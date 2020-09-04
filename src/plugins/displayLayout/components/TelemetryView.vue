@@ -74,10 +74,12 @@
 import LayoutFrame from './LayoutFrame.vue';
 import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+import uuid from 'uuid';
+import Clipboard from '../../../utils/clipboard';
+import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
-const CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
 
 export default {
     makeDefinition(openmct, gridSize, domainObject, position) {
@@ -129,7 +131,8 @@ export default {
             datum: undefined,
             formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined
+            currentObjectPath: undefined,
+            viewKey: uuid()
         };
     },
     computed: {
@@ -214,8 +217,33 @@ export default {
         }
 
         this.openmct.time.off("bounds", this.refreshData);
+        this.openmct.actions.removeAllViewActions(this.viewKey);
     },
     methods: {
+        getMenuItems() {
+            const defaultNotebook = getDefaultNotebook();
+
+            const CopyToClipboardAction = {
+                name: 'copy to Clipboard',
+                description: "copyToClipboard",
+                cssClass: 'icon-eye-open',
+                callBack: this.copyToClipboard,
+                group: 'view'
+            };
+
+            const CopyToNotebookAction = {
+                name: 'copy to Notebook',
+                description: "copyToNotebook",
+                cssClass: 'icon-eye-open',
+                callBack: this.copyToNotebook,
+                group: 'view'
+            };
+
+            return [
+                CopyToClipboardAction,
+                CopyToNotebookAction
+            ]
+        },
         requestHistoricalData() {
             let bounds = this.openmct.time.bounds();
             let options = {
@@ -297,7 +325,35 @@ export default {
             this.$emit('formatChanged', this.item, format);
         },
         showContextMenu(event) {
-            this.openmct.menus.showMenu(event.x, event.y, this.applicableActions);
+            this.openmct.menus.showMenu(event.x, event.y, this.contextMenuActions);
+
+            // let menuActions = this.getMenuItems();
+            // const applicableActions = this.openmct.actions._groupedAndSortedObjectActions(this.currentObjectPath, ['viewHistoricalData']);
+            // applicableActions.forEach(d => { menuActions = menuActions.concat(d); });
+
+            // this.openmct.menus.showMenu(event.x, event.y, menuActions);
+        },
+        copyToClipboard() {
+            console.log('copyToClipboard', this.datum);
+            // this.$el.focus();
+            Clipboard.updateClipboard(JSON.stringify(this.datum))
+                .then(() => {
+                    console.log('Success : updateClipboard');
+                });
+
+
+            setTimeout(() => {
+                Clipboard.readClipboard()
+                    .then(data => {
+                        console.log('Success: readClipboard', JSON.parse(data));
+                    })
+                    .catch((e) => {
+                        console.log('Error: readClipboard', e);
+                    })
+            }, 2000);
+        },
+        copyToNotebook() {
+            // TODO:
         }
     }
 };
