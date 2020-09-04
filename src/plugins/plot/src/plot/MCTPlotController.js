@@ -575,7 +575,7 @@ define([
         if (dataForSelectedXKey !== undefined) {
             this.config.xAxis.set('key', selectedXKey);
         } else {
-            this.config.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.')
+            this.config.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.');
             this.$scope.selectedXKeyOption.key = lastXKey;
         }
     };
