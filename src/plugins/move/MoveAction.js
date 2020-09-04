@@ -36,9 +36,7 @@ export default class MoveAction {
         let dialogForm = this.getDialogForm(object, oldParent);
         let userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
 
-        if (object.name !== userInput.name) {
-            this.openmct.objects.mutate(object, 'name', userInput.name);
-        }
+        this.updateNameCheck(object, userInput.name);
 
         let parentContext = userInput.location.getCapability('context');
         let newParent = await this.openmct.objects.get(parentContext.domainObject.id);
@@ -52,8 +50,21 @@ export default class MoveAction {
 
         if (this.inNavigationPath(object)) {
             let newObjectPath = await this.openmct.objects.getOriginalPath(object.identifier);
-            newObjectPath.pop(); // remove ROOT
+            let root = await this.openmct.objects.getRoot();
+            let rootChildCount = root.composition.length;
+
+            // if not multiple root children, remove root from path
+            if (rootChildCount < 2) {
+                newObjectPath.pop(); // remove ROOT
+            }
+
             this.navigateTo(newObjectPath);
+        }
+    }
+
+    updateNameCheck(object, name) {
+        if (object.name !== name) {
+            this.openmct.objects.mutate(object, 'name', name);
         }
     }
 

@@ -27,7 +27,7 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-describe("The Move Action plugin", () => {
+fdescribe("The Move Action plugin", () => {
 
     let openmct;
     let moveAction;
@@ -88,43 +88,37 @@ describe("The Move Action plugin", () => {
         expect(MoveActionPlugin).toBeDefined();
     });
 
-    describe("when removing an object from a parent composition", () => {
+    describe("when moving an object to a new parent and removing from the old parent", () => {
 
         beforeEach(() => {
             moveAction = new MoveAction(openmct);
-            spyOn(moveAction, 'removeFromComposition').and.callThrough();
-            spyOn(moveAction, 'inNavigationPath').and.returnValue(false);
-            spyOn(openmct.objects, 'mutate').and.callThrough();
-            moveAction.removeFromComposition(parentObject, childObject);
+            moveAction.addToNewParent(childObject, anotherParentObject);
+            moveAction.removeFromOldParent(parentObject, childObject);
         });
 
-        it("removeFromComposition should be called with the parent and child", () => {
-            expect(moveAction.removeFromComposition).toHaveBeenCalled();
-            expect(moveAction.removeFromComposition).toHaveBeenCalledWith(parentObject, childObject);
+        it("the child object's identifier should be in the new parent's composition", () => {
+            let newParentChild = anotherParentObject.composition[0];
+            expect(newParentChild).toEqual(childObject.identifier);
         });
 
-        it("it should mutate the parent object", () => {
-            expect(openmct.objects.mutate).toHaveBeenCalled();
-            expect(openmct.objects.mutate.calls.argsFor(0)[0]).toEqual(parentObject);
+        it("the child object's identifier should be removed from the old parent's composition", () => {
+            let oldParentComposition = parentObject.composition;
+            expect(oldParentComposition.length).toEqual(0);
         });
     });
 
-    describe("when determining the object is applicable", () => {
+    describe("when a new name is provided for the child object", () => {
+        const NEW_NAME = 'New Name';
 
         beforeEach(() => {
             moveAction = new MoveAction(openmct);
-            spyOn(moveAction, 'appliesTo').and.callThrough();
+            moveAction.updateNameCheck(childObject, NEW_NAME);
         });
 
-        it("should be true when the parent is creatable and has composition", () => {
-            let applies = moveAction.appliesTo([childObject, parentObject]);
-            expect(applies).toBe(true);
-        });
-
-        it("should be false when the child is locked", () => {
-            childObject.locked = true;
-            let applies = moveAction.appliesTo([childObject, parentObject]);
-            expect(applies).toBe(false);
+        it("the name is updated", () => {
+            let childName = childObject.name;
+            expect(childName).toEqual(NEW_NAME);
         });
     });
+
 });
