@@ -552,8 +552,18 @@ define([
         return isSinglePlot && !isFrozen && !inRealTimeMode;
     };
 
-    MCTPlotController.prototype.toggleXKeyOption = function () {
-        this.config.xAxis.set('key', this.$scope.selectedXKeyOption.key);
+    MCTPlotController.prototype.toggleXKeyOption = function (lastXKey, series) {
+        const selectedXKey = this.$scope.selectedXKeyOption.key;
+        const dataForSelectedXKey = series.data
+            ? series.data[0][selectedXKey]
+            : undefined;
+
+        if (dataForSelectedXKey !== undefined) {
+            this.config.xAxis.set('key', selectedXKey);
+        } else {
+            this.config.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.')
+            this.$scope.selectedXKeyOption.key = lastXKey;
+        }
     };
 
     MCTPlotController.prototype.toggleYAxisLabel = function (label, options, series) {
