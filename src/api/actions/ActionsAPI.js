@@ -20,24 +20,78 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
-import { timingSafeEqual } from 'crypto';
+import ActionCollection from './ActionCollection';
 
 class ActionsAPI extends EventEmitter {
     constructor() {
         super();
 
+        this._allActions = {};
         this._viewActions = {};
         this._objectActions = [];
+        this._actionCollections = {};
 
         this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'json'];
 
+        this.register = this.register.bind(this);
+        this.get = this.get.bind(this);
         this.registerObjectAction = this.registerObjectAction.bind(this);
         this.registerViewAction = this.registerViewAction.bind(this);
         this.removeAllViewActions = this.removeAllViewActions.bind(this);
-        this._applicableObjectActions = this._applicableObjectActions.bind(this);
-        this._groupedAndSortedObjectActions = this._groupedAndSortedObjectActions.bind(this);
         this._applicableViewActions = this._applicableViewActions.bind(this);
         this._applicableActions = this._applicableActions.bind(this);
+    }
+
+    register(actionDefinition) {
+        this._allActions[actionDefinition.key] = actionDefinition;
+    }
+
+    get(objectPath, viewContext) {
+
+        if (viewContext && viewContext.getViewKey) {
+            let cachedActionCollection = this._actionCollections[viewContext.getViewKey()];
+
+            if (cachedActionCollection) {
+                return cachedActionCollection;
+            } else {
+                let applicableActions = this._applicableActions(objectPath, viewContext);
+                let actionCollection = new ActionCollection(applicableActions);
+
+                this._actionCollections[viewContext.getViewKey()] = actionCollection;
+                
+                return actionCollection;
+            }
+        } else {
+            let applicableActions = this._applicableActions(objectPath);
+
+            return this._groupAndSortActions(applicableActions);
+        }
+    }
+
+    _applicableActions(objectPath, viewContext) {
+        let actionsObject = {};
+
+        let keys = Object.keys(this._allActions).filter(key => {
+            let actionDefinition = this._allActions[key];
+
+            if (actionDefinition.appliesTo === undefined) {
+                return true;
+            } else {
+                return actionDefinition.appliesTo(objectPath, viewContext);
+            }
+        });
+
+        keys.forEach(key => {
+            let action = this._allActions[key];
+
+            action.callBack = () => {
+                return action.invoke(objectPath, viewContext);
+            }
+
+            actionsObject[key] = action;
+        });
+
+        return actionsObject;
     }
 
     registerObjectAction(actionDefinition) {
@@ -69,51 +123,15 @@ class ActionsAPI extends EventEmitter {
         this.emit('update', viewKey, []);
     }
 
-    _applicableObjectActions(objectPath, actionsToBeIncluded) {
-        let applicableActions = this._objectActions.filter((action) => {
-            if (actionsToBeIncluded) {
-                if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.key)) {
-                    return true;
-                }
-
-                return action.appliesTo(objectPath, actionsToBeIncluded) && actionsToBeIncluded.includes(action.key);
-            } else {
-                if (action.appliesTo === undefined) {
-                    return true;
-                }
-
-                return action.appliesTo(objectPath, actionsToBeIncluded) && !action.hideInDefaultMenu;
-            }
-        });
-
-        applicableActions.forEach(action => {
-            action.callBack = () => {
-                return action.invoke(objectPath);
-            };
-        });
-
-        return applicableActions;
-    }
-
-    _groupedAndSortedObjectActions(objectPath, actionsToBeIncluded) {
-        let actions = this._applicableObjectActions(objectPath, actionsToBeIncluded);
-
-        return this._groupAndSortActions(actions);
-    }
-
     _applicableViewActions(viewKey) {
         return this._viewActions[viewKey] || [];
     }
 
-    _applicableActions(objectPath, viewKey, actionsToBeIncluded) {
-        let objectActions = this._applicableObjectActions(objectPath, actionsToBeIncluded);
-        let viewActions = this._applicableViewActions(viewKey);
-        let combinedActions = objectActions.concat(viewActions);
-
-        return this._groupAndSortActions(combinedActions);
-    }
-
     _groupAndSortActions(actionsArray) {
+        if (!Array.isArray(actionsArray) && typeof actionsArray === 'object') {
+            actionsArray = Object.keys(actionsArray).map(key => actionsArray[key]);
+        }
+
         let actionsObject = {};
         let groupedSortedActionsArray = [];
 

@@ -91,9 +91,7 @@ define([
                     },
                     getViewContext() {
                         if (component) {
-                            return {
-                                getViewKey: component.$refs.tableComponent.getViewKey
-                            }
+                            return component.$refs.tableComponent.getViewContext();
                         } else {
                             return {};
                         }

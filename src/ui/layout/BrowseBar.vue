@@ -225,14 +225,24 @@ export default {
             });
         },
         viewProvider(viewProvider) {
-            if (viewProvider.getViewContext) {
-                if (!this.statusBarViewKey) {
-                    this.openmct.actions.on('update', this.updateStatusBarItems);
-                }
-                this.statusBarViewKey = viewProvider.getViewContext().getViewKey();
+            if (this.actionCollection) {
+                this.actionCollection.off('update', this.updateActionItems);
+                // this.actionCollection.destroy();
+                delete this.actionCollection;
+            }
 
-                let statusBarItems = this.openmct.actions._applicableViewActions(this.statusBarViewKey);
-                this.updateStatusBarItems(this.statusBarViewKey, statusBarItems);
+            if (viewProvider.getViewContext) {
+                let viewContext = viewProvider.getViewContext();
+                let viewKey = viewContext.getViewKey && viewContext.getViewKey();
+
+                if (this.statusBarViewKey !== viewKey) {
+                    if (viewKey) {
+                        this.actionCollection = this.openmct.actions.get(this.openmct.router.path, viewContext);
+                        this.actionCollection.on('update', this.updateActionItems);
+
+                        this.updateActionItems(this.actionCollection.applicableActions);
+                    }
+                }
             } else {
                 this.statusBarViewKey = undefined;
                 this.statusBarItems = [];
@@ -336,15 +346,14 @@ export default {
         goToParent() {
             window.location.hash = this.parentUrl;
         },
-        updateStatusBarItems(statusBarViewKey, items) {
-            if (this.statusBarViewKey === statusBarViewKey) {
-                this.statusBarItems = items.filter(item => item.showInStatusBar);
-            }
+        updateActionItems(actionItems) {
+            let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
+
+            this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled);
+            this.menuItems = this.openmct.actions._groupAndSortActions(actionItemsArray);
         },
         showMenuItems(event) {
-            let applicableMenuItems = this.openmct.actions._applicableActions(this.openmct.router.path, this.statusBarViewKey);
-
-            this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);
+            this.openmct.menus.showMenu(event.x, event.y, this.menuItems);
         },
         toggleLock(flag) {
             this.openmct.objects.mutate(this.domainObject, 'locked', flag);

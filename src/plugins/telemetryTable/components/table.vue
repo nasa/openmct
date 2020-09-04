@@ -345,7 +345,7 @@ export default {
             markedRows: [],
             isShowingMarkedRowsOnly: false,
             hideHeaders: configuration.hideHeaders,
-            viewKey: Math.random()
+            viewKey: `telemetry-table-${Math.random()}`
         }
     },
     computed: {
@@ -918,6 +918,17 @@ export default {
         },
         getViewKey() {
             return this.viewKey;
+        },
+        getViewContext() {
+            return {
+                getViewKey: this.getViewKey,
+                exportAllDataAsCSV: this.exportAllDataAsCSV,
+                exportMarkedRows: this.exportMarkedRows,
+                unmarkAllRows: this.unmarkAllRows,
+                togglePauseByButton: this.togglePauseByButton,
+                expandColumns: this.recalculateColumnWidths,
+                autosizeColumns: this.autosizeColumns
+            }
         },
         updateMenuItems() {
             this.openmct.actions.updateViewActions(this.viewKey, this.getMenuItems());
