@@ -27,7 +27,7 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-fdescribe("The Move Action plugin", () => {
+describe("The Move Action plugin", () => {
 
     let openmct;
     let moveAction;
