@@ -202,7 +202,8 @@ define([
             plotSeries.load({
                 size: this.$element[0].offsetWidth,
                 start: range.min,
-                end: range.max
+                end: range.max,
+                domain: this.config.xAxis.get('key')
             })
                 .then(this.stopLoading());
             if (purge) {
