@@ -81,7 +81,7 @@ class ActionsAPI extends EventEmitter {
 
     _updateCachedActionCollections(key) {
         if (this._actionCollections[key]) {
-            this._actionCollection[key].off('destroy', this._updateCachedActionCollections);
+            this._actionCollections[key].off('destroy', this._updateCachedActionCollections);
             this._actionCollections[key] = undefined;
             delete this._actionCollections[key];
         }
