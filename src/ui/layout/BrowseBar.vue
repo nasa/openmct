@@ -129,17 +129,17 @@ const PLACEHOLDER_OBJECT = {};
 
 export default {
     inject: ['openmct'],
+    components: {
+        NotebookMenuSwitcher,
+        ViewSwitcher
+    },
     props: {
         viewProvider: {
             type: Object,
             default: () => {
                 return {};
             }
-        },
-    },
-    components: {
-        NotebookMenuSwitcher,
-        ViewSwitcher
+        }
     },
     data: function () {
         return {
@@ -151,7 +151,7 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             notebookEnabled: this.openmct.types.get('notebook'),
             statusBarItems: []
-        }
+        };
     },
     computed: {
         classList() {
@@ -356,10 +356,10 @@ export default {
 
             if (this.actionCollection) {
                 let unfilteredActions = this.actionCollection.applicableActions;
-                
+
                 actions = Object.keys(unfilteredActions).map(key => unfilteredActions[key]).filter(action => !action.hidden);
             } else {
-                actions =  this.openmct.actions.get(this.openmct.router.path);
+                actions = this.openmct.actions.get(this.openmct.router.path);
             }
 
             let sortedActions = this.openmct.actions._groupAndSortActions(actions);

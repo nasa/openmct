@@ -104,7 +104,6 @@
 
 <script>
 import ObjectView from './ObjectView.vue';
-import ContextMenuDropDown from './contextMenuDropDown.vue';
 import PreviewHeader from '@/ui/preview/preview-header.vue';
 import Vue from 'vue';
 
@@ -119,8 +118,7 @@ const SIMPLE_CONTENT_TYPES = [
 export default {
     inject: ['openmct'],
     components: {
-        ObjectView,
-        ContextMenuDropDown
+        ObjectView
     },
     props: {
         domainObject: {
@@ -163,6 +161,13 @@ export default {
             }
 
             return classList.join(' ');
+        }
+    },
+    beforeDestroy() {
+        if (this.actionCollection) {
+            this.actionCollection.off('update', this.updateStatusBarItems);
+            this.actionCollection.destroy();
+            delete this.actionCollection;
         }
     },
     methods: {
@@ -247,25 +252,18 @@ export default {
             this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
         },
         showMenuItems(event) {
-           let actions;
+            let actions;
 
             if (this.actionCollection) {
                 let unfilteredActions = this.actionCollection.applicableActions;
-                
+
                 actions = Object.keys(unfilteredActions).map(key => unfilteredActions[key]).filter(action => !action.hidden);
             } else {
-                actions =  this.openmct.actions.get(this.objectPath);
+                actions = this.openmct.actions.get(this.objectPath);
             }
 
             let sortedActions = this.openmct.actions._groupAndSortActions(actions);
             this.openmct.menus.showMenu(event.x, event.y, sortedActions);
-        }
-    },
-    beforeDestroy() {
-        if (this.actionCollection) {
-            this.actionCollection.off('update', this.updateStatusBarItems);
-            this.actionCollection.destroy();
-            delete this.actionCollection;
         }
     }
 };

@@ -43,7 +43,7 @@ define([
                     return true;
                 }
             });
-            
+
             TelemetryTableViewActions.default.forEach(action => {
                 openmct.actions.register(action);
             });

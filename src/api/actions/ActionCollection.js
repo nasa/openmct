@@ -22,8 +22,8 @@
 
 import EventEmitter from 'EventEmitter';
 
-class ActionCollection extends EventEmitter{
-    constructor (key, applicableActions, objectPath, viewContext, openmct) {
+class ActionCollection extends EventEmitter {
+    constructor(key, applicableActions, objectPath, viewContext, openmct) {
         super();
 
         this.key = key;
@@ -66,7 +66,7 @@ class ActionCollection extends EventEmitter{
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].hidden = false;
             }
-        })
+        });
     }
 
     update() {
@@ -86,10 +86,13 @@ class ActionCollection extends EventEmitter{
     }
 
     _observeObjectPath() {
+        let actionCollection = this;
+
         function updateObject(oldObject, newObject) {
             Object.assign(oldObject, newObject);
-            this._updateActions();
-        };
+
+            actionCollection._updateActions();
+        }
 
         this.objectPath.forEach(object => {
             if (object) {

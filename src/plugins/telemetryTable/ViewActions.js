@@ -113,8 +113,9 @@ viewActions.forEach(action => {
 
             return key.includes('telemetry-table');
         }
+
         return false;
-    }
+    };
 });
 
 export default viewActions;

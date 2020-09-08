@@ -19,7 +19,10 @@
                 class="c-menu__section-separator"
             >
             </div>
-            <li v-if="actionGroups.length === 0" :key="index">
+            <li
+                v-if="actionGroups.length === 0"
+                :key="index"
+            >
                 No actions defined.
             </li>
         </template>
@@ -45,5 +48,5 @@
 <script>
 export default {
     inject: ['actions']
-}
+};
 </script>

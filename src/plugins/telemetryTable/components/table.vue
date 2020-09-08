@@ -346,7 +346,7 @@ export default {
             isShowingMarkedRowsOnly: false,
             hideHeaders: configuration.hideHeaders,
             viewKey: `telemetry-table-${Math.random()}`
-        }
+        };
     },
     computed: {
         dropTargetStyle() {
@@ -389,7 +389,7 @@ export default {
                 let updated = false;
 
                 if ((oldVal.length === 0 && newVal.length > 0) || newVal.length > 0) {
-                    this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows'])
+                    this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
                     updated = true;
                 } else if (oldVal.length > 0 && newVal.length === 0) {
                     this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
@@ -410,6 +410,7 @@ export default {
                     this.viewActionsCollection.hide(['play-data']);
                     this.viewActionsCollection.show(['pause-data']);
                 }
+
                 this.viewActionsCollection.update();
             }
         },
@@ -422,6 +423,7 @@ export default {
                     this.viewActionsCollection.show(['autosize-columns']);
                     this.viewActionsCollection.hide(['expand-columns']);
                 }
+
                 this.viewActionsCollection.update();
             }
         }
@@ -949,11 +951,11 @@ export default {
                 togglePauseByButton: this.togglePauseByButton,
                 expandColumns: this.recalculateColumnWidths,
                 autosizeColumns: this.autosizeColumns
-            }
+            };
         },
         initializeViewActions() {
             if (this.markedRows.length > 0) {
-                this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows'])
+                this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
             } else if (this.markedRows.length === 0) {
                 this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
             }

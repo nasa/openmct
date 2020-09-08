@@ -22,7 +22,6 @@
 import EventEmitter from 'EventEmitter';
 import ActionCollection from './ActionCollection';
 import _ from 'lodash';
-import { throws } from 'assert';
 
 class ActionsAPI extends EventEmitter {
     constructor(openmct) {
@@ -58,7 +57,7 @@ class ActionsAPI extends EventEmitter {
 
                 this._actionCollections[key] = actionCollection;
                 actionCollection.on('destroy', this._updateCachedActionCollections);
-                
+
                 return actionCollection;
             }
         } else {
@@ -69,7 +68,7 @@ class ActionsAPI extends EventEmitter {
 
                 action.callBack = () => {
                     return action.invoke(objectPath, viewContext);
-                }
+                };
             });
 
             return applicableActions;
@@ -79,7 +78,7 @@ class ActionsAPI extends EventEmitter {
     updateGroupOrder(groupArray) {
         this._groupOrder = groupArray;
     }
-    
+
     _updateCachedActionCollections(key) {
         if (this._actionCollections[key]) {
             this._actionCollection[key].off('destroy', this._updateCachedActionCollections);
