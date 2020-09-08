@@ -246,15 +246,15 @@
 
                 <div
                     class="gl-plot-label gl-plot-x-label"
-                    ng-class="{'icon-gear': (xKeyOptions.length > 1 && series.length === 1)}"
+                    ng-class="{'icon-gear': isEnabledXKeyToggle()}"
                 >
                     {{ xAxis.get('label') }}
                 </div>
 
                 <select
-                    ng-if="plot.isEnabledXKeyToggle()"
+                    ng-show="plot.isEnabledXKeyToggle()"
                     ng-model="selectedXKeyOption.key"
-                    ng-change="plot.toggleXKeyOption()"
+                    ng-change="plot.toggleXKeyOption('{{selectedXKeyOption.key}}', series[0])"
                     class="gl-plot-x-label__select local-controls--hidden"
                     ng-options="option.key as option.name for option in xKeyOptions"
                 >
