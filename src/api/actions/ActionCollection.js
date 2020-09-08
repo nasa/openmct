@@ -23,8 +23,11 @@
 import EventEmitter from 'EventEmitter';
 
 class ActionCollection extends EventEmitter{
-    constructor (applicableActions, objectPath, viewContext, openmct) {
+    constructor (key, applicableActions, objectPath, viewContext, openmct) {
+        console.log('istantiated');
         super();
+
+        this.key = key;
         this.applicableActions = applicableActions;
         this.openmct = openmct;
         this.objectPath = objectPath;
@@ -99,13 +102,18 @@ class ActionCollection extends EventEmitter{
         this.objectUnsubscribes.forEach(unsubscribe => {
             unsubscribe();
         });
+        this.objectUnsubscribes = [];
+        this.applicableActions = {};
+        this.objectPath = [];
+        this.viewContext = {};
 
-        this.emit('destroy');
+        this.emit('destroy', this.key);
     }
 
     _observeObjectPath() {
         function updateObject(oldObject, newObject) {
             Object.assign(oldObject, newObject);
+            this._updateActions();
         };
 
         this.objectPath.forEach(object => {
@@ -120,10 +128,14 @@ class ActionCollection extends EventEmitter{
     _initializeActions() {
         Object.keys(this.applicableActions).forEach(key => {
             this.applicableActions[key].callBack = () => {
-                console.log(this.objectPath);
                 return this.applicableActions[key].invoke(this.objectPath, this.viewContext);
             };
         });
+    }
+
+    _updateActions() {
+        this.applicableActions = this.openmct.actions._applicableActions(this.objectPath, this.viewContext);
+        this._initializeActions();
     }
 }
 

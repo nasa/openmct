@@ -41,6 +41,7 @@ class ActionsAPI extends EventEmitter {
         this.removeAllViewActions = this.removeAllViewActions.bind(this);
         this._applicableViewActions = this._applicableViewActions.bind(this);
         this._applicableActions = this._applicableActions.bind(this);
+        this._updateCachedActionCollections = this._updateCachedActionCollections.bind(this);
     }
 
     register(actionDefinition) {
@@ -50,28 +51,40 @@ class ActionsAPI extends EventEmitter {
     get(objectPath, viewContext) {
 
         if (viewContext && viewContext.getViewKey) {
-            let cachedActionCollection = this._actionCollections[viewContext.getViewKey()];
+            let key = viewContext.getViewKey();
+            let cachedActionCollection = this._actionCollections[key];
 
             if (cachedActionCollection) {
                 return cachedActionCollection;
             } else {
                 let applicableActions = this._applicableActions(objectPath, viewContext);
-                let actionCollection = new ActionCollection(applicableActions, objectPath, viewContext, this._openmct);
+                let actionCollection = new ActionCollection(key, applicableActions, objectPath, viewContext, this._openmct);
 
-                this._actionCollections[viewContext.getViewKey()] = actionCollection;
+                this._actionCollections[key] = actionCollection;
+                console.log(this._actionCollections);
+                actionCollection.on('destroy', this._updateCachedActionCollections);
                 
                 return actionCollection;
             }
         } else {
             let applicableActions = this._applicableActions(objectPath);
 
-            Object.keys(applicableActions).forEach(action => {
+            Object.keys(applicableActions).forEach(key => {
+                let action = applicableActions[key];
+
                 action.callBack = () => {
                     return action.invoke(objectPath, viewContext);
                 }
             });
 
-            return this._groupAndSortActions(applicableActions);
+            return applicableActions;
+        }
+    }
+    
+    _updateCachedActionCollections(key) {
+        if (this._actionCollections[key]) {
+            this._actionCollections[key] = undefined;
+            delete this._actionCollections[key];
         }
     }
 

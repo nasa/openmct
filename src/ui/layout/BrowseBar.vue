@@ -226,8 +226,8 @@ export default {
         },
         viewProvider(viewProvider) {
             if (this.actionCollection) {
-                this.actionCollection.off('update', this.updateActionItems);
-                // this.actionCollection.destroy();
+                this.actionCollection.off('update', this.updateStatusBarItems);
+                this.actionCollection.destroy();
                 delete this.actionCollection;
             }
 
@@ -238,9 +238,9 @@ export default {
                 if (this.statusBarViewKey !== viewKey) {
                     if (viewKey) {
                         this.actionCollection = this.openmct.actions.get(this.openmct.router.path, viewContext);
-                        this.actionCollection.on('update', this.updateActionItems);
+                        this.actionCollection.on('update', this.updateStatusBarItems);
 
-                        this.updateActionItems(this.actionCollection.applicableActions);
+                        this.updateStatusBarItems(this.actionCollection.applicableActions);
                     }
                 }
             } else {
@@ -346,15 +346,23 @@ export default {
         goToParent() {
             window.location.hash = this.parentUrl;
         },
-        updateActionItems(actionItems) {
+        updateStatusBarItems(actionItems) {
             let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
             this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
-
-            let nonHiddenActions = actionItemsArray.filter(action => !action.hidden);
-            this.menuItems = this.openmct.actions._groupAndSortActions(nonHiddenActions);
         },
         showMenuItems(event) {
-            this.openmct.menus.showMenu(event.x, event.y, this.menuItems);
+            let actions;
+
+            if (this.actionCollection) {
+                let unfilteredActions = this.actionCollection.applicableActions;
+                
+                actions = Object.keys(unfilteredActions).map(key => unfilteredActions[key]).filter(action => !action.hidden);
+            } else {
+                actions =  this.openmct.actions.get(this.openmct.router.path);
+            }
+
+            let sortedActions = this.openmct.actions._groupAndSortActions(actions);
+            this.openmct.menus.showMenu(event.x, event.y, sortedActions);
         },
         toggleLock(flag) {
             this.openmct.objects.mutate(this.domainObject, 'locked', flag);
