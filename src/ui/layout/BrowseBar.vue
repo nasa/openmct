@@ -348,9 +348,10 @@ export default {
         },
         updateActionItems(actionItems) {
             let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
+            this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
 
-            this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled);
-            this.menuItems = this.openmct.actions._groupAndSortActions(actionItemsArray);
+            let nonHiddenActions = actionItemsArray.filter(action => !action.hidden);
+            this.menuItems = this.openmct.actions._groupAndSortActions(nonHiddenActions);
         },
         showMenuItems(event) {
             this.openmct.menus.showMenu(event.x, event.y, this.menuItems);

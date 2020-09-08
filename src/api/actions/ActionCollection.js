@@ -23,9 +23,16 @@
 import EventEmitter from 'EventEmitter';
 
 class ActionCollection extends EventEmitter{
-    constructor (applicableActions) {
+    constructor (applicableActions, objectPath, viewContext, openmct) {
         super();
         this.applicableActions = applicableActions;
+        this.openmct = openmct;
+        this.objectPath = objectPath;
+        this.viewContext = viewContext;
+        this.objectUnsubscribes = [];
+
+        this._observeObjectPath();
+        this._initializeActions();
     }
 
     disable(actionKeys) {
@@ -86,6 +93,37 @@ class ActionCollection extends EventEmitter{
         if (updated) {
             this.emit('update', this.applicableActions);
         }
+    }
+
+    destroy() {
+        this.objectUnsubscribes.forEach(unsubscribe => {
+            unsubscribe();
+        });
+
+        this.emit('destroy');
+    }
+
+    _observeObjectPath() {
+        function updateObject(oldObject, newObject) {
+            Object.assign(oldObject, newObject);
+        };
+
+        this.objectPath.forEach(object => {
+            if (object) {
+                let unsubscribe = this.openmct.objects.observe(object, '*', updateObject.bind(this, object));
+
+                this.objectUnsubscribes.push(unsubscribe);
+            }
+        });
+    }
+
+    _initializeActions() {
+        Object.keys(this.applicableActions).forEach(key => {
+            this.applicableActions[key].callBack = () => {
+                console.log(this.objectPath);
+                return this.applicableActions[key].invoke(this.objectPath, this.viewContext);
+            };
+        });
     }
 }
 

@@ -7,7 +7,7 @@
             <li
                 v-for="action in actionGroups"
                 :key="action.name"
-                :class="action.cssClass"
+                :class="[action.cssClass, action.disabled ? 'disabled' : '']"
                 :title="action.description"
                 @click="action.callBack"
             >

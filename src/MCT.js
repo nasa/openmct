@@ -244,7 +244,7 @@ define([
 
         this.menus = new api.MenuAPI(this);
 
-        this.actions = new api.ActionsAPI();
+        this.actions = new api.ActionsAPI(this);
 
         this.router = new ApplicationRouter();
 

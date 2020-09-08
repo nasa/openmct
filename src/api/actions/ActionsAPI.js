@@ -23,13 +23,14 @@ import EventEmitter from 'EventEmitter';
 import ActionCollection from './ActionCollection';
 
 class ActionsAPI extends EventEmitter {
-    constructor() {
+    constructor(openmct) {
         super();
 
         this._allActions = {};
         this._viewActions = {};
         this._objectActions = [];
         this._actionCollections = {};
+        this._openmct = openmct;
 
         this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'json'];
 
@@ -55,7 +56,7 @@ class ActionsAPI extends EventEmitter {
                 return cachedActionCollection;
             } else {
                 let applicableActions = this._applicableActions(objectPath, viewContext);
-                let actionCollection = new ActionCollection(applicableActions);
+                let actionCollection = new ActionCollection(applicableActions, objectPath, viewContext, this._openmct);
 
                 this._actionCollections[viewContext.getViewKey()] = actionCollection;
                 
@@ -63,6 +64,12 @@ class ActionsAPI extends EventEmitter {
             }
         } else {
             let applicableActions = this._applicableActions(objectPath);
+
+            Object.keys(applicableActions).forEach(action => {
+                action.callBack = () => {
+                    return action.invoke(objectPath, viewContext);
+                }
+            });
 
             return this._groupAndSortActions(applicableActions);
         }
@@ -83,10 +90,6 @@ class ActionsAPI extends EventEmitter {
 
         keys.forEach(key => {
             let action = this._allActions[key];
-
-            action.callBack = () => {
-                return action.invoke(objectPath, viewContext);
-            }
 
             actionsObject[key] = action;
         });

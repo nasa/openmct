@@ -387,19 +387,33 @@ export default {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
 
-                if (oldVal.length === 0 && newVal.length > 0 || oldVal.length > 0 && newVal === 0) {
-                    this.updateMenuItems();
+                if ((oldVal.length === 0 && newVal.length > 0) || newVal.length > 0) {
+                    this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows'])
+                } else if (oldVal.length > 0 && newVal.length === 0) {
+                    this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
                 }
             }
         },
         paused: {
-            handler() {
-                this.updateMenuItems();
+            handler(newVal) {
+                if (newVal) {
+                    this.viewActionsCollection.hide(['pause-data']);
+                    this.viewActionsCollection.show(['play-data']);
+                } else {
+                    this.viewActionsCollection.hide(['play-data']);
+                    this.viewActionsCollection.show(['pause-data']);
+                }
             }
         },
         isAutosizeEnabled: {
-            handler() {
-                this.updateMenuItems();
+            handler(newVal) {
+                if (newVal) {
+                    this.viewActionsCollection.show(['expand-columns']);
+                    this.viewActionsCollection.hide(['autosize-columns']);
+                } else {
+                    this.viewActionsCollection.show(['autosize-columns']);
+                    this.viewActionsCollection.hide(['expand-columns']);
+                }
             }
         }
     },
@@ -411,6 +425,8 @@ export default {
         this.rowsAdded = _.throttle(this.rowsAdded, 200);
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);
+        this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.getViewContext());
+        this.initializeViewActions();
 
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
@@ -928,6 +944,29 @@ export default {
                 togglePauseByButton: this.togglePauseByButton,
                 expandColumns: this.recalculateColumnWidths,
                 autosizeColumns: this.autosizeColumns
+            }
+        },
+        initializeViewActions() {
+            if (this.markedRows.length > 0) {
+                this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows'])
+            } else if (this.markedRows.length === 0) {
+                this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+            }
+
+            if (this.paused) {
+                this.viewActionsCollection.hide(['pause-data']);
+                this.viewActionsCollection.show(['play-data']);
+            } else {
+                this.viewActionsCollection.hide(['play-data']);
+                this.viewActionsCollection.show(['pause-data']);
+            }
+
+            if (this.isAutosizeEnabled) {
+                this.viewActionsCollection.show(['expand-columns']);
+                this.viewActionsCollection.hide(['autosize-columns']);
+            } else {
+                this.viewActionsCollection.show(['autosize-columns']);
+                this.viewActionsCollection.hide(['expand-columns']);
             }
         },
         updateMenuItems() {
