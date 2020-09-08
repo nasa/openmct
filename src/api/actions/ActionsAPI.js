@@ -20,100 +20,100 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
-import { timingSafeEqual } from 'crypto';
+import ActionCollection from './ActionCollection';
+import _ from 'lodash';
 
 class ActionsAPI extends EventEmitter {
-    constructor() {
+    constructor(openmct) {
         super();
 
-        this._viewActions = {};
-        this._objectActions = [];
+        this._allActions = {};
+        this._actionCollections = {};
+        this._openmct = openmct;
 
         this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'json'];
 
-        this.registerObjectAction = this.registerObjectAction.bind(this);
-        this.registerViewAction = this.registerViewAction.bind(this);
-        this.removeAllViewActions = this.removeAllViewActions.bind(this);
-        this._applicableObjectActions = this._applicableObjectActions.bind(this);
-        this._groupedAndSortedObjectActions = this._groupedAndSortedObjectActions.bind(this);
-        this._applicableViewActions = this._applicableViewActions.bind(this);
+        this.register = this.register.bind(this);
+        this.get = this.get.bind(this);
         this._applicableActions = this._applicableActions.bind(this);
+        this._updateCachedActionCollections = this._updateCachedActionCollections.bind(this);
     }
 
-    registerObjectAction(actionDefinition) {
-        this._objectActions.push(actionDefinition);
+    register(actionDefinition) {
+        this._allActions[actionDefinition.key] = actionDefinition;
     }
 
-    registerViewAction(viewKey, actionDefinition) {
+    get(objectPath, viewContext) {
 
-        if (Array.isArray(actionDefinition)) {
-            this._viewActions[viewKey] = actionDefinition;
-        } else {
-            if (this._viewActions[viewKey]) {
-                this._viewActions[viewKey].push(actionDefinition);
+        if (viewContext && viewContext.getViewKey) {
+            let key = viewContext.getViewKey();
+            let cachedActionCollection = this._actionCollections[key];
+
+            if (cachedActionCollection) {
+                return cachedActionCollection;
             } else {
-                this._viewActions[viewKey] = [actionDefinition];
+                let applicableActions = this._applicableActions(objectPath, viewContext);
+                let actionCollection = new ActionCollection(key, applicableActions, objectPath, viewContext, this._openmct);
+
+                this._actionCollections[key] = actionCollection;
+                actionCollection.on('destroy', this._updateCachedActionCollections);
+
+                return actionCollection;
             }
+        } else {
+            let applicableActions = this._applicableActions(objectPath);
+
+            Object.keys(applicableActions).forEach(key => {
+                let action = applicableActions[key];
+
+                action.callBack = () => {
+                    return action.invoke(objectPath, viewContext);
+                };
+            });
+
+            return applicableActions;
         }
     }
 
-    updateViewActions(viewKey, actionDefinitionsArray) {
-        this._viewActions[viewKey] = actionDefinitionsArray;
-        this.emit('update', viewKey, actionDefinitionsArray);
+    updateGroupOrder(groupArray) {
+        this._groupOrder = groupArray;
     }
 
-    removeAllViewActions(viewKey) {
-        this._viewActions[viewKey] = undefined;
-        delete this._viewActions[viewKey];
-
-        this.emit('update', viewKey, []);
+    _updateCachedActionCollections(key) {
+        if (this._actionCollections[key]) {
+            this._actionCollection[key].off('destroy', this._updateCachedActionCollections);
+            this._actionCollections[key] = undefined;
+            delete this._actionCollections[key];
+        }
     }
 
-    _applicableObjectActions(objectPath, actionsToBeIncluded) {
-        let applicableActions = this._objectActions.filter((action) => {
-            if (actionsToBeIncluded) {
-                if (action.appliesTo === undefined && actionsToBeIncluded.includes(action.key)) {
-                    return true;
-                }
+    _applicableActions(objectPath, viewContext) {
+        let actionsObject = {};
 
-                return action.appliesTo(objectPath, actionsToBeIncluded) && actionsToBeIncluded.includes(action.key);
+        let keys = Object.keys(this._allActions).filter(key => {
+            let actionDefinition = this._allActions[key];
+
+            if (actionDefinition.appliesTo === undefined) {
+                return true;
             } else {
-                if (action.appliesTo === undefined) {
-                    return true;
-                }
-
-                return action.appliesTo(objectPath, actionsToBeIncluded) && !action.hideInDefaultMenu;
+                return actionDefinition.appliesTo(objectPath, viewContext);
             }
         });
 
-        applicableActions.forEach(action => {
-            action.callBack = () => {
-                return action.invoke(objectPath);
-            };
+        keys.forEach(key => {
+            let action = _.clone(this._allActions[key]);
+
+            actionsObject[key] = action;
         });
 
-        return applicableActions;
-    }
-
-    _groupedAndSortedObjectActions(objectPath, actionsToBeIncluded) {
-        let actions = this._applicableObjectActions(objectPath, actionsToBeIncluded);
-
-        return this._groupAndSortActions(actions);
-    }
-
-    _applicableViewActions(viewKey) {
-        return this._viewActions[viewKey] || [];
-    }
-
-    _applicableActions(objectPath, viewKey, actionsToBeIncluded) {
-        let objectActions = this._applicableObjectActions(objectPath, actionsToBeIncluded);
-        let viewActions = this._applicableViewActions(viewKey);
-        let combinedActions = objectActions.concat(viewActions);
-
-        return this._groupAndSortActions(combinedActions);
+        return actionsObject;
     }
 
     _groupAndSortActions(actionsArray) {
+        if (!Array.isArray(actionsArray) && typeof actionsArray === 'object') {
+            actionsArray = Object.keys(actionsArray).map(key => actionsArray[key]);
+        }
+
         let actionsObject = {};
         let groupedSortedActionsArray = [];
 

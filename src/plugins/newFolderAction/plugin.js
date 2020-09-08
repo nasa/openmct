@@ -23,6 +23,6 @@ import NewFolderAction from './newFolderAction';
 
 export default function () {
     return function (openmct) {
-        openmct.actions.registerObjectAction(new NewFolderAction(openmct));
+        openmct.actions.register(new NewFolderAction(openmct));
     };
 }

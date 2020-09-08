@@ -53,7 +53,7 @@ define([
                 openmct.indicators.add(indicator);
             }
 
-            openmct.actions.registerObjectAction(new ClearDataAction.default(openmct, appliesToObjects));
+            openmct.actions.register(new ClearDataAction.default(openmct, appliesToObjects));
         };
     };
 });

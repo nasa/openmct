@@ -75,9 +75,9 @@
             <object-view
                 ref="browseObject"
                 class="l-shell__main-container"
+                data-selectable
                 :show-edit-view="true"
                 @change-provider="setProvider"
-                data-selectable
             />
             <component
                 :is="conductorComponent"

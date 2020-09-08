@@ -129,17 +129,17 @@ const PLACEHOLDER_OBJECT = {};
 
 export default {
     inject: ['openmct'],
+    components: {
+        NotebookMenuSwitcher,
+        ViewSwitcher
+    },
     props: {
         viewProvider: {
             type: Object,
             default: () => {
                 return {};
             }
-        },
-    },
-    components: {
-        NotebookMenuSwitcher,
-        ViewSwitcher
+        }
     },
     data: function () {
         return {
@@ -151,7 +151,7 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             notebookEnabled: this.openmct.types.get('notebook'),
             statusBarItems: []
-        }
+        };
     },
     computed: {
         classList() {
@@ -225,14 +225,25 @@ export default {
             });
         },
         viewProvider(viewProvider) {
-            if (viewProvider.getViewContext) {
-                if (!this.statusBarViewKey) {
-                    this.openmct.actions.on('update', this.updateStatusBarItems);
-                }
-                this.statusBarViewKey = viewProvider.getViewContext().getViewKey();
+            if (this.actionCollection) {
+                this.actionCollection.off('update', this.updateStatusBarItems);
+                this.actionCollection.destroy();
+                delete this.actionCollection;
+            }
 
-                let statusBarItems = this.openmct.actions._applicableViewActions(this.statusBarViewKey);
-                this.updateStatusBarItems(this.statusBarViewKey, statusBarItems);
+            if (viewProvider.getViewContext) {
+                let viewContext = viewProvider.getViewContext();
+                let viewKey = viewContext.getViewKey && viewContext.getViewKey();
+
+                if (this.statusBarViewKey !== viewKey) {
+                    this.statusBarViewKey = viewKey;
+                    if (viewKey) {
+                        this.actionCollection = this.openmct.actions.get(this.openmct.router.path, viewContext);
+                        this.actionCollection.on('update', this.updateStatusBarItems);
+
+                        this.updateStatusBarItems(this.actionCollection.applicableActions);
+                    }
+                }
             } else {
                 this.statusBarViewKey = undefined;
                 this.statusBarItems = [];
@@ -336,15 +347,23 @@ export default {
         goToParent() {
             window.location.hash = this.parentUrl;
         },
-        updateStatusBarItems(statusBarViewKey, items) {
-            if (this.statusBarViewKey === statusBarViewKey) {
-                this.statusBarItems = items.filter(item => item.showInStatusBar);
-            }
+        updateStatusBarItems(actionItems) {
+            let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
+            this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
         },
         showMenuItems(event) {
-            let applicableMenuItems = this.openmct.actions._applicableActions(this.openmct.router.path, this.statusBarViewKey);
+            let actions;
 
-            this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);
+            if (this.actionCollection) {
+                let unfilteredActions = this.actionCollection.applicableActions;
+
+                actions = Object.keys(unfilteredActions).map(key => unfilteredActions[key]).filter(action => !action.hidden);
+            } else {
+                actions = this.openmct.actions.get(this.openmct.router.path);
+            }
+
+            let sortedActions = this.openmct.actions._groupAndSortActions(actions);
+            this.openmct.menus.showMenu(event.x, event.y, sortedActions);
         },
         toggleLock(flag) {
             this.openmct.objects.mutate(this.domainObject, 'locked', flag);

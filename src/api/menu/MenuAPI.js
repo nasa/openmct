@@ -47,7 +47,7 @@ class MenuAPI {
             x,
             y,
             actions
-        }
+        };
 
         this.menuComponent = new Menu(options);
         this.menuComponent.on('destroy', this._clearMenuComponent);

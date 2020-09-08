@@ -6,7 +6,12 @@
         @click="setNotebookTypes"
         @click.stop="toggleMenu"
     >
-        <span title="Take Notebook Snapshot" class="c-icon-button__label">Snapshot</span>
+        <span
+            title="Take Notebook Snapshot"
+            class="c-icon-button__label"
+        >
+            Snapshot
+        </span>
     </button>
     <div
         v-show="showMenu"
