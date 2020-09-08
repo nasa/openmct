@@ -24,7 +24,6 @@ import EventEmitter from 'EventEmitter';
 
 class ActionCollection extends EventEmitter{
     constructor (key, applicableActions, objectPath, viewContext, openmct) {
-        console.log('istantiated');
         super();
 
         this.key = key;
@@ -39,63 +38,39 @@ class ActionCollection extends EventEmitter{
     }
 
     disable(actionKeys) {
-        let updated = false;
-
         actionKeys.forEach(actionKey => {
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].disabled = true;
-                updated = true;
             }
         });
-
-        if (updated) {
-            this.emit('update', this.applicableActions);
-        }
     }
 
     enable(actionKeys) {
-        let updated = false;
-
         actionKeys.forEach(actionKey => {
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].disabled = false;
-                updated = true;
             }
         });
-
-        if (updated) {
-            this.emit('update', this.applicableActions);
-        }
     }
 
     hide(actionKeys) {
-        let updated = false;
-
         actionKeys.forEach(actionKey => {
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].hidden = true;
-                updated = true;
             }
         });
-
-        if (updated) {
-            this.emit('update', this.applicableActions);
-        }
     }
 
     show(actionKeys) {
-        let updated  = false;
-
         actionKeys.forEach(actionKey => {
             if (this.applicableActions[actionKey]) {
                 this.applicableActions[actionKey].hidden = false;
-                updated = true;
             }
         })
+    }
 
-        if (updated) {
-            this.emit('update', this.applicableActions);
-        }
+    update() {
+        this.emit('update', this.applicableActions);
     }
 
     destroy() {

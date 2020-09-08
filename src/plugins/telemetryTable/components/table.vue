@@ -386,11 +386,18 @@ export default {
         markedRows: {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
+                let updated = false;
 
                 if ((oldVal.length === 0 && newVal.length > 0) || newVal.length > 0) {
                     this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows'])
+                    updated = true;
                 } else if (oldVal.length > 0 && newVal.length === 0) {
                     this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+                    updated = true;
+                }
+
+                if (updated) {
+                    this.viewActionsCollection.update();
                 }
             }
         },
@@ -403,6 +410,7 @@ export default {
                     this.viewActionsCollection.hide(['play-data']);
                     this.viewActionsCollection.show(['pause-data']);
                 }
+                this.viewActionsCollection.update();
             }
         },
         isAutosizeEnabled: {
@@ -414,6 +422,7 @@ export default {
                     this.viewActionsCollection.show(['autosize-columns']);
                     this.viewActionsCollection.hide(['expand-columns']);
                 }
+                this.viewActionsCollection.update();
             }
         }
     },
@@ -448,8 +457,6 @@ export default {
 
         this.table.configuration.on('change', this.updateConfiguration);
 
-        this.openmct.actions.registerViewAction(this.viewKey, this.getMenuItems());
-
         this.calculateTableSize();
         this.pollForResize();
         this.calculateScrollbarWidth();
@@ -470,8 +477,6 @@ export default {
         this.table.configuration.off('change', this.updateConfiguration);
 
         clearInterval(this.resizePollHandle);
-
-        this.openmct.actions.removeAllViewActions(this.viewKey);
 
         this.table.configuration.destroy();
 
@@ -968,79 +973,8 @@ export default {
                 this.viewActionsCollection.show(['autosize-columns']);
                 this.viewActionsCollection.hide(['expand-columns']);
             }
-        },
-        updateMenuItems() {
-            this.openmct.actions.updateViewActions(this.viewKey, this.getMenuItems());
-        },
-        getMenuItems() {
 
-            let exportCSV = {
-                name: 'Export Table Data',
-                description: "Export this view's data",
-                cssClass: 'icon-download labeled',
-                callBack: this.exportAllDataAsCSV,
-                group: 'view'
-            };
-            let exportMarkedRows = {
-                name: 'Export Marked Rows',
-                description: "Export marked rows as CSV",
-                cssClass: 'icon-download labeled',
-                callBack: this.exportMarkedDataAsCSV,
-                group: 'view'
-            };
-            let unmarkAllRows = {
-                name: 'Unmark All Rows',
-                description: 'Unmark all rows',
-                cssClass: 'icon-x labeled',
-                callBack: this.unmarkAllRows,
-                showInStatusBar: true,
-                group: 'view'
-            }
-            let pausePlay = {
-                name: this.paused ? 'Play' : 'Pause',
-                description: this.paused ? 'Continue real-time data flow' : 'Pause real-time data flow',
-                cssClass: this.paused ? 'c-button pause-play is-paused' : 'icon-pause',
-                callBack: this.togglePauseByButton,
-                showInStatusBar: true,
-                group: 'view'
-            }
-            let expandColumns = {
-                name: 'Expand Columns',
-                description: "Increase column widths to fit currently available data.",
-                cssClass: 'icon-arrows-right-left labeled',
-                callBack: this.recalculateColumnWidths,
-                showInStatusBar: true,
-                group: 'view'
-            }
-            let autosizeColumns = {
-                name: 'Autosize Columns',
-                description: "Automatically size columns to fit the table into the available space.",
-                cssClass: 'icon-expand labeled',
-                callBack: this.autosizeColumns,
-                showInStatusBar: true,
-                group: 'view'
-            }
-            let columnSizing;
-            let applicableOptions = [];
-
-            if (!this.markedRows.length) {
-                exportMarkedRows.cssClass += ' disabled';
-                unmarkAllRows.cssClass += ' disabled';
-            }
-
-            if (this.isAutosizeEnabled) {
-                columnSizing = expandColumns;
-            } else {
-                columnSizing = autosizeColumns;
-            }
-
-            return [
-                exportCSV,
-                exportMarkedRows,
-                unmarkAllRows,
-                pausePlay,
-                columnSizing
-            ]
+            this.viewActionsCollection.update();
         }
     }
 };

@@ -21,14 +21,14 @@
  *****************************************************************************/
 import EventEmitter from 'EventEmitter';
 import ActionCollection from './ActionCollection';
+import _ from 'lodash';
+import { throws } from 'assert';
 
 class ActionsAPI extends EventEmitter {
     constructor(openmct) {
         super();
 
         this._allActions = {};
-        this._viewActions = {};
-        this._objectActions = [];
         this._actionCollections = {};
         this._openmct = openmct;
 
@@ -36,10 +36,6 @@ class ActionsAPI extends EventEmitter {
 
         this.register = this.register.bind(this);
         this.get = this.get.bind(this);
-        this.registerObjectAction = this.registerObjectAction.bind(this);
-        this.registerViewAction = this.registerViewAction.bind(this);
-        this.removeAllViewActions = this.removeAllViewActions.bind(this);
-        this._applicableViewActions = this._applicableViewActions.bind(this);
         this._applicableActions = this._applicableActions.bind(this);
         this._updateCachedActionCollections = this._updateCachedActionCollections.bind(this);
     }
@@ -61,7 +57,6 @@ class ActionsAPI extends EventEmitter {
                 let actionCollection = new ActionCollection(key, applicableActions, objectPath, viewContext, this._openmct);
 
                 this._actionCollections[key] = actionCollection;
-                console.log(this._actionCollections);
                 actionCollection.on('destroy', this._updateCachedActionCollections);
                 
                 return actionCollection;
@@ -80,9 +75,14 @@ class ActionsAPI extends EventEmitter {
             return applicableActions;
         }
     }
+
+    updateGroupOrder(groupArray) {
+        this._groupOrder = groupArray;
+    }
     
     _updateCachedActionCollections(key) {
         if (this._actionCollections[key]) {
+            this._actionCollection[key].off('destroy', this._updateCachedActionCollections);
             this._actionCollections[key] = undefined;
             delete this._actionCollections[key];
         }
@@ -102,45 +102,12 @@ class ActionsAPI extends EventEmitter {
         });
 
         keys.forEach(key => {
-            let action = this._allActions[key];
+            let action = _.clone(this._allActions[key]);
 
             actionsObject[key] = action;
         });
 
         return actionsObject;
-    }
-
-    registerObjectAction(actionDefinition) {
-        this._objectActions.push(actionDefinition);
-    }
-
-    registerViewAction(viewKey, actionDefinition) {
-
-        if (Array.isArray(actionDefinition)) {
-            this._viewActions[viewKey] = actionDefinition;
-        } else {
-            if (this._viewActions[viewKey]) {
-                this._viewActions[viewKey].push(actionDefinition);
-            } else {
-                this._viewActions[viewKey] = [actionDefinition];
-            }
-        }
-    }
-
-    updateViewActions(viewKey, actionDefinitionsArray) {
-        this._viewActions[viewKey] = actionDefinitionsArray;
-        this.emit('update', viewKey, actionDefinitionsArray);
-    }
-
-    removeAllViewActions(viewKey) {
-        this._viewActions[viewKey] = undefined;
-        delete this._viewActions[viewKey];
-
-        this.emit('update', viewKey, []);
-    }
-
-    _applicableViewActions(viewKey) {
-        return this._viewActions[viewKey] || [];
     }
 
     _groupAndSortActions(actionsArray) {

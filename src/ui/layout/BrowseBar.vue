@@ -236,6 +236,7 @@ export default {
                 let viewKey = viewContext.getViewKey && viewContext.getViewKey();
 
                 if (this.statusBarViewKey !== viewKey) {
+                    this.statusBarViewKey = viewKey;
                     if (viewKey) {
                         this.actionCollection = this.openmct.actions.get(this.openmct.router.path, viewContext);
                         this.actionCollection.on('update', this.updateStatusBarItems);

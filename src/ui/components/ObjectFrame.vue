@@ -218,29 +218,54 @@ export default {
             this.initializeStatusBarItems();
         },
         initializeStatusBarItems() {
-            if (!this.actionsListener) {
-                this.openmct.actions.on('update', this.setStatusBarItems);
-                this.actionsListener = true;
+            if (this.actionCollection) {
+                this.actionCollection.off('update', this.updateStatusBarItems);
+                this.actionCollection.destroy();
+                delete this.actionCollection;
             }
 
-            let viewContext = this.viewProvider.getViewContext && this.viewProvider.getViewContext();
+            if (this.viewProvider.getViewContext) {
+                let viewContext = this.viewProvider.getViewContext();
+                let viewKey = viewContext.getViewKey && viewContext.getViewKey();
 
-            if (viewContext) {
-                this.viewKey = viewContext.getViewKey();
-                this.statusBarItems = this.openmct.actions._applicableViewActions(this.viewKey).filter(action => action.showInStatusBar);
+                if (this.statusBarViewKey !== viewKey) {
+                    this.statusBarViewKey = viewKey;
+                    if (viewKey) {
+                        this.actionCollection = this.openmct.actions.get(this.objectPath, viewContext);
+                        this.actionCollection.on('update', this.updateStatusBarItems);
+
+                        this.updateStatusBarItems(this.actionCollection.applicableActions);
+                    }
+                }
             } else {
-                this.openmct.actions.off('update', this.setStatusBarItems);
+                this.statusBarViewKey = undefined;
+                this.statusBarItems = [];
             }
         },
-        setStatusBarItems(viewKey, actionItems) {
-            if (viewKey === this.viewKey) {
-                this.statusBarItems = actionItems.filter(action => action.showInStatusBar);
-            }
+        updateStatusBarItems(actionItems) {
+            let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
+            this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
         },
         showMenuItems(event) {
-            let applicableMenuItems = this.openmct.actions._applicableActions(this.objectPath, this.viewKey);
+           let actions;
 
-            this.openmct.menus.showMenu(event.x, event.y, applicableMenuItems);
+            if (this.actionCollection) {
+                let unfilteredActions = this.actionCollection.applicableActions;
+                
+                actions = Object.keys(unfilteredActions).map(key => unfilteredActions[key]).filter(action => !action.hidden);
+            } else {
+                actions =  this.openmct.actions.get(this.objectPath);
+            }
+
+            let sortedActions = this.openmct.actions._groupAndSortActions(actions);
+            this.openmct.menus.showMenu(event.x, event.y, sortedActions);
+        }
+    },
+    beforeDestroy() {
+        if (this.actionCollection) {
+            this.actionCollection.off('update', this.updateStatusBarItems);
+            this.actionCollection.destroy();
+            delete this.actionCollection;
         }
     }
 };
