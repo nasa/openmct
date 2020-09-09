@@ -29,7 +29,7 @@ import SavedStylesView from './SavedStylesView.vue';
 import Vue from 'vue';
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'stylesManager'],
     data() {
         return {
             selection: []
@@ -56,7 +56,8 @@ export default {
                 this.component = new Vue({
                     provide: {
                         openmct: this.openmct,
-                        selection: selection
+                        selection: selection,
+                        stylesManager: this.stylesManager
                     },
                     el: viewContainer,
                     components: {

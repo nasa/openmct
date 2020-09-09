@@ -52,26 +52,26 @@ export default {
     },
     inject: [
         'openmct',
-        'selection'
+        'selection',
+        'stylesManager'
     ],
-    data: () => {
-        const defaultStyle = {
-            backgroundColor: '',
-            border: '',
-            color: ''
-        };
-
-        const testStyle = {
-            backgroundColor: 'red',
-            border: 'green',
-            color: 'blue'
-        }
-
+    data: function () {
         return {
-            savedStyles: [defaultStyle, testStyle]
+            savedStyles: this.loadStyles()
         };
     },
+    mounted() {
+        this.stylesManager.on('stylesUpdated', this.setStyles);
+    },
     methods: {
+        loadStyles() {
+            const styles = this.stylesManager.load();
+
+            this.setStyles(styles);
+        },
+        setStyles(styles) {
+            this.savedStyles = styles;
+        },
         hash(style) {
             return `
                 backgroundColor:${style.backgroundColor}

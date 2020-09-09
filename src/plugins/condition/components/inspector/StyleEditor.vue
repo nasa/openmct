@@ -88,7 +88,8 @@ export default {
         ToolbarToggleButton
     },
     inject: [
-        'openmct'
+        'openmct',
+        'stylesManager'
     ],
     props: {
         isEditing: {
@@ -237,7 +238,9 @@ export default {
             return !this.mixedStyles.length;
         },
         saveStyle() {
-            console.log('saving style');
+            const style = this.itemStyle();
+            console.log(style);
+            this.stylesManager.saveStyle(style);
         }
     }
 };
