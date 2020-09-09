@@ -226,7 +226,7 @@ export default {
         },
         viewProvider(viewProvider) {
             if (this.actionCollection) {
-                this.actionCollection.off('update', this.updateStatusBarItems);
+                this.actionCollection.off('update', this.updateActionItems);
                 this.actionCollection.destroy();
                 delete this.actionCollection;
             }
@@ -239,14 +239,15 @@ export default {
                     this.statusBarViewKey = viewKey;
                     if (viewKey) {
                         this.actionCollection = this.openmct.actions.get(this.openmct.router.path, viewContext);
-                        this.actionCollection.on('update', this.updateStatusBarItems);
+                        this.actionCollection.on('update', this.updateActionItems);
 
-                        this.updateStatusBarItems(this.actionCollection.applicableActions);
+                        this.updateActionItems(this.actionCollection.applicableActions);
                     }
                 }
             } else {
                 this.statusBarViewKey = undefined;
                 this.statusBarItems = [];
+                this.menuActionItems = [];
             }
         }
     },
@@ -347,17 +348,16 @@ export default {
         goToParent() {
             window.location.hash = this.parentUrl;
         },
-        updateStatusBarItems(actionItems) {
+        updateActionItems(actionItems) {
             let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
             this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
+            this.menuActionItems = actionItemsArray.filter(action => !action.hidden);
         },
         showMenuItems(event) {
             let actions;
 
-            if (this.actionCollection) {
-                let unfilteredActions = this.actionCollection.applicableActions;
-
-                actions = Object.keys(unfilteredActions).map(key => unfilteredActions[key]).filter(action => !action.hidden);
+            if (this.menuActionItems.length) {
+                actions = this.menuActionItems;
             } else {
                 actions = this.openmct.actions.get(this.openmct.router.path);
             }

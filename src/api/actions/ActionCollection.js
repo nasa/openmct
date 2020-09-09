@@ -112,8 +112,24 @@ class ActionCollection extends EventEmitter {
     }
 
     _updateActions() {
-        this.applicableActions = this.openmct.actions._applicableActions(this.objectPath, this.viewContext);
+        let newApplicableActions = this.openmct.actions._applicableActions(this.objectPath, this.viewContext);
+        
+        this.applicableActions = this._mergeOldAndNewActions(this.applicableActions, newApplicableActions);
         this._initializeActions();
+        this.emit('update', this.applicableActions);
+    }
+
+    _mergeOldAndNewActions(oldActions, newActions) {
+        let mergedActions = {};
+        Object.keys(newActions).forEach(key => {
+            if (oldActions[key]) {
+                mergedActions[key] = oldActions[key];
+            } else {
+                mergedActions[key] = newActions[key];
+            }
+        });
+
+        return mergedActions;
     }
 }
 
