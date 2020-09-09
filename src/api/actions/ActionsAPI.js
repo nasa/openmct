@@ -43,7 +43,7 @@ class ActionsAPI extends EventEmitter {
         this._allActions[actionDefinition.key] = actionDefinition;
     }
 
-    get(objectPath, viewContext) {
+    get(objectPath, viewContext, options) {
 
         if (viewContext && viewContext.getViewKey) {
             let key = viewContext.getViewKey();
@@ -52,8 +52,8 @@ class ActionsAPI extends EventEmitter {
             if (cachedActionCollection) {
                 return cachedActionCollection;
             } else {
-                let applicableActions = this._applicableActions(objectPath, viewContext);
-                let actionCollection = new ActionCollection(key, applicableActions, objectPath, viewContext, this._openmct);
+                let applicableActions = this._applicableActions(objectPath, viewContext, options);
+                let actionCollection = new ActionCollection(key, applicableActions, objectPath, viewContext, this._openmct, options);
 
                 this._actionCollections[key] = actionCollection;
                 actionCollection.on('destroy', this._updateCachedActionCollections);
@@ -61,7 +61,7 @@ class ActionsAPI extends EventEmitter {
                 return actionCollection;
             }
         } else {
-            let applicableActions = this._applicableActions(objectPath);
+            let applicableActions = this._applicableActions(objectPath, viewContext, options);
 
             Object.keys(applicableActions).forEach(key => {
                 let action = applicableActions[key];
@@ -87,7 +87,7 @@ class ActionsAPI extends EventEmitter {
         }
     }
 
-    _applicableActions(objectPath, viewContext) {
+    _applicableActions(objectPath, viewContext, options) {
         let actionsObject = {};
 
         let keys = Object.keys(this._allActions).filter(key => {
@@ -96,7 +96,7 @@ class ActionsAPI extends EventEmitter {
             if (actionDefinition.appliesTo === undefined) {
                 return true;
             } else {
-                return actionDefinition.appliesTo(objectPath, viewContext);
+                return actionDefinition.appliesTo(objectPath, viewContext, options);
             }
         });
 

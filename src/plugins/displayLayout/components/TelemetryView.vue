@@ -36,7 +36,7 @@
             'is-missing': domainObject.status === 'missing'
         }"
         :style="styleObject"
-        @contextmenu.prevent="showContextMenu"
+        @contextmenu.prevent.stop="showContextMenu"
     >
         <div class="is-missing__indicator"
              title="This item is missing"
@@ -206,6 +206,8 @@ export default {
         this.openmct.objects.get(this.item.identifier)
             .then(this.setObject);
         this.openmct.time.on("bounds", this.refreshData);
+
+
     },
     destroyed() {
         this.removeSubscription();
@@ -277,12 +279,20 @@ export default {
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context, this.immediatelySelect || this.initSelect);
             delete this.immediatelySelect;
+
+            this.getContextMenuActions();
         },
         updateTelemetryFormat(format) {
             this.$emit('formatChanged', this.item, format);
         },
+        getContextMenuActions() {
+            let actionsObject = this.openmct.actions.get(this.currentObjectPath, {}, {viewHistoricalData: true});
+            let applicableActionKeys = Object.keys(actionsObject).filter(key => actionsObject[key].key === 'viewHistoricalData');
+
+            this.contextMenuActions = applicableActionKeys.map(key => actionsObject[key]);
+        },
         showContextMenu(event) {
-            this.openmct.menus._showObjectMenu(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
+            this.openmct.menus.showMenu(event.x, event.y, this.contextMenuActions);
         }
     }
 };

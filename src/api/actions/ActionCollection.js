@@ -24,12 +24,13 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
 class ActionCollection extends EventEmitter {
-    constructor(key, applicableActions, objectPath, viewContext, openmct) {
+    constructor(key, applicableActions, objectPath, viewContext, openmct, options) {
         super();
 
         this.key = key;
         this.applicableActions = applicableActions;
         this.openmct = openmct;
+        this.options = options;
         this.objectPath = objectPath;
         this.viewContext = viewContext;
         this.objectUnsubscribes = [];
@@ -121,7 +122,7 @@ class ActionCollection extends EventEmitter {
     }
 
     _updateActions() {
-        let newApplicableActions = this.openmct.actions._applicableActions(this.objectPath, this.viewContext);
+        let newApplicableActions = this.openmct.actions._applicableActions(this.objectPath, this.viewContext, this.options);
         
         this.applicableActions = this._mergeOldAndNewActions(this.applicableActions, newApplicableActions);
         this._initializeActions();
