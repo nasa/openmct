@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+import _ from 'lodash';
 
 class ActionCollection extends EventEmitter {
     constructor(key, applicableActions, objectPath, viewContext, openmct) {
@@ -35,6 +36,14 @@ class ActionCollection extends EventEmitter {
 
         this._observeObjectPath();
         this._initializeActions();
+
+        let debounceOptions = {
+            leading: false,
+            trailing: true
+        };
+
+        this._updateActions = _.debounce(this._updateActions, 150, debounceOptions);
+        this.update = _.debounce(this.update, 150, debounceOptions);
     }
 
     disable(actionKeys) {
@@ -116,7 +125,7 @@ class ActionCollection extends EventEmitter {
         
         this.applicableActions = this._mergeOldAndNewActions(this.applicableActions, newApplicableActions);
         this._initializeActions();
-        this.emit('update', this.applicableActions);
+        this.update();
     }
 
     _mergeOldAndNewActions(oldActions, newActions) {
