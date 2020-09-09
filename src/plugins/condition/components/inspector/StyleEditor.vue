@@ -238,9 +238,7 @@ export default {
             return !this.mixedStyles.length;
         },
         saveStyle() {
-            const style = this.itemStyle();
-            console.log(style);
-            this.stylesManager.saveStyle(style);
+            this.stylesManager.save(this.itemStyle);
         }
     }
 };

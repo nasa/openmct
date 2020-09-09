@@ -97,7 +97,8 @@ export default {
         ToolbarButton
     },
     inject: [
-        'openmct'
+        'openmct',
+        'stylesManager'
     ],
     props: {
         isEditing: {
@@ -222,10 +223,10 @@ export default {
     },
     methods: {
         applySavedStyle() {
-            this.$emit('applySavedStyle', this.hash);
+            this.stylesManager.select(this.savedStyle);
         },
         deleteStyle() {
-            this.$emit('deleteSavedStyle', this.hash);
+            this.stylesManager.delete(this.savedStyle);
         },
         hasProperty(property) {
             return property !== undefined;

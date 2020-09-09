@@ -22,6 +22,7 @@ export default class StylesManager extends EventEmitter {
     }
 
     load() {
+        console.log('loading styles');
         const rawStyles = window.localStorage.getItem(LOCAL_STORAGE_KEY);
         const styles = rawStyles ? JSON.parse(rawStyles) : [DEFAULT_STYLE];
 
@@ -53,7 +54,20 @@ export default class StylesManager extends EventEmitter {
         }
     }
 
+    equal(style1, style2) {
+        return false;
+    }
+
     select(style) {
         this.emit('styleSelected', style);
+    }
+
+    delete(style) {
+        const styles = this.load();
+        const remainingStyles = styles.filter(keep => !this.equal(keep, style));
+
+        this.persist(remainingStyles);
+
+        this.emit('stylesUpdated', remainingStyles);
     }
 }

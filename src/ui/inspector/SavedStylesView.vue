@@ -55,13 +55,16 @@ export default {
         'selection',
         'stylesManager'
     ],
-    data: function () {
+    data() {
         return {
-            savedStyles: this.loadStyles()
+            savedStyles: undefined
         };
     },
     mounted() {
         this.stylesManager.on('stylesUpdated', this.setStyles);
+
+        this.loadStyles();
+        console.log(this.savedStyles);
     },
     methods: {
         loadStyles() {
