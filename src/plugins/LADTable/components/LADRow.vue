@@ -176,7 +176,10 @@ export default {
             this.timestampKey = timeSystem.key;
         },
         showContextMenu(event) {
-            this.openmct.menus._showObjectMenu(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
+            let allActions = this.openmct.actions.get(this.currentObjectPath, {}, {viewHistoricalData: true});
+            let applicableActions = CONTEXT_MENU_ACTIONS.map(key => allActions[key]);
+
+            this.openmct.menus.showMenu(event.x, event.y, applicableActions);
         },
         resetValues() {
             this.value = '---';

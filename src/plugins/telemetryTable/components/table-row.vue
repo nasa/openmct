@@ -177,7 +177,10 @@ export default {
                 let contextualObjectPath = this.objectPath.slice();
                 contextualObjectPath.unshift(domainObject);
 
-                this.openmct.menus._showObjectMenu(contextualObjectPath, event.x, event.y, this.row.getContextMenuActions());
+                let allActions = this.openmct.actions.get(contextualObjectPath, {}, {viewHistoricalData: true});
+                let applicableActions = this.row.getContextMenuActions().map(key => allActions[key]);
+
+                this.openmct.menus.showMenu(event.x, event.y, applicableActions);
             });
         }
     }
