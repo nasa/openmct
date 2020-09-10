@@ -2,8 +2,6 @@
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
-    //TODO: Do we need this???
-    //padding-right: $interiorMarginSm;
     overflow: auto;
 
     > * + * { margin-top: $interiorMargin; }
@@ -245,6 +243,7 @@
         border: 1px solid $colorInteriorBorder;
         border-radius: $controlCr;
         padding: $interiorMargin;
+        overflow: auto;
     }
 }
 
