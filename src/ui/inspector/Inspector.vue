@@ -70,7 +70,10 @@ export default {
         InspectorViews
     },
     props: {
-        'isEditing': Boolean
+        isEditing: {
+            type: Boolean,
+            required: true
+        }
     },
     data() {
         return {
