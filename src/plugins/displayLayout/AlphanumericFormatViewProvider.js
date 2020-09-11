@@ -64,8 +64,16 @@ define([
                             components: {
                                 AlphanumericFormatView: AlphanumericFormatView.default
                             },
-                            template: '<alphanumeric-format-view></alphanumeric-format-view>'
+                            template: '<alphanumeric-format-view ref="alphanumericFormatView"></alphanumeric-format-view>'
                         });
+                    },
+                    getViewContext() {
+                        console.log('getViewContext', component);
+                        if (component) {
+                            return component.$refs.alphanumericFormatView.getViewContext();
+                        } else {
+                            return {};
+                        }
                     },
                     destroy: function () {
                         component.$destroy();

@@ -68,8 +68,6 @@ export default {
     destroyed() {
         this.openmct.editor.off('isEditing', this.toggleEdit);
         this.openmct.selection.off('change', this.handleSelection);
-
-        this.openmct.actions.removeAllViewActions(this.viewKey);
     },
     methods: {
         toggleEdit(isEditing) {

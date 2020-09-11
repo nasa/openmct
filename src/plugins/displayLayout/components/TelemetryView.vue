@@ -132,7 +132,7 @@ export default {
             formats: undefined,
             domainObject: undefined,
             currentObjectPath: undefined,
-            viewKey: uuid()
+            viewKey: `alphanumeric-format-${Math.random()}`
         };
     },
     computed: {
@@ -217,32 +217,19 @@ export default {
         }
 
         this.openmct.time.off("bounds", this.refreshData);
-        this.openmct.actions.removeAllViewActions(this.viewKey);
     },
     methods: {
-        getMenuItems() {
-            const defaultNotebook = getDefaultNotebook();
-
-            const CopyToClipboardAction = {
-                name: 'copy to Clipboard',
-                description: "copyToClipboard",
-                cssClass: 'icon-eye-open',
-                callBack: this.copyToClipboard,
-                group: 'view'
+        getViewContext() {
+            return {
+                getViewKey: () => this.viewKey,
+                formattedValueForCopy: this.formattedValueForCopy
             };
+        },
+        formattedValueForCopy() {
+            const timeFormatterKey = this.openmct.time.timeSystem().key;
+            const timeFormatter = this.formats[timeFormatterKey];
 
-            const CopyToNotebookAction = {
-                name: 'copy to Notebook',
-                description: "copyToNotebook",
-                cssClass: 'icon-eye-open',
-                callBack: this.copyToNotebook,
-                group: 'view'
-            };
-
-            return [
-                CopyToClipboardAction,
-                CopyToNotebookAction
-            ]
+            return `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue} ${this.unit}`;
         },
         requestHistoricalData() {
             let bounds = this.openmct.time.bounds();
@@ -324,36 +311,21 @@ export default {
         updateTelemetryFormat(format) {
             this.$emit('formatChanged', this.item, format);
         },
-        showContextMenu(event) {
-            this.openmct.menus.showMenu(event.x, event.y, this.contextMenuActions);
+        getContextMenuActions() {
+            const actionsObject = this.openmct.actions.get(this.currentObjectPath, this.getViewContext(), { viewHistoricalData: true }).applicableActions;
+            let applicableActionKeys = Object.keys(actionsObject)
+                .filter(key => {
+                    const isViewHistoricalData = actionsObject[key].key === 'viewHistoricalData';
+                    const isCopyToClipboard = actionsObject[key].key === 'copyToClipboard';
+                    const isCopyToNotebook = actionsObject[key].key === 'copyToNotebook';
 
-            // let menuActions = this.getMenuItems();
-            // const applicableActions = this.openmct.actions._groupedAndSortedObjectActions(this.currentObjectPath, ['viewHistoricalData']);
-            // applicableActions.forEach(d => { menuActions = menuActions.concat(d); });
-
-            // this.openmct.menus.showMenu(event.x, event.y, menuActions);
-        },
-        copyToClipboard() {
-            console.log('copyToClipboard', this.datum);
-            // this.$el.focus();
-            Clipboard.updateClipboard(JSON.stringify(this.datum))
-                .then(() => {
-                    console.log('Success : updateClipboard');
+                    return isCopyToClipboard || isCopyToNotebook || isViewHistoricalData;
                 });
 
-
-            setTimeout(() => {
-                Clipboard.readClipboard()
-                    .then(data => {
-                        console.log('Success: readClipboard', JSON.parse(data));
-                    })
-                    .catch((e) => {
-                        console.log('Error: readClipboard', e);
-                    })
-            }, 2000);
+            this.contextMenuActions = CONTEXT_MENU_ACTIONS.map(actionKey => actionsObject[actionKey]);
         },
-        copyToNotebook() {
-            // TODO:
+        showContextMenu(event) {
+            this.openmct.menus.showMenu(event.x, event.y, this.contextMenuActions);
         }
     }
 };
