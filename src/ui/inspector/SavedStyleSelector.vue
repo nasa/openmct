@@ -129,8 +129,9 @@ export default {
         },
         showConfirmDialog(style) {
             const message = `
-                Please confirm you want to want to delete this style.
-                ${JSON.stringify(style)}
+                This will delete this saved style.
+                This action will not effect styling that has already been applied.
+                Do you want to continue?
             `;
 
             return new Promise((resolve, reject) => {
