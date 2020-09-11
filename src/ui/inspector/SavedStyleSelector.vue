@@ -42,7 +42,7 @@
                 <div
                     class="c-swatch"
                     :style="{
-                        background: savedStyle.border
+                        background: borderColor
                     }"
                 ></div>
             </div>
@@ -105,6 +105,9 @@ export default {
         }
     },
     computed: {
+        borderColor() {
+            return this.savedStyle.border.substring(this.savedStyle.border.indexOf('#'));
+        },
         hash() {
             return `
                 backgroundColor:${this.savedStyle.backgroundColor}
