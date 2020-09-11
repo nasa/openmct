@@ -554,7 +554,6 @@ export default {
             }
         },
         getAndPersistStyles(property, defaultConditionId) {
-            console.log(this.items);
             this.persist(this.domainObject, this.getDomainObjectStyle(this.domainObject, property, this.items, defaultConditionId));
             if (this.domainObjectsById) {
                 const domainObjects = Object.values(this.domainObjectsById);
@@ -645,17 +644,20 @@ export default {
         },
         updateItemStyle(styles) {
             const foundStyle = this.findStyleByConditionId(this.selectedConditionId);
+
             if (foundStyle) {
                 foundStyle.style = styles;
+                this.getAndPersistStyles();
             } else {
+                const properties = Object.keys(this.staticStyle.style);
+                // this.staticStyle = { style: styles };
                 // TODO static styles not working
                 // do i need to grab from selection?
-                Object.keys(this.staticStyle.style).forEach(property => {
+                properties.forEach(property => {
                     this.staticStyle.style[property] = styles[property];
+                    this.getAndPersistStyles(property);
                 });
             }
-
-            this.getAndPersistStyles();
         }
     }
 };
