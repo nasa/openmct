@@ -15,7 +15,7 @@
 
     </div>
     <div class="c-inspector__content">
-        <multipane v-if="currentTabbedView.key === '__properties'"
+        <multipane v-show="currentTabbedView.key === '__properties'"
                    type="vertical"
         >
             <pane class="c-inspector__properties">
@@ -32,10 +32,13 @@
                 <elements />
             </pane>
         </multipane>
-        <template v-else>
-            <styles-inspector-view />
-            <SavedStylesInspectorView :is-editing="isEditing" />
-        </template>
+        <StylesInspectorView
+            v-show="currentTabbedView.key === '__styles'"
+        />
+        <SavedStylesInspectorView
+            v-show="currentTabbedView.key === '__styles'"
+            :is-editing="isEditing"
+        />
     </div>
 </div>
 </template>
