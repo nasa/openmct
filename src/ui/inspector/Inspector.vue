@@ -34,7 +34,7 @@
         </multipane>
         <template v-else>
             <styles-inspector-view />
-            <saved-styles-inspector-view />
+            <SavedStylesInspectorView :is-editing="isEditing" />
         </template>
     </div>
 </div>
@@ -94,7 +94,6 @@ export default {
         this.openmct.selection.on('change', this.updateInspectorViews);
     },
     destroyed() {
-        console.log('destroyed');
         this.openmct.selection.off('change', this.updateInspectorViews);
     },
     methods: {

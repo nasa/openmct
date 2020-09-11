@@ -25,7 +25,6 @@
     <span
         class="c-style-thumb"
         :style="[savedStyle.imageUrl ? { backgroundImage:'url(' + savedStyle.imageUrl + ')'} : savedStyle ]"
-        @click="applySavedStyle(savedStyle)"
     >
         <span
             class="c-style-thumb__text"
@@ -80,7 +79,6 @@
             v-if="!isDefaultStyle"
             class="c-style__toolbar-button--delete"
             :options="deleteOptions"
-            @click.stop="deleteStyle()"
         />
     </span>
 </div>
@@ -101,9 +99,6 @@ export default {
         'stylesManager'
     ],
     props: {
-        isEditing: {
-            type: Boolean
-        },
         savedStyle: {
             type: Object,
             required: true
@@ -129,95 +124,17 @@ export default {
         itemStyle() {
             return getStylesWithoutNoneValue(this.savedStyle);
         },
-        borderColorOption() {
-            let value = this.savedStyle.border.replace('1px solid ', '');
 
-            return {
-                icon: 'icon-line-horz',
-                title: STYLE_CONSTANTS.borderColorTitle,
-                value: this.normalizeValueForSwatch(value),
-                property: 'border',
-                isEditing: this.isEditing,
-                nonSpecific: this.mixedStyles.indexOf('border') > -1
-            };
-        },
-        backgroundColorOption() {
-            let value = this.savedStyle.backgroundColor;
-
-            return {
-                icon: 'icon-paint-bucket',
-                title: STYLE_CONSTANTS.backgroundColorTitle,
-                value: this.normalizeValueForSwatch(value),
-                property: 'backgroundColor',
-                isEditing: this.isEditing,
-                nonSpecific: this.mixedStyles.indexOf('backgroundColor') > -1
-            };
-        },
-        colorOption() {
-            let value = this.savedStyle.color;
-
-            return {
-                icon: 'icon-font',
-                title: STYLE_CONSTANTS.textColorTitle,
-                value: this.normalizeValueForSwatch(value),
-                property: 'color',
-                isEditing: this.isEditing,
-                nonSpecific: this.mixedStyles.indexOf('color') > -1
-            };
-        },
-        imageUrlOption() {
-            return {
-                icon: 'icon-image',
-                title: STYLE_CONSTANTS.imagePropertiesTitle,
-                dialog: {
-                    name: "Image Properties",
-                    sections: [
-                        {
-                            rows: [
-                                {
-                                    key: "url",
-                                    control: "textfield",
-                                    name: "Image URL",
-                                    "cssClass": "l-input-lg"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                property: 'imageUrl',
-                formKeys: ['url'],
-                value: {url: this.savedStyle.imageUrl},
-                isEditing: this.isEditing,
-                nonSpecific: this.mixedStyles.indexOf('imageUrl') > -1
-            };
-        },
-        isStyleInvisibleOption() {
-            return {
-                value: this.savedStyle.isStyleInvisible,
-                property: 'isStyleInvisible',
-                isEditing: this.isEditing,
-                options: [
-                    {
-                        value: '',
-                        icon: 'icon-eye-disabled',
-                        title: STYLE_CONSTANTS.visibilityHidden
-                    },
-                    {
-                        value: STYLE_CONSTANTS.isStyleInvisible,
-                        icon: 'icon-eye-open',
-                        title: STYLE_CONSTANTS.visibilityVisible
-                    }
-                ]
-            };
-        },
         deleteOptions() {
             return {
                 icon: 'icon-trash',
                 title: 'Delete style',
                 // value: this.normalizeValueForSwatch(value),
                 // property: 'color',
-                isEditing: this.isEditing
-                // nonSpecific: this.mixedStyles.indexOf('color') > -1
+                dialog: {
+                    name: "Delete Style",
+                    value: true
+                }
             };
         }
     },

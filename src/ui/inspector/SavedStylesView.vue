@@ -31,6 +31,7 @@
                 v-for="(savedStyle, index) in savedStyles"
                 :key="index"
                 class="c-inspect-styles__saved-style"
+                @click="applyStyle(savedStyle)"
             >
                 <saved-style-selector
                     class="c-inspect-styles__selector"
@@ -64,7 +65,6 @@ export default {
         this.stylesManager.on('stylesUpdated', this.setStyles);
 
         this.loadStyles();
-        console.log(this.savedStyles);
     },
     methods: {
         loadStyles() {
@@ -75,28 +75,10 @@ export default {
         setStyles(styles) {
             this.savedStyles = styles;
         },
-        hash(style) {
-            return `
-                backgroundColor:${style.backgroundColor}
-                border:${style.border}
-                color:${style.color}
-            `;
-        },
-        applySavedStyle(hash) {
-            console.log(this.selection);
-            console.log('applystyle');
-        },
-        applyStaticStyleToSingleSelection(style) {
-            const selectionId = this.selection[0].context.layoutItem.id;
-            let styleConfiguration = this.selection[0][1].context.item.configuration.objectStyles[selectionId].staticStyle;
-            let styles = Object.keys(styleConfiguration);
-            // styles.forEach(style => {
-            //     styleConfiguration[style] = 
-            // });
-            console.log('applying single selection');
-        },
-        deleteSavedStyle(hash) {
-
+        applyStyle(style) {
+            if (this.openmct.editor.isEditing()) {
+                this.stylesManager.select(style);
+            }
         }
     }
 };

@@ -22,7 +22,6 @@ export default class StylesManager extends EventEmitter {
     }
 
     load() {
-        console.log('loading styles');
         const rawStyles = window.localStorage.getItem(LOCAL_STORAGE_KEY);
         const styles = rawStyles ? JSON.parse(rawStyles) : [DEFAULT_STYLE];
 

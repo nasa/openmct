@@ -66,7 +66,7 @@
         <toolbar-button v-if="canSaveStyle()"
                         class="c-style__toolbar-button--save"
                         :options="saveOptions"
-                        @click="saveStyle()"
+                        @click="saveItemStyle()"
         />
     </span>
 </div>
@@ -93,7 +93,8 @@ export default {
     ],
     props: {
         isEditing: {
-            type: Boolean
+            type: Boolean,
+            required: true
         },
         mixedStyles: {
             type: Array,
@@ -237,7 +238,7 @@ export default {
         canSaveStyle() {
             return !this.mixedStyles.length;
         },
-        saveStyle() {
+        saveItemStyle() {
             this.stylesManager.save(this.itemStyle);
         }
     }

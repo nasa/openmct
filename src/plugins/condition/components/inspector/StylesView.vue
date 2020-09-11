@@ -125,7 +125,8 @@ export default {
     },
     inject: [
         'openmct',
-        'selection'
+        'selection',
+        'stylesManager'
     ],
     data() {
         return {
@@ -149,6 +150,8 @@ export default {
     },
     destroyed() {
         this.removeListeners();
+        this.openmct.editor.off('isEditing', this.setEditState);
+        this.stylesManager.off('styleSelected', this.updateItemStyle);
     },
     mounted() {
         this.items = [];
@@ -167,6 +170,7 @@ export default {
         }
 
         this.openmct.editor.on('isEditing', this.setEditState);
+        this.stylesManager.on('styleSelected', this.updateItemStyle);
     },
     methods: {
         getObjectStyles() {
@@ -550,6 +554,7 @@ export default {
             }
         },
         getAndPersistStyles(property, defaultConditionId) {
+            console.log(this.items);
             this.persist(this.domainObject, this.getDomainObjectStyle(this.domainObject, property, this.items, defaultConditionId));
             if (this.domainObjectsById) {
                 const domainObjects = Object.values(this.domainObjectsById);
@@ -637,6 +642,20 @@ export default {
         },
         persist(domainObject, style) {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
+        },
+        updateItemStyle(styles) {
+            const foundStyle = this.findStyleByConditionId(this.selectedConditionId);
+            if (foundStyle) {
+                foundStyle.style = styles;
+            } else {
+                // TODO static styles not working
+                // do i need to grab from selection?
+                Object.keys(this.staticStyle.style).forEach(property => {
+                    this.staticStyle.style[property] = styles[property];
+                });
+            }
+
+            this.getAndPersistStyles();
         }
     }
 };
