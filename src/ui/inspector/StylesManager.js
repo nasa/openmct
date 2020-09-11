@@ -4,6 +4,9 @@ const LOCAL_STORAGE_KEY = 'mct-saved-styles';
 const LIMIT = 100;
 const PERSIST_ERROR_MESSAGE = 'Problem saving styles';
 const LIMIT_WARNING_MESSAGE = 'Saved styles limit reached. Please delete a saved style and try again.';
+const STYLE_PROPERTIES = [
+    'backgroundColor', 'border', 'color', 'imageUrl', 'isStyleInvisible'
+];
 const DEFAULT_STYLE = {
     backgroundColor: '',
     border: '',
@@ -53,8 +56,18 @@ export default class StylesManager extends EventEmitter {
         }
     }
 
-    equal(style1, style2) {
-        return false;
+    isEqual(style1, style2) {
+        const keys = Object.keys(Object.assign({}, style1, style2));
+        const different = keys.some(key => (style1[key] !== undefined && style2[key] === undefined)
+            || (style1[key] === undefined && style2[key] !== undefined)
+            || (style1[key] !== style2[key])
+        );
+
+        return !different;
+    }
+
+    isDefaultStyle(style) {
+        return this.isEqual(style, DEFAULT_STYLE);
     }
 
     select(style) {
@@ -63,7 +76,7 @@ export default class StylesManager extends EventEmitter {
 
     delete(style) {
         const styles = this.load();
-        const remainingStyles = styles.filter(keep => !this.equal(keep, style));
+        const remainingStyles = styles.filter(keep => !this.isEqual(keep, style));
 
         this.persist(remainingStyles);
 

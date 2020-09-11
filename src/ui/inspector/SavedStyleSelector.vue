@@ -75,25 +75,26 @@
         </div>
 
         <!-- delete saved style -->
-        <toolbar-button
+        <div
             v-if="!isDefaultStyle"
-            class="c-style__toolbar-button--delete"
-            :options="deleteOptions"
-        />
+            class="c-ctrl-wrapper"
+        >
+            <div
+                class="c-icon-button icon-trash"
+                title="Delete Style"
+                @click.stop="deleteStyle()"
+            >
+            </div>
+        </div>
     </span>
 </div>
 </template>
 
 <script>
-import { STYLE_CONSTANTS } from "@/plugins/condition/utils/constants";
 import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
-import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
 
 export default {
     name: 'SavedStyleSelector',
-    components: {
-        ToolbarButton
-    },
     inject: [
         'openmct',
         'stylesManager'
@@ -108,45 +109,53 @@ export default {
         borderColor() {
             return this.savedStyle.border.substring(this.savedStyle.border.indexOf('#'));
         },
-        hash() {
-            return `
-                backgroundColor:${this.savedStyle.backgroundColor}
-                border:${this.savedStyle.border}
-                color:${this.savedStyle.color}
-            `;
-        },
         isDefaultStyle() {
-            const defaultHash = `
-                backgroundColor:
-                border:
-                color:
-            `;
-
-            return this.hash === defaultHash;
+            return this.stylesManager.isDefaultStyle(this.savedStyle);
         },
         itemStyle() {
             return getStylesWithoutNoneValue(this.savedStyle);
-        },
-
-        deleteOptions() {
-            return {
-                icon: 'icon-trash',
-                title: 'Delete style',
-                // value: this.normalizeValueForSwatch(value),
-                // property: 'color',
-                dialog: {
-                    name: "Delete Style",
-                    value: true
-                }
-            };
         }
     },
     methods: {
         applySavedStyle() {
             this.stylesManager.select(this.savedStyle);
         },
-        deleteStyle() {
-            this.stylesManager.delete(this.savedStyle);
+        deleteStyle(style) {
+            this.showConfirmDialog(style)
+                .then(() => {
+                    this.stylesManager.delete(this.savedStyle);
+                })
+                .catch(() => {});
+        },
+        showConfirmDialog(style) {
+            const message = `
+                Please confirm you want to want to delete this style.
+                ${JSON.stringify(style)}
+            `;
+
+            return new Promise((resolve, reject) => {
+                let dialog = this.openmct.overlays.dialog({
+                    title: 'Delete Saved Style',
+                    iconClass: 'alert',
+                    message: message,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            callback: () => {
+                                dialog.dismiss();
+                                resolve();
+                            }
+                        },
+                        {
+                            label: 'Cancel',
+                            callback: () => {
+                                dialog.dismiss();
+                                reject();
+                            }
+                        }
+                    ]
+                });
+            });
         },
         hasProperty(property) {
             return property !== undefined;
