@@ -33,7 +33,7 @@
                 <div class="c-imagery__timestamp">{{ getTime() }}</div>
                 <div
                     v-if="clock"
-                    :class="{'c-imagery--new': isImageNew() && !refreshCSS}"
+                    :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ age }}</div>
             </div>
@@ -110,6 +110,14 @@ export default {
             ageTracker: undefined,
             refreshCSS: false
         };
+    },
+    computed: {
+        isImageNew() {
+            let cutoff = FIVE_MINUTES;
+            let age = this.numericImageAge();
+
+            return age < cutoff;
+        }
     },
     watch: {
         time() {
@@ -379,14 +387,6 @@ export default {
         },
         clearAgeTracking() {
             window.clearInterval(this.ageTracker);
-        },
-        isImageNew(lessThanMinutes) {
-            let cutoff = lessThanMinutes
-                ? lessThanMinutes * ONE_MINUTE
-                : FIVE_MINUTES;
-            let age = this.numericImageAge();
-
-            return age < cutoff;
         },
         resetAgeCSS() {
             this.refreshCSS = true;
