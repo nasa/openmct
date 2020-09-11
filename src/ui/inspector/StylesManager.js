@@ -2,10 +2,10 @@ import EventEmitter from 'EventEmitter';
 
 const LOCAL_STORAGE_KEY = 'mct-saved-styles';
 const LIMIT = 100;
-const PERSIST_ERROR_MESSAGE = 'Problem saving styles';
-const LIMIT_WARNING_MESSAGE = 'Saved styles limit reached. Please delete a saved style and try again.';
+const PERSIST_ERROR_MESSAGE = 'Problem encountered saving styles.';
+const LIMIT_WARNING_MESSAGE = `Saved styles limit (${LIMIT}) reached. Please delete a saved style and try again.`;
 const STYLE_PROPERTIES = [
-    'backgroundColor', 'border', 'color', 'imageUrl', 'isStyleInvisible'
+    'backgroundColor', 'border', 'color', 'isStyleInvisible'
 ];
 const DEFAULT_STYLE = {
     backgroundColor: '',
@@ -33,15 +33,19 @@ export default class StylesManager extends EventEmitter {
 
     save(style) {
         const styles = this.load();
+        let persistSucceeded;
 
         if (styles.length < LIMIT) {
-            styles.push(style);
-            this.persist(styles);
+            // latest saved styles go to front of store (except default always first)
+            styles.splice(1, 0, style);
+            persistSucceeded = this.persist(styles);
         } else {
             this.openmct.notifications.warning(LIMIT_WARNING_MESSAGE);
         }
 
-        this.emit('stylesUpdated', styles);
+        if (persistSucceeded) {
+            this.emit('stylesUpdated', styles);
+        }
     }
 
     /**
@@ -51,9 +55,13 @@ export default class StylesManager extends EventEmitter {
     persist(styles) {
         try {
             window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(styles));
+
+            return true;
         } catch {
             this.openmct.notifications.error(PERSIST_ERROR_MESSAGE);
         }
+
+        return false;
     }
 
     isEqual(style1, style2) {
@@ -78,8 +86,9 @@ export default class StylesManager extends EventEmitter {
         const styles = this.load();
         const remainingStyles = styles.filter(keep => !this.isEqual(keep, style));
 
-        this.persist(remainingStyles);
-
-        this.emit('stylesUpdated', remainingStyles);
+        const persistSuccess = this.persist(remainingStyles);
+        if (persistSuccess) {
+            this.emit('stylesUpdated', remainingStyles);
+        }
     }
 }
