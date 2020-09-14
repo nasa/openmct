@@ -19,33 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RootObjectProvider from '../RootObjectProvider';
 
-describe('RootObjectProvider', function () {
-    const ROOT_NAME = 'Open MCT';
-    let rootObjectProvider;
-    let roots = ['some root'];
-    let rootRegistry = {
-        getRoots: () => {
-            return Promise.resolve(roots);
-        }
+import CouchObjectProvider from './CouchObjectProvider';
+const NAMESPACE = '';
+
+export default function CouchPlugin(url) {
+    return function install(openmct) {
+        openmct.objects.addProvider(NAMESPACE, new CouchObjectProvider(openmct, url, NAMESPACE));
     };
-
-    beforeEach(function () {
-        rootObjectProvider = new RootObjectProvider(rootRegistry);
-    });
-
-    it('supports fetching root', async () => {
-        let root = await rootObjectProvider.get();
-
-        expect(root).toEqual({
-            identifier: {
-                key: "ROOT",
-                namespace: ""
-            },
-            name: ROOT_NAME,
-            type: 'root',
-            composition: ['some root']
-        });
-    });
-});
+}

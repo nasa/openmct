@@ -19,33 +19,29 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RootObjectProvider from '../RootObjectProvider';
 
-describe('RootObjectProvider', function () {
-    const ROOT_NAME = 'Open MCT';
-    let rootObjectProvider;
-    let roots = ['some root'];
-    let rootRegistry = {
-        getRoots: () => {
-            return Promise.resolve(roots);
-        }
-    };
+import objectUtils from 'objectUtils';
 
-    beforeEach(function () {
-        rootObjectProvider = new RootObjectProvider(rootRegistry);
-    });
+export default class LegacyPersistenceAdapter {
+    constructor(openmct) {
+        this.openmct = openmct;
+    }
 
-    it('supports fetching root', async () => {
-        let root = await rootObjectProvider.get();
+    listObjects() {
+        return Promise.resolve([]);
+    }
 
-        expect(root).toEqual({
-            identifier: {
-                key: "ROOT",
-                namespace: ""
-            },
-            name: ROOT_NAME,
-            type: 'root',
-            composition: ['some root']
-        });
-    });
-});
+    listSpaces() {
+        return Promise.resolve(Object.keys(this.openmct.objects.providers));
+    }
+
+    updateObject(legacyDomainObject) {
+        return this.openmct.objects.save(legacyDomainObject.useCapability('adapter'));
+    }
+
+    readObject(keystring) {
+        let identifier = objectUtils.parseKeyString(keystring);
+
+        return this.openmct.legacyObject(this.openmct.objects.get(identifier));
+    }
+}
