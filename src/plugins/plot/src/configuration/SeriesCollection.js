@@ -33,7 +33,7 @@ define([
     _
 ) {
 
-    var SeriesCollection = Collection.extend({
+    const SeriesCollection = Collection.extend({
         modelClass: PlotSeries,
         initialize: function (options) {
             this.plot = options.plot;
@@ -43,7 +43,7 @@ define([
             this.listenTo(this, 'remove', this.onSeriesRemove, this);
             this.listenTo(this.plot, 'change:domainObject', this.trackPersistedConfig, this);
 
-            var domainObject = this.plot.get('domainObject');
+            const domainObject = this.plot.get('domainObject');
             if (domainObject.telemetry) {
                 this.addTelemetryObject(domainObject);
             } else {
@@ -52,22 +52,22 @@ define([
         },
         trackPersistedConfig: function (domainObject) {
             domainObject.configuration.series.forEach(function (seriesConfig) {
-                var series = this.byIdentifier(seriesConfig.identifier);
+                const series = this.byIdentifier(seriesConfig.identifier);
                 if (series) {
                     series.persistedConfig = seriesConfig;
                 }
             }, this);
         },
         watchTelemetryContainer: function (domainObject) {
-            var composition = this.openmct.composition.get(domainObject);
+            const composition = this.openmct.composition.get(domainObject);
             this.listenTo(composition, 'add', this.addTelemetryObject, this);
             this.listenTo(composition, 'remove', this.removeTelemetryObject, this);
             composition.load();
         },
         addTelemetryObject: function (domainObject, index) {
-            var seriesConfig = this.plot.getPersistedSeriesConfig(domainObject.identifier);
-            var filters = this.plot.getPersistedFilters(domainObject.identifier);
-            var plotObject = this.plot.get('domainObject');
+            let seriesConfig = this.plot.getPersistedSeriesConfig(domainObject.identifier);
+            const filters = this.plot.getPersistedFilters(domainObject.identifier);
+            const plotObject = this.plot.get('domainObject');
 
             if (!seriesConfig) {
                 seriesConfig = {
@@ -84,6 +84,7 @@ define([
                         .getPersistedSeriesConfig(domainObject.identifier);
                 }
             }
+
             // Clone to prevent accidental mutation by ref.
             seriesConfig = JSON.parse(JSON.stringify(seriesConfig));
 
@@ -98,14 +99,14 @@ define([
             }));
         },
         removeTelemetryObject: function (identifier) {
-            var plotObject = this.plot.get('domainObject');
+            const plotObject = this.plot.get('domainObject');
             if (plotObject.type === 'telemetry.plot.overlay') {
 
-                var persistedIndex = plotObject.configuration.series.findIndex(s => {
+                const persistedIndex = plotObject.configuration.series.findIndex(s => {
                     return _.isEqual(identifier, s.identifier);
                 });
 
-                var configIndex = this.models.findIndex(m => {
+                const configIndex = this.models.findIndex(m => {
                     return _.isEqual(m.domainObject.identifier, identifier);
                 });
 
@@ -121,8 +122,8 @@ define([
                     // to defer mutation of our plot object, otherwise we might
                     // mutate an outdated version of the plotObject.
                     setTimeout(function () {
-                        var newPlotObject = this.plot.get('domainObject');
-                        var cSeries = newPlotObject.configuration.series.slice();
+                        const newPlotObject = this.plot.get('domainObject');
+                        const cSeries = newPlotObject.configuration.series.slice();
                         cSeries.splice(persistedIndex, 1);
                         this.openmct.objects.mutate(newPlotObject, 'configuration.series', cSeries);
                     }.bind(this));
@@ -130,16 +131,18 @@ define([
             }
         },
         onSeriesAdd: function (series) {
-            var seriesColor = series.get('color');
+            let seriesColor = series.get('color');
             if (seriesColor) {
                 if (!(seriesColor instanceof color.Color)) {
                     seriesColor = color.Color.fromHexString(seriesColor);
                     series.set('color', seriesColor);
                 }
+
                 this.palette.remove(seriesColor);
             } else {
                 series.set('color', this.palette.getNextColor());
             }
+
             this.listenTo(series, 'change:color', this.updateColorPalette, this);
         },
         onSeriesRemove: function (series) {
@@ -149,7 +152,7 @@ define([
         },
         updateColorPalette: function (newColor, oldColor) {
             this.palette.remove(newColor);
-            var seriesWithColor = this.filter(function (series) {
+            const seriesWithColor = this.filter(function (series) {
                 return series.get('color') === newColor;
             })[0];
             if (!seriesWithColor) {
@@ -158,9 +161,10 @@ define([
         },
         byIdentifier: function (identifier) {
             return this.filter(function (series) {
-                var seriesIdentifier = series.get('identifier');
-                return seriesIdentifier.namespace === identifier.namespace &&
-                    seriesIdentifier.key === identifier.key;
+                const seriesIdentifier = series.get('identifier');
+
+                return seriesIdentifier.namespace === identifier.namespace
+                    && seriesIdentifier.key === identifier.key;
             })[0];
         }
     });

@@ -253,20 +253,22 @@ export default {
                     label: `when ${TRIGGER_LABEL[TRIGGER[trigger]]}`
                 });
             });
+
             return triggerOptions;
         },
         canEvaluateCriteria: function () {
             let criteria = this.condition.configuration.criteria;
             if (criteria.length) {
                 let lastCriterion = criteria[criteria.length - 1];
-                if (lastCriterion.telemetry &&
-                    lastCriterion.operation &&
-                    (lastCriterion.input.length ||
-                        lastCriterion.operation === 'isDefined' ||
-                        lastCriterion.operation === 'isUndefined')) {
+                if (lastCriterion.telemetry
+                    && lastCriterion.operation
+                    && (lastCriterion.input.length
+                        || lastCriterion.operation === 'isDefined'
+                        || lastCriterion.operation === 'isUndefined')) {
                     return true;
                 }
             }
+
             return false;
         }
     },
@@ -293,6 +295,7 @@ export default {
             } else {
                 this.condition.configuration.output = this.selectedOutputSelection;
             }
+
             this.persist();
         },
         addCriteria() {
@@ -305,20 +308,26 @@ export default {
             };
             this.condition.configuration.criteria.push(criteriaObject);
         },
-        dragStart(e) {
-            e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
-            e.dataTransfer.effectAllowed = "copyMove";
-            e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
+        dragStart(event) {
+            event.dataTransfer.clearData();
+            event.dataTransfer.setData('dragging', event.target); // required for FF to initiate drag
+            event.dataTransfer.effectAllowed = "copyMove";
+            event.dataTransfer.setDragImage(event.target.closest('.c-condition-h'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
         },
-        dragEnd(event) {
+        dragEnd() {
             this.dragStarted = false;
-            event.dataTransfer.clearData();
             this.$emit('dragComplete');
         },
         dropCondition(event, targetIndex) {
-            if (!this.isDragging) { return }
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            if (!this.isDragging) {
+                return;
+            }
+
+            if (targetIndex > this.moveIndex) {
+                targetIndex--;
+            } // for 'downward' move
+
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = undefined;
                 this.draggingOver = false;
@@ -326,8 +335,14 @@ export default {
             }
         },
         dragEnter(event, targetIndex) {
-            if (!this.isDragging) { return }
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            if (!this.isDragging) {
+                return;
+            }
+
+            if (targetIndex > this.moveIndex) {
+                targetIndex--;
+            } // for 'downward' move
+
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = event.target.parentElement;
                 this.draggingOver = true;
@@ -344,10 +359,10 @@ export default {
         },
         destroy() {
         },
-        removeCondition(ev) {
-            this.$emit('removeCondition', this.conditionIndex);
+        removeCondition() {
+            this.$emit('removeCondition', this.condition.id);
         },
-        cloneCondition(ev) {
+        cloneCondition() {
             this.$emit('cloneCondition', {
                 condition: this.condition,
                 index: this.conditionIndex
@@ -365,13 +380,12 @@ export default {
         },
         persist() {
             this.$emit('updateCondition', {
-                condition: this.condition,
-                index: this.conditionIndex
+                condition: this.condition
             });
         },
         initCap(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1)
+            return str.charAt(0).toUpperCase() + str.slice(1);
         }
     }
-}
+};
 </script>

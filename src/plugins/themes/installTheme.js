@@ -1,6 +1,6 @@
 const dataAttribute = 'theme';
 
-export const installTheme = (openmct, themeName) => {
+export function installTheme(openmct, themeName) {
     const currentTheme = document.querySelector(`link[data-${dataAttribute}]`);
     if (currentTheme) {
         currentTheme.remove();

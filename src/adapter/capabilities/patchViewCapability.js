@@ -28,18 +28,18 @@ define([
 
     function patchViewCapability(viewConstructor) {
         return function makeCapability(domainObject) {
-            var capability = viewConstructor(domainObject);
-            var oldInvoke = capability.invoke.bind(capability);
+            const capability = viewConstructor(domainObject);
+            const oldInvoke = capability.invoke.bind(capability);
 
             /* eslint-disable you-dont-need-lodash-underscore/map */
             capability.invoke = function () {
-                var availableViews = oldInvoke();
-                var newDomainObject = capability
+                const availableViews = oldInvoke();
+                const newDomainObject = capability
                     .domainObject
                     .useCapability('adapter');
 
                 return _(availableViews).map(function (v, i) {
-                    var vd = {
+                    const vd = {
                         view: v,
                         priority: i + 100 // arbitrary to allow new views to
                         // be defaults by returning priority less than 100.
@@ -47,6 +47,7 @@ define([
                     if (v.provider && v.provider.priority) {
                         vd.priority = v.provider.priority(newDomainObject);
                     }
+
                     return vd;
                 })
                     .sortBy('priority')

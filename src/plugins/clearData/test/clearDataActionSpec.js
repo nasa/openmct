@@ -20,25 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ClearDataActionPlugin  from '../plugin.js';
+import ClearDataActionPlugin from '../plugin.js';
 import ClearDataAction from '../clearDataAction.js';
 
 describe('When the Clear Data Plugin is installed,', function () {
-    var mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']),
-        mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']),
-        mockContextMenuProvider = jasmine.createSpyObj('contextMenu', ['registerAction']),
-        openmct = {
-            objectViews: mockObjectViews,
-            indicators: mockIndicatorProvider,
-            contextMenu: mockContextMenuProvider,
-            install: function (plugin) {
-                plugin(this);
-            }
-        },
-        mockObjectPath = [
-            {name: 'mockObject1'},
-            {name: 'mockObject2'}
-        ];
+    const mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']);
+    const mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']);
+    const mockContextMenuProvider = jasmine.createSpyObj('contextMenu', ['registerAction']);
+
+    const openmct = {
+        objectViews: mockObjectViews,
+        indicators: mockIndicatorProvider,
+        contextMenu: mockContextMenuProvider,
+        install: function (plugin) {
+            plugin(this);
+        }
+    };
+
+    const mockObjectPath = [
+        {name: 'mockObject1'},
+        {name: 'mockObject2'}
+    ];
 
     it('Global Clear Indicator is installed', function () {
         openmct.install(ClearDataActionPlugin([]));

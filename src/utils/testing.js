@@ -21,14 +21,17 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
-let nativeFunctions = [],
-    mockObjects = setMockObjects();
+let nativeFunctions = [];
+let mockObjects = setMockObjects();
 
 export function createOpenMct() {
     const openmct = new MCT();
     openmct.install(openmct.plugins.LocalStorage());
     openmct.install(openmct.plugins.UTCTimeSystem());
-    openmct.time.timeSystem('utc', {start: 0, end: 1});
+    openmct.time.timeSystem('utc', {
+        start: 0,
+        end: 1
+    });
 
     return openmct;
 }
@@ -47,7 +50,11 @@ export function spyOnBuiltins(functionNames, object = window) {
             throw `Builtin spy function already defined for ${functionName}`;
         }
 
-        nativeFunctions.push({functionName, object, nativeFunction: object[functionName]});
+        nativeFunctions.push({
+            functionName,
+            object,
+            nativeFunction: object[functionName]
+        });
         spyOn(object, functionName);
     });
 }
@@ -58,12 +65,29 @@ export function clearBuiltinSpies() {
 }
 
 export function resetApplicationState(openmct) {
+    let promise;
+
     clearBuiltinSpies();
-    window.location.hash = '#';
 
     if (openmct !== undefined) {
         openmct.destroy();
     }
+
+    if (window.location.hash !== '#' && window.location.hash !== '') {
+        promise = new Promise((resolve, reject) => {
+            window.addEventListener('hashchange', cleanup);
+            window.location.hash = '#';
+
+            function cleanup() {
+                window.removeEventListener('hashchange', cleanup);
+                resolve();
+            }
+        });
+    } else {
+        promise = Promise.resolve();
+    }
+
+    return promise;
 }
 
 function clearBuiltinSpy(funcDefinition) {
@@ -71,10 +95,10 @@ function clearBuiltinSpy(funcDefinition) {
 }
 
 export function getLatestTelemetry(telemetry = [], opts = {}) {
-    let latest = [],
-        timeFormat = opts.timeFormat || 'utc';
+    let latest = [];
+    let timeFormat = opts.timeFormat || 'utc';
 
-    if(telemetry.length) {
+    if (telemetry.length) {
         latest = telemetry.reduce((prev, cur) => {
             return prev[timeFormat] > cur[timeFormat] ? prev : cur;
         });
@@ -101,7 +125,7 @@ export function getLatestTelemetry(telemetry = [], opts = {}) {
 // })
 export function getMockObjects(opts = {}) {
     opts.type = opts.type || 'default';
-    if(opts.objectKeyStrings && !Array.isArray(opts.objectKeyStrings)) {
+    if (opts.objectKeyStrings && !Array.isArray(opts.objectKeyStrings)) {
         throw `"getMockObjects" optional parameter "objectKeyStrings" must be an array of string object keys`;
     }
 
@@ -111,7 +135,7 @@ export function getMockObjects(opts = {}) {
         requestedMocks = copyObj(mockObjects[opts.type]);
     } else {
         opts.objectKeyStrings.forEach(objKey => {
-            if(mockObjects[opts.type] && mockObjects[opts.type][objKey]) {
+            if (mockObjects[opts.type] && mockObjects[opts.type][objKey]) {
                 requestedMocks[objKey] = copyObj(mockObjects[opts.type][objKey]);
             } else {
                 throw `No mock object for object key "${objKey}" of type "${opts.type}"`;
@@ -120,16 +144,16 @@ export function getMockObjects(opts = {}) {
     }
 
     // build out custom telemetry mappings if necessary
-    if(requestedMocks.telemetry && opts.telemetryConfig) {
-        let keys = opts.telemetryConfig.keys,
-            format = opts.telemetryConfig.format || 'utc',
-            hints = opts.telemetryConfig.hints,
-            values;
+    if (requestedMocks.telemetry && opts.telemetryConfig) {
+        let keys = opts.telemetryConfig.keys;
+        let format = opts.telemetryConfig.format || 'utc';
+        let hints = opts.telemetryConfig.hints;
+        let values;
 
         // if utc, keep default
-        if(format === 'utc') {
+        if (format === 'utc') {
             // save for later if new keys
-            if(keys) {
+            if (keys) {
                 format = requestedMocks.telemetry
                     .telemetry.values.find((vals) => vals.key === 'utc');
             }
@@ -141,19 +165,22 @@ export function getMockObjects(opts = {}) {
                 hints: {
                     domain: 1
                 }
-            }
+            };
         }
 
-        if(keys) {
-            values = keys.map((key) => ({ key, name: key + ' attribute' }));
+        if (keys) {
+            values = keys.map((key) => ({
+                key,
+                name: key + ' attribute'
+            }));
             values.push(format); // add time format back in
         } else {
             values = requestedMocks.telemetry.telemetry.values;
         }
 
-        if(hints) {
-            for(let val of values) {
-                if(hints[val.key]) {
+        if (hints) {
+            for (let val of values) {
+                if (hints[val.key]) {
                     val.hints = hints[val.key];
                 }
             }
@@ -163,14 +190,10 @@ export function getMockObjects(opts = {}) {
     }
 
     // overwrite any field keys
-    if(opts.overwrite) {
-        for(let mock in requestedMocks) {
-            if(opts.overwrite[mock]) {
-                for(let key in opts.overwrite[mock]) {
-                    if (Object.prototype.hasOwnProperty.call(opts.overwrite[mock], key)) {
-                        requestedMocks[mock][key] = opts.overwrite[mock][key];
-                    }
-                }
+    if (opts.overwrite) {
+        for (let mock in requestedMocks) {
+            if (opts.overwrite[mock]) {
+                requestedMocks[mock] = Object.assign(requestedMocks[mock], opts.overwrite[mock]);
             }
         }
     }
@@ -186,29 +209,29 @@ export function getMockObjects(opts = {}) {
 //     format: 'local'
 // })
 export function getMockTelemetry(opts = {}) {
-    let count = opts.count || 2,
-        format = opts.format || 'utc',
-        name = opts.name || 'Mock Telemetry Datum',
-        keyCount = 2,
-        keys = false,
-        telemetry = [];
+    let count = opts.count || 2;
+    let format = opts.format || 'utc';
+    let name = opts.name || 'Mock Telemetry Datum';
+    let keyCount = 2;
+    let keys = false;
+    let telemetry = [];
 
-    if(opts.keys && Array.isArray(opts.keys)) {
+    if (opts.keys && Array.isArray(opts.keys)) {
         keyCount = opts.keys.length;
         keys = opts.keys;
-    } else if(opts.keyCount) {
+    } else if (opts.keyCount) {
         keyCount = opts.keyCount;
     }
 
-    for(let i = 1; i < count + 1; i++) {
+    for (let i = 1; i < count + 1; i++) {
         let datum = {
             [format]: i,
             name
-        }
+        };
 
-        for(let k = 1; k < keyCount + 1; k++) {
-            let key = keys ? keys[k - 1] : 'some-key-' + k,
-                value = keys ? keys[k - 1] + ' value ' + i : 'some value ' + i + '-' + k;
+        for (let k = 1; k < keyCount + 1; k++) {
+            let key = keys ? keys[k - 1] : 'some-key-' + k;
+            let value = keys ? keys[k - 1] + ' value ' + i : 'some value ' + i + '-' + k;
             datum[key] = value;
         }
 
@@ -227,18 +250,37 @@ function copyObj(obj) {
 function setMockObjects() {
     return {
         default: {
+            folder: {
+                identifier: {
+                    namespace: "",
+                    key: "folder-object"
+                },
+                name: "Test Folder Object",
+                type: "folder",
+                composition: [],
+                location: "mine"
+            },
             ladTable: {
-                identifier: { namespace: "", key: "lad-object"},
+                identifier: {
+                    namespace: "",
+                    key: "lad-object"
+                },
                 type: 'LadTable',
                 composition: []
             },
             ladTableSet: {
-                identifier: { namespace: "", key: "lad-set-object"},
+                identifier: {
+                    namespace: "",
+                    key: "lad-set-object"
+                },
                 type: 'LadTableSet',
                 composition: []
             },
             telemetry: {
-                identifier: { namespace: "", key: "telemetry-object"},
+                identifier: {
+                    namespace: "",
+                    key: "telemetry-object"
+                },
                 type: "test-telemetry-object",
                 name: "Test Telemetry Object",
                 telemetry: {
@@ -246,14 +288,14 @@ function setMockObjects() {
                         key: "name",
                         name: "Name",
                         format: "string"
-                    },{
+                    }, {
                         key: "utc",
                         name: "Time",
                         format: "utc",
                         hints: {
                             domain: 1
                         }
-                    },{
+                    }, {
                         name: "Some attribute 1",
                         key: "some-key-1",
                         hints: {
@@ -269,5 +311,5 @@ function setMockObjects() {
         otherType: {
             example: {}
         }
-    }
+    };
 }

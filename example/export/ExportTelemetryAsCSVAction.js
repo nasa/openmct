@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([], function () {
     'use strict';
@@ -76,13 +75,14 @@ define([], function () {
                 copyRangesToRow(row, i);
                 rows.push(row);
             }
+
             exportService.exportCSV(rows, { headers: headers });
         });
     };
 
     ExportTelemetryAsCSVAction.appliesTo = function (context) {
-        return context.domainObject &&
-            context.domainObject.hasCapability("telemetry");
+        return context.domainObject
+            && context.domainObject.hasCapability("telemetry");
     };
 
     return ExportTelemetryAsCSVAction;

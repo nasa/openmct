@@ -47,6 +47,7 @@ define(["zepto"], function ($) {
         return new Promise(function (resolve, reject) {
             input.trigger("click");
             input.on('change', function (event) {
+                // eslint-disable-next-line no-invalid-this
                 file = this.files[0];
                 input.remove();
                 if (file) {
@@ -74,15 +75,17 @@ define(["zepto"], function ($) {
             fileReader.onerror = function () {
                 return reject(event.target.result);
             };
+
             fileReader.readAsText(file);
         });
     };
 
-    FileInputService.prototype.newInput  = function () {
+    FileInputService.prototype.newInput = function () {
         var input = $(document.createElement('input'));
         input.attr("type", "file");
         input.css("display", "none");
         $('body').append(input);
+
         return input;
     };
 

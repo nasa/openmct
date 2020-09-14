@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
@@ -64,6 +63,7 @@ define(
                     wrappedPersistence.persist.bind(wrappedPersistence),
                     wrappedPersistence.refresh.bind(wrappedPersistence)
                 );
+
                 //Need to return a promise from this function
                 return this.$q.when(true);
             } else {
@@ -74,6 +74,7 @@ define(
         TransactionalPersistenceCapability.prototype.refresh = function () {
             this.transactionManager
                 .clearTransactionsFor(this.domainObject.getId());
+
             return this.persistenceCapability.refresh();
         };
 

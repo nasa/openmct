@@ -48,7 +48,7 @@ define([
      *         disabled.
      *
      */
-    var YAxisModel = Model.extend({
+    const YAxisModel = Model.extend({
         initialize: function (options) {
             this.plot = options.plot;
             this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
@@ -60,14 +60,14 @@ define([
         },
         listenToSeriesCollection: function (seriesCollection) {
             this.seriesCollection = seriesCollection;
-            this.listenTo(this.seriesCollection, 'add', function (series) {
+            this.listenTo(this.seriesCollection, 'add', (series => {
                 this.trackSeries(series);
                 this.updateFromSeries(this.seriesCollection);
-            }, this);
-            this.listenTo(this.seriesCollection, 'remove', function (series) {
+            }), this);
+            this.listenTo(this.seriesCollection, 'remove', (series => {
                 this.untrackSeries(series);
                 this.updateFromSeries(this.seriesCollection);
-            }, this);
+            }), this);
             this.seriesCollection.forEach(this.trackSeries, this);
             this.updateFromSeries(this.seriesCollection);
         },
@@ -82,10 +82,11 @@ define([
             }
         },
         applyPadding: function (range) {
-            var padding = Math.abs(range.max - range.min) * this.get('autoscalePadding');
+            let padding = Math.abs(range.max - range.min) * this.get('autoscalePadding');
             if (padding === 0) {
                 padding = 1;
             }
+
             return {
                 min: range.min - padding,
                 max: range.max + padding
@@ -111,18 +112,22 @@ define([
                     min: seriesStats.minValue,
                     max: seriesStats.maxValue
                 });
+
                 return;
             }
-            var stats = this.get('stats');
-            var changed = false;
+
+            const stats = this.get('stats');
+            let changed = false;
             if (stats.min > seriesStats.minValue) {
                 changed = true;
                 stats.min = seriesStats.minValue;
             }
+
             if (stats.max < seriesStats.maxValue) {
                 changed = true;
                 stats.max = seriesStats.maxValue;
             }
+
             if (changed) {
                 this.set('stats', {
                     min: stats.min,
@@ -139,16 +144,16 @@ define([
             }, this);
         },
         trackSeries: function (series) {
-            this.listenTo(series, 'change:stats', function (seriesStats) {
+            this.listenTo(series, 'change:stats', seriesStats => {
                 if (!seriesStats) {
                     this.resetStats();
                 } else {
                     this.updateStats(seriesStats);
                 }
-            }, this);
-            this.listenTo(series, 'change:yKey', function () {
+            });
+            this.listenTo(series, 'change:yKey', () => {
                 this.updateFromSeries(this.seriesCollection);
-            }, this);
+            });
         },
         untrackSeries: function (series) {
             this.stopListening(series);
@@ -166,53 +171,60 @@ define([
          * Update yAxis format, values, and label from known series.
          */
         updateFromSeries: function (series) {
-            var plotModel = this.plot.get('domainObject');
-            var label = _.get(plotModel, 'configuration.yAxis.label');
-            var sampleSeries = series.first();
+            const plotModel = this.plot.get('domainObject');
+            const label = _.get(plotModel, 'configuration.yAxis.label');
+            const sampleSeries = series.first();
             if (!sampleSeries) {
                 if (!label) {
                     this.unset('label');
                 }
+
                 return;
             }
 
-            var yKey = sampleSeries.get('yKey');
-            var yMetadata = sampleSeries.metadata.value(yKey);
-            var yFormat = sampleSeries.formats[yKey];
+            const yKey = sampleSeries.get('yKey');
+            const yMetadata = sampleSeries.metadata.value(yKey);
+            const yFormat = sampleSeries.formats[yKey];
             this.set('format', yFormat.format.bind(yFormat));
             this.set('values', yMetadata.values);
             if (!label) {
-                var labelName = series.map(function (s) {
+                const labelName = series.map(function (s) {
                     return s.metadata.value(s.get('yKey')).name;
                 }).reduce(function (a, b) {
                     if (a === undefined) {
                         return b;
                     }
+
                     if (a === b) {
                         return a;
                     }
+
                     return '';
                 }, undefined);
 
                 if (labelName) {
                     this.set('label', labelName);
+
                     return;
                 }
 
-                var labelUnits = series.map(function (s) {
+                const labelUnits = series.map(function (s) {
                     return s.metadata.value(s.get('yKey')).units;
                 }).reduce(function (a, b) {
                     if (a === undefined) {
                         return b;
                     }
+
                     if (a === b) {
                         return a;
                     }
+
                     return '';
                 }, undefined);
 
                 if (labelUnits) {
                     this.set('label', labelUnits);
+
                     return;
                 }
             }

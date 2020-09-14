@@ -33,8 +33,12 @@ define([], function () {
                 resolve();
             } else {
                 //Latch condition not true yet, create observer on DOM and test again on change.
-                var config = { attributes: true, childList: true, subtree: true };
-                var observer = new MutationObserver(function () {
+                const config = {
+                    attributes: true,
+                    childList: true,
+                    subtree: true
+                };
+                const observer = new MutationObserver(function () {
                     if (latchFunction()) {
                         resolve();
                     }

@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./src/ExamplePolicy"
@@ -29,7 +28,7 @@ define([
     "use strict";
 
     return {
-        name:"example/policy",
+        name: "example/policy",
         definition: {
             "name": "Example Policy",
             "description": "Provides an example of using policies to prohibit actions.",

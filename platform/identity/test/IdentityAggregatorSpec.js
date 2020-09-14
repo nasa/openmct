@@ -39,9 +39,18 @@ define(
 
             beforeEach(function () {
                 testUsers = [
-                    { key: "user0", name: "User Zero" },
-                    { key: "user1", name: "User One" },
-                    { key: "user2", name: "User Two" }
+                    {
+                        key: "user0",
+                        name: "User Zero"
+                    },
+                    {
+                        key: "user1",
+                        name: "User One"
+                    },
+                    {
+                        key: "user2",
+                        name: "User Two"
+                    }
                 ];
 
                 resolves = {};

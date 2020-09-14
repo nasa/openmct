@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     function () {
@@ -81,6 +80,7 @@ define(
                 (dictionary.instruments || []).forEach(function (instrument) {
                     addInstrument(instrument, "msl:curiosity");
                 });
+
                 return models;
             }
 
@@ -90,6 +90,7 @@ define(
                 }
             };
         }
+
         return RemsTelemetryModelProvider;
     }
 );

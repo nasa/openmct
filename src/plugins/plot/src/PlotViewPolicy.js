@@ -35,19 +35,20 @@ define(
         }
 
         PlotViewPolicy.prototype.hasNumericTelemetry = function (domainObject) {
-            var adaptedObject = domainObject.useCapability('adapter');
+            const adaptedObject = domainObject.useCapability('adapter');
 
             if (!adaptedObject.telemetry) {
-                return domainObject.hasCapability('delegation') &&
-                    domainObject.getCapability('delegation')
+                return domainObject.hasCapability('delegation')
+                    && domainObject.getCapability('delegation')
                         .doesDelegateCapability('telemetry');
             }
 
-            var metadata = this.openmct.telemetry.getMetadata(adaptedObject);
-            var rangeValues = metadata.valuesForHints(['range']);
+            const metadata = this.openmct.telemetry.getMetadata(adaptedObject);
+            const rangeValues = metadata.valuesForHints(['range']);
             if (rangeValues.length === 0) {
                 return false;
             }
+
             return !rangeValues.every(function (value) {
                 return value.format === 'string';
             });

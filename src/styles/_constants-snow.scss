@@ -78,11 +78,15 @@ $colorKeyFilterHov: invert(69%) sepia(87%) saturate(3243%) hue-rotate(151deg) br
 $colorKeySelectedBg: $colorKey;
 $uiColor: #289fec; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
-$colorA: #999;
+$colorA: $colorBodyFg;
 $colorAHov: $colorKey;
-$filterHov: brightness(1.3); // Tree, location items
-$colorSelectedBg: pushBack($colorKey, 40%);
+$filterHov: brightness(0.8) contrast(2); // Tree, location items
+$colorSelectedBg: rgba($colorKey, 0.2);
 $colorSelectedFg: pullForward($colorBodyFg, 10%);
+
+// Object labels
+$objectLabelTypeIconOpacity: 0.5;
+$objectLabelNameFilter: brightness(0.5);
 
 // Layout
 $shellMainPad: 4px 0;
@@ -90,7 +94,7 @@ $shellPanePad: $interiorMargin, 7px;
 $drawerBg: darken($colorBodyBg, 5%);
 $drawerFg: darken($colorBodyFg, 5%);
 $sideBarBg: $drawerBg;
-$sideBarHeaderBg: rgba(black, 0.25);
+$sideBarHeaderBg: rgba(black, 0.1);
 $sideBarHeaderFg: rgba($colorBodyFg, 0.7);
 
 // Status colors, mainly used for messaging and item ancillary symbols
@@ -224,7 +228,7 @@ $colorDisclosureCtrlHov: rgba($colorBodyFg, 0.7);
 $btnStdH: 24px;
 $colorCursorGuide: rgba(black, 0.6);
 $shdwCursorGuide: rgba(white, 0.4) 0 0 2px;
-$colorLocalControlOvrBg: rgba($colorBodyFg, 0.8);
+$colorLocalControlOvrBg: rgba($colorBodyBg, 0.8);
 $colorSelectBg: $colorBtnBg; // This must be a solid color, not a gradient, due to usage of SVG bg in selects
 $colorSelectFg: $colorBtnFg;
 $colorSelectArw: lighten($colorBtnBg, 20%);
@@ -347,8 +351,8 @@ $colorSummaryFgEm: white;
 // Plot
 $colorPlotBg: rgba(black, 0.05);
 $colorPlotFg: $colorBodyFg;
-$colorPlotHash: black;
-$opacityPlotHash: 0.2;
+$colorPlotHash: $colorPlotFg;
+$opacityPlotHash: 0.3;
 $stylePlotHash: dashed;
 $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
@@ -364,7 +368,8 @@ $colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: $colorSelectedBg;
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
-$colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
+$filterItemTreeSelected: contrast(1.4);
+$colorItemTreeSelectedIcon: $colorItemTreeIcon;
 $colorItemTreeEditingBg: pushBack($editUIColor, 20%);
 $colorItemTreeEditingFg: $editUIColor;
 $colorItemTreeEditingIcon: $editUIColor;

@@ -40,11 +40,11 @@ $inputTextP: $inputTextPTopBtm $inputTextPLeftRight;
 $menuLineH: 1.5rem;
 $treeItemIndent: 16px;
 $treeTypeIconW: 18px;
-$overlayOuterMarginLg: 5%;
 $overlayOuterMarginFullscreen: 0%;
 $overlayOuterMarginDialog: 20%;
 $overlayInnerMargin: 25px;
-$mainViewPad: 2px;
+$mainViewPad: 0px;
+$treeNavArrowD: 20px;
 /*************** Items */
 $itemPadLR: 5px;
 $gridItemDesk: 175px;
@@ -57,7 +57,7 @@ $tabularTdPadTB: 2px;
 $plotYBarW: 60px;
 $plotYLabelMinH: 20px;
 $plotYLabelW: 10px;
-$plotXBarH: 35px;
+$plotXBarH: 32px;
 $plotLegendH: 20px;
 $plotLegendWidthCollapsed: 20%;
 $plotLegendWidthExpanded: 50%;
@@ -82,14 +82,16 @@ $formLabelMinW: 120px;
 $formLabelW: 30%;
 /*************** Wait Spinner */
 $waitSpinnerD: 32px;
-$waitSpinnerTreeD: 20px;
 $waitSpinnerBorderW: 5px;
+$waitSpinnerTreeD: 20px;
 $waitSpinnerTreeBorderW: 3px;
 /*************** Messages */
 $messageIconD: 80px;
 $messageListIconD: 32px;
 /*************** Tables */
 $tableResizeColHitareaD: 6px;
+/*************** Misc */
+$drawingObjBorderW: 3px;
 
 /************************** MOBILE */
 $mobileMenuIconD: 24px; // Used

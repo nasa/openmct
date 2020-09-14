@@ -35,7 +35,8 @@ define([
     './services/LegacyObjectAPIInterceptor',
     './views/installLegacyViews',
     './policies/LegacyCompositionPolicyAdapter',
-    './actions/LegacyActionAdapter'
+    './actions/LegacyActionAdapter',
+    './services/LegacyPersistenceAdapter'
 ], function (
     ActionDialogDecorator,
     AdapterCapability,
@@ -51,7 +52,8 @@ define([
     LegacyObjectAPIInterceptor,
     installLegacyViews,
     legacyCompositionPolicyAdapter,
-    LegacyActionAdapter
+    LegacyActionAdapter,
+    LegacyPersistenceAdapter
 ) {
     return {
         name: 'src/adapter',
@@ -114,6 +116,15 @@ define([
                             "instantiate",
                             "topic"
                         ]
+                    },
+                    {
+                        provides: "persistenceService",
+                        type: "provider",
+                        priority: "fallback",
+                        implementation: function legacyPersistenceProvider(openmct) {
+                            return new LegacyPersistenceAdapter.default(openmct);
+                        },
+                        depends: ["openmct"]
                     }
                 ],
                 policies: [
@@ -202,5 +213,5 @@ define([
                 ]
             }
         }
-    }
+    };
 });

@@ -71,14 +71,14 @@ define([
      * @return {string} The ID of the rule whose drag indicator should be displayed
      */
     WidgetDnD.prototype.getDropLocation = function (event) {
-        var ruleOrder = this.ruleOrder,
-            rulesById = this.rulesById,
-            draggingId = this.draggingId,
-            offset,
-            y,
-            height,
-            dropY = event.pageY,
-            target = '';
+        const ruleOrder = this.ruleOrder;
+        const rulesById = this.rulesById;
+        const draggingId = this.draggingId;
+        let offset;
+        let y;
+        let height;
+        const dropY = event.pageY;
+        let target = '';
 
         ruleOrder.forEach(function (ruleId, index) {
             offset = rulesById[ruleId].getDOM().offset();
@@ -98,6 +98,7 @@ define([
                 }
             }
         });
+
         return target;
     };
 
@@ -106,7 +107,7 @@ define([
      * @param {string} ruleId The identifier of the rule which is being dragged
      */
     WidgetDnD.prototype.dragStart = function (ruleId) {
-        var ruleOrder = this.ruleOrder;
+        const ruleOrder = this.ruleOrder;
         this.draggingId = ruleId;
         this.draggingRulePrevious = ruleOrder[ruleOrder.indexOf(ruleId) - 1];
         this.rulesById[this.draggingRulePrevious].showDragIndicator();
@@ -122,7 +123,7 @@ define([
      * @param {Event} event The mousemove event that triggered this callback
      */
     WidgetDnD.prototype.drag = function (event) {
-        var dragTarget;
+        let dragTarget;
         if (this.draggingId && this.draggingId !== '') {
             event.preventDefault();
             dragTarget = this.getDropLocation(event);
@@ -146,13 +147,14 @@ define([
      * @param {Event} event The mouseup event that triggered this callback
      */
     WidgetDnD.prototype.drop = function (event) {
-        var dropTarget = this.getDropLocation(event),
-            draggingId = this.draggingId;
+        let dropTarget = this.getDropLocation(event);
+        const draggingId = this.draggingId;
 
         if (this.draggingId && this.draggingId !== '') {
             if (!this.rulesById[dropTarget]) {
                 dropTarget = this.draggingId;
             }
+
             this.eventEmitter.emit('drop', {
                 draggingId: draggingId,
                 dropTarget: dropTarget

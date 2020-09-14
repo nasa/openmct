@@ -1,12 +1,33 @@
-/*global define*/
-// jscs:disable disallowDanglingUnderscores
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2020, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 define([], function () {
-    var helperFunctions = {
+    const helperFunctions = {
         listenTo: function (object, event, callback, context) {
             if (!this._listeningTo) {
                 this._listeningTo = [];
             }
-            var listener = {
+
+            const listener = {
                 object: object,
                 event: event,
                 callback: callback,
@@ -14,7 +35,7 @@ define([], function () {
                 _cb: context ? callback.bind(context) : callback
             };
             if (object.$watch && event.indexOf('change:') === 0) {
-                var scopePath = event.replace('change:', '');
+                const scopePath = event.replace('change:', '');
                 listener.unlisten = object.$watch(scopePath, listener._cb, true);
             } else if (object.$on) {
                 listener.unlisten = object.$on(event, listener._cb);
@@ -23,6 +44,7 @@ define([], function () {
             } else {
                 object.on(event, listener._cb);
             }
+
             this._listeningTo.push(listener);
         },
 
@@ -35,15 +57,19 @@ define([], function () {
                 if (object && object !== listener.object) {
                     return false;
                 }
+
                 if (event && event !== listener.event) {
                     return false;
                 }
+
                 if (callback && callback !== listener.callback) {
                     return false;
                 }
+
                 if (context && context !== listener.context) {
                     return false;
                 }
+
                 return true;
             })
                 .map(function (listener) {
@@ -54,6 +80,7 @@ define([], function () {
                     } else {
                         listener.object.off(listener.event, listener._cb);
                     }
+
                     return listener;
                 })
                 .forEach(function (listener) {

@@ -22,9 +22,9 @@
 
 define(["./LocalClock"], function (LocalClock) {
     describe("The LocalClock class", function () {
-        var clock,
-            mockTimeout,
-            timeoutHandle = {};
+        let clock;
+        let mockTimeout;
+        const timeoutHandle = {};
 
         beforeEach(function () {
             mockTimeout = jasmine.createSpy("timeout");
@@ -35,7 +35,7 @@ define(["./LocalClock"], function (LocalClock) {
         });
 
         it("calls listeners on tick with current time", function () {
-            var mockListener = jasmine.createSpy("listener");
+            const mockListener = jasmine.createSpy("listener");
             clock.on('tick', mockListener);
             clock.tick();
             expect(mockListener).toHaveBeenCalledWith(jasmine.any(Number));
