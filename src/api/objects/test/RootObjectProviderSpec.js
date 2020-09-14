@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 import RootObjectProvider from '../RootObjectProvider';
 
 describe('RootObjectProvider', function () {
-    // let rootRegistry;
+    const ROOT_NAME = 'Open MCT';
     let rootObjectProvider;
     let roots = ['some root'];
     let rootRegistry = {
@@ -43,7 +43,7 @@ describe('RootObjectProvider', function () {
                 key: "ROOT",
                 namespace: ""
             },
-            name: 'The root object',
+            name: ROOT_NAME,
             type: 'root',
             composition: ['some root']
         });

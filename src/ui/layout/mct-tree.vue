@@ -76,7 +76,7 @@
                             @expanded="handleExpanded"
                         />
                         <li
-                            v-if="visibleItems.length === 0"
+                            v-if="visibleItems.length === 0 && !noVisibleItems"
                             :style="emptyStyles()"
                             class="c-tree__item c-tree__item--empty"
                         >
@@ -140,7 +140,8 @@ export default {
             getChildHeight: false,
             settingChildrenHeight: false,
             isMobile: isMobile.mobileName,
-            multipleRootChildren: false
+            multipleRootChildren: false,
+            noVisibleItems: false
         };
     },
     computed: {
@@ -318,6 +319,7 @@ export default {
                         this.noScroll = true;
                     }
 
+                    this.noVisibleItems = false;
                     this.updatevisibleItems();
                 });
             } else {
@@ -565,6 +567,7 @@ export default {
                 return;
             }
 
+            this.noVisibleItems = true;
             this.visibleItems = [];
             await this.$nextTick(); // prevents "ghost" image of visibleItems
             this.childrenSlideClass = 'slide-left';

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2018, United States Government
+ Open MCT, Copyright (c) 2014-2020, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -244,9 +244,9 @@
                 </div>
             </div>
 
-            <div class="gl-plot-axis-area gl-plot-x">
+            <div class="gl-plot-axis-area gl-plot-x has-local-controls">
                 <mct-ticks axis="xAxis">
-                     <div ng-repeat="tick in ticks track by tick.value"
+                     <div ng-repeat="tick in ticks track by tick.text"
                           class="gl-plot-tick gl-plot-x-tick-label"
                           ng-style="{
                               left: (100 * (tick.value - min) / interval) + '%'
@@ -256,9 +256,21 @@
                      </div>
                 </mct-ticks>
 
-                <div class="gl-plot-label gl-plot-x-label">
+                <div
+                    class="gl-plot-label gl-plot-x-label"
+                    ng-class="{'icon-gear': isEnabledXKeyToggle()}"
+                >
                     {{ xAxis.get('label') }}
                 </div>
+
+                <select
+                    ng-show="plot.isEnabledXKeyToggle()"
+                    ng-model="selectedXKeyOption.key"
+                    ng-change="plot.toggleXKeyOption('{{selectedXKeyOption.key}}', series[0])"
+                    class="gl-plot-x-label__select local-controls--hidden"
+                    ng-options="option.key as option.name for option in xKeyOptions"
+                >
+                </select>
             </div>
 
         </div>
