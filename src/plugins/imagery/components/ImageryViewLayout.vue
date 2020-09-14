@@ -71,7 +71,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
-const AGE_TRACK_INTERVAL_MS = 100;
+const AGE_TRACK_INTERVAL_MS = 1000;
 const REFRESH_CHECK_MS = 500;
 
 const ONE_MINUTE = 60 * 1000;
@@ -117,11 +117,27 @@ export default {
             let age = this.numericImageAge();
 
             return age < cutoff;
-        }
-    },
-    watch: {
-        time() {
-            this.resetAgeCSS();
+        },
+        formattedAge() {
+            let age = this.numericImageAge();
+
+            if (!age) {
+                return;
+            }
+
+            let result = this.durationFormatter.format(age);
+
+            if (age > EIGHT_HOURS) {
+                let negativeAge = (age / ONE_HOUR) * -1;
+                result = moment.duration(negativeAge, 'hours').humanize(true);
+
+                if (age > TWENTYFOUR_HOURS) {
+                    negativeAge = (age / TWENTYFOUR_HOURS) * -1;
+                    result = moment.duration(negativeAge, 'days').humanize(true);
+                }
+            }
+
+            return result;
         }
     },
     mounted() {
@@ -333,6 +349,8 @@ export default {
 
             this.time = this.timeFormat.format(datum);
             this.imageUrl = this.imageFormat.format(datum);
+            this.selectedImage = this.getSelectedImage();
+            this.resetAgeCSS();
         },
         getFormatter(key) {
             let valueFormatter = this.openmct.telemetry.getValueFormatter({
@@ -343,42 +361,20 @@ export default {
         },
         numericImageAge() {
             let currentTime = this.currentTimeValue();
-            let selectedImage = this.getSelectedImage();
 
-            if (selectedImage === undefined || selectedImage[this.timeKey] === undefined) {
+            if (this.selectedImage === undefined || this.selectedImage[this.timeKey] === undefined) {
                 return;
             }
 
-            let parsedSelectedTime = this.formatter.parse(selectedImage[this.timeKey]);
+            let parsedSelectedTime = this.formatter.parse(this.selectedImage[this.timeKey]);
 
             return currentTime - parsedSelectedTime;
-        },
-        formattedAge() {
-            let age = this.numericImageAge();
-
-            if (!age) {
-                return;
-            }
-
-            let result = this.durationFormatter.format(age);
-
-            if (age > EIGHT_HOURS) {
-                let negativeAge = (age / ONE_HOUR) * -1;
-                result = moment.duration(negativeAge, 'hours').humanize(true);
-
-                if (age > TWENTYFOUR_HOURS) {
-                    negativeAge = (age / TWENTYFOUR_HOURS) * -1;
-                    result = moment.duration(negativeAge, 'days').humanize(true);
-                }
-            }
-
-            return result;
         },
         trackAge() {
             let age;
             this.clearAgeTracking();
             this.ageTracker = window.setInterval(() => {
-                age = this.formattedAge();
+                age = this.formattedAge;
                 if (age) {
                     this.age = age;
                 } else {
