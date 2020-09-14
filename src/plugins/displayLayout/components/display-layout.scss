@@ -32,6 +32,8 @@
         &-vals {
             $p: 2px;
             color: $editDimensionsColor;
+            display: inline-block;
+            font-style: italic;
             position: absolute;
             bottom: $p; right: $p;
             opacity: 0.7;
@@ -42,7 +44,7 @@
         position: absolute;
     }
 }
-
+/*
 .l-shell__main-container {
     &[s-selected],
     &[s-selected-parent] {
@@ -61,7 +63,7 @@
             // Sub-layout in layout
         }
     }
-}
+}*/
 
 .is-editing {
     .l-shell__main-container {
@@ -86,7 +88,7 @@
         &[s-selected],
         &[s-selected-parent] {
             // Display grid and allow edit marquee to display in nested layouts when editing
-            > * > * > .l-layout + .allow-editing {
+            > * > * > .l-layout.allow-editing {
                 box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
 
                 > [class*="__dimensions"] {
