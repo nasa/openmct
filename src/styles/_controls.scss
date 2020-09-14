@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -97,7 +97,8 @@ button {
     }
 }
 
-.c-click-link {
+.c-click-link,
+.c-icon-link {
     // A clickable element, typically inline, with an icon and label
     @include cControl();
     cursor: pointer;
@@ -112,8 +113,15 @@ button {
     }
 }
 
+.c-icon-link {
+    &:before {
+        // Icon
+        //color: $colorBtnMajorBg;
+    }
+}
+
 .c-icon-button {
-    .c-icon-button__label {
+    &__label {
         margin-left: $interiorMargin;
     }
 
@@ -914,14 +922,6 @@ input[type="range"] {
         // Horizontal layout be
         display: inline-flex;
         align-items: center;
-    }
-
-    &--overlay-content {
-        > .c-button {
-            background: $colorLocalControlOvrBg;
-            border-radius: $controlCr;
-            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
-        }
     }
 }
 

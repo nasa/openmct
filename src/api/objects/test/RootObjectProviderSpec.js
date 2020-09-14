@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,34 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    '../RootObjectProvider'
-], function (
-    RootObjectProvider
-) {
-    describe('RootObjectProvider', function () {
-        let rootRegistry;
-        let rootObjectProvider;
+import RootObjectProvider from '../RootObjectProvider';
 
-        beforeEach(function () {
-            rootRegistry = jasmine.createSpyObj('rootRegistry', ['getRoots']);
-            rootRegistry.getRoots.and.returnValue(Promise.resolve(['some root']));
-            rootObjectProvider = new RootObjectProvider(rootRegistry);
-        });
+describe('RootObjectProvider', function () {
+    const ROOT_NAME = 'Open MCT';
+    let rootObjectProvider;
+    let roots = ['some root'];
+    let rootRegistry = {
+        getRoots: () => {
+            return Promise.resolve(roots);
+        }
+    };
 
-        it('supports fetching root', function () {
-            return rootObjectProvider.get()
-                .then(function (root) {
-                    expect(root).toEqual({
-                        identifier: {
-                            key: "ROOT",
-                            namespace: ""
-                        },
-                        name: 'The root object',
-                        type: 'root',
-                        composition: ['some root']
-                    });
-                });
+    beforeEach(function () {
+        rootObjectProvider = new RootObjectProvider(rootRegistry);
+    });
+
+    it('supports fetching root', async () => {
+        let root = await rootObjectProvider.get();
+
+        expect(root).toEqual({
+            identifier: {
+                key: "ROOT",
+                namespace: ""
+            },
+            name: ROOT_NAME,
+            type: 'root',
+            composition: ['some root']
         });
     });
 });
