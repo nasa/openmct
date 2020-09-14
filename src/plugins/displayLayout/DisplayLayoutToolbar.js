@@ -624,8 +624,8 @@ define(['lodash'], function (_) {
                 }
 
                 function getToggleGridButton(selection, selectionPath) {
-                    const ICON_GRID_SHOW = 'icon-grid-show';
-                    const ICON_GRID_HIDE = 'icon-grid-hide';
+                    const ICON_GRID_SHOW = 'icon-grid-on';
+                    const ICON_GRID_HIDE = 'icon-grid-off';
 
                     let displayLayoutContext;
 
