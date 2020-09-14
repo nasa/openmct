@@ -59,6 +59,7 @@ export default {
             return !this.item.identifier && !this.multiSelect;
         },
         isMissing() {
+            // safe check this.domainObject since for layout objects this.domainOjbect is undefined
             return this.domainObject && this.domainObject.status === 'missing';
         }
     },
