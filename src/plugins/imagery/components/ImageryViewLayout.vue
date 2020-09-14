@@ -131,6 +131,7 @@ export default {
         this.imageFormat = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
         // initialize
         this.timeKey = this.openmct.time.timeSystem().key;
+        this.formatter = this.getFormatter(this.timeKey);
         this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
@@ -278,6 +279,7 @@ export default {
             let timeSystem = this.openmct.time.timeSystem();
             // reset timesystem dependent variables
             this.timeKey = system.key;
+            this.formatter = this.getFormatter(this.timeKey);
             this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
             this.durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         },
@@ -342,13 +344,12 @@ export default {
         numericImageAge() {
             let currentTime = this.currentTimeValue();
             let selectedImage = this.getSelectedImage();
-            let formatter = this.getFormatter(this.timeKey);
 
             if (selectedImage === undefined || selectedImage[this.timeKey] === undefined) {
                 return;
             }
 
-            let parsedSelectedTime = formatter.parse(selectedImage[this.timeKey]);
+            let parsedSelectedTime = this.formatter.parse(selectedImage[this.timeKey]);
 
             return currentTime - parsedSelectedTime;
         },
