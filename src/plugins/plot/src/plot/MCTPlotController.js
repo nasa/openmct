@@ -557,9 +557,9 @@ define([
         this.cursorGuide = !this.cursorGuide;
     };
 
-
     MCTPlotController.prototype.toggleGridLines = function ($event) {
         this.gridLines = !this.gridLines;
+    };
 
     MCTPlotController.prototype.getXKeyOption = function (key) {
         return this.$scope.xKeyOptions.find(option => option.key === key);
