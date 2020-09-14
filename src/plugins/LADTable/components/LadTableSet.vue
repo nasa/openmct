@@ -143,10 +143,10 @@ export default {
                 telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 telemetryObject.domainObject = domainObject;
 
-                let array = this.ladTelemetryObjects[ladTable.key];
-                array.push(telemetryObject);
+                let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                telemetryObjects.push(telemetryObject);
 
-                this.$set(this.ladTelemetryObjects, ladTable.key, array);
+                this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
             };
         },
         removeTelemetryObject(ladTable) {
