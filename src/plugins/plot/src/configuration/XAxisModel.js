@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,6 +49,7 @@ define([
             }
 
             this.listenTo(this, 'change:key', this.changeKey, this);
+            this.listenTo(this, 'resetSeries', this.resetSeries, this);
         },
         changeKey: function (newKey) {
             const series = this.plot.series.first();
@@ -66,6 +67,10 @@ define([
 
             this.plot.series.forEach(function (plotSeries) {
                 plotSeries.set('xKey', newKey);
+            });
+        },
+        resetSeries: function () {
+            this.plot.series.forEach(function (plotSeries) {
                 plotSeries.reset();
             });
         },
