@@ -58,7 +58,7 @@ export default class DuplicateTask {
         this.filter = filter || this.isCreatable;
 
         await this.buildDuplicationPlan();
-        await this.persistObjects();
+        // this.persistObjects();
         await this.addClonesToParent();
 
         return this.firstClone;
@@ -83,8 +83,6 @@ export default class DuplicateTask {
         }
 
         this.firstClone = domainObjectClone;
-
-        return;
     }
 
     /**
@@ -93,32 +91,18 @@ export default class DuplicateTask {
      * result in automatic request batching by the browser.
      */
     persistObjects() {
-        // this.openmct.objects.mutate(clone, 'created', Date.now());
-        return self.$q.all(self.clones.map(function (clone) {
-            return clone.getCapability("persistence").persist().then(function () {
-                self.deferred.notify({
-                    phase: "duplicating",
-                    totalObjects: self.clones.length,
-                    processed: ++self.persisted
-                });
-            });
-        })).then(function () {
-            return self;
+        this.clones.forEach(clone => {
+            this.openmct.objects.mutate(clone, 'created', Date.now());
         });
     }
 
     /**
      * Will add a list of clones to the specified parent's composition
      */
-    addClonesToParent(self) {
-        return self.parent.getCapability("composition")
-            .add(self.firstClone)
-            .then(function (addedClone) {
-                return self.parent.getCapability("persistence").persist()
-                    .then(function () {
-                        return addedClone;
-                    });
-            });
+    async addClonesToParent() {
+        let parentComposition = this.openmct.composition.get(this.parent);
+        await parentComposition.load();
+        parentComposition.add(this.firstClone);
     }
 
     /**
@@ -141,7 +125,11 @@ export default class DuplicateTask {
 
             // Get children, if any
             let composeesCollection = this.openmct.composition.get(originalObject);
-            let composees = await composeesCollection.load();
+            let composees;
+
+            if (composeesCollection) {
+                composees = await composeesCollection.load();
+            }
 
             // Recursively duplicate children
             return this.duplicateComposees(clone, composees);
@@ -190,15 +178,16 @@ export default class DuplicateTask {
     async duplicateComposees(clonedParent, composees = []) {
         let idMap = {};
 
-        let finished = await composees.reduce(async (previousPromise, nextComposee) => {
+        let allComposeesDuplicated = composees.reduce(async (previousPromise, nextComposee) => {
             await previousPromise;
             let clonedComposee = await this.duplicateObject(nextComposee);
             idMap[this.getId(nextComposee)] = this.getId(clonedComposee);
+            await this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
 
-            return this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
+            return;
         }, Promise.resolve());
 
-        await finished;
+        await allComposeesDuplicated;
 
         this.rewriteIdentifiers(clonedParent, idMap);
         this.clones.push(clonedParent);
@@ -206,33 +195,16 @@ export default class DuplicateTask {
         return clonedParent;
     }
 
-    composeChild(child, parent, setLocation) {
-        let childKeyString = this.getId(child);
-
-        parent.composition.push(childKeyString);
+    async composeChild(child, parent, setLocation) {
+        let parentComposition = this.openmct.composition.get(parent);
+        await parentComposition.load();
+        parentComposition.add(child);
 
         //If a location is not specified, set it.
         if (setLocation && child.location === undefined) {
             let parentKeyString = this.getId(parent);
             child.location = parentKeyString;
         }
-
-        return child;
-    }
-
-    cloneOdbjectModel(domainObject) {
-        let clone = { ...domainObject };
-
-        // clean up
-        if (clone.composition) {
-            clone.composition = [];
-        }
-
-        delete clone.persisted;
-        delete clone.modified;
-        delete clone.location;
-
-        return clone;
     }
 
     getTypeDefinition(domainObject, definition) {
@@ -242,14 +214,11 @@ export default class DuplicateTask {
     }
 
     cloneObjectModel(domainObject) {
-        let clone = { ...domainObject };
+        let clone = JSON.parse(JSON.stringify(domainObject));
         let identifier = {
             key: uuid(),
             namespace: domainObject.identifier.namespace
         };
-        let type = this.openmct.types.get(domainObject.type);
-
-        type.definition.initialize(clone);
 
         if (clone.modified || clone.persisted || clone.location) {
             clone.modified = undefined;

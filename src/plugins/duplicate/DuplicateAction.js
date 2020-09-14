@@ -27,17 +27,17 @@ export default class DuplicateAction {
         this.key = 'duplicatee';
         this.description = 'Duplicate this object.';
         this.cssClass = "icon-duplicate";
-        this.newName = undefined;
 
         this.openmct = openmct;
     }
 
     async invoke(objectPath) {
-        let dupeAction = new DuplicateTask(this.openmct);
+        let duplicationTask = new DuplicateTask(this.openmct);
         let originalObject = objectPath[0];
         let parent = objectPath[1];
         let userInput = await this.getUserInput(originalObject, parent);
         let newParent = userInput.location;
+        let inNavigationPath = this.inNavigationPath(originalObject);
 
         // legacy check
         if (this.isLegacyDomainObject(newParent)) {
@@ -45,25 +45,15 @@ export default class DuplicateAction {
         }
 
         // if editing, save
-        if (this.inNavigationPath(originalObject) && this.openmct.editor.isEditing()) {
+        if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
-        let newObject = await dupeAction.duplicate(originalObject, parent);
-        this.addToNewParent(newObject, newParent);
+        // duplicate
+        let newObject = await duplicationTask.duplicate(originalObject, newParent);
+        this.updateNameCheck(newObject, userInput.name);
 
-        // if (this.inNavigationPath(originalObject)) {
-        //     let newObjectPath = await this.openmct.objects.getOriginalPath(originalObject.identifier);
-        //     let root = await this.openmct.objects.getRoot();
-        //     let rootChildCount = root.composition.length;
-
-        //     // if not multiple root children, remove root from path
-        //     if (rootChildCount < 2) {
-        //         newObjectPath.pop(); // remove ROOT
-        //     }
-
-        //     this.navigateTo(newObjectPath);
-        // }
+        return;
     }
 
     async getUserInput(originalObject, parent) {
@@ -73,10 +63,6 @@ export default class DuplicateAction {
             name: originalObject.name
         };
         let userInput = await dialogService.getUserInput(dialogForm, formState);
-
-        // check new user input to see if we need to update name of duplicated object
-        // if so store for later
-        this.updateNameCheck(originalObject, userInput.name);
 
         return userInput;
     }
@@ -113,46 +99,13 @@ export default class DuplicateAction {
 
     updateNameCheck(object, name) {
         if (object.name !== name) {
-            this.newName = name;
+            this.openmct.objects.mutate(object, 'name', name);
         }
     }
 
     inNavigationPath(object) {
         return this.openmct.router.path
             .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
-    }
-
-    navigateTo(objectPath) {
-        let urlPath = objectPath.reverse()
-            .map(object => this.openmct.objects.makeKeyString(object.identifier))
-            .join("/");
-
-        window.location.href = '#/browse/' + urlPath;
-    }
-
-    addToNewParent(child, newParent) {
-        let newParentKeyString = this.openmct.objects.makeKeyString(newParent.identifier);
-        let composition = newParent.composition;
-
-        composition.push(child.identifier);
-
-        this.openmct.objects.mutate(newParent, 'composition', composition);
-        this.openmct.objects.mutate(child, 'location', newParentKeyString);
-    }
-
-    removeFromOldParent(parent, child) {
-        let composition = parent.composition.filter(id =>
-            !this.openmct.objects.areIdsEqual(id, child.identifier)
-        );
-
-        this.openmct.objects.mutate(parent, 'composition', composition);
-
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-        const isAlias = parentKeyString !== child.location;
-
-        if (!isAlias) {
-            this.openmct.objects.mutate(child, 'location', null);
-        }
     }
 
     getDialogForm(object, parent) {
