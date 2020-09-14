@@ -17,18 +17,29 @@
     flex-direction: column;
     overflow: auto;
 
-    &__grid-holder {
+    &__grid-holder,
+    &__dimensions {
         display: none;
+    }
+
+    &__dimensions {
+        $b: 1px dashed $editDimensionsColor;
+        border-right: $b;
+        border-bottom: $b;
+        pointer-events: none;
+        position: absolute;
+
+        &-vals {
+            $p: 2px;
+            color: $editDimensionsColor;
+            position: absolute;
+            bottom: $p; right: $p;
+            opacity: 0.7;
+        }
     }
 
     &__frame {
         position: absolute;
-    }
-
-    &__dimensions {
-        display: none;
-        position: absolute;
-        outline: 2px solid red;
     }
 }
 
@@ -37,7 +48,7 @@
     &[s-selected-parent] {
         > .l-layout {
             > [class*="__dimensions"] {
-                display: block;
+                //display: block;
             }
         }
     }
@@ -47,9 +58,7 @@
     &[s-selected]:not([multi-select="true"]),
     &[s-selected-parent] {
         > * > * > .l-layout {
-            > [class*="__dimensions"] {
-                display: block;
-            }
+            // Sub-layout in layout
         }
     }
 }
@@ -61,6 +70,10 @@
             // Display grid and allow edit marquee to display in main layout holder when editing
             > .l-layout {
                 background: $editUIGridColorBg;
+
+                > [class*="__dimensions"] {
+                    display: block;
+                }
 
                 > [class*="__grid-holder"] {
                     display: block;
@@ -75,6 +88,10 @@
             // Display grid and allow edit marquee to display in nested layouts when editing
             > * > * > .l-layout + .allow-editing {
                 box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
+
+                > [class*="__dimensions"] {
+                    display: block;
+                }
 
                 > [class*='grid-holder'] {
                     display: block;

@@ -51,6 +51,9 @@
         class="l-layout__dimensions"
         :style="layoutDimensionsStyle"
     >
+        <div class="l-layout__dimensions-vals">
+            {{ layoutDimensions[0]}},{{ layoutDimensions[1]}}
+        </div>
     </div>
     <component
         :is="item.type"
