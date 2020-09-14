@@ -112,11 +112,22 @@ define(
                 formModel = this.createModel(formValue);
 
             formModel.location = parent.getId();
+
+            this.updateNamespaceFromParent(parent);
+
             this.domainObject.useCapability("mutation", function () {
                 return formModel;
             });
 
             return this.domainObject;
+        };
+
+        /** @private */
+        CreateWizard.prototype.updateNamespaceFromParent = function (parent) {
+            let childIdentifier = this.domainObject.useCapability('adapter').identifier;
+            let parentIdentifier = parent.useCapability('adapter').identifier;
+            childIdentifier.namespace = parentIdentifier.namespace;
+            this.domainObject.id = this.openmct.objects.makeKeyString(childIdentifier);
         };
 
         /**
