@@ -48,6 +48,7 @@
         ></div>
     </div>
     <div
+        v-if="layoutDimensions[0] > 0 && layoutDimensions[1] > 0"
         class="l-layout__dimensions"
         :style="layoutDimensionsStyle"
     >
@@ -180,6 +181,7 @@ export default {
             });
         },
         layoutDimensions() {
+            console.log(this.internalDomainObject.configuration.layoutDimensions);
             return this.internalDomainObject.configuration.layoutDimensions;
         },
         layoutDimensionsStyle() {
