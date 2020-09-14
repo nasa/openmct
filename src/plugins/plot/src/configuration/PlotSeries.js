@@ -428,6 +428,19 @@ define([
                 this.filters = deepCopiedFilters;
             }
         },
+        getDisplayRange: function (xKey) {
+            const unsortedData = this.data;
+            this.data = [];
+            unsortedData.forEach(point => this.add(point, false));
+
+            const minValue = this.getXVal(this.data[0]);
+            const maxValue = this.getXVal(this.data[this.data.length - 1]);
+
+            return {
+                min: minValue,
+                max: maxValue
+            };
+        },
         markerOptionsDisplayText: function () {
             const showMarkers = this.get('markers');
             if (!showMarkers) {

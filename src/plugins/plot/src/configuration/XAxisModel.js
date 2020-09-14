@@ -49,6 +49,7 @@ define([
             }
 
             this.listenTo(this, 'change:key', this.changeKey, this);
+            this.listenTo(this, 'resetSeries', this.resetSeries, this);
         },
         changeKey: function (newKey) {
             const series = this.plot.series.first();
@@ -66,6 +67,10 @@ define([
 
             this.plot.series.forEach(function (plotSeries) {
                 plotSeries.set('xKey', newKey);
+            });
+        },
+        resetSeries: function () {
+            this.plot.series.forEach(function (plotSeries) {
                 plotSeries.reset();
             });
         },
