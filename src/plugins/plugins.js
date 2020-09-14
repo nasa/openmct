@@ -24,6 +24,7 @@ define([
     'lodash',
     './utcTimeSystem/plugin',
     './localTimeSystem/plugin',
+    './ISOTimeFormat/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -61,6 +62,7 @@ define([
     _,
     UTCTimeSystem,
     LocalTimeSystem,
+    ISOTimeFormat,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -184,6 +186,7 @@ define([
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
+    plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
 
     return plugins;
