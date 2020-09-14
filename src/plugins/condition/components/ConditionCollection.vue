@@ -223,10 +223,10 @@ export default {
             this.conditionManager.addCondition();
         },
         updateCondition(data) {
-            this.conditionManager.updateCondition(data.condition, data.index);
+            this.conditionManager.updateCondition(data.condition);
         },
-        removeCondition(index) {
-            this.conditionManager.removeCondition(index);
+        removeCondition(id) {
+            this.conditionManager.removeCondition(id);
         },
         reorder(reorderPlan) {
             this.conditionManager.reorderConditions(reorderPlan);

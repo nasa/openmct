@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,33 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RootObjectProvider from '../RootObjectProvider';
 
-describe('RootObjectProvider', function () {
-    const ROOT_NAME = 'Open MCT';
-    let rootObjectProvider;
-    let roots = ['some root'];
-    let rootRegistry = {
-        getRoots: () => {
-            return Promise.resolve(roots);
-        }
-    };
+export default class CouchObjectQueue {
+    constructor(object, rev) {
+        this.rev = rev;
+        this.objects = object ? [object] : [];
+        this.pending = false;
+    }
 
-    beforeEach(function () {
-        rootObjectProvider = new RootObjectProvider(rootRegistry);
-    });
+    updateRevision(rev) {
+        this.rev = rev;
+    }
 
-    it('supports fetching root', async () => {
-        let root = await rootObjectProvider.get();
+    hasNext() {
+        return this.objects.length;
+    }
 
-        expect(root).toEqual({
-            identifier: {
-                key: "ROOT",
-                namespace: ""
-            },
-            name: ROOT_NAME,
-            type: 'root',
-            composition: ['some root']
-        });
-    });
-});
+    enqueue(item) {
+        this.objects.push(item);
+    }
+
+    dequeue() {
+        return this.objects.shift();
+    }
+
+    clear() {
+        this.rev = undefined;
+        this.objects = [];
+    }
+
+}

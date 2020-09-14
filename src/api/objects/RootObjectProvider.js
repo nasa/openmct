@@ -29,7 +29,7 @@ class RootObjectProvider {
                     key: "ROOT",
                     namespace: ""
                 },
-                name: 'The root object',
+                name: 'Open MCT',
                 type: 'root',
                 composition: []
             };
