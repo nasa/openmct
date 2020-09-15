@@ -21,7 +21,10 @@
 *****************************************************************************/
 
 <template>
-<div class="c-style">
+<div
+    class="c-style"
+    @click="applyStyle()"
+>
     <span
         class="c-style-thumb"
         :style="[savedStyle.imageUrl ? { backgroundImage:'url(' + savedStyle.imageUrl + ')'} : savedStyle ]"
@@ -91,8 +94,6 @@
 </template>
 
 <script>
-import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
-
 export default {
     name: 'SavedStyleSelector',
     inject: [
@@ -111,23 +112,22 @@ export default {
         },
         isDefaultStyle() {
             return this.stylesManager.isDefaultStyle(this.savedStyle);
-        },
-        itemStyle() {
-            return getStylesWithoutNoneValue(this.savedStyle);
         }
     },
     methods: {
-        applySavedStyle() {
-            this.stylesManager.select(this.savedStyle);
+        applyStyle() {
+            if (this.openmct.editor.isEditing()) {
+                this.stylesManager.select(this.savedStyle);
+            }
         },
         deleteStyle(style) {
-            this.showConfirmDialog(style)
+            this.showDeleteStyleDialog(style)
                 .then(() => {
                     this.stylesManager.delete(this.savedStyle);
                 })
                 .catch(() => {});
         },
-        showConfirmDialog(style) {
+        showDeleteStyleDialog(style) {
             const message = `
                 This will delete this saved style.
                 This action will not effect styling that has already been applied.
@@ -160,34 +160,6 @@ export default {
         },
         hasProperty(property) {
             return property !== undefined;
-        },
-        normalizeValueForSwatch(value) {
-            if (value && value.indexOf('__no_value') > -1) {
-                return value.replace('__no_value', 'transparent');
-            }
-
-            return value;
-        },
-        normalizeValueForStyle(value) {
-            if (value && value === 'transparent') {
-                return '__no_value';
-            }
-
-            return value;
-        },
-        updateStyleValue(value, item) {
-            value = this.normalizeValueForStyle(value);
-            if (item.property === 'border') {
-                value = '1px solid ' + value;
-            }
-
-            if (value && (value.url !== undefined)) {
-                this.savedStyle[item.property] = value.url;
-            } else {
-                this.savedStyle[item.property] = value;
-            }
-
-            this.$emit('persist', this.styleItem, item.property);
         }
     }
 };

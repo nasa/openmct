@@ -31,7 +31,6 @@
                 v-for="(savedStyle, index) in savedStyles"
                 :key="index"
                 class="c-inspect-styles__saved-style"
-                @click="applyStyle(savedStyle)"
             >
                 <saved-style-selector
                     class="c-inspect-styles__selector"
@@ -74,11 +73,6 @@ export default {
         },
         setStyles(styles) {
             this.savedStyles = styles;
-        },
-        applyStyle(style) {
-            if (this.openmct.editor.isEditing()) {
-                this.stylesManager.select(style);
-            }
         }
     }
 };
