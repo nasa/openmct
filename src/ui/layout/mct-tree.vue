@@ -41,7 +41,7 @@
             <!-- loading -->
             <li
                 v-if="isLoading"
-                :style="leftPaddingStyle()"
+                :style="indicatorLeftOffset"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
                 <span class="c-tree__item__label">Loading...</span>
@@ -78,7 +78,7 @@
                         />
                         <li
                             v-if="visibleItems.length === 0 && !noVisibleItems"
-                            :style="leftPaddingStyle()"
+                            :style="indicatorLeftOffset"
                             class="c-tree__item c-tree__item--empty"
                         >
                             No items
@@ -168,7 +168,14 @@ export default {
         },
         itemLeftOffset() {
             return this.activeSearch ? '0px' : this.ancestors.length * 10 + 'px';
-        }
+        },
+        indicatorLeftOffset() {
+            let offset = ((this.ancestors.length + 1) * 10);
+
+            return {
+                paddingLeft: offset + 'px'
+            };
+        },
     },
     watch: {
         syncTreeNavigation() {
@@ -630,13 +637,6 @@ export default {
             return {
                 height: this.availableContainerHeight + 'px',
                 overflow: this.noScroll ? 'hidden' : 'scroll'
-            };
-        },
-        leftPaddingStyle() {
-            let offset = ((this.ancestors.length + 1) * 10);
-
-            return {
-                paddingLeft: offset + 'px'
             };
         },
         childrenIn(el, done) {
