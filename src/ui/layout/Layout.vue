@@ -5,6 +5,14 @@
         'is-editing': isEditing
     }"
 >
+
+    <div 
+        id="splash-screen"
+        style="background-color: red; position:absolute; top:0px; left:0px; width:100%; height:100%; z-index:2000;"
+    >
+        LOADING ...
+    </div>
+
     <div
         class="l-shell__head"
         :class="{
