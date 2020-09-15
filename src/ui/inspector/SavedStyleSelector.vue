@@ -23,7 +23,7 @@
 <template>
 <div
     class="c-style"
-    @click="applyStyle()"
+    @click="selectStyle()"
 >
     <span
         class="c-style-thumb"
@@ -115,7 +115,7 @@ export default {
         }
     },
     methods: {
-        applyStyle() {
+        selectStyle() {
             if (this.openmct.editor.isEditing()) {
                 this.stylesManager.select(this.savedStyle);
             }
