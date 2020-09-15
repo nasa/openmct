@@ -630,7 +630,7 @@ export default {
             object.identifier = identifier;
             object.location = parentKeyString;
 
-            this.openmct.objects.mutate(object, 'created', Date.now());
+            this.openmct.objects.save(object);
 
             return object;
         },
