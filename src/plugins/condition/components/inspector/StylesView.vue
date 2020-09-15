@@ -642,11 +642,11 @@ export default {
         persist(domainObject, style) {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
         },
-        updateItemStyle(styles) {
+        updateItemStyle(style) {
             const foundStyle = this.findStyleByConditionId(this.selectedConditionId);
 
             if (foundStyle) {
-                foundStyle.style = styles;
+                foundStyle.style = style;
                 this.getAndPersistStyles();
             } else {
                 const properties = Object.keys(this.staticStyle.style);
@@ -654,7 +654,7 @@ export default {
                 // TODO static styles not working
                 // do i need to grab from selection?
                 properties.forEach(property => {
-                    this.staticStyle.style[property] = styles[property];
+                    this.staticStyle.style[property] = style[property];
                     this.getAndPersistStyles(property);
                 });
             }
