@@ -41,7 +41,7 @@
             <!-- loading -->
             <li
                 v-if="isLoading"
-                :style="emptyStyles()"
+                :style="leftPaddingStyle()"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
                 <span class="c-tree__item__label">Loading...</span>
@@ -78,7 +78,7 @@
                         />
                         <li
                             v-if="visibleItems.length === 0 && !noVisibleItems"
-                            :style="emptyStyles()"
+                            :style="leftPaddingStyle()"
                             class="c-tree__item c-tree__item--empty"
                         >
                             No items
@@ -632,7 +632,7 @@ export default {
                 overflow: this.noScroll ? 'hidden' : 'scroll'
             };
         },
-        emptyStyles() {
+        leftPaddingStyle() {
             let offset = ((this.ancestors.length + 1) * 10);
 
             return {
