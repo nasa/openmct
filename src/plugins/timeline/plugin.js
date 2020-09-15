@@ -32,69 +32,73 @@ export default function () {
             cssClass: 'icon-clock',
             initialize: function (domainObject) {
                 let currentTimeStamp = new Date().getTime();
+                let templateActivities = [{
+                    name: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet",
+                    // name: 'Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1',
+                    // start: 1597170002854,
+                    start: currentTimeStamp,
+                    end: currentTimeStamp + 564000,
+                    type: 'NIRVSS',
+                    color: 'fuchsia',
+                    textColor: 'white'
+                },
+                    {
+                        name: 'Duis aute irure dolor in reprehenderit in ',
+                        // name: 'Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2',
+                        // start: 1597171132854,
+                        start: currentTimeStamp + 565000,
+                        end: currentTimeStamp + 565000 + 50000,
+                        type: 'NIRVSS',
+                        color: 'orange',
+                        textColor: 'white'
+                    },
+                    {
+                        name: 'Sed ut perspiciatis unde omnis iste natus error sit.',
+                        // name: 'Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3',
+                        // start: 1597170132854,
+                        start: currentTimeStamp + 65000,
+                        end: currentTimeStamp + 65000 + 535000,
+                        type: 'VIPER',
+                        color: 'white',
+                        textColor: 'black'
+                    },
+                    {
+                        name: 'At vero eos et accusamus et ',
+                        // name: 'Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4',
+                        // start: 1597170132854,
+                        start: currentTimeStamp + 65000,
+                        end: currentTimeStamp + 65000 + 535000,
+                        type: 'VIPER',
+                        color: 'blue',
+                        textColor: 'white'
+                    },
+                    {
+                        name: 'Temporibus autem quibusdam.',
+                        // name: 'Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 ',
+                        // start: 1597170132854,
+                        start: currentTimeStamp + 65000,
+                        end: currentTimeStamp + 65000 + 535000,
+                        type: 'VIPER',
+                        color: 'red',
+                        textColor: 'white'
+                    },
+                    {
+                        name: 'Lorem Ipsum',
+                        // start: 1597171132854,
+                        start: currentTimeStamp + 565000,
+                        end: currentTimeStamp + 565000 + 50000,
+                        type: 'NIRVSS',
+                        color: 'purple',
+                        textColor: 'white'
+                    }];
+                let activities = [];
+                for (let i=0;i < 100; i++) {
+                    activities = activities.concat(templateActivities.map(activity => activity));
+                }
                 domainObject.configuration = {
                     name: 'Demo Plan',
                     swimlanes: 10,
-                    activities: [
-                        {
-                            name: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit",
-                            // name: 'Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1',
-                            // start: 1597170002854,
-                            start: currentTimeStamp,
-                            end: currentTimeStamp + 564000,
-                            type: 'NIRVSS',
-                            color: 'fuchsia',
-                            textColor: 'white'
-                        },
-                        {
-                            name: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur Excepteur sint occaecat cupidatat non proident',
-                            // name: 'Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2',
-                            // start: 1597171132854,
-                            start: currentTimeStamp + 565000,
-                            end: currentTimeStamp + 565000 + 50000,
-                            type: 'NIRVSS',
-                            color: 'orange',
-                            textColor: 'white'
-                        },
-                        {
-                            name: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.',
-                            // name: 'Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3',
-                            // start: 1597170132854,
-                            start: currentTimeStamp + 65000,
-                            end: currentTimeStamp + 65000 + 535000,
-                            type: 'VIPER',
-                            color: 'white',
-                            textColor: 'black'
-                        },
-                        {
-                            name: 'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident',
-                            // name: 'Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4',
-                            // start: 1597170132854,
-                            start: currentTimeStamp + 65000,
-                            end: currentTimeStamp + 65000 + 535000,
-                            type: 'VIPER',
-                            color: 'blue',
-                            textColor: 'white'
-                        },
-                        {
-                            name: 'Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.',
-                            // name: 'Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 ',
-                            // start: 1597170132854,
-                            start: currentTimeStamp + 65000,
-                            end: currentTimeStamp + 65000 + 535000,
-                            type: 'VIPER',
-                            color: 'red',
-                            textColor: 'white'
-                        },
-                        {
-                            name: 'Lorem Ipsum',
-                            // start: 1597171132854,
-                            start: currentTimeStamp + 565000,
-                            end: currentTimeStamp + 565000 + 50000,
-                            type: 'NIRVSS',
-                            color: 'purple',
-                            textColor: 'white'
-                        }]
+                    activities: activities
                     //TODO: these will come later
                     // groups: [],
                     // bounds: {

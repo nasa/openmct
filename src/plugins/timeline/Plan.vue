@@ -24,6 +24,7 @@ const PIXELS_PER_TICK_WIDE = 200;
 const ROW_HEIGHT = 30;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
+const TIMELINE_HEIGHT = 30;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -33,14 +34,17 @@ export default {
         // draw x axis with labels. CSS is used to position them.
         this.axisElement = this.svgElement.append("g")
             .attr("class", "axis");
+        this.xAxis = d3Axis.axisTop();
+
         this.setDimensions();
         this.canvas = this.container.append('canvas').node();
         this.canvasContext = this.canvas.getContext('2d');
         this.canvasContext.font = "normal 14px sans-serif";
-        // this.canvas.width = this.width;
+        this.canvas.width = this.width;
         // this.canvas.height = this.height;
-        this.svgElement.attr("width", this.width);
-        this.svgElement.attr("height", this.height);
+        this.canvas.height = 17000;
+        // this.svgElement.attr("width", this.width);
+        // this.svgElement.attr("height", this.height);
 
         this.updateViewBounds();
         this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
@@ -50,12 +54,12 @@ export default {
     methods: {
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
-            this.xAxis = d3Axis.axisTop();
+            this.viewBounds.end = this.viewBounds.end + (30*60*1000);
             this.setScaleAndPlotActivities();
         },
         setScaleAndPlotActivities() {
             this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            d3Selection.selectAll("svg > *").remove();
+            d3Selection.selectAll("svg > :not(g)").remove();
             this.setScale();
             this.plotActivity();
         },
@@ -182,8 +186,8 @@ export default {
                     }
 
                     //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
-                    // this.plotCanvas(activity, rectX, rectWidth, activityRow, textStart, canFitText);
-                    this.plotSVG(activity, rectX, rectWidth, activityRow, textStart, canFitText);
+                    this.plotCanvas(activity, rectX, rectWidth, activityRow + TIMELINE_HEIGHT, textStart, canFitText);
+                    // this.plotSVG(activity, rectX, rectWidth, activityRow + TIMELINE_HEIGHT, textStart, canFitText);
 
                     if (!this.activityPositions[activityRow]) {
                         this.activityPositions[activityRow] = [];
@@ -195,6 +199,7 @@ export default {
                     });
                 }
             });
+            // this.svgElement.attr("height", activityRow + TIMELINE_HEIGHT);
         },
         plotSVG(activity, rectX, rectWidth, activityRow, textStart, canFitText) {
             this.svgElement.append("rect")
