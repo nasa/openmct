@@ -151,7 +151,7 @@ export default {
     destroyed() {
         this.removeListeners();
         this.openmct.editor.off('isEditing', this.setEditState);
-        this.stylesManager.off('styleSelected', this.updateItemStyle);
+        this.stylesManager.off('styleSelected', this.updateSelectionStyle);
     },
     mounted() {
         this.items = [];
@@ -170,7 +170,7 @@ export default {
         }
 
         this.openmct.editor.on('isEditing', this.setEditState);
-        this.stylesManager.on('styleSelected', this.updateItemStyle);
+        this.stylesManager.on('styleSelected', this.updateSelectionStyle);
     },
     methods: {
         getObjectStyles() {
@@ -642,20 +642,22 @@ export default {
         persist(domainObject, style) {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
         },
-        updateItemStyle(style) {
+        updateSelectionStyle(style) {
             const foundStyle = this.findStyleByConditionId(this.selectedConditionId);
 
             if (foundStyle) {
-                foundStyle.style = style;
+                Object.entries(style).forEach(([property, value]) => {
+                    if (foundStyle.style[property] !== undefined && foundStyle.style[property] !== value) {
+                        foundStyle.style[property] = value;
+                    }
+                });
                 this.getAndPersistStyles();
             } else {
-                const properties = Object.keys(this.staticStyle.style);
-                // this.staticStyle = { style: styles };
-                // TODO static styles not working
-                // do i need to grab from selection?
-                properties.forEach(property => {
-                    this.staticStyle.style[property] = style[property];
-                    this.getAndPersistStyles(property);
+                Object.entries(style).forEach(([property, value]) => {
+                    if (this.staticStyle.style[property] !== undefined && this.staticStyle.style[property] !== value) {
+                        this.staticStyle.style[property] = value;
+                        this.getAndPersistStyles(property);
+                    }
                 });
             }
         }
