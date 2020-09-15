@@ -22,74 +22,85 @@
 
 <template>
 <div
-    class="c-style"
+    class="c-saved-style"
     @click="selectStyle()"
 >
-    <span
-        class="c-style-thumb"
-        :style="[savedStyle.imageUrl ? { backgroundImage:'url(' + savedStyle.imageUrl + ')'} : savedStyle ]"
-    >
+    <div class="c-style">
         <span
-            class="c-style-thumb__text"
-            :class="{ 'hide-nice': !hasProperty(savedStyle.color) }"
+            class="c-disclosure-triangle is-enabled"
+            :class="{ 'c-disclosure-triangle--expanded': expanded }"
+            @click.stop="toggleExpanded()"
+        ></span>
+        <span
+            class="c-style-thumb"
+            :style="[savedStyle.imageUrl ? { backgroundImage:'url(' + savedStyle.imageUrl + ')'} : savedStyle ]"
         >
-            ABC
+            <span
+                class="c-style-thumb__text"
+                :class="{ 'hide-nice': !hasProperty(savedStyle.color) }"
+            >
+                ABC
+            </span>
         </span>
-    </span>
-    <span class="c-toolbar">
-        <div class="c-ctrl-wrapper">
-            <div
-                class="c-icon-button--disabled c-icon-button--swatched icon-line-horz"
-                title="Border color"
-            >
+        <span class="c-toolbar">
+            <div class="c-ctrl-wrapper">
                 <div
-                    class="c-swatch"
-                    :style="{
-                        background: borderColor
-                    }"
-                ></div>
+                    class="c-icon-button--disabled c-icon-button--swatched icon-line-horz"
+                    title="Border color"
+                >
+                    <div
+                        class="c-swatch"
+                        :style="{
+                            background: borderColor
+                        }"
+                    ></div>
+                </div>
             </div>
-        </div>
-        <div class="c-ctrl-wrapper">
-            <div
-                class="c-icon-button--disabled c-icon-button--swatched icon-paint-bucket"
-                title="Background color"
-            >
+            <div class="c-ctrl-wrapper">
                 <div
-                    class="c-swatch"
-                    :style="{
-                        background: savedStyle.backgroundColor
-                    }"
-                ></div>
+                    class="c-icon-button--disabled c-icon-button--swatched icon-paint-bucket"
+                    title="Background color"
+                >
+                    <div
+                        class="c-swatch"
+                        :style="{
+                            background: savedStyle.backgroundColor
+                        }"
+                    ></div>
+                </div>
             </div>
-        </div>
-        <div class="c-ctrl-wrapper">
-            <div
-                class="c-icon-button--disabled c-icon-button--swatched icon-font"
-                title="Text color"
-            >
+            <div class="c-ctrl-wrapper">
                 <div
-                    class="c-swatch"
-                    :style="{
-                        background: savedStyle.color
-                    }"
-                ></div>
+                    class="c-icon-button--disabled c-icon-button--swatched icon-font"
+                    title="Text color"
+                >
+                    <div
+                        class="c-swatch"
+                        :style="{
+                            background: savedStyle.color
+                        }"
+                    ></div>
+                </div>
             </div>
-        </div>
 
-        <!-- delete saved style -->
-        <div
-            v-if="!isDefaultStyle"
-            class="c-ctrl-wrapper"
-        >
+            <!-- delete saved style -->
             <div
-                class="c-icon-button icon-trash"
-                title="Delete Style"
-                @click.stop="deleteStyle()"
+                v-if="!isDefaultStyle"
+                class="c-ctrl-wrapper"
             >
+                <div
+                    class="c-icon-button icon-trash"
+                    title="Delete Style"
+                    @click.stop="deleteStyle()"
+                >
+                </div>
             </div>
-        </div>
-    </span>
+        </span>
+    </div>
+
+    <div v-if="expanded">
+        {{ description }}
+    </div>
 </div>
 </template>
 
@@ -106,9 +117,29 @@ export default {
             required: true
         }
     },
+    data() {
+        return {
+            expanded: false
+        };
+    },
     computed: {
         borderColor() {
             return this.savedStyle.border.substring(this.savedStyle.border.indexOf('#'));
+        },
+        description() {
+            const fill = `Fill: ${this.savedStyle.fill || 'None'};`;
+            const border = `Border: ${this.savedStyle.border || 'None'};`;
+            const color = `Text Color: ${this.savedStyle.color || 'None'};`;
+            const fontSize = this.savedStyle.fontSize ? `Font Size: ${this.savedStyle.fontSize};` : '';
+            const font = this.savedStyle.font ? `Font Family: ${this.savedStyle.font};` : '';
+
+            return `
+                ${fill}
+                ${border}
+                ${color}
+                ${fontSize}
+                ${font}
+            `;
         },
         isDefaultStyle() {
             return this.stylesManager.isDefaultStyle(this.savedStyle);
@@ -160,6 +191,9 @@ export default {
         },
         hasProperty(property) {
             return property !== undefined;
+        },
+        toggleExpanded() {
+            this.expanded = !this.expanded;
         }
     }
 };
