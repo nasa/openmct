@@ -41,6 +41,7 @@
             <!-- loading -->
             <li
                 v-if="isLoading"
+                :style="emptyStyles()"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
                 <span class="c-tree__item__label">Loading...</span>
@@ -171,6 +172,10 @@ export default {
     },
     watch: {
         syncTreeNavigation() {
+            if (this.isLoading) {
+                return;
+            }
+
             const AND_SAVE_PATH = true;
             let currentLocationPath = this.openmct.router.currentLocation.path;
             let hasParent = this.currentlyViewedObjectParentPath() || (this.multipleRootChildren && !this.currentlyViewedObjectParentPath());
@@ -292,6 +297,7 @@ export default {
 
                 this.itemOffset = start;
                 this.visibleItems = this.focusedItems.slice(start, end);
+                this.noVisibleItems = false;
 
                 this.updatingView = false;
             });
@@ -319,7 +325,6 @@ export default {
                         this.noScroll = true;
                     }
 
-                    this.noVisibleItems = false;
                     this.updatevisibleItems();
                 });
             } else {
@@ -408,7 +413,9 @@ export default {
             }
         },
         async getAllChildren(node) {
+            await this.clearVisibleItems();
             this.isLoading = true;
+
             if (this.composition) {
                 this.composition.off('add', this.addChild);
                 this.composition.off('remove', this.removeChild);
@@ -554,22 +561,21 @@ export default {
             this.$refs.scrollable.scrollTop = 0;
             this.setContainerHeight();
         },
-        async handleReset(node) {
-            this.visibleItems = [];
-            await this.$nextTick(); // prevents "ghost" image of visibleItems
+        handleReset(node) {
+            if (this.isLoading) {
+                return;
+            }
+
             this.childrenSlideClass = 'slide-right';
             this.ancestors.splice(this.ancestors.indexOf(node) + 1);
             this.getAllChildren(node);
             this.setCurrentNavigatedPath();
         },
-        async handleExpanded(node) {
-            if (this.activeSearch) {
+        handleExpanded(node) {
+            if (this.activeSearch || this.isLoading) {
                 return;
             }
 
-            this.noVisibleItems = true;
-            this.visibleItems = [];
-            await this.$nextTick(); // prevents "ghost" image of visibleItems
             this.childrenSlideClass = 'slide-left';
             let newParent = this.buildTreeItem(node);
             this.ancestors.push(newParent);
@@ -604,6 +610,13 @@ export default {
 
                 return currentPath.join('/');
             }
+        },
+        async clearVisibleItems() {
+            this.noVisibleItems = true;
+            this.visibleItems = [];
+            await this.$nextTick(); // prevents "ghost" image of visibleItems
+
+            return;
         },
         scrollItems(event) {
             if (!windowResizing) {
