@@ -175,7 +175,7 @@ export default {
             return {
                 paddingLeft: offset + 'px'
             };
-        },
+        }
     },
     watch: {
         syncTreeNavigation() {
