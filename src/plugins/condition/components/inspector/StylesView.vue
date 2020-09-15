@@ -115,6 +115,7 @@ import ConditionSetSelectorDialog from "@/plugins/condition/components/inspector
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
 import Vue from 'vue';
+import StylesManager from '@/ui/inspector/StylesManager';
 
 export default {
     name: 'StylesView',
@@ -125,8 +126,7 @@ export default {
     },
     inject: [
         'openmct',
-        'selection',
-        'stylesManager'
+        'selection'
     ],
     data() {
         return {
@@ -170,6 +170,7 @@ export default {
         }
 
         this.openmct.editor.on('isEditing', this.setEditState);
+        this.stylesManager = new StylesManager(this.openmct);
         this.stylesManager.on('styleSelected', this.updateSelectionStyle);
     },
     methods: {

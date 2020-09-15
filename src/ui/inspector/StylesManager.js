@@ -2,10 +2,8 @@ import EventEmitter from 'EventEmitter';
 
 const LOCAL_STORAGE_KEY = 'mct-saved-styles';
 const LIMIT = 100;
-const PERSIST_ERROR_MESSAGE = 'Problem encountered saving styles.';
-const LIMIT_WARNING_MESSAGE = `Saved styles limit (${LIMIT}) reached. Please delete a saved style and try again.`;
 const STYLE_PROPERTIES = [
-    'backgroundColor', 'border', 'color', 'isStyleInvisible'
+    'backgroundColor', 'border', 'color'
 ];
 const DEFAULT_STYLE = {
     backgroundColor: '',
@@ -21,7 +19,14 @@ export default class StylesManager extends EventEmitter {
     constructor(openmct) {
         super();
 
+        if (!StylesManager.instance) {
+            StylesManager.instance = this;
+        }
+
         this.openmct = openmct;
+
+        // eslint-disable-next-line
+        return StylesManager.instance;
     }
 
     load() {
@@ -33,23 +38,56 @@ export default class StylesManager extends EventEmitter {
 
     save(style) {
         const styles = this.load();
+        let allowSave;
         let persistSucceeded;
 
-        if (styles.length < LIMIT) {
+        allowSave = !this.isSaveLimitReached(styles);
+        allowSave = !this.isExistingStyle(style, styles);
+
+        if (allowSave) {
             // latest saved styles go to front of store (except default always first)
             styles.splice(1, 0, style);
             persistSucceeded = this.persist(styles);
-        } else {
-            this.openmct.notifications.warning(LIMIT_WARNING_MESSAGE);
-        }
 
-        if (persistSucceeded) {
-            this.emit('stylesUpdated', styles);
+            if (persistSucceeded) {
+                this.emit('stylesUpdated', styles);
+            }
         }
     }
 
     /**
-     * @param {Array<Style>} styles saved styles for this browser
+     * @private
+     */
+    isSaveLimitReached(styles) {
+        if (styles.length >= LIMIT) {
+            this.openmct.notifications.alert(
+                `Saved styles limit (${LIMIT}) reached. Please delete a saved style and try again.`
+            );
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @private
+     */
+    isExistingStyle(style, styles) {
+        const match = styles.findIndex(existingStyle => this.isEqual(style, existingStyle));
+
+        if (match > -1) {
+            this.openmct.notifications.alert(
+                `This style is already saved at position ${match + 1}.`
+            );
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * @private
      */
     persist(styles) {
@@ -58,7 +96,7 @@ export default class StylesManager extends EventEmitter {
 
             return true;
         } catch {
-            this.openmct.notifications.error(PERSIST_ERROR_MESSAGE);
+            this.openmct.notifications.error('Problem encountered saving styles.');
         }
 
         return false;

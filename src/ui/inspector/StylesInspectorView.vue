@@ -29,7 +29,7 @@ import StylesView from '../../plugins/condition/components/inspector/StylesView.
 import Vue from 'vue';
 
 export default {
-    inject: ['openmct', 'stylesManager'],
+    inject: ['openmct'],
     data() {
         return {
             selection: []
@@ -56,8 +56,7 @@ export default {
                 this.component = new Vue({
                     provide: {
                         openmct: this.openmct,
-                        selection: selection,
-                        stylesManager: this.stylesManager
+                        selection: selection
                     },
                     el: viewContainer,
                     components: {

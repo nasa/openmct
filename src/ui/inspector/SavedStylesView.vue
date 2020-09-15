@@ -44,6 +44,7 @@
 
 <script>
 import SavedStyleSelector from './SavedStyleSelector.vue';
+import StylesManager from '@/ui/inspector/StylesManager';
 
 export default {
     name: 'SavedStylesView',
@@ -52,8 +53,7 @@ export default {
     },
     inject: [
         'openmct',
-        'selection',
-        'stylesManager'
+        'selection'
     ],
     data() {
         return {
@@ -61,6 +61,7 @@ export default {
         };
     },
     mounted() {
+        this.stylesManager = new StylesManager(this.openmct);
         this.stylesManager.on('stylesUpdated', this.setStyles);
 
         this.loadStyles();

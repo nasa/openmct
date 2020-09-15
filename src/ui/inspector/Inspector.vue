@@ -54,12 +54,8 @@ import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
 import StylesInspectorView from './StylesInspectorView.vue';
 import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
-import StylesManager from './StylesManager';
 
 export default {
-    provide: {
-        stylesManager: new StylesManager()
-    },
     inject: ['openmct'],
     components: {
         StylesInspectorView,
