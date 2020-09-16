@@ -32,7 +32,7 @@
             <div class="c-imagery__time">
                 <div class="c-imagery__timestamp">{{ time }}</div>
                 <div
-                    v-if="clock && timeSystem.isUTCBased"
+                    v-if="canTrackDuration"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
@@ -67,11 +67,11 @@
 </template>
 
 <script>
-import _ from 'lodash';
 import moment from 'moment';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
+const DURATION_TRACK_MS = 1000;
 const THUMBNAIL_CLICKED = true;
 
 const ONE_MINUTE = 60 * 1000;
@@ -94,17 +94,15 @@ export default {
                 contrast: 100
             },
             focusedImage: undefined,
-            imageFormat: '',
             imageHistory: [],
             thumbnailClick: THUMBNAIL_CLICKED,
-            numericDuration: undefined,
             isPaused: false,
             metadata: {},
             requestCount: 0,
             timeSystem: timeSystem,
             timeFormatter: undefined,
             clock: clock,
-            ageTracker: undefined,
+            formattedDuration: undefined,
             refreshCSS: false
         };
     },
@@ -121,29 +119,19 @@ export default {
 
             return age < cutoff && !this.refreshCSS;
         },
-        formattedDuration() {
-            if (!this.durationFormatter) {
-                return 'N/A';
-            }
+        canTrackDuration() {
+            return this.clock && this.timeSystem.isUTCBased;
+        },
+        numericDuration() {
+            let currentTime = this.clock.currentValue();
+            let parsedSelectedTime = this.parseTime(this.focusedImage);
 
-            let result = this.durationFormatter.format(this.numericDuration);
-
-            if (this.numericDuration > EIGHT_HOURS) {
-                let negativeAge = (this.numericDuration / ONE_HOUR) * -1;
-                result = moment.duration(negativeAge, 'hours').humanize(true);
-
-                if (this.numericDuration > TWENTYFOUR_HOURS) {
-                    negativeAge = (this.numericDuration / TWENTYFOUR_HOURS) * -1;
-                    result = moment.duration(negativeAge, 'days').humanize(true);
-                }
-            }
-
-            return result;
+            return currentTime - parsedSelectedTime;
         }
     },
     watch: {
         focusedImage() {
-            this.setNumericDuration();
+            this.trackDuration();
             this.resetAgeCSS();
         }
     },
@@ -152,13 +140,16 @@ export default {
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
+
         // set
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
+
         // initialize
         this.timeKey = this.timeSystem.key;
         this.timeFormatter = this.getFormatter(this.timeKey);
+
         // kickoff
         this.subscribe();
         this.requestHistory();
@@ -172,7 +163,7 @@ export default {
             delete this.unsubscribe;
         }
 
-        this.clearAgeTracking();
+        this.stopDurationTracking();
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
@@ -269,8 +260,8 @@ export default {
 
             this.focusedImage = image;
 
-            if (thumbnailClick) {
-                this.paused(true, 'thumbnail');
+            if (thumbnailClick && !this.isPaused) {
+                this.paused(true);
             }
         },
         boundsChange(bounds, isTick) {
@@ -287,8 +278,9 @@ export default {
                 .request(this.domainObject, bounds) || [];
 
             if (this.requestCount === requestId) {
+                const SET_FOCUSED_BOOL = false;
                 values.forEach((value) => {
-                    this.updateHistory(value, false);
+                    this.updateHistory(value, SET_FOCUSED_BOOL);
                 });
                 this.setFocusedImage(values[values.length - 1]);
             }
@@ -298,12 +290,11 @@ export default {
             this.timeKey = this.timeSystem.key;
             this.timeFormatter = this.getFormatter(this.timeKey);
             this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+            this.trackDuration();
         },
         clockChange(clock) {
             this.clock = clock;
-        },
-        currentTimeValue() {
-            return this.clock.currentValue();
+            this.trackDuration();
         },
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
@@ -322,8 +313,7 @@ export default {
                 return;
             }
 
-            const index = _.sortedIndexBy(this.imageHistory, datum, this.timeFormatter.format.bind(this.timeFormatter));
-            this.imageHistory.splice(index, 0, datum);
+            this.imageHistory.push(datum);
 
             if (setFocused) {
                 this.setFocusedImage(datum);
@@ -335,15 +325,40 @@ export default {
 
             return valueFormatter;
         },
-        setNumericDuration() {
-            let currentTime = this.currentTimeValue();
-            let parsedSelectedTime = this.parseTime(this.focusedImage);
+        trackDuration() {
+            if (this.canTrackDuration) {
+                this.stopDurationTracking();
+                this.setFormattedDuration();
+                this.durationTracker = window.setInterval(
+                    this.setFormattedDuration, DURATION_TRACK_MS
+                );
+            } else {
+                this.stopDurationTracking();
+            }
+        },
+        stopDurationTracking() {
+            window.clearInterval(this.durationTracker);
+            this.formattedDuration = undefined;
+        },
+        setFormattedDuration() {
+            let result = 'N/A';
+            let negativeAge = -1;
 
-            this.numericDuration = currentTime - parsedSelectedTime;
+            if (this.numericDuration > TWENTYFOUR_HOURS) {
+                negativeAge *= (this.numericDuration / TWENTYFOUR_HOURS);
+                result = moment.duration(negativeAge, 'days').humanize(true);
+            } else if (this.numericDuration > EIGHT_HOURS) {
+                negativeAge *= (this.numericDuration / ONE_HOUR);
+                result = moment.duration(negativeAge, 'hours').humanize(true);
+            } else if (this.durationFormatter) {
+                result = this.durationFormatter.format(this.numericDuration);
+            }
+
+            this.formattedDuration = result;
         },
         resetAgeCSS() {
             this.refreshCSS = true;
-
+            // unable to make this work with nextTick
             setTimeout(() => {
                 this.refreshCSS = false;
             }, REFRESH_CSS_MS);
