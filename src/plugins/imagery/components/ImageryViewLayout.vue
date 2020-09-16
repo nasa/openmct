@@ -27,7 +27,20 @@
              :style="{'background-image': imageUrl ? `url(${imageUrl})` : 'none',
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
         >
+            <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
+                <button class="c-nav c-nav--prev"
+                        title="Previous image"
+                        :disabled="isPrevDisabled"
+                        @click="prevImage()"
+                ></button>
+                <button class="c-nav c-nav--next"
+                        title="Next image"
+                        :disabled="isNextDisabled"
+                        @click="nextImage()"
+                ></button>
+            </div>
         </div>
+
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
                 <div class="c-imagery__timestamp">{{ time }}</div>
@@ -127,6 +140,26 @@ export default {
             let parsedSelectedTime = this.parseTime(this.focusedImage);
 
             return currentTime - parsedSelectedTime;
+        },
+        isNextDisabled() {
+            let disabled = false;
+            let index = this.focusedImageIndex();
+
+            if (index === -1 || index === this.imageHistory.length - 1) {
+                disabled = true;
+            }
+
+            return disabled;
+        },
+        isPrevDisabled() {
+            let disabled = false;
+            let index = this.focusedImageIndex();
+
+            if (index === 0 || this.imageHistory.length < 2) {
+                disabled = true;
+            }
+
+            return disabled;
         }
     },
     watch: {
@@ -362,6 +395,27 @@ export default {
             setTimeout(() => {
                 this.refreshCSS = false;
             }, REFRESH_CSS_MS);
+        },
+        focusedImageIndex() {
+            return this.imageHistory.indexOf(this.focusedImage);
+        },
+        setFocusedByIndex(index) {
+            this.setFocusedImage(this.imageHistory[index]);
+        },
+        nextImage() {
+            let index = this.focusedImageIndex();
+            this.setFocusedByIndex(++index);
+            if (index === this.imageHistory.length - 1) {
+                this.paused(false);
+            }
+        },
+        prevImage() {
+            let index = this.focusedImageIndex();
+            if (index === this.imageHistor.length - 1) {
+                this.setFocusedByIndex(this.imageHistory.length - 2);
+            } else {
+                this.setFocusedByIndex(--index);
+            }
         }
     }
 };
