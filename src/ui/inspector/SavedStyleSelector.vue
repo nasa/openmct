@@ -51,7 +51,7 @@
                     <div
                         class="c-swatch"
                         :style="{
-                            background: borderColor
+                            background: savedStyle.border
                         }"
                     ></div>
                 </div>
@@ -129,9 +129,6 @@ export default {
         };
     },
     computed: {
-        borderColor() {
-            return this.savedStyle.border.substring(this.savedStyle.border.indexOf('#'));
-        },
         description() {
             const fill = `Fill: ${this.savedStyle.fill || 'None'};`;
             const border = `Border: ${this.savedStyle.border || 'None'};`;

@@ -37,22 +37,35 @@ export default class StylesManager extends EventEmitter {
     }
 
     save(style) {
+        const normalizedStyle = this.normalizeStyle(style);
         const styles = this.load();
         let allowSave;
         let persistSucceeded;
 
         allowSave = !this.isSaveLimitReached(styles);
-        allowSave = !this.isExistingStyle(style, styles);
+        allowSave = !this.isExistingStyle(normalizedStyle, styles);
 
         if (allowSave) {
             // latest saved styles go to front of store (except default always first)
-            styles.splice(1, 0, style);
+            styles.splice(1, 0, normalizedStyle);
             persistSucceeded = this.persist(styles);
 
             if (persistSucceeded) {
                 this.emit('stylesUpdated', styles);
             }
         }
+    }
+
+    /**
+     * @private
+     */
+    normalizeStyle(style) {
+        const normalizedStyle = style;
+
+        // strip border styling down to border color only
+        style.border = style.border.substring(style.border.lastIndexOf('#'));
+
+        return normalizedStyle;
     }
 
     /**
