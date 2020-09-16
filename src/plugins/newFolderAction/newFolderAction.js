@@ -74,7 +74,8 @@ export default class NewFolderAction {
             folderType.definition.initialize(objectModel);
             objectModel.name = name || 'New Folder';
 
-            this._openmct.objects.mutate(objectModel, 'created', Date.now());
+            this._openmct.objects.save(objectModel);
+
             composition.add(objectModel);
         });
     }
