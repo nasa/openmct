@@ -23,44 +23,44 @@
             </span>
         </div>
         <div class="main-image s-image-main c-imagery__main-image"
-             :class="{'paused unnsynced': paused(),'stale':false }"
-             :style="{'background-image': getImageUrl() ? `url(${getImageUrl()})` : 'none',
+             :class="{'paused unnsynced': isPaused,'stale':false }"
+             :style="{'background-image': imageUrl ? `url(${imageUrl})` : 'none',
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
         >
         </div>
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
-                <div class="c-imagery__timestamp">{{ getTime() }}</div>
+                <div class="c-imagery__timestamp">{{ time }}</div>
                 <div
-                    v-if="clock"
+                    v-if="clock && timeSystem.isUTCBased"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
-                >{{ age }}</div>
+                >{{ formattedDuration }}</div>
             </div>
             <div class="h-local-controls flex-elem">
                 <button
                     class="c-button icon-pause pause-play"
-                    :class="{'is-paused': paused()}"
-                    @click="paused(!paused())"
+                    :class="{'is-paused': isPaused}"
+                    @click="paused(!isPaused, 'button')"
                 ></button>
             </div>
         </div>
     </div>
     <div ref="thumbsWrapper"
          class="c-imagery__thumbs-wrapper"
-         :class="{'is-paused': paused()}"
+         :class="{'is-paused': isPaused}"
          @scroll="handleScroll"
     >
         <div v-for="(imageData, index) in imageHistory"
              :key="index"
              class="c-imagery__thumb c-thumb"
-             :class="{selected: imageData.selected}"
-             @click="setSelectedImage(imageData)"
+             :class="{ selected: focusedImage === imageData && isPaused }"
+             @click="setFocusedImage(imageData, thumbnailClick)"
         >
             <img class="c-thumb__image"
-                 :src="getImageUrl(imageData)"
+                 :src="formatImageUrl(imageData)"
             >
-            <div class="c-thumb__timestamp">{{ getTime(imageData) }}</div>
+            <div class="c-thumb__timestamp">{{ formatTime(imageData) }}</div>
         </div>
     </div>
 </div>
@@ -71,8 +71,8 @@ import _ from 'lodash';
 import moment from 'moment';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
-const AGE_TRACK_INTERVAL_MS = 1000;
-const REFRESH_CHECK_MS = 500;
+const REFRESH_CSS_MS = 500;
+const THUMBNAIL_CLICKED = true;
 
 const ONE_MINUTE = 60 * 1000;
 const FIVE_MINUTES = 5 * ONE_MINUTE;
@@ -83,56 +83,57 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 export default {
     inject: ['openmct', 'domainObject'],
     data() {
-        let timeSystem = this.openmct.time.timeSystem();
-        let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         let clock = this.openmct.time.clock();
+        let timeSystem = this.openmct.time.timeSystem();
 
         return {
             autoScroll: true,
-            durationFormatter: durationFormatter,
+            durationFormatter: undefined,
             filters: {
                 brightness: 100,
                 contrast: 100
             },
-            image: {
-                selected: ''
-            },
+            focusedImage: undefined,
             imageFormat: '',
             imageHistory: [],
-            imageUrl: '',
-            age: '',
+            thumbnailClick: THUMBNAIL_CLICKED,
+            numericDuration: undefined,
             isPaused: false,
             metadata: {},
             requestCount: 0,
-            time: undefined,
-            timeFormat: '',
+            timeSystem: timeSystem,
+            timeFormatter: undefined,
             clock: clock,
             ageTracker: undefined,
             refreshCSS: false
         };
     },
     computed: {
+        time() {
+            return this.formatTime(this.focusedImage);
+        },
+        imageUrl() {
+            return this.formatImageUrl(this.focusedImage);
+        },
         isImageNew() {
             let cutoff = FIVE_MINUTES;
-            let age = this.numericImageAge();
+            let age = this.numericDuration;
 
-            return age < cutoff;
+            return age < cutoff && !this.refreshCSS;
         },
-        formattedAge() {
-            let age = this.numericImageAge();
-
-            if (!age) {
-                return;
+        formattedDuration() {
+            if (!this.durationFormatter) {
+                return 'N/A';
             }
 
-            let result = this.durationFormatter.format(age);
+            let result = this.durationFormatter.format(this.numericDuration);
 
-            if (age > EIGHT_HOURS) {
-                let negativeAge = (age / ONE_HOUR) * -1;
+            if (this.numericDuration > EIGHT_HOURS) {
+                let negativeAge = (this.numericDuration / ONE_HOUR) * -1;
                 result = moment.duration(negativeAge, 'hours').humanize(true);
 
-                if (age > TWENTYFOUR_HOURS) {
-                    negativeAge = (age / TWENTYFOUR_HOURS) * -1;
+                if (this.numericDuration > TWENTYFOUR_HOURS) {
+                    negativeAge = (this.numericDuration / TWENTYFOUR_HOURS) * -1;
                     result = moment.duration(negativeAge, 'days').humanize(true);
                 }
             }
@@ -140,23 +141,27 @@ export default {
             return result;
         }
     },
+    watch: {
+        focusedImage() {
+            this.setNumericDuration();
+            this.resetAgeCSS();
+        }
+    },
     mounted() {
-        // set
-        this.keystring = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
-        this.imageFormat = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
-        // initialize
-        this.timeKey = this.openmct.time.timeSystem().key;
-        this.formatter = this.getFormatter(this.timeKey);
-        this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
+        // set
+        this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+        this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+        this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
+        // initialize
+        this.timeKey = this.timeSystem.key;
+        this.timeFormatter = this.getFormatter(this.timeKey);
         // kickoff
         this.subscribe();
         this.requestHistory();
-        this.ageTrackConditionCheck();
     },
     updated() {
         this.scrollToRight();
@@ -170,6 +175,7 @@ export default {
         this.clearAgeTracking();
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
+        this.openmct.time.off('clock', this.clockChange);
     },
     methods: {
         datumIsNotValid(datum) {
@@ -177,29 +183,40 @@ export default {
                 return false;
             }
 
-            const datumTime = this.timeFormat.format(datum);
-            const datumURL = this.imageFormat.format(datum);
-            const lastHistoryTime = this.timeFormat.format(this.imageHistory.slice(-1)[0]);
-            const lastHistoryURL = this.imageFormat.format(this.imageHistory.slice(-1)[0]);
+            const datumTime = this.formatTime(datum);
+            const datumURL = this.formatImageUrl(datum);
+            const lastHistoryTime = this.formatTime(this.imageHistory.slice(-1)[0]);
+            const lastHistoryURL = this.formatImageUrl(this.imageHistory.slice(-1)[0]);
 
             // datum is not valid if it matches the last datum in history,
             // or it is before the last datum in the history
-            const datumTimeCheck = this.timeFormat.parse(datum);
-            const historyTimeCheck = this.timeFormat.parse(this.imageHistory.slice(-1)[0]);
+            const datumTimeCheck = this.parseTime(datum);
+            const historyTimeCheck = this.parseTime(this.imageHistory.slice(-1)[0]);
             const matchesLast = (datumTime === lastHistoryTime) && (datumURL === lastHistoryURL);
             const isStale = datumTimeCheck < historyTimeCheck;
 
             return matchesLast || isStale;
         },
-        getImageUrl(datum) {
-            return datum
-                ? this.imageFormat.format(datum)
-                : this.imageUrl;
+        formatImageUrl(datum) {
+            if (!datum) {
+                return;
+            }
+
+            return this.imageFormatter.format(datum);
         },
-        getTime(datum) {
-            return datum
-                ? this.timeFormat.format(datum)
-                : this.time;
+        formatTime(datum) {
+            if (!datum) {
+                return;
+            }
+
+            return this.timeFormatter.format(datum);
+        },
+        parseTime(datum) {
+            if (!datum) {
+                return;
+            }
+
+            return this.timeFormatter.parse(datum);
         },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
@@ -212,26 +229,20 @@ export default {
                     || (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;
         },
-        paused(state) {
-            if (arguments.length > 0 && state !== this.isPaused) {
-                this.unselectAllImages();
-                this.isPaused = state;
-                if (state === true) {
-                    // If we are pausing, select the latest image in imageHistory
-                    this.setSelectedImage(this.imageHistory[this.imageHistory.length - 1]);
-                }
+        paused(state, type) {
 
-                if (this.nextDatum) {
-                    this.updateValues(this.nextDatum);
-                    delete this.nextDatum;
-                } else {
-                    this.updateValues(this.imageHistory[this.imageHistory.length - 1]);
-                }
+            this.isPaused = state;
 
-                this.autoScroll = true;
+            if (type === 'button') {
+                this.setFocusedImage(this.imageHistory[this.imageHistory.length - 1]);
             }
 
-            return this.isPaused;
+            if (this.nextDatum) {
+                this.setFocusedImage(this.nextDatum);
+                delete this.nextDatum;
+            }
+
+            this.autoScroll = true;
         },
         scrollToRight() {
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
@@ -245,70 +256,51 @@ export default {
 
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
         },
-        setSelectedImage(image) {
-            // If we are paused and the current image IS selected, unpause
-            // Otherwise, set current image and pause
+        setFocusedImage(image, thumbnailClick = false) {
             if (!image) {
                 return;
             }
 
-            if (this.isPaused && image.selected) {
-                this.paused(false);
-                this.unselectAllImages();
-            } else {
-                this.paused(true);
-                this.imageUrl = this.getImageUrl(image);
-                this.time = this.getTime(image);
-                this.unselectAllImages();
-                image.selected = true;
-            }
-        },
-        getSelectedImage() {
-            let selected = this.imageHistory.find(image => image.selected);
+            if (this.isPaused && !thumbnailClick) {
+                this.nextDatum = image;
 
-            if (selected === undefined) {
-                selected = this.imageHistory[this.imageHistory.length - 1];
+                return;
             }
 
-            return selected;
+            this.focusedImage = image;
+
+            if (thumbnailClick) {
+                this.paused(true, 'thumbnail');
+            }
         },
         boundsChange(bounds, isTick) {
             if (!isTick) {
                 this.requestHistory();
             }
         },
-        requestHistory() {
+        async requestHistory() {
             let bounds = this.openmct.time.bounds();
             this.requestCount++;
             const requestId = this.requestCount;
             this.imageHistory = [];
-            this.openmct.telemetry
-                .request(this.domainObject, bounds)
-                .then((values = []) => {
-                    if (this.requestCount === requestId) {
-                        values.forEach(this.updateHistory, false);
-                        this.updateValues(values[values.length - 1]);
-                    }
+            let values = await this.openmct.telemetry
+                .request(this.domainObject, bounds) || [];
+
+            if (this.requestCount === requestId) {
+                values.forEach((value) => {
+                    this.updateHistory(value, false);
                 });
+                this.setFocusedImage(values[values.length - 1]);
+            }
         },
         timeSystemChange(system) {
-            let timeSystem = this.openmct.time.timeSystem();
-            // reset timesystem dependent variables
-            this.timeKey = system.key;
-            this.formatter = this.getFormatter(this.timeKey);
-            this.timeFormat = this.openmct.telemetry.getValueFormatter(this.metadata.value(this.timeKey));
-            this.durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
+            this.timeSystem = this.openmct.time.timeSystem();
+            this.timeKey = this.timeSystem.key;
+            this.timeFormatter = this.getFormatter(this.timeKey);
+            this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         },
         clockChange(clock) {
             this.clock = clock;
-            this.ageTrackConditionCheck();
-        },
-        ageTrackConditionCheck() {
-            if (this.clock !== undefined && this.openmct.time.timeSystem().isUTCBased) {
-                this.trackAge();
-            } else {
-                this.clearAgeTracking();
-            }
         },
         currentTimeValue() {
             return this.clock.currentValue();
@@ -316,81 +308,45 @@ export default {
         subscribe() {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.timeFormat.parse(datum);
+                    let parsedTimestamp = this.parseTime(datum);
                     let bounds = this.openmct.time.bounds();
 
                     if (parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
                         this.updateHistory(datum);
-                        this.updateValues(datum);
+                        this.setFocusedImage(datum);
                     }
                 });
         },
-        unselectAllImages() {
-            this.imageHistory.forEach(image => image.selected = false);
-        },
-        updateHistory(datum, updateValues = true) {
+        updateHistory(datum, setFocused = true) {
             if (this.datumIsNotValid(datum)) {
                 return;
             }
 
-            const index = _.sortedIndexBy(this.imageHistory, datum, this.timeFormat.format.bind(this.timeFormat));
+            const index = _.sortedIndexBy(this.imageHistory, datum, this.timeFormatter.format.bind(this.timeFormatter));
             this.imageHistory.splice(index, 0, datum);
 
-            if (updateValues) {
-                this.updateValues(datum);
+            if (setFocused) {
+                this.setFocusedImage(datum);
             }
-        },
-        updateValues(datum) {
-            if (this.isPaused) {
-                this.nextDatum = datum;
-
-                return;
-            }
-
-            this.time = this.timeFormat.format(datum);
-            this.imageUrl = this.imageFormat.format(datum);
-            this.selectedImage = this.getSelectedImage();
-            this.resetAgeCSS();
         },
         getFormatter(key) {
-            let valueFormatter = this.openmct.telemetry.getValueFormatter({
-                format: key
-            });
+            let metadataValue = this.metadata.value(key) || { format: key };
+            let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
-            return valueFormatter.formatter;
+            return valueFormatter;
         },
-        numericImageAge() {
+        setNumericDuration() {
             let currentTime = this.currentTimeValue();
+            let parsedSelectedTime = this.parseTime(this.focusedImage);
 
-            if (this.selectedImage === undefined || this.selectedImage[this.timeKey] === undefined) {
-                return;
-            }
-
-            let parsedSelectedTime = this.formatter.parse(this.selectedImage[this.timeKey]);
-
-            return currentTime - parsedSelectedTime;
-        },
-        trackAge() {
-            let age;
-            this.clearAgeTracking();
-            this.ageTracker = window.setInterval(() => {
-                age = this.formattedAge;
-                if (age) {
-                    this.age = age;
-                } else {
-                    this.age = 'N/A';
-                }
-            }, AGE_TRACK_INTERVAL_MS);
-        },
-        clearAgeTracking() {
-            window.clearInterval(this.ageTracker);
+            this.numericDuration = currentTime - parsedSelectedTime;
         },
         resetAgeCSS() {
             this.refreshCSS = true;
-            window.setTimeout(() => {
-                // trigger class reimplimentation so animations start over
+
+            setTimeout(() => {
                 this.refreshCSS = false;
-            }, REFRESH_CHECK_MS);
+            }, REFRESH_CSS_MS);
         }
     }
 };
