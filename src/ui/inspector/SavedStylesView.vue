@@ -34,6 +34,7 @@
             >
                 <saved-style-selector
                     class="c-inspect-styles__selector"
+                    :is-editing="isEditing"
                     :saved-style="savedStyle"
                 />
             </div>
@@ -57,16 +58,25 @@ export default {
     ],
     data() {
         return {
+            isEditing: this.openmct.editor.isEditing(),
             savedStyles: undefined
         };
     },
     mounted() {
+        this.openmct.editor.on('isEditing', this.setIsEditing);
         this.stylesManager = new StylesManager(this.openmct);
         this.stylesManager.on('stylesUpdated', this.setStyles);
 
         this.loadStyles();
     },
+    destroyed() {
+        this.openmct.editor.off('isEditing', this.setIsEditing);
+        this.stylesManager.off('stylesUpdated', this.setStyles);
+    },
     methods: {
+        setIsEditing(isEditing) {
+            this.isEditing = isEditing;
+        },
         loadStyles() {
             const styles = this.stylesManager.load();
 

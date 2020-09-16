@@ -85,7 +85,7 @@
 
             <!-- delete saved style -->
             <div
-                v-if="!isDefaultStyle"
+                v-if="canDeleteStyle"
                 class="c-ctrl-wrapper c-local-controls--show-on-hover"
             >
                 <div
@@ -113,6 +113,10 @@ export default {
         'openmct'
     ],
     props: {
+        isEditing: {
+            type: Boolean,
+            required: true
+        },
         savedStyle: {
             type: Object,
             required: true
@@ -145,11 +149,14 @@ export default {
         },
         isDefaultStyle() {
             return this.stylesManager.isDefaultStyle(this.savedStyle);
+        },
+        canDeleteStyle() {
+            return this.isEditing && !this.isDefaultStyle;
         }
     },
     methods: {
         selectStyle() {
-            if (this.openmct.editor.isEditing()) {
+            if (this.isEditing) {
                 this.stylesManager.select(this.savedStyle);
             }
         },
