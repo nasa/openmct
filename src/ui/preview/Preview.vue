@@ -51,13 +51,9 @@ export default {
         return {
             domainObject: domainObject,
             viewKey: undefined,
-            views: []
+            views: [],
+            currentView: {}
         };
-    },
-    computed: {
-        currentView() {
-            return this.views.filter(v => v.key === this.viewKey)[0] || {};
-        }
     },
     mounted() {
         this.views = this.openmct.objectViews.get(this.domainObject).map((view) => {
@@ -95,8 +91,8 @@ export default {
             }
 
             this.clear();
-            
             this.viewKey = view.key;
+            this.currentView = view;
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('l-angular-ov-wrapper');
             this.$refs.objectView.append(this.viewContainer);
