@@ -25,7 +25,6 @@
         :current-view="currentView"
         :domain-object="domainObject"
         :views="views"
-        @setView="setView"
     />
     <div class="l-preview-window__object-view">
         <div ref="objectView"></div>
@@ -51,23 +50,23 @@ export default {
 
         return {
             domainObject: domainObject,
-            viewKey: undefined
+            viewKey: undefined,
+            views: []
         };
     },
     computed: {
-        views() {
-            return this
-                .openmct
-                .objectViews
-                .get(this.domainObject);
-        },
         currentView() {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
         }
     },
     mounted() {
-        let view = this.openmct.objectViews.get(this.domainObject)[0];
-        this.setView(view);
+        this.views = this.openmct.objectViews.get(this.domainObject).map((view) => {
+            view.callBack = () => {
+                return this.setView(view);
+            }
+            return view;
+        });
+        this.setView(this.views[0]);
     },
     destroyed() {
         this.view.destroy();
@@ -91,8 +90,12 @@ export default {
             delete this.viewContainer;
         },
         setView(view) {
-            this.clear();
+            if (this.viewKey === view.key) {
+                return;
+            }
 
+            this.clear();
+            
             this.viewKey = view.key;
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('l-angular-ov-wrapper');

@@ -3,8 +3,7 @@
     <button
         class="c-icon-button c-button--menu icon-camera"
         title="Take a Notebook Snapshot"
-        @click="setNotebookTypes"
-        @click.stop="toggleMenu"
+        @click.stop.prevent="showMenu"
     >
         <span
             title="Take Notebook Snapshot"
@@ -13,22 +12,6 @@
             Snapshot
         </span>
     </button>
-    <div
-        v-show="showMenu"
-        class="c-menu"
-    >
-        <ul>
-            <li
-                v-for="(type, index) in notebookTypes"
-                :key="index"
-                :class="type.cssClass"
-                :title="type.name"
-                @click="snapshot(type)"
-            >
-                {{ type.name }}
-            </li>
-        </ul>
-    </div>
 </div>
 </template>
 
@@ -62,22 +45,19 @@ export default {
     data() {
         return {
             notebookSnapshot: null,
-            notebookTypes: [],
-            showMenu: false
+            notebookTypes: []
         };
     },
     mounted() {
         this.notebookSnapshot = new Snapshot(this.openmct);
-
-        document.addEventListener('click', this.hideMenu);
-    },
-    destroyed() {
-        document.removeEventListener('click', this.hideMenu);
     },
     methods: {
-        setNotebookTypes() {
+        showMenu(event) {
             const notebookTypes = [];
             const defaultNotebook = getDefaultNotebook();
+            const elementBoundingClientRect = this.$el.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
             if (defaultNotebook) {
                 const domainObject = defaultNotebook.domainObject;
@@ -88,7 +68,9 @@ export default {
                     notebookTypes.push({
                         cssClass: 'icon-notebook',
                         name: `Save to Notebook ${defaultPath}`,
-                        type: NOTEBOOK_DEFAULT
+                        callBack: () => {
+                            return this.snapshot(NOTEBOOK_DEFAULT);
+                        }
                     });
                 }
             }
@@ -96,20 +78,14 @@ export default {
             notebookTypes.push({
                 cssClass: 'icon-camera',
                 name: 'Save to Notebook Snapshots',
-                type: NOTEBOOK_SNAPSHOT
+                callBack: () => {
+                    return this.snapshot(NOTEBOOK_SNAPSHOT);
+                }
             });
 
-            this.notebookTypes = notebookTypes;
-        },
-        toggleMenu() {
-            this.showMenu = !this.showMenu;
-        },
-        hideMenu() {
-            this.showMenu = false;
+            this.openmct.menus.showMenu(x, y, notebookTypes);
         },
         snapshot(notebook) {
-            this.hideMenu();
-
             this.$nextTick(() => {
                 const element = document.querySelector('.c-overlay__contents')
                     || document.getElementsByClassName('l-shell__main-container')[0];

@@ -18,7 +18,6 @@
                 :v-if="!hideViewSwitcher"
                 :views="views"
                 :current-view="currentView"
-                @setView="setView"
             />
         </div>
     </div>

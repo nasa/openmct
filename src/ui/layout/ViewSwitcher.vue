@@ -7,13 +7,13 @@
         class="c-icon-button c-button--menu"
         :class="currentView.cssClass"
         title="Change the current view"
-        @click.stop="toggleViewMenu"
+        @click.prevent.stop="showMenu"
     >
         <span class="c-icon-button__label">
             {{ currentView.name }}
         </span>
     </button>
-    <div
+    <!-- <div
         v-show="showViewMenu"
         class="c-menu"
     >
@@ -28,12 +28,13 @@
                 {{ view.name }}
             </li>
         </ul>
-    </div>
+    </div> -->
 </div>
 </template>
 
 <script>
 export default {
+    inject: ['openmct'],
     props: {
         currentView: {
             type: Object,
@@ -44,26 +45,16 @@ export default {
             required: true
         }
     },
-    data() {
-        return {
-            showViewMenu: false
-        };
-    },
-    mounted() {
-        document.addEventListener('click', this.hideViewMenu);
-    },
-    destroyed() {
-        document.removeEventListener('click', this.hideViewMenu);
-    },
     methods: {
         setView(view) {
             this.$emit('setView', view);
         },
-        toggleViewMenu() {
-            this.showViewMenu = !this.showViewMenu;
-        },
-        hideViewMenu() {
-            this.showViewMenu = false;
+        showMenu() {
+            const elementBoundingClientRect = this.$el.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
+
+            this.openmct.menus.showMenu(x, y, this.views);
         }
     }
 };

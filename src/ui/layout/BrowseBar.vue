@@ -38,7 +38,6 @@
             v-if="!isEditing"
             :current-view="currentView"
             :views="views"
-            @setView="setView"
         />
         <!-- Action buttons -->
         <NotebookMenuSwitcher v-if="notebookEnabled"
@@ -174,7 +173,10 @@ export default {
                     return {
                         key: p.key,
                         cssClass: p.cssClass,
-                        name: p.name
+                        name: p.name,
+                        callBack: () => {
+                            return this.setView({key: p.key});
+                        }
                     };
                 });
         },
