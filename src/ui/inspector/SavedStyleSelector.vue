@@ -25,7 +25,7 @@
     class="c-saved-style"
     @click="selectStyle()"
 >
-    <div class="c-style">
+    <div class="c-style has-local-controls">
         <span
             class="c-disclosure-triangle is-enabled"
             :class="{ 'c-disclosure-triangle--expanded': expanded }"
@@ -86,7 +86,7 @@
             <!-- delete saved style -->
             <div
                 v-if="!isDefaultStyle"
-                class="c-ctrl-wrapper"
+                class="c-ctrl-wrapper c-local-controls--show-on-hover"
             >
                 <div
                     class="c-icon-button icon-trash"

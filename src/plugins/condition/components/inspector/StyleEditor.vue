@@ -21,7 +21,7 @@
 *****************************************************************************/
 
 <template>
-<div class="c-style">
+<div class="c-style has-local-controls">
     <span :class="[
               { 'is-style-invisible': styleItem.style && styleItem.style.isStyleInvisible },
               { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
@@ -64,7 +64,7 @@
 
         <!-- Save Styles -->
         <toolbar-button v-if="canSaveStyle()"
-                        class="c-style__toolbar-button--save"
+                        class="c-style__toolbar-button--save c-local-controls--show-on-hover"
                         :options="saveOptions"
                         @click="saveItemStyle()"
         />
@@ -239,7 +239,7 @@ export default {
             this.$emit('persist', this.styleItem, item.property);
         },
         canSaveStyle() {
-            return !this.mixedStyles.length;
+            return this.isEditing && !this.mixedStyles.length;
         },
         saveItemStyle() {
             this.stylesManager.save(this.itemStyle);
