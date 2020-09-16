@@ -92,7 +92,7 @@ export default function () {
                         textColor: 'white'
                     }];
                 let activities = [];
-                for (let i=0;i < 100; i++) {
+                for (let i=0;i < 1000; i++) {
                     activities = activities.concat(templateActivities.map(activity => activity));
                 }
                 domainObject.configuration = {

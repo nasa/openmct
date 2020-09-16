@@ -28,7 +28,19 @@ const TIMELINE_HEIGHT = 30;
 
 export default {
     inject: ['openmct', 'domainObject'],
+    props: {
+        "renderingEngine": {
+            type: String,
+            default() {
+                return 'canvas';
+            }
+        }
+    },
     mounted() {
+        if (this.renderingEngine === 'svg') {
+            this.useSVG = true;
+        }
+
         this.container = d3Selection.select(this.$refs.axisHolder);
         this.svgElement = this.container.append("svg:svg");
         // draw x axis with labels. CSS is used to position them.
@@ -36,16 +48,11 @@ export default {
             .attr("class", "axis");
         this.xAxis = d3Axis.axisTop();
 
-        this.setDimensions();
         this.canvas = this.container.append('canvas').node();
         this.canvasContext = this.canvas.getContext('2d');
         this.canvasContext.font = "normal 14px sans-serif";
-        this.canvas.width = this.width;
-        // this.canvas.height = this.height;
-        this.canvas.height = 17000;
-        // this.svgElement.attr("width", this.width);
-        // this.svgElement.attr("height", this.height);
 
+        this.setDimensions();
         this.updateViewBounds();
         this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
         this.openmct.time.on("bounds", this.updateViewBounds);
@@ -54,14 +61,21 @@ export default {
     methods: {
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
-            this.viewBounds.end = this.viewBounds.end + (30*60*1000);
+            // this.viewBounds.end = this.viewBounds.end + (30 * 60 * 1000);
             this.setScaleAndPlotActivities();
         },
         setScaleAndPlotActivities() {
-            this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            d3Selection.selectAll("svg > :not(g)").remove();
             this.setScale();
-            this.plotActivity();
+            this.clearPreviousActivities();
+            this.calculatePlanLayout();
+            this.drawPlan();
+        },
+        clearPreviousActivities() {
+            if (this.useSVG) {
+                d3Selection.selectAll("svg > :not(g)").remove();
+            } else {
+                this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            }
         },
         setDimensions() {
             const axisHolder = this.$refs.axisHolder;
@@ -69,8 +83,17 @@ export default {
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
             this.width = axisHolder.clientWidth;
+
             const axisHolderParent = this.$parent.$refs.planHolder;
             this.height = Math.round(axisHolderParent.getBoundingClientRect().height);
+
+            if (this.useSVG) {
+                this.svgElement.attr("width", this.width);
+                this.svgElement.attr("height", this.height);
+            } else {
+                this.canvas.width = this.width;
+                this.canvas.height = this.height;
+            }
         },
         setScale(timeSystem) {
             if (!this.width) {
@@ -129,8 +152,8 @@ export default {
         },
         // Get the row where the next activity will land.
         getRowForActivity(rectX, rectWidth, defaultActivityRow = 0) {
-            let activityRow;
-            let sortedActivityRows = Object.keys(this.activityPositions).sort(this.sortFn);
+            let currentRow;
+            let sortedActivityRows = Object.keys(this.activitiesByRow).sort(this.sortFn);
 
             function getOverlap(rects) {
                 return rects.every(rect => {
@@ -143,120 +166,142 @@ export default {
 
             for (let i = 0; i < sortedActivityRows.length; i++) {
                 let row = sortedActivityRows[i];
-                if (getOverlap(this.activityPositions[row])) {
-                    activityRow = row;
+                if (getOverlap(this.activitiesByRow[row])) {
+                    currentRow = row;
                     break;
                 }
             }
 
-            if (activityRow === undefined && sortedActivityRows.length) {
-                activityRow = parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + ROW_HEIGHT + ROW_PADDING;
+            if (currentRow === undefined && sortedActivityRows.length) {
+                currentRow = parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + ROW_HEIGHT + ROW_PADDING;
             }
 
-            return (activityRow || defaultActivityRow);
+            return (currentRow || defaultActivityRow);
         },
-        plotActivity() {
-            let currentStart;
-            let currentEnd;
-            let activityRow = 0;
-            this.activityPositions = {};
+        calculatePlanLayout() {
+            this.activitiesByRow = {};
+
+            let currentRow = 0;
             this.domainObject.configuration.activities.forEach((activity) => {
                 if (this.isActivityInBounds(activity)) {
-                    currentStart = Math.max(this.viewBounds.start, activity.start);
-                    currentEnd = Math.min(this.viewBounds.end, activity.end);
+                    const currentStart = Math.max(this.viewBounds.start, activity.start);
+                    const currentEnd = Math.min(this.viewBounds.end, activity.end);
                     const rectX = this.xScale(currentStart);
                     const rectY = this.xScale(currentEnd);
                     const rectWidth = rectY - rectX;
 
                     const activityNameWidth = this.getTextWidth(activity.name) + TEXT_LEFT_PADDING;
+                    const activityNameFitsRect = (rectWidth >= activityNameWidth);
+                    const textStart = activityNameFitsRect ? (rectX + TEXT_LEFT_PADDING) : (rectX + rectWidth + TEXT_LEFT_PADDING);
 
-                    const innerLabelStart = rectX + TEXT_LEFT_PADDING;
-                    // const innerLabelEnd = innerLabelStart + activityNameWidth;
-                    const outerLabelStart = rectX + rectWidth + TEXT_LEFT_PADDING;
+                    let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
+                    const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
 
-                    const canFitText = (rectWidth >= activityNameWidth);
-
-                    const textStart = canFitText ? innerLabelStart : outerLabelStart;
-                    const textWidth = textStart + activityNameWidth;
-
-                    if (canFitText) {
-                        activityRow = this.getRowForActivity(rectX, rectWidth);
+                    if (activityNameFitsRect) {
+                        currentRow = this.getRowForActivity(rectX, rectWidth);
                     } else {
-                        activityRow = this.getRowForActivity(rectX, textWidth);
+                        currentRow = this.getRowForActivity(rectX, textWidth);
                     }
 
-                    //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
-                    this.plotCanvas(activity, rectX, rectWidth, activityRow + TIMELINE_HEIGHT, textStart, canFitText);
-                    // this.plotSVG(activity, rectX, rectWidth, activityRow + TIMELINE_HEIGHT, textStart, canFitText);
+                    let textY = activityNameFitsRect ? parseInt(currentRow, 10) + INNER_TEXT_PADDING : parseInt(currentRow, 10) + TEXT_PADDING;
 
-                    if (!this.activityPositions[activityRow]) {
-                        this.activityPositions[activityRow] = [];
+                    if (!this.activitiesByRow[currentRow]) {
+                        this.activitiesByRow[currentRow] = [];
                     }
 
-                    this.activityPositions[activityRow].push({
+                    this.activitiesByRow[currentRow].push({
+                        activity: {
+                            color: activity.color,
+                            textColor: activity.textColor
+                        },
+                        textLines: textLines,
+                        textStart: textStart,
+                        textY: textY,
                         start: rectX,
-                        end: canFitText ? rectWidth : textWidth
+                        end: activityNameFitsRect ? rectWidth : textWidth,
+                        rectWidth: rectWidth
                     });
                 }
             });
-            // this.svgElement.attr("height", activityRow + TIMELINE_HEIGHT);
         },
-        plotSVG(activity, rectX, rectWidth, activityRow, textStart, canFitText) {
+        getActivityDisplayText(context, text, activityNameFitsRect) {
+        //TODO: If the activity start is less than viewBounds.start then the text should be cropped on the left/should be off-screen)
+            let words = text.split(' ');
+            let line = '';
+            let activityText = [];
+            let rows = 1;
+
+            for (let n = 0; (n < words.length) && (rows <= 2); n++) {
+                let testLine = line + words[n] + ' ';
+                let metrics = context.measureText(testLine);
+                let testWidth = metrics.width;
+                if (!activityNameFitsRect && (testWidth > MAX_TEXT_WIDTH && n > 0)) {
+                    activityText.push(line);
+                    line = words[n] + ' ';
+                    testLine = line + words[n] + ' ';
+                    rows = rows + 1;
+                }
+
+                line = testLine;
+            }
+
+            return activityText.length ? activityText : [line];
+        },
+        drawPlan() {
+            const activityRows = Object.keys(this.activitiesByRow);
+
+            if (activityRows.length) {
+                const planHeight = activityRows[activityRows.length - 1] + TIMELINE_HEIGHT;
+                if (this.useSVG) {
+                    this.svgElement.attr("height", planHeight);
+                } else {
+                    // This needs to happen before we draw on the canvas or the canvas will get wiped out when height is set
+                    this.canvas.height = planHeight;
+                }
+
+                activityRows.forEach((row) => {
+                    const item = this.activitiesByRow[row];
+                    //next tick
+                    setTimeout(() => {
+                        //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
+                        if (this.useSVG) {
+                            this.plotSVG(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY, item.textLines);
+                        } else {
+                            this.plotCanvas(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY, item.textLines);
+                        }
+                    }, 0);
+                });
+            }
+        },
+        plotSVG(activity, rectX, rectWidth, rectY, textStart, textY, textLines) {
             this.svgElement.append("rect")
                 .attr("class", "activity")
                 .attr("x", rectX)
-                .attr("y", activityRow)
+                .attr("y", rectY)
                 .attr("width", rectWidth)
                 .attr("height", ROW_HEIGHT)
                 .attr('fill', activity.color)
                 .attr('stroke', "lightgray");
 
-            let textLines = this.getActivityText(this.canvasContext, activity.name, canFitText);
-            let y = canFitText ? parseInt(activityRow, 10) + INNER_TEXT_PADDING : parseInt(activityRow, 10) + TEXT_PADDING;
             textLines.forEach((line, index) => {
-              this.svgElement.append("text").text(line)
-                  .attr("class", "activity")
-                  .attr("x", textStart)
-                  .attr("y", y + (index * LINE_HEIGHT))
-                  .attr('fill', activity.textColor);
+                this.svgElement.append("text").text(line)
+                    .attr("class", "activity")
+                    .attr("x", textStart)
+                    .attr("y", textY + (index * LINE_HEIGHT))
+                    .attr('fill', activity.textColor);
             });
         },
-        plotCanvas(activity, rectX, rectWidth, activityRow, textStart, canFitText) {
+        plotCanvas(activity, rectX, rectWidth, rectY, textStart, textY, textLines) {
             this.canvasContext.fillStyle = activity.color;
             this.canvasContext.strokeStyle = "lightgray";
-            this.canvasContext.fillRect(rectX, activityRow, rectWidth, ROW_HEIGHT);
-            this.canvasContext.strokeRect(rectX, activityRow, rectWidth, ROW_HEIGHT);
+            this.canvasContext.fillRect(rectX, rectY, rectWidth, ROW_HEIGHT);
+            this.canvasContext.strokeRect(rectX, rectY, rectWidth, ROW_HEIGHT);
 
             this.canvasContext.fillStyle = activity.textColor;
 
-            let y = canFitText ? parseInt(activityRow, 10) + INNER_TEXT_PADDING : parseInt(activityRow, 10) + TEXT_PADDING;
-            let textLines = this.getActivityText(this.canvasContext, activity.name, canFitText);
-
             textLines.forEach((line, index) => {
-              this.canvasContext.fillText(line, textStart, y + (index * LINE_HEIGHT));
+                this.canvasContext.fillText(line, textStart, textY + (index * LINE_HEIGHT));
             });
-        },
-        getActivityText(context, text, canFitText) {
-          //TODO: If the activity start is less than viewBounds.start then the text should be cropped on the left/should be off-screen)
-          let words = text.split(' ');
-          let line = '';
-          let activityText = [];
-          let rows = 1;
-
-          for (let n = 0; (n < words.length) && (rows <= 2); n++) {
-            let testLine = line + words[n] + ' ';
-            let metrics = context.measureText(testLine);
-            let testWidth = metrics.width;
-            if (!canFitText && (testWidth > MAX_TEXT_WIDTH && n > 0)) {
-              activityText.push(line);
-              line = words[n] + ' ';
-              testLine = line + words[n] + ' ';
-              rows = rows + 1;
-            }
-            line = testLine;
-          }
-
-          return activityText.length ? activityText : [line];
         }
     }
 };

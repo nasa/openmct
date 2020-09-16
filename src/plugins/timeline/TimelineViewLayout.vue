@@ -24,7 +24,7 @@
 <div ref="planHolder"
      class="c-timeline"
 >
-    <plan :drawing-engine="'canvas'" />
+    <plan :rendering-engine="'canvas'" />
 </div>
 </template>
 
