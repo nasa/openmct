@@ -93,6 +93,9 @@ const ONE_HOUR = ONE_MINUTE * 60;
 const EIGHT_HOURS = 8 * ONE_HOUR;
 const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 
+const ARROW_RIGHT = 39;
+const ARROW_LEFT = 37;
+
 export default {
     inject: ['openmct', 'domainObject'],
     data() {
@@ -173,6 +176,7 @@ export default {
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
+        document.addEventListener('keyup', this.arrowHandler);
 
         // set
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
@@ -200,6 +204,7 @@ export default {
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
+        document.removeEventListener('keyup', this.arrowHandler);
     },
     methods: {
         datumIsNotValid(datum) {
@@ -400,7 +405,7 @@ export default {
             return this.imageHistory.indexOf(this.focusedImage);
         },
         setFocusedByIndex(index) {
-            this.setFocusedImage(this.imageHistory[index]);
+            this.setFocusedImage(this.imageHistory[index], THUMBNAIL_CLICKED);
         },
         nextImage() {
             let index = this.focusedImageIndex();
@@ -411,10 +416,21 @@ export default {
         },
         prevImage() {
             let index = this.focusedImageIndex();
-            if (index === this.imageHistor.length - 1) {
+            if (index === this.imageHistory.length - 1) {
                 this.setFocusedByIndex(this.imageHistory.length - 2);
             } else {
                 this.setFocusedByIndex(--index);
+            }
+        },
+        arrowHandler(event) {
+            let key = event.keyCode;
+
+            if (key === ARROW_RIGHT) {
+                this.nextImage();
+            }
+
+            if (key === ARROW_LEFT) {
+                this.prevImage();
             }
         }
     }
