@@ -33,7 +33,7 @@
         ></span>
         <span
             class="c-style-thumb"
-            :style="[savedStyle.imageUrl ? { backgroundImage:'url(' + savedStyle.imageUrl + ')'} : savedStyle ]"
+            :style="thumbStyle"
         >
             <span
                 class="c-style-thumb__text"
@@ -129,8 +129,15 @@ export default {
         };
     },
     computed: {
+        thumbStyle() {
+            return {
+                border: `1px solid ${this.savedStyle.border}`,
+                backgroundColor: this.savedStyle.backgroundColor,
+                color: this.savedStyle.color
+            };
+        },
         description() {
-            const fill = `Fill: ${this.savedStyle.fill || 'None'};`;
+            const fill = `Fill: ${this.savedStyle.backgroundColor || 'None'};`;
             const border = `Border: ${this.savedStyle.border || 'None'};`;
             const color = `Text Color: ${this.savedStyle.color || 'None'};`;
             const fontSize = this.savedStyle.fontSize ? `Font Size: ${this.savedStyle.fontSize};` : '';
@@ -144,11 +151,8 @@ export default {
                 ${font}
             `;
         },
-        isDefaultStyle() {
-            return this.stylesManager.isDefaultStyle(this.savedStyle);
-        },
         canDeleteStyle() {
-            return this.isEditing && !this.isDefaultStyle;
+            return this.isEditing;
         }
     },
     methods: {

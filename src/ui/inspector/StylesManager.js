@@ -5,11 +5,6 @@ const LIMIT = 100;
 const STYLE_PROPERTIES = [
     'backgroundColor', 'border', 'color'
 ];
-const DEFAULT_STYLE = {
-    backgroundColor: '',
-    border: '',
-    color: ''
-};
 
 /**
  * @typedef {Object} Style
@@ -30,8 +25,8 @@ export default class StylesManager extends EventEmitter {
     }
 
     load() {
-        const rawStyles = window.localStorage.getItem(LOCAL_STORAGE_KEY);
-        const styles = rawStyles ? JSON.parse(rawStyles) : [DEFAULT_STYLE];
+        let styles = window.localStorage.getItem(LOCAL_STORAGE_KEY);
+        styles = styles ? JSON.parse(styles) : [];
 
         return styles;
     }
@@ -46,8 +41,7 @@ export default class StylesManager extends EventEmitter {
         allowSave = !this.isExistingStyle(normalizedStyle, styles);
 
         if (allowSave) {
-            // latest saved styles go to front of store (except default always first)
-            styles.splice(1, 0, normalizedStyle);
+            styles.unshift(normalizedStyle);
             persistSucceeded = this.persist(styles);
 
             if (persistSucceeded) {
@@ -123,10 +117,6 @@ export default class StylesManager extends EventEmitter {
         );
 
         return !different;
-    }
-
-    isDefaultStyle(style) {
-        return this.isEqual(style, DEFAULT_STYLE);
     }
 
     select(style) {
