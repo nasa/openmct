@@ -205,3 +205,28 @@
         }
     }
 }
+
+.c-imagery__prev-next-buttons {
+    //background: rgba(deeppink, 0.2);
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+
+    .c-nav {
+        pointer-events: all;
+    }
+}
+
+.c-nav {
+    @include cArrowButtonBase($colorBg: rgba($colorLocalControlOvrBg, 0.1), $colorFg: $colorBtnBg);
+    @include cArrowButtonSizing($dimOuter: 48px);
+    border-radius: $controlCr;
+
+    .is-in-small-container & {
+        @include cArrowButtonSizing($dimOuter: 32px);
+    }
+}
