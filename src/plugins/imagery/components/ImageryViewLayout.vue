@@ -85,6 +85,8 @@ import moment from 'moment';
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;
+const ARROW_DOWN_DELAY_CHECK_MS = 400;
+const ARROW_SCROLL_RATE_MS = 100;
 const THUMBNAIL_CLICKED = true;
 
 const ONE_MINUTE = 60 * 1000;
@@ -176,7 +178,8 @@ export default {
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
-        document.addEventListener('keyup', this.arrowHandler);
+        document.addEventListener('keyup', this.arrowUpHandler);
+        document.addEventListener('keydown', this.arrowDownHandler);
 
         // set
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
@@ -204,7 +207,8 @@ export default {
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
-        document.removeEventListener('keyup', this.arrowHandler);
+        document.removeEventListener('keyup', this.arrowUpHandler);
+        document.removeEventListener('keydown', this.arrowDownHandler);
     },
     methods: {
         datumIsNotValid(datum) {
@@ -272,6 +276,22 @@ export default {
             }
 
             this.autoScroll = true;
+        },
+        scrollToFocused() {
+            const thumbsWrapper = this.$refs.thumbsWrapper;
+            if (!thumbsWrapper) {
+                return;
+            }
+
+            let index = this.focusedImageIndex();
+            let domThumb = thumbsWrapper.children[index];
+
+            if (domThumb) {
+                domThumb.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
         },
         scrollToRight() {
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
@@ -422,16 +442,56 @@ export default {
                 this.setFocusedByIndex(--index);
             }
         },
-        arrowHandler(event) {
+        arrowDownHandler(event) {
             let key = event.keyCode;
 
-            if (key === ARROW_RIGHT) {
-                this.nextImage();
+            if (this.isLeftOrRightArrowKey(key)) {
+                this.arrowDown = true;
+                window.clearTimeout(this.arrowDownDelayTimeout);
+                this.arrowDownDelayTimeout = window.setTimeout(() => {
+                    this.arrowKeyScroll(this.directionByKey(key));
+                }, ARROW_DOWN_DELAY_CHECK_MS);
+            }
+        },
+        arrowUpHandler(event) {
+            let key = event.keyCode;
+
+            window.clearTimeout(this.arrowDownDelayTimeout);
+
+            if (this.isLeftOrRightArrowKey(key)) {
+                this.arrowDown = false;
+                let direction = this.directionByKey(key);
+                this[direction + 'Image']();
+            }
+        },
+        arrowKeyScroll(direction) {
+            if (this.arrowDown) {
+                this.arrowKeyScrolling = true;
+                this[direction + 'Image']();
+                setTimeout(() => {
+                    this.arrowKeyScroll(direction);
+                }, ARROW_SCROLL_RATE_MS);
+            } else {
+                window.clearTimeout(this.arrowDownDelayTimeout);
+                this.arrowKeyScrolling = false;
+                this.scrollToFocused();
+            }
+        },
+        directionByKey(keyCode) {
+            let direction;
+
+            if (keyCode === ARROW_LEFT) {
+                direction = 'prev';
             }
 
-            if (key === ARROW_LEFT) {
-                this.prevImage();
+            if (keyCode === ARROW_RIGHT) {
+                direction = 'next';
             }
+
+            return direction;
+        },
+        isLeftOrRightArrowKey(keyCode) {
+            return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
         }
     }
 };
