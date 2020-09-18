@@ -58,7 +58,7 @@ export default class DuplicateTask {
         this.filter = filter || this.isCreatable;
 
         await this.buildDuplicationPlan();
-        // this.persistObjects();
+        this.persistObjects();
         await this.addClonesToParent();
 
         return this.firstClone;
@@ -92,7 +92,7 @@ export default class DuplicateTask {
      */
     persistObjects() {
         this.clones.forEach(clone => {
-            this.openmct.objects.mutate(clone, 'created', Date.now());
+            this.openmct.objects.save(clone);
         });
     }
 
@@ -196,9 +196,10 @@ export default class DuplicateTask {
     }
 
     async composeChild(child, parent, setLocation) {
+        const PERSIST_BOOL = false;
         let parentComposition = this.openmct.composition.get(parent);
         await parentComposition.load();
-        parentComposition.add(child);
+        parentComposition.add(child, PERSIST_BOOL);
 
         //If a location is not specified, set it.
         if (setLocation && child.location === undefined) {
@@ -227,6 +228,10 @@ export default class DuplicateTask {
             delete clone.modified;
             delete clone.persisted;
             delete clone.location;
+        }
+
+        if (clone.composition) {
+            clone.composition = [];
         }
 
         clone.identifier = identifier;

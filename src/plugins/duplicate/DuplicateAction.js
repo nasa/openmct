@@ -145,15 +145,7 @@ export default class DuplicateAction {
                 return false;
             }
 
-            if (parentCandidateKeystring === currentParentKeystring) {
-                return false;
-            }
-
-            if (parentCandidate.getId() === objectKeystring) {
-                return false;
-            }
-
-            if (parentCandidate.getModel().composition.indexOf(objectKeystring) !== -1) {
+            if (parentCandidateKeystring === objectKeystring) {
                 return false;
             }
 
