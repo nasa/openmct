@@ -105,12 +105,11 @@
 </template>
 
 <script>
-import StylesManager from '@/ui/inspector/StylesManager';
-
 export default {
     name: 'SavedStyleSelector',
     inject: [
-        'openmct'
+        'openmct',
+        'stylesManager'
     ],
     props: {
         isEditing: {
@@ -124,8 +123,7 @@ export default {
     },
     data() {
         return {
-            expanded: false,
-            stylesManager: new StylesManager(this.openmct)
+            expanded: false
         };
     },
     computed: {

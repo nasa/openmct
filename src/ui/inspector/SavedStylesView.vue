@@ -45,7 +45,6 @@
 
 <script>
 import SavedStyleSelector from './SavedStyleSelector.vue';
-import StylesManager from '@/ui/inspector/StylesManager';
 
 export default {
     name: 'SavedStylesView',
@@ -54,7 +53,8 @@ export default {
     },
     inject: [
         'openmct',
-        'selection'
+        'selection',
+        'stylesManager'
     ],
     data() {
         return {
@@ -64,14 +64,17 @@ export default {
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.setIsEditing);
-        this.stylesManager = new StylesManager(this.openmct);
         this.stylesManager.on('stylesUpdated', this.setStyles);
+        this.stylesManager.on('limitReached', this.showLimitReachedDialog);
+        this.stylesManager.on('persistError', this.showPersistErrorDialog);
 
         this.loadStyles();
     },
     destroyed() {
         this.openmct.editor.off('isEditing', this.setIsEditing);
         this.stylesManager.off('stylesUpdated', this.setStyles);
+        this.stylesManager.off('limitReached', this.showLimitReachedDialog);
+        this.stylesManager.off('persistError', this.showPersistErrorDialog);
     },
     methods: {
         setIsEditing(isEditing) {
@@ -84,6 +87,45 @@ export default {
         },
         setStyles(styles) {
             this.savedStyles = styles;
+        },
+        showLimitReachedDialog(limit) {
+            const message = `
+                You have reached the limit on the number of saved styles.
+                Please delete one or more saved styles and try again.
+            `;
+
+            let dialog = this.openmct.overlays.dialog({
+                title: 'Saved Styles Limit',
+                iconClass: 'alert',
+                message: message,
+                buttons: [
+                    {
+                        label: 'OK',
+                        callback: () => {
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
+        },
+        showPersistErrorDialog() {
+            const message = `
+                Problem encountered saving styles.
+                Try again or delete one or more styles before trying again.
+            `;
+            let dialog = this.openmct.overlays.dialog({
+                title: 'Error Saving Style',
+                iconClass: 'error',
+                message: message,
+                buttons: [
+                    {
+                        label: 'OK',
+                        callback: () => {
+                            dialog.dismiss();
+                        }
+                    }
+                ]
+            });
         }
     }
 };

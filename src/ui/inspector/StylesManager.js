@@ -10,20 +10,7 @@ const STYLE_PROPERTIES = [
  * @typedef {Object} Style
  * @property {*} property
  */
-export default class StylesManager extends EventEmitter {
-    constructor(openmct) {
-        super();
-
-        if (!StylesManager.instance) {
-            StylesManager.instance = this;
-        }
-
-        this.openmct = openmct;
-
-        // eslint-disable-next-line
-        return StylesManager.instance;
-    }
-
+class StylesManager extends EventEmitter {
     load() {
         let styles = window.localStorage.getItem(LOCAL_STORAGE_KEY);
         styles = styles ? JSON.parse(styles) : [];
@@ -62,9 +49,7 @@ export default class StylesManager extends EventEmitter {
      */
     isSaveLimitReached(styles) {
         if (styles.length >= LIMIT) {
-            this.openmct.notifications.alert(
-                `Saved styles limit (${LIMIT}) reached. Please delete a saved style and try again.`
-            );
+            this.emit('limitReached');
 
             return true;
         }
@@ -76,17 +61,7 @@ export default class StylesManager extends EventEmitter {
      * @private
      */
     isExistingStyle(style, styles) {
-        const match = styles.findIndex(existingStyle => this.isEqual(style, existingStyle));
-
-        if (match > -1) {
-            this.openmct.notifications.alert(
-                `This style is already saved at position ${match + 1}.`
-            );
-
-            return true;
-        }
-
-        return false;
+        return styles.some(existingStyle => this.isEqual(style, existingStyle));
     }
 
     /**
@@ -98,7 +73,7 @@ export default class StylesManager extends EventEmitter {
 
             return true;
         } catch {
-            this.openmct.notifications.error('Problem encountered saving styles.');
+            this.emit('persistError');
         }
 
         return false;
@@ -106,8 +81,8 @@ export default class StylesManager extends EventEmitter {
 
     isEqual(style1, style2) {
         const keys = Object.keys(Object.assign({}, style1, style2));
-        const different = keys.some(key => (style1[key] !== undefined && style2[key] === undefined)
-            || (style1[key] === undefined && style2[key] !== undefined)
+        const different = keys.some(key => (!style1[key] && style2[key])
+            || (style1[key] && !style2[key])
             || (style1[key] !== style2[key])
         );
 
@@ -128,3 +103,9 @@ export default class StylesManager extends EventEmitter {
         }
     }
 }
+
+const stylesManager = new StylesManager();
+// breaks on adding listener later
+// Object.freeze(stylesManager);
+
+export default stylesManager;

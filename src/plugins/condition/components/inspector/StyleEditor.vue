@@ -79,7 +79,6 @@ import ToolbarButton from "@/ui/toolbar/components/toolbar-button.vue";
 import ToolbarToggleButton from "@/ui/toolbar/components/toolbar-toggle-button.vue";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 import {getStylesWithoutNoneValue} from "@/plugins/condition/utils/styleUtils";
-import StylesManager from '@/ui/inspector/StylesManager';
 
 export default {
     name: 'StyleEditor',
@@ -89,7 +88,7 @@ export default {
         ToolbarToggleButton
     },
     inject: [
-        'openmct'
+        'openmct', 'stylesManager'
     ],
     props: {
         isEditing: {
@@ -202,9 +201,6 @@ export default {
                 // nonSpecific: this.mixedStyles.indexOf('color') > -1
             };
         }
-    },
-    mounted() {
-        this.stylesManager = new StylesManager(this.openmct);
     },
     methods: {
         hasProperty(property) {

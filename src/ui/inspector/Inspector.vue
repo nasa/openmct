@@ -52,10 +52,14 @@ import Properties from './Properties.vue';
 import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
+import stylesManager from '@/ui/inspector/StylesManager';
 import StylesInspectorView from './StylesInspectorView.vue';
 import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
 
 export default {
+    provide: {
+        stylesManager: stylesManager
+    },
     inject: ['openmct'],
     components: {
         StylesInspectorView,
