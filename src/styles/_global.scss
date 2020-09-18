@@ -312,14 +312,8 @@ body.desktop .has-local-controls {
 
         display: flex;
         align-items: center;
-<<<<<<< HEAD
-        padding-left: $spinnerL + $d/2 + $interiorMargin;
-        background: $colorLoadingBg;
-        min-height: 5 + $d;
-=======
         margin-left: $treeNavArrowD + $interiorMargin;
         min-height: 5px + $d;
->>>>>>> styles/fonts-inspector
 
         .c-tree__item__label {
             font-style: italic;
@@ -332,14 +326,9 @@ body.desktop .has-local-controls {
             transform: translate(0);
             height: $d;
             width: $d;
-<<<<<<< HEAD
-            border-width: 4;
-            left: $spinnerL;
-=======
             border-width: 3px;
             //left: $spinnerL;
             position: relative;
->>>>>>> styles/fonts-inspector
         }
         &:after {
             display: none;
