@@ -59,7 +59,7 @@
             >
                 <ul
                     ref="scrollable"
-                    class="scrollable-children"
+                    class="c-tree__scrollable-children"
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
@@ -635,8 +635,7 @@ export default {
         },
         scrollableStyles() {
             return {
-                height: this.availableContainerHeight + 'px',
-                overflow: this.noScroll ? 'hidden' : 'scroll'
+                height: this.availableContainerHeight + 'px'
             };
         },
         childrenIn(el, done) {
