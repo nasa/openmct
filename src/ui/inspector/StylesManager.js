@@ -1,7 +1,7 @@
 import EventEmitter from 'EventEmitter';
 
 const LOCAL_STORAGE_KEY = 'mct-saved-styles';
-const LIMIT = 100;
+const LIMIT = 20;
 const STYLE_PROPERTIES = [
     'backgroundColor', 'border', 'color'
 ];
@@ -34,15 +34,10 @@ export default class StylesManager extends EventEmitter {
     save(style) {
         const normalizedStyle = this.normalizeStyle(style);
         const styles = this.load();
-        let allowSave;
-        let persistSucceeded;
 
-        allowSave = !this.isSaveLimitReached(styles);
-        allowSave = !this.isExistingStyle(normalizedStyle, styles);
-
-        if (allowSave) {
+        if (!this.isSaveLimitReached(styles)) {
             styles.unshift(normalizedStyle);
-            persistSucceeded = this.persist(styles);
+            const persistSucceeded = this.persist(styles);
 
             if (persistSucceeded) {
                 this.emit('stylesUpdated', styles);

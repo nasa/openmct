@@ -644,15 +644,13 @@ export default {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
         },
         updateSelectionStyle(style) {
-            if (this.isStaticAndConditionalStyles) {
-                console.log(`mixed`);
-
+            if (!this.allowEditing) {
                 return;
             }
-            
+
             const foundStyle = this.findStyleByConditionId(this.selectedConditionId);
 
-            if (foundStyle) {
+            if (foundStyle && !this.isStaticAndConditionalStyles) {
                 Object.entries(style).forEach(([property, value]) => {
                     if (foundStyle.style[property] !== undefined && foundStyle.style[property] !== value) {
                         foundStyle.style[property] = value;
@@ -660,6 +658,7 @@ export default {
                 });
                 this.getAndPersistStyles();
             } else {
+                this.removeConditionSet();
                 Object.entries(style).forEach(([property, value]) => {
                     if (this.staticStyle.style[property] !== undefined && this.staticStyle.style[property] !== value) {
                         this.staticStyle.style[property] = value;
