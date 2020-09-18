@@ -14,7 +14,7 @@ define([
 
     function plugin() {
 
-        var widgetType = {
+        const widgetType = {
             name: 'Summary Widget',
             description: 'A compact status update for collections of telemetry-producing items',
             creatable: true,

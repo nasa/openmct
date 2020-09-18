@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -56,10 +56,11 @@ define(
          */
         CreateWizard.prototype.getFormStructure = function (includeLocation) {
             var sections = [],
-                domainObject = this.domainObject;
+                domainObject = this.domainObject,
+                self = this;
 
             function validateLocation(parent) {
-                return parent && this.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
+                return parent && self.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
             }
 
             sections.push({
@@ -111,11 +112,22 @@ define(
                 formModel = this.createModel(formValue);
 
             formModel.location = parent.getId();
+
+            this.updateNamespaceFromParent(parent);
+
             this.domainObject.useCapability("mutation", function () {
                 return formModel;
             });
 
             return this.domainObject;
+        };
+
+        /** @private */
+        CreateWizard.prototype.updateNamespaceFromParent = function (parent) {
+            let childIdentifier = this.domainObject.useCapability('adapter').identifier;
+            let parentIdentifier = parent.useCapability('adapter').identifier;
+            childIdentifier.namespace = parentIdentifier.namespace;
+            this.domainObject.id = this.openmct.objects.makeKeyString(childIdentifier);
         };
 
         /**

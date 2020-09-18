@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,19 +46,20 @@ define([
      * models.  If a model is requested twice, respond with a missing result.
      */
     MissingModelCompatibilityDecorator.prototype.apiFetch = function (ids) {
-        var results = {},
-            promises = ids.map(function (id) {
-                if (this.apiFetching[id]) {
-                    return Promise.resolve();
-                }
+        const results = {};
 
-                this.apiFetching[id] = true;
+        const promises = ids.map(function (id) {
+            if (this.apiFetching[id]) {
+                return Promise.resolve();
+            }
 
-                return this.api.objects.get(objectUtils.parseKeyString(id))
-                    .then(function (newDO) {
-                        results[id] = objectUtils.toOldFormat(newDO);
-                    });
-            }, this);
+            this.apiFetching[id] = true;
+
+            return this.api.objects.get(objectUtils.parseKeyString(id))
+                .then(function (newDO) {
+                    results[id] = objectUtils.toOldFormat(newDO);
+                });
+        }, this);
 
         return Promise.all(promises).then(function () {
             return results;
@@ -72,7 +73,7 @@ define([
     MissingModelCompatibilityDecorator.prototype.getModels = function (ids) {
         return this.modelService.getModels(ids)
             .then(function (models) {
-                var missingIds = ids.filter(function (id) {
+                const missingIds = ids.filter(function (id) {
                     return !models[id];
                 });
 

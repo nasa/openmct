@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -106,8 +106,8 @@ define([
     ) {
         this.establishTopicListener();
 
-        var keyString = objectUtils.makeKeyString(domainObject.identifier);
-        var objectListeners = this.listeningTo[keyString];
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let objectListeners = this.listeningTo[keyString];
 
         if (!objectListeners) {
             objectListeners = this.listeningTo[keyString] = {
@@ -140,10 +140,10 @@ define([
         callback,
         context
     ) {
-        var keyString = objectUtils.makeKeyString(domainObject.identifier);
-        var objectListeners = this.listeningTo[keyString];
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+        const objectListeners = this.listeningTo[keyString];
 
-        var index = objectListeners[event].findIndex(l => {
+        const index = objectListeners[event].findIndex(l => {
             return l.callback === callback && l.context === context;
         });
 
@@ -233,7 +233,7 @@ define([
         this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
         let id = objectUtils.makeKeyString(domainObject.identifier);
-        var listeners = this.listeningTo[id];
+        const listeners = this.listeningTo[id];
 
         if (!listeners) {
             return;
@@ -274,18 +274,18 @@ define([
      * @private
      */
     DefaultCompositionProvider.prototype.onMutation = function (oldDomainObject) {
-        var id = objectUtils.makeKeyString(oldDomainObject.identifier);
-        var listeners = this.listeningTo[id];
+        const id = objectUtils.makeKeyString(oldDomainObject.identifier);
+        const listeners = this.listeningTo[id];
 
         if (!listeners) {
             return;
         }
 
-        var oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        var newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
+        const oldComposition = listeners.composition.map(objectUtils.makeKeyString);
+        const newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
 
-        var added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
-        var removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
+        const added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
+        const removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
 
         function notify(value) {
             return function (listener) {

@@ -87,6 +87,15 @@
         }
     }
 
+    &__selector {
+        &:hover {
+            $c: $colorBodyFg;
+            border-color: rgba($c, 0.2);
+            background: rgba($c, 0.2);
+            transition: $transIn;
+        }
+    }
+
     .c-style {
         padding: 2px; // Allow a bit of room for thumb box-shadow
 

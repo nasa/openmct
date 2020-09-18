@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -58,8 +58,8 @@ define([
      * @private
      */
     AutoflowTabularController.prototype.addRow = function (childObject) {
-        var identifier = childObject.identifier;
-        var id = [identifier.namespace, identifier.key].join(":");
+        const identifier = childObject.identifier;
+        const id = [identifier.namespace, identifier.key].join(":");
 
         if (!this.rows[id]) {
             this.rows[id] = {
@@ -84,7 +84,7 @@ define([
      * @private
      */
     AutoflowTabularController.prototype.removeRow = function (identifier) {
-        var id = [identifier.namespace, identifier.key].join(":");
+        const id = [identifier.namespace, identifier.key].join(":");
 
         if (this.rows[id]) {
             this.data.items = this.data.items.filter(function (item) {

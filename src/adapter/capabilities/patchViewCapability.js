@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,18 +28,18 @@ define([
 
     function patchViewCapability(viewConstructor) {
         return function makeCapability(domainObject) {
-            var capability = viewConstructor(domainObject);
-            var oldInvoke = capability.invoke.bind(capability);
+            const capability = viewConstructor(domainObject);
+            const oldInvoke = capability.invoke.bind(capability);
 
             /* eslint-disable you-dont-need-lodash-underscore/map */
             capability.invoke = function () {
-                var availableViews = oldInvoke();
-                var newDomainObject = capability
+                const availableViews = oldInvoke();
+                const newDomainObject = capability
                     .domainObject
                     .useCapability('adapter');
 
                 return _(availableViews).map(function (v, i) {
-                    var vd = {
+                    const vd = {
                         view: v,
                         priority: i + 100 // arbitrary to allow new views to
                         // be defaults by returning priority less than 100.

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2018, United States Government
+ * Open MCT Web, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -143,12 +143,12 @@ export default {
     methods: {
         generateTable() {
             let m = moment.utc({
-                    year: this.picker.year,
-                    month: this.picker.month
-                }).day(0),
-                table = [],
-                row,
-                col;
+                year: this.picker.year,
+                month: this.picker.month
+            }).day(0);
+            let table = [];
+            let row;
+            let col;
 
             for (row = 0; row < 6; row += 1) {
                 table.push([]);

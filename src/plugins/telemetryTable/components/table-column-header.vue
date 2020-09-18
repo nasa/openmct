@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -104,7 +104,7 @@ export default {
         resizeColumn(event) {
             let delta = event.clientX - this.resizeStartX;
             let newWidth = this.resizeStartWidth + delta;
-            let minWidth = parseInt(window.getComputedStyle(this.$el).minWidth);
+            let minWidth = parseInt(window.getComputedStyle(this.$el).minWidth, 10);
             if (newWidth > minWidth) {
                 this.$emit('resizeColumn', this.headerKey, newWidth);
             }

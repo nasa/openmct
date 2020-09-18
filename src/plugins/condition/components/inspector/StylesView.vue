@@ -125,7 +125,8 @@ export default {
     },
     inject: [
         'openmct',
-        'selection'
+        'selection',
+        'stylesManager'
     ],
     data() {
         return {
@@ -149,6 +150,8 @@ export default {
     },
     destroyed() {
         this.removeListeners();
+        this.openmct.editor.off('isEditing', this.setEditState);
+        this.stylesManager.off('styleSelected', this.updateSelectionStyle);
     },
     mounted() {
         this.items = [];
@@ -167,6 +170,7 @@ export default {
         }
 
         this.openmct.editor.on('isEditing', this.setEditState);
+        this.stylesManager.on('styleSelected', this.updateSelectionStyle);
     },
     methods: {
         getObjectStyles() {
@@ -431,20 +435,22 @@ export default {
         },
         addConditionSet() {
             let conditionSetDomainObject;
-            const handleItemSelection = (item) => {
+            let self = this;
+            function handleItemSelection(item) {
                 if (item) {
                     conditionSetDomainObject = item;
                 }
-            };
+            }
 
-            const dismissDialog = (overlay, initialize) => {
+            function dismissDialog(overlay, initialize) {
                 overlay.dismiss();
+
                 if (initialize && conditionSetDomainObject) {
-                    this.conditionSetDomainObject = conditionSetDomainObject;
-                    this.conditionalStyles = [];
-                    this.initializeConditionalStyles();
+                    self.conditionSetDomainObject = conditionSetDomainObject;
+                    self.conditionalStyles = [];
+                    self.initializeConditionalStyles();
                 }
-            };
+            }
 
             let vm = new Vue({
                 provide: {
@@ -635,6 +641,30 @@ export default {
         },
         persist(domainObject, style) {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
+        },
+        updateSelectionStyle(style) {
+            if (!this.allowEditing) {
+                return;
+            }
+
+            const foundStyle = this.findStyleByConditionId(this.selectedConditionId);
+
+            if (foundStyle && !this.isStaticAndConditionalStyles) {
+                Object.entries(style).forEach(([property, value]) => {
+                    if (foundStyle.style[property] !== undefined && foundStyle.style[property] !== value) {
+                        foundStyle.style[property] = value;
+                    }
+                });
+                this.getAndPersistStyles();
+            } else {
+                this.removeConditionSet();
+                Object.entries(style).forEach(([property, value]) => {
+                    if (this.staticStyle.style[property] !== undefined && this.staticStyle.style[property] !== value) {
+                        this.staticStyle.style[property] = value;
+                        this.getAndPersistStyles(property);
+                    }
+                });
+            }
         }
     }
 };

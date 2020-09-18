@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -285,16 +285,16 @@ define([
     };
 
     DrawWebGL.prototype.drawLimitPoints = function (points, color, pointSize) {
-        var limitSize = pointSize * 2;
-        var offset = limitSize / 2;
+        const limitSize = pointSize * 2;
+        const offset = limitSize / 2;
 
-        var mappedColor = color.map(function (c, i) {
+        const mappedColor = color.map(function (c, i) {
             return i < 3 ? Math.floor(c * 255) : (c);
         }).join(',');
         this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
         this.c2d.fillStyle = "rgba(" + mappedColor + ")";
 
-        for (var i = 0; i < points.length; i++) {
+        for (let i = 0; i < points.length; i++) {
             this.drawLimitPoint(
                 this.x(points[i].x) - offset,
                 this.y(points[i].y) - offset,

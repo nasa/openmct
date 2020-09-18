@@ -2,7 +2,11 @@
 <div class="c-inspector__header">
     <div v-if="!multiSelect"
          class="c-inspector__selected c-object-label"
+<<<<<<< HEAD
          :class="{'is-missing': domainObject && domainObject.status === 'missing' }"
+=======
+         :class="{'is-missing': isMissing }"
+>>>>>>> styles/fonts-inspector
     >
         <div class="c-object-label__type-icon"
              :class="typeCssClass"
@@ -57,6 +61,10 @@ export default {
         },
         singleSelectNonObject() {
             return !this.item.identifier && !this.multiSelect;
+        },
+        isMissing() {
+            // safe check this.domainObject since for layout objects this.domainOjbect is undefined
+            return this.domainObject && this.domainObject.status === 'missing';
         }
     },
     mounted() {

@@ -15,7 +15,7 @@
 
     </div>
     <div class="c-inspector__content">
-        <multipane v-if="currentTabbedView.key === '__properties'"
+        <multipane v-show="currentTabbedView.key === '__properties'"
                    type="vertical"
         >
             <pane class="c-inspector__properties">
@@ -32,9 +32,13 @@
                 <elements />
             </pane>
         </multipane>
-        <template v-else>
-            <styles-inspector-view />
-        </template>
+        <StylesInspectorView
+            v-show="currentTabbedView.key === '__styles'"
+        />
+        <SavedStylesInspectorView
+            v-show="currentTabbedView.key === '__styles'"
+            :is-editing="isEditing"
+        />
     </div>
 </div>
 </template>
@@ -48,12 +52,18 @@ import Properties from './Properties.vue';
 import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
-import StylesInspectorView from "./StylesInspectorView.vue";
+import stylesManager from '@/ui/inspector/StylesManager';
+import StylesInspectorView from './StylesInspectorView.vue';
+import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
 
 export default {
+    provide: {
+        stylesManager: stylesManager
+    },
     inject: ['openmct'],
     components: {
         StylesInspectorView,
+        SavedStylesInspectorView,
         multipane,
         pane,
         Elements,
@@ -63,7 +73,10 @@ export default {
         InspectorViews
     },
     props: {
-        'isEditing': Boolean
+        isEditing: {
+            type: Boolean,
+            required: true
+        }
     },
     data() {
         return {

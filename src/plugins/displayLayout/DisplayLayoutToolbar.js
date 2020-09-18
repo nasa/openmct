@@ -713,8 +713,8 @@ define(['lodash'], function (_) {
                 }
 
                 function getPropertyFromPath(object, path) {
-                    let splitPath = path.split('.'),
-                        property = Object.assign({}, object);
+                    let splitPath = path.split('.');
+                    let property = Object.assign({}, object);
 
                     while (splitPath.length && property) {
                         property = property[splitPath.shift()];
@@ -787,9 +787,9 @@ define(['lodash'], function (_) {
 
                 function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
                     if (selection.length === 1) {
-                        let displayLayoutContext = selectionPath[1].context,
-                            selectedItemContext = selectionPath[0].context,
-                            selectedItemType = selectedItemContext.item.type;
+                        let displayLayoutContext = selectionPath[1].context;
+                        let selectedItemContext = selectionPath[0].context;
+                        let selectedItemType = selectedItemContext.item.type;
 
                         if (selectedItemContext.layoutItem.type === 'telemetry-view') {
                             selectedItemType = 'telemetry-view';

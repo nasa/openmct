@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -121,7 +121,9 @@ define([
             formProp = prop;
         }
 
-        var formPath = 'form.' + formProp;
+        const formPath = 'form.' + formProp;
+        let self = this;
+
         if (!coerce) {
             coerce = function (v) {
                 return v;
@@ -135,19 +137,19 @@ define([
         }
 
         if (objectPath && !_.isFunction(objectPath)) {
-            var staticObjectPath = objectPath;
+            const staticObjectPath = objectPath;
             objectPath = function () {
                 return staticObjectPath;
             };
         }
 
         this.listenTo(this.model, 'change:' + prop, function (newVal, oldVal) {
-            if (!_.isEqual(coerce(_.get(this.$scope, formPath)), coerce(newVal))) {
-                _.set(this.$scope, formPath, coerce(newVal));
+            if (!_.isEqual(coerce(_.get(self.$scope, formPath)), coerce(newVal))) {
+                _.set(self.$scope, formPath, coerce(newVal));
             }
-        }, this);
-        this.model.listenTo(this.$scope, 'change:' + formPath, function (newVal, oldVal) {
-            var validationResult = validate(newVal, this.model);
+        });
+        this.model.listenTo(this.$scope, 'change:' + formPath, (newVal, oldVal) => {
+            const validationResult = validate(newVal, this.model);
             if (validationResult === true) {
                 delete this.$scope.validation[formProp];
             } else {
@@ -170,7 +172,7 @@ define([
                     );
                 }
             }
-        }, this);
+        });
         _.set(this.$scope, formPath, coerce(this.model.get(prop)));
     };
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,7 +46,7 @@ define([
         this.eventEmitter = new EventEmitter();
         this.providers = {};
         this.rootRegistry = new RootRegistry();
-        this.rootProvider = new RootObjectProvider(this.rootRegistry);
+        this.rootProvider = new RootObjectProvider.default(this.rootRegistry);
     }
 
     /**
@@ -155,7 +155,7 @@ define([
      */
     ObjectAPI.prototype.get = function (identifier) {
         identifier = utils.parseKeyString(identifier);
-        var provider = this.getProvider(identifier);
+        const provider = this.getProvider(identifier);
 
         if (!provider) {
             throw new Error('No Provider Matched');
@@ -232,7 +232,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-        var mutableObject =
+        const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
 
         return mutableObject.set(path, value);
@@ -248,7 +248,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        var mutableObject =
+        const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
         mutableObject.on(path, callback);
 

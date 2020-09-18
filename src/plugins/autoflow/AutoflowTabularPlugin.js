@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,7 @@ define([
 ) {
     return function (options) {
         return function (openmct) {
-            var views = (openmct.mainViews || openmct.objectViews);
+            const views = (openmct.mainViews || openmct.objectViews);
 
             views.addProvider({
                 name: "Autoflow Tabular",

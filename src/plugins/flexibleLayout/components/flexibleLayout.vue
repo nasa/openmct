@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -196,8 +196,8 @@ export default {
             this.persist();
         },
         deleteContainer(containerId) {
-            let container = this.containers.filter(c => c.id === containerId)[0],
-                containerIndex = this.containers.indexOf(container);
+            let container = this.containers.filter(c => c.id === containerId)[0];
+            let containerIndex = this.containers.indexOf(container);
 
             /*
                 remove associated domainObjects from composition
@@ -273,9 +273,9 @@ export default {
                 return false;
             }
 
-            let containerId = event.dataTransfer.getData('containerid'),
-                container = this.containers.filter((c) => c.id === containerId)[0],
-                containerPos = this.containers.indexOf(container);
+            let containerId = event.dataTransfer.getData('containerid');
+            let container = this.containers.filter((c) => c.id === containerId)[0];
+            let containerPos = this.containers.indexOf(container);
 
             if (index === -1) {
                 return containerPos !== 0;
@@ -291,15 +291,15 @@ export default {
             }
         },
         startContainerResizing(index) {
-            let beforeContainer = this.containers[index],
-                afterContainer = this.containers[index + 1];
+            let beforeContainer = this.containers[index];
+            let afterContainer = this.containers[index + 1];
 
             this.maxMoveSize = beforeContainer.size + afterContainer.size;
         },
         containerResizing(index, delta, event) {
-            let percentageMoved = Math.round(delta / this.getElSize() * 100),
-                beforeContainer = this.containers[index],
-                afterContainer = this.containers[index + 1];
+            let percentageMoved = Math.round(delta / this.getElSize() * 100);
+            let beforeContainer = this.containers[index];
+            let afterContainer = this.containers[index + 1];
 
             beforeContainer.size = this.getContainerSize(beforeContainer.size + percentageMoved);
             afterContainer.size = this.getContainerSize(afterContainer.size - percentageMoved);

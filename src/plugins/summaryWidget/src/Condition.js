@@ -44,7 +44,7 @@ define([
         this.remove = this.remove.bind(this);
         this.duplicate = this.duplicate.bind(this);
 
-        var self = this;
+        const self = this;
 
         /**
          * Event handler for a change in one of this conditions' custom selects
@@ -70,9 +70,9 @@ define([
          * @private
          */
         function onValueInput(event) {
-            var elem = event.target,
-                value = isNaN(Number(elem.value)) ? elem.value : Number(elem.value),
-                inputIndex = self.valueInputs.indexOf(elem);
+            const elem = event.target;
+            const value = isNaN(Number(elem.value)) ? elem.value : Number(elem.value);
+            const inputIndex = self.valueInputs.indexOf(elem);
 
             self.eventEmitter.emit('change', {
                 value: value,
@@ -156,7 +156,7 @@ define([
      * callbacks with the cloned configuration and this rule's index
      */
     Condition.prototype.duplicate = function () {
-        var sourceCondition = JSON.parse(JSON.stringify(this.config));
+        const sourceCondition = JSON.parse(JSON.stringify(this.config));
         this.eventEmitter.emit('duplicate', {
             sourceCondition: sourceCondition,
             index: this.index
@@ -171,13 +171,13 @@ define([
      * @param {string} operation The key of currently selected operation
      */
     Condition.prototype.generateValueInputs = function (operation) {
-        var evaluator = this.conditionManager.getEvaluator(),
-            inputArea = $('.t-value-inputs', this.domElement),
-            inputCount,
-            inputType,
-            newInput,
-            index = 0,
-            emitChange = false;
+        const evaluator = this.conditionManager.getEvaluator();
+        const inputArea = $('.t-value-inputs', this.domElement);
+        let inputCount;
+        let inputType;
+        let newInput;
+        let index = 0;
+        let emitChange = false;
 
         inputArea.html('');
         this.valueInputs = [];

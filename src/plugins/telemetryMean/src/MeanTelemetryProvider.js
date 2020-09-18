@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*jshint latedef: nofunc */
-/*global console */
+
 define([
     'objectUtils',
     './TelemetryAverager'
@@ -43,10 +42,10 @@ define([
             MeanTelemetryProvider.prototype.canProvideTelemetry;
 
     MeanTelemetryProvider.prototype.subscribe = function (domainObject, callback) {
-        var wrappedUnsubscribe;
-        var unsubscribeCalled = false;
-        var objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
-        var samples = domainObject.samples;
+        let wrappedUnsubscribe;
+        let unsubscribeCalled = false;
+        const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+        const samples = domainObject.samples;
 
         this.objectAPI.get(objectId)
             .then(function (linkedDomainObject) {
@@ -65,15 +64,15 @@ define([
     };
 
     MeanTelemetryProvider.prototype.subscribeToAverage = function (domainObject, samples, callback) {
-        var telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples, callback);
-        var createAverageDatum = telemetryAverager.createAverageDatum.bind(telemetryAverager);
+        const telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples, callback);
+        const createAverageDatum = telemetryAverager.createAverageDatum.bind(telemetryAverager);
 
         return this.telemetryAPI.subscribe(domainObject, createAverageDatum);
     };
 
     MeanTelemetryProvider.prototype.request = function (domainObject, request) {
-        var objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
-        var samples = domainObject.samples;
+        const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+        const samples = domainObject.samples;
 
         return this.objectAPI.get(objectId).then(function (linkedDomainObject) {
             return this.requestAverageTelemetry(linkedDomainObject, request, samples);
@@ -84,10 +83,10 @@ define([
      * @private
      */
     MeanTelemetryProvider.prototype.requestAverageTelemetry = function (domainObject, request, samples) {
-        var averageData = [];
-        var addToAverageData = averageData.push.bind(averageData);
-        var telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples, addToAverageData);
-        var createAverageDatum = telemetryAverager.createAverageDatum.bind(telemetryAverager);
+        const averageData = [];
+        const addToAverageData = averageData.push.bind(averageData);
+        const telemetryAverager = new TelemetryAverager(this.telemetryAPI, this.timeAPI, domainObject, samples, addToAverageData);
+        const createAverageDatum = telemetryAverager.createAverageDatum.bind(telemetryAverager);
 
         return this.telemetryAPI.request(domainObject, request).then(function (telemetryData) {
             telemetryData.forEach(createAverageDatum);
@@ -100,7 +99,7 @@ define([
      * @private
      */
     MeanTelemetryProvider.prototype.getLinkedObject = function (domainObject) {
-        var objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
+        const objectId = objectUtils.parseKeyString(domainObject.telemetryPoint);
 
         return this.objectAPI.get(objectId);
     };

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,10 +28,10 @@ define([
     SummaryWidgetEvaluator
 ) {
     describe('EvaluatorPool', function () {
-        var pool;
-        var openmct;
-        var objectA;
-        var objectB;
+        let pool;
+        let openmct;
+        let objectA;
+        let objectB;
 
         beforeEach(function () {
             openmct = {
@@ -39,7 +39,7 @@ define([
                 objects: jasmine.createSpyObj('objectAPI', ['observe'])
             };
             openmct.composition.get.and.callFake(function () {
-                var compositionCollection = jasmine.createSpyObj(
+                const compositionCollection = jasmine.createSpyObj(
                     'compositionCollection',
                     [
                         'load',
@@ -76,27 +76,27 @@ define([
         });
 
         it('returns new evaluators for different objects', function () {
-            var evaluatorA = pool.get(objectA);
-            var evaluatorB = pool.get(objectB);
+            const evaluatorA = pool.get(objectA);
+            const evaluatorB = pool.get(objectB);
             expect(evaluatorA).not.toBe(evaluatorB);
         });
 
         it('returns the same evaluator for the same object', function () {
-            var evaluatorA = pool.get(objectA);
-            var evaluatorB = pool.get(objectA);
+            const evaluatorA = pool.get(objectA);
+            const evaluatorB = pool.get(objectA);
             expect(evaluatorA).toBe(evaluatorB);
 
-            var evaluatorC = pool.get(JSON.parse(JSON.stringify(objectA)));
+            const evaluatorC = pool.get(JSON.parse(JSON.stringify(objectA)));
             expect(evaluatorA).toBe(evaluatorC);
         });
 
         it('returns new evaluator when old is released', function () {
-            var evaluatorA = pool.get(objectA);
-            var evaluatorB = pool.get(objectA);
+            const evaluatorA = pool.get(objectA);
+            const evaluatorB = pool.get(objectA);
             expect(evaluatorA).toBe(evaluatorB);
             pool.release(evaluatorA);
             pool.release(evaluatorB);
-            var evaluatorC = pool.get(objectA);
+            const evaluatorC = pool.get(objectA);
             expect(evaluatorA).not.toBe(evaluatorC);
         });
     });

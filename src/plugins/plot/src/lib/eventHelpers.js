@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,13 +27,13 @@ define([
 
 ) {
 
-    var helperFunctions = {
+    const helperFunctions = {
         listenTo: function (object, event, callback, context) {
             if (!this._listeningTo) {
                 this._listeningTo = [];
             }
 
-            var listener = {
+            const listener = {
                 object: object,
                 event: event,
                 callback: callback,
@@ -41,7 +41,7 @@ define([
                 _cb: context ? callback.bind(context) : callback
             };
             if (object.$watch && event.indexOf('change:') === 0) {
-                var scopePath = event.replace('change:', '');
+                const scopePath = event.replace('change:', '');
                 listener.unlisten = object.$watch(scopePath, listener._cb, true);
             } else if (object.$on) {
                 listener.unlisten = object.$on(event, listener._cb);

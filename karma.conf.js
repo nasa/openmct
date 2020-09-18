@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -52,12 +52,16 @@ module.exports = (config) => {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'platform/**/*Spec.js',
-            'src/**/*Spec.js'
+            'indexTest.js'
         ],
         port: 9876,
         reporters: reporters,
         browsers: browsers,
+        client: {
+            jasmine: {
+                random: false
+            }
+        },
         customLaunchers: {
             ChromeDebugging: {
                 base: 'Chrome',
@@ -82,20 +86,20 @@ module.exports = (config) => {
             reports: ['html', 'lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    lines: 62
+                    lines: 64
                 }
             }
         },
         preprocessors: {
-            'platform/**/*Spec.js': ['webpack', 'sourcemap'],
-            'src/**/*Spec.js': ['webpack', 'sourcemap']
+            'indexTest.js': ['webpack', 'sourcemap']
         },
         webpack: webpackConfig,
         webpackMiddleware: {
             stats: 'errors-only',
             logLevel: 'warn'
         },
+        concurrency: 1,
         singleRun: true,
-        browserNoActivityTimeout: 90000
+        browserNoActivityTimeout: 400000
     });
-}
+};

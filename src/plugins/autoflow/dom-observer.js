@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,12 +33,12 @@ define([], function () {
                 resolve();
             } else {
                 //Latch condition not true yet, create observer on DOM and test again on change.
-                var config = {
+                const config = {
                     attributes: true,
                     childList: true,
                     subtree: true
                 };
-                var observer = new MutationObserver(function () {
+                const observer = new MutationObserver(function () {
                     if (latchFunction()) {
                         resolve();
                     }

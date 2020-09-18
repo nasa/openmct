@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -35,8 +35,8 @@ define([
     }
 
     EvaluatorPool.prototype.get = function (domainObject) {
-        var objectId = objectUtils.makeKeyString(domainObject.identifier);
-        var poolEntry = this.byObjectId[objectId];
+        const objectId = objectUtils.makeKeyString(domainObject.identifier);
+        let poolEntry = this.byObjectId[objectId];
         if (!poolEntry) {
             poolEntry = {
                 leases: 0,
@@ -53,7 +53,7 @@ define([
     };
 
     EvaluatorPool.prototype.release = function (evaluator) {
-        var poolEntry = this.byEvaluator.get(evaluator);
+        const poolEntry = this.byEvaluator.get(evaluator);
         poolEntry.leases -= 1;
         if (poolEntry.leases === 0) {
             evaluator.destroy();

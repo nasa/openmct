@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -270,14 +270,14 @@ define([
         }
 
         isTelemetryObject(domainObject) {
-            return domainObject.hasOwnProperty('telemetry');
+            return Object.prototype.hasOwnProperty.call(domainObject, 'telemetry');
         }
 
         buildOptionsFromConfiguration(telemetryObject) {
-            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier),
-                filters = this.domainObject.configuration
-                    && this.domainObject.configuration.filters
-                    && this.domainObject.configuration.filters[keyString];
+            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            let filters = this.domainObject.configuration
+                && this.domainObject.configuration.filters
+                && this.domainObject.configuration.filters[keyString];
 
             return {filters} || {};
         }

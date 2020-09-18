@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,7 +46,7 @@ define(
          * @private
          */
         InspectorRegion.prototype.buildRegion = function () {
-            var metadataRegion = {
+            const metadataRegion = {
                 name: 'metadata',
                 title: 'Metadata Region',
                 // Which modes should the region part be visible in? If

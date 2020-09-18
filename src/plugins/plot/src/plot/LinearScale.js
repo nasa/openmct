@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -59,10 +59,10 @@ define([
             return;
         }
 
-        var domainOffset = domainValue - this._domain.min,
-            rangeFraction = domainOffset - this._domainDenominator,
-            rangeOffset = rangeFraction * this._rangeDenominator,
-            rangeValue = rangeOffset + this._range.min;
+        const domainOffset = domainValue - this._domain.min;
+        const rangeFraction = domainOffset - this._domainDenominator;
+        const rangeOffset = rangeFraction * this._rangeDenominator;
+        const rangeValue = rangeOffset + this._range.min;
 
         return rangeValue;
     };
@@ -72,10 +72,10 @@ define([
             return;
         }
 
-        var rangeOffset = rangeValue - this._range.min,
-            domainFraction = rangeOffset / this._rangeDenominator,
-            domainOffset = domainFraction * this._domainDenominator,
-            domainValue = domainOffset + this._domain.min;
+        const rangeOffset = rangeValue - this._range.min;
+        const domainFraction = rangeOffset / this._rangeDenominator;
+        const domainOffset = domainFraction * this._domainDenominator;
+        const domainValue = domainOffset + this._domain.min;
 
         return domainValue;
     };

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,7 +46,7 @@ define([
         }
 
         function addChildToComposition(model) {
-            var existingIndex = model.composition.indexOf(child.getId());
+            const existingIndex = model.composition.indexOf(child.getId());
             if (existingIndex === -1) {
                 model.composition.push(child.getId());
             }
@@ -71,16 +71,16 @@ define([
             this.getDependencies();
         }
 
-        var keyString = objectUtils.makeKeyString(child.identifier);
-        var oldModel = objectUtils.toOldFormat(child);
-        var newDO = this.instantiate(oldModel, keyString);
+        const keyString = objectUtils.makeKeyString(child.identifier);
+        const oldModel = objectUtils.toOldFormat(child);
+        const newDO = this.instantiate(oldModel, keyString);
 
         return new ContextualDomainObject(newDO, this.domainObject);
 
     };
 
     AlternateCompositionCapability.prototype.invoke = function () {
-        var newFormatDO = objectUtils.toNewFormat(
+        const newFormatDO = objectUtils.toNewFormat(
             this.domainObject.getModel(),
             this.domainObject.getId()
         );
@@ -89,7 +89,7 @@ define([
             this.getDependencies();
         }
 
-        var collection = this.openmct.composition.get(newFormatDO);
+        const collection = this.openmct.composition.get(newFormatDO);
 
         return collection.load()
             .then(function (children) {
@@ -104,5 +104,4 @@ define([
     };
 
     return AlternateCompositionCapability;
-}
-);
+});
