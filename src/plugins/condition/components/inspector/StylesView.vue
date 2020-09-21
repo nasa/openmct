@@ -31,6 +31,12 @@
         <div class="c-inspect-styles__header">
             Object Style
         </div>
+        <FontStyleEditor
+            :font-style="fontStyle"
+            :is-editing="allowEditing"
+            :mixed-font-style="mixedFontStyle"
+            @persist="updateFontStyle"
+        />
         <div class="c-inspect-styles__content">
             <div v-if="staticStyle"
                  class="c-inspect-styles__style"
@@ -56,6 +62,12 @@
         <div class="c-inspect-styles__header">
             Conditional Object Styles
         </div>
+        <FontStyleEditor
+            :font-style="fontStyle"
+            :is-editing="allowEditing"
+            :mixed-font-style="mixedFontStyle"
+            @persist="updateFontStyle"
+        />
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <a v-if="conditionSetDomainObject"
                class="c-object-label icon-conditional"
@@ -108,6 +120,7 @@
 
 <script>
 
+import FontStyleEditor from '@/ui/inspector/styles/FontStyleEditor.vue';
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionSetIdentifierForItem } from "@/plugins/condition/utils/styleUtils";
@@ -119,6 +132,7 @@ import Vue from 'vue';
 export default {
     name: 'StylesView',
     components: {
+        FontStyleEditor,
         StyleEditor,
         ConditionError,
         ConditionDescription
@@ -140,7 +154,9 @@ export default {
             conditionsLoaded: false,
             navigateToPath: '',
             selectedConditionId: '',
-            locked: false
+            locked: false,
+            fontStyle: undefined,
+            mixedFontStyle: []
         };
     },
     computed: {
