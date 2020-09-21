@@ -52,9 +52,9 @@ import Properties from './Properties.vue';
 import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
-import stylesManager from '@/ui/inspector/StylesManager';
-import StylesInspectorView from './StylesInspectorView.vue';
-import SavedStylesInspectorView from './SavedStylesInspectorView.vue';
+import stylesManager from '@/ui/inspector/styles/StylesManager';
+import StylesInspectorView from '@/ui/inspector/styles/StylesInspectorView.vue';
+import SavedStylesInspectorView from '@/ui/inspector/styles/SavedStylesInspectorView.vue';
 
 export default {
     provide: {

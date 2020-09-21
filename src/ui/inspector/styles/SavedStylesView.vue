@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import SavedStyleSelector from './SavedStyleSelector.vue';
+import SavedStyleSelector from '@/ui/inspector/styles/SavedStyleSelector.vue';
 
 export default {
     name: 'SavedStylesView',

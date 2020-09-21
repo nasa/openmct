@@ -2,9 +2,6 @@ import EventEmitter from 'EventEmitter';
 
 const LOCAL_STORAGE_KEY = 'mct-saved-styles';
 const LIMIT = 20;
-const STYLE_PROPERTIES = [
-    'backgroundColor', 'border', 'color'
-];
 
 /**
  * @typedef {Object} Style
@@ -32,16 +29,47 @@ class StylesManager extends EventEmitter {
         }
     }
 
+    delete(style) {
+        const styles = this.load();
+        const remainingStyles = styles.filter(keep => !this.isEqual(keep, style));
+        
+        const persistSuccess = this.persist(remainingStyles);
+        if (persistSuccess) {
+            this.emit('stylesUpdated', remainingStyles);
+        }
+    }
+    
+    select(style) {
+        this.emit('styleSelected', style);
+    }
+
     /**
      * @private
      */
     normalizeStyle(style) {
-        const normalizedStyle = style;
+        const normalizedStyle = this.getBaseStyleObject();
 
-        // strip border styling down to border color only
-        style.border = style.border.substring(style.border.lastIndexOf('#'));
+        Object.keys(normalizedStyle).forEach(property => {
+            const value = style[property];
+            if (value !== undefined) {
+                normalizedStyle[property] = value;
+            }
+        });
 
         return normalizedStyle;
+    }
+
+    /**
+     * @private
+     */
+    getBaseStyleObject() {
+        return {
+            backgroundColor: '',
+            border: '',
+            color: '',
+            fontSize: 'default',
+            font: 'default'
+        };
     }
 
     /**
@@ -79,6 +107,9 @@ class StylesManager extends EventEmitter {
         return false;
     }
 
+    /**
+     * @private
+     */
     isEqual(style1, style2) {
         const keys = Object.keys(Object.assign({}, style1, style2));
         const different = keys.some(key => (!style1[key] && style2[key])
@@ -87,20 +118,6 @@ class StylesManager extends EventEmitter {
         );
 
         return !different;
-    }
-
-    select(style) {
-        this.emit('styleSelected', style);
-    }
-
-    delete(style) {
-        const styles = this.load();
-        const remainingStyles = styles.filter(keep => !this.isEqual(keep, style));
-
-        const persistSuccess = this.persist(remainingStyles);
-        if (persistSuccess) {
-            this.emit('stylesUpdated', remainingStyles);
-        }
     }
 }
 

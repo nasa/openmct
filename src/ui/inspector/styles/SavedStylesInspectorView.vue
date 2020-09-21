@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import StylesView from '../../plugins/condition/components/inspector/StylesView.vue';
+import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
 import Vue from 'vue';
 
 export default {
@@ -54,16 +54,16 @@ export default {
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
                 this.component = new Vue({
+                    el: viewContainer,
+                    components: {
+                        SavedStylesView
+                    },
                     provide: {
                         openmct: this.openmct,
                         selection: selection,
                         stylesManager: this.stylesManager
                     },
-                    el: viewContainer,
-                    components: {
-                        StylesView
-                    },
-                    template: '<styles-view/>'
+                    template: '<saved-styles-view />'
                 });
             }
         }
