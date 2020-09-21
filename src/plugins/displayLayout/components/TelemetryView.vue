@@ -317,7 +317,7 @@ export default {
             const defaultNotebook = getDefaultNotebook();
 
             const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
-            const defaultPath = domainObject && `${domainObject.name} > ${defaultNotebook.section.name} > ${defaultNotebook.page.name}`;
+            const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
 
             const actionsObject = this.openmct.actions.get(this.currentObjectPath, this.getViewContext(), { viewHistoricalData: true }).applicableActions;
             let applicableActionKeys = Object.keys(actionsObject)
