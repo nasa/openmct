@@ -51,7 +51,7 @@
                     <div
                         class="c-swatch"
                         :style="{
-                            background: savedStyle.border
+                            background: borderColor
                         }"
                     ></div>
                 </div>
@@ -127,9 +127,13 @@ export default {
         };
     },
     computed: {
+        borderColor() {
+            return this.savedStyle.border.substring(this.savedStyle.border.indexOf('#'));
+        },
         thumbStyle() {
+            // TODO render font and font size
             return {
-                border: `1px solid ${this.savedStyle.border}`,
+                border: this.savedStyle.border,
                 backgroundColor: this.savedStyle.backgroundColor,
                 color: this.savedStyle.color
             };
