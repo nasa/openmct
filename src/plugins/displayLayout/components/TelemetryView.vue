@@ -313,22 +313,30 @@ export default {
         updateTelemetryFormat(format) {
             this.$emit('formatChanged', this.item, format);
         },
-        getContextMenuActions() {
+        async getContextMenuActions() {
             const defaultNotebook = getDefaultNotebook();
+
+            const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+            const defaultPath = domainObject && `${domainObject.name} > ${defaultNotebook.section.name} > ${defaultNotebook.page.name}`;
+
             const actionsObject = this.openmct.actions.get(this.currentObjectPath, this.getViewContext(), { viewHistoricalData: true }).applicableActions;
             let applicableActionKeys = Object.keys(actionsObject)
                 .filter(key => {
                     const isViewHistoricalData = actionsObject[key].key === 'viewHistoricalData';
                     const isCopyToClipboard = actionsObject[key].key === 'copyToClipboard';
-                    const isCopyToNotebook = actionsObject[key].key === 'copyToNotebook';
+                    const isCopyToNotebook = defaultNotebook && actionsObject[key].key === 'copyToNotebook';
 
-                    return isCopyToClipboard || (defaultNotebook && isCopyToNotebook) || isViewHistoricalData;
+                    if (isCopyToNotebook) {
+                        actionsObject[key].name = `Copy to Notebook ${defaultPath}`;
+                    }
+
+                    return isCopyToClipboard || isCopyToNotebook || isViewHistoricalData;
                 });
 
             return applicableActionKeys.map(key => actionsObject[key]);
         },
-        showContextMenu(event) {
-            const contextMenuActions = this.getContextMenuActions();
+        async showContextMenu(event) {
+            const contextMenuActions = await this.getContextMenuActions();
             this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
         }
     }
