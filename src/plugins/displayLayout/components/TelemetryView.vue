@@ -229,7 +229,9 @@ export default {
             const timeFormatterKey = this.openmct.time.timeSystem().key;
             const timeFormatter = this.formats[timeFormatterKey];
 
-            return `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue} ${this.unit}`;
+            return {
+                value: `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue} ${this.unit}`
+            };
         },
         requestHistoricalData() {
             let bounds = this.openmct.time.bounds();
@@ -312,6 +314,7 @@ export default {
             this.$emit('formatChanged', this.item, format);
         },
         getContextMenuActions() {
+            const defaultNotebook = getDefaultNotebook();
             const actionsObject = this.openmct.actions.get(this.currentObjectPath, this.getViewContext(), { viewHistoricalData: true }).applicableActions;
             let applicableActionKeys = Object.keys(actionsObject)
                 .filter(key => {
@@ -319,13 +322,14 @@ export default {
                     const isCopyToClipboard = actionsObject[key].key === 'copyToClipboard';
                     const isCopyToNotebook = actionsObject[key].key === 'copyToNotebook';
 
-                    return isCopyToClipboard || isCopyToNotebook || isViewHistoricalData;
+                    return isCopyToClipboard || (defaultNotebook && isCopyToNotebook) || isViewHistoricalData;
                 });
 
-            this.contextMenuActions = CONTEXT_MENU_ACTIONS.map(actionKey => actionsObject[actionKey]);
+            return applicableActionKeys.map(key => actionsObject[key]);
         },
         showContextMenu(event) {
-            this.openmct.menus.showMenu(event.x, event.y, this.contextMenuActions);
+            const contextMenuActions = this.getContextMenuActions();
+            this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
         }
     }
 };

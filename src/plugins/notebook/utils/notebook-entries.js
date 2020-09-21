@@ -102,7 +102,7 @@ export function createNewEmbed(snapshotMeta, snapshot = '') {
     };
 }
 
-export function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null) {
+export function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null, entryText = '') {
     if (!openmct || !domainObject || !notebookStorage) {
         return;
     }
@@ -124,7 +124,7 @@ export function addNotebookEntry(openmct, domainObject, notebookStorage, embed =
     defaultEntries.push({
         id,
         createdOn: date,
-        text: '',
+        text: entryText,
         embeds
     });
 

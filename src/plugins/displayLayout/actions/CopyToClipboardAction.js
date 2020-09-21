@@ -4,7 +4,7 @@ export default class CopyToClipboardAction {
     constructor(openmct) {
         this.openmct = openmct;
 
-        this.cssClass = 'icon-folder-new';
+        this.cssClass = 'icon-duplicate';
         this.description = 'Copy to Clipboard action';
         this.group = "action";
         this.key = 'copyToClipboard';
@@ -13,15 +13,14 @@ export default class CopyToClipboardAction {
     }
 
     invoke(objectPath = null, viewContext) {
-        console.log('invoke', viewContext);
         if (!objectPath) {
             return;
         }
 
-        const value = viewContext.formattedValueForCopy();
-        Clipboard.updateClipboard(value)
+        const formattedValue = viewContext.formattedValueForCopy();
+        Clipboard.updateClipboard(formattedValue.value)
             .then(() => {
-                this.openmct.notifications.info(`Success : copied to clipboard '${value}'`);
+                this.openmct.notifications.info(`Success : copied to clipboard '${formattedValue.value}'`);
             });
     }
 
