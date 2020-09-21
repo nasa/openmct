@@ -502,11 +502,11 @@ export default {
             this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
-            let columnWidths = {},
-                totalWidth = 0,
-                headerKeys = Object.keys(this.headers),
-                sizingTableRow = this.sizingTable.children[1],
-                sizingCells = sizingTableRow.children;
+            let columnWidths = {};
+            let totalWidth = 0;
+            let headerKeys = Object.keys(this.headers);
+            let sizingTableRow = this.sizingTable.children[1];
+            let sizingCells = sizingTableRow.children;
 
             headerKeys.forEach((headerKey, headerIndex, array) => {
                 if (this.isAutosizeEnabled) {

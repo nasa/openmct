@@ -41,200 +41,200 @@ define(['lodash'], function (_) {
             },
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
-                        'text': {
-                            name: "Text Element Properties",
-                            sections: [
-                                {
-                                    rows: [
-                                        {
-                                            key: "text",
-                                            control: "textfield",
-                                            name: "Text",
-                                            required: true
-                                        }
-                                    ]
-                                }
-                            ]
-                        },
-                        'image': {
-                            name: "Image Properties",
-                            sections: [
-                                {
-                                    rows: [
-                                        {
-                                            key: "url",
-                                            control: "textfield",
-                                            name: "Image URL",
-                                            "cssClass": "l-input-lg",
-                                            required: true
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    VIEW_TYPES = {
-                        'telemetry-view': {
-                            value: 'telemetry-view',
-                            name: 'Alphanumeric',
-                            class: 'icon-alphanumeric'
-                        },
-                        'telemetry.plot.overlay': {
-                            value: 'telemetry.plot.overlay',
-                            name: 'Overlay Plot',
-                            class: "icon-plot-overlay"
-                        },
-                        'telemetry.plot.stacked': {
-                            value: "telemetry.plot.stacked",
-                            name: "Stacked Plot",
-                            class: "icon-plot-stacked"
-                        },
-                        'table': {
-                            value: 'table',
-                            name: 'Table',
-                            class: 'icon-tabular-realtime'
-                        }
-                    },
-                    APPLICABLE_VIEWS = {
-                        'telemetry-view': [
-                            VIEW_TYPES['telemetry.plot.overlay'],
-                            VIEW_TYPES['telemetry.plot.stacked'],
-                            VIEW_TYPES.table
-                        ],
-                        'telemetry.plot.overlay': [
-                            VIEW_TYPES['telemetry.plot.stacked'],
-                            VIEW_TYPES.table,
-                            VIEW_TYPES['telemetry-view']
-                        ],
-                        'telemetry.plot.stacked': [
-                            VIEW_TYPES['telemetry.plot.overlay'],
-                            VIEW_TYPES.table,
-                            VIEW_TYPES['telemetry-view']
-                        ],
-                        'table': [
-                            VIEW_TYPES['telemetry.plot.overlay'],
-                            VIEW_TYPES['telemetry.plot.stacked'],
-                            VIEW_TYPES['telemetry-view']
-                        ],
-                        'telemetry-view-multi': [
-                            VIEW_TYPES['telemetry.plot.overlay'],
-                            VIEW_TYPES['telemetry.plot.stacked'],
-                            VIEW_TYPES.table
-                        ],
-                        'telemetry.plot.overlay-multi': [
-                            VIEW_TYPES['telemetry.plot.stacked']
+                    'text': {
+                        name: "Text Element Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "text",
+                                        control: "textfield",
+                                        name: "Text",
+                                        required: true
+                                    }
+                                ]
+                            }
                         ]
                     },
-                    SMALL_FONT_SIZES = [
-                        {
-                            name: 'Default Size',
-                            value: 'default'
-                        },
-                        {
-                            name: '8px',
-                            value: '8'
-                        },
-                        {
-                            name: '9px',
-                            value: '9'
-                        },
-                        {
-                            name: '10px',
-                            value: '10'
-                        },
-                        {
-                            name: '11px',
-                            value: '11'
-                        },
-                        {
-                            name: '12px',
-                            value: '12'
-                        },
-                        {
-                            name: '13px',
-                            value: '13'
-                        },
-                        {
-                            name: '14px',
-                            value: '14'
-                        },
-                        {
-                            name: '16px',
-                            value: '16'
-                        },
-                        {
-                            name: '18px',
-                            value: '18'
-                        },
-                        {
-                            name: '20px',
-                            value: '20'
-                        },
-                        {
-                            name: '24px',
-                            value: '24'
-                        }
+                    'image': {
+                        name: "Image Properties",
+                        sections: [
+                            {
+                                rows: [
+                                    {
+                                        key: "url",
+                                        control: "textfield",
+                                        name: "Image URL",
+                                        "cssClass": "l-input-lg",
+                                        required: true
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                };
+                const VIEW_TYPES = {
+                    'telemetry-view': {
+                        value: 'telemetry-view',
+                        name: 'Alphanumeric',
+                        class: 'icon-alphanumeric'
+                    },
+                    'telemetry.plot.overlay': {
+                        value: 'telemetry.plot.overlay',
+                        name: 'Overlay Plot',
+                        class: "icon-plot-overlay"
+                    },
+                    'telemetry.plot.stacked': {
+                        value: "telemetry.plot.stacked",
+                        name: "Stacked Plot",
+                        class: "icon-plot-stacked"
+                    },
+                    'table': {
+                        value: 'table',
+                        name: 'Table',
+                        class: 'icon-tabular-realtime'
+                    }
+                };
+                const APPLICABLE_VIEWS = {
+                    'telemetry-view': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table
                     ],
-                    LARGE_FONT_SIZES = [
-                        {
-                            name: '28px',
-                            value: '28'
-                        },
-                        {
-                            name: '32px',
-                            value: '32'
-                        },
-                        {
-                            name: '36px',
-                            value: '36'
-                        },
-                        {
-                            name: '42px',
-                            value: '42'
-                        },
-                        {
-                            name: '48px',
-                            value: '48'
-                        },
-                        {
-                            name: '72px',
-                            value: '72'
-                        },
-                        {
-                            name: '96px',
-                            value: '96'
-                        },
-                        {
-                            name: '128px',
-                            value: '128'
-                        }
+                    'telemetry.plot.overlay': [
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table,
+                        VIEW_TYPES['telemetry-view']
                     ],
-                    FONTS = [
-                        {
-                            name: 'Default',
-                            value: 'default'
-                        },
-                        {
-                            name: 'Bold',
-                            value: 'default-bold'
-                        },
-                        {
-                            name: 'Narrow',
-                            value: 'narrow'
-                        },
-                        {
-                            name: 'Narrow Bold',
-                            value: 'narrow-bold'
-                        },
-                        {
-                            name: 'Monospace',
-                            value: 'monospace'
-                        },
-                        {
-                            name: 'Monospace Bold',
-                            value: 'monospace-bold'
-                        }
+                    'telemetry.plot.stacked': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES.table,
+                        VIEW_TYPES['telemetry-view']
+                    ],
+                    'table': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES['telemetry-view']
+                    ],
+                    'telemetry-view-multi': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table
+                    ],
+                    'telemetry.plot.overlay-multi': [
+                        VIEW_TYPES['telemetry.plot.stacked']
                     ]
+                };
+                const SMALL_FONT_SIZES = [
+                    {
+                        name: 'Default Size',
+                        value: 'default'
+                    },
+                    {
+                        name: '8px',
+                        value: '8'
+                    },
+                    {
+                        name: '9px',
+                        value: '9'
+                    },
+                    {
+                        name: '10px',
+                        value: '10'
+                    },
+                    {
+                        name: '11px',
+                        value: '11'
+                    },
+                    {
+                        name: '12px',
+                        value: '12'
+                    },
+                    {
+                        name: '13px',
+                        value: '13'
+                    },
+                    {
+                        name: '14px',
+                        value: '14'
+                    },
+                    {
+                        name: '16px',
+                        value: '16'
+                    },
+                    {
+                        name: '18px',
+                        value: '18'
+                    },
+                    {
+                        name: '20px',
+                        value: '20'
+                    },
+                    {
+                        name: '24px',
+                        value: '24'
+                    }
+                ];
+                const LARGE_FONT_SIZES = [
+                    {
+                        name: '28px',
+                        value: '28'
+                    },
+                    {
+                        name: '32px',
+                        value: '32'
+                    },
+                    {
+                        name: '36px',
+                        value: '36'
+                    },
+                    {
+                        name: '42px',
+                        value: '42'
+                    },
+                    {
+                        name: '48px',
+                        value: '48'
+                    },
+                    {
+                        name: '72px',
+                        value: '72'
+                    },
+                    {
+                        name: '96px',
+                        value: '96'
+                    },
+                    {
+                        name: '128px',
+                        value: '128'
+                    }
+                ];
+                const FONTS = [
+                    {
+                        name: 'Default',
+                        value: 'default'
+                    },
+                    {
+                        name: 'Bold',
+                        value: 'default-bold'
+                    },
+                    {
+                        name: 'Narrow',
+                        value: 'narrow'
+                    },
+                    {
+                        name: 'Narrow Bold',
+                        value: 'narrow-bold'
+                    },
+                    {
+                        name: 'Monospace',
+                        value: 'monospace'
+                    },
+                    {
+                        name: 'Monospace Bold',
+                        value: 'monospace-bold'
+                    }
+                ];
 
                 function getUserInput(form) {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
@@ -503,8 +503,8 @@ define(['lodash'], function (_) {
 
                     selection.forEach(selectable => {
                         if (selectable[0].context.item) {
-                            if (selectable[0].context.item.type.includes('plot') ||
-                            selectable[0].context.item.type.includes('table')) {
+                            if (selectable[0].context.item.type.includes('plot')
+                            || selectable[0].context.item.type.includes('table')) {
                                 sizeOptions = 'small';
                             }
                         }
@@ -526,9 +526,9 @@ define(['lodash'], function (_) {
                         if (type === 'subobject-view') {
                             let objectType = primary.context.item.type;
 
-                            if (objectType === 'layout' ||
-                                objectType === 'flexible-layout' ||
-                                objectType === 'tabs') {
+                            if (objectType === 'layout'
+                                || objectType === 'flexible-layout'
+                                || objectType === 'tabs') {
                                 return;
                             }
                         }
@@ -557,12 +557,13 @@ define(['lodash'], function (_) {
                                 } else if (type === 'subobject-view') {
                                     let objectType = selectionPath[0].context.item.type;
 
-                                    if (objectType === 'layout' ||
-                                        objectType === 'flexible-layout' ||
-                                        objectType === 'tabs') {
+                                    if (objectType === 'layout'
+                                        || objectType === 'flexible-layout'
+                                        || objectType === 'tabs') {
                                         return false;
                                     }
                                 }
+
                                 return true;
                             }),
                             property: (selectionPath) => {
@@ -570,7 +571,7 @@ define(['lodash'], function (_) {
                             },
                             title: "Set font size",
                             options: getAvailableFontSizeOptions(selection)
-                        }
+                        };
                     }
                 }
 
@@ -582,9 +583,9 @@ define(['lodash'], function (_) {
                         if (type === 'subobject-view') {
                             let objectType = primary.context.item.type;
 
-                            if (objectType === 'layout' ||
-                                objectType === 'flexible-layout' ||
-                                objectType === 'tabs') {
+                            if (objectType === 'layout'
+                                || objectType === 'flexible-layout'
+                                || objectType === 'tabs') {
                                 return;
                             }
                         }
@@ -599,7 +600,7 @@ define(['lodash'], function (_) {
                             },
                             title: "Set font style",
                             options: FONTS
-                        }
+                        };
                     } else {
                         return {
                             control: 'select-menu',
@@ -613,12 +614,13 @@ define(['lodash'], function (_) {
                                 } else if (type === 'subobject-view') {
                                     let objectType = selectionPath[0].context.item.type;
 
-                                    if (objectType === 'layout' ||
-                                    objectType === 'flexible-layout' ||
-                                    objectType === 'tabs') {
+                                    if (objectType === 'layout'
+                                    || objectType === 'flexible-layout'
+                                    || objectType === 'tabs') {
                                         return false;
                                     }
                                 }
+
                                 return true;
                             }),
                             property: (selectionPath) => {
@@ -626,7 +628,7 @@ define(['lodash'], function (_) {
                             },
                             title: "Set font style",
                             options: FONTS
-                        }
+                        };
                     }
                 }
 
@@ -971,6 +973,7 @@ define(['lodash'], function (_) {
                                 getFontSizeMenu(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar['font-family'].length === 0) {
                             toolbar['font-family'] = [
                                 getFontMenu(selectedParent, selectedObjects)

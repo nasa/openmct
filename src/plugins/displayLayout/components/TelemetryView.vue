@@ -156,7 +156,7 @@ export default {
             let size;
             //for legacy size support
             if (!this.item.fontSize) {
-                size = this.item.size
+                size = this.item.size;
             }
 
             return Object.assign({}, {

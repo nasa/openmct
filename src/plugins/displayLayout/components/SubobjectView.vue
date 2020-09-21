@@ -124,6 +124,7 @@ export default {
             if (!this.context) {
                 return;
             }
+
             this.context.layoutItem = newItem;
         }
     },

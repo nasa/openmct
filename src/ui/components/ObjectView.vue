@@ -154,6 +154,7 @@ export default {
                         } else if (styleObj.isStyleInvisible && !elemToStyle.classList.contains(styleObj.isStyleInvisible)) {
                             elemToStyle.classList.add(styleObj.isStyleInvisible);
                         }
+
                         elemToStyle.style[key] = styleObj[key];
                     }
                 }
