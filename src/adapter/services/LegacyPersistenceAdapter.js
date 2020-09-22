@@ -39,15 +39,11 @@ export default class LegacyPersistenceAdapter {
         return this.openmct.objects.save(legacyDomainObject.useCapability('adapter'));
     }
 
-    readObject() {
-        let keystring = arguments[0];
-        let identifier;
-
-        if (arguments[1]) {
-            keystring = [arguments[0], arguments[1]].join(':');
-        }
-
-        identifier = objectUtils.parseKeyString(keystring);
+    readObject(space, key) {
+        const identifier = {
+            namespace: space,
+            key: key
+        };
 
         return this.openmct.legacyObject(this.openmct.objects.get(identifier));
     }
