@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
-
 export default class LegacyPersistenceAdapter {
     constructor(openmct) {
         this.openmct = openmct;
