@@ -74,7 +74,6 @@
 import LayoutFrame from './LayoutFrame.vue';
 import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
-import uuid from 'uuid';
 import Clipboard from '../../../utils/clipboard';
 import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
 
@@ -128,10 +127,10 @@ export default {
     },
     data() {
         return {
-            datum: undefined,
-            formats: undefined,
-            domainObject: undefined,
             currentObjectPath: undefined,
+            datum: undefined,
+            domainObject: undefined,
+            formats: undefined,
             viewKey: `alphanumeric-format-${Math.random()}`
         };
     },
@@ -317,7 +316,6 @@ export default {
             const defaultNotebook = getDefaultNotebook();
 
             const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
-            const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
 
             const actionsObject = this.openmct.actions.get(this.currentObjectPath, this.getViewContext(), { viewHistoricalData: true }).applicableActions;
             let applicableActionKeys = Object.keys(actionsObject)
@@ -327,6 +325,7 @@ export default {
                     const isCopyToNotebook = defaultNotebook && actionsObject[key].key === 'copyToNotebook';
 
                     if (isCopyToNotebook) {
+                        const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
                         actionsObject[key].name = `Copy to Notebook ${defaultPath}`;
                     }
 
