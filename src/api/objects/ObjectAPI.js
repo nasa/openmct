@@ -200,17 +200,19 @@ define([
         } else if (hasAlreadyBeenPersisted(domainObject)) {
             result = Promise.resolve(true);
         } else {
+            const persistedTime = Date.now();
             if (domainObject.persisted === undefined) {
-                domainObject.persisted = domainObject.modified;
                 result = new Promise((resolve) => {
                     savedResolve = resolve;
                 });
+                domainObject.persisted = persistedTime;
                 provider.create(domainObject).then((response) => {
-                    this.mutate(domainObject, 'persisted', domainObject.modified);
+                    this.mutate(domainObject, 'persisted', persistedTime);
                     savedResolve(response);
                 });
             } else {
-                this.mutate(domainObject, 'persisted', domainObject.modified);
+                domainObject.persisted = persistedTime;
+                this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
             }
         }
