@@ -248,11 +248,11 @@ export default {
         },
         formatTime(time) {
             let format = this.timeSystem.timeFormat;
-            let negativeOffset = false;
+            let isNegativeOffset = false;
 
             if (!this.isFixed) {
                 if (time < 0) {
-                    negativeOffset = true;
+                    isNegativeOffset = true;
                 }
 
                 time = Math.abs(time);
@@ -264,7 +264,7 @@ export default {
                 format: format
             }).formatter;
 
-            return (negativeOffset ? '-' : '') + formatter.format(time);
+            return (isNegativeOffset ? '-' : '') + formatter.format(time);
         }
     }
 };
