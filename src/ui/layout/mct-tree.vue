@@ -175,6 +175,13 @@ export default {
             return {
                 paddingLeft: offset + 'px'
             };
+        },
+        ancestorsHeight() {
+            if (this.activeSearch) {
+                return 0;
+            }
+
+            return this.itemHeight * this.ancestors.length;
         }
     },
     watch: {
@@ -316,14 +323,9 @@ export default {
 
             if (mainTreeHeight !== 0) {
                 this.calculateChildHeight(() => {
-                    let ancestorsHeight = this.calculateAncestorHeight();
                     let allChildrenHeight = this.calculateChildrenHeight();
 
-                    if (this.activeSearch) {
-                        ancestorsHeight = 0;
-                    }
-
-                    this.availableContainerHeight = mainTreeHeight - ancestorsHeight;
+                    this.availableContainerHeight = mainTreeHeight - this.ancestorsHeight;
 
                     if (allChildrenHeight > this.availableContainerHeight) {
                         this.setPageThreshold();
@@ -356,11 +358,6 @@ export default {
         },
         setChildrenHeight() {
             this.childrenHeight = this.calculateChildrenHeight();
-        },
-        calculateAncestorHeight() {
-            let ancestorCount = this.ancestors.length;
-
-            return this.itemHeight * ancestorCount;
         },
         calculateChildHeight(callback) {
             if (callback) {
@@ -401,6 +398,7 @@ export default {
             this.settingChildrenHeight = false;
         },
         setPageThreshold() {
+            console.log(this.availableContainerHeight, this.itemHeight);
             let threshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
             // all items haven't loaded yet (nextTick not working for this)
             if (threshold === ITEM_BUFFER) {
@@ -408,6 +406,7 @@ export default {
             } else {
                 this.pageThreshold = threshold;
             }
+            console.log(this.pageThreshold);
         },
         handleWindowResize() {
             if (!windowResizing) {
