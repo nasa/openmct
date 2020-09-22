@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -102,10 +102,30 @@ define([
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
         this.listenTo(this.$scope, 'plot:highlight:set', this.onPlotHighlightSet, this);
         this.listenTo(this.$scope, 'plot:reinitializeCanvas', this.initCanvas, this);
+        this.listenTo(this.config.xAxis, 'resetSeries', this.setUpXAxisOptions, this);
         this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
         this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
 
+        this.setUpXAxisOptions();
         this.setUpYAxisOptions();
+    };
+
+    MCTPlotController.prototype.setUpXAxisOptions = function () {
+        const xAxisKey = this.config.xAxis.get('key');
+
+        if (this.$scope.series.length === 1) {
+            let metadata = this.$scope.series[0].metadata;
+
+            this.$scope.xKeyOptions = metadata
+                .valuesForHints(['domain'])
+                .map(function (o) {
+                    return {
+                        name: o.name,
+                        key: o.key
+                    };
+                });
+            this.$scope.selectedXKeyOption = this.getXKeyOption(xAxisKey);
+        }
     };
 
     MCTPlotController.prototype.setUpYAxisOptions = function () {
@@ -532,6 +552,32 @@ define([
 
     MCTPlotController.prototype.toggleCursorGuide = function ($event) {
         this.cursorGuide = !this.cursorGuide;
+    };
+
+    MCTPlotController.prototype.getXKeyOption = function (key) {
+        return this.$scope.xKeyOptions.find(option => option.key === key);
+    };
+
+    MCTPlotController.prototype.isEnabledXKeyToggle = function () {
+        const isSinglePlot = this.$scope.xKeyOptions && this.$scope.xKeyOptions.length > 1 && this.$scope.series.length === 1;
+        const isFrozen = this.config.xAxis.get('frozen');
+        const inRealTimeMode = this.config.openmct.time.clock();
+
+        return isSinglePlot && !isFrozen && !inRealTimeMode;
+    };
+
+    MCTPlotController.prototype.toggleXKeyOption = function (lastXKey, series) {
+        const selectedXKey = this.$scope.selectedXKeyOption.key;
+        const dataForSelectedXKey = series.data
+            ? series.data[0][selectedXKey]
+            : undefined;
+
+        if (dataForSelectedXKey !== undefined) {
+            this.config.xAxis.set('key', selectedXKey);
+        } else {
+            this.config.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.');
+            this.$scope.selectedXKeyOption.key = lastXKey;
+        }
     };
 
     MCTPlotController.prototype.toggleYAxisLabel = function (label, options, series) {

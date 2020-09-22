@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -44,6 +44,7 @@ $overlayOuterMarginFullscreen: 0%;
 $overlayOuterMarginDialog: 20%;
 $overlayInnerMargin: 25px;
 $mainViewPad: 0px;
+$treeNavArrowD: 20px;
 /*************** Items */
 $itemPadLR: 5px;
 $gridItemDesk: 175px;
@@ -81,8 +82,8 @@ $formLabelMinW: 120px;
 $formLabelW: 30%;
 /*************** Wait Spinner */
 $waitSpinnerD: 32px;
-$waitSpinnerTreeD: 20px;
 $waitSpinnerBorderW: 5px;
+$waitSpinnerTreeD: 20px;
 $waitSpinnerTreeBorderW: 3px;
 /*************** Messages */
 $messageIconD: 80px;
@@ -205,6 +206,10 @@ $glyph-icon-crosshair-in-circle: '\ea33';
 $glyph-icon-target: '\ea34';
 $glyph-icon-items-collapse: '\ea35';
 $glyph-icon-items-expand: '\ea36';
+$glyph-icon-3-dots: '\ea37';
+$glyph-icon-grid-on: '\ea38';
+$glyph-icon-grid-off: '\ea39';
+$glyph-icon-camera: '\ea3a';
 $glyph-icon-activity: '\eb00';
 $glyph-icon-activity-mode: '\eb01';
 $glyph-icon-autoflow-tabular: '\eb02';
