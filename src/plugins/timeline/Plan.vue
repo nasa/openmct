@@ -192,7 +192,8 @@ export default {
             keys.forEach((key, index) => {
                 let activities = this.domainObject.configuration.activities[key];
                 currentRow = currentRow + ROW_HEIGHT * index;
-                activities.forEach((activity, activityIndex) => {
+                let newKey = true;
+                activities.forEach((activity) => {
                     if (this.isActivityInBounds(activity)) {
                         const currentStart = Math.max(this.viewBounds.start, activity.start);
                         const currentEnd = Math.min(this.viewBounds.end, activity.end);
@@ -221,7 +222,7 @@ export default {
                         }
 
                         this.activitiesByRow[currentRow].push({
-                            heading: activityIndex ? "" : key,
+                            heading: newKey ? key : '',
                             activity: {
                                 color: activity.color,
                                 textColor: activity.textColor
@@ -233,6 +234,7 @@ export default {
                             end: activityNameFitsRect ? rectX + rectWidth : textStart + textWidth,
                             rectWidth: rectWidth
                         });
+                        newKey = false;
                     }
                 });
             });
@@ -294,7 +296,7 @@ export default {
                                         .attr("class", "activity")
                                         .attr("x1", 0)
                                         .attr("y1", groupHeadingBorder)
-                                        .attr("x2", this.offsetWidth)
+                                        .attr("x2", this.width)
                                         .attr("y2", groupHeadingBorder)
                                         .attr('stroke', "white");
                                 }
@@ -335,7 +337,7 @@ export default {
         plotSVG(activity, rectX, rectWidth, rectY, textStart, textY, textLines) {
             this.svgElement.append("rect")
                 .attr("class", "activity")
-                .attr("x", rectX)
+                .attr("x", rectX + TYPE_OFFSET)
                 .attr("y", rectY)
                 .attr("width", rectWidth)
                 .attr("height", ROW_HEIGHT)
@@ -345,7 +347,7 @@ export default {
             textLines.forEach((line, index) => {
                 this.svgElement.append("text").text(line)
                     .attr("class", "activity")
-                    .attr("x", textStart)
+                    .attr("x", textStart + TYPE_OFFSET)
                     .attr("y", textY + (index * LINE_HEIGHT))
                     .attr('fill', activity.textColor);
             });
