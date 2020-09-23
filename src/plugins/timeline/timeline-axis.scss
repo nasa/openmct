@@ -8,6 +8,7 @@
     text-rendering: geometricPrecision;
     width: 100%;
     height: 100%;
+    padding-left: 100px;
     > g.axis {
       // Overall Tick holder
       transform: translateY($tickYPos);

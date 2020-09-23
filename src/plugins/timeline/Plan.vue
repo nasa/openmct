@@ -25,7 +25,7 @@ const ROW_HEIGHT = 30;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 const TIMELINE_HEIGHT = 30;
-
+const TYPE_OFFSET = 100;
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
@@ -83,6 +83,7 @@ export default {
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
             this.width = axisHolder.clientWidth;
+            this.offsetWidth = this.width - TYPE_OFFSET;
 
             const axisHolderParent = this.$parent.$refs.planHolder;
             this.height = Math.round(axisHolderParent.getBoundingClientRect().height);
@@ -91,6 +92,7 @@ export default {
                 this.svgElement.attr("width", this.width);
                 this.svgElement.attr("height", this.height);
             } else {
+                this.svgElement.attr("height", 50);
                 this.canvas.width = this.width;
                 this.canvas.height = this.height;
             }
@@ -118,7 +120,7 @@ export default {
                 );
             }
 
-            this.xScale.range([PADDING, this.width - PADDING * 2]);
+            this.xScale.range([PADDING, this.offsetWidth - PADDING * 2]);
 
             this.xAxis.scale(this.xScale);
 
@@ -185,47 +187,54 @@ export default {
             this.activitiesByRow = {};
 
             let currentRow = 0;
-            this.domainObject.configuration.activities.forEach((activity) => {
-                if (this.isActivityInBounds(activity)) {
-                    const currentStart = Math.max(this.viewBounds.start, activity.start);
-                    const currentEnd = Math.min(this.viewBounds.end, activity.end);
-                    const rectX = this.xScale(currentStart);
-                    const rectY = this.xScale(currentEnd);
-                    const rectWidth = rectY - rectX;
 
-                    const activityNameWidth = this.getTextWidth(activity.name) + TEXT_LEFT_PADDING;
-                    //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
-                    const activityNameFitsRect = (rectWidth >= activityNameWidth);
-                    const textStart = activityNameFitsRect ? (rectX + TEXT_LEFT_PADDING) : (rectX + rectWidth + TEXT_LEFT_PADDING);
+            let keys = Object.keys(this.domainObject.configuration.activities);
+            keys.forEach((key, index) => {
+                let activities = this.domainObject.configuration.activities[key];
+                currentRow = currentRow + ROW_HEIGHT * index;
+                activities.forEach((activity, activityIndex) => {
+                    if (this.isActivityInBounds(activity)) {
+                        const currentStart = Math.max(this.viewBounds.start, activity.start);
+                        const currentEnd = Math.min(this.viewBounds.end, activity.end);
+                        const rectX = this.xScale(currentStart);
+                        const rectY = this.xScale(currentEnd);
+                        const rectWidth = rectY - rectX;
 
-                    let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
-                    const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
+                        const activityNameWidth = this.getTextWidth(activity.name) + TEXT_LEFT_PADDING;
+                        //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
+                        const activityNameFitsRect = (rectWidth >= activityNameWidth);
+                        const textStart = activityNameFitsRect ? (rectX + TEXT_LEFT_PADDING) : (rectX + rectWidth + TEXT_LEFT_PADDING);
 
-                    if (activityNameFitsRect) {
-                        currentRow = this.getRowForActivity(rectX, rectWidth);
-                    } else {
-                        currentRow = this.getRowForActivity(rectX, textWidth);
+                        let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
+                        const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
+
+                        if (activityNameFitsRect) {
+                            currentRow = this.getRowForActivity(rectX, rectWidth);
+                        } else {
+                            currentRow = this.getRowForActivity(rectX, textWidth);
+                        }
+
+                        let textY = activityNameFitsRect ? parseInt(currentRow, 10) + INNER_TEXT_PADDING : parseInt(currentRow, 10) + TEXT_PADDING;
+
+                        if (!this.activitiesByRow[currentRow]) {
+                            this.activitiesByRow[currentRow] = [];
+                        }
+
+                        this.activitiesByRow[currentRow].push({
+                            heading: activityIndex ? "" : key,
+                            activity: {
+                                color: activity.color,
+                                textColor: activity.textColor
+                            },
+                            textLines: textLines,
+                            textStart: textStart,
+                            textY: textY,
+                            start: rectX,
+                            end: activityNameFitsRect ? rectX + rectWidth : textStart + textWidth,
+                            rectWidth: rectWidth
+                        });
                     }
-
-                    let textY = activityNameFitsRect ? parseInt(currentRow, 10) + INNER_TEXT_PADDING : parseInt(currentRow, 10) + TEXT_PADDING;
-
-                    if (!this.activitiesByRow[currentRow]) {
-                        this.activitiesByRow[currentRow] = [];
-                    }
-
-                    this.activitiesByRow[currentRow].push({
-                        activity: {
-                            color: activity.color,
-                            textColor: activity.textColor
-                        },
-                        textLines: textLines,
-                        textStart: textStart,
-                        textY: textY,
-                        start: rectX,
-                        end: activityNameFitsRect ? rectX + rectWidth : textStart + textWidth,
-                        rectWidth: rectWidth
-                    });
-                }
+                });
             });
         },
         getActivityDisplayText(context, text, activityNameFitsRect) {
@@ -253,7 +262,6 @@ export default {
         },
         drawPlan() {
             const activityRows = Object.keys(this.activitiesByRow);
-
             if (activityRows.length) {
                 const planHeight = parseInt(activityRows[activityRows.length - 1], 10) + 150;
                 if (this.useSVG) {
@@ -267,12 +275,58 @@ export default {
                     const items = this.activitiesByRow[key];
                     const row = parseInt(key, 10);
                     items.forEach((item) => {
+                        const heading = item.heading;
+                        console.log(heading);
+                        let groupHeadingRow;
+                        let groupHeadingBorder;
+                        if (row) {
+                            groupHeadingRow = row + ROW_HEIGHT * 2 + ROW_PADDING + TEXT_PADDING;
+                            groupHeadingBorder = row + ROW_HEIGHT * 2 + ROW_PADDING - 5;
+                        } else {
+                            groupHeadingRow = TIMELINE_HEIGHT + TEXT_PADDING;
+                        }
+
                         //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
                         if (this.useSVG) {
+                            if (heading) {
+                                if (groupHeadingBorder) {
+                                    this.svgElement.append("line")
+                                        .attr("class", "activity")
+                                        .attr("x1", 0)
+                                        .attr("y1", groupHeadingBorder)
+                                        .attr("x2", this.offsetWidth)
+                                        .attr("y2", groupHeadingBorder)
+                                        .attr('stroke', "white");
+                                }
+
+                                this.svgElement.append("text").text(heading)
+                                    .attr("class", "activity")
+                                    .attr("x", 0)
+                                    .attr("y", groupHeadingRow)
+                                    .attr('fill', "white");
+                            }
+
                             this.plotSVG(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY + TIMELINE_HEIGHT, item.textLines, item.actualX);
+                            //TODO: Ending border
                         } else {
+                            if (heading) {
+                                if (groupHeadingBorder) {
+                                    this.canvasContext.strokeStyle = "white";
+                                    this.canvasContext.beginPath(); // Start a new path
+                                    this.canvasContext.moveTo(0, groupHeadingBorder); // Move the pen to (30, 50)
+                                    this.canvasContext.lineTo(this.width, groupHeadingBorder); // Draw a line to (150, 100)
+                                    this.canvasContext.stroke(); // Render the path
+                                }
+
+                                this.canvasContext.fillStyle = "white";
+                                this.canvasContext.fillText(heading, 0, groupHeadingRow);
+                            }
+
                             this.plotCanvas(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY + TIMELINE_HEIGHT, item.textLines, item.actualX);
+                            //TODO: Ending border
+
                         }
+
                     });
 
                 });
@@ -299,13 +353,13 @@ export default {
         plotCanvas(activity, rectX, rectWidth, rectY, textStart, textY, textLines) {
             this.canvasContext.fillStyle = activity.color;
             this.canvasContext.strokeStyle = "lightgray";
-            this.canvasContext.fillRect(rectX, rectY, rectWidth, ROW_HEIGHT);
-            this.canvasContext.strokeRect(rectX, rectY, rectWidth, ROW_HEIGHT);
+            this.canvasContext.fillRect(rectX + TYPE_OFFSET, rectY, rectWidth, ROW_HEIGHT);
+            this.canvasContext.strokeRect(rectX + TYPE_OFFSET, rectY, rectWidth, ROW_HEIGHT);
 
             this.canvasContext.fillStyle = activity.textColor;
 
             textLines.forEach((line, index) => {
-                this.canvasContext.fillText(line, textStart, textY + (index * LINE_HEIGHT));
+                this.canvasContext.fillText(line, textStart + TYPE_OFFSET, textY + (index * LINE_HEIGHT));
             });
         }
     }
