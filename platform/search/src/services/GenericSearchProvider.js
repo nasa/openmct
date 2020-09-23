@@ -190,9 +190,7 @@ define([
         }
 
         var domainObject = objectUtils.toNewFormat(model, id);
-        var composition = this.openmct.composition.registry.find(p => {
-            return p.appliesTo(domainObject);
-        });
+        var composition = this.openmct.composition.get(domainObject);
 
         if (!composition) {
             return;
@@ -201,7 +199,7 @@ define([
         composition.load(domainObject)
             .then(function (children) {
                 children.forEach(function (child) {
-                    provider.scheduleForIndexing(objectUtils.makeKeyString(child));
+                    provider.scheduleForIndexing(objectUtils.makeKeyString(child.identifier));
                 });
             });
     };
