@@ -43,6 +43,10 @@ export default class LegacyPersistenceAdapter {
             key: key
         };
 
-        return this.openmct.legacyObject(this.openmct.objects.get(identifier));
+        return this.openmct.objects.get(identifier).then(domainObject => {
+            let object = this.openmct.legacyObject(domainObject);
+
+            return object.model;
+        });
     }
 }
