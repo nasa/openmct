@@ -26,6 +26,7 @@ const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 const TIMELINE_HEIGHT = 30;
 const TYPE_OFFSET = 100;
+
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
@@ -62,13 +63,27 @@ export default {
             this.viewBounds = this.openmct.time.bounds();
             // this.viewBounds.end = this.viewBounds.end + (30 * 60 * 1000);
             this.setScaleAndPlotActivities();
-            // this.updateNowMarker();
+        },
+        updateNowMarker() {
+            const now = this.xScale(Date.now());
+            this.canvasContext.strokeStyle = "white";
+            this.canvasContext.beginPath();
+            this.canvasContext.moveTo(now + TYPE_OFFSET - 10, 0);
+            this.canvasContext.lineTo(now + TYPE_OFFSET + 10, 0);
+            this.canvasContext.lineTo(now + TYPE_OFFSET, 20);
+            this.canvasContext.fill();
+
+            this.canvasContext.beginPath();
+            this.canvasContext.moveTo(now + TYPE_OFFSET, 0);
+            this.canvasContext.lineTo(now + TYPE_OFFSET, this.height);
+            this.canvasContext.stroke();
         },
         setScaleAndPlotActivities() {
             this.setScale();
             this.clearPreviousActivities();
             this.calculatePlanLayout();
             this.drawPlan();
+            this.updateNowMarker();
         },
         clearPreviousActivities() {
             if (this.useSVG) {
@@ -314,10 +329,10 @@ export default {
                             if (heading) {
                                 if (groupHeadingBorder) {
                                     this.canvasContext.strokeStyle = "white";
-                                    this.canvasContext.beginPath(); // Start a new path
-                                    this.canvasContext.moveTo(0, groupHeadingBorder); // Move the pen to (30, 50)
-                                    this.canvasContext.lineTo(this.width, groupHeadingBorder); // Draw a line to (150, 100)
-                                    this.canvasContext.stroke(); // Render the path
+                                    this.canvasContext.beginPath();
+                                    this.canvasContext.moveTo(0, groupHeadingBorder);
+                                    this.canvasContext.lineTo(this.width, groupHeadingBorder);
+                                    this.canvasContext.stroke();
                                 }
 
                                 this.canvasContext.fillStyle = "white";
