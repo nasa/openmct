@@ -22,10 +22,12 @@
                 ></a>
             </span>
         </div>
-        <div class="main-image s-image-main c-imagery__main-image has-local-controls"
+        <div class="main-image s-image-main c-imagery__main-image has-local-controls j-imagery-image"
              :class="{'paused unnsynced': paused(),'stale':false }"
              :style="{'background-image': getImageUrl() ? `url(${getImageUrl()})` : 'none',
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
+             :data-openmct-image-timestamp="getTime()"
+             :data-openmct-object-keystring="keystring"
         >
             <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
                 <button class="c-nav c-nav--prev"
@@ -92,7 +94,8 @@ export default {
             isPaused: false,
             metadata: {},
             requestCount: 0,
-            timeFormat: ''
+            timeFormat: '',
+            keystring: ''
         };
     },
     computed: {
