@@ -9,7 +9,7 @@
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
-// import utcMultiTimeFormat from '../timeConductor/utcMultiTimeFormat.js';
+import utcMultiTimeFormat from "@/plugins/timeConductor/utcMultiTimeFormat";
 
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
@@ -138,13 +138,14 @@ export default {
             this.xScale.range([PADDING, this.offsetWidth - PADDING * 2]);
 
             this.xAxis.scale(this.xScale);
+            this.xAxis.tickFormat(utcMultiTimeFormat);
 
             this.axisElement.call(this.xAxis);
 
             if (this.width > 1800) {
-                this.xAxis.ticks(this.width / PIXELS_PER_TICK_WIDE);
+                this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK_WIDE);
             } else {
-                this.xAxis.ticks(this.width / PIXELS_PER_TICK);
+                this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK);
             }
         },
         isActivityInBounds(activity) {
@@ -285,7 +286,7 @@ export default {
                     this.svgElement.attr("height", planHeight);
                 } else {
                     // This needs to happen before we draw on the canvas or the canvas will get wiped out when height is set
-                    this.canvas.height = planHeight;
+                    this.canvas.height = Math.max(this.height, planHeight);
                 }
 
                 activityRows.forEach((key) => {
@@ -293,7 +294,6 @@ export default {
                     const row = parseInt(key, 10);
                     items.forEach((item) => {
                         const heading = item.heading;
-                        console.log(heading);
                         let groupHeadingRow;
                         let groupHeadingBorder;
                         if (row) {
