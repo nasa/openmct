@@ -32,9 +32,11 @@
             Object Style
         </div>
         <FontStyleEditor
+            v-if="canStyleFont"
             :font-style="fontStyle"
             :is-editing="allowEditing"
             :mixed-font-style="mixedFontStyle"
+            :styleable-items="styleableFontItems"
             @persist="updateFontStyle"
         />
         <div class="c-inspect-styles__content">
@@ -63,9 +65,11 @@
             Conditional Object Styles
         </div>
         <FontStyleEditor
+            v-if="canStyleFont"
             :font-style="fontStyle"
             :is-editing="allowEditing"
             :mixed-font-style="mixedFontStyle"
+            :styleable-items="styleableFontItems"
             @persist="updateFontStyle"
         />
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
@@ -162,6 +166,72 @@ export default {
     computed: {
         allowEditing() {
             return this.isEditing && !this.locked;
+        },
+        isMainLayoutSelected() {
+            const selectedItem = this.selection[0][0].context.item;
+            const selectedLayoutItem = this.selection[0][0].context.layoutItem;
+
+            return selectedItem && selectedItem.type === 'layout' && !selectedLayoutItem;
+        },
+        styleableFontItems() {
+            if (this.isMainLayoutSelected) {
+                return [];
+            }
+
+            if (this.selection.length === 1) {
+                const primary = this.selection[0][0];
+                const layoutItem = primary.context.layoutItem;
+
+                if (!layoutItem) {
+                    console.log('no layout item');
+                    return [];
+                }
+
+                const type = primary.context.layoutItem.type;
+
+                // if (type === 'telemetry-view' || type === 'text-view') {
+                //     return this.selection;
+                // }
+
+                if (type === 'line-view' || type === 'box-view' || type === 'image-view') {
+                    return [];
+                }
+
+                if (type === 'subobject-view') {
+                    const objectType = primary.context.item.type;
+
+                    if (objectType === 'layout'
+                        || objectType === 'flexible-layout'
+                        || objectType === 'tabs') {
+                        return [];
+                    }
+                }
+
+                return this.selection;
+            } else {
+                return this.selection.filter(selectionPath => {
+                    let type = selectionPath[0].context.layoutItem.type;
+
+                    if (type === 'line-view' || type === 'box-view') {
+                        return false;
+                    }
+
+                    if (type === 'subobject-view') {
+                        let objectType = selectionPath[0].context.item.type;
+
+                        if (objectType === 'layout'
+                            || objectType === 'flexible-layout'
+                            || objectType === 'tabs') {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+            }
+        },
+        canStyleFont() {
+            return Boolean(this.styleableFontItems.length);
         }
     },
     destroyed() {
@@ -681,6 +751,12 @@ export default {
                     }
                 });
             }
+        },
+        updateFontStyle() {
+            console.log('updating font');
+        },
+        isStyleable(selectionPath) {
+
         }
     }
 };

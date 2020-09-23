@@ -36,8 +36,10 @@
             :style="thumbStyle"
         >
             <span
-                class="c-style-thumb__text"
+                class="c-style-thumb__text u-style-receiver js-style-receiver"
                 :class="{ 'hide-nice': !hasProperty(savedStyle.color) }"
+                :data-font-size="savedStyle.fontSize"
+                :data-font="savedStyle.font"
             >
                 ABC
             </span>

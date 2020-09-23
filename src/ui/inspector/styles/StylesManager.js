@@ -32,13 +32,13 @@ class StylesManager extends EventEmitter {
     delete(style) {
         const styles = this.load();
         const remainingStyles = styles.filter(keep => !this.isEqual(keep, style));
-        
+
         const persistSuccess = this.persist(remainingStyles);
         if (persistSuccess) {
             this.emit('stylesUpdated', remainingStyles);
         }
     }
-    
+
     select(style) {
         this.emit('styleSelected', style);
     }
