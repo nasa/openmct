@@ -50,7 +50,6 @@ export default {
 
         this.canvas = this.container.append('canvas').node();
         this.canvasContext = this.canvas.getContext('2d');
-        this.canvasContext.font = "normal 14px sans-serif";
 
         this.setDimensions();
         this.updateViewBounds();
@@ -63,6 +62,7 @@ export default {
             this.viewBounds = this.openmct.time.bounds();
             // this.viewBounds.end = this.viewBounds.end + (30 * 60 * 1000);
             this.setScaleAndPlotActivities();
+            // this.updateNowMarker();
         },
         setScaleAndPlotActivities() {
             this.setScale();
@@ -94,6 +94,8 @@ export default {
                 this.canvas.width = this.width;
                 this.canvas.height = this.height;
             }
+
+            this.canvasContext.font = "normal normal 12px sans-serif";
         },
         setScale(timeSystem) {
             if (!this.width) {
@@ -151,14 +153,15 @@ export default {
             return 0;
         },
         // Get the row where the next activity will land.
-        getRowForActivity(rectX, rectWidth, defaultActivityRow = 0) {
+        getRowForActivity(rectX, width, defaultActivityRow = 0) {
             let currentRow;
             let sortedActivityRows = Object.keys(this.activitiesByRow).sort(this.sortFn);
 
             function getOverlap(rects) {
                 return rects.every(rect => {
                     const { start, end } = rect;
-                    const hasOverlap = (rectX >= start && rectX <= end) || (rectWidth >= start && rectWidth <= end) || (rectX <= start && rectWidth >= end);
+                    const calculatedEnd = rectX + width;
+                    const hasOverlap = (rectX >= start && rectX <= end) || (calculatedEnd >= start && calculatedEnd <= end) || (rectX <= start && calculatedEnd >= end);
 
                     return !hasOverlap;
                 });
@@ -191,6 +194,7 @@ export default {
                     const rectWidth = rectY - rectX;
 
                     const activityNameWidth = this.getTextWidth(activity.name) + TEXT_LEFT_PADDING;
+                    //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
                     const activityNameFitsRect = (rectWidth >= activityNameWidth);
                     const textStart = activityNameFitsRect ? (rectX + TEXT_LEFT_PADDING) : (rectX + rectWidth + TEXT_LEFT_PADDING);
 
@@ -218,7 +222,7 @@ export default {
                         textStart: textStart,
                         textY: textY,
                         start: rectX,
-                        end: activityNameFitsRect ? rectWidth : textWidth,
+                        end: activityNameFitsRect ? rectX + rectWidth : textStart + textWidth,
                         rectWidth: rectWidth
                     });
                 }
@@ -251,7 +255,7 @@ export default {
             const activityRows = Object.keys(this.activitiesByRow);
 
             if (activityRows.length) {
-                const planHeight = activityRows[activityRows.length - 1] + TIMELINE_HEIGHT;
+                const planHeight = parseInt(activityRows[activityRows.length - 1], 10) + 150;
                 if (this.useSVG) {
                     this.svgElement.attr("height", planHeight);
                 } else {
@@ -259,17 +263,18 @@ export default {
                     this.canvas.height = planHeight;
                 }
 
-                activityRows.forEach((row) => {
-                    const item = this.activitiesByRow[row];
-                    //next tick
-                    setTimeout(() => {
+                activityRows.forEach((key) => {
+                    const items = this.activitiesByRow[key];
+                    const row = parseInt(key, 10);
+                    items.forEach((item) => {
                         //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
                         if (this.useSVG) {
-                            this.plotSVG(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY, item.textLines);
+                            this.plotSVG(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY + TIMELINE_HEIGHT, item.textLines, item.actualX);
                         } else {
-                            this.plotCanvas(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY, item.textLines);
+                            this.plotCanvas(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY + TIMELINE_HEIGHT, item.textLines, item.actualX);
                         }
-                    }, 0);
+                    });
+
                 });
             }
         },
