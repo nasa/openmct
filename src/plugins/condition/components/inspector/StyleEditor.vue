@@ -106,6 +106,11 @@ export default {
             required: true
         }
     },
+    mounted() {
+        console.log(this.isEditing);
+        // console.log(this.mixedStyles)
+        // console.log(this.styleItem);
+    },
     computed: {
         itemStyle() {
             return getStylesWithoutNoneValue(this.styleItem.style);
@@ -195,10 +200,7 @@ export default {
             return {
                 icon: 'icon-save',
                 title: 'Save style',
-                // value: this.normalizeValueForSwatch(value),
-                // property: 'color',
                 isEditing: this.isEditing
-                // nonSpecific: this.mixedStyles.indexOf('color') > -1
             };
         }
     },

@@ -33,10 +33,9 @@
         </div>
         <FontStyleEditor
             v-if="canStyleFont"
-            :font-style="fontStyle"
-            :is-editing="allowEditing"
-            :mixed-font-style="mixedFontStyle"
-            :styleable-items="styleableFontItems"
+            :allow-editing="allowEditing"
+            :styleables="styleableFontItems"
+            :object-styles="objectStyles"
             @persist="updateFontStyle"
         />
         <div class="c-inspect-styles__content">
@@ -66,10 +65,9 @@
         </div>
         <FontStyleEditor
             v-if="canStyleFont"
-            :font-style="fontStyle"
-            :is-editing="allowEditing"
-            :mixed-font-style="mixedFontStyle"
-            :styleable-items="styleableFontItems"
+            :allow-editing="allowEditing"
+            :styleables="styleableFontItems"
+            :object-styles="objectStyles"
             @persist="updateFontStyle"
         />
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
@@ -158,12 +156,22 @@ export default {
             conditionsLoaded: false,
             navigateToPath: '',
             selectedConditionId: '',
-            locked: false,
             fontStyle: undefined,
-            mixedFontStyle: []
+            mixedFontStyle: [],
+            items: [],
+            domainObject: undefined
         };
     },
     computed: {
+        locked() {
+            // TODO should this be for parent layouts only?
+            return this.selection.some(selectionPath => {
+                const self = selectionPath[0].context.item;
+                const parent = selectionPath.length > 1 ? selectionPath[1].context.item : undefined;
+
+                return (self && self.locked) || (parent && parent.locked);
+            });
+        },
         allowEditing() {
             return this.isEditing && !this.locked;
         },
@@ -232,6 +240,24 @@ export default {
         },
         canStyleFont() {
             return Boolean(this.styleableFontItems.length);
+        },
+        objectStyles() {
+            let objectStyles = {};
+            if (this.domainObjectsById) {
+                const domainObject = Object.values(this.domainObjectsById)[0];
+                if (domainObject.configuration && domainObject.configuration.objectStyles) {
+                    objectStyles = domainObject.configuration.objectStyles;
+                }
+            } else if (this.items.length) {
+                const itemId = this.items[0].id;
+                if (this.domainObject && this.domainObject.configuration && this.domainObject.configuration.objectStyles && this.domainObject.configuration.objectStyles[itemId]) {
+                    objectStyles = this.domainObject.configuration.objectStyles[itemId];
+                }
+            } else if (this.domainObject && this.domainObject.configuration && this.domainObject.configuration.objectStyles) {
+                objectStyles = this.domainObject.configuration.objectStyles;
+            }
+
+            return objectStyles;
         }
     },
     destroyed() {
@@ -240,16 +266,14 @@ export default {
         this.stylesManager.off('styleSelected', this.updateSelectionStyle);
     },
     mounted() {
-        this.items = [];
         this.previewAction = new PreviewAction(this.openmct);
         this.isMultipleSelection = this.selection.length > 1;
         this.getObjectsAndItemsFromSelection();
         if (!this.isMultipleSelection) {
-            let objectStyles = this.getObjectStyles();
-            this.initializeStaticStyle(objectStyles);
-            if (objectStyles && objectStyles.conditionSetIdentifier) {
-                this.openmct.objects.get(objectStyles.conditionSetIdentifier).then(this.initialize);
-                this.conditionalStyles = objectStyles.styles;
+            this.initializeStaticStyle(this.objectStyles);
+            if (this.objectStyles && this.objectStyles.conditionSetIdentifier) {
+                this.openmct.objects.get(this.objectStyles.conditionSetIdentifier).then(this.initialize);
+                this.conditionalStyles = this.objectStyles.styles;
             }
         } else {
             this.initializeStaticStyle();
@@ -259,24 +283,6 @@ export default {
         this.stylesManager.on('styleSelected', this.updateSelectionStyle);
     },
     methods: {
-        getObjectStyles() {
-            let objectStyles;
-            if (this.domainObjectsById) {
-                const domainObject = Object.values(this.domainObjectsById)[0];
-                if (domainObject.configuration && domainObject.configuration.objectStyles) {
-                    objectStyles = domainObject.configuration.objectStyles;
-                }
-            } else if (this.items.length) {
-                const itemId = this.items[0].id;
-                if (this.domainObject.configuration && this.domainObject.configuration.objectStyles && this.domainObject.configuration.objectStyles[itemId]) {
-                    objectStyles = this.domainObject.configuration.objectStyles[itemId];
-                }
-            } else if (this.domainObject.configuration && this.domainObject.configuration.objectStyles) {
-                objectStyles = this.domainObject.configuration.objectStyles;
-            }
-
-            return objectStyles;
-        },
         setEditState(isEditing) {
             this.isEditing = isEditing;
             if (this.isEditing) {
@@ -325,12 +331,7 @@ export default {
             this.selection.forEach((selectionItem) => {
                 const item = selectionItem[0].context.item;
                 const layoutItem = selectionItem[0].context.layoutItem;
-                const layoutDomainObject = selectionItem[0].context.item;
                 const isChildItem = selectionItem.length > 1;
-
-                if (layoutDomainObject && layoutDomainObject.locked) {
-                    this.locked = true;
-                }
 
                 if (!isChildItem) {
                     domainObject = item;
@@ -365,7 +366,7 @@ export default {
             const {styles, mixedStyles} = getConsolidatedStyleValues(itemInitialStyles);
             this.initialStyles = styles;
             this.mixedStyles = mixedStyles;
-
+            // main layout
             this.domainObject = domainObject;
             this.removeListeners();
             if (this.domainObject) {
@@ -380,6 +381,7 @@ export default {
             keys.forEach((key) => {
                 if (this.isKeyItemId(key)) {
                     if (!(newItems.find(item => item.id === key))) {
+                        console.log('something happened' + key);
                         this.removeItemStyles(key);
                     }
                 }
@@ -388,6 +390,7 @@ export default {
         isKeyItemId(key) {
             return (key !== 'styles')
                 && (key !== 'staticStyle')
+                && (key !== 'fontStyle')
                 && (key !== 'defaultConditionId')
                 && (key !== 'selectedConditionId')
                 && (key !== 'conditionSetIdentifier');

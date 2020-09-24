@@ -25,42 +25,39 @@ export default {
         ToolbarSelectMenu
     },
     props: {
-        styleableItems: {
+        styleables: {
             type: Array,
+            required: true
+        },
+        objectStyles: {
+            type: Object,
             required: true
         }
     },
     computed: {
+        
         fontMenuOptions() {
             return {
                 control: 'select-menu',
-                // domainObject: selectedParent,
                 icon: "icon-font",
-                // applicableSelectedItems: selection,
-                // property: (selectionPath) => {
-                //     return getPath(selectionPath) + '.font';
-                // },
                 title: "Set font style",
+                value: this.font,
                 options: FONTS
             };
         },
         fontSizeMenuOptions() {
             return {
                 control: 'select-menu',
-                // domainObject: selectedParent,
                 icon: "icon-font-size",
-                // applicableSelectedItems: selection,
-                // property: (selectionPath) => {
-                //     return getPath(selectionPath) + '.fontSize';
-                // },
                 title: "Set font size",
+                value: this.fontSize,
                 options: this.availableFontSizeOptions
             };
         },
         availableFontSizeOptions() {
             let sizeOptions = 'big';
 
-            this.styleableItems.forEach(styleable => {
+            this.styleables.forEach(styleable => {
                 if (styleable[0].context.item) {
                     if (styleable[0].context.item.type.includes('plot')
                     || styleable[0].context.item.type.includes('table')) {
@@ -77,9 +74,23 @@ export default {
         }
     },
     mounted() {
-        console.log(this.styleableItems);
+        // console.log(this.styleables);
     },
     methods: {
+        updateStyleValue(value, item) {
+            value = this.normalizeValueForStyle(value);
+            if (item.property === 'border') {
+                value = '1px solid ' + value;
+            }
+
+            if (value && (value.url !== undefined)) {
+                this.styleItem.style[item.property] = value.url;
+            } else {
+                this.styleItem.style[item.property] = value;
+            }
+
+            this.$emit('persist', this.styleItem, item.property);
+        },
         updateFont() {
 
         },
