@@ -109,7 +109,8 @@ define([
                             "topic",
                             "GENERIC_SEARCH_ROOTS",
                             "USE_LEGACY_INDEXER",
-                            "openmct"
+                            "openmct",
+                            "objectService"
                         ]
                     },
                     {

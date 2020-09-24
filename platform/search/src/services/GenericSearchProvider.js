@@ -43,11 +43,12 @@ define([
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
+    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct, objectService) {
         var provider = this;
         this.$q = $q;
         this.$log = $log;
         this.modelService = modelService;
+        this.objectService = objectService;
         this.openmct = openmct;
 
         this.indexedIds = {};
@@ -218,12 +219,12 @@ define([
             provider = this;
 
         this.pendingRequests += 1;
-        this.modelService
-            .getModels([idToIndex])
-            .then(function (models) {
+        this.objectService
+            .getObjects([idToIndex])
+            .then(function (objects) {
                 delete provider.pendingIndex[idToIndex];
-                if (models[idToIndex]) {
-                    provider.index(idToIndex, models[idToIndex]);
+                if (objects[idToIndex]) {
+                    provider.index(idToIndex, objects[idToIndex].model);
                 }
             }, function () {
                 provider
