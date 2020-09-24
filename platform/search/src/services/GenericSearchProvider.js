@@ -191,13 +191,14 @@ define([
 
         var domainObject = objectUtils.toNewFormat(model, id);
         var composition = this.openmct.composition.get(domainObject);
-
+        console.log('composition', composition);
         if (!composition) {
             return;
         }
 
         composition.load(domainObject)
             .then(function (children) {
+                console.log('children', children);
                 children.forEach(function (child) {
                     provider.scheduleForIndexing(objectUtils.makeKeyString(child.identifier));
                 });
