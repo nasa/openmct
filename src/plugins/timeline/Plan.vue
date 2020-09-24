@@ -2,6 +2,7 @@
 <div ref="axisHolder"
      class="c-timeline-plan"
 >
+    <div class="nowMarker"><span class="icon-arrow-down"></span></div>
 </div>
 </template>
 
@@ -65,18 +66,12 @@ export default {
             this.setScaleAndPlotActivities();
         },
         updateNowMarker() {
-            const now = this.xScale(Date.now());
-            this.canvasContext.strokeStyle = "white";
-            this.canvasContext.beginPath();
-            this.canvasContext.moveTo(now + TYPE_OFFSET - 10, 0);
-            this.canvasContext.lineTo(now + TYPE_OFFSET + 10, 0);
-            this.canvasContext.lineTo(now + TYPE_OFFSET, 20);
-            this.canvasContext.fill();
-
-            this.canvasContext.beginPath();
-            this.canvasContext.moveTo(now + TYPE_OFFSET, 0);
-            this.canvasContext.lineTo(now + TYPE_OFFSET, this.height);
-            this.canvasContext.stroke();
+            let nowMarker = document.querySelector('.nowMarker');
+            if (nowMarker) {
+                nowMarker.style.height = this.canvas.height + 'px';
+                const now = this.xScale(Date.now());
+                nowMarker.style.left = now + TYPE_OFFSET + 'px';
+            }
         },
         setScaleAndPlotActivities() {
             this.setScale();
