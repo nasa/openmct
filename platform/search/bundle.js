@@ -104,13 +104,12 @@ define([
                         "depends": [
                             "$q",
                             "$log",
-                            "modelService",
+                            "objectService",
                             "workerService",
                             "topic",
                             "GENERIC_SEARCH_ROOTS",
                             "USE_LEGACY_INDEXER",
-                            "openmct",
-                            "objectService"
+                            "openmct"
                         ]
                     },
                     {

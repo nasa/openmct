@@ -13,8 +13,17 @@
         />
     </div>
 
+    <!-- search loading -->
+    <li
+        v-if="searchLoading && activeSearch"
+        class="c-tree__item c-tree-and-search__loading loading"
+    >
+        <span class="c-tree__item__label">Searching...</span>
+    </li>
+
+    <!-- no results -->
     <div
-        v-if="(searchValue && allTreeItems.length === 0 && !isLoading) || (searchValue && searchResultItems.length === 0)"
+        v-if="(searchValue && searchResultItems.length === 0 && !searchLoading)"
         class="c-tree-and-search__no-results"
     >
         No results found
@@ -48,14 +57,16 @@
             </li>
             <!-- end loading -->
         </div>
+
         <!-- currently viewed children -->
         <transition
-            @enter="childrenIn"
+            name="children"
+            appear
         >
             <li
-                v-if="!isLoading"
-                :class="childrenSlideClass"
+                v-if="!isLoading && !searchLoading"
                 :style="childrenListStyles()"
+                :class="childrenSlideClass"
             >
                 <ul
                     ref="scrollable"
@@ -77,7 +88,7 @@
                             @expanded="handleExpanded"
                         />
                         <li
-                            v-if="visibleItems.length === 0 && !noVisibleItems"
+                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch"
                             :style="indicatorLeftOffset"
                             class="c-tree__item c-tree__item--empty"
                         >
@@ -93,6 +104,7 @@
 </template>
 
 <script>
+import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
 
@@ -123,12 +135,13 @@ export default {
 
         return {
             isLoading: false,
+            searchLoading: false,
             searchValue: '',
             allTreeItems: [],
             searchResultItems: [],
             visibleItems: [],
             ancestors: [],
-            childrenSlideClass: 'slide-left',
+            childrenSlideClass: 'down',
             availableContainerHeight: 0,
             noScroll: true,
             updatingView: false,
@@ -266,6 +279,9 @@ export default {
 
             this.getAllChildren(rootNode);
         }
+    },
+    created() {
+        this.getSearchResults = _.debounce(this.getSearchResults, 400);
     },
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
@@ -466,6 +482,7 @@ export default {
 
             this.autoScroll();
             this.isLoading = false;
+            this.setContainerHeight();
         },
         async jumpToPath(saveExpandedPath = false) {
             // switching back and forth between multiple root children can cause issues,
@@ -551,20 +568,25 @@ export default {
                     navigateToParent
                 };
             });
+            this.searchLoading = false;
         },
         searchTree(value) {
             this.searchValue = value;
+            this.searchLoading = true;
 
             if (this.searchValue !== '') {
                 this.getSearchResults();
+            } else {
+                this.searchLoading = false;
             }
         },
         searchActivated() {
             this.activeSearch = true;
             this.$refs.scrollable.scrollTop = 0;
         },
-        searchDeactivated() {
+        async searchDeactivated() {
             this.activeSearch = false;
+            await this.$nextTick();
             this.$refs.scrollable.scrollTop = 0;
             this.setContainerHeight();
         },
@@ -573,7 +595,7 @@ export default {
                 return;
             }
 
-            this.childrenSlideClass = 'slide-right';
+            this.childrenSlideClass = 'up';
             this.ancestors.splice(this.ancestors.indexOf(node) + 1);
             this.getAllChildren(node);
             this.setCurrentNavigatedPath();
@@ -583,7 +605,7 @@ export default {
                 return;
             }
 
-            this.childrenSlideClass = 'slide-left';
+            this.childrenSlideClass = 'down';
             let newParent = this.buildTreeItem(node);
             this.ancestors.push(newParent);
             this.getAllChildren(newParent);
@@ -639,11 +661,15 @@ export default {
                 overflow: this.noScroll ? 'hidden' : 'scroll'
             };
         },
-        childrenIn(el, done) {
-            // still needing this timeout for some reason
-            window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
+        afterChildrenEnter(el, done) {
+            this.childrenSlideClass = '';
             done();
         },
+        // childrenIn(el, done) {
+        //     // still needing this timeout for some reason
+        //     window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
+        //     setTimeout(()=>{ done();},2000);
+        // },
         getElementStyleValue(el, style) {
             let styleString = window.getComputedStyle(el)[style];
             let index = styleString.indexOf('px');

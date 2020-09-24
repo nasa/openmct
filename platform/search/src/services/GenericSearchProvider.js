@@ -38,16 +38,15 @@ define([
      * @constructor
      * @param $q Angular's $q, for promise consolidation.
      * @param $log Anglar's $log, for logging.
-     * @param {ModelService} modelService the model service.
+     * @param {ObjectService} objectService the object service.
      * @param {WorkerService} workerService the workerService.
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct, objectService) {
+    function GenericSearchProvider($q, $log, objectService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
         var provider = this;
         this.$q = $q;
         this.$log = $log;
-        this.modelService = modelService;
         this.objectService = objectService;
         this.openmct = openmct;
 
