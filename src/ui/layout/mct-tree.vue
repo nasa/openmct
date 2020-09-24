@@ -661,15 +661,6 @@ export default {
                 overflow: this.noScroll ? 'hidden' : 'scroll'
             };
         },
-        afterChildrenEnter(el, done) {
-            this.childrenSlideClass = '';
-            done();
-        },
-        // childrenIn(el, done) {
-        //     // still needing this timeout for some reason
-        //     window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
-        //     setTimeout(()=>{ done();},2000);
-        // },
         getElementStyleValue(el, style) {
             let styleString = window.getComputedStyle(el)[style];
             let index = styleString.indexOf('px');
