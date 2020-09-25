@@ -463,9 +463,9 @@ export default {
                 let ancestorKeyString = this.openmct.objects.makeKeyString(ancestorObject.identifier);
                 let index = observedAncestorIds.indexOf(ancestorKeyString);
 
-                observedAncestorIds.splice(index, 1); // remove all active ancestors from id tracking
-
-                if (!observedAncestorIds.includes(ancestorKeyString)) {
+                if (index !== -1) { // currently observed
+                    observedAncestorIds.splice(index, 1); // remove all active ancestors from id tracking
+                } else { // not observed, observe it
                     this.observeAncestor(ancestorKeyString, ancestorObject);
                 }
             });
