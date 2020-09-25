@@ -179,10 +179,6 @@ export default {
     },
     watch: {
         syncTreeNavigation() {
-            if (this.isLoading) {
-                return;
-            }
-
             const AND_SAVE_PATH = true;
             let currentLocationPath = this.openmct.router.currentLocation.path;
             let hasParent = this.currentlyViewedObjectParentPath() || (this.multipleRootChildren && !this.currentlyViewedObjectParentPath());
@@ -420,6 +416,9 @@ export default {
             }
         },
         async getAllChildren(node) {
+            let currentNavigationRequest = this.openmct.objects.makeKeyString(node.object.identifier);
+            this.latestNavigationRequest = currentNavigationRequest;
+
             await this.clearVisibleItems();
             this.isLoading = true;
 
@@ -434,7 +433,10 @@ export default {
             this.composition.on('add', this.addChild);
             this.composition.on('remove', this.removeChild);
             await this.composition.load();
-            this.finishLoading();
+
+            if (currentNavigationRequest === this.latestNavigationRequest) {
+                this.finishLoading();
+            }
         },
         buildTreeItem(domainObject) {
             let navToParent = ROOT_PATH + this.currentNavigatedPath;
@@ -569,20 +571,12 @@ export default {
             this.setContainerHeight();
         },
         handleReset(node) {
-            if (this.isLoading) {
-                return;
-            }
-
             this.childrenSlideClass = 'slide-right';
             this.ancestors.splice(this.ancestors.indexOf(node) + 1);
             this.getAllChildren(node);
             this.setCurrentNavigatedPath();
         },
         handleExpanded(node) {
-            if (this.activeSearch || this.isLoading) {
-                return;
-            }
-
             this.childrenSlideClass = 'slide-left';
             let newParent = this.buildTreeItem(node);
             this.ancestors.push(newParent);
