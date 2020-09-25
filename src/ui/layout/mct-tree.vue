@@ -479,7 +479,7 @@ export default {
             let ids = Object.keys(this.observedAncestors);
 
             ids.forEach((id) => {
-                this.stopObservingAncestors(id);
+                this.stopObservingAncestor(id);
             });
         },
         observeAncestor(id, object) {
