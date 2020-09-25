@@ -398,15 +398,13 @@ export default {
             this.settingChildrenHeight = false;
         },
         setPageThreshold() {
-            console.log(this.availableContainerHeight, this.itemHeight);
             let threshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
             // all items haven't loaded yet (nextTick not working for this)
-            if (threshold === ITEM_BUFFER) {
+            if (threshold === ITEM_BUFFER || threshold === ITEM_BUFFER + 1) {
                 window.setTimeout(this.setPageThreshold, RECHECK_DELAY);
             } else {
                 this.pageThreshold = threshold;
             }
-            console.log(this.pageThreshold);
         },
         handleWindowResize() {
             if (!windowResizing) {
