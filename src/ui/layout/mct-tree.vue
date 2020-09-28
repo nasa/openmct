@@ -399,11 +399,6 @@ export default {
         },
         setPageThreshold() {
             let threshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
-            console.log('set page threshhold', threshold);
-            let mainTree = this.$refs.mainTree;
-            let mainTreeHeight = mainTree.clientHeight;
-            console.log(mainTree, mainTreeHeight);
-            console.log('loading', this.isLoading);
             // all items haven't loaded yet (nextTick not working for this)
             if (threshold === ITEM_BUFFER || threshold === ITEM_BUFFER + 1) {
                 window.setTimeout(this.setPageThreshold, RECHECK_DELAY);
