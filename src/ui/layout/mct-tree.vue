@@ -471,15 +471,13 @@ export default {
             });
 
             // remove any ancestors currnetly being observed that are no longer active ancestors
-            observedAncestorIds.forEach((id) => {
-                this.stopObservingAncestor(id);
-            });
+            this.stopObservingAncestors(observedAncestorIds);
         },
-        stopObservingAncestors() {
-            let ids = Object.keys(this.observedAncestors);
-
+        stopObservingAncestors(ids = Object.keys(this.observedAncestors)) {
             ids.forEach((id) => {
-                this.stopObservingAncestor(id);
+                this.observedAncestors[id]();
+                this.observedAncestors[id] = undefined;
+                delete this.observedAncestors[id];
             });
         },
         observeAncestor(id, object) {
@@ -495,11 +493,6 @@ export default {
                         }
                     }
                 });
-        },
-        stopObservingAncestor(id) {
-            this.observedAncestors[id]();
-            this.observedAncestors[id] = undefined;
-            delete this.observedAncestors[id];
         },
         addChild(child) {
             let item = this.buildTreeItem(child);
