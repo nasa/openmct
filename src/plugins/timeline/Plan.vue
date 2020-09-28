@@ -39,6 +39,7 @@ export default {
         }
     },
     mounted() {
+        this.validateJSON(this.domainObject.selectFile.body);
         if (this.renderingEngine === 'svg') {
             this.useSVG = true;
         }
@@ -60,17 +61,33 @@ export default {
 
     },
     methods: {
+        validateJSON(jsonString) {
+            try {
+                this.json = JSON.parse(jsonString);
+            } catch (e) {
+                return false;
+            }
+
+            return true;
+        },
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
             // this.viewBounds.end = this.viewBounds.end + (30 * 60 * 1000);
             this.setScaleAndPlotActivities();
         },
         updateNowMarker() {
-            let nowMarker = document.querySelector('.nowMarker');
-            if (nowMarker) {
-                nowMarker.style.height = this.canvas.height + 'px';
-                const now = this.xScale(Date.now());
-                nowMarker.style.left = now + TYPE_OFFSET + 'px';
+            if (this.openmct.time.clock() === undefined) {
+                let nowMarker = document.querySelector('.nowMarker');
+                if (nowMarker) {
+                    nowMarker.parentNode.removeChild(nowMarker);
+                }
+            } else {
+                let nowMarker = document.querySelector('.nowMarker');
+                if (nowMarker) {
+                    nowMarker.style.height = this.canvas.height + 'px';
+                    const now = this.xScale(Date.now());
+                    nowMarker.style.left = now + TYPE_OFFSET + 'px';
+                }
             }
         },
         setScaleAndPlotActivities() {
@@ -199,9 +216,9 @@ export default {
 
             let currentRow = 0;
 
-            let keys = Object.keys(this.domainObject.configuration.activities);
+            let keys = Object.keys(this.json);
             keys.forEach((key, index) => {
-                let activities = this.domainObject.configuration.activities[key];
+                let activities = this.json[key];
                 currentRow = currentRow + ROW_HEIGHT * index;
                 let newKey = true;
                 activities.forEach((activity) => {
@@ -292,8 +309,8 @@ export default {
                         let groupHeadingRow;
                         let groupHeadingBorder;
                         if (row) {
-                            groupHeadingRow = row + ROW_HEIGHT * 2 + ROW_PADDING + TEXT_PADDING;
-                            groupHeadingBorder = row + ROW_HEIGHT * 2 + ROW_PADDING - 5;
+                            groupHeadingRow = row + ROW_PADDING * 2 + TEXT_PADDING;
+                            groupHeadingBorder = row + ROW_PADDING * 2;
                         } else {
                             groupHeadingRow = TIMELINE_HEIGHT + TEXT_PADDING;
                         }

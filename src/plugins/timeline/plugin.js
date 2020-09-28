@@ -30,87 +30,17 @@ export default function () {
             description: 'An activity timeline',
             creatable: true,
             cssClass: 'icon-clock',
+            form: [
+                {
+                    name: 'Upload Plan (JSON File)',
+                    key: 'selectFile',
+                    control: 'file-input',
+                    required: true,
+                    text: 'Select File',
+                    type: 'application/json'
+                }
+            ],
             initialize: function (domainObject) {
-                let currentTimeStamp = new Date().getTime();
-                let templateActivities = {
-                    "NIRVSS": [{
-                        name: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet",
-                        // name: 'Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1 Activity 1',
-                        // start: 1597170002854,
-                        start: currentTimeStamp,
-                        end: currentTimeStamp + 564000,
-                        type: 'NIRVSS',
-                        color: 'fuchsia',
-                        textColor: 'white'
-                    },
-                    {
-                        name: 'Duis aute irure dolor in reprehenderit in ',
-                        // name: 'Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2 Activity 2',
-                        // start: 1597171132854,
-                        start: currentTimeStamp + 565000,
-                        end: currentTimeStamp + 565000 + 50000,
-                        type: 'NIRVSS',
-                        color: 'orange',
-                        textColor: 'white'
-                    },
-                    {
-                        name: 'Lorem Ipsum',
-                        // start: 1597171132854,
-                        start: currentTimeStamp + 565000,
-                        end: currentTimeStamp + 565000 + 50000,
-                        type: 'NIRVSS',
-                        color: 'purple',
-                        textColor: 'white'
-                    }],
-                    "ROVER": [
-                        {
-                            name: 'Sed ut perspiciatis unde omnis iste natus error sit.',
-                            // name: 'Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3 Activity 3',
-                            // start: 1597170132854,
-                            start: currentTimeStamp + 65000,
-                            end: currentTimeStamp + 65000 + 535000,
-                            type: 'VIPER',
-                            color: 'white',
-                            textColor: 'black'
-                        },
-                        {
-                            name: 'At vero eos et accusamus et ',
-                            // name: 'Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4 Activity 4',
-                            // start: 1597170132854,
-                            start: currentTimeStamp + 65000,
-                            end: currentTimeStamp + 65000 + 535000,
-                            type: 'VIPER',
-                            color: 'blue',
-                            textColor: 'white'
-                        },
-                        {
-                            name: 'Temporibus autem quibusdam.',
-                            // name: 'Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 Activity 5 ',
-                            // start: 1597170132854,
-                            start: currentTimeStamp + 65000,
-                            end: currentTimeStamp + 65000 + 535000,
-                            type: 'VIPER',
-                            color: 'red',
-                            textColor: 'white'
-                        }
-                    ]
-                };
-                // let activities = [];
-                // for (let i = 0; i < 1; i++) {
-                //     activities = activities.concat(templateActivities.map(activity => activity));
-                // }
-
-                domainObject.configuration = {
-                    name: 'Demo Plan',
-                    swimlanes: 10,
-                    activities: templateActivities
-                    //TODO: these will come later
-                    // groups: [],
-                    // bounds: {
-                    //     start: '',
-                    //     end: ''
-                    // },
-                };
             }
         });
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
