@@ -142,7 +142,8 @@ export default {
             settingChildrenHeight: false,
             isMobile: isMobile.mobileName,
             multipleRootChildren: false,
-            noVisibleItems: false
+            noVisibleItems: false,
+            observedAncestors: {}
         };
     },
     computed: {
@@ -231,6 +232,9 @@ export default {
             if (!this.isLoading) {
                 this.setContainerHeight();
             }
+        },
+        ancestors() {
+            this.observeAncestors();
         }
     },
     async mounted() {
@@ -269,6 +273,7 @@ export default {
     },
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
+        this.stopObservingAncestors();
     },
     methods: {
         updatevisibleItems() {
@@ -312,7 +317,7 @@ export default {
         async setContainerHeight() {
             await this.$nextTick();
             let mainTree = this.$refs.mainTree;
-            let mainTreeHeight = mainTree.clientHeight;
+            let mainTreeHeight = mainTree && mainTree.clientHeight ? mainTree.clientHeight : 0;
 
             if (mainTreeHeight !== 0) {
                 this.calculateChildHeight(() => {
@@ -448,6 +453,46 @@ export default {
                 objectPath: [domainObject].concat(this.currentObjectPath),
                 navigateToParent: navToParent
             };
+        },
+        observeAncestors() {
+            let observedAncestorIds = Object.keys(this.observedAncestors);
+
+            // observe any ancestors, not currently being observed
+            this.ancestors.forEach((ancestor) => {
+                let ancestorObject = ancestor.object;
+                let ancestorKeyString = this.openmct.objects.makeKeyString(ancestorObject.identifier);
+                let index = observedAncestorIds.indexOf(ancestorKeyString);
+
+                if (index !== -1) { // currently observed
+                    observedAncestorIds.splice(index, 1); // remove all active ancestors from id tracking
+                } else { // not observed, observe it
+                    this.observeAncestor(ancestorKeyString, ancestorObject);
+                }
+            });
+
+            // remove any ancestors currnetly being observed that are no longer active ancestors
+            this.stopObservingAncestors(observedAncestorIds);
+        },
+        stopObservingAncestors(ids = Object.keys(this.observedAncestors)) {
+            ids.forEach((id) => {
+                this.observedAncestors[id]();
+                this.observedAncestors[id] = undefined;
+                delete this.observedAncestors[id];
+            });
+        },
+        observeAncestor(id, object) {
+            this.observedAncestors[id] = this.openmct.objects.observe(object, 'location',
+                (location) => {
+                    let ancestorObjects = this.ancestors.map(ancestor => ancestor.object);
+                    // ancestor has been removed from tree, reset to it's parent
+                    if (location === null) {
+                        let index = ancestorObjects.indexOf(object);
+                        let parentIndex = index - 1;
+                        if (this.ancestors[parentIndex]) {
+                            this.handleReset(this.ancestors[parentIndex]);
+                        }
+                    }
+                });
         },
         addChild(child) {
             let item = this.buildTreeItem(child);
