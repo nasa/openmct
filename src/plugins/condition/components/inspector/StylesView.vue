@@ -32,10 +32,10 @@
             Object Style
         </div>
         <FontStyleEditor
-            v-if="canStyleFont"
+            v-if="canStyleFont && domainObject"
             :allow-editing="allowEditing"
             :styleables="styleableFontItems"
-            :object-styles="objectStyles"
+            :domain-object="domainObject"
             @persist="updateFontStyle"
         />
         <div class="c-inspect-styles__content">
@@ -64,10 +64,10 @@
             Conditional Object Styles
         </div>
         <FontStyleEditor
-            v-if="canStyleFont"
+            v-if="canStyleFont && domainObject"
             :allow-editing="allowEditing"
             :styleables="styleableFontItems"
-            :object-styles="objectStyles"
+            :domain-object="domainObject"
             @persist="updateFontStyle"
         />
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
@@ -191,7 +191,6 @@ export default {
                 const layoutItem = primary.context.layoutItem;
 
                 if (!layoutItem) {
-                    console.log('no layout item');
                     return [];
                 }
 
@@ -266,6 +265,7 @@ export default {
         this.stylesManager.off('styleSelected', this.updateSelectionStyle);
     },
     mounted() {
+        console.log(this.selection);
         this.previewAction = new PreviewAction(this.openmct);
         this.isMultipleSelection = this.selection.length > 1;
         this.getObjectsAndItemsFromSelection();
@@ -381,7 +381,6 @@ export default {
             keys.forEach((key) => {
                 if (this.isKeyItemId(key)) {
                     if (!(newItems.find(item => item.id === key))) {
-                        console.log('something happened' + key);
                         this.removeItemStyles(key);
                     }
                 }
@@ -756,7 +755,7 @@ export default {
             }
         },
         updateFontStyle() {
-            console.log('updating font');
+            console.log('updating font in styles view');
         },
         isStyleable(selectionPath) {
 
