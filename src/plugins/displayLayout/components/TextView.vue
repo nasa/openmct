@@ -30,8 +30,8 @@
 >
     <div
         class="c-text-view u-style-receiver js-style-receiver"
-        :data-font-size="item.fontSize"
-        :data-font="item.font"
+        :data-font-size="itemFontStyle && itemFontStyle.fontSize"
+        :data-font="itemFontStyle && itemFontStyle.font"
         :class="[styleClass]"
         :style="style"
     >
@@ -115,6 +115,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.itemFontStyle);
         this.context = {
             layoutItem: this.item,
             index: this.index

@@ -38,39 +38,46 @@ export default {
         }
     },
     computed: {
+        objectStyles() {
+            const objectStyles = Object.assign(
+                {},
+                this.domainObject.configuration && this.domainObject.configuration.objectStyles
+            );
+
+            this.styleables.forEach(styleable => {
+                const item = styleable[0].context.item;
+                const layoutItem = styleable[0].context.layoutItem;
+                const id = item && item.id ? item.id : layoutItem.id;
+
+                if (!objectStyles[id]) {
+                    objectStyles[id] = {};
+                }
+
+                if (!objectStyles[id].fontStyle) {
+                    objectStyles[id].fontStyle = {
+                        fontSize: layoutItem ? layoutItem.fontSize : 'default',
+                        font: layoutItem ? layoutItem.font : 'default'
+                    };
+                }
+            });
+
+            return objectStyles;
+        },
         consolidatedFontStyle() {
+            const objectStyles = this.objectStyles;
             const styles = [];
 
             this.styleables.forEach(styleable => {
-                let fontStyle;
                 const item = styleable[0].context.item;
                 const layoutItem = styleable[0].context.layoutItem;
-                const parentItem = styleable.length > 1 ? styleable[1].context.item : undefined;
-                const id = item ? item.id : layoutItem.id;
+                const id = item && item.id ? item.id : layoutItem.id;
+                const fontStyle = objectStyles[id].fontStyle;
 
-                if (parentItem) {
-                    fontStyle = parentItem.configuration
-                        && parentItem.configuration.objectStyles
-                        && parentItem.configuration.objectStyles[id]
-                        && parentItem.configuration.objectStyles[id].fontStyle;
-
-                    // legacy support
-                    if (!fontStyle) {
-                        if (layoutItem.fontSize || layoutItem.font) {
-                            fontStyle = {
-                                fontSize: layoutItem.fontSize,
-                                font: layoutItem.font
-                            };
-                        }
-                    }
-
-                    styles.push(fontStyle);
-                }
+                styles.push(fontStyle);
             });
 
             const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
             const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
-
             const consolidatedFontStyle = {
                 fontSize: hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC,
                 font: hasConsolidatedFont ? styles[0].font : NON_SPECIFIC
@@ -131,28 +138,33 @@ export default {
             this.$emit('persist', this.styleItem, item.property);
         },
         setFont(font, item) {
-            console.log('update font');
-            console.log(this.domainObject);
-
             const fontStyle = {
                 ...this.consolidatedFontStyle,
                 font: font
             };
 
-            this.setFontStyle(fontStyle);
+            this.setFontStyle(fontStyle, 'font');
         },
         setFontSize(fontSize, item) {
-            console.log('update font size');
             const fontStyle = {
                 ...this.consolidatedFontStyle,
                 fontSize: fontSize
             };
 
-            this.setFontStyle(fontStyle);
+            this.setFontStyle(fontStyle, 'fontSize');
         },
-        setFontStyle(style) {
-            console.log(style);
-            // this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
+        setFontStyle(style, property) {
+            const objectStyles = this.objectStyles;
+
+            this.styleables.forEach(styleable => {
+                const item = styleable[0].context.item;
+                const layoutItem = styleable[0].context.layoutItem;
+                const id = item && item.id ? item.id : layoutItem.id;
+
+                objectStyles[id].fontStyle[property] = style[property];
+            });
+
+            this.openmct.objects.mutate(this.domainObject, 'configuration.objectStyles', objectStyles);
         }
     }
 };
