@@ -138,6 +138,10 @@ define([
             });
     };
 
+    ObjectServiceProvider.prototype.search = function (searchOptions) {
+
+    }
+
     // Injects new object API as a decorator so that it hijacks all requests.
     // Object providers implemented on new API should just work, old API should just work, many things may break.
     function LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {

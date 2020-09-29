@@ -168,6 +168,15 @@ define([
         return provider.get(identifier);
     };
 
+    ObjectAPI.prototype.search = function (searchOptions) {
+        return Promise.all(Object.values(this.providers)
+            .filter(provider => provider.search !== undefined)
+            .map((provider) => {
+                return provider.search(searchOptions);
+            }))
+            .then(allResults => _.flatten(allResults));
+    };
+
     ObjectAPI.prototype.delete = function () {
         throw new Error('Delete not implemented');
     };
