@@ -79,6 +79,7 @@ import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
+const CONTEXT_MENU_ACTIONS = ['copyToClipboard', 'copyToNotebook', 'viewHistoricalData'];
 
 export default {
     makeDefinition(openmct, gridSize, domainObject, position) {
@@ -314,22 +315,18 @@ export default {
         },
         async getContextMenuActions() {
             const defaultNotebook = getDefaultNotebook();
-
             const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
 
             const actionsObject = this.openmct.actions.get(this.currentObjectPath, this.getViewContext(), { viewHistoricalData: true }).applicableActions;
             let applicableActionKeys = Object.keys(actionsObject)
                 .filter(key => {
-                    const isViewHistoricalData = actionsObject[key].key === 'viewHistoricalData';
-                    const isCopyToClipboard = actionsObject[key].key === 'copyToClipboard';
-                    const isCopyToNotebook = defaultNotebook && actionsObject[key].key === 'copyToNotebook';
-
-                    if (isCopyToNotebook) {
+                    const isCopyToNotebook = actionsObject[key].key === 'copyToNotebook';
+                    if (defaultNotebook && isCopyToNotebook) {
                         const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
                         actionsObject[key].name = `Copy to Notebook ${defaultPath}`;
                     }
 
-                    return isCopyToClipboard || isCopyToNotebook || isViewHistoricalData;
+                    return CONTEXT_MENU_ACTIONS.includes(actionsObject[key].key);
                 });
 
             return applicableActionKeys.map(key => actionsObject[key]);

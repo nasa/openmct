@@ -26,10 +26,6 @@ export default class CopyToNotebookAction {
     }
 
     invoke(objectPath = null, viewContext) {
-        if (!objectPath) {
-            return;
-        }
-
         const formattedValue = viewContext.formattedValueForCopy();
         this.copyToNotebook(formattedValue.value);
     }

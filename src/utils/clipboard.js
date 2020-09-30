@@ -22,7 +22,6 @@ class Clipboard {
         Clipboard.instance = this;
     }
 
-    // methods
     init() {
         navigator.permissions.query({ name: 'clipboard-write' })
             .then(result => {

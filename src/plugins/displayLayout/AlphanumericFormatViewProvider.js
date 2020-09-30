@@ -68,7 +68,6 @@ define([
                         });
                     },
                     getViewContext() {
-                        console.log('getViewContext', component);
                         if (component) {
                             return component.$refs.alphanumericFormatView.getViewContext();
                         } else {

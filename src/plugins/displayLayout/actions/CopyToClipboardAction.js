@@ -13,10 +13,6 @@ export default class CopyToClipboardAction {
     }
 
     invoke(objectPath = null, viewContext) {
-        if (!objectPath) {
-            return;
-        }
-
         const formattedValue = viewContext.formattedValueForCopy();
         Clipboard.updateClipboard(formattedValue.value)
             .then(() => {
