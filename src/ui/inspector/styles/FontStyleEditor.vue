@@ -32,46 +32,29 @@ export default {
             type: Array,
             required: true
         },
-        domainObject: {
-            type: Object,
+        allowEditing: {
+            type: Boolean,
             required: true
         }
     },
     computed: {
-        objectStyles() {
-            const objectStyles = Object.assign(
-                {},
-                this.domainObject.configuration && this.domainObject.configuration.objectStyles
-            );
-
-            this.styleables.forEach(styleable => {
-                const item = styleable[0].context.item;
-                const layoutItem = styleable[0].context.layoutItem;
-                const id = item && item.id ? item.id : layoutItem.id;
-
-                if (!objectStyles[id]) {
-                    objectStyles[id] = {};
-                }
-
-                if (!objectStyles[id].fontStyle) {
-                    objectStyles[id].fontStyle = {
-                        fontSize: layoutItem ? layoutItem.fontSize : 'default',
-                        font: layoutItem ? layoutItem.font : 'default'
-                    };
-                }
-            });
-
-            return objectStyles;
-        },
         consolidatedFontStyle() {
-            const objectStyles = this.objectStyles;
             const styles = [];
 
             this.styleables.forEach(styleable => {
+                let fontStyle;
                 const item = styleable[0].context.item;
                 const layoutItem = styleable[0].context.layoutItem;
+                const parentItem = styleable[1].context.item;
                 const id = item && item.id ? item.id : layoutItem.id;
-                const fontStyle = objectStyles[id].fontStyle;
+
+                fontStyle = item && item.configuration && item.configuration.fontStyle;
+                if (!fontStyle) {
+                    fontStyle = {
+                        fontSize: layoutItem ? layoutItem.fontSize : 'default',
+                        font: layoutItem ? layoutItem.font : 'default'
+                    };                    
+                }
 
                 styles.push(fontStyle);
             });
@@ -123,48 +106,57 @@ export default {
         }
     },
     methods: {
-        updateStyleValue(value, item) {
-            value = this.normalizeValueForStyle(value);
-            if (item.property === 'border') {
-                value = '1px solid ' + value;
-            }
-
-            if (value && (value.url !== undefined)) {
-                this.styleItem.style[item.property] = value.url;
-            } else {
-                this.styleItem.style[item.property] = value;
-            }
-
-            this.$emit('persist', this.styleItem, item.property);
-        },
         setFont(font, item) {
-            const fontStyle = {
-                ...this.consolidatedFontStyle,
-                font: font
-            };
-
-            this.setFontStyle(fontStyle, 'font');
+            this.setFontStyle(font, 'font');
         },
         setFontSize(fontSize, item) {
-            const fontStyle = {
-                ...this.consolidatedFontStyle,
-                fontSize: fontSize
-            };
-
-            this.setFontStyle(fontStyle, 'fontSize');
+            this.setFontStyle(fontSize, 'fontSize');
         },
-        setFontStyle(style, property) {
-            const objectStyles = this.objectStyles;
+        setFontStyle(value, property) {
+            let layoutDomainObject;
 
             this.styleables.forEach(styleable => {
                 const item = styleable[0].context.item;
                 const layoutItem = styleable[0].context.layoutItem;
+                const parentItem = styleable[1].context.item;
                 const id = item && item.id ? item.id : layoutItem.id;
 
-                objectStyles[id].fontStyle[property] = style[property];
+                if (!this.isLayoutObject(styleable)) {
+                    let fontStyle = item.configuration && item.configuration.fontStyle;
+
+                    // legacy font style support
+                    if (!fontStyle) {
+                        fontStyle = {
+                            fontSize: layoutItem && layoutItem.fontSize || 'default',
+                            font: layoutItem && layoutItem.font || 'default'
+                        };
+                    }
+
+                    fontStyle[property] = value;
+
+                    this.openmct.objects.mutate(item, 'configuration.fontStyle', fontStyle);
+                } else {
+                    // all layoutItems in this context will share same parent layout
+                    if (!layoutDomainObject) {
+                        layoutDomainObject = parentItem;
+                    }
+
+                    // save layout item font style to parent layout configuration
+                    const layoutItemIndex = styleable[0].context.index;
+                    const layoutItemConfiguration = layoutDomainObject.configuration.items[layoutItemIndex];
+                    
+                    layoutItemConfiguration[property] = value;
+                }                
             });
 
-            this.openmct.objects.mutate(this.domainObject, 'configuration.objectStyles', objectStyles);
+            if (layoutDomainObject) {
+                this.openmct.objects.mutate(layoutDomainObject, 'configuration.items', layoutDomainObject.configuration.items);
+            }
+        },
+        isLayoutObject(selectionPath) {
+            const layoutItemType = selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type;
+
+            return layoutItemType && layoutItemType !== 'subobject-view';
         }
     }
 };

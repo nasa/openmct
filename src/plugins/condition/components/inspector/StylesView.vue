@@ -32,11 +32,9 @@
             Object Style
         </div>
         <FontStyleEditor
-            v-if="canStyleFont && domainObject"
+            v-if="canStyleFont"
             :allow-editing="allowEditing"
             :styleables="styleableFontItems"
-            :domain-object="domainObject"
-            @persist="updateFontStyle"
         />
         <div class="c-inspect-styles__content">
             <div v-if="staticStyle"
@@ -64,11 +62,9 @@
             Conditional Object Styles
         </div>
         <FontStyleEditor
-            v-if="canStyleFont && domainObject"
+            v-if="canStyleFont"
             :allow-editing="allowEditing"
             :styleables="styleableFontItems"
-            :domain-object="domainObject"
-            @persist="updateFontStyle"
         />
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <a v-if="conditionSetDomainObject"
@@ -156,8 +152,6 @@ export default {
             conditionsLoaded: false,
             navigateToPath: '',
             selectedConditionId: '',
-            fontStyle: undefined,
-            mixedFontStyle: [],
             items: [],
             domainObject: undefined
         };
@@ -182,6 +176,10 @@ export default {
             return selectedItem && selectedItem.type === 'layout' && !selectedLayoutItem;
         },
         styleableFontItems() {
+            // subobject-view, not layout, flexible-layout, tabs,
+            // telemetry-view
+            // text-view
+
             if (this.isMainLayoutSelected) {
                 return [];
             }
@@ -190,15 +188,7 @@ export default {
                 const primary = this.selection[0][0];
                 const layoutItem = primary.context.layoutItem;
 
-                if (!layoutItem) {
-                    return [];
-                }
-
                 const type = primary.context.layoutItem.type;
-
-                // if (type === 'telemetry-view' || type === 'text-view') {
-                //     return this.selection;
-                // }
 
                 if (type === 'line-view' || type === 'box-view' || type === 'image-view') {
                     return [];
@@ -219,7 +209,7 @@ export default {
                 return this.selection.filter(selectionPath => {
                     let type = selectionPath[0].context.layoutItem.type;
 
-                    if (type === 'line-view' || type === 'box-view') {
+                    if (type === 'line-view' || type === 'box-view' || type === 'image-view') {
                         return false;
                     }
 
@@ -753,12 +743,6 @@ export default {
                     }
                 });
             }
-        },
-        updateFontStyle() {
-            console.log('updating font in styles view');
-        },
-        isStyleable(selectionPath) {
-
         }
     }
 };

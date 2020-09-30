@@ -106,11 +106,6 @@ export default {
             required: true
         }
     },
-    mounted() {
-        console.log(this.isEditing);
-        // console.log(this.mixedStyles)
-        // console.log(this.styleItem);
-    },
     computed: {
         itemStyle() {
             return getStylesWithoutNoneValue(this.styleItem.style);

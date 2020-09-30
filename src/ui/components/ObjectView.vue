@@ -341,6 +341,7 @@ export default {
             return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
         },
         setFontSize(newSize) {
+            console.log(newSize);
             let elemToStyle = this.getStyleReceiver();
             elemToStyle.dataset.fontSize = newSize;
         },
