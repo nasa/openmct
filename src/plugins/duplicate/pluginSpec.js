@@ -19,18 +19,19 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import MoveActionPlugin from './plugin.js';
-import MoveAction from './MoveAction.js';
+import DuplicateActionPlugin from './plugin.js';
+import DuplicateAction from './DuplicateAction.js';
+import DuplicateTask from './DuplicateTask.js';
 import {
     createOpenMct,
     resetApplicationState,
     getMockObjects
 } from 'utils/testing';
 
-describe("The Move Action plugin", () => {
+fdescribe("The Duplicate Action plugin", () => {
 
     let openmct;
-    let moveAction;
+    let duplicateTask;
     let childObject;
     let parentObject;
     let anotherParentObject;
@@ -74,7 +75,7 @@ describe("The Move Action plugin", () => {
         }).folder;
 
         // already installed by default, but never hurts, just adds to context menu
-        openmct.install(MoveActionPlugin());
+        openmct.install(DuplicateActionPlugin());
 
         openmct.on('start', done);
         openmct.startHeadless(appHolder);
@@ -85,38 +86,42 @@ describe("The Move Action plugin", () => {
     });
 
     it("should be defined", () => {
-        expect(MoveActionPlugin).toBeDefined();
+        expect(DuplicateActionPlugin).toBeDefined();
     });
 
-    describe("when moving an object to a new parent and removing from the old parent", () => {
+    describe("when moving an object to a new parent", () => {
 
-        beforeEach(() => {
-            moveAction = new MoveAction(openmct);
-            moveAction.addToNewParent(childObject, anotherParentObject);
-            moveAction.removeFromOldParent(parentObject, childObject);
+        beforeEach(async (done) => {
+            duplicateTask = new DuplicateTask(openmct);
+            await duplicateTask.duplicate(parentObject, anotherParentObject);
+            done();
         });
 
-        it("the child object's identifier should be in the new parent's composition", () => {
-            let newParentChild = anotherParentObject.composition[0];
-            expect(newParentChild).toEqual(childObject.identifier);
+        it("the duplicate child object's name (when not changing) should be the same as the original object", async () => {
+            let duplicatedObjectIdentifier = anotherParentObject.composition[0];
+            let duplicatedObject = await openmct.objects.get(duplicatedObjectIdentifier);
+            let duplicateObjectName = duplicatedObject.name;
+
+            expect(duplicateObjectName).toEqual(parentObject.name);
         });
 
-        it("the child object's identifier should be removed from the old parent's composition", () => {
-            let oldParentComposition = parentObject.composition;
-            expect(oldParentComposition.length).toEqual(0);
+        it("the duplicate child object's identifier should be new", () => {
+            let duplicatedObjectIdentifier = anotherParentObject.composition[0];
+
+            expect(duplicatedObjectIdentifier.key).not.toEqual(parentObject.identifier.key);
         });
     });
 
-    describe("when a new name is provided for the child object", () => {
+    describe("when a new name is provided for the duplicated object", () => {
         const NEW_NAME = 'New Name';
 
         beforeEach(() => {
-            moveAction = new MoveAction(openmct);
-            moveAction.updateNameCheck(childObject, NEW_NAME);
+            duplicateTask = new DuplicateAction(openmct);
+            duplicateTask.updateNameCheck(parentObject, NEW_NAME);
         });
 
         it("the name is updated", () => {
-            let childName = childObject.name;
+            let childName = parentObject.name;
             expect(childName).toEqual(NEW_NAME);
         });
     });

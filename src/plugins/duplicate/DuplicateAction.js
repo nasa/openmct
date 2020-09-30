@@ -67,36 +67,6 @@ export default class DuplicateAction {
         return userInput;
     }
 
-    /*
-    Copy has two distinct phases. In the first phase a copy plan is
-    made in memory. During this phase of execution, the user is
-    shown a blocking 'modal' dialog.
-
-    In the second phase, the copying is taking place, and the user
-    is shown non-invasive banner notifications at the bottom of the screen.
-    */
-    showProgress(phase, totalObjects, processed) {
-        // this.openmct.notifications.info()
-        // if (phase.toLowerCase() === 'preparing' && !this.dialog) {
-        //     this.dialog = this.dialogService.showBlockingMessage({
-        //         title: "Preparing to copy objects",
-        //         hint: "Do not navigate away from this page or close this browser tab while this message is displayed.",
-        //         unknownProgress: true,
-        //         severity: "info"
-        //     });
-        // } else if (phase.toLowerCase() === "copying") {
-        //     if (this.dialog) {
-        //         this.dialog.dismiss();
-        //     }
-        //
-        //     this.openmct.notifications.info("Copying objects");
-
-        //     this.notification.model.progress = (processed / totalObjects) * 100;
-        //     this.notification.model.title = ["Copied ", processed, "of ",
-        //         totalObjects, "objects"].join(" ");
-        // }
-    }
-
     updateNameCheck(object, name) {
         if (object.name !== name) {
             this.openmct.objects.mutate(object, 'name', name);

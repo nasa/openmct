@@ -58,7 +58,7 @@ export default class DuplicateTask {
         this.filter = filter || this.isCreatable;
 
         await this.buildDuplicationPlan();
-        this.persistObjects();
+        await this.persistObjects();
         await this.addClonesToParent();
 
         return this.firstClone;
@@ -90,10 +90,28 @@ export default class DuplicateTask {
      * simultaneously, irrespective of order in the list. This may
      * result in automatic request batching by the browser.
      */
-    persistObjects() {
-        this.clones.forEach(clone => {
-            this.openmct.objects.save(clone);
+    async persistObjects() {
+        let initialCount = this.clones.length;
+        let dialog = this.openmct.overlays.progressDialog({
+            progressPerc: 0,
+            message: `Duplicating ${initialCount} files.`,
+            iconClass: 'info',
+            title: 'Duplicating'
         });
+        let clonesDone = Promise.all(this.clones.map(clone => {
+            let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
+            let message = `Duplicating ${initialCount - this.persisted} files.`;
+
+            dialog.updateProgress(percentPersisted, message);
+
+            return this.openmct.objects.save(clone);
+        }));
+
+        await clonesDone;
+        dialog.dismiss();
+        this.openmct.notifications.info(`Duplicated ${this.persisted} objects.`);
+
+        return;
     }
 
     /**
@@ -121,7 +139,6 @@ export default class DuplicateTask {
         if (this.filter(originalObject)) {
             // Clone original object
             let clone = this.cloneObjectModel(originalObject);
-            this.openmct.notifications.info('preparing');
 
             // Get children, if any
             let composeesCollection = this.openmct.composition.get(originalObject);
