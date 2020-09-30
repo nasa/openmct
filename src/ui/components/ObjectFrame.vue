@@ -240,7 +240,6 @@ export default {
             delete this.actionCollection;
         },
         updateActionItems(actionItems) {
-            console.log('update');
             let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
             this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
             this.menuActionItems = actionItemsArray.filter(action => !action.hidden);

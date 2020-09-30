@@ -125,7 +125,7 @@ class ActionCollection extends EventEmitter {
         
         this.applicableActions = this._mergeOldAndNewActions(this.applicableActions, newApplicableActions);
         this._initializeActions();
-        this.update();
+        this._update();
     }
 
     _mergeOldAndNewActions(oldActions, newActions) {
