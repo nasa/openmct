@@ -23,8 +23,8 @@ import DuplicateTask from './DuplicateTask';
 
 export default class DuplicateAction {
     constructor(openmct) {
-        this.name = 'Duplicatee';
-        this.key = 'duplicatee';
+        this.name = 'Duplicate';
+        this.key = 'duplicate';
         this.description = 'Duplicate this object.';
         this.cssClass = "icon-duplicate";
 
