@@ -19,7 +19,7 @@ const INNER_TEXT_PADDING = 17;
 const TEXT_LEFT_PADDING = 5;
 const ROW_PADDING = 12;
 // const DEFAULT_DURATION_FORMATTER = 'duration';
-// const RESIZE_POLL_INTERVAL = 200;
+const RESIZE_POLL_INTERVAL = 200;
 const PIXELS_PER_TICK = 100;
 const PIXELS_PER_TICK_WIDE = 200;
 const ROW_HEIGHT = 30;
@@ -58,9 +58,20 @@ export default {
         this.updateViewBounds();
         this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
         this.openmct.time.on("bounds", this.updateViewBounds);
-
+        this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+    },
+    destroyed() {
+        clearInterval(this.resizeTimer);
+        this.openmct.time.off("timeSystem", this.setScaleAndPlotActivities);
+        this.openmct.time.off("bounds", this.updateViewBounds);
     },
     methods: {
+        resize() {
+            if (this.$refs.axisHolder.clientWidth !== this.width) {
+                this.setDimensions();
+                this.updateViewBounds();
+            }
+        },
         validateJSON(jsonString) {
             try {
                 this.json = JSON.parse(jsonString);
@@ -93,9 +104,11 @@ export default {
         setScaleAndPlotActivities() {
             this.setScale();
             this.clearPreviousActivities();
-            this.calculatePlanLayout();
-            this.drawPlan();
-            this.updateNowMarker();
+            if (this.xScale) {
+                this.calculatePlanLayout();
+                this.drawPlan();
+                this.updateNowMarker();
+            }
         },
         clearPreviousActivities() {
             if (this.useSVG) {

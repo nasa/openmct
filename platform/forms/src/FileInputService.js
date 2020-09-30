@@ -50,7 +50,7 @@ define(["zepto"], function ($) {
                 file = this.files[0];
                 input.remove();
                 if (file) {
-                    if (fileType && !file.type || (file.type !== fileType)) {
+                    if (fileType && (!file.type || (file.type !== fileType))) {
                         reject("Incompatible file type");
                     }
 

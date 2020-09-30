@@ -25,7 +25,7 @@ import TimelinePlugin from "./plugin";
 import Vue from 'vue';
 import TimelineViewLayout from "./TimelineViewLayout.vue";
 
-fdescribe('the plugin', function () {
+describe('the plugin', function () {
     let planDefinition;
     let element;
     let child;

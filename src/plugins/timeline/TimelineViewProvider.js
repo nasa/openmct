@@ -26,7 +26,7 @@ import Vue from 'vue';
 export default function TimelineViewProvider(openmct) {
 
     return {
-        key: 'TimelineView',
+        key: 'timeline.view',
         name: 'Timeline',
         cssClass: 'icon-clock',
         canView(domainObject) {
