@@ -28,7 +28,7 @@ import {
     getMockObjects
 } from 'utils/testing';
 
-fdescribe("The Duplicate Action plugin", () => {
+describe("The Duplicate Action plugin", () => {
 
     let openmct;
     let duplicateTask;
