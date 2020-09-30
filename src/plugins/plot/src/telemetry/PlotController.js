@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -90,7 +90,7 @@ define([
 
     PlotController.prototype.followTimeConductor = function () {
         this.listenTo(this.openmct.time, 'bounds', this.updateDisplayBounds, this);
-        this.listenTo(this.openmct.time, 'timeSystem', this.onTimeSystemChange, this);
+        this.listenTo(this.openmct.time, 'timeSystem', this.syncXAxisToTimeSystem, this);
         this.synchronized(true);
     };
 
@@ -134,6 +134,9 @@ define([
     };
 
     PlotController.prototype.addSeries = function (series) {
+        this.listenTo(series, 'change:xKey', (xKey) => {
+            this.setDisplayRange(series, xKey);
+        }, this);
         this.listenTo(series, 'change:yKey', () => {
             this.loadSeriesData(series);
         }, this);
@@ -143,6 +146,15 @@ define([
         }, this);
 
         this.loadSeriesData(series);
+    };
+
+    PlotController.prototype.setDisplayRange = function (series, xKey) {
+        if (this.config.series.models.length !== 1) {
+            return;
+        }
+
+        const displayRange = series.getDisplayRange(xKey);
+        this.config.xAxis.set('range', displayRange);
     };
 
     PlotController.prototype.removeSeries = function (plotSeries) {
@@ -165,8 +177,9 @@ define([
         return config;
     };
 
-    PlotController.prototype.onTimeSystemChange = function (timeSystem) {
+    PlotController.prototype.syncXAxisToTimeSystem = function (timeSystem) {
         this.config.xAxis.set('key', timeSystem.key);
+        this.config.xAxis.emit('resetSeries');
     };
 
     PlotController.prototype.destroy = function () {
@@ -189,7 +202,8 @@ define([
             plotSeries.load({
                 size: this.$element[0].offsetWidth,
                 start: range.min,
-                end: range.max
+                end: range.max,
+                domain: this.config.xAxis.get('key')
             })
                 .then(this.stopLoading());
             if (purge) {
@@ -202,10 +216,18 @@ define([
      * Track latest display bounds.  Forces update when not receiving ticks.
      */
     PlotController.prototype.updateDisplayBounds = function (bounds, isTick) {
+
+        const xAxisKey = this.config.xAxis.get('key');
+        const timeSystem = this.openmct.time.timeSystem();
         const newRange = {
             min: bounds.start,
             max: bounds.end
         };
+
+        if (xAxisKey !== timeSystem.key) {
+            this.syncXAxisToTimeSystem(timeSystem);
+        }
+
         this.config.xAxis.set('range', newRange);
         if (!isTick) {
             this.skipReloadOnInteraction = true;

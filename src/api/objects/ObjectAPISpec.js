@@ -32,6 +32,7 @@ describe("The Object API", () => {
                     "create",
                     "update"
                 ]);
+                mockProvider.create.and.returnValue(Promise.resolve(true));
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
             });
             it("Calls 'create' on provider if object is new", () => {
