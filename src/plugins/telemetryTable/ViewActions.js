@@ -25,8 +25,8 @@ let exportCSV = {
     key: 'export-csv-all',
     description: "Export this view's data",
     cssClass: 'icon-download labeled',
-    invoke: (objectPath, viewContext) => {
-        viewContext.exportAllDataAsCSV();
+    invoke: (objectPath, viewProvider) => {
+        viewProvider.getViewContext().exportAllDataAsCSV();
     },
     group: 'view'
 };
@@ -35,8 +35,8 @@ let exportMarkedRows = {
     key: 'export-csv-marked',
     description: "Export marked rows as CSV",
     cssClass: 'icon-download labeled',
-    invoke: (objectPath, viewContext) => {
-        viewContext.exportMarkedDataAsCSV();
+    invoke: (objectPath, viewProvider) => {
+        viewProvider.getViewContext().exportMarkedDataAsCSV();
     },
     group: 'view'
 };
@@ -45,8 +45,8 @@ let unmarkAllRows = {
     key: 'unmark-all-rows',
     description: 'Unmark all rows',
     cssClass: 'icon-x labeled',
-    invoke: (objectPath, viewContext) => {
-        viewContext.unmarkAllRows();
+    invoke: (objectPath, viewProvider) => {
+        viewProvider.getViewContext().unmarkAllRows();
     },
     showInStatusBar: true,
     group: 'view'
@@ -56,8 +56,8 @@ let pause = {
     key: 'pause-data',
     description: 'Pause real-time data flow',
     cssClass: 'icon-pause',
-    invoke: (objectPath, viewContext) => {
-        viewContext.togglePauseByButton();
+    invoke: (objectPath, viewProvider) => {
+        viewProvider.getViewContext().togglePauseByButton();
     },
     showInStatusBar: true,
     group: 'view'
@@ -67,8 +67,8 @@ let play = {
     key: 'play-data',
     description: 'Continue real-time data flow',
     cssClass: 'c-button pause-play is-paused',
-    invoke: (objectPath, viewContext) => {
-        viewContext.togglePauseByButton();
+    invoke: (objectPath, viewProvider) => {
+        viewProvider.getViewContext().togglePauseByButton();
     },
     showInStatusBar: true,
     group: 'view'
@@ -78,8 +78,8 @@ let expandColumns = {
     key: 'expand-columns',
     description: "Increase column widths to fit currently available data.",
     cssClass: 'icon-arrows-right-left labeled',
-    invoke: (objectPath, viewContext) => {
-        viewContext.expandColumns();
+    invoke: (objectPath, viewProvider) => {
+        viewProvider.getViewContext().expandColumns();
     },
     showInStatusBar: true,
     group: 'view'
@@ -89,8 +89,8 @@ let autosizeColumns = {
     key: 'autosize-columns',
     description: "Automatically size columns to fit the table into the available space.",
     cssClass: 'icon-expand labeled',
-    invoke: (objectPath, viewContext) => {
-        viewContext.autosizeColumns();
+    invoke: (objectPath, viewProvider) => {
+        viewProvider.getViewContext().autosizeColumns();
     },
     showInStatusBar: true,
     group: 'view'
@@ -107,11 +107,13 @@ let viewActions = [
 ];
 
 viewActions.forEach(action => {
-    action.appliesTo = (objectPath, viewContext) => {
-        if (viewContext && viewContext.getViewKey) {
-            let key = viewContext.getViewKey();
+    action.appliesTo = (objectPath, viewProvider = {}) => {
+        let viewContext = viewProvider.getViewContext && viewProvider.getViewContext();
 
-            return key.includes('telemetry-table');
+        if (viewContext) {
+            let type = viewContext.type;
+
+            return type === 'telemetry-table';
         }
 
         return false;

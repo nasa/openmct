@@ -229,21 +229,11 @@ export default {
                 delete this.actionCollection;
             }
 
-            if (this.viewProvider.getViewContext) {
-                let viewContext = this.viewProvider.getViewContext();
-                let viewKey = viewContext.getViewKey && viewContext.getViewKey();
-
-                if (this.statusBarViewKey !== viewKey) {
-                    this.statusBarViewKey = viewKey;
-                    if (viewKey) {
-                        this.actionCollection = this.openmct.actions.get(this.objectPath, viewContext);
-                        this.actionCollection.on('update', this.updateActionItems);
-
-                        this.updateActionItems(this.actionCollection.applicableActions);
-                    }
-                }
+            if (this.viewProvider) {
+                this.actionCollection = this.openmct.actions.get(this.objectPath, this.viewProvider);
+                this.actionCollection.on('update', this.updateActionItems);
+                this.updateActionItems(this.actionCollection.applicableActions);
             } else {
-                this.statusBarViewKey = undefined;
                 this.statusBarItems = [];
                 this.menuActionItems = [];
             }

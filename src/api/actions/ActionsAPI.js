@@ -28,7 +28,7 @@ class ActionsAPI extends EventEmitter {
         super();
 
         this._allActions = {};
-        this._actionCollections = {};
+        this._actionCollections = new WeakMap();
         this._openmct = openmct;
 
         this._groupOrder = ['windowing', 'undefined', 'view', 'action', 'json'];
@@ -43,31 +43,30 @@ class ActionsAPI extends EventEmitter {
         this._allActions[actionDefinition.key] = actionDefinition;
     }
 
-    get(objectPath, viewContext, options) {
+    get(objectPath, viewProvider, options) {
 
-        if (viewContext && viewContext.getViewKey) {
-            let key = viewContext.getViewKey();
-            let cachedActionCollection = this._actionCollections[key];
+        if (viewProvider) {
+            let cachedActionCollection = this._actionCollections.get(viewProvider);
 
             if (cachedActionCollection) {
                 return cachedActionCollection;
             } else {
-                let applicableActions = this._applicableActions(objectPath, viewContext, options);
-                let actionCollection = new ActionCollection(key, applicableActions, objectPath, viewContext, this._openmct, options);
+                let applicableActions = this._applicableActions(objectPath, viewProvider, options);
+                let actionCollection = new ActionCollection(applicableActions, objectPath, viewProvider, this._openmct, options);
 
-                this._actionCollections[key] = actionCollection;
+                this._actionCollections.set(viewProvider, actionCollection);
                 actionCollection.on('destroy', this._updateCachedActionCollections);
 
                 return actionCollection;
             }
         } else {
-            let applicableActions = this._applicableActions(objectPath, viewContext, options);
+            let applicableActions = this._applicableActions(objectPath, viewProvider, options);
 
             Object.keys(applicableActions).forEach(key => {
                 let action = applicableActions[key];
 
                 action.callBack = () => {
-                    return action.invoke(objectPath, viewContext);
+                    return action.invoke(objectPath, viewProvider);
                 };
             });
 
@@ -80,14 +79,15 @@ class ActionsAPI extends EventEmitter {
     }
 
     _updateCachedActionCollections(key) {
-        if (this._actionCollections[key]) {
-            this._actionCollections[key].off('destroy', this._updateCachedActionCollections);
-            this._actionCollections[key] = undefined;
-            delete this._actionCollections[key];
+        if (this._actionCollections.has(key)) {
+            let actionCollection = this._actionCollections.get(key);
+            actionCollection.off('destroy', this._updateCachedActionCollections);
+
+            this._actionCollections.delete(key);
         }
     }
 
-    _applicableActions(objectPath, viewContext, options) {
+    _applicableActions(objectPath, viewProvider, options) {
         let actionsObject = {};
 
         let keys = Object.keys(this._allActions).filter(key => {
@@ -96,7 +96,7 @@ class ActionsAPI extends EventEmitter {
             if (actionDefinition.appliesTo === undefined) {
                 return true;
             } else {
-                return actionDefinition.appliesTo(objectPath, viewContext, options);
+                return actionDefinition.appliesTo(objectPath, viewProvider, options);
             }
         });
 

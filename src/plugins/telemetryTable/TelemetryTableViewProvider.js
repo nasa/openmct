@@ -54,15 +54,13 @@ define([
             view(domainObject, objectPath) {
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
-
                 let markingProp = {
                     enable: true,
                     useAlternateControlBar: false,
                     rowName: '',
                     rowNamePlural: ''
                 };
-
-                return {
+                const viewProvider = {
                     show: function (element, editMode) {
                         component = new Vue({
                             el: element,
@@ -78,7 +76,8 @@ define([
                             provide: {
                                 openmct,
                                 table,
-                                objectPath
+                                objectPath,
+                                viewProvider
                             },
                             template: '<table-component ref="tableComponent" :isEditing="isEditing" :marking="markingProp"/>'
                         });
@@ -93,7 +92,9 @@ define([
                         if (component) {
                             return component.$refs.tableComponent.getViewContext();
                         } else {
-                            return {};
+                            return {
+                                type: 'telemetry-table'
+                            };
                         }
                     },
                     destroy: function (element) {
@@ -101,6 +102,8 @@ define([
                         component = undefined;
                     }
                 };
+
+                return viewProvider;
             },
             priority() {
                 return 1;

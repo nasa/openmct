@@ -24,15 +24,14 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
 class ActionCollection extends EventEmitter {
-    constructor(key, applicableActions, objectPath, viewContext, openmct, options) {
+    constructor(applicableActions, objectPath, viewProvider, openmct, options) {
         super();
 
-        this.key = key;
         this.applicableActions = applicableActions;
         this.openmct = openmct;
         this.options = options;
         this.objectPath = objectPath;
-        this.viewContext = viewContext;
+        this.viewProvider = viewProvider;
         this.objectUnsubscribes = [];
 
         this._observeObjectPath();
@@ -87,12 +86,8 @@ class ActionCollection extends EventEmitter {
         this.objectUnsubscribes.forEach(unsubscribe => {
             unsubscribe();
         });
-        this.objectUnsubscribes = [];
-        this.applicableActions = {};
-        this.objectPath = [];
-        this.viewContext = {};
 
-        this.emit('destroy', this.key);
+        this.emit('destroy', this.viewProvider);
     }
 
     _observeObjectPath() {
@@ -116,13 +111,13 @@ class ActionCollection extends EventEmitter {
     _initializeActions() {
         Object.keys(this.applicableActions).forEach(key => {
             this.applicableActions[key].callBack = () => {
-                return this.applicableActions[key].invoke(this.objectPath, this.viewContext);
+                return this.applicableActions[key].invoke(this.objectPath, this.viewProvider);
             };
         });
     }
 
     _updateActions() {
-        let newApplicableActions = this.openmct.actions._applicableActions(this.objectPath, this.viewContext, this.options);
+        let newApplicableActions = this.openmct.actions._applicableActions(this.objectPath, this.viewProvider, this.options);
         
         this.applicableActions = this._mergeOldAndNewActions(this.applicableActions, newApplicableActions);
         this._initializeActions();

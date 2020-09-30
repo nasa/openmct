@@ -282,7 +282,7 @@ export default {
         TelemetryFilterIndicator,
         ToggleSwitch
     },
-    inject: ['table', 'openmct', 'objectPath'],
+    inject: ['table', 'openmct', 'objectPath', 'viewProvider'],
     props: {
         isEditing: {
             type: Boolean,
@@ -344,8 +344,7 @@ export default {
             paused: false,
             markedRows: [],
             isShowingMarkedRowsOnly: false,
-            hideHeaders: configuration.hideHeaders,
-            viewKey: `telemetry-table-${Math.random()}`
+            hideHeaders: configuration.hideHeaders
         };
     },
     computed: {
@@ -436,7 +435,8 @@ export default {
         this.rowsAdded = _.throttle(this.rowsAdded, 200);
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);
-        this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.getViewContext());
+
+        this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.viewProvider);
         this.initializeViewActions();
 
         this.table.on('object-added', this.addObject);
@@ -939,12 +939,9 @@ export default {
 
             this.$nextTick().then(this.calculateColumnWidths);
         },
-        getViewKey() {
-            return this.viewKey;
-        },
         getViewContext() {
             return {
-                getViewKey: this.getViewKey,
+                type: 'telemetry-table',
                 exportAllDataAsCSV: this.exportAllDataAsCSV,
                 exportMarkedRows: this.exportMarkedRows,
                 unmarkAllRows: this.unmarkAllRows,
