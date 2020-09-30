@@ -228,9 +228,7 @@ export default {
         },
         viewProvider(viewProvider) {
             if (this.actionCollection) {
-                this.actionCollection.off('update', this.updateActionItems);
-                this.actionCollection.destroy();
-                delete this.actionCollection;
+                this.unlistenToActionCollection();
             }
 
             if (viewProvider) {
@@ -255,6 +253,10 @@ export default {
     beforeDestroy: function () {
         if (this.mutationObserver) {
             this.mutationObserver();
+        }
+
+        if (this.actionCollection) {
+            this.unlistenToActionCollection();
         }
 
         document.removeEventListener('click', this.closeViewAndSaveMenu);
@@ -357,6 +359,11 @@ export default {
 
             let sortedActions = this.openmct.actions._groupAndSortActions(actions);
             this.openmct.menus.showMenu(event.x, event.y, sortedActions);
+        },
+        unlistenToActionCollection() {
+            this.actionCollection.off('update', this.updateActionItems);
+            this.actionCollection.destroy();
+            delete this.actionCollection;
         },
         toggleLock(flag) {
             this.openmct.objects.mutate(this.domainObject, 'locked', flag);

@@ -385,18 +385,11 @@ export default {
         markedRows: {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
-                let updated = false;
 
-                if ((oldVal.length === 0 && newVal.length > 0) || newVal.length > 0) {
+                if (newVal.length > 0) {
                     this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
-                    updated = true;
-                } else if (oldVal.length > 0 && newVal.length === 0) {
+                } else if (newVal.length === 0) {
                     this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
-                    updated = true;
-                }
-
-                if (updated) {
-                    this.viewActionsCollection.update();
                 }
             }
         },
@@ -409,8 +402,6 @@ export default {
                     this.viewActionsCollection.hide(['play-data']);
                     this.viewActionsCollection.show(['pause-data']);
                 }
-
-                this.viewActionsCollection.update();
             }
         },
         isAutosizeEnabled: {
@@ -422,8 +413,6 @@ export default {
                     this.viewActionsCollection.show(['autosize-columns']);
                     this.viewActionsCollection.hide(['expand-columns']);
                 }
-
-                this.viewActionsCollection.update();
             }
         }
     },
@@ -972,8 +961,6 @@ export default {
                 this.viewActionsCollection.show(['autosize-columns']);
                 this.viewActionsCollection.hide(['expand-columns']);
             }
-
-            this.viewActionsCollection.update();
         }
     }
 };

@@ -43,7 +43,7 @@ class ActionCollection extends EventEmitter {
         };
 
         this._updateActions = _.debounce(this._updateActions, 150, debounceOptions);
-        this.update = _.debounce(this.update, 150, debounceOptions);
+        this._update = _.debounce(this._update, 150, debounceOptions);
     }
 
     disable(actionKeys) {
@@ -52,6 +52,7 @@ class ActionCollection extends EventEmitter {
                 this.applicableActions[actionKey].disabled = true;
             }
         });
+        this._update();
     }
 
     enable(actionKeys) {
@@ -60,6 +61,7 @@ class ActionCollection extends EventEmitter {
                 this.applicableActions[actionKey].disabled = false;
             }
         });
+        this._update();
     }
 
     hide(actionKeys) {
@@ -68,6 +70,7 @@ class ActionCollection extends EventEmitter {
                 this.applicableActions[actionKey].hidden = true;
             }
         });
+        this._update();
     }
 
     show(actionKeys) {
@@ -76,10 +79,7 @@ class ActionCollection extends EventEmitter {
                 this.applicableActions[actionKey].hidden = false;
             }
         });
-    }
-
-    update() {
-        this.emit('update', this.applicableActions);
+        this._update();
     }
 
     destroy() {
@@ -88,6 +88,10 @@ class ActionCollection extends EventEmitter {
         });
 
         this.emit('destroy', this.viewProvider);
+    }
+
+    _update() {
+        this.emit('update', this.applicableActions);
     }
 
     _observeObjectPath() {

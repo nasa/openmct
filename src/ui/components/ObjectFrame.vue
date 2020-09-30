@@ -164,10 +164,8 @@ export default {
         }
     },
     beforeDestroy() {
-        if (this.actionCollection) {
-            this.actionCollection.off('update', this.updateActionItems);
-            this.actionCollection.destroy();
-            delete this.actionCollection;
+       if (this.actionCollection) {
+            this.unlistenToActionCollection();
         }
     },
     methods: {
@@ -224,9 +222,7 @@ export default {
         },
         initializeStatusBarItems() {
             if (this.actionCollection) {
-                this.actionCollection.off('update', this.updateActionItems);
-                this.actionCollection.destroy();
-                delete this.actionCollection;
+                this.unlistenToActionCollection();
             }
 
             if (this.viewProvider) {
@@ -238,7 +234,13 @@ export default {
                 this.menuActionItems = [];
             }
         },
+        unlistenToActionCollection() {
+            this.actionCollection.off('update', this.updateActionItems);
+            this.actionCollection.destroy();
+            delete this.actionCollection;
+        },
         updateActionItems(actionItems) {
+            console.log('update');
             let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
             this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
             this.menuActionItems = actionItemsArray.filter(action => !action.hidden);
