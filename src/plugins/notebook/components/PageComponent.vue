@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import PopupMenu from './popup-menu.vue';
+import PopupMenu from './PopupMenu.vue';
 import RemoveDialog from '../utils/removeDialog';
 
 export default {
@@ -54,8 +54,6 @@ export default {
     mounted() {
         this.addPopupMenuItems();
         this.toggleContentEditable();
-    },
-    destroyed() {
     },
     methods: {
         addPopupMenuItems() {
