@@ -71,10 +71,12 @@ export default class NewFolderAction {
 
             folderType.definition.initialize(objectModel);
             objectModel.name = name || 'New Folder';
+            objectModel.modified = Date.now();
 
-            this._openmct.objects.save(objectModel);
+            this._openmct.objects.save(objectModel).then(() => {
+                composition.add(objectModel);
+            });
 
-            composition.add(objectModel);
         });
     }
     appliesTo(objectPath) {

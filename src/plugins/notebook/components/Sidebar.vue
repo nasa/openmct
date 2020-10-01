@@ -56,8 +56,8 @@
 </template>
 
 <script>
-import SectionCollection from './section-collection.vue';
-import PageCollection from './page-collection.vue';
+import SectionCollection from './SectionCollection.vue';
+import PageCollection from './PageCollection.vue';
 import uuid from 'uuid';
 
 export default {
@@ -138,8 +138,6 @@ export default {
         if (!this.sections.length) {
             this.addSection();
         }
-    },
-    destroyed() {
     },
     methods: {
         addPage() {
