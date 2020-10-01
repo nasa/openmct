@@ -14,7 +14,7 @@ import utcMultiTimeFormat from "@/plugins/timeConductor/utcMultiTimeFormat";
 
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
-const TEXT_PADDING = 12;
+const OUTER_TEXT_PADDING = 12;
 const INNER_TEXT_PADDING = 17;
 const TEXT_LEFT_PADDING = 5;
 const ROW_PADDING = 12;
@@ -26,7 +26,9 @@ const ROW_HEIGHT = 30;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 const TIMELINE_HEIGHT = 30;
-const TYPE_OFFSET = 100;
+//This offset needs to be re-considered
+const TIMELINE_OFFSET_HEIGHT = 70;
+const GROUP_OFFSET = 100;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -95,9 +97,11 @@ export default {
             } else {
                 let nowMarker = document.querySelector('.nowMarker');
                 if (nowMarker) {
-                    nowMarker.style.height = this.canvas.height + 'px';
+                    const svgEl = d3Selection.select(this.svgElement).node();
+                    const height = this.useSVG ? svgEl.style('height') : this.canvas.height + 'px';
+                    nowMarker.style.height = height;
                     const now = this.xScale(Date.now());
-                    nowMarker.style.left = now + TYPE_OFFSET + 'px';
+                    nowMarker.style.left = now + GROUP_OFFSET + 'px';
                 }
             }
         },
@@ -123,7 +127,7 @@ export default {
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
             this.width = axisHolder.clientWidth;
-            this.offsetWidth = this.width - TYPE_OFFSET;
+            this.offsetWidth = this.width - GROUP_OFFSET;
 
             const axisHolderParent = this.$parent.$refs.planHolder;
             this.height = Math.round(axisHolderParent.getBoundingClientRect().height);
@@ -229,11 +233,12 @@ export default {
 
             let currentRow = 0;
 
-            let keys = Object.keys(this.json);
-            keys.forEach((key, index) => {
+            let groups = Object.keys(this.json);
+            groups.forEach((key, index) => {
                 let activities = this.json[key];
+                //set the currentRow to the beginning of the next logical row
                 currentRow = currentRow + ROW_HEIGHT * index;
-                let newKey = true;
+                let newGroup = true;
                 activities.forEach((activity) => {
                     if (this.isActivityInBounds(activity)) {
                         const currentStart = Math.max(this.viewBounds.start, activity.start);
@@ -245,7 +250,7 @@ export default {
                         const activityNameWidth = this.getTextWidth(activity.name) + TEXT_LEFT_PADDING;
                         //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
                         const activityNameFitsRect = (rectWidth >= activityNameWidth);
-                        const textStart = activityNameFitsRect ? (rectX + TEXT_LEFT_PADDING) : (rectX + rectWidth + TEXT_LEFT_PADDING);
+                        const textStart = (activityNameFitsRect ? rectX : (rectX + rectWidth)) + TEXT_LEFT_PADDING;
 
                         let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
                         const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
@@ -256,14 +261,14 @@ export default {
                             currentRow = this.getRowForActivity(rectX, textWidth);
                         }
 
-                        let textY = activityNameFitsRect ? parseInt(currentRow, 10) + INNER_TEXT_PADDING : parseInt(currentRow, 10) + TEXT_PADDING;
+                        let textY = parseInt(currentRow, 10) + (activityNameFitsRect ? INNER_TEXT_PADDING : OUTER_TEXT_PADDING);
 
                         if (!this.activitiesByRow[currentRow]) {
                             this.activitiesByRow[currentRow] = [];
                         }
 
                         this.activitiesByRow[currentRow].push({
-                            heading: newKey ? key : '',
+                            heading: newGroup ? key : '',
                             activity: {
                                 color: activity.color,
                                 textColor: activity.textColor
@@ -275,7 +280,7 @@ export default {
                             end: activityNameFitsRect ? rectX + rectWidth : textStart + textWidth,
                             rectWidth: rectWidth
                         });
-                        newKey = false;
+                        newGroup = false;
                     }
                 });
             });
@@ -303,70 +308,48 @@ export default {
 
             return activityText.length ? activityText : [line];
         },
+        getGroupHeading(row) {
+            let groupHeadingRow;
+            let groupHeadingBorder;
+
+            if (row) {
+                groupHeadingBorder = row + ROW_PADDING + OUTER_TEXT_PADDING;
+                groupHeadingRow = groupHeadingBorder + OUTER_TEXT_PADDING;
+            } else {
+                groupHeadingRow = TIMELINE_HEIGHT + OUTER_TEXT_PADDING;
+            }
+
+            return {
+                groupHeadingRow,
+                groupHeadingBorder
+            };
+        },
+        getPlanHeight(activityRows) {
+            return parseInt(activityRows[activityRows.length - 1], 10) + TIMELINE_OFFSET_HEIGHT;
+        },
         drawPlan() {
             const activityRows = Object.keys(this.activitiesByRow);
             if (activityRows.length) {
-                const planHeight = parseInt(activityRows[activityRows.length - 1], 10) + 150;
+
+                let planHeight = this.getPlanHeight(activityRows);
+                planHeight = Math.max(this.height, planHeight);
                 if (this.useSVG) {
                     this.svgElement.attr("height", planHeight);
                 } else {
                     // This needs to happen before we draw on the canvas or the canvas will get wiped out when height is set
-                    this.canvas.height = Math.max(this.height, planHeight);
+                    this.canvas.height = planHeight;
                 }
 
                 activityRows.forEach((key) => {
                     const items = this.activitiesByRow[key];
                     const row = parseInt(key, 10);
                     items.forEach((item) => {
-                        const heading = item.heading;
-                        let groupHeadingRow;
-                        let groupHeadingBorder;
-                        if (row) {
-                            groupHeadingRow = row + ROW_PADDING * 2 + TEXT_PADDING;
-                            groupHeadingBorder = row + ROW_PADDING * 2;
-                        } else {
-                            groupHeadingRow = TIMELINE_HEIGHT + TEXT_PADDING;
-                        }
 
                         //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
                         if (this.useSVG) {
-                            if (heading) {
-                                if (groupHeadingBorder) {
-                                    this.svgElement.append("line")
-                                        .attr("class", "activity")
-                                        .attr("x1", 0)
-                                        .attr("y1", groupHeadingBorder)
-                                        .attr("x2", this.width)
-                                        .attr("y2", groupHeadingBorder)
-                                        .attr('stroke', "white");
-                                }
-
-                                this.svgElement.append("text").text(heading)
-                                    .attr("class", "activity")
-                                    .attr("x", 0)
-                                    .attr("y", groupHeadingRow)
-                                    .attr('fill', "white");
-                            }
-
-                            this.plotSVG(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY + TIMELINE_HEIGHT, item.textLines, item.actualX);
-                            //TODO: Ending border
+                            this.plotSVG(item, row);
                         } else {
-                            if (heading) {
-                                if (groupHeadingBorder) {
-                                    this.canvasContext.strokeStyle = "white";
-                                    this.canvasContext.beginPath();
-                                    this.canvasContext.moveTo(0, groupHeadingBorder);
-                                    this.canvasContext.lineTo(this.width, groupHeadingBorder);
-                                    this.canvasContext.stroke();
-                                }
-
-                                this.canvasContext.fillStyle = "white";
-                                this.canvasContext.fillText(heading, 0, groupHeadingRow);
-                            }
-
-                            this.plotCanvas(item.activity, item.start, item.rectWidth, row + TIMELINE_HEIGHT, item.textStart, item.textY + TIMELINE_HEIGHT, item.textLines, item.actualX);
-                            //TODO: Ending border
-
+                            this.plotCanvas(item, row);
                         }
 
                     });
@@ -374,35 +357,80 @@ export default {
                 });
             }
         },
-        plotSVG(activity, rectX, rectWidth, rectY, textStart, textY, textLines) {
+        plotSVG(item, row) {
+            const headingText = item.heading;
+            const { groupHeadingRow, groupHeadingBorder } = this.getGroupHeading(row);
+
+            if (headingText) {
+                if (groupHeadingBorder) {
+                    this.svgElement.append("line")
+                        .attr("class", "activity")
+                        .attr("x1", 0)
+                        .attr("y1", groupHeadingBorder)
+                        .attr("x2", this.width)
+                        .attr("y2", groupHeadingBorder)
+                        .attr('stroke', "white");
+                }
+
+                this.svgElement.append("text").text(headingText)
+                    .attr("class", "activity")
+                    .attr("x", 0)
+                    .attr("y", groupHeadingRow)
+                    .attr('fill', "white");
+            }
+
+            const activity = item.activity;
+            const rectY = row + TIMELINE_HEIGHT;
             this.svgElement.append("rect")
                 .attr("class", "activity")
-                .attr("x", rectX + TYPE_OFFSET)
-                .attr("y", rectY)
-                .attr("width", rectWidth)
+                .attr("x", item.start + GROUP_OFFSET)
+                .attr("y", rectY + TIMELINE_HEIGHT)
+                .attr("width", item.rectWidth)
                 .attr("height", ROW_HEIGHT)
                 .attr('fill', activity.color)
                 .attr('stroke', "lightgray");
 
-            textLines.forEach((line, index) => {
+            item.textLines.forEach((line, index) => {
                 this.svgElement.append("text").text(line)
                     .attr("class", "activity")
-                    .attr("x", textStart + TYPE_OFFSET)
-                    .attr("y", textY + (index * LINE_HEIGHT))
+                    .attr("x", item.textStart + GROUP_OFFSET)
+                    .attr("y", item.textY + TIMELINE_HEIGHT + (index * LINE_HEIGHT))
                     .attr('fill', activity.textColor);
             });
+            //TODO: Ending border
         },
-        plotCanvas(activity, rectX, rectWidth, rectY, textStart, textY, textLines) {
+        plotCanvas(item, row) {
+            const headingText = item.heading;
+            const { groupHeadingRow, groupHeadingBorder } = this.getGroupHeading(row);
+
+            if (headingText) {
+                if (groupHeadingBorder) {
+                    this.canvasContext.strokeStyle = "white";
+                    this.canvasContext.beginPath();
+                    this.canvasContext.moveTo(0, groupHeadingBorder);
+                    this.canvasContext.lineTo(this.width, groupHeadingBorder);
+                    this.canvasContext.stroke();
+                }
+
+                this.canvasContext.fillStyle = "white";
+                this.canvasContext.fillText(headingText, 0, groupHeadingRow);
+            }
+
+            const activity = item.activity;
+            const rectX = item.start;
+            const rectY = row + TIMELINE_HEIGHT;
+            const rectWidth = item.rectWidth;
             this.canvasContext.fillStyle = activity.color;
             this.canvasContext.strokeStyle = "lightgray";
-            this.canvasContext.fillRect(rectX + TYPE_OFFSET, rectY, rectWidth, ROW_HEIGHT);
-            this.canvasContext.strokeRect(rectX + TYPE_OFFSET, rectY, rectWidth, ROW_HEIGHT);
+            this.canvasContext.fillRect(rectX + GROUP_OFFSET, rectY, rectWidth, ROW_HEIGHT);
+            this.canvasContext.strokeRect(rectX + GROUP_OFFSET, rectY, rectWidth, ROW_HEIGHT);
 
             this.canvasContext.fillStyle = activity.textColor;
 
-            textLines.forEach((line, index) => {
-                this.canvasContext.fillText(line, textStart + TYPE_OFFSET, textY + (index * LINE_HEIGHT));
+            item.textLines.forEach((line, index) => {
+                this.canvasContext.fillText(line, item.textStart + GROUP_OFFSET, item.textY + TIMELINE_HEIGHT + (index * LINE_HEIGHT));
             });
+            //TODO: Ending border
         }
     }
 };

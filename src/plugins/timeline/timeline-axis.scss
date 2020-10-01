@@ -1,6 +1,7 @@
 .c-timeline {
   $h: 18px;
-  $tickYPos: ($h / 2) + 12px;
+  $tickYPos: ($h / 2) + 12px + 10px;
+  $tickXPos: 100px;
 
   height: 100%;
 
@@ -8,11 +9,9 @@
     text-rendering: geometricPrecision;
     width: 100%;
     height: 100%;
-    padding-left: 100px;
-    padding-top: 10px;
     > g.axis {
       // Overall Tick holder
-      transform: translateY($tickYPos);
+      transform: translateY($tickYPos) translateX($tickXPos);
 
       g {
          //Each tick. These move on drag.
@@ -39,6 +38,8 @@
       stroke: none;
     }
   }
+
+
 
   .nowMarker {
     width: 2px;
