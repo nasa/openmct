@@ -113,7 +113,7 @@
 
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
-import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
 const PLACEHOLDER_OBJECT = {};
 
