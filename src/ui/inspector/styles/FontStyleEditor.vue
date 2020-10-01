@@ -45,8 +45,6 @@ export default {
                 let fontStyle;
                 const item = styleable[0].context.item;
                 const layoutItem = styleable[0].context.layoutItem;
-                const parentItem = styleable[1].context.item;
-                const id = item && item.id ? item.id : layoutItem.id;
 
                 fontStyle = item && item.configuration && item.configuration.fontStyle;
                 if (!fontStyle) {
@@ -118,8 +116,6 @@ export default {
             this.styleables.forEach(styleable => {
                 const item = styleable[0].context.item;
                 const layoutItem = styleable[0].context.layoutItem;
-                const parentItem = styleable[1].context.item;
-                const id = item && item.id ? item.id : layoutItem.id;
 
                 if (!this.isLayoutObject(styleable)) {
                     let fontStyle = item.configuration && item.configuration.fontStyle;
@@ -138,7 +134,7 @@ export default {
                 } else {
                     // all layoutItems in this context will share same parent layout
                     if (!layoutDomainObject) {
-                        layoutDomainObject = parentItem;
+                        layoutDomainObject = styleable[1].context.item;
                     }
 
                     // save layout item font style to parent layout configuration

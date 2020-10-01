@@ -176,56 +176,32 @@ export default {
             return selectedItem && selectedItem.type === 'layout' && !selectedLayoutItem;
         },
         styleableFontItems() {
-            // subobject-view, not layout, flexible-layout, tabs,
-            // telemetry-view
-            // text-view
+            return this.selection.filter(selectionPath => {
+                const item = selectionPath[0].context.item;
+                const itemType = item && item.type;
+                const layoutItem = selectionPath[0].context.layoutItem;
+                const layoutItemType = layoutItem && layoutItem.type;
+                const NON_STYLEABLE_CONTAINER_TYPES = [
+                    'layout',
+                    'flexible-layout',
+                    'tabs'
+                ];
+                const NON_STYLEABLE_LAYOUT_ITEM_TYPES = [
+                    'line-view',
+                    'box-view',
+                    'image-view'
+                ];
 
-            if (this.isMainLayoutSelected) {
-                return [];
-            }
-
-            if (this.selection.length === 1) {
-                const primary = this.selection[0][0];
-                const layoutItem = primary.context.layoutItem;
-
-                const type = primary.context.layoutItem.type;
-
-                if (type === 'line-view' || type === 'box-view' || type === 'image-view') {
-                    return [];
+                if (itemType && NON_STYLEABLE_CONTAINER_TYPES.includes(itemType)) {
+                    return false;
                 }
 
-                if (type === 'subobject-view') {
-                    const objectType = primary.context.item.type;
-
-                    if (objectType === 'layout'
-                        || objectType === 'flexible-layout'
-                        || objectType === 'tabs') {
-                        return [];
-                    }
+                if (layoutItemType && NON_STYLEABLE_LAYOUT_ITEM_TYPES.includes(layoutItemType)) {
+                    return false;
                 }
 
-                return this.selection;
-            } else {
-                return this.selection.filter(selectionPath => {
-                    let type = selectionPath[0].context.layoutItem.type;
-
-                    if (type === 'line-view' || type === 'box-view' || type === 'image-view') {
-                        return false;
-                    }
-
-                    if (type === 'subobject-view') {
-                        let objectType = selectionPath[0].context.item.type;
-
-                        if (objectType === 'layout'
-                            || objectType === 'flexible-layout'
-                            || objectType === 'tabs') {
-                            return false;
-                        }
-                    }
-
-                    return true;
-                });
-            }
+                return true;
+            });
         },
         canStyleFont() {
             return Boolean(this.styleableFontItems.length);
