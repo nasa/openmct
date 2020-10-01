@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2018, United States Government
+ * Open MCT Web, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -144,13 +144,14 @@ export default {
                 start: this.bounds.start,
                 end: this.bounds.end
             };
+            let self = this;
 
-            const isNotEqual = function (entry) {
-                const start = entry.start !== this.start;
-                const end = entry.end !== this.end;
+            function isNotEqual(entry) {
+                const start = entry.start !== self.start;
+                const end = entry.end !== self.end;
 
                 return start || end;
-            };
+            }
 
             currentHistory = currentHistory.filter(isNotEqual, timespan);
 

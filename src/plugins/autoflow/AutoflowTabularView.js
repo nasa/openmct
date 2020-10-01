@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,17 +31,17 @@ define([
     VueView,
     autoflowTemplate
 ) {
-    var ROW_HEIGHT = AutoflowTabularConstants.ROW_HEIGHT;
-    var SLIDER_HEIGHT = AutoflowTabularConstants.SLIDER_HEIGHT;
-    var INITIAL_COLUMN_WIDTH = AutoflowTabularConstants.INITIAL_COLUMN_WIDTH;
-    var MAX_COLUMN_WIDTH = AutoflowTabularConstants.MAX_COLUMN_WIDTH;
-    var COLUMN_WIDTH_STEP = AutoflowTabularConstants.COLUMN_WIDTH_STEP;
+    const ROW_HEIGHT = AutoflowTabularConstants.ROW_HEIGHT;
+    const SLIDER_HEIGHT = AutoflowTabularConstants.SLIDER_HEIGHT;
+    const INITIAL_COLUMN_WIDTH = AutoflowTabularConstants.INITIAL_COLUMN_WIDTH;
+    const MAX_COLUMN_WIDTH = AutoflowTabularConstants.MAX_COLUMN_WIDTH;
+    const COLUMN_WIDTH_STEP = AutoflowTabularConstants.COLUMN_WIDTH_STEP;
 
     /**
      * Implements the Autoflow Tabular view of a domain object.
      */
     function AutoflowTabularView(domainObject, openmct) {
-        var data = {
+        const data = {
             items: [],
             columns: [],
             width: INITIAL_COLUMN_WIDTH,
@@ -49,9 +49,9 @@ define([
             updated: "No updates",
             rowCount: 1
         };
-        var controller =
+        const controller =
             new AutoflowTabularController(domainObject, data, openmct);
-        var interval;
+        let interval;
 
         VueView.call(this, {
             data: data,
@@ -62,9 +62,9 @@ define([
                         ? INITIAL_COLUMN_WIDTH : data.width;
                 },
                 reflow: function () {
-                    var column = [];
-                    var index = 0;
-                    var filteredItems =
+                    let column = [];
+                    let index = 0;
+                    const filteredItems =
                         data.items.filter(function (item) {
                             return item.name.toLowerCase()
                                 .indexOf(data.filter.toLowerCase()) !== -1;
@@ -104,11 +104,11 @@ define([
             mounted: function () {
                 controller.activate();
 
-                var updateRowHeight = function () {
-                    var tabularArea = this.$refs.autoflowItems;
-                    var height = tabularArea ? tabularArea.clientHeight : 0;
-                    var available = height - SLIDER_HEIGHT;
-                    var rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
+                const updateRowHeight = function () {
+                    const tabularArea = this.$refs.autoflowItems;
+                    const height = tabularArea ? tabularArea.clientHeight : 0;
+                    const available = height - SLIDER_HEIGHT;
+                    const rows = Math.max(1, Math.floor(available / ROW_HEIGHT));
                     data.rowCount = rows;
                 }.bind(this);
 

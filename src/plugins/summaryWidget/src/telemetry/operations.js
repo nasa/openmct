@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,7 @@ define([
 ], function (
 
 ) {
-    var OPERATIONS = {
+    const OPERATIONS = {
         equalTo: {
             operation: function (input) {
                 return input[0] === input[1];

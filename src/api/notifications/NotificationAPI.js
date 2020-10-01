@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -299,7 +299,7 @@ export default class NotificationAPI extends EventEmitter {
             this._dismiss(notification);
         };
 
-        if (notificationModel.hasOwnProperty('progressPerc')) {
+        if (Object.prototype.hasOwnProperty.call(notificationModel, 'progressPerc')) {
             notification.progress = (progressPerc, progressText) => {
                 notification.model.progressPerc = progressPerc;
                 notification.model.progressText = progressText;

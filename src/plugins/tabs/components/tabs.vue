@@ -70,7 +70,7 @@ import {
     deleteSearchParam
 } from 'utils/openmctLocation';
 
-var unknownObjectType = {
+const unknownObjectType = {
     definition: {
         cssClass: 'icon-object-unknown',
         name: 'Unknown Type'
@@ -191,12 +191,12 @@ export default {
             this.composition.remove(childDomainObject);
         },
         addItem(domainObject) {
-            let type = this.openmct.types.get(domainObject.type) || unknownObjectType,
-                tabItem = {
-                    domainObject,
-                    type: type,
-                    key: this.openmct.objects.makeKeyString(domainObject.identifier)
-                };
+            let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
+            let tabItem = {
+                domainObject,
+                type: type,
+                key: this.openmct.objects.makeKeyString(domainObject.identifier)
+            };
 
             this.tabsList.push(tabItem);
 
@@ -211,9 +211,9 @@ export default {
         },
         removeItem(identifier) {
             let pos = this.tabsList.findIndex(tab =>
-                    tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
-                ),
-                tabToBeRemoved = this.tabsList[pos];
+                tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
+            );
+            let tabToBeRemoved = this.tabsList[pos];
 
             this.tabsList.splice(pos, 1);
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,17 +37,18 @@ define([
         return function install(openmct) {
             if (installIndicator) {
                 let component = new Vue ({
-                        provide: {
-                            openmct
-                        },
-                        components: {
-                            GlobalClearIndicator: GlobaClearIndicator.default
-                        },
-                        template: '<GlobalClearIndicator></GlobalClearIndicator>'
-                    }),
-                    indicator = {
-                        element: component.$mount().$el
-                    };
+                    provide: {
+                        openmct
+                    },
+                    components: {
+                        GlobalClearIndicator: GlobaClearIndicator.default
+                    },
+                    template: '<GlobalClearIndicator></GlobalClearIndicator>'
+                });
+
+                let indicator = {
+                    element: component.$mount().$el
+                };
 
                 openmct.indicators.add(indicator);
             }

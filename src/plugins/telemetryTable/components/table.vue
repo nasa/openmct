@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -496,11 +496,11 @@ export default {
             this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
-            let columnWidths = {},
-                totalWidth = 0,
-                headerKeys = Object.keys(this.headers),
-                sizingTableRow = this.sizingTable.children[0],
-                sizingCells = sizingTableRow.children;
+            let columnWidths = {};
+            let totalWidth = 0;
+            let headerKeys = Object.keys(this.headers);
+            let sizingTableRow = this.sizingTable.children[0];
+            let sizingCells = sizingTableRow.children;
 
             headerKeys.forEach((headerKey, headerIndex, array) => {
                 if (this.isAutosizeEnabled) {
@@ -754,8 +754,8 @@ export default {
         },
         unmarkRow(rowIndex) {
             if (this.markedRows.length > 1) {
-                let row = this.visibleRows[rowIndex],
-                    positionInMarkedArray = this.markedRows.indexOf(row);
+                let row = this.visibleRows[rowIndex];
+                let positionInMarkedArray = this.markedRows.indexOf(row);
 
                 row.marked = false;
                 this.markedRows.splice(positionInMarkedArray, 1);
@@ -820,9 +820,9 @@ export default {
 
                 let lastRowToBeMarked = this.visibleRows[rowIndex];
 
-                let allRows = this.table.filteredRows.getRows(),
-                    firstRowIndex = allRows.indexOf(this.markedRows[0]),
-                    lastRowIndex = allRows.indexOf(lastRowToBeMarked);
+                let allRows = this.table.filteredRows.getRows();
+                let firstRowIndex = allRows.indexOf(this.markedRows[0]);
+                let lastRowIndex = allRows.indexOf(lastRowToBeMarked);
 
                 //supports backward selection
                 if (lastRowIndex < firstRowIndex) {
@@ -831,7 +831,7 @@ export default {
 
                 let baseRow = this.markedRows[0];
 
-                for (var i = firstRowIndex; i <= lastRowIndex; i++) {
+                for (let i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
                     row.marked = true;
 

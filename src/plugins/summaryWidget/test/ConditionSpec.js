@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,15 +22,15 @@
 
 define(['../src/Condition', 'zepto'], function (Condition, $) {
     xdescribe('A summary widget condition', function () {
-        var testCondition,
-            mockConfig,
-            mockConditionManager,
-            mockContainer,
-            mockEvaluator,
-            changeSpy,
-            duplicateSpy,
-            removeSpy,
-            generateValuesSpy;
+        let testCondition;
+        let mockConfig;
+        let mockConditionManager;
+        let mockContainer;
+        let mockEvaluator;
+        let changeSpy;
+        let duplicateSpy;
+        let removeSpy;
+        let generateValuesSpy;
 
         beforeEach(function () {
             mockContainer = $(document.createElement('div'));

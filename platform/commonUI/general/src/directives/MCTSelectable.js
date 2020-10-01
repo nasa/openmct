@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -58,7 +58,8 @@ define(
                     var removeSelectable = openmct.selection.selectable(
                         element[0],
                         scope.$eval(attrs.mctSelectable),
-                        attrs.hasOwnProperty('mctInitSelect') && scope.$eval(attrs.mctInitSelect) !== false
+                        Object.prototype.hasOwnProperty.call(attrs, 'mctInitSelect')
+                        && scope.$eval(attrs.mctInitSelect) !== false
                     );
 
                     scope.$on("$destroy", function () {

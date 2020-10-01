@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -80,12 +80,12 @@ $colorKeyHov: #26d8ff;
 $colorKeyFilter: invert(36%) sepia(76%) saturate(2514%) hue-rotate(170deg) brightness(99%) contrast(101%);
 $colorKeyFilterHov: invert(63%) sepia(88%) saturate(3029%) hue-rotate(154deg) brightness(101%) contrast(100%);
 $colorKeySelectedBg: $colorKey;
-$uiColor: #00b2ff; // Resize bars, splitter bars, etc.
+$uiColor: #0093ff; // Resize bars, splitter bars, etc.
 $colorInteriorBorder: rgba($colorBodyFg, 0.2);
 $colorA: #ccc;
 $colorAHov: #fff;
-$filterHov: brightness(1.3); // Tree, location items
-$colorSelectedBg: pushBack($colorKey, 10%);
+$filterHov: brightness(1.3) contrast(1.5); // Tree, location items
+$colorSelectedBg: rgba($colorKey, 0.3);
 $colorSelectedFg: pullForward($colorBodyFg, 20%);
 
 // Object labels
@@ -365,13 +365,14 @@ $legendTableHeadBg: rgba($colorBodyFg, 0.15);
 
 // Tree
 $colorTreeBg: transparent;
-$colorItemTreeHoverBg: rgba(white, 0.07);
-$colorItemTreeHoverFg: pullForward($colorBodyFg, 20%);
+$colorItemTreeHoverBg: rgba(#fff, 0.03);
+$colorItemTreeHoverFg: #fff;
 $colorItemTreeIcon: $colorKey; // Used
 $colorItemTreeIconHover: $colorItemTreeIcon; // Used
 $colorItemTreeFg: $colorBodyFg;
 $colorItemTreeSelectedBg: $colorSelectedBg;
 $colorItemTreeSelectedFg: $colorItemTreeHoverFg;
+$filterItemTreeSelected: $filterHov;
 $colorItemTreeSelectedIcon: $colorItemTreeSelectedFg;
 $colorItemTreeEditingBg: pushBack($editUIColor, 20%);
 $colorItemTreeEditingFg: $editUIColor;
@@ -406,7 +407,7 @@ $splitterBtnColorBg: $colorBtnBg;
 $splitterBtnColorFg: #999;
 $splitterBtnLabelColorFg: #666;
 $splitterCollapsedBtnColorBg: #222;
-$splitterCollapsedBtnColorFg: #666;
+$splitterCollapsedBtnColorFg: #555;
 $splitterCollapsedBtnColorBgHov: $colorKey;
 $splitterCollapsedBtnColorFgHov: $colorKeyFg;
 

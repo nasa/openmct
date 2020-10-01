@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,7 @@ define([
 
     // TODO: needs reference to formatService;
     function TelemetryValueFormatter(valueMetadata, formatService) {
-        var numberFormatter = {
+        const numberFormatter = {
             parse: function (x) {
                 return Number(x);
             },
@@ -63,7 +63,7 @@ define([
                 byString: {}
             });
             this.formatter.format = function (value) {
-                if (this.enumerations.byValue.hasOwnProperty(value)) {
+                if (Object.prototype.hasOwnProperty.call(this.enumerations.byValue, value)) {
                     return this.enumerations.byValue[value];
                 }
 
@@ -71,7 +71,7 @@ define([
             }.bind(this);
             this.formatter.parse = function (string) {
                 if (typeof string === "string") {
-                    if (this.enumerations.byString.hasOwnProperty(string)) {
+                    if (Object.prototype.hasOwnProperty.call(this.enumerations.byString, string)) {
                         return this.enumerations.byString[string];
                     }
                 }
@@ -82,8 +82,8 @@ define([
 
         // Check for formatString support once instead of per format call.
         if (valueMetadata.formatString) {
-            var baseFormat = this.formatter.format;
-            var formatString = valueMetadata.formatString;
+            const baseFormat = this.formatter.format;
+            const formatString = valueMetadata.formatString;
             this.formatter.format = function (value) {
                 return printj.sprintf(formatString, baseFormat.call(this, value));
             };

@@ -3,7 +3,8 @@
     <div class="l-browse-bar__start">
         <button
             v-if="hasParent"
-            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
+            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
+            title="Navigate up to parent"
             @click="goToParent"
         ></button>
         <div
@@ -112,7 +113,7 @@
 
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
-import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
 const PLACEHOLDER_OBJECT = {};
 

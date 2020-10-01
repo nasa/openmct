@@ -25,14 +25,14 @@ import {
 } from 'utils/testing';
 
 describe("the plugin", () => {
-    let openmct,
-        compositionAPI,
-        newFolderAction,
-        mockObjectPath,
-        mockDialogService,
-        mockComposition,
-        mockPromise,
-        newFolderName = 'New Folder';
+    let openmct;
+    let compositionAPI;
+    let newFolderAction;
+    let mockObjectPath;
+    let mockDialogService;
+    let mockComposition;
+    let mockPromise;
+    let newFolderName = 'New Folder';
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -46,7 +46,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it('installs the new folder action', () => {
@@ -79,7 +79,7 @@ describe("the plugin", () => {
 
             spyOn(openmct.$injector, 'get').and.returnValue(mockDialogService);
             spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
-            spyOn(openmct.objects, 'mutate');
+            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 
             newFolderAction.invoke(mockObjectPath);
         });
@@ -89,7 +89,7 @@ describe("the plugin", () => {
         });
 
         it('creates a new folder object', () => {
-            expect(openmct.objects.mutate).toHaveBeenCalled();
+            expect(openmct.objects.save).toHaveBeenCalled();
         });
 
         it('adds new folder object to parent composition', () => {

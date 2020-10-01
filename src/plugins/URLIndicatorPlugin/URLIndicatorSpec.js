@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,14 +33,14 @@ define(
         MCT,
         $
     ) {
-        var defaultAjaxFunction = $.ajax;
+        const defaultAjaxFunction = $.ajax;
 
-        xdescribe("The URLIndicator", function () {
-            var openmct;
-            var indicatorElement;
-            var pluginOptions;
-            var ajaxOptions;
-            var urlIndicator; // eslint-disable-line
+        describe("The URLIndicator", function () {
+            let openmct;
+            let indicatorElement;
+            let pluginOptions;
+            let ajaxOptions;
+            let urlIndicator; // eslint-disable-line
 
             beforeEach(function () {
                 jasmine.clock().install();

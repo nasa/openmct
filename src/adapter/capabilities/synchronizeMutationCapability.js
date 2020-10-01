@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,8 +32,8 @@ define([
     function synchronizeMutationCapability(mutationConstructor) {
 
         return function makeCapability(domainObject) {
-            var capability = mutationConstructor(domainObject);
-            var oldListen = capability.listen.bind(capability);
+            const capability = mutationConstructor(domainObject);
+            const oldListen = capability.listen.bind(capability);
             capability.listen = function (listener) {
                 return oldListen(function (newModel) {
                     capability.domainObject.model =

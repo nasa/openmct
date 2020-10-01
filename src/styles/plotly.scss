@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,20 +29,27 @@
         stroke-width: 1 !important;
     }
 
-    .cartesianlayer .gridlayer {
-        .x,
-        .y {
-            path {
-                opacity: $opacityPlotHash;
-                stroke: $colorPlotHash !important;
+    .cartesianlayer {
+        .gridlayer {
+            .x,
+            .y {
+                path {
+                    opacity: $opacityPlotHash;
+                    stroke: $colorPlotHash !important;
+                }
             }
+        }
+
+        path.xy2-y {
+            stroke: $colorPlotHash !important; // Using this instead of $colorPlotAreaBorder because that is an rgba
+            opacity: $opacityPlotHash !important;
         }
     }
 
     .xtick,
     .ytick,
-    .g-xtitle,
-    .g-ytitle {
+    [class^="g-"] text[class*="title"] {
+        // Matches <g class="g-*"> <text class="*title">
         text {
             fill: $colorPlotFg !important;
             font-size: 12px !important;

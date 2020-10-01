@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,7 +46,7 @@ define([
         this.eventEmitter = new EventEmitter();
         this.providers = {};
         this.rootRegistry = new RootRegistry();
-        this.rootProvider = new RootObjectProvider(this.rootRegistry);
+        this.rootProvider = new RootObjectProvider.default(this.rootRegistry);
     }
 
     /**
@@ -155,7 +155,7 @@ define([
      */
     ObjectAPI.prototype.get = function (identifier) {
         identifier = utils.parseKeyString(identifier);
-        var provider = this.getProvider(identifier);
+        const provider = this.getProvider(identifier);
 
         if (!provider) {
             throw new Error('No Provider Matched');
@@ -192,6 +192,7 @@ define([
      */
     ObjectAPI.prototype.save = function (domainObject) {
         let provider = this.getProvider(domainObject.identifier);
+        let savedResolve;
         let result;
 
         if (!this.isPersistable(domainObject)) {
@@ -199,11 +200,19 @@ define([
         } else if (hasAlreadyBeenPersisted(domainObject)) {
             result = Promise.resolve(true);
         } else {
+            const persistedTime = Date.now();
             if (domainObject.persisted === undefined) {
-                this.mutate(domainObject, 'persisted', domainObject.modified);
-                result = provider.create(domainObject);
+                result = new Promise((resolve) => {
+                    savedResolve = resolve;
+                });
+                domainObject.persisted = persistedTime;
+                provider.create(domainObject).then((response) => {
+                    this.mutate(domainObject, 'persisted', persistedTime);
+                    savedResolve(response);
+                });
             } else {
-                this.mutate(domainObject, 'persisted', domainObject.modified);
+                domainObject.persisted = persistedTime;
+                this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
             }
         }
@@ -232,7 +241,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-        var mutableObject =
+        const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
 
         return mutableObject.set(path, value);
@@ -248,7 +257,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        var mutableObject =
+        const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
         mutableObject.on(path, callback);
 

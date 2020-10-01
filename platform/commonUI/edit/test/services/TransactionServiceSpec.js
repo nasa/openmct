@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define,describe,it,expect,beforeEach,jasmine*/
 
 define(
     ["../../src/services/TransactionService"],
@@ -28,6 +27,7 @@ define(
         describe("The Transaction Service", function () {
             var mockQ,
                 mockLog,
+                mockCacheService,
                 transactionService;
 
             function fastPromise(val) {
@@ -40,9 +40,10 @@ define(
 
             beforeEach(function () {
                 mockQ = jasmine.createSpyObj("$q", ["all"]);
+                mockCacheService = jasmine.createSpyObj("cacheService", ["flush"]);
                 mockQ.all.and.returnValue(fastPromise());
                 mockLog = jasmine.createSpyObj("$log", ["error"]);
-                transactionService = new TransactionService(mockQ, mockLog);
+                transactionService = new TransactionService(mockQ, mockLog, mockCacheService);
             });
 
             it("isActive returns true if a transaction is in progress", function () {
@@ -85,17 +86,20 @@ define(
 
                 it("commit calls all queued commit functions", function () {
                     expect(transactionService.size()).toBe(3);
-                    transactionService.commit();
-                    onCommits.forEach(function (spy) {
-                        expect(spy).toHaveBeenCalled();
+
+                    return transactionService.commit().then(() => {
+                        onCommits.forEach(function (spy) {
+                            expect(spy).toHaveBeenCalled();
+                        });
                     });
                 });
 
                 it("commit resets active state and clears queues", function () {
-                    transactionService.commit();
-                    expect(transactionService.isActive()).toBe(false);
-                    expect(transactionService.size()).toBe(0);
-                    expect(transactionService.size()).toBe(0);
+                    return transactionService.commit().then(() => {
+                        expect(transactionService.isActive()).toBe(false);
+                        expect(transactionService.size()).toBe(0);
+                        expect(transactionService.size()).toBe(0);
+                    });
                 });
 
             });

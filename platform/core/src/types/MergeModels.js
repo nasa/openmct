@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -75,13 +75,13 @@ define(
             function mergeObjects(a, b) {
                 var result = {};
                 Object.keys(a).forEach(function (k) {
-                    result[k] = b.hasOwnProperty(k)
+                    result[k] = Object.prototype.hasOwnProperty.call(b, k)
                         ? mergeModels(a[k], b[k], (merger || {})[k])
                         : a[k];
                 });
                 Object.keys(b).forEach(function (k) {
                     // Copy any properties not already merged
-                    if (!a.hasOwnProperty(k)) {
+                    if (!Object.prototype.hasOwnProperty.call(a, k)) {
                         result[k] = b[k];
                     }
                 });

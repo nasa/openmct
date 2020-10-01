@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,29 +22,29 @@
 
 define(['../src/ConditionManager'], function (ConditionManager) {
     xdescribe('A Summary Widget Condition Manager', function () {
-        var conditionManager,
-            mockDomainObject,
-            mockCompObject1,
-            mockCompObject2,
-            mockCompObject3,
-            mockMetadata,
-            mockTelemetryCallbacks,
-            mockEventCallbacks,
-            unsubscribeSpies,
-            unregisterSpies,
-            mockMetadataManagers,
-            mockComposition,
-            mockOpenMCT,
-            mockTelemetryAPI,
-            addCallbackSpy,
-            loadCallbackSpy,
-            removeCallbackSpy,
-            telemetryCallbackSpy,
-            metadataCallbackSpy,
-            telemetryRequests,
-            mockTelemetryValues,
-            mockTelemetryValues2,
-            mockConditionEvaluator;
+        let conditionManager;
+        let mockDomainObject;
+        let mockCompObject1;
+        let mockCompObject2;
+        let mockCompObject3;
+        let mockMetadata;
+        let mockTelemetryCallbacks;
+        let mockEventCallbacks;
+        let unsubscribeSpies;
+        let unregisterSpies;
+        let mockMetadataManagers;
+        let mockComposition;
+        let mockOpenMCT;
+        let mockTelemetryAPI;
+        let addCallbackSpy;
+        let loadCallbackSpy;
+        let removeCallbackSpy;
+        let telemetryCallbackSpy;
+        let metadataCallbackSpy;
+        let telemetryRequests;
+        let mockTelemetryValues;
+        let mockTelemetryValues2;
+        let mockConditionEvaluator;
 
         beforeEach(function () {
             mockDomainObject = {
@@ -217,7 +217,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
                 'triggerTelemetryCallback'
             ]);
             mockTelemetryAPI.request.and.callFake(function (obj) {
-                var req = {
+                const req = {
                     object: obj
                 };
                 req.promise = new Promise(function (resolve, reject) {
@@ -283,7 +283,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
         });
 
         it('maintains lists of global metadata, and does not duplicate repeated fields', function () {
-            var allKeys = {
+            const allKeys = {
                 property1: {
                     key: 'property1',
                     name: 'Property 1',
@@ -389,18 +389,18 @@ define(['../src/ConditionManager'], function (ConditionManager) {
 
         it('evalutes a set of rules and returns the id of the'
            + 'last active rule, or the first if no rules are active', function () {
-            var mockRuleOrder = ['default', 'rule0', 'rule1'],
-                mockRules = {
-                    default: {
-                        getProperty: function () {}
-                    },
-                    rule0: {
-                        getProperty: function () {}
-                    },
-                    rule1: {
-                        getProperty: function () {}
-                    }
-                };
+            const mockRuleOrder = ['default', 'rule0', 'rule1'];
+            const mockRules = {
+                default: {
+                    getProperty: function () {}
+                },
+                rule0: {
+                    getProperty: function () {}
+                },
+                rule1: {
+                    getProperty: function () {}
+                }
+            };
 
             mockConditionEvaluator.execute.and.returnValue(false);
             expect(conditionManager.executeRules(mockRuleOrder, mockRules)).toEqual('default');
