@@ -74,7 +74,6 @@
 import LayoutFrame from './LayoutFrame.vue';
 import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
-import Clipboard from '../../../utils/clipboard';
 import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
@@ -229,9 +228,7 @@ export default {
             const timeFormatterKey = this.openmct.time.timeSystem().key;
             const timeFormatter = this.formats[timeFormatterKey];
 
-            return {
-                value: `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue} ${this.unit}`
-            };
+            return `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue} ${this.unit}`;
         },
         requestHistoricalData() {
             let bounds = this.openmct.time.bounds();

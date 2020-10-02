@@ -1,25 +1,9 @@
-function getClipboard() {
-    if (Clipboard.instance) {
-        return Clipboard.instance;
-    }
-
-    new Clipboard();
-
-    return Clipboard.instance;
-}
-
 class Clipboard {
     constructor() {
-        if (Clipboard.instance) {
-            return;
-        }
-
         this.clipboardRead = false;
         this.clipboardWrite = false;
 
         this.init();
-
-        Clipboard.instance = this;
     }
 
     init() {
@@ -57,5 +41,4 @@ class Clipboard {
     }
 }
 
-export default getClipboard();
-
+export default new Clipboard();

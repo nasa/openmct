@@ -1,4 +1,4 @@
-import Clipboard from '@/utils/clipboard';
+import clipboard from '@/utils/clipboard';
 
 export default class CopyToClipboardAction {
     constructor(openmct) {
@@ -14,9 +14,9 @@ export default class CopyToClipboardAction {
 
     invoke(objectPath = null, viewContext) {
         const formattedValue = viewContext.formattedValueForCopy();
-        Clipboard.updateClipboard(formattedValue.value)
+        clipboard.updateClipboard(formattedValue)
             .then(() => {
-                this.openmct.notifications.info(`Success : copied to clipboard '${formattedValue.value}'`);
+                this.openmct.notifications.info(`Success : copied to clipboard '${formattedValue}'`);
             });
     }
 
