@@ -253,6 +253,16 @@ export default {
                 this.requestHistoricalData(this.domainObject);
             }
         },
+        getView() {
+            return {
+                getViewContext() {
+                    return {
+                        viewHistoricalData: true,
+                        skipCache: true
+                    }
+                }
+            }
+        },
         setObject(domainObject) {
             this.domainObject = domainObject;
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -277,18 +287,17 @@ export default {
                 this.$el, this.context, this.immediatelySelect || this.initSelect);
             delete this.immediatelySelect;
 
-            this.getContextMenuActions();
+            let allActions = this.openmct.actions.get(this.currentObjectPath, this.getView());
+
+            this.applicableActions = CONTEXT_MENU_ACTIONS.map(actionKey => {
+                return allActions[actionKey];
+            });
         },
         updateTelemetryFormat(format) {
             this.$emit('formatChanged', this.item, format);
         },
-        getContextMenuActions() {
-            let actionsObject = this.openmct.actions.get(this.currentObjectPath, undefined, { viewHistoricalData: true });
-
-            this.contextMenuActions = CONTEXT_MENU_ACTIONS.map(actionKey => actionsObject[actionKey]);
-        },
         showContextMenu(event) {
-            this.openmct.menus.showMenu(event.x, event.y, this.contextMenuActions);
+            this.openmct.menus.showMenu(event.x, event.y, this.applicableActions);
         }
     }
 };

@@ -13,22 +13,6 @@
             {{ currentView.name }}
         </span>
     </button>
-    <!-- <div
-        v-show="showViewMenu"
-        class="c-menu"
-    >
-        <ul>
-            <li
-                v-for="(view, index) in views"
-                :key="index"
-                :class="view.cssClass"
-                :title="view.name"
-                @click="setView(view)"
-            >
-                {{ view.name }}
-            </li>
-        </ul>
-    </div> -->
 </div>
 </template>
 

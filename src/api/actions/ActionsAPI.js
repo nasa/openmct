@@ -43,30 +43,31 @@ class ActionsAPI extends EventEmitter {
         this._allActions[actionDefinition.key] = actionDefinition;
     }
 
-    get(objectPath, viewProvider, options) {
-
-        if (viewProvider) {
-            let cachedActionCollection = this._actionCollections.get(viewProvider);
+    get(objectPath, view) {
+        let viewContext = view && view.getViewContext && view.getViewContext() || {};
+ 
+        if (view && !viewContext.skipCache) {
+            let cachedActionCollection = this._actionCollections.get(view);
 
             if (cachedActionCollection) {
                 return cachedActionCollection;
             } else {
-                let applicableActions = this._applicableActions(objectPath, viewProvider, options);
-                let actionCollection = new ActionCollection(applicableActions, objectPath, viewProvider, this._openmct, options);
+                let applicableActions = this._applicableActions(objectPath, view);
+                let actionCollection = new ActionCollection(applicableActions, objectPath, view, this._openmct);
 
-                this._actionCollections.set(viewProvider, actionCollection);
+                this._actionCollections.set(view, actionCollection);
                 actionCollection.on('destroy', this._updateCachedActionCollections);
 
                 return actionCollection;
             }
         } else {
-            let applicableActions = this._applicableActions(objectPath, viewProvider, options);
+            let applicableActions = this._applicableActions(objectPath, view);
 
             Object.keys(applicableActions).forEach(key => {
                 let action = applicableActions[key];
 
                 action.callBack = () => {
-                    return action.invoke(objectPath, viewProvider);
+                    return action.invoke(objectPath, view);
                 };
             });
 
@@ -87,7 +88,7 @@ class ActionsAPI extends EventEmitter {
         }
     }
 
-    _applicableActions(objectPath, viewProvider, options) {
+    _applicableActions(objectPath, view) {
         let actionsObject = {};
 
         let keys = Object.keys(this._allActions).filter(key => {
@@ -96,7 +97,7 @@ class ActionsAPI extends EventEmitter {
             if (actionDefinition.appliesTo === undefined) {
                 return true;
             } else {
-                return actionDefinition.appliesTo(objectPath, viewProvider, options);
+                return actionDefinition.appliesTo(objectPath, view);
             }
         });
 

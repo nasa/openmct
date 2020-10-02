@@ -33,8 +33,10 @@ export default class ViewHistoricalDataAction extends PreviewAction {
         this.hideInDefaultMenu = true;
     }
 
-    appliesTo(objectPath, viewContext = {}, options = {}) {
-        if (objectPath.length && options.viewHistoricalData) {
+    appliesTo(objectPath, view = {}) {
+        let viewContext = view.getViewContext && view.getViewContext();
+
+        if (objectPath.length && viewContext && viewContext.viewHistoricalData) {
             return true;
         } else {
             return false;

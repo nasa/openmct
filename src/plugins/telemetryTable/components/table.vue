@@ -207,7 +207,7 @@ export default {
         TelemetryFilterIndicator,
         ToggleSwitch
     },
-    inject: ['table', 'openmct', 'objectPath', 'viewProvider'],
+    inject: ['table', 'openmct', 'objectPath', 'view'],
     props: {
         isEditing: {
             type: Boolean,
@@ -350,7 +350,7 @@ export default {
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);
 
-        this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.viewProvider);
+        this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.view);
         this.initializeViewActions();
 
         this.table.on('object-added', this.addObject);

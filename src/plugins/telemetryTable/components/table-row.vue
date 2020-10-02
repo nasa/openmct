@@ -102,7 +102,15 @@ export default {
                 selectable[columnKeys] = this.row.columns[columnKeys].selectable;
 
                 return selectable;
-            }, {})
+            }, {}),
+            actionsViewContext: {
+                getViewContext() {
+                    return {
+                        viewHistoricalData: true,
+                        skipCache: true
+                    }
+                }
+            }
         };
     },
     computed: {
@@ -177,7 +185,7 @@ export default {
                 let contextualObjectPath = this.objectPath.slice();
                 contextualObjectPath.unshift(domainObject);
 
-                let allActions = this.openmct.actions.get(contextualObjectPath, {}, {viewHistoricalData: true});
+                let allActions = this.openmct.actions.get(contextualObjectPath, this.actionsViewContext);
                 let applicableActions = this.row.getContextMenuActions().map(key => allActions[key]);
 
                 this.openmct.menus.showMenu(event.x, event.y, applicableActions);

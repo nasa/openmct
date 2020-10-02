@@ -60,7 +60,7 @@ define([
                     rowName: '',
                     rowNamePlural: ''
                 };
-                const viewProvider = {
+                const view = {
                     show: function (element, editMode) {
                         component = new Vue({
                             el: element,
@@ -77,7 +77,7 @@ define([
                                 openmct,
                                 table,
                                 objectPath,
-                                viewProvider
+                                view
                             },
                             template: '<table-component ref="tableComponent" :isEditing="isEditing" :marking="markingProp"/>'
                         });
@@ -103,7 +103,7 @@ define([
                     }
                 };
 
-                return viewProvider;
+                return view;
             },
             priority() {
                 return 1;
