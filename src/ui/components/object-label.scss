@@ -2,7 +2,7 @@
     // <a> tag and draggable element that holds type icon and name.
     // Used mostly in trees and lists
     display: flex;
-    align-items: center;
+    align-items: baseline; // Provides better vertical alignment than center
     flex: 0 1 auto;
     overflow: hidden;
     white-space: nowrap;

@@ -40,7 +40,7 @@ define(
                 }
 
                 function handleClick() {
-                    fileInputService.getInput().then(function (result) {
+                    fileInputService.getInput(scope.structure.type).then(function (result) {
                         setText(result.name);
                         scope.ngModel[scope.field] = result;
                         control.$setValidity("file-input", true);
