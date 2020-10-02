@@ -344,9 +344,8 @@ export default {
             window.location.hash = this.parentUrl;
         },
         updateActionItems(actionItems) {
-            let actionItemsArray = Object.keys(actionItems).map(key => actionItems[key]);
-            this.statusBarItems = actionItemsArray.filter(action => action.showInStatusBar && !action.disabled && !action.hidden);
-            this.menuActionItems = actionItemsArray.filter(action => !action.hidden);
+            this.statusBarItems = this.actionCollection.getStatusBarActions();
+            this.menuActionItems = this.actionCollection.getVisibleActions();
         },
         showMenuItems(event) {
             let actions;

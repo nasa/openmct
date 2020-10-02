@@ -49,7 +49,7 @@ class ActionCollection extends EventEmitter {
     disable(actionKeys) {
         actionKeys.forEach(actionKey => {
             if (this.applicableActions[actionKey]) {
-                this.applicableActions[actionKey].disabled = true;
+                this.applicableActions[actionKey].isDisabled = true;
             }
         });
         this._update();
@@ -58,7 +58,7 @@ class ActionCollection extends EventEmitter {
     enable(actionKeys) {
         actionKeys.forEach(actionKey => {
             if (this.applicableActions[actionKey]) {
-                this.applicableActions[actionKey].disabled = false;
+                this.applicableActions[actionKey].isDisabled = false;
             }
         });
         this._update();
@@ -67,7 +67,7 @@ class ActionCollection extends EventEmitter {
     hide(actionKeys) {
         actionKeys.forEach(actionKey => {
             if (this.applicableActions[actionKey]) {
-                this.applicableActions[actionKey].hidden = true;
+                this.applicableActions[actionKey].isHidden = true;
             }
         });
         this._update();
@@ -76,7 +76,7 @@ class ActionCollection extends EventEmitter {
     show(actionKeys) {
         actionKeys.forEach(actionKey => {
             if (this.applicableActions[actionKey]) {
-                this.applicableActions[actionKey].hidden = false;
+                this.applicableActions[actionKey].isHidden = false;
             }
         });
         this._update();
@@ -88,6 +88,36 @@ class ActionCollection extends EventEmitter {
         });
 
         this.emit('destroy', this.viewProvider);
+    }
+
+    getVisibleActions() {
+        let actionsArray = Object.keys(this.applicableActions);
+        let visibleActions = [];
+
+        actionsArray.forEach(actionKey => {
+            let action = this.applicableActions[actionKey];
+
+            if (!action.isHidden) {
+                visibleActions.push(action);
+            }
+        });
+
+        return visibleActions;
+    }
+
+    getStatusBarActions() {
+        let actionsArray = Object.keys(this.applicableActions);
+        let statusBarActions = [];
+
+        actionsArray.forEach(actionKey => {
+            let action = this.applicableActions[actionKey];
+
+            if (action.showInStatusBar && !action.isDisabled && !action.isHidden) {
+                statusBarActions.push(action);
+            }
+        });
+
+        return statusBarActions;
     }
 
     _update() {
