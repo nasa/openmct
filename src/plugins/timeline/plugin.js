@@ -29,7 +29,7 @@ export default function () {
             key: 'plan',
             description: 'An activity timeline',
             creatable: true,
-            cssClass: 'icon-clock',
+            cssClass: 'icon-timeline',
             form: [
                 {
                     name: 'Upload Plan (JSON File)',
