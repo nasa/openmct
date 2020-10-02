@@ -4,26 +4,34 @@
     <div class="c-notebook__entries">
         <NotebookEntry v-for="(result, index) in results"
                        :key="index"
+                       :domain-object="domainObject"
                        :result="result"
                        :entry="result.entry"
                        :read-only="true"
-                       :selected-page="null"
-                       :selected-section="null"
+                       :selected-page="result.page"
+                       :selected-section="result.section"
                        @changeSectionPage="changeSectionPage"
+                       @updateEntries="updateEntries"
         />
     </div>
 </div>
 </template>
 
 <script>
-import NotebookEntry from './notebook-entry.vue';
+import NotebookEntry from './NotebookEntry.vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'snapshotContainer'],
     components: {
         NotebookEntry
     },
     props: {
+        domainObject: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         results: {
             type: Array,
             default() {
@@ -31,19 +39,12 @@ export default {
             }
         }
     },
-    data() {
-        return {};
-    },
-    watch: {
-        results(newResults) {}
-    },
-    destroyed() {
-    },
-    mounted() {
-    },
     methods: {
         changeSectionPage(data) {
             this.$emit('changeSectionPage', data);
+        },
+        updateEntries(entries) {
+            this.$emit('updateEntries', entries);
         }
     }
 };

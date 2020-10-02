@@ -145,7 +145,6 @@ export default {
         },
         unit() {
             let value = this.item.value;
-
             let unit = this.metadata.value(value).unit;
 
             return unit;
