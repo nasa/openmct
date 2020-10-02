@@ -157,7 +157,6 @@ export default {
                 ? this.timeFormat.format(datum)
                 : this.time;
             // Replace ISO "T" with a space to allow wrapping
-            dateTimeStr = dateTimeStr.toString();
             return dateTimeStr ? dateTimeStr.replace("T"," ") : "";
         },
         handleScroll() {
