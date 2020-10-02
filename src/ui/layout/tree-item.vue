@@ -22,11 +22,10 @@
             @input="resetTreeHere"
         />
         <object-label
-            :domain-object="domainObject"
+            :domain-object="node.object"
             :object-path="node.objectPath"
             :navigate-to-path="navigateToPath"
             :style="{ paddingLeft: leftOffset }"
-            @getFullDomainObject="getFullDomainObject"
         />
         <view-control
             v-model="expanded"
@@ -91,20 +90,17 @@ export default {
         }
     },
     data() {
-        let domainObject = this.node.object;
-        let objectPath = this.node.objectPath;
+        this.navigateToPath = this.buildPathString(this.node.navigateToParent);
 
         return {
             hasComposition: false,
-            navigated: false,
-            expanded: false,
-            domainObject: domainObject,
-            objectPath: objectPath
+            navigated: this.navigateToPath === this.openmct.router.currentLocation.path,
+            expanded: false
         };
     },
     computed: {
         isAlias() {
-            let parent = this.objectPath[1];
+            let parent = this.node.objectPath[1];
             if (!parent) {
                 return false;
             }
@@ -115,12 +111,6 @@ export default {
         },
         itemTop() {
             return (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
-        },
-        isLite() {
-            return this.domainObject.lite;
-        },
-        navigateToPath() {
-            return this.buildPathString(this.node.navigateToParent);
         }
     },
     watch: {
@@ -134,34 +124,27 @@ export default {
         }
     },
     mounted() {
-        this.domainObject = this.node.object;
+        let objectComposition = this.openmct.composition.get(this.node.object);
 
-        if (!this.isLite) {
-            this.initialize();
+        this.domainObject = this.node.object;
+        let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
+            this.domainObject = newObject;
+        });
+
+        this.$once('hook:destroyed', removeListener);
+        if (objectComposition) {
+            this.hasComposition = true;
+        }
+
+        this.openmct.router.on('change:path', this.highlightIfNavigated);
+        if (this.emitHeight) {
+            this.$emit('emittedHeight', this.$refs.me);
         }
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
     },
     methods: {
-        initialize() {
-            let objectComposition = this.openmct.composition.get(this.node.object);
-            let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
-                this.domainObject = newObject;
-            });
-
-            this.navigated = this.navigateToPath === this.openmct.router.currentLocation.path;
-
-            this.$once('hook:destroyed', removeListener);
-            if (objectComposition) {
-                this.hasComposition = true;
-            }
-
-            this.openmct.router.on('change:path', this.highlightIfNavigated);
-            if (this.emitHeight) {
-                this.$emit('emittedHeight', this.$refs.me);
-            }
-        },
         buildPathString(parentPath) {
             return [parentPath, this.openmct.objects.makeKeyString(this.node.object.identifier)].join('/');
         },
@@ -174,15 +157,6 @@ export default {
         },
         resetTreeHere() {
             this.$emit('resetTree', this.node);
-        },
-        async getFullDomainObject() {
-            console.log('getfulldomainobject');
-            let fullDomainObject = await this.openmct.objects.get(this.domainObject.id);
-            this.objectPath = await this.openmct.objects.getOriginalPath(fullDomainObject.identifier);
-            this.domainObject = fullDomainObject;
-            this.initialize();
-
-            return;
         }
     }
 };

@@ -30,13 +30,6 @@ export default {
         showContextMenu(event) {
             event.preventDefault();
             event.stopPropagation();
-            console.log('ob', this.observedObject);
-            if (this.observedObject.lite) {
-                this.loadFullDomainObjectThen('showContextMenu', arguments);
-
-                return;
-            }
-
             this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
         }
     }

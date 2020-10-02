@@ -26,8 +26,10 @@
         overflow: hidden;
         transition: all;
 
-        &__scrollable-children {
-            overflow: auto;
+        .scrollable-children {
+            .c-tree__item-h {
+                width: 100%;
+            }
         }
 
         &__item--empty {
@@ -55,11 +57,7 @@
 
     li {
         position: relative;
-        &[class*="__item-h"] {
-            display: block;
-            width: 100%;
-        }
-
+        &[class*="__item-h"] { display: block; }
         + li {
             margin-top: 1px;
         }
