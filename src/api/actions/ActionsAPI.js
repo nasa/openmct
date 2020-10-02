@@ -45,7 +45,7 @@ class ActionsAPI extends EventEmitter {
 
     get(objectPath, view) {
         let viewContext = view && view.getViewContext && view.getViewContext() || {};
- 
+
         if (view && !viewContext.skipCache) {
             let cachedActionCollection = this._actionCollections.get(view);
 

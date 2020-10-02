@@ -259,9 +259,9 @@ export default {
                     return {
                         viewHistoricalData: true,
                         skipCache: true
-                    }
+                    };
                 }
-            }
+            };
         },
         setObject(domainObject) {
             this.domainObject = domainObject;
