@@ -38,10 +38,9 @@
             <span
                 class="c-style-thumb__text u-style-receiver js-style-receiver"
                 :class="{ 'hide-nice': !hasProperty(savedStyle.color) }"
-                :data-font-size="savedStyle.fontSize"
                 :data-font="savedStyle.font"
             >
-                ABC
+                {{ thumbLabel }}
             </span>
         </span>
         <span class="c-toolbar">
@@ -133,12 +132,14 @@ export default {
             return this.savedStyle.border.substring(this.savedStyle.border.indexOf('#'));
         },
         thumbStyle() {
-            // TODO render font and font size
             return {
                 border: this.savedStyle.border,
                 backgroundColor: this.savedStyle.backgroundColor,
                 color: this.savedStyle.color
             };
+        },
+        thumbLabel() {
+            return this.savedStyle.fontSize !== 'default' ? `${this.savedStyle.fontSize}px` : 'ABC';
         },
         description() {
             const fill = `Fill: ${this.savedStyle.backgroundColor || 'None'};`;
