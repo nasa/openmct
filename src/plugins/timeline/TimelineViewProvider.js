@@ -20,33 +20,45 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class LegacyPersistenceAdapter {
-    constructor(openmct) {
-        this.openmct = openmct;
-    }
+import TimelineViewLayout from './TimelineViewLayout.vue';
+import Vue from 'vue';
 
-    listObjects() {
-        return Promise.resolve([]);
-    }
+export default function TimelineViewProvider(openmct) {
 
-    listSpaces() {
-        return Promise.resolve(Object.keys(this.openmct.objects.providers));
-    }
+    return {
+        key: 'timeline.view',
+        name: 'Timeline',
+        cssClass: 'icon-clock',
+        canView(domainObject) {
+            return domainObject.type === 'plan';
+        },
 
-    updateObject(legacyDomainObject) {
-        return this.openmct.objects.save(legacyDomainObject.useCapability('adapter'));
-    }
+        canEdit(domainObject) {
+            return domainObject.type === 'plan';
+        },
 
-    readObject(space, key) {
-        const identifier = {
-            namespace: space,
-            key: key
-        };
+        view: function (domainObject) {
+            let component;
 
-        return this.openmct.objects.get(identifier).then(domainObject => {
-            let object = this.openmct.legacyObject(domainObject);
-
-            return object.model;
-        });
-    }
+            return {
+                show: function (element) {
+                    component = new Vue({
+                        el: element,
+                        components: {
+                            TimelineViewLayout
+                        },
+                        provide: {
+                            openmct,
+                            domainObject
+                        },
+                        template: '<timeline-view-layout></timeline-view-layout>'
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        }
+    };
 }

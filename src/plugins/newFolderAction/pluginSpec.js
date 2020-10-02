@@ -79,7 +79,7 @@ describe("the plugin", () => {
 
             spyOn(openmct.$injector, 'get').and.returnValue(mockDialogService);
             spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
-            spyOn(openmct.objects, 'save');
+            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 
             newFolderAction.invoke(mockObjectPath);
         });

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import SnapshotContainerComponent from './notebook-snapshot-container.vue';
+import SnapshotContainerComponent from './NotebookSnapshotContainer.vue';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import Vue from 'vue';

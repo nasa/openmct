@@ -20,33 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class LegacyPersistenceAdapter {
-    constructor(openmct) {
-        this.openmct = openmct;
-    }
+import TimelineViewProvider from './TimelineViewProvider';
 
-    listObjects() {
-        return Promise.resolve([]);
-    }
-
-    listSpaces() {
-        return Promise.resolve(Object.keys(this.openmct.objects.providers));
-    }
-
-    updateObject(legacyDomainObject) {
-        return this.openmct.objects.save(legacyDomainObject.useCapability('adapter'));
-    }
-
-    readObject(space, key) {
-        const identifier = {
-            namespace: space,
-            key: key
-        };
-
-        return this.openmct.objects.get(identifier).then(domainObject => {
-            let object = this.openmct.legacyObject(domainObject);
-
-            return object.model;
+export default function () {
+    return function install(openmct) {
+        openmct.types.addType('plan', {
+            name: 'Plan',
+            key: 'plan',
+            description: 'An activity timeline',
+            creatable: true,
+            cssClass: 'icon-timeline',
+            form: [
+                {
+                    name: 'Upload Plan (JSON File)',
+                    key: 'selectFile',
+                    control: 'file-input',
+                    required: true,
+                    text: 'Select File',
+                    type: 'application/json'
+                }
+            ],
+            initialize: function (domainObject) {
+            }
         });
-    }
+        openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
+    };
 }
+
