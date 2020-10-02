@@ -588,31 +588,46 @@ export default {
                 }
             }
         },
+        createDomainObjectLite(id, name, type) {
+            return {
+                id: id,
+                identifier: {
+                    namespace: '',
+                    key: ''
+                },
+                name: name,
+                type: type,
+                location: '',
+                lite: true
+            };
+        },
         async getSearchResults() {
-            let results = await this.searchService.query(this.searchValue);
+            let results = await this.searchService.queryLite(this.searchValue);
             this.searchResultItems = results.hits.map(result => {
 
-                let context = result.object.getCapability('context');
-                let object = result.object.useCapability('adapter');
+                // let context = result.object.getCapability('context');
+                // let object = result.object.useCapability('adapter');
+                let object = this.createDomainObjectLite(result.id, result.name, result.type);
                 let objectPath = [];
                 let navigateToParent;
 
-                if (context) {
-                    objectPath = context.getPath().slice(1)
-                        .map(oldObject => oldObject.useCapability('adapter'))
-                        .reverse();
-                    navigateToParent = objectPath.slice(1)
-                        .map((parent) => this.openmct.objects.makeKeyString(parent.identifier));
-                    navigateToParent = ROOT_PATH + navigateToParent.reverse().join('/');
-                }
+                // if (context) {
+                //     objectPath = context.getPath().slice(1)
+                //         .map(oldObject => oldObject.useCapability('adapter'))
+                //         .reverse();
+                //     navigateToParent = objectPath.slice(1)
+                //         .map((parent) => this.openmct.objects.makeKeyString(parent.identifier));
+                //     navigateToParent = ROOT_PATH + navigateToParent.reverse().join('/');
+                // }
 
                 return {
-                    id: this.openmct.objects.makeKeyString(object.identifier),
+                    id: result.id,
                     object,
                     objectPath,
                     navigateToParent
                 };
             });
+            console.log('search result items', this.searchResultItems);
             this.searchLoading = false;
         },
         searchTree(value) {

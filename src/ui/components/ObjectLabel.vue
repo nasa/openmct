@@ -70,18 +70,41 @@ export default {
             return type.definition.cssClass;
         }
     },
+    watch: {
+        domainObject() {
+            if (this.afterFullLoaded) {
+                this.observedObject = this.domainObject;
+                this.observe();
+
+                let { func, args } = this.afterFullLoaded;
+                console.log('func', func, 'args', ...args);
+                this[func](...args);
+                this.afterFullLoaded = undefined;
+                delete this.afterFullLoaded;
+            }
+        }
+    },
     mounted() {
-        if (this.observedObject) {
-            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
-                this.observedObject = newObject;
-            });
-            this.$once('hook:destroyed', removeListener);
+        if (!this.observedObject.lite) {
+            this.observe();
         }
 
         this.previewAction = new PreviewAction(this.openmct);
     },
     methods: {
+        observe() {
+            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
+                this.observedObject = newObject;
+            });
+            this.$once('hook:destroyed', removeListener);
+        },
         navigateOrPreview(event) {
+            if (this.observedObject.lite) {
+                this.loadFullDomainObjectThen(this.navigateOrPreview, arguments);
+
+                return;
+            }
+
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 this.preview();
@@ -93,6 +116,12 @@ export default {
             }
         },
         dragStart(event) {
+            if (this.observedObject.lite) {
+                this.loadFullDomainObjectThen(this.dragStart, arguments);
+
+                return;
+            }
+
             let navigatedObject = this.openmct.router.path[0];
             let serializedPath = JSON.stringify(this.objectPath);
             let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -110,6 +139,15 @@ export default {
             // (eg. notabook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
             event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
+        },
+        loadFullDomainObjectThen(func, args) {
+
+            this.afterFullLoaded = {
+                func,
+                args
+            };
+
+            this.$emit('getFullDomainObject');
         }
     }
 };

@@ -125,15 +125,17 @@ define([
      * @param topic the topicService.
      */
     GenericSearchProvider.prototype.indexOnMutation = function (topic) {
-        var mutationTopic = topic('mutation'),
-            provider = this;
+        let mutationTopic = topic('mutation');
 
-        mutationTopic.listen(function (mutatedObject) {
-            var editor = mutatedObject.getCapability('editor');
+        mutationTopic.listen(mutatedObject => {
+            let editor = mutatedObject.getCapability('editor');
             if (!editor || !editor.inEditContext()) {
-                provider.index(
+                let mutatedObjectModel = mutatedObject.getModel();
+                this.index(
                     mutatedObject.getId(),
-                    mutatedObject.getModel()
+                    mutatedObjectModel,
+                    mutatedObjectModel.type
+
                 );
             }
         });
@@ -178,14 +180,15 @@ define([
      * @param id a model id
      * @param model a model
      */
-    GenericSearchProvider.prototype.index = function (id, model) {
+    GenericSearchProvider.prototype.index = function (id, model, type) {
         var provider = this;
 
         if (id !== 'ROOT') {
             this.worker.postMessage({
                 request: 'index',
                 model: model,
-                id: id
+                id: id,
+                type: type
             });
         }
 
@@ -223,7 +226,7 @@ define([
             .then(function (objects) {
                 delete provider.pendingIndex[idToIndex];
                 if (objects[idToIndex]) {
-                    provider.index(idToIndex, objects[idToIndex].model);
+                    provider.index(idToIndex, objects[idToIndex].model, objects[idToIndex].model.type);
                 }
             }, function () {
                 provider
@@ -262,6 +265,7 @@ define([
                 return {
                     id: hit.item.id,
                     model: hit.item.model,
+                    type: hit.item.type,
                     score: hit.matchCount
                 };
             });
@@ -273,7 +277,9 @@ define([
 
             modelResults.hits = event.data.results.map(function (hit) {
                 return {
-                    id: hit.id
+                    id: hit.id,
+                    name: hit.name,
+                    type: hit.type
                 };
             });
         }

@@ -29,10 +29,11 @@
     // {id: domainObject's ID, name: domainObject's name}
     var indexedItems = [];
 
-    function indexItem(id, model) {
+    function indexItem(id, model, type) {
         indexedItems.push({
             id: id,
-            name: model.name.toLowerCase()
+            name: model.name.toLowerCase(),
+            type: type
         });
     }
 
@@ -70,7 +71,7 @@
 
     self.onmessage = function (event) {
         if (event.data.request === 'index') {
-            indexItem(event.data.id, event.data.model);
+            indexItem(event.data.id, event.data.model, event.data.type);
         } else if (event.data.request === 'search') {
             self.postMessage(search(event.data));
         }
