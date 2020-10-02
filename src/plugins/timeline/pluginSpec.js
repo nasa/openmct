@@ -55,7 +55,7 @@ describe('the plugin', function () {
         });
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless(appHolder);
     });
 
     afterEach(() => {
@@ -198,6 +198,13 @@ describe('the plugin', function () {
                     }
                 ]
             };
+            expect(Object.keys(planViewComponent.activitiesByRow)).toEqual(Object.keys(expectedActivitiesByRow));
+            expect(planViewComponent.activitiesByRow["0"][0].textLines.length).toEqual(expectedActivitiesByRow["0"][0].textLines.length);
+            expect(planViewComponent.activitiesByRow["42"][0].textLines.length).toEqual(expectedActivitiesByRow["42"][0].textLines.length);
+            delete planViewComponent.activitiesByRow["0"][0].textLines;
+            delete expectedActivitiesByRow["0"][0].textLines;
+            delete planViewComponent.activitiesByRow["42"][0].textLines;
+            delete expectedActivitiesByRow["42"][0].textLines;
             expect(planViewComponent.activitiesByRow).toEqual(expectedActivitiesByRow);
         });
     });
