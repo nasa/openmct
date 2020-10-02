@@ -57,7 +57,8 @@ define([
     './notificationIndicator/plugin',
     './newFolderAction/plugin',
     './persistence/couch/plugin',
-    './defaultRootName/plugin'
+    './defaultRootName/plugin',
+    './timeline/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -95,7 +96,8 @@ define([
     NotificationIndicator,
     NewFolderAction,
     CouchDBPlugin,
-    DefaultRootName
+    DefaultRootName,
+    Timeline
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -188,6 +190,7 @@ define([
     plugins.NewFolderAction = NewFolderAction.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
+    plugins.Timeline = Timeline.default;
 
     return plugins;
 });
