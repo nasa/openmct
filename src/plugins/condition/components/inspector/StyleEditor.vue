@@ -101,6 +101,10 @@ export default {
                 return [];
             }
         },
+        nonSpecificFontProperties: {
+            type: Array,
+            required: true
+        },
         styleItem: {
             type: Object,
             required: true
@@ -232,10 +236,11 @@ export default {
             this.$emit('persist', this.styleItem, item.property);
         },
         canSaveStyle() {
-            return this.isEditing && !this.mixedStyles.length;
+            return this.isEditing && !this.mixedStyles.length && !this.nonSpecificFontProperties.length;
         },
         saveItemStyle() {
-            this.stylesManager.save(this.itemStyle);
+            // this.stylesManager.save(this.itemStyle);
+            this.$emit('save-style', this.itemStyle);
         }
     }
 };

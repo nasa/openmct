@@ -115,7 +115,6 @@ export default {
         }
     },
     mounted() {
-        console.log(this.itemFontStyle);
         this.context = {
             layoutItem: this.item,
             index: this.index

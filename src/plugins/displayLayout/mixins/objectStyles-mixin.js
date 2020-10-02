@@ -29,8 +29,7 @@ export default {
         return {
             objectStyle: undefined,
             itemStyle: undefined,
-            styleClass: '',
-            itemFontStyle: undefined
+            styleClass: ''
         };
     },
     mounted() {
@@ -38,7 +37,6 @@ export default {
         this.itemId = this.item.id;
         this.objectStyle = this.getObjectStyleForItem(this.parentDomainObject.configuration.objectStyles);
         this.initObjectStyles();
-        this.itemFontStyle = this.getItemFontStyle(this.parentDomainObject.configuration.objectStyles);
     },
     destroyed() {
         if (this.stopListeningObjectStyles) {
@@ -52,15 +50,6 @@ export default {
             } else {
                 return undefined;
             }
-        },
-        getItemFontStyle(objectStyles) {
-            let itemFontStyle;
-
-            if (objectStyles && objectStyles[this.itemId] && objectStyles[this.itemId].fontStyle) {
-                itemFontStyle = JSON.parse(JSON.stringify(objectStyles[this.itemId].fontStyle));
-            }
-
-            return itemFontStyle;
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {
@@ -77,26 +66,10 @@ export default {
                 //Updating object styles in the inspector view will trigger this so that the changes are reflected immediately
                 let newItemObjectStyle = this.getObjectStyleForItem(newObjectStyle);
                 if (this.objectStyle !== newItemObjectStyle) {
-                    this.updateItemFontStyle(newItemObjectStyle);
                     this.objectStyle = newItemObjectStyle;
                     this.styleRuleManager.updateObjectStyleConfig(this.objectStyle);
                 }
-                console.log('configuration.objectStyles');
             });
-        },
-        updateItemFontStyle(objectStyle) {
-            console.log('here');
-            if (!objectStyle) {
-                console.log('no style');
-                return;
-            }
-
-            const fontSize = objectStyle.fontStyle && objectStyle.fontStyle.fontSize;
-            const font = objectStyle.fontStyle && objectStyle.fontStyle.font;
-
-            if (this.itemFontStyle && (this.itemFontStyle.fontSize !== fontSize || this.itemFontStyle.font !== font)) {
-                this.itemFontStyle = objectStyle.fontStyle;
-            }
         },
         updateStyle(style) {
             this.itemStyle = getStylesWithoutNoneValue(style);
