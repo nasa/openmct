@@ -164,7 +164,7 @@ export default {
         }
     },
     beforeDestroy() {
-       if (this.actionCollection) {
+        if (this.actionCollection) {
             this.unlistenToActionCollection();
         }
     },

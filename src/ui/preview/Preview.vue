@@ -59,7 +59,8 @@ export default {
         this.views = this.openmct.objectViews.get(this.domainObject).map((view) => {
             view.callBack = () => {
                 return this.setView(view);
-            }
+            };
+
             return view;
         });
         this.setView(this.views[0]);

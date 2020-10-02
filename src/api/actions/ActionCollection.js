@@ -152,7 +152,7 @@ class ActionCollection extends EventEmitter {
 
     _updateActions() {
         let newApplicableActions = this.openmct.actions._applicableActions(this.objectPath, this.viewProvider, this.options);
-        
+
         this.applicableActions = this._mergeOldAndNewActions(this.applicableActions, newApplicableActions);
         this._initializeActions();
         this._update();

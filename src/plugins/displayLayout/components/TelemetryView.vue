@@ -205,8 +205,6 @@ export default {
         this.openmct.objects.get(this.item.identifier)
             .then(this.setObject);
         this.openmct.time.on("bounds", this.refreshData);
-
-
     },
     destroyed() {
         this.removeSubscription();
@@ -285,10 +283,9 @@ export default {
             this.$emit('formatChanged', this.item, format);
         },
         getContextMenuActions() {
-            let actionsObject = this.openmct.actions.get(this.currentObjectPath, {}, {viewHistoricalData: true});
-            let applicableActionKeys = Object.keys(actionsObject).filter(key => actionsObject[key].key === 'viewHistoricalData');
+            let actionsObject = this.openmct.actions.get(this.currentObjectPath, undefined, { viewHistoricalData: true });
 
-            this.contextMenuActions = applicableActionKeys.map(key => actionsObject[key]);
+            this.contextMenuActions = CONTEXT_MENU_ACTIONS.map(actionKey => actionsObject[actionKey]);
         },
         showContextMenu(event) {
             this.openmct.menus.showMenu(event.x, event.y, this.contextMenuActions);
