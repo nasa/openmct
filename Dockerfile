@@ -2,12 +2,16 @@ FROM node:alpine
 
 WORKDIR /openmct
 
+RUN apk update && apk upgrade \
+  && apk add --no-cache git
+
+COPY package.json ./
+
+RUN npm install 
+
 COPY . ./
 
-RUN apk update && apk upgrade \
-  && apk add --no-cache git \
-  && npm install \
-  && npm run build:prod
+RUN npm run build:prod
 
 EXPOSE 8080
 
