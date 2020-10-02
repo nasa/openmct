@@ -70,7 +70,7 @@
             >
                 <ul
                     ref="scrollable"
-                    class="scrollable-children"
+                    class="c-tree__scrollable-children"
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
@@ -134,6 +134,7 @@ export default {
         let isMobile = this.openmct.$injector.get('agentService');
 
         return {
+            firstLoad: true,
             isLoading: false,
             searchLoading: false,
             searchValue: '',
@@ -146,6 +147,7 @@ export default {
             noScroll: true,
             updatingView: false,
             itemHeight: 28,
+            itemHeightCalculated: false,
             itemOffset: 0,
             childrenHeight: 0,
             scrollable: undefined,
@@ -189,6 +191,13 @@ export default {
             return {
                 paddingLeft: offset + 'px'
             };
+        },
+        ancestorsHeight() {
+            if (this.activeSearch) {
+                return 0;
+            }
+
+            return this.itemHeight * this.ancestors.length;
         }
     },
     watch: {
@@ -332,22 +341,14 @@ export default {
         },
         async setContainerHeight() {
             await this.$nextTick();
-            let mainTree = this.$refs.mainTree;
-            let mainTreeHeight = mainTree && mainTree.clientHeight ? mainTree.clientHeight : 0;
-
-            if (mainTreeHeight !== 0) {
+            let mainTreeHeight = this.mainTreeHeight();
+            if (mainTreeHeight !== 0 && mainTreeHeight !== this.itemHeight) {
                 this.calculateChildHeight(() => {
-                    let ancestorsHeight = this.calculateAncestorHeight();
                     let allChildrenHeight = this.calculateChildrenHeight();
+                    this.availableContainerHeight = mainTreeHeight - this.ancestorsHeight;
 
-                    if (this.activeSearch) {
-                        ancestorsHeight = 0;
-                    }
-
-                    this.availableContainerHeight = mainTreeHeight - ancestorsHeight;
-
+                    this.setPageThreshold();
                     if (allChildrenHeight > this.availableContainerHeight) {
-                        this.setPageThreshold();
                         this.noScroll = false;
                     } else {
                         this.noScroll = true;
@@ -358,6 +359,11 @@ export default {
             } else {
                 window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
             }
+        },
+        mainTreeHeight() {
+            let mainTree = this.$refs.mainTree;
+
+            return mainTree && mainTree.clientHeight ? mainTree.clientHeight : 0;
         },
         calculateFirstVisibleItem() {
             let scrollTop = this.$refs.scrollable.scrollTop;
@@ -378,12 +384,11 @@ export default {
         setChildrenHeight() {
             this.childrenHeight = this.calculateChildrenHeight();
         },
-        calculateAncestorHeight() {
-            let ancestorCount = this.ancestors.length;
-
-            return this.itemHeight * ancestorCount;
-        },
         calculateChildHeight(callback) {
+            if (this.itemHeightCalculated) {
+                callback();
+            }
+
             if (callback) {
                 this.afterChildHeight = callback;
             }
@@ -420,11 +425,12 @@ export default {
 
             this.getChildHeight = false;
             this.settingChildrenHeight = false;
+            this.itemHeightCalculated = true;
         },
         setPageThreshold() {
             let threshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
             // all items haven't loaded yet (nextTick not working for this)
-            if (threshold === ITEM_BUFFER) {
+            if (threshold === ITEM_BUFFER || threshold === ITEM_BUFFER + 1) {
                 window.setTimeout(this.setPageThreshold, RECHECK_DELAY);
             } else {
                 this.pageThreshold = threshold;
@@ -525,9 +531,14 @@ export default {
                 this.jumpToPath();
             }
 
-            this.autoScroll();
             this.isLoading = false;
-            this.setContainerHeight();
+            if (this.firstLoad) {
+                setTimeout(this.setContainerHeight, 250);
+                this.firstLoad = false;
+            } else {
+                this.setContainerHeight();
+                this.autoScroll();
+            }
         },
         async jumpToPath(saveExpandedPath = false) {
             // switching back and forth between multiple root children can cause issues,
@@ -651,10 +662,6 @@ export default {
             this.setContainerHeight();
         },
         handleReset(node) {
-            if (this.isLoading) {
-                return;
-            }
-
             this.childrenSlideClass = 'up';
             this.ancestors.splice(this.ancestors.indexOf(node) + 1);
             this.getAllChildren(node);
@@ -717,8 +724,7 @@ export default {
         },
         scrollableStyles() {
             return {
-                height: this.availableContainerHeight + 'px',
-                overflow: this.noScroll ? 'hidden' : 'scroll'
+                height: this.availableContainerHeight + 'px'
             };
         },
         getElementStyleValue(el, style) {
