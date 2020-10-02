@@ -241,8 +241,11 @@ export default {
             if (!datum) {
                 return;
             }
-
-            return this.timeFormatter.format(datum);
+            
+            let dateTimeStr = this.timeFormatter.format(datum);
+            
+            // Replace ISO "T" with a space to allow wrapping
+            return dateTimeStr.replace("T", " ");
         },
         parseTime(datum) {
             if (!datum) {
