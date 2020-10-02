@@ -96,10 +96,6 @@
         height: 0; // Fixes Chrome 73 overflow bug
         overflow-x: auto;
         overflow-y: scroll;
-
-        .is-editing & {
-            pointer-events: none;
-        }
     }
 
     /******************************* TABLES */
@@ -113,6 +109,10 @@
             align-items: stretch;
             position: absolute;
             height: 18px; // Needed when a row has empty values in its cells
+
+            .is-editing .l-layout__frame & {
+                pointer-events: none;
+            }
 
             &.is-selected {
                 background-color: $colorSelectedBg !important;
