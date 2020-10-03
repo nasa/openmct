@@ -156,9 +156,12 @@ export default {
                 : this.imageUrl;
         },
         getTime(datum) {
-            return datum
+            let dateTimeStr = datum
                 ? this.timeFormat.format(datum)
                 : this.time;
+
+            // Replace ISO "T" with a space to allow wrapping
+            return dateTimeStr ? dateTimeStr.replace("T", " ") : "";
         },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
