@@ -29,7 +29,6 @@ define(["zepto"], function ($) {
      * @memberof platform/forms
      */
     function FileInputService() {
-
     }
 
     /**
@@ -38,7 +37,7 @@ define(["zepto"], function ($) {
      *
      * @returns {Promise} promise for an object containing file meta-data
      */
-    FileInputService.prototype.getInput = function () {
+    FileInputService.prototype.getInput = function (fileType) {
         var input = this.newInput();
         var read = this.readFile;
         var fileInfo = {};
@@ -51,6 +50,10 @@ define(["zepto"], function ($) {
                 file = this.files[0];
                 input.remove();
                 if (file) {
+                    if (fileType && (!file.type || (file.type !== fileType))) {
+                        reject("Incompatible file type");
+                    }
+
                     read(file)
                         .then(function (contents) {
                             fileInfo.name = file.name;
