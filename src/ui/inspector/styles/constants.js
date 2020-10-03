@@ -1,4 +1,4 @@
-export const SMALL_FONT_SIZES = [
+export const FONT_SIZES = [
     {
         name: 'Default Size',
         value: 'default'
@@ -46,10 +46,7 @@ export const SMALL_FONT_SIZES = [
     {
         name: '24px',
         value: '24'
-    }
-];
-
-export const LARGE_FONT_SIZES = [
+    },
     {
         name: '28px',
         value: '28'

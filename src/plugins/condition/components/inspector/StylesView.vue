@@ -35,7 +35,6 @@
             v-if="canStyleFont"
             :allow-editing="allowEditing"
             :font-style="consolidatedFontStyle"
-            :font-size-set="fontSizeSet"
             @set-font-property="setFontProperty"
         />
         <div class="c-inspect-styles__content">
@@ -69,7 +68,6 @@
             v-if="canStyleFont"
             :allow-editing="allowEditing"
             :font-style="consolidatedFontStyle"
-            :font-size-set="fontSizeSet"
         />
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <a v-if="conditionSetDomainObject"
@@ -243,13 +241,6 @@ export default {
         },
         nonSpecificFontProperties() {
             return Object.keys(this.consolidatedFontStyle).filter(property => this.consolidatedFontStyle[property] === NON_SPECIFIC);
-        },
-        fontSizeSet() {
-            const includesPlotOrTable = this.styleableFontItems.some(
-                styleable => styleable[0].context.item && (styleable[0].context.item.type.includes('plot') || styleable[0].context.item.type.includes('table'))
-            );
-
-            return includesPlotOrTable ? 'small' : 'big';
         },
         canStyleFont() {
             return Boolean(this.styleableFontItems.length);

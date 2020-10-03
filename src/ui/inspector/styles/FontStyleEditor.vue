@@ -15,8 +15,7 @@
 import ToolbarSelectMenu from '@/ui/toolbar/components/toolbar-select-menu.vue';
 
 import {
-    SMALL_FONT_SIZES,
-    LARGE_FONT_SIZES,
+    FONT_SIZES,
     FONTS
 } from '@/ui/inspector/styles/constants';
 
@@ -28,10 +27,6 @@ export default {
     props: {
         fontStyle: {
             type: Object,
-            required: true
-        },
-        fontSizeSet: {
-            type: String,
             required: true
         },
         allowEditing: {
@@ -55,15 +50,8 @@ export default {
                 icon: "icon-font-size",
                 title: "Set font size",
                 value: this.fontStyle.fontSize,
-                options: this.availableFontSizeOptions
+                options: FONT_SIZES
             };
-        },
-        availableFontSizeOptions() {
-            if (this.fontSizeSet === 'small') {
-                return SMALL_FONT_SIZES;
-            } else {
-                return SMALL_FONT_SIZES.concat(LARGE_FONT_SIZES);
-            }
         }
     },
     methods: {
