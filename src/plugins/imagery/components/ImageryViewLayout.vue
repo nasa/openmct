@@ -22,7 +22,7 @@
                 ></a>
             </span>
         </div>
-        <div class="main-image s-image-main c-imagery__main-image has-local-controls j-imagery-image"
+        <div class="main-image s-image-main c-imagery__main-image has-local-controls js-imageryView-image"
              :class="{'paused unnsynced': paused(),'stale':false }"
              :style="{'background-image': getImageUrl() ? `url(${getImageUrl()})` : 'none',
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
