@@ -63,7 +63,7 @@
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
-                    <div :style="{ height: childrenHeight + 'px'}">
+                    <div :style="childrenStyles()">
                         <tree-item
                             v-for="(treeItem, index) in visibleItems"
                             :key="treeItem.id"
@@ -322,6 +322,7 @@ export default {
             });
         },
         async setContainerHeight() {
+            console.log('set contaienr height');
             await this.$nextTick();
             let mainTree = this.$refs.mainTree;
             let mainTreeHeight = mainTree && mainTree.clientHeight ? mainTree.clientHeight : 0;
@@ -331,6 +332,7 @@ export default {
                     let allChildrenHeight = this.calculateChildrenHeight();
 
                     this.availableContainerHeight = mainTreeHeight - this.ancestorsHeight;
+                    console.log('container height', this.availableContainerHeight);
 
                     if (allChildrenHeight > this.availableContainerHeight) {
                         this.setPageThreshold();
@@ -357,7 +359,7 @@ export default {
         },
         calculateChildrenHeight() {
             let mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-            let childrenCount = this.focusedItems.length;
+            let childrenCount = this.focusedItems.length || 1;
 
             return (this.itemHeight * childrenCount) - mainTreeTopMargin; // 5px margin
         },
@@ -676,9 +678,14 @@ export default {
             return { position: 'relative' };
         },
         scrollableStyles() {
-            return {
-                height: this.availableContainerHeight + 'px'
-            };
+            let height = this.availableContainerHeight + 'px';
+
+            return { height };
+        },
+        childrenStyles() {
+            let height = this.childrenHeight + 'px';
+
+            return { height };
         },
         childrenIn(el, done) {
             // still needing this timeout for some reason
