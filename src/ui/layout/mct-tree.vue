@@ -74,7 +74,7 @@
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
-                    <div :style="childrenStyles()">
+                    <div>
                         <tree-item
                             v-for="(treeItem, index) in visibleItems"
                             :key="treeItem.id"
@@ -147,7 +147,7 @@ export default {
             updatingView: false,
             itemHeight: 28,
             itemOffset: 0,
-            childrenHeight: 0,
+            // childrenHeight: 0,
             scrollable: undefined,
             pageThreshold: 50,
             activeSearch: false,
@@ -196,6 +196,16 @@ export default {
             }
 
             return this.itemHeight * this.ancestors.length;
+        },
+        childrenHeight() {
+            if (!this.$refs.mainTree) {
+                return;
+            }
+
+            let mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+            let childrenCount = this.focusedItems.length || 1;
+
+            return (this.itemHeight * childrenCount) - mainTreeTopMargin; // 5px margin
         }
     },
     watch: {
@@ -255,6 +265,12 @@ export default {
         },
         ancestors() {
             this.observeAncestors();
+        },
+        focusedItems() {
+            console.log('focused items changed', this.focusedItems);
+        },
+        visibleItems() {
+            // this.setContainerHeight();
         }
     },
     async mounted() {
@@ -338,19 +354,19 @@ export default {
             });
         },
         async setContainerHeight() {
-            console.log('set contaienr height');
+            console.log('set container height');
             await this.$nextTick();
             let mainTree = this.$refs.mainTree;
             let mainTreeHeight = mainTree && mainTree.clientHeight ? mainTree.clientHeight : 0;
-
+            console.log('mainTreeHeight', mainTreeHeight);
             if (mainTreeHeight !== 0) {
-                this.calculateChildHeight(() => {
-                    let allChildrenHeight = this.calculateChildrenHeight();
+                this.calculateItemHeight(() => {
+                    // let allChildrenHeight = this.getChildrenHeight();
 
                     this.availableContainerHeight = mainTreeHeight - this.ancestorsHeight;
-                    console.log('container height', this.availableContainerHeight);
+                    console.log('setting availableContainerHeight', this.availableContainerHeight);
 
-                    if (allChildrenHeight > this.availableContainerHeight) {
+                    if (this.childrenHeight > this.availableContainerHeight) {
                         this.setPageThreshold();
                         this.noScroll = false;
                     } else {
@@ -373,16 +389,16 @@ export default {
 
             return Math.ceil(scrollBottom / this.itemHeight);
         },
-        calculateChildrenHeight() {
-            let mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-            let childrenCount = this.focusedItems.length || 1;
+        // getChildrenHeight() {
+        //     let mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+        //     let childrenCount = this.focusedItems.length || 1;
 
-            return (this.itemHeight * childrenCount) - mainTreeTopMargin; // 5px margin
-        },
-        setChildrenHeight() {
-            this.childrenHeight = this.calculateChildrenHeight();
-        },
-        calculateChildHeight(callback) {
+        //     return (this.itemHeight * childrenCount) - mainTreeTopMargin; // 5px margin
+        // },
+        // setChildrenHeight() {
+        //     this.childrenHeight = this.getChildrenHeight();
+        // },
+        calculateItemHeight(callback) {
             if (callback) {
                 this.afterChildHeight = callback;
             }
@@ -411,7 +427,7 @@ export default {
             let totalVerticalMargin = topMargin + bottomMargin;
 
             this.itemHeight = item.clientHeight + totalVerticalMargin;
-            this.setChildrenHeight();
+            // this.setChildrenHeight();
             if (this.afterChildHeight) {
                 this.afterChildHeight();
                 delete this.afterChildHeight;
@@ -701,14 +717,15 @@ export default {
         },
         scrollableStyles() {
             let height = this.availableContainerHeight + 'px';
-
+            console.log('scrollableStyles', height);
             return { height };
         },
-        childrenStyles() {
-            let height = this.childrenHeight + 'px';
+        // childrenStyles() {
+        //     let height = this.childrenHeight + 'px';
+        //     console.log('childrenStyles', height);
 
-            return { height };
-        },
+        //     return { height };
+        // },
         getElementStyleValue(el, style) {
             let styleString = window.getComputedStyle(el)[style];
             let index = styleString.indexOf('px');
