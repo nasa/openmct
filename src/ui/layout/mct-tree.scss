@@ -250,20 +250,14 @@
 }
 
 // TRANSITIONS
-.slide-left,
-.slide-right {
-    animation-duration: 500ms;
-    animation-iteration-count: 1;
-    transition: all;
-    transition-timing-function: ease-in-out;
-}
+.children-enter-active {
+    &.down {
+        animation: animSlideLeft 500ms;
+    }
 
-.slide-left {
-    animation-name: animSlideLeft;
-}
-
-.slide-right {
-    animation-name: animSlideRight;
+    &.up {
+        animation: animSlideRight 500ms;
+    }
 }
 
 @keyframes animSlideLeft {
