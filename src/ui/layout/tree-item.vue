@@ -116,11 +116,6 @@ export default {
     watch: {
         expanded() {
             this.$emit('expanded', this.domainObject);
-        },
-        emitHeight() {
-            this.$nextTick(() => {
-                this.$emit('emittedHeight', this.$refs.me);
-            });
         }
     },
     mounted() {
@@ -137,8 +132,15 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
+    },
+    updated() {
         if (this.emitHeight) {
-            this.$emit('emittedHeight', this.$refs.me);
+            this.$nextTick(() => {
+                // no reliable way to get the fully rendered height without timeout
+                setTimeout(() => {
+                    this.$emit('emittedHeight', this.$refs.me.offsetHeight);
+                }, 250);
+            });
         }
     },
     destroyed() {
