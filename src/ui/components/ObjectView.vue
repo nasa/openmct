@@ -30,6 +30,11 @@ export default {
             default: ''
         }
     },
+    data() {
+        return {
+            currentObject: this.object
+        };
+    },
     computed: {
         objectFontStyle() {
             return this.currentObject && this.currentObject.configuration && this.currentObject.configuration.fontStyle;
@@ -56,11 +61,6 @@ export default {
                 this.setFont(newFont);
             }
         }
-    },
-    data() {
-        return {
-            currentObject: this.object
-        };
     },
     destroyed() {
         this.clear();
