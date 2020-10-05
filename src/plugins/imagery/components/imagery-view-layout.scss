@@ -4,6 +4,10 @@
     overflow: hidden;
     height: 100%;
 
+    &:focus {
+        outline: none;
+    }
+
     > * + * {
         margin-top: $interiorMargin;
     }
