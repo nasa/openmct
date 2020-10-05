@@ -33,6 +33,8 @@
              :class="{'paused unnsynced': isPaused,'stale':false }"
              :style="{'background-image': imageUrl ? `url(${imageUrl})` : 'none',
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
+             :data-openmct-image-timestamp="getTime()"
+             :data-openmct-object-keystring="keystring"
         >
             <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
                 <button class="c-nav c-nav--prev"
