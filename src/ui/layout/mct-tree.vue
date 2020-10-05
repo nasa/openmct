@@ -244,11 +244,8 @@ export default {
                 this.searchDeactivated();
             }
         },
-        searchResultItems() {
-            // this.setContainerHeight();
-        },
         allTreeItems() {
-            // catches an edge case race condition and when new items are added (ex. folder)
+            // catches an edge case when new items are added (ex. folder)
             if (!this.isLoading) {
                 this.setContainerHeight();
             }
@@ -407,10 +404,6 @@ export default {
 
             if (this.itemHeightCalculated) {
                 return;
-            }
-
-            if (this.isMobile) {
-                // item = item.children[0];
             }
 
             await this.$nextTick();
@@ -627,7 +620,6 @@ export default {
             this.activeSearch = false;
             await this.$nextTick();
             this.$refs.scrollable.scrollTop = 0;
-            // this.setContainerHeight();
         },
         handleReset(node) {
             this.childrenSlideClass = 'up';
