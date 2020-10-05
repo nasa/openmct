@@ -40,7 +40,7 @@ describe("the plugin", () => {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        newFolderAction = openmct.actions._allActions['newFolder'];
+        newFolderAction = openmct.actions._allActions.newFolder;
     });
 
     afterEach(() => {
