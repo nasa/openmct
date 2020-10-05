@@ -40,9 +40,7 @@ describe("the plugin", () => {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        newFolderAction = openmct.contextMenu._allActions.filter(action => {
-            return action.key === 'newFolder';
-        })[0];
+        newFolderAction = openmct.actions._allActions['newFolder'];
     });
 
     afterEach(() => {

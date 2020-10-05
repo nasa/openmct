@@ -105,6 +105,16 @@ export default class RemoveAction {
         let parentType = parent && this.openmct.types.get(parent.type);
         let child = objectPath[0];
         let locked = child.locked ? child.locked : parent && parent.locked;
+        let isEditing = this.openmct.editor.isEditing();
+
+        if (isEditing) {
+            let currentItemInView = this.openmct.router.path[0];
+            let domainObject = objectPath[0];
+
+            if (this.openmct.objects.areIdsEqual(currentItemInView.identifier, domainObject.identifier)) {
+                return false;
+            }
+        }
 
         if (locked) {
             return false;

@@ -33,16 +33,18 @@ class ActionCollection extends EventEmitter {
         this.view = view;
         this.objectUnsubscribes = [];
 
-        this._observeObjectPath();
-        this._initializeActions();
-
         let debounceOptions = {
             leading: false,
             trailing: true
         };
 
-        this._updateActions = _.debounce(this._updateActions, 150, debounceOptions);
-        this._update = _.debounce(this._update, 150, debounceOptions);
+        this._updateActions = _.debounce(this._updateActions.bind(this), 150, debounceOptions);
+        this._update = _.debounce(this._update.bind(this), 150, debounceOptions);
+
+        this._observeObjectPath();
+        this._initializeActions();
+
+        this.openmct.editor.on('isEditing', this._updateActions);
     }
 
     disable(actionKeys) {
@@ -85,6 +87,8 @@ class ActionCollection extends EventEmitter {
         this.objectUnsubscribes.forEach(unsubscribe => {
             unsubscribe();
         });
+
+        this.openmct.editor.off('isEditing', this._updateActions);
 
         this.emit('destroy', this.view);
     }
