@@ -66,8 +66,8 @@
         :object="domainObject"
         :show-edit-view="showEditView"
         :object-path="objectPath"
-        :font-size="fontSize"
-        :font="font"
+        :layout-font-size="layoutFontSize"
+        :layout-font="layoutFont"
     />
 </div>
 </template>
@@ -106,11 +106,11 @@ export default {
             type: Boolean,
             default: true
         },
-        fontSize: {
+        layoutFontSize: {
             type: String,
             default: ''
         },
-        font: {
+        layoutFont: {
             type: String,
             default: ''
         }

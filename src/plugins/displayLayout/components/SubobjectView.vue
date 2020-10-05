@@ -35,8 +35,8 @@
         :object-path="currentObjectPath"
         :has-frame="item.hasFrame"
         :show-edit-view="false"
-        :font-size="fontSize"
-        :font="font"
+        :layout-font-size="item.fontSize"
+        :layout-font="item.font"
     />
 </layout-frame>
 </template>
@@ -111,26 +111,6 @@ export default {
             domainObject: undefined,
             currentObjectPath: []
         };
-    },
-    computed: {
-        fontStyle() {
-            return this.domainObject.configuration && this.domainObject.configuration.fontStyle;
-        },
-        fontSize() {
-            console.log(this.domainObject);
-            console.log(this.legacyFontSize);
-
-            return this.fontStyle ? this.fontStyle.fontSize : this.legacyFontSize;
-        },
-        font() {
-            return this.fontStyle ? this.fontStyle.font : this.legacyFont;
-        },
-        legacyFontSize() {
-            return this.item.fontSize;
-        },
-        legacyFont() {
-            return this.item.font;
-        }
     },
     watch: {
         index(newIndex) {

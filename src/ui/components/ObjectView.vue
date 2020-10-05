@@ -21,13 +21,24 @@ export default {
                 return [];
             }
         },
-        fontSize: {
+        layoutFontSize: {
             type: String,
             default: ''
         },
-        font: {
+        layoutFont: {
             type: String,
             default: ''
+        }
+    },
+    computed: {
+        objectFontStyle() {
+            return this.currentObject && this.currentObject.configuration && this.currentObject.configuration.fontStyle;
+        },
+        fontSize() {
+            return this.objectFontStyle ? this.objectFontStyle.fontSize : this.layoutFontSize;
+        },
+        font() {
+            return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         }
     },
     watch: {
@@ -45,6 +56,11 @@ export default {
                 this.setFont(newFont);
             }
         }
+    },
+    data() {
+        return {
+            currentObject: this.object
+        };
     },
     destroyed() {
         this.clear();
@@ -69,7 +85,6 @@ export default {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
     },
     mounted() {
-        this.currentObject = this.object;
         this.updateView();
         this.$el.addEventListener('dragover', this.onDragOver, {
             capture: true
@@ -341,7 +356,6 @@ export default {
             return [browseObject, parentObject, this.currentObject].every(object => object && !object.locked);
         },
         setFontSize(newSize) {
-            console.log(newSize);
             let elemToStyle = this.getStyleReceiver();
             elemToStyle.dataset.fontSize = newSize;
         },
