@@ -83,7 +83,7 @@
                             :item-offset="itemOffset"
                             :item-index="index"
                             :item-height="itemHeight"
-                            :virtual-scroll="scrollActive"
+                            :virtual-scroll="true"
                             :show-down="activeSearch ? false : true"
                             @expanded="handleExpanded"
                         />
@@ -197,9 +197,6 @@ export default {
         },
         pageThreshold() {
             return Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
-        },
-        scrollActive() {
-            return !(this.childrenHeight > this.availableContainerHeight);
         }
     },
     watch: {
@@ -210,7 +207,7 @@ export default {
             let jumpAndScroll = currentLocationPath
                     && hasParent
                     && !this.currentPathIsActivePath();
-            let justScroll = this.currentPathIsActivePath() && this.scrollActive;
+            let justScroll = this.currentPathIsActivePath();
 
             if (this.searchValue) {
                 this.searchValue = '';
@@ -254,10 +251,10 @@ export default {
             this.observeAncestors();
         },
         availableContainerHeight() {
-            this.updatevisibleItems();
+            this.updateVisibleItems();
         },
         focusedItems() {
-            this.updatevisibleItems();
+            this.updateVisibleItems();
         }
     },
     async mounted() {
@@ -273,20 +270,20 @@ export default {
 
         if (root.identifier !== undefined) {
             let rootNode = this.buildTreeItem(root);
-            let rootComposition = this.openmct.composition.get(root);
-            let rootCompositionCollection = await rootComposition.load();
+            let rootCompositionCollection = this.openmct.composition.get(root);
+            let rootComposition = await rootCompositionCollection.load();
 
             // if more than one root item, set multipleRootChildren to true and add root to ancestors
-            if (rootCompositionCollection && rootCompositionCollection.length > 1) {
+            if (rootComposition && rootComposition.length > 1) {
                 this.ancestors.push(rootNode);
                 if (!this.itemHeightCalculated) {
                     await this.calculateItemHeight();
                 }
 
                 this.multipleRootChildren = true;
-            } else if (!savedPath && rootCompositionCollection[0] !== undefined) {
+            } else if (!savedPath && rootComposition[0] !== undefined) {
                 // needed if saved path is not set, need to set it to the only root child
-                savedPath = rootCompositionCollection[0].identifier;
+                savedPath = rootComposition[0].identifier;
             }
 
             if (savedPath) {
@@ -317,7 +314,7 @@ export default {
         this.stopObservingAncestors();
     },
     methods: {
-        updatevisibleItems() {
+        updateVisibleItems() {
             if (this.updatingView) {
                 return;
             }
@@ -672,7 +669,7 @@ export default {
         },
         scrollItems(event) {
             if (!windowResizing) {
-                this.updatevisibleItems();
+                this.updateVisibleItems();
             }
         },
         childrenListStyles() {

@@ -135,12 +135,10 @@ export default {
     },
     updated() {
         if (this.emitHeight) {
-            this.$nextTick(() => {
-                // no reliable way to get the fully rendered height without timeout
-                setTimeout(() => {
-                    this.$emit('emittedHeight', this.$refs.me.offsetHeight);
-                }, 250);
-            });
+            // no reliable way to get the fully rendered height without timeout
+            setTimeout(() => {
+                this.$emit('emittedHeight', this.$refs.me.offsetHeight);
+            }, 250);
         }
     },
     destroyed() {
