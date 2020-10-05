@@ -85,7 +85,10 @@ export default {
         },
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
-            // this.viewBounds.end = this.viewBounds.end + (30 * 60 * 1000);
+            //Add a 30 min padding to the end bounds to look ahead
+            let endDate = new Date(this.viewBounds.end);
+            endDate.setMinutes(endDate.getMinutes() + 30);
+            this.viewBounds.end = endDate.getTime();
             this.setScaleAndPlotActivities();
         },
         updateNowMarker() {
@@ -240,9 +243,14 @@ export default {
                 currentRow = currentRow + ROW_HEIGHT * index;
                 let newGroup = true;
                 activities.forEach((activity) => {
-                    if (this.isActivityInBounds(activity)) {
-                        const currentStart = Math.max(this.viewBounds.start, activity.start);
-                        const currentEnd = Math.min(this.viewBounds.end, activity.end);
+                    const activityStart = new Date(activity.start).getTime();
+                    const activityEnd = new Date(activity.end).getTime();
+                    if (this.isActivityInBounds({
+                        start: activityStart,
+                        end: activityEnd
+                    })) {
+                        const currentStart = Math.max(this.viewBounds.start, activityStart);
+                        const currentEnd = Math.min(this.viewBounds.end, activityEnd);
                         const rectX = this.xScale(currentStart);
                         const rectY = this.xScale(currentEnd);
                         const rectWidth = rectY - rectX;

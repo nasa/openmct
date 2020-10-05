@@ -157,7 +157,14 @@ describe('the plugin', function () {
 
         it('loads a time axis into the view', () => {
             let ticks = planViewComponent.axisElement.node().querySelectorAll('g.tick');
-            expect(ticks.length).toEqual(11);
+            expect(ticks.length).toEqual(12);
+        });
+
+        it('shows 30 minutes ahead of the end bounds in the time axis', () => {
+            const endDate = new Date(1597181232854);
+            endDate.setMinutes(endDate.getMinutes() + 30);
+            const endBoundsPlus30Min = new Date(endDate).getTime();
+            expect(planViewComponent.viewBounds.end).toEqual(endBoundsPlus30Min);
         });
 
         it('calculates the activity layout', () => {
