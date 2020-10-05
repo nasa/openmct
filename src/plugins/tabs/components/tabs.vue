@@ -28,7 +28,18 @@
             }"
             @click="showTab(tab, index)"
         >
-            <span class="c-button__label c-tabs-view__tab__label">{{ tab.domainObject.name }}</span>
+            <div class="c-tabs-view__tab__label c-object-label"
+                 :class="{'is-missing': tab.domainObject.status === 'missing'}"
+            >
+                <div class="c-object-label__type-icon"
+                     :class="tab.type.definition.cssClass"
+                >
+                    <span class="is-missing__indicator"
+                          title="This item is missing"
+                    ></span>
+                </div>
+                <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
+            </div>
             <button v-if="isEditing"
                     class="icon-x c-click-icon c-tabs-view__tab__close-btn"
                     @click="showRemoveDialog(index)"
