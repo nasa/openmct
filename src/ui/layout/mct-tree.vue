@@ -43,7 +43,7 @@
                 :show-up="index < ancestors.length - 1"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
-                :emit-height="getItemHeight"
+                :should-emit-height="shouldEmitHeight"
                 @emittedHeight="setItemHeight"
                 @resetTree="handleReset"
             />
@@ -149,7 +149,7 @@ export default {
             itemOffset: 0,
             scrollable: undefined,
             activeSearch: false,
-            getItemHeight: false,
+            shouldEmitHeight: false,
             isMobile: isMobile.mobileName,
             multipleRootChildren: false,
             noVisibleItems: false,
@@ -392,7 +392,7 @@ export default {
             return Math.ceil(scrollBottom / this.itemHeight);
         },
         calculateItemHeight() {
-            this.getItemHeight = true;
+            this.shouldEmitHeight = true;
 
             return new Promise((resolve, reject) => {
                 this.itemHeightResolve = resolve;
@@ -408,7 +408,7 @@ export default {
 
             this.itemHeight = height;
             this.itemHeightCalculated = true;
-            this.getItemHeight = false;
+            this.shouldEmitHeight = false;
 
             this.itemHeightResolve();
         },

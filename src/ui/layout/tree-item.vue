@@ -84,7 +84,7 @@ export default {
             type: Boolean,
             default: false
         },
-        emitHeight: {
+        shouldEmitHeight: {
             type: Boolean,
             default: false
         }
@@ -124,7 +124,7 @@ export default {
         // only reliable way to get final item height
         document.onreadystatechange = () => {
             if (document.readyState === "complete") {
-                if (this.emitHeight) {
+                if (this.shouldEmitHeight) {
                     this.$emit('emittedHeight', this.$el.offsetHeight);
                 }
             }
