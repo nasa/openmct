@@ -1,11 +1,10 @@
 <template>
 <div
-    :tabindex="listenToKeys"
+    tabindex="0"
     class="c-imagery"
     @keyup="arrowUpHandler"
     @keydown="arrowDownHandler"
-    @mouseover="listenToKeys = 0"
-    @mouseleave="listenToKeys = undefined"
+    @mouseover="focusElement"
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
@@ -33,8 +32,8 @@
              :class="{'paused unnsynced': isPaused,'stale':false }"
              :style="{'background-image': imageUrl ? `url(${imageUrl})` : 'none',
                       'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
-             :data-openmct-image-timestamp="getTime()"
-             :data-openmct-object-keystring="keystring"
+             :data-openmct-image-timestamp="time"
+             :data-openmct-object-keystring="keyString"
         >
             <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
                 <button class="c-nav c-nav--prev"
@@ -73,16 +72,16 @@
          :class="{'is-paused': isPaused}"
          @scroll="handleScroll"
     >
-        <div v-for="(imageData, i) in imageHistory"
-             :key="i"
+        <div v-for="(datum, index) in imageHistory"
+             :key="datum.url"
              class="c-imagery__thumb c-thumb"
-             :class="{ selected: focusedImage === imageData && isPaused }"
-             @click="setFocusedImage(imageData, thumbnailClick)"
+             :class="{ selected: focusedImageIndex === index && isPaused }"
+             @click="setFocusedImage(index, thumbnailClick)"
         >
             <img class="c-thumb__image"
-                 :src="formatImageUrl(imageData)"
+                 :src="formatImageUrl(datum)"
             >
-            <div class="c-thumb__timestamp">{{ formatTime(imageData) }}</div>
+            <div class="c-thumb__timestamp">{{ formatTime(datum) }}</div>
         </div>
     </div>
 </div>
@@ -119,7 +118,6 @@ export default {
                 brightness: 100,
                 contrast: 100
             },
-            focusedImage: undefined,
             imageHistory: [],
             thumbnailClick: THUMBNAIL_CLICKED,
             isPaused: false,
@@ -127,10 +125,10 @@ export default {
             requestCount: 0,
             timeSystem: timeSystem,
             timeFormatter: undefined,
-            formattedDuration: undefined,
             refreshCSS: false,
-            listenToKeys: undefined,
-            index: undefined
+            keyString: undefined,
+            focusedImageIndex: undefined,
+            numericDuration: undefined
         };
     },
     computed: {
@@ -142,7 +140,7 @@ export default {
         },
         isImageNew() {
             let cutoff = FIVE_MINUTES;
-            let age = this.getNumericDuration();
+            let age = this.numericDuration;
 
             return age < cutoff && !this.refreshCSS;
         },
@@ -152,7 +150,7 @@ export default {
         isNextDisabled() {
             let disabled = false;
 
-            if (this.index === -1 || this.index === this.imageHistory.length - 1) {
+            if (this.focusedImageIndex === -1 || this.focusedImageIndex === this.imageHistory.length - 1) {
                 disabled = true;
             }
 
@@ -161,26 +159,39 @@ export default {
         isPrevDisabled() {
             let disabled = false;
 
-            if (this.index === 0 || this.imageHistory.length < 2) {
+            if (this.focusedImageIndex === 0 || this.imageHistory.length < 2) {
                 disabled = true;
             }
 
             return disabled;
+        },
+        focusedImage() {
+            return this.imageHistory[this.focusedImageIndex];
+        },
+        parsedSelectedTime() {
+            return this.parseTime(this.focusedImage);
+        },
+        formattedDuration() {
+            let result = 'N/A';
+            let negativeAge = -1;
+
+            if (this.numericDuration > TWENTYFOUR_HOURS) {
+                negativeAge *= (this.numericDuration / TWENTYFOUR_HOURS);
+                result = moment.duration(negativeAge, 'days').humanize(true);
+            } else if (this.numericDuration > EIGHT_HOURS) {
+                negativeAge *= (this.numericDuration / ONE_HOUR);
+                result = moment.duration(negativeAge, 'hours').humanize(true);
+            } else if (this.durationFormatter) {
+                result = this.durationFormatter.format(this.numericDuration);
+            }
+
+            return result;
         }
     },
     watch: {
-        focusedImage() {
+        focusedImageIndex() {
             this.trackDuration();
             this.resetAgeCSS();
-        },
-        listenToKeys(val) {
-            this.$nextTick(() => {
-                if (val === 0) {
-                    this.$el.focus();
-                } else {
-                    this.$el.blur();
-                }
-            });
         }
     },
     mounted() {
@@ -190,6 +201,7 @@ export default {
         this.openmct.time.on('clock', this.clockChange);
 
         // set
+        this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
@@ -217,6 +229,9 @@ export default {
         this.openmct.time.off('clock', this.clockChange);
     },
     methods: {
+        focusElement() {
+            this.$el.focus();
+        },
         datumIsNotValid(datum) {
             if (this.imageHistory.length === 0) {
                 return false;
@@ -274,12 +289,12 @@ export default {
             this.isPaused = state;
 
             if (type === 'button') {
-                this.setFocusedImage(this.imageHistory[this.imageHistory.length - 1]);
+                this.setFocusedImage(this.imageHistory.length - 1);
             }
 
-            if (this.nextDatum) {
-                this.setFocusedImage(this.nextDatum);
-                delete this.nextDatum;
+            if (this.nextImageIndex) {
+                this.setFocusedImage(this.nextImageIndex);
+                delete this.nextImageIndex;
             }
 
             this.autoScroll = true;
@@ -290,7 +305,7 @@ export default {
                 return;
             }
 
-            let domThumb = thumbsWrapper.children[this.index];
+            let domThumb = thumbsWrapper.children[this.focusedImageIndex];
 
             if (domThumb) {
                 domThumb.scrollIntoView({
@@ -311,19 +326,14 @@ export default {
 
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
         },
-        setFocusedImage(image, thumbnailClick = false) {
-            if (!image) {
-                return;
-            }
-
+        setFocusedImage(index, thumbnailClick = false) {
             if (this.isPaused && !thumbnailClick) {
-                this.nextDatum = image;
+                this.nextImageIndex = index;
 
                 return;
             }
 
-            this.focusedImage = image;
-            this.index = this.imageHistory.indexOf(this.focusedImage);
+            this.focusedImageIndex = index;
 
             if (thumbnailClick && !this.isPaused) {
                 this.paused(true);
@@ -339,15 +349,13 @@ export default {
             this.requestCount++;
             const requestId = this.requestCount;
             this.imageHistory = [];
-            let values = await this.openmct.telemetry
+            let data = await this.openmct.telemetry
                 .request(this.domainObject, bounds) || [];
 
             if (this.requestCount === requestId) {
-                const SET_FOCUSED_BOOL = false;
-                values.forEach((value) => {
-                    this.updateHistory(value, SET_FOCUSED_BOOL);
+                data.forEach((datum, index) => {
+                    this.updateHistory(datum, index === data.length - 1);
                 });
-                this.setFocusedImage(values[values.length - 1]);
             }
         },
         timeSystemChange(system) {
@@ -368,7 +376,6 @@ export default {
 
                     if (parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
                         this.updateHistory(datum);
-                        this.setFocusedImage(datum);
                     }
                 });
         },
@@ -380,7 +387,7 @@ export default {
             this.imageHistory.push(datum);
 
             if (setFocused) {
-                this.setFocusedImage(datum);
+                this.setFocusedImage(this.imageHistory.length - 1);
             }
         },
         getFormatter(key) {
@@ -392,9 +399,9 @@ export default {
         trackDuration() {
             if (this.canTrackDuration) {
                 this.stopDurationTracking();
-                this.setFormattedDuration();
+                this.updateDuration();
                 this.durationTracker = window.setInterval(
-                    this.setFormattedDuration, DURATION_TRACK_MS
+                    this.updateDuration, DURATION_TRACK_MS
                 );
             } else {
                 this.stopDurationTracking();
@@ -402,30 +409,10 @@ export default {
         },
         stopDurationTracking() {
             window.clearInterval(this.durationTracker);
-            this.formattedDuration = undefined;
         },
-        getNumericDuration() {
+        updateDuration() {
             let currentTime = this.openmct.time.clock().currentValue();
-            let parsedSelectedTime = this.parseTime(this.focusedImage);
-
-            return currentTime - parsedSelectedTime;
-        },
-        setFormattedDuration() {
-            let result = 'N/A';
-            let negativeAge = -1;
-            let numericDuration = this.getNumericDuration();
-
-            if (numericDuration > TWENTYFOUR_HOURS) {
-                negativeAge *= (numericDuration / TWENTYFOUR_HOURS);
-                result = moment.duration(negativeAge, 'days').humanize(true);
-            } else if (numericDuration > EIGHT_HOURS) {
-                negativeAge *= (numericDuration / ONE_HOUR);
-                result = moment.duration(negativeAge, 'hours').humanize(true);
-            } else if (this.durationFormatter) {
-                result = this.durationFormatter.format(numericDuration);
-            }
-
-            this.formattedDuration = result;
+            this.numericDuration = currentTime - this.parsedSelectedTime;
         },
         resetAgeCSS() {
             this.refreshCSS = true;
@@ -434,27 +421,29 @@ export default {
                 this.refreshCSS = false;
             }, REFRESH_CSS_MS);
         },
-        setFocusedByIndex(index) {
-            this.setFocusedImage(this.imageHistory[index], THUMBNAIL_CLICKED);
-        },
         nextImage() {
-            let index = this.index;
-            this.setFocusedByIndex(++index);
+            if (this.isNextDisabled) {
+                return;
+            }
+
+            let index = this.focusedImageIndex;
+
+            this.setFocusedImage(++index, THUMBNAIL_CLICKED);
             if (index === this.imageHistory.length - 1) {
                 this.paused(false);
-                this.$el.focus(); // reset focus
             }
         },
         prevImage() {
-            let index = this.index;
-            if (index === this.imageHistory.length - 1) {
-                this.setFocusedByIndex(this.imageHistory.length - 2);
-            } else {
-                this.setFocusedByIndex(--index);
+            if (this.isPrevDisabled) {
+                return;
             }
 
-            if (this.isPrevDisabled) {
-                this.$el.focus(); // reset focus
+            let index = this.focusedImageIndex;
+
+            if (index === this.imageHistory.length - 1) {
+                this.setFocusedImage(this.imageHistory.length - 2, THUMBNAIL_CLICKED);
+            } else {
+                this.setFocusedImage(--index, THUMBNAIL_CLICKED);
             }
         },
         arrowDownHandler(event) {
