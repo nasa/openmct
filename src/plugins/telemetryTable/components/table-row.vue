@@ -104,9 +104,11 @@ export default {
                 return selectable;
             }, {}),
             actionsViewContext: {
-                getViewContext() {
+                getViewContext: () => {
                     return {
                         viewHistoricalData: true,
+                        viewDatumAction: true,
+                        getDatum: this.getDatum,
                         skipCache: true
                     };
                 }
@@ -178,8 +180,13 @@ export default {
                 event.stopPropagation();
             }
         },
+        getDatum() {
+            return this.row.fullDatum;
+        },
         showContextMenu: function (event) {
             event.preventDefault();
+
+            this.markRow(event);
 
             this.row.getContextualDomainObject(this.openmct, this.row.objectKeyString).then(domainObject => {
                 let contextualObjectPath = this.objectPath.slice();
@@ -188,7 +195,9 @@ export default {
                 let allActions = this.openmct.actions.get(contextualObjectPath, this.actionsViewContext);
                 let applicableActions = this.row.getContextMenuActions().map(key => allActions[key]);
 
-                this.openmct.menus.showMenu(event.x, event.y, applicableActions);
+                if (applicableActions.length) {
+                    this.openmct.menus.showMenu(event.x, event.y, applicableActions);
+                }
             });
         }
     }
