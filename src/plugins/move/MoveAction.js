@@ -138,7 +138,7 @@ export default class MoveAction {
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.getId());
             let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
 
-            if (!parentCandidate || !currentParentKeystring) {
+            if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
             }
 
@@ -146,7 +146,7 @@ export default class MoveAction {
                 return false;
             }
 
-            if (parentCandidate.getId() === objectKeystring) {
+            if (parentCandidateKeystring === objectKeystring) {
                 return false;
             }
 
