@@ -121,6 +121,15 @@ export default {
     mounted() {
         let objectComposition = this.openmct.composition.get(this.node.object);
 
+        // only reliable way to get final item height
+        document.onreadystatechange = () => {
+            if (document.readyState === "complete") {
+                if (this.emitHeight) {
+                    this.$emit('emittedHeight', this.$el.offsetHeight);
+                }
+            }
+        };
+
         this.domainObject = this.node.object;
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
             this.domainObject = newObject;
@@ -132,14 +141,6 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
-    },
-    updated() {
-        if (this.emitHeight) {
-            // no reliable way to get the fully rendered height without timeout
-            setTimeout(() => {
-                this.$emit('emittedHeight', this.$refs.me.offsetHeight);
-            }, 250);
-        }
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);

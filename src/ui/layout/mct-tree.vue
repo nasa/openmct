@@ -74,7 +74,7 @@
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
-                    <div :style="{ height: childrenHeight() + 'px' }">
+                    <div :style="{ height: childrenHeight + 'px' }">
                         <tree-item
                             v-for="(treeItem, index) in visibleItems"
                             :key="treeItem.id"
@@ -150,11 +150,11 @@ export default {
             scrollable: undefined,
             activeSearch: false,
             getItemHeight: false,
-            settingChildrenHeight: false,
             isMobile: isMobile.mobileName,
             multipleRootChildren: false,
             noVisibleItems: false,
-            observedAncestors: {}
+            observedAncestors: {},
+            mainTreeTopMargin: undefined
         };
     },
     computed: {
@@ -197,6 +197,11 @@ export default {
         },
         pageThreshold() {
             return Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
+        },
+        childrenHeight() {
+            let childrenCount = this.focusedItems.length || 1;
+
+            return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
         }
     },
     watch: {
@@ -258,7 +263,13 @@ export default {
         }
     },
     async mounted() {
-        await this.$nextTick();
+
+        // only reliable way to get final tree top margin
+        document.onreadystatechange = () => {
+            if (document.readyState === "complete") {
+                this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+            }
+        };
 
         this.backwardsCompatibilityCheck();
 
@@ -361,16 +372,6 @@ export default {
             } else {
                 window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
             }
-        },
-        childrenHeight() {
-            if (!this.$refs.mainTree) {
-                return;
-            }
-
-            let mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-            let childrenCount = this.focusedItems.length || 1;
-
-            return (this.itemHeight * childrenCount) - mainTreeTopMargin; // 5px margin
         },
         calculateFirstVisibleItem() {
             if (!this.$refs.scrollable) {
