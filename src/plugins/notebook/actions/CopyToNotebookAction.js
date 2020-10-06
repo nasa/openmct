@@ -25,11 +25,11 @@ export default class CopyToNotebookAction {
             });
     }
 
-    invoke(objectPath = null, viewContext) {
+    invoke(objectPath, viewContext) {
         this.copyToNotebook(viewContext.formattedValueForCopy());
     }
 
-    appliesTo(objectPath = null, viewContext) {
+    appliesTo(objectPath, viewContext) {
         if (viewContext && viewContext.getViewKey) {
             return viewContext.getViewKey().includes('alphanumeric-format');
         }

@@ -12,7 +12,7 @@ export default class CopyToClipboardAction {
         this.priority = 9;
     }
 
-    invoke(objectPath = null, viewContext) {
+    invoke(objectPath, viewContext) {
         const formattedValue = viewContext.formattedValueForCopy();
         clipboard.updateClipboard(formattedValue)
             .then(() => {
@@ -20,7 +20,7 @@ export default class CopyToClipboardAction {
             });
     }
 
-    appliesTo(objectPath = null, viewContext) {
+    appliesTo(objectPath, viewContext) {
         if (viewContext && viewContext.getViewKey) {
             return viewContext.getViewKey().includes('alphanumeric-format');
         }

@@ -9,14 +9,14 @@ class Clipboard {
     init() {
         navigator.permissions.query({ name: 'clipboard-write' })
             .then(result => {
-                if (result.state == 'granted' || result.state == 'prompt') {
+                if (result.state === 'granted' || result.state === 'prompt') {
                     this.clipboardWrite = true;
                 }
             });
 
         navigator.permissions.query({ name: 'clipboard-read' })
             .then(result => {
-                if (result.state == 'granted' || result.state == 'prompt') {
+                if (result.state === 'granted' || result.state === 'prompt') {
                     this.clipboardRead = true;
                 }
             });
