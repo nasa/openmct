@@ -1,6 +1,6 @@
 import CopyToNotebookAction from './actions/CopyToNotebookAction';
 import Notebook from './components/notebook.vue';
-import NotebookSnapshotIndicator from './components/notebook-snapshot-indicator.vue';
+import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import SnapshotContainer from './snapshot-container';
 import Vue from 'vue';
 
