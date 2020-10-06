@@ -17,39 +17,6 @@
     </div>
 </template>
 
-<style lang="scss">
-    .c-attributes-view {
-        display: flex;
-        flex: 1 1 auto;
-        flex-direction: column;
-
-        > * {
-            flex: 0 0 auto;
-        }
-
-        &__content {
-            $p: 3px;
-
-            display: grid;
-            grid-template-columns: max-content 1fr;
-            grid-row-gap: $p;
-
-            li { display: contents; }
-
-            [class*="__grid-item"] {
-                border-bottom: 1px solid rgba(#999, 0.2);
-                padding: 0 5px $p 0;
-            }
-
-            [class*="__label"] {
-                opacity: 0.8;
-            }
-        }
-
-
-    }
-</style>
-
 <script>
 export default {
     inject: ['name', 'attributes']
