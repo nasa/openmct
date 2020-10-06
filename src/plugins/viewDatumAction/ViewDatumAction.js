@@ -45,7 +45,8 @@ export default class ViewDatumAction {
             },
             template: '<MetadataListView />'
         });
-        let overlay = this._openmct.overlays.overlay({
+
+        this._openmct.overlays.overlay({
             element: component.$mount().$el,
             size: 'large',
             dismissable: true,
@@ -53,7 +54,6 @@ export default class ViewDatumAction {
                 component.$destroy();
             }
         });
-
     }
     appliesTo(objectPath, view = {}) {
         let viewContext = view.getViewContext && view.getViewContext() || {};
@@ -63,6 +63,7 @@ export default class ViewDatumAction {
         if (enabled && datum) {
             return true;
         }
+
         return false;
     }
 }
