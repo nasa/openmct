@@ -35,7 +35,7 @@
         class="c-tree-and-search__tree c-tree"
     >
         <!-- ancestors -->
-        <div v-if="!activeSearch">
+        <li v-if="!activeSearch">
             <tree-item
                 v-for="(ancestor, index) in ancestors"
                 :key="ancestor.id"
@@ -43,20 +43,20 @@
                 :show-up="index < ancestors.length - 1"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
-                :emit-height="getChildHeight"
-                @emittedHeight="setChildHeight"
+                :should-emit-height="shouldEmitHeight"
+                @emittedHeight="setItemHeight"
                 @resetTree="handleReset"
             />
             <!-- loading -->
-            <li
-                v-if="isLoading"
+            <div
+                v-if="isLoading || !itemHeightCalculated"
                 :style="indicatorLeftOffset"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
                 <span class="c-tree__item__label">Loading...</span>
-            </li>
+            </div>
             <!-- end loading -->
-        </div>
+        </li>
 
         <!-- currently viewed children -->
         <transition
@@ -64,17 +64,17 @@
             appear
         >
             <li
-                v-if="!isLoading && !searchLoading"
+                v-if="!isLoading && !searchLoading && itemHeightCalculated"
                 :style="childrenListStyles()"
                 :class="childrenSlideClass"
             >
                 <ul
                     ref="scrollable"
-                    class="scrollable-children"
+                    class="c-tree__scrollable-children"
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
-                    <div :style="{ height: childrenHeight + 'px'}">
+                    <div :style="{ height: childrenHeight + 'px' }">
                         <tree-item
                             v-for="(treeItem, index) in visibleItems"
                             :key="treeItem.id"
@@ -83,7 +83,7 @@
                             :item-offset="itemOffset"
                             :item-index="index"
                             :item-height="itemHeight"
-                            :virtual-scroll="!noScroll"
+                            :virtual-scroll="true"
                             :show-down="activeSearch ? false : true"
                             @expanded="handleExpanded"
                         />
@@ -143,20 +143,18 @@ export default {
             ancestors: [],
             childrenSlideClass: 'down',
             availableContainerHeight: 0,
-            noScroll: true,
             updatingView: false,
+            itemHeightCalculated: false,
             itemHeight: 28,
             itemOffset: 0,
-            childrenHeight: 0,
             scrollable: undefined,
-            pageThreshold: 50,
             activeSearch: false,
-            getChildHeight: false,
-            settingChildrenHeight: false,
+            shouldEmitHeight: false,
             isMobile: isMobile.mobileName,
             multipleRootChildren: false,
             noVisibleItems: false,
-            observedAncestors: {}
+            observedAncestors: {},
+            mainTreeTopMargin: undefined
         };
     },
     computed: {
@@ -189,6 +187,21 @@ export default {
             return {
                 paddingLeft: offset + 'px'
             };
+        },
+        ancestorsHeight() {
+            if (this.activeSearch) {
+                return 0;
+            }
+
+            return this.itemHeight * this.ancestors.length;
+        },
+        pageThreshold() {
+            return Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
+        },
+        childrenHeight() {
+            let childrenCount = this.focusedItems.length || 1;
+
+            return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
         }
     },
     watch: {
@@ -199,7 +212,7 @@ export default {
             let jumpAndScroll = currentLocationPath
                     && hasParent
                     && !this.currentPathIsActivePath();
-            let justScroll = this.currentPathIsActivePath() && !this.noScroll;
+            let justScroll = this.currentPathIsActivePath();
 
             if (this.searchValue) {
                 this.searchValue = '';
@@ -233,20 +246,31 @@ export default {
                 this.searchDeactivated();
             }
         },
-        searchResultItems() {
-            this.setContainerHeight();
-        },
         allTreeItems() {
-            // catches an edge case race condition and when new items are added (ex. folder)
+            // catches an edge case when new items are added (ex. folder)
             if (!this.isLoading) {
                 this.setContainerHeight();
             }
         },
         ancestors() {
             this.observeAncestors();
+        },
+        availableContainerHeight() {
+            this.updateVisibleItems();
+        },
+        focusedItems() {
+            this.updateVisibleItems();
         }
     },
     async mounted() {
+
+        // only reliable way to get final tree top margin
+        document.onreadystatechange = () => {
+            if (document.readyState === "complete") {
+                this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+            }
+        };
+
         this.backwardsCompatibilityCheck();
 
         let savedPath = this.getSavedNavigatedPath();
@@ -257,13 +281,20 @@ export default {
 
         if (root.identifier !== undefined) {
             let rootNode = this.buildTreeItem(root);
+            let rootCompositionCollection = this.openmct.composition.get(root);
+            let rootComposition = await rootCompositionCollection.load();
+
             // if more than one root item, set multipleRootChildren to true and add root to ancestors
-            if (root.composition && root.composition.length > 1) {
+            if (rootComposition && rootComposition.length > 1) {
                 this.ancestors.push(rootNode);
+                if (!this.itemHeightCalculated) {
+                    await this.calculateItemHeight();
+                }
+
                 this.multipleRootChildren = true;
-            } else if (!savedPath && root.composition[0] !== undefined) {
+            } else if (!savedPath && rootComposition[0] !== undefined) {
                 // needed if saved path is not set, need to set it to the only root child
-                savedPath = root.composition[0];
+                savedPath = rootComposition[0].identifier;
             }
 
             if (savedPath) {
@@ -282,13 +313,19 @@ export default {
     },
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
+        this.setContainerHeight = _.debounce(this.setContainerHeight, 200);
+    },
+    updated() {
+        this.$nextTick(() => {
+            this.setContainerHeight();
+        });
     },
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
         this.stopObservingAncestors();
     },
     methods: {
-        updatevisibleItems() {
+        updateVisibleItems() {
             if (this.updatingView) {
                 return;
             }
@@ -326,105 +363,54 @@ export default {
                 this.updatingView = false;
             });
         },
-        async setContainerHeight() {
-            await this.$nextTick();
+        setContainerHeight() {
             let mainTree = this.$refs.mainTree;
             let mainTreeHeight = mainTree && mainTree.clientHeight ? mainTree.clientHeight : 0;
 
             if (mainTreeHeight !== 0) {
-                this.calculateChildHeight(() => {
-                    let ancestorsHeight = this.calculateAncestorHeight();
-                    let allChildrenHeight = this.calculateChildrenHeight();
-
-                    if (this.activeSearch) {
-                        ancestorsHeight = 0;
-                    }
-
-                    this.availableContainerHeight = mainTreeHeight - ancestorsHeight;
-
-                    if (allChildrenHeight > this.availableContainerHeight) {
-                        this.setPageThreshold();
-                        this.noScroll = false;
-                    } else {
-                        this.noScroll = true;
-                    }
-
-                    this.updatevisibleItems();
-                });
+                this.availableContainerHeight = mainTreeHeight - this.ancestorsHeight;
             } else {
                 window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
             }
         },
         calculateFirstVisibleItem() {
+            if (!this.$refs.scrollable) {
+                return;
+            }
+
             let scrollTop = this.$refs.scrollable.scrollTop;
 
             return Math.floor(scrollTop / this.itemHeight);
         },
         calculateLastVisibleItem() {
+            if (!this.$refs.scrollable) {
+                return;
+            }
+
             let scrollBottom = this.$refs.scrollable.scrollTop + this.$refs.scrollable.offsetHeight;
 
             return Math.ceil(scrollBottom / this.itemHeight);
         },
-        calculateChildrenHeight() {
-            let mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-            let childrenCount = this.focusedItems.length;
+        calculateItemHeight() {
+            this.shouldEmitHeight = true;
 
-            return (this.itemHeight * childrenCount) - mainTreeTopMargin; // 5px margin
+            return new Promise((resolve, reject) => {
+                this.itemHeightResolve = resolve;
+            });
         },
-        setChildrenHeight() {
-            this.childrenHeight = this.calculateChildrenHeight();
-        },
-        calculateAncestorHeight() {
-            let ancestorCount = this.ancestors.length;
+        async setItemHeight(height) {
 
-            return this.itemHeight * ancestorCount;
-        },
-        calculateChildHeight(callback) {
-            if (callback) {
-                this.afterChildHeight = callback;
-            }
-
-            if (!this.activeSearch) {
-                this.getChildHeight = true;
-            } else if (this.afterChildHeight) {
-                // keep the height from before
-                this.afterChildHeight();
-                delete this.afterChildHeight;
-            }
-        },
-        async setChildHeight(item) {
-            if (!this.getChildHeight || this.settingChildrenHeight) {
+            if (this.itemHeightCalculated) {
                 return;
             }
 
-            this.settingChildrenHeight = true;
-            if (this.isMobile) {
-                item = item.children[0];
-            }
-
             await this.$nextTick();
-            let topMargin = this.getElementStyleValue(item, 'marginTop');
-            let bottomMargin = this.getElementStyleValue(item, 'marginBottom');
-            let totalVerticalMargin = topMargin + bottomMargin;
 
-            this.itemHeight = item.clientHeight + totalVerticalMargin;
-            this.setChildrenHeight();
-            if (this.afterChildHeight) {
-                this.afterChildHeight();
-                delete this.afterChildHeight;
-            }
+            this.itemHeight = height;
+            this.itemHeightCalculated = true;
+            this.shouldEmitHeight = false;
 
-            this.getChildHeight = false;
-            this.settingChildrenHeight = false;
-        },
-        setPageThreshold() {
-            let threshold = Math.ceil(this.availableContainerHeight / this.itemHeight) + ITEM_BUFFER;
-            // all items haven't loaded yet (nextTick not working for this)
-            if (threshold === ITEM_BUFFER) {
-                window.setTimeout(this.setPageThreshold, RECHECK_DELAY);
-            } else {
-                this.pageThreshold = threshold;
-            }
+            this.itemHeightResolve();
         },
         handleWindowResize() {
             if (!windowResizing) {
@@ -544,6 +530,9 @@ export default {
                 let currentNode = await this.openmct.objects.get(nodes[i]);
                 let newParent = this.buildTreeItem(currentNode);
                 this.ancestors.push(newParent);
+                if (!this.itemHeightCalculated) {
+                    await this.calculateItemHeight();
+                }
 
                 if (i === nodes.length - 1) {
                     this.jumpPath = '';
@@ -570,14 +559,8 @@ export default {
                 let scrollTopAmount = indexOfScroll * this.itemHeight;
 
                 await this.$nextTick();
+
                 this.$refs.scrollable.scrollTop = scrollTopAmount;
-                // race condition check
-                if (scrollTopAmount > 0 && this.$refs.scrollable.scrollTop === 0) {
-                    window.setTimeout(this.autoScroll, RECHECK_DELAY);
-
-                    return;
-                }
-
                 this.scrollTo = undefined;
             } else {
                 window.setTimeout(this.autoScroll, RECHECK_DELAY);
@@ -635,7 +618,6 @@ export default {
             this.activeSearch = false;
             await this.$nextTick();
             this.$refs.scrollable.scrollTop = 0;
-            this.setContainerHeight();
         },
         handleReset(node) {
             this.childrenSlideClass = 'up';
@@ -688,17 +670,16 @@ export default {
         },
         scrollItems(event) {
             if (!windowResizing) {
-                this.updatevisibleItems();
+                this.updateVisibleItems();
             }
         },
         childrenListStyles() {
             return { position: 'relative' };
         },
         scrollableStyles() {
-            return {
-                height: this.availableContainerHeight + 'px',
-                overflow: this.noScroll ? 'hidden' : 'scroll'
-            };
+            let height = this.availableContainerHeight + 'px';
+
+            return { height };
         },
         getElementStyleValue(el, style) {
             let styleString = window.getComputedStyle(el)[style];
