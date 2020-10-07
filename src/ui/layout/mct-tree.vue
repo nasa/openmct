@@ -265,11 +265,7 @@ export default {
     async mounted() {
 
         // only reliable way to get final tree top margin
-        document.onreadystatechange = () => {
-            if (document.readyState === "complete") {
-                this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-            }
-        };
+        this.readyStateCheck();
 
         this.backwardsCompatibilityCheck();
 
@@ -323,8 +319,21 @@ export default {
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
         this.stopObservingAncestors();
+        document.removeEventListener('readystatechange', this.setTreeTopMargin);
     },
     methods: {
+        readyStateCheck() {
+            if (document.readyState !== 'complete') {
+                document.addEventListener('readystatechange', this.setTreeTopMargin);
+            } else {
+                this.setTreeTopMargin();
+            }
+        },
+        setTreeTopMargin() {
+            if (document.readyState === 'complete') {
+                this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+            }
+        },
         updateVisibleItems() {
             if (this.updatingView) {
                 return;
