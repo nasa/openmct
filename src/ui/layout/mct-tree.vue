@@ -49,7 +49,7 @@
             />
             <!-- loading -->
             <div
-                v-if="isLoading"
+                v-if="isLoading || !itemHeightCalculated"
                 :style="indicatorLeftOffset"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
@@ -64,7 +64,7 @@
             appear
         >
             <li
-                v-if="!isLoading && !searchLoading"
+                v-if="!isLoading && !searchLoading && itemHeightCalculated"
                 :style="childrenListStyles()"
                 :class="childrenSlideClass"
             >
