@@ -4,10 +4,11 @@
     :class="{ 'is-filtering': filterNames.length > 0 }"
 >
     <div
-            :title="title"
-            class="c-table-indicator__filter c-table-indicator__elem c-filter-indication"
-            :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
-            v-if="filterNames.length > 0">
+        v-if="filterNames.length > 0"
+        class="c-table-indicator__filter c-table-indicator__elem c-filter-indication"
+        :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
+        :title="title"
+    >
         <span class="c-filter-indication__mixed">{{ label }}</span>
         <span
             v-for="(name, index) in filterNames"
@@ -20,16 +21,19 @@
 
     <div class="c-table-indicator__counts">
         <span
-                :title="totalRows + ' rows visible after any filtering'"
-                class="c-table-indicator__elem c-table-indicator__row-count">{{ totalRows }} Rows</span>
+            :title="totalRows + ' rows visible after any filtering'"
+            class="c-table-indicator__elem c-table-indicator__row-count"
+        >
+            {{ totalRows }} Rows
+        </span>
 
         <span
-                :title="markedRows + ' rows selected'"
-                class="c-table-indicator__elem c-table-indicator__marked-count"
-                v-if="markedRows"
+            v-if="markedRows"
+            class="c-table-indicator__elem c-table-indicator__marked-count"
+            :title="markedRows + ' rows selected'"
         >
-        {{ markedRows }} Marked
-    </span>
+            {{ markedRows }} Marked
+        </span>
 
     </div>
 </div>
