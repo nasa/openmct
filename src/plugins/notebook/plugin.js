@@ -1,3 +1,4 @@
+import CopyToNotebookAction from './actions/CopyToNotebookAction';
 import Notebook from './components/Notebook.vue';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import SnapshotContainer from './snapshot-container';
@@ -12,6 +13,8 @@ export default function NotebookPlugin() {
         }
 
         installed = true;
+
+        openmct.actions.register(new CopyToNotebookAction(openmct));
 
         const notebookType = {
             name: 'Notebook',

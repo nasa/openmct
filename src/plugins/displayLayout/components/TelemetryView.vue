@@ -74,10 +74,11 @@
 import LayoutFrame from './LayoutFrame.vue';
 import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
-const CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
+const CONTEXT_MENU_ACTIONS = ['copyToClipboard', 'copyToNotebook', 'viewHistoricalData'];
 
 export default {
     makeDefinition(openmct, gridSize, domainObject, position) {
@@ -126,10 +127,11 @@ export default {
     },
     data() {
         return {
+            currentObjectPath: undefined,
             datum: undefined,
-            formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined
+            formats: undefined,
+            viewKey: `alphanumeric-format-${Math.random()}`
         };
     },
     computed: {
@@ -216,6 +218,18 @@ export default {
         this.openmct.time.off("bounds", this.refreshData);
     },
     methods: {
+        getViewContext() {
+            return {
+                getViewKey: () => this.viewKey,
+                formattedValueForCopy: this.formattedValueForCopy
+            };
+        },
+        formattedValueForCopy() {
+            const timeFormatterKey = this.openmct.time.timeSystem().key;
+            const timeFormatter = this.formats[timeFormatterKey];
+
+            return `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue} ${this.unit}`;
+        },
         requestHistoricalData() {
             let bounds = this.openmct.time.bounds();
             let options = {
@@ -296,8 +310,27 @@ export default {
         updateTelemetryFormat(format) {
             this.$emit('formatChanged', this.item, format);
         },
-        showContextMenu(event) {
-            this.openmct.menus.showMenu(event.x, event.y, this.applicableActions);
+        async getContextMenuActions() {
+            const defaultNotebook = getDefaultNotebook();
+            const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+
+            const actionsObject = this.openmct.actions.get(this.currentObjectPath, this.getViewContext(), { viewHistoricalData: true }).applicableActions;
+            let applicableActionKeys = Object.keys(actionsObject)
+                .filter(key => {
+                    const isCopyToNotebook = actionsObject[key].key === 'copyToNotebook';
+                    if (defaultNotebook && isCopyToNotebook) {
+                        const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+                        actionsObject[key].name = `Copy to Notebook ${defaultPath}`;
+                    }
+
+                    return CONTEXT_MENU_ACTIONS.includes(actionsObject[key].key);
+                });
+
+            return applicableActionKeys.map(key => actionsObject[key]);
+        },
+        async showContextMenu(event) {
+            const contextMenuActions = await this.getContextMenuActions();
+            this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
         }
     }
 };
