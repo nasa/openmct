@@ -84,7 +84,7 @@ export default {
             type: Boolean,
             default: false
         },
-        emitHeight: {
+        shouldEmitHeight: {
             type: Boolean,
             default: false
         }
@@ -116,15 +116,19 @@ export default {
     watch: {
         expanded() {
             this.$emit('expanded', this.domainObject);
-        },
-        emitHeight() {
-            this.$nextTick(() => {
-                this.$emit('emittedHeight', this.$refs.me);
-            });
         }
     },
     mounted() {
         let objectComposition = this.openmct.composition.get(this.node.object);
+
+        // only reliable way to get final item height
+        document.onreadystatechange = () => {
+            if (document.readyState === "complete") {
+                if (this.shouldEmitHeight) {
+                    this.$emit('emittedHeight', this.$el.offsetHeight);
+                }
+            }
+        };
 
         this.domainObject = this.node.object;
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
@@ -137,9 +141,6 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
-        if (this.emitHeight) {
-            this.$emit('emittedHeight', this.$refs.me);
-        }
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
