@@ -122,11 +122,7 @@ export default {
         let objectComposition = this.openmct.composition.get(this.node.object);
 
         // only reliable way to get final item height
-        if (document.readyState !== "complete") {
-            this.readyStateChecks();
-        } else {
-            this.emitHeight();
-        }
+        this.readyStateCheck();
 
         this.domainObject = this.node.object;
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
@@ -142,17 +138,18 @@ export default {
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
+        document.removeEventListener('readystatechange', this.emitHeight);
     },
     methods: {
-        readyStateChecks() {
-            document.onreadystatechange = () => {
-                if (document.readyState === "complete") {
-                    this.emitHeight();
-                }
-            };
+        readyStateCheck() {
+            if (document.readyState !== 'complete') {
+                document.addEventListener('readystatechange', this.emitHeight);
+            } else {
+                this.emitHeight();
+            }
         },
         emitHeight() {
-            if (this.shouldEmitHeight) {
+            if (this.shouldEmitHeight && document.readyState === 'complete') {
                 this.$emit('emittedHeight', this.$el.offsetHeight);
             }
         },
