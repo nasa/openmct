@@ -152,16 +152,17 @@
     }
 
     &__footer {
-        $pt: $interiorMarginSm;
+        $pt: 2px;
         border-top: 1px solid $colorInteriorBorder;
         margin-top: $interiorMargin;
-        padding-top: $pt;
+        padding: $pt 0;
         overflow: hidden;
-        transition: height 250ms;
+        transition: all 250ms;
 
         &:not(.is-filtering) {
             .c-frame & {
                 height: 0;
+                padding: 0;
                 visibility: hidden;
             }
         }
@@ -169,10 +170,11 @@
 
     .c-frame & {
         // target .c-frame .c-telemetry-table {}
-        $pt: $interiorMarginSm;
+        $pt: 2px;
         &:hover {
-            .c-telemetry-table__footer {
+            .c-telemetry-table__footer:not(.is-filtering) {
                 height: $pt + 16px;
+                padding: initial;
                 visibility: visible;
             }
         }

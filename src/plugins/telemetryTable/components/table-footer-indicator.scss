@@ -2,16 +2,17 @@
     display: flex;
     align-items: center;
     font-size: 0.9em;
+    overflow: hidden;
 
     &__elem {
         @include ellipsize();
+        flex: 0 1 auto;
         padding: 2px;
         text-transform: uppercase;
-    }
 
-    &__filter {
-        flex: 0 0 auto;
-
+        > * {
+            //display: contents;
+        }
     }
 
     &__counts {
@@ -23,43 +24,6 @@
 
         > * {
             margin-left: $interiorMargin;
-        }
-    }
-}
-
-.c-filter-indication {
-    @include userSelectNone();
-    background: $colorFilterBg;
-    border-radius: $smallCr;
-    color: $colorFilterFg;
-    display: flex;
-    align-items: center;
-    margin-top: $interiorMarginSm;
-    //padding: 2px;
-
-    &:before {
-        font-family: symbolsfont-12px;
-        content: $glyph-icon-filter;
-        display: block;
-        font-size: 12px;
-        margin-right: $interiorMarginSm;
-    }
-
-    &__mixed {
-        margin-right: $interiorMarginSm;
-    }
-
-    &--mixed {
-        .c-filter-indication__mixed {
-            font-style: italic;
-        }
-    }
-
-    &__label {
-        + .c-filter-indication__label {
-            &:before {
-                content: ',';
-            }
         }
     }
 }

@@ -20,11 +20,11 @@
 
     <div class="c-table-indicator__counts">
         <span
-                title="The number of rows visible in the table after any filtering"
+                :title="totalRows + ' rows visible after any filtering'"
                 class="c-table-indicator__elem c-table-indicator__row-count">{{ totalRows }} Rows</span>
 
         <span
-                title="The number of rows currently selected"
+                :title="markedRows + ' rows selected'"
                 class="c-table-indicator__elem c-table-indicator__marked-count"
                 v-if="markedRows"
         >
