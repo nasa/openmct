@@ -17,6 +17,9 @@ export default class CopyToClipboardAction {
         clipboard.updateClipboard(formattedValue)
             .then(() => {
                 this.openmct.notifications.info(`Success : copied to clipboard '${formattedValue}'`);
+            })
+            .catch(() => {
+                this.openmct.notifications.error(`Failed : to copy to clipboard '${formattedValue}'`);
             });
     }
 
