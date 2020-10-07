@@ -1,27 +1,13 @@
 <template>
 <div
-    :title="title"
-    class="c-filter-indication"
-    :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
+    class="c-table-indicator"
+    :class="{ 'is-filtering': filterNames.length > 0 }"
 >
-    <template
-        v-if="totalRows">
-        <span class="c-filter-indication__mixed">Total Rows: </span>
-        <span class="c-filter-indication__label">
-            {{ totalRows }}
-        </span>
-    </template>
-
-    <template
-        v-if="markedRows">
-        <span class="c-filter-indication__mixed">Marked Rows: </span>
-        <span class="c-filter-indication__label">
-            {{ markedRows }}
-        </span>
-    </template>
-
-    <template
-        v-if="filterNames.length > 0">
+    <div
+            :title="title"
+            class="c-table-indicator__filter c-table-indicator__elem c-filter-indication"
+            :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
+            v-if="filterNames.length > 0">
         <span class="c-filter-indication__mixed">{{ label }}</span>
         <span
             v-for="(name, index) in filterNames"
@@ -30,7 +16,22 @@
         >
             {{ name }}
         </span>
-    </template>
+    </div>
+
+    <div class="c-table-indicator__counts">
+        <span
+                title="The number of rows visible in the table after any filtering"
+                class="c-table-indicator__elem c-table-indicator__row-count">{{ totalRows }} Rows</span>
+
+        <span
+                title="The number of rows currently selected"
+                class="c-table-indicator__elem c-table-indicator__marked-count"
+                v-if="markedRows"
+        >
+        {{ markedRows }} Marked
+    </span>
+
+    </div>
 </div>
 </template>
 

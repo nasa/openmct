@@ -150,6 +150,33 @@
             white-space: nowrap;
         }
     }
+
+    &__footer {
+        $pt: $interiorMarginSm;
+        border-top: 1px solid $colorInteriorBorder;
+        margin-top: $interiorMargin;
+        padding-top: $pt;
+        overflow: hidden;
+        transition: height 250ms;
+
+        &:not(.is-filtering) {
+            .c-frame & {
+                height: 0;
+                visibility: hidden;
+            }
+        }
+    }
+
+    .c-frame & {
+        // target .c-frame .c-telemetry-table {}
+        $pt: $interiorMarginSm;
+        &:hover {
+            .c-telemetry-table__footer {
+                height: $pt + 16px;
+                visibility: visible;
+            }
+        }
+    }
 }
 
 /******************************* SPECIFIC CASE WRAPPERS */

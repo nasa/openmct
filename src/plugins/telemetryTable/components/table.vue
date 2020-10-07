@@ -253,7 +253,8 @@
                 :object-path="objectPath"
             />
         </table>
-        <table-footer-indicator 
+        <table-footer-indicator
+            class="c-telemetry-table__footer"
             :marked-rows="markedRows.length"
             :total-rows="totalNumberOfRows"
         />

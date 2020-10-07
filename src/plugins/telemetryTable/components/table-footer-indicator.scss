@@ -1,13 +1,41 @@
-.c-filter-indication {
-    @include userSelectNone();
-    background: $colorFilterBg;
-    color: $colorFilterFg;
+.c-table-indicator {
     display: flex;
     align-items: center;
     font-size: 0.9em;
+
+    &__elem {
+        @include ellipsize();
+        padding: 2px;
+        text-transform: uppercase;
+    }
+
+    &__filter {
+        flex: 0 0 auto;
+
+    }
+
+    &__counts {
+        //background: rgba(deeppink, 0.1);
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: flex-end;
+        overflow: hidden;
+
+        > * {
+            margin-left: $interiorMargin;
+        }
+    }
+}
+
+.c-filter-indication {
+    @include userSelectNone();
+    background: $colorFilterBg;
+    border-radius: $smallCr;
+    color: $colorFilterFg;
+    display: flex;
+    align-items: center;
     margin-top: $interiorMarginSm;
-    padding: 2px;
-    text-transform: uppercase;
+    //padding: 2px;
 
     &:before {
         font-family: symbolsfont-12px;
