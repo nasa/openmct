@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import utils from 'objectUtils';
+
 export default class LegacyPersistenceAdapter {
     constructor(openmct) {
         this.openmct = openmct;
@@ -33,8 +35,13 @@ export default class LegacyPersistenceAdapter {
         return Promise.resolve(Object.keys(this.openmct.objects.providers));
     }
 
-    updateObject(legacyDomainObject) {
-        return this.openmct.objects.save(legacyDomainObject.useCapability('adapter'));
+    updateObject(space, key, legacyDomainObject) {
+        let object = utils.toNewFormat(legacyDomainObject, {
+            namespace: space,
+            key: key
+        });
+
+        return this.openmct.objects.save(object);
     }
 
     readObject(space, key) {
