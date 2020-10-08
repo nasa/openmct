@@ -38,7 +38,7 @@ describe('the plugin', () => {
     beforeEach((done) => {
         mockDomainObject = {
             identifier: {
-                namespace: 'mct',
+                namespace: '',
                 key: 'some-value'
             }
         };
