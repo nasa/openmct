@@ -87,9 +87,7 @@ export default {
         ToolbarColorPicker,
         ToolbarToggleButton
     },
-    inject: [
-        'openmct', 'stylesManager'
-    ],
+    inject: ['openmct'],
     props: {
         isEditing: {
             type: Boolean,
@@ -239,7 +237,6 @@ export default {
             return this.isEditing && !this.mixedStyles.length && !this.nonSpecificFontProperties.length;
         },
         saveItemStyle() {
-            // this.stylesManager.save(this.itemStyle);
             this.$emit('save-style', this.itemStyle);
         }
     }

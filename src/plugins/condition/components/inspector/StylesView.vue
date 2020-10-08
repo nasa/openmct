@@ -68,6 +68,7 @@
             v-if="canStyleFont"
             :allow-editing="allowEditing"
             :font-style="consolidatedFontStyle"
+            @set-font-property="setFontProperty"
         />
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <a v-if="conditionSetDomainObject"
