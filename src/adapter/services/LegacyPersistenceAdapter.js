@@ -35,6 +35,24 @@ export default class LegacyPersistenceAdapter {
         return Promise.resolve(Object.keys(this.openmct.objects.providers));
     }
 
+    createObject(space, key, legacyDomainObject) {
+        let object = utils.toNewFormat(legacyDomainObject, {
+            namespace: space,
+            key: key
+        });
+
+        return this.openmct.objects.save(object);
+    }
+
+    deleteObject(space, key) {
+        const identifier = {
+            namespace: space,
+            key: key
+        };
+
+        return this.openmct.objects.delete(identifier);
+    }
+
     updateObject(space, key, legacyDomainObject) {
         let object = utils.toNewFormat(legacyDomainObject, {
             namespace: space,
