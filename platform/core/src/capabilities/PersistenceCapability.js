@@ -153,10 +153,11 @@ define(["objectUtils"],
                 return this.$q.when(true);
             }
 
-            return this.persistenceService.readObject(
-                this.getSpace(),
-                this.getKey()
-            ).then(updateModel);
+            return this.openmct.objects.get(domainObject.getId()).then((newStyleObject) => {
+                let oldStyleObject = this.openmct.legacyObject(newStyleObject);
+
+                return updateModel(oldStyleObject.getModel());
+            });
         };
 
         /**

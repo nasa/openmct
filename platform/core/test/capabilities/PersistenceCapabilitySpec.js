@@ -37,6 +37,7 @@ define(
                 key = "persistence key",
                 id = "object identifier",
                 model,
+                refreshModel,
                 SPACE = "some space",
                 persistence,
                 mockOpenMCT,
@@ -60,6 +61,7 @@ define(
                     someKey: "some value",
                     name: "domain object"
                 };
+                refreshModel = {someOtherKey: "some other value"};
 
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",
@@ -110,8 +112,18 @@ define(
                     }
                 });
 
-                mockOpenMCT = {};
-                mockOpenMCT.objects = jasmine.createSpyObj('Object API', ['save']);
+                mockOpenMCT = {
+                    legacyObject: function (object) {
+                        return {
+                            getModel: function () {
+                                console.log(object);
+
+                                return object;
+                            }
+                        };
+                    }
+                };
+                mockOpenMCT.objects = jasmine.createSpyObj('Object API', ['save', 'get']);
 
                 mockIdentifierService.parse.and.returnValue(mockIdentifier);
                 mockIdentifier.getSpace.and.returnValue(SPACE);
@@ -131,6 +143,7 @@ define(
             describe("successful persistence", function () {
                 beforeEach(function () {
                     mockOpenMCT.objects.save.and.returnValue(Promise.resolve(true));
+                    mockOpenMCT.objects.get.and.returnValue(Promise.resolve(refreshModel));
                 });
                 it("creates unpersisted objects with the persistence service", function () {
                     // Verify precondition; no call made during constructor
@@ -146,11 +159,10 @@ define(
                 });
 
                 it("refreshes the domain object model from persistence", function () {
-                    var refreshModel = {someOtherKey: "some other value"};
                     model.persisted = 1;
-                    mockPersistenceService.readObject.and.returnValue(asPromise(refreshModel));
-                    persistence.refresh();
-                    expect(model).toEqual(refreshModel);
+                    persistence.refresh().then(() => {
+                        expect(model).toEqual(refreshModel);
+                    });
                 });
 
                 it("does not trigger error notification on successful"
