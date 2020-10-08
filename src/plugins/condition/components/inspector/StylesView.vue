@@ -134,6 +134,16 @@ import ConditionDescription from "@/plugins/condition/components/ConditionDescri
 import Vue from 'vue';
 
 const NON_SPECIFIC = '??';
+const NON_STYLEABLE_CONTAINER_TYPES = [
+    'layout',
+    'flexible-layout',
+    'tabs'
+];
+const NON_STYLEABLE_LAYOUT_ITEM_TYPES = [
+    'line-view',
+    'box-view',
+    'image-view'
+];
 
 export default {
     name: 'StylesView',
@@ -166,7 +176,6 @@ export default {
     },
     computed: {
         locked() {
-            // TODO should this be for parent layouts only?
             return this.selection.some(selectionPath => {
                 const self = selectionPath[0].context.item;
                 const parent = selectionPath.length > 1 ? selectionPath[1].context.item : undefined;
@@ -189,16 +198,6 @@ export default {
                 const itemType = item && item.type;
                 const layoutItem = selectionPath[0].context.layoutItem;
                 const layoutItemType = layoutItem && layoutItem.type;
-                const NON_STYLEABLE_CONTAINER_TYPES = [
-                    'layout',
-                    'flexible-layout',
-                    'tabs'
-                ];
-                const NON_STYLEABLE_LAYOUT_ITEM_TYPES = [
-                    'line-view',
-                    'box-view',
-                    'image-view'
-                ];
 
                 if (itemType && NON_STYLEABLE_CONTAINER_TYPES.includes(itemType)) {
                     return false;
@@ -271,7 +270,6 @@ export default {
         this.stylesManager.off('styleSelected', this.applyStyleToSelection);
     },
     mounted() {
-        console.log(this.selection);
         this.previewAction = new PreviewAction(this.openmct);
         this.isMultipleSelection = this.selection.length > 1;
         this.getObjectsAndItemsFromSelection();
