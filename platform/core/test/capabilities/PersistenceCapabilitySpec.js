@@ -116,8 +116,6 @@ define(
                     legacyObject: function (object) {
                         return {
                             getModel: function () {
-                                console.log(object);
-
                                 return object;
                             }
                         };
