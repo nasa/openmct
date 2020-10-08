@@ -63,7 +63,7 @@
         />
 
         <!-- Save Styles -->
-        <toolbar-button v-if="canSaveStyle()"
+        <toolbar-button v-if="canSaveStyle"
                         class="c-style__toolbar-button--save c-local-controls--show-on-hover"
                         :options="saveOptions"
                         @click="saveItemStyle()"
@@ -199,6 +199,9 @@ export default {
                 title: 'Save style',
                 isEditing: this.isEditing
             };
+        },
+        canSaveStyle() {
+            return this.isEditing && !this.mixedStyles.length && !this.nonSpecificFontProperties.length;
         }
     },
     methods: {
@@ -232,9 +235,6 @@ export default {
             }
 
             this.$emit('persist', this.styleItem, item.property);
-        },
-        canSaveStyle() {
-            return this.isEditing && !this.mixedStyles.length && !this.nonSpecificFontProperties.length;
         },
         saveItemStyle() {
             this.$emit('save-style', this.itemStyle);
