@@ -431,7 +431,9 @@ export default {
         },
         async updateDefaultNotebook(notebookStorage) {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
-            if (defaultNotebookObject.identifier.key !== notebookStorage.notebookMeta.identifier.key) {
+            if (!defaultNotebookObject) {
+                setDefaultNotebook(this.openmct, notebookStorage);
+            } else if (defaultNotebookObject.identifier.key !== notebookStorage.notebookMeta.identifier.key) {
                 this.removeDefaultClass(defaultNotebookObject);
                 setDefaultNotebook(this.openmct, notebookStorage);
             }
