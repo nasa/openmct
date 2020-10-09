@@ -30,11 +30,9 @@ describe("The Object API", () => {
             beforeEach(() => {
                 mockProvider = jasmine.createSpyObj("mock provider", [
                     "create",
-                    "update",
-                    "get"
+                    "update"
                 ]);
                 mockProvider.create.and.returnValue(Promise.resolve(true));
-                mockProvider.get.and.returnValue(Promise.resolve(mockDomainObject));
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
             });
             it("Calls 'create' on provider if object is new", () => {
@@ -58,6 +56,19 @@ describe("The Object API", () => {
                 objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).not.toHaveBeenCalled();
                 expect(mockProvider.update).not.toHaveBeenCalled();
+            });
+        });
+    });
+
+    describe("The get function", () => {
+        describe("when a provider is available", () => {
+            let mockProvider;
+            beforeEach(() => {
+                mockProvider = jasmine.createSpyObj("mock provider", [
+                    "get"
+                ]);
+                mockProvider.get.and.returnValue(Promise.resolve(mockDomainObject));
+                objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
             });
 
             it("Caches multiple requests for the same object", () => {
