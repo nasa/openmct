@@ -49,7 +49,7 @@
             />
             <!-- loading -->
             <div
-                v-if="isLoading || !itemHeightCalculated || syncingNavigation"
+                v-if="isLoading || !itemHeightCalculated"
                 :style="indicatorLeftOffset"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
@@ -88,7 +88,7 @@
                             @expanded="handleExpanded"
                         />
                         <li
-                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch && !syncingNavigation"
+                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch"
                             :style="indicatorLeftOffset"
                             class="c-tree__item c-tree__item--empty"
                         >
@@ -206,12 +206,7 @@ export default {
     },
     watch: {
         syncTreeNavigation() {
-            if (this.syncingNavigation) {
-                return;
-            }
-
             const AND_SAVE_PATH = true;
-            this.syncingNavigation = true;
             let currentLocationPath = this.openmct.router.currentLocation.path;
             let hasParent = this.currentlyViewedObjectParentPath() || (this.multipleRootChildren && !this.currentlyViewedObjectParentPath());
             // if there's a current location path,
@@ -247,7 +242,6 @@ export default {
             } else if (justScroll) {
                 this.scrollTo = this.currentlyViewedObjectId();
                 this.autoScroll();
-                this.syncingNavigation = false;
             }
         },
         searchValue() {
@@ -442,7 +436,7 @@ export default {
                 }, RESIZE_FIRE_DELAY_MS);
             }
         },
-        async getAllChildren(node) {
+        async getAllChildren(node, after) {
             let currentNavigationRequest = this.openmct.objects.makeKeyString(node.object.identifier);
             this.latestNavigationRequest = currentNavigationRequest;
 
@@ -459,14 +453,20 @@ export default {
             this.composition = this.openmct.composition.get(node.object);
             this.composition.on('add', this.addChild);
             this.composition.on('remove', this.removeChild);
-            await this.composition.load();
 
             if (currentNavigationRequest === this.latestNavigationRequest) {
+                if (after && typeof after === 'function') {
+                    after();
+                }
+
+                await this.composition.load();
                 this.finishLoading();
             }
         },
-        buildTreeItem(domainObject) {
-            let navToParent = ROOT_PATH + this.currentNavigatedPath;
+        buildTreeItem(domainObject, path) {
+            let currentPath = path || this.currentNavigatedPath;
+
+            let navToParent = ROOT_PATH + currentPath;
             if (navToParent === ROOT_PATH) {
                 navToParent = navToParent.slice(0, -1);
             }
@@ -518,6 +518,16 @@ export default {
                     }
                 });
         },
+        buildNavigationPath(objects) {
+            let objectsCopy = [...objects];
+            if (this.multipleRootChildren) {
+                objectsCopy.shift(); // remove root
+            }
+
+            return objectsCopy
+                .map((object) => object.id)
+                .join('/');
+        },
         addChild(child) {
             let item = this.buildTreeItem(child);
             this.allTreeItems.push(item);
@@ -535,7 +545,6 @@ export default {
 
             this.autoScroll();
             this.isLoading = false;
-            this.syncingNavigation = false;
             this.setContainerHeight();
         },
         async jumpToPath(saveExpandedPath = false) {
@@ -546,29 +555,34 @@ export default {
             }
 
             let nodes = this.jumpPath.split('/');
+            let tempAncestors = [...this.ancestors];
+            let newParent;
 
             for (let i = 0; i < nodes.length; i++) {
                 let currentNode = await this.openmct.objects.get(nodes[i]);
-                let newParent = this.buildTreeItem(currentNode);
-                this.ancestors.push(newParent);
+                let path = this.buildNavigationPath(tempAncestors);
+                newParent = this.buildTreeItem(currentNode, path);
+                tempAncestors.push(newParent);
                 if (!this.itemHeightCalculated) {
+                    this.ancestors.push(newParent); // add for calculations
                     await this.calculateItemHeight();
-                }
-
-                if (i === nodes.length - 1) {
-                    this.jumpPath = '';
-                    this.getAllChildren(newParent);
-                    if (this.afterJump) {
-                        await this.$nextTick();
-                        this.afterJump();
-                        delete this.afterJump;
-                    }
-
-                    if (saveExpandedPath) {
-                        this.setCurrentNavigatedPath();
-                    }
+                    this.ancestors.pop(); // remove after
                 }
             }
+
+            this.jumpPath = '';
+            this.getAllChildren(newParent, async () => {
+                this.ancestors = tempAncestors; // reset ancestors
+                if (this.afterJump) {
+                    await this.$nextTick();
+                    this.afterJump();
+                    delete this.afterJump;
+                }
+
+                if (saveExpandedPath) {
+                    this.setCurrentNavigatedPath();
+                }
+            });
         },
         async autoScroll() {
             if (!this.scrollTo) {
@@ -641,21 +655,20 @@ export default {
             this.$refs.scrollable.scrollTop = 0;
         },
         handleReset(node) {
-            if (this.syncingNavigation) {
-                return;
-            }
-
-            this.childrenSlideClass = 'up';
-            this.ancestors.splice(this.ancestors.indexOf(node) + 1);
-            this.getAllChildren(node);
-            this.setCurrentNavigatedPath();
+            this.getAllChildren(node, () => {
+                this.childrenSlideClass = 'up';
+                this.ancestors.splice(this.ancestors.indexOf(node) + 1);
+                this.setCurrentNavigatedPath();
+            });
         },
         handleExpanded(node) {
-            this.childrenSlideClass = 'down';
             let newParent = this.buildTreeItem(node);
-            this.ancestors.push(newParent);
-            this.getAllChildren(newParent);
-            this.setCurrentNavigatedPath();
+
+            this.getAllChildren(newParent, () => {
+                this.childrenSlideClass = 'down';
+                this.ancestors.push(newParent);
+                this.setCurrentNavigatedPath();
+            });
         },
         getSavedNavigatedPath() {
             return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE));
