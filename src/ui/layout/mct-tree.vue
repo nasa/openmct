@@ -49,7 +49,7 @@
             />
             <!-- loading -->
             <div
-                v-if="isLoading || !itemHeightCalculated"
+                v-if="isLoading || !itemHeightCalculated || syncingNavigation"
                 :style="indicatorLeftOffset"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
@@ -88,7 +88,7 @@
                             @expanded="handleExpanded"
                         />
                         <li
-                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch"
+                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch && !syncingNavigation"
                             :style="indicatorLeftOffset"
                             class="c-tree__item c-tree__item--empty"
                         >
@@ -206,12 +206,21 @@ export default {
     },
     watch: {
         syncTreeNavigation() {
+            if (this.syncingNavigation) {
+                return;
+            }
+
             const AND_SAVE_PATH = true;
+            this.syncingNavigation = true;
             let currentLocationPath = this.openmct.router.currentLocation.path;
             let hasParent = this.currentlyViewedObjectParentPath() || (this.multipleRootChildren && !this.currentlyViewedObjectParentPath());
+            // if there's a current location path,
+            // if there's a parent of the currently viewed object
+            // and we're not in the parent of the currently viewed object
             let jumpAndScroll = currentLocationPath
                     && hasParent
                     && !this.currentPathIsActivePath();
+            // if the object being viewed is in the current path
             let justScroll = this.currentPathIsActivePath();
 
             if (this.searchValue) {
@@ -219,9 +228,10 @@ export default {
             }
 
             if (jumpAndScroll) {
-                this.scrollTo = this.currentlyViewedObjectId();
                 this.allTreeItems = [];
+                this.scrollTo = this.currentlyViewedObjectId();
                 this.jumpPath = this.currentlyViewedObjectParentPath();
+
                 if (this.multipleRootChildren) {
                     if (!this.jumpPath) {
                         this.jumpPath = 'ROOT';
@@ -237,6 +247,7 @@ export default {
             } else if (justScroll) {
                 this.scrollTo = this.currentlyViewedObjectId();
                 this.autoScroll();
+                this.syncingNavigation = false;
             }
         },
         searchValue() {
@@ -524,6 +535,7 @@ export default {
 
             this.autoScroll();
             this.isLoading = false;
+            this.syncingNavigation = false;
             this.setContainerHeight();
         },
         async jumpToPath(saveExpandedPath = false) {
@@ -629,6 +641,10 @@ export default {
             this.$refs.scrollable.scrollTop = 0;
         },
         handleReset(node) {
+            if (this.syncingNavigation) {
+                return;
+            }
+
             this.childrenSlideClass = 'up';
             this.ancestors.splice(this.ancestors.indexOf(node) + 1);
             this.getAllChildren(node);
