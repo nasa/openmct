@@ -101,6 +101,7 @@ export default {
     computed: {
         isAlias() {
             let parent = this.node.objectPath[1];
+
             if (!parent) {
                 return false;
             }
