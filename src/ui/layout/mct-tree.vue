@@ -155,7 +155,8 @@ export default {
             multipleRootChildren: false,
             noVisibleItems: false,
             observedAncestors: {},
-            mainTreeTopMargin: undefined
+            mainTreeTopMargin: undefined,
+            syncingNavigation: false
         };
     },
     computed: {
@@ -645,7 +646,8 @@ export default {
                     objectPath,
                     navigateToParent
                 });
-            };
+            }
+
             this.searchLoading = false;
         },
         searchTree(value) {
