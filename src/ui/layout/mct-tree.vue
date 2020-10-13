@@ -49,7 +49,7 @@
             />
             <!-- loading -->
             <div
-                v-if="isLoading || !itemHeightCalculated"
+                v-if="isLoading || !itemHeightCalculated || syncingNavigation"
                 :style="indicatorLeftOffset"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
@@ -88,7 +88,7 @@
                             @expanded="handleExpanded"
                         />
                         <li
-                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch"
+                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch && !syncingNavigation"
                             :style="indicatorLeftOffset"
                             class="c-tree__item c-tree__item--empty"
                         >
@@ -209,6 +209,7 @@ export default {
         syncTreeNavigation() {
             this.isLoading = true;
             const AND_SAVE_PATH = true;
+            this.syncingNavigation = true;
             let currentLocationPath = this.openmct.router.currentLocation.path;
             let hasParent = this.currentlyViewedObjectParentPath() || (this.multipleRootChildren && !this.currentlyViewedObjectParentPath());
             // if there's a current location path,
@@ -555,6 +556,7 @@ export default {
 
             this.autoScroll();
             this.isLoading = false;
+            this.syncingNavigation = false;
             this.setContainerHeight();
         },
         async jumpToPath(saveExpandedPath = false) {
