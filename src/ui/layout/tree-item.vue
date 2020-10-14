@@ -101,6 +101,7 @@ export default {
     computed: {
         isAlias() {
             let parent = this.node.objectPath[1];
+
             if (!parent) {
                 return false;
             }
@@ -122,13 +123,7 @@ export default {
         let objectComposition = this.openmct.composition.get(this.node.object);
 
         // only reliable way to get final item height
-        document.onreadystatechange = () => {
-            if (document.readyState === "complete") {
-                if (this.shouldEmitHeight) {
-                    this.$emit('emittedHeight', this.$el.offsetHeight);
-                }
-            }
-        };
+        this.readyStateCheck();
 
         this.domainObject = this.node.object;
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
@@ -144,8 +139,21 @@ export default {
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
+        document.removeEventListener('readystatechange', this.emitHeight);
     },
     methods: {
+        readyStateCheck() {
+            if (document.readyState !== 'complete') {
+                document.addEventListener('readystatechange', this.emitHeight);
+            } else {
+                this.emitHeight();
+            }
+        },
+        emitHeight() {
+            if (this.shouldEmitHeight && document.readyState === 'complete') {
+                this.$emit('emittedHeight', this.$el.offsetHeight);
+            }
+        },
         buildPathString(parentPath) {
             return [parentPath, this.openmct.objects.makeKeyString(this.node.object.identifier)].join('/');
         },
