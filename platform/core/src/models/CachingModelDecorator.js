@@ -21,8 +21,8 @@
  *****************************************************************************/
 
 define(
-    [],
-    function () {
+    ['objectUtils'],
+    function (utils) {
 
         /**
          * The caching model decorator maintains a cache of loaded domain
@@ -40,10 +40,14 @@ define(
 
         CachingModelDecorator.prototype.getModels = function (ids) {
             var loadFromCache = ids.filter(function cached(id) {
-                    return this.cacheService.has(id);
+                    let identifier = utils.parseKeyString(id);
+
+                    return this.cacheService.has(identifier.key);
                 }, this),
                 loadFromService = ids.filter(function notCached(id) {
-                    return !this.cacheService.has(id);
+                    let identifier = utils.parseKeyString(id);
+
+                    return !this.cacheService.has(identifier.key);
                 }, this);
 
             if (!loadFromCache.length) {
@@ -53,7 +57,8 @@ define(
             return this.modelService.getModels(loadFromService)
                 .then(function (modelResults) {
                     loadFromCache.forEach(function (id) {
-                        modelResults[id] = this.cacheService.get(id);
+                        let identifier = utils.parseKeyString(id);
+                        modelResults[id] = this.cacheService.get(identifier.key);
                     }, this);
 
                     return modelResults;
