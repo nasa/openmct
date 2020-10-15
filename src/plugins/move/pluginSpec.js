@@ -106,19 +106,4 @@ describe("The Move Action plugin", () => {
             expect(oldParentComposition.length).toEqual(0);
         });
     });
-
-    describe("when a new name is provided for the child object", () => {
-        const NEW_NAME = 'New Name';
-
-        beforeEach(() => {
-            moveAction = new MoveAction(openmct);
-            moveAction.updateNameCheck(childObject, NEW_NAME);
-        });
-
-        it("the name is updated", () => {
-            let childName = childObject.name;
-            expect(childName).toEqual(NEW_NAME);
-        });
-    });
-
 });
