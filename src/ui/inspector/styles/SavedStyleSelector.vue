@@ -22,23 +22,24 @@
 
 <template>
 <div
-    @click="selectStyle()"
-    :title="description"
 >
-    <div class="c-style has-local-controls">
-        <span
-            class="c-style-thumb"
-            :style="thumbStyle"
+    <div class="c-style c-style--saved has-local-controls c-toolbar">
+        <div class="c-style__controls"
+             @click="selectStyle()"
+             :title="description"
         >
-            <span
-                class="c-style-thumb__text u-style-receiver js-style-receiver"
-                :class="{ 'hide-nice': !hasProperty(savedStyle.color) }"
-                :data-font="savedStyle.font"
+            <div
+                class="c-style-thumb"
+                :style="thumbStyle"
             >
-                {{ thumbLabel }}
-            </span>
-        </span>
-        <div class="c-toolbar">
+                <span
+                        class="c-style-thumb__text u-style-receiver js-style-receiver"
+                        :class="{ 'hide-nice': !hasProperty(savedStyle.color) }"
+                        :data-font="savedStyle.font"
+                >
+                    {{ thumbLabel }}
+                </span>
+            </div>
             <div
                     class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-line-horz"
                     title="Border color"
@@ -68,17 +69,18 @@
                         :style="{ background: savedStyle.color }"
                 ></div>
             </div>
-            <!-- delete saved style -->
-            <div
+        </div>
+
+        <!-- delete saved style -->
+        <div
                 v-if="canDeleteStyle"
-                class="c-ctrl-wrapper c-local-controls--show-on-hover"
-            >
-                <div
+                class="c-style__button-delete c-local-controls--show-on-hover"
+        >
+            <div
                     class="c-icon-button icon-trash"
-                    title="Delete Style"
+                    title="Delete this saved style"
                     @click.stop="deleteStyle()"
-                >
-                </div>
+            >
             </div>
         </div>
     </div>
@@ -122,20 +124,19 @@ export default {
             return this.savedStyle.fontSize !== 'default' ? `${this.savedStyle.fontSize}px` : 'ABC';
         },
         description() {
-            // Note: lack of indention in the return string is deliberate, it affects how the text is rendered
-            const fill = `Fill: ${this.savedStyle.backgroundColor || 'None'};`;
-            const border = `Border: ${this.savedStyle.border || 'None'};`;
-            const color = `Text Color: ${this.savedStyle.color || 'None'};`;
-            const fontSize = this.savedStyle.fontSize ? `Font Size: ${this.savedStyle.fontSize};` : '';
-            const font = this.savedStyle.font ? `Font Family: ${this.savedStyle.font};` : '';
+            const fill = `Fill: ${this.savedStyle.backgroundColor || 'none'}`;
+            const border = `Border: ${this.savedStyle.border || 'none'}`;
+            const color = `Text Color: ${this.savedStyle.color || 'default'}`;
+            const fontSize = this.savedStyle.fontSize ? `Font Size: ${this.savedStyle.fontSize}` : '';
+            const font = this.savedStyle.font ? `Font Style: ${this.savedStyle.font}` : '';
 
-            return `
+            // Note: lack of indention in the return string is deliberate, it affects how the text is rendered
+            return `Click to apply this style:
 ${fill}
 ${border}
 ${color}
 ${fontSize}
-${font}
-            `;
+${font}`;
         },
         canDeleteStyle() {
             return this.isEditing;

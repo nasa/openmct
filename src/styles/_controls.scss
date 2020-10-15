@@ -849,8 +849,41 @@ select {
     display: flex;
     flex: 1 1 auto;
     align-items: center;
+    justify-content: space-between;
 
-    > * + * { margin-left: $interiorMargin; }
+    &__controls {
+        // Holds thumb, icon buttons
+        display: flex;
+        flex: 1 0 auto;
+
+        > * + * { margin-left: $interiorMargin; }
+    }
+
+    &__button-save,
+    &__button-delete {
+        // Holds save and delete buttons accordingly
+        flex: 0 0 auto;
+    }
+
+    &--saved {
+        border-radius: $controlCr;
+        padding: $interiorMargin !important;
+        cursor: pointer;
+
+        @include hover {
+            background: rgba($editUIBaseColorHov, 0.3);
+        }
+
+        .c-style__controls {
+            [class*='button'] {
+                pointer-events: none;
+
+                &:before {
+                    opacity: $controlDisabledOpacity;
+                }
+            }
+        }
+    }
 }
 
 .c-style-thumb {

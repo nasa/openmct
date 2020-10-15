@@ -53,8 +53,10 @@
         }
     }
 
-    &__style,
-    &__saved-style,
+    &__style {
+        padding-bottom: $interiorMargin;
+    }
+
     &__condition {
         padding: $interiorMargin;
     }
@@ -85,20 +87,6 @@
                 border-color: $c;
                 background: rgba($c, 0.1);
             }
-        }
-    }
-
-    &__saved-style {
-        border-radius: $controlCr;
-
-        .is-editing & {
-            &:hover {
-                $c: deeppink; //colorBodyFg;
-                border-color: rgba($c, 0.2);
-                background: rgba($c, 0.2);
-                transition: $transIn;
-            }
-
         }
     }
 

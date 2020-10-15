@@ -21,21 +21,22 @@
 *****************************************************************************/
 
 <template>
-<div class="c-style has-local-controls">
-    <span :class="[
-              { 'is-style-invisible': styleItem.style && styleItem.style.isStyleInvisible },
-              { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
-          ]"
-          :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
-          class="c-style-thumb"
-    >
-        <span class="c-style-thumb__text"
-              :class="{ 'hide-nice': !hasProperty(styleItem.style.color) }"
+<div class="c-style has-local-controls c-toolbar">
+    <div class="c-style__controls">
+        <div :class="[
+                  { 'is-style-invisible': styleItem.style && styleItem.style.isStyleInvisible },
+                  { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
+              ]"
+              :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
+              class="c-style-thumb"
         >
-            ABC
-        </span>
-    </span>
-    <span class="c-toolbar">
+            <span class="c-style-thumb__text"
+                  :class="{ 'hide-nice': !hasProperty(styleItem.style.color) }"
+            >
+                ABC
+            </span>
+        </div>
+
         <toolbar-color-picker v-if="hasProperty(styleItem.style.border)"
                               class="c-style__toolbar-button--border-color u-menu-to--center"
                               :options="borderColorOption"
@@ -61,14 +62,14 @@
                                :options="isStyleInvisibleOption"
                                @change="updateStyleValue"
         />
+    </div>
 
-        <!-- Save Styles -->
-        <toolbar-button v-if="canSaveStyle"
-                        class="c-style__toolbar-button--save c-local-controls--show-on-hover"
-                        :options="saveOptions"
-                        @click="saveItemStyle()"
-        />
-    </span>
+    <!-- Save Styles -->
+    <toolbar-button v-if="canSaveStyle"
+                    class="c-style__toolbar-button--save c-local-controls--show-on-hover c-icon-button c-icon-button--major"
+                    :options="saveOptions"
+                    @click="saveItemStyle()"
+    />
 </div>
 </template>
 
