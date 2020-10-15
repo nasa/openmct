@@ -30,7 +30,7 @@
     var indexedItems = [],
         TERM_SPLITTER = /[ _*]/;
 
-    function indexItem(id, model, type) {
+    function indexItem(id, model) {
         var vector = {
             name: model.name
         };
@@ -42,7 +42,7 @@
             id: id,
             vector: vector,
             model: model,
-            type: type
+            type: model.type
         });
     }
 
@@ -154,7 +154,7 @@
 
     self.onmessage = function (event) {
         if (event.data.request === 'index') {
-            indexItem(event.data.id, event.data.model, event.data.type);
+            indexItem(event.data.id, event.data.model);
         } else if (event.data.request === 'search') {
             self.postMessage(search(event.data));
         }
