@@ -1,5 +1,6 @@
 import objectLink from '../../../ui/mixins/object-link';
 
+export const DEFAULT_CLASS = 'is-notebook-default';
 const TIME_BOUNDS = {
     START_BOUND: 'tc.startBound',
     END_BOUND: 'tc.endBound',
@@ -128,6 +129,7 @@ export function addNotebookEntry(openmct, domainObject, notebookStorage, embed =
         embeds
     });
 
+    addDefaultClass(domainObject);
     openmct.objects.mutate(domainObject, 'configuration.entries', entries);
 
     return id;
@@ -193,5 +195,15 @@ export function deleteNotebookEntries(openmct, domainObject, selectedSection, se
     }
 
     delete entries[selectedSection.id][selectedPage.id];
+
     openmct.objects.mutate(domainObject, 'configuration.entries', entries);
+}
+
+function addDefaultClass(domainObject) {
+    const classList = domainObject.classList || [];
+    if (classList.includes(DEFAULT_CLASS)) {
+        return;
+    }
+
+    classList.push(DEFAULT_CLASS);
 }

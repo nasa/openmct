@@ -111,10 +111,8 @@ import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
+import { DEFAULT_CLASS, addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import { throttle } from 'lodash';
-
-const DEFAULT_CLASS = 'is-notebook-default';
 
 export default {
     inject: ['openmct', 'domainObject', 'snapshotContainer'],
@@ -197,15 +195,6 @@ export default {
         });
     },
     methods: {
-        addDefaultClass() {
-            const classList = this.internalDomainObject.classList || [];
-            if (classList.includes(DEFAULT_CLASS)) {
-                return;
-            }
-
-            classList.push(DEFAULT_CLASS);
-            this.mutateObject('classList', classList);
-        },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
                 s.isSelected = false;
@@ -442,11 +431,18 @@ export default {
         },
         async updateDefaultNotebook(notebookStorage) {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
-            this.removeDefaultClass(defaultNotebookObject);
-            setDefaultNotebook(this.openmct, notebookStorage);
-            this.addDefaultClass();
-            this.defaultSectionId = notebookStorage.section.id;
-            this.defaultPageId = notebookStorage.page.id;
+            if (defaultNotebookObject.identifier.key !== notebookStorage.notebookMeta.identifier.key) {
+                this.removeDefaultClass(defaultNotebookObject);
+                setDefaultNotebook(this.openmct, notebookStorage);
+            }
+
+            if (this.defaultSectionId.length === 0 || this.defaultSectionId !== notebookStorage.section.id) {
+                this.defaultSectionId = notebookStorage.section.id;
+            }
+
+            if (this.defaultPageId.length === 0 || this.defaultPageId !== notebookStorage.page.id) {
+                this.defaultPageId = notebookStorage.page.id;
+            }
         },
         updateDefaultNotebookPage(pages, id) {
             if (!id) {
