@@ -47,6 +47,7 @@ define([
         this.providers = {};
         this.rootRegistry = new RootRegistry();
         this.rootProvider = new RootObjectProvider.default(this.rootRegistry);
+        this.cache = {};
     }
 
     /**
@@ -154,6 +155,11 @@ define([
      *          has been saved, or be rejected if it cannot be saved
      */
     ObjectAPI.prototype.get = function (identifier) {
+        let keystring = this.makeKeyString(identifier);
+        if (this.cache[keystring] !== undefined) {
+            return this.cache[keystring];
+        }
+
         identifier = utils.parseKeyString(identifier);
         const provider = this.getProvider(identifier);
 
@@ -165,7 +171,15 @@ define([
             throw new Error('Provider does not support get!');
         }
 
-        return provider.get(identifier);
+        let objectPromise = provider.get(identifier);
+
+        this.cache[keystring] = objectPromise;
+
+        return objectPromise.then(result => {
+            delete this.cache[keystring];
+
+            return result;
+        });
     };
 
     ObjectAPI.prototype.delete = function () {

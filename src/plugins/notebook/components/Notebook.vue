@@ -9,10 +9,11 @@
     </div>
     <SearchResults v-if="search.length"
                    ref="searchResults"
-                   :results="getSearchResults()"
+                   :domain-object="internalDomainObject"
+                   :results="searchedEntries"
                    @changeSectionPage="changeSelectedSection"
+                   @updateEntries="updateEntries"
     />
-
     <div v-if="!search.length"
          class="c-notebook__body"
     >
@@ -105,15 +106,13 @@
 </template>
 
 <script>
-import NotebookEntry from './notebook-entry.vue';
+import NotebookEntry from './NotebookEntry.vue';
 import Search from '@/ui/components/search.vue';
-import SearchResults from './search-results.vue';
-import Sidebar from './sidebar.vue';
+import SearchResults from './SearchResults.vue';
+import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
+import { DEFAULT_CLASS, addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import { throttle } from 'lodash';
-
-const DEFAULT_CLASS = 'is-notebook-default';
 
 export default {
     inject: ['openmct', 'domainObject', 'snapshotContainer'],
@@ -153,6 +152,9 @@ export default {
         pages() {
             return this.getPages() || [];
         },
+        searchedEntries() {
+            return this.getSearchResults();
+        },
         sections() {
             return this.internalDomainObject.configuration.sections || [];
         },
@@ -171,8 +173,6 @@ export default {
 
             return this.sections.find(section => section.isSelected);
         }
-    },
-    watch: {
     },
     beforeMount() {
         this.throttledSearchItem = throttle(this.searchItem, 500);
@@ -195,15 +195,6 @@ export default {
         });
     },
     methods: {
-        addDefaultClass() {
-            const classList = this.internalDomainObject.classList || [];
-            if (classList.includes(DEFAULT_CLASS)) {
-                return;
-            }
-
-            classList.push(DEFAULT_CLASS);
-            this.mutateObject('classList', classList);
-        },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
                 s.isSelected = false;
@@ -259,7 +250,7 @@ export default {
             event.preventDefault();
             event.stopImmediatePropagation();
 
-            const snapshotId = event.dataTransfer.getData('snapshot/id');
+            const snapshotId = event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
                 const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
                 this.newEntry(snapshot);
@@ -440,11 +431,18 @@ export default {
         },
         async updateDefaultNotebook(notebookStorage) {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
-            this.removeDefaultClass(defaultNotebookObject);
-            setDefaultNotebook(this.openmct, notebookStorage);
-            this.addDefaultClass();
-            this.defaultSectionId = notebookStorage.section.id;
-            this.defaultPageId = notebookStorage.page.id;
+            if (defaultNotebookObject.identifier.key !== notebookStorage.notebookMeta.identifier.key) {
+                this.removeDefaultClass(defaultNotebookObject);
+                setDefaultNotebook(this.openmct, notebookStorage);
+            }
+
+            if (this.defaultSectionId.length === 0 || this.defaultSectionId !== notebookStorage.section.id) {
+                this.defaultSectionId = notebookStorage.section.id;
+            }
+
+            if (this.defaultPageId.length === 0 || this.defaultPageId !== notebookStorage.page.id) {
+                this.defaultPageId = notebookStorage.page.id;
+            }
         },
         updateDefaultNotebookPage(pages, id) {
             if (!id) {
