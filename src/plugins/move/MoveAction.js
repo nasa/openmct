@@ -31,24 +31,28 @@ export default class MoveAction {
 
     async invoke(objectPath) {
         let object = objectPath[0];
+        let inNavigationPath = this.inNavigationPath(object);
         let oldParent = objectPath[1];
         let dialogService = this.openmct.$injector.get('dialogService');
         let dialogForm = this.getDialogForm(object, oldParent);
         let userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
 
-        this.updateNameCheck(object, userInput.name);
+        // if we need to update name
+        if (object.name !== userInput.name) {
+            this.openmct.objects.mutate(object, 'name', userInput.name);
+        }
 
         let parentContext = userInput.location.getCapability('context');
         let newParent = await this.openmct.objects.get(parentContext.domainObject.id);
 
-        if (this.inNavigationPath(object) && this.openmct.editor.isEditing()) {
+        if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
         this.addToNewParent(object, newParent);
         this.removeFromOldParent(oldParent, object);
 
-        if (this.inNavigationPath(object)) {
+        if (inNavigationPath) {
             let newObjectPath = await this.openmct.objects.getOriginalPath(object.identifier);
             let root = await this.openmct.objects.getRoot();
             let rootChildCount = root.composition.length;
@@ -59,12 +63,6 @@ export default class MoveAction {
             }
 
             this.navigateTo(newObjectPath);
-        }
-    }
-
-    updateNameCheck(object, name) {
-        if (object.name !== name) {
-            this.openmct.objects.mutate(object, 'name', name);
         }
     }
 
@@ -83,27 +81,16 @@ export default class MoveAction {
 
     addToNewParent(child, newParent) {
         let newParentKeyString = this.openmct.objects.makeKeyString(newParent.identifier);
-        let composition = newParent.composition;
+        let compositionCollection = this.openmct.composition.get(newParent);
 
-        composition.push(child.identifier);
-
-        this.openmct.objects.mutate(newParent, 'composition', composition);
         this.openmct.objects.mutate(child, 'location', newParentKeyString);
+        compositionCollection.add(child);
     }
 
     removeFromOldParent(parent, child) {
-        let composition = parent.composition.filter(id =>
-            !this.openmct.objects.areIdsEqual(id, child.identifier)
-        );
+        let compositionCollection = this.openmct.composition.get(parent);
 
-        this.openmct.objects.mutate(parent, 'composition', composition);
-
-        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
-        const isAlias = parentKeyString !== child.location;
-
-        if (!isAlias) {
-            this.openmct.objects.mutate(child, 'location', null);
-        }
+        compositionCollection.remove(child);
     }
 
     getDialogForm(object, parent) {
@@ -165,9 +152,8 @@ export default class MoveAction {
         let parent = objectPath[1];
         let parentType = parent && this.openmct.types.get(parent.type);
         let child = objectPath[0];
-        let locked = child.locked ? child.locked : parent && parent.locked;
 
-        if (locked) {
+        if (child.locked || (parent && parent.locked)) {
             return false;
         }
 
