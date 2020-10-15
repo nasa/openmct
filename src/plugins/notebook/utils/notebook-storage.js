@@ -1,3 +1,5 @@
+import objectUtils from 'objectUtils';
+
 const NOTEBOOK_LOCAL_STORAGE = 'notebook-storage';
 let currentNotebookObjectIdentifier = null;
 let unlisten = null;
@@ -19,7 +21,7 @@ function defaultNotebookObjectChanged(newDomainObject) {
 
 function observeDefaultNotebookObject(openmct, notebookMeta, domainObject) {
     if (currentNotebookObjectIdentifier
-            && currentNotebookObjectIdentifier.key === notebookMeta.identifier.key) {
+            && objectUtils.makeKeyString(currentNotebookObjectIdentifier) === objectUtils.makeKeyString(notebookMeta.identifier)) {
         return;
     }
 
