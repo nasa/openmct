@@ -245,7 +245,7 @@ export default {
             return Object.keys(this.consolidatedFontStyle).filter(property => this.consolidatedFontStyle[property] === NON_SPECIFIC);
         },
         canStyleFont() {
-            return Boolean(this.styleableFontItems.length);
+            return Boolean(this.styleableFontItems.length && this.isEditing);
         },
         objectStyles() {
             let objectStyles = {};
