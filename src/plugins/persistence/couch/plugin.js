@@ -22,9 +22,10 @@
 
 import CouchObjectProvider from './CouchObjectProvider';
 const NAMESPACE = '';
+const PERSISTENCE_SPACE = '';
 
 export default function CouchPlugin(url) {
     return function install(openmct) {
-        openmct.objects.addProvider(NAMESPACE, new CouchObjectProvider(openmct, url, NAMESPACE));
+        openmct.objects.addProvider(PERSISTENCE_SPACE, new CouchObjectProvider(openmct, url, NAMESPACE));
     };
 }
