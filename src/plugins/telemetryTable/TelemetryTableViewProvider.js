@@ -70,16 +70,16 @@ define([
                             data() {
                                 return {
                                     isEditing: editMode,
-                                    markingProp
+                                    markingProp,
+                                    view
                                 };
                             },
                             provide: {
                                 openmct,
                                 table,
-                                objectPath,
-                                view
+                                objectPath
                             },
-                            template: '<table-component ref="tableComponent" :isEditing="isEditing" :marking="markingProp"/>'
+                            template: '<table-component ref="tableComponent" :isEditing="isEditing" :marking="markingProp" :view="view"/>'
                         });
                     },
                     onEditModeChange(editMode) {

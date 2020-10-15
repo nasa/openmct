@@ -23,6 +23,77 @@
 <div class="c-table-wrapper"
      :class="{ 'is-paused': paused }"
 >
+    <div v-if="enableLegacyToolbar"
+         class="c-table-control-bar c-control-bar"
+    >
+        <button
+            v-if="allowExport"
+            v-show="!markedRows.length"
+            class="c-button icon-download labeled"
+            title="Export this view's data"
+            @click="exportAllDataAsCSV()"
+        >
+            <span class="c-button__label">Export Table Data</span>
+        </button>
+        <button
+            v-if="allowExport"
+            v-show="markedRows.length"
+            class="c-button icon-download labeled"
+            title="Export marked rows as CSV"
+            @click="exportMarkedDataAsCSV()"
+        >
+            <span class="c-button__label">Export Marked Rows</span>
+        </button>
+        <button
+            v-show="markedRows.length"
+            class="c-button icon-x labeled"
+            title="Unmark all rows"
+            @click="unmarkAllRows()"
+        >
+            <span class="c-button__label">Unmark All Rows</span>
+        </button>
+        <div
+            v-if="marking.enable"
+            class="c-separator"
+        ></div>
+        <button
+            v-if="marking.enable"
+            class="c-button icon-pause pause-play labeled"
+            :class=" paused ? 'icon-play is-paused' : 'icon-pause'"
+            :title="paused ? 'Continue real-time data flow' : 'Pause real-time data flow'"
+            @click="togglePauseByButton()"
+        >
+            <span class="c-button__label">
+                {{ paused ? 'Play' : 'Pause' }}
+            </span>
+        </button>
+
+        <template v-if="!isEditing">
+            <div
+                class="c-separator"
+            >
+            </div>
+            <button
+                v-if="isAutosizeEnabled"
+                class="c-button icon-arrows-right-left labeled"
+                title="Increase column widths to fit currently available data."
+                @click="recalculateColumnWidths"
+            >
+                <span class="c-button__label">Expand Columns</span>
+            </button>
+            <button
+                v-else
+                class="c-button icon-expand labeled"
+                title="Automatically size columns to fit the table into the available space."
+                @click="autosizeColumns"
+            >
+                <span class="c-button__label">Autosize Columns</span>
+            </button>
+        </template>
+
+        <slot name="buttons"></slot>
+    </div>
+
     <!-- alternate controlbar start -->
     <div v-if="marking.useAlternateControlBar"
          class="c-table-control-bar c-control-bar"
@@ -207,7 +278,7 @@ export default {
         TelemetryFilterIndicator,
         ToggleSwitch
     },
-    inject: ['table', 'openmct', 'objectPath', 'view'],
+    inject: ['table', 'openmct', 'objectPath'],
     props: {
         isEditing: {
             type: Boolean,
@@ -218,12 +289,12 @@ export default {
             default: true
         },
         allowFiltering: {
-            'type': Boolean,
-            'default': true
+            type: Boolean,
+            default: true
         },
         allowSorting: {
-            'type': Boolean,
-            'default': true
+            type: Boolean,
+            default: true
         },
         marking: {
             type: Object,
@@ -236,6 +307,14 @@ export default {
                     rowNamePlural: ""
                 };
             }
+        },
+        enableLegacyToolbar: {
+            type: Boolean,
+            default: false
+        },
+        view: {
+            type: Object,
+            required: false
         }
     },
     data() {
@@ -350,7 +429,13 @@ export default {
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);
 
-        this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.view);
+        if (!this.view) {
+            this.defaultView = {
+                getViewContext: this.getViewContext
+            }
+        };
+
+        this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.view || this.defaultView);
         this.initializeViewActions();
 
         this.table.on('object-added', this.addObject);
