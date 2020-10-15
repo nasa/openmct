@@ -60,7 +60,6 @@ export function setDefaultNotebookSection(section) {
 
     notebookStorage.section = section;
     saveDefaultNotebook(notebookStorage);
-
 }
 
 export function setDefaultNotebookPage(page) {

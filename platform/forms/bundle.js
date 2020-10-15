@@ -30,7 +30,6 @@ define([
     "./src/controllers/CompositeController",
     "./src/controllers/ColorController",
     "./src/controllers/DialogButtonController",
-    "./src/controllers/SnapshotPreviewController",
     "./res/templates/controls/autocomplete.html",
     "./res/templates/controls/checkbox.html",
     "./res/templates/controls/datetime.html",
@@ -44,8 +43,7 @@ define([
     "./res/templates/controls/menu-button.html",
     "./res/templates/controls/dialog.html",
     "./res/templates/controls/radio.html",
-    "./res/templates/controls/file-input.html",
-    "./res/templates/controls/snap-view.html"
+    "./res/templates/controls/file-input.html"
 ], function (
     MCTForm,
     MCTControl,
@@ -56,7 +54,6 @@ define([
     CompositeController,
     ColorController,
     DialogButtonController,
-    SnapshotPreviewController,
     autocompleteTemplate,
     checkboxTemplate,
     datetimeTemplate,
@@ -70,8 +67,7 @@ define([
     menuButtonTemplate,
     dialogTemplate,
     radioTemplate,
-    fileInputTemplate,
-    snapViewTemplate
+    fileInputTemplate
 ) {
 
     return {
@@ -157,10 +153,6 @@ define([
                     {
                         "key": "file-input",
                         "template": fileInputTemplate
-                    },
-                    {
-                        "key": "snap-view",
-                        "template": snapViewTemplate
                     }
                 ],
                 "controllers": [
@@ -193,14 +185,6 @@ define([
                         "depends": [
                             "$scope",
                             "dialogService"
-                        ]
-                    },
-                    {
-                        "key": "SnapshotPreviewController",
-                        "implementation": SnapshotPreviewController,
-                        "depends": [
-                            "$scope",
-                            "openmct"
                         ]
                     }
                 ],
