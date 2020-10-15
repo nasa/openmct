@@ -49,8 +49,8 @@
 </template>
 
 <script>
-import NotebookEmbed from './notebook-embed.vue';
-import PopupMenu from './popup-menu.vue';
+import NotebookEmbed from './NotebookEmbed.vue';
+import PopupMenu from './PopupMenu.vue';
 import RemoveDialog from '../utils/removeDialog';
 import { NOTEBOOK_SNAPSHOT_MAX_COUNT } from '../snapshot-container';
 import { EVENT_SNAPSHOTS_UPDATED } from '../notebook-constants';
@@ -80,8 +80,6 @@ export default {
         this.addPopupMenuItems();
         this.snapshotContainer.on(EVENT_SNAPSHOTS_UPDATED, this.snapshotsUpdated);
         this.snapshots = this.snapshotContainer.getSnapshots();
-    },
-    beforeDestory() {
     },
     methods: {
         addPopupMenuItems() {
@@ -122,7 +120,7 @@ export default {
         },
         startEmbedDrag(snapshot, event) {
             event.dataTransfer.setData('text/plain', snapshot.id);
-            event.dataTransfer.setData('snapshot/id', snapshot.id);
+            event.dataTransfer.setData('openmct/snapshot/id', snapshot.id);
         },
         updateSnapshot(snapshot) {
             this.snapshotContainer.updateSnapshot(snapshot);
