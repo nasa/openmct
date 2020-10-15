@@ -106,4 +106,5 @@ describe("The Move Action plugin", () => {
             expect(oldParentComposition.length).toEqual(0);
         });
     });
+
 });
