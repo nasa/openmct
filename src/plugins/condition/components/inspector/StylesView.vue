@@ -62,14 +62,8 @@
     </template>
     <template v-else>
         <div class="c-inspect-styles__header">
-            Conditional Object Styles
+            Conditional Object Styles SV
         </div>
-        <FontStyleEditor
-            v-if="canStyleFont"
-            :allow-editing="allowEditing"
-            :font-style="consolidatedFontStyle"
-            @set-font-property="setFontProperty"
-        />
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <a v-if="conditionSetDomainObject"
                class="c-object-label icon-conditional"
@@ -93,6 +87,13 @@
                 ></button>
             </template>
         </div>
+
+        <FontStyleEditor
+                v-if="canStyleFont"
+                :allow-editing="allowEditing"
+                :font-style="consolidatedFontStyle"
+                @set-font-property="setFontProperty"
+        />
 
         <div v-if="conditionsLoaded"
              class="c-inspect-styles__conditions"

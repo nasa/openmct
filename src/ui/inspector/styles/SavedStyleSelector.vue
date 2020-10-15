@@ -22,15 +22,10 @@
 
 <template>
 <div
-    class="c-saved-style"
     @click="selectStyle()"
+    :title="description"
 >
     <div class="c-style has-local-controls">
-        <span
-            class="c-disclosure-triangle is-enabled"
-            :class="{ 'c-disclosure-triangle--expanded': expanded }"
-            @click.stop="toggleExpanded()"
-        ></span>
         <span
             class="c-style-thumb"
             :style="thumbStyle"
@@ -43,47 +38,36 @@
                 {{ thumbLabel }}
             </span>
         </span>
-        <span class="c-toolbar">
-            <div class="c-ctrl-wrapper">
-                <div
-                    class="c-icon-button--disabled c-icon-button--swatched icon-line-horz"
+        <div class="c-toolbar">
+            <div
+                    class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-line-horz"
                     title="Border color"
-                >
-                    <div
+            >
+                <div
                         class="c-swatch"
                         :style="{
                             background: borderColor
                         }"
-                    ></div>
-                </div>
+                ></div>
             </div>
-            <div class="c-ctrl-wrapper">
-                <div
-                    class="c-icon-button--disabled c-icon-button--swatched icon-paint-bucket"
+            <div
+                    class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-paint-bucket"
                     title="Background color"
-                >
-                    <div
-                        class="c-swatch"
-                        :style="{
-                            background: savedStyle.backgroundColor
-                        }"
-                    ></div>
-                </div>
-            </div>
-            <div class="c-ctrl-wrapper">
+            ><!-- OK-->
                 <div
-                    class="c-icon-button--disabled c-icon-button--swatched icon-font"
-                    title="Text color"
-                >
-                    <div
                         class="c-swatch"
-                        :style="{
-                            background: savedStyle.color
-                        }"
-                    ></div>
-                </div>
+                        :style="{ background: savedStyle.backgroundColor }"
+                ></div>
             </div>
-
+            <div
+                    class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-font"
+                    title="Text color"
+            ><!-- OK-->
+                <div
+                        class="c-swatch"
+                        :style="{ background: savedStyle.color }"
+                ></div>
+            </div>
             <!-- delete saved style -->
             <div
                 v-if="canDeleteStyle"
@@ -96,11 +80,7 @@
                 >
                 </div>
             </div>
-        </span>
-    </div>
-
-    <div v-if="expanded">
-        {{ description }}
+        </div>
     </div>
 </div>
 </template>
@@ -142,6 +122,7 @@ export default {
             return this.savedStyle.fontSize !== 'default' ? `${this.savedStyle.fontSize}px` : 'ABC';
         },
         description() {
+            // Note: lack of indention in the return string is deliberate, it affects how the text is rendered
             const fill = `Fill: ${this.savedStyle.backgroundColor || 'None'};`;
             const border = `Border: ${this.savedStyle.border || 'None'};`;
             const color = `Text Color: ${this.savedStyle.color || 'None'};`;
@@ -149,11 +130,11 @@ export default {
             const font = this.savedStyle.font ? `Font Family: ${this.savedStyle.font};` : '';
 
             return `
-                ${fill}
-                ${border}
-                ${color}
-                ${fontSize}
-                ${font}
+${fill}
+${border}
+${color}
+${fontSize}
+${font}
             `;
         },
         canDeleteStyle() {

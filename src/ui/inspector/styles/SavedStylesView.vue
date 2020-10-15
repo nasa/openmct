@@ -26,18 +26,14 @@
         Saved Styles
     </div>
     <div class="c-inspect-styles__content">
-        <div class="c-inspect-styles__saved-style">
-            <div
+        <div class="c-inspect-styles__saved-styles">
+            <saved-style-selector
                 v-for="(savedStyle, index) in savedStyles"
                 :key="index"
                 class="c-inspect-styles__saved-style"
-            >
-                <saved-style-selector
-                    class="c-inspect-styles__selector"
-                    :is-editing="isEditing"
-                    :saved-style="savedStyle"
-                />
-            </div>
+                :is-editing="isEditing"
+                :saved-style="savedStyle"
+            />
         </div>
     </div>
 </div>

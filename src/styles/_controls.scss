@@ -859,7 +859,9 @@ select {
     border-radius: $basicCr;
     box-shadow: rgba($colorBodyFg, 0.4) 0 0 3px;
     flex: 0 0 auto;
-    padding: $interiorMargin $interiorMarginLg;
+    padding: $interiorMargin;
+    text-align: center;
+    width: 50px;
 
     &--mixed {
         @include mixedBg();
