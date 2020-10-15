@@ -112,6 +112,8 @@ import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
 import { DEFAULT_CLASS, addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
+import objectUtils from 'objectUtils';
+
 import { throttle } from 'lodash';
 
 export default {
@@ -433,7 +435,7 @@ export default {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
             if (!defaultNotebookObject) {
                 setDefaultNotebook(this.openmct, notebookStorage);
-            } else if (defaultNotebookObject.identifier.key !== notebookStorage.notebookMeta.identifier.key) {
+            } else if (objectUtils.makeKeyString(defaultNotebookObject.identifier) !== objectUtils.makeKeyString(notebookStorage.notebookMeta.identifier)) {
                 this.removeDefaultClass(defaultNotebookObject);
                 setDefaultNotebook(this.openmct, notebookStorage);
             }
