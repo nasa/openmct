@@ -4,6 +4,7 @@
         :options="fontSizeMenuOptions"
         @change="setFontSize"
     />
+    <div class="c-toolbar__separator"></div>
     <toolbar-select-menu
         :options="fontMenuOptions"
         @change="setFont"

@@ -124,10 +124,9 @@ button {
     }
 }
 
-.c-icon-button,
-.c-icon-button--disabled {
-    &__label {
-        margin-left: $interiorMargin;
+.c-icon-button {
+    [class*='label'] {
+        opacity: 0.6;
     }
 
     &--mixed {
@@ -656,6 +655,7 @@ select {
     }
 
     &__item-none {
+        @include userSelectNone();
         flex: 0 0 auto;
         display: flex;
         align-items: center;
@@ -766,6 +766,12 @@ select {
         @include hover() {
             background: $editUIBaseColorHov !important;
             color: $editUIBaseColorFg !important;
+        }
+
+        &--menu {
+            $p: 4px;
+            padding-top: $p;
+            padding-bottom: $p;
         }
 
         &--swatched {

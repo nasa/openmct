@@ -54,7 +54,7 @@
             <div
                     class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-paint-bucket"
                     title="Background color"
-            ><!-- OK-->
+            >
                 <div
                         class="c-swatch"
                         :style="{ background: savedStyle.backgroundColor }"
@@ -63,7 +63,7 @@
             <div
                     class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-font"
                     title="Text color"
-            ><!-- OK-->
+            >
                 <div
                         class="c-swatch"
                         :style="{ background: savedStyle.color }"
@@ -71,7 +71,6 @@
             </div>
         </div>
 
-        <!-- delete saved style -->
         <div
                 v-if="canDeleteStyle"
                 class="c-style__button-delete c-local-controls--show-on-hover"

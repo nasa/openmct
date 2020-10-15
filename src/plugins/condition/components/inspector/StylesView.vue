@@ -62,14 +62,15 @@
     </template>
     <template v-else>
         <div class="c-inspect-styles__header">
-            Conditional Object Styles SV
+            Conditional Object Styles
         </div>
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <a v-if="conditionSetDomainObject"
-               class="c-object-label icon-conditional"
+               class="c-object-label"
                :href="navigateToPath"
                @click="navigateOrPreview"
             >
+                <span class="c-object-label__type-icon icon-conditional"></span>
                 <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
             </a>
             <template v-if="allowEditing">
