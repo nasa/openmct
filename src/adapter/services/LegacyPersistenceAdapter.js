@@ -32,7 +32,9 @@ export default class LegacyPersistenceAdapter {
     }
 
     listSpaces() {
-        return Promise.resolve(Object.keys(this.openmct.objects.providers));
+        let keys = Object.keys(this.openmct.objects.providers).map(key => key || 'mct');
+
+        return Promise.resolve(keys);
     }
 
     createObject(space, key, legacyDomainObject) {
@@ -40,6 +42,10 @@ export default class LegacyPersistenceAdapter {
             namespace: space,
             key: key
         });
+
+        if (object.identifier.namespace && object.identifier.namespace === 'mct') {
+            object.identifier.namespace = '';
+        }
 
         return this.openmct.objects.save(object);
     }
@@ -50,6 +56,10 @@ export default class LegacyPersistenceAdapter {
             key: key
         };
 
+        if (identifier.namespace && identifier.namespace === 'mct') {
+            identifier.namespace = '';
+        }
+
         return this.openmct.objects.delete(identifier);
     }
 
@@ -59,6 +69,10 @@ export default class LegacyPersistenceAdapter {
             key: key
         });
 
+        if (object.identifier.namespace && object.identifier.namespace === 'mct') {
+            object.identifier.namespace = '';
+        }
+
         return this.openmct.objects.save(object);
     }
 
@@ -67,6 +81,10 @@ export default class LegacyPersistenceAdapter {
             namespace: space,
             key: key
         };
+
+        if (identifier.namespace && identifier.namespace === 'mct') {
+            identifier.namespace = '';
+        }
 
         return this.openmct.objects.get(identifier).then(domainObject => {
             let object = this.openmct.legacyObject(domainObject);

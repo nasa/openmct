@@ -146,6 +146,7 @@ define(["objectUtils"],
                     return domainObject.useCapability("mutation", function () {
                         return model;
                     }, modified);
+
                 }
             }
 
@@ -153,11 +154,10 @@ define(["objectUtils"],
                 return this.$q.when(true);
             }
 
-            return this.openmct.objects.get(domainObject.getId()).then((newStyleObject) => {
-                let oldStyleObject = this.openmct.legacyObject(newStyleObject);
-
-                return updateModel(oldStyleObject.getModel());
-            });
+            return this.persistenceService.readObject(
+                this.getSpace(),
+                this.getKey()
+            ).then(updateModel);
         };
 
         /**
