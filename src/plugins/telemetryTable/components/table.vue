@@ -314,7 +314,10 @@ export default {
         },
         view: {
             type: Object,
-            required: false
+            required: false,
+            default() {
+                return {};
+            }
         }
     },
     data() {
@@ -390,32 +393,38 @@ export default {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
 
-                if (newVal.length > 0) {
-                    this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
-                } else if (newVal.length === 0) {
-                    this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+                if (this.viewActionsCollection) {
+                    if (newVal.length > 0) {
+                        this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
+                    } else if (newVal.length === 0) {
+                        this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+                    }
                 }
             }
         },
         paused: {
             handler(newVal) {
-                if (newVal) {
-                    this.viewActionsCollection.hide(['pause-data']);
-                    this.viewActionsCollection.show(['play-data']);
-                } else {
-                    this.viewActionsCollection.hide(['play-data']);
-                    this.viewActionsCollection.show(['pause-data']);
+                if (this.viewActionsCollection) {
+                    if (newVal) {
+                        this.viewActionsCollection.hide(['pause-data']);
+                        this.viewActionsCollection.show(['play-data']);
+                    } else {
+                        this.viewActionsCollection.hide(['play-data']);
+                        this.viewActionsCollection.show(['pause-data']);
+                    }
                 }
             }
         },
         isAutosizeEnabled: {
             handler(newVal) {
-                if (newVal) {
-                    this.viewActionsCollection.show(['expand-columns']);
-                    this.viewActionsCollection.hide(['autosize-columns']);
-                } else {
-                    this.viewActionsCollection.show(['autosize-columns']);
-                    this.viewActionsCollection.hide(['expand-columns']);
+                if (this.viewActionsCollection) {
+                    if (newVal) {
+                        this.viewActionsCollection.show(['expand-columns']);
+                        this.viewActionsCollection.hide(['autosize-columns']);
+                    } else {
+                        this.viewActionsCollection.show(['autosize-columns']);
+                        this.viewActionsCollection.hide(['expand-columns']);
+                    }
                 }
             }
         }
@@ -429,14 +438,10 @@ export default {
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);
 
-        if (!this.view) {
-            this.defaultView = {
-                getViewContext: this.getViewContext
-            }
-        };
-
-        this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.view || this.defaultView);
-        this.initializeViewActions();
+        if (!this.marking.useAlternateControlBar && !this.enableLegacyToolbar) {
+            this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.view);
+            this.initializeViewActions();
+        }
 
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
