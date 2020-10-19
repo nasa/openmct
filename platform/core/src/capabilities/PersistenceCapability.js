@@ -114,7 +114,12 @@ define(["objectUtils"],
             var self = this,
                 domainObject = this.domainObject;
 
-            let newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), domainObject.getId());
+            const identifier = {
+                namespace: this.getSpace(),
+                key: this.getKey()
+            };
+
+            let newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), identifier);
 
             return this.openmct.objects
                 .save(newStyleObject)
