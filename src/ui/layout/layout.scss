@@ -81,7 +81,7 @@
                 flex: 0 0 auto;
 
                 + * {
-                    margin-top: $interiorMarginLg;
+                    margin-top: $interiorMargin;
                 }
             }
         }
@@ -148,6 +148,7 @@
     /******************************* HEAD */
     &__main-view-browse-bar {
         flex: 0 0 auto;
+        margin-bottom: $interiorMargin; // Needs some additional visual separation
     }
 
     body.mobile & .l-shell__main-view-browse-bar {
