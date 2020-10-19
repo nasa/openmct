@@ -19,7 +19,7 @@
 <script>
 import { deleteNotebookEntries } from '../utils/notebook-entries';
 import { getDefaultNotebook } from '../utils/notebook-storage';
-import sectionComponent from './section-component.vue';
+import sectionComponent from './SectionComponent.vue';
 
 export default {
     inject: ['openmct'],
@@ -56,12 +56,6 @@ export default {
     data() {
         return {
         };
-    },
-    watch: {
-    },
-    mounted() {
-    },
-    destroyed() {
     },
     methods: {
         deleteSection(id) {

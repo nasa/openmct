@@ -43,13 +43,25 @@
 }
 
 [class*="icon-"] {
-    &:before, &:after
+    &:before
     {
         -webkit-font-smoothing: antialiased;
     }
 }
 
 /************************** EFFECTS */
+@mixin flash($animName: flash, $dur: 500ms, $dir: alternate, $iter: 20, $prop: background, $valStart: rgba($colorOk, 1), $valEnd: rgba($colorOk, 0)) {
+    @keyframes #{$animName} {
+        0%   { #{$prop}: $valStart; }
+        100% {  #{$prop}: $valEnd; }
+    }
+    animation-name: $animName;
+    animation-duration: $dur;
+    animation-direction: $dir;
+    animation-iteration-count: $iter;
+    animation-timing-function: ease-out;
+}
+
 @mixin mixedBg() {
     $c1: nth($mixedSettingBg, 1);
     $c2: nth($mixedSettingBg, 2);
@@ -538,6 +550,67 @@
             left: auto; right: 0;
         }
     }
+}
+
+@mixin cArrowButtonBase($colorBg: transparent, $colorFg: $colorBtnFg, $filterHov: $filterHov) {
+    // Copied from branch new-tree-refactor
+
+    flex: 0 0 auto;
+    position: relative;
+    background: $colorBg;
+
+    &:before {
+        // Arrow shape
+        border-style: solid;
+        content: '';
+        display: block;
+        position: absolute;
+        left: 50%; top: 50%;
+        transform-origin: center;
+    }
+
+    &:before {
+        border-color: $colorFg;
+    }
+
+    @include hover {
+        filter: $filterHov;
+    }
+
+    &--up, &--prev {
+        &:before {
+            transform: translate(-30%, -50%) rotate(135deg);
+        }
+    }
+
+    &--down, &--next {
+        &:before {
+            transform: translate(-70%, -50%) rotate(-45deg);
+        }
+    }
+}
+
+@mixin cArrowButtonSizing($dimOuter: 48px) {
+    height: $dimOuter;
+    width: $dimOuter;
+    $dimInner: floor($dimOuter * 0.6);
+    $borderW: floor($dimInner * 0.3);
+    $backOffsetW: floor($dimInner * 0.4);
+
+    &:before {
+        height: $dimInner;
+        width: $dimInner;
+    }
+
+    &:before {
+        // Arrow shape
+        border-width: 0 $borderW $borderW 0;
+    }
+}
+
+@mixin cArrowButton() {
+    @include cArrowButtonBase();
+    @include cArrowButtonSizing();
 }
 
 @mixin hasMenu() {

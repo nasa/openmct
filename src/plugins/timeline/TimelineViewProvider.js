@@ -20,12 +20,45 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchObjectProvider from './CouchObjectProvider';
-const NAMESPACE = '';
-const PERSISTENCE_SPACE = '';
+import TimelineViewLayout from './TimelineViewLayout.vue';
+import Vue from 'vue';
 
-export default function CouchPlugin(url) {
-    return function install(openmct) {
-        openmct.objects.addProvider(PERSISTENCE_SPACE, new CouchObjectProvider(openmct, url, NAMESPACE));
+export default function TimelineViewProvider(openmct) {
+
+    return {
+        key: 'timeline.view',
+        name: 'Timeline',
+        cssClass: 'icon-clock',
+        canView(domainObject) {
+            return domainObject.type === 'plan';
+        },
+
+        canEdit(domainObject) {
+            return domainObject.type === 'plan';
+        },
+
+        view: function (domainObject) {
+            let component;
+
+            return {
+                show: function (element) {
+                    component = new Vue({
+                        el: element,
+                        components: {
+                            TimelineViewLayout
+                        },
+                        provide: {
+                            openmct,
+                            domainObject
+                        },
+                        template: '<timeline-view-layout></timeline-view-layout>'
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        }
     };
 }

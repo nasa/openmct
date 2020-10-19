@@ -630,9 +630,14 @@ export default {
             object.identifier = identifier;
             object.location = parentKeyString;
 
-            this.openmct.objects.mutate(object, 'created', Date.now());
+            let savedResolve;
+            this.openmct.objects.save(object).then(() => {
+                savedResolve(object);
+            });
 
-            return object;
+            return new Promise((resolve) => {
+                savedResolve = resolve;
+            });
         },
         convertToTelemetryView(identifier, position) {
             this.openmct.objects.get(identifier).then((domainObject) => {
@@ -679,10 +684,10 @@ export default {
                 }
 
                 if (copy.type === 'subobject-view') {
-                    let newDomainObject = this.createNewDomainObject(domainObject, domainObject.composition, domainObject.type, 'duplicate', domainObject);
-
-                    newDomainObjectsArray.push(newDomainObject);
-                    copy.identifier = newDomainObject.identifier;
+                    this.createNewDomainObject(domainObject, domainObject.composition, domainObject.type, 'duplicate', domainObject).then((newDomainObject) => {
+                        newDomainObjectsArray.push(newDomainObject);
+                        copy.identifier = newDomainObject.identifier;
+                    });
                 }
 
                 offsetKeys.forEach(key => {
@@ -719,12 +724,12 @@ export default {
                 name: 'Merged Telemetry Views',
                 identifier: firstDomainObject.identifier
             };
-            let newDomainObject = this.createNewDomainObject(mockDomainObject, identifiers, viewType);
-
-            this.composition.add(newDomainObject);
-            this.addItem('subobject-view', newDomainObject, position);
-            this.removeItem(selection);
-            this.initSelectIndex = this.layoutItems.length - 1;
+            this.createNewDomainObject(mockDomainObject, identifiers, viewType).then((newDomainObject) => {
+                this.composition.add(newDomainObject);
+                this.addItem('subobject-view', newDomainObject, position);
+                this.removeItem(selection);
+                this.initSelectIndex = this.layoutItems.length - 1;
+            });
         },
         mergeMultipleOverlayPlots(selection, viewType) {
             let overlayPlots = selection.map(selectedItem => selectedItem[0].context.item);
@@ -736,21 +741,22 @@ export default {
                 name: 'Merged Overlay Plots',
                 identifier: firstOverlayPlot.identifier
             };
-            let newDomainObject = this.createNewDomainObject(mockDomainObject, overlayPlotIdentifiers, viewType);
-            let newDomainObjectKeyString = this.openmct.objects.makeKeyString(newDomainObject.identifier);
-            let internalDomainObjectKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
+            this.createNewDomainObject(mockDomainObject, overlayPlotIdentifiers, viewType).then((newDomainObject) => {
+                let newDomainObjectKeyString = this.openmct.objects.makeKeyString(newDomainObject.identifier);
+                let internalDomainObjectKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
 
-            this.composition.add(newDomainObject);
-            this.addItem('subobject-view', newDomainObject, position);
+                this.composition.add(newDomainObject);
+                this.addItem('subobject-view', newDomainObject, position);
 
-            overlayPlots.forEach(overlayPlot => {
-                if (overlayPlot.location === internalDomainObjectKeyString) {
-                    this.openmct.objects.mutate(overlayPlot, 'location', newDomainObjectKeyString);
-                }
+                overlayPlots.forEach(overlayPlot => {
+                    if (overlayPlot.location === internalDomainObjectKeyString) {
+                        this.openmct.objects.mutate(overlayPlot, 'location', newDomainObjectKeyString);
+                    }
+                });
+
+                this.removeItem(selection);
+                this.initSelectIndex = this.layoutItems.length - 1;
             });
-
-            this.removeItem(selection);
-            this.initSelectIndex = this.layoutItems.length - 1;
         },
         getTelemetryIdentifiers(domainObject) {
             let method = TELEMETRY_IDENTIFIER_FUNCTIONS[domainObject.type];
@@ -768,10 +774,10 @@ export default {
             let layoutType = 'subobject-view';
 
             if (layoutItem.type === 'telemetry-view') {
-                let newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], viewType);
-
-                this.composition.add(newDomainObject);
-                this.addItem(layoutType, newDomainObject, position);
+                this.createNewDomainObject(domainObject, [domainObject.identifier], viewType).then((newDomainObject) => {
+                    this.composition.add(newDomainObject);
+                    this.addItem(layoutType, newDomainObject, position);
+                });
             } else {
                 this.getTelemetryIdentifiers(domainObject).then((identifiers) => {
                     if (viewType === 'telemetry-view') {
@@ -782,10 +788,10 @@ export default {
                             this.convertToTelemetryView(identifier, [positionX, positionY]);
                         });
                     } else {
-                        let newDomainObject = this.createNewDomainObject(domainObject, identifiers, viewType);
-
-                        this.composition.add(newDomainObject);
-                        this.addItem(layoutType, newDomainObject, position);
+                        this.createNewDomainObject(domainObject, identifiers, viewType).then((newDomainObject) => {
+                            this.composition.add(newDomainObject);
+                            this.addItem(layoutType, newDomainObject, position);
+                        });
                     }
                 });
             }
