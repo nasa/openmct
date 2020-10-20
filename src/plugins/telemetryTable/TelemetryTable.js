@@ -74,13 +74,13 @@ define([
         }
 
         addColunmName(telemetryObject, metadataValues) {
-            let metadatum = metadataValues.find(metadatum => metadatum.key === 'name');
+            let metadatum = metadataValues.find(m => m.key === 'name');
             if (!metadatum) {
                 metadatum = {
                     format: 'string',
                     key: 'name',
                     name: 'Name'
-                }
+                };
             }
 
             const column = new TelemetryTableNameColumn(this.openmct, telemetryObject, metadatum);
