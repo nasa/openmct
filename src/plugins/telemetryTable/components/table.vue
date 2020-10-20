@@ -251,7 +251,11 @@
                 :object-path="objectPath"
             />
         </table>
-        <telemetry-filter-indicator />
+        <table-footer-indicator
+            class="c-telemetry-table__footer"
+            :marked-rows="markedRows.length"
+            :total-rows="totalNumberOfRows"
+        />
     </div>
 </div><!-- closes c-table-wrapper -->
 </template>
@@ -260,7 +264,7 @@
 import TelemetryTableRow from './table-row.vue';
 import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
-import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
+import TableFooterIndicator from './table-footer-indicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
@@ -275,7 +279,7 @@ export default {
         TelemetryTableRow,
         TableColumnHeader,
         search,
-        TelemetryFilterIndicator,
+        TableFooterIndicator,
         ToggleSwitch
     },
     inject: ['table', 'openmct', 'objectPath'],
@@ -351,7 +355,8 @@ export default {
             paused: false,
             markedRows: [],
             isShowingMarkedRowsOnly: false,
-            hideHeaders: configuration.hideHeaders
+            hideHeaders: configuration.hideHeaders,
+            totalNumberOfRows: 0
         };
     },
     computed: {
@@ -498,6 +503,8 @@ export default {
                     let end = VISIBLE_ROW_COUNT;
                     let filteredRows = this.table.filteredRows.getRows();
                     let filteredRowsLength = filteredRows.length;
+
+                    this.totalNumberOfRows = filteredRowsLength;
 
                     if (filteredRowsLength < VISIBLE_ROW_COUNT) {
                         end = filteredRowsLength;
