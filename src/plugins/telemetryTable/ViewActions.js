@@ -36,7 +36,7 @@ let exportMarkedRows = {
     description: "Export marked rows as CSV",
     cssClass: 'icon-download labeled',
     invoke: (objectPath, viewProvider) => {
-        viewProvider.getViewContext().exportMarkedDataAsCSV();
+        viewProvider.getViewContext().exportMarkedRows();
     },
     group: 'view'
 };
