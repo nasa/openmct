@@ -129,13 +129,6 @@ define([
 
     ObjectServiceProvider.prototype.get = function (key) {
         let keyString = utils.makeKeyString(key);
-        const space = this.getSpace(keyString);
-
-        let identifier = utils.parseKeyString(keyString);
-        // We assign to the space for legacy persistence providers since they register themselves using a defaultSpace.
-        // This is the way to make everyone happy.
-        identifier.namespace = space;
-        keyString = utils.makeKeyString(identifier);
 
         return this.objectService.getObjects([keyString])
             .then(function (results) {
