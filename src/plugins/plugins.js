@@ -163,7 +163,7 @@ define([
         return GeneratorPlugin;
     };
 
-    plugins.CustomFormatter = CustomFormatter.default
+    plugins.CustomFormatter = CustomFormatter.default;
     plugins.ExampleImagery = ExampleImagery;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin;

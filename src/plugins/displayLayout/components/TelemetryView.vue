@@ -198,6 +198,8 @@ export default {
                 return customFormatter.format(this.datum[this.valueMetadata.key]);
             } catch (e) {
                 console.error(e);
+
+                return '';
             }
         },
         telemetryClass() {
