@@ -81,6 +81,25 @@
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
 
+        openmct.install(openmct.plugins.CustomFormatter({
+            formats: [
+                {
+                    key: 'sclk',
+                    formatString: '&sclk',
+                    format: (value) => {
+                        return value;
+                    }
+                },
+                {
+                    key: 'lts',
+                    formatString: '&lts',
+                    format: (value) => {
+                        return value;
+                    }
+                }
+            ]
+        }));
+
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());

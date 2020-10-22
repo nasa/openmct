@@ -22,6 +22,7 @@
 
 define([
     'lodash',
+    './customFormatter/plugin',
     './utcTimeSystem/plugin',
     './localTimeSystem/plugin',
     './ISOTimeFormat/plugin',
@@ -61,6 +62,7 @@ define([
     './timeline/plugin'
 ], function (
     _,
+    CustomFormatter,
     UTCTimeSystem,
     LocalTimeSystem,
     ISOTimeFormat,
@@ -161,6 +163,7 @@ define([
         return GeneratorPlugin;
     };
 
+    plugins.CustomFormatter = CustomFormatter.default
     plugins.ExampleImagery = ExampleImagery;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin;

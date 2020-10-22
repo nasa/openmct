@@ -177,11 +177,28 @@ export default {
                 return;
             }
 
-            if (this.item.format) {
-                return printj.sprintf(this.item.format, this.datum[this.valueMetadata.key]);
+            const itemFormat = this.item.format;
+            if (!itemFormat) {
+                return this.valueFormatter && this.valueFormatter.format(this.datum);
             }
 
-            return this.valueFormatter && this.valueFormatter.format(this.datum);
+            if (!itemFormat.startsWith('&')) {
+                return printj.sprintf(itemFormat, this.datum[this.valueMetadata.key]);
+            }
+
+            try {
+                const formatMap = this.openmct.telemetry.formatService.formatMap;
+                const key = itemFormat.slice(1);
+
+                const customFormatter = formatMap[key];
+                if (!customFormatter) {
+                    throw new Error('Custom Formatter not found');
+                }
+
+                return customFormatter.format(this.datum[this.valueMetadata.key]);
+            } catch (e) {
+                console.error(e);
+            }
         },
         telemetryClass() {
             if (!this.datum) {
