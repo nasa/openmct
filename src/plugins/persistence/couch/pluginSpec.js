@@ -31,18 +31,18 @@ describe('the plugin', () => {
     let element;
     let child;
     let provider;
-    let testSpace = 'testSpace';
     let testPath = '/test/db';
-    let mockDomainObject = {
-        identifier: {
-            namespace: '',
-            key: 'some-value'
-        }
-    };
+    let mockDomainObject;
 
     beforeEach((done) => {
+        mockDomainObject = {
+            identifier: {
+                namespace: 'mct',
+                key: 'some-value'
+            }
+        };
         openmct = createOpenMct(false);
-        openmct.install(new CouchPlugin(testSpace, testPath));
+        openmct.install(new CouchPlugin(testPath));
 
         element = document.createElement('div');
         child = document.createElement('div');

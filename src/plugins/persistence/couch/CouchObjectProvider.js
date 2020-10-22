@@ -86,7 +86,10 @@ export default class CouchObjectProvider {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
 
-            this.objectQueue[key].updateRevision(response[REV]);
+            //Sometimes CouchDB returns the old rev which fetching the object if there is a document update in progress
+            if (!this.objectQueue[key].pending) {
+                this.objectQueue[key].updateRevision(response[REV]);
+            }
 
             return object;
         } else {

@@ -13,14 +13,7 @@
     }
 
     &__tab {
-        &:before {
-            margin-right: $interiorMarginSm;
-            opacity: 0.7;
-        }
-
-        &__label {
-            flex: 1 1 auto;
-        }
+        justify-content: space-between; // Places remove button to far side of tab
 
         &__close-btn {
             flex: 0 0 auto;
