@@ -1,9 +1,13 @@
 <template>
 <div
+    ref="searchAndTree"
     class="c-tree-and-search"
 >
 
-    <div class="c-tree-and-search__search">
+    <div
+        ref="search"
+        class="c-tree-and-search__search"
+    >
         <search
             ref="shell-search"
             class="c-search"
@@ -14,12 +18,12 @@
     </div>
 
     <!-- search loading -->
-    <li
+    <div
         v-if="searchLoading && activeSearch"
         class="c-tree__item c-tree-and-search__loading loading"
     >
         <span class="c-tree__item__label">Searching...</span>
-    </li>
+    </div>
 
     <!-- no results -->
     <div
@@ -30,12 +34,36 @@
     </div>
 
     <!-- main tree -->
-    <ul
+    <div
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
     >
         <!-- ancestors -->
-        <li v-if="!activeSearch">
+        <div v-if="!activeSearch">
+
+            <div
+                ref="dummyItem"
+                class="c-tree__item-h"
+                style="left: -1000px; position: absolute;"
+            >
+                <div class="c-tree__item">
+                    <span class="c-tree__item__view-control c-nav__up is-enabled"></span>
+                    <a
+                        class="c-tree__item__label c-object-label"
+                        draggable="true"
+                        href="#"
+                    >
+                        <div class="c-tree__item__type-icon c-object-label__type-icon icon-folder">
+                            <span title="Open MCT"></span>
+                        </div>
+                        <div class="c-tree__item__name c-object-label__name">
+                            Open MCT
+                        </div>
+                    </a>
+                    <span class="c-tree__item__view-control c-nav__down"></span>
+                </div>
+            </div>
+
             <tree-item
                 v-for="(ancestor, index) in ancestors"
                 :key="ancestor.id"
@@ -43,32 +71,31 @@
                 :show-up="index < ancestors.length - 1"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
-                :should-emit-height="shouldEmitHeight"
-                @emittedHeight="setItemHeight"
-                @resetTree="handleReset"
+                @resetTree="beginNavigationRequest('handleReset', ancestor)"
             />
             <!-- loading -->
             <div
-                v-if="isLoading || !itemHeightCalculated || syncingNavigation"
+                v-if="isLoading"
                 :style="indicatorLeftOffset"
                 class="c-tree__item c-tree-and-search__loading loading"
             >
                 <span class="c-tree__item__label">Loading...</span>
             </div>
             <!-- end loading -->
-        </li>
+        </div>
 
         <!-- currently viewed children -->
         <transition
             name="children"
             appear
+            @after-enter="autoScroll"
         >
-            <li
-                v-if="!isLoading && !searchLoading && itemHeightCalculated"
+            <div
+                v-if="!isLoading && !searchLoading"
                 :style="childrenListStyles()"
                 :class="childrenSlideClass"
             >
-                <ul
+                <div
                     ref="scrollable"
                     class="c-tree__scrollable-children"
                     :style="scrollableStyles()"
@@ -85,21 +112,22 @@
                             :item-height="itemHeight"
                             :virtual-scroll="true"
                             :show-down="activeSearch ? false : true"
-                            @expanded="handleExpanded"
+                            @expanded="beginNavigationRequest('handleExpanded', treeItem)"
                         />
-                        <li
-                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch && !syncingNavigation"
+                        <div
+                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch"
                             :style="indicatorLeftOffset"
                             class="c-tree__item c-tree__item--empty"
                         >
                             No items
-                        </li>
+                        </div>
                     </div>
-                </ul>
-            </li>
+                </div>
+            </div>
         </transition>
-    </ul>
+    </div>
     <!-- end main tree -->
+
 </div>
 </template>
 
@@ -108,10 +136,11 @@ import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
 import objectUtils from 'objectUtils';
+import uuid from 'uuid';
 
 const LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD = 'mct-tree-expanded';
 const LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE = 'mct-expanded-tree-node';
-const ROOT_PATH = '/browse/';
+const ROOT_PATH = 'browse';
 const ITEM_BUFFER = 5;
 const RECHECK_DELAY = 100;
 const RESIZE_FIRE_DELAY_MS = 500;
@@ -132,53 +161,42 @@ export default {
         }
     },
     data() {
-        let isMobile = this.openmct.$injector.get('agentService');
-
         return {
+            root: undefined,
             isLoading: false,
+            mainTreeHeight: undefined,
             searchLoading: false,
             searchValue: '',
-            allTreeItems: [],
+            childItems: [],
             searchResultItems: [],
             visibleItems: [],
             ancestors: [],
             childrenSlideClass: 'down',
-            availableContainerHeight: 0,
             updatingView: false,
-            itemHeightCalculated: false,
-            itemHeight: 28,
+            itemHeight: 27,
             itemOffset: 0,
-            scrollable: undefined,
             activeSearch: false,
-            shouldEmitHeight: false,
-            isMobile: isMobile.mobileName,
             multipleRootChildren: false,
             noVisibleItems: false,
             observedAncestors: {},
-            mainTreeTopMargin: undefined,
-            syncingNavigation: false
+            mainTreeTopMargin: undefined
         };
     },
     computed: {
-        currentNavigatedPath() {
-            let ancestorsCopy = [...this.ancestors];
-            if (this.multipleRootChildren) {
-                ancestorsCopy.shift(); // remove root
-            }
-
-            return ancestorsCopy
+        currentTreePath() {
+            let path = [...this.ancestors]
                 .map((ancestor) => ancestor.id)
                 .join('/');
-        },
-        currentObjectPath() {
-            let ancestorsCopy = [...this.ancestors];
 
-            return ancestorsCopy
-                .reverse()
-                .map((ancestor) => ancestor.object);
+            // if not multiRootChildren, then need to add in root
+            if (!this.multipleRootChildren) {
+                path = ROOT_PATH + '/' + path;
+            }
+
+            return path;
         },
         focusedItems() {
-            return this.activeSearch ? this.searchResultItems : this.allTreeItems;
+            return this.activeSearch ? this.searchResultItems : this.childItems;
         },
         itemLeftOffset() {
             return this.activeSearch ? '0px' : this.ancestors.length * 10 + 'px';
@@ -204,62 +222,38 @@ export default {
             let childrenCount = this.focusedItems.length || 1;
 
             return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
+        },
+        availableContainerHeight() {
+            return this.mainTreeHeight - this.ancestorsHeight;
         }
     },
     watch: {
         syncTreeNavigation() {
-            this.isLoading = true;
-            const AND_SAVE_PATH = true;
-            this.syncingNavigation = true;
-            let currentLocationPath = this.openmct.router.currentLocation.path;
-            let hasParent = this.currentlyViewedObjectParentPath() || (this.multipleRootChildren && !this.currentlyViewedObjectParentPath());
-            // if there's a current location path,
-            // if there's a parent of the currently viewed object
-            // and we're not in the parent of the currently viewed object
-            let jumpAndScroll = currentLocationPath
-                    && hasParent
-                    && !this.currentPathIsActivePath();
-            // if the object being viewed is in the current path
-            let justScroll = this.currentPathIsActivePath();
+            this.searchValue = '';
 
-            if (this.searchValue) {
-                this.searchValue = '';
+            if (!this.openmct.router.path) {
+                return;
             }
 
-            if (jumpAndScroll) {
-                this.allTreeItems = [];
-                this.scrollTo = this.currentlyViewedObjectId();
-                this.jumpPath = this.currentlyViewedObjectParentPath();
-
-                if (this.multipleRootChildren) {
-                    if (!this.jumpPath) {
-                        this.jumpPath = 'ROOT';
-                        this.ancestors = [];
-                    } else {
-                        this.ancestors = [this.ancestors[0]];
-                    }
-                } else {
-                    this.ancestors = [];
-                }
-
-                this.jumpToPath(AND_SAVE_PATH);
-            } else if (justScroll) {
-                this.scrollTo = this.currentlyViewedObjectId();
+            if (this.currentPathIsActivePath()) {
+                this.skipScroll = false;
                 this.autoScroll();
-                this.isLoading = false;
+
+                return;
             }
+
+            let routePath = [...this.openmct.router.path];
+            routePath.shift(); // remove the child, so it navigates to the parent
+            this.beginNavigationRequest('jumpTo', [...routePath].reverse());
         },
         searchValue() {
             if (this.searchValue !== '' && !this.activeSearch) {
-                this.searchActivated();
+                this.activeSearch = true;
+                this.$refs.scrollable.scrollTop = 0;
+                this.skipScroll = true;
             } else if (this.searchValue === '') {
-                this.searchDeactivated();
-            }
-        },
-        allTreeItems() {
-            // catches an edge case when new items are added (ex. folder)
-            if (!this.isLoading) {
-                this.setContainerHeight();
+                this.activeSearch = false;
+                this.skipScroll = false;
             }
         },
         ancestors() {
@@ -273,58 +267,23 @@ export default {
         }
     },
     async mounted() {
+        let savedPath = this.getStoredTreePath();
 
-        // only reliable way to get final tree top margin
-        this.readyStateCheck();
+        this.initialize();
+        let rootComposition = await this.loadRoot();
 
-        this.backwardsCompatibilityCheck();
-
-        let savedPath = this.getSavedNavigatedPath();
-        this.searchService = this.openmct.$injector.get('searchService');
-        window.addEventListener('resize', this.handleWindowResize);
-        this.isLoading = true;
-        let root = await this.openmct.objects.get('ROOT');
-
-        if (root.identifier !== undefined) {
-            let rootNode = this.buildTreeItem(root);
-            let rootCompositionCollection = this.openmct.composition.get(root);
-            let rootComposition = await rootCompositionCollection.load();
-
-            // if more than one root item, set multipleRootChildren to true and add root to ancestors
-            if (rootComposition && rootComposition.length > 1) {
-                this.ancestors.push(rootNode);
-                if (!this.itemHeightCalculated) {
-                    await this.calculateItemHeight();
-                }
-
-                this.multipleRootChildren = true;
-            } else if (!savedPath && rootComposition[0] !== undefined) {
-                // needed if saved path is not set, need to set it to the only root child
-                savedPath = rootComposition[0].identifier;
+        if (!savedPath) {
+            savedPath = ROOT_PATH;
+            if (!this.multipleRootChildren) {
+                let id = this.openmct.objects.makeKeyString(rootComposition[0].identifier);
+                savedPath += '/' + id;
             }
-
-            if (savedPath) {
-                let scrollIfApplicable = () => {
-                    if (this.currentPathIsActivePath()) {
-                        this.scrollTo = this.currentlyViewedObjectId();
-                    }
-                };
-
-                this.jumpPath = savedPath;
-                this.afterJump = scrollIfApplicable;
-            }
-
-            this.getAllChildren(rootNode);
         }
+
+        this.beginNavigationRequest('jumpTo', savedPath);
     },
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
-        this.setContainerHeight = _.debounce(this.setContainerHeight, 200);
-    },
-    updated() {
-        this.$nextTick(() => {
-            this.setContainerHeight();
-        });
     },
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
@@ -332,17 +291,209 @@ export default {
         document.removeEventListener('readystatechange', this.setTreeTopMargin);
     },
     methods: {
+        initialize() {
+            this.searchService = this.openmct.$injector.get('searchService');
+            window.addEventListener('resize', this.handleWindowResize);
+            this.readyStateCheck();
+            this.backwardsCompatibilityCheck();
+        },
         readyStateCheck() {
             if (document.readyState !== 'complete') {
-                document.addEventListener('readystatechange', this.setTreeTopMargin);
+                document.addEventListener('readystatechange', this.onReadyState);
             } else {
-                this.setTreeTopMargin();
+                this.onReadyState();
             }
         },
-        setTreeTopMargin() {
+        onReadyState() {
             if (document.readyState === 'complete') {
-                this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+                this.calculateHeights();
             }
+        },
+        backwardsCompatibilityCheck() {
+            let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
+
+            if (oldTreeExpanded) {
+                localStorage.removeItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD);
+            }
+        },
+        async loadRoot() {
+            this.root = await this.openmct.objects.get('ROOT');
+
+            let rootCompositionCollection = this.openmct.composition.get(this.root);
+            let rootComposition = await rootCompositionCollection.load();
+
+            if (rootComposition.length > 1) {
+                this.multipleRootChildren = true;
+            }
+
+            return rootComposition;
+        },
+        async beginNavigationRequest(type, request) {
+            let requestId = uuid();
+
+            this.isLoading = true;
+            this.latestNavigationRequest = requestId;
+
+            if (['handleReset', 'handleExpanded'].indexOf(type) !== -1) {
+                this.skipScroll = true;
+            } else {
+                this.skipScroll = false;
+            }
+
+            let success = await this[type](request, requestId);
+
+            if (success && this.isLatestNavigationRequest(requestId)) {
+                this.isLoading = false;
+                this.storeCurrentTreePath();
+            }
+        },
+        isLatestNavigationRequest(requestId) {
+            return this.latestNavigationRequest === requestId;
+        },
+        // will jump to an object path or a string path
+        async jumpTo(path, requestId) {
+            if (!this.isLatestNavigationRequest(requestId)) {
+                return false;
+            }
+
+            // if path string, build object string
+            if (typeof path === 'string') {
+                path = await this.buildObjectPathFromString(path, requestId);
+
+                if (!path) {
+                    return false;
+                }
+            }
+
+            // build ancestors tree items from objects
+            let ancestorItems = [];
+            for (let i = 0; i < path.length; i++) {
+                let builtAncestor = this.buildTreeItem(path[i], path.slice(0, i));
+                ancestorItems.push(builtAncestor);
+            }
+
+            // load children for last ancestor
+            let childrenItems = await this.getChildrenAsTreeItems(ancestorItems[ancestorItems.length - 1], path, requestId);
+
+            // if all is good, return true for successful navigation
+            return this.updateTree(ancestorItems, childrenItems, requestId);
+        },
+        async handleReset(node, requestId) {
+            if (!this.isLatestNavigationRequest(requestId)) {
+                return false;
+            }
+
+            this.childrenSlideClass = 'up';
+
+            let ancestorItems = [...this.ancestors];
+            ancestorItems.splice(ancestorItems.indexOf(node) + 1);
+
+            let objectPath = this.ancestorsAsObjects();
+            objectPath.splice(objectPath.indexOf(node.object) + 1);
+
+            let childrenItems = await this.getChildrenAsTreeItems(node, objectPath, requestId);
+
+            // if all is good, return true for successful navigation
+            return this.updateTree(ancestorItems, childrenItems, requestId);
+        },
+        async handleExpanded(node, requestId) {
+            if (!this.isLatestNavigationRequest(requestId)) {
+                return false;
+            }
+
+            this.childrenSlideClass = 'down';
+
+            let ancestorItems = [...this.ancestors];
+            ancestorItems.push(node);
+
+            let objectPath = this.ancestorsAsObjects().concat(node.object);
+
+            let childrenItems = await this.getChildrenAsTreeItems(node, objectPath, requestId);
+
+            // if all is good, return true for successful navigation
+            return this.updateTree(ancestorItems, childrenItems, requestId);
+
+        },
+        ancestorsAsObjects() {
+            let ancestorsCopy = [...this.ancestors];
+
+            if (this.multipleRootChildren && ancestorsCopy[0].id === 'ROOT') {
+                // no root for object paths
+                ancestorsCopy.shift();
+            }
+
+            return ancestorsCopy.map(item => item.object);
+        },
+        async buildObjectPathFromString(path, requestId) {
+            let pathNodes = path.split('/');
+            let objectPath = [];
+
+            // skip first element, it's root "browse" path
+            for (let i = 1; i < pathNodes.length; i++) {
+                let domainObject = await this.openmct.objects.get(pathNodes[i]);
+                objectPath.push(domainObject);
+
+                if (!this.isLatestNavigationRequest(requestId)) {
+                    return false;
+                }
+            }
+
+            return objectPath;
+        },
+        async getChildrenAsTreeItems(item, parentObjectPath, requestId) {
+            if (!this.isLatestNavigationRequest(requestId)) {
+                return false;
+            }
+
+            if (this.composition) {
+                this.composition.off('add', this.addChild);
+                this.composition.off('remove', this.removeChild);
+                delete this.composition;
+            }
+
+            this.childItems = [];
+            this.composition = this.openmct.composition.get(item.object);
+            let children = await this.composition.load();
+
+            if (!this.isLatestNavigationRequest(requestId)) {
+                return false;
+            }
+
+            return children.map((child) => {
+                return this.buildTreeItem(child, parentObjectPath);
+            });
+        },
+        async updateTree(ancestors, children, requestId) {
+            if (!this.isLatestNavigationRequest(requestId)) {
+                return false;
+            }
+
+            // show or don't show root
+            if (!this.multipleRootChildren && ancestors[0].id === 'ROOT') {
+                ancestors.shift();
+            }
+
+            await this.clearVisibleItems();
+
+            // update ancestors and children
+            this.ancestors = ancestors;
+            this.childItems = children;
+
+            // any new items added or removed handled here
+            this.composition.on('add', this.addChild);
+            this.composition.on('remove', this.removeChild);
+
+            return true;
+        },
+        // domainObject: from composition add event
+        addChild(domainObject) {
+            let item = this.buildTreeItem(domainObject, this.ancestorsAsObjects());
+            this.childItems.push(item);
+        },
+        removeChild(identifier) {
+            let removeId = this.openmct.objects.makeKeyString(identifier);
+            this.childItems = this.childItems
+                .filter(c => c.id !== removeId);
         },
         updateVisibleItems() {
             if (this.updatingView) {
@@ -382,16 +533,6 @@ export default {
                 this.updatingView = false;
             });
         },
-        setContainerHeight() {
-            let mainTree = this.$refs.mainTree;
-            let mainTreeHeight = mainTree && mainTree.clientHeight ? mainTree.clientHeight : 0;
-
-            if (mainTreeHeight !== 0) {
-                this.availableContainerHeight = mainTreeHeight - this.ancestorsHeight;
-            } else {
-                window.setTimeout(this.setContainerHeight, RECHECK_DELAY);
-            }
-        },
         calculateFirstVisibleItem() {
             if (!this.$refs.scrollable) {
                 return;
@@ -410,78 +551,52 @@ export default {
 
             return Math.ceil(scrollBottom / this.itemHeight);
         },
-        calculateItemHeight() {
-            this.shouldEmitHeight = true;
-
-            return new Promise((resolve, reject) => {
-                this.itemHeightResolve = resolve;
-            });
-        },
-        async setItemHeight(height) {
-
-            if (this.itemHeightCalculated) {
-                return;
+        scrollItems(event) {
+            if (!windowResizing) {
+                this.updateVisibleItems();
             }
-
-            await this.$nextTick();
-
-            this.itemHeight = height;
-            this.itemHeightCalculated = true;
-            this.shouldEmitHeight = false;
-
-            this.itemHeightResolve();
         },
         handleWindowResize() {
             if (!windowResizing) {
                 windowResizing = true;
                 window.clearTimeout(windowResizeId);
                 windowResizeId = window.setTimeout(() => {
-                    this.setContainerHeight();
+                    this.calculateHeights();
                     windowResizing = false;
                 }, RESIZE_FIRE_DELAY_MS);
             }
         },
-        async getAllChildren(node, after) {
-            let currentNavigationRequest = this.openmct.objects.makeKeyString(node.object.identifier);
-            this.latestNavigationRequest = currentNavigationRequest;
+        // domainObject: we're building a tree item for this
+        // objects: domainObject array up to parent of domainObject, excluding domainObject for item being built
+        buildTreeItem(domainObject, objects) {
+            let objectPath = objects;
 
-            await this.clearVisibleItems();
-
-            if (this.composition) {
-                this.composition.off('add', this.addChild);
-                this.composition.off('remove', this.removeChild);
-                delete this.composition;
+            // remove root for object path
+            if (objectPath[0] && objectPath[0].type === 'root') {
+                objectPath.shift();
             }
 
-            this.allTreeItems = [];
-            this.composition = this.openmct.composition.get(node.object);
-            this.composition.on('add', this.addChild);
-            this.composition.on('remove', this.removeChild);
-
-            if (currentNavigationRequest === this.latestNavigationRequest) {
-                if (after && typeof after === 'function') {
-                    after();
-                }
-
-                await this.composition.load();
-                this.finishLoading();
-            }
-        },
-        buildTreeItem(domainObject, path, objectPath) {
-            let currentPath = path || this.currentNavigatedPath;
-            let currentObjectPath = objectPath || this.currentObjectPath;
-
-            let navToParent = ROOT_PATH + currentPath;
-            if (navToParent === ROOT_PATH) {
-                navToParent = navToParent.slice(0, -1);
-            }
+            let navigationPath = this.buildNavigationPath(domainObject, objectPath);
+            let builtObjectPath = [...objectPath].reverse();
 
             return {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
-                objectPath: [domainObject].concat(currentObjectPath),
-                navigateToParent: navToParent
+                objectPath: [domainObject].concat(builtObjectPath),
+                navigationPath
             };
+        },
+        // domainObject: the item we're building the path for (will be used in url and links)
+        // objects: array of domainObjects representing path to domainobject passed in
+        buildNavigationPath(domainObject, objects) {
+            let path = [...objects]
+                .map(object => this.openmct.objects.makeKeyString(object.identifier));
+
+            return '/' + [
+                ROOT_PATH,
+                ...path,
+                this.openmct.objects.makeKeyString(domainObject.identifier)
+            ].join('/');
         },
         observeAncestors() {
             let observedAncestorIds = Object.keys(this.observedAncestors);
@@ -512,113 +627,30 @@ export default {
         observeAncestor(id, object) {
             this.observedAncestors[id] = this.openmct.objects.observe(object, 'location',
                 (location) => {
-                    let ancestorObjects = this.ancestors.map(ancestor => ancestor.object);
+                    let ancestorObjects = this.ancestorsAsObjects();
                     // ancestor has been removed from tree, reset to it's parent
                     if (location === null) {
                         let index = ancestorObjects.indexOf(object);
                         let parentIndex = index - 1;
                         if (this.ancestors[parentIndex]) {
-                            this.handleReset(this.ancestors[parentIndex]);
+                            this.beginNavigationRequest('handleReset', this.ancestors[parentIndex]);
                         }
                     }
                 });
         },
-        buildNavigationPath(objects) {
-            let objectsCopy = [...objects];
-            if (this.multipleRootChildren) {
-                objectsCopy.shift(); // remove root
-            }
-
-            return objectsCopy
-                .map((object) => object.id)
-                .join('/');
-        },
-        buildObjectPath(objects) {
-            let objectsCopy = [...objects];
-
-            return objectsCopy
-                .reverse()
-                .map((object) => object.object);
-        },
-        addChild(child) {
-            let item = this.buildTreeItem(child);
-            this.allTreeItems.push(item);
-        },
-        removeChild(identifier) {
-            let removeId = this.openmct.objects.makeKeyString(identifier);
-            this.allTreeItems = this.allTreeItems
-                .filter(c => c.id !== removeId);
-            this.setContainerHeight();
-        },
-        finishLoading() {
-            if (this.jumpPath) {
-                this.jumpToPath();
-            }
-
-            this.autoScroll();
-            this.isLoading = false;
-            this.syncingNavigation = false;
-            this.setContainerHeight();
-        },
-        async jumpToPath(saveExpandedPath = false) {
-            // switching back and forth between multiple root children can cause issues,
-            // this checks for one of those issues
-            if (this.jumpPath.key) {
-                this.jumpPath = this.jumpPath.key;
-            }
-
-            let nodes = this.jumpPath.split('/');
-            let tempAncestors = [...this.ancestors];
-            let newParent;
-
-            for (let i = 0; i < nodes.length; i++) {
-                let currentNode = await this.openmct.objects.get(nodes[i]);
-                let path = this.buildNavigationPath(tempAncestors);
-                let objectPath = this.buildObjectPath(tempAncestors);
-                newParent = this.buildTreeItem(currentNode, path, objectPath);
-                tempAncestors.push(newParent);
-
-                if (!this.itemHeightCalculated) {
-                    this.ancestors.push(newParent); // add for calculations
-                    await this.calculateItemHeight();
-                    this.ancestors.pop(); // remove after
-                }
-            }
-
-            this.jumpPath = '';
-            this.getAllChildren(newParent, async () => {
-                this.ancestors = tempAncestors; // reset ancestors
-                if (this.afterJump) {
-                    await this.$nextTick();
-                    this.afterJump();
-                    delete this.afterJump;
-                }
-
-                if (saveExpandedPath) {
-                    this.setCurrentNavigatedPath();
-                }
-            });
-        },
-        async autoScroll() {
-            if (!this.scrollTo) {
-                return;
-            }
-
-            if (this.$refs.scrollable) {
-                let indexOfScroll = this.indexOfItemById(this.scrollTo);
+        autoScroll() {
+            if (this.currentPathIsActivePath() && !this.skipScroll) {
+                let indexOfScroll = this.indexOfItemById(this.currentlyViewedObjectId());
                 let scrollTopAmount = indexOfScroll * this.itemHeight;
-
-                await this.$nextTick();
-
-                this.$refs.scrollable.scrollTop = scrollTopAmount;
-                this.scrollTo = undefined;
-            } else {
-                window.setTimeout(this.autoScroll, RECHECK_DELAY);
+                this.$refs.scrollable.scrollTo({
+                    top: scrollTopAmount,
+                    behavior: 'smooth'
+                });
             }
         },
         indexOfItemById(id) {
-            for (let i = 0; i < this.allTreeItems.length; i++) {
-                if (this.allTreeItems[i].id === id) {
+            for (let i = 0; i < this.childItems.length; i++) {
+                if (this.childItems[i].id === id) {
                     return i;
                 }
             }
@@ -630,22 +662,22 @@ export default {
             for (let i = 0; i < results.hits.length; i++) {
                 let result = results.hits[i];
                 let newStyleObject = objectUtils.toNewFormat(result.object.getModel(), result.object.getId());
-                let objectPath = [];
-                let navigateToParent;
+                let objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
 
-                objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
-                objectPath.pop(); // remove root
+                // removing the item itself, as the path we pass to buildTreeItem is a parent path
+                objectPath.shift();
+                console.log(objectPath);
+                // if root, remove, we're not using in object path for tree
+                let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
+                if (lastObject && lastObject.type === 'root') {
+                    objectPath.pop();
+                }
 
-                navigateToParent = objectPath.slice(1)
-                    .map((parent) => this.openmct.objects.makeKeyString(parent.identifier));
-                navigateToParent = ROOT_PATH + navigateToParent.reverse().join('/');
+                // we reverse the objectPath in the tree, so have to do it here first,
+                // since this one is already in the correct direction
+                let resultObject = this.buildTreeItem(newStyleObject, objectPath.reverse());
 
-                this.searchResultItems.push({
-                    id: this.openmct.objects.makeKeyString(newStyleObject.identifier),
-                    object: newStyleObject,
-                    objectPath,
-                    navigateToParent
-                });
+                this.searchResultItems.push(resultObject);
             }
 
             this.searchLoading = false;
@@ -660,60 +692,30 @@ export default {
                 this.searchLoading = false;
             }
         },
-        searchActivated() {
-            this.activeSearch = true;
-            this.$refs.scrollable.scrollTop = 0;
-        },
-        async searchDeactivated() {
-            this.activeSearch = false;
-            await this.$nextTick();
-            this.$refs.scrollable.scrollTop = 0;
-        },
-        handleReset(node) {
-            this.isLoading = true;
-
-            this.getAllChildren(node, () => {
-                this.childrenSlideClass = 'up';
-                this.ancestors.splice(this.ancestors.indexOf(node) + 1);
-                this.setCurrentNavigatedPath();
-            });
-        },
-        handleExpanded(node) {
-            this.isLoading = true;
-
-            let newParent = this.buildTreeItem(node);
-
-            this.getAllChildren(newParent, () => {
-                this.childrenSlideClass = 'down';
-                this.ancestors.push(newParent);
-                this.setCurrentNavigatedPath();
-            });
-        },
-        getSavedNavigatedPath() {
+        getStoredTreePath() {
             return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE));
         },
-        setCurrentNavigatedPath() {
+        storeCurrentTreePath() {
             if (!this.searchValue) {
-                localStorage.setItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE, JSON.stringify(this.currentNavigatedPath));
+                localStorage.setItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE, JSON.stringify(this.currentTreePath));
             }
         },
         currentPathIsActivePath() {
-            return this.getSavedNavigatedPath() === this.currentlyViewedObjectParentPath();
+            return this.getStoredTreePath() === this.currentlyViewedObjectParentPath();
         },
         currentlyViewedObjectId() {
             let currentPath = this.openmct.router.currentLocation.path;
             if (currentPath) {
-                currentPath = currentPath.split(ROOT_PATH)[1];
-
                 return currentPath.split('/').pop();
             }
         },
         currentlyViewedObjectParentPath() {
             let currentPath = this.openmct.router.currentLocation.path;
+
             if (currentPath) {
-                currentPath = currentPath.split(ROOT_PATH)[1];
                 currentPath = currentPath.split('/');
-                currentPath.pop();
+                currentPath.shift(); // remove empty array element from initial '/'
+                currentPath.pop(); // remove current child
 
                 return currentPath.join('/');
             }
@@ -724,11 +726,6 @@ export default {
             await this.$nextTick(); // prevents "ghost" image of visibleItems
 
             return;
-        },
-        scrollItems(event) {
-            if (!windowResizing) {
-                this.updateVisibleItems();
-            }
         },
         childrenListStyles() {
             return { position: 'relative' };
@@ -744,12 +741,12 @@ export default {
 
             return Number(styleString.slice(0, index));
         },
-        backwardsCompatibilityCheck() {
-            let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
-
-            if (oldTreeExpanded) {
-                localStorage.removeItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD);
-            }
+        calculateHeights() {
+            this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+            this.mainTreeHeight = this.$refs.searchAndTree.offsetHeight
+                - this.$refs.search.offsetHeight
+                - this.mainTreeTopMargin;
+            this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
         }
     }
 };
