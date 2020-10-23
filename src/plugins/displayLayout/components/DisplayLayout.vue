@@ -178,7 +178,6 @@ export default {
         },
         shouldDisplayLayoutDimensions() {
             return this.layoutDimensions
-                && this.layoutDimensions.length === 2
                 && this.layoutDimensions[0] > 0
                 && this.layoutDimensions[1] > 0;
         },
