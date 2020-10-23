@@ -188,15 +188,19 @@
                          ng-style="{
                              right: (100 * (max - tick.value) / interval) + '%',
                              height: '100%'
-                         }">
-                     </div>
+                         }"
+                         ng-show="plot.gridLines"
+                    >
+                    </div>
                 </mct-ticks>
 
                 <mct-ticks axis="yAxis">
-                     <div class="gl-plot-hash hash-h"
+                    <div class="gl-plot-hash hash-h"
                           ng-repeat="tick in ticks track by tick.value"
-                          ng-style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }">
-                     </div>
+                          ng-style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
+                          ng-show="plot.gridLines"
+                    >
+                    </div>
                 </mct-ticks>
 
                 <mct-chart config="config"

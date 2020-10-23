@@ -96,7 +96,10 @@ define([
         this.cursorGuideHorizontal = this.$element[0].querySelector('.js-cursor-guide--h');
         this.cursorGuide = false;
 
+        this.gridLines = true;
+
         this.listenTo(this.$scope, 'cursorguide', this.toggleCursorGuide, this);
+        this.listenTo(this.$scope, 'toggleGridLines', this.toggleGridLines, this);
 
         this.listenTo(this.$scope, '$destroy', this.destroy, this);
         this.listenTo(this.$scope, 'plot:tickWidth', this.onTickWidthChange, this);
@@ -552,6 +555,10 @@ define([
 
     MCTPlotController.prototype.toggleCursorGuide = function ($event) {
         this.cursorGuide = !this.cursorGuide;
+    };
+
+    MCTPlotController.prototype.toggleGridLines = function ($event) {
+        this.gridLines = !this.gridLines;
     };
 
     MCTPlotController.prototype.getXKeyOption = function (key) {
