@@ -37,7 +37,7 @@
         :show-grid="showGrid"
     />
     <div
-        v-if="layoutDimensions[0] > 0 && layoutDimensions[1] > 0"
+        v-if="shouldDisplayLayoutDimensions"
         class="l-layout__dimensions"
         :style="layoutDimensionsStyle"
     >
@@ -175,6 +175,12 @@ export default {
         },
         layoutDimensions() {
             return this.internalDomainObject.configuration.layoutDimensions;
+        },
+        shouldDisplayLayoutDimensions() {
+            return this.layoutDimensions
+                && this.layoutDimensions.length === 2
+                && this.layoutDimensions[0] > 0
+                && this.layoutDimensions[1] > 0;
         },
         layoutDimensionsStyle() {
             const width = `${this.layoutDimensions[0]}px`;
