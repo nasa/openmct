@@ -184,7 +184,6 @@ export default {
             });
         },
         layoutDimensions() {
-            console.log(this.internalDomainObject.configuration.layoutDimensions);
             return this.internalDomainObject.configuration.layoutDimensions;
         },
         layoutDimensionsStyle() {

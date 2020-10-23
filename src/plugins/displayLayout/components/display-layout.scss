@@ -44,26 +44,6 @@
         position: absolute;
     }
 }
-/*
-.l-shell__main-container {
-    &[s-selected],
-    &[s-selected-parent] {
-        > .l-layout {
-            > [class*="__dimensions"] {
-                //display: block;
-            }
-        }
-    }
-}
-
-.l-layout__frame {
-    &[s-selected]:not([multi-select="true"]),
-    &[s-selected-parent] {
-        > * > * > .l-layout {
-            // Sub-layout in layout
-        }
-    }
-}*/
 
 .is-editing {
     .l-shell__main-container {
