@@ -31,21 +31,11 @@
     @click.capture="bypassSelection"
     @drop="handleDrop"
 >
-    <div
+    <display-layout-grid
         v-if="isEditing"
-        class="l-layout__grid-holder c-grid"
-    >
-        <div
-            v-if="gridSize[0] >= 3"
-            class="c-grid__x l-grid l-grid-x"
-            :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]"
-        ></div>
-        <div
-            v-if="gridSize[1] >= 3"
-            class="c-grid__y l-grid l-grid-y"
-            :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"
-        ></div>
-    </div>
+        :grid-size="gridSize"
+        :show-grid="showGrid"
+    />
     <div
         v-if="layoutDimensions[0] > 0 && layoutDimensions[1] > 0"
         class="l-layout__dimensions"
