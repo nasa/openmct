@@ -17,8 +17,27 @@
     flex-direction: column;
     overflow: auto;
 
-    &__grid-holder {
+    &__grid-holder,
+    &__dimensions {
         display: none;
+    }
+
+    &__dimensions {
+        $b: 1px dashed $editDimensionsColor;
+        border-right: $b;
+        border-bottom: $b;
+        pointer-events: none;
+        position: absolute;
+
+        &-vals {
+            $p: 2px;
+            color: $editDimensionsColor;
+            display: inline-block;
+            font-style: italic;
+            position: absolute;
+            bottom: $p; right: $p;
+            opacity: 0.7;
+        }
     }
 
     &__frame {
@@ -34,6 +53,10 @@
             > .l-layout {
                 background: $editUIGridColorBg;
 
+                > [class*="__dimensions"] {
+                    display: block;
+                }
+
                 > [class*="__grid-holder"] {
                     display: block;
                 }
@@ -47,6 +70,10 @@
             // Display grid and allow edit marquee to display in nested layouts when editing
             > * > * > .l-layout.allow-editing {
                 box-shadow: inset $editUIGridColorFg 0 0 2px 1px;
+
+                > [class*="__dimensions"] {
+                    display: block;
+                }
 
                 > [class*='grid-holder'] {
                     display: block;

@@ -36,7 +36,15 @@
         :grid-size="gridSize"
         :show-grid="showGrid"
     />
-
+    <div
+        v-if="shouldDisplayLayoutDimensions"
+        class="l-layout__dimensions"
+        :style="layoutDimensionsStyle"
+    >
+        <div class="l-layout__dimensions-vals">
+            {{ layoutDimensions[0] }},{{ layoutDimensions[1] }}
+        </div>
+    </div>
     <component
         :is="item.type"
         v-for="(item, index) in layoutItems"
@@ -164,6 +172,23 @@ export default {
             return this.layoutItems.filter(item => {
                 return this.itemIsInCurrentSelection(item);
             });
+        },
+        layoutDimensions() {
+            return this.internalDomainObject.configuration.layoutDimensions;
+        },
+        shouldDisplayLayoutDimensions() {
+            return this.layoutDimensions
+                && this.layoutDimensions[0] > 0
+                && this.layoutDimensions[1] > 0;
+        },
+        layoutDimensionsStyle() {
+            const width = `${this.layoutDimensions[0]}px`;
+            const height = `${this.layoutDimensions[1]}px`;
+
+            return {
+                width,
+                height
+            };
         },
         showMarquee() {
             let selectionPath = this.selection[0];
