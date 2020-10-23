@@ -31,22 +31,12 @@
     @click.capture="bypassSelection"
     @drop="handleDrop"
 >
-    <!-- Background grid -->
-    <div
+    <display-layout-grid
         v-if="isEditing"
-        class="l-layout__grid-holder c-grid"
-    >
-        <div
-            v-if="gridSize[0] >= 3"
-            class="c-grid__x l-grid l-grid-x"
-            :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]"
-        ></div>
-        <div
-            v-if="gridSize[1] >= 3"
-            class="c-grid__y l-grid l-grid-y"
-            :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"
-        ></div>
-    </div>
+        :grid-size="gridSize"
+        :show-grid="showGrid"
+    />
+
     <component
         :is="item.type"
         v-for="(item, index) in layoutItems"
@@ -81,6 +71,7 @@ import TextView from './TextView.vue';
 import LineView from './LineView.vue';
 import ImageView from './ImageView.vue';
 import EditMarquee from './EditMarquee.vue';
+import DisplayLayoutGrid from './DisplayLayoutGrid.vue';
 import _ from 'lodash';
 
 const TELEMETRY_IDENTIFIER_FUNCTIONS = {
@@ -127,6 +118,7 @@ const DUPLICATE_OFFSET = 3;
 
 let components = ITEM_TYPE_VIEW_MAP;
 components['edit-marquee'] = EditMarquee;
+components['display-layout-grid'] = DisplayLayoutGrid;
 
 function getItemDefinition(itemType, ...options) {
     let itemView = ITEM_TYPE_VIEW_MAP[itemType];
@@ -140,6 +132,7 @@ function getItemDefinition(itemType, ...options) {
 
 export default {
     components: components,
+    inject: ['openmct', 'options', 'objectPath'],
     props: {
         domainObject: {
             type: Object,
@@ -156,7 +149,8 @@ export default {
         return {
             internalDomainObject: domainObject,
             initSelectIndex: undefined,
-            selection: []
+            selection: [],
+            showGrid: true
         };
     },
     computed: {
@@ -179,7 +173,13 @@ export default {
             return this.isEditing && selectionPath && selectionPath.length > 1 && !singleSelectedLine;
         }
     },
-    inject: ['openmct', 'options', 'objectPath'],
+    watch: {
+        isEditing(value) {
+            if (value) {
+                this.showGrid = value;
+            }
+        }
+    },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
             this.internalDomainObject = JSON.parse(JSON.stringify(obj));
@@ -798,6 +798,9 @@ export default {
 
             this.removeItem(selection);
             this.initSelectIndex = this.layoutItems.length - 1; //restore selection
+        },
+        toggleGrid() {
+            this.showGrid = !this.showGrid;
         }
     }
 };
