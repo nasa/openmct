@@ -85,7 +85,7 @@
     }
 
     .l-layout__frame {
-        &[s-selected],
+        &[s-selected]:not([multi-select="true"]),
         &[s-selected-parent] {
             // Display grid and allow edit marquee to display in nested layouts when editing
             > * > * > .l-layout.allow-editing {
