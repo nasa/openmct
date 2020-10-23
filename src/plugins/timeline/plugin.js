@@ -20,12 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchObjectProvider from './CouchObjectProvider';
-const NAMESPACE = '';
-const PERSISTENCE_SPACE = 'mct';
+import TimelineViewProvider from './TimelineViewProvider';
 
-export default function CouchPlugin(url) {
+export default function () {
     return function install(openmct) {
-        openmct.objects.addProvider(PERSISTENCE_SPACE, new CouchObjectProvider(openmct, url, NAMESPACE));
+        openmct.types.addType('plan', {
+            name: 'Plan',
+            key: 'plan',
+            description: 'An activity timeline',
+            creatable: true,
+            cssClass: 'icon-timeline',
+            form: [
+                {
+                    name: 'Upload Plan (JSON File)',
+                    key: 'selectFile',
+                    control: 'file-input',
+                    required: true,
+                    text: 'Select File',
+                    type: 'application/json'
+                }
+            ],
+            initialize: function (domainObject) {
+            }
+        });
+        openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
     };
 }
+

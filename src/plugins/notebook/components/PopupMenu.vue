@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import MenuItems from './menu-items.vue';
+import MenuItems from './MenuItems.vue';
 import Vue from 'vue';
 
 export default {
