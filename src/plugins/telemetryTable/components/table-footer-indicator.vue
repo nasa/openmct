@@ -1,18 +1,41 @@
 <template>
 <div
-    v-if="filterNames.length > 0"
-    :title="title"
-    class="c-filter-indication"
-    :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
+    class="c-table-indicator"
+    :class="{ 'is-filtering': filterNames.length > 0 }"
 >
-    <span class="c-filter-indication__mixed">{{ label }}</span>
-    <span
-        v-for="(name, index) in filterNames"
-        :key="index"
-        class="c-filter-indication__label"
+    <div
+        v-if="filterNames.length > 0"
+        class="c-table-indicator__filter c-table-indicator__elem c-filter-indication"
+        :class="{ 'c-filter-indication--mixed': hasMixedFilters }"
+        :title="title"
     >
-        {{ name }}
-    </span>
+        <span class="c-filter-indication__mixed">{{ label }}</span>
+        <span
+            v-for="(name, index) in filterNames"
+            :key="index"
+            class="c-filter-indication__label"
+        >
+            {{ name }}
+        </span>
+    </div>
+
+    <div class="c-table-indicator__counts">
+        <span
+            :title="totalRows + ' rows visible after any filtering'"
+            class="c-table-indicator__elem c-table-indicator__row-count"
+        >
+            {{ totalRows }} Rows
+        </span>
+
+        <span
+            v-if="markedRows"
+            class="c-table-indicator__elem c-table-indicator__marked-count"
+            :title="markedRows + ' rows selected'"
+        >
+            {{ markedRows }} Marked
+        </span>
+
+    </div>
 </div>
 </template>
 
@@ -27,6 +50,16 @@ const USE_GLOBAL = 'useGlobal';
 
 export default {
     inject: ['openmct', 'table'],
+    props: {
+        markedRows: {
+            type: Number,
+            default: 0
+        },
+        totalRows: {
+            type: Number,
+            default: 0
+        }
+    },
     data() {
         return {
             filterNames: [],

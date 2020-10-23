@@ -1,21 +1,21 @@
-@import "~styles/vendor/normalize-min";
-@import "~styles/constants";
-@import "~styles/constants-mobile.scss";
+@import "../../styles/vendor/normalize-min";
+@import "../../styles/constants";
+@import "../../styles/constants-mobile.scss";
 
-@import "~styles/constants-maelstrom";
+@import "../../styles/constants-maelstrom";
 
-@import "~styles/mixins";
-@import "~styles/animations";
-@import "~styles/about";
-@import "~styles/glyphs";
-@import "~styles/global";
-@import "~styles/status";
-@import "~styles/controls";
-@import "~styles/forms";
-@import "~styles/table";
-@import "~styles/legacy";
-@import "~styles/legacy-plots";
-@import "~styles/plotly";
-@import "~styles/legacy-messages";
+@import "../../styles/mixins";
+@import "../../styles/animations";
+@import "../../styles/about";
+@import "../../styles/glyphs";
+@import "../../styles/global";
+@import "../../styles/status";
+@import "../../styles/controls";
+@import "../../styles/forms";
+@import "../../styles/table";
+@import "../../styles/legacy";
+@import "../../styles/legacy-plots";
+@import "../../styles/plotly";
+@import "../../styles/legacy-messages";
 
-@import "~styles/vue-styles.scss";
+@import "../../styles/vue-styles.scss";
