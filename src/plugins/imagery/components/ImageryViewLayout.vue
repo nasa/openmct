@@ -7,34 +7,40 @@
     @mouseover="focusElement"
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
-        <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover l-flex-row c-imagery__lc">
-            <span class="holder flex-elem grows c-imagery__lc__sliders">
-                <input v-model="filters.brightness"
-                       class="icon-brightness"
-                       type="range"
-                       min="0"
-                       max="500"
-                >
-                <input v-model="filters.contrast"
-                       class="icon-contrast"
-                       type="range"
-                       min="0"
-                       max="500"
-                >
+        <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
+            <span class="c-image-controls__sliders">
+                <div class="c-image-controls__slider-wrapper icon-brightness">
+                    <input v-model="filters.brightness"
+                           type="range"
+                           min="0"
+                           max="500"
+                    >
+                </div>
+                <div class="c-image-controls__slider-wrapper icon-contrast">
+                    <input v-model="filters.contrast"
+                           type="range"
+                           min="0"
+                           max="500"
+                    >
+                </div>
             </span>
-            <span class="holder flex-elem t-reset-btn-holder c-imagery__lc__reset-btn">
+            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
                 <a class="s-icon-button icon-reset t-btn-reset"
                    @click="filters={brightness: 100, contrast: 100}"
                 ></a>
             </span>
         </div>
-        <div class="main-image s-image-main c-imagery__main-image has-local-controls"
+        <div class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
-             :style="{'background-image': imageUrl ? `url(${imageUrl})` : 'none',
-                      'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`}"
-             :data-openmct-image-timestamp="time"
-             :data-openmct-object-keystring="keyString"
         >
+            <div class="c-imagery__main-image__image"
+                 :style="{
+                 'background-image': imageUrl ? `url(${imageUrl})` : 'none',
+                 'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                 }"
+                 :data-openmct-image-timestamp="time"
+                 :data-openmct-object-keystring="keyString"
+            ></div>
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
             <button class="c-nav c-nav--prev"
@@ -58,7 +64,7 @@
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
             </div>
-            <div class="h-local-controls flex-elem">
+            <div class="h-local-controls">
                 <button
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': isPaused}"
