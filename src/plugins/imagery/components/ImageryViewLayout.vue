@@ -35,8 +35,8 @@
         >
             <div class="c-imagery__main-image__image"
                  :style="{
-                 'background-image': imageUrl ? `url(${imageUrl})` : 'none',
-                 'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                     'background-image': imageUrl ? `url(${imageUrl})` : 'none',
+                     'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
                  }"
                  :data-openmct-image-timestamp="time"
                  :data-openmct-object-keystring="keyString"
