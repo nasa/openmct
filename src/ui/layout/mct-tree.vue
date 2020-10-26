@@ -65,10 +65,10 @@
             </div>
 
             <tree-item
-                v-for="(ancestor, index) in ancestors"
+                v-for="(ancestor, index) in focusedAncestors"
                 :key="ancestor.id"
                 :node="ancestor"
-                :show-up="index < ancestors.length - 1"
+                :show-up="index < focusedAncestors.length - 1"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
                 @resetTree="beginNavigationRequest('handleReset', ancestor)"
@@ -167,6 +167,7 @@ export default {
             searchResultItems: [],
             visibleItems: [],
             ancestors: [],
+            tempAncestors: [],
             childrenSlideClass: 'down',
             updatingView: false,
             itemHeight: 27,
@@ -196,11 +197,14 @@ export default {
         focusedItems() {
             return this.activeSearch ? this.searchResultItems : this.childItems;
         },
+        focusedAncestors() {
+            return this.isLoading ? this.tempAncestors : this.ancestors;
+        },
         itemLeftOffset() {
             return this.activeSearch ? '0px' : this.ancestors.length * 10 + 'px';
         },
         indicatorLeftOffset() {
-            let offset = ((this.ancestors.length + 1) * 10);
+            let offset = ((this.focusedAncestors.length + 1) * 10);
 
             return {
                 paddingLeft: offset + 'px'
@@ -248,8 +252,6 @@ export default {
 
                 return;
             }
-
-            console.log('sync tree further');
 
             let routePath = [...this.openmct.router.path];
             routePath.shift(); // remove the child, so it navigates to the parent
@@ -377,17 +379,18 @@ export default {
             }
 
             // build ancestors tree items from objects
-            let ancestorItems = [];
+            this.tempAncestors = [];
+
             for (let i = 0; i < path.length; i++) {
                 let builtAncestor = this.buildTreeItem(path[i], path.slice(0, i));
-                ancestorItems.push(builtAncestor);
+                this.tempAncestors.push(builtAncestor);
             }
 
             // load children for last ancestor
-            let childrenItems = await this.getChildrenAsTreeItems(ancestorItems[ancestorItems.length - 1], path, requestId);
+            let childrenItems = await this.getChildrenAsTreeItems(this.tempAncestors[this.tempAncestors.length - 1], path, requestId);
 
             // if all is good, return true for successful navigation
-            return this.updateTree(ancestorItems, childrenItems, requestId);
+            return this.updateTree(this.tempAncestors, childrenItems, requestId);
         },
         async handleReset(node, requestId) {
             if (!this.isLatestNavigationRequest(requestId)) {
@@ -396,8 +399,8 @@ export default {
 
             this.childrenSlideClass = 'up';
 
-            let ancestorItems = [...this.ancestors];
-            ancestorItems.splice(ancestorItems.indexOf(node) + 1);
+            this.tempAncestors = [...this.ancestors];
+            this.tempAncestors.splice(this.tempAncestors.indexOf(node) + 1);
 
             let objectPath = this.ancestorsAsObjects();
             objectPath.splice(objectPath.indexOf(node.object) + 1);
@@ -405,7 +408,7 @@ export default {
             let childrenItems = await this.getChildrenAsTreeItems(node, objectPath, requestId);
 
             // if all is good, return true for successful navigation
-            return this.updateTree(ancestorItems, childrenItems, requestId);
+            return this.updateTree(this.tempAncestors, childrenItems, requestId);
         },
         async handleExpanded(node, requestId) {
             if (!this.isLatestNavigationRequest(requestId)) {
@@ -414,15 +417,15 @@ export default {
 
             this.childrenSlideClass = 'down';
 
-            let ancestorItems = [...this.ancestors];
-            ancestorItems.push(node);
+            this.tempAncestors = [...this.ancestors];
+            this.tempAncestors.push(node);
 
             let objectPath = this.ancestorsAsObjects().concat(node.object);
 
             let childrenItems = await this.getChildrenAsTreeItems(node, objectPath, requestId);
 
             // if all is good, return true for successful navigation
-            return this.updateTree(ancestorItems, childrenItems, requestId);
+            return this.updateTree(this.tempAncestors, childrenItems, requestId);
 
         },
         ancestorsAsObjects() {
@@ -451,11 +454,6 @@ export default {
 
             return objectPath;
         },
-        delayIt(duration) {
-            return new Promise((resolve, reject) => {
-                setTimeout(resolve, duration);
-            });
-        },
         async getChildrenAsTreeItems(item, parentObjectPath, requestId) {
             if (!this.isLatestNavigationRequest(requestId)) {
                 return false;
@@ -470,7 +468,6 @@ export default {
             this.childItems = [];
             let tempComposition = this.openmct.composition.get(item.object);
             let children = await tempComposition.load();
-            await this.delayIt(1000);
 
             if (!this.isLatestNavigationRequest(requestId)) {
                 return false;
@@ -638,9 +635,12 @@ export default {
                     let ancestorObjects = this.ancestorsAsObjects();
                     // ancestor has been removed from tree, reset to it's parent
                     if (location === null) {
-                        let index = ancestorObjects.indexOf(object);
+                        let index = ancestorObjects.findIndex(o => {
+                            return this.openmct.objects.makeKeyString(o.identifier) === this.openmct.objects.makeKeyString(object.identifier);
+                        });
                         let offset = this.multipleRootChildren ? 0 : 1; // account for ancestorsAsObjects removing root
                         let parentIndex = index - offset;
+
                         if (this.ancestors[parentIndex]) {
                             this.beginNavigationRequest('handleReset', this.ancestors[parentIndex]);
                         }
