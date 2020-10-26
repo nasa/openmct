@@ -81,24 +81,16 @@
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
 
-        openmct.install(openmct.plugins.CustomFormatter({
-            formats: [
-                {
-                    key: 'sclk',
-                    formatString: '&sclk',
-                    format: (value) => {
-                        return value;
-                    }
-                },
-                {
-                    key: 'lts',
-                    formatString: '&lts',
-                    format: (value) => {
-                        return value;
-                    }
-                }
-            ]
-        }));
+        [
+            {
+                key: 'sclk',
+                format: (value) => value
+            },
+            {
+                key: 'lts',
+                format: (value) => value
+            }
+        ].forEach(openmct.telemetry.addFormat);
 
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Espresso());

@@ -74,8 +74,8 @@
 
 <script>
 import LayoutFrame from './LayoutFrame.vue';
-import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+import CustomStringFormat from '../CustomStringFormatter';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
@@ -132,7 +132,8 @@ export default {
             datum: undefined,
             formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined
+            currentObjectPath: undefined,
+            formatter: undefined
         };
     },
     computed: {
@@ -177,30 +178,7 @@ export default {
                 return;
             }
 
-            const itemFormat = this.item.format;
-            if (!itemFormat) {
-                return this.valueFormatter && this.valueFormatter.format(this.datum);
-            }
-
-            if (!itemFormat.startsWith('&')) {
-                return printj.sprintf(itemFormat, this.datum[this.valueMetadata.key]);
-            }
-
-            try {
-                const formatMap = this.openmct.telemetry.formatService.formatMap;
-                const key = itemFormat.slice(1);
-
-                const customFormatter = formatMap[key];
-                if (!customFormatter) {
-                    throw new Error('Custom Formatter not found');
-                }
-
-                return customFormatter.format(this.datum[this.valueMetadata.key]);
-            } catch (e) {
-                console.error(e);
-
-                return '';
-            }
+            return this.formatter.format(this.datum, this.valueFormatter, this.valueMetadata);
         },
         telemetryClass() {
             if (!this.datum) {
@@ -232,6 +210,8 @@ export default {
         this.openmct.objects.get(this.item.identifier)
             .then(this.setObject);
         this.openmct.time.on("bounds", this.refreshData);
+
+        this.formatter = new CustomStringFormat(this.openmct, this.item.format);
     },
     destroyed() {
         this.removeSubscription();
@@ -305,6 +285,8 @@ export default {
             delete this.immediatelySelect;
         },
         updateTelemetryFormat(format) {
+            this.formatter = new CustomStringFormat(this.openmct, format);
+
             this.$emit('formatChanged', this.item, format);
         },
         showContextMenu(event) {
