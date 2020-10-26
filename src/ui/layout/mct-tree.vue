@@ -27,7 +27,7 @@
 
     <!-- no results -->
     <div
-        v-if="(searchValue && searchResultItems.length === 0 && !searchLoading)"
+        v-if="showNoSearchResults"
         class="c-tree-and-search__no-results"
     >
         No results found
@@ -91,7 +91,7 @@
             @after-enter="autoScroll"
         >
             <div
-                v-if="!isLoading && !searchLoading"
+                v-if="showChildContainer"
                 :style="childrenListStyles()"
                 :class="childrenSlideClass"
             >
@@ -115,7 +115,7 @@
                             @expanded="beginNavigationRequest('handleExpanded', treeItem)"
                         />
                         <div
-                            v-if="visibleItems.length === 0 && !noVisibleItems && !activeSearch"
+                            v-if="showNoItems"
                             :style="indicatorLeftOffset"
                             class="c-tree__item c-tree__item--empty"
                         >
@@ -142,10 +142,6 @@ const LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD = 'mct-tree-expanded';
 const LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE = 'mct-expanded-tree-node';
 const ROOT_PATH = 'browse';
 const ITEM_BUFFER = 5;
-const RECHECK_DELAY = 100;
-const RESIZE_FIRE_DELAY_MS = 500;
-let windowResizeId = undefined;
-let windowResizing = false;
 
 export default {
     inject: ['openmct'],
@@ -177,7 +173,6 @@ export default {
             itemOffset: 0,
             activeSearch: false,
             multipleRootChildren: false,
-            noVisibleItems: false,
             observedAncestors: {},
             mainTreeTopMargin: undefined
         };
@@ -188,9 +183,12 @@ export default {
                 .map((ancestor) => ancestor.id)
                 .join('/');
 
-            // if not multiRootChildren, then need to add in root
+            // if not multiRootChildren, then need to add in root ('browse')
             if (!this.multipleRootChildren) {
                 path = ROOT_PATH + '/' + path;
+            // if multiRootChldren, need to replace root id with 'browse'
+            } else {
+                path = path.replace('ROOT', ROOT_PATH);
             }
 
             return path;
@@ -225,6 +223,15 @@ export default {
         },
         availableContainerHeight() {
             return this.mainTreeHeight - this.ancestorsHeight;
+        },
+        showNoItems() {
+            return this.visibleItems.length === 0 && !this.activeSearch;
+        },
+        showNoSearchResults() {
+            return this.searchValue && this.searchResultItems.length === 0 && !this.searchLoading;
+        },
+        showChildContainer() {
+            return !this.isLoading && !this.searchLoading;
         }
     },
     watch: {
@@ -235,15 +242,18 @@ export default {
                 return;
             }
 
-            if (this.currentPathIsActivePath()) {
+            if (this.currentPathIsActivePath() && !this.isLoading) {
                 this.skipScroll = false;
                 this.autoScroll();
 
                 return;
             }
 
+            console.log('sync tree further');
+
             let routePath = [...this.openmct.router.path];
             routePath.shift(); // remove the child, so it navigates to the parent
+            routePath.push(this.root); // adding root
             this.beginNavigationRequest('jumpTo', [...routePath].reverse());
         },
         searchValue() {
@@ -284,6 +294,7 @@ export default {
     },
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
+        this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
     },
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
@@ -426,9 +437,9 @@ export default {
         },
         async buildObjectPathFromString(path, requestId) {
             let pathNodes = path.split('/');
-            let objectPath = [];
+            let objectPath = [this.root];
 
-            // skip first element, it's root "browse" path
+            // skip first element, it's root "browse" path, handled above
             for (let i = 1; i < pathNodes.length; i++) {
                 let domainObject = await this.openmct.objects.get(pathNodes[i]);
                 objectPath.push(domainObject);
@@ -439,6 +450,11 @@ export default {
             }
 
             return objectPath;
+        },
+        delayIt(duration) {
+            return new Promise((resolve, reject) => {
+                setTimeout(resolve, duration);
+            });
         },
         async getChildrenAsTreeItems(item, parentObjectPath, requestId) {
             if (!this.isLatestNavigationRequest(requestId)) {
@@ -452,12 +468,15 @@ export default {
             }
 
             this.childItems = [];
-            this.composition = this.openmct.composition.get(item.object);
-            let children = await this.composition.load();
+            let tempComposition = this.openmct.composition.get(item.object);
+            let children = await tempComposition.load();
+            await this.delayIt(1000);
 
             if (!this.isLatestNavigationRequest(requestId)) {
                 return false;
             }
+
+            this.composition = tempComposition;
 
             return children.map((child) => {
                 return this.buildTreeItem(child, parentObjectPath);
@@ -475,7 +494,6 @@ export default {
 
             await this.clearVisibleItems();
 
-            // update ancestors and children
             this.ancestors = ancestors;
             this.childItems = children;
 
@@ -528,7 +546,6 @@ export default {
 
                 this.itemOffset = start;
                 this.visibleItems = this.focusedItems.slice(start, end);
-                this.noVisibleItems = false;
 
                 this.updatingView = false;
             });
@@ -552,24 +569,15 @@ export default {
             return Math.ceil(scrollBottom / this.itemHeight);
         },
         scrollItems(event) {
-            if (!windowResizing) {
-                this.updateVisibleItems();
-            }
+            this.updateVisibleItems();
         },
         handleWindowResize() {
-            if (!windowResizing) {
-                windowResizing = true;
-                window.clearTimeout(windowResizeId);
-                windowResizeId = window.setTimeout(() => {
-                    this.calculateHeights();
-                    windowResizing = false;
-                }, RESIZE_FIRE_DELAY_MS);
-            }
+            this.calculateHeights();
         },
         // domainObject: we're building a tree item for this
         // objects: domainObject array up to parent of domainObject, excluding domainObject for item being built
         buildTreeItem(domainObject, objects) {
-            let objectPath = objects;
+            let objectPath = [...objects];
 
             // remove root for object path
             if (objectPath[0] && objectPath[0].type === 'root') {
@@ -631,7 +639,8 @@ export default {
                     // ancestor has been removed from tree, reset to it's parent
                     if (location === null) {
                         let index = ancestorObjects.indexOf(object);
-                        let parentIndex = index - 1;
+                        let offset = this.multipleRootChildren ? 0 : 1; // account for ancestorsAsObjects removing root
+                        let parentIndex = index - offset;
                         if (this.ancestors[parentIndex]) {
                             this.beginNavigationRequest('handleReset', this.ancestors[parentIndex]);
                         }
@@ -639,7 +648,7 @@ export default {
                 });
         },
         autoScroll() {
-            if (this.currentPathIsActivePath() && !this.skipScroll) {
+            if (this.currentPathIsActivePath() && !this.skipScroll && this.$refs.scrollable) {
                 let indexOfScroll = this.indexOfItemById(this.currentlyViewedObjectId());
                 let scrollTopAmount = indexOfScroll * this.itemHeight;
                 this.$refs.scrollable.scrollTo({
@@ -666,7 +675,7 @@ export default {
 
                 // removing the item itself, as the path we pass to buildTreeItem is a parent path
                 objectPath.shift();
-                console.log(objectPath);
+
                 // if root, remove, we're not using in object path for tree
                 let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
                 if (lastObject && lastObject.type === 'root') {
@@ -721,7 +730,6 @@ export default {
             }
         },
         async clearVisibleItems() {
-            this.noVisibleItems = true;
             this.visibleItems = [];
             await this.$nextTick(); // prevents "ghost" image of visibleItems
 
