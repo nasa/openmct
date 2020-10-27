@@ -576,7 +576,7 @@ export default {
         buildTreeItem(domainObject, objects) {
             let objectPath = [...objects];
 
-            // remove root for object path
+            // remove root (if present) for object path
             if (objectPath[0] && objectPath[0].type === 'root') {
                 objectPath.shift();
             }
@@ -607,15 +607,17 @@ export default {
             let observedAncestorIds = Object.keys(this.observedAncestors);
 
             // observe any ancestors, not currently being observed
-            this.ancestors.forEach((ancestor) => {
-                let ancestorObject = ancestor.object;
-                let ancestorKeyString = this.openmct.objects.makeKeyString(ancestorObject.identifier);
-                let index = observedAncestorIds.indexOf(ancestorKeyString);
+            this.ancestors.forEach((ancestor, index) => {
+                // skip last ancestor as it's children are currently being watched
+                if (index !== this.ancestors.length - 1) {
+                    let ancestorKeyString = this.openmct.objects.makeKeyString(ancestor.object.identifier);
+                    let ancestorIndex = observedAncestorIds.indexOf(ancestorKeyString);
 
-                if (index !== -1) { // currently observed
-                    observedAncestorIds.splice(index, 1); // remove all active ancestors from id tracking
-                } else { // not observed, observe it
-                    this.observeAncestor(ancestorKeyString, ancestorObject);
+                    if (ancestorIndex !== -1) { // currently observed
+                        observedAncestorIds.splice(ancestorIndex, 1); // remove all active ancestors from id tracking
+                    } else { // not observed, observe it
+                        this.observeAncestor(ancestorKeyString, ancestor);
+                    }
                 }
             });
 
@@ -624,28 +626,49 @@ export default {
         },
         stopObservingAncestors(ids = Object.keys(this.observedAncestors)) {
             ids.forEach((id) => {
-                this.observedAncestors[id]();
+                this.observedAncestors[id].composition.off('add', this.observedAncestors[id].addChild);
+                this.observedAncestors[id].composition.off('remove', this.observedAncestors[id].removeChild);
+                this.observedAncestors[id].removeChild = undefined;
+                this.observedAncestors[id].addChild = undefined;
+                this.observedAncestors[id].composition = undefined;
+
+                // remove tracking for this id
                 this.observedAncestors[id] = undefined;
                 delete this.observedAncestors[id];
             });
         },
-        observeAncestor(id, object) {
-            this.observedAncestors[id] = this.openmct.objects.observe(object, 'location',
-                (location) => {
-                    let ancestorObjects = this.ancestorsAsObjects();
-                    // ancestor has been removed from tree, reset to it's parent
-                    if (location === null) {
-                        let index = ancestorObjects.findIndex(o => {
-                            return this.openmct.objects.makeKeyString(o.identifier) === this.openmct.objects.makeKeyString(object.identifier);
-                        });
-                        let offset = this.multipleRootChildren ? 0 : 1; // account for ancestorsAsObjects removing root
-                        let parentIndex = index - offset;
+        async observeAncestor(id, ancestorNode) {
+            this.observedAncestors[id] = {};
 
-                        if (this.ancestors[parentIndex]) {
-                            this.beginNavigationRequest('handleReset', this.ancestors[parentIndex]);
-                        }
-                    }
+            this.observedAncestors[id].composition = this.openmct.composition.get(ancestorNode.object);
+            await this.observedAncestors[id].composition.load();
+            this.observedAncestors[id].addChild = this.ancestorAdd(ancestorNode);
+            this.observedAncestors[id].removeChild = this.ancestorRemove(ancestorNode);
+            this.observedAncestors[id].composition.on('add', this.observedAncestors[id].addChild);
+            this.observedAncestors[id].composition.on('remove', this.observedAncestors[id].removeChild);
+            // }
+        },
+        ancestorAdd(ancestor) {
+            return (node) => {
+                // no use case for this as of yet since ancestors do not show siblings
+                // and the main ancestor being viewed currently has it's composition watched elsewhere
+            };
+        },
+        ancestorRemove(ancestorNode) {
+            return (identifier) => {
+                // check if this item is showing in the tree currently
+                let index = this.ancestors.findIndex(treeAncestor => {
+                    let treeAncestorIdentifier = this.openmct.objects.makeKeyString(treeAncestor.object.identifier);
+                    let removedItemIdentifier = this.openmct.objects.makeKeyString(identifier);
+
+                    return treeAncestorIdentifier === removedItemIdentifier;
                 });
+
+                if (index !== -1) {
+                    let ancestorIndex = this.ancestors.indexOf(ancestorNode);
+                    this.beginNavigationRequest('handleReset', this.ancestors[ancestorIndex]);
+                }
+            };
         },
         autoScroll() {
             if (this.currentPathIsActivePath() && !this.skipScroll && this.$refs.scrollable) {
