@@ -285,7 +285,7 @@ export default {
             delete this.immediatelySelect;
         },
         updateTelemetryFormat(format) {
-            this.formatter = new CustomStringFormat(this.openmct, format);
+            this.formatter.setFormat(format);
 
             this.$emit('formatChanged', this.item, format);
         },

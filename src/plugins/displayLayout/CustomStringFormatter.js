@@ -1,7 +1,7 @@
 import printj from 'printj';
 
 export default class CustomStringFormatter {
-    constructor(openmct, itemFormat) {
+    constructor(openmct, itemFormat = null) {
         this.openmct = openmct;
 
         this.itemFormat = itemFormat;
@@ -31,5 +31,9 @@ export default class CustomStringFormatter {
 
             return valueFormatter && valueFormatter.format(datum);
         }
+    }
+
+    setFormat(itemFormat) {
+        this.itemFormat = itemFormat;
     }
 }
