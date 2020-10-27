@@ -12,9 +12,8 @@
         <div class="c-ne__content">
             <div :id="entry.id"
                  class="c-ne__text"
-                 :class="{'c-input-inline' : !readOnly }"
+                 :class="{'c-ne__input' : !readOnly }"
                  :contenteditable="!readOnly"
-                 :style="!entry.text.length ? defaultEntryStyle : ''"
                  @blur="updateEntryValue($event, entry.id)"
                  @focus="updateCurrentEntryValue($event, entry.id)"
             >{{ entry.text.length ? entry.text : defaultText }}</div>
@@ -107,11 +106,7 @@ export default {
     data() {
         return {
             currentEntryValue: '',
-            defaultEntryStyle: {
-                fontStyle: 'italic',
-                color: '#6e6e6e'
-            },
-            defaultText: 'add description'
+            defaultText: ' '
         };
     },
     computed: {
