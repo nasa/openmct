@@ -1,13 +1,25 @@
 <template>
 <div class="c-toolbar">
-    <component
-        :is="item.control"
-        v-for="(item, index) in structure"
-        :key="index"
-        :options="item"
-        @click="triggerMethod(item, $event)"
-        @change="updateObjectValue"
-    />
+    <div class="c-toolbar__element-controls">
+        <component
+            :is="item.control"
+            v-for="(item, index) in primaryStructure"
+            :key="index"
+            :options="item"
+            @change="updateObjectValue"
+            @click="triggerMethod(item, $event)"
+        />
+    </div>
+    <div class="c-toolbar__dimensions-and-controls">
+        <component
+            :is="item.control"
+            v-for="(item, index) in secondaryStructure"
+            :key="index"
+            :options="item"
+            @change="updateObjectValue"
+            @click="triggerMethod(item, $event)"
+        />
+    </div>
 </div>
 </template>
 
@@ -39,6 +51,14 @@ export default {
         return {
             structure: []
         };
+    },
+    computed: {
+        primaryStructure() {
+            return this.structure.filter(item => !item.secondary);
+        },
+        secondaryStructure() {
+            return this.structure.filter(item => item.secondary);
+        }
     },
     mounted() {
         this.openmct.selection.on('change', this.handleSelection);
