@@ -90,10 +90,10 @@
         </div>
 
         <FontStyleEditor
-                v-if="canStyleFont"
-                :allow-editing="allowEditing"
-                :font-style="consolidatedFontStyle"
-                @set-font-property="setFontProperty"
+            v-if="canStyleFont"
+            :allow-editing="allowEditing"
+            :font-style="consolidatedFontStyle"
+            @set-font-property="setFontProperty"
         />
 
         <div v-if="conditionsLoaded"

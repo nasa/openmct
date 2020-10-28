@@ -21,64 +21,63 @@
 *****************************************************************************/
 
 <template>
-<div
->
+<div>
     <div class="c-style c-style--saved has-local-controls c-toolbar">
         <div class="c-style__controls"
-             @click="selectStyle()"
              :title="description"
+             @click="selectStyle()"
         >
             <div
                 class="c-style-thumb"
                 :style="thumbStyle"
             >
                 <span
-                        class="c-style-thumb__text u-style-receiver js-style-receiver"
-                        :class="{ 'hide-nice': !hasProperty(savedStyle.color) }"
-                        :data-font="savedStyle.font"
+                    class="c-style-thumb__text u-style-receiver js-style-receiver"
+                    :class="{ 'hide-nice': !hasProperty(savedStyle.color) }"
+                    :data-font="savedStyle.font"
                 >
                     {{ thumbLabel }}
                 </span>
             </div>
             <div
-                    class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-line-horz"
-                    title="Border color"
+                class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-line-horz"
+                title="Border color"
             >
                 <div
-                        class="c-swatch"
-                        :style="{
-                            background: borderColor
-                        }"
+                    class="c-swatch"
+                    :style="{
+                        background: borderColor
+                    }"
                 ></div>
             </div>
             <div
-                    class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-paint-bucket"
-                    title="Background color"
+                class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-paint-bucket"
+                title="Background color"
             >
                 <div
-                        class="c-swatch"
-                        :style="{ background: savedStyle.backgroundColor }"
+                    class="c-swatch"
+                    :style="{ background: savedStyle.backgroundColor }"
                 ></div>
             </div>
             <div
-                    class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-font"
-                    title="Text color"
+                class="c-icon-button c-icon-button--disabled c-icon-button--swatched icon-font"
+                title="Text color"
             >
                 <div
-                        class="c-swatch"
-                        :style="{ background: savedStyle.color }"
+                    class="c-swatch"
+                    :style="{ background: savedStyle.color }"
                 ></div>
             </div>
         </div>
 
         <div
-                v-if="canDeleteStyle"
-                class="c-style__button-delete c-local-controls--show-on-hover"
+            v-if="canDeleteStyle"
+            class="c-style__button-delete c-local-controls--show-on-hover"
         >
             <div
-                    class="c-icon-button icon-trash"
-                    title="Delete this saved style"
-                    @click.stop="deleteStyle()"
+                class="c-icon-button icon-trash"
+                title="Delete this saved style"
+                @click.stop="deleteStyle()"
             >
             </div>
         </div>

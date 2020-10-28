@@ -24,11 +24,11 @@
 <div class="c-style has-local-controls c-toolbar">
     <div class="c-style__controls">
         <div :class="[
-                  { 'is-style-invisible': styleItem.style && styleItem.style.isStyleInvisible },
-                  { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
-              ]"
-              :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
-              class="c-style-thumb"
+                 { 'is-style-invisible': styleItem.style && styleItem.style.isStyleInvisible },
+                 { 'c-style-thumb--mixed': mixedStyles.indexOf('backgroundColor') > -1 }
+             ]"
+             :style="[styleItem.style.imageUrl ? { backgroundImage:'url(' + styleItem.style.imageUrl + ')'} : itemStyle ]"
+             class="c-style-thumb"
         >
             <span class="c-style-thumb__text"
                   :class="{ 'hide-nice': !hasProperty(styleItem.style.color) }"
