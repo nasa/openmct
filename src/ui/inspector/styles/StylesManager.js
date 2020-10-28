@@ -21,21 +21,19 @@ class StylesManager extends EventEmitter {
 
         if (!this.isSaveLimitReached(styles)) {
             styles.unshift(normalizedStyle);
-            const persistSucceeded = this.persist(styles);
 
-            if (persistSucceeded) {
+            if (this.persist(styles)) {
                 this.emit('stylesUpdated', styles);
             }
         }
     }
 
-    delete(style) {
+    delete(index) {
         const styles = this.load();
-        const remainingStyles = styles.filter(keep => !this.isEqual(keep, style));
+        styles.splice(index, 1);
 
-        const persistSuccess = this.persist(remainingStyles);
-        if (persistSuccess) {
-            this.emit('stylesUpdated', remainingStyles);
+        if (this.persist(styles)) {
+            this.emit('stylesUpdated', styles);
         }
     }
 

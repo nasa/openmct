@@ -146,10 +146,10 @@ ${font}`;
                 this.stylesManager.select(this.savedStyle);
             }
         },
-        deleteStyle(style) {
-            this.showDeleteStyleDialog(style)
+        deleteStyle() {
+            this.showDeleteStyleDialog()
                 .then(() => {
-                    this.stylesManager.delete(this.savedStyle);
+                    this.$emit('delete-style');
                 })
                 .catch(() => {});
         },

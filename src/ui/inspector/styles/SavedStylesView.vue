@@ -30,6 +30,7 @@
                 class="c-inspect-styles__saved-style"
                 :is-editing="isEditing"
                 :saved-style="savedStyle"
+                @delete-style="deleteStyle(index)"
             />
         </div>
     </div>
@@ -119,6 +120,9 @@ export default {
                     }
                 ]
             });
+        },
+        deleteStyle(index) {
+            this.stylesManager.delete(index);
         }
     }
 };
