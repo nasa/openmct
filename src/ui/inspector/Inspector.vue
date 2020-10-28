@@ -32,13 +32,22 @@
                 <elements />
             </pane>
         </multipane>
-        <StylesInspectorView
+        <multipane
             v-show="currentTabbedView.key === '__styles'"
-        />
-        <SavedStylesInspectorView
-            v-show="currentTabbedView.key === '__styles'"
-            :is-editing="isEditing"
-        />
+            type="vertical"
+        >
+            <pane class="c-inspector__styles">
+                <StylesInspectorView />
+            </pane>
+            <pane
+                v-if="isEditing"
+                class="c-inspector__saved-styles"
+                handle="before"
+                label="Saved Styles"
+            >
+                <SavedStylesInspectorView :is-editing="isEditing" />
+            </pane>
+        </multipane>
     </div>
 </div>
 </template>

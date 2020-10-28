@@ -22,9 +22,6 @@
 
 <template>
 <div class="c-inspector__saved-styles c-inspect-styles">
-    <div class="c-inspect-styles__header">
-        Saved Styles
-    </div>
     <div class="c-inspect-styles__content">
         <div class="c-inspect-styles__saved-styles">
             <saved-style-selector
