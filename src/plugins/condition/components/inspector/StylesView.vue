@@ -213,6 +213,7 @@ export default {
             });
         },
         consolidatedFontStyle() {
+            let consolidatedFontStyle;
             const styleables = this.styleableFontItems;
             const styles = [];
 
@@ -232,16 +233,22 @@ export default {
                 styles.push(fontStyle);
             });
 
-            const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
-            const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
-            const consolidatedFontStyle = {
-                fontSize: hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC,
-                font: hasConsolidatedFont ? styles[0].font : NON_SPECIFIC
-            };
+            if (styles.length) {
+                const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
+                const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
+                consolidatedFontStyle = {
+                    fontSize: hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC,
+                    font: hasConsolidatedFont ? styles[0].font : NON_SPECIFIC
+                };
+            }
 
             return consolidatedFontStyle;
         },
         nonSpecificFontProperties() {
+            if (!this.consolidatedFontStyle) {
+                return [];
+            }
+
             return Object.keys(this.consolidatedFontStyle).filter(property => this.consolidatedFontStyle[property] === NON_SPECIFIC);
         },
         canStyleFont() {
