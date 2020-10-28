@@ -16,7 +16,7 @@
                  :contenteditable="!readOnly"
                  @blur="updateEntryValue($event, entry.id)"
                  @focus="updateCurrentEntryValue($event, entry.id)"
-            >{{ entry.text.length ? entry.text : defaultText }}</div>
+            >{{ entry.text }}</div>
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
                                :key="embed.id"
@@ -105,8 +105,7 @@ export default {
     },
     data() {
         return {
-            currentEntryValue: '',
-            defaultText: ' '
+            currentEntryValue: ''
         };
     },
     computed: {
@@ -230,24 +229,13 @@ export default {
             this.entry.embeds.splice(embedPosition, 1);
             this.updateEntry(this.entry);
         },
-        selectTextInsideElement(element) {
-            const range = document.createRange();
-            range.selectNodeContents(element);
-            let selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-        },
         updateCurrentEntryValue($event) {
             if (this.readOnly) {
                 return;
             }
 
             const target = $event.target;
-            this.currentEntryValue = target ? target.innerText : '';
-
-            if (!this.entry.text.length) {
-                this.selectTextInsideElement(target);
-            }
+            this.currentEntryValue = target ? target.textContent : '';
         },
         updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
@@ -287,6 +275,8 @@ export default {
             const entryPos = this.entryPosById(entryId);
             const value = target.textContent.trim();
             if (this.currentEntryValue !== value) {
+                target.textContent = value;
+
                 const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
                 entries[entryPos].text = value;
 
