@@ -143,7 +143,8 @@ export default {
                 this.openmct.notifications.alert(message);
             }
 
-            window.location.href = link;
+            const url = new URL(link);
+            window.location.href = url.hash;
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
