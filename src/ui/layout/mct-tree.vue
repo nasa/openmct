@@ -1,8 +1,5 @@
 <template>
-<div
-    ref="searchAndTree"
-    class="c-tree-and-search"
->
+<div class="c-tree-and-search">
 
     <div
         ref="search"
@@ -44,7 +41,7 @@
             <div
                 ref="dummyItem"
                 class="c-tree__item-h"
-                style="left: -1000px; position: absolute;"
+                style="left: -1000px; position: absolute; visibility: hidden"
             >
                 <div class="c-tree__item">
                     <span class="c-tree__item__view-control c-nav__up is-enabled"></span>
@@ -774,7 +771,7 @@ export default {
         },
         calculateHeights() {
             this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-            this.mainTreeHeight = this.$refs.searchAndTree.offsetHeight
+            this.mainTreeHeight = this.$el.offsetHeight
                 - this.$refs.search.offsetHeight
                 - this.mainTreeTopMargin;
             this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
