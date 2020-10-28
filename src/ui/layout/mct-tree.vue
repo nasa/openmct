@@ -281,9 +281,13 @@ export default {
         this.initialize();
         let rootComposition = await this.loadRoot();
 
+        if (!rootComposition) {
+            return;
+        }
+
         if (!savedPath) {
             savedPath = ROOT_PATH;
-            if (!this.multipleRootChildren) {
+            if (!this.multipleRootChildren && rootComposition[0]) {
                 let id = this.openmct.objects.makeKeyString(rootComposition[0].identifier);
                 savedPath += '/' + id;
             }
@@ -328,6 +332,10 @@ export default {
         },
         async loadRoot() {
             this.root = await this.openmct.objects.get('ROOT');
+
+            if (!this.root.identifier) {
+                return false;
+            }
 
             let rootCompositionCollection = this.openmct.composition.get(this.root);
             let rootComposition = await rootCompositionCollection.load();
