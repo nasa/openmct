@@ -17,10 +17,8 @@ export default class CustomStringFormatter {
         }
 
         try {
-            const formatMap = this.openmct.telemetry.formatService.formatMap;
             const key = this.itemFormat.slice(1);
-
-            const customFormatter = formatMap[key];
+            const customFormatter = this.openmct.telemetry.getFormatter(key);
             if (!customFormatter) {
                 throw new Error('Custom Formatter not found');
             }

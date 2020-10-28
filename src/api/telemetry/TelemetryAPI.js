@@ -421,6 +421,18 @@ define([
     };
 
     /**
+     * Get a value formatter for a given valueMetadata.
+     * @param {string} key
+     *
+     * @returns {Format}
+     */
+    TelemetryAPI.prototype.getFormatter = function (key) {
+        const formatMap = this.formatService.formatMap;
+
+        return formatMap[key];
+    };
+
+    /**
      * Get a format map of all value formatters for a given piece of telemetry
      * metadata.
      *
