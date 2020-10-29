@@ -113,7 +113,7 @@ export default {
             if (defaultNotebookObject && defaultNotebookObject.notebookMeta) {
                 let notebookIdentifier = defaultNotebookObject.notebookMeta.identifier;
 
-                this.openmct.status.set(notebookIdentifier, 'default');
+                this.openmct.status.set(notebookIdentifier, 'notebook-default');
             }
         }
     }

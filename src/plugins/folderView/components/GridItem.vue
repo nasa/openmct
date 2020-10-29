@@ -1,11 +1,10 @@
 <template>
 <a
     class="l-grid-view__item c-grid-item"
-    :class="{
+    :class="[{
         'is-alias': item.isAlias === true,
-        'is-missing': item.model.status === 'missing',
         'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1
-    }"
+    }, statusClass]"
     :href="objectLink"
 >
     <div
@@ -46,9 +45,10 @@
 <script>
 import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
 import objectLink from '../../../ui/mixins/object-link';
+import statusListener from './status-listener';
 
 export default {
-    mixins: [contextMenuGesture, objectLink],
+    mixins: [contextMenuGesture, objectLink, statusListener],
     props: {
         item: {
             type: Object,

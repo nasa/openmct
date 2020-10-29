@@ -60,11 +60,7 @@ export default {
             return type.definition.cssClass;
         },
         statusClass() {
-            if (this.status === 'default') {
-                return 'is-notebook-default';
-            } else if (this.status === 'missing') {
-                return 'is-missing';
-            }
+            return `is-${this.status}`;
         }
     },
     mounted() {

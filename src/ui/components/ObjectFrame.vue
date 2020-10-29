@@ -153,11 +153,7 @@ export default {
     },
     computed: {
         statusClass() {
-            if (this.status === 'default') {
-                return 'is-notebook-default';
-            } else if (this.status === 'missing') {
-                return 'is-missing';
-            }
+            return `is-${this.status}`;
         }
     },
     mounted() {

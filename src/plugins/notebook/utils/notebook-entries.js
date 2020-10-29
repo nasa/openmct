@@ -1,6 +1,6 @@
 import objectLink from '../../../ui/mixins/object-link';
 
-export const DEFAULT_CLASS = 'default';
+export const DEFAULT_CLASS = 'notebook-default';
 const TIME_BOUNDS = {
     START_BOUND: 'tc.startBound',
     END_BOUND: 'tc.endBound',
