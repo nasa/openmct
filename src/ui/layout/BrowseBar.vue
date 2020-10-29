@@ -195,17 +195,6 @@ export default {
             }
         }
     },
-    watch: {
-        domainObject() {
-            if (this.mutationObserver) {
-                this.mutationObserver();
-            }
-
-            this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
-                this.domainObject = domainObject;
-            });
-        }
-    },
     mounted: function () {
         document.addEventListener('click', this.closeViewAndSaveMenu);
         window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
