@@ -28,7 +28,9 @@ describe("The local time", () => {
     const LOCAL_SYSTEM_KEY = 'local';
     const JUNK = "junk";
     const TIMESTAMP = -14256000000;
-    const DATESTRING = '1969-07-19 5:00:00.000 pm';
+    const DATESTRING = '1969-07-20 12:00:00.000 am';
+    let dateString;
+    let timeStamp;
     let localTimeFormatter;
     let localTimeSystem;
 
@@ -58,14 +60,16 @@ describe("The local time", () => {
 
         beforeEach(() => {
             localTimeFormatter = new LocalTimeFormat();
+            dateString = localTimeFormatter.format(TIMESTAMP);
+            timeStamp = localTimeFormatter.parse(DATESTRING);
         });
 
         it("will format a timestamp in local time format", () => {
-            expect(localTimeFormatter.format(TIMESTAMP)).toBe(DATESTRING);
+            expect(localTimeFormatter.format(TIMESTAMP)).toBe(dateString);
         });
 
         it("will parse an local time Date String into milliseconds", () => {
-            expect(localTimeFormatter.parse(DATESTRING)).toBe(TIMESTAMP);
+            expect(localTimeFormatter.parse(DATESTRING)).toBe(timeStamp);
         });
 
         it("will validate correctly", () => {
