@@ -3,7 +3,7 @@
     class="c-tree__item__label c-object-label"
     :class="{
         classList,
-        'is-missing': observedObject.status === 'missing'
+        'is-missing': domainObject.status === 'missing'
     }"
     draggable="true"
     :href="objectLink"
@@ -19,7 +19,7 @@
         ></span>
     </div>
     <div class="c-tree__item__name c-object-label__name">
-        {{ observedObject.name }}
+        {{ domainObject.name }}
     </div>
 </a>
 </template>
@@ -47,14 +47,9 @@ export default {
             default: undefined
         }
     },
-    data() {
-        return {
-            observedObject: this.domainObject
-        };
-    },
     computed: {
         classList() {
-            const classList = this.observedObject.classList;
+            const classList = this.domainObject.classList;
             if (!classList || !classList.length) {
                 return '';
             }
@@ -62,7 +57,7 @@ export default {
             return classList.join(' ');
         },
         typeClass() {
-            let type = this.openmct.types.get(this.observedObject.type);
+            let type = this.openmct.types.get(this.domainObject.type);
             if (!type) {
                 return 'icon-object-unknown';
             }
@@ -71,13 +66,6 @@ export default {
         }
     },
     mounted() {
-        if (this.observedObject) {
-            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
-                this.observedObject = newObject;
-            });
-            this.$once('hook:destroyed', removeListener);
-        }
-
         this.previewAction = new PreviewAction(this.openmct);
     },
     methods: {
@@ -102,7 +90,7 @@ export default {
              * that point. If dragged object can be composed by navigated object, then indicate with presence of
              * 'composable-domain-object' in data transfer
              */
-            if (this.openmct.composition.checkPolicy(navigatedObject, this.observedObject)) {
+            if (this.openmct.composition.checkPolicy(navigatedObject, this.domainObject)) {
                 event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
 
