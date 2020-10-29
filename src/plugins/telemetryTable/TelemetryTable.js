@@ -73,7 +73,10 @@ define([
             openmct.time.on('timeSystem', this.refreshData);
         }
 
-        addColunmName(telemetryObject, metadataValues) {
+        /**
+         * @private
+         */
+        addNameColumn(telemetryObject, metadataValues) {
             let metadatum = metadataValues.find(m => m.key === 'name');
             if (!metadatum) {
                 metadatum = {
@@ -230,7 +233,7 @@ define([
         addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
 
-            this.addColunmName(telemetryObject, metadataValues);
+            this.addNameColumn(telemetryObject, metadataValues);
             metadataValues.forEach(metadatum => {
                 if (metadatum.key === 'name') {
                     return;
