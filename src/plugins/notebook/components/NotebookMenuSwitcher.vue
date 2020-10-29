@@ -92,7 +92,7 @@ export default {
 
                 const bounds = this.openmct.time.bounds();
                 const link = !this.ignoreLink
-                    ? window.location.href
+                    ? window.location.hash
                     : null;
 
                 const objectPath = this.objectPath || this.openmct.router.path;

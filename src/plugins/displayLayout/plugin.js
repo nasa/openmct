@@ -75,7 +75,8 @@ export default function DisplayLayoutPlugin(options) {
                             duplicateItem: component && component.$refs.displayLayout.duplicateItem,
                             switchViewType: component && component.$refs.displayLayout.switchViewType,
                             mergeMultipleTelemetryViews: component && component.$refs.displayLayout.mergeMultipleTelemetryViews,
-                            mergeMultipleOverlayPlots: component && component.$refs.displayLayout.mergeMultipleOverlayPlots
+                            mergeMultipleOverlayPlots: component && component.$refs.displayLayout.mergeMultipleOverlayPlots,
+                            toggleGrid: component && component.$refs.displayLayout.toggleGrid
                         };
                     },
                     onEditModeChange: function (isEditing) {
