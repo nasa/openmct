@@ -276,9 +276,9 @@ export default {
         }
     },
     async mounted() {
-        let savedPath = this.getStoredTreePath();
-
         this.initialize();
+
+        let savedPath = this.getStoredTreePath();
         let rootComposition = await this.loadRoot();
 
         if (!rootComposition) {
@@ -328,6 +328,15 @@ export default {
 
             if (oldTreeExpanded) {
                 localStorage.removeItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD);
+            }
+
+            let newTreeExpanded = this.getStoredTreePath();
+
+            if (newTreeExpanded) {
+                // see if it's in a deprecated format
+                if (newTreeExpanded.indexOf('mine') === 0) {
+                    localStorage.setItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE, JSON.stringify('browse/' + newTreeExpanded));
+                }
             }
         },
         async loadRoot() {
