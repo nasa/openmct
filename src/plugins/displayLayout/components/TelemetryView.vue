@@ -31,9 +31,7 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view"
-        :class="{
-            styleClass
-        }"
+        :class="[styleClass]"
         :style="styleObject"
         @contextmenu.prevent.stop="showContextMenu"
     >
