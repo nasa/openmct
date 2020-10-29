@@ -134,8 +134,8 @@ export default {
             }
 
             this.composition = this.openmct.composition.get(this.object);
+
             if (this.composition) {
-                this.composition._synchronize();
                 this.loadComposition();
             }
 
@@ -297,7 +297,7 @@ export default {
             }
         },
         isEditingAllowed() {
-            let browseObject = this.openmct.layout.$refs.browseObjecs.object;
+            let browseObject = this.object;
             let objectPath = this.currentObjectPath || this.objectPath;
             let parentObject = objectPath[1];
 

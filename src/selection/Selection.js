@@ -230,11 +230,8 @@ define(
             element.addEventListener('click', capture, true);
             element.addEventListener('click', selectCapture);
 
-            let unlisten = undefined;
             if (context.item) {
-                unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
-                    context.item = newItem;
-                });
+                context.item = this.openmct.objects._toMutable(context.item);
             }
 
             if (select) {
@@ -249,8 +246,8 @@ define(
                 element.removeEventListener('click', capture, true);
                 element.removeEventListener('click', selectCapture);
 
-                if (unlisten !== undefined) {
-                    unlisten();
+                if (context.item.isMutable) {
+                    context.item.$destroy();
                 }
             };
         };

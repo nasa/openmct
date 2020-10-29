@@ -81,14 +81,6 @@ export default {
             return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
         }
     },
-    watch: {
-        domainObject: {
-            deep: true,
-            handler(o) {
-                console.log(`changed ${o.name}`);
-            }
-        }
-    },
     mounted() {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
