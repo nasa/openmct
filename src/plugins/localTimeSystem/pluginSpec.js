@@ -23,33 +23,53 @@
 import LocalTimeFormat from './LocalTimeFormat.js';
 import LocalTimeSystem from './LocalTimeSystem.js';
 
-fdescribe("the plugin", () => {
-    const LOCAL_KEY = 'local-format';
+describe("The local time", () => {
+    const LOCAL_FORMAT_KEY = 'local-format';
+    const LOCAL_SYSTEM_KEY = 'local';
     const JUNK = "junk";
-    const MOON_LANDING_TIMESTAMP = -14256000000;
-    const MOON_LANDING_DATESTRING = '1969-07-20T00:00:00.000Z';
+    const TIMESTAMP = -14256000000;
+    const DATESTRING = '1969-07-19 5:00:00.000 pm';
     let localTimeFormatter;
+    let localTimeSystem;
 
-    beforeEach(() => {
-        localTimeFormatter = new LocalTimeFormat();
+    describe("system", function () {
+
+        beforeEach(() => {
+            localTimeSystem = new LocalTimeSystem();
+        });
+
+        it("uses the local-format time format", function () {
+            expect(localTimeSystem.timeFormat).toBe(LOCAL_FORMAT_KEY);
+        });
+
+        it("is UTC based", function () {
+            expect(localTimeSystem.isUTCBased).toBe(true);
+        });
+
+        it("defines expected metadata", function () {
+            expect(localTimeSystem.key).toBe(LOCAL_SYSTEM_KEY);
+            expect(localTimeSystem.name).toBeDefined();
+            expect(localTimeSystem.cssClass).toBeDefined();
+            expect(localTimeSystem.durationFormat).toBeDefined();
+        });
     });
 
-    describe("creates a new ISO based formatter", function () {
+    describe("formatter", function () {
 
-        it("with the key 'local-format'", () => {
-            expect(localTimeFormatter.key).toBe(LOCAL_KEY);
+        beforeEach(() => {
+            localTimeFormatter = new LocalTimeFormat();
         });
 
-        it("that will format a timestamp in ISO standard format", () => {
-            expect(localTimeFormatter.format(MOON_LANDING_TIMESTAMP)).toBe(MOON_LANDING_DATESTRING);
+        it("will format a timestamp in local time format", () => {
+            expect(localTimeFormatter.format(TIMESTAMP)).toBe(DATESTRING);
         });
 
-        it("that will parse an ISO Date String into milliseconds", () => {
-            expect(localTimeFormatter.parse(MOON_LANDING_DATESTRING)).toBe(MOON_LANDING_TIMESTAMP);
+        it("will parse an local time Date String into milliseconds", () => {
+            expect(localTimeFormatter.parse(DATESTRING)).toBe(TIMESTAMP);
         });
 
-        it("that will validate correctly", () => {
-            expect(localTimeFormatter.validate(MOON_LANDING_DATESTRING)).toBe(true);
+        it("will validate correctly", () => {
+            expect(localTimeFormatter.validate(DATESTRING)).toBe(true);
             expect(localTimeFormatter.validate(JUNK)).toBe(false);
         });
     });
