@@ -10,10 +10,6 @@ import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 export default {
     inject: ["openmct"],
     props: {
-        object: {
-            type: Object,
-            default: undefined
-        },
         showEditView: Boolean,
         objectPath: {
             type: Array,
@@ -21,6 +17,11 @@ export default {
                 return [];
             }
         }
+    },
+    data() {
+        return {
+            object: undefined
+        };
     },
     watch: {
         object(newObject, oldObject) {
