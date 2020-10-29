@@ -35,10 +35,7 @@
         class="c-so-view__header"
     >
         <div class="c-object-label"
-             :class="{
-                 classList,
-                 'is-missing': domainObject.status === 'missing'
-             }"
+             :class="[ statusClass ]"
         >
             <div class="c-object-label__type-icon"
                  :class="cssClass"
@@ -150,20 +147,26 @@ export default {
             cssClass,
             complexContent,
             viewProvider,
-            statusBarItems
+            statusBarItems,
+            status: ''
         };
     },
     computed: {
-        classList() {
-            const classList = this.domainObject.classList;
-            if (!classList || !classList.length) {
-                return '';
+        statusClass() {
+            if (this.status === 'default') {
+                return 'is-notebook-default';
+            } else if (this.status === 'missing') {
+                return 'is-missing';
             }
-
-            return classList.join(' ');
         }
     },
+    mounted() {
+        this.status = this.openmct.status.get(this.domainObject.identifier);
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+    },
     beforeDestroy() {
+        this.removeStatusListener();
+
         if (this.actionCollection) {
             this.unlistenToActionCollection();
         }
@@ -254,6 +257,9 @@ export default {
 
             let sortedActions = this.openmct.actions._groupAndSortActions(actions);
             this.openmct.menus.showMenu(event.x, event.y, sortedActions);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
 };

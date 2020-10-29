@@ -246,6 +246,8 @@ define([
 
         this.actions = new api.ActionsAPI(this);
 
+        this.status = new api.StatusAPI(this);
+
         this.router = new ApplicationRouter();
 
         this.branding = BrandingAPI.default;

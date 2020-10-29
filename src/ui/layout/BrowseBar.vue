@@ -9,10 +9,7 @@
         ></button>
         <div
             class="l-browse-bar__object-name--w c-object-label"
-            :class="{
-                classList,
-                'is-missing': domainObject.status === 'missing'
-            }"
+            :class="[statusClass]"
         >
             <div class="c-object-label__type-icon"
                  :class="type.cssClass"
@@ -149,17 +146,17 @@ export default {
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
             notebookEnabled: this.openmct.types.get('notebook'),
-            statusBarItems: []
+            statusBarItems: [],
+            status: ''
         };
     },
     computed: {
-        classList() {
-            const classList = this.domainObject.classList;
-            if (!classList || !classList.length) {
-                return '';
+        statusClass() {
+            if (this.status === 'default') {
+                return 'is-notebook-default';
+            } else if (this.status === 'missing') {
+                return 'is-missing';
             }
-
-            return classList.join(' ');
         },
         currentView() {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
@@ -225,6 +222,13 @@ export default {
             this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
                 this.domainObject = domainObject;
             });
+
+            if (this.removeStatusListener) {
+                this.removeStatusListener();
+            }
+
+            this.status = this.openmct.status.get(this.domainObject.identifier, this.setStatus);
+            this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         },
         viewProvider(viewProvider) {
             if (this.actionCollection) {
@@ -257,6 +261,10 @@ export default {
 
         if (this.actionCollection) {
             this.unlistenToActionCollection();
+        }
+
+        if (this.removeStatusListener) {
+            this.removeStatusListener();
         }
 
         document.removeEventListener('click', this.closeViewAndSaveMenu);
@@ -366,6 +374,9 @@ export default {
         },
         toggleLock(flag) {
             this.openmct.objects.mutate(this.domainObject, 'locked', flag);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
 };

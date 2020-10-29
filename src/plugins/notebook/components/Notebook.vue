@@ -416,14 +416,7 @@ export default {
                 return;
             }
 
-            const classList = domainObject.classList || [];
-            const index = classList.indexOf(DEFAULT_CLASS);
-            if (!classList.length || index < 0) {
-                return;
-            }
-
-            classList.splice(index, 1);
-            this.openmct.objects.mutate(domainObject, 'classList', classList);
+            this.openmct.status.delete(domainObject.identifier);
         },
         searchItem(input) {
             this.search = input;

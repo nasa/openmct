@@ -32,8 +32,7 @@
         v-if="domainObject"
         class="c-telemetry-view"
         :class="{
-            styleClass,
-            'is-missing': domainObject.status === 'missing'
+            styleClass
         }"
         :style="styleObject"
         @contextmenu.prevent.stop="showContextMenu"
@@ -131,10 +130,16 @@ export default {
             datum: undefined,
             domainObject: undefined,
             formats: undefined,
-            viewKey: `alphanumeric-format-${Math.random()}`
+            viewKey: `alphanumeric-format-${Math.random()}`,
+            status: ''
         };
     },
     computed: {
+        statusClass() {
+            if (this.status === 'missing') {
+                return 'is-missing';
+            }
+        },
         showLabel() {
             let displayMode = this.item.displayMode;
 
@@ -207,9 +212,13 @@ export default {
         this.openmct.objects.get(this.item.identifier)
             .then(this.setObject);
         this.openmct.time.on("bounds", this.refreshData);
+
+        this.status = this.openmct.status.get(this.item.identifier);
+        this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
     },
     destroyed() {
         this.removeSubscription();
+        this.removeStatusListener();
 
         if (this.removeSelectable) {
             this.removeSelectable();
@@ -331,6 +340,9 @@ export default {
         async showContextMenu(event) {
             const contextMenuActions = await this.getContextMenuActions();
             this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
 };
