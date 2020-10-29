@@ -23,14 +23,14 @@
 define([
     'lodash',
     'objectUtils',
-    './MutableObject',
+    './MutableDomainObject',
     './RootRegistry',
     './RootObjectProvider',
     'EventEmitter'
 ], function (
     _,
     utils,
-    MutableObject,
+    MutableDomainObject,
     RootRegistry,
     RootObjectProvider,
     EventEmitter
@@ -42,7 +42,8 @@ define([
      * @memberof module:openmct
      */
 
-    function ObjectAPI() {
+    function ObjectAPI(typeRegistry) {
+        this.typeRegistry = typeRegistry;
         this.eventEmitter = new EventEmitter();
         this.providers = {};
         this.rootRegistry = new RootRegistry();
@@ -182,6 +183,20 @@ define([
         });
     };
 
+    /**
+     * Will fetch object, returning it as a MutableDomainObject IF the object is mutable.
+     * Requires object to be destroyed after use.
+     */
+    ObjectAPI.prototype.getAsMutable = function (identifier) {
+        return this.get(identifier).then((object) => {
+            if (this.isMutable(object)) {
+                return this._toMutable(object);
+            } else {
+                return object;
+            }
+        });
+    };
+
     ObjectAPI.prototype.delete = function () {
         throw new Error('Delete not implemented');
     };
@@ -255,10 +270,29 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-        const mutableObject =
-            new MutableObject(this.eventEmitter, domainObject);
+        if (!this.isMutable(domainObject)) {
+            throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
+        }
 
-        return mutableObject.set(path, value);
+        if (domainObject instanceof MutableDomainObject.default) {
+            domainObject.$set(path, value);
+        } else {
+            let mutable = this._toMutable(domainObject);
+            mutable.$set(path, value);
+            mutable.$destroy();
+        }
+    };
+
+    ObjectAPI.prototype._toMutable = function (object) {
+        return MutableDomainObject.default.createMutable(object, this.eventEmitter);
+    };
+
+    ObjectAPI.prototype.isMutable = function (object) {
+        // Checking for mutability is a bit broken right now. This is an 80% solution,
+        // but does not work in many cases.
+        const type = this.typeRegistry.get(object.type);
+
+        return type && type.definition.creatable === true;
     };
 
     /**
@@ -271,11 +305,14 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        const mutableObject =
-            new MutableObject(this.eventEmitter, domainObject);
-        mutableObject.on(path, callback);
+        if (domainObject instanceof MutableDomainObject.default) {
+            return domainObject.$observe(path, callback);
+        } else {
+            let mutable = this._toMutable(domainObject);
+            mutable.$observe(path, callback);
 
-        return mutableObject.stopListening.bind(mutableObject);
+            return () => mutable.$destroy();
+        }
     };
 
     /**
