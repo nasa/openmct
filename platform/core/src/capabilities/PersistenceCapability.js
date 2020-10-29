@@ -114,7 +114,12 @@ define(["objectUtils"],
             var self = this,
                 domainObject = this.domainObject;
 
-            let newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), domainObject.getId());
+            const identifier = {
+                namespace: this.getSpace(),
+                key: this.getKey()
+            };
+
+            let newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), identifier);
 
             return this.openmct.objects
                 .save(newStyleObject)
@@ -146,6 +151,7 @@ define(["objectUtils"],
                     return domainObject.useCapability("mutation", function () {
                         return model;
                     }, modified);
+
                 }
             }
 
@@ -153,11 +159,10 @@ define(["objectUtils"],
                 return this.$q.when(true);
             }
 
-            return this.openmct.objects.get(domainObject.getId()).then((newStyleObject) => {
-                let oldStyleObject = this.openmct.legacyObject(newStyleObject);
-
-                return updateModel(oldStyleObject.getModel());
-            });
+            return this.persistenceService.readObject(
+                this.getSpace(),
+                this.getKey()
+            ).then(updateModel);
         };
 
         /**

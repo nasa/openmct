@@ -22,7 +22,7 @@
 
 import CouchObjectProvider from './CouchObjectProvider';
 const NAMESPACE = '';
-const PERSISTENCE_SPACE = '';
+const PERSISTENCE_SPACE = 'mct';
 
 export default function CouchPlugin(url) {
     return function install(openmct) {
