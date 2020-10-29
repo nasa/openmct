@@ -81,17 +81,6 @@
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
 
-        [
-            {
-                key: 'sclk',
-                format: (value) => value
-            },
-            {
-                key: 'lts',
-                format: (value) => value
-            }
-        ].forEach(openmct.telemetry.addFormat);
-
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
