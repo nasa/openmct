@@ -427,6 +427,10 @@ define([
      * @returns {Format}
      */
     TelemetryAPI.prototype.getFormatter = function (key) {
+        if (!this.formatService) {
+            this.formatService = this.openmct.$injector.get('formatService');
+        }
+
         const formatMap = this.formatService.formatMap;
 
         return formatMap[key];
