@@ -18,7 +18,7 @@ describe("The Status API", () => {
         };
         status = "test-status";
         status2 = 'test-status-deux';
-        callback = jasmine.createSpy('callback', (status) => status);
+        callback = jasmine.createSpy('callback', (statusUpdate) => statusUpdate);
     });
 
     afterEach(() => {
@@ -48,13 +48,13 @@ describe("The Status API", () => {
     describe("delete function", () => {
         it("deletes status for identifier", () => {
             statusAPI.set(identifier, status);
-            
+
             let resultingStatus = statusAPI.get(identifier);
             expect(resultingStatus).toEqual(status);
 
             statusAPI.delete(identifier);
             resultingStatus = statusAPI.get(identifier);
-            
+
             expect(resultingStatus).toBeUndefined();
         });
     });
@@ -64,21 +64,21 @@ describe("The Status API", () => {
         it("allows callbacks to be attached to status set and delete events", () => {
             let unsubscribe = statusAPI.observe(identifier, callback);
             statusAPI.set(identifier, status);
-            
+
             expect(callback).toHaveBeenCalledWith(status);
 
             statusAPI.delete(identifier);
-            
+
             expect(callback).toHaveBeenCalledWith(undefined);
             unsubscribe();
         });
 
-        it("returns a unsubscribe function",  () => {
+        it("returns a unsubscribe function", () => {
             let unsubscribe = statusAPI.observe(identifier, callback);
             unsubscribe();
 
             statusAPI.set(identifier, status);
-            
+
             expect(callback).toHaveBeenCalledTimes(0);
         });
     });

@@ -46,7 +46,7 @@ export default class StatusAPI extends EventEmitter {
         this._statusCache[keyString] = value;
         this.emit(keyString, value);
     }
-    
+
     delete(identifier) {
         let keyString = this._openmct.objects.makeKeyString(identifier);
 
@@ -62,6 +62,6 @@ export default class StatusAPI extends EventEmitter {
 
         return () => {
             this.off(key, callback);
-        }
+        };
     }
 }

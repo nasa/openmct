@@ -111,7 +111,7 @@ import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
-import { DEFAULT_CLASS, addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
 import { throttle } from 'lodash';

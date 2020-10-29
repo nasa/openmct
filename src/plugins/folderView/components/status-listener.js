@@ -1,5 +1,3 @@
-import { throws } from "assert";
-
 export default {
     inject: ['openmct'],
     props: {
@@ -16,12 +14,12 @@ export default {
     data() {
         return {
             status: ''
-        }
+        };
     },
     methods: {
         setStatus(status) {
             this.status = status;
-        } 
+        }
     },
     mounted() {
         let identifier = this.item.model.identifier;

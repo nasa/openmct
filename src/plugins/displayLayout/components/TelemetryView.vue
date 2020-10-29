@@ -136,9 +136,7 @@ export default {
     },
     computed: {
         statusClass() {
-            if (this.status === 'missing') {
-                return 'is-missing';
-            }
+            return `is-${this.status}`;
         },
         showLabel() {
             let displayMode = this.item.displayMode;
