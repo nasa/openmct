@@ -63,7 +63,6 @@
     <object-view
         ref="objectView"
         class="c-so-view__object-view"
-        :object="domainObject"
         :show-edit-view="showEditView"
         :object-path="objectPath"
     />
@@ -124,6 +123,9 @@ export default {
 
             return classList.join(' ');
         }
+    },
+    mounted() {
+        this.$refs.objectView.show(this.domainObject, undefined, false, this.objectPath);
     },
     methods: {
         expand() {

@@ -284,7 +284,11 @@ define([
     };
 
     ObjectAPI.prototype._toMutable = function (object) {
-        return MutableDomainObject.default.createMutable(object, this.eventEmitter);
+        if (object.isMutable) {
+            return object;
+        } else {
+            return MutableDomainObject.default.createMutable(object, this.eventEmitter);
+        }
     };
 
     ObjectAPI.prototype.isMutable = function (object) {

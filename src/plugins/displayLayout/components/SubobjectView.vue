@@ -125,13 +125,15 @@ export default {
         }
     },
     mounted() {
-        this.openmct.objects.get(this.item.identifier)
+        this.openmct.objects.getAsMutable(this.item.identifier)
             .then(this.setObject);
     },
     destroyed() {
         if (this.removeSelectable) {
             this.removeSelectable();
         }
+
+        this.domainObject.$destroy();
     },
     methods: {
         setObject(domainObject) {
