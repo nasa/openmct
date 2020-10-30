@@ -33,7 +33,6 @@
         </div>
         <FontStyleEditor
             v-if="canStyleFont"
-            :allow-editing="allowEditing"
             :font-style="consolidatedFontStyle"
             @set-font-property="setFontProperty"
         />
@@ -91,7 +90,6 @@
 
         <FontStyleEditor
             v-if="canStyleFont"
-            :allow-editing="allowEditing"
             :font-style="consolidatedFontStyle"
             @set-font-property="setFontProperty"
         />
@@ -214,15 +212,15 @@ export default {
         },
         consolidatedFontStyle() {
             let consolidatedFontStyle;
-            const styleables = this.styleableFontItems;
             const styles = [];
 
-            styleables.forEach(styleable => {
+            this.styleableFontItems.forEach(styleable => {
                 let fontStyle;
                 const item = styleable[0].context.item;
                 const layoutItem = styleable[0].context.layoutItem;
 
                 fontStyle = item && item.configuration && item.configuration.fontStyle;
+
                 if (!fontStyle) {
                     fontStyle = {
                         fontSize: layoutItem ? layoutItem.fontSize : 'default',
@@ -236,6 +234,7 @@ export default {
             if (styles.length) {
                 const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
                 const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
+
                 consolidatedFontStyle = {
                     fontSize: hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC,
                     font: hasConsolidatedFont ? styles[0].font : NON_SPECIFIC
@@ -252,7 +251,7 @@ export default {
             return Object.keys(this.consolidatedFontStyle).filter(property => this.consolidatedFontStyle[property] === NON_SPECIFIC);
         },
         canStyleFont() {
-            return Boolean(this.styleableFontItems.length && this.isEditing);
+            return this.styleableFontItems.length && this.allowEditing;
         },
         objectStyles() {
             let objectStyles = {};

@@ -29,10 +29,6 @@ export default {
         fontStyle: {
             type: Object,
             required: true
-        },
-        allowEditing: {
-            type: Boolean,
-            required: true
         }
     },
     computed: {
@@ -57,18 +53,10 @@ export default {
     },
     methods: {
         setFont(font) {
-            const property = {
-                font: font
-            };
-            // this.setFontStyle(font, 'font');
-            this.$emit('set-font-property', property);
+            this.$emit('set-font-property', { font: font });
         },
         setFontSize(fontSize) {
-            const property = {
-                fontSize: fontSize
-            };
-            // this.setFontStyle(fontSize, 'fontSize');
-            this.$emit('set-font-property', property);
+            this.$emit('set-font-property', { fontSize: fontSize });
         }
     }
 };
