@@ -380,12 +380,6 @@
     &:focus {
         box-shadow: $shdwInputFoc;
     }
-
-    //@include hover() {
-    //    &:not(:focus) {
-    //        box-shadow: $shdwInputHov;
-    //    }
-    //}
 }
 
 @mixin inlineInput() {
