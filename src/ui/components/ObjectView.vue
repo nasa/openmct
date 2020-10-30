@@ -297,7 +297,7 @@ export default {
             }
         },
         isEditingAllowed() {
-            let browseObject = this.domainObject;
+            let browseObject = this.openmct.layout.$refs.browseObject.domainObject;
             let objectPath = this.currentObjectPath || this.objectPath;
             let parentObject = objectPath[1];
 
