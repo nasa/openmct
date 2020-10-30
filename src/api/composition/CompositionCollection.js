@@ -64,8 +64,8 @@ define([
         this.onProviderRemove = this.onProviderRemove.bind(this);
         this.mutables = {};
 
-        if (this.domainObject instanceof MutableDomainObject.default &&
-            this.publicAPI.objects.isMutable(this.domainObject)) {
+        if (this.domainObject instanceof MutableDomainObject.default
+            && this.publicAPI.objects.isMutable(this.domainObject)) {
             this.returnMutables = true;
             this.domainObject.$observe('$_destroy', () => {
                 Object.values(this.mutables).forEach(mutable => {

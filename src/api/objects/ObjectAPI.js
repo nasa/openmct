@@ -190,7 +190,7 @@ define([
      * lifecycle of any `MutableDomainObjects` that it provides. If you use `getAsMutable` you are responsible for
      * managing lifecycle yourself. `.$destroy` should be called when the object is no longer needed.
      *
-     * @returns {Promise.<MutableDomainObject|DomainObject>} a promise that will resolve with a MutableDomainObject if 
+     * @returns {Promise.<MutableDomainObject|DomainObject>} a promise that will resolve with a MutableDomainObject if
      * the object can be mutated, or a DomainObject if not.
      */
     ObjectAPI.prototype.getAsMutable = function (identifier) {
