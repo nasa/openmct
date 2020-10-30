@@ -152,10 +152,7 @@ export default {
         }
     },
     data() {
-        let domainObject = JSON.parse(JSON.stringify(this.domainObject));
-
         return {
-            internalDomainObject: domainObject,
             initSelectIndex: undefined,
             selection: [],
             showGrid: true
@@ -163,10 +160,10 @@ export default {
     },
     computed: {
         gridSize() {
-            return this.internalDomainObject.configuration.layoutGrid;
+            return this.domainObject.configuration.layoutGrid;
         },
         layoutItems() {
-            return this.internalDomainObject.configuration.items;
+            return this.domainObject.configuration.items;
         },
         selectedLayoutItems() {
             return this.layoutItems.filter(item => {
@@ -174,7 +171,7 @@ export default {
             });
         },
         layoutDimensions() {
-            return this.internalDomainObject.configuration.layoutDimensions;
+            return this.domainObject.configuration.layoutDimensions;
         },
         shouldDisplayLayoutDimensions() {
             return this.layoutDimensions
@@ -206,12 +203,9 @@ export default {
         }
     },
     mounted() {
-        this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
-            this.internalDomainObject = JSON.parse(JSON.stringify(obj));
-        }.bind(this));
         this.openmct.selection.on('change', this.setSelection);
         this.initializeItems();
-        this.composition = this.openmct.composition.get(this.internalDomainObject);
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
         this.composition.load();
@@ -347,7 +341,7 @@ export default {
             this.startingMinY2 = undefined;
         },
         mutate(path, value) {
-            this.openmct.objects.mutate(this.internalDomainObject, path, value);
+            this.openmct.objects.mutate(this.domainObject, path, value);
         },
         handleDrop($event) {
             if (!$event.dataTransfer.types.includes('openmct/domain-object-path')) {
@@ -387,11 +381,11 @@ export default {
             }
         },
         containsObject(identifier) {
-            return _.get(this.internalDomainObject, 'composition')
+            return _.get(this.domainObject, 'composition')
                 .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
         },
         handleDragOver($event) {
-            if (this.internalDomainObject.locked) {
+            if (this.domainObject.locked) {
                 return;
             }
 
@@ -420,7 +414,7 @@ export default {
             item.id = uuid();
             this.trackItem(item);
             this.layoutItems.push(item);
-            this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
+            this.openmct.objects.mutate(this.domainObject, "configuration.items", this.layoutItems);
             this.initSelectIndex = this.layoutItems.length - 1;
         },
         trackItem(item) {
@@ -477,7 +471,7 @@ export default {
             }
         },
         removeFromComposition(keyString) {
-            let composition = _.get(this.internalDomainObject, 'composition');
+            let composition = _.get(this.domainObject, 'composition');
             composition = composition.filter(identifier => {
                 return this.openmct.objects.makeKeyString(identifier) !== keyString;
             });
@@ -629,10 +623,10 @@ export default {
         createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
             let identifier = {
                 key: uuid(),
-                namespace: this.internalDomainObject.identifier.namespace
+                namespace: this.domainObject.identifier.namespace
             };
             let type = this.openmct.types.get(viewType);
-            let parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
+            let parentKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let objectName = nameExtension ? `${domainObject.name}-${nameExtension}` : domainObject.name;
             let object = {};
 
@@ -689,7 +683,7 @@ export default {
             });
         },
         duplicateItem(selectedItems) {
-            let objectStyles = this.internalDomainObject.configuration.objectStyles || {};
+            let objectStyles = this.domainObject.configuration.objectStyles || {};
             let selectItemsArray = [];
             let newDomainObjectsArray = [];
 
@@ -728,8 +722,8 @@ export default {
             });
 
             this.$nextTick(() => {
-                this.openmct.objects.mutate(this.internalDomainObject, "configuration.items", this.layoutItems);
-                this.openmct.objects.mutate(this.internalDomainObject, "configuration.objectStyles", objectStyles);
+                this.openmct.objects.mutate(this.domainObject, "configuration.items", this.layoutItems);
+                this.openmct.objects.mutate(this.domainObject, "configuration.objectStyles", objectStyles);
                 this.$el.click(); //clear selection;
 
                 newDomainObjectsArray.forEach(domainObject => {
@@ -768,13 +762,13 @@ export default {
             };
             this.createNewDomainObject(mockDomainObject, overlayPlotIdentifiers, viewType).then((newDomainObject) => {
                 let newDomainObjectKeyString = this.openmct.objects.makeKeyString(newDomainObject.identifier);
-                let internalDomainObjectKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
+                let domainObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
                 this.composition.add(newDomainObject);
                 this.addItem('subobject-view', newDomainObject, position);
 
                 overlayPlots.forEach(overlayPlot => {
-                    if (overlayPlot.location === internalDomainObjectKeyString) {
+                    if (overlayPlot.location === domainObjectKeyString) {
                         this.openmct.objects.mutate(overlayPlot, 'location', newDomainObjectKeyString);
                     }
                 });
