@@ -23,11 +23,11 @@ export default {
             domainObject: undefined
         };
     },
-    watch: {
-        domainObject(newObject, oldObject) {
-            this.debounceUpdateView();
-        }
-    },
+    // watch: {
+    //     domainObject(newObject, oldObject) {
+    //         this.debounceUpdateView();
+    //     }
+    // },
     destroyed() {
         this.clear();
         if (this.releaseEditModeHandler) {
