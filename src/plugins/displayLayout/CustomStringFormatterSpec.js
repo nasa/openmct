@@ -40,12 +40,11 @@ describe('CustomStringFormatter', function () {
 
     beforeEach((done) => {
         openmct = createOpenMct();
-        window.openmct = openmct;
 
         element = document.createElement('div');
         child = document.createElement('div');
         element.appendChild(child);
-        CUSTOM_FORMATS.forEach(openmct.telemetry.addFormat);
+        CUSTOM_FORMATS.forEach(openmct.telemetry.addFormat.bind({openmct}));
         openmct.on('start', done);
         openmct.startHeadless();
 

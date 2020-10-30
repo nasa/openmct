@@ -183,7 +183,11 @@ export default {
                 value = this.formatter.format(this.datum, this.valueMetadata);
             }
 
-            return value || this.valueFormatter && this.valueFormatter.format(this.datum);
+            if (!value) {
+                value = this.valueFormatter && this.valueFormatter.format(this.datum);
+            }
+
+            return value;
         },
         telemetryClass() {
             if (!this.datum) {

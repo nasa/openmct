@@ -400,6 +400,14 @@ define([
         return _.sortBy(options, sortKeys);
     };
 
+    TelemetryAPI.prototype.getFormatService = function () {
+        if (!this.formatService) {
+            this.formatService = this.openmct.$injector.get('formatService');
+        }
+
+        return this.formatService;
+    };
+
     /**
      * Get a value formatter for a given valueMetadata.
      *
@@ -407,13 +415,9 @@ define([
      */
     TelemetryAPI.prototype.getValueFormatter = function (valueMetadata) {
         if (!this.valueFormatterCache.has(valueMetadata)) {
-            if (!this.formatService) {
-                this.formatService = this.openmct.$injector.get('formatService');
-            }
-
             this.valueFormatterCache.set(
                 valueMetadata,
-                new TelemetryValueFormatter(valueMetadata, this.formatService)
+                new TelemetryValueFormatter(valueMetadata, this.getFormatService())
             );
         }
 
@@ -427,11 +431,7 @@ define([
      * @returns {Format}
      */
     TelemetryAPI.prototype.getFormatter = function (key) {
-        if (!this.formatService) {
-            this.formatService = this.openmct.$injector.get('formatService');
-        }
-
-        const formatMap = this.formatService.formatMap;
+        const formatMap = this.getFormatService().formatMap;
 
         return formatMap[key];
     };
