@@ -24,6 +24,15 @@ import utils from './object-utils.js';
 
 const ANY_OBJECT_EVENT = 'mutation';
 
+/**
+ * Wraps a domain object to keep its model synchronized with other instances of the same object.
+ * 
+ * Creating a MutableDomainObject will automatically register listeners to keep its model in sync. As such, developers
+ * should be careful to call $destroy on the MutableDomainObject in order to avoid memory leaks.
+ * All Open MCT API functions that provide objects will provide MutableDomainObjects where possible, and will manage 
+ * their lifecycle for you. Most of the time it is not necessary to create a MutableDomainObject directly, and if you do
+ * you will be responsible for its lifecycle.
+ */
 class MutableDomainObject {
     constructor(eventEmitter) {
         Object.defineProperties(this, {
