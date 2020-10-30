@@ -26,6 +26,10 @@
         overflow: hidden;
         transition: all;
 
+        .c-tree__item-h {
+            width: 100%;
+        }
+
         &__scrollable-children {
             overflow: auto;
         }
