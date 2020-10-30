@@ -34,11 +34,14 @@ describe("The local time", () => {
     let localTimeFormatter;
     let localTimeSystem;
 
-    describe("system", function () {
+    beforeEach(() => {
+        localTimeSystem = new LocalTimeSystem();
+        localTimeFormatter = new LocalTimeFormat();
+        dateString = localTimeFormatter.format(TIMESTAMP);
+        timeStamp = localTimeFormatter.parse(DATESTRING);
+    });
 
-        beforeEach(() => {
-            localTimeSystem = new LocalTimeSystem();
-        });
+    describe("system", function () {
 
         it("uses the local-format time format", function () {
             expect(localTimeSystem.timeFormat).toBe(LOCAL_FORMAT_KEY);
@@ -57,12 +60,6 @@ describe("The local time", () => {
     });
 
     describe("formatter", function () {
-
-        beforeEach(() => {
-            localTimeFormatter = new LocalTimeFormat();
-            dateString = localTimeFormatter.format(TIMESTAMP);
-            timeStamp = localTimeFormatter.parse(DATESTRING);
-        });
 
         it("will format a timestamp in local time format", () => {
             expect(localTimeFormatter.format(TIMESTAMP)).toBe(dateString);
