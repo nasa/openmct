@@ -2,12 +2,21 @@ import ObjectAPI from './ObjectAPI.js';
 
 describe("The Object API", () => {
     let objectAPI;
+    let typeRegistry;
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
     beforeEach(() => {
-        objectAPI = new ObjectAPI();
+        typeRegistry = jasmine.createSpyObj('typeRegistry', [
+            'get'
+        ]);
+        typeRegistry.get.and.returnValue({
+            definition: {
+                creatable: true
+            }
+        });
+        objectAPI = new ObjectAPI(typeRegistry);
         mockDomainObject = {
             identifier: {
                 namespace: TEST_NAMESPACE,

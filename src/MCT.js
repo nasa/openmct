@@ -359,7 +359,7 @@ define([
      *        MCT; if undefined, MCT will be run in the body of the document
      */
     MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
-        if (!this.plugins.DisplayLayout._installed) {
+        if (this.types.get('layout') === undefined) {
             this.install(this.plugins.DisplayLayout({
                 showAsView: ['summary-widget']
             }));
