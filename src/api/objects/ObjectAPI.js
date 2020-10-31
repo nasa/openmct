@@ -184,16 +184,16 @@ define([
     };
 
     /**
-     * Will fetch object, returning it as a MutableDomainObject IF the object is mutable.
-     * Before using this function, you should ask yourself whether you really need it. The platform will always provide
-     * MutableDomainObjects from API functions if the underlying object can be mutated. The platform will manage the
-     * lifecycle of any `MutableDomainObjects` that it provides. If you use `getAsMutable` you are responsible for
-     * managing lifecycle yourself. `.$destroy` should be called when the object is no longer needed.
+     * Will fetch object, returning a synchronized version of the object that will automatically keep itself updated as
+     * it is mutated. Before using this function, you should ask yourself whether you really need it. The platform will
+     * always provide synchronized object from API functions if the underlying object can be mutated. The platform will
+     *  manage the lifecycle of any synchronized objects that it provides. If you use `getSynchronized` you are responsible
+     * for managing lifecycle yourself. `.$destroy` should be called when the object is no longer needed.
      *
      * @returns {Promise.<MutableDomainObject|DomainObject>} a promise that will resolve with a MutableDomainObject if
      * the object can be mutated, or a DomainObject if not.
      */
-    ObjectAPI.prototype.getAsMutable = function (identifier) {
+    ObjectAPI.prototype.getSynchronized = function (identifier) {
         return this.get(identifier).then((object) => {
             if (this.isMutable(object)) {
                 return this._toMutable(object);

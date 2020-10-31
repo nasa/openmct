@@ -202,7 +202,7 @@ export default {
         }
     },
     mounted() {
-        this.openmct.objects.getAsMutable(this.item.identifier)
+        this.openmct.objects.getSynchronized(this.item.identifier)
             .then(this.setObject);
         this.openmct.time.on("bounds", this.refreshData);
     },

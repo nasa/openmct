@@ -116,7 +116,7 @@ define([
 
         function pathToObjects(path) {
             return Promise.all(path.map((keyString) => {
-                return openmct.objects.getAsMutable(keyString);
+                return openmct.objects.getSynchronized(keyString);
             }));
         }
 
