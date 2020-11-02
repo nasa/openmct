@@ -10,7 +10,8 @@
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
             <span class="c-image-controls__sliders"
                   draggable="true"
-                  @dragstart="startDrag">
+                  @dragstart="startDrag"
+            >
                 <div class="c-image-controls__slider-wrapper icon-brightness">
                     <input v-model="filters.brightness"
                            type="range"
@@ -59,7 +60,7 @@
 
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
-                <div class="c-imagery__timestamp">{{ time }}</div>
+                <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ time }}</div>
                 <div
                     v-if="canTrackDuration"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
