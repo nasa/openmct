@@ -25,11 +25,11 @@
 </template>
 
 <script>
-import StylesView from '../../plugins/condition/components/inspector/StylesView.vue';
+import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
 import Vue from 'vue';
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'stylesManager'],
     data() {
         return {
             selection: []
@@ -54,15 +54,16 @@ export default {
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
                 this.component = new Vue({
-                    provide: {
-                        openmct: this.openmct,
-                        selection: selection
-                    },
                     el: viewContainer,
                     components: {
-                        StylesView
+                        SavedStylesView
                     },
-                    template: '<styles-view/>'
+                    provide: {
+                        openmct: this.openmct,
+                        selection: selection,
+                        stylesManager: this.stylesManager
+                    },
+                    template: '<saved-styles-view />'
                 });
             }
         }
