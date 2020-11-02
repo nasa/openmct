@@ -104,7 +104,7 @@ define([
                         "depends": [
                             "$q",
                             "$log",
-                            "modelService",
+                            "objectService",
                             "workerService",
                             "topic",
                             "GENERIC_SEARCH_ROOTS",

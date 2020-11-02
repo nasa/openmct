@@ -26,10 +26,12 @@
         overflow: hidden;
         transition: all;
 
-        .scrollable-children {
-            .c-tree__item-h {
-                width: 100%;
-            }
+        .c-tree__item-h {
+            width: 100%;
+        }
+
+        &__scrollable-children {
+            overflow: auto;
         }
 
         &__item--empty {
@@ -57,7 +59,11 @@
 
     li {
         position: relative;
-        &[class*="__item-h"] { display: block; }
+        &[class*="__item-h"] {
+            display: block;
+            width: 100%;
+        }
+
         + li {
             margin-top: 1px;
         }
@@ -248,20 +254,14 @@
 }
 
 // TRANSITIONS
-.slide-left,
-.slide-right {
-    animation-duration: 500ms;
-    animation-iteration-count: 1;
-    transition: all;
-    transition-timing-function: ease-in-out;
-}
+.children-enter-active {
+    &.down {
+        animation: animSlideLeft 500ms;
+    }
 
-.slide-left {
-    animation-name: animSlideLeft;
-}
-
-.slide-right {
-    animation-name: animSlideRight;
+    &.up {
+        animation: animSlideRight 500ms;
+    }
 }
 
 @keyframes animSlideLeft {

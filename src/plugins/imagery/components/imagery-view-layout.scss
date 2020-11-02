@@ -4,6 +4,10 @@
     overflow: hidden;
     height: 100%;
 
+    &:focus {
+        outline: none;
+    }
+
     > * + * {
         margin-top: $interiorMargin;
     }
@@ -15,24 +19,78 @@
     }
 
     &__main-image {
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        height: 100%;
+        &__bg,
+        &__image {
+            height: 100%;
+        }
 
-        &.unnsynced{
-            @include sUnsynced();
+        &__bg {
+            background-color: $colorPlotBg;
+            border: 1px solid transparent;
+
+            &.unnsynced{
+                @include sUnsynced();
+            }
+        }
+
+        &__image {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
         }
     }
 
-    &__control-bar {
-        padding: 5px 0 0 0;
+    &__control-bar,
+    &__time {
         display: flex;
-        align-items: center;
+        align-items: baseline;
+
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+    }
+
+    &__control-bar {
+        margin-top: 2px;
+        padding: $interiorMarginSm 0;
+        justify-content: space-between;
+
+    }
+
+    &__time {
+        flex: 0 1 auto;
+        overflow: hidden;
+    }
+
+    &__timestamp,
+    &__age {
+        @include ellipsize();
+        flex: 0 1 auto;
     }
 
     &__timestamp {
-        flex: 1 1 auto;
+        flex-shrink: 10;
+    }
+
+    &__age {
+        border-radius: $controlCr;
+        display: flex;
+        flex-shrink: 0;
+        align-items: baseline;
+        padding: 1px $interiorMarginSm;
+
+        &:before {
+            opacity: 0.5;
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &--new {
+        // New imagery
+        $bgColor: $colorOk;
+        background: rgba($bgColor, 0.5);
+        @include flash($animName: flashImageAge, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
     }
 
     &__thumbs-wrapper {
@@ -91,11 +149,6 @@
     }
 }
 
-.s-image-main {
-    background-color: $colorPlotBg;
-    border: 1px solid transparent;
-}
-
 /*************************************** IMAGERY LOCAL CONTROLS*/
 .c-imagery {
     .h-local-controls--overlay-content {
@@ -105,7 +158,7 @@
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
         max-width: 200px;
-        min-width: 100px;
+        min-width: 70px;
         width: 35%;
         align-items: center;
         padding: $interiorMargin $interiorMarginLg;
@@ -126,6 +179,7 @@
     &__lc {
         &__reset-btn {
             $bc: $scrollbarTrackColorBg;
+
             &:before,
             &:after {
                 border-right: 1px solid $bc;
@@ -148,9 +202,51 @@
     }
 }
 
+.c-image-controls {
+    // Brightness/contrast
+
+    &__controls {
+        // Sliders and reset element
+        display: flex;
+        align-items: center;
+        margin-right: $interiorMargin; // Need some extra space due to proximity to close button
+    }
+
+    &__sliders {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: 11px;
+        }
+    }
+
+    &__slider-wrapper {
+        // A wrapper is needed to add the type icon to left of each range input
+        display: flex;
+        align-items: center;
+
+        &:before {
+            color: rgba($colorMenuFg, 0.5);
+            margin-right: $interiorMarginSm;
+        }
+
+        input[type='range'] {
+            width: 100px;
+        }
+    }
+
+    &__btn-reset {
+        flex: 0 0 auto;
+    }
+}
+
 /*************************************** BUTTONS */
 .c-button.pause-play {
     // Pause icon set by default in markup
+    justify-self: end;
+
     &.is-paused {
         background: $colorPausedBg !important;
         color: $colorPausedFg;
@@ -162,14 +258,13 @@
 }
 
 .c-imagery__prev-next-buttons {
-    //background: rgba(deeppink, 0.2);
     display: flex;
     width: 100%;
     justify-content: space-between;
     pointer-events: none;
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-75%);
 
     .c-nav {
         pointer-events: all;

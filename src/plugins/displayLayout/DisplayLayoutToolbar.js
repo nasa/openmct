@@ -598,6 +598,33 @@ define(['lodash'], function (_) {
                     }
                 }
 
+                function getToggleGridButton(selection, selectionPath) {
+                    const ICON_GRID_SHOW = 'icon-grid-on';
+                    const ICON_GRID_HIDE = 'icon-grid-off';
+
+                    let displayLayoutContext;
+
+                    if (selection.length === 1 && selectionPath === undefined) {
+                        displayLayoutContext = selection[0][0].context;
+                    } else {
+                        displayLayoutContext = selectionPath[1].context;
+                    }
+
+                    return {
+                        control: "button",
+                        domainObject: displayLayoutContext.item,
+                        icon: ICON_GRID_SHOW,
+                        method: function () {
+                            displayLayoutContext.toggleGrid();
+
+                            this.icon = this.icon === ICON_GRID_SHOW
+                                ? ICON_GRID_HIDE
+                                : ICON_GRID_SHOW;
+                        },
+                        secondary: true
+                    };
+                }
+
                 function getSeparator() {
                     return {
                         control: "separator"
@@ -612,7 +639,9 @@ define(['lodash'], function (_) {
                 }
 
                 if (isMainLayoutSelected(selectedObjects[0])) {
-                    return [getAddButton(selectedObjects)];
+                    return [
+                        getToggleGridButton(selectedObjects),
+                        getAddButton(selectedObjects)];
                 }
 
                 let toolbar = {
@@ -627,7 +656,8 @@ define(['lodash'], function (_) {
                     'position': [],
                     'duplicate': [],
                     'unit-toggle': [],
-                    'remove': []
+                    'remove': [],
+                    'toggle-grid': []
                 };
 
                 selectedObjects.forEach(selectionPath => {
@@ -761,6 +791,10 @@ define(['lodash'], function (_) {
 
                     if (toolbar.duplicate.length === 0) {
                         toolbar.duplicate = [getDuplicateButton(selectedParent, selectionPath, selectedObjects)];
+                    }
+
+                    if (toolbar['toggle-grid'].length === 0) {
+                        toolbar['toggle-grid'] = [getToggleGridButton(selectedObjects, selectionPath)];
                     }
                 });
 

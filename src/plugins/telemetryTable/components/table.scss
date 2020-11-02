@@ -99,10 +99,6 @@
         height: 0; // Fixes Chrome 73 overflow bug
         overflow-x: auto;
         overflow-y: scroll;
-
-        .is-editing & {
-            pointer-events: none;
-        }
     }
 
     /******************************* TABLES */
@@ -116,6 +112,10 @@
             align-items: stretch;
             position: absolute;
             min-height: 18px; // Needed when a row has empty values in its cells
+
+            .is-editing .l-layout__frame & {
+                pointer-events: none;
+            }
 
             &.is-selected {
                 background-color: $colorSelectedBg !important;
@@ -158,6 +158,35 @@
         // A row element used to determine sizing of rows based on font size
         visibility: hidden;
         pointer-events: none;
+    }
+
+    &__footer {
+        $pt: 2px;
+        border-top: 1px solid $colorInteriorBorder;
+        margin-top: $interiorMargin;
+        padding: $pt 0;
+        overflow: hidden;
+        transition: all 250ms;
+
+        &:not(.is-filtering) {
+            .c-frame & {
+                height: 0;
+                padding: 0;
+                visibility: hidden;
+            }
+        }
+    }
+
+    .c-frame & {
+        // target .c-frame .c-telemetry-table {}
+        $pt: 2px;
+        &:hover {
+            .c-telemetry-table__footer:not(.is-filtering) {
+                height: $pt + 16px;
+                padding: initial;
+                visibility: visible;
+            }
+        }
     }
 }
 

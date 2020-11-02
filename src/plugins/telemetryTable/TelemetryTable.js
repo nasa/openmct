@@ -25,6 +25,7 @@ define([
     'lodash',
     './collections/BoundedTableRowCollection',
     './collections/FilteredTableRowCollection',
+    './TelemetryTableNameColumn',
     './TelemetryTableRow',
     './TelemetryTableColumn',
     './TelemetryTableUnitColumn',
@@ -34,6 +35,7 @@ define([
     _,
     BoundedTableRowCollection,
     FilteredTableRowCollection,
+    TelemetryTableNameColumn,
     TelemetryTableRow,
     TelemetryTableColumn,
     TelemetryTableUnitColumn,
@@ -69,6 +71,24 @@ define([
 
             openmct.time.on('bounds', this.refreshData);
             openmct.time.on('timeSystem', this.refreshData);
+        }
+
+        /**
+         * @private
+         */
+        addNameColumn(telemetryObject, metadataValues) {
+            let metadatum = metadataValues.find(m => m.key === 'name');
+            if (!metadatum) {
+                metadatum = {
+                    format: 'string',
+                    key: 'name',
+                    name: 'Name'
+                };
+            }
+
+            const column = new TelemetryTableNameColumn(this.openmct, telemetryObject, metadatum);
+
+            this.configuration.addSingleColumnForObject(telemetryObject, column);
         }
 
         initialize() {
@@ -212,7 +232,13 @@ define([
 
         addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+
+            this.addNameColumn(telemetryObject, metadataValues);
             metadataValues.forEach(metadatum => {
+                if (metadatum.key === 'name') {
+                    return;
+                }
+
                 let column = this.createColumn(metadatum);
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
                 // add units column if available

@@ -128,7 +128,7 @@ define([
     };
 
     ObjectServiceProvider.prototype.get = function (key) {
-        const keyString = utils.makeKeyString(key);
+        let keyString = utils.makeKeyString(key);
 
         return this.objectService.getObjects([keyString])
             .then(function (results) {

@@ -17,7 +17,7 @@
         <div v-if="embed.snapshot"
              class="c-ne__embed__time"
         >
-            {{ formatTime(embed.createdOn, 'YYYY-MM-DD HH:mm:ss') }}
+            {{ createdOn }}
         </div>
     </div>
 </div>
@@ -25,10 +25,10 @@
 
 <script>
 import Moment from 'moment';
-import PopupMenu from './popup-menu.vue';
+import PopupMenu from './PopupMenu.vue';
 import PreviewAction from '../../../ui/preview/PreviewAction';
-import Painterro from 'painterro';
 import RemoveDialog from '../utils/removeDialog';
+import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
 import Vue from 'vue';
 
@@ -56,7 +56,10 @@ export default {
             popupMenuItems: []
         };
     },
-    watch: {
+    computed: {
+        createdOn() {
+            return this.formatTime(this.embed.createdOn, 'YYYY-MM-DD HH:mm:ss');
+        }
     },
     mounted() {
         this.addPopupMenuItems();
@@ -78,95 +81,44 @@ export default {
             this.popupMenuItems = [removeEmbed, preview];
         },
         annotateSnapshot() {
-            const self = this;
-
-            let save = false;
-            let painterroInstance = {};
             const annotateVue = new Vue({
                 template: '<div id="snap-annotation"></div>'
-            });
+            }).$mount();
 
-            let annotateOverlay = self.openmct.overlays.overlay({
-                element: annotateVue.$mount().$el,
+            const painterroInstance = new PainterroInstance(annotateVue.$el, this.updateSnapshot);
+            const annotateOverlay = this.openmct.overlays.overlay({
+                element: annotateVue.$el,
                 size: 'large',
                 dismissable: false,
                 buttons: [
                     {
                         label: 'Cancel',
-                        callback: function () {
-                            save = false;
-                            painterroInstance.save();
+                        emphasis: true,
+                        callback: () => {
+                            painterroInstance.dismiss();
                             annotateOverlay.dismiss();
                         }
                     },
                     {
                         label: 'Save',
-                        callback: function () {
-
-                            save = true;
+                        callback: () => {
                             painterroInstance.save();
                             annotateOverlay.dismiss();
+                            this.snapshotOverlay.dismiss();
+                            this.openSnapshot();
                         }
                     }
                 ],
-                onDestroy: function () {
+                onDestroy: () => {
                     annotateVue.$destroy(true);
                 }
             });
 
-            painterroInstance = Painterro({
-                id: 'snap-annotation',
-                activeColor: '#ff0000',
-                activeColorAlpha: 1.0,
-                activeFillColor: '#fff',
-                activeFillColorAlpha: 0.0,
-                backgroundFillColor: '#000',
-                backgroundFillColorAlpha: 0.0,
-                defaultFontSize: 16,
-                defaultLineWidth: 2,
-                defaultTool: 'ellipse',
-                hiddenTools: ['save', 'open', 'close', 'eraser', 'pixelize', 'rotate', 'settings', 'resize'],
-                translation: {
-                    name: 'en',
-                    strings: {
-                        lineColor: 'Line',
-                        fillColor: 'Fill',
-                        lineWidth: 'Size',
-                        textColor: 'Color',
-                        fontSize: 'Size',
-                        fontStyle: 'Style'
-                    }
-                },
-                saveHandler: function (image, done) {
-                    if (save) {
-                        const url = image.asBlob();
-                        const reader = new window.FileReader();
-                        reader.readAsDataURL(url);
-                        reader.onloadend = function () {
-                            const snapshot = reader.result;
-                            const snapshotObject = {
-                                src: snapshot,
-                                type: url.type,
-                                size: url.size,
-                                modified: Date.now()
-                            };
-
-                            self.embed.snapshot = snapshotObject;
-                            self.updateEmbed(self.embed);
-                        };
-                    } else {
-                        console.log('You cancelled the annotation!!!');
-                    }
-
-                    done(true);
-                }
-            }).show(this.embed.snapshot.src);
+            painterroInstance.intialize();
+            painterroInstance.show(this.embed.snapshot.src);
         },
         changeLocation() {
             const link = this.embed.historicLink;
-            if (!link) {
-                return;
-            }
 
             const bounds = this.openmct.time.bounds();
             const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
@@ -191,7 +143,8 @@ export default {
                 this.openmct.notifications.alert(message);
             }
 
-            window.location.href = link;
+            const url = new URL(link);
+            window.location.href = url.hash;
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
@@ -209,7 +162,8 @@ export default {
             this.snapshot = new Vue({
                 data: () => {
                     return {
-                        embed: self.embed
+                        createdOn: this.createdOn,
+                        embed: this.embed
                     };
                 },
                 methods: {
@@ -218,13 +172,11 @@ export default {
                     exportImage: self.exportImage
                 },
                 template: SnapshotTemplate
-            });
+            }).$mount();
 
-            const snapshotOverlay = this.openmct.overlays.overlay({
-                element: this.snapshot.$mount().$el,
-                onDestroy: () => {
-                    this.snapshot.$destroy(true);
-                },
+            this.snapshotOverlay = this.openmct.overlays.overlay({
+                element: this.snapshot.$el,
+                onDestroy: () => this.snapshot.$destroy(true),
                 size: 'large',
                 dismissable: true,
                 buttons: [
@@ -232,7 +184,7 @@ export default {
                         label: 'Done',
                         emphasis: true,
                         callback: () => {
-                            snapshotOverlay.dismiss();
+                            this.snapshotOverlay.dismiss();
                         }
                     }
                 ]
@@ -262,6 +214,10 @@ export default {
         },
         updateEmbed(embed) {
             this.$emit('updateEmbed', embed);
+        },
+        updateSnapshot(snapshotObject) {
+            this.embed.snapshot = snapshotObject;
+            this.updateEmbed(this.embed);
         }
     }
 };

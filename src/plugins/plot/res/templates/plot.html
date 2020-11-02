@@ -22,22 +22,27 @@
 <div ng-controller="PlotController as controller"
     class="c-plot holder holder-plot has-control-bar">
     <div class="c-control-bar" ng-show="!controller.hideExportButtons">
-         <span class="c-button-set c-button-set--strip-h">
+        <span class="c-button-set c-button-set--strip-h">
             <button class="c-button icon-download"
-               ng-click="controller.exportPNG()"
-               title="Export This View's Data as PNG">
-                 <span class="c-button__label">PNG</span>
+                ng-click="controller.exportPNG()"
+                title="Export This View's Data as PNG">
+                <span class="c-button__label">PNG</span>
             </button>
             <button class="c-button"
-               ng-click="controller.exportJPG()"
-               title="Export This View's Data as JPG">
-                 <span class="c-button__label">JPG</span>
+                ng-click="controller.exportJPG()"
+                title="Export This View's Data as JPG">
+                <span class="c-button__label">JPG</span>
             </button>
         </span>
         <button class="c-button icon-crosshair"
                 ng-class="{ 'is-active': controller.cursorGuide }"
                 ng-click="controller.toggleCursorGuide($event)"
                 title="Toggle cursor guides">
+        </button>
+        <button class="c-button"
+                ng-class="{ 'icon-grid-on': controller.gridLines, 'icon-grid-off': !controller.gridLines }"
+                ng-click="controller.toggleGridLines($event)"
+                title="Toggle grid lines">
         </button>
     </div>
 

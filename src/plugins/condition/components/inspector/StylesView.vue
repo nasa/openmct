@@ -314,6 +314,18 @@ export default {
         isItemType(type, item) {
             return item && (item.type === type);
         },
+        canPersistObject(item) {
+            // for now the only way to tell if an object can be persisted is if it is creatable.
+            let creatable = false;
+            if (item) {
+                const type = this.openmct.types.get(item.type);
+                if (type && type.definition) {
+                    creatable = (type.definition.creatable === true);
+                }
+            }
+
+            return creatable;
+        },
         hasConditionalStyle(domainObject, layoutItem) {
             const id = layoutItem ? layoutItem.id : undefined;
 
@@ -341,7 +353,7 @@ export default {
                 } else {
                     this.canHide = true;
                     domainObject = selectionItem[1].context.item;
-                    if (item && !layoutItem || this.isItemType('subobject-view', layoutItem)) {
+                    if (item && !layoutItem || (this.isItemType('subobject-view', layoutItem) && this.canPersistObject(item))) {
                         subObjects.push(item);
                         itemStyle = getApplicableStylesForItem(item);
                         if (this.hasConditionalStyle(item)) {
