@@ -50,16 +50,6 @@ export default {
         object(newObject, oldObject) {
             this.currentObject = newObject;
             this.debounceUpdateView();
-        },
-        fontSize(newSize, oldSize) {
-            if (newSize !== oldSize) {
-                this.setFontSize(newSize);
-            }
-        },
-        font(newFont, oldFont) {
-            if (newFont !== oldFont) {
-                this.setFont(newFont);
-            }
         }
     },
     destroyed() {
@@ -74,6 +64,10 @@ export default {
 
         if (this.stopListeningStyles) {
             this.stopListeningStyles();
+        }
+
+        if (this.stopListeningFontStyles) {
+            this.stopListeningFontStyles();
         }
 
         if (this.styleRuleManager) {
@@ -96,8 +90,6 @@ export default {
         if (this.currentObject) {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
-            this.setFontSize(this.fontSize);
-            this.setFont(this.font);
         }
     },
     methods: {
@@ -270,6 +262,14 @@ export default {
             this.stopListeningStyles = this.openmct.objects.observe(this.currentObject, 'configuration.objectStyles', (newObjectStyle) => {
                 //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
                 this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
+            });
+
+            this.setFontSize(this.fontSize);
+            this.setFont(this.font);
+
+            this.stopListeningFontStyles = this.openmct.objects.observe(this.currentObject, 'configuration.fontStyle', (newFontStyle) => {
+                this.setFontSize(newFontStyle.fontSize);
+                this.setFont(newFontStyle.font);
             });
         },
         loadComposition() {

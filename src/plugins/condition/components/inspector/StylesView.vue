@@ -171,7 +171,8 @@ export default {
             navigateToPath: '',
             selectedConditionId: '',
             items: [],
-            domainObject: undefined
+            domainObject: undefined,
+            consolidatedFontStyle: {}
         };
     },
     computed: {
@@ -185,12 +186,6 @@ export default {
         },
         allowEditing() {
             return this.isEditing && !this.locked;
-        },
-        isMainLayoutSelected() {
-            const selectedItem = this.selection[0][0].context.item;
-            const selectedLayoutItem = this.selection[0][0].context.layoutItem;
-
-            return selectedItem && selectedItem.type === 'layout' && !selectedLayoutItem;
         },
         styleableFontItems() {
             return this.selection.filter(selectionPath => {
@@ -210,23 +205,12 @@ export default {
                 return true;
             });
         },
-        consolidatedFontStyle() {
+        computedconsolidatedFontStyle() {
             let consolidatedFontStyle;
             const styles = [];
 
             this.styleableFontItems.forEach(styleable => {
-                let fontStyle;
-                const item = styleable[0].context.item;
-                const layoutItem = styleable[0].context.layoutItem;
-
-                fontStyle = item && item.configuration && item.configuration.fontStyle;
-
-                if (!fontStyle) {
-                    fontStyle = {
-                        fontSize: layoutItem ? layoutItem.fontSize : 'default',
-                        font: layoutItem ? layoutItem.font : 'default'
-                    };
-                }
+                const fontStyle = this.getFontStyle(styleable[0]);
 
                 styles.push(fontStyle);
             });
@@ -290,6 +274,8 @@ export default {
         } else {
             this.initializeStaticStyle();
         }
+
+        this.setConsolidatedFontStyle();
 
         this.openmct.editor.on('isEditing', this.setEditState);
         this.stylesManager.on('styleSelected', this.applyStyleToSelection);
@@ -789,28 +775,51 @@ export default {
 
             this.stylesManager.save(styleToSave);
         },
+        setConsolidatedFontStyle() {
+            const styles = [];
+
+            this.styleableFontItems.forEach(styleable => {
+                const fontStyle = this.getFontStyle(styleable[0]);
+
+                styles.push(fontStyle);
+            });
+
+            if (styles.length) {
+                const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
+                const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
+
+                const fontSize = hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC;
+                const font = hasConsolidatedFont ? styles[0].font : NON_SPECIFIC;
+
+                this.$set(this.consolidatedFontStyle, 'fontSize', fontSize);
+                this.$set(this.consolidatedFontStyle, 'font', font);
+            }
+        },
+        getFontStyle(selectionPath) {
+            const item = selectionPath.context.item;
+            const layoutItem = selectionPath.context.layoutItem;
+            let fontStyle = item && item.configuration && item.configuration.fontStyle;
+
+            // support for legacy where font styling in layouts only
+            if (!fontStyle) {
+                fontStyle = {
+                    fontSize: layoutItem && layoutItem.fontSize || 'default',
+                    font: layoutItem && layoutItem.font || 'default'
+                };
+            }
+
+            return fontStyle;
+        },
         setFontProperty(fontStyleObject) {
             let layoutDomainObject;
             const [property, value] = Object.entries(fontStyleObject)[0];
 
             this.styleableFontItems.forEach(styleable => {
-                const item = styleable[0].context.item;
-                const layoutItem = styleable[0].context.layoutItem;
-
                 if (!this.isLayoutObject(styleable)) {
-                    let fontStyle = item.configuration && item.configuration.fontStyle;
-
-                    // legacy font style support
-                    if (!fontStyle) {
-                        fontStyle = {
-                            fontSize: layoutItem && layoutItem.fontSize || 'default',
-                            font: layoutItem && layoutItem.font || 'default'
-                        };
-                    }
-
+                    const fontStyle = this.getFontStyle(styleable[0]);
                     fontStyle[property] = value;
 
-                    this.openmct.objects.mutate(item, 'configuration.fontStyle', fontStyle);
+                    this.openmct.objects.mutate(styleable[0].context.item, 'configuration.fontStyle', fontStyle);
                 } else {
                     // all layoutItems in this context will share same parent layout
                     if (!layoutDomainObject) {
@@ -828,6 +837,9 @@ export default {
             if (layoutDomainObject) {
                 this.openmct.objects.mutate(layoutDomainObject, 'configuration.items', layoutDomainObject.configuration.items);
             }
+
+            // sync vue component on font update
+            this.$set(this.consolidatedFontStyle, property, value);
         },
         isLayoutObject(selectionPath) {
             const layoutItemType = selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type;
