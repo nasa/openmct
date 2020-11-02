@@ -288,7 +288,6 @@ define([
     PlotController.prototype.onUserViewportChangeEnd = function () {
         const xDisplayRange = this.config.xAxis.get('displayRange');
         const xRange = this.config.xAxis.get('range');
-        console.log(xDisplayRange, xRange, this.config);
 
         if (!this.skipReloadOnInteraction) {
             this.loadMoreData(xDisplayRange);
