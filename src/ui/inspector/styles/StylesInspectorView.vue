@@ -21,40 +21,51 @@
 *****************************************************************************/
 
 <template>
-<component :is="urlDefined ? 'a' : 'span'"
-           class="c-condition-widget u-style-receiver js-style-receiver"
-           :href="urlDefined ? internalDomainObject.url : null"
->
-    <div class="c-condition-widget__label">
-        {{ internalDomainObject.label }}
-    </div>
-</component>
+<div class="u-contents"></div>
 </template>
 
 <script>
+import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
+import Vue from 'vue';
+
 export default {
-    inject: ['openmct', 'domainObject'],
-    data: function () {
+    inject: ['openmct', 'stylesManager'],
+    data() {
         return {
-            internalDomainObject: this.domainObject
+            selection: []
         };
     },
-    computed: {
-        urlDefined() {
-            return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
-        }
-    },
     mounted() {
-        this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
+        this.openmct.selection.on('change', this.updateSelection);
+        this.updateSelection(this.openmct.selection.get());
     },
-    beforeDestroy() {
-        if (this.unlisten) {
-            this.unlisten();
-        }
+    destroyed() {
+        this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
-        updateInternalDomainObject(domainObject) {
-            this.internalDomainObject = domainObject;
+        updateSelection(selection) {
+            if (selection.length > 0 && selection[0].length > 0) {
+                if (this.component) {
+                    this.component.$destroy();
+                    this.component = undefined;
+                    this.$el.innerHTML = '';
+                }
+
+                let viewContainer = document.createElement('div');
+                this.$el.append(viewContainer);
+                this.component = new Vue({
+                    provide: {
+                        openmct: this.openmct,
+                        selection: selection,
+                        stylesManager: this.stylesManager
+                    },
+                    el: viewContainer,
+                    components: {
+                        StylesView
+                    },
+                    template: '<styles-view/>'
+                });
+            }
         }
     }
 };

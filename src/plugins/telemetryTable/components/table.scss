@@ -9,6 +9,9 @@
 
 .c-telemetry-table {
     // Table that displays telemetry in a scrolling body area
+
+    @include fontAndSize();
+
     display: flex;
     flex-flow: column nowrap;
     justify-content: flex-start;
@@ -108,7 +111,7 @@
             display: flex; // flex-flow defaults to row nowrap (which is what we want) so no need to define
             align-items: stretch;
             position: absolute;
-            height: 18px; // Needed when a row has empty values in its cells
+            min-height: 18px; // Needed when a row has empty values in its cells
 
             .is-editing .l-layout__frame & {
                 pointer-events: none;
@@ -149,6 +152,12 @@
             padding-left: 10px;
             white-space: nowrap;
         }
+    }
+
+    &__sizing-tr {
+        // A row element used to determine sizing of rows based on font size
+        visibility: hidden;
+        pointer-events: none;
     }
 
     &__footer {

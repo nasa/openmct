@@ -113,6 +113,10 @@ button {
     }
 }
 
+.c-icon-button--disabled {
+    @include cClickIconButtonLayout();
+}
+
 .c-icon-link {
     &:before {
         // Icon
@@ -121,8 +125,8 @@ button {
 }
 
 .c-icon-button {
-    &__label {
-        margin-left: $interiorMargin;
+    [class*='label'] {
+        opacity: 0.6;
     }
 
     &--mixed {
@@ -639,6 +643,7 @@ select {
     }
 
     &__item-none {
+        @include userSelectNone();
         flex: 0 0 auto;
         display: flex;
         align-items: center;
@@ -760,6 +765,12 @@ select {
             color: $editUIBaseColorFg !important;
         }
 
+        &--menu {
+            $p: 4px;
+            padding-top: $p;
+            padding-bottom: $p;
+        }
+
         &--swatched {
             padding-bottom: floor($pTB / 2);
             width: 2em; // Standardize the width
@@ -841,8 +852,41 @@ select {
     display: flex;
     flex: 1 1 auto;
     align-items: center;
+    justify-content: space-between;
 
-    > * + * { margin-left: $interiorMargin; }
+    &__controls {
+        // Holds thumb, icon buttons
+        display: flex;
+        flex: 1 0 auto;
+
+        > * + * { margin-left: $interiorMargin; }
+    }
+
+    &__button-save,
+    &__button-delete {
+        // Holds save and delete buttons accordingly
+        flex: 0 0 auto;
+    }
+
+    &--saved {
+        border-radius: $controlCr;
+        padding: $interiorMargin !important;
+        cursor: pointer;
+
+        @include hover {
+            background: rgba($editUIBaseColorHov, 0.3);
+        }
+
+        .c-style__controls {
+            [class*='button'] {
+                pointer-events: none;
+
+                &:before {
+                    opacity: $controlDisabledOpacity;
+                }
+            }
+        }
+    }
 }
 
 .c-style-thumb {
@@ -851,7 +895,9 @@ select {
     border-radius: $basicCr;
     box-shadow: rgba($colorBodyFg, 0.4) 0 0 3px;
     flex: 0 0 auto;
-    padding: $interiorMargin $interiorMarginLg;
+    padding: $interiorMargin;
+    text-align: center;
+    width: 50px;
 
     &--mixed {
         @include mixedBg();

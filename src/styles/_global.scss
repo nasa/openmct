@@ -96,6 +96,37 @@ body.desktop {
     }
 }
 
+/******************************************************** FONTS */
+@mixin fontAndSize() {
+    @each $size in $listFontSizes {
+        &[data-font-size="#{$size}"] {
+            font-size: #{$size}px;
+
+            // Set row heights in telemetry tables
+            tr {
+                min-height: #{$size + ($tabularTdPadTB * 2)};
+            }
+
+        }
+    }
+
+    &[data-font*="bold"] {
+        font-weight: bold;
+    }
+
+    &[data-font*="narrow"] {
+        font-family: 'Arial Narrow', sans-serif;
+    }
+
+    &[data-font*="monospace"] {
+        font-family: 'Andale Mono', sans-serif;
+    }
+}
+
+.u-style-receiver {
+    @include fontAndSize();
+}
+
 /******************************************************** HTML ENTITIES */
 a {
     color: $colorA;
@@ -227,7 +258,7 @@ body.desktop .has-local-controls {
 }
 
 /******************************************************** STATES */
-@mixin  spinner($b: 5px, $c: $colorKey) {
+@mixin  spinner($b: 5, $c: $colorKey) {
     animation-name: rotation-centered;
     animation-duration: 0.5s;
     animation-iteration-count: infinite;
@@ -277,7 +308,7 @@ body.desktop .has-local-controls {
     }
     &.c-tree__item {
         $d: $waitSpinnerTreeD;
-        $spinnerL: 19px + $d/2;
+        $spinnerL: 19 + $d/2;
 
         display: flex;
         align-items: center;

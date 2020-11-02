@@ -534,7 +534,7 @@
     }
 
     &[class*="--major"] {
-        color: $colorKey;
+        color: $colorBtnMajorBg !important;
     }
 }
 

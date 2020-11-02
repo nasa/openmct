@@ -73,7 +73,6 @@ define(['lodash'], function (_) {
                         ]
                     }
                 };
-
                 const VIEW_TYPES = {
                     'telemetry-view': {
                         value: 'telemetry-view',
@@ -96,7 +95,6 @@ define(['lodash'], function (_) {
                         class: 'icon-tabular-realtime'
                     }
                 };
-
                 const APPLICABLE_VIEWS = {
                     'telemetry-view': [
                         VIEW_TYPES['telemetry.plot.overlay'],
@@ -390,29 +388,6 @@ define(['lodash'], function (_) {
                     }
                 }
 
-                function getTextSizeMenu(selectedParent, selection) {
-                    const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
-
-                    return {
-                        control: "select-menu",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
-
-                            return type === 'text-view' || type === 'telemetry-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".size";
-                        },
-                        title: "Set text size",
-                        options: TEXT_SIZE.map(size => {
-                            return {
-                                value: size + "px"
-                            };
-                        })
-                    };
-                }
-
                 function getTextButton(selectedParent, selection) {
                     return {
                         control: "button",
@@ -423,7 +398,7 @@ define(['lodash'], function (_) {
                         property: function (selectionPath) {
                             return getPath(selectionPath);
                         },
-                        icon: "icon-font",
+                        icon: "icon-pencil",
                         title: "Edit text properties",
                         dialog: DIALOG_FORM.text
                     };
@@ -678,7 +653,6 @@ define(['lodash'], function (_) {
                     'display-mode': [],
                     'telemetry-value': [],
                     'style': [],
-                    'text-style': [],
                     'position': [],
                     'duplicate': [],
                     'unit-toggle': [],
@@ -729,12 +703,6 @@ define(['lodash'], function (_) {
                             toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectedObjects)];
                         }
 
-                        if (toolbar['text-style'].length === 0) {
-                            toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
-                            ];
-                        }
-
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -760,12 +728,6 @@ define(['lodash'], function (_) {
                             }
                         }
                     } else if (layoutItem.type === 'text-view') {
-                        if (toolbar['text-style'].length === 0) {
-                            toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
-                            ];
-                        }
-
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
