@@ -8,7 +8,9 @@
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
-            <span class="c-image-controls__sliders">
+            <span class="c-image-controls__sliders"
+                  draggable="true"
+                  @dragstart="startDrag">
                 <div class="c-image-controls__slider-wrapper icon-brightness">
                     <input v-model="filters.brightness"
                            type="range"
@@ -451,6 +453,10 @@ export default {
             } else {
                 this.setFocusedImage(--index, THUMBNAIL_CLICKED);
             }
+        },
+        startDrag(e) {
+            e.preventDefault();
+            e.stopPropagation();
         },
         arrowDownHandler(event) {
             let key = event.keyCode;
