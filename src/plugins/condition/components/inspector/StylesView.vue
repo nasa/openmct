@@ -236,9 +236,36 @@ export default {
         },
         canStyleFont() {
             return this.styleableFontItems.length && this.allowEditing;
-        },
-        objectStyles() {
-            let objectStyles = {};
+        }
+    },
+    destroyed() {
+        this.removeListeners();
+        this.openmct.editor.off('isEditing', this.setEditState);
+        this.stylesManager.off('styleSelected', this.applyStyleToSelection);
+    },
+    mounted() {
+        this.previewAction = new PreviewAction(this.openmct);
+        this.isMultipleSelection = this.selection.length > 1;
+        this.getObjectsAndItemsFromSelection();
+        if (!this.isMultipleSelection) {
+            let objectStyles = this.getObjectStyles();
+            this.initializeStaticStyle(objectStyles);
+            if (objectStyles && objectStyles.conditionSetIdentifier) {
+                this.openmct.objects.get(objectStyles.conditionSetIdentifier).then(this.initialize);
+                this.conditionalStyles = objectStyles.styles;
+            }
+        } else {
+            this.initializeStaticStyle();
+        }
+
+        this.setConsolidatedFontStyle();
+
+        this.openmct.editor.on('isEditing', this.setEditState);
+        this.stylesManager.on('styleSelected', this.applyStyleToSelection);
+    },
+    methods: {
+        getObjectStyles() {
+            let objectStyles;
             if (this.domainObjectsById) {
                 const domainObject = Object.values(this.domainObjectsById)[0];
                 if (domainObject.configuration && domainObject.configuration.objectStyles) {
@@ -254,33 +281,7 @@ export default {
             }
 
             return objectStyles;
-        }
-    },
-    destroyed() {
-        this.removeListeners();
-        this.openmct.editor.off('isEditing', this.setEditState);
-        this.stylesManager.off('styleSelected', this.applyStyleToSelection);
-    },
-    mounted() {
-        this.previewAction = new PreviewAction(this.openmct);
-        this.isMultipleSelection = this.selection.length > 1;
-        this.getObjectsAndItemsFromSelection();
-        if (!this.isMultipleSelection) {
-            this.initializeStaticStyle(this.objectStyles);
-            if (this.objectStyles && this.objectStyles.conditionSetIdentifier) {
-                this.openmct.objects.get(this.objectStyles.conditionSetIdentifier).then(this.initialize);
-                this.conditionalStyles = this.objectStyles.styles;
-            }
-        } else {
-            this.initializeStaticStyle();
-        }
-
-        this.setConsolidatedFontStyle();
-
-        this.openmct.editor.on('isEditing', this.setEditState);
-        this.stylesManager.on('styleSelected', this.applyStyleToSelection);
-    },
-    methods: {
+        },
         setEditState(isEditing) {
             this.isEditing = isEditing;
             if (this.isEditing) {
