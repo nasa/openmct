@@ -32,6 +32,7 @@
 
     <!-- main tree -->
     <div
+        id="mainTree"
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
     >
@@ -226,7 +227,7 @@ export default {
             return this.mainTreeHeight - this.ancestorsHeight;
         },
         showNoItems() {
-            return this.visibleItems.length === 0 && !this.activeSearch;
+            return this.visibleItems.length === 0 && !this.activeSearch && !this.isLoading;
         },
         showNoSearchResults() {
             return this.searchValue && this.searchResultItems.length === 0 && !this.searchLoading;
@@ -302,7 +303,7 @@ export default {
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
         this.stopObservingAncestors();
-        document.removeEventListener('readystatechange', this.setTreeTopMargin);
+        document.removeEventListener('readystatechange', this.onReadyState);
     },
     methods: {
         initialize() {
@@ -320,8 +321,15 @@ export default {
         },
         onReadyState() {
             if (document.readyState === 'complete') {
-                this.calculateHeights();
+                this.observeMainTreeSize();
             }
+        },
+        observeMainTreeSize() {
+            this.resizeObserver = new ResizeObserver(entries => {
+                this.calculateHeights();
+                this.resizeObserver.disconnect();
+            });
+            this.resizeObserver.observe(document.getElementById('mainTree'));
         },
         backwardsCompatibilityCheck() {
             let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
@@ -781,6 +789,10 @@ export default {
             return { height };
         },
         getElementStyleValue(el, style) {
+            if (!el) {
+                return;
+            }
+
             let styleString = window.getComputedStyle(el)[style];
             let index = styleString.indexOf('px');
 
