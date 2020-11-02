@@ -180,7 +180,7 @@ export default {
 
             let value;
             if (this.item.format) {
-                value = this.formatter.format(this.datum, this.valueMetadata);
+                value = this.customformatter.format(this.datum);
             }
 
             if (!value) {
@@ -219,8 +219,6 @@ export default {
         this.openmct.objects.get(this.item.identifier)
             .then(this.setObject);
         this.openmct.time.on("bounds", this.refreshData);
-
-        this.formatter = new CustomStringFormat(this.openmct, this.item.format);
     },
     destroyed() {
         this.removeSubscription();
@@ -275,6 +273,9 @@ export default {
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+
+            this.customformatter = new CustomStringFormat(this.openmct, this.metadata.value(this.item.value), this.item.format);
+
             this.requestHistoricalData();
             this.subscribeToObject();
 
@@ -294,7 +295,7 @@ export default {
             delete this.immediatelySelect;
         },
         updateTelemetryFormat(format) {
-            this.formatter.setFormat(format);
+            this.customformatter.setFormat(format);
 
             this.$emit('formatChanged', this.item, format);
         },

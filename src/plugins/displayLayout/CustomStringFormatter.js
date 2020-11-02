@@ -1,15 +1,20 @@
 import printj from 'printj';
 
 export default class CustomStringFormatter {
-    constructor(openmct, itemFormat = null) {
+    constructor(openmct, valueMetadata, itemFormat) {
         this.openmct = openmct;
 
         this.itemFormat = itemFormat;
+        this.valueMetadata = valueMetadata;
     }
 
-    format(datum, valueMetadata) {
+    format(datum) {
+        if (!this.itemFormat) {
+            return null;
+        }
+
         if (!this.itemFormat.startsWith('&')) {
-            return printj.sprintf(this.itemFormat, datum[valueMetadata.key]);
+            return printj.sprintf(this.itemFormat, datum[this.valueMetadata.key]);
         }
 
         try {
@@ -19,7 +24,7 @@ export default class CustomStringFormatter {
                 throw new Error('Custom Formatter not found');
             }
 
-            return customFormatter.format(datum[valueMetadata.key]);
+            return customFormatter.format(datum[this.valueMetadata.key]);
         } catch (e) {
             console.error(e);
 
