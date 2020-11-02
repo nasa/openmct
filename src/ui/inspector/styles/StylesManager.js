@@ -98,7 +98,7 @@ class StylesManager extends EventEmitter {
             window.localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(styles));
 
             return true;
-        } catch {
+        } catch (e) {
             this.emit('persistError');
         }
 
