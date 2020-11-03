@@ -305,7 +305,6 @@ export default {
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
         this.stopObservingAncestors();
-        // document.removeEventListener('readystatechange', this.onReadyState);
     },
     methods: {
         async initialize() {
@@ -315,18 +314,6 @@ export default {
             await this.calculateHeights();
 
         },
-        // readyStateCheck() {
-        //     if (document.readyState !== 'complete') {
-        //         // document.addEventListener('readystatechange', this.onReadyState);
-        //     } else {
-        //         // this.onReadyState();
-        //     }
-        // },
-        // onReadyState() {
-        //     if (document.readyState === 'complete') {
-        //         this.observeMainTreeSize();
-        //     }
-        // },
         backwardsCompatibilityCheck() {
             let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
 
@@ -814,13 +801,6 @@ export default {
                             - this.$refs.search.offsetHeight
                             - this.mainTreeTopMargin;
                         this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
-                        console.log({...{
-                            mainMargin: this.mainTreeTopMargin,
-                            mainTreeHeight: this.mainTreeHeight,
-                            itemHeight: this.itemHeight,
-                            el: this.$el,
-                            elOffset: this.$el.offsetHeight
-                        }});
 
                         resolve();
                     } else {
