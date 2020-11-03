@@ -277,7 +277,9 @@ export default {
         }
     },
     async mounted() {
-        this.initialize();
+        this.isLoading = true;
+
+        await this.initialize();
 
         let savedPath = this.getStoredTreePath();
         let rootComposition = await this.loadRoot();
@@ -303,34 +305,28 @@ export default {
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
         this.stopObservingAncestors();
-        document.removeEventListener('readystatechange', this.onReadyState);
+        // document.removeEventListener('readystatechange', this.onReadyState);
     },
     methods: {
-        initialize() {
+        async initialize() {
             this.searchService = this.openmct.$injector.get('searchService');
             window.addEventListener('resize', this.handleWindowResize);
-            this.readyStateCheck();
             this.backwardsCompatibilityCheck();
+            await this.calculateHeights();
+
         },
-        readyStateCheck() {
-            if (document.readyState !== 'complete') {
-                document.addEventListener('readystatechange', this.onReadyState);
-            } else {
-                this.onReadyState();
-            }
-        },
-        onReadyState() {
-            if (document.readyState === 'complete') {
-                this.observeMainTreeSize();
-            }
-        },
-        observeMainTreeSize() {
-            this.resizeObserver = new ResizeObserver(entries => {
-                this.calculateHeights();
-                this.resizeObserver.disconnect();
-            });
-            this.resizeObserver.observe(document.getElementById('mainTree'));
-        },
+        // readyStateCheck() {
+        //     if (document.readyState !== 'complete') {
+        //         // document.addEventListener('readystatechange', this.onReadyState);
+        //     } else {
+        //         // this.onReadyState();
+        //     }
+        // },
+        // onReadyState() {
+        //     if (document.readyState === 'complete') {
+        //         this.observeMainTreeSize();
+        //     }
+        // },
         backwardsCompatibilityCheck() {
             let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
 
@@ -799,11 +795,41 @@ export default {
             return Number(styleString.slice(0, index));
         },
         calculateHeights() {
-            this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-            this.mainTreeHeight = this.$el.offsetHeight
-                - this.$refs.search.offsetHeight
-                - this.mainTreeTopMargin;
-            this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
+            const RECHECK = 100;
+
+            return new Promise((resolve, reject) => {
+
+                let checkHeights = () => {
+                    let treeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+                    if (
+                        this.$el
+                        && this.$refs.search
+                        && this.$refs.mainTree
+                        && this.$refs.dummyItem
+                        && this.$el.offsetHeight !== 0
+                        && treeTopMargin > 0
+                    ) {
+                        this.mainTreeTopMargin = treeTopMargin;
+                        this.mainTreeHeight = this.$el.offsetHeight
+                            - this.$refs.search.offsetHeight
+                            - this.mainTreeTopMargin;
+                        this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
+                        console.log({...{
+                            mainMargin: this.mainTreeTopMargin,
+                            mainTreeHeight: this.mainTreeHeight,
+                            itemHeight: this.itemHeight,
+                            el: this.$el,
+                            elOffset: this.$el.offsetHeight
+                        }});
+
+                        resolve();
+                    } else {
+                        setTimeout(checkHeights, RECHECK);
+                    }
+                };
+
+                checkHeights();
+            });
         }
     }
 };
