@@ -485,7 +485,7 @@ select {
         transition: $transIn;
         white-space: nowrap;
 
-        &:hover {
+        @include hover {
             background: $colorMenuHovBg;
             color: $colorMenuHovFg;
             &:before {
@@ -502,6 +502,10 @@ select {
 
         &:not([class]):before {
              content: ''; // Add this element so that menu items without an icon still indent properly
+        }
+
+        .menus-no-icon & {
+            &:before { display: none; }
         }
     }
 }
@@ -734,7 +738,6 @@ select {
 .c-toolbar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
 
     > * {
         // First level items

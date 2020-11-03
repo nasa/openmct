@@ -555,7 +555,8 @@
         }
     }
 
-    &[class*='--menus-left'] {
+    &[class*='--menus-left'],
+    &[class*='menus-to-left'] {
         .c-menu {
             left: auto; right: 0;
         }
