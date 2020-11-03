@@ -312,6 +312,7 @@ export default {
             this.backwardsCompatibilityCheck();
             await this.calculateHeights();
 
+            return;
         },
         backwardsCompatibilityCheck() {
             let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
