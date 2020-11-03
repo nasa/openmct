@@ -32,7 +32,6 @@
 
     <!-- main tree -->
     <div
-        id="mainTree"
         ref="mainTree"
         class="c-tree-and-search__tree c-tree"
     >
