@@ -512,7 +512,7 @@ export default {
             this.mutateObject('configuration.entries', notebookEntries);
         },
         updateInternalDomainObject(domainObject) {
-            this.internalDomainObject = domainObject;
+            this.internalDomainObject = JSON.parse(JSON.stringify(domainObject));
         },
         updatePage({ pages = [], id = null}) {
             const selectedSection = this.getSelectedSection();
