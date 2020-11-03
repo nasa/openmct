@@ -29,7 +29,9 @@
     @endMove="() => $emit('endMove')"
 >
     <div
-        class="c-text-view"
+        class="c-text-view u-style-receiver js-style-receiver"
+        :data-font-size="item.fontSize"
+        :data-font="item.font"
         :class="[styleClass]"
         :style="style"
     >
@@ -47,13 +49,14 @@ export default {
         return {
             fill: '',
             stroke: '',
-            size: '13px',
             color: '',
             x: 1,
             y: 1,
             width: 10,
             height: 5,
-            text: element.text
+            text: element.text,
+            fontSize: 'default',
+            font: 'default'
         };
     },
     inject: ['openmct'],
@@ -84,8 +87,14 @@ export default {
     },
     computed: {
         style() {
+            let size;
+            //legacy size support
+            if (!this.item.fontSize) {
+                size = this.item.size;
+            }
+
             return Object.assign({
-                fontSize: this.item.size
+                size
             }, this.itemStyle);
         }
     },

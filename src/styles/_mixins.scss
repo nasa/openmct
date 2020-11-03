@@ -380,11 +380,21 @@
     &:focus {
         box-shadow: $shdwInputFoc;
     }
+}
 
-    @include hover() {
-        &:not(:focus) {
-            box-shadow: $shdwInputHov;
-        }
+@mixin inlineInput() {
+    @include reactive-input($bg: transparent);
+    box-shadow: none;
+    display: block !important;
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+    transition: all 250ms ease;
+    white-space: nowrap;
+
+    &:not(:focus) {
+        text-overflow: ellipsis;
     }
 }
 
@@ -526,7 +536,7 @@
     }
 
     &[class*="--major"] {
-        color: $colorKey;
+        color: $colorBtnMajorBg !important;
     }
 }
 
