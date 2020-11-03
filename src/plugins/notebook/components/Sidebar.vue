@@ -34,7 +34,7 @@
 
         <div class="c-sidebar__contents-and-controls">
             <button class="c-list-button"
-                    @click="addPage"
+                    @click="addPage(false)"
             >
                 <span class="c-button c-list-button__button icon-plus"></span>
                 <span class="c-list-button__label">Add {{ pageTitle }}</span>
@@ -140,10 +140,10 @@ export default {
         }
     },
     methods: {
-        addPage() {
+        addPage(suppressEvent) {
             const pageTitle = this.pageTitle;
             const id = uuid();
-            const page = {
+            const newPage = {
                 id,
                 isDefault: false,
                 isSelected: true,
@@ -151,23 +151,28 @@ export default {
                 pageTitle
             };
 
-            this.pages.forEach(p => p.isSelected = false);
-            const pages = this.pages.concat(page);
+            const pages = this.pages || [];
+            pages.forEach(p => p.isSelected = false);
+            const newPages = pages.concat(newPage);
+            if (suppressEvent) {
+                return newPages;
+            }
 
             this.updatePage({
-                pages,
+                pages: newPages,
                 id
             });
         },
         addSection() {
             const sectionTitle = this.sectionTitle;
             const id = uuid();
+            const pages = this.addPage(true);
             const section = {
                 id,
                 isDefault: false,
                 isSelected: true,
                 name: `Unnamed ${sectionTitle}`,
-                pages: [],
+                pages,
                 sectionTitle
             };
 
