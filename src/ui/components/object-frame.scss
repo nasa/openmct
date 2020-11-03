@@ -110,10 +110,10 @@
             }
         }
 
-        &.is-missing {
+        &.is-status--missing {
             @include isMissing($absPos: true);
 
-            .is-missing__indicator {
+            .is-status__indicator {
                 top: $interiorMargin;
                 left: $interiorMargin;
             }
@@ -145,7 +145,7 @@
         > .c-so-view__view-large { display: block; }
     }
 
-    &.is-missing {
+    &.is-status--missing {
         border: $borderMissing;
     }
 }

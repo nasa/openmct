@@ -14,8 +14,8 @@
             <div class="c-object-label__type-icon"
                  :class="type.cssClass"
             >
-                <span class="is-missing__indicator"
-                      title="This item is missing"
+                <span class="is-status__indicator"
+                      title="This item is missing or suspect"
                 ></span>
             </div>
             <span
@@ -152,7 +152,7 @@ export default {
     },
     computed: {
         statusClass() {
-            return `is-${this.status}`;
+            return (this.status) ? `is-status--${this.status}` : '';
         },
         currentView() {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};

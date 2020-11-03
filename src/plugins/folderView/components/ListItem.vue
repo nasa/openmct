@@ -15,8 +15,8 @@
                 class="c-object-label__type-icon c-list-item__name__type-icon"
                 :class="item.type.cssClass"
             >
-                <span class="is-missing__indicator"
-                      title="This item is missing"
+                <span class="is-status__indicator"
+                      title="This item is missing or suspect"
                 ></span>
             </div>
             <div class="c-object-label__name c-list-item__name__name">{{ item.model.name }}</div>

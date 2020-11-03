@@ -2,13 +2,13 @@
 <div class="c-inspector__header">
     <div v-if="!multiSelect"
          class="c-inspector__selected c-object-label"
-         :class="{'is-missing': isMissing }"
+         :class="{'is-status--missing': isMissing }"
     >
         <div class="c-object-label__type-icon"
              :class="typeCssClass"
         >
-            <span class="is-missing__indicator"
-                  title="This item is missing"
+            <span class="is-status__indicator"
+                  title="This item is missing or suspect"
             ></span>
         </div>
         <span v-if="!singleSelectNonObject"
