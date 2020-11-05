@@ -10,7 +10,7 @@ export default class CustomStringFormatter {
 
     format(datum) {
         if (!this.itemFormat) {
-            return null;
+            return;
         }
 
         if (!this.itemFormat.startsWith('&')) {
@@ -27,8 +27,6 @@ export default class CustomStringFormatter {
             return customFormatter.format(datum[this.valueMetadata.key]);
         } catch (e) {
             console.error(e);
-
-            return null;
         }
     }
 
