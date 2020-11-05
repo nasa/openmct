@@ -51,7 +51,7 @@ export default {
             }
 
             // If no selected option, then options are non-specific
-            return '??px';
+            return '??';
         },
         nonSpecific() {
             return this.options.nonSpecific === true;

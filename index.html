@@ -67,7 +67,13 @@
     </body>
     <script>
         const THIRTY_SECONDS = 30 * 1000;
-        const THIRTY_MINUTES = THIRTY_SECONDS * 60;
+        const ONE_MINUTE = THIRTY_SECONDS * 2;
+        const FIVE_MINUTES = ONE_MINUTE * 5;
+        const FIFTEEN_MINUTES = FIVE_MINUTES * 3;
+        const THIRTY_MINUTES = FIFTEEN_MINUTES * 2;
+        const ONE_HOUR = THIRTY_MINUTES * 2;
+        const TWO_HOURS = ONE_HOUR * 2;
+        const ONE_DAY = ONE_HOUR * 24;
 
         [
             'example/eventGenerator'
@@ -105,21 +111,21 @@
                         {
                             label: 'Last Day',
                             bounds: {
-                                start: () => Date.now() - 1000 * 60 * 60 * 24,
+                                start: () => Date.now() - ONE_DAY,
                                 end: () => Date.now()
                             }
                         },
                         {
                             label: 'Last 2 hours',
                             bounds: {
-                                start: () => Date.now() - 1000 * 60 * 60 * 2,
+                                start: () => Date.now() - TWO_HOURS,
                                 end: () => Date.now()
                             }
                         },
                         {
                             label: 'Last hour',
                             bounds: {
-                                start: () => Date.now() - 1000 * 60 * 60,
+                                start: () => Date.now() - ONE_HOUR,
                                 end: () => Date.now()
                             }
                         }
@@ -128,7 +134,7 @@
                     records: 10,
                     // maximum duration between start and end bounds
                     // for utc-based time systems this is in milliseconds
-                    limit: 1000 * 60 * 60 * 24
+                    limit: ONE_DAY
                 },
                 {
                     name: "Realtime",
@@ -137,7 +143,44 @@
                     clockOffsets: {
                         start: - THIRTY_MINUTES,
                         end: THIRTY_SECONDS
-                    }
+                    },
+                    presets: [
+                        {
+                            label: '1 Hour',
+                            bounds: {
+                                start: - ONE_HOUR,
+                                end: THIRTY_SECONDS
+                            }
+                        },
+                        {
+                            label: '30 Minutes',
+                            bounds: {
+                                start: - THIRTY_MINUTES,
+                                end: THIRTY_SECONDS
+                            }
+                        },
+                        {
+                            label: '15 Minutes',
+                            bounds: {
+                                start: - FIFTEEN_MINUTES,
+                                end: THIRTY_SECONDS
+                            }
+                        },
+                        {
+                            label: '5 Minutes',
+                            bounds: {
+                                start: - FIVE_MINUTES,
+                                end: THIRTY_SECONDS
+                            }
+                        },
+                        {
+                            label: '1 Minute',
+                            bounds: {
+                                start: - ONE_MINUTE,
+                                end: THIRTY_SECONDS
+                            }
+                        }
+                    ]
                 }
             ]
         }));
