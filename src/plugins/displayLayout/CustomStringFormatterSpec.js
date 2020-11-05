@@ -51,7 +51,7 @@ describe('CustomStringFormatter', function () {
         spyOn(openmct.telemetry, 'getFormatter');
         openmct.telemetry.getFormatter.and.callFake((key) => CUSTOM_FORMATS.find(d => d.key === key));
 
-        customStringFormatter = new CustomStringFormatter(openmct);
+        customStringFormatter = new CustomStringFormatter(openmct, valueMetadata);
     });
 
     afterEach(() => {
