@@ -57,6 +57,10 @@
         }
     }
 
+    &__saved-styles {
+        height: 300px;
+    }
+
     .c-color-swatch {
         $d: 12px;
         display: block;
@@ -160,6 +164,11 @@
             grid-column: 1 / 3;
         }
     }
+}
+
+/********************************************* INSPECTOR PROPERTIES TAB */
+.c-saved-style {
+    cursor: default;
 }
 
 /********************************************* LEGACY SUPPORT */

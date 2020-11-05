@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2018, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,13 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+define([
+    './TelemetryTableColumn.js'
+], function (
+    TelemetryTableColumn
+) {
+    class TelemetryTableNameColumn extends TelemetryTableColumn {
+        constructor(openmct, telemetryObject, metadatum) {
+            super(openmct, metadatum);
 
-import CouchObjectProvider from './CouchObjectProvider';
-const NAMESPACE = '';
-const PERSISTENCE_SPACE = 'mct';
+            this.telemetryObject = telemetryObject;
+        }
 
-export default function CouchPlugin(url) {
-    return function install(openmct) {
-        openmct.objects.addProvider(PERSISTENCE_SPACE, new CouchObjectProvider(openmct, url, NAMESPACE));
-    };
-}
+        getRawValue() {
+            return this.telemetryObject.name;
+        }
+
+        getFormattedValue() {
+            return this.telemetryObject.name;
+        }
+    }
+
+    return TelemetryTableNameColumn;
+});
