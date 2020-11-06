@@ -137,8 +137,12 @@
     .is-status__indicator {
         display: none ;
         text-shadow: $colorBodyBg 0 0 2px;
-        color: $colorAlert;
         font-family: symbolsfont;
+
+        &[class^='is-status'] .is-status__indicator,
+        [class^='is-status'] .is-status__indicator {
+            display: block !important;
+        }
 
         @if $absPos {
             position: absolute;
@@ -150,13 +154,18 @@
 @mixin isMissing($absPos: false) {
     @include isStatus($absPos);
 
-    &.is-status--missing .is-status__indicator,
-    .is-status--missing .is-status__indicator {
-        display: block !important;
+    .is-status__indicator:before {
+        color: $colorAlert;
+        content: $glyph-icon-alert-triangle;
+    }
+}
 
-        &:before {
-            content: $glyph-icon-alert-triangle;
-        }
+@mixin isSuspect($absPos: false) {
+    @include isStatus($absPos);
+
+    .is-status__indicator:before {
+        color: $colorWarningLo;
+        content: $glyph-icon-alert-rect;
     }
 }
 
