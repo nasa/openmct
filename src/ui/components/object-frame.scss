@@ -71,8 +71,9 @@
     }
 
     &__object-view {
+        display: flex;
         flex: 1 1 auto;
-        height: 0; // Chrome 73 overflow bug fix
+        //height: 0; // Chrome 73 overflow bug fix - causes problems in Safari 12
         overflow: auto;
 
         .u-fills-container {
@@ -84,6 +85,6 @@
 
 .l-angular-ov-wrapper {
     // This element is the recipient for object styling; cannot be display: contents
-    height: 100%;
+    flex: 1 1 auto;
     overflow: hidden;
 }

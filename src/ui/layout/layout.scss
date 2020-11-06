@@ -228,8 +228,9 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
+        display: flex;
         flex: 1 1 auto !important;
-        height: 0; // Chrome 73 overflow bug fix
+        height: 100%; // Chrome 73 overflow bug fix
         overflow: auto;
     }
 
