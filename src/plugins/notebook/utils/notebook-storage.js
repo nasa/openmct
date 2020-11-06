@@ -21,7 +21,7 @@ function defaultNotebookObjectChanged(newDomainObject) {
 
 function observeDefaultNotebookObject(openmct, notebookMeta, domainObject) {
     if (currentNotebookObjectIdentifier
-            && objectUtils.makeKeyString(currentNotebookObjectIdentifier) === objectUtils.makeKeyString(notebookMeta.identifier)) {
+            && objectUtils.makeKeyString(currentNotebookObjectIdentifier) === notebookMeta.keyString) {
         return;
     }
 
