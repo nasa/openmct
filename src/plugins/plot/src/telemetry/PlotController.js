@@ -164,7 +164,7 @@ define([
 
     PlotController.prototype.getConfig = function (domainObject) {
         const configId = domainObject.getId();
-        let config = configStore.get(this.$scope.$id + '-' + configId);
+        let config = configStore.get(configId);
         if (!config) {
             const newDomainObject = domainObject.useCapability('adapter');
             config = new PlotConfigurationModel({
@@ -172,7 +172,7 @@ define([
                 domainObject: newDomainObject,
                 openmct: this.openmct
             });
-            configStore.add(this.$scope.$id + '-' + configId, config);
+            configStore.add(configId, config);
         }
 
         return config;
@@ -184,7 +184,7 @@ define([
     };
 
     PlotController.prototype.destroy = function () {
-        configStore.deleteStore(this.$scope.$id + '-' + this.config.id);
+        configStore.deleteStore(this.config.id);
 
         this.stopListening();
         if (this.checkForSize) {
