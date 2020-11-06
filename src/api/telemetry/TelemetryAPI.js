@@ -400,6 +400,9 @@ define([
         return _.sortBy(options, sortKeys);
     };
 
+    /**
+     * @private
+     */
     TelemetryAPI.prototype.getFormatService = function () {
         if (!this.formatService) {
             this.formatService = this.openmct.$injector.get('formatService');
@@ -425,7 +428,7 @@ define([
     };
 
     /**
-     * Get a value formatter for a given valueMetadata.
+     * Get a value formatter for a given key.
      * @param {string} key
      *
      * @returns {Format}
