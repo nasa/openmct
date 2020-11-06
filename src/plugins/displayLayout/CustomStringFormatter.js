@@ -27,6 +27,8 @@ export default class CustomStringFormatter {
             return customFormatter.format(datum[this.valueMetadata.key]);
         } catch (e) {
             console.error(e);
+
+            return datum[this.valueMetadata.key];
         }
     }
 

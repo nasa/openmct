@@ -132,8 +132,7 @@ export default {
             datum: undefined,
             formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined,
-            formatter: undefined
+            currentObjectPath: undefined
         };
     },
     computed: {
@@ -170,7 +169,11 @@ export default {
         valueMetadata() {
             return this.datum && this.metadata.value(this.item.value);
         },
-        valueFormatter() {
+        formatter() {
+            if (this.item.format) {
+                return this.customStringformatter;
+            }
+
             return this.formats[this.item.value];
         },
         telemetryValue() {
@@ -178,16 +181,7 @@ export default {
                 return;
             }
 
-            let value;
-            if (this.item.format) {
-                value = this.customformatter.format(this.datum);
-            }
-
-            if (!value) {
-                value = this.valueFormatter && this.valueFormatter.format(this.datum);
-            }
-
-            return value;
+            return this.formatter && this.formatter.format(this.datum);
         },
         telemetryClass() {
             if (!this.datum) {
@@ -274,7 +268,7 @@ export default {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
-            this.customformatter = new CustomStringFormat(this.openmct, this.metadata.value(this.item.value), this.item.format);
+            this.customStringformatter = new CustomStringFormat(this.openmct, this.metadata.value(this.item.value), this.item.format);
 
             this.requestHistoricalData();
             this.subscribeToObject();
@@ -295,7 +289,7 @@ export default {
             delete this.immediatelySelect;
         },
         updateTelemetryFormat(format) {
-            this.customformatter.setFormat(format);
+            this.customStringformatter.setFormat(format);
 
             this.$emit('formatChanged', this.item, format);
         },
