@@ -144,13 +144,19 @@ export default {
             const newPage = this.createNewPage();
             const pages = this.addNewPage(newPage);
 
-            this.pagesChanged({ pages, id: newPage.id });
+            this.pagesChanged({
+                pages,
+                id: newPage.id
+            });
         },
         addSection() {
             const newSection = this.createNewSection();
             const sections = this.addNewSection(newSection);
 
-            this.sectionsChanged({ sections, id: newSection.id });
+            this.sectionsChanged({
+                sections,
+                id: newSection.id
+            });
         },
         addNewPage(page) {
             const pages = this.pages.map(p => {
@@ -168,7 +174,7 @@ export default {
                 return s;
             });
 
-            return this.sections.concat(section);
+            return sections.concat(section);
         },
         createNewPage() {
             const pageTitle = this.pageTitle;

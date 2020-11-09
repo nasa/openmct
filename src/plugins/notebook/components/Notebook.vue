@@ -26,7 +26,7 @@
                  :page-title="internalDomainObject.configuration.pageTitle"
                  :section-title="internalDomainObject.configuration.sectionTitle"
                  :sections="sections"
-                 :selectedSection="selectedSection"
+                 :selected-section="selectedSection"
                  :sidebar-covers-entries="sidebarCoversEntries"
                  @pagesChanged="pagesChanged"
                  @sectionsChanged="sectionsChanged"
