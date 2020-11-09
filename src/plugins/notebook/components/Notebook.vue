@@ -309,10 +309,7 @@ export default {
                 return null;
             }
 
-            return this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier)
-                .catch(e => {
-                    console.error('[Notebook] Unable to find notebook with identifier', oldNotebookStorage.notebookMeta.identifier);
-                });
+            return this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier);
         },
         getPage(section, id) {
             return section.pages.find(p => p.id === id);
