@@ -24,12 +24,12 @@
                  :default-section-id="defaultSectionId"
                  :domain-object="internalDomainObject"
                  :page-title="internalDomainObject.configuration.pageTitle"
-                 :pages="pages"
                  :section-title="internalDomainObject.configuration.sectionTitle"
                  :sections="sections"
+                 :selectedSection="selectedSection"
                  :sidebar-covers-entries="sidebarCoversEntries"
-                 @updatePage="updatePage"
-                 @updateSection="updateSection"
+                 @pagesChanged="pagesChanged"
+                 @sectionsChanged="sectionsChanged"
                  @toggleNav="toggleNav"
         />
         <div class="c-notebook__page-view">
@@ -220,7 +220,7 @@ export default {
                 return s;
             });
 
-            this.updateSection({ sections });
+            this.sectionsChanged({ sections });
             this.throttledSearchItem('');
         },
         createNotebookStorageObject() {
@@ -398,7 +398,7 @@ export default {
                 return s;
             });
 
-            this.updateSection({ sections });
+            this.sectionsChanged({ sections });
         },
         newEntry(embed = null) {
             this.search = '';
@@ -410,6 +410,24 @@ export default {
         },
         orientationChange() {
             this.formatSidebar();
+        },
+        pagesChanged({ pages = [], id = null}) {
+            const selectedSection = this.getSelectedSection();
+            if (!selectedSection) {
+                return;
+            }
+
+            selectedSection.pages = pages;
+            const sections = this.sections.map(section => {
+                if (section.id === selectedSection.id) {
+                    section = selectedSection;
+                }
+
+                return section;
+            });
+
+            this.sectionsChanged({ sections });
+            this.updateDefaultNotebookPage(pages, id);
         },
         removeDefaultClass(domainObject) {
             if (!domainObject) {
@@ -442,10 +460,12 @@ export default {
 
             if (this.defaultSectionId && this.defaultSectionId.length === 0 || this.defaultSectionId !== notebookStorage.section.id) {
                 this.defaultSectionId = notebookStorage.section.id;
+                setDefaultNotebookSection(notebookStorage.section);
             }
 
             if (this.defaultPageId && this.defaultPageId.length === 0 || this.defaultPageId !== notebookStorage.page.id) {
                 this.defaultPageId = notebookStorage.page.id;
+                setDefaultNotebookPage(notebookStorage.page);
             }
         },
         updateDefaultNotebookPage(pages, id) {
@@ -514,24 +534,6 @@ export default {
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
         },
-        updatePage({ pages = [], id = null}) {
-            const selectedSection = this.getSelectedSection();
-            if (!selectedSection) {
-                return;
-            }
-
-            selectedSection.pages = pages;
-            const sections = this.sections.map(section => {
-                if (section.id === selectedSection.id) {
-                    section = selectedSection;
-                }
-
-                return section;
-            });
-
-            this.updateSection({ sections });
-            this.updateDefaultNotebookPage(pages, id);
-        },
         updateParams(sections) {
             const selectedSection = sections.find(s => s.isSelected);
             if (!selectedSection) {
@@ -555,7 +557,7 @@ export default {
                 pageId
             });
         },
-        updateSection({ sections, id = null }) {
+        sectionsChanged({ sections, id = null }) {
             mutateObject(this.openmct, this.internalDomainObject, 'configuration.sections', sections);
 
             this.updateParams(sections);

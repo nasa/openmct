@@ -8,14 +8,10 @@ const TIME_BOUNDS = {
 };
 
 export function addEntryIntoPage(notebookStorage, entries, entry) {
-    if (!notebookStorage) {
-        return null;
-    }
-
     const defaultSection = notebookStorage.section;
     const defaultPage = notebookStorage.page;
     if (!defaultSection || !defaultPage) {
-        return null;
+        return;
     }
 
     const newEntries = JSON.parse(JSON.stringify(entries));
@@ -135,7 +131,7 @@ export function addNotebookEntry(openmct, domainObject, notebookStorage, embed =
 
 export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage) {
-        return null;
+        return;
     }
 
     const configuration = domainObject.configuration;
@@ -143,12 +139,12 @@ export function getNotebookEntries(domainObject, selectedSection, selectedPage) 
 
     let section = entries[selectedSection.id];
     if (!section) {
-        return null;
+        return;
     }
 
     let page = entries[selectedSection.id][selectedPage.id];
     if (!page) {
-        return null;
+        return;
     }
 
     return entries[selectedSection.id][selectedPage.id];

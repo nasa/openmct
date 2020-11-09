@@ -172,6 +172,6 @@ describe('Notebook Entries:', () => {
         NotebookEntries.deleteNotebookEntries(openmct, notebookDomainObject, selectedSection, selectedPage);
         const afterEntries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
 
-        expect(afterEntries).toEqual(null);
+        expect(afterEntries).toEqual(undefined);
     });
 });
