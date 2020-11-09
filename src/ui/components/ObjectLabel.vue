@@ -18,7 +18,8 @@
               title="This item is missing"
         ></span>
     </div>
-    <div class="c-tree__item__name c-object-label__name">
+    <div class="c-tree__item__name c-object-label__name"
+        :class="classList" >
         {{ observedObject.name }}
     </div>
 </a>

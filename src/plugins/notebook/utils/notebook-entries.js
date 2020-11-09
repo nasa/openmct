@@ -204,4 +204,6 @@ function addDefaultClass(domainObject) {
     }
 
     classList.push(DEFAULT_CLASS);
+
+    domainObject.classList = classList;
 }
