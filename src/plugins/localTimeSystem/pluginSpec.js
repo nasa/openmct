@@ -22,6 +22,10 @@
 
 import LocalTimeFormat from './LocalTimeFormat.js';
 import LocalTimeSystem from './LocalTimeSystem.js';
+import {
+    createOpenMct,
+    resetApplicationState
+} from 'utils/testing';
 
 describe("The local time", () => {
     const LOCAL_FORMAT_KEY = 'local-format';
@@ -29,16 +33,25 @@ describe("The local time", () => {
     const JUNK = "junk";
     const TIMESTAMP = -14256000000;
     const DATESTRING = '1969-07-20 12:00:00.000 am';
+    let openmct;
     let dateString;
     let timeStamp;
     let localTimeFormatter;
     let localTimeSystem;
 
     beforeEach(() => {
+
+        openmct = createOpenMct();
+        openmct.install(openmct.plugins.LocalTimeSystem());
+
         localTimeSystem = new LocalTimeSystem();
         localTimeFormatter = new LocalTimeFormat();
         dateString = localTimeFormatter.format(TIMESTAMP);
         timeStamp = localTimeFormatter.parse(DATESTRING);
+    });
+
+    afterEach(() => {
+        return resetApplicationState(openmct);
     });
 
     describe("system", function () {
