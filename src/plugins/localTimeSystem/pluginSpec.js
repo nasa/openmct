@@ -56,15 +56,31 @@ describe("The local time", () => {
 
     describe("system", function () {
 
-        it("uses the local-format time format", function () {
+        it("is installed", () => {
+            let timeSystems = openmct.time.getAllTimeSystems();
+            let local = timeSystems.find(ts => ts.key === 'local');
+
+            expect(local).not.toEqual(-1);
+        });
+
+        it("can be set to be the main time system", () => {
+            openmct.time.timeSystem('local', {
+                start: 0,
+                end: 4
+            });
+
+            expect(openmct.time.timeSystem().key).toBe('local');
+        });
+
+        it("uses the local-format time format", () => {
             expect(localTimeSystem.timeFormat).toBe(LOCAL_FORMAT_KEY);
         });
 
-        it("is UTC based", function () {
+        it("is UTC based", () => {
             expect(localTimeSystem.isUTCBased).toBe(true);
         });
 
-        it("defines expected metadata", function () {
+        it("defines expected metadata", () => {
             expect(localTimeSystem.key).toBe(LOCAL_SYSTEM_KEY);
             expect(localTimeSystem.name).toBeDefined();
             expect(localTimeSystem.cssClass).toBeDefined();
@@ -72,7 +88,7 @@ describe("The local time", () => {
         });
     });
 
-    describe("formatter", function () {
+    describe("formatter", () => {
 
         it("will format a timestamp in local time format", () => {
             expect(localTimeFormatter.format(TIMESTAMP)).toBe(dateString);
