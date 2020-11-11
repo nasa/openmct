@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    'lodash',
-    '../objects/MutableDomainObject'
+    'lodash'
 ], function (
-    _,
-    MutableDomainObject
+    _
 ) {
     /**
      * A CompositionCollection represents the list of domain objects contained
@@ -64,12 +62,11 @@ define([
         this.onProviderRemove = this.onProviderRemove.bind(this);
         this.mutables = {};
 
-        if (this.domainObject instanceof MutableDomainObject.default
-            && this.publicAPI.objects.isMutable(this.domainObject)) {
+        if (this.domainObject.isMutable) {
             this.returnMutables = true;
-            this.domainObject.$observe('$_destroy', () => {
+            this.publicAPI.objects.observe(this.domainObject, '$_destroy', () => {
                 Object.values(this.mutables).forEach(mutable => {
-                    mutable.$destroy();
+                    this.publicAPI.objects.destroyMutable(mutable);
                 });
             });
         }
@@ -198,9 +195,10 @@ define([
 
             this.provider.add(this.domainObject, child.identifier);
         } else {
-            if (this.returnMutables && this.publicAPI.objects.isMutable(child)) {
+            if (this.returnMutables && this.publicAPI.objects.supportsMutation(child)) {
                 let keyString = this.publicAPI.objects.makeKeyString(child.identifier);
-                if (this.publicAPI.objects.isMutable(child)) {
+
+                if (this.publicAPI.objects.supportsMutation(child)) {
                     child = this.publicAPI.objects._toMutable(child);
                     this.mutables[keyString] = child;
                 }
@@ -253,10 +251,10 @@ define([
         if (!skipMutate) {
             this.provider.remove(this.domainObject, child.identifier);
         } else {
-            if (this.returnMutables && this.publicAPI.objects.isMutable(child)) {
+            if (this.returnMutables) {
                 let keyString = this.publicAPI.objects.makeKeyString(child);
-                if (this.mutables[keyString] !== undefined) {
-                    this.mutables[keyString].$destroy();
+                if (this.mutables[keyString] !== undefined && this.mutables[keyString].isMutable) {
+                    this.publicAPI.objects.destroyMutable(this.mutables[keyString]);
                     delete this.mutables[keyString];
                 }
             }
@@ -331,7 +329,7 @@ define([
 
     CompositionCollection.prototype.cleanUpMutables = function () {
         Object.values(this.mutables).forEach(mutable => {
-            mutable.$destroy();
+            this.publicAPI.objects.destroyMutable(mutable);
         });
     };
 

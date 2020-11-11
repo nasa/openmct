@@ -242,14 +242,14 @@ define(
                 }
             }
 
-            return function () {
+            return (function () {
                 element.removeEventListener('click', capture, true);
                 element.removeEventListener('click', selectCapture);
 
                 if (context.item.isMutable) {
                     this.openmct.objects.destroyMutable(context.item);
                 }
-            };
+            }).bind(this);
         };
 
         return Selection;

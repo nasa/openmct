@@ -133,7 +133,7 @@ export default {
             this.removeSelectable();
         }
 
-        this.openmct.objects.destroy(this.domainObject);
+        this.openmct.objects.destroyMutable(this.domainObject);
     },
     methods: {
         setObject(domainObject) {

@@ -43,7 +43,7 @@ define([
                 mutable = undefined;
             }
 
-            if (openmct.objects.isMutable(object)) {
+            if (openmct.objects.supportsMutation(object)) {
                 mutable = openmct.objects._toMutable(object);
             }
 

@@ -214,7 +214,7 @@ export default {
         }
 
         this.openmct.time.off("bounds", this.refreshData);
-        this.openmct.objects.destroy(this.domainObject);
+        this.openmct.objects.destroyMutable(this.domainObject);
     },
     methods: {
         requestHistoricalData() {
