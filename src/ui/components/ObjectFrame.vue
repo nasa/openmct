@@ -65,6 +65,8 @@
         class="c-so-view__object-view"
         :show-edit-view="showEditView"
         :object-path="objectPath"
+        :layout-font-size="layoutFontSize"
+        :layout-font="layoutFont"
     />
 </div>
 </template>
@@ -102,6 +104,14 @@ export default {
         showEditView: {
             type: Boolean,
             default: true
+        },
+        layoutFontSize: {
+            type: String,
+            default: ''
+        },
+        layoutFont: {
+            type: String,
+            default: ''
         }
     },
     data() {

@@ -1,5 +1,5 @@
 <template>
-<li
+<div
     ref="me"
     :style="{
         'top': virtualScroll ? itemTop : 'auto',
@@ -24,7 +24,7 @@
         <object-label
             :domain-object="node.object"
             :object-path="node.objectPath"
-            :navigate-to-path="navigateToPath"
+            :navigate-to-path="navigationPath"
             :style="{ paddingLeft: leftOffset }"
         />
         <view-control
@@ -34,7 +34,7 @@
             :enabled="hasComposition && showDown"
         />
     </div>
-</li>
+</div>
 </template>
 
 <script>
@@ -83,18 +83,14 @@ export default {
         virtualScroll: {
             type: Boolean,
             default: false
-        },
-        shouldEmitHeight: {
-            type: Boolean,
-            default: false
         }
     },
     data() {
-        this.navigateToPath = this.buildPathString(this.node.navigateToParent);
+        this.navigationPath = this.node.navigationPath;
 
         return {
             hasComposition: false,
-            navigated: this.navigateToPath === this.openmct.router.currentLocation.path,
+            navigated: this.isNavigated(),
             expanded: false
         };
     },
@@ -122,9 +118,6 @@ export default {
     mounted() {
         let objectComposition = this.openmct.composition.get(this.node.object);
 
-        // only reliable way to get final item height
-        this.readyStateCheck();
-
         this.domainObject = this.node.object;
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
             this.domainObject = newObject;
@@ -139,30 +132,13 @@ export default {
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
-        document.removeEventListener('readystatechange', this.emitHeight);
     },
     methods: {
-        readyStateCheck() {
-            if (document.readyState !== 'complete') {
-                document.addEventListener('readystatechange', this.emitHeight);
-            } else {
-                this.emitHeight();
-            }
+        isNavigated() {
+            return this.navigationPath === this.openmct.router.currentLocation.path;
         },
-        emitHeight() {
-            if (this.shouldEmitHeight && document.readyState === 'complete') {
-                this.$emit('emittedHeight', this.$el.offsetHeight);
-            }
-        },
-        buildPathString(parentPath) {
-            return [parentPath, this.openmct.objects.makeKeyString(this.node.object.identifier)].join('/');
-        },
-        highlightIfNavigated(newPath, oldPath) {
-            if (newPath === this.navigateToPath) {
-                this.navigated = true;
-            } else if (oldPath === this.navigateToPath) {
-                this.navigated = false;
-            }
+        highlightIfNavigated() {
+            this.navigated = this.isNavigated();
         },
         resetTreeHere() {
             this.$emit('resetTree', this.node);

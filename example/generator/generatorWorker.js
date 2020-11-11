@@ -108,7 +108,6 @@
 
         for (; nextStep < end && data.length < 5000; nextStep += step) {
             data.push({
-                name: request.name,
                 utc: nextStep,
                 yesterday: nextStep - 60 * 60 * 24 * 1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),

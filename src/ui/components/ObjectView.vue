@@ -16,6 +16,30 @@ export default {
             default: () => {
                 return [];
             }
+        },
+        layoutFontSize: {
+            type: String,
+            default: ''
+        },
+        layoutFont: {
+            type: String,
+            default: ''
+        }
+    },
+    data() {
+        return {
+            currentObject: this.object
+        };
+    },
+    computed: {
+        objectFontStyle() {
+            return this.currentObject && this.currentObject.configuration && this.currentObject.configuration.fontStyle;
+        },
+        fontSize() {
+            return this.objectFontStyle ? this.objectFontStyle.fontSize : this.layoutFontSize;
+        },
+        font() {
+            return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         }
     },
     data() {
@@ -36,6 +60,10 @@ export default {
 
         if (this.stopListeningStyles) {
             this.stopListeningStyles();
+        }
+
+        if (this.stopListeningFontStyles) {
+            this.stopListeningFontStyles();
         }
 
         if (this.styleRuleManager) {
@@ -59,7 +87,6 @@ export default {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
         }
-
     },
     methods: {
         clear() {
@@ -87,6 +114,15 @@ export default {
 
             this.openmct.objectViews.off('clearData', this.clearData);
         },
+        getStyleReceiver() {
+            let styleReceiver = this.$el.querySelector('.js-style-receiver');
+
+            if (!styleReceiver) {
+                styleReceiver = this.$el.querySelector(':first-child');
+            }
+
+            return styleReceiver;
+        },
         invokeEditModeHandler(editMode) {
             let edit;
 
@@ -108,21 +144,21 @@ export default {
             }
 
             let keys = Object.keys(styleObj);
+            let elemToStyle = this.getStyleReceiver();
             keys.forEach(key => {
-                let firstChild = this.$el.querySelector(':first-child');
-                if (firstChild) {
+                if (elemToStyle) {
                     if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
-                        if (firstChild.style[key]) {
-                            firstChild.style[key] = '';
+                        if (elemToStyle.style[key]) {
+                            elemToStyle.style[key] = '';
                         }
                     } else {
-                        if (!styleObj.isStyleInvisible && firstChild.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
-                            firstChild.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
-                        } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
-                            firstChild.classList.add(styleObj.isStyleInvisible);
+                        if (!styleObj.isStyleInvisible && elemToStyle.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                            elemToStyle.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                        } else if (styleObj.isStyleInvisible && !elemToStyle.classList.contains(styleObj.isStyleInvisible)) {
+                            elemToStyle.classList.add(styleObj.isStyleInvisible);
                         }
 
-                        firstChild.style[key] = styleObj[key];
+                        elemToStyle.style[key] = styleObj[key];
                     }
                 }
             });
@@ -219,6 +255,14 @@ export default {
                 //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
                 this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
             });
+
+            this.setFontSize(this.fontSize);
+            this.setFont(this.font);
+
+            this.stopListeningFontStyles = this.openmct.objects.observe(this.currentObject, 'configuration.fontStyle', (newFontStyle) => {
+                this.setFontSize(newFontStyle.fontSize);
+                this.setFont(newFontStyle.font);
+            });
         },
         loadComposition() {
             return this.composition.load();
@@ -302,6 +346,14 @@ export default {
             let parentObject = objectPath[1];
 
             return [browseObject, parentObject, this.domainObject].every(object => object && !object.locked);
+        },
+        setFontSize(newSize) {
+            let elemToStyle = this.getStyleReceiver();
+            elemToStyle.dataset.fontSize = newSize;
+        },
+        setFont(newFont) {
+            let elemToStyle = this.getStyleReceiver();
+            elemToStyle.dataset.font = newFont;
         }
     }
 };

@@ -1,8 +1,8 @@
 .c-imagery {
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     overflow: hidden;
-    height: 100%;
 
     &:focus {
         outline: none;
@@ -19,13 +19,21 @@
     }
 
     &__main-image {
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        height: 100%;
+        &__bg {
+            background-color: $colorPlotBg;
+            border: 1px solid transparent;
+            flex: 1 1 auto;
 
-        &.unnsynced{
-            @include sUnsynced();
+            &.unnsynced{
+                @include sUnsynced();
+            }
+        }
+
+        &__image {
+            @include abs(); // Safari fix
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
         }
     }
 
@@ -138,11 +146,6 @@
     }
 }
 
-.s-image-main {
-    background-color: $colorPlotBg;
-    border: 1px solid transparent;
-}
-
 /*************************************** IMAGERY LOCAL CONTROLS*/
 .c-imagery {
     .h-local-controls--overlay-content {
@@ -152,7 +155,7 @@
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
         max-width: 200px;
-        min-width: 100px;
+        min-width: 70px;
         width: 35%;
         align-items: center;
         padding: $interiorMargin $interiorMarginLg;
@@ -173,6 +176,7 @@
     &__lc {
         &__reset-btn {
             $bc: $scrollbarTrackColorBg;
+
             &:before,
             &:after {
                 border-right: 1px solid $bc;
@@ -195,6 +199,46 @@
     }
 }
 
+.c-image-controls {
+    // Brightness/contrast
+
+    &__controls {
+        // Sliders and reset element
+        display: flex;
+        align-items: center;
+        margin-right: $interiorMargin; // Need some extra space due to proximity to close button
+    }
+
+    &__sliders {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: 11px;
+        }
+    }
+
+    &__slider-wrapper {
+        // A wrapper is needed to add the type icon to left of each range input
+        display: flex;
+        align-items: center;
+
+        &:before {
+            color: rgba($colorMenuFg, 0.5);
+            margin-right: $interiorMarginSm;
+        }
+
+        input[type='range'] {
+            width: 100px;
+        }
+    }
+
+    &__btn-reset {
+        flex: 0 0 auto;
+    }
+}
+
 /*************************************** BUTTONS */
 .c-button.pause-play {
     // Pause icon set by default in markup
@@ -211,14 +255,13 @@
 }
 
 .c-imagery__prev-next-buttons {
-    //background: rgba(deeppink, 0.2);
     display: flex;
     width: 100%;
     justify-content: space-between;
     pointer-events: none;
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-75%);
 
     .c-nav {
         pointer-events: all;

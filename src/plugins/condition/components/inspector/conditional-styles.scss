@@ -40,9 +40,11 @@
     }
 
     &__condition-set {
+        align-items: baseline;
+        border-bottom: 1px solid $colorInteriorBorder;
         display: flex;
         flex-direction: row;
-        align-items: center;
+        padding-bottom: $interiorMargin;
 
         .c-object-label {
             flex: 1 1 auto;
@@ -53,7 +55,10 @@
         }
     }
 
-    &__style,
+    &__style {
+        padding-bottom: $interiorMargin;
+    }
+
     &__condition {
         padding: $interiorMargin;
     }
