@@ -184,16 +184,16 @@ define([
     };
 
     /**
-     * Will fetch object, returning a synchronized version of the object that will automatically keep itself updated as
-     * it is mutated. Before using this function, you should ask yourself whether you really need it. The platform will
-     * always provide synchronized object from API functions if the underlying object can be mutated. The platform will
-     *  manage the lifecycle of any synchronized objects that it provides. If you use `getSynchronized` you are responsible
-     * for managing lifecycle yourself. `.$destroy` should be called when the object is no longer needed.
+     * Will fetch object for the given identifier, returning a version of the object that will automatically keep
+     * itself updated as it is mutated. Before using this function, you should ask yourself whether you really need it.
+     * The platform will provide mutable objects to views automatically if the underlying object can be mutated. The
+     * platform will manage the lifecycle of any mutable objects that it provides. If you use `getMutable` you are
+     * committing to managing that lifecycle yourself. `.destroy` should be called when the object is no longer needed.
      *
      * @returns {Promise.<MutableDomainObject|DomainObject>} a promise that will resolve with a MutableDomainObject if
      * the object can be mutated, or a DomainObject if not.
      */
-    ObjectAPI.prototype.getSynchronized = function (identifier) {
+    ObjectAPI.prototype.getMutable = function (identifier) {
         return this.get(identifier).then((object) => {
             if (this.isMutable(object)) {
                 return this._toMutable(object);
@@ -201,6 +201,20 @@ define([
                 return object;
             }
         });
+    };
+
+    /**
+     * This function is for cleaning up a mutable domain object when you're done with it.
+     * You only need to use this if you retrieved the object using `getMutable()`. If the object was provided by the
+     * platform (eg. passed into a `view()` function) then the platform is responsible for its lifecycle.
+     * @param {MutableDomainObject} domainObject
+     */
+    ObjectAPI.prototype.destroyMutable = function (domainObject) {
+        if (domainObject.isMutable) {
+            return domainObject.$destroy();
+        } else {
+            throw new Error("Attempted to destroy non-mutable domain object");
+        }
     };
 
     ObjectAPI.prototype.delete = function () {

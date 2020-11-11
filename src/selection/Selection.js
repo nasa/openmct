@@ -247,7 +247,7 @@ define(
                 element.removeEventListener('click', selectCapture);
 
                 if (context.item.isMutable) {
-                    context.item.$destroy();
+                    this.openmct.objects.destroyMutable(context.item);
                 }
             };
         };

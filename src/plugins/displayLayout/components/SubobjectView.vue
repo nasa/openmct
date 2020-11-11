@@ -125,7 +125,7 @@ export default {
         }
     },
     mounted() {
-        this.openmct.objects.getSynchronized(this.item.identifier)
+        this.openmct.objects.getMutable(this.item.identifier)
             .then(this.setObject);
     },
     destroyed() {
@@ -133,7 +133,7 @@ export default {
             this.removeSelectable();
         }
 
-        this.domainObject.$destroy();
+        this.openmct.objects.destroy(this.domainObject);
     },
     methods: {
         setObject(domainObject) {

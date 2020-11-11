@@ -202,7 +202,7 @@ export default {
         }
     },
     mounted() {
-        this.openmct.objects.getSynchronized(this.item.identifier)
+        this.openmct.objects.getMutable(this.item.identifier)
             .then(this.setObject);
         this.openmct.time.on("bounds", this.refreshData);
     },
@@ -214,7 +214,7 @@ export default {
         }
 
         this.openmct.time.off("bounds", this.refreshData);
-        this.domainObject.$destroy();
+        this.openmct.objects.destroy(this.domainObject);
     },
     methods: {
         requestHistoricalData() {

@@ -39,7 +39,7 @@ define([
 
         function viewObject(object, viewProvider) {
             if (mutable) {
-                mutable.$destroy();
+                openmct.objects.destroyMutable(mutable);
                 mutable = undefined;
             }
 
@@ -116,7 +116,7 @@ define([
 
         function pathToObjects(path) {
             return Promise.all(path.map((keyString) => {
-                return openmct.objects.getSynchronized(keyString);
+                return openmct.objects.getMutable(keyString);
             }));
         }
 
@@ -138,8 +138,8 @@ define([
         function clearMutationListeners() {
             if (openmct.router.path !== undefined) {
                 openmct.router.path.forEach((pathObject) => {
-                    if (pathObject.$destroy) {
-                        pathObject.$destroy();
+                    if (pathObject.isMutable) {
+                        openmct.objects.destroyMutable(pathObject);
                     }
                 });
             }

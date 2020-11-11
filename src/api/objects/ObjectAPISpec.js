@@ -115,7 +115,7 @@ describe("The Object API", () => {
             mockProvider.get.and.returnValue(Promise.resolve(testObject));
             objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
 
-            return objectAPI.getSynchronized(testObject.identifier)
+            return objectAPI.getMutable(testObject.identifier)
                 .then(object => {
                     mutable = object;
 
