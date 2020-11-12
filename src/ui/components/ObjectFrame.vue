@@ -94,6 +94,8 @@
         :object="domainObject"
         :show-edit-view="showEditView"
         :object-path="objectPath"
+        :layout-font-size="layoutFontSize"
+        :layout-font="layoutFont"
         @change-provider="setViewProvider"
     />
 </div>
@@ -130,6 +132,14 @@ export default {
         showEditView: {
             type: Boolean,
             default: true
+        },
+        layoutFontSize: {
+            type: String,
+            default: ''
+        },
+        layoutFont: {
+            type: String,
+            default: ''
         }
     },
     data() {

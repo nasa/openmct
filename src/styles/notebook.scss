@@ -275,21 +275,22 @@
     &__text {
         min-height: 22px; // Needed in Firefox when field is blank
         white-space: pre-wrap;
-
-        &.is-blank-notebook-entry {
-            &:not(:focus):before {
-                content: 'Blank entry';
-                font-style: italic;
-                opacity: 0.5;
-            }
-        }
     }
 
-    &__embeds {
-        //flex-wrap: wrap;
+    &__input {
+        // Appended to __text element when Notebook is not in readOnly mode
+        @include inlineInput;
+        padding-left: $inputTextPLeftRight;
+        padding-right: $inputTextPLeftRight;
 
-        > [class*="__embed"] {
-            //margin: 0 $interiorMarginSm $interiorMarginSm 0;
+        @include hover {
+            &:not(:focus) {
+                background: rgba($colorBodyFg, 0.1);
+            }
+        }
+
+        &:focus {
+            background: $colorInputBg;
         }
     }
 

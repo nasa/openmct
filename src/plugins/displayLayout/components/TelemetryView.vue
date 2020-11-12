@@ -31,9 +31,11 @@
     <div
         v-if="domainObject"
         class="c-telemetry-view"
-        :class="[styleClass]"
+        :class="[statusClass]"
         :style="styleObject"
-        @contextmenu.prevent.stop="showContextMenu"
+        :data-font-size="item.fontSize"
+        :data-font="item.font"
+        @contextmenu.prevent="showContextMenu"
     >
         <div class="is-status__indicator"
              title="This item is missing or suspect"
@@ -93,7 +95,8 @@ export default {
             stroke: "",
             fill: "",
             color: "",
-            size: "13px"
+            fontSize: 'default',
+            font: 'default'
         };
     },
     inject: ['openmct', 'objectPath'],
@@ -153,10 +156,15 @@ export default {
             return unit;
         },
         styleObject() {
-            return Object.assign({}, {
-                fontSize: this.item.size
-            }, this.itemStyle);
+            let size;
+            //for legacy size support
+            if (!this.item.fontSize) {
+                size = this.item.size;
+            }
 
+            return Object.assign({}, {
+                size
+            }, this.itemStyle);
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;

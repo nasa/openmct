@@ -27,6 +27,7 @@ export default {
     inject: ['openmct'],
     data() {
         return {
+            objectStyle: undefined,
             itemStyle: undefined,
             styleClass: ''
         };
