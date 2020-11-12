@@ -148,10 +148,21 @@
     &.is-missing {
         border: $borderMissing;
     }
+
+    &__object-view {
+        display: flex;
+        flex: 1 1 auto;
+        overflow: auto;
+
+        .u-fills-container {
+            // Expand component types that fill a container
+            @include abs();
+        }
+    }
 }
 
 .l-angular-ov-wrapper {
     // This element is the recipient for object styling; cannot be display: contents
-    height: 100%;
+    flex: 1 1 auto;
     overflow: hidden;
 }
