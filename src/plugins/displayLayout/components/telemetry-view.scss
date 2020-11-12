@@ -29,12 +29,12 @@
 
     @include isMissing($absPos: true);
 
-    .is-missing__indicator {
+    .is-status__indicator {
         top: 0;
         left: 0;
     }
 
-    &.is-missing {
+    &.is-status--missing {
         border: $borderMissing;
     }
 }

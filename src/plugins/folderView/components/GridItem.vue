@@ -26,8 +26,8 @@
         </div>
     </div>
     <div class="c-grid-item__controls">
-        <div class="is-missing__indicator"
-             title="This item is missing"
+        <div class="is-status__indicator"
+             title="This item is missing or suspect"
         ></div>
         <div
             class="icon-people"

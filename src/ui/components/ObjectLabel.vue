@@ -11,8 +11,8 @@
         class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"
     >
-        <span class="is-missing__indicator"
-              title="This item is missing"
+        <span class="is-status__indicator"
+              title="This item is missing or suspect"
         ></span>
     </div>
     <div class="c-tree__item__name c-object-label__name">
@@ -60,7 +60,7 @@ export default {
             return type.definition.cssClass;
         },
         statusClass() {
-            return `is-${this.status}`;
+            return (this.status) ? `is-status--${this.status}` : '';
         }
     },
     mounted() {

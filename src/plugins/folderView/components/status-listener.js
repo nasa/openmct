@@ -8,7 +8,7 @@ export default {
     },
     computed: {
         statusClass() {
-            return `is-${this.status}`;
+            return (this.status) ? `is-status--${this.status}` : '';
         }
     },
     data() {

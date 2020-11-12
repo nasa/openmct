@@ -35,8 +35,8 @@
         :style="styleObject"
         @contextmenu.prevent.stop="showContextMenu"
     >
-        <div class="is-missing__indicator"
-             title="This item is missing"
+        <div class="is-status__indicator"
+             title="This item is missing or suspect"
         ></div>
         <div
             v-if="showLabel"
@@ -134,7 +134,7 @@ export default {
     },
     computed: {
         statusClass() {
-            return `is-${this.status}`;
+            return (this.status) ? `is-status--${this.status}` : '';
         },
         showLabel() {
             let displayMode = this.item.displayMode;

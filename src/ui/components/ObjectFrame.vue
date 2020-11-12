@@ -40,8 +40,8 @@
             <div class="c-object-label__type-icon"
                  :class="cssClass"
             >
-                <span class="is-missing__indicator"
-                      title="This item is missing"
+                <span class="is-status__indicator"
+                      title="This item is missing or suspect"
                 ></span>
             </div>
             <div class="c-object-label__name">
@@ -85,8 +85,8 @@
         </div>
     </div>
 
-    <div class="is-missing__indicator"
-         title="This item is missing"
+    <div class="is-status__indicator"
+         title="This item is missing or suspect"
     ></div>
     <object-view
         ref="objectView"
@@ -153,7 +153,7 @@ export default {
     },
     computed: {
         statusClass() {
-            return `is-${this.status}`;
+            return (this.status) ? `is-status--${this.status}` : '';
         }
     },
     mounted() {

@@ -41,7 +41,7 @@
         }
     }
 
-    &.is-missing {
+    &.is-status--missing {
         @include isMissing();
 
         [class*='__type-icon'],
