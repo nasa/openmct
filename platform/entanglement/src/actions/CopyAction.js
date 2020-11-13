@@ -161,7 +161,7 @@ define(
                 .then(success, error, notification);
         };
 
-        CopyAction.prototype.appliesTo = function (context) {
+        CopyAction.appliesTo = function (context) {
             var applicableObject =
                 context.selectedObject || context.domainObject;
 
