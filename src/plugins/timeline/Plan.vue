@@ -61,20 +61,21 @@ export default {
         this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
         this.openmct.time.on("bounds", this.updateViewBounds);
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
-        this.unlistenFileChange = this.openmct.objects.observe(this.domainObject, '*', (mutatedObject) => {
-            this.validateJSON(mutatedObject.selectFile.body);
-            this.setScaleAndPlotActivities();
-        });
+        this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     },
     destroyed() {
         clearInterval(this.resizeTimer);
         this.openmct.time.off("timeSystem", this.setScaleAndPlotActivities);
         this.openmct.time.off("bounds", this.updateViewBounds);
-        if (this.unlistenFileChange) {
-            this.unlistenFileChange();
+        if (this.unlisten) {
+            this.unlisten();
         }
     },
     methods: {
+        observeForChanges(mutatedObject) {
+            this.validateJSON(mutatedObject.selectFile.body);
+            this.setScaleAndPlotActivities();
+        },
         resize() {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
                 this.setDimensions();
