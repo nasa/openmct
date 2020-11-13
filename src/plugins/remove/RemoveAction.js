@@ -76,7 +76,7 @@ export default class RemoveAction {
             .map(object => this.openmct.objects.makeKeyString(object.identifier))
             .join("/");
 
-        window.location.href = '#/browse/' + urlPath;
+        this.openmct.router.setHash(`#/browse/${urlPath}`);
     }
 
     removeFromComposition(parent, child) {

@@ -264,12 +264,12 @@ export default {
             let currentTabIndexInURL = getSearchParam(this.searchTabKey);
 
             if (index !== currentTabIndexInURL) {
-                setSearchParam(this.searchTabKey, index);
+                setSearchParam(this.openmct, this.searchTabKey, index);
                 this.currentTabIndex = index;
             }
         },
         clearCurrentTabIndexFromURL() {
-            deleteSearchParam(this.searchTabKey);
+            deleteSearchParam(this.openmct, this.searchTabKey);
         }
     }
 };

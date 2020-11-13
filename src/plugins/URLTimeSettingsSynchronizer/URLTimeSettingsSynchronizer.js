@@ -51,7 +51,7 @@ export default class URLTimeSettingsSynchronizer {
     initialize() {
         this.updateTimeSettings();
 
-        window.addEventListener('hashchange', this.updateTimeSettings);
+        this.openmct.router.on('change:hash', this.updateTimeSettings);
         TIME_EVENTS.forEach(event => {
             this.openmct.time.on(event, this.setUrlFromTimeApi);
         });
@@ -59,7 +59,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     destroy() {
-        window.removeEventListener('hashchange', this.updateTimeSettings);
+        this.openmct.router.off('change:hash', this.updateTimeSettings);
         this.openmct.off('start', this.initialize);
         this.openmct.off('destroy', this.destroy);
 
@@ -69,7 +69,8 @@ export default class URLTimeSettingsSynchronizer {
         this.openmct.time.off('bounds', this.updateBounds);
     }
 
-    updateTimeSettings() {
+    updateTimeSettings(hash) {
+        // console.log('updateTimeSettings', hash);
         // Prevent from triggering self
         if (!this.isUrlUpdateInProgress) {
             let timeParameters = this.parseParametersFromUrl();
@@ -177,7 +178,7 @@ export default class URLTimeSettingsSynchronizer {
 
         searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
         this.isUrlUpdateInProgress = true;
-        setAllSearchParams(searchParams);
+        setAllSearchParams(this.openmct, searchParams);
     }
 
     areTimeParametersValid(timeParameters) {

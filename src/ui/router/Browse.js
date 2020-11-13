@@ -15,6 +15,7 @@ define([
 
         openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
             isRoutingInProgress = true;
+
             let navigatePath = results[1];
             navigateToPath(navigatePath, params.view);
             onParamsChanged(null, null, params);

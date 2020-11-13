@@ -39,7 +39,7 @@ export default class GoToOriginalAction {
                     .slice(1)
                     .join('/');
 
-                window.location.href = url;
+                this._openmct.router.setHash(url);
             });
     }
     appliesTo(objectPath) {

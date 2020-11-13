@@ -6,7 +6,6 @@
         'is-missing': observedObject.status === 'missing'
     }"
     draggable="true"
-    :href="objectLink"
     @dragstart="dragStart"
     @click="navigateOrPreview"
 >
@@ -85,7 +84,11 @@ export default {
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 this.preview();
+
+                return;
             }
+
+            this.openmct.router.setPath(this.objectLink);
         },
         preview() {
             if (this.previewAction.appliesTo(this.objectPath)) {

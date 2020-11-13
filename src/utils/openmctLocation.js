@@ -29,25 +29,25 @@ import objectUtils from '../api/objects/object-utils.js';
  * hash section of the URL.
  */
 
-export function setSearchParam(paramName, paramValue) {
+export function setSearchParam(openmct, paramName, paramValue) {
     let url = getHashRelativeURL();
 
     url.searchParams.set(paramName, paramValue);
-    setLocationFromUrl(url);
+    setLocationFromUrl(openmct, url);
 }
 
-export function deleteSearchParam(paramName) {
+export function deleteSearchParam(openmct, paramName) {
     let url = getHashRelativeURL();
 
     url.searchParams.delete(paramName);
-    setLocationFromUrl(url);
+    setLocationFromUrl(openmct, url);
 }
 
 /**
  * Will replace all current search parameters with the ones defined in urlSearchParams
  * @param {URLSearchParams} paramMap
  */
-export function setAllSearchParams(newSearchParams) {
+export function setAllSearchParams(openmct, newSearchParams) {
     let url = getHashRelativeURL();
 
     Array.from(url.searchParams.keys()).forEach((key) => url.searchParams.delete(key));
@@ -56,7 +56,7 @@ export function setAllSearchParams(newSearchParams) {
         url.searchParams.set(key, newSearchParams.get(key));
     });
 
-    setLocationFromUrl(url);
+    setLocationFromUrl(openmct, url);
 }
 
 export function getSearchParam(paramName) {
@@ -75,7 +75,7 @@ export function getObjectPath() {
     return getHashRelativeURL().pathname;
 }
 
-export function setObjectPath(objectPath) {
+export function setObjectPath(openmct, objectPath) {
     let objectPathString;
     let url = getHashRelativeURL();
 
@@ -92,15 +92,16 @@ export function setObjectPath(objectPath) {
     }
 
     url.pathname = objectPathString;
-    setLocationFromUrl(url);
+    setLocationFromUrl(openmct, url);
 }
 
 function isDomainObject(potentialObject) {
     return potentialObject.identifier === undefined;
 }
 
-function setLocationFromUrl(url) {
-    window.location.hash = `${url.pathname}${url.search}`;
+function setLocationFromUrl(openmct, url) {
+    console.log('setLocationFromUrl');
+    openmct.router.setHash(`${url.pathname}${url.search}`);
 }
 
 function getHashRelativeURL() {

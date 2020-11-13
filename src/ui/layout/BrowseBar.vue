@@ -304,7 +304,7 @@ export default {
             this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
         },
         goToParent() {
-            window.location.hash = this.parentUrl;
+            this.openmct.router.setHash(this.parentUrl);
         },
         toggleLock(flag) {
             this.openmct.objects.mutate(this.domainObject, 'locked', flag);

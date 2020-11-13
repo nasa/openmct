@@ -144,7 +144,7 @@ export default {
             }
 
             const url = new URL(link);
-            window.location.href = url.hash;
+            this.openmct.router.setHash(url.hash);
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);

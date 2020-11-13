@@ -125,10 +125,11 @@ export default {
         Sidebar
     },
     data() {
+        const configuration = this.domainObject.configuration || {};
         return {
             defaultPageId: getDefaultNotebook() ? getDefaultNotebook().page.id : '',
             defaultSectionId: getDefaultNotebook() ? getDefaultNotebook().section.id : '',
-            defaultSort: this.domainObject.configuration.defaultSort,
+            defaultSort: configuration.defaultSort,
             focusEntryId: null,
             internalDomainObject: this.domainObject,
             search: '',

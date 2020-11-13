@@ -21,8 +21,8 @@
  *****************************************************************************/
 /*global module*/
 
-const LocationBar = require('location-bar');
 const EventEmitter = require('EventEmitter');
+const lodash = require('lodash');
 
 function paramsToObject(searchParams) {
     let params = {};
@@ -61,7 +61,9 @@ class ApplicationRouter extends EventEmitter {
         super();
         this.routes = [];
         this.started = false;
-        this.locationBar = new LocationBar();
+
+        this.hashChanged = this.hashChanged.bind(this);
+        // this.setHash = lodash.debounce(this.setHash, 500);
     }
 
     /**
@@ -74,14 +76,31 @@ class ApplicationRouter extends EventEmitter {
 
         this.started = true;
 
-        this.locationBar.onChange(p => this.handleLocationChange(p));
-        this.locationBar.start({
-            root: location.pathname
-        });
+        this.hashChanged();
+
+        window.addEventListener('hashchange', this.hashChanged);
+    }
+
+    getPathString() {
+        const hash = window.location.hash;
+        return hash.substring(1);
     }
 
     destroy() {
-        this.locationBar.stop();
+        window.removeEventListener(this.hashChanged);
+    }
+
+    hashChanged () {
+        const pathString = this.getPathString();
+        this.handleLocationChange(this.getPathString());
+        // const hasTimeSystem = pathString.includes('timeSystem=');
+        // if (hasTimeSystem) {
+            // console.log(location.hash);
+            // const currentState = history.state || {};
+            // history.pushState(currentState, 'hashchange', location.hash);
+        // }
+
+        // console.log('hashchanged', new Date().toISOString(), location.hash);
     }
 
     handleLocationChange(pathString) {
@@ -186,7 +205,25 @@ class ApplicationRouter extends EventEmitter {
     }
 
     set(path, queryString) {
-        location.hash = `${path}?${queryString}`;
+        const hash = `${path}?${queryString}`;
+
+        this.setHash(hash);
+    }
+
+    setHash(hash) {
+        if (hash === location.hash) {
+            return;
+        }
+
+        console.log('setHash', new Date().toISOString(), hash);
+
+        if (hash.includes('timeSystem=')) {
+            location.hash = hash;
+        } else {
+            this.handleLocationChange(hash);
+        }
+
+        this.emit('change:hash', hash);
     }
 
     setQueryString(queryString) {
