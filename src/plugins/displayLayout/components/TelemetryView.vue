@@ -75,7 +75,6 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
-import CustomStringFormat from '../CustomStringFormatter';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
@@ -268,7 +267,7 @@ export default {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
-            this.customStringformatter = new CustomStringFormat(this.openmct, this.metadata.value(this.item.value), this.item.format);
+            this.customStringformatter = this.openmct.telemetry.customStringFormatter(this.metadata, this.item);
 
             this.requestHistoricalData();
             this.subscribeToObject();

@@ -21,12 +21,14 @@
  *****************************************************************************/
 
 define([
+    '../../plugins/displayLayout/CustomStringFormatter',
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
     './DefaultMetadataProvider',
     'objectUtils',
     'lodash'
 ], function (
+    CustomStringFormatter,
     TelemetryMetadataManager,
     TelemetryValueFormatter,
     DefaultMetadataProvider,
@@ -141,6 +143,17 @@ define([
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
     }
+
+    /**
+     * Return Custom String Formatter
+     *
+     * @param {Object} metadata
+     * @param {Object} item
+     * @returns {CustomStringFormatter}
+     */
+    TelemetryAPI.prototype.customStringFormatter = function (metadata, item) {
+        return new CustomStringFormatter.default(this.openmct, metadata.value(item.value), item.format);
+    };
 
     /**
      * Return true if the given domainObject is a telemetry object.  A telemetry
