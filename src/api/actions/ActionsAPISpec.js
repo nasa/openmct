@@ -21,17 +21,14 @@
  *****************************************************************************/
 
 import ActionsAPI from './ActionsAPI';
-import ActionsCollection from './ActionCollection';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
 describe('The Actions API', () => {
     let openmct;
     let actionsAPI;
     let mockAction;
-    let invoked;
     let mockObjectPath;
     let mockViewContext1;
-    let mockViewContext2;
 
     beforeEach(() => {
         openmct = createOpenMct();
@@ -46,6 +43,7 @@ describe('The Actions API', () => {
             appliesTo: (objectPath, view = {}) => {
                 if (view.getViewContext) {
                     let viewContext = view.getViewContext();
+
                     return viewContext.onlyAppliesToTestCase;
                 } else if (objectPath.length) {
                     return objectPath[0].type === 'fake-folder';
@@ -54,7 +52,6 @@ describe('The Actions API', () => {
                 return false;
             },
             invoke: () => {
-                invoked = true;
             }
         };
         mockObjectPath = [
@@ -83,13 +80,6 @@ describe('The Actions API', () => {
                 };
             }
         };
-        mockViewContext2 = {
-            getViewContext:() => {
-                return {
-                    onlyAppliesToTestCase: true
-                };
-            }
-        };
     });
 
     afterEach(() => {
@@ -99,7 +89,7 @@ describe('The Actions API', () => {
     describe("register method", () => {
         it("adds action to ActionsAPI", () => {
             actionsAPI.register(mockAction);
-            
+
             let action = actionsAPI.get(mockObjectPath, mockViewContext1)[mockAction.key];
 
             expect(action.key).toEqual(mockAction.key);
