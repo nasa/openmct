@@ -29,13 +29,13 @@
             @click="showTab(tab, index)"
         >
             <div class="c-tabs-view__tab__label c-object-label"
-                 :class="{'is-missing': tab.domainObject.status === 'missing'}"
+                 :class="[tab.status ? `is-${tab.status}` : '']"
             >
                 <div class="c-object-label__type-icon"
                      :class="tab.type.definition.cssClass"
                 >
-                    <span class="is-missing__indicator"
-                          title="This item is missing"
+                    <span class="is-status__indicator"
+                          title="This item is missing or suspect"
                     ></span>
                 </div>
                 <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
@@ -192,8 +192,10 @@ export default {
         },
         addItem(domainObject) {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
+            let status = this.openmct.status.get(domainObject.identifier);
             let tabItem = {
                 domainObject,
+                status,
                 type: type,
                 key: this.openmct.objects.makeKeyString(domainObject.identifier)
             };

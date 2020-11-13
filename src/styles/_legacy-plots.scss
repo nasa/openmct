@@ -59,12 +59,12 @@ mct-plot {
     }
 
     /*********************** MISSING ITEM INDICATORS */
-    .is-missing__indicator {
+    .is-status__indicator {
         display: none;
     }
-    .is-missing {
+    .is-status--missing {
         @include isMissing();
-        .is-missing__indicator {
+        .is-status__indicator {
             font-size: 0.8em;
         }
     }

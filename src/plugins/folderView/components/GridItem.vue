@@ -1,11 +1,10 @@
 <template>
 <a
     class="l-grid-view__item c-grid-item"
-    :class="{
+    :class="[{
         'is-alias': item.isAlias === true,
-        'is-missing': item.model.status === 'missing',
         'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1
-    }"
+    }, statusClass]"
     :href="objectLink"
 >
     <div
@@ -27,8 +26,8 @@
         </div>
     </div>
     <div class="c-grid-item__controls">
-        <div class="is-missing__indicator"
-             title="This item is missing"
+        <div class="is-status__indicator"
+             title="This item is missing or suspect"
         ></div>
         <div
             class="icon-people"
@@ -46,9 +45,10 @@
 <script>
 import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
 import objectLink from '../../../ui/mixins/object-link';
+import statusListener from './status-listener';
 
 export default {
-    mixins: [contextMenuGesture, objectLink],
+    mixins: [contextMenuGesture, objectLink, statusListener],
     props: {
         item: {
             type: Object,

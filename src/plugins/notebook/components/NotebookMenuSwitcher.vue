@@ -50,6 +50,7 @@ export default {
     },
     mounted() {
         this.notebookSnapshot = new Snapshot(this.openmct);
+        this.setDefaultNotebookStatus();
     },
     methods: {
         showMenu(event) {
@@ -105,6 +106,15 @@ export default {
 
                 this.notebookSnapshot.capture(snapshotMeta, notebook.type, element);
             });
+        },
+        setDefaultNotebookStatus() {
+            let defaultNotebookObject = getDefaultNotebook();
+
+            if (defaultNotebookObject && defaultNotebookObject.notebookMeta) {
+                let notebookIdentifier = defaultNotebookObject.notebookMeta.identifier;
+
+                this.openmct.status.set(notebookIdentifier, 'notebook-default');
+            }
         }
     }
 };

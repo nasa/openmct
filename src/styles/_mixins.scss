@@ -129,31 +129,44 @@
     }
 }
 
-@mixin isMissing($absPos: false) {
+@mixin isStatus($absPos: false) {
+    // Supports CSS classing as follows:
+    // is-status--missing, is-status--suspect, etc.
     // Common styles to be applied to tree items, object labels, grid and list item views
-    //opacity: 0.7;
-    //pointer-events: none; // Don't think we can do this, as disables title hover on icon element
 
-    .is-missing__indicator {
+    .is-status__indicator {
         display: none ;
         text-shadow: $colorBodyBg 0 0 2px;
-        color: $colorAlert;
         font-family: symbolsfont;
 
-        &:before {
-            content: $glyph-icon-alert-triangle;
+        &[class^='is-status'] .is-status__indicator,
+        [class^='is-status'] .is-status__indicator {
+            display: block !important;
         }
-    }
 
-    @if $absPos {
-        .is-missing__indicator {
+        @if $absPos {
             position: absolute;
             z-index: 3;
         }
     }
+}
 
-    &.is-missing .is-missing__indicator,
-    .is-missing .is-missing__indicator { display: block !important; }
+@mixin isMissing($absPos: false) {
+    @include isStatus($absPos);
+
+    .is-status__indicator:before {
+        color: $colorAlert;
+        content: $glyph-icon-alert-triangle;
+    }
+}
+
+@mixin isSuspect($absPos: false) {
+    @include isStatus($absPos);
+
+    .is-status__indicator:before {
+        color: $colorWarningLo;
+        content: $glyph-icon-alert-rect;
+    }
 }
 
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {

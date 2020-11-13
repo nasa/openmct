@@ -8,15 +8,15 @@
         <a
             ref="objectLink"
             class="c-object-label"
-            :class="{ 'is-missing': item.model.status === 'missing' }"
+            :class="[statusClass]"
             :href="objectLink"
         >
             <div
                 class="c-object-label__type-icon c-list-item__name__type-icon"
                 :class="item.type.cssClass"
             >
-                <span class="is-missing__indicator"
-                      title="This item is missing"
+                <span class="is-status__indicator"
+                      title="This item is missing or suspect"
                 ></span>
             </div>
             <div class="c-object-label__name c-list-item__name__name">{{ item.model.name }}</div>
@@ -39,9 +39,10 @@
 import moment from 'moment';
 import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
 import objectLink from '../../../ui/mixins/object-link';
+import statusListener from './status-listener';
 
 export default {
-    mixins: [contextMenuGesture, objectLink],
+    mixins: [contextMenuGesture, objectLink, statusListener],
     props: {
         item: {
             type: Object,

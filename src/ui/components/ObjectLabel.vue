@@ -1,10 +1,7 @@
 <template>
 <a
     class="c-tree__item__label c-object-label"
-    :class="{
-        classList,
-        'is-missing': observedObject.status === 'missing'
-    }"
+    :class="[statusClass]"
     draggable="true"
     :href="objectLink"
     @dragstart="dragStart"
@@ -14,8 +11,8 @@
         class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"
     >
-        <span class="is-missing__indicator"
-              title="This item is missing"
+        <span class="is-status__indicator"
+              title="This item is missing or suspect"
         ></span>
     </div>
     <div class="c-tree__item__name c-object-label__name">
@@ -49,18 +46,11 @@ export default {
     },
     data() {
         return {
-            observedObject: this.domainObject
+            observedObject: this.domainObject,
+            status: ''
         };
     },
     computed: {
-        classList() {
-            const classList = this.observedObject.classList;
-            if (!classList || !classList.length) {
-                return '';
-            }
-
-            return classList.join(' ');
-        },
         typeClass() {
             let type = this.openmct.types.get(this.observedObject.type);
             if (!type) {
@@ -68,6 +58,9 @@ export default {
             }
 
             return type.definition.cssClass;
+        },
+        statusClass() {
+            return (this.status) ? `is-status--${this.status}` : '';
         }
     },
     mounted() {
@@ -78,7 +71,12 @@ export default {
             this.$once('hook:destroyed', removeListener);
         }
 
+        this.removeStatusListener = this.openmct.status.observe(this.observedObject.identifier, this.setStatus);
+        this.status = this.openmct.status.get(this.observedObject.identifier);
         this.previewAction = new PreviewAction(this.openmct);
+    },
+    destroyed() {
+        this.removeStatusListener();
     },
     methods: {
         navigateOrPreview(event) {
@@ -110,6 +108,9 @@ export default {
             // (eg. notabook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
             event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
 };
