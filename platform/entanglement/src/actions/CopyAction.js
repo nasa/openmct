@@ -173,8 +173,6 @@ define(
                 && applicableObject.hasCapability('context'));
         };
 
-        CopyAction.appliesTo = AbstractComposeAction.appliesTo;
-
         return CopyAction;
     }
 );
