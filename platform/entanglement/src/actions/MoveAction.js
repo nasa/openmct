@@ -45,11 +45,15 @@ define(
             var applicableObject =
                 context.selectedObject || context.domainObject;
 
+            let type = applicableObject && applicableObject.getCapability('type');
+
+            const isCreatable = Boolean(type && type.hasFeature('creation'));
+
             if (applicableObject && applicableObject.model.locked) {
                 return false;
             }
 
-            return Boolean(applicableObject
+            return isCreatable && Boolean(applicableObject
                 && applicableObject.hasCapability('context'));
         };
 

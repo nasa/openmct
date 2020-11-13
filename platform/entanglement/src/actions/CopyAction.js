@@ -161,6 +161,18 @@ define(
                 .then(success, error, notification);
         };
 
+        CopyAction.prototype.appliesTo = function (context) {
+            var applicableObject =
+                context.selectedObject || context.domainObject;
+
+            let type = applicableObject && applicableObject.getCapability('type');
+
+            const isCreatable = Boolean(type && type.hasFeature('creation'));
+
+            return isCreatable && Boolean(applicableObject
+                && applicableObject.hasCapability('context'));
+        };
+
         CopyAction.appliesTo = AbstractComposeAction.appliesTo;
 
         return CopyAction;
