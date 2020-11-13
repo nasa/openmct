@@ -27,14 +27,20 @@
         border: 1px solid transparent;
     }
 
-    @include isMissing($absPos: true);
-
     .is-status__indicator {
         top: 0;
         left: 0;
     }
 
     &.is-status--missing {
+        @include isMissing($absPos: true);
+
+        border: $borderMissing;
+    }
+
+    &.is-status--suspect {
+        @include isSuspect($absPos: true);
+
         border: $borderMissing;
     }
 }

@@ -52,6 +52,15 @@
         }
     }
 
+    &.is-status--suspect {
+        @include isSuspect();
+
+        [class*='__type-icon'],
+        [class*='__details'] {
+            opacity: $opacityMissing;
+        }
+    }
+
     &__details {
         display: flex;
         flex-flow: column nowrap;

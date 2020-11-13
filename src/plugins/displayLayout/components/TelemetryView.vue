@@ -38,7 +38,7 @@
         @contextmenu.prevent="showContextMenu"
     >
         <div class="is-status__indicator"
-             title="This item is missing or suspect"
+             :title="`This item is ${this.status}`"
         ></div>
         <div
             v-if="showLabel"

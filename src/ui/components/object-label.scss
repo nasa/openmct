@@ -35,6 +35,16 @@
             transform: scale(0.7);
         }
     }
+
+    &.is-status--suspect {
+        @include isSuspect($absPos: true);
+
+        .is-status__indicator {
+            right: -3px;
+            top: -3px;
+            transform: scale(0.7);
+        }
+    }
 }
 
 .c-tree .c-object-label {

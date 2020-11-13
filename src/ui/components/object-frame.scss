@@ -118,6 +118,15 @@
                 left: $interiorMargin;
             }
         }
+
+        &.is-status--suspect {
+            @include isSuspect($absPos: true);
+
+            .is-status__indicator {
+                top: $interiorMargin;
+                left: $interiorMargin;
+            }
+        }
     }
 
     /*************************** OBJECT VIEW */
@@ -146,6 +155,10 @@
     }
 
     &.is-status--missing {
+        border: $borderMissing;
+    }
+
+    &.is-status--suspect {
         border: $borderMissing;
     }
 
