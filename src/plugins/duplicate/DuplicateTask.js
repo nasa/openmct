@@ -83,6 +83,8 @@ export default class DuplicateTask {
         }
 
         this.firstClone = domainObjectClone;
+
+        return;
     }
 
     /**
@@ -121,6 +123,8 @@ export default class DuplicateTask {
         let parentComposition = this.openmct.composition.get(this.parent);
         await parentComposition.load();
         parentComposition.add(this.firstClone);
+
+        return;
     }
 
     /**
@@ -150,10 +154,10 @@ export default class DuplicateTask {
 
             // Recursively duplicate children
             return this.duplicateComposees(clone, composees);
-        } else {
-            // Not creatable, creating a link, no need to iterate children
-            return originalObject;
         }
+
+        // Not creatable, creating a link, no need to iterate children
+        return originalObject;
     }
 
     /**

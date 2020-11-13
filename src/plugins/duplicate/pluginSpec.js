@@ -74,6 +74,38 @@ describe("The Duplicate Action plugin", () => {
             }
         }).folder;
 
+        let objectGet = openmct.objects.get.bind(openmct.objects);
+        spyOn(openmct.objects, 'get').and.callFake((identifier) => {
+            let obj = [childObject, parentObject, anotherParentObject].find((ob) => ob.identifier.key === identifier.key);
+
+            if (!obj) {
+                // not one of the mocked objs, callthrough basically
+                return objectGet(identifier);
+            }
+
+            return Promise.resolve(obj);
+        });
+
+        spyOn(openmct.composition, 'get').and.callFake((domainObject) => {
+            return {
+                load: async () => {
+                    let obj = [childObject, parentObject, anotherParentObject].find((ob) => ob.identifier.key === domainObject.identifier.key);
+                    let children = [];
+
+                    if (obj) {
+                        for (let i = 0; i < obj.composition.length; i++) {
+                            children.push(await openmct.objects.get(obj.composition[i]));
+                        }
+                    }
+
+                    return Promise.resolve(children);
+                },
+                add: (child) => {
+                    domainObject.composition.push(child.identifier);
+                }
+            };
+        });
+
         // already installed by default, but never hurts, just adds to context menu
         openmct.install(DuplicateActionPlugin());
 
@@ -97,13 +129,12 @@ describe("The Duplicate Action plugin", () => {
             done();
         });
 
-        it("the duplicate child object's name (when not changing) should be the same as the original object", async (done) => {
+        it("the duplicate child object's name (when not changing) should be the same as the original object", async () => {
             let duplicatedObjectIdentifier = anotherParentObject.composition[0];
             let duplicatedObject = await openmct.objects.get(duplicatedObjectIdentifier);
             let duplicateObjectName = duplicatedObject.name;
 
             expect(duplicateObjectName).toEqual(parentObject.name);
-            done();
         });
 
         it("the duplicate child object's identifier should be new", () => {
