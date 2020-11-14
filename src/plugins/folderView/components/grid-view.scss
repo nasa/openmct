@@ -11,6 +11,8 @@
 
     body.desktop & {
         flex-flow: row wrap;
+        align-content: flex-start;
+
         &__item {
             height: $gridItemDesk;
             width: $gridItemDesk;

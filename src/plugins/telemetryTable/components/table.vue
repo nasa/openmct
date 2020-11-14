@@ -125,7 +125,7 @@
     <!-- alternate controlbar end  -->
 
     <div
-        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
+        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar u-style-receiver js-style-receiver"
         :class="{
             'loading': loading,
             'is-paused' : paused
@@ -234,6 +234,10 @@
             class="c-telemetry-table__sizing js-telemetry-table__sizing"
             :style="sizingTableWidth"
         >
+            <sizing-row
+                :is-editing="isEditing"
+                @change-height="setRowHeight"
+            />
             <tr>
                 <template v-for="(title, key) in headers">
                     <th
@@ -253,7 +257,11 @@
                 :object-path="objectPath"
             />
         </table>
-        <telemetry-filter-indicator />
+        <table-footer-indicator
+            class="c-telemetry-table__footer"
+            :marked-rows="markedRows.length"
+            :total-rows="totalNumberOfRows"
+        />
     </div>
 </div><!-- closes c-table-wrapper -->
 </template>
@@ -262,10 +270,11 @@
 import TelemetryTableRow from './table-row.vue';
 import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
-import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
+import TableFooterIndicator from './table-footer-indicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import SizingRow from './sizing-row.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -277,8 +286,9 @@ export default {
         TelemetryTableRow,
         TableColumnHeader,
         search,
-        TelemetryFilterIndicator,
-        ToggleSwitch
+        TableFooterIndicator,
+        ToggleSwitch,
+        SizingRow
     },
     inject: ['table', 'openmct', 'objectPath'],
     props: {
@@ -342,7 +352,8 @@ export default {
             paused: false,
             markedRows: [],
             isShowingMarkedRowsOnly: false,
-            hideHeaders: configuration.hideHeaders
+            hideHeaders: configuration.hideHeaders,
+            totalNumberOfRows: 0
         };
     },
     computed: {
@@ -451,6 +462,8 @@ export default {
                     let filteredRows = this.table.filteredRows.getRows();
                     let filteredRowsLength = filteredRows.length;
 
+                    this.totalNumberOfRows = filteredRowsLength;
+
                     if (filteredRowsLength < VISIBLE_ROW_COUNT) {
                         end = filteredRowsLength;
                     } else {
@@ -499,7 +512,7 @@ export default {
             let columnWidths = {};
             let totalWidth = 0;
             let headerKeys = Object.keys(this.headers);
-            let sizingTableRow = this.sizingTable.children[0];
+            let sizingTableRow = this.sizingTable.children[1];
             let sizingCells = sizingTableRow.children;
 
             headerKeys.forEach((headerKey, headerIndex, array) => {
@@ -894,6 +907,12 @@ export default {
             this.isAutosizeEnabled = true;
 
             this.$nextTick().then(this.calculateColumnWidths);
+        },
+        setRowHeight(height) {
+            this.rowHeight = height;
+            this.setHeight();
+            this.calculateTableSize();
+            this.clearRowsAndRerender();
         }
     }
 };
