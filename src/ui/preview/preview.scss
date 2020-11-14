@@ -13,8 +13,9 @@
     }
 
     &__object-view {
+        display: flex;
         flex: 1 1 auto;
-        height: 0; // Chrome 73
+        height: 100%; // Chrome 73
         overflow: auto;
 
         > div:not([class]) {
