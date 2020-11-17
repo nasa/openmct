@@ -6,11 +6,11 @@ export default class CopyToNotebookAction {
         this.openmct = openmct;
 
         this.cssClass = 'icon-duplicate';
-        this.description = 'Copy to Notebook action';
+        this.description = 'Copy value to notebook as an entry';
         this.group = "action";
         this.key = 'copyToNotebook';
         this.name = 'Copy to Notebook';
-        this.priority = 9;
+        this.priority = 1;
     }
 
     copyToNotebook(entryText) {
@@ -25,15 +25,16 @@ export default class CopyToNotebookAction {
             });
     }
 
-    invoke(objectPath, viewContext) {
+    invoke(objectPath, view = {}) {
+        let viewContext = view.getViewContext && view.getViewContext();
+
         this.copyToNotebook(viewContext.formattedValueForCopy());
     }
 
-    appliesTo(objectPath, viewContext) {
-        if (viewContext && viewContext.getViewKey) {
-            return viewContext.getViewKey().includes('alphanumeric-format');
-        }
+    appliesTo(objectPath, view = {}) {
+        let viewContext = view.getViewContext && view.getViewContext();
 
-        return false;
+        return viewContext && viewContext.formattedValueForCopy
+            && typeof viewContext.formattedValueForCopy === 'function';
     }
 }

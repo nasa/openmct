@@ -47,36 +47,39 @@ class ActionsAPI extends EventEmitter {
         let viewContext = view && view.getViewContext && view.getViewContext() || {};
 
         if (view && !viewContext.skipCache) {
-            let cachedActionCollection = this._actionCollections.get(view);
 
-            if (cachedActionCollection) {
-                return cachedActionCollection;
-            } else {
-                let applicableActions = this._applicableActions(objectPath, view);
-                let actionCollection = new ActionCollection(applicableActions, objectPath, view, this._openmct);
-
-                this._actionCollections.set(view, actionCollection);
-                actionCollection.on('destroy', this._updateCachedActionCollections);
-
-                return actionCollection;
-            }
+            return this._getCachedActionCollection(objectPath, view);
         } else {
-            let applicableActions = this._applicableActions(objectPath, view);
 
-            Object.keys(applicableActions).forEach(key => {
-                let action = applicableActions[key];
-
-                action.callBack = () => {
-                    return action.invoke(objectPath, view);
-                };
-            });
-
-            return applicableActions;
+            return this._newActionCollection(objectPath, view, true);
         }
     }
 
     updateGroupOrder(groupArray) {
         this._groupOrder = groupArray;
+    }
+
+    _getCachedActionCollection(objectPath, view) {
+        let cachedActionCollection = this._actionCollections.get(view);
+
+        if (cachedActionCollection) {
+
+            return cachedActionCollection;
+        } else {
+
+            let actionCollection = this._newActionCollection(objectPath, view);
+
+            this._actionCollections.set(view, actionCollection);
+            actionCollection.on('destroy', this._updateCachedActionCollections);
+
+            return actionCollection;
+        }
+    }
+
+    _newActionCollection(objectPath, view, skipEnvironmentObservers) {
+        let applicableActions = this._applicableActions(objectPath, view);
+
+        return new ActionCollection(applicableActions, objectPath, view, this._openmct, skipEnvironmentObservers);
     }
 
     _updateCachedActionCollections(key) {

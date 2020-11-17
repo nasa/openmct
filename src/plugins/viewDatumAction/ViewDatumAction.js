@@ -56,7 +56,7 @@ export default class ViewDatumAction {
         });
     }
     appliesTo(objectPath, view = {}) {
-        let viewContext = view.getViewContext && view.getViewContext() || {};
+        let viewContext = (view.getViewContext && view.getViewContext()) || {};
         let datum = viewContext.getDatum;
         let enabled = viewContext.viewDatumAction;
 

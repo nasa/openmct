@@ -24,13 +24,14 @@ import EventEmitter from 'EventEmitter';
 import _ from 'lodash';
 
 class ActionCollection extends EventEmitter {
-    constructor(applicableActions, objectPath, view, openmct) {
+    constructor(applicableActions, objectPath, view, openmct, skipEnvironmentObservers) {
         super();
 
         this.applicableActions = applicableActions;
         this.openmct = openmct;
         this.objectPath = objectPath;
         this.view = view;
+        this.skipEnvironmentObservers = skipEnvironmentObservers;
         this.objectUnsubscribes = [];
 
         let debounceOptions = {
@@ -41,10 +42,12 @@ class ActionCollection extends EventEmitter {
         this._updateActions = _.debounce(this._updateActions.bind(this), 150, debounceOptions);
         this._update = _.debounce(this._update.bind(this), 150, debounceOptions);
 
-        this._observeObjectPath();
-        this._initializeActions();
+        if (!skipEnvironmentObservers) {
+            this._observeObjectPath();
+            this.openmct.editor.on('isEditing', this._updateActions);
+        }
 
-        this.openmct.editor.on('isEditing', this._updateActions);
+        this._initializeActions();
     }
 
     disable(actionKeys) {
@@ -84,11 +87,14 @@ class ActionCollection extends EventEmitter {
     }
 
     destroy() {
-        this.objectUnsubscribes.forEach(unsubscribe => {
-            unsubscribe();
-        });
 
-        this.openmct.editor.off('isEditing', this._updateActions);
+        if (!this.skipEnvironmentObservers) {
+            this.objectUnsubscribes.forEach(unsubscribe => {
+                unsubscribe();
+            });
+
+            this.openmct.editor.off('isEditing', this._updateActions);
+        }
 
         this.emit('destroy', this.view);
     }
@@ -121,6 +127,10 @@ class ActionCollection extends EventEmitter {
         });
 
         return statusBarActions;
+    }
+
+    getActionsObject() {
+        return this.applicableActions;
     }
 
     _update() {

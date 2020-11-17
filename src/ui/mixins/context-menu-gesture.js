@@ -31,7 +31,8 @@ export default {
             event.preventDefault();
             event.stopPropagation();
 
-            let actions = this.openmct.actions.get(this.objectPath);
+            let actionsCollection = this.openmct.actions.get(this.objectPath);
+            let actions = actionsCollection.getVisibleActions();
             let sortedActions = this.openmct.actions._groupAndSortActions(actions);
 
             this.openmct.menus.showMenu(event.clientX, event.clientY, sortedActions);

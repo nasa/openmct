@@ -44,6 +44,7 @@
 <script>
 
 const CONTEXT_MENU_ACTIONS = [
+    'viewDatumAction',
     'viewHistoricalData',
     'remove'
 ];
@@ -129,6 +130,7 @@ export default {
             let limit;
 
             if (this.shouldUpdate(newTimestamp)) {
+                this.datum = datum;
                 this.timestamp = newTimestamp;
                 this.value = this.formats[this.valueKey].format(datum);
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
@@ -175,8 +177,23 @@ export default {
             this.resetValues();
             this.timestampKey = timeSystem.key;
         },
+        getView() {
+            return {
+                getViewContext: () => {
+                    return {
+                        skipCache: true,
+                        viewHistoricalData: true,
+                        viewDatumAction: true,
+                        getDatum: () => {
+                            return this.datum;
+                        }
+                    };
+                }
+            };
+        },
         showContextMenu(event) {
-            let allActions = this.openmct.actions.get(this.currentObjectPath, {}, {viewHistoricalData: true});
+            let actionCollection = this.openmct.actions.get(this.currentObjectPath, this.getView());
+            let allActions = actionCollection.getActionsObject();
             let applicableActions = CONTEXT_MENU_ACTIONS.map(key => allActions[key]);
 
             this.openmct.menus.showMenu(event.x, event.y, applicableActions);

@@ -192,7 +192,8 @@ export default {
                 let contextualObjectPath = this.objectPath.slice();
                 contextualObjectPath.unshift(domainObject);
 
-                let allActions = this.openmct.actions.get(contextualObjectPath, this.actionsViewContext);
+                let actionsCollection = this.openmct.actions.get(contextualObjectPath, this.actionsViewContext);
+                let allActions = actionsCollection.getActionsObject();
                 let applicableActions = this.row.getContextMenuActions().map(key => allActions[key]);
 
                 if (applicableActions.length) {

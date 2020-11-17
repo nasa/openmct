@@ -231,12 +231,6 @@ export default {
         this.openmct.time.off("bounds", this.refreshData);
     },
     methods: {
-        getViewContext() {
-            return {
-                getViewKey: () => this.viewKey,
-                formattedValueForCopy: this.formattedValueForCopy
-            };
-        },
         formattedValueForCopy() {
             const timeFormatterKey = this.openmct.time.timeSystem().key;
             const timeFormatter = this.formats[timeFormatterKey];
@@ -282,10 +276,11 @@ export default {
         },
         getView() {
             return {
-                getViewContext() {
+                getViewContext: () => {
                     return {
                         viewHistoricalData: true,
-                        skipCache: true
+                        skipCache: true,
+                        formattedValueForCopy: this.formattedValueForCopy
                     };
                 }
             };
@@ -313,12 +308,6 @@ export default {
             this.removeSelectable = this.openmct.selection.selectable(
                 this.$el, this.context, this.immediatelySelect || this.initSelect);
             delete this.immediatelySelect;
-
-            let allActions = this.openmct.actions.get(this.currentObjectPath, this.getView());
-
-            this.applicableActions = CONTEXT_MENU_ACTIONS.map(actionKey => {
-                return allActions[actionKey];
-            });
         },
         updateTelemetryFormat(format) {
             this.$emit('formatChanged', this.item, format);
@@ -326,24 +315,25 @@ export default {
         async getContextMenuActions() {
             const defaultNotebook = getDefaultNotebook();
             const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+            const actionCollection = this.openmct.actions.get(this.currentObjectPath, this.getView());
+            const actionsObject = actionCollection.getActionsObject();
 
-            const actionsObject = this.openmct.actions.get(this.currentObjectPath, this.getViewContext(), { viewHistoricalData: true }).applicableActions;
-            let applicableActionKeys = Object.keys(actionsObject)
-                .filter(key => {
-                    const isCopyToNotebook = actionsObject[key].key === 'copyToNotebook';
-                    if (defaultNotebook && isCopyToNotebook) {
-                        const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
-                        actionsObject[key].name = `Copy to Notebook ${defaultPath}`;
-                    }
+            let copyToNotebookAction = actionsObject.copyToNotebook;
 
-                    return CONTEXT_MENU_ACTIONS.includes(actionsObject[key].key);
-                });
+            if (defaultNotebook && copyToNotebookAction) {
+                const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+                copyToNotebookAction.name = `Copy to Notebook ${defaultPath}`;
+            }
 
-            return applicableActionKeys.map(key => actionsObject[key]);
+            return CONTEXT_MENU_ACTIONS.map(actionKey => {
+                return actionsObject[actionKey];
+            });
         },
         async showContextMenu(event) {
             const contextMenuActions = await this.getContextMenuActions();
-            this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
+
+            console.log(contextMenuActions);
+            // this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
         },
         setStatus(status) {
             this.status = status;
