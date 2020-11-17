@@ -27,7 +27,7 @@
                 @click="item.callBack"
             >
             </button>
-             <button
+            <button
                 class="l-browse-bar__actions c-icon-button icon-3-dots"
                 title="More options"
                 @click.prevent.stop="showMenuItems($event)"
@@ -79,6 +79,13 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            type: this.openmct.types.get(this.domainObject.type),
+            statusBarItems: [],
+            menuActionItems: []
+        };
+    },
     watch: {
         actionCollection(actionCollection) {
             if (this.actionCollection) {
@@ -94,13 +101,6 @@ export default {
             this.actionCollection.on('update', this.updateActionItems);
             this.updateActionItems(this.actionCollection.getActionsObject());
         }
-    },
-    data() {
-        return {
-            type: this.openmct.types.get(this.domainObject.type),
-            statusBarItems: [],
-            menuActionItems: []
-        };
     },
     methods: {
         setView(view) {
