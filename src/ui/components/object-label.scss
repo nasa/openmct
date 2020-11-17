@@ -19,20 +19,22 @@
         display: block;
         flex: 0 0 auto;
         font-size: 1.1em;
+        opacity: $objectLabelTypeIconOpacity;
     }
 
-    &.is-status--missing {
-        @include isMissing($absPos: true);
-
-        [class*='__type-icon']:before,
-        [class*='__type-icon']:after{
-            opacity: $opacityMissing;
+    &[class*='is-status'] {
+        [class*='__type-icon'] {
+            &:before,
+            &:after {
+                opacity: $opacityMissing;
+            }
         }
 
         .is-status__indicator {
+            position: absolute;
             right: -3px;
             top: -3px;
-            transform: scale(0.7);
+            transform: scale(0.5);
         }
     }
 }

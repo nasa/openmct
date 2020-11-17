@@ -7,7 +7,6 @@
         flex: 1 1 auto;
         display: flex;
         flex-direction: row;
-       // justify-content: center;
         align-items: center;
         overflow: hidden;
         padding: $interiorMargin;
@@ -27,14 +26,13 @@
         border: 1px solid transparent;
     }
 
-    @include isMissing($absPos: true);
-
     .is-status__indicator {
+        position: absolute;
         top: 0;
         left: 0;
     }
 
-    &.is-status--missing {
+    &[class*='is-status'] {
         border: $borderMissing;
     }
 }

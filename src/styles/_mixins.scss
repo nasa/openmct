@@ -135,37 +135,14 @@
     // Common styles to be applied to tree items, object labels, grid and list item views
 
     .is-status__indicator {
-        display: none ;
+        display: block ; // Set to display: none in status.scss
         text-shadow: $colorBodyBg 0 0 2px;
         font-family: symbolsfont;
-
-        &[class^='is-status'] .is-status__indicator,
-        [class^='is-status'] .is-status__indicator {
-            display: block !important;
-        }
 
         @if $absPos {
             position: absolute;
             z-index: 3;
         }
-    }
-}
-
-@mixin isMissing($absPos: false) {
-    @include isStatus($absPos);
-
-    .is-status__indicator:before {
-        color: $colorAlert;
-        content: $glyph-icon-alert-triangle;
-    }
-}
-
-@mixin isSuspect($absPos: false) {
-    @include isStatus($absPos);
-
-    .is-status__indicator:before {
-        color: $colorWarningLo;
-        content: $glyph-icon-alert-rect;
     }
 }
 

@@ -60,13 +60,7 @@ mct-plot {
 
     /*********************** MISSING ITEM INDICATORS */
     .is-status__indicator {
-        display: none;
-    }
-    .is-status--missing {
-        @include isMissing();
-        .is-status__indicator {
-            font-size: 0.8em;
-        }
+        font-size: 0.8em;
     }
 }
 

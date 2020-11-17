@@ -110,13 +110,8 @@
             }
         }
 
-        &.is-status--missing {
-            @include isMissing($absPos: true);
-
-            .is-status__indicator {
-                top: $interiorMargin;
-                left: $interiorMargin;
-            }
+        &[class*='is-status'] {
+            border: $borderMissing;
         }
     }
 
