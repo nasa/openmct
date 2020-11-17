@@ -346,20 +346,11 @@ export default {
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
         showMenuItems(event) {
-            let actions;
-
-            if (this.menuActionItems.length) {
-                actions = this.menuActionItems;
-            } else {
-                actions = this.openmct.actions.get(this.openmct.router.path);
-            }
-
-            let sortedActions = this.openmct.actions._groupAndSortActions(actions);
+            let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
             this.openmct.menus.showMenu(event.x, event.y, sortedActions);
         },
         unlistenToActionCollection() {
             this.actionCollection.off('update', this.updateActionItems);
-            this.actionCollection.destroy();
             delete this.actionCollection;
         },
         toggleLock(flag) {

@@ -23,6 +23,7 @@
 <div class="l-preview-window">
     <PreviewHeader
         :current-view="currentView"
+        :action-collection="actionCollection"
         :domain-object="domainObject"
         :views="views"
     />
@@ -52,7 +53,8 @@ export default {
             domainObject: domainObject,
             viewKey: undefined,
             views: [],
-            currentView: {}
+            currentView: {},
+            actionCollection: undefined
         };
     },
     mounted() {
@@ -74,6 +76,10 @@ export default {
         if (this.styleRuleManager) {
             this.styleRuleManager.destroy();
             delete this.styleRuleManager;
+        }
+
+        if (this.actionCollection) {
+            this.actionCollection.destroy();
         }
     },
     methods: {
@@ -97,10 +103,18 @@ export default {
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('l-angular-ov-wrapper');
             this.$refs.objectView.append(this.viewContainer);
-
             this.view = this.currentView.view(this.domainObject, this.objectPath);
+
+            this.getActionsCollection();
             this.view.show(this.viewContainer, false);
             this.initObjectStyles();
+        },
+        getActionsCollection() {
+            if (this.actionCollection) {
+                this.actionCollection.destroy();
+            }
+
+            this.actionCollection = this.openmct.actions._get(this.objectPath, this.view);
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {

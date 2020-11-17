@@ -199,6 +199,7 @@ export default {
         },
         getPreviewHeader() {
             const domainObject = this.objectPath[0];
+            const actionCollection = this.actionCollection;
             const preview = new Vue({
                 components: {
                     PreviewHeader
@@ -209,10 +210,11 @@ export default {
                 },
                 data() {
                     return {
-                        domainObject
+                        domainObject,
+                        actionCollection
                     };
                 },
-                template: '<PreviewHeader :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
+                template: '<PreviewHeader :actionCollection="actionCollection" :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
             });
 
             return preview.$mount().$el;
@@ -231,7 +233,6 @@ export default {
         },
         unlistenToActionCollection() {
             this.actionCollection.off('update', this.updateActionItems);
-            this.actionCollection.destroy();
             delete this.actionCollection;
         },
         updateActionItems(actionItems) {

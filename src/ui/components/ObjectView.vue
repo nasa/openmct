@@ -74,6 +74,11 @@ export default {
             this.styleRuleManager.destroy();
             delete this.styleRuleManager;
         }
+
+        if (this.actionCollection) {
+            this.actionCollection.destroy();
+            delete this.actionCollection;
+        }
     },
     created() {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
@@ -222,7 +227,7 @@ export default {
                 this.actionCollection.destroy();
             }
 
-            this.actionCollection = this.openmct.actions._get(this.openmct.router.path, this.currentView);
+            this.actionCollection = this.openmct.actions._get(this.currentObjectPath || this.objectPath, this.currentView);
             this.$emit('change-action-collection', this.actionCollection);
         },
         show(object, viewKey, immediatelySelect, currentObjectPath) {
