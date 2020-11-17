@@ -181,7 +181,6 @@ export default {
             return {
                 getViewContext: () => {
                     return {
-                        skipCache: true,
                         viewHistoricalData: true,
                         viewDatumAction: true,
                         getDatum: () => {

@@ -87,6 +87,7 @@ class ActionCollection extends EventEmitter {
     }
 
     destroy() {
+        super.removeAllListeners();
 
         if (!this.skipEnvironmentObservers) {
             this.objectUnsubscribes.forEach(unsubscribe => {

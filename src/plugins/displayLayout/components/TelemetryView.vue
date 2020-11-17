@@ -279,7 +279,6 @@ export default {
                 getViewContext: () => {
                     return {
                         viewHistoricalData: true,
-                        skipCache: true,
                         formattedValueForCopy: this.formattedValueForCopy
                     };
                 }
@@ -320,20 +319,22 @@ export default {
 
             let copyToNotebookAction = actionsObject.copyToNotebook;
 
-            if (defaultNotebook && copyToNotebookAction) {
+            if (defaultNotebook) {
                 const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
                 copyToNotebookAction.name = `Copy to Notebook ${defaultPath}`;
+            } else {
+                actionsObject.copyToNotebook = undefined;
+                delete actionsObject.copyToNotebook;
             }
 
             return CONTEXT_MENU_ACTIONS.map(actionKey => {
                 return actionsObject[actionKey];
-            });
+            }).filter(action => action !== undefined);
         },
         async showContextMenu(event) {
             const contextMenuActions = await this.getContextMenuActions();
 
-            console.log(contextMenuActions);
-            // this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
+            this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
         },
         setStatus(status) {
             this.status = status;

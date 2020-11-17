@@ -207,6 +207,7 @@ export default {
                 }
             }
 
+            this.getActionCollection();
             this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
 
             if (immediatelySelect) {
@@ -214,8 +215,15 @@ export default {
                     this.$el, this.getSelectionContext(), true);
             }
 
-            this.$emit('change-provider', this.currentView);
             this.openmct.objectViews.on('clearData', this.clearData);
+        },
+        getActionCollection() {
+            if (this.actionCollection) {
+                this.actionCollection.destroy();
+            }
+
+            this.actionCollection = this.openmct.actions._get(this.openmct.router.path, this.currentView);
+            this.$emit('change-action-collection', this.actionCollection);
         },
         show(object, viewKey, immediatelySelect, currentObjectPath) {
             this.updateStyle();

@@ -70,7 +70,7 @@
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
-                :view-provider="viewProvider"
+                :action-collection="actionCollection"
                 @sync-tree-navigation="handleSyncTreeNavigation"
             />
             <toolbar
@@ -82,7 +82,7 @@
                 class="l-shell__main-container"
                 data-selectable
                 :show-edit-view="true"
-                @change-provider="setProvider"
+                @change-action-collection="setActionCollection"
             />
             <component
                 :is="conductorComponent"
@@ -146,9 +146,9 @@ export default {
             conductorComponent: undefined,
             isEditing: false,
             hasToolbar: false,
-            viewProvider: undefined,
-            headExpanded,
-            triggerSync: false
+            actionCollection: undefined,
+            triggerSync: false,
+            headExpanded
         };
     },
     computed: {
@@ -223,8 +223,8 @@ export default {
 
             this.hasToolbar = structure.length > 0;
         },
-        setProvider(provider) {
-            this.viewProvider = provider;
+        setActionCollection(actionCollection) {
+            this.actionCollection = actionCollection;
         },
         handleSyncTreeNavigation() {
             this.triggerSync = !this.triggerSync;
