@@ -23,11 +23,11 @@
 <div
     class="c-so-view"
     :class="[
+        statusClass,
         'c-so-view--' + domainObject.type,
         {
             'c-so-view--no-frame': !hasFrame,
-            'has-complex-content': complexContent,
-            'is-missing': domainObject.status === 'missing'
+            'has-complex-content': complexContent
         }
     ]"
 >
@@ -85,9 +85,6 @@
         </div>
     </div>
 
-    <div class="is-status__indicator"
-         title="This item is missing or suspect"
-    ></div>
     <object-view
         ref="objectView"
         class="c-so-view__object-view"

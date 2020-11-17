@@ -43,9 +43,7 @@
         }
     }
 
-    &.is-status--missing {
-        @include isMissing();
-
+    &[class*='is-status'] {
         [class*='__type-icon'],
         [class*='__details'] {
             opacity: $opacityMissing;
