@@ -93,7 +93,7 @@
         :object-path="objectPath"
         :layout-font-size="layoutFontSize"
         :layout-font="layoutFont"
-        @change-provider="setViewProvider"
+        @change-action-collection="setActionCollection"
     />
 </div>
 </template>
@@ -146,15 +146,10 @@ export default {
 
         let complexContent = !SIMPLE_CONTENT_TYPES.includes(this.domainObject.type);
 
-        let viewProvider = {};
-
-        let statusBarItems = {};
-
         return {
             cssClass,
             complexContent,
-            viewProvider,
-            statusBarItems,
+            statusBarItems: [],
             status: ''
         };
     },
@@ -201,6 +196,7 @@ export default {
         },
         getPreviewHeader() {
             const domainObject = this.objectPath[0];
+            const actionCollection = this.actionCollection;
             const preview = new Vue({
                 components: {
                     PreviewHeader
@@ -211,10 +207,11 @@ export default {
                 },
                 data() {
                     return {
-                        domainObject
+                        domainObject,
+                        actionCollection
                     };
                 },
-                template: '<PreviewHeader :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
+                template: '<PreviewHeader :actionCollection="actionCollection" :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
             });
 
             return preview.$mount().$el;
@@ -222,27 +219,17 @@ export default {
         getSelectionContext() {
             return this.$refs.objectView.getSelectionContext();
         },
-        setViewProvider(provider) {
-            this.viewProvider = provider;
-            this.initializeStatusBarItems();
-        },
-        initializeStatusBarItems() {
+        setActionCollection(actionCollection) {
             if (this.actionCollection) {
                 this.unlistenToActionCollection();
             }
 
-            if (this.viewProvider) {
-                this.actionCollection = this.openmct.actions.get(this.objectPath, this.viewProvider);
-                this.actionCollection.on('update', this.updateActionItems);
-                this.updateActionItems(this.actionCollection.applicableActions);
-            } else {
-                this.statusBarItems = [];
-                this.menuActionItems = [];
-            }
+            this.actionCollection = actionCollection;
+            this.actionCollection.on('update', this.updateActionItems);
+            this.updateActionItems(this.actionCollection.applicableActions);
         },
         unlistenToActionCollection() {
             this.actionCollection.off('update', this.updateActionItems);
-            this.actionCollection.destroy();
             delete this.actionCollection;
         },
         updateActionItems(actionItems) {
@@ -250,15 +237,7 @@ export default {
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
         showMenuItems(event) {
-            let actions;
-
-            if (this.menuActionItems.length) {
-                actions = this.menuActionItems;
-            } else {
-                actions = this.openmct.actions.get(this.objectPath);
-            }
-
-            let sortedActions = this.openmct.actions._groupAndSortActions(actions);
+            let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
             this.openmct.menus.showMenu(event.x, event.y, sortedActions);
         },
         setStatus(status) {

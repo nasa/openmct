@@ -108,8 +108,7 @@ export default {
                     return {
                         viewHistoricalData: true,
                         viewDatumAction: true,
-                        getDatum: this.getDatum,
-                        skipCache: true
+                        getDatum: this.getDatum
                     };
                 }
             }

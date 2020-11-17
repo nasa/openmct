@@ -130,7 +130,7 @@ export default {
         ViewSwitcher
     },
     props: {
-        viewProvider: {
+        actionCollection: {
             type: Object,
             default: () => {
                 return {};
@@ -226,20 +226,14 @@ export default {
             this.status = this.openmct.status.get(this.domainObject.identifier, this.setStatus);
             this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         },
-        viewProvider(viewProvider) {
+        actionCollection(actionCollection) {
             if (this.actionCollection) {
                 this.unlistenToActionCollection();
             }
 
-            if (viewProvider) {
-                this.actionCollection = this.openmct.actions.get(this.openmct.router.path, viewProvider);
-                this.actionCollection.on('update', this.updateActionItems);
-                this.updateActionItems(this.actionCollection.applicableActions);
-            } else {
-                this.statusBarViewKey = undefined;
-                this.statusBarItems = [];
-                this.menuActionItems = [];
-            }
+            this.actionCollection = actionCollection;
+            this.actionCollection.on('update', this.updateActionItems);
+            this.updateActionItems(this.actionCollection.getActionsObject());
         }
     },
     mounted: function () {
@@ -352,20 +346,11 @@ export default {
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
         showMenuItems(event) {
-            let actions;
-
-            if (this.menuActionItems.length) {
-                actions = this.menuActionItems;
-            } else {
-                actions = this.openmct.actions.get(this.openmct.router.path);
-            }
-
-            let sortedActions = this.openmct.actions._groupAndSortActions(actions);
+            let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
             this.openmct.menus.showMenu(event.x, event.y, sortedActions);
         },
         unlistenToActionCollection() {
             this.actionCollection.off('update', this.updateActionItems);
-            this.actionCollection.destroy();
             delete this.actionCollection;
         },
         toggleLock(flag) {

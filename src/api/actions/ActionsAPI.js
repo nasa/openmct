@@ -44,11 +44,9 @@ class ActionsAPI extends EventEmitter {
     }
 
     get(objectPath, view) {
-        let viewContext = view && view.getViewContext && view.getViewContext() || {};
+        if (view) {
 
-        if (view && !viewContext.skipCache) {
-
-            return this._getCachedActionCollection(objectPath, view);
+            return this._getCachedActionCollection(objectPath, view) || this._newActionCollection(objectPath, view, true);
         } else {
 
             return this._newActionCollection(objectPath, view, true);
@@ -59,21 +57,19 @@ class ActionsAPI extends EventEmitter {
         this._groupOrder = groupArray;
     }
 
+    _get(objectPath, view) {
+        let actionCollection = this._newActionCollection(objectPath, view);
+
+        this._actionCollections.set(view, actionCollection);
+        actionCollection.on('destroy', this._updateCachedActionCollections);
+
+        return actionCollection;
+    }
+
     _getCachedActionCollection(objectPath, view) {
         let cachedActionCollection = this._actionCollections.get(view);
 
-        if (cachedActionCollection) {
-
-            return cachedActionCollection;
-        } else {
-
-            let actionCollection = this._newActionCollection(objectPath, view);
-
-            this._actionCollections.set(view, actionCollection);
-            actionCollection.on('destroy', this._updateCachedActionCollections);
-
-            return actionCollection;
-        }
+        return cachedActionCollection;
     }
 
     _newActionCollection(objectPath, view, skipEnvironmentObservers) {

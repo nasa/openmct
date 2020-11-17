@@ -75,8 +75,7 @@ describe('The Actions API', () => {
         mockViewContext1 = {
             getViewContext: () => {
                 return {
-                    onlyAppliesToTestCase: true,
-                    skipCache: true
+                    onlyAppliesToTestCase: true
                 };
             }
         };
@@ -104,14 +103,6 @@ describe('The Actions API', () => {
         });
 
         it("returns an object with relevant actions when invoked with objectPath only", () => {
-            let actionCollection = actionsAPI.get(mockObjectPath, mockViewContext1);
-            let action = actionCollection.getActionsObject()[mockAction.key];
-
-            expect(action.key).toEqual(mockAction.key);
-            expect(action.name).toEqual(mockAction.name);
-        });
-
-        it("returns an object with relevant actions when invoked with viewContext and skipCache", () => {
             let actionCollection = actionsAPI.get(mockObjectPath, mockViewContext1);
             let action = actionCollection.getActionsObject()[mockAction.key];
 
