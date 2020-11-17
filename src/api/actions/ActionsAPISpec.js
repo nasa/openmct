@@ -90,7 +90,8 @@ describe('The Actions API', () => {
         it("adds action to ActionsAPI", () => {
             actionsAPI.register(mockAction);
 
-            let action = actionsAPI.get(mockObjectPath, mockViewContext1)[mockAction.key];
+            let actionCollection = actionsAPI.get(mockObjectPath, mockViewContext1);
+            let action = actionCollection.getActionsObject()[mockAction.key];
 
             expect(action.key).toEqual(mockAction.key);
             expect(action.name).toEqual(mockAction.name);
@@ -103,14 +104,16 @@ describe('The Actions API', () => {
         });
 
         it("returns an object with relevant actions when invoked with objectPath only", () => {
-            let action = actionsAPI.get(mockObjectPath, mockViewContext1)[mockAction.key];
+            let actionCollection = actionsAPI.get(mockObjectPath, mockViewContext1);
+            let action = actionCollection.getActionsObject()[mockAction.key];
 
             expect(action.key).toEqual(mockAction.key);
             expect(action.name).toEqual(mockAction.name);
         });
 
         it("returns an object with relevant actions when invoked with viewContext and skipCache", () => {
-            let action = actionsAPI.get(mockObjectPath, mockViewContext1)[mockAction.key];
+            let actionCollection = actionsAPI.get(mockObjectPath, mockViewContext1);
+            let action = actionCollection.getActionsObject()[mockAction.key];
 
             expect(action.key).toEqual(mockAction.key);
             expect(action.name).toEqual(mockAction.name);
