@@ -138,8 +138,9 @@ export default {
             }
 
             let keys = Object.keys(styleObj);
+            let firstChild = this.$refs.objectView.querySelector(':first-child');
+
             keys.forEach(key => {
-                let firstChild = this.$refs.objectView.querySelector(':first-child');
                 if (firstChild) {
                     if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
                         if (firstChild.style[key]) {

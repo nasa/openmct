@@ -39,6 +39,11 @@
 
 <script>
 import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
+const HIDDEN_ACTIONS = [
+    'remove',
+    'move',
+    'preview'
+];
 
 export default {
     inject: [
@@ -111,6 +116,7 @@ export default {
             delete this.actionCollection;
         },
         updateActionItems() {
+            this.actionCollection.hide(HIDDEN_ACTIONS);
             this.statusBarItems = this.actionCollection.getStatusBarActions();
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
