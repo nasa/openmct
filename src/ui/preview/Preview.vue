@@ -79,7 +79,7 @@ export default {
 
         if (this.actionCollection) {
             this.actionCollection.destroy();
-        } 
+        }
     },
     destroyed() {
         this.view.destroy();
