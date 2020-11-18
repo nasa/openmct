@@ -213,7 +213,8 @@
     }
 }
 
-.is-notebook-default {
+.is-notebook-default,
+.is-status--notebook-default {
     &:after {
         color: $colorFilter;
         content: $glyph-icon-notebook-page;

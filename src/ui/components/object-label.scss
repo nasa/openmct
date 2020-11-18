@@ -22,19 +22,20 @@
         opacity: $objectLabelTypeIconOpacity;
     }
 
-    &[class*='is-status'] {
+    .is-status__indicator {
+        position: absolute;
+        right: -3px;
+        top: -3px;
+        transform: scale(0.5);
+    }
+
+    &[class*='is-status--missing'],
+    &[class*='is-status--suspect'] {
         [class*='__type-icon'] {
             &:before,
             &:after {
                 opacity: $opacityMissing;
             }
-        }
-
-        .is-status__indicator {
-            position: absolute;
-            right: -3px;
-            top: -3px;
-            transform: scale(0.5);
         }
     }
 }
