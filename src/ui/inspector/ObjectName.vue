@@ -71,7 +71,7 @@ export default {
     beforeDestroy() {
         this.openmct.selection.off('change', this.updateSelection);
 
-        if(this.statusUnsubscribe) {
+        if (this.statusUnsubscribe) {
             this.statusUnsubscribe();
         }
     },
@@ -84,6 +84,7 @@ export default {
 
             if (selection.length === 0 || selection[0].length === 0) {
                 this.resetDomainObject();
+
                 return;
             }
 

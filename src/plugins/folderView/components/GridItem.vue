@@ -27,7 +27,7 @@
     </div>
     <div class="c-grid-item__controls">
         <div class="is-status__indicator"
-            :title="`This item is ${status}`"
+             :title="`This item is ${status}`"
         ></div>
         <div
             class="icon-people"

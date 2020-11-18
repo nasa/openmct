@@ -139,7 +139,7 @@ export default {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.onReorder);
-        
+
         this.tabsList.forEach(tab => {
             tab.statusUnsubscribe();
         });
@@ -199,8 +199,8 @@ export default {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let status = this.openmct.status.get(domainObject.identifier);
-            let statusUnsubscribe = this.openmct.status.observe(keyString, (status) => {
-                this.updateStatus(keyString, status);
+            let statusUnsubscribe = this.openmct.status.observe(keyString, (updatedStatus) => {
+                this.updateStatus(keyString, updatedStatus);
             });
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let tabItem = {
@@ -291,7 +291,7 @@ export default {
             let tabPos = this.tabsList.findIndex((tab) => {
                 return tab.keyString === keyString;
             });
-            
+
             if (tabPos !== -1) {
                 let tab = this.tabsList[tabPos];
                 this.$set(tab, 'status', status);
