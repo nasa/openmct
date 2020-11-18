@@ -171,6 +171,7 @@ define([
          * Update yAxis format, values, and label from known series.
          */
         updateFromSeries: function (series) {
+            this.unset('displayRange');
             const plotModel = this.plot.get('domainObject');
             const label = _.get(plotModel, 'configuration.yAxis.label');
             const sampleSeries = series.first();
