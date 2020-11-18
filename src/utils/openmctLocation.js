@@ -29,26 +29,26 @@ import objectUtils from '../api/objects/object-utils.js';
  * hash section of the URL.
  */
 
-export function setSearchParam(paramName, paramValue) {
-    let url = getHashRelativeURL();
+export function setSearchParam(openmct, paramName, paramValue) {
+    let url = getHashRelativeURL(openmct);
 
     url.searchParams.set(paramName, paramValue);
-    setLocationFromUrl(url);
+    setLocationFromUrl(openmct, url);
 }
 
-export function deleteSearchParam(paramName) {
-    let url = getHashRelativeURL();
+export function deleteSearchParam(openmct, paramName) {
+    let url = getHashRelativeURL(openmct);
 
     url.searchParams.delete(paramName);
-    setLocationFromUrl(url);
+    setLocationFromUrl(openmct, url);
 }
 
 /**
  * Will replace all current search parameters with the ones defined in urlSearchParams
  * @param {URLSearchParams} paramMap
  */
-export function setAllSearchParams(newSearchParams) {
-    let url = getHashRelativeURL();
+export function setAllSearchParams(openmct, newSearchParams) {
+    let url = getHashRelativeURL(openmct);
 
     Array.from(url.searchParams.keys()).forEach((key) => url.searchParams.delete(key));
 
@@ -56,28 +56,28 @@ export function setAllSearchParams(newSearchParams) {
         url.searchParams.set(key, newSearchParams.get(key));
     });
 
-    setLocationFromUrl(url);
+    setLocationFromUrl(openmct, url);
 }
 
-export function getSearchParam(paramName) {
-    return getAllSearchParams().get(paramName);
+export function getSearchParam(openmct, paramName) {
+    return getAllSearchParams(openmct).get(paramName);
 }
 
 /**
  * @returns {URLSearchParams} A {@link https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries|URLSearchParams}
  * object for accessing all current search parameters
  */
-export function getAllSearchParams() {
-    return getHashRelativeURL().searchParams;
+export function getAllSearchParams(openmct) {
+    return getHashRelativeURL(openmct).searchParams;
 }
 
-export function getObjectPath() {
-    return getHashRelativeURL().pathname;
+export function getObjectPath(openmct) {
+    return getHashRelativeURL(openmct).pathname;
 }
 
-export function setObjectPath(objectPath) {
+export function setObjectPath(openmct, objectPath) {
     let objectPathString;
-    let url = getHashRelativeURL();
+    let url = getHashRelativeURL(openmct);
 
     if (objectPath instanceof Array) {
         if (objectPath.length > 0 && isDomainObject(objectPath[0])) {
@@ -92,17 +92,23 @@ export function setObjectPath(objectPath) {
     }
 
     url.pathname = objectPathString;
-    setLocationFromUrl(url);
+    setLocationFromUrl(openmct, url);
 }
 
 function isDomainObject(potentialObject) {
     return potentialObject.identifier === undefined;
 }
 
-function setLocationFromUrl(url) {
-    window.location.hash = `${url.pathname}${url.search}`;
+function setLocationFromUrl(openmct, url) {
+    openmct.router.updateTimeSettings(url);
 }
 
-function getHashRelativeURL() {
-    return new URL(window.location.hash.substring(1), window.location.origin);
+function getHashRelativeURL(openmct) {
+    const url = new URL(window.location.hash.substring(1), window.location.origin);
+    return url;
+
+    // const currentLocation = openmct.router.getCurrentLocation();
+    // const newUrl = new URL(currentLocation.url.pathname, window.location.origin);
+    // return newUrl;
+    // return currentLocation.url;
 }

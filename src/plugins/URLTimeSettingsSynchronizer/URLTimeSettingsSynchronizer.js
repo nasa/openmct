@@ -51,7 +51,8 @@ export default class URLTimeSettingsSynchronizer {
     initialize() {
         this.updateTimeSettings();
 
-        window.addEventListener('hashchange', this.updateTimeSettings);
+        this.openmct.router.on('change:params', this.updateTimeSettings);
+
         TIME_EVENTS.forEach(event => {
             this.openmct.time.on(event, this.setUrlFromTimeApi);
         });
@@ -59,7 +60,8 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     destroy() {
-        window.removeEventListener('hashchange', this.updateTimeSettings);
+        this.openmct.router.off('change:params', this.updateTimeSettings);
+
         this.openmct.off('start', this.initialize);
         this.openmct.off('destroy', this.destroy);
 
@@ -71,21 +73,21 @@ export default class URLTimeSettingsSynchronizer {
 
     updateTimeSettings() {
         // Prevent from triggering self
-        if (!this.isUrlUpdateInProgress) {
-            let timeParameters = this.parseParametersFromUrl();
+        // if (!this.isUrlUpdateInProgress) {
+            // let timeParameters = this.parseParametersFromUrl();
 
-            if (this.areTimeParametersValid(timeParameters)) {
-                this.setTimeApiFromUrl(timeParameters);
-            } else {
+            // if (this.areTimeParametersValid(timeParameters)) {
+            //     this.setTimeApiFromUrl(timeParameters);
+            // } else {
                 this.setUrlFromTimeApi();
-            }
-        } else {
-            this.isUrlUpdateInProgress = false;
-        }
+            // }
+        // } else {
+        //     this.isUrlUpdateInProgress = false;
+        // }
     }
 
     parseParametersFromUrl() {
-        let searchParams = getAllSearchParams();
+        let searchParams = getAllSearchParams(this.openmct);
 
         let mode = searchParams.get(SEARCH_MODE);
         let timeSystem = searchParams.get(SEARCH_TIME_SYSTEM);
@@ -148,7 +150,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     setUrlFromTimeApi() {
-        let searchParams = getAllSearchParams();
+        let searchParams = getAllSearchParams(this.openmct);
         let clock = this.openmct.time.clock();
         let bounds = this.openmct.time.bounds();
         let clockOffsets = this.openmct.time.clockOffsets();
@@ -176,8 +178,7 @@ export default class URLTimeSettingsSynchronizer {
         }
 
         searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
-        this.isUrlUpdateInProgress = true;
-        setAllSearchParams(searchParams);
+        setAllSearchParams(this.openmct, searchParams);
     }
 
     areTimeParametersValid(timeParameters) {

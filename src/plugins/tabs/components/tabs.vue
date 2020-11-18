@@ -115,7 +115,7 @@ export default {
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.onReorder);
             this.composition.load().then(() => {
-                let currentTabIndexFromURL = getSearchParam(this.searchTabKey);
+                let currentTabIndexFromURL = getSearchParam(this.openmct, this.searchTabKey);
                 let currentTabIndexFromDomainObject = this.internalDomainObject.currentTabIndex;
 
                 if (currentTabIndexFromURL !== null) {
@@ -285,10 +285,10 @@ export default {
             this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
         },
         storeCurrentTabIndexInURL(index) {
-            let currentTabIndexInURL = getSearchParam(this.searchTabKey);
+            let currentTabIndexInURL = getSearchParam(this.openmct, this.searchTabKey);
 
             if (index !== currentTabIndexInURL) {
-                setSearchParam(this.searchTabKey, index);
+                setSearchParam(this.openmct, this.searchTabKey, index);
                 this.currentTabIndex = index;
             }
         },

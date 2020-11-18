@@ -23,6 +23,7 @@
 
 const LocationBar = require('location-bar');
 const EventEmitter = require('EventEmitter');
+const _ = require('lodash');
 
 function paramsToObject(searchParams) {
     let params = {};
@@ -62,6 +63,8 @@ class ApplicationRouter extends EventEmitter {
         this.routes = [];
         this.started = false;
         this.locationBar = new LocationBar();
+
+        this.changeHash = _.debounce(this.changeHash.bind(this), 300);
     }
 
     /**
@@ -74,7 +77,7 @@ class ApplicationRouter extends EventEmitter {
 
         this.started = true;
 
-        this.locationBar.onChange(p => this.handleLocationChange(p));
+        this.locationBar.onChange(p => this.hashChaged(p));
         this.locationBar.start({
             root: location.pathname
         });
@@ -85,7 +88,7 @@ class ApplicationRouter extends EventEmitter {
         this.removeAllListeners();
     }
 
-    handleLocationChange(pathString) {
+    createLocation(pathString) {
         if (pathString[0] !== '/') {
             pathString = '/' + pathString;
         }
@@ -95,14 +98,17 @@ class ApplicationRouter extends EventEmitter {
             `${location.protocol}//${location.host}${location.pathname}`
         );
 
-        let oldLocation = this.currentLocation;
-
-        let newLocation = {
+        return {
             url: url,
             path: url.pathname,
             queryString: url.search.replace(/^\?/, ''),
             params: paramsToObject(url.searchParams)
         };
+    }
+
+    handleLocationChange(pathString) {
+        let oldLocation = this.currentLocation;
+        let newLocation = this.createLocation(pathString);
 
         this.currentLocation = newLocation;
 
@@ -151,6 +157,7 @@ class ApplicationRouter extends EventEmitter {
                 changedParams[key] = undefined;
             }
         });
+
         this.emit('change:params', newParams, oldParams, changedParams);
     }
 
@@ -166,6 +173,7 @@ class ApplicationRouter extends EventEmitter {
                 searchParams.set(key, value);
             }
         });
+
         this.setQueryString(searchParams.toString());
     }
 
@@ -186,16 +194,46 @@ class ApplicationRouter extends EventEmitter {
         this.set(path, searchParams.toString());
     }
 
+    hashChaged(p) {
+        this.handleLocationChange(p);
+    }
+
+    changeHash(hash) {
+        location.hash = '#' + hash.replace(/\#/g, '');
+    }
+
+    updateTimeSettings(url) {
+        const queryString = url.search.replace(/^\?/, '');
+        console.log('queryString', queryString);
+        const hash = `${this.currentLocation.path}?${queryString}`;
+        this.handleLocationChange(hash);
+
+        this.changeHash(hash);
+    }
+
+    navigateToObject(objectLink) {
+        this.handleLocationChange(objectLink.substring(1));
+    }
+
     set(path, queryString) {
-        location.hash = `${path}?${queryString}`;
+        console.log('set ***********************************************');
+        this.changeHash(`${path}?${queryString}`);
     }
 
     setQueryString(queryString) {
-        this.set(this.currentLocation.path, queryString);
+        this.handleLocationChange(`${this.currentLocation.path}?${queryString}`);
+    }
+
+    changePath(path) {
+        this.set(path, this.currentLocation.queryString);
+    }
+
+    getCurrentLocation() {
+        return this.currentLocation;
     }
 
     setPath(path) {
-        this.set(path, this.currentLocation.queryString);
+        this.changeHash(path);
     }
 
     route(matcher, callback) {
