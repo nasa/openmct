@@ -26,6 +26,7 @@ define([
     './MutableObject',
     './RootRegistry',
     './RootObjectProvider',
+    './InterceptorRegistry',
     'EventEmitter'
 ], function (
     _,
@@ -33,6 +34,7 @@ define([
     MutableObject,
     RootRegistry,
     RootObjectProvider,
+    InterceptorRegistry,
     EventEmitter
 ) {
 
@@ -48,6 +50,7 @@ define([
         this.rootRegistry = new RootRegistry();
         this.rootProvider = new RootObjectProvider.default(this.rootRegistry);
         this.cache = {};
+        this.interceptorRegistry = new InterceptorRegistry.default();
     }
 
     /**
@@ -177,6 +180,10 @@ define([
 
         return objectPromise.then(result => {
             delete this.cache[keystring];
+            const interceptors = this.getInterceptors(identifier, result);
+            interceptors.forEach(interceptor => {
+                result = interceptor.invoke(identifier, result);
+            });
 
             return result;
         });
@@ -310,6 +317,35 @@ define([
                 return path;
             }
         });
+    };
+
+    /**
+     * Register a new object interceptor.
+     *
+     * @param {string} key a string identifier for this interceptor
+     * @param {module:openmct.Interceptor} interceptor the interceptor to add
+     * @method addInterceptor
+     * @memberof module:openmct.InterceptorRegistry#
+     */
+    ObjectAPI.prototype.addInterceptor = function (key, interceptorDef) {
+        //TODO: sort by priority
+        this.interceptorRegistry.addInterceptor(key, interceptorDef);
+    };
+
+    /**
+     * Get all object interceptors.
+     * @returns {Array.<String>} a list of interceptor keys
+     */
+    ObjectAPI.prototype.getInterceptorKeys = function () {
+        return this.interceptorRegistry.listKeys();
+    };
+
+    /**
+     * Retrieve the interceptors for a given identifier.
+     * @private
+     */
+    ObjectAPI.prototype.getInterceptors = function (identifier, object) {
+        return this.interceptorRegistry.getInterceptors(identifier, object);
     };
 
     /**

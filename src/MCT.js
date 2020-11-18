@@ -271,6 +271,7 @@ define([
         this.install(this.plugins.URLTimeSettingsSynchronizer());
         this.install(this.plugins.NotificationIndicator());
         this.install(this.plugins.NewFolderAction());
+        this.install(this.plugins.ObjectInterceptors());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
