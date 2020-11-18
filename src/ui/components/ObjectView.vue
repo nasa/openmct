@@ -154,6 +154,7 @@ export default {
 
             let keys = Object.keys(styleObj);
             let elemToStyle = this.getStyleReceiver();
+
             keys.forEach(key => {
                 if (elemToStyle) {
                     if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {

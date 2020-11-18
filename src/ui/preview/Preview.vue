@@ -67,8 +67,7 @@ export default {
         });
         this.setView(this.views[0]);
     },
-    destroyed() {
-        this.view.destroy();
+    beforeDestroy() {
         if (this.stopListeningStyles) {
             this.stopListeningStyles();
         }
@@ -80,7 +79,10 @@ export default {
 
         if (this.actionCollection) {
             this.actionCollection.destroy();
-        }
+        } 
+    },
+    destroyed() {
+        this.view.destroy();
     },
     methods: {
         clear() {
