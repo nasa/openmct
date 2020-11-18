@@ -15,7 +15,7 @@
                  :class="type.cssClass"
             >
                 <span class="is-status__indicator"
-                      title="This item is missing or suspect"
+                      :title="`This item is ${status}`"
                 ></span>
             </div>
             <span

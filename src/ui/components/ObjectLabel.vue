@@ -12,7 +12,7 @@
         :class="typeClass"
     >
         <span class="is-status__indicator"
-              title="This item is missing or suspect"
+              :title="`This item is ${status}`"
         ></span>
     </div>
     <div class="c-tree__item__name c-object-label__name">
