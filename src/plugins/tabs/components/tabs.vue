@@ -129,6 +129,8 @@ export default {
 
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
+        this.openmct.router.on('change:params', this.updateCurrentTab.bind(this));
+
         this.RemoveAction = new RemoveAction(this.openmct);
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
@@ -309,6 +311,19 @@ export default {
             } else {
                 return this.loadedTabs[tab.keyString];
             }
+        },
+        updateCurrentTab(newParams, oldParams, changedParams) {
+            const tabIndex = changedParams[this.searchTabKey];
+            if (!tabIndex) {
+                return;
+            }
+
+            if (this.currentTabIndex === parseInt(tabIndex, 10)) {
+                return;
+            }
+
+            this.currentTabIndex = tabIndex;
+            this.currentTab = this.tabsList[tabIndex];
         }
     }
 };
