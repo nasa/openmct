@@ -150,6 +150,8 @@ export default {
         this.unsubscribe();
         this.clearCurrentTabIndexFromURL();
 
+        this.openmct.router.off('change:params', this.updateCurrentTab.bind(this));
+
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
     },
