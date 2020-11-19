@@ -33,14 +33,14 @@ export function setSearchParam(openmct, paramName, paramValue) {
     let url = getHashRelativeURL(openmct);
 
     url.searchParams.set(paramName, paramValue);
-    setLocationFromUrl(openmct, url);
+    setLocationFromUrl(openmct);
 }
 
 export function deleteSearchParam(openmct, paramName) {
     let url = getHashRelativeURL(openmct);
 
     url.searchParams.delete(paramName);
-    setLocationFromUrl(openmct, url);
+    setLocationFromUrl(openmct);
 }
 
 /**
@@ -48,15 +48,7 @@ export function deleteSearchParam(openmct, paramName) {
  * @param {URLSearchParams} paramMap
  */
 export function setAllSearchParams(openmct, newSearchParams) {
-    let url = getHashRelativeURL(openmct);
-
-    Array.from(url.searchParams.keys()).forEach((key) => url.searchParams.delete(key));
-
-    Array.from(newSearchParams.keys()).forEach(key => {
-        url.searchParams.set(key, newSearchParams.get(key));
-    });
-
-    setLocationFromUrl(openmct, url);
+    setLocationFromUrl(openmct);
 }
 
 export function getSearchParam(openmct, paramName) {
@@ -92,23 +84,17 @@ export function setObjectPath(openmct, objectPath) {
     }
 
     url.pathname = objectPathString;
-    setLocationFromUrl(openmct, url);
+    setLocationFromUrl(openmct);
 }
 
 function isDomainObject(potentialObject) {
     return potentialObject.identifier === undefined;
 }
 
-function setLocationFromUrl(openmct, url) {
-    openmct.router.updateTimeSettings(url);
+export function setLocationFromUrl(openmct) {
+    openmct.router.updateTimeSettings();
 }
 
 function getHashRelativeURL(openmct) {
-    const url = new URL(window.location.hash.substring(1), window.location.origin);
-    return url;
-
-    // const currentLocation = openmct.router.getCurrentLocation();
-    // const newUrl = new URL(currentLocation.url.pathname, window.location.origin);
-    // return newUrl;
-    // return currentLocation.url;
+    return openmct.router.getCurrentLocation().url;
 }

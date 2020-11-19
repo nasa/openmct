@@ -21,7 +21,8 @@
  *****************************************************************************/
 import {
     getAllSearchParams,
-    setAllSearchParams
+    setAllSearchParams,
+    setLocationFromUrl
 } from 'utils/openmctLocation';
 
 const TIME_EVENTS = ['timeSystem', 'clock', 'clockOffsets'];
@@ -49,8 +50,6 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     initialize() {
-        this.updateTimeSettings();
-
         this.openmct.router.on('change:params', this.updateTimeSettings);
 
         TIME_EVENTS.forEach(event => {
@@ -72,18 +71,14 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     updateTimeSettings() {
-        // Prevent from triggering self
-        // if (!this.isUrlUpdateInProgress) {
-            // let timeParameters = this.parseParametersFromUrl();
+        let timeParameters = this.parseParametersFromUrl();
 
-            // if (this.areTimeParametersValid(timeParameters)) {
-            //     this.setTimeApiFromUrl(timeParameters);
-            // } else {
-                this.setUrlFromTimeApi();
-            // }
-        // } else {
-        //     this.isUrlUpdateInProgress = false;
-        // }
+        if (this.areTimeParametersValid(timeParameters)) {
+            this.setTimeApiFromUrl(timeParameters);
+            setLocationFromUrl(this.openmct);
+        } else {
+            this.setUrlFromTimeApi();
+        }
     }
 
     parseParametersFromUrl() {
