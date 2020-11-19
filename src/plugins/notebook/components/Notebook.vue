@@ -24,12 +24,12 @@
                  :default-section-id="defaultSectionId"
                  :domain-object="internalDomainObject"
                  :page-title="internalDomainObject.configuration.pageTitle"
-                 :pages="pages"
                  :section-title="internalDomainObject.configuration.sectionTitle"
                  :sections="sections"
+                 :selected-section="selectedSection"
                  :sidebar-covers-entries="sidebarCoversEntries"
-                 @updatePage="updatePage"
-                 @updateSection="updateSection"
+                 @pagesChanged="pagesChanged"
+                 @sectionsChanged="sectionsChanged"
                  @toggleNav="toggleNav"
         />
         <div class="c-notebook__page-view">
@@ -111,7 +111,7 @@ import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
 import { throttle } from 'lodash';
@@ -220,7 +220,7 @@ export default {
                 return s;
             });
 
-            this.updateSection({ sections });
+            this.sectionsChanged({ sections });
             this.throttledSearchItem('');
         },
         createNotebookStorageObject() {
@@ -309,7 +309,7 @@ export default {
                 return null;
             }
 
-            return this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier).then(d => d);
+            return this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier);
         },
         getPage(section, id) {
             return section.pages.find(p => p.id === id);
@@ -379,9 +379,6 @@ export default {
 
             return this.sections.find(section => section.isSelected);
         },
-        mutateObject(key, value) {
-            this.openmct.objects.mutate(this.internalDomainObject, key, value);
-        },
         navigateToSectionPage() {
             const { pageId, sectionId } = this.openmct.router.getParams();
             if (!pageId || !sectionId) {
@@ -398,7 +395,7 @@ export default {
                 return s;
             });
 
-            this.updateSection({ sections });
+            this.sectionsChanged({ sections });
         },
         newEntry(embed = null) {
             this.search = '';
@@ -410,6 +407,24 @@ export default {
         },
         orientationChange() {
             this.formatSidebar();
+        },
+        pagesChanged({ pages = [], id = null}) {
+            const selectedSection = this.getSelectedSection();
+            if (!selectedSection) {
+                return;
+            }
+
+            selectedSection.pages = pages;
+            const sections = this.sections.map(section => {
+                if (section.id === selectedSection.id) {
+                    section = selectedSection;
+                }
+
+                return section;
+            });
+
+            this.sectionsChanged({ sections });
+            this.updateDefaultNotebookPage(pages, id);
         },
         removeDefaultClass(domainObject) {
             if (!domainObject) {
@@ -433,12 +448,14 @@ export default {
                 setDefaultNotebook(this.openmct, notebookStorage);
             }
 
-            if (this.defaultSectionId.length === 0 || this.defaultSectionId !== notebookStorage.section.id) {
+            if (this.defaultSectionId && this.defaultSectionId.length === 0 || this.defaultSectionId !== notebookStorage.section.id) {
                 this.defaultSectionId = notebookStorage.section.id;
+                setDefaultNotebookSection(notebookStorage.section);
             }
 
-            if (this.defaultPageId.length === 0 || this.defaultPageId !== notebookStorage.page.id) {
+            if (this.defaultPageId && this.defaultPageId.length === 0 || this.defaultPageId !== notebookStorage.page.id) {
                 this.defaultPageId = notebookStorage.page.id;
+                setDefaultNotebookPage(notebookStorage.page);
             }
         },
         updateDefaultNotebookPage(pages, id) {
@@ -502,28 +519,10 @@ export default {
             const notebookEntries = configuration.entries || {};
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
-            this.mutateObject('configuration.entries', notebookEntries);
+            mutateObject(this.openmct, this.internalDomainObject, 'configuration.entries', notebookEntries);
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
-        },
-        updatePage({ pages = [], id = null}) {
-            const selectedSection = this.getSelectedSection();
-            if (!selectedSection) {
-                return;
-            }
-
-            selectedSection.pages = pages;
-            const sections = this.sections.map(section => {
-                if (section.id === selectedSection.id) {
-                    section = selectedSection;
-                }
-
-                return section;
-            });
-
-            this.updateSection({ sections });
-            this.updateDefaultNotebookPage(pages, id);
         },
         updateParams(sections) {
             const selectedSection = sections.find(s => s.isSelected);
@@ -548,8 +547,8 @@ export default {
                 pageId
             });
         },
-        updateSection({ sections, id = null }) {
-            this.mutateObject('configuration.sections', sections);
+        sectionsChanged({ sections, id = null }) {
+            mutateObject(this.openmct, this.internalDomainObject, 'configuration.sections', sections);
 
             this.updateParams(sections);
             this.updateDefaultNotebookSection(sections, id);
