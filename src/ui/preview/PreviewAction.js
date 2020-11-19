@@ -27,10 +27,12 @@ export default class PreviewAction {
         /**
          * Metadata
          */
-        this.name = 'Preview';
+        this.name = 'View';
         this.key = 'preview';
-        this.description = 'Preview in large dialog';
-        this.cssClass = 'icon-eye-open';
+        this.description = 'View in large dialog';
+        this.cssClass = 'icon-items-expand';
+        this.group = 'windowing';
+        this.priority = 1;
 
         /**
          * Dependencies
@@ -81,8 +83,7 @@ export default class PreviewAction {
         let targetObject = objectPath[0];
         let navigatedObject = this._openmct.router.path[0];
 
-        return targetObject.identifier.namespace === navigatedObject.identifier.namespace
-            && targetObject.identifier.key === navigatedObject.identifier.key;
+        return this._openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
     _preventPreview(objectPath) {
         const noPreviewTypes = ['folder'];

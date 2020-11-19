@@ -22,18 +22,20 @@
         opacity: $objectLabelTypeIconOpacity;
     }
 
-    &.is-missing {
-        @include isMissing($absPos: true);
+    .is-status__indicator {
+        position: absolute;
+        right: -3px;
+        top: -3px;
+        transform: scale(0.5);
+    }
 
-        [class*='__type-icon']:before,
-        [class*='__type-icon']:after{
-            opacity: $opacityMissing;
-        }
-
-        .is-missing__indicator {
-            right: -3px;
-            top: -3px;
-            transform: scale(0.7);
+    &[class*='is-status--missing'],
+    &[class*='is-status--suspect'] {
+        [class*='__type-icon'] {
+            &:before,
+            &:after {
+                opacity: $opacityMissing;
+            }
         }
     }
 }

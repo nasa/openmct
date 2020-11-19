@@ -54,15 +54,13 @@ define([
             view(domainObject, objectPath) {
                 let table = new TelemetryTable(domainObject, openmct);
                 let component;
-
                 let markingProp = {
                     enable: true,
                     useAlternateControlBar: false,
                     rowName: '',
                     rowNamePlural: ''
                 };
-
-                return {
+                const view = {
                     show: function (element, editMode) {
                         component = new Vue({
                             el: element,
@@ -72,7 +70,8 @@ define([
                             data() {
                                 return {
                                     isEditing: editMode,
-                                    markingProp
+                                    markingProp,
+                                    view
                                 };
                             },
                             provide: {
@@ -80,7 +79,7 @@ define([
                                 table,
                                 objectPath
                             },
-                            template: '<table-component :isEditing="isEditing" :marking="markingProp"/>'
+                            template: '<table-component ref="tableComponent" :isEditing="isEditing" :marking="markingProp" :view="view"/>'
                         });
                     },
                     onEditModeChange(editMode) {
@@ -89,11 +88,22 @@ define([
                     onClearData() {
                         table.clearData();
                     },
+                    getViewContext() {
+                        if (component) {
+                            return component.$refs.tableComponent.getViewContext();
+                        } else {
+                            return {
+                                type: 'telemetry-table'
+                            };
+                        }
+                    },
                     destroy: function (element) {
                         component.$destroy();
                         component = undefined;
                     }
                 };
+
+                return view;
             },
             priority() {
                 return 1;
