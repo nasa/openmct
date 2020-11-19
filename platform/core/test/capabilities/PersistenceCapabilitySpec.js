@@ -99,8 +99,8 @@ define(
 
                 mockNewStyleDomainObject = Object.assign({}, model);
                 mockNewStyleDomainObject.identifier = {
-                    namespace: "",
-                    key: id
+                    namespace: SPACE,
+                    key: key
                 };
 
                 // Simulate mutation capability

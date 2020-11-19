@@ -340,6 +340,7 @@ describe('the plugin', function () {
 
         it('provides controls including separators', () => {
             const displayLayoutToolbar = openmct.toolbars.get(selection);
+
             expect(displayLayoutToolbar.length).toBe(9);
         });
     });

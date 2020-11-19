@@ -59,4 +59,25 @@ describe("The Object API", () => {
             });
         });
     });
+
+    describe("The get function", () => {
+        describe("when a provider is available", () => {
+            let mockProvider;
+            beforeEach(() => {
+                mockProvider = jasmine.createSpyObj("mock provider", [
+                    "get"
+                ]);
+                mockProvider.get.and.returnValue(Promise.resolve(mockDomainObject));
+                objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
+            });
+
+            it("Caches multiple requests for the same object", () => {
+                expect(mockProvider.get.calls.count()).toBe(0);
+                objectAPI.get(mockDomainObject.identifier);
+                expect(mockProvider.get.calls.count()).toBe(1);
+                objectAPI.get(mockDomainObject.identifier);
+                expect(mockProvider.get.calls.count()).toBe(1);
+            });
+        });
+    });
 });
