@@ -147,12 +147,12 @@ define([
     /**
      * Return Custom String Formatter
      *
-     * @param {Object} metadata
-     * @param {Object} item
+     * @param {Object} valueMetadata valueMetadata for given telemetry object
+     * @param {string} format custom formatter string (eg: %.4f, &lts etc.)
      * @returns {CustomStringFormatter}
      */
-    TelemetryAPI.prototype.customStringFormatter = function (metadata, item) {
-        return new CustomStringFormatter.default(this.openmct, metadata.value(item.value), item.format);
+    TelemetryAPI.prototype.customStringFormatter = function (valueMetadata, format) {
+        return new CustomStringFormatter.default(this.openmct, valueMetadata, format);
     };
 
     /**

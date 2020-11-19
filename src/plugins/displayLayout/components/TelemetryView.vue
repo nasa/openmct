@@ -290,7 +290,8 @@ export default {
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
 
-            this.customStringformatter = this.openmct.telemetry.customStringFormatter(this.metadata, this.item);
+            const valueMetadata = this.metadata.value(this.item.value);
+            this.customStringformatter = this.openmct.telemetry.customStringFormatter(valueMetadata, this.item.format);
 
             this.requestHistoricalData();
             this.subscribeToObject();
