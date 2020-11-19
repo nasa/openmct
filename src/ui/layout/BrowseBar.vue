@@ -9,10 +9,7 @@
         ></button>
         <div
             class="l-browse-bar__object-name--w c-object-label"
-            :class="{
-                classList,
-                'is-missing': domainObject.status === 'missing'
-            }"
+            :class="[classList, { 'is-missing': domainObject.status === 'missing' }]"
         >
             <div class="c-object-label__type-icon"
                  :class="type.cssClass"
