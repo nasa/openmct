@@ -40,7 +40,7 @@
                 <div class="c-state-indicator__alert-cursor-lock icon-cursor-lock" title="Cursor is point locked. Click anywhere in the plot to unlock."></div>
                 <div class="plot-legend-item"
                      ng-class="{
-                        'is-missing': series.domainObject.status === 'missing'
+                        'is-status--missing': series.domainObject.status === 'missing'
                     }"
                      ng-repeat="series in series track by $index"
                 >
@@ -48,7 +48,7 @@
                         <span class="plot-series-color-swatch"
                               ng-style="{ 'background-color': series.get('color').asHexString() }">
                         </span>
-                        <span class="is-missing__indicator" title="This item is missing"></span>
+                        <span class="is-status__indicator" title="This item is missing or suspect"></span>
                         <span class="plot-series-name">{{ series.nameWithUnit() }}</span>
                     </div>
                     <div class="plot-series-value hover-value-enabled value-to-display-{{ legend.get('valueToShowWhenCollapsed') }} {{ series.closest.mctLimitState.cssClass }}"
@@ -95,14 +95,14 @@
                     <tr ng-repeat="series in series"
                         class="plot-legend-item"
                         ng-class="{
-                            'is-missing': series.domainObject.status === 'missing'
+                            'is-status--missing': series.domainObject.status === 'missing'
                         }"
                     >
                         <td class="plot-series-swatch-and-name">
                             <span class="plot-series-color-swatch"
                                   ng-style="{ 'background-color': series.get('color').asHexString() }">
                             </span>
-                            <span class="is-missing__indicator" title="This item is missing"></span>
+                            <span class="is-status__indicator" title="This item is missing or suspect"></span>
                             <span class="plot-series-name">{{ series.get('name') }}</span>
                         </td>
 
