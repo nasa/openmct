@@ -129,31 +129,21 @@
     }
 }
 
-@mixin isMissing($absPos: false) {
+@mixin isStatus($absPos: false) {
+    // Supports CSS classing as follows:
+    // is-status--missing, is-status--suspect, etc.
     // Common styles to be applied to tree items, object labels, grid and list item views
-    //opacity: 0.7;
-    //pointer-events: none; // Don't think we can do this, as disables title hover on icon element
 
-    .is-missing__indicator {
-        display: none ;
+    .is-status__indicator {
+        display: block ; // Set to display: none in status.scss
         text-shadow: $colorBodyBg 0 0 2px;
-        color: $colorAlert;
         font-family: symbolsfont;
 
-        &:before {
-            content: $glyph-icon-alert-triangle;
-        }
-    }
-
-    @if $absPos {
-        .is-missing__indicator {
+        @if $absPos {
             position: absolute;
             z-index: 3;
         }
     }
-
-    &.is-missing .is-missing__indicator,
-    .is-missing .is-missing__indicator { display: block !important; }
 }
 
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
@@ -502,8 +492,8 @@
 }
 
 @mixin cClickIconButtonLayout() {
-    $pLR: 4px;
-    $pTB: 4px;
+    $pLR: 5px;
+    $pTB: 5px;
     padding: $pTB $pLR;
 
     &:before,
@@ -522,6 +512,7 @@
     @include cControl();
     @include cClickIconButtonLayout();
     background: none;
+    color: $colorClickIconButton;
     box-shadow: none;
     cursor: pointer;
     transition: $transOut;
@@ -530,7 +521,8 @@
     @include hover() {
         transition: $transIn;
         background: $colorClickIconButtonBgHov;
-        color: $colorClickIconButtonFgHov;
+        //color: $colorClickIconButtonFgHov;
+        filter: $filterHov;
     }
 
     &[class*="--major"] {

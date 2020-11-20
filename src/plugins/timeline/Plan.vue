@@ -61,13 +61,21 @@ export default {
         this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
         this.openmct.time.on("bounds", this.updateViewBounds);
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+        this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     },
     destroyed() {
         clearInterval(this.resizeTimer);
         this.openmct.time.off("timeSystem", this.setScaleAndPlotActivities);
         this.openmct.time.off("bounds", this.updateViewBounds);
+        if (this.unlisten) {
+            this.unlisten();
+        }
     },
     methods: {
+        observeForChanges(mutatedObject) {
+            this.validateJSON(mutatedObject.selectFile.body);
+            this.setScaleAndPlotActivities();
+        },
         resize() {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
                 this.setDimensions();
@@ -200,7 +208,7 @@ export default {
             return 0;
         },
         // Get the row where the next activity will land.
-        getRowForActivity(rectX, width, defaultActivityRow = 0) {
+        getRowForActivity(rectX, width, minimumActivityRow = 0) {
             let currentRow;
             let sortedActivityRows = Object.keys(this.activitiesByRow).sort(this.sortFn);
 
@@ -216,17 +224,18 @@ export default {
 
             for (let i = 0; i < sortedActivityRows.length; i++) {
                 let row = sortedActivityRows[i];
-                if (getOverlap(this.activitiesByRow[row])) {
+                if (row >= minimumActivityRow && getOverlap(this.activitiesByRow[row])) {
                     currentRow = row;
                     break;
                 }
             }
 
             if (currentRow === undefined && sortedActivityRows.length) {
-                currentRow = parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + ROW_HEIGHT + ROW_PADDING;
+                let row = Math.max(parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10), minimumActivityRow);
+                currentRow = row + ROW_HEIGHT + ROW_PADDING;
             }
 
-            return (currentRow || defaultActivityRow);
+            return (currentRow || minimumActivityRow);
         },
         calculatePlanLayout() {
             this.activitiesByRow = {};
@@ -236,8 +245,9 @@ export default {
             let groups = Object.keys(this.json);
             groups.forEach((key, index) => {
                 let activities = this.json[key];
-                //set the currentRow to the beginning of the next logical row
-                currentRow = currentRow + ROW_HEIGHT * index;
+                //set the new group's first row. It should be greater than the largest row of the last group
+                let sortedActivityRows = Object.keys(this.activitiesByRow).sort(this.sortFn);
+                const groupRowStart = sortedActivityRows.length ? parseInt(sortedActivityRows[sortedActivityRows.length - 1], 10) + 1 : 0;
                 let newGroup = true;
                 activities.forEach((activity) => {
                     if (this.isActivityInBounds(activity)) {
@@ -256,9 +266,9 @@ export default {
                         const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
 
                         if (activityNameFitsRect) {
-                            currentRow = this.getRowForActivity(rectX, rectWidth);
+                            currentRow = this.getRowForActivity(rectX, rectWidth, groupRowStart);
                         } else {
-                            currentRow = this.getRowForActivity(rectX, textWidth);
+                            currentRow = this.getRowForActivity(rectX, textWidth, groupRowStart);
                         }
 
                         let textY = parseInt(currentRow, 10) + (activityNameFitsRect ? INNER_TEXT_PADDING : OUTER_TEXT_PADDING);

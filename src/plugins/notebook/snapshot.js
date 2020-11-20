@@ -49,7 +49,7 @@ export default class Snapshot {
             .then(domainObject => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
 
-                const defaultPath = `${domainObject.name} > ${notebookStorage.section.name} > ${notebookStorage.page.name}`;
+                const defaultPath = `${domainObject.name} - ${notebookStorage.section.name} - ${notebookStorage.page.name}`;
                 const msg = `Saved to Notebook ${defaultPath}`;
                 this._showNotification(msg);
             });
