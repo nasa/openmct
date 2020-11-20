@@ -26,12 +26,12 @@ import ClearDataAction from '../clearDataAction.js';
 describe('When the Clear Data Plugin is installed,', function () {
     const mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']);
     const mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']);
-    const mockContextMenuProvider = jasmine.createSpyObj('contextMenu', ['registerAction']);
+    const mockActionsProvider = jasmine.createSpyObj('actions', ['register']);
 
     const openmct = {
         objectViews: mockObjectViews,
         indicators: mockIndicatorProvider,
-        contextMenu: mockContextMenuProvider,
+        actions: mockActionsProvider,
         install: function (plugin) {
             plugin(this);
         }
@@ -51,7 +51,7 @@ describe('When the Clear Data Plugin is installed,', function () {
     it('Clear Data context menu action is installed', function () {
         openmct.install(ClearDataActionPlugin([]));
 
-        expect(mockContextMenuProvider.registerAction).toHaveBeenCalled();
+        expect(mockActionsProvider.register).toHaveBeenCalled();
     });
 
     it('clear data action emits a clearData event when invoked', function () {

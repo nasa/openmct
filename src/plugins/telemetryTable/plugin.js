@@ -23,11 +23,13 @@
 define([
     './TelemetryTableViewProvider',
     './TableConfigurationViewProvider',
-    './TelemetryTableType'
+    './TelemetryTableType',
+    './ViewActions'
 ], function (
     TelemetryTableViewProvider,
     TableConfigurationViewProvider,
-    TelemetryTableType
+    TelemetryTableType,
+    TelemetryTableViewActions
 ) {
     return function plugin() {
         return function install(openmct) {
@@ -40,6 +42,10 @@ define([
                 } else {
                     return true;
                 }
+            });
+
+            TelemetryTableViewActions.default.forEach(action => {
+                openmct.actions.register(action);
             });
         };
     };

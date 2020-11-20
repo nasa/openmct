@@ -244,7 +244,11 @@ define([
 
         this.overlays = new OverlayAPI.default();
 
-        this.contextMenu = new api.ContextMenuRegistry();
+        this.menus = new api.MenuAPI(this);
+
+        this.actions = new api.ActionsAPI(this);
+
+        this.status = new api.StatusAPI(this);
 
         this.router = new ApplicationRouter();
 
@@ -274,6 +278,7 @@ define([
         this.install(this.plugins.URLTimeSettingsSynchronizer());
         this.install(this.plugins.NotificationIndicator());
         this.install(this.plugins.NewFolderAction());
+        this.install(this.plugins.ViewDatumAction());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

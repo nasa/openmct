@@ -64,6 +64,8 @@ define([
                         "description": "Move object to another location.",
                         "cssClass": "icon-move",
                         "category": "contextual",
+                        "group": "action",
+                        "priority": 9,
                         "implementation": MoveAction,
                         "depends": [
                             "policyService",
@@ -77,6 +79,8 @@ define([
                         "description": "Create Link to object in another location.",
                         "cssClass": "icon-link",
                         "category": "contextual",
+                        "group": "action",
+                        "priority": 7,
                         "implementation": LinkAction,
                         "depends": [
                             "policyService",
