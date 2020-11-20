@@ -24,7 +24,7 @@ import ActionsAPI from './ActionsAPI';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import ActionCollection from './ActionCollection';
 
-fdescribe('The Actions API', () => {
+describe('The Actions API', () => {
     let openmct;
     let actionsAPI;
     let mockAction;
@@ -35,7 +35,7 @@ fdescribe('The Actions API', () => {
     beforeEach(() => {
         openmct = createOpenMct();
         actionsAPI = new ActionsAPI(openmct);
-        mockObjectPathAction  ={
+        mockObjectPathAction = {
             name: 'Test Action Object Path',
             key: 'test-action-object-path',
             cssClass: 'test-action-object-path',
@@ -51,7 +51,7 @@ fdescribe('The Actions API', () => {
             },
             invoke: () => {
             }
-        }
+        };
         mockAction = {
             name: 'Test Action View',
             key: 'test-action-view',
