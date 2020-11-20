@@ -59,6 +59,7 @@ define([
     './persistence/couch/plugin',
     './defaultRootName/plugin',
     './timeline/plugin',
+    './viewDatumAction/plugin',
     './interceptors/plugin'
 ], function (
     _,
@@ -99,6 +100,7 @@ define([
     CouchDBPlugin,
     DefaultRootName,
     Timeline,
+    ViewDatumAction,
     ObjectInterceptors
 ) {
     const bundleMap = {
@@ -193,6 +195,7 @@ define([
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
     plugins.Timeline = Timeline.default;
+    plugins.ViewDatumAction = ViewDatumAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
 
     return plugins;
