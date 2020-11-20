@@ -21,64 +21,42 @@
  *****************************************************************************/
 export default class InterceptorRegistry {
     /**
-     * @interceptorDef InterceptorDefinition
-     * @memberof module:openmct.InterceptorRegistry~
-     * @property {string} key the key for this interceptor
-     * @property {function (identifier, object)} a function which implements
-     *           any modifications to objects and returns the modified object
-     */
-
-    /**
-     * A InterceptorRegistry maintains the definitions for different interceptors
-     * that domain objects may have.
+     * A InterceptorRegistry maintains the definitions for different interceptors that may be invoked on domain objects.
      * @interface InterceptorRegistry
      * @memberof module:openmct
      */
     constructor() {
-        this.interceptors = {};
+        this.interceptors = [];
     }
+
+    /**
+     * @interface InterceptorDef
+     * @property {function} appliesTo function that determines if this interceptor should be called for the given identifier/object
+     * @property {function} invoke function that transforms the provided domain object and returns the transformed domain object
+     * @property {function} priority the priority for this interceptor. A higher number returned has more weight than a lower number
+     * @memberof module:openmct InterceptorRegistry#
+     */
 
     /**
      * Register a new object interceptor.
      *
-     * @param {string} key a string identifier for this interceptor
-     * @param {module:openmct.Interceptor} interceptor the interceptor to add
+     * @param {module:openmct.InterceptorDef} interceptorDef the interceptor to add
      * @method addInterceptor
      * @memberof module:openmct.InterceptorRegistry#
      */
-    addInterceptor(key, interceptorDef) {
+    addInterceptor(interceptorDef) {
         //TODO: sort by priority
-        this.interceptors[key] = interceptorDef;
+        this.interceptors.push(interceptorDef);
     }
 
     /**
-     * List keys for all registered interceptors.
-     * @method listKeys
-     * @memberof module:openmct.InterceptorRegistry#
-     * @returns {string[]} all registered interceptor keys
-     */
-    listKeys() {
-        return Object.keys(this.interceptors);
-    }
-
-    /**
-     * Retrieve a registered interceptor by its key.
-     * @method get
-     * @param {string} key the key for this interceptor
-     * @memberof module:openmct.InterceptorRegistry#
-     * @returns {module:openmct.Interceptor} the registered interceptor
-     */
-    get(key) {
-        return this.interceptors[key];
-    }
-
-    /**
-     * Retrieve all interceptors for a domain object.
+     * Retrieve all interceptors applicable to a domain object.
      * @method getInterceptors
-     * @returns {module:openmct.Interceptor} the registered interceptor
+     * @returns [module:openmct.InterceptorDef] the registered interceptors for this identifier/object
+     * @memberof module:openmct.InterceptorRegistry#
      */
     getInterceptors(identifier, object) {
-        return Object.values(this.interceptors).filter(interceptor => {
+        return this.interceptors.filter(interceptor => {
             return typeof interceptor.appliesTo === 'function'
                 && interceptor.appliesTo(identifier, object);
         });

@@ -22,7 +22,7 @@
 
 export default function MyItemsInterceptor(openmct) {
 
-    openmct.objects.addInterceptor('my-items', {
+    openmct.objects.addGetInterceptor({
         appliesTo: (identifier, domainObject) => {
             return identifier.key === 'mine';
         },

@@ -105,9 +105,9 @@ describe("The Object API", () => {
                     }, object);
                 });
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
-                objectAPI.addInterceptor('test-interceptor', mockInterceptor);
-                objectAPI.addInterceptor('test-interceptor2', anotherMockInterceptor);
-                objectAPI.addInterceptor('test-interceptor3', notApplicableMockInterceptor);
+                objectAPI.addGetInterceptor(mockInterceptor);
+                objectAPI.addGetInterceptor(anotherMockInterceptor);
+                objectAPI.addGetInterceptor(notApplicableMockInterceptor);
             });
 
             it("Caches multiple requests for the same object", () => {

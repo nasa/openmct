@@ -180,7 +180,7 @@ define([
 
         return objectPromise.then(result => {
             delete this.cache[keystring];
-            const interceptors = this.getInterceptors(identifier, result);
+            const interceptors = this.listGetInterceptors(identifier, result);
             interceptors.forEach(interceptor => {
                 result = interceptor.invoke(identifier, result);
             });
@@ -320,31 +320,23 @@ define([
     };
 
     /**
-     * Register a new object interceptor.
+     * Register an object interceptor that transforms a domain object requested via module:openmct.ObjectAPI.get
+     * The domain object will be transformed after it is retrieved from the persistence store
+     * The domain object will be transformed only if the interceptor is applicable to that domain object as defined by the InterceptorDef
      *
-     * @param {string} key a string identifier for this interceptor
-     * @param {module:openmct.Interceptor} interceptor the interceptor to add
-     * @method addInterceptor
+     * @param {module:openmct.InterceptorDef} interceptorDef the interceptor definition to add
+     * @method addGetInterceptor
      * @memberof module:openmct.InterceptorRegistry#
      */
-    ObjectAPI.prototype.addInterceptor = function (key, interceptorDef) {
-        //TODO: sort by priority
-        this.interceptorRegistry.addInterceptor(key, interceptorDef);
+    ObjectAPI.prototype.addGetInterceptor = function (interceptorDef) {
+        this.interceptorRegistry.addInterceptor(interceptorDef);
     };
 
     /**
-     * Get all object interceptors.
-     * @returns {Array.<String>} a list of interceptor keys
-     */
-    ObjectAPI.prototype.getInterceptorKeys = function () {
-        return this.interceptorRegistry.listKeys();
-    };
-
-    /**
-     * Retrieve the interceptors for a given identifier.
+     * Retrieve the interceptors for a given domain object.
      * @private
      */
-    ObjectAPI.prototype.getInterceptors = function (identifier, object) {
+    ObjectAPI.prototype.listGetInterceptors = function (identifier, object) {
         return this.interceptorRegistry.getInterceptors(identifier, object);
     };
 
