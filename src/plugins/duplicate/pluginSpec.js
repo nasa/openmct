@@ -38,10 +38,6 @@ describe("The Duplicate Action plugin", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         childObject = getMockObjects({
@@ -110,7 +106,7 @@ describe("The Duplicate Action plugin", () => {
         openmct.install(DuplicateActionPlugin());
 
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {

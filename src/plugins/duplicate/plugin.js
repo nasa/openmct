@@ -23,6 +23,6 @@ import DuplicateAction from "./DuplicateAction";
 
 export default function () {
     return function (openmct) {
-        openmct.contextMenu.registerAction(new DuplicateAction(openmct));
+        openmct.actions.register(new DuplicateAction(openmct));
     };
 }

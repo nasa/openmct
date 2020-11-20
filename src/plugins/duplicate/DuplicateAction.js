@@ -27,6 +27,8 @@ export default class DuplicateAction {
         this.key = 'duplicate';
         this.description = 'Duplicate this object.';
         this.cssClass = "icon-duplicate";
+        this.group = "action";
+        this.priority = 7;
 
         this.openmct = openmct;
     }
