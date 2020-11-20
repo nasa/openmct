@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const { TelemetryCollection } = require("./TelemetryCollection");
+
 define([
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
@@ -258,6 +260,74 @@ define([
         if (!Object.prototype.hasOwnProperty.call(options, 'domain')) {
             options.domain = this.openmct.time.timeSystem().key;
         }
+    };
+
+    /**
+     * Request telemetry collection for a domain object.
+     * The `options` argument allows you to specify filters
+     * (start, end, etc.), sort order, and strategies for retrieving
+     * telemetry (aggregation, latest available, etc.).
+     *
+     * @method request
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     * @param {module:openmct.DomainObject} domainObject the object
+     *        which has associated telemetry
+     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+     *        options for this historical request
+     * @returns {Promise.<object[]>} a promise for an array of
+     *          telemetry data
+     */
+    TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject) {
+        if (arguments.length === 1) {
+            arguments.length = 2;
+            arguments[1] = {};
+        }
+
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+
+        // historical setup
+        this.standardizeRequestOptions(arguments[1]);
+        const historicalProvider = this.findRequestProvider.apply(this, arguments);
+
+        // subscription setup
+        const subscriptionProvider = this.findSubscriptionProvider(domainObject);
+
+        // check for no providers
+        if (!historicalProvider && !subscriptionProvider) {
+            return Promise.reject('No providers found');
+        }
+
+        if (!this.subscribeCache) {
+            this.subscribeCache = {};
+        }
+
+        let subscriber = this.subscribeCache[keyString];
+
+        if (!subscriber) {
+            subscriber = this.subscribeCache[keyString] = {
+                callbacks: []
+            };
+        }
+
+        // move this to telemetry collection
+        // historicalProvider.request.apply(historicalProvider, arguments).catch((rejected) => {
+        //     this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+        //     console.error(rejected);
+
+        //     return Promise.reject(rejected);
+        // });
+
+        let telemetryCollectionOptions = {
+            domainObject,
+            historicalProvider,
+            subscription: {
+                subscriber,
+                provider: subscriptionProvider
+            },
+            options: arguments
+        }
+
+        return Promise.resolve(new TelemetryCollection(this.openmct, telemetryCollectionOptions));
     };
 
     /**
