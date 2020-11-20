@@ -71,7 +71,6 @@
 
 <script>
 import LayoutFrame from './LayoutFrame.vue';
-import printj from 'printj';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
 import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
 
@@ -172,7 +171,11 @@ export default {
         valueMetadata() {
             return this.datum && this.metadata.value(this.item.value);
         },
-        valueFormatter() {
+        formatter() {
+            if (this.item.format) {
+                return this.customStringformatter;
+            }
+
             return this.formats[this.item.value];
         },
         telemetryValue() {
@@ -180,11 +183,7 @@ export default {
                 return;
             }
 
-            if (this.item.format) {
-                return printj.sprintf(this.item.format, this.datum[this.valueMetadata.key]);
-            }
-
-            return this.valueFormatter && this.valueFormatter.format(this.datum);
+            return this.formatter && this.formatter.format(this.datum);
         },
         telemetryClass() {
             if (!this.datum) {
@@ -290,6 +289,10 @@ export default {
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+
+            const valueMetadata = this.metadata.value(this.item.value);
+            this.customStringformatter = this.openmct.telemetry.customStringFormatter(valueMetadata, this.item.format);
+
             this.requestHistoricalData();
             this.subscribeToObject();
 
@@ -309,6 +312,8 @@ export default {
             delete this.immediatelySelect;
         },
         updateTelemetryFormat(format) {
+            this.customStringformatter.setFormat(format);
+
             this.$emit('formatChanged', this.item, format);
         },
         async getContextMenuActions() {
