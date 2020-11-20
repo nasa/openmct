@@ -18,7 +18,7 @@
                                :domain-object="domainObject"
                                :sections="sections"
                                :section-title="sectionTitle"
-                               @updateSection="updateSection"
+                               @updateSection="sectionsChanged"
             />
         </div>
     </div>
@@ -48,7 +48,7 @@
                             :sidebar-covers-entries="sidebarCoversEntries"
                             :page-title="pageTitle"
                             @toggleNav="toggleNav"
-                            @updatePage="updatePage"
+                            @updatePage="pagesChanged"
             />
         </div>
     </div>
@@ -85,13 +85,6 @@ export default {
                 return {};
             }
         },
-        pages: {
-            type: Array,
-            required: true,
-            default() {
-                return [];
-            }
-        },
         pageTitle: {
             type: String,
             default() {
@@ -122,9 +115,16 @@ export default {
         return {
         };
     },
+    computed: {
+        pages() {
+            const selectedSection = this.sections.find(section => section.isSelected);
+
+            return selectedSection && selectedSection.pages || [];
+        }
+    },
     watch: {
-        pages(newpages) {
-            if (!newpages.length) {
+        pages(newPages) {
+            if (!newPages.length) {
                 this.addPage();
             }
         },
@@ -141,55 +141,79 @@ export default {
     },
     methods: {
         addPage() {
+            const newPage = this.createNewPage();
+            const pages = this.addNewPage(newPage);
+
+            this.pagesChanged({
+                pages,
+                id: newPage.id
+            });
+        },
+        addSection() {
+            const newSection = this.createNewSection();
+            const sections = this.addNewSection(newSection);
+
+            this.sectionsChanged({
+                sections,
+                id: newSection.id
+            });
+        },
+        addNewPage(page) {
+            const pages = this.pages.map(p => {
+                p.isSelected = false;
+
+                return p;
+            });
+
+            return pages.concat(page);
+        },
+        addNewSection(section) {
+            const sections = this.sections.map(s => {
+                s.isSelected = false;
+
+                return s;
+            });
+
+            return sections.concat(section);
+        },
+        createNewPage() {
             const pageTitle = this.pageTitle;
             const id = uuid();
-            const page = {
+
+            return {
                 id,
                 isDefault: false,
                 isSelected: true,
                 name: `Unnamed ${pageTitle}`,
                 pageTitle
             };
-
-            this.pages.forEach(p => p.isSelected = false);
-            const pages = this.pages.concat(page);
-
-            this.updatePage({
-                pages,
-                id
-            });
         },
-        addSection() {
+        createNewSection() {
             const sectionTitle = this.sectionTitle;
             const id = uuid();
-            const section = {
+            const page = this.createNewPage();
+            const pages = [page];
+
+            return {
                 id,
                 isDefault: false,
                 isSelected: true,
                 name: `Unnamed ${sectionTitle}`,
-                pages: [],
+                pages,
                 sectionTitle
             };
-
-            this.sections.forEach(s => s.isSelected = false);
-            const sections = this.sections.concat(section);
-
-            this.updateSection({
-                sections,
-                id
-            });
         },
         toggleNav() {
             this.$emit('toggleNav');
         },
-        updatePage({ pages, id }) {
-            this.$emit('updatePage', {
+        pagesChanged({ pages, id }) {
+            this.$emit('pagesChanged', {
                 pages,
                 id
             });
         },
-        updateSection({ sections, id }) {
-            this.$emit('updateSection', {
+        sectionsChanged({ sections, id }) {
+            this.$emit('sectionsChanged', {
                 sections,
                 id
             });
