@@ -26,6 +26,7 @@ define([], function () {
             this.columns = columns;
 
             this.datum = createNormalizedDatum(datum, columns);
+            this.fullDatum = datum;
             this.limitEvaluator = limitEvaluator;
             this.objectKeyString = objectKeyString;
         }
@@ -87,7 +88,7 @@ define([], function () {
         }
 
         getContextMenuActions() {
-            return [];
+            return ['viewDatumAction'];
         }
     }
 

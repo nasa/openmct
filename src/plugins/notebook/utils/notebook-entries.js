@@ -1,5 +1,6 @@
 import objectLink from '../../../ui/mixins/object-link';
-export const DEFAULT_CLASS = 'is-notebook-default';
+
+export const DEFAULT_CLASS = 'notebook-default';
 const TIME_BOUNDS = {
     START_BOUND: 'tc.startBound',
     END_BOUND: 'tc.endBound',
@@ -96,7 +97,7 @@ export function createNewEmbed(snapshotMeta, snapshot = '') {
     };
 }
 
-export function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null) {
+export function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null, entryText = '') {
     if (!openmct || !domainObject || !notebookStorage) {
         return;
     }
@@ -117,14 +118,14 @@ export function addNotebookEntry(openmct, domainObject, notebookStorage, embed =
     const entry = {
         id,
         createdOn: date,
-        text: '',
+        text: entryText,
         embeds
     };
 
     const newEntries = addEntryIntoPage(notebookStorage, entries, entry);
 
-    addDefaultClass(domainObject);
-    mutateObject(openmct, domainObject, 'configuration.entries', newEntries);
+    addDefaultClass(domainObject, openmct);
+    openmct.objects.mutate(domainObject, 'configuration.entries', newEntries);
 
     return id;
 }
@@ -197,13 +198,6 @@ export function mutateObject(openmct, object, key, value) {
     openmct.objects.mutate(object, key, value);
 }
 
-function addDefaultClass(domainObject) {
-    const classList = domainObject.classList || [];
-    if (classList.includes(DEFAULT_CLASS)) {
-        return;
-    }
-
-    classList.push(DEFAULT_CLASS);
-
-    domainObject.classList = classList;
+function addDefaultClass(domainObject, openmct) {
+    openmct.status.set(domainObject.identifier, DEFAULT_CLASS);
 }

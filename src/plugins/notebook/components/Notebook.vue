@@ -111,7 +111,7 @@ import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
-import { DEFAULT_CLASS, addNotebookEntry, createNewEmbed, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
 import { throttle } from 'lodash';
@@ -431,14 +431,7 @@ export default {
                 return;
             }
 
-            const classList = domainObject.classList || [];
-            const index = classList.indexOf(DEFAULT_CLASS);
-            if (!classList.length || index < 0) {
-                return;
-            }
-
-            classList.splice(index, 1);
-            mutateObject(this.openmct, domainObject, 'classList', classList);
+            this.openmct.status.delete(domainObject.identifier);
         },
         searchItem(input) {
             this.search = input;
