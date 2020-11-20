@@ -97,9 +97,12 @@ export default {
             } else {
                 this.multiSelect = false;
                 this.domainObject = selection[0][0].context.item;
-                this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                this.status = this.openmct.status.get(this.keyString);
-                this.statusUnsubscribe = this.openmct.status.observe(this.keyString, this.updateStatus);
+
+                if (this.domainObject) {
+                    this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+                    this.status = this.openmct.status.get(this.keyString);
+                    this.statusUnsubscribe = this.openmct.status.observe(this.keyString, this.updateStatus);
+                }
             }
         },
         resetDomainObject() {
