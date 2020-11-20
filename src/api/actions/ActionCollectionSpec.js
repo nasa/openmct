@@ -82,6 +82,7 @@ describe('The ActionCollection', () => {
                 description: 'This is a test action for view',
                 group: 'action',
                 priority: 9,
+                showInStatusBar: true,
                 appliesTo: (objectPath, view = {}) => {
                     if (view.getViewContext) {
                         let viewContext = view.getViewContext();
@@ -100,6 +101,7 @@ describe('The ActionCollection', () => {
     });
 
     afterEach(() => {
+        actionCollection.destroy();
         resetApplicationState(openmct);
     });
 
@@ -170,6 +172,54 @@ describe('The ActionCollection', () => {
             action = actionsObject[actionKey];
 
             expect(action.isHidden).toBeFalse();
+        });
+    });
+
+    describe("getVisibleActions method", () => {
+        it("returns an array of non hidden actions", () => {
+            let action1Key = 'test-action-object-path';
+            let action2Key = 'test-action-view';
+
+            actionCollection.hide([action1Key]);
+
+            let visibleActions = actionCollection.getVisibleActions();
+
+            expect(Array.isArray(visibleActions)).toBeTrue();
+            expect(visibleActions.length).toEqual(1);
+            expect(visibleActions[0].key).toEqual(action2Key);
+
+            actionCollection.show([action1Key]);
+            visibleActions = actionCollection.getVisibleActions();
+
+            expect(visibleActions.length).toEqual(2);
+        });
+    });
+
+    describe("getStatusBarActions method", () => {
+        it("returns an array of non disabled, non hidden statusBar actions", () => {
+            let action2Key = 'test-action-view';
+
+            let statusBarActions = actionCollection.getStatusBarActions();
+
+            expect(Array.isArray(statusBarActions)).toBeTrue();
+            expect(statusBarActions.length).toEqual(1);
+            expect(statusBarActions[0].key).toEqual(action2Key);
+
+            actionCollection.disable([action2Key]);
+            statusBarActions = actionCollection.getStatusBarActions();
+
+            expect(statusBarActions.length).toEqual(0);
+
+            actionCollection.enable([action2Key]);
+            statusBarActions = actionCollection.getStatusBarActions();
+
+            expect(statusBarActions.length).toEqual(1);
+            expect(statusBarActions[0].key).toEqual(action2Key);
+
+            actionCollection.hide([action2Key]);
+            statusBarActions = actionCollection.getStatusBarActions();
+
+            expect(statusBarActions.length).toEqual(0);
         });
     });
 });
