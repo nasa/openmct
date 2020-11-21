@@ -9,6 +9,7 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: $interiorMarginSm;
+        overflow: hidden;
         padding: 3px;
 
         .c-object-label {
@@ -35,6 +36,7 @@
     /*************************** FRAME CONTROLS */
     &__frame-controls {
         display: flex;
+        flex: 0 0 auto;
 
         &__btns,
         &__more {
