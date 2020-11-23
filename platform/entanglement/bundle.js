@@ -22,7 +22,6 @@
 
 define([
     "./src/actions/MoveAction",
-    "./src/actions/CopyAction",
     "./src/actions/LinkAction",
     "./src/actions/SetPrimaryLocationAction",
     "./src/services/LocatingCreationDecorator",
@@ -37,7 +36,6 @@ define([
     "./src/services/LocationService"
 ], function (
     MoveAction,
-    CopyAction,
     LinkAction,
     SetPrimaryLocationAction,
     LocatingCreationDecorator,
@@ -73,24 +71,6 @@ define([
                             "policyService",
                             "locationService",
                             "moveService"
-                        ]
-                    },
-                    {
-                        "key": "copy",
-                        "name": "Duplicate",
-                        "description": "Duplicate object to another location.",
-                        "cssClass": "icon-duplicate",
-                        "category": "contextual",
-                        "group": "action",
-                        "priority": 8,
-                        "implementation": CopyAction,
-                        "depends": [
-                            "$log",
-                            "policyService",
-                            "locationService",
-                            "copyService",
-                            "dialogService",
-                            "notificationService"
                         ]
                     },
                     {
