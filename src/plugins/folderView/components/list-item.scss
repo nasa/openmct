@@ -1,11 +1,19 @@
 /******************************* LIST ITEM */
 .c-list-item {
-    &__type-icon {
+    &__name__type-icon {
         color: $colorItemTreeIcon;
     }
 
-    &__name {
+    &__name__name {
         @include ellipsize();
+
+        a & {
+            color: $colorItemFg;
+        }
+    }
+
+    &:not(.c-list-item__name) {
+        color: $colorItemFgDetails;
     }
 
     &.is-alias {
