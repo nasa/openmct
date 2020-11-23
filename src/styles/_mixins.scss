@@ -129,7 +129,7 @@
     }
 }
 
-@mixin isStatus($absPos: false) {
+@mixin isStatus($absPos: false, $glyph: '', $color: $colorBodyFg) {
     // Supports CSS classing as follows:
     // is-status--missing, is-status--suspect, etc.
     // Common styles to be applied to tree items, object labels, grid and list item views
@@ -142,6 +142,11 @@
         @if $absPos {
             position: absolute;
             z-index: 3;
+        }
+
+        &:before {
+            color: $color;
+            content: $glyph;
         }
     }
 }
