@@ -17,7 +17,7 @@
 
 <script>
 import Snapshot from '../snapshot';
-import { getDefaultNotebook } from '../utils/notebook-storage';
+import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
 
 export default {
@@ -49,6 +49,8 @@ export default {
         };
     },
     mounted() {
+        validateNotebookStorageObject();
+
         this.notebookSnapshot = new Snapshot(this.openmct);
         this.setDefaultNotebookStatus();
     },
