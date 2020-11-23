@@ -38,59 +38,39 @@ describe("the inspector", () => {
         return resetApplicationState(openmct);
     });
 
-    describe("when not in edit mode", () => {
-        describe("the saved styles inspector view", () => {
-            it("should not be displayed", () => {
+    describe("the saved styles inspector view", () => {
+        it("should display all saved styles", () => {
 
-            });
+        });
+
+        it("should allow a saved style to be applied", () => {
+
+        });
+
+        it("should allow a saved style to be deleted", () => {
+
         });
     });
 
-    describe("when in edit mode", () => {
-        describe("the saved styles inspector view", () => {
-            it("should be displayed", () => {
+    describe("the styles inspector view", () => {
+        it("should allow a style to be saved", () => {
 
-            });
-
-            it("should be display all saved styles", () => {
-
-            });
-
-            it("should allow a saved style to be applied", () => {
-
-            });
-
-            it("should allow a saved style to be deleted", () => {
-
-            });
         });
 
-        describe("the styles inspector view", () => {
-            it("should allow a style to be saved", () => {
+        it("should prevent a style from being saved when the number of saved styles is at the limit", () => {
 
-            });
+        });
 
-            describe("when the number of saved styles is at the limit", () => {
-                it("should prevent a style from being saved", () => {
+        it("should prevent a style from being saved when the selection has mixed styling", () => {
 
-                });
-            });
+        });
 
-            describe("when the selection has mixed styling", () => {
-                it("should prevent the style from being saved", () => {
+        it("should prevent the style from being saved when the selection has non-specific font styling", () => {
 
-                });
-            });
+        });
 
-            describe("when the selection has non-specific font styling", () => {
-                it("should prevent the style from being saved", () => {
+        it("should allow a saved style to be applied", () => {
 
-                });
-            });
-
-            it("should allow a saved style to be applied", () => {
-
-            });
         });
     });
 });
