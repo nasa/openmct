@@ -25,6 +25,8 @@ export default class MoveAction {
         this.key = 'move';
         this.description = 'Move this object from its containing object to another object.';
         this.cssClass = "icon-move";
+        this.group = "action";
+        this.priority = 7;
 
         this.openmct = openmct;
     }

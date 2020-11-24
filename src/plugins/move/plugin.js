@@ -23,6 +23,6 @@ import MoveAction from "./MoveAction";
 
 export default function () {
     return function (openmct) {
-        openmct.contextMenu.registerAction(new MoveAction(openmct));
+        openmct.actions.register(new MoveAction(openmct));
     };
 }

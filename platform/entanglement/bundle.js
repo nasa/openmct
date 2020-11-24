@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    "./src/actions/MoveAction",
+    // "./src/actions/MoveAction",
     "./src/actions/LinkAction",
     "./src/actions/SetPrimaryLocationAction",
     "./src/services/LocatingCreationDecorator",
@@ -33,7 +33,7 @@ define([
     "./src/services/CopyService",
     "./src/services/LocationService"
 ], function (
-    MoveAction,
+    // MoveAction,
     LinkAction,
     SetPrimaryLocationAction,
     LocatingCreationDecorator,
@@ -54,21 +54,21 @@ define([
             "configuration": {},
             "extensions": {
                 "actions": [
-                    {
-                        "key": "move",
-                        "name": "Move",
-                        "description": "Move object to another location.",
-                        "cssClass": "icon-move",
-                        "category": "contextual",
-                        "group": "action",
-                        "priority": 9,
-                        "implementation": MoveAction,
-                        "depends": [
-                            "policyService",
-                            "locationService",
-                            "moveService"
-                        ]
-                    },
+                    // {
+                    //     "key": "move",
+                    //     "name": "Move",
+                    //     "description": "Move object to another location.",
+                    //     "cssClass": "icon-move",
+                    //     "category": "contextual",
+                    //     "group": "action",
+                    //     "priority": 9,
+                    //     "implementation": MoveAction,
+                    //     "depends": [
+                    //         "policyService",
+                    //         "locationService",
+                    //         "moveService"
+                    //     ]
+                    // },
                     {
                         "key": "link",
                         "name": "Create Link",
