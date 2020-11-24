@@ -118,7 +118,7 @@ export default {
             painterroInstance.show(this.embed.snapshot.src);
         },
         changeLocation() {
-            const link = this.embed.historicLink;
+            const hash = this.embed.historicLink;
 
             const bounds = this.openmct.time.bounds();
             const isTimeBoundChanged = this.embed.bounds.start !== bounds.start
@@ -143,6 +143,7 @@ export default {
                 this.openmct.notifications.alert(message);
             }
 
+            const link = `${location.host}${location.pathname}${hash}`;
             const url = new URL(link);
             window.location.href = url.hash;
         },
