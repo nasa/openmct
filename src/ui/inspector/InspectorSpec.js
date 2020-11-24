@@ -22,55 +22,141 @@
 
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationState,
+    mockLocalStorage
 } from 'utils/testing';
+import Vue from 'vue';
+import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
+import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
+import stylesManager from '@/ui/inspector/styles/StylesManager';
 
-describe("the inspector", () => {
+fdescribe("the inspector", () => {
     let openmct;
+    let element;
+    let child;
+    let selection;
+    let stylesViewComponent;
+    let stylesView;
+    let savedStylesViewComponent;
+    let savedStylesView;
+    let mockStyle;
 
     beforeEach((done) => {
         openmct = createOpenMct();
         openmct.on('start', done);
         openmct.startHeadless();
+
+        mockLocalStorage();
+
+        element = document.createElement('div');
+        child = document.createElement('div');
+        element.appendChild(child);
+
+        selection = getMockSelection();
+
+        savedStylesViewComponent = new Vue({
+            provide: {
+                openmct,
+                selection,
+                stylesManager
+            },
+            el: element,
+            components: {
+                SavedStylesView
+            },
+            template: '<SavedStylesView />'
+        });
+
+        element = document.createElement('div');
+        child = document.createElement('div');
+        element.appendChild(child);
+
+        stylesViewComponent = new Vue({
+            provide: {
+                openmct,
+                selection,
+                stylesManager
+            },
+            el: element,
+            components: {
+                StylesView
+            },
+            template: '<StylesView />'
+        });
+
+        stylesView = stylesView = stylesViewComponent.$root.$children[0];
+        savedStylesView = savedStylesViewComponent.$root.$children[0];
+
+        mockStyle = {
+            backgroundColor: "#ff0000",
+            border: "#ff0000",
+            color: "#ff0000"
+        };
     });
 
     afterEach(() => {
+        stylesViewComponent.$destroy();
+        stylesViewComponent = undefined;
+        savedStylesViewComponent.$destroy();
+        savedStylesViewComponent = undefined;
+
         return resetApplicationState(openmct);
     });
 
-    describe("the saved styles inspector view", () => {
-        it("should display all saved styles", () => {
+    it("should allow a style to be saved", () => {
+        expect(savedStylesView.savedStyles.length).toBe(0);
 
-        });
+        stylesView.saveStyle(mockStyle);
 
-        it("should allow a saved style to be applied", () => {
+        expect(savedStylesView.savedStyles.length).toBe(1);
+    });
 
-        });
+    it("should display all saved styles", () => {
+        stylesView.saveStyle(mockStyle);
 
-        it("should allow a saved style to be deleted", () => {
-
+        Vue.nextTick().then(() => {
+            expect(savedStylesView.$children.length.toBe(1));
         });
     });
 
-    describe("the styles inspector view", () => {
-        it("should allow a style to be saved", () => {
+    it("should allow a saved style to be applied", () => {
 
-        });
+    });
 
-        it("should prevent a style from being saved when the number of saved styles is at the limit", () => {
+    it("should allow a saved style to be deleted", () => {
 
-        });
+    });
 
-        it("should prevent a style from being saved when the selection has mixed styling", () => {
+    it("should prevent a style from being saved when the number of saved styles is at the limit", () => {
 
-        });
+    });
 
-        it("should prevent the style from being saved when the selection has non-specific font styling", () => {
+    it("should prevent a style from being saved when the selection has mixed styling", () => {
 
-        });
+    });
 
-        it("should allow a saved style to be applied", () => {
+    it("should prevent the style from being saved when the selection has non-specific font styling", () => {
 
-        });
+    });
+
+    it("should allow a saved style to be applied", () => {
+
     });
 });
+
+function getMockSelection() {
+    return [
+        [{
+            context: {
+                item: {
+                    configuration: {},
+                    type: 'table',
+                    identifier: {
+                        key: 'mock-telemetry-table-1',
+                        namespace: ''
+                    }
+                }
+            }
+        }]
+    ];
+}
