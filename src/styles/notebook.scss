@@ -25,6 +25,7 @@
     $headerFontSize: 1.3em;
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     overflow: hidden;
     height: 100%;
 
@@ -212,17 +213,16 @@
     }
 }
 
-.is-notebook-default {
+.is-notebook-default,
+.is-status--notebook-default {
     &:after {
         color: $colorFilter;
-        content: $glyph-icon-notebook-page;
-        display: block;
         font-family: symbolsfont;
         font-size: 0.9em;
-        margin-left: $interiorMargin;
     }
 
     &.c-list__item:after {
+        content: $glyph-icon-notebook-page;
         flex: 1 0 auto;
         text-align: right;
     }

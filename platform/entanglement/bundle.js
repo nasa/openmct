@@ -22,7 +22,6 @@
 
 define([
     "./src/actions/MoveAction",
-    "./src/actions/CopyAction",
     "./src/actions/LinkAction",
     "./src/actions/SetPrimaryLocationAction",
     "./src/services/LocatingCreationDecorator",
@@ -37,7 +36,6 @@ define([
     "./src/services/LocationService"
 ], function (
     MoveAction,
-    CopyAction,
     LinkAction,
     SetPrimaryLocationAction,
     LocatingCreationDecorator,
@@ -66,6 +64,8 @@ define([
                         "description": "Move object to another location.",
                         "cssClass": "icon-move",
                         "category": "contextual",
+                        "group": "action",
+                        "priority": 9,
                         "implementation": MoveAction,
                         "depends": [
                             "policyService",
@@ -74,27 +74,13 @@ define([
                         ]
                     },
                     {
-                        "key": "copy",
-                        "name": "Duplicate",
-                        "description": "Duplicate object to another location.",
-                        "cssClass": "icon-duplicate",
-                        "category": "contextual",
-                        "implementation": CopyAction,
-                        "depends": [
-                            "$log",
-                            "policyService",
-                            "locationService",
-                            "copyService",
-                            "dialogService",
-                            "notificationService"
-                        ]
-                    },
-                    {
                         "key": "link",
                         "name": "Create Link",
                         "description": "Create Link to object in another location.",
                         "cssClass": "icon-link",
                         "category": "contextual",
+                        "group": "action",
+                        "priority": 7,
                         "implementation": LinkAction,
                         "depends": [
                             "policyService",

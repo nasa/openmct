@@ -198,3 +198,17 @@ tr {
 
 .u-alert { @include uIndicator($colorAlert, $colorAlertFg, $glyph-icon-alert-triangle); }
 .u-error { @include uIndicator($colorError, $colorErrorFg, $glyph-icon-alert-triangle); }
+
+.is-status {
+    &__indicator {
+        display: none; // Default state; is set to block when within an actual is-status class
+    }
+
+    &--missing {
+        @include isStatus($glyph: $glyph-icon-alert-triangle, $color: $colorAlert);
+    }
+
+    &--suspect {
+        @include isStatus($glyph: $glyph-icon-alert-rect, $color: $colorWarningLo);
+    }
+}

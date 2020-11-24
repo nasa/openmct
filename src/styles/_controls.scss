@@ -126,7 +126,7 @@ button {
 
 .c-icon-button {
     [class*='label'] {
-        opacity: 0.6;
+        opacity: 0.8;
     }
 
     &--mixed {
@@ -468,9 +468,6 @@ select {
 
     > * {
         flex: 0 0 auto;
-        //+ * {
-        //    margin-top: $interiorMarginSm;
-        //}
     }
 }
 
@@ -500,8 +497,8 @@ select {
             min-width: 1em;
         }
 
-        &:not([class]):before {
-             content: ''; // Add this element so that menu items without an icon still indent properly
+        &:not([class*='icon']):before {
+             content: ''; // Enable :before so that menu items without an icon still indent properly
         }
 
         .menus-no-icon & {
@@ -516,7 +513,7 @@ select {
 
     &__section-hint {
         $m: $interiorMargin;
-        margin: $m 0;
+        margin: 0 0 $m 0;
         padding: $m nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
 
         opacity: 0.6;
@@ -528,7 +525,7 @@ select {
         $m: $interiorMargin;
         border-top: 1px solid $colorInteriorBorder;
         margin: $m 0;
-        padding: $m nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
+        padding: 0 nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
     }
 }
 
