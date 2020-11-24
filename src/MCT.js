@@ -47,6 +47,7 @@ define([
     './plugins/licenses/plugin',
     './plugins/remove/plugin',
     './plugins/move/plugin',
+    './plugins/duplicate/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -75,6 +76,7 @@ define([
     LicensesPlugin,
     RemoveActionPlugin,
     MoveActionPlugin,
+    DuplicateActionPlugin,
     Vue
 ) {
     /**
@@ -244,7 +246,11 @@ define([
 
         this.overlays = new OverlayAPI.default();
 
-        this.contextMenu = new api.ContextMenuRegistry();
+        this.menus = new api.MenuAPI(this);
+
+        this.actions = new api.ActionsAPI(this);
+
+        this.status = new api.StatusAPI(this);
 
         this.router = new ApplicationRouter();
 
@@ -262,6 +268,7 @@ define([
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
         this.install(MoveActionPlugin.default());
+        this.install(DuplicateActionPlugin.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(ImageryPlugin.default());
@@ -274,6 +281,7 @@ define([
         this.install(this.plugins.URLTimeSettingsSynchronizer());
         this.install(this.plugins.NotificationIndicator());
         this.install(this.plugins.NewFolderAction());
+        this.install(this.plugins.ViewDatumAction());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

@@ -22,6 +22,7 @@ class OverlayAPI {
                 this.dismissLastOverlay();
             }
         });
+
     }
 
     /**
@@ -127,6 +128,7 @@ class OverlayAPI {
 
         return progressDialog;
     }
+
 }
 
 export default OverlayAPI;
