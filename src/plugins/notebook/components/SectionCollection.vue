@@ -53,10 +53,6 @@ export default {
             }
         }
     },
-    data() {
-        return {
-        };
-    },
     methods: {
         deleteSection(id) {
             const section = this.sections.find(s => s.id === id);

@@ -43,9 +43,20 @@
         }
     }
 
-    &.is-missing {
-        @include isMissing();
+    &.is-status--notebook-default {
+        .is-status__indicator {
+            display: block;
 
+            &:before {
+                color: $colorFilter;
+                content: $glyph-icon-notebook-page;
+                font-family: symbolsfont;
+            }
+        }
+    }
+
+    &[class*='is-status--missing'],
+    &[class*='is-status--suspect']{
         [class*='__type-icon'],
         [class*='__details'] {
             opacity: $opacityMissing;

@@ -172,6 +172,8 @@ describe("the plugin", () => {
                 return telemetryPromise;
             });
 
+            openmct.router.path = [testTelemetryObject];
+
             applicableViews = openmct.objectViews.get(testTelemetryObject);
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
             tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);

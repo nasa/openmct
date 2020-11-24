@@ -29,6 +29,10 @@
             filter: $objectLabelNameFilter;
         }
 
+        .c-object-label__type-icon {
+            opacity: $objectLabelTypeIconOpacity;
+        }
+
         &--non-domain-object .c-object-label__name {
             font-style: italic;
         }
