@@ -217,14 +217,12 @@
 .is-status--notebook-default {
     &:after {
         color: $colorFilter;
-        content: $glyph-icon-notebook-page;
-        display: block;
         font-family: symbolsfont;
         font-size: 0.9em;
-        margin-left: $interiorMargin;
     }
 
     &.c-list__item:after {
+        content: $glyph-icon-notebook-page;
         flex: 1 0 auto;
         text-align: right;
     }
