@@ -297,18 +297,6 @@ define([
             return Promise.reject('No providers found');
         }
 
-        if (!this.subscribeCache) {
-            this.subscribeCache = {};
-        }
-
-        let subscriber = this.subscribeCache[keyString];
-
-        if (!subscriber) {
-            subscriber = this.subscribeCache[keyString] = {
-                callbacks: []
-            };
-        }
-
         // move this to telemetry collection
         // historicalProvider.request.apply(historicalProvider, arguments).catch((rejected) => {
         //     this.openmct.notifications.error('Error requesting telemetry data, see console for details');
@@ -320,10 +308,7 @@ define([
         let telemetryCollectionOptions = {
             domainObject,
             historicalProvider,
-            subscription: {
-                subscriber,
-                provider: subscriptionProvider
-            },
+            subscriptionProvider,
             options: arguments
         }
 

@@ -19,35 +19,59 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import _ from 'lodash';
+// import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
-
+import TelemetrySubscriptionService from './TelemetrySubscriptionService';
 export class TelemetryCollection extends EventEmitter {
 
     constructor(openmct, options) {
         super();
 
-        this.domainObject = options.domainObject;
-        this.historical = options.historicalProvider;
-        this.subscription = options.subscriptionProvider;
-        this.telemetry = [];
         this.openmct = openmct;
+        this.domainObject = options.domainObject;
+
+        this.historicalProvider = options.historicalProvider;
+        this.subscriptionProvider = options.subscription.provider;
+
+        this.options = options.options;
+
         this.listeners = {
             add: [],
             remove: []
         };
 
+        if (this.historicalProvider) {
+            this.trackHistoricalTelemetry();
+        }
+
+        if (this.subscriptionProvider) {
+            this.trackSubscriptionTelemetry();
+        }
+
         this.lastBounds = openmct.time.bounds();
         this.subscribeToBounds();
     }
 
-    on(event, callback) {
+    trackHistoricalTelemetry() {
+
+    }
+
+    trackSubscriptionTelemetry() {
+        this.subscriptionService = new TelemetrySubscriptionService();
+    }
+
+    on(event, callback, options) {
         if (!this.listeners[event]) {
             throw new Error('Event not supported by Telemetry Collections: ' + event);
         }
 
         if (event === 'add') {
-            // add
+            this.unsubscribe = this.subscriptionService.subscribe(
+                this.domainObject,
+                callback,
+                this.subscriptionProvider,
+                options
+            );
         }
 
         if (event === 'remove') {
