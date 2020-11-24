@@ -30,7 +30,7 @@
 >
     <div
         v-if="domainObject"
-        class="c-telemetry-view"
+        class="c-telemetry-view u-style-receiver"
         :class="[statusClass]"
         :style="styleObject"
         :data-font-size="item.fontSize"
