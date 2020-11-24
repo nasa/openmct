@@ -38,7 +38,7 @@ define([
             canEdit: function (domainObject) {
                 return domainObject.type === 'tabs';
             },
-            view: function (domainObject) {
+            view: function (domainObject, objectPath) {
                 let component;
 
                 return {
@@ -56,6 +56,7 @@ define([
                             provide: {
                                 openmct,
                                 domainObject,
+                                objectPath,
                                 composition: openmct.composition.get(domainObject)
                             },
                             template: '<tabs-component :isEditing="isEditing"></tabs-component>'

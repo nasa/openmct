@@ -66,14 +66,10 @@ export default {
             }
         }
     },
-    data() {
-        return {
-        };
-    },
     methods: {
         deletePage(id) {
             const selectedSection = this.sections.find(s => s.isSelected);
-            const page = this.pages.filter(p => p.id !== id);
+            const page = this.pages.find(p => p.id !== id);
             deleteNotebookEntries(this.openmct, this.domainObject, selectedSection, page);
 
             const selectedPage = this.pages.find(p => p.isSelected);

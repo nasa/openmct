@@ -139,7 +139,9 @@ define([
                         ],
                         "description": "Edit",
                         "category": "view-control",
-                        "cssClass": "major icon-pencil"
+                        "cssClass": "major icon-pencil",
+                        "group": "action",
+                        "priority": 10
                     },
                     {
                         "key": "properties",
@@ -150,6 +152,8 @@ define([
                         "implementation": PropertiesAction,
                         "cssClass": "major icon-pencil",
                         "name": "Edit Properties...",
+                        "group": "action",
+                        "priority": 10,
                         "description": "Edit properties of this object.",
                         "depends": [
                             "dialogService"

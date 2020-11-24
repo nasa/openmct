@@ -32,4 +32,14 @@ export default class ViewHistoricalDataAction extends PreviewAction {
         this.cssClass = 'icon-eye-open';
         this.hideInDefaultMenu = true;
     }
+
+    appliesTo(objectPath, view = {}) {
+        let viewContext = view.getViewContext && view.getViewContext();
+
+        if (objectPath.length && viewContext && viewContext.viewHistoricalData) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
