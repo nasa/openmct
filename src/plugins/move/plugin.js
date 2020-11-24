@@ -19,41 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import MoveAction from "./MoveAction";
 
-define(
-    ['./AbstractComposeAction'],
-    function (AbstractComposeAction) {
-
-        /**
-         * The MoveAction is available from context menus and allows a user to
-         * move an object to another location of their choosing.
-         *
-         * @implements {Action}
-         * @constructor
-         * @memberof platform/entanglement
-         */
-        function MoveAction(policyService, locationService, moveService, context) {
-            AbstractComposeAction.apply(
-                this,
-                [policyService, locationService, moveService, context, "Move"]
-            );
-        }
-
-        MoveAction.prototype = Object.create(AbstractComposeAction.prototype);
-
-        MoveAction.appliesTo = function (context) {
-            var applicableObject =
-                context.selectedObject || context.domainObject;
-
-            if (applicableObject && applicableObject.model.locked) {
-                return false;
-            }
-
-            return Boolean(applicableObject
-                && applicableObject.hasCapability('context'));
-        };
-
-        return MoveAction;
-    }
-);
-
+export default function () {
+    return function (openmct) {
+        openmct.actions.register(new MoveAction(openmct));
+    };
+}
