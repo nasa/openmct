@@ -23,36 +23,49 @@
 import {
     createOpenMct,
     resetApplicationState,
-    mockLocalStorage
+    // mockLocalStorage
 } from 'utils/testing';
 import Vue from 'vue';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
 import stylesManager from '@/ui/inspector/styles/StylesManager';
 
-fdescribe("the inspector", () => {
+describe("the inspector", () => {
     let openmct;
     let element;
     let child;
     let selection;
     let stylesViewComponent;
-    let stylesView;
     let savedStylesViewComponent;
-    let savedStylesView;
     let mockStyle;
+    let mockLocalStorage;
+    let mockGetItem;
+    let mockSetItem;
 
     beforeEach((done) => {
+        spyOn(SavedStylesView.methods, 'showLimitReachedDialog').and.callThrough();
+
         openmct = createOpenMct();
         openmct.on('start', done);
         openmct.startHeadless();
 
-        mockLocalStorage();
+        mockLocalStorage = {};
+        mockGetItem = (key) => {
+            return mockLocalStorage[key];
+        };
+
+        mockSetItem = (key, value) => {
+            mockLocalStorage[key] = typeof value === 'string' ? value : JSON.stringify(value);
+        };
+
+        spyOn(Storage.prototype, 'getItem').and.callFake(mockGetItem);
+        spyOn(Storage.prototype, 'setItem').and.callFake(mockSetItem);
+
+        selection = getMockSelection();
 
         element = document.createElement('div');
         child = document.createElement('div');
         element.appendChild(child);
-
-        selection = getMockSelection();
 
         savedStylesViewComponent = new Vue({
             provide: {
@@ -84,9 +97,6 @@ fdescribe("the inspector", () => {
             template: '<StylesView />'
         });
 
-        stylesView = stylesView = stylesViewComponent.$root.$children[0];
-        savedStylesView = savedStylesViewComponent.$root.$children[0];
-
         mockStyle = {
             backgroundColor: "#ff0000",
             border: "#ff0000",
@@ -104,18 +114,19 @@ fdescribe("the inspector", () => {
     });
 
     it("should allow a style to be saved", () => {
-        expect(savedStylesView.savedStyles.length).toBe(0);
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
 
-        stylesView.saveStyle(mockStyle);
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
 
-        expect(savedStylesView.savedStyles.length).toBe(1);
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
     });
 
     it("should display all saved styles", () => {
-        stylesView.saveStyle(mockStyle);
+        expect(savedStylesViewComponent.$children[0].$children.length).toBe(0);
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
 
         Vue.nextTick().then(() => {
-            expect(savedStylesView.$children.length.toBe(1));
+            expect(savedStylesViewComponent.$children[0].$children.length).toBe(1);
         });
     });
 
@@ -124,11 +135,27 @@ fdescribe("the inspector", () => {
     });
 
     it("should allow a saved style to be deleted", () => {
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
 
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
+
+        savedStylesViewComponent.$children[0].deleteStyle(0);
+
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
     });
 
     it("should prevent a style from being saved when the number of saved styles is at the limit", () => {
+        for (let i = 1; i <= 20; i++) {
+            stylesViewComponent.$children[0].saveStyle(mockStyle);
+        }
 
+        expect(SavedStylesView.methods.showLimitReachedDialog).not.toHaveBeenCalled();
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
+
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+        expect(SavedStylesView.methods.showLimitReachedDialog).toHaveBeenCalled();
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
     });
 
     it("should prevent a style from being saved when the selection has mixed styling", () => {
