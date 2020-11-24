@@ -313,3 +313,20 @@ function setMockObjects() {
         }
     };
 }
+
+export function mockLocalStorage() {
+    let storage = {};
+
+    spyOn(Storage.prototype, 'getItem').and.callFake(getItem);
+    spyOn(Storage.prototype, 'setItem').and.callFake(setItem);
+
+    function getItem(key) {
+        return storage[key];
+    }
+
+    function setItem(key, value) {
+        storage[key] = JSON.stringify(value);
+    }
+
+    return storage;
+}
