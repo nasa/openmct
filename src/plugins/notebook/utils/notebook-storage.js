@@ -67,3 +67,24 @@ export function setDefaultNotebookPage(page) {
     notebookStorage.page = page;
     saveDefaultNotebook(notebookStorage);
 }
+
+export function validateNotebookStorageObject() {
+    const notebookStorage = getDefaultNotebook();
+
+    let valid = false;
+    if (notebookStorage) {
+        Object.entries(notebookStorage).forEach(([key, value]) => {
+            const validKey = key !== undefined && key !== null;
+            const validValue = value !== undefined && value !== null;
+            valid = validKey && validValue;
+        });
+    }
+
+    if (valid) {
+        return notebookStorage;
+    }
+
+    console.warn('Invalid Notebook object, clearing default notebook storage');
+
+    clearDefaultNotebook();
+}
