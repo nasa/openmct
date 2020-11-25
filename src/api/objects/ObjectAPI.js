@@ -278,9 +278,18 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
     if (domainObject.isMutable) {
         domainObject.$set(path, value);
     } else {
-        let mutable = this._toMutable(domainObject);
-        mutable.$set(path, value);
-        this.destroyMutable(mutable);
+        //Creating a temporary mutable domain object allows other mutable instances of the
+        //object to be kept in sync.
+        let mutableDomainObject = this._toMutable(domainObject);
+
+        //Mutate original object
+        MutableDomainObject.mutateObject(domainObject, path, value);
+
+        //Mutate temptary mutable object, in the process informing any other mutable instances
+        mutableDomainObject.$set(path, value);
+
+        //Destroy temporary mutable object
+        this.destroyMutable(mutableDomainObject);
     }
 };
 

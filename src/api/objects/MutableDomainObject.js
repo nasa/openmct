@@ -110,6 +110,11 @@ class MutableDomainObject {
 
         return mutable;
     }
+
+    static mutateObject(object, path, value) {
+        _.set(object, path, value);
+        _.set(object, 'modified', Date.now());
+    }
 }
 
 function qualifiedEventName(object, eventName) {

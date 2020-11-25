@@ -90,7 +90,7 @@ describe("The Object API", () => {
         });
     });
 
-    describe("the MutableDomainObject", () => {
+    describe("the mutation API", () => {
         let testObject;
         let mutable;
         let mockProvider;
@@ -102,6 +102,7 @@ describe("The Object API", () => {
                     namespace: TEST_NAMESPACE,
                     key: 'test-key'
                 },
+                name: 'test object',
                 otherAttribute: 'other-attribute-value',
                 objectAttribute: {
                     embeddedObject: {
@@ -127,19 +128,23 @@ describe("The Object API", () => {
             mutable.$destroy();
         });
 
-        it('retains own properties', function () {
-            expect(hasOwnProperty(mutable, 'identifier')).toBe(true);
-            expect(hasOwnProperty(mutable, 'otherAttribute')).toBe(true);
-            expect(mutable.identifier).toEqual(testObject.identifier);
-            expect(mutable.otherAttribute).toEqual(testObject.otherAttribute);
+        it('mutates the original object', () => {
+            const MUTATED_NAME = 'mutated name';
+            objectAPI.mutate(testObject, 'name', MUTATED_NAME);
+            expect(testObject.name).toBe(MUTATED_NAME);
         });
 
-        it('is identical to original object when serialized', function () {
-            expect(JSON.stringify(mutable)).toEqual(JSON.stringify(testObject));
-        });
+        describe ('uses a MutableDomainObject', () => {
+            it('and retains properties of original object ', function () {
+                expect(hasOwnProperty(mutable, 'identifier')).toBe(true);
+                expect(hasOwnProperty(mutable, 'otherAttribute')).toBe(true);
+                expect(mutable.identifier).toEqual(testObject.identifier);
+                expect(mutable.otherAttribute).toEqual(testObject.otherAttribute);
+            });
 
-        it('is identical to original object when serialized', function () {
-            expect(JSON.stringify(mutable)).toEqual(JSON.stringify(testObject));
+            it('that is identical to original object when serialized', function () {
+                expect(JSON.stringify(mutable)).toEqual(JSON.stringify(testObject));
+            });
         });
 
         describe('uses events', function () {
