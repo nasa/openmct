@@ -40,8 +40,6 @@ fdescribe("the inspector", () => {
     mockLocalStorage();
 
     let openmct;
-    let element;
-    let child;
     let selection;
     let stylesViewComponent;
     let savedStylesViewComponent;
@@ -55,39 +53,8 @@ fdescribe("the inspector", () => {
 
         selection = mockTelemetryTableSelection;
 
-        element = document.createElement('div');
-        child = document.createElement('div');
-        element.appendChild(child);
-
-        savedStylesViewComponent = new Vue({
-            provide: {
-                openmct,
-                selection,
-                stylesManager
-            },
-            el: element,
-            components: {
-                SavedStylesView
-            },
-            template: '<SavedStylesView />'
-        });
-
-        element = document.createElement('div');
-        child = document.createElement('div');
-        element.appendChild(child);
-
-        stylesViewComponent = new Vue({
-            provide: {
-                openmct,
-                selection,
-                stylesManager
-            },
-            el: element,
-            components: {
-                StylesView
-            },
-            template: '<StylesView />'
-        });
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
     });
 
     afterEach(() => {
@@ -160,3 +127,28 @@ fdescribe("the inspector", () => {
 
     });
 });
+
+function createViewComponent(
+    component,
+    selection,
+    openmct
+) {
+    const element = document.createElement('div');
+    const child = document.createElement('div');
+    element.appendChild(child);
+
+    const config = {
+        provide: {
+            openmct,
+            selection,
+            stylesManager
+        },
+        el: element,
+        components: {},
+        template: `<${component.name} />`
+    };
+
+    config.components[component.name] = component;
+
+    return new Vue(config);
+}
