@@ -264,7 +264,7 @@ export default {
             this.setFontSize(this.fontSize);
             this.setFont(this.font);
 
-            this.stopListeningFontStyles = this.openmct.objects.observe(this.currentObject, 'configuration.fontStyle', (newFontStyle) => {
+            this.stopListeningFontStyles = this.openmct.objects.observe(this.domainObject, 'configuration.fontStyle', (newFontStyle) => {
                 this.setFontSize(newFontStyle.fontSize);
                 this.setFont(newFontStyle.font);
             });
