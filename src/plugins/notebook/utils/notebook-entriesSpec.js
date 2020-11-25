@@ -25,6 +25,7 @@ import { createOpenMct, resetApplicationState } from 'utils/testing';
 const notebookStorage = {
     domainObject: {
         name: 'notebook',
+        type: 'notebook',
         identifier: {
             namespace: '',
             key: 'test-notebook'
@@ -120,6 +121,9 @@ let openmct;
 describe('Notebook Entries:', () => {
     beforeEach(done => {
         openmct = createOpenMct();
+        openmct.types.addType('notebook', {
+            creatable: true
+        });
         window.localStorage.setItem('notebook-storage', null);
 
         done();
