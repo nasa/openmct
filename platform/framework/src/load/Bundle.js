@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,6 @@ define(
     ['../Constants', './Extension'],
     function (Constants, Extension) {
 
-
         /**
          * A bundle's plain JSON definition.
          *
@@ -39,7 +38,6 @@ define(
          * @constructor
          * @memberof platform/framework
          */
-
 
         /**
          * Instantiate a new reference to a bundle, based on its human-readable
@@ -78,13 +76,12 @@ define(
             this.logName = logName;
         }
 
-
         // Utility function for resolving paths in this bundle
         Bundle.prototype.resolvePath = function (elements) {
             var path = this.path;
+
             return [path].concat(elements || []).join(Constants.SEPARATOR);
         };
-
 
         /**
          * Get the path to this bundle.
@@ -105,9 +102,9 @@ define(
          *          source file within it)
          */
         Bundle.prototype.getSourcePath = function (sourceFile) {
-            var subpath = sourceFile ?
-                [this.definition.sources, sourceFile] :
-                [this.definition.sources];
+            var subpath = sourceFile
+                ? [this.definition.sources, sourceFile]
+                : [this.definition.sources];
 
             return this.resolvePath(subpath);
         };
@@ -123,9 +120,9 @@ define(
          *          resource file within it)
          */
         Bundle.prototype.getResourcePath = function (resourceFile) {
-            var subpath = resourceFile ?
-                [this.definition.resources, resourceFile] :
-                [this.definition.resources];
+            var subpath = resourceFile
+                ? [this.definition.resources, resourceFile]
+                : [this.definition.resources];
 
             return this.resolvePath(subpath);
         };
@@ -141,9 +138,9 @@ define(
          *          resource file within it)
          */
         Bundle.prototype.getLibraryPath = function (libraryFile) {
-            var subpath = libraryFile ?
-                [this.definition.libraries, libraryFile] :
-                [this.definition.libraries];
+            var subpath = libraryFile
+                ? [this.definition.libraries, libraryFile]
+                : [this.definition.libraries];
 
             return this.resolvePath(subpath);
         };

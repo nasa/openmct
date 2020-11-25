@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/* global console*/
 
 define([
     '../../src/directives/MCTTree',
@@ -40,6 +39,7 @@ define([
             ]);
             mockDomainObject.getId.and.returnValue(id);
             mockDomainObject.getModel.and.returnValue({});
+
             return mockDomainObject;
         }
 
@@ -126,8 +126,10 @@ define([
             it("does trigger $apply from tree manipulation", function () {
                 if (/PhantomJS/g.test(window.navigator.userAgent)) {
                     console.log('Unable to run test in PhantomJS due to lack of support for event constructors');
+
                     return;
                 }
+
                 // White-boxy; we know this is the setter for the tree's value
                 var treeValueFn = TreeView.prototype.observe.calls.all()[0].args[0];
 

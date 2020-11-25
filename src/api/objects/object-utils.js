@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,9 +31,9 @@ define([
      * @private
      */
     function isIdentifier(thing) {
-        return typeof thing === 'object' &&
-            thing.hasOwnProperty('key') &&
-            thing.hasOwnProperty('namespace');
+        return typeof thing === 'object'
+            && Object.prototype.hasOwnProperty.call(thing, 'key')
+            && Object.prototype.hasOwnProperty.call(thing, 'namespace');
     }
 
     /**
@@ -57,15 +57,17 @@ define([
         if (isIdentifier(keyString)) {
             return keyString;
         }
-        var namespace = '',
-            key = keyString;
-        for (var i = 0; i < key.length; i++) {
+
+        let namespace = '';
+        let key = keyString;
+        for (let i = 0; i < key.length; i++) {
             if (key[i] === "\\" && key[i + 1] === ":") {
                 i++; // skip escape character.
             } else if (key[i] === ":") {
                 key = key.slice(i + 1);
                 break;
             }
+
             namespace += key[i];
         }
 
@@ -78,7 +80,6 @@ define([
             key: key
         };
     }
-
 
     /**
      * Convert an Open MCT Identifier into a keyString, ex:
@@ -93,9 +94,11 @@ define([
         if (isKeyString(identifier)) {
             return identifier;
         }
+
         if (!identifier.namespace) {
             return identifier.key;
         }
+
         return [
             identifier.namespace.replace(/:/g, '\\:'),
             identifier.key
@@ -116,6 +119,7 @@ define([
         if (model.composition) {
             model.composition = model.composition.map(makeKeyString);
         }
+
         return model;
     }
 
@@ -134,6 +138,7 @@ define([
         if (model.composition) {
             model.composition = model.composition.map(parseKeyString);
         }
+
         return model;
     }
 

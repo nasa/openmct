@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,8 +25,8 @@ import {saveAs} from 'file-saver/FileSaver';
 
 class CSVExporter {
     export(rows, options) {
-        let headers = (options && options.headers) ||
-            (Object.keys((rows[0] || {})).sort());
+        let headers = (options && options.headers)
+            || (Object.keys((rows[0] || {})).sort());
         let filename = (options && options.filename) || "export.csv";
         let csvText = new CSV(rows, { header: headers }).encode();
         let blob = new Blob([csvText], { type: "text/csv" });

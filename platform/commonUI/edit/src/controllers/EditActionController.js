@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,9 +48,9 @@ define(
             // Maintain all "conclude-editing" and "save" actions in the
             // present context.
             function updateActions() {
-                $scope.saveActions = $scope.action ?
-                    $scope.action.getActions(SAVE_ACTION_CONTEXT) :
-                    [];
+                $scope.saveActions = $scope.action
+                    ? $scope.action.getActions(SAVE_ACTION_CONTEXT)
+                    : [];
 
                 $scope.saveActionsAsMenuOptions = $scope.saveActions.map(actionToMenuOption);
 
@@ -58,9 +58,9 @@ define(
                     clickedAction.perform();
                 };
 
-                $scope.otherEditActions = $scope.action ?
-                    $scope.action.getActions(OTHERS_ACTION_CONTEXT) :
-                    [];
+                $scope.otherEditActions = $scope.action
+                    ? $scope.action.getActions(OTHERS_ACTION_CONTEXT)
+                    : [];
 
                 // Required because Angular does not allow 'bind'
                 // in expressions.

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,6 +26,7 @@ define([], function () {
             this.columns = columns;
 
             this.datum = createNormalizedDatum(datum, columns);
+            this.fullDatum = datum;
             this.limitEvaluator = limitEvaluator;
             this.objectKeyString = objectKeyString;
         }
@@ -33,25 +34,29 @@ define([], function () {
         getFormattedDatum(headers) {
             return Object.keys(headers).reduce((formattedDatum, columnKey) => {
                 formattedDatum[columnKey] = this.getFormattedValue(columnKey);
+
                 return formattedDatum;
             }, {});
         }
 
         getFormattedValue(key) {
             let column = this.columns[key];
+
             return column && column.getFormattedValue(this.datum[key]);
         }
 
         getParsedValue(key) {
             let column = this.columns[key];
+
             return column && column.getParsedValue(this.datum[key]);
         }
 
         getCellComponentName(key) {
             let column = this.columns[key];
-            return column &&
-                column.getCellComponentName &&
-                column.getCellComponentName();
+
+            return column
+                && column.getCellComponentName
+                && column.getCellComponentName();
         }
 
         getRowClass() {
@@ -59,23 +64,31 @@ define([], function () {
                 let limitEvaluation = this.limitEvaluator.evaluate(this.datum);
                 this.rowClass = limitEvaluation && limitEvaluation.cssClass;
             }
+
             return this.rowClass;
         }
 
         getCellLimitClasses() {
             if (!this.cellLimitClasses) {
                 this.cellLimitClasses = Object.values(this.columns).reduce((alarmStateMap, column) => {
-                    let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
-                    alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
+                    if (!column.isUnit) {
+                        let limitEvaluation = this.limitEvaluator.evaluate(this.datum, column.getMetadatum());
+                        alarmStateMap[column.getKey()] = limitEvaluation && limitEvaluation.cssClass;
+                    }
 
                     return alarmStateMap;
                 }, {});
             }
+
             return this.cellLimitClasses;
         }
 
+        getContextualDomainObject(openmct, objectKeyString) {
+            return openmct.objects.get(objectKeyString);
+        }
+
         getContextMenuActions() {
-            return [];
+            return ['viewDatumAction'];
         }
     }
 
@@ -89,6 +102,7 @@ define([], function () {
     function createNormalizedDatum(datum, columns) {
         return Object.values(columns).reduce((normalizedDatum, column) => {
             normalizedDatum[column.getKey()] = column.getRawValue(datum);
+
             return normalizedDatum;
         }, {});
     }

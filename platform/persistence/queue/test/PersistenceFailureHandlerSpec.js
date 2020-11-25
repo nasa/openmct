@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 
 define(
     ["../src/PersistenceFailureHandler", "../src/PersistenceFailureConstants"],
@@ -48,10 +47,14 @@ define(
                 mockFailure.domainObject.getCapability.and.callFake(function (c) {
                     return (c === 'persistence') && mockPersistence;
                 });
-                mockFailure.domainObject.getModel.and.returnValue({ id: id, modified: index });
+                mockFailure.domainObject.getModel.and.returnValue({
+                    id: id,
+                    modified: index
+                });
                 mockFailure.persistence = mockPersistence;
                 mockFailure.id = id;
                 mockFailure.error = { key: Constants.REVISION_ERROR_KEY };
+
                 return mockFailure;
             }
 

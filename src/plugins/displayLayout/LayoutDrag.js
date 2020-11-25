@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -87,7 +87,6 @@ define(
             });
         }
 
-
         /**
          * Get a new position object in grid coordinates, with
          * position and dimensions both offset appropriately
@@ -96,7 +95,8 @@ define(
          *        original position, in pixels
          */
         LayoutDrag.prototype.getAdjustedPositionAndDimensions = function (pixelDelta) {
-            var gridDelta = toGridDelta(this.gridSize, pixelDelta);
+            const gridDelta = toGridDelta(this.gridSize, pixelDelta);
+
             return {
                 position: max(add(
                     this.rawPosition.position,
@@ -110,7 +110,8 @@ define(
         };
 
         LayoutDrag.prototype.getAdjustedPosition = function (pixelDelta) {
-            var gridDelta = toGridDelta(this.gridSize, pixelDelta);
+            const gridDelta = toGridDelta(this.gridSize, pixelDelta);
+
             return {
                 position: max(add(
                     this.rawPosition.position,

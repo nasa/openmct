@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,14 +25,20 @@ define(
     function (AboutController) {
 
         describe("The About controller", function () {
-            var testVersions,
-                mockWindow,
-                controller;
+            let testVersions;
+            let mockWindow;
+            let controller;
 
             beforeEach(function () {
                 testVersions = [
-                    { name: "Some name", value: "1.2.3" },
-                    { name: "Some other name", value: "3.2.1" }
+                    {
+                        name: "Some name",
+                        value: "1.2.3"
+                    },
+                    {
+                        name: "Some other name",
+                        value: "3.2.1"
+                    }
                 ];
                 mockWindow = jasmine.createSpyObj("$window", ["open"]);
                 controller = new AboutController(testVersions, mockWindow);
@@ -50,8 +56,6 @@ define(
                 controller.openLicenses();
                 expect(mockWindow.open).toHaveBeenCalledWith("#/licenses");
             });
-
-
         });
 
     }

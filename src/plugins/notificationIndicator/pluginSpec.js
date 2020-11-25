@@ -28,16 +28,12 @@ import {
 } from 'utils/testing';
 
 describe('the plugin', () => {
-    let notificationIndicatorPlugin,
-        openmct,
-        indicatorObject,
-        indicatorElement,
-        parentElement,
-        mockMessages = ['error', 'test', 'notifications'];
-
-    beforeAll(() => {
-        resetApplicationState();
-    });
+    let notificationIndicatorPlugin;
+    let openmct;
+    let indicatorObject;
+    let indicatorElement;
+    let parentElement;
+    let mockMessages = ['error', 'test', 'notifications'];
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -61,12 +57,13 @@ describe('the plugin', () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe('the indicator plugin element', () => {
         beforeEach(() => {
             parentElement.append(indicatorElement);
+
             return Vue.nextTick();
         });
 
@@ -76,5 +73,4 @@ describe('the plugin', () => {
             expect(notificationCountElement.innerText).toEqual(mockMessages.length.toString());
         });
     });
-
 });

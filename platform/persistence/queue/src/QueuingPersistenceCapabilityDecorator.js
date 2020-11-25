@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -60,9 +60,9 @@ define(
                     capabilities.persistence = function (domainObject) {
                         // Get/instantiate the original
                         var original =
-                            (typeof originalPersistence === 'function') ?
-                                originalPersistence(domainObject) :
-                                originalPersistence;
+                            (typeof originalPersistence === 'function')
+                                ? originalPersistence(domainObject)
+                                : originalPersistence;
 
                         // Provide a decorated version
                         return new QueuingPersistenceCapability(
@@ -72,6 +72,7 @@ define(
                         );
                     };
                 }
+
                 return capabilities;
             }
 

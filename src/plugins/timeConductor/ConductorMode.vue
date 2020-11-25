@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2018, United States Government
+ * Open MCT Web, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -71,6 +71,7 @@ export default {
             //Create copy of active clock so the time API does not get reactified.
             activeClock = Object.create(activeClock);
         }
+
         return {
             selectedMode: this.getModeOptionForClock(activeClock),
             selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
@@ -102,7 +103,7 @@ export default {
                 .map(this.getModeOptionForClock);
 
             function isDefinedAndUnique(key, index, array) {
-                return key!== undefined && array.indexOf(key) === index;
+                return key !== undefined && array.indexOf(key) === index;
             }
         },
 
@@ -113,15 +114,15 @@ export default {
                     name: 'Fixed Timespan',
                     description: 'Query and explore data that falls between two fixed datetimes.',
                     cssClass: 'icon-tabular'
-                }
+                };
             } else {
                 return {
                     key: clock.key,
                     name: clock.name,
-                    description: "Monitor streaming data in real-time. The Time " +
-                    "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
+                    description: "Monitor streaming data in real-time. The Time "
+                    + "Conductor and displays will automatically advance themselves based on this clock. " + clock.description,
                     cssClass: clock.cssClass || 'icon-clock'
-                }
+                };
             }
         },
 
@@ -160,10 +161,10 @@ export default {
         getMatchingConfig(options) {
             const matchers = {
                 clock(config) {
-                    return options.clock === config.clock
+                    return options.clock === config.clock;
                 },
                 timeSystem(config) {
-                    return options.timeSystem === config.timeSystem
+                    return options.timeSystem === config.timeSystem;
                 }
             };
 
@@ -181,5 +182,5 @@ export default {
         }
     }
 
-}
+};
 </script>

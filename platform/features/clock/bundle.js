@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -54,7 +54,7 @@ define([
     timerTemplate
 ) {
     return {
-        name:"platform/features/clock",
+        name: "platform/features/clock",
         definition: {
             "name": "Clocks/Timers",
             "descriptions": "Domain objects for displaying current & relative times.",

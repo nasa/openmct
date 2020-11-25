@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -57,9 +57,9 @@ define([
      * @private
      */
     DefaultCompositionProvider.prototype.cannotContainItself = function (parent, child) {
-        return !(parent.identifier.namespace === child.identifier.namespace &&
-            parent.identifier.key === child.identifier.key);
-    }
+        return !(parent.identifier.namespace === child.identifier.namespace
+            && parent.identifier.key === child.identifier.key);
+    };
 
     /**
      * Check if this provider should be used to load composition for a
@@ -72,7 +72,7 @@ define([
      * @method appliesTo
      */
     DefaultCompositionProvider.prototype.appliesTo = function (domainObject) {
-        return !!domainObject.composition;
+        return Boolean(domainObject.composition);
     };
 
     /**
@@ -106,8 +106,8 @@ define([
     ) {
         this.establishTopicListener();
 
-        var keyString = objectUtils.makeKeyString(domainObject.identifier);
-        var objectListeners = this.listeningTo[keyString];
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let objectListeners = this.listeningTo[keyString];
 
         if (!objectListeners) {
             objectListeners = this.listeningTo[keyString] = {
@@ -140,10 +140,10 @@ define([
         callback,
         context
     ) {
-        var keyString = objectUtils.makeKeyString(domainObject.identifier);
-        var objectListeners = this.listeningTo[keyString];
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+        const objectListeners = this.listeningTo[keyString];
 
-        var index = objectListeners[event].findIndex(l => {
+        const index = objectListeners[event].findIndex(l => {
             return l.callback === callback && l.context === context;
         });
 
@@ -167,8 +167,8 @@ define([
      */
     DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
         let composition = domainObject.composition.filter(function (child) {
-            return !(childId.namespace === child.namespace &&
-                childId.key === child.key);
+            return !(childId.namespace === child.namespace
+                && childId.key === child.key);
         });
 
         this.publicAPI.objects.mutate(domainObject, 'composition', composition);
@@ -192,6 +192,7 @@ define([
             this.publicAPI.objects.mutate(parent, 'composition', parent.composition);
         }
     };
+
     /**
      * @private
      */
@@ -228,10 +229,11 @@ define([
                 });
             }
         }
+
         this.publicAPI.objects.mutate(domainObject, 'composition', newComposition);
 
         let id = objectUtils.makeKeyString(domainObject.identifier);
-        var listeners = this.listeningTo[id];
+        const listeners = this.listeningTo[id];
 
         if (!listeners) {
             return;
@@ -258,9 +260,10 @@ define([
         if (this.topicListener) {
             return;
         }
+
         this.publicAPI.objects.eventEmitter.on('mutation', this.onMutation);
         this.topicListener = () => {
-            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation)
+            this.publicAPI.objects.eventEmitter.off('mutation', this.onMutation);
         };
     };
 
@@ -271,18 +274,18 @@ define([
      * @private
      */
     DefaultCompositionProvider.prototype.onMutation = function (oldDomainObject) {
-        var id = objectUtils.makeKeyString(oldDomainObject.identifier);
-        var listeners = this.listeningTo[id];
+        const id = objectUtils.makeKeyString(oldDomainObject.identifier);
+        const listeners = this.listeningTo[id];
 
         if (!listeners) {
             return;
         }
 
-        var oldComposition = listeners.composition.map(objectUtils.makeKeyString);
-        var newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
+        const oldComposition = listeners.composition.map(objectUtils.makeKeyString);
+        const newComposition = oldDomainObject.composition.map(objectUtils.makeKeyString);
 
-        var added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
-        var removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
+        const added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
+        const removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
 
         function notify(value) {
             return function (listener) {
@@ -303,7 +306,6 @@ define([
         removed.forEach(function (removedChild) {
             listeners.remove.forEach(notify(removedChild));
         });
-
 
     };
 

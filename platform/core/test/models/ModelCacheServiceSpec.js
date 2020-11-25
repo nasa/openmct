@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,6 +30,7 @@ define(['../../src/models/ModelCacheService'], function (ModelCacheService) {
             testIds = ['a', 'b', 'c', 'd'];
             testModels = testIds.reduce(function (models, id) {
                 models[id] = { someKey: "some value for " + id };
+
                 return models;
             }, {});
             cacheService = new ModelCacheService();

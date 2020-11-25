@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,28 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-], function (
-) {
+class RootObjectProvider {
+    constructor(rootRegistry) {
+        if (!RootObjectProvider.instance) {
+            this.rootRegistry = rootRegistry;
+            this.rootObject = {
+                identifier: {
+                    key: "ROOT",
+                    namespace: ""
+                },
+                name: 'Open MCT',
+                type: 'root',
+                composition: []
+            };
+            RootObjectProvider.instance = this;
+        } else if (rootRegistry) {
+            // if called twice, update instance rootRegistry
+            RootObjectProvider.instance.rootRegistry = rootRegistry;
+        }
 
-    function RootObjectProvider(rootRegistry) {
-        this.rootRegistry = rootRegistry;
+        return RootObjectProvider.instance; // eslint-disable-line no-constructor-return
     }
 
-    RootObjectProvider.prototype.get = function () {
-        return this.rootRegistry.getRoots()
-            .then(function (roots) {
-                return {
-                    identifier: {
-                        key: "ROOT",
-                        namespace: ""
-                    },
-                    name: 'The root object',
-                    type: 'root',
-                    composition: roots
-                };
-            });
-    };
+    updateName(name) {
+        this.rootObject.name = name;
+    }
 
-    return RootObjectProvider;
-});
+    async get() {
+        let roots = await this.rootRegistry.getRoots();
+        this.rootObject.composition = roots;
+
+        return this.rootObject;
+    }
+}
+
+function instance(rootRegistry) {
+    return new RootObjectProvider(rootRegistry);
+}
+
+export default instance;

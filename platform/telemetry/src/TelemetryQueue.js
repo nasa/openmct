@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -65,7 +65,6 @@ define(
             this.counts = {};
         }
 
-
         TelemetryQueue.prototype.isEmpty = function () {
             return this.queue.length < 1;
         };
@@ -84,6 +83,7 @@ define(
 
             // Decrement counts for the object that will be popped
             Object.keys(counts).forEach(decrementCount);
+
             return this.queue.shift();
         };
 
@@ -109,6 +109,7 @@ define(
                 // up a new  container for key-value pairs.
                 object = {};
                 queue.push(object);
+
                 return object;
             }
 

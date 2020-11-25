@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -85,7 +85,10 @@ export default {
             this.resizeStartX = event.clientX;
             this.resizeStartWidth = this.columnWidth;
 
-            document.addEventListener('mouseup', this.resizeColumnEnd, {once: true, capture: true});
+            document.addEventListener('mouseup', this.resizeColumnEnd, {
+                once: true,
+                capture: true
+            });
             document.addEventListener('mousemove', this.resizeColumn);
             event.preventDefault();
         },
@@ -101,7 +104,7 @@ export default {
         resizeColumn(event) {
             let delta = event.clientX - this.resizeStartX;
             let newWidth = this.resizeStartWidth + delta;
-            let minWidth = parseInt(window.getComputedStyle(this.$el).minWidth);
+            let minWidth = parseInt(window.getComputedStyle(this.$el).minWidth, 10);
             if (newWidth > minWidth) {
                 this.$emit('resizeColumn', this.headerKey, newWidth);
             }
@@ -130,6 +133,7 @@ export default {
             } else {
                 dropOffsetLeft = element.offsetLeft + element.offsetWidth;
             }
+
             this.$emit('dropTargetOffsetChanged', dropOffsetLeft);
             this.$emit('dropTargetActive', true);
         },
@@ -149,6 +153,7 @@ export default {
                         toIndex++;
                     }
                 }
+
                 if (toIndex !== fromIndex) {
                     this.$emit('reorderColumn', fromIndex, toIndex);
                 }
@@ -158,5 +163,5 @@ export default {
             this.$emit("sort");
         }
     }
-}
+};
 </script>

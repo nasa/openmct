@@ -2,7 +2,7 @@
     // <a> tag and draggable element that holds type icon and name.
     // Used mostly in trees and lists
     display: flex;
-    align-items: center;
+    align-items: baseline; // Provides better vertical alignment than center
     flex: 0 1 auto;
     overflow: hidden;
     white-space: nowrap;
@@ -19,20 +19,31 @@
         display: block;
         flex: 0 0 auto;
         font-size: 1.1em;
+        opacity: $objectLabelTypeIconOpacity;
     }
 
-    &.is-missing {
-        @include isMissing($absPos: true);
+    .is-status__indicator {
+        position: absolute;
+        right: -3px;
+        top: -3px;
+        transform: scale(0.5);
+    }
 
-        [class*='__type-icon']:before,
-        [class*='__type-icon']:after{
-            opacity: $opacityMissing;
+    &.is-status--missing,
+    &.is-status--suspect {
+        [class*='__type-icon'] {
+            &:before,
+            &:after {
+                opacity: $opacityMissing;
+            }
         }
+    }
 
-        .is-missing__indicator {
-            right: -3px;
-            top: -3px;
-            transform: scale(0.7);
+    &.is-status--notebook-default {
+        &:after {
+            content: $glyph-icon-notebook-page;
+            display: block;
+            margin-left: $interiorMargin;
         }
     }
 }

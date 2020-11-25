@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,6 @@
 define(
     [],
     function () {
-
 
         /**
          * The `delegation` capability allows a domain object to indicate
@@ -65,7 +64,6 @@ define(
             }
         }
 
-
         /**
          * Get the domain objects which are intended to be delegated
          * responsibility for some specific capability.
@@ -90,11 +88,11 @@ define(
                 return domainObject.useCapability('composition');
             }
 
-            return this.doesDelegateCapability(key) ?
-                promiseChildren().then(
+            return this.doesDelegateCapability(key)
+                ? promiseChildren().then(
                     filterObjectsWithCapability(key)
-                ) :
-                this.$q.when([]);
+                )
+                : this.$q.when([]);
         };
 
         /**
@@ -105,7 +103,7 @@ define(
          * @returns {boolean} true if the capability is delegated
          */
         DelegationCapability.prototype.doesDelegateCapability = function (key) {
-            return !!(this.delegateCapabilities[key]);
+            return Boolean(this.delegateCapabilities[key]);
         };
 
         /**

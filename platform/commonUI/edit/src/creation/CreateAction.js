@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -103,7 +103,6 @@ define(
             // Which means we have to toggle createwizard afterwards.  For now,
             // We will disable this.
         };
-
 
         /**
          * Metadata associated with a Create action.

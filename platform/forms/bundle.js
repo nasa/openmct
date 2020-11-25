@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,6 @@ define([
     "./src/controllers/CompositeController",
     "./src/controllers/ColorController",
     "./src/controllers/DialogButtonController",
-    "./src/controllers/SnapshotPreviewController",
     "./res/templates/controls/autocomplete.html",
     "./res/templates/controls/checkbox.html",
     "./res/templates/controls/datetime.html",
@@ -44,8 +43,7 @@ define([
     "./res/templates/controls/menu-button.html",
     "./res/templates/controls/dialog.html",
     "./res/templates/controls/radio.html",
-    "./res/templates/controls/file-input.html",
-    "./res/templates/controls/snap-view.html"
+    "./res/templates/controls/file-input.html"
 ], function (
     MCTForm,
     MCTControl,
@@ -56,7 +54,6 @@ define([
     CompositeController,
     ColorController,
     DialogButtonController,
-    SnapshotPreviewController,
     autocompleteTemplate,
     checkboxTemplate,
     datetimeTemplate,
@@ -70,12 +67,11 @@ define([
     menuButtonTemplate,
     dialogTemplate,
     radioTemplate,
-    fileInputTemplate,
-    snapViewTemplate
+    fileInputTemplate
 ) {
 
     return {
-        name:"platform/forms",
+        name: "platform/forms",
         definition: {
             "name": "MCT Forms",
             "description": "Form generator; includes directive and some controls.",
@@ -157,10 +153,6 @@ define([
                     {
                         "key": "file-input",
                         "template": fileInputTemplate
-                    },
-                    {
-                        "key": "snap-view",
-                        "template": snapViewTemplate
                     }
                 ],
                 "controllers": [
@@ -193,14 +185,6 @@ define([
                         "depends": [
                             "$scope",
                             "dialogService"
-                        ]
-                    },
-                    {
-                        "key": "SnapshotPreviewController",
-                        "implementation": SnapshotPreviewController,
-                        "depends": [
-                            "$scope",
-                            "openmct"
                         ]
                     }
                 ],

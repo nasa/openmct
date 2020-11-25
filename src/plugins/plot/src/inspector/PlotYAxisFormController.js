@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,7 @@ define([
     PlotModelFormController
 ) {
 
-    var PlotYAxisFormController = PlotModelFormController.extend({
+    const PlotYAxisFormController = PlotModelFormController.extend({
         fields: [
             {
                 modelProp: 'label',
@@ -52,37 +52,47 @@ define([
                             max: 0
                         };
                     }
-                    var newRange = {};
+
+                    const newRange = {};
                     if (typeof range.min !== 'undefined' && range.min !== null) {
                         newRange.min = Number(range.min);
                     }
+
                     if (typeof range.max !== 'undefined' && range.max !== null) {
                         newRange.max = Number(range.max);
                     }
+
                     return newRange;
                 },
                 validate: function validateRange(range, model) {
                     if (!range) {
                         return 'Need range';
                     }
+
                     if (range.min === '' || range.min === null || typeof range.min === 'undefined') {
                         return 'Must specify Minimum';
                     }
+
                     if (range.max === '' || range.max === null || typeof range.max === 'undefined') {
                         return 'Must specify Maximum';
                     }
+
                     if (Number.isNaN(Number(range.min))) {
                         return 'Minimum must be a number.';
                     }
+
                     if (Number.isNaN(Number(range.max))) {
                         return 'Maximum must be a number.';
                     }
+
                     if (Number(range.min) > Number(range.max)) {
                         return 'Minimum must be less than Maximum.';
                     }
+
                     if (model.get('autoscale')) {
                         return false;
                     }
+
                     return true;
                 }
             }

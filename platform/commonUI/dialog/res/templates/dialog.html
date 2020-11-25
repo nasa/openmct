@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2018, United States Government
+ Open MCT, Copyright (c) 2014-2020, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -31,13 +31,13 @@
     </mct-form>
 </div>
 <div class="c-overlay__button-bar">
-    <a class='c-button c-button--major'
+    <button class='c-button c-button--major'
        ng-class="{ disabled: !createForm.$valid }"
        ng-click="ngModel.confirm()">
         OK
-    </a>
-    <a class='c-button  '
+    </button>
+    <button class='c-button  '
        ng-click="ngModel.cancel()">
         Cancel
-    </a>
+    </button>
 </div>

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,13 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-table-wrapper">
-    <!-- main contolbar  start-->
-    <div v-if="!marking.useAlternateControlBar"
+<div class="c-table-wrapper"
+     :class="{ 'is-paused': paused }"
+>
+    <div v-if="enableLegacyToolbar"
          class="c-table-control-bar c-control-bar"
     >
         <button
             v-if="allowExport"
+            v-show="!markedRows.length"
             class="c-button icon-download labeled"
             title="Export this view's data"
             @click="exportAllDataAsCSV()"
@@ -91,7 +93,6 @@
 
         <slot name="buttons"></slot>
     </div>
-    <!-- main controlbar end -->
 
     <!-- alternate controlbar start -->
     <div v-if="marking.useAlternateControlBar"
@@ -110,11 +111,11 @@
 
         <button
             :class="{'hide-nice': !markedRows.length}"
-            class="c-button icon-x labeled"
+            class="c-icon-button icon-x labeled"
             title="Deselect All"
             @click="unmarkAllRows()"
         >
-            <span class="c-button__label">Deselect All</span>
+            <span class="c-icon-button__label">{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }} </span>
         </button>
 
         <slot name="buttons"></slot>
@@ -122,10 +123,10 @@
     <!-- alternate controlbar end  -->
 
     <div
-        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
+        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar u-style-receiver js-style-receiver"
         :class="{
             'loading': loading,
-            'paused' : paused
+            'is-paused' : paused
         }"
     >
         <div :style="{ 'max-width': widthWithScroll, 'min-width': '150px'}">
@@ -241,6 +242,10 @@
             class="c-telemetry-table__sizing js-telemetry-table__sizing"
             :style="sizingTableWidth"
         >
+            <sizing-row
+                :is-editing="isEditing"
+                @change-height="setRowHeight"
+            />
             <tr>
                 <template v-for="(title, key) in headers">
                     <th
@@ -260,7 +265,11 @@
                 :object-path="objectPath"
             />
         </table>
-        <telemetry-filter-indicator />
+        <table-footer-indicator
+            class="c-telemetry-table__footer"
+            :marked-rows="markedRows.length"
+            :total-rows="totalNumberOfRows"
+        />
     </div>
 </div><!-- closes c-table-wrapper -->
 </template>
@@ -269,10 +278,11 @@
 import TelemetryTableRow from './table-row.vue';
 import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
-import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
+import TableFooterIndicator from './table-footer-indicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import SizingRow from './sizing-row.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -284,8 +294,9 @@ export default {
         TelemetryTableRow,
         TableColumnHeader,
         search,
-        TelemetryFilterIndicator,
-        ToggleSwitch
+        TableFooterIndicator,
+        ToggleSwitch,
+        SizingRow
     },
     inject: ['table', 'openmct', 'objectPath'],
     props: {
@@ -298,22 +309,34 @@ export default {
             default: true
         },
         allowFiltering: {
-            'type': Boolean,
-            'default': true
+            type: Boolean,
+            default: true
         },
         allowSorting: {
-            'type': Boolean,
-            'default': true
+            type: Boolean,
+            default: true
         },
         marking: {
             type: Object,
             default() {
                 return {
                     enable: false,
+                    disableMultiSelect: false,
                     useAlternateControlBar: false,
                     rowName: '',
                     rowNamePlural: ""
-                }
+                };
+            }
+        },
+        enableLegacyToolbar: {
+            type: Boolean,
+            default: false
+        },
+        view: {
+            type: Object,
+            required: false,
+            default() {
+                return {};
             }
         }
     },
@@ -349,8 +372,9 @@ export default {
             markedRows: [],
             isShowingMarkedRowsOnly: false,
             enableRegexSearch: {},
-            hideHeaders: configuration.hideHeaders
-        }
+            hideHeaders: configuration.hideHeaders,
+            totalNumberOfRows: 0
+        };
     },
     computed: {
         dropTargetStyle() {
@@ -358,10 +382,11 @@ export default {
                 top: this.$refs.headersTable.offsetTop + 'px',
                 height: this.totalHeight + this.$refs.headersTable.offsetHeight + 'px',
                 left: this.dropOffsetLeft && this.dropOffsetLeft + 'px'
-            }
+            };
         },
         lastHeaderKey() {
             let headerKeys = Object.keys(this.headers);
+
             return headerKeys[headerKeys.length - 1];
         },
         widthWithScroll() {
@@ -375,11 +400,13 @@ export default {
             } else {
                 let totalWidth = Object.keys(this.headers).reduce((total, key) => {
                     total += this.configuredColumnWidths[key];
+
                     return total;
                 }, 0);
 
                 style = {width: totalWidth + 'px'};
             }
+
             return style;
         }
     },
@@ -387,6 +414,40 @@ export default {
         markedRows: {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
+
+                if (this.viewActionsCollection) {
+                    if (newVal.length > 0) {
+                        this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
+                    } else if (newVal.length === 0) {
+                        this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+                    }
+                }
+            }
+        },
+        paused: {
+            handler(newVal) {
+                if (this.viewActionsCollection) {
+                    if (newVal) {
+                        this.viewActionsCollection.hide(['pause-data']);
+                        this.viewActionsCollection.show(['play-data']);
+                    } else {
+                        this.viewActionsCollection.hide(['play-data']);
+                        this.viewActionsCollection.show(['pause-data']);
+                    }
+                }
+            }
+        },
+        isAutosizeEnabled: {
+            handler(newVal) {
+                if (this.viewActionsCollection) {
+                    if (newVal) {
+                        this.viewActionsCollection.show(['expand-columns']);
+                        this.viewActionsCollection.hide(['autosize-columns']);
+                    } else {
+                        this.viewActionsCollection.show(['autosize-columns']);
+                        this.viewActionsCollection.hide(['expand-columns']);
+                    }
+                }
             }
         }
     },
@@ -398,6 +459,11 @@ export default {
         this.rowsAdded = _.throttle(this.rowsAdded, 200);
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);
+
+        if (!this.marking.useAlternateControlBar && !this.enableLegacyToolbar) {
+            this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.view);
+            this.initializeViewActions();
+        }
 
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
@@ -448,12 +514,14 @@ export default {
         updateVisibleRows() {
             if (!this.updatingView) {
                 this.updatingView = true;
-                requestAnimationFrame(()=> {
+                requestAnimationFrame(() => {
 
                     let start = 0;
                     let end = VISIBLE_ROW_COUNT;
                     let filteredRows = this.table.filteredRows.getRows();
                     let filteredRowsLength = filteredRows.length;
+
+                    this.totalNumberOfRows = filteredRowsLength;
 
                     if (filteredRowsLength < VISIBLE_ROW_COUNT) {
                         end = filteredRowsLength;
@@ -484,10 +552,12 @@ export default {
         },
         calculateFirstVisibleRow() {
             let scrollTop = this.scrollable.scrollTop;
+
             return Math.floor(scrollTop / this.rowHeight);
         },
         calculateLastVisibleRow() {
             let scrollBottom = this.scrollable.scrollTop + this.scrollable.offsetHeight;
+
             return Math.ceil(scrollBottom / this.rowHeight);
         },
         updateHeaders() {
@@ -498,19 +568,20 @@ export default {
             this.scrollW = (this.scrollable.offsetWidth - this.scrollable.clientWidth) + 1;
         },
         calculateColumnWidths() {
-            let columnWidths = {},
-                totalWidth = 0,
-                headerKeys = Object.keys(this.headers),
-                sizingTableRow = this.sizingTable.children[0],
-                sizingCells = sizingTableRow.children;
+            let columnWidths = {};
+            let totalWidth = 0;
+            let headerKeys = Object.keys(this.headers);
+            let sizingTableRow = this.sizingTable.children[1];
+            let sizingCells = sizingTableRow.children;
 
-            headerKeys.forEach((headerKey, headerIndex, array)=>{
+            headerKeys.forEach((headerKey, headerIndex, array) => {
                 if (this.isAutosizeEnabled) {
                     columnWidths[headerKey] = this.sizingTable.clientWidth / array.length;
                 } else {
                     let cell = sizingCells[headerIndex];
                     columnWidths[headerKey] = cell.offsetWidth;
                 }
+
                 totalWidth += columnWidths[headerKey];
             });
 
@@ -531,8 +602,9 @@ export default {
                 this.sortOptions = {
                     key: columnKey,
                     direction: 'asc'
-                }
+                };
             }
+
             this.table.sortBy(this.sortOptions);
         },
         scroll() {
@@ -682,8 +754,9 @@ export default {
                 newHeaderKeys.splice(to, 0, moveFromKey);
             }
 
-            let newHeaders = newHeaderKeys.reduce((headers, headerKey)=>{
+            let newHeaders = newHeaderKeys.reduce((headers, headerKey) => {
                 headers[headerKey] = this.headers[headerKey];
+
                 return headers;
             }, {});
 
@@ -713,9 +786,11 @@ export default {
                     } else {
                         this.scrollable.scrollTop = scrollTop;
                     }
+
                     width = el.clientWidth;
                     height = el.clientHeight;
                 }
+
                 scrollTop = this.scrollable.scrollTop;
             }, RESIZE_POLL_INTERVAL);
         },
@@ -727,6 +802,7 @@ export default {
             if (pausedByButton) {
                 this.pausedByButton = true;
             }
+
             this.paused = true;
             this.table.pause();
         },
@@ -759,8 +835,8 @@ export default {
         },
         unmarkRow(rowIndex) {
             if (this.markedRows.length > 1) {
-                let row = this.visibleRows[rowIndex],
-                    positionInMarkedArray = this.markedRows.indexOf(row);
+                let row = this.visibleRows[rowIndex];
+                let positionInMarkedArray = this.markedRows.indexOf(row);
 
                 row.marked = false;
                 this.markedRows.splice(positionInMarkedArray, 1);
@@ -793,6 +869,11 @@ export default {
             this.$set(markedRow, 'marked', true);
             this.pause();
 
+            if (this.marking.disableMultiSelect) {
+                this.unmarkAllRows();
+                insertMethod = 'push';
+            }
+
             this.markedRows[insertMethod](markedRow);
         },
         unmarkAllRows(skipUnpause) {
@@ -806,22 +887,23 @@ export default {
                 return;
             }
 
-            if (!this.markedRows.length) {
+            if (!this.markedRows.length || this.marking.disableMultiSelect) {
                 this.markRow(rowIndex);
             } else {
                 if (this.markedRows.length > 1) {
-                    this.markedRows.forEach((r,i) => {
+                    this.markedRows.forEach((r, i) => {
                         if (i !== 0) {
                             r.marked = false;
                         }
                     });
                     this.markedRows.splice(1);
                 }
+
                 let lastRowToBeMarked = this.visibleRows[rowIndex];
 
-                let allRows = this.table.filteredRows.getRows(),
-                    firstRowIndex = allRows.indexOf(this.markedRows[0]),
-                    lastRowIndex = allRows.indexOf(lastRowToBeMarked);
+                let allRows = this.table.filteredRows.getRows();
+                let firstRowIndex = allRows.indexOf(this.markedRows[0]);
+                let lastRowIndex = allRows.indexOf(lastRowToBeMarked);
 
                 //supports backward selection
                 if (lastRowIndex < firstRowIndex) {
@@ -830,9 +912,9 @@ export default {
 
                 let baseRow = this.markedRows[0];
 
-                for (var i = firstRowIndex; i <= lastRowIndex; i++) {
+                for (let i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
-                    row.marked = true;
+                    this.$set(row, 'marked', true);
 
                     if (row !== baseRow) {
                         this.markedRows.push(row);
@@ -879,7 +961,7 @@ export default {
             });
         },
         recalculateColumnWidths() {
-            this.visibleRows.forEach((row,i) => {
+            this.visibleRows.forEach((row, i) => {
                 this.$set(this.sizingRows, i, row);
             });
 
@@ -905,7 +987,47 @@ export default {
         },
         isCompleteRegex(string) {
             return (string.length > 2 && string[0] === '/' && string[string.length - 1] === '/')
+        },
+        getViewContext() {
+            return {
+                type: 'telemetry-table',
+                exportAllDataAsCSV: this.exportAllDataAsCSV,
+                exportMarkedRows: this.exportMarkedRows,
+                unmarkAllRows: this.unmarkAllRows,
+                togglePauseByButton: this.togglePauseByButton,
+                expandColumns: this.recalculateColumnWidths,
+                autosizeColumns: this.autosizeColumns
+            };
+        },
+        initializeViewActions() {
+            if (this.markedRows.length > 0) {
+                this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
+            } else if (this.markedRows.length === 0) {
+                this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+            }
+
+            if (this.paused) {
+                this.viewActionsCollection.hide(['pause-data']);
+                this.viewActionsCollection.show(['play-data']);
+            } else {
+                this.viewActionsCollection.hide(['play-data']);
+                this.viewActionsCollection.show(['pause-data']);
+            }
+
+            if (this.isAutosizeEnabled) {
+                this.viewActionsCollection.show(['expand-columns']);
+                this.viewActionsCollection.hide(['autosize-columns']);
+            } else {
+                this.viewActionsCollection.show(['autosize-columns']);
+                this.viewActionsCollection.hide(['expand-columns']);
+            }
+        },
+        setRowHeight(height) {
+            this.rowHeight = height;
+            this.setHeight();
+            this.calculateTableSize();
+            this.clearRowsAndRerender();
         }
     }
-}
+};
 </script>

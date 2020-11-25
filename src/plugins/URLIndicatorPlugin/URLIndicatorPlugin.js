@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,8 +23,8 @@ define(['./URLIndicator'],
     function URLIndicatorPlugin(URLIndicator) {
         return function (opts) {
             return function install(openmct) {
-                var simpleIndicator = openmct.indicators.simpleIndicator();
-                var urlIndicator = new URLIndicator(opts, simpleIndicator);
+                const simpleIndicator = openmct.indicators.simpleIndicator();
+                const urlIndicator = new URLIndicator(opts, simpleIndicator);
 
                 openmct.indicators.add(simpleIndicator);
 

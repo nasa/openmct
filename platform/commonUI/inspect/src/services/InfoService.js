@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -56,8 +56,8 @@ define(
                 $rootScope = this.$rootScope,
                 scope = $rootScope.$new(),
                 span = $compile('<span></span>')(scope),
-                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR +
-                    InfoConstants.BUBBLE_MAX_WIDTH,
+                bubbleSpaceLR = InfoConstants.BUBBLE_MARGIN_LR
+                    + InfoConstants.BUBBLE_MAX_WIDTH,
                 options,
                 popup,
                 bubble;

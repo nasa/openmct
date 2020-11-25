@@ -24,13 +24,13 @@ import Condition from "./Condition";
 import {TRIGGER} from "./utils/constants";
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
 
-let openmct = {},
-    testConditionDefinition,
-    testTelemetryObject,
-    conditionObj,
-    conditionManager,
-    mockTelemetryReceived,
-    mockTimeSystems;
+let openmct = {};
+let testConditionDefinition;
+let testTelemetryObject;
+let conditionObj;
+let conditionManager;
+let mockTelemetryReceived;
+let mockTimeSystems;
 
 describe("The condition", function () {
 
@@ -43,7 +43,10 @@ describe("The condition", function () {
         conditionManager.updateConditionDescription.and.returnValue(function () {});
 
         testTelemetryObject = {
-            identifier:{ namespace: "", key: "test-object"},
+            identifier: {
+                namespace: "",
+                key: "test-object"
+            },
             type: "test-object",
             name: "Test Object",
             telemetry: {
@@ -75,7 +78,7 @@ describe("The condition", function () {
         openmct.objects = jasmine.createSpyObj('objects', ['get', 'makeKeyString']);
         openmct.objects.get.and.returnValue(new Promise(function (resolve, reject) {
             resolve(testTelemetryObject);
-        }));        openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
+        })); openmct.objects.makeKeyString.and.returnValue(testTelemetryObject.identifier.key);
         openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', 'subscribe', 'getMetadata']);
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         openmct.telemetry.subscribe.and.returnValue(function () {});
@@ -146,7 +149,7 @@ describe("The condition", function () {
     });
 
     it("gets the result of a condition when new telemetry data is received", function () {
-        conditionObj.getResult({
+        conditionObj.updateResult({
             value: '0',
             utc: 'Hi',
             id: testTelemetryObject.identifier.key
@@ -155,7 +158,7 @@ describe("The condition", function () {
     });
 
     it("gets the result of a condition when new telemetry data is received", function () {
-        conditionObj.getResult({
+        conditionObj.updateResult({
             value: '1',
             utc: 'Hi',
             id: testTelemetryObject.identifier.key
@@ -164,14 +167,14 @@ describe("The condition", function () {
     });
 
     it("keeps the old result new telemetry data is not used by it", function () {
-        conditionObj.getResult({
+        conditionObj.updateResult({
             value: '0',
             utc: 'Hi',
             id: testTelemetryObject.identifier.key
         });
         expect(conditionObj.result).toBeTrue();
 
-        conditionObj.getResult({
+        conditionObj.updateResult({
             value: '1',
             utc: 'Hi',
             id: '1234'

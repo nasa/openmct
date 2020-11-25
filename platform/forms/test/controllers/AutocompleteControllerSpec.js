@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,8 +48,14 @@ define([
 
         it("filters options by returning array containing optionId and name", function () {
             mockScope.filterOptions('Asia');
-            var filteredOptions = [{ optionId : 0, name : 'Asia/Dhaka' },
-                { optionId : 1, name : 'Asia/Shanghai' }];
+            var filteredOptions = [{
+                optionId: 0,
+                name: 'Asia/Dhaka'
+            },
+            {
+                optionId: 1,
+                name: 'Asia/Shanghai'
+            }];
             expect(mockScope.filteredOptions).toEqual(filteredOptions);
         });
 

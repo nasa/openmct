@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2018, United States Government
+ * Open MCT Web, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -66,7 +66,9 @@
 <script>
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 
-const LOCAL_STORAGE_HISTORY_KEY = 'tcHistory';
+const DEFAULT_DURATION_FORMATTER = 'duration';
+const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
+const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 
 export default {
@@ -77,77 +79,125 @@ export default {
             type: Object,
             required: true
         },
+        offsets: {
+            type: Object,
+            required: false,
+            default: () => {}
+        },
         timeSystem: {
             type: Object,
+            required: true
+        },
+        mode: {
+            type: String,
             required: true
         }
     },
     data() {
         return {
-            history: {}, // contains arrays of timespans {start, end}, array key is time system key
+            /**
+             * previous bounds entries available for easy re-use
+             * @realtimeHistory array of timespans
+             * @timespans {start, end} number representing timestamp
+             */
+            realtimeHistory: {},
+            /**
+             * previous bounds entries available for easy re-use
+             * @fixedHistory array of timespans
+             * @timespans {start, end} number representing timestamp
+             */
+            fixedHistory: {},
             presets: []
-        }
+        };
     },
     computed: {
+        currentHistory() {
+            return this.mode + 'History';
+        },
+        isFixed() {
+            return this.openmct.time.clock() === undefined;
+        },
         hasHistoryPresets() {
             return this.timeSystem.isUTCBased && this.presets.length;
         },
         historyForCurrentTimeSystem() {
-            const history = this.history[this.timeSystem.key];
+            const history = this[this.currentHistory][this.timeSystem.key];
 
             return history;
+        },
+        storageKey() {
+            let key = LOCAL_STORAGE_HISTORY_KEY_FIXED;
+            if (this.mode !== 'fixed') {
+                key = LOCAL_STORAGE_HISTORY_KEY_REALTIME;
+            }
+
+            return key;
         }
     },
     watch: {
         bounds: {
+            handler() {
+                // only for fixed time since we track offsets for realtime
+                if (this.isFixed) {
+                    this.addTimespan();
+                }
+            },
+            deep: true
+        },
+        offsets: {
             handler() {
                 this.addTimespan();
             },
             deep: true
         },
         timeSystem: {
-            handler() {
+            handler(ts) {
                 this.loadConfiguration();
                 this.addTimespan();
             },
             deep: true
         },
-        history: {
-            handler() {
-                this.persistHistoryToLocalStorage();
-            },
-            deep: true
+        mode: function () {
+            this.getHistoryFromLocalStorage();
+            this.initializeHistoryIfNoHistory();
+            this.loadConfiguration();
         }
     },
     mounted() {
         this.getHistoryFromLocalStorage();
+        this.initializeHistoryIfNoHistory();
     },
     methods: {
         getHistoryFromLocalStorage() {
-            if (localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY)) {
-                this.history = JSON.parse(localStorage.getItem(LOCAL_STORAGE_HISTORY_KEY))
-            } else {
-                this.history = {};
+            const localStorageHistory = localStorage.getItem(this.storageKey);
+            const history = localStorageHistory ? JSON.parse(localStorageHistory) : undefined;
+            this[this.currentHistory] = history;
+        },
+        initializeHistoryIfNoHistory() {
+            if (!this[this.currentHistory]) {
+                this[this.currentHistory] = {};
                 this.persistHistoryToLocalStorage();
             }
         },
         persistHistoryToLocalStorage() {
-            localStorage.setItem(LOCAL_STORAGE_HISTORY_KEY, JSON.stringify(this.history));
+            localStorage.setItem(this.storageKey, JSON.stringify(this[this.currentHistory]));
         },
         addTimespan() {
             const key = this.timeSystem.key;
-            let [...currentHistory] = this.history[key] || [];
+            let [...currentHistory] = this[this.currentHistory][key] || [];
             const timespan = {
-                start: this.bounds.start,
-                end: this.bounds.end
+                start: this.isFixed ? this.bounds.start : this.offsets.start,
+                end: this.isFixed ? this.bounds.end : this.offsets.end
             };
+            let self = this;
 
-            const isNotEqual = function (entry) {
-                const start = entry.start !== this.start;
-                const end = entry.end !== this.end;
+            function isNotEqual(entry) {
+                const start = entry.start !== self.start;
+                const end = entry.end !== self.end;
 
                 return start || end;
-            };
+            }
+
             currentHistory = currentHistory.filter(isNotEqual, timespan);
 
             while (currentHistory.length >= this.records) {
@@ -155,29 +205,37 @@ export default {
             }
 
             currentHistory.unshift(timespan);
-            this.history[key] = currentHistory;
+            this.$set(this[this.currentHistory], key, currentHistory);
+
+            this.persistHistoryToLocalStorage();
         },
         selectTimespan(timespan) {
-            this.openmct.time.bounds(timespan);
+            if (this.isFixed) {
+                this.openmct.time.bounds(timespan);
+            } else {
+                this.openmct.time.clockOffsets(timespan);
+            }
         },
         selectPresetBounds(bounds) {
             const start = typeof bounds.start === 'function' ? bounds.start() : bounds.start;
             const end = typeof bounds.end === 'function' ? bounds.end() : bounds.end;
 
             this.selectTimespan({
-                start: start,
-                end: end
+                start,
+                end
             });
         },
         loadConfiguration() {
             const configurations = this.configuration.menuOptions
-                .filter(option => option.timeSystem ===  this.timeSystem.key);
+                .filter(option => option.timeSystem === this.timeSystem.key);
 
             this.presets = this.loadPresets(configurations);
             this.records = this.loadRecords(configurations);
         },
         loadPresets(configurations) {
-            const configuration = configurations.find(option => option.presets);
+            const configuration = configurations.find(option => {
+                return option.presets && option.name.toLowerCase() === this.mode;
+            });
             const presets = configuration ? configuration.presets : [];
 
             return presets;
@@ -189,12 +247,25 @@ export default {
             return records;
         },
         formatTime(time) {
+            let format = this.timeSystem.timeFormat;
+            let isNegativeOffset = false;
+
+            if (!this.isFixed) {
+                if (time < 0) {
+                    isNegativeOffset = true;
+                }
+
+                time = Math.abs(time);
+
+                format = this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER;
+            }
+
             const formatter = this.openmct.telemetry.getValueFormatter({
-                format: this.timeSystem.timeFormat
+                format: format
             }).formatter;
 
-            return formatter.format(time);
+            return (isNegativeOffset ? '-' : '') + formatter.format(time);
         }
     }
-}
+};
 </script>

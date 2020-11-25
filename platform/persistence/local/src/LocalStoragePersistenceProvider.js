@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -55,8 +55,8 @@ define(
          * @private
          */
         LocalStoragePersistenceProvider.prototype.getValue = function (key) {
-            return this.localStorage[key] ?
-                JSON.parse(this.localStorage[key]) : {};
+            return this.localStorage[key]
+                ? JSON.parse(this.localStorage[key]) : {};
         };
 
         LocalStoragePersistenceProvider.prototype.listSpaces = function () {
@@ -71,11 +71,13 @@ define(
             var spaceObj = this.getValue(space);
             spaceObj[key] = value;
             this.setValue(space, spaceObj);
+
             return this.$q.when(true);
         };
 
         LocalStoragePersistenceProvider.prototype.readObject = function (space, key) {
             var spaceObj = this.getValue(space);
+
             return this.$q.when(spaceObj[key]);
         };
 
@@ -83,6 +85,7 @@ define(
             var spaceObj = this.getValue(space);
             delete spaceObj[key];
             this.setValue(space, spaceObj);
+
             return this.$q.when(true);
         };
 

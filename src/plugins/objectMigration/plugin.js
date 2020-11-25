@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Migrations from './Migrations.js'
+import Migrations from './Migrations.js';
 
 export default function () {
     return function (openmct) {
@@ -43,11 +43,13 @@ export default function () {
                         migrateObject(object)
                             .then(newObject => {
                                 openmct.objects.mutate(newObject, 'persisted', Date.now());
+
                                 return newObject;
                             });
                     }
+
                     return object;
                 });
-        }
+        };
     };
 }

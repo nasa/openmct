@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     [],
@@ -48,7 +47,8 @@ define(
                     "Eros turpis, pulvinar turpis eros eu",
                     "Lundium nascetur a, lectus montes ac, parturient in natoque, duis risus risus pulvinar pid rhoncus, habitasse auctor natoque!"
                 ];
-                return actionTexts[Math.floor(Math.random()*3)];
+
+                return actionTexts[Math.floor(Math.random() * 3)];
             }
 
             /**
@@ -61,6 +61,7 @@ define(
                     severity: "error"
                 });
             };
+
             /**
              * Launch a new notification with a severity of 'Alert'.
              */
@@ -72,7 +73,6 @@ define(
                     autoDismiss: true
                 });
             };
-
 
             /**
              * Launch a new notification with a progress bar that is updated
@@ -93,10 +93,10 @@ define(
                  * @param notification
                  */
                 function incrementProgress() {
-                    progress = Math.min(100, Math.floor(progress + Math.random() * 30))
-                    let progressText = ["Estimated time" +
-                    " remaining:" +
-                    " about ", 60 - Math.floor((progress / 100) * 60), " seconds"].join(" ");
+                    progress = Math.min(100, Math.floor(progress + Math.random() * 30));
+                    let progressText = ["Estimated time"
+                    + " remaining:"
+                    + " about ", 60 - Math.floor((progress / 100) * 60), " seconds"].join(" ");
                     notification.progress(progress, progressText);
 
                     if (progress < 100) {
@@ -120,6 +120,7 @@ define(
             };
 
         }
+
         return NotificationLaunchController;
     }
 );

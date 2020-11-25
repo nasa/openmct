@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -73,12 +73,13 @@ define(
             // as a child contained by that parent.
             function addToComposition() {
                 var compositionCapability = parent.getCapability('composition'),
-                    addResult = compositionCapability &&
-                        compositionCapability.add(newObject);
+                    addResult = compositionCapability
+                        && compositionCapability.add(newObject);
 
                 return self.$q.when(addResult).then(function (result) {
                     if (!result) {
                         self.$log.error("Could not modify " + parent.getId());
+
                         return undefined;
                     }
 
@@ -92,14 +93,13 @@ define(
             // what space to create the new object's model in.
             if (!persistence || !newObjectPersistence) {
                 self.$log.warn(NON_PERSISTENT_WARNING);
+
                 return self.$q.reject(new Error(NON_PERSISTENT_WARNING));
             }
 
             // Persist the new object, then add it to composition.
             return newObjectPersistence.persist().then(addToComposition);
         };
-
-
 
         return CreationService;
     }

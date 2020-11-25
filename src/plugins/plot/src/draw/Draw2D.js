@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 
 define([
     'EventEmitter',
@@ -61,19 +60,18 @@ define([
 
     // Convert from logical to physical y coordinates
     Draw2D.prototype.y = function (v) {
-        return this.height -
-            ((v - this.origin[1]) / this.dimensions[1]) * this.height;
+        return this.height
+            - ((v - this.origin[1]) / this.dimensions[1]) * this.height;
     };
 
     // Set the color to be used for drawing operations
     Draw2D.prototype.setColor = function (color) {
-        var mappedColor = color.map(function (c, i) {
+        const mappedColor = color.map(function (c, i) {
             return i < 3 ? Math.floor(c * 255) : (c);
         }).join(',');
         this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
         this.c2d.fillStyle = "rgba(" + mappedColor + ")";
     };
-
 
     Draw2D.prototype.clear = function () {
         this.width = this.canvas.width = this.canvas.offsetWidth;
@@ -87,7 +85,7 @@ define([
     };
 
     Draw2D.prototype.drawLine = function (buf, color, points) {
-        var i;
+        let i;
 
         this.setColor(color);
 
@@ -110,10 +108,10 @@ define([
     };
 
     Draw2D.prototype.drawSquare = function (min, max, color) {
-        var x1 = this.x(min[0]),
-            y1 = this.y(min[1]),
-            w = this.x(max[0]) - x1,
-            h = this.y(max[1]) - y1;
+        const x1 = this.x(min[0]);
+        const y1 = this.y(min[1]);
+        const w = this.x(max[0]) - x1;
+        const h = this.y(max[1]) - y1;
 
         this.setColor(color);
         this.c2d.fillRect(x1, y1, w, h);
@@ -147,12 +145,12 @@ define([
     };
 
     Draw2D.prototype.drawLimitPoints = function (points, color, pointSize) {
-        var limitSize = pointSize * 2;
-        var offset = limitSize / 2;
+        const limitSize = pointSize * 2;
+        const offset = limitSize / 2;
 
         this.setColor(color);
 
-        for (var i = 0; i < points.length; i++) {
+        for (let i = 0; i < points.length; i++) {
             this.drawLimitPoint(
                 this.x(points[i].x) - offset,
                 this.y(points[i].y) - offset,
@@ -160,7 +158,6 @@ define([
             );
         }
     };
-
 
     return Draw2D;
 });

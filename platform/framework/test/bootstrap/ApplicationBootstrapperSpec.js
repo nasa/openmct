@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,6 +39,7 @@ define(
             // Used to capture arguments to mocks
             function capture() {
                 var names = Array.prototype.slice.apply(arguments, []);
+
                 return function () {
                     var values = arguments;
                     names.forEach(function (name, index) {
@@ -54,6 +55,7 @@ define(
                 mockAngular = {
                     element: function (selector) {
                         captured.selector = selector;
+
                         return { ready: capture("callback") };
                     },
                     bootstrap: capture("element", "appNames")
@@ -73,7 +75,6 @@ define(
 
                 bootstrapper.bootstrap(mockApp);
             });
-
 
             // The tests.
 

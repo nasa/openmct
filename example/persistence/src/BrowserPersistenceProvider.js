@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 /**
  * Stubbed implementation of a persistence provider,
@@ -29,8 +28,6 @@ define(
     [],
     function () {
         'use strict';
-
-
 
         function BrowserPersistenceProvider($q, SPACE) {
             var spaces = SPACE ? [SPACE] : [],
@@ -51,6 +48,7 @@ define(
                 },
                 listObjects: function (space) {
                     var cache = caches[space];
+
                     return promises.as(
                         cache ? Object.keys(cache) : null
                     );
@@ -68,6 +66,7 @@ define(
                 },
                 readObject: function (space, key) {
                     var cache = caches[space];
+
                     return promises.as(
                         cache ? cache[key] : null
                     );

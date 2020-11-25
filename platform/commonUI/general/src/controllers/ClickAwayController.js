@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -56,6 +56,7 @@ define(
             this.state = false;
             this.$document.off("mouseup", this.clickaway);
         };
+
         ClickAwayController.prototype.activate = function () {
             this.state = true;
             this.$document.on("mouseup", this.clickaway);

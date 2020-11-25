@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,10 @@ define(
         describe("Type property", function () {
 
             it("allows retrieval of its definition", function () {
-                var definition = { key: "hello", someOtherKey: "hm?" };
+                var definition = {
+                    key: "hello",
+                    someOtherKey: "hm?"
+                };
                 expect(
                     new TypeProperty(definition).getDefinition()
                 ).toEqual(definition);

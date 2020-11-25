@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,9 +47,9 @@ define(
 
         function toGradient(triplet, value) {
             return triplet.map(function (v) {
-                return Math.round(value > 0 ?
-                    (v + (255 - v) * value) :
-                    (v * (1 + value))
+                return Math.round(value > 0
+                    ? (v + (255 - v) * value)
+                    : (v * (1 + value))
                 );
             });
         }
@@ -66,6 +66,7 @@ define(
                     Math.round(28.3333 * group.length)
                 ]));
             }
+
             GROUPS.push(group);
 
             // Ten basic colors

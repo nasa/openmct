@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,16 +22,16 @@
 
 define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
     xdescribe('The Summary Widget', function () {
-        var summaryWidget,
-            mockDomainObject,
-            mockOldDomainObject,
-            mockOpenMCT,
-            mockObjectService,
-            mockStatusCapability,
-            mockComposition,
-            mockContainer,
-            listenCallback,
-            listenCallbackSpy;
+        let summaryWidget;
+        let mockDomainObject;
+        let mockOldDomainObject;
+        let mockOpenMCT;
+        let mockObjectService;
+        let mockStatusCapability;
+        let mockComposition;
+        let mockContainer;
+        let listenCallback;
+        let listenCallbackSpy;
 
         beforeEach(function () {
             mockDomainObject = {
@@ -58,6 +58,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
             mockStatusCapability.get.and.returnValue([]);
             mockStatusCapability.listen.and.callFake(function (callback) {
                 listenCallback = callback;
+
                 return listenCallbackSpy;
             });
             mockStatusCapability.triggerCallback.and.callFake(function () {
@@ -133,7 +134,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
         });
 
         it('allows duplicating a rule from source configuration', function () {
-            var sourceConfig = JSON.parse(JSON.stringify(mockDomainObject.configuration.ruleConfigById.default));
+            const sourceConfig = JSON.parse(JSON.stringify(mockDomainObject.configuration.ruleConfigById.default));
             summaryWidget.duplicateRule(sourceConfig);
             expect(Object.keys(mockDomainObject.configuration.ruleConfigById).length).toEqual(2);
         });
@@ -185,7 +186,7 @@ define(['../src/SummaryWidget', 'zepto'], function (SummaryWidget, $) {
         it('adds hyperlink to the widget button and sets newTab preference', function () {
             summaryWidget.addHyperlink('https://www.nasa.gov', 'newTab');
 
-            var widgetButton = $('#widget', mockContainer);
+            const widgetButton = $('#widget', mockContainer);
 
             expect(widgetButton.attr('href')).toEqual('https://www.nasa.gov');
             expect(widgetButton.attr('target')).toEqual('_blank');

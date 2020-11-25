@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -35,19 +35,20 @@ define(
         }
 
         PlotViewPolicy.prototype.hasNumericTelemetry = function (domainObject) {
-            var adaptedObject = domainObject.useCapability('adapter');
+            const adaptedObject = domainObject.useCapability('adapter');
 
             if (!adaptedObject.telemetry) {
-                return domainObject.hasCapability('delegation') &&
-                    domainObject.getCapability('delegation')
+                return domainObject.hasCapability('delegation')
+                    && domainObject.getCapability('delegation')
                         .doesDelegateCapability('telemetry');
             }
 
-            var metadata = this.openmct.telemetry.getMetadata(adaptedObject);
-            var rangeValues = metadata.valuesForHints(['range']);
+            const metadata = this.openmct.telemetry.getMetadata(adaptedObject);
+            const rangeValues = metadata.valuesForHints(['range']);
             if (rangeValues.length === 0) {
                 return false;
             }
+
             return !rangeValues.every(function (value) {
                 return value.format === 'string';
             });

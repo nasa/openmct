@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -103,6 +103,7 @@ define(
                         key: 'default' + hint
                     };
                     metadatum[hint] = "foo";
+
                     return [metadatum];
                 });
 
@@ -160,8 +161,14 @@ define(
                         key: "testKey", // from model
                         start: 42, // from argument
                         domain: 'mockTimeSystem',
-                        domains: [{ domain: "foo", key: 'defaultdomain' }],
-                        ranges: [{ range: "foo", key: 'defaultrange' }]
+                        domains: [{
+                            domain: "foo",
+                            key: 'defaultdomain'
+                        }],
+                        ranges: [{
+                            range: "foo",
+                            key: 'defaultrange'
+                        }]
                     }]);
             });
 
@@ -182,8 +189,14 @@ define(
                     start: 0,
                     end: 1,
                     domain: 'mockTimeSystem',
-                    domains: [{ domain: "foo", key: 'defaultdomain' }],
-                    ranges: [{ range: "foo", key: 'defaultrange' }]
+                    domains: [{
+                        domain: "foo",
+                        key: 'defaultdomain'
+                    }],
+                    ranges: [{
+                        range: "foo",
+                        key: 'defaultrange'
+                    }]
                 });
             });
 
@@ -201,11 +214,16 @@ define(
                     start: 0,
                     end: 1,
                     domain: 'mockTimeSystem',
-                    domains: [{ domain: "foo", key: 'defaultdomain' }],
-                    ranges: [{ range: "foo", key: 'defaultrange' }]
+                    domains: [{
+                        domain: "foo",
+                        key: 'defaultdomain'
+                    }],
+                    ranges: [{
+                        range: "foo",
+                        key: 'defaultrange'
+                    }]
                 });
             });
-
 
             it("warns if no telemetry service can be injected", function () {
                 mockInjector.get.and.callFake(function () {
@@ -304,8 +322,14 @@ define(
                         start: 0,
                         end: 1,
                         domain: 'mockTimeSystem',
-                        domains: [{ domain: "foo", key: "defaultdomain" }],
-                        ranges: [{ range: "foo", key: "defaultrange" }]
+                        domains: [{
+                            domain: "foo",
+                            key: "defaultdomain"
+                        }],
+                        ranges: [{
+                            range: "foo",
+                            key: "defaultrange"
+                        }]
                     }]
                 );
 
@@ -331,7 +355,10 @@ define(
                 expect(fullRequest.start).toBe(mockBounds.start);
                 expect(fullRequest.end).toBe(mockBounds.end);
 
-                fullRequest = telemetry.buildRequest({start: 10, end: 20});
+                fullRequest = telemetry.buildRequest({
+                    start: 10,
+                    end: 20
+                });
 
                 expect(fullRequest.start).toBe(10);
                 expect(fullRequest.end).toBe(20);

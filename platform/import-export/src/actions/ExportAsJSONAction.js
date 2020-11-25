@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -86,7 +86,7 @@ define(['lodash'], function (_) {
                         // Only export if object is creatable
                         if (this.isCreatable(child)) {
                             // Prevents infinite export of self-contained objs
-                            if (!this.tree.hasOwnProperty(this.getId(child))) {
+                            if (!Object.prototype.hasOwnProperty.call(this.tree, this.getId(child))) {
                                 // If object is a link to something absent from
                                 // tree, generate new id and treat as new object
                                 if (this.isExternal(child, parent)) {
@@ -94,6 +94,7 @@ define(['lodash'], function (_) {
                                 } else {
                                     this.tree[this.getId(child)] = child;
                                 }
+
                                 this.write(child);
                             }
                         }
@@ -140,17 +141,19 @@ define(['lodash'], function (_) {
 
     ExportAsJSONAction.prototype.copyObject = function (object) {
         var jsonString = JSON.stringify(object);
+
         return JSON.parse(jsonString);
     };
 
     ExportAsJSONAction.prototype.isExternal = function (child, parent) {
-        if (child.location !== this.getId(parent) &&
-            !Object.keys(this.tree).includes(child.location) &&
-            this.getId(child) !== this.getId(this.root) ||
-            this.externalIdentifiers.includes(this.getId(child))) {
+        if (child.location !== this.getId(parent)
+            && !Object.keys(this.tree).includes(child.location)
+            && this.getId(child) !== this.getId(this.root)
+            || this.externalIdentifiers.includes(this.getId(child))) {
 
             return true;
         }
+
         return false;
     };
 
@@ -169,6 +172,7 @@ define(['lodash'], function (_) {
 
     ExportAsJSONAction.prototype.isCreatable = function (domainObject) {
         var type = this.typeService.getType(domainObject.type);
+
         return this.policyService.allow(
             "creation",
             type

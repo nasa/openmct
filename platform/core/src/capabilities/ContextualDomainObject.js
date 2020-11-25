@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -53,9 +53,9 @@ define(
 
             // Intercept requests for a context capability.
             contextualObject.getCapability = function (name) {
-                return name === "context" ?
-                    contextCapability :
-                    domainObject.getCapability.apply(this, arguments);
+                return name === "context"
+                    ? contextCapability
+                    : domainObject.getCapability.apply(this, arguments);
             };
 
             return contextualObject;

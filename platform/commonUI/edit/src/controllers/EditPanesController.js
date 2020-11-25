@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -35,8 +35,8 @@ define(
             // Update root object based on represented object
             function updateRoot(domainObject) {
                 var root = self.rootDomainObject,
-                    context = domainObject &&
-                        domainObject.getCapability('context'),
+                    context = domainObject
+                        && domainObject.getCapability('context'),
                     newRoot = context && context.getTrueRoot(),
                     oldId = root && root.getId(),
                     newId = newRoot && newRoot.getId();
@@ -51,6 +51,7 @@ define(
             // Update root when represented object changes
             $scope.$watch('domainObject', updateRoot);
         }
+
         /**
          * Get the root-level domain object, as reported by the
          * represented domain object.

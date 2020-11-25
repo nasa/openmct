@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -42,7 +42,10 @@ define(
                 queue.put("a", { someKey: "some value" });
                 queue.put("b", 42);
                 expect(queue.poll())
-                    .toEqual({ a: { someKey: "some value" }, b: 42 });
+                    .toEqual({
+                        a: { someKey: "some value" },
+                        b: 42
+                    });
             });
 
             it("overwrites repeated keys", function () {
@@ -50,7 +53,10 @@ define(
                 queue.put("a", { someKey: "some other value" });
                 queue.put("b", 42);
                 expect(queue.poll())
-                    .toEqual({ a: { someKey: "some other value" }, b: 42 });
+                    .toEqual({
+                        a: { someKey: "some other value" },
+                        b: 42
+                    });
                 expect(queue.poll())
                     .toBeUndefined();
             });
@@ -64,7 +70,6 @@ define(
                 queue.poll();
                 expect(queue.isEmpty()).toBeTruthy();
             });
-
 
         });
 

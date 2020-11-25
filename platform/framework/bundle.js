@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 define([], function () {
 
     return {
-        name:"platform/framework",
+        name: "platform/framework",
         definition: {
             "name": "Open MCT Framework Component",
             "description": "Framework layer for Open MCT; interprets bundle definitions and serves as an intermediary between Require and Angular",

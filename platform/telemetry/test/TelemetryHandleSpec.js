@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -74,6 +74,7 @@ define(
                         asPromise(v).then(function (value) {
                             r = value;
                         });
+
                         return r;
                     });
                 });
@@ -120,7 +121,10 @@ define(
             });
 
             it("provides access to the datum objects by index", function () {
-                var testDatum = { a: 1, b: 2 }, testIndex = 42;
+                var testDatum = {
+                        a: 1,
+                        b: 2
+                    }, testIndex = 42;
                 mockSubscription.makeDatum.and.returnValue(testDatum);
                 handle.request({});
                 expect(handle.getDatum(mockDomainObject, testIndex))

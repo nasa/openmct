@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -83,6 +83,7 @@ define(
 
                         // Indicate that we will accept the drag
                         event.preventDefault(); // Required in Chrome?
+
                         return false;
                     }
                 }
@@ -122,7 +123,6 @@ define(
             this.element.off('dragover', this.dragOverCallback);
             this.element.off('drop', this.dropCallback);
         };
-
 
         return DropGesture;
     }

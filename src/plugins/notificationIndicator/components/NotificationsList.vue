@@ -31,7 +31,7 @@ export default {
         }
     },
     data() {
-        return {}
+        return {};
     },
     mounted() {
         this.openOverlay();
@@ -46,7 +46,7 @@ export default {
                     {
                         label: 'Clear All Notifications',
                         emphasis: true,
-                        callback:() => {
+                        callback: () => {
                             this.$emit('clear-all');
                             this.overlay.dismiss();
                         }
@@ -65,5 +65,5 @@ export default {
             }
         }
     }
-}
+};
 </script>

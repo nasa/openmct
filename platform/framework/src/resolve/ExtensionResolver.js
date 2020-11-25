@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -59,9 +59,9 @@ define(
                 $log = this.$log;
 
             function loadImplementation(ext) {
-                var implPromise = ext.hasImplementationValue() ?
-                        Promise.resolve(ext.getImplementationValue()) :
-                        loader.load(ext.getImplementationPath()),
+                var implPromise = ext.hasImplementationValue()
+                        ? Promise.resolve(ext.getImplementationValue())
+                        : loader.load(ext.getImplementationPath()),
                     definition = ext.getDefinition();
 
                 // Wrap a constructor function (to avoid modifying the original)
@@ -69,16 +69,18 @@ define(
                     function Constructor() {
                         return impl.apply(this, arguments);
                     }
+
                     Constructor.prototype = impl.prototype;
+
                     return Constructor;
                 }
 
                 // Attach values from the object definition to the
                 // loaded implementation.
                 function attachDefinition(impl) {
-                    var result = (typeof impl === 'function') ?
-                        constructorFor(impl) :
-                        Object.create(impl);
+                    var result = (typeof impl === 'function')
+                        ? constructorFor(impl)
+                        : Object.create(impl);
 
                     // Copy over static properties
                     Object.keys(impl).forEach(function (k) {
@@ -135,9 +137,9 @@ define(
                 extension.getLogName()
             ].join(""));
 
-            return extension.hasImplementation() ?
-                loadImplementation(extension) :
-                Promise.resolve(extension.getDefinition());
+            return extension.hasImplementation()
+                ? loadImplementation(extension)
+                : Promise.resolve(extension.getDefinition());
         };
 
         return ExtensionResolver;

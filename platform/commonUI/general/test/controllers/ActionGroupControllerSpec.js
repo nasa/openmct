@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -35,6 +35,7 @@ define(
                     ["perform", "getMetadata"]
                 );
                 action.getMetadata.and.returnValue(metadata);
+
                 return action;
             }
 
@@ -62,14 +63,32 @@ define(
                 mockScope.parameters = { category: "test" };
 
                 mockActions.getActions.and.returnValue([
-                    { group: "a", someKey: 0 },
-                    { group: "a", someKey: 1 },
-                    { group: "b", someKey: 2 },
-                    { group: "a", someKey: 3 },
-                    { group: "b", someKey: 4 },
+                    {
+                        group: "a",
+                        someKey: 0
+                    },
+                    {
+                        group: "a",
+                        someKey: 1
+                    },
+                    {
+                        group: "b",
+                        someKey: 2
+                    },
+                    {
+                        group: "a",
+                        someKey: 3
+                    },
+                    {
+                        group: "b",
+                        someKey: 4
+                    },
                     { someKey: 5 },
                     { someKey: 6 },
-                    { group: "a", someKey: 7 },
+                    {
+                        group: "a",
+                        someKey: 7
+                    },
                     { someKey: 8 }
                 ].map(mockAction));
 

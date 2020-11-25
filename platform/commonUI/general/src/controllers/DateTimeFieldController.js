@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,12 +47,13 @@ define(
             function updateFromModel(value) {
                 // Only reformat if the value is different from user
                 // input (to avoid reformatting valid input while typing.)
-                if (!formatter.validate($scope.textValue) ||
-                        formatter.parse($scope.textValue) !== value) {
+                if (!formatter.validate($scope.textValue)
+                        || formatter.parse($scope.textValue) !== value) {
                     $scope.textValue = formatter.format(value);
                     $scope.textInvalid = false;
                     $scope.lastValidValue = $scope.textValue;
                 }
+
                 $scope.pickerModel = { value: value };
             }
 

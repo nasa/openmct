@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,7 +30,7 @@ define([
 
     // TODO: needs reference to formatService;
     function TelemetryValueFormatter(valueMetadata, formatService) {
-        var numberFormatter = {
+        const numberFormatter = {
             parse: function (x) {
                 return Number(x);
             },
@@ -56,45 +56,56 @@ define([
             this.enumerations = valueMetadata.enumerations.reduce(function (vm, e) {
                 vm.byValue[e.value] = e.string;
                 vm.byString[e.string] = e.value;
+
                 return vm;
-            }, {byValue: {}, byString: {}});
+            }, {
+                byValue: {},
+                byString: {}
+            });
             this.formatter.format = function (value) {
-                if (this.enumerations.byValue.hasOwnProperty(value)) {
+                if (Object.prototype.hasOwnProperty.call(this.enumerations.byValue, value)) {
                     return this.enumerations.byValue[value];
                 }
+
                 return value;
             }.bind(this);
             this.formatter.parse = function (string) {
                 if (typeof string === "string") {
-                    if (this.enumerations.byString.hasOwnProperty(string)) {
+                    if (Object.prototype.hasOwnProperty.call(this.enumerations.byString, string)) {
                         return this.enumerations.byString[string];
                     }
                 }
+
                 return Number(string);
             }.bind(this);
         }
+
         // Check for formatString support once instead of per format call.
         if (valueMetadata.formatString) {
-            var baseFormat = this.formatter.format;
-            var formatString = valueMetadata.formatString;
+            const baseFormat = this.formatter.format;
+            const formatString = valueMetadata.formatString;
             this.formatter.format = function (value) {
                 return printj.sprintf(formatString, baseFormat.call(this, value));
             };
         }
+
         if (valueMetadata.format === 'string') {
             this.formatter.parse = function (value) {
                 if (value === undefined) {
                     return '';
                 }
+
                 if (typeof value === 'string') {
                     return value;
                 } else {
                     return value.toString();
                 }
             };
+
             this.formatter.format = function (value) {
                 return value;
             };
+
             this.formatter.validate = function (value) {
                 return typeof value === 'string';
             };
@@ -105,6 +116,7 @@ define([
         if (_.isObject(datum)) {
             return this.formatter.parse(datum[this.valueMetadata.source]);
         }
+
         return this.formatter.parse(datum);
     };
 
@@ -112,6 +124,7 @@ define([
         if (_.isObject(datum)) {
             return this.formatter.format(datum[this.valueMetadata.source]);
         }
+
         return this.formatter.format(datum);
     };
 

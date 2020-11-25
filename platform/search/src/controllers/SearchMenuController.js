@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,7 +48,6 @@ define(function () {
             }
         });
 
-
         // For documentation, see updateOptions below
         function updateOptions() {
             var type,
@@ -77,6 +76,7 @@ define(function () {
                         }
                     }
                 }
+
                 // If there's still nothing in the filters string, there are no
                 //   filters selected
                 if ($scope.ngModel.filtersString === '') {
@@ -122,5 +122,6 @@ define(function () {
             checkAll: checkAll
         };
     }
+
     return SearchMenuController;
 });

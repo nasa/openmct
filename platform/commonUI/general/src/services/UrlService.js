@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,8 +47,8 @@ define(
          * @returns {string} URL for the domain object
          */
         UrlService.prototype.urlForLocation = function (mode, domainObject) {
-            var context = domainObject &&
-                    domainObject.getCapability('context'),
+            var context = domainObject
+                    && domainObject.getCapability('context'),
                 objectPath = context ? context.getPath() : [],
                 ids = objectPath.map(function (domainObj) {
                     return domainObj.getId();
@@ -76,14 +76,16 @@ define(
             var search = this.$location.search(),
                 arr = [];
             for (var key in search) {
-                if (search.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(search, key)) {
                     arr.push(key + '=' + search[key]);
                 }
             }
+
             var searchPath = "?" + arr.join('&'),
                 newTabPath =
-                    "#" + this.urlForLocation(mode, domainObject) +
-                            searchPath;
+                    "#" + this.urlForLocation(mode, domainObject)
+                            + searchPath;
+
             return newTabPath;
         };
 

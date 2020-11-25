@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,8 +39,16 @@ define(
                 );
 
                 mockTypes = [
-                    {key: 'mock.type.1', name: 'Mock Type 1', cssClass: 'icon-layout'},
-                    {key: 'mock.type.2', name: 'Mock Type 2', cssClass: 'icon-telemetry'}
+                    {
+                        key: 'mock.type.1',
+                        name: 'Mock Type 1',
+                        cssClass: 'icon-layout'
+                    },
+                    {
+                        key: 'mock.type.2',
+                        name: 'Mock Type 2',
+                        cssClass: 'icon-telemetry'
+                    }
                 ];
 
                 mockScope.ngModel = {};

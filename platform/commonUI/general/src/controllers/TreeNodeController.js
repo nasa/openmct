@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -78,9 +78,9 @@ define(
                 // id at the current index for equality and perform
                 // a recursive step for subsequent ids in the paths,
                 // until we exceed path length or hit a mismatch.
-                return (index >= nodePath.length) ||
-                    ((navPath[index] === nodePath[index]) &&
-                    checkPath(nodePath, navPath, index + 1));
+                return (index >= nodePath.length)
+                    || ((navPath[index] === nodePath[index])
+                    && checkPath(nodePath, navPath, index + 1));
             }
 
             // Consider the currently-navigated object and update
@@ -88,10 +88,10 @@ define(
             function checkSelection() {
                 var nodeObject = $scope.domainObject,
                     navObject = selectedObject,
-                    nodeContext = nodeObject &&
-                        nodeObject.getCapability('context'),
-                    navContext = navObject &&
-                        navObject.getCapability('context'),
+                    nodeContext = nodeObject
+                        && nodeObject.getCapability('context'),
+                    navContext = navObject
+                        && navObject.getCapability('context'),
                     nodePath,
                     navPath;
 
@@ -109,8 +109,8 @@ define(
                     // Check to see if the node's path lies entirely
                     // within the navigation path; otherwise, navigation
                     // has happened in some other subtree.
-                    if (navPath.length >= nodePath.length &&
-                        checkPath(nodePath, navPath)) {
+                    if (navPath.length >= nodePath.length
+                        && checkPath(nodePath, navPath)) {
 
                         // nodePath is along the navPath; if it's
                         // at the end of the path, highlight;
@@ -121,6 +121,7 @@ define(
                             if ($scope.toggle) {
                                 $scope.toggle.setState(true);
                             }
+
                             self.trackExpansion();
                         }
 
@@ -156,6 +157,7 @@ define(
                 this.$scope.ngModel.selectedObject =
                     this.$scope.domainObject;
             }
+
             if ((this.$scope.parameters || {}).callback) {
                 this.$scope.parameters.callback(this.$scope.domainObject);
             }

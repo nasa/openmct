@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,14 +27,14 @@ define([
 ) {
 
     describe('SummaryWidgetCondition', function () {
-        var condition;
-        var telemetryState;
+        let condition;
+        let telemetryState;
 
         beforeEach(function () {
             // Format map intentionally uses different keys than those present
             // in datum, which serves to verify conditions use format map to get
             // data.
-            var formatMap = {
+            const formatMap = {
                 adjusted: {
                     parse: function (datum) {
                         return datum.value + 10;

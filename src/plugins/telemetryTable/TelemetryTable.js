@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,16 +25,20 @@ define([
     'lodash',
     './collections/BoundedTableRowCollection',
     './collections/FilteredTableRowCollection',
+    './TelemetryTableNameColumn',
     './TelemetryTableRow',
     './TelemetryTableColumn',
+    './TelemetryTableUnitColumn',
     './TelemetryTableConfiguration'
 ], function (
     EventEmitter,
     _,
     BoundedTableRowCollection,
     FilteredTableRowCollection,
+    TelemetryTableNameColumn,
     TelemetryTableRow,
     TelemetryTableColumn,
+    TelemetryTableUnitColumn,
     TelemetryTableConfiguration
 ) {
     class TelemetryTable extends EventEmitter {
@@ -67,6 +71,24 @@ define([
 
             openmct.time.on('bounds', this.refreshData);
             openmct.time.on('timeSystem', this.refreshData);
+        }
+
+        /**
+         * @private
+         */
+        addNameColumn(telemetryObject, metadataValues) {
+            let metadatum = metadataValues.find(m => m.key === 'name');
+            if (!metadatum) {
+                metadatum = {
+                    format: 'string',
+                    key: 'name',
+                    name: 'Name'
+                };
+            }
+
+            const column = new TelemetryTableNameColumn(this.openmct, telemetryObject, metadatum);
+
+            this.configuration.addSingleColumnForObject(telemetryObject, column);
         }
 
         initialize() {
@@ -138,12 +160,14 @@ define([
         requestDataFor(telemetryObject) {
             this.incrementOutstandingRequests();
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+
             return this.openmct.telemetry.request(telemetryObject, requestOptions)
                 .then(telemetryData => {
                     //Check that telemetry object has not been removed since telemetry was requested.
                     if (!this.telemetryObjects.includes(telemetryObject)) {
                         return;
                     }
+
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let columnMap = this.getColumnMapForObject(keyString);
                     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
@@ -156,7 +180,6 @@ define([
         processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
             let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             this.boundedRows.add(telemetryRows);
-            this.emit('historical-rows-processed');
         }
 
         /**
@@ -166,6 +189,7 @@ define([
             if (this.outstandingRequests === 0) {
                 this.emit('outstanding-requests', true);
             }
+
             this.outstandingRequests++;
         }
 
@@ -200,6 +224,7 @@ define([
 
             return columns[objectKeyString].reduce((map, column) => {
                 map[column.getKey()] = column;
+
                 return map;
             }, {});
         }
@@ -207,14 +232,28 @@ define([
         addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
 
+            this.addNameColumn(telemetryObject, metadataValues);
             metadataValues.forEach(metadatum => {
+                if (metadatum.key === 'name') {
+                    return;
+                }
+
                 let column = this.createColumn(metadatum);
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
+                // add units column if available
+                if (metadatum.unit !== undefined) {
+                    let unitColumn = this.createUnitColumn(metadatum);
+                    this.configuration.addSingleColumnForObject(telemetryObject, unitColumn);
+                }
             });
         }
 
         createColumn(metadatum) {
             return new TelemetryTableColumn(this.openmct, metadatum);
+        }
+
+        createUnitColumn(metadatum) {
+            return new TelemetryTableUnitColumn(this.openmct, metadatum);
         }
 
         subscribeTo(telemetryObject) {
@@ -256,14 +295,14 @@ define([
         }
 
         isTelemetryObject(domainObject) {
-            return domainObject.hasOwnProperty('telemetry');
+            return Object.prototype.hasOwnProperty.call(domainObject, 'telemetry');
         }
 
         buildOptionsFromConfiguration(telemetryObject) {
-            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier),
-                filters = this.domainObject.configuration &&
-                    this.domainObject.configuration.filters &&
-                    this.domainObject.configuration.filters[keyString];
+            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            let filters = this.domainObject.configuration
+                && this.domainObject.configuration.filters
+                && this.domainObject.configuration.filters[keyString];
 
             return {filters} || {};
         }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,15 +27,15 @@ define([
 ) {
 
     xdescribe('SummaryWidgetTelemetryProvider', function () {
-        var telemObjectA;
-        var telemObjectB;
-        var summaryWidgetObject;
-        var openmct;
-        var telemUnsubscribes;
-        var unobserver;
-        var composition;
-        var telemetryProvider;
-        var loader;
+        let telemObjectA;
+        let telemObjectB;
+        let summaryWidgetObject;
+        let openmct;
+        let telemUnsubscribes;
+        let unobserver;
+        let composition;
+        let telemetryProvider;
+        let loader;
 
         beforeEach(function () {
             telemObjectA = {
@@ -159,14 +159,11 @@ define([
                 ])
             };
 
-
             openmct.time.getAllTimeSystems.and.returnValue([{key: 'timestamp'}]);
             openmct.time.timeSystem.and.returnValue({key: 'timestamp'});
 
-
             unobserver = jasmine.createSpy('unobserver');
             openmct.objects.observe.and.returnValue(unobserver);
-
 
             composition = jasmine.createSpyObj('compositionCollection', [
                 'on',
@@ -202,14 +199,16 @@ define([
                         });
                     });
                 });
+
                 return loader.promise;
             });
             openmct.composition.get.and.returnValue(composition);
 
             telemUnsubscribes = [];
             openmct.telemetry.subscribe.and.callFake(function () {
-                var unsubscriber = jasmine.createSpy('unsubscriber' + telemUnsubscribes.length);
+                const unsubscriber = jasmine.createSpy('unsubscriber' + telemUnsubscribes.length);
                 telemUnsubscribes.push(unsubscriber);
+
                 return unsubscriber;
             });
 
@@ -223,6 +222,7 @@ define([
 
             openmct.telemetry.getFormatMap.and.callFake(function (metadata) {
                 expect(metadata.name).toBe('fake metadata manager');
+
                 return {
                     metadata: metadata,
                     timestamp: {
@@ -265,7 +265,7 @@ define([
         });
 
         it('provides realtime telemetry', function () {
-            var callback = jasmine.createSpy('callback');
+            const callback = jasmine.createSpy('callback');
             telemetryProvider.subscribe(summaryWidgetObject, callback);
 
             return loader.promise.then(function () {
@@ -279,8 +279,8 @@ define([
                 expect(openmct.telemetry.subscribe)
                     .toHaveBeenCalledWith(telemObjectB, jasmine.any(Function));
 
-                var aCallback = openmct.telemetry.subscribe.calls.all()[0].args[1];
-                var bCallback = openmct.telemetry.subscribe.calls.all()[1].args[1];
+                const aCallback = openmct.telemetry.subscribe.calls.all()[0].args[1];
+                const bCallback = openmct.telemetry.subscribe.calls.all()[1].args[1];
 
                 aCallback({
                     t: 123,
@@ -370,21 +370,30 @@ define([
         });
 
         describe('providing lad telemetry', function () {
-            var responseDatums;
-            var resultsShouldBe;
+            let responseDatums;
+            let resultsShouldBe;
 
             beforeEach(function () {
                 openmct.telemetry.request.and.callFake(function (rObj, options) {
                     expect(rObj).toEqual(jasmine.any(Object));
-                    expect(options).toEqual({size: 1, strategy: 'latest', domain: 'timestamp'});
+                    expect(options).toEqual({
+                        size: 1,
+                        strategy: 'latest',
+                        domain: 'timestamp'
+                    });
                     expect(responseDatums[rObj.identifier.namespace]).toBeDefined();
+
                     return Promise.resolve([responseDatums[rObj.identifier.namespace]]);
                 });
                 responseDatums = {};
 
                 resultsShouldBe = function (results) {
                     return telemetryProvider
-                        .request(summaryWidgetObject, {size: 1, strategy: 'latest', domain: 'timestamp'})
+                        .request(summaryWidgetObject, {
+                            size: 1,
+                            strategy: 'latest',
+                            domain: 'timestamp'
+                        })
                         .then(function (r) {
                             expect(r).toEqual(results);
                         });

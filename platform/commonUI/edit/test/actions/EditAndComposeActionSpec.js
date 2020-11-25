@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -93,7 +93,6 @@ define(
                 action = new EditAndComposeAction(actionContext);
             });
 
-
             it("adds to the parent's composition when performed", function () {
                 action.perform();
                 expect(mockComposition.add)
@@ -106,8 +105,8 @@ define(
                 expect(mockEditAction.perform).toHaveBeenCalled();
             });
 
-            it("Does not enable edit mode for objects that do not have an" +
-                " edit action", function () {
+            it("Does not enable edit mode for objects that do not have an"
+                + " edit action", function () {
                 mockActionCapability.getActions.and.returnValue([]);
                 action.perform();
                 expect(mockEditAction.perform).not.toHaveBeenCalled();

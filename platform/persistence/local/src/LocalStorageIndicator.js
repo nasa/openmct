@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,12 +43,15 @@ define(
         LocalStorageIndicator.prototype.getCssClass = function () {
             return "c-indicator--clickable icon-suitcase s-status-caution";
         };
+
         LocalStorageIndicator.prototype.getGlyphClass = function () {
             return 'caution';
         };
+
         LocalStorageIndicator.prototype.getText = function () {
             return "Off-line storage";
         };
+
         LocalStorageIndicator.prototype.getDescription = function () {
             return LOCAL_STORAGE_WARNING;
         };

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -52,12 +52,15 @@ define(
                 mockDomainObject.hasCapability = function (c) {
                     return capabilities[c] !== undefined;
                 };
+
                 mockDomainObject.getCapability = function (c) {
                     return capabilities[c];
                 };
+
                 mockDomainObject.useCapability = function (c, v) {
                     return capabilities[c] && capabilities[c].invoke(v);
                 };
+
                 mockLog = jasmine.createSpyObj("$log", ["warn", "info", "debug"]);
 
                 capabilities = {};
@@ -108,7 +111,10 @@ define(
 
             it("restricts typed views to matching types", function () {
                 var testType = "testType",
-                    testView = { key: "x", type: testType },
+                    testView = {
+                        key: "x",
+                        type: testType
+                    },
                     viewProvider = new ViewProvider([testView], mockLog);
 
                 // Include a "type" capability

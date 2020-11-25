@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,9 +46,11 @@ define(
         IdentityIndicator.prototype.getCssClass = function () {
             return this.text && "icon-person";
         };
+
         IdentityIndicator.prototype.getText = function () {
             return this.text;
         };
+
         IdentityIndicator.prototype.getDescription = function () {
             return this.description;
         };

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -110,6 +110,7 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
                 if (!tree[keystring] || seen.includes(keystring)) {
                     return;
                 }
+
                 let newModel = tree[keystring];
                 delete newModel.persisted;
 
@@ -133,6 +134,7 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
 
             tree = this.rewriteId(oldId, newId, tree);
         }, this);
+
         return tree;
     };
 
@@ -152,11 +154,11 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
         tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
 
         return JSON.parse(tree, (key, value) => {
-            if (Object.prototype.hasOwnProperty.call(value, 'key') &&
-                Object.prototype.hasOwnProperty.call(value, 'namespace') &&
-                value.key === oldId.key &&
-                value.namespace === oldId.namespace) {
-                return newId
+            if (Object.prototype.hasOwnProperty.call(value, 'key')
+                && Object.prototype.hasOwnProperty.call(value, 'namespace')
+                && value.key === oldId.key
+                && value.namespace === oldId.namespace) {
+                return newId;
             } else {
                 return value;
             }
@@ -190,9 +192,11 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
         } catch (e) {
             return false;
         }
+
         if (!json.openmct || !json.rootId) {
             return false;
         }
+
         return true;
     };
 
@@ -200,8 +204,8 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
         var dialog,
             model = {
                 title: "Invalid File",
-                actionText:  "The selected file was either invalid JSON or was " +
-                "not formatted properly for import into Open MCT.",
+                actionText: "The selected file was either invalid JSON or was "
+                + "not formatted properly for import into Open MCT.",
                 severity: "error",
                 options: [
                     {
@@ -222,8 +226,8 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
             return false;
         }
 
-        return domainObject !== undefined &&
-            domainObject.hasCapability("composition");
+        return domainObject !== undefined
+            && domainObject.hasCapability("composition");
     };
 
     return ImportAsJSONAction;

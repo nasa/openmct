@@ -1,6 +1,10 @@
 define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
     describe('A select for choosing composition objects', function () {
-        var mockConfig, mockBadConfig, mockManager, objectSelect, mockComposition;
+        let mockConfig;
+        let mockBadConfig;
+        let mockManager;
+        let objectSelect;
+        let mockComposition;
         beforeEach(function () {
             mockConfig = {
                 object: 'key1'
@@ -31,16 +35,16 @@ define(['../../src/input/ObjectSelect'], function (ObjectSelect) {
                 'getComposition'
             ]);
 
-            mockManager.on.and.callFake(function (event, callback) {
-                this.callbacks = this.callbacks || {};
-                this.callbacks[event] = callback;
+            mockManager.on.and.callFake((event, callback) => {
+                mockManager.callbacks = mockManager.callbacks || {};
+                mockManager.callbacks[event] = callback;
             });
 
-            mockManager.triggerCallback.and.callFake(function (event, newObj) {
+            mockManager.triggerCallback.and.callFake((event, newObj) => {
                 if (event === 'add') {
-                    this.callbacks.add(newObj);
+                    mockManager.callbacks.add(newObj);
                 } else {
-                    this.callbacks[event]();
+                    mockManager.callbacks[event]();
                 }
             });
 

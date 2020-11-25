@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,7 +49,7 @@ export default {
         return {
             initialPos: 0,
             isDragging: false
-        }
+        };
     },
     mounted() {
         document.addEventListener('dragstart', this.setDragging);
@@ -73,7 +73,9 @@ export default {
         mousemove(event) {
             event.preventDefault();
 
-            let elSize, mousePos, delta;
+            let elSize;
+            let mousePos;
+            let delta;
 
             if (this.orientation === 'horizontal') {
                 elSize = this.$el.getBoundingClientRect().x;
@@ -100,5 +102,5 @@ export default {
             this.isDragging = false;
         }
     }
-}
+};
 </script>

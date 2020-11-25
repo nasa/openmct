@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2018, United States Government
+ Open MCT, Copyright (c) 2014-2020, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -116,6 +116,11 @@
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
+                     title="Hide the legend when the plot is small">Hide when plot small</div>
+                <div class="grid-cell value">{{ config.legend.get('hideLegendWhenSmall') ? "Yes" : "No" }}</div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
                      title="Show the legend expanded by default">Expand by Default</div>
                 <div class="grid-cell value">{{ config.legend.get('expandByDefault') ? "Yes" : "No" }}</div>
             </li>
@@ -135,6 +140,7 @@
                     <span ng-if="config.legend.get('showValueWhenExpanded')">Value</span>
                     <span ng-if="config.legend.get('showMinimumWhenExpanded')">Min</span>
                     <span ng-if="config.legend.get('showMaximumWhenExpanded')">Max</span>
+                    <span ng-if="config.legend.get('showUnitsWhenExpanded')">Units</span>
                 </div>
             </li>
         </ul>

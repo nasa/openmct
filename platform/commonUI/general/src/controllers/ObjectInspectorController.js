@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -44,12 +44,12 @@ define(
                     currentParent,
                     parents = [];
 
-                currentParent = currentObj &&
-                    currentObj.hasCapability('context') &&
-                    currentObj.getCapability('context').getParent();
+                currentParent = currentObj
+                    && currentObj.hasCapability('context')
+                    && currentObj.getCapability('context').getParent();
 
-                while (currentParent && currentParent.getModel().type !== 'root' &&
-                        currentParent.hasCapability('context')) {
+                while (currentParent && currentParent.getModel().type !== 'root'
+                        && currentParent.hasCapability('context')) {
                     // Record this object
                     parents.unshift(currentParent);
 
@@ -87,16 +87,16 @@ define(
 
             // Gets the metadata for the selected object
             function getMetadata() {
-                $scope.metadata = $scope.domainObject &&
-                    $scope.domainObject.hasCapability('metadata') &&
-                    $scope.domainObject.useCapability('metadata');
+                $scope.metadata = $scope.domainObject
+                    && $scope.domainObject.hasCapability('metadata')
+                    && $scope.domainObject.useCapability('metadata');
             }
 
             // Set scope variables when the selected object changes
             $scope.$watch('domainObject', function () {
-                $scope.isLink = $scope.domainObject &&
-                    $scope.domainObject.hasCapability('location') &&
-                    $scope.domainObject.getCapability('location').isLink();
+                $scope.isLink = $scope.domainObject
+                    && $scope.domainObject.hasCapability('location')
+                    && $scope.domainObject.getCapability('location').isLink();
 
                 if ($scope.isLink) {
                     getPrimaryPath();
@@ -113,6 +113,7 @@ define(
             var unlisten = mutation.listen(getMetadata);
             $scope.$on('$destroy', unlisten);
         }
+
         return ObjectInspectorController;
     }
 );

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -96,13 +96,45 @@ body.desktop {
     }
 }
 
+/******************************************************** FONTS */
+@mixin fontAndSize() {
+    @each $size in $listFontSizes {
+        &[data-font-size="#{$size}"] {
+            font-size: #{$size}px;
+
+            // Set row heights in telemetry tables
+            tr {
+                min-height: #{$size + ($tabularTdPadTB * 2)};
+            }
+
+        }
+    }
+
+    &[data-font*="bold"] {
+        font-weight: bold;
+    }
+
+    &[data-font*="narrow"] {
+        font-family: 'Arial Narrow', sans-serif;
+    }
+
+    &[data-font*="monospace"] {
+        font-family: 'Andale Mono', sans-serif;
+    }
+}
+
+.u-style-receiver {
+    @include fontAndSize();
+}
+
 /******************************************************** HTML ENTITIES */
 a {
     color: $colorA;
     cursor: pointer;
     text-decoration: none;
-    &:hover {
-        color: $colorAHov;
+
+    &:focus {
+        outline: none !important;
     }
 }
 
@@ -206,10 +238,6 @@ body.desktop .has-local-controls {
     &:hover {
         box-shadow: $browseSelectableShdwHov;
     }
-
-    &[s-selected] {
-        border: $browseSelectedBorder;
-    }
 }
 
 /**************************** EDITING */
@@ -230,7 +258,7 @@ body.desktop .has-local-controls {
 }
 
 /******************************************************** STATES */
-@mixin  spinner($b: 5px, $c: $colorKey) {
+@mixin  spinner($b: 5, $c: $colorKey) {
     animation-name: rotation-centered;
     animation-duration: 0.5s;
     animation-iteration-count: infinite;
@@ -280,23 +308,27 @@ body.desktop .has-local-controls {
     }
     &.c-tree__item {
         $d: $waitSpinnerTreeD;
-        $spinnerL: 19px + $d/2;
+        $spinnerL: 19 + $d/2;
 
         display: flex;
         align-items: center;
-        padding-left: $spinnerL + $d/2 + $interiorMargin;
-        background: $colorLoadingBg;
+        margin-left: $treeNavArrowD + $interiorMargin;
         min-height: 5px + $d;
 
         .c-tree__item__label {
             font-style: italic;
+            margin-left: $interiorMargin;
             opacity: 0.6;
         }
         &:before {
+            left: auto;
+            top: auto;
+            transform: translate(0);
             height: $d;
             width: $d;
-            border-width: 4px;
-            left: $spinnerL;
+            border-width: 3px;
+            //left: $spinnerL;
+            position: relative;
         }
         &:after {
             display: none;

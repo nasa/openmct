@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -95,11 +95,13 @@ define(
             });
 
             it("provides a list of relationship types", function () {
-                mockDomainObject.getModel.and.returnValue({ relationships: {
-                    abc: ['a', 'b'],
-                    def: "not an array, should be ignored",
-                    xyz: []
-                } });
+                mockDomainObject.getModel.and.returnValue({
+                    relationships: {
+                        abc: ['a', 'b'],
+                        def: "not an array, should be ignored",
+                        xyz: []
+                    }
+                });
                 expect(relationship.listRelationships()).toEqual(['abc', 'xyz']);
             });
 

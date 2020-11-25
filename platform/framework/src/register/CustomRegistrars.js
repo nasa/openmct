@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+/* eslint-disable no-invalid-this */
 
 /**
  * Module defining CustomRegistrars. Created by vwoeltje on 11/3/14.
@@ -169,6 +170,7 @@ define(
         function registerComponents(components) {
             var app = this.app,
                 $log = this.$log;
+
             return new ServiceCompositor(app, $log)
                 .registerCompositeServices(components);
         }

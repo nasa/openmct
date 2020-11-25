@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -87,10 +87,10 @@ define(
                 }
 
                 return this.columnFilters[columnKey] &&
-                    filter.startsWith(this.columnFilters[columnKey]) &&
+                    filter.startsWith(this.columnFilters[columnKey])
                     // startsWith check will otherwise fail when filter cleared
                     // because anyString.startsWith('') === true
-                    filter !== '';
+                    && filter !== '';
             }
 
             addOne(row) {
@@ -118,11 +118,12 @@ define(
                         doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
                     }
                 });
+
                 return doesMatchFilters;
             }
 
             rowHasColumn(row, key) {
-                return row.columns.hasOwnProperty(key);
+                return Object.prototype.hasOwnProperty.call(row.columns, key);
             }
 
             destroy() {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 
 define(
     ["../src/PersistenceQueueImpl"],
@@ -41,6 +40,7 @@ define(
                     ['getId']
                 );
                 mockDomainObject.getId.and.returnValue(id);
+
                 return mockDomainObject;
             }
 
@@ -49,6 +49,7 @@ define(
                     'persistence-' + id,
                     ['persist']
                 );
+
                 return mockPersistence;
             }
 

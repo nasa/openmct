@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 
 define(
     [
@@ -85,6 +84,7 @@ define(
                         var id = "some-id-" + counter;
                         cloneIds[model.originalId] = id;
                         counter += 1;
+
                         return domainObjectFactory({
                             id: id,
                             model: model,
@@ -133,6 +133,7 @@ define(
                         promise.then(function (v) {
                             value = v;
                         });
+
                         return value;
                     }));
                 });
@@ -141,9 +142,7 @@ define(
                     mockDeferred.promise = synchronousPromise(value);
                 });
 
-
             });
-
 
             describe("produces models which", function () {
                 var model;
@@ -173,7 +172,6 @@ define(
                         .toEqual(cloneIds[testModel.someObj.someProperty]);
                 });
 
-
                 it("contain rewritten identifiers in property names", function () {
                     expect(model.someObj[cloneIds[ID_A]])
                         .toEqual(testModel.someObj[ID_A]);
@@ -187,8 +185,8 @@ define(
                 });
             });
 
-            describe("copies object trees with multiple references to the" +
-                " same object", function () {
+            describe("copies object trees with multiple references to the"
+                + " same object", function () {
                 var mockDomainObjectB,
                     mockComposingObject,
                     composingObjectModel,
@@ -250,8 +248,8 @@ define(
                 /**
                  * This a bug found in testathon when testing issue #428
                  */
-                it(" and correctly updates child identifiers in object" +
-                    " arrays within models ", function () {
+                it(" and correctly updates child identifiers in object"
+                    + " arrays within models ", function () {
                     var childA_ID = task.clones[0].getId(),
                         childB_ID = task.clones[1].getId();
 
@@ -264,7 +262,6 @@ define(
             });
 
         });
-
 
     }
 );

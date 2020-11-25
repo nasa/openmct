@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -90,6 +90,7 @@ define(function () {
             this.pendingQuery = undefined;
             this.$scope.ngModel.search = false;
             this.$scope.loading = false;
+
             return;
         }
 
@@ -120,6 +121,7 @@ define(function () {
                 if (controller.pendingQuery !== queryId) {
                     return; // another query in progress, so skip this one.
                 }
+
                 controller.onSearchComplete(results);
             });
     };
@@ -145,9 +147,11 @@ define(function () {
                 return true;
             };
         }
+
         var includeTypes = this.$scope.ngModel.checked;
+
         return function (model) {
-            return !!includeTypes[model.type];
+            return Boolean(includeTypes[model.type]);
         };
     };
 
@@ -161,7 +165,6 @@ define(function () {
         this.availableResults = 0;
         this.numberToDisplay = this.RESULTS_PER_PAGE;
     };
-
 
     /**
      * Update search results from given `results`.

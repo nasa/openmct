@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -87,7 +87,7 @@ define([
                 return Promise.resolve(domainObject.composition);
             });
             compositionProvider.appliesTo.and.callFake(function (domainObject) {
-                return !!domainObject.composition;
+                return Boolean(domainObject.composition);
             });
             openmct = {
                 composition: {
@@ -237,12 +237,18 @@ define([
                 provider.index(id, model);
 
                 expect(compositionProvider.appliesTo).toHaveBeenCalledWith({
-                    identifier: {key: 'anId', namespace: ''},
+                    identifier: {
+                        key: 'anId',
+                        namespace: ''
+                    },
                     composition: [jasmine.any(Object), jasmine.any(Object)]
                 });
 
                 expect(compositionProvider.load).toHaveBeenCalledWith({
-                    identifier:  {key: 'anId', namespace: ''},
+                    identifier: {
+                        key: 'anId',
+                        namespace: ''
+                    },
                     composition: [jasmine.any(Object), jasmine.any(Object)]
                 });
 
@@ -262,7 +268,10 @@ define([
                 provider.index(id, model);
                 expect(worker.postMessage).not.toHaveBeenCalled();
                 expect(compositionProvider.appliesTo).toHaveBeenCalledWith({
-                    identifier: {key: 'ROOT', namespace: ''}
+                    identifier: {
+                        key: 'ROOT',
+                        namespace: ''
+                    }
                 });
             });
         });
@@ -326,7 +335,6 @@ define([
                 });
             }
         });
-
 
         it('can dispatch searches to worker', function () {
             spyOn(provider, 'makeQueryId').and.returnValue(428);

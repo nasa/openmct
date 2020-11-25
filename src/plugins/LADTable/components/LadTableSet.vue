@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,24 +27,26 @@
             <th>Name</th>
             <th>Timestamp</th>
             <th>Value</th>
+            <th v-if="hasUnits">Unit</th>
         </tr>
     </thead>
     <tbody>
         <template
-            v-for="primary in primaryTelemetryObjects"
+            v-for="ladTable in ladTableObjects"
         >
             <tr
-                :key="primary.key"
+                :key="ladTable.key"
                 class="c-table__group-header js-lad-table-set__table-headers"
             >
                 <td colspan="10">
-                    {{ primary.domainObject.name }}
+                    {{ ladTable.domainObject.name }}
                 </td>
             </tr>
             <lad-row
-                v-for="secondary in secondaryTelemetryObjects[primary.key]"
-                :key="secondary.key"
-                :domain-object="secondary.domainObject"
+                v-for="telemetryObject in ladTelemetryObjects[ladTable.key]"
+                :key="telemetryObject.key"
+                :domain-object="telemetryObject.domainObject"
+                :has-units="hasUnits"
             />
         </template>
     </tbody>
@@ -61,82 +63,102 @@ export default {
     },
     data() {
         return {
-            primaryTelemetryObjects: [],
-            secondaryTelemetryObjects: {},
+            ladTableObjects: [],
+            ladTelemetryObjects: {},
             compositions: []
+        };
+    },
+    computed: {
+        hasUnits() {
+            let ladTables = Object.values(this.ladTelemetryObjects);
+            for (let ladTable of ladTables) {
+                for (let telemetryObject of ladTable) {
+                    let metadata = this.openmct.telemetry.getMetadata(telemetryObject.domainObject);
+                    for (let metadatum of metadata.valueMetadatas) {
+                        if (metadatum.unit) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
         }
     },
     mounted() {
         this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.addPrimary);
-        this.composition.on('remove', this.removePrimary);
-        this.composition.on('reorder', this.reorderPrimary);
+        this.composition.on('add', this.addLadTable);
+        this.composition.on('remove', this.removeLadTable);
+        this.composition.on('reorder', this.reorderLadTables);
         this.composition.load();
     },
     destroyed() {
-        this.composition.off('add', this.addPrimary);
-        this.composition.off('remove', this.removePrimary);
-        this.composition.off('reorder', this.reorderPrimary);
+        this.composition.off('add', this.addLadTable);
+        this.composition.off('remove', this.removeLadTable);
+        this.composition.off('reorder', this.reorderLadTables);
         this.compositions.forEach(c => {
             c.composition.off('add', c.addCallback);
             c.composition.off('remove', c.removeCallback);
         });
     },
     methods: {
-        addPrimary(domainObject) {
-            let primary = {};
-            primary.domainObject = domainObject;
-            primary.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+        addLadTable(domainObject) {
+            let ladTable = {};
+            ladTable.domainObject = domainObject;
+            ladTable.key = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-            this.$set(this.secondaryTelemetryObjects, primary.key, []);
-            this.primaryTelemetryObjects.push(primary);
+            this.$set(this.ladTelemetryObjects, ladTable.key, []);
+            this.ladTableObjects.push(ladTable);
 
-            let composition = this.openmct.composition.get(primary.domainObject),
-                addCallback = this.addSecondary(primary),
-                removeCallback = this.removeSecondary(primary);
+            let composition = this.openmct.composition.get(ladTable.domainObject);
+            let addCallback = this.addTelemetryObject(ladTable);
+            let removeCallback = this.removeTelemetryObject(ladTable);
 
             composition.on('add', addCallback);
             composition.on('remove', removeCallback);
             composition.load();
 
-            this.compositions.push({composition, addCallback, removeCallback});
-        },
-        removePrimary(identifier) {
-            let index = this.primaryTelemetryObjects.findIndex(primary => this.openmct.objects.makeKeyString(identifier) === primary.key),
-                primary = this.primaryTelemetryObjects[index];
-
-            this.$set(this.secondaryTelemetryObjects, primary.key, undefined);
-            this.primaryTelemetryObjects.splice(index,1);
-            primary = undefined;
-        },
-        reorderPrimary(reorderPlan) {
-            let oldComposition = this.primaryTelemetryObjects.slice();
-            reorderPlan.forEach(reorderEvent => {
-                this.$set(this.primaryTelemetryObjects, reorderEvent.newIndex, oldComposition[reorderEvent.oldIndex]);
+            this.compositions.push({
+                composition,
+                addCallback,
+                removeCallback
             });
         },
-        addSecondary(primary) {
-            return (domainObject) => {
-                let secondary = {};
-                secondary.key = this.openmct.objects.makeKeyString(domainObject.identifier);
-                secondary.domainObject = domainObject;
+        removeLadTable(identifier) {
+            let index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.key);
+            let ladTable = this.ladTableObjects[index];
 
-                let array = this.secondaryTelemetryObjects[primary.key];
-                array.push(secondary);
-
-                this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            }
+            this.$delete(this.ladTelemetryObjects, ladTable.key);
+            this.ladTableObjects.splice(index, 1);
         },
-        removeSecondary(primary) {
+        reorderLadTables(reorderPlan) {
+            let oldComposition = this.ladTableObjects.slice();
+            reorderPlan.forEach(reorderEvent => {
+                this.$set(this.ladTableObjects, reorderEvent.newIndex, oldComposition[reorderEvent.oldIndex]);
+            });
+        },
+        addTelemetryObject(ladTable) {
+            return (domainObject) => {
+                let telemetryObject = {};
+                telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+                telemetryObject.domainObject = domainObject;
+
+                let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                telemetryObjects.push(telemetryObject);
+
+                this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+            };
+        },
+        removeTelemetryObject(ladTable) {
             return (identifier) => {
-                let array = this.secondaryTelemetryObjects[primary.key],
-                    index = array.findIndex(secondary => this.openmct.objects.makeKeyString(identifier) === secondary.key);
+                let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                let index = telemetryObjects.findIndex(telemetryObject => this.openmct.objects.makeKeyString(identifier) === telemetryObject.key);
 
-                array.splice(index, 1);
+                telemetryObjects.splice(index, 1);
 
-                this.$set(this.secondaryTelemetryObjects, primary.key, array);
-            }
+                this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+            };
         }
     }
-}
+};
 </script>

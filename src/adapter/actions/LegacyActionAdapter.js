@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,11 +27,13 @@ export default function LegacyActionAdapter(openmct, legacyActions) {
         if (action.category === 'contextual' || (Array.isArray(action.category) && action.category.includes('contextual'))) {
             return true;
         }
+
         console.warn(`DEPRECATION WARNING: Action ${action.definition.key} in bundle ${action.bundle.path} is non-contextual and should be migrated.`);
+
         return false;
     }
 
     legacyActions.filter(contextualCategoryOnly)
         .map(LegacyAction => new LegacyContextMenuAction(openmct, LegacyAction))
-        .forEach(openmct.contextMenu.registerAction);
+        .forEach(openmct.actions.register);
 }

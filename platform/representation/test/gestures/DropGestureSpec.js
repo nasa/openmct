@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,6 @@
 define(
     ["../../src/gestures/DropGesture"],
     function (DropGesture) {
-
 
         // Methods to mock
         var JQLITE_FUNCTIONS = ["on", "off", "attr", "removeAttr", "scope"],
@@ -170,7 +169,10 @@ define(
                 expect(mockScope.$broadcast).toHaveBeenCalledWith(
                     'mctDrop',
                     DROP_ID,
-                    { x: 10, y: 28 }
+                    {
+                        x: 10,
+                        y: 28
+                    }
                 );
             });
 

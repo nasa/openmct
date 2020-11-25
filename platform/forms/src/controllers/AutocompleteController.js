@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -59,6 +59,7 @@ define(
                 if ($scope.optionIndex === 0) {
                     $scope.optionIndex = $scope.filteredOptions.length;
                 }
+
                 $scope.optionIndex--;
                 fillInputWithIndexedOption();
             }
@@ -67,6 +68,7 @@ define(
                 if ($scope.optionIndex === $scope.filteredOptions.length - 1) {
                     $scope.optionIndex = -1;
                 }
+
                 $scope.optionIndex++;
                 fillInputWithIndexedOption();
             }
@@ -90,7 +92,7 @@ define(
                         incrementOptionIndex();
                         break;
                     case key.up:
-                        $event.preventDefault();    // Prevents cursor jumping back and forth
+                        $event.preventDefault(); // Prevents cursor jumping back and forth
                         decrementOptionIndex();
                         break;
                     case key.enter:

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,6 +25,8 @@ export default class RemoveAction {
         this.key = 'remove';
         this.description = 'Remove this object from its containing object.';
         this.cssClass = "icon-trash";
+        this.group = "action";
+        this.priority = 1;
 
         this.openmct = openmct;
     }
@@ -37,7 +39,7 @@ export default class RemoveAction {
             if (this.inNavigationPath(object)) {
                 this.navigateTo(objectPath.slice(1));
             }
-        }).catch(() =>{});
+        }).catch(() => {});
     }
 
     showConfirmDialog(object) {
@@ -62,8 +64,8 @@ export default class RemoveAction {
                         }
                     }
                 ]
-            })
-        })
+            });
+        });
     }
 
     inNavigationPath(object) {
@@ -103,13 +105,23 @@ export default class RemoveAction {
         let parentType = parent && this.openmct.types.get(parent.type);
         let child = objectPath[0];
         let locked = child.locked ? child.locked : parent && parent.locked;
+        let isEditing = this.openmct.editor.isEditing();
+
+        if (isEditing) {
+            let currentItemInView = this.openmct.router.path[0];
+            let domainObject = objectPath[0];
+
+            if (this.openmct.objects.areIdsEqual(currentItemInView.identifier, domainObject.identifier)) {
+                return false;
+            }
+        }
 
         if (locked) {
             return false;
         }
 
-        return parentType &&
-            parentType.definition.creatable &&
-            Array.isArray(parent.composition);
+        return parentType
+            && parentType.definition.creatable
+            && Array.isArray(parent.composition);
     }
 }

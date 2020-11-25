@@ -2,70 +2,119 @@
     display: flex;
     flex-direction: column;
 
-    &.is-missing {
-        border: $borderMissing;
-    }
-
     /*************************** HEADER */
     &__header {
         flex: 0 0 auto;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        margin-bottom: $interiorMargin;
+        margin-bottom: $interiorMarginSm;
+        overflow: hidden;
+        padding: 3px;
 
-        &__icon {
-            flex: 0 0 auto;
-            margin-right: $interiorMarginSm;
-            opacity: 0.5;
-        }
+        .c-object-label {
+            font-size: 1.05em;
+            &__type-icon {
+                opacity: $objectLabelTypeIconOpacity;
+            }
 
-        &__name {
-            @include headerFont(1em);
-            @include ellipsize();
-            flex: 0 1 auto;
+            &__name {
+                filter: $objectLabelNameFilter;
+            }
         }
     }
 
     &:not(.c-so-view--no-frame) {
         border: $browseFrameBorder;
-        padding: $interiorMargin;
+        padding: 0 $interiorMarginSm;
 
         .is-editing & {
             background: rgba($colorBodyBg, 0.8);
         }
     }
 
-    &--no-frame {
-        > .c-so-view__header {
-            display: none;
+    /*************************** FRAME CONTROLS */
+    &__frame-controls {
+        display: flex;
+        flex: 0 0 auto;
+
+        &__btns,
+        &__more {
+            flex: 0 0 auto;
         }
 
-        > .c-so-view__local-controls {
-            top: $interiorMarginSm; right: $interiorMarginSm;
-        }
+        .is-in-small-container &,
+        .c-fl-frame & {
+            [class*="__label"] {
+                // button labels
+                display: none;
 
-        &.is-missing {
-            @include isMissing($absPos: true);
-
-            .is-missing__indicator {
-                top: $interiorMargin;
-                left: $interiorMargin;
             }
         }
     }
 
-    &__local-controls {
-        position: absolute;
-        top: $interiorMargin; right: $interiorMargin;
-        z-index: 2;
-    }
+    /*************************** HIDDEN FRAME */
+    &--no-frame {
+        > .c-so-view__header {
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute;
+            top: 0; right: 0; bottom: auto; left: 0;
+            z-index: 2;
 
-    &__view-large {
-        display: none;
-    }
+            .c-object-label {
+                visibility: hidden;
+            }
 
-    &.has-complex-content {
-        > .c-so-view__view-large { display: block; }
+            .c-so-view__frame-controls {
+                background: $frameControlsColorBg;
+                border-radius: $controlCr;
+                box-shadow: $frameControlsShdw;
+                padding: 1px;
+                pointer-events: all;
+
+                .c-icon-button {
+                    color: $frameControlsColorFg;
+
+                    &:hover {
+                        background: rgba($frameControlsColorFg, 0.3);
+                    }
+                }
+
+                &__btns {
+                    display: none;
+                }
+
+                &:hover {
+                    [class*="__btns"] {
+                        display: block;
+                    }
+                }
+
+                [class*="__label"] {
+                    // button labels
+                    display: none;
+
+                }
+            }
+        }
+        &.c-so-view--layout {
+            // For sub-layouts with hidden frames, completely hide the header to avoid overlapping buttons
+            > .c-so-view__header {
+                display: none;
+            }
+        }
+
+        /* HOVERS */
+        &:hover {
+            > .c-so-view__header {
+                visibility: visible;
+            }
+        }
+
+        &[class*='is-status'] {
+            border: $borderMissing;
+        }
     }
 
     /*************************** OBJECT VIEW */
@@ -81,13 +130,37 @@
     }
 
     .c-click-icon,
-    .c-button {
+    .c-button,
+    .c-icon-button {
         // Shrink buttons a bit when they appear in a frame
+        border-radius: $smallCr !important;
         font-size: 0.9em;
-        padding: 3px 5px;
+        padding: 5px;
+    }
+
+    &.has-complex-content {
+        > .c-so-view__view-large { display: block; }
+    }
+
+    &.is-status--missing {
+        border: $borderMissing;
+    }
+
+    &__object-view {
+        display: flex;
+        flex: 1 1 auto;
+        overflow: auto;
+
+        .u-fills-container {
+            // Expand component types that fill a container
+            @include abs();
+        }
     }
 }
 
-.u-angular-object-view-wrapper {
+.l-angular-ov-wrapper {
+    // This element is the recipient for object styling; cannot be display: contents
+    flex: 1 1 auto;
+    overflow: hidden;
     display: contents;
 }

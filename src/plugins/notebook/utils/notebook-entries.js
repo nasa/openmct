@@ -1,13 +1,37 @@
 import objectLink from '../../../ui/mixins/object-link';
 
+export const DEFAULT_CLASS = 'notebook-default';
 const TIME_BOUNDS = {
     START_BOUND: 'tc.startBound',
     END_BOUND: 'tc.endBound',
     START_DELTA: 'tc.startDelta',
     END_DELTA: 'tc.endDelta'
+};
+
+export function addEntryIntoPage(notebookStorage, entries, entry) {
+    const defaultSection = notebookStorage.section;
+    const defaultPage = notebookStorage.page;
+    if (!defaultSection || !defaultPage) {
+        return;
+    }
+
+    const newEntries = JSON.parse(JSON.stringify(entries));
+    let section = newEntries[defaultSection.id];
+    if (!section) {
+        newEntries[defaultSection.id] = {};
+    }
+
+    let page = newEntries[defaultSection.id][defaultPage.id];
+    if (!page) {
+        newEntries[defaultSection.id][defaultPage.id] = [];
+    }
+
+    newEntries[defaultSection.id][defaultPage.id].push(entry);
+
+    return newEntries;
 }
 
-export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink) => {
+export function getHistoricLinkInFixedMode(openmct, bounds, historicLink) {
     if (historicLink.includes('tc.mode=fixed')) {
         return historicLink;
     }
@@ -37,36 +61,7 @@ export const getHistoricLinkInFixedMode = (openmct, bounds, historicLink) => {
     return params.join('&');
 }
 
-export const getNotebookDefaultEntries = (notebookStorage, domainObject) => {
-    if (!notebookStorage || !domainObject) {
-        return null;
-    }
-
-    const defaultSection = notebookStorage.section;
-    const defaultPage = notebookStorage.page;
-    if (!defaultSection || !defaultPage) {
-        return null;
-    }
-
-    const configuration = domainObject.configuration;
-    const entries = configuration.entries || {};
-
-    let section = entries[defaultSection.id];
-    if (!section) {
-        section = {};
-        entries[defaultSection.id] = section;
-    }
-
-    let page = entries[defaultSection.id][defaultPage.id];
-    if (!page) {
-        page = [];
-        entries[defaultSection.id][defaultPage.id] = [];
-    }
-
-    return entries[defaultSection.id][defaultPage.id];
-}
-
-export const createNewEmbed = (snapshotMeta, snapshot = '') => {
+export function createNewEmbed(snapshotMeta, snapshot = '') {
     const {
         bounds,
         link,
@@ -82,7 +77,10 @@ export const createNewEmbed = (snapshotMeta, snapshot = '') => {
     const date = Date.now();
     const historicLink = link
         ? getHistoricLinkInFixedMode(openmct, bounds, link)
-        : objectLink.computed.objectLink.call({ objectPath, openmct });
+        : objectLink.computed.objectLink.call({
+            objectPath,
+            openmct
+        });
     const name = domainObject.name;
     const type = domainObject.identifier.key;
 
@@ -95,12 +93,11 @@ export const createNewEmbed = (snapshotMeta, snapshot = '') => {
         id: 'embed-' + date,
         name,
         snapshot,
-        type,
-        objectPath: JSON.stringify(objectPath)
+        type
     };
 }
 
-export const addNotebookEntry = (openmct, domainObject, notebookStorage, embed = null) => {
+export function addNotebookEntry(openmct, domainObject, notebookStorage, embed = null, entryText = '') {
     if (!openmct || !domainObject || !notebookStorage) {
         return;
     }
@@ -117,23 +114,25 @@ export const addNotebookEntry = (openmct, domainObject, notebookStorage, embed =
         ? [embed]
         : [];
 
-    const defaultEntries = getNotebookDefaultEntries(notebookStorage, domainObject);
     const id = `entry-${date}`;
-    defaultEntries.push({
+    const entry = {
         id,
         createdOn: date,
-        text: '',
+        text: entryText,
         embeds
-    });
+    };
 
-    openmct.objects.mutate(domainObject, 'configuration.entries', entries);
+    const newEntries = addEntryIntoPage(notebookStorage, entries, entry);
+
+    addDefaultClass(domainObject, openmct);
+    openmct.objects.mutate(domainObject, 'configuration.entries', newEntries);
 
     return id;
 }
 
-export const getNotebookEntries = (domainObject, selectedSection, selectedPage) => {
+export function getNotebookEntries(domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage) {
-        return null;
+        return;
     }
 
     const configuration = domainObject.configuration;
@@ -141,18 +140,18 @@ export const getNotebookEntries = (domainObject, selectedSection, selectedPage) 
 
     let section = entries[selectedSection.id];
     if (!section) {
-        return null;
+        return;
     }
 
     let page = entries[selectedSection.id][selectedPage.id];
     if (!page) {
-        return null;
+        return;
     }
 
     return entries[selectedSection.id][selectedPage.id];
 }
 
-export const getEntryPosById = (entryId, domainObject, selectedSection, selectedPage) => {
+export function getEntryPosById(entryId, domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection || !selectedPage) {
         return;
     }
@@ -170,7 +169,7 @@ export const getEntryPosById = (entryId, domainObject, selectedSection, selected
     return foundId;
 }
 
-export const deleteNotebookEntries = (openmct, domainObject, selectedSection, selectedPage) => {
+export function deleteNotebookEntries(openmct, domainObject, selectedSection, selectedPage) {
     if (!domainObject || !selectedSection) {
         return;
     }
@@ -191,5 +190,14 @@ export const deleteNotebookEntries = (openmct, domainObject, selectedSection, se
     }
 
     delete entries[selectedSection.id][selectedPage.id];
-    openmct.objects.mutate(domainObject, 'configuration.entries', entries);
+
+    mutateObject(openmct, domainObject, 'configuration.entries', entries);
+}
+
+export function mutateObject(openmct, object, key, value) {
+    openmct.objects.mutate(object, key, value);
+}
+
+function addDefaultClass(domainObject, openmct) {
+    openmct.status.set(domainObject.identifier, DEFAULT_CLASS);
 }

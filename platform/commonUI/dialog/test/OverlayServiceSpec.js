@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,7 +48,7 @@ define(
                 mockScope = jasmine.createSpyObj("scope", ["$destroy"]);
                 mockTimeout = function (callback) {
                     callback();
-                }
+                };
 
                 mockDocument.find.and.returnValue(mockBody);
                 mockCompile.and.returnValue(mockTemplate);

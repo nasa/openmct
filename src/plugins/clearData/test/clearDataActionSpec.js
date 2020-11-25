@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,25 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ClearDataActionPlugin  from '../plugin.js';
+import ClearDataActionPlugin from '../plugin.js';
 import ClearDataAction from '../clearDataAction.js';
 
 describe('When the Clear Data Plugin is installed,', function () {
-    var mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']),
-        mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']),
-        mockContextMenuProvider = jasmine.createSpyObj('contextMenu', ['registerAction']),
-        openmct = {
-            objectViews: mockObjectViews,
-            indicators: mockIndicatorProvider,
-            contextMenu: mockContextMenuProvider,
-            install: function (plugin) {
-                plugin(this);
-            }
-        },
-        mockObjectPath = [
-            {name: 'mockObject1'},
-            {name: 'mockObject2'}
-        ];
+    const mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']);
+    const mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']);
+    const mockActionsProvider = jasmine.createSpyObj('actions', ['register']);
+
+    const openmct = {
+        objectViews: mockObjectViews,
+        indicators: mockIndicatorProvider,
+        actions: mockActionsProvider,
+        install: function (plugin) {
+            plugin(this);
+        }
+    };
+
+    const mockObjectPath = [
+        {name: 'mockObject1'},
+        {name: 'mockObject2'}
+    ];
 
     it('Global Clear Indicator is installed', function () {
         openmct.install(ClearDataActionPlugin([]));
@@ -49,7 +51,7 @@ describe('When the Clear Data Plugin is installed,', function () {
     it('Clear Data context menu action is installed', function () {
         openmct.install(ClearDataActionPlugin([]));
 
-        expect(mockContextMenuProvider.registerAction).toHaveBeenCalled();
+        expect(mockActionsProvider.register).toHaveBeenCalled();
     });
 
     it('clear data action emits a clearData event when invoked', function () {

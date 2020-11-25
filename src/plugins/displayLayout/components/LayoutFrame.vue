@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,22 +25,22 @@
     class="l-layout__frame c-frame"
     :class="{
         'no-frame': !item.hasFrame,
-        'u-inspectable': inspectable
+        'u-inspectable': inspectable,
+        'is-in-small-container': size.width < 600 || size.height < 600
     }"
     :style="style"
 >
     <slot></slot>
-
     <div
-        class="c-frame-edit__move"
+        class="c-frame__move-bar"
         @mousedown="isEditing ? startMove([1,1], [0,0], $event) : null"
     ></div>
 </div>
 </template>
 
 <script>
-import LayoutDrag from './../LayoutDrag'
-import _ from 'lodash'
+import LayoutDrag from './../LayoutDrag';
+import _ from 'lodash';
 
 export default {
     inject: ['openmct'],
@@ -61,8 +61,17 @@ export default {
         }
     },
     computed: {
+        size() {
+            let {width, height} = this.item;
+
+            return {
+                width: (this.gridSize[0] * width),
+                height: (this.gridSize[1] * height)
+            };
+        },
         style() {
             let {x, y, width, height} = this.item;
+
             return {
                 left: (this.gridSize[0] * x) + 'px',
                 top: (this.gridSize[1] * y) + 'px',
@@ -120,5 +129,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

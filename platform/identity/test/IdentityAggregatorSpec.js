@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -39,9 +39,18 @@ define(
 
             beforeEach(function () {
                 testUsers = [
-                    { key: "user0", name: "User Zero" },
-                    { key: "user1", name: "User One" },
-                    { key: "user2", name: "User Two" }
+                    {
+                        key: "user0",
+                        name: "User Zero"
+                    },
+                    {
+                        key: "user1",
+                        name: "User One"
+                    },
+                    {
+                        key: "user2",
+                        name: "User Two"
+                    }
                 ];
 
                 resolves = {};

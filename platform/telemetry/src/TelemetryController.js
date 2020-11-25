@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -124,6 +124,7 @@ define(
                     // Request won't happen, so don't
                     // mark it as pending.
                     self.pending -= trackPending ? 1 : 0;
+
                     return;
                 }
 
@@ -175,9 +176,10 @@ define(
                     "delegation",
                     "telemetry"
                 )).then(function (result) {
-                    var head = domainObject.hasCapability("telemetry") ?
-                            [domainObject] : [],
+                    var head = domainObject.hasCapability("telemetry")
+                            ? [domainObject] : [],
                         tail = result || [];
+
                     return head.concat(tail);
                 });
             }
@@ -186,8 +188,8 @@ define(
             // by this controller to track latest responses, etc, for
             // a given domain object.
             function buildResponseContainer(domainObject) {
-                var telemetry = domainObject &&
-                        domainObject.getCapability("telemetry"),
+                var telemetry = domainObject
+                        && domainObject.getCapability("telemetry"),
                     id,
                     metadata;
 
@@ -350,8 +352,8 @@ define(
                  * @memberof platform/telemetry.TelemetryController#
                  */
                 getResponse: function getResponse(arg) {
-                    var id = arg && (typeof arg === 'string' ?
-                        arg : arg.getId());
+                    var id = arg && (typeof arg === 'string'
+                        ? arg : arg.getId());
 
                     if (id) {
                         return (self.response[id] || {}).data;
@@ -380,6 +382,7 @@ define(
                  */
                 requestData: function (request) {
                     self.request = request || {};
+
                     return requestTelemetry(true);
                 },
                 /**

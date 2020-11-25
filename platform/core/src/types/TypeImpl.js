@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -106,7 +106,6 @@ define(
          * @returns {boolean} true if the feature is supported
          * @method Type#hasFeature
          */
-
 
         /**
          * Construct a new type. Types describe categories of

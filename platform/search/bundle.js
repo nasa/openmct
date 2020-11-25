@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,7 +43,7 @@ define([
 ) {
 
     return {
-        name:"platform/search",
+        name: "platform/search",
         definition: {
             "name": "Search",
             "description": "Allows the user to search through the file tree.",
@@ -104,7 +104,7 @@ define([
                         "depends": [
                             "$q",
                             "$log",
-                            "modelService",
+                            "objectService",
                             "workerService",
                             "topic",
                             "GENERIC_SEARCH_ROOTS",

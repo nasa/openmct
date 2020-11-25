@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -58,12 +58,14 @@ define(
 
                 mockTopic.and.callFake(function (t) {
                     expect(t).toBe('mutation');
+
                     return mockMutationTopic;
                 });
 
                 mockDomainObject.getId.and.returnValue('mockId');
                 mockDomainObject.getCapability.and.callFake(function (c) {
                     expect(c).toBe('persistence');
+
                     return mockPersistence;
                 });
                 mockModel = {};

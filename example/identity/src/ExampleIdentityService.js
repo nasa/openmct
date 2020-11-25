@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,31 +19,34 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define(
     function () {
         "use strict";
 
-        var DEFAULT_IDENTITY = { key: "user", name: "Example User" },
+        var DEFAULT_IDENTITY = {
+                key: "user",
+                name: "Example User"
+            },
             DIALOG_STRUCTURE = {
                 name: "Identify Yourself",
-                sections: [{ rows: [
-                    {
-                        name: "User ID",
-                        control: "textfield",
-                        key: "key",
-                        required: true
-                    },
-                    {
-                        name: "Human name",
-                        control: "textfield",
-                        key: "name",
-                        required: true
-                    }
-                ]}]
+                sections: [{
+                    rows: [
+                        {
+                            name: "User ID",
+                            control: "textfield",
+                            key: "key",
+                            required: true
+                        },
+                        {
+                            name: "Human name",
+                            control: "textfield",
+                            key: "name",
+                            required: true
+                        }
+                    ]
+                }]
             };
-
 
         /**
          * Example implementation of an identity service. This prompts the
@@ -77,14 +80,14 @@ define(
          */
         ExampleIdentityProvider.prototype.returnUser = function (user) {
             return this.user = user;
-        }
+        };
 
         /**
          * @private
          */
         ExampleIdentityProvider.prototype.returnUndefined = function () {
             return undefined;
-        }
+        };
 
         return ExampleIdentityProvider;
     }

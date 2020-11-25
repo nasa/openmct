@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,7 +36,6 @@ define([
     EventEmitter
 ) {
 
-
     /**
      * Utilities for loading, saving, and manipulating domain objects.
      * @interface ObjectAPI
@@ -47,7 +46,8 @@ define([
         this.eventEmitter = new EventEmitter();
         this.providers = {};
         this.rootRegistry = new RootRegistry();
-        this.rootProvider = new RootObjectProvider(this.rootRegistry);
+        this.rootProvider = new RootObjectProvider.default(this.rootRegistry);
+        this.cache = {};
     }
 
     /**
@@ -66,6 +66,7 @@ define([
         if (identifier.key === 'ROOT') {
             return this.rootProvider;
         }
+
         return this.providers[identifier.namespace] || this.fallbackProvider;
     };
 
@@ -154,8 +155,13 @@ define([
      *          has been saved, or be rejected if it cannot be saved
      */
     ObjectAPI.prototype.get = function (identifier) {
+        let keystring = this.makeKeyString(identifier);
+        if (this.cache[keystring] !== undefined) {
+            return this.cache[keystring];
+        }
+
         identifier = utils.parseKeyString(identifier);
-        var provider = this.getProvider(identifier);
+        const provider = this.getProvider(identifier);
 
         if (!provider) {
             throw new Error('No Provider Matched');
@@ -165,7 +171,15 @@ define([
             throw new Error('Provider does not support get!');
         }
 
-        return provider.get(identifier);
+        let objectPromise = provider.get(identifier);
+
+        this.cache[keystring] = objectPromise;
+
+        return objectPromise.then(result => {
+            delete this.cache[keystring];
+
+            return result;
+        });
     };
 
     ObjectAPI.prototype.delete = function () {
@@ -174,10 +188,11 @@ define([
 
     ObjectAPI.prototype.isPersistable = function (domainObject) {
         let provider = this.getProvider(domainObject.identifier);
-        return provider !== undefined &&
-            provider.create !== undefined &&
-            provider.update !== undefined;
-    }
+
+        return provider !== undefined
+            && provider.create !== undefined
+            && provider.update !== undefined;
+    };
 
     /**
      * Save this domain object in its current state. EXPERIMENTAL
@@ -191,6 +206,7 @@ define([
      */
     ObjectAPI.prototype.save = function (domainObject) {
         let provider = this.getProvider(domainObject.identifier);
+        let savedResolve;
         let result;
 
         if (!this.isPersistable(domainObject)) {
@@ -198,14 +214,23 @@ define([
         } else if (hasAlreadyBeenPersisted(domainObject)) {
             result = Promise.resolve(true);
         } else {
+            const persistedTime = Date.now();
             if (domainObject.persisted === undefined) {
-                this.mutate(domainObject, 'persisted', domainObject.modified);
-                result = provider.create(domainObject);
+                result = new Promise((resolve) => {
+                    savedResolve = resolve;
+                });
+                domainObject.persisted = persistedTime;
+                provider.create(domainObject).then((response) => {
+                    this.mutate(domainObject, 'persisted', persistedTime);
+                    savedResolve(response);
+                });
             } else {
-                this.mutate(domainObject, 'persisted', domainObject.modified);
+                domainObject.persisted = persistedTime;
+                this.mutate(domainObject, 'persisted', persistedTime);
                 result = provider.update(domainObject);
             }
         }
+
         return result;
     };
 
@@ -230,8 +255,9 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-        var mutableObject =
+        const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
+
         return mutableObject.set(path, value);
     };
 
@@ -245,9 +271,10 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.observe = function (domainObject, path, callback) {
-        var mutableObject =
+        const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
         mutableObject.on(path, callback);
+
         return mutableObject.stopListening.bind(mutableObject);
     };
 
@@ -266,9 +293,9 @@ define([
     ObjectAPI.prototype.areIdsEqual = function (...identifiers) {
         return identifiers.map(utils.parseKeyString)
             .every(identifier => {
-                return identifier === identifiers[0] ||
-                    (identifier.namespace === identifiers[0].namespace &&
-                        identifier.key === identifiers[0].key);
+                return identifier === identifiers[0]
+                    || (identifier.namespace === identifiers[0].namespace
+                        && identifier.key === identifiers[0].key);
             });
     };
 
@@ -321,8 +348,9 @@ define([
      */
 
     function hasAlreadyBeenPersisted(domainObject) {
-        return domainObject.persisted !== undefined &&
-            domainObject.persisted === domainObject.modified;
+        return domainObject.persisted !== undefined
+            && domainObject.persisted === domainObject.modified;
     }
+
     return ObjectAPI;
 });

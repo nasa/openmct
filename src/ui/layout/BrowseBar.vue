@@ -3,21 +3,19 @@
     <div class="l-browse-bar__start">
         <button
             v-if="hasParent"
-            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
+            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
+            title="Navigate up to parent"
             @click="goToParent"
         ></button>
         <div
             class="l-browse-bar__object-name--w c-object-label"
-            :class="{
-                classList,
-                'is-missing': domainObject.status === 'missing'
-            }"
+            :class="[statusClass]"
         >
             <div class="c-object-label__type-icon"
                  :class="type.cssClass"
             >
-                <span class="is-missing__indicator"
-                      title="This item is missing"
+                <span class="is-status__indicator"
+                      :title="`This item is ${status}`"
                 ></span>
             </div>
             <span
@@ -30,10 +28,6 @@
                 {{ domainObject.name }}
             </span>
         </div>
-        <div
-            class="l-browse-bar__context-actions c-disclosure-button"
-            @click.prevent.stop="showContextMenu"
-        ></div>
     </div>
 
     <div class="l-browse-bar__end">
@@ -41,7 +35,6 @@
             v-if="!isEditing"
             :current-view="currentView"
             :views="views"
-            @setView="setView"
         />
         <!-- Action buttons -->
         <NotebookMenuSwitcher v-if="notebookEnabled"
@@ -51,15 +44,24 @@
         />
         <div class="l-browse-bar__actions">
             <button
-                v-if="isViewEditable && !isEditing"
-                :title="lockedOrUnlocked"
+                v-for="(item, index) in statusBarItems"
+                :key="index"
                 class="c-button"
+                :class="item.cssClass"
+                @click="item.callBack"
+            >
+            </button>
+
+            <button
+                v-if="isViewEditable & !isEditing"
+                :title="lockedOrUnlockedTitle"
                 :class="{
-                    'icon-lock': domainObject.locked,
-                    'icon-unlocked': !domainObject.locked
+                    'c-button icon-lock': domainObject.locked,
+                    'c-icon-button icon-unlocked': !domainObject.locked
                 }"
                 @click="toggleLock(!domainObject.locked)"
             ></button>
+
             <button
                 v-if="isViewEditable && !isEditing && !domainObject.locked"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
@@ -105,6 +107,11 @@
                 title="Cancel Editing"
                 @click="promptUserandCancelEditing()"
             ></button>
+            <button
+                class="l-browse-bar__actions c-icon-button icon-3-dots"
+                title="More options"
+                @click.prevent.stop="showMenuItems($event)"
+            ></button>
         </div>
     </div>
 </div>
@@ -112,7 +119,7 @@
 
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
-import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
 const PLACEHOLDER_OBJECT = {};
 
@@ -122,6 +129,14 @@ export default {
         NotebookMenuSwitcher,
         ViewSwitcher
     },
+    props: {
+        actionCollection: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        }
+    },
     data: function () {
         return {
             notebookTypes: [],
@@ -130,17 +145,14 @@ export default {
             domainObject: PLACEHOLDER_OBJECT,
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            notebookEnabled: this.openmct.types.get('notebook')
-        }
+            notebookEnabled: this.openmct.types.get('notebook'),
+            statusBarItems: [],
+            status: ''
+        };
     },
     computed: {
-        classList() {
-            const classList = this.domainObject.classList;
-            if (!classList || !classList.length) {
-                return '';
-            }
-
-            return classList.join(' ');
+        statusClass() {
+            return (this.status) ? `is-status--${this.status}` : '';
         },
         currentView() {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
@@ -154,35 +166,42 @@ export default {
                     return {
                         key: p.key,
                         cssClass: p.cssClass,
-                        name: p.name
+                        name: p.name,
+                        callBack: () => {
+                            return this.setView({key: p.key});
+                        }
                     };
                 });
         },
         hasParent() {
-            return this.domainObject !== PLACEHOLDER_OBJECT &&
-                    this.parentUrl !== '#/browse'
+            return this.domainObject !== PLACEHOLDER_OBJECT
+                    && this.parentUrl !== '#/browse';
         },
         parentUrl() {
             let objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let hash = window.location.hash;
+
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
         },
         type() {
             let objectType = this.openmct.types.get(this.domainObject.type);
             if (!objectType) {
-                return {}
+                return {};
             }
+
             return objectType.definition;
         },
         isViewEditable() {
             let currentViewKey = this.currentView.key;
             if (currentViewKey !== undefined) {
                 let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
+
                 return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
             }
+
             return false;
         },
-        lockedOrUnlocked() {
+        lockedOrUnlockedTitle() {
             if (this.domainObject.locked) {
                 return 'Locked for editing - click to unlock.';
             } else {
@@ -195,9 +214,26 @@ export default {
             if (this.mutationObserver) {
                 this.mutationObserver();
             }
+
             this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
                 this.domainObject = domainObject;
             });
+
+            if (this.removeStatusListener) {
+                this.removeStatusListener();
+            }
+
+            this.status = this.openmct.status.get(this.domainObject.identifier, this.setStatus);
+            this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+        },
+        actionCollection(actionCollection) {
+            if (this.actionCollection) {
+                this.unlistenToActionCollection();
+            }
+
+            this.actionCollection = actionCollection;
+            this.actionCollection.on('update', this.updateActionItems);
+            this.updateActionItems(this.actionCollection.getActionsObject());
         }
     },
     mounted: function () {
@@ -212,6 +248,15 @@ export default {
         if (this.mutationObserver) {
             this.mutationObserver();
         }
+
+        if (this.actionCollection) {
+            this.unlistenToActionCollection();
+        }
+
+        if (this.removeStatusListener) {
+            this.removeStatusListener();
+        }
+
         document.removeEventListener('click', this.closeViewAndSaveMenu);
         window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
     },
@@ -266,7 +311,7 @@ export default {
             });
         },
         promptUserbeforeNavigatingAway(event) {
-            if(this.openmct.editor.isEditing()) {
+            if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 event.returnValue = '';
             }
@@ -279,7 +324,7 @@ export default {
                 title: 'Saving'
             });
 
-            return this.openmct.editor.save().then(()=> {
+            return this.openmct.editor.save().then(() => {
                 dialog.dismiss();
                 this.openmct.notifications.info('Save successful');
             }).catch((error) => {
@@ -293,15 +338,27 @@ export default {
                 this.openmct.editor.edit();
             });
         },
-        showContextMenu(event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
-        },
         goToParent() {
             window.location.hash = this.parentUrl;
         },
+        updateActionItems(actionItems) {
+            this.statusBarItems = this.actionCollection.getStatusBarActions();
+            this.menuActionItems = this.actionCollection.getVisibleActions();
+        },
+        showMenuItems(event) {
+            let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
+            this.openmct.menus.showMenu(event.x, event.y, sortedActions);
+        },
+        unlistenToActionCollection() {
+            this.actionCollection.off('update', this.updateActionItems);
+            delete this.actionCollection;
+        },
         toggleLock(flag) {
             this.openmct.objects.mutate(this.domainObject, 'locked', flag);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
-}
+};
 </script>

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,15 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Layout from './components/DisplayLayout.vue'
-import Vue from 'vue'
-import objectUtils from 'objectUtils'
-import DisplayLayoutType from './DisplayLayoutType.js'
-import DisplayLayoutToolbar from './DisplayLayoutToolbar.js'
-import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js'
+import Layout from './components/DisplayLayout.vue';
+import Vue from 'vue';
+import objectUtils from 'objectUtils';
+import DisplayLayoutType from './DisplayLayoutType.js';
+import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
+import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
+import CopyToClipboardAction from './actions/CopyToClipboardAction';
 
 export default function DisplayLayoutPlugin(options) {
     return function (openmct) {
+        openmct.actions.register(new CopyToClipboardAction(openmct));
+
         openmct.objectViews.addProvider({
             key: 'layout.view',
             canView: function (domainObject) {
@@ -39,6 +42,7 @@ export default function DisplayLayoutPlugin(options) {
             },
             view: function (domainObject, objectPath) {
                 let component;
+
                 return {
                     show(container) {
                         component = new Vue({
@@ -71,7 +75,8 @@ export default function DisplayLayoutPlugin(options) {
                             duplicateItem: component && component.$refs.displayLayout.duplicateItem,
                             switchViewType: component && component.$refs.displayLayout.switchViewType,
                             mergeMultipleTelemetryViews: component && component.$refs.displayLayout.mergeMultipleTelemetryViews,
-                            mergeMultipleOverlayPlots: component && component.$refs.displayLayout.mergeMultipleOverlayPlots
+                            mergeMultipleOverlayPlots: component && component.$refs.displayLayout.mergeMultipleOverlayPlots,
+                            toggleGrid: component && component.$refs.displayLayout.toggleGrid
                         };
                     },
                     onEditModeChange: function (isEditing) {
@@ -97,5 +102,5 @@ export default function DisplayLayoutPlugin(options) {
             }
         });
         DisplayLayoutPlugin._installed = true;
-    }
+    };
 }

@@ -16,10 +16,11 @@ describe("The Object API", () => {
             name: "test object",
             type: "test-type"
         };
-    })
+    });
     describe("The save function", () => {
         it("Rejects if no provider available", () => {
             let rejected = false;
+
             return objectAPI.save(mockDomainObject)
                 .catch(() => rejected = true)
                 .then(() => expect(rejected).toBe(true));
@@ -31,8 +32,9 @@ describe("The Object API", () => {
                     "create",
                     "update"
                 ]);
+                mockProvider.create.and.returnValue(Promise.resolve(true));
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
-            })
+            });
             it("Calls 'create' on provider if object is new", () => {
                 objectAPI.save(mockDomainObject);
                 expect(mockProvider.create).toHaveBeenCalled();
@@ -56,5 +58,26 @@ describe("The Object API", () => {
                 expect(mockProvider.update).not.toHaveBeenCalled();
             });
         });
-    })
+    });
+
+    describe("The get function", () => {
+        describe("when a provider is available", () => {
+            let mockProvider;
+            beforeEach(() => {
+                mockProvider = jasmine.createSpyObj("mock provider", [
+                    "get"
+                ]);
+                mockProvider.get.and.returnValue(Promise.resolve(mockDomainObject));
+                objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
+            });
+
+            it("Caches multiple requests for the same object", () => {
+                expect(mockProvider.get.calls.count()).toBe(0);
+                objectAPI.get(mockDomainObject.identifier);
+                expect(mockProvider.get.calls.count()).toBe(1);
+                objectAPI.get(mockDomainObject.identifier);
+                expect(mockProvider.get.calls.count()).toBe(1);
+            });
+        });
+    });
 });

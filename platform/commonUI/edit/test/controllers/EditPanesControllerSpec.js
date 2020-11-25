@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,9 +48,9 @@ define(
                 mockContext.getTrueRoot.and.callFake(function () {
                     var mockRoot = jasmine.createSpyObj('root', ['getId']);
                     mockRoot.getId.and.returnValue('root-id');
+
                     return mockRoot;
                 });
-
 
                 controller = new EditPanesController(mockScope);
             });
@@ -97,6 +97,7 @@ define(
                 mockContext.getTrueRoot.and.callFake(function () {
                     var mockRoot = jasmine.createSpyObj('root', ['getId']);
                     mockRoot.getId.and.returnValue('other-root-id');
+
                     return mockRoot;
                 });
 

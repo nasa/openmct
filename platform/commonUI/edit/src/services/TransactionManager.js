@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -50,7 +50,7 @@ define([], function () {
      * @returns {boolean} true if callbacks have been added
      */
     TransactionManager.prototype.isScheduled = function (id) {
-        return !!this.clearTransactionFns[id];
+        return Boolean(this.clearTransactionFns[id]);
     };
 
     /**
@@ -77,6 +77,7 @@ define([], function () {
                 return promiseFn().then(nextFn);
             };
         }
+
         /**
          * Clear any existing persistence calls for object with given ID. This ensures only the most recent persistence
          * call is executed. This should prevent stale objects being persisted and overwriting fresh ones.

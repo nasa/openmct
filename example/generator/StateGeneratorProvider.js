@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -48,7 +48,7 @@ define([
         var interval = setInterval(function () {
             var now = Date.now();
             var datum = pointForTimestamp(now, duration, domainObject.name);
-            datum.value += "";
+            datum.value = String(datum.value);
             callback(datum);
         }, duration);
 
@@ -56,7 +56,6 @@ define([
             clearInterval(interval);
         };
     };
-
 
     StateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
         return domainObject.type === 'example.state-generator';
@@ -69,11 +68,13 @@ define([
         if (options.strategy === 'latest' || options.size === 1) {
             start = end;
         }
+
         var data = [];
         while (start <= end && data.length < 5000) {
             data.push(pointForTimestamp(start, duration, domainObject.name));
             start += duration;
         }
+
         return Promise.resolve(data);
     };
 

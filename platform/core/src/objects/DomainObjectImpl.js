@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -118,8 +118,9 @@ define(
 
         DomainObjectImpl.prototype.getCapability = function (name) {
             var capability = this.capabilities[name];
-            return typeof capability === 'function' ?
-                capability(this) : capability;
+
+            return typeof capability === 'function'
+                ? capability(this) : capability;
         };
 
         DomainObjectImpl.prototype.hasCapability = function (name) {
@@ -131,9 +132,9 @@ define(
             var args = Array.prototype.slice.apply(arguments, [1]),
                 capability = this.getCapability(name);
 
-            return (capability && capability.invoke) ?
-                capability.invoke.apply(capability, args) :
-                capability;
+            return (capability && capability.invoke)
+                ? capability.invoke.apply(capability, args)
+                : capability;
         };
 
         return DomainObjectImpl;

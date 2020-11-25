@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -139,7 +139,9 @@ define([
                         ],
                         "description": "Edit",
                         "category": "view-control",
-                        "cssClass": "major icon-pencil"
+                        "cssClass": "major icon-pencil",
+                        "group": "action",
+                        "priority": 10
                     },
                     {
                         "key": "properties",
@@ -150,6 +152,8 @@ define([
                         "implementation": PropertiesAction,
                         "cssClass": "major icon-pencil",
                         "name": "Edit Properties...",
+                        "group": "action",
+                        "priority": 10,
                         "description": "Edit properties of this object.",
                         "depends": [
                             "dialogService"

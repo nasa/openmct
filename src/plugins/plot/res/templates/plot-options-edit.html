@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2018, United States Government
+ Open MCT, Copyright (c) 2014-2020, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -174,13 +174,17 @@
                      title="The position of the legend relative to the plot display area.">Position</div>
                 <div class="grid-cell value">
                     <select ng-model="form.position">
-                        <option value="hidden">Hidden</option>
                         <option value="top">Top</option>
                         <option value="right">Right</option>
                         <option value="bottom">Bottom</option>
                         <option value="left">Left</option>
                     </select>
                 </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
+                     title="Hide the legend when the plot is small">Hide when plot small</div>
+                <div class="grid-cell value"><input type="checkbox" ng-model="form.hideLegendWhenSmall"/></div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
@@ -197,6 +201,7 @@
                         <option value="nearestValue">Nearest value</option>
                         <option value="min">Minimum value</option>
                         <option value="max">Maximum value</option>
+                        <option value="units">showUnitsWhenExpanded</option>
                     </select>
                 </div>
             </li>
@@ -213,6 +218,8 @@
                                    ng-model="form.showMinimumWhenExpanded"/> Minimum value</li>
                         <li><input type="checkbox"
                                    ng-model="form.showMaximumWhenExpanded"/> Maximum value</li>
+                        <li><input type="checkbox"
+                                    ng-model="form.showUnitsWhenExpanded"/> Units</li>
                     </ul>
 
                 </div>

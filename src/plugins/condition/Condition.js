@@ -63,13 +63,15 @@ export default class Condition extends EventEmitter {
         if (conditionConfiguration.configuration.criteria) {
             this.createCriteria(conditionConfiguration.configuration.criteria);
         }
+
         this.trigger = conditionConfiguration.configuration.trigger;
         this.description = '';
     }
 
-    getResult(datum) {
+    updateResult(datum) {
         if (!datum || !datum.id) {
             console.log('no data received');
+
             return;
         }
 
@@ -77,9 +79,9 @@ export default class Condition extends EventEmitter {
 
             this.criteria.forEach(criterion => {
                 if (this.isAnyOrAllTelemetry(criterion)) {
-                    criterion.getResult(datum, this.conditionManager.telemetryObjects);
+                    criterion.updateResult(datum, this.conditionManager.telemetryObjects);
                 } else {
-                    criterion.getResult(datum);
+                    criterion.updateResult(datum);
                 }
             });
 
@@ -149,24 +151,27 @@ export default class Condition extends EventEmitter {
         } else {
             criterion = new TelemetryCriterion(criterionConfigurationWithId, this.openmct);
         }
+
         criterion.on('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
         criterion.on('telemetryIsStale', (obj) => this.handleStaleCriterion(obj));
         if (!this.criteria) {
             this.criteria = [];
         }
+
         this.criteria.push(criterion);
+
         return criterionConfigurationWithId.id;
     }
 
     findCriterion(id) {
         let criterion;
 
-        for (let i=0, ii=this.criteria.length; i < ii; i ++) {
+        for (let i = 0, ii = this.criteria.length; i < ii; i++) {
             if (this.criteria[i].id === id) {
                 criterion = {
                     item: this.criteria[i],
                     index: i
-                }
+                };
             }
         }
 
@@ -206,6 +211,7 @@ export default class Condition extends EventEmitter {
 
             return true;
         }
+
         return false;
     }
 
@@ -236,6 +242,7 @@ export default class Condition extends EventEmitter {
             if (!index) {
                 description = `Match if ${triggerDescription.prefix}`;
             }
+
             description = `${description} ${criterion.getDescription()} ${(index < this.criteria.length - 1) ? triggerDescription.conjunction : ''}`;
         });
         this.description = description;
@@ -260,8 +267,9 @@ export default class Condition extends EventEmitter {
                 results.forEach(resultObj => {
                     const { id, data, data: { result } } = resultObj;
                     if (this.findCriterion(id)) {
-                        criteriaResults[id] = !!result;
+                        criteriaResults[id] = Boolean(result);
                     }
+
                     latestTimestamp = getLatestTimestamp(
                         latestTimestamp,
                         data,
@@ -269,6 +277,7 @@ export default class Condition extends EventEmitter {
                         this.openmct.time.timeSystem()
                     );
                 });
+
                 return {
                     id: this.id,
                     data: Object.assign(
@@ -287,9 +296,10 @@ export default class Condition extends EventEmitter {
     destroyCriteria() {
         let success = true;
         //looping through the array backwards since destroyCriterion modifies the criteria array
-        for (let i=this.criteria.length-1; i >= 0; i--) {
+        for (let i = this.criteria.length - 1; i >= 0; i--) {
             success = success && this.destroyCriterion(this.criteria[i].id);
         }
+
         return success;
     }
 

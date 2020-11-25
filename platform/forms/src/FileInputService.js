@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,7 +29,6 @@ define(["zepto"], function ($) {
      * @memberof platform/forms
      */
     function FileInputService() {
-
     }
 
     /**
@@ -38,7 +37,7 @@ define(["zepto"], function ($) {
      *
      * @returns {Promise} promise for an object containing file meta-data
      */
-    FileInputService.prototype.getInput = function () {
+    FileInputService.prototype.getInput = function (fileType) {
         var input = this.newInput();
         var read = this.readFile;
         var fileInfo = {};
@@ -47,9 +46,14 @@ define(["zepto"], function ($) {
         return new Promise(function (resolve, reject) {
             input.trigger("click");
             input.on('change', function (event) {
+                // eslint-disable-next-line no-invalid-this
                 file = this.files[0];
                 input.remove();
                 if (file) {
+                    if (fileType && (!file.type || (file.type !== fileType))) {
+                        reject("Incompatible file type");
+                    }
+
                     read(file)
                         .then(function (contents) {
                             fileInfo.name = file.name;
@@ -74,15 +78,17 @@ define(["zepto"], function ($) {
             fileReader.onerror = function () {
                 return reject(event.target.result);
             };
+
             fileReader.readAsText(file);
         });
     };
 
-    FileInputService.prototype.newInput  = function () {
+    FileInputService.prototype.newInput = function () {
         var input = $(document.createElement('input'));
         input.attr("type", "file");
         input.css("display", "none");
         $('body').append(input);
+
         return input;
     };
 

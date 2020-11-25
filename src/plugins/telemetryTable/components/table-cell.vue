@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -51,6 +51,7 @@ export default {
         },
         isSelectable() {
             let column = this.row.columns[this.columnKey];
+
             return column && column.selectable;
         }
     },
@@ -64,7 +65,7 @@ export default {
                         row: this.row.objectKeyString,
                         column: columnKey
                     }
-                },{
+                }, {
                     element: this.openmct.layout.$refs.browseObject.$el,
                     context: {
                         item: this.objectPath[0]

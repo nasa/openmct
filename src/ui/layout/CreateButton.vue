@@ -16,7 +16,9 @@
                     v-for="(item, index) in sortedItems"
                     :key="index"
                     :class="item.class"
-                    :title="item.title"
+                    :aria-label="item.name"
+                    role="button"
+                    tabindex="0"
                     @mouseover="showItemDescription(item)"
                     @click="create(item)"
                 >
@@ -65,11 +67,11 @@ export default {
             items: items,
             selectedMenuItem: {},
             opened: false
-        }
+        };
     },
     computed: {
         sortedItems() {
-            return this.items.slice().sort((a,b) => {
+            return this.items.slice().sort((a, b) => {
                 if (a.name < b.name) {
                     return -1;
                 } else if (a.name > b.name) {
@@ -88,6 +90,7 @@ export default {
             if (this.opened) {
                 return;
             }
+
             this.opened = true;
             setTimeout(() => document.addEventListener('click', this.close));
         },
@@ -95,6 +98,7 @@ export default {
             if (!this.opened) {
                 return;
             }
+
             this.opened = false;
             document.removeEventListener('click', this.close);
         },
@@ -121,14 +125,16 @@ export default {
                         context,
                         this.openmct
                     );
+
                     return action.perform();
                 });
         },
         convertToLegacy(domainObject) {
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
+
             return this.openmct.$injector.get('instantiate')(oldModel, keyString);
         }
     }
-}
+};
 </script>

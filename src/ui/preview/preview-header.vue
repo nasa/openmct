@@ -1,49 +1,55 @@
 <template>
-<div class="l-browse-bar">
+<div class="c-preview-header l-browse-bar">
     <div class="l-browse-bar__start">
         <div
-            class="l-browse-bar__object-name--w"
-            :class="type.cssClass"
+            class="l-browse-bar__object-name--w c-object-label"
         >
-            <span class="l-browse-bar__object-name">
+            <div class="c-object-label__type-icon"
+                 :class="type.cssClass"
+            ></div>
+            <span class="l-browse-bar__object-name c-object-label__name">
                 {{ domainObject.name }}
             </span>
-            <context-menu-drop-down :object-path="objectPath" />
         </div>
     </div>
     <div class="l-browse-bar__end">
+        <view-switcher
+            :v-if="!hideViewSwitcher"
+            :views="views"
+            :current-view="currentView"
+        />
         <div class="l-browse-bar__actions">
-            <view-switcher
-                :v-if="!hideViewSwitcher"
-                :views="views"
-                :current-view="currentView"
-                @setView="setView"
-            />
-            <NotebookMenuSwitcher v-if="showNotebookMenuSwitcher"
-                                  :domain-object="domainObject"
-                                  :ignore-link="true"
-                                  :object-path="objectPath"
-                                  class="c-notebook-snapshot-menubutton"
-            />
+            <button
+                v-for="(item, index) in statusBarItems"
+                :key="index"
+                class="c-button"
+                :class="item.cssClass"
+                @click="item.callBack"
+            >
+            </button>
+            <button
+                class="l-browse-bar__actions c-icon-button icon-3-dots"
+                title="More options"
+                @click.prevent.stop="showMenuItems($event)"
+            ></button>
         </div>
     </div>
 </div>
 </template>
 
-
 <script>
-import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
-import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
 import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
+const HIDDEN_ACTIONS = [
+    'remove',
+    'move',
+    'preview'
+];
 
 export default {
     inject: [
-        'openmct',
-        'objectPath'
+        'openmct'
     ],
     components: {
-        ContextMenuDropDown,
-        NotebookMenuSwitcher,
         ViewSwitcher
     },
     props: {
@@ -65,28 +71,59 @@ export default {
                 return false;
             }
         },
-        showNotebookMenuSwitcher: {
-            type: Boolean,
-            default: () => {
-                return false;
-            }
-        },
         views: {
             type: Array,
             default: () => {
                 return [];
             }
+        },
+        actionCollection: {
+            type: Object,
+            default: () => {
+                return undefined;
+            }
         }
     },
     data() {
         return {
-            type: this.openmct.types.get(this.domainObject.type)
+            type: this.openmct.types.get(this.domainObject.type),
+            statusBarItems: [],
+            menuActionItems: []
         };
+    },
+    watch: {
+        actionCollection(actionCollection) {
+            if (this.actionCollection) {
+                this.unlistenToActionCollection();
+            }
+
+            this.actionCollection.on('update', this.updateActionItems);
+            this.updateActionItems(this.actionCollection.getActionsObject());
+        }
+    },
+    mounted() {
+        if (this.actionCollection) {
+            this.actionCollection.on('update', this.updateActionItems);
+            this.updateActionItems(this.actionCollection.getActionsObject());
+        }
     },
     methods: {
         setView(view) {
             this.$emit('setView', view);
+        },
+        unlistenToActionCollection() {
+            this.actionCollection.off('update', this.updateActionItems);
+            delete this.actionCollection;
+        },
+        updateActionItems() {
+            this.actionCollection.hide(HIDDEN_ACTIONS);
+            this.statusBarItems = this.actionCollection.getStatusBarActions();
+            this.menuActionItems = this.actionCollection.getVisibleActions();
+        },
+        showMenuItems(event) {
+            let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
+            this.openmct.menus.showMenu(event.x, event.y, sortedActions);
         }
     }
-}
+};
 </script>

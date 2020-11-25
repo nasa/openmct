@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,7 +37,7 @@ define([
 ) {
 
     return {
-        name:"platform/telemetry",
+        name: "platform/telemetry",
         definition: {
             "name": "Data bundle",
             "description": "Interfaces and infrastructure for real-time and historical data",

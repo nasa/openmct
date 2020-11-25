@@ -98,7 +98,7 @@ export default {
             filteredTreeItems: [],
             isLoading: false,
             selectedItem: undefined
-        }
+        };
     },
     mounted() {
         this.searchService = this.openmct.$injector.get('searchService');
@@ -109,7 +109,7 @@ export default {
             this.isLoading = true;
             this.openmct.objects.get('ROOT')
                 .then(root => {
-                    return this.openmct.composition.get(root).load()
+                    return this.openmct.composition.get(root).load();
                 })
                 .then(children => {
                     this.isLoading = false;
@@ -127,10 +127,10 @@ export default {
             this.searchService.query(this.searchValue).then(children => {
                 this.filteredTreeItems = children.hits.map(child => {
 
-                    let context = child.object.getCapability('context'),
-                        object = child.object.useCapability('adapter'),
-                        objectPath = [],
-                        navigateToParent;
+                    let context = child.object.getCapability('context');
+                    let object = child.object.useCapability('adapter');
+                    let objectPath = [];
+                    let navigateToParent;
 
                     if (context) {
                         objectPath = context.getPath().slice(1)
@@ -146,7 +146,7 @@ export default {
                         object,
                         objectPath,
                         navigateToParent
-                    }
+                    };
                 });
             });
         },
@@ -168,5 +168,5 @@ export default {
             }
         }
     }
-}
+};
 </script>

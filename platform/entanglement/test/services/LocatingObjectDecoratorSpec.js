@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 
 define(
     [
@@ -50,10 +49,22 @@ define(
                 // D <-> E, to verify cycle detection
                 testModels = {
                     a: { name: "A" },
-                    b: { name: "B", location: "a" },
-                    c: { name: "C", location: "b" },
-                    d: { name: "D", location: "e" },
-                    e: { name: "E", location: "d" }
+                    b: {
+                        name: "B",
+                        location: "a"
+                    },
+                    c: {
+                        name: "C",
+                        location: "b"
+                    },
+                    d: {
+                        name: "D",
+                        location: "e"
+                    },
+                    e: {
+                        name: "E",
+                        location: "d"
+                    }
                 };
                 testObjects = {};
 
@@ -71,6 +82,7 @@ define(
                             result[k] = v;
                         });
                     });
+
                     return testPromise(result);
                 });
 

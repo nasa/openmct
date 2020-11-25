@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -53,6 +53,7 @@ define([
 
         it("sets navigation if it is allowed", function () {
             mockNavigationService.shouldNavigate.and.returnValue(true);
+
             return action.perform()
                 .then(function () {
                     expect(mockNavigationService.setNavigation)
@@ -63,6 +64,7 @@ define([
         it("does not set navigation if it is not allowed", function () {
             mockNavigationService.shouldNavigate.and.returnValue(false);
             var onSuccess = jasmine.createSpy('onSuccess');
+
             return action.perform()
                 .then(onSuccess, function () {
                     expect(onSuccess).not.toHaveBeenCalled();

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,15 +28,26 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
+class MockDataTransfer {
+    constructor() {
+        this.data = {};
+    }
+    get types() {
+        return Object.keys(this.data);
+    }
+    setData(format, data) {
+        this.data[format] = data;
+    }
+    getData(format) {
+        return this.data[format];
+    }
+}
+
 describe("the plugin", () => {
     let openmct;
     let tablePlugin;
     let element;
     let child;
-
-    beforeAll(() => {
-        resetApplicationState();
-    })
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -52,7 +63,10 @@ describe("the plugin", () => {
         child = document.createElement('div');
         element.appendChild(child);
 
-        openmct.time.timeSystem('utc', {start: 0, end: 4});
+        openmct.time.timeSystem('utc', {
+            start: 0,
+            end: 4
+        });
 
         spyOnBuiltins(['requestAnimationFrame']);
         window.requestAnimationFrame.and.callFake((callBack) => {
@@ -64,7 +78,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("defines a table object", function () {
@@ -72,11 +86,11 @@ describe("the plugin", () => {
             let tableType = openmct.types.get('table');
             expect(tableType.definition.creatable).toBe(true);
         });
-    })
+    });
 
     it("provides a table view for objects with telemetry", () => {
         const testTelemetryObject = {
-            id:"test-object",
+            id: "test-object",
             type: "test-object",
             telemetry: {
                 values: [{
@@ -98,7 +112,10 @@ describe("the plugin", () => {
 
         beforeEach(() => {
             testTelemetryObject = {
-                identifier:{ namespace: "", key: "test-object"},
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
                 type: "test-object",
                 name: "Test Object",
                 telemetry: {
@@ -109,7 +126,7 @@ describe("the plugin", () => {
                         hints: {
                             domain: 1
                         }
-                    },{
+                    }, {
                         key: "some-key",
                         name: "Some attribute",
                         hints: {
@@ -128,17 +145,17 @@ describe("the plugin", () => {
                 {
                     'utc': 1,
                     'some-key': 'some-value 1',
-                    'some-other-key' : 'some-other-value 1'
+                    'some-other-key': 'some-other-value 1'
                 },
                 {
                     'utc': 2,
                     'some-key': 'some-value 2',
-                    'some-other-key' : 'some-other-value 2'
+                    'some-other-key': 'some-other-value 2'
                 },
                 {
                     'utc': 3,
                     'some-key': 'some-value 3',
-                    'some-other-key' : 'some-other-value 3'
+                    'some-other-key': 'some-other-value 3'
                 }
             ];
             let telemetryPromiseResolve;
@@ -147,8 +164,11 @@ describe("the plugin", () => {
             });
             openmct.telemetry.request.and.callFake(() => {
                 telemetryPromiseResolve(testTelemetry);
+
                 return telemetryPromise;
             });
+
+            openmct.router.path = [testTelemetryObject];
 
             applicableViews = openmct.objectViews.get(testTelemetryObject);
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
@@ -158,21 +178,21 @@ describe("the plugin", () => {
             return telemetryPromise.then(() => Vue.nextTick());
         });
 
-        it("Renders a row for every telemetry datum returned",() => {
+        it("Renders a row for every telemetry datum returned", () => {
             let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
             expect(rows.length).toBe(3);
         });
 
-
-        it("Renders a column for every item in telemetry metadata",() => {
+        it("Renders a column for every item in telemetry metadata", () => {
             let headers = element.querySelectorAll('span.c-telemetry-table__headers__label');
-            expect(headers.length).toBe(3);
-            expect(headers[0].innerText).toBe('Time');
-            expect(headers[1].innerText).toBe('Some attribute');
-            expect(headers[2].innerText).toBe('Another attribute');
+            expect(headers.length).toBe(4);
+            expect(headers[0].innerText).toBe('Name');
+            expect(headers[1].innerText).toBe('Time');
+            expect(headers[2].innerText).toBe('Some attribute');
+            expect(headers[3].innerText).toBe('Another attribute');
         });
 
-        it("Supports column reordering via drag and drop",() => {
+        it("Supports column reordering via drag and drop", () => {
             let columns = element.querySelectorAll('tr.c-telemetry-table__headers__labels th');
             let fromColumn = columns[0];
             let toColumn = columns[1];
@@ -185,7 +205,7 @@ describe("the plugin", () => {
 
             dragStartEvent.dataTransfer =
                 dragOverEvent.dataTransfer =
-                    dropEvent.dataTransfer = new DataTransfer();
+                    dropEvent.dataTransfer = new MockDataTransfer();
 
             fromColumn.dispatchEvent(dragStartEvent);
             toColumn.dispatchEvent(dragOverEvent);

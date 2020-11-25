@@ -8,13 +8,13 @@
         margin-top: $interiorMargin;
     }
 
-    &__selected-w,
-    &__multiple-selected-w {
+    &__selected,
+    &__multiple-selected {
         @include headerFont(1.1em);
         padding: $interiorMarginSm 0;
     }
 
-    &__multiple-selected-w {
+    &__multiple-selected {
         $p: $interiorMarginLg;
         background: rgba($colorWarningLo, 0.3);
         border-radius: $basicCr;
@@ -25,10 +25,15 @@
     }
 
     &__selected {
-        @include ellipsize();
-        flex: 1 1 auto;
+        .c-object-label__name {
+            filter: $objectLabelNameFilter;
+        }
 
-        &--non-domain-object {
+        .c-object-label__type-icon {
+            opacity: $objectLabelTypeIconOpacity;
+        }
+
+        &--non-domain-object .c-object-label__name {
             font-style: italic;
         }
     }
@@ -54,6 +59,10 @@
                 left: 0;
             }
         }
+    }
+
+    &__saved-styles {
+        height: 300px;
     }
 
     .c-color-swatch {
@@ -159,6 +168,11 @@
             grid-column: 1 / 3;
         }
     }
+}
+
+/********************************************* INSPECTOR PROPERTIES TAB */
+.c-saved-style {
+    cursor: default;
 }
 
 /********************************************* LEGACY SUPPORT */

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,9 +37,9 @@ define(
 
             function addModelToMap(model) {
                 // Skip models which don't look right
-                if (typeof model !== 'object' ||
-                        typeof model.id !== 'string' ||
-                            typeof model.model !== 'object') {
+                if (typeof model !== 'object'
+                        || typeof model.id !== 'string'
+                            || typeof model.model !== 'object') {
                     $log.warn([
                         "Skipping malformed domain object model exposed by ",
                         ((model || {}).bundle || {}).path
@@ -62,6 +62,7 @@ define(
             ids.forEach(function (id) {
                 result[id] = modelMap[id];
             });
+
             return this.$q.when(result);
         };
 

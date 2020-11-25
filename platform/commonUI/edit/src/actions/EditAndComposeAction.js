@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,7 +24,6 @@ define(
     [],
     function () {
 
-
         /**
          * Add one domain object to another's composition.
          * @constructor
@@ -42,8 +41,9 @@ define(
 
             // Link these objects
             function doLink() {
-                var composition = self.domainObject &&
-                        self.domainObject.getCapability('composition');
+                var composition = self.domainObject
+                        && self.domainObject.getCapability('composition');
+
                 return composition && composition.add(self.selectedObject);
             }
 

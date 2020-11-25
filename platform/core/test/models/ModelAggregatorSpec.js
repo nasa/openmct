@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,8 +31,14 @@ define(
             var mockQ,
                 mockProviders,
                 modelList = [
-                    { "a": { someKey: "some value" }, "b": undefined },
-                    { "b": { someOtherKey: "some other value" }, "a": undefined }
+                    {
+                        "a": { someKey: "some value" },
+                        "b": undefined
+                    },
+                    {
+                        "b": { someOtherKey: "some other value" },
+                        "a": undefined
+                    }
                 ],
                 aggregator;
 
@@ -44,6 +50,7 @@ define(
                         ["getModels"]
                     );
                     mockProvider.getModels.and.returnValue(models);
+
                     return mockProvider;
                 });
 

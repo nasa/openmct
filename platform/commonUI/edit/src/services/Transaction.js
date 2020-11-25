@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -41,8 +41,12 @@ define([], function () {
      *          pair of callbacks from the transaction
      */
     Transaction.prototype.add = function (commit, cancel) {
-        var callback = { commit: commit, cancel: cancel };
+        var callback = {
+            commit: commit,
+            cancel: cancel
+        };
         this.callbacks.push(callback);
+
         return function () {
             this.callbacks = this.callbacks.filter(function (c) {
                 return c !== callback;
@@ -90,7 +94,6 @@ define([], function () {
             return Promise.all(promises);
         };
     });
-
 
     return Transaction;
 });

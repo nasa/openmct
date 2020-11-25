@@ -27,9 +27,10 @@ export default {
     inject: ['openmct'],
     data() {
         return {
+            objectStyle: undefined,
             itemStyle: undefined,
             styleClass: ''
-        }
+        };
     },
     mounted() {
         this.parentDomainObject = this.$parent.domainObject;

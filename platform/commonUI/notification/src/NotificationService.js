@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,7 @@ export default class NotificationService {
         if (typeof message === 'string') {
             return this.openmct.notifications.info(message);
         } else {
-            if (message.hasOwnProperty('progress')) {
+            if (Object.prototype.hasOwnProperty.call(message, 'progress')) {
                 return this.openmct.notifications.progress(message.title, message.progress, message.progressText);
             } else {
                 return this.openmct.notifications.info(message.title);

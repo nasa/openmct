@@ -22,7 +22,7 @@
 
 <template>
 <component :is="urlDefined ? 'a' : 'span'"
-           class="c-condition-widget"
+           class="c-condition-widget u-style-receiver js-style-receiver"
            :href="urlDefined ? internalDomainObject.url : null"
 >
     <div class="c-condition-widget__label">
@@ -37,7 +37,7 @@ export default {
     data: function () {
         return {
             internalDomainObject: this.domainObject
-        }
+        };
     },
     computed: {
         urlDefined() {
@@ -57,5 +57,5 @@ export default {
             this.internalDomainObject = domainObject;
         }
     }
-}
+};
 </script>

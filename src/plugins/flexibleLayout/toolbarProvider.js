@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,20 +29,19 @@ function ToolbarProvider(openmct) {
         forSelection: function (selection) {
             let context = selection[0][0].context;
 
-            return (context && context.type &&
-                (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
+            return (context && context.type
+                && (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
         },
         toolbar: function (selection) {
-
-            let selectionPath = selection[0],
-                primary = selectionPath[0],
-                secondary = selectionPath[1],
-                tertiary = selectionPath[2],
-                deleteFrame,
-                toggleContainer,
-                deleteContainer,
-                addContainer,
-                toggleFrame;
+            let selectionPath = selection[0];
+            let primary = selectionPath[0];
+            let secondary = selectionPath[1];
+            let tertiary = selectionPath[2];
+            let deleteFrame;
+            let toggleContainer;
+            let deleteContainer;
+            let addContainer;
+            let toggleFrame;
 
             toggleContainer = {
                 control: 'toggle-button',
@@ -155,8 +154,8 @@ function ToolbarProvider(openmct) {
                     control: "button",
                     domainObject: primary.context.item,
                     method: function () {
-                        let removeContainer = secondary.context.deleteContainer,
-                            containerId = primary.context.containerId;
+                        let removeContainer = secondary.context.deleteContainer;
+                        let containerId = primary.context.containerId;
 
                         let prompt = openmct.overlays.dialog({
                             iconClass: 'alert',

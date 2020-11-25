@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -90,14 +90,29 @@ div.c-table {
         flex: 1 1 auto;
     }
 
-    > * + * {
-        margin-top: $interiorMarginSm;
+    .is-in-small-container & {
+        &:not(.is-paused) {
+            .c-table-control-bar {
+                display: none;
+            }
+        }
+        .c-table-control-bar {
+            .c-icon-button,
+            .c-click-icon,
+            .c-button {
+                &__label {
+                    display: none;
+                }
+            }
+        }
     }
 }
 
 .c-table-control-bar {
     display: flex;
     flex: 0 0 auto;
+    //margin-bottom: $interiorMarginSm; // This approach to allow margin to go away when control bar is hidden
+    padding: $interiorMarginSm 0;
 
     > * + * {
         margin-left: $interiorMarginSm;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,8 +27,8 @@ define(
     ['../Constants', './Bundle'],
     function (Constants, Bundle) {
 
-        var INVALID_ARGUMENT_MESSAGE = "Malformed loadBundles argument; " +
-            "expected string or array",
+        var INVALID_ARGUMENT_MESSAGE = "Malformed loadBundles argument; "
+            + "expected string or array",
             BAD_CONTENTS_PREFIX = "Invalid bundle contents for ",
             LOAD_ERROR_PREFIX = "Failed to load bundle ";
 
@@ -84,12 +84,15 @@ define(
                     function (x) {
                         if (x === null || typeof x !== 'object') {
                             $log.warn(BAD_CONTENTS_PREFIX + bundlePath);
+
                             return undefined;
                         }
+
                         return x;
                     },
                     function () {
                         $log.warn(LOAD_ERROR_PREFIX + bundlePath);
+
                         return undefined;
                     }
                 );
@@ -139,6 +142,7 @@ define(
                         err.status,
                         err.statusText
                     ].join(' '));
+
                     return loadBundlesFromArray([]);
                 }
 
@@ -146,9 +150,9 @@ define(
                     .then(loadBundlesFromArray, handleError);
             }
 
-            return Array.isArray(bundles) ? loadBundlesFromArray(bundles) :
-                (typeof bundles === 'string') ? loadBundlesFromFile(bundles) :
-                    Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
+            return Array.isArray(bundles) ? loadBundlesFromArray(bundles)
+                : (typeof bundles === 'string') ? loadBundlesFromFile(bundles)
+                    : Promise.reject(new Error(INVALID_ARGUMENT_MESSAGE));
         };
 
         return BundleLoader;

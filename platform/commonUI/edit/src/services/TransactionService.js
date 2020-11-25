@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 define(
     ['./Transaction', './NestedTransaction'],
     function (Transaction, NestedTransaction) {
@@ -48,9 +47,9 @@ define(
          * #cancel} are called
          */
         TransactionService.prototype.startTransaction = function () {
-            var transaction = this.isActive() ?
-                new NestedTransaction(this.transactions[0]) :
-                new Transaction(this.$log);
+            var transaction = this.isActive()
+                ? new NestedTransaction(this.transactions[0])
+                : new Transaction(this.$log);
 
             this.transactions.push(transaction);
         };
@@ -99,13 +98,16 @@ define(
             if (!transaction) {
                 return Promise.reject();
             }
+
             if (!this.isActive()) {
                 return transaction.commit()
                     .then(function (r) {
                         this.cacheService.flush();
+
                         return r;
                     }.bind(this));
             }
+
             return transaction.commit();
         };
 
@@ -119,6 +121,7 @@ define(
          */
         TransactionService.prototype.cancel = function () {
             var transaction = this.transactions.pop();
+
             return transaction ? transaction.cancel() : Promise.reject();
         };
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -115,6 +115,7 @@ define([
             /* eslint-enable you-dont-need-lodash-underscore/uniq */
             function fromColumnsToHeadersMap(headersMap, column) {
                 headersMap[column.getKey()] = column.getTitle();
+
                 return headersMap;
             }
 
@@ -134,12 +135,14 @@ define([
                 })
                 .reduce((headers, headerKey) => {
                     headers[headerKey] = allHeaders[headerKey];
+
                     return headers;
                 }, {});
         }
 
         getColumnWidths() {
             let configuration = this.getConfiguration();
+
             return configuration.columnWidths;
         }
 
@@ -151,6 +154,7 @@ define([
 
         getColumnOrder() {
             let configuration = this.getConfiguration();
+
             return configuration.columnOrder;
         }
 

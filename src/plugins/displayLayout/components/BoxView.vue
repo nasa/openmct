@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,7 +29,7 @@
     @endMove="() => $emit('endMove')"
 >
     <div
-        class="c-box-view"
+        class="c-box-view u-style-receiver js-style-receiver"
         :class="[styleClass]"
         :style="style"
     ></div>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
+import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 
 export default {
@@ -118,5 +118,5 @@ export default {
             this.removeSelectable();
         }
     }
-}
+};
 </script>

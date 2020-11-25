@@ -19,7 +19,7 @@ export default {
         this.objectPath.forEach(object => {
             if (object) {
                 this.$once('hook:destroyed',
-                    this.openmct.objects.observe(object, '*', updateObject.bind(this, object)))
+                    this.openmct.objects.observe(object, '*', updateObject.bind(this, object)));
             }
         });
     },
@@ -30,7 +30,12 @@ export default {
         showContextMenu(event) {
             event.preventDefault();
             event.stopPropagation();
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
+
+            let actionsCollection = this.openmct.actions.get(this.objectPath);
+            let actions = actionsCollection.getVisibleActions();
+            let sortedActions = this.openmct.actions._groupAndSortActions(actions);
+
+            this.openmct.menus.showMenu(event.clientX, event.clientY, sortedActions);
         }
     }
 };

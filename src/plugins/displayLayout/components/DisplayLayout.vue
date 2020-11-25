@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,7 @@
 
 <template>
 <div
-    class="l-layout"
+    class="l-layout u-style-receiver js-style-receiver"
     :class="{
         'is-multi-selected': selectedLayoutItems.length > 1,
         'allow-editing': isEditing
@@ -31,21 +31,19 @@
     @click.capture="bypassSelection"
     @drop="handleDrop"
 >
-    <!-- Background grid -->
-    <div
+    <display-layout-grid
         v-if="isEditing"
-        class="l-layout__grid-holder c-grid"
+        :grid-size="gridSize"
+        :show-grid="showGrid"
+    />
+    <div
+        v-if="shouldDisplayLayoutDimensions"
+        class="l-layout__dimensions"
+        :style="layoutDimensionsStyle"
     >
-        <div
-            v-if="gridSize[0] >= 3"
-            class="c-grid__x l-grid l-grid-x"
-            :style="[{ backgroundSize: gridSize[0] + 'px 100%' }]"
-        ></div>
-        <div
-            v-if="gridSize[1] >= 3"
-            class="c-grid__y l-grid l-grid-y"
-            :style="[{ backgroundSize: '100%' + gridSize[1] + 'px' }]"
-        ></div>
+        <div class="l-layout__dimensions-vals">
+            {{ layoutDimensions[0] }},{{ layoutDimensions[1] }}
+        </div>
     </div>
     <component
         :is="item.type"
@@ -74,14 +72,15 @@
 
 <script>
 import uuid from 'uuid';
-import SubobjectView from './SubobjectView.vue'
-import TelemetryView from './TelemetryView.vue'
-import BoxView from './BoxView.vue'
-import TextView from './TextView.vue'
-import LineView from './LineView.vue'
-import ImageView from './ImageView.vue'
-import EditMarquee from './EditMarquee.vue'
-import _ from 'lodash'
+import SubobjectView from './SubobjectView.vue';
+import TelemetryView from './TelemetryView.vue';
+import BoxView from './BoxView.vue';
+import TextView from './TextView.vue';
+import LineView from './LineView.vue';
+import ImageView from './ImageView.vue';
+import EditMarquee from './EditMarquee.vue';
+import DisplayLayoutGrid from './DisplayLayoutGrid.vue';
+import _ from 'lodash';
 
 const TELEMETRY_IDENTIFIER_FUNCTIONS = {
     'table': (domainObject) => {
@@ -102,10 +101,11 @@ const TELEMETRY_IDENTIFIER_FUNCTIONS = {
                     identifiers.push(object.identifier);
                 }
             });
+
             return Promise.resolve(identifiers);
         });
     }
-}
+};
 
 const ITEM_TYPE_VIEW_MAP = {
     'subobject-view': SubobjectView,
@@ -126,6 +126,7 @@ const DUPLICATE_OFFSET = 3;
 
 let components = ITEM_TYPE_VIEW_MAP;
 components['edit-marquee'] = EditMarquee;
+components['display-layout-grid'] = DisplayLayoutGrid;
 
 function getItemDefinition(itemType, ...options) {
     let itemView = ITEM_TYPE_VIEW_MAP[itemType];
@@ -139,6 +140,7 @@ function getItemDefinition(itemType, ...options) {
 
 export default {
     components: components,
+    inject: ['openmct', 'options', 'objectPath'],
     props: {
         domainObject: {
             type: Object,
@@ -151,10 +153,12 @@ export default {
     },
     data() {
         let domainObject = JSON.parse(JSON.stringify(this.domainObject));
+
         return {
             internalDomainObject: domainObject,
             initSelectIndex: undefined,
-            selection: []
+            selection: [],
+            showGrid: true
         };
     },
     computed: {
@@ -169,14 +173,38 @@ export default {
                 return this.itemIsInCurrentSelection(item);
             });
         },
+        layoutDimensions() {
+            return this.internalDomainObject.configuration.layoutDimensions;
+        },
+        shouldDisplayLayoutDimensions() {
+            return this.layoutDimensions
+                && this.layoutDimensions[0] > 0
+                && this.layoutDimensions[1] > 0;
+        },
+        layoutDimensionsStyle() {
+            const width = `${this.layoutDimensions[0]}px`;
+            const height = `${this.layoutDimensions[1]}px`;
+
+            return {
+                width,
+                height
+            };
+        },
         showMarquee() {
             let selectionPath = this.selection[0];
-            let singleSelectedLine = this.selection.length === 1 &&
-                    selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
+            let singleSelectedLine = this.selection.length === 1
+                    && selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type === 'line-view';
+
             return this.isEditing && selectionPath && selectionPath.length > 1 && !singleSelectedLine;
         }
     },
-    inject: ['openmct', 'options', 'objectPath'],
+    watch: {
+        isEditing(value) {
+            if (value) {
+                this.showGrid = value;
+            }
+        }
+    },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', function (obj) {
             this.internalDomainObject = JSON.parse(JSON.stringify(obj));
@@ -210,7 +238,9 @@ export default {
                 if ($event) {
                     $event.stopImmediatePropagation();
                 }
+
                 this.dragInProgress = false;
+
                 return;
             }
         },
@@ -364,20 +394,21 @@ export default {
             if (this.internalDomainObject.locked) {
                 return;
             }
+
             // Get the ID of the dragged object
             let draggedKeyString = $event.dataTransfer.types
                 .filter(type => type.startsWith(DRAG_OBJECT_TRANSFER_PREFIX))
                 .map(type => type.substring(DRAG_OBJECT_TRANSFER_PREFIX.length))[0];
 
-                // If the layout already contains the given object, then shortcut the default dragover behavior and
-                // potentially allow drop. Display layouts allow drag drop of duplicate telemetry objects.
+            // If the layout already contains the given object, then shortcut the default dragover behavior and
+            // potentially allow drop. Display layouts allow drag drop of duplicate telemetry objects.
             if (this.containsObject(draggedKeyString)) {
                 $event.preventDefault();
             }
         },
         isTelemetry(domainObject) {
-            if (this.openmct.telemetry.isTelemetryObject(domainObject) &&
-                    !this.options.showAsView.includes(domainObject.type)) {
+            if (this.openmct.telemetry.isTelemetryObject(domainObject)
+                    && !this.options.showAsView.includes(domainObject.type)) {
                 return true;
             } else {
                 return false;
@@ -423,9 +454,9 @@ export default {
                 return;
             }
 
-            let keyString = this.openmct.objects.makeKeyString(item.identifier),
-                telemetryViewCount = this.telemetryViewMap[keyString],
-                objectViewCount = this.objectViewMap[keyString];
+            let keyString = this.openmct.objects.makeKeyString(item.identifier);
+            let telemetryViewCount = this.telemetryViewMap[keyString];
+            let objectViewCount = this.objectViewMap[keyString];
 
             if (item.type === 'telemetry-view') {
                 telemetryViewCount = --this.telemetryViewMap[keyString];
@@ -458,8 +489,8 @@ export default {
             this.layoutItems.forEach(this.trackItem);
         },
         isItemAlreadyTracked(child) {
-            let found = false,
-                keyString = this.openmct.objects.makeKeyString(child.identifier);
+            let found = false;
+            let keyString = this.openmct.objects.makeKeyString(child.identifier);
 
             this.layoutItems.forEach(item => {
                 if (item.identifier) {
@@ -467,6 +498,7 @@ export default {
 
                     if (itemKeyString === keyString) {
                         found = true;
+
                         return;
                     }
                 }
@@ -545,9 +577,9 @@ export default {
             let newIndex = -1;
 
             indices.forEach((itemIndex, index) => {
-                let isAdjacentItemSelected = position === 'up' ?
-                    itemIndex + 1 === previousItemIndex :
-                    itemIndex - 1 === previousItemIndex;
+                let isAdjacentItemSelected = position === 'up'
+                    ? itemIndex + 1 === previousItemIndex
+                    : itemIndex - 1 === previousItemIndex;
 
                 if (index > 0 && isAdjacentItemSelected) {
                     if (position === 'up') {
@@ -596,13 +628,13 @@ export default {
         },
         createNewDomainObject(domainObject, composition, viewType, nameExtension, model) {
             let identifier = {
-                    key: uuid(),
-                    namespace: this.internalDomainObject.identifier.namespace
-                },
-                type = this.openmct.types.get(viewType),
-                parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier),
-                objectName = nameExtension ? `${domainObject.name}-${nameExtension}` : domainObject.name,
-                object = {};
+                key: uuid(),
+                namespace: this.internalDomainObject.identifier.namespace
+            };
+            let type = this.openmct.types.get(viewType);
+            let parentKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
+            let objectName = nameExtension ? `${domainObject.name}-${nameExtension}` : domainObject.name;
+            let object = {};
 
             if (model) {
                 object = _.cloneDeep(model);
@@ -612,13 +644,25 @@ export default {
                 object.composition.push(...composition);
             }
 
+            if (object.modified || object.persisted) {
+                object.modified = undefined;
+                object.persisted = undefined;
+                delete object.modified;
+                delete object.persisted;
+            }
+
             object.name = objectName;
             object.identifier = identifier;
             object.location = parentKeyString;
 
-            this.openmct.objects.mutate(object, 'created', Date.now());
+            let savedResolve;
+            this.openmct.objects.save(object).then(() => {
+                savedResolve(object);
+            });
 
-            return object;
+            return new Promise((resolve) => {
+                savedResolve = resolve;
+            });
         },
         convertToTelemetryView(identifier, position) {
             this.openmct.objects.get(identifier).then((domainObject) => {
@@ -632,11 +676,11 @@ export default {
                 shiftKey: true,
                 cancelable: true,
                 view: window
-            })
+            });
 
             selectItemsArray.forEach((id) => {
-                let refId = `layout-item-${id}`,
-                    component = this.$refs[refId] && this.$refs[refId][0];
+                let refId = `layout-item-${id}`;
+                let component = this.$refs[refId] && this.$refs[refId][0];
 
                 if (component) {
                     component.immediatelySelect = event;
@@ -645,15 +689,15 @@ export default {
             });
         },
         duplicateItem(selectedItems) {
-            let objectStyles = this.internalDomainObject.configuration.objectStyles || {},
-                selectItemsArray = [],
-                newDomainObjectsArray = [];
+            let objectStyles = this.internalDomainObject.configuration.objectStyles || {};
+            let selectItemsArray = [];
+            let newDomainObjectsArray = [];
 
             selectedItems.forEach(selectedItem => {
-                let layoutItem = selectedItem[0].context.layoutItem,
-                    domainObject = selectedItem[0].context.item,
-                    layoutItemStyle = objectStyles[layoutItem.id],
-                    copy = _.cloneDeep(layoutItem);
+                let layoutItem = selectedItem[0].context.layoutItem;
+                let domainObject = selectedItem[0].context.item;
+                let layoutItemStyle = objectStyles[layoutItem.id];
+                let copy = _.cloneDeep(layoutItem);
 
                 copy.id = uuid();
                 selectItemsArray.push(copy.id);
@@ -665,14 +709,14 @@ export default {
                 }
 
                 if (copy.type === 'subobject-view') {
-                    let newDomainObject = this.createNewDomainObject(domainObject, domainObject.composition, domainObject.type, 'duplicate', domainObject);
-
-                    newDomainObjectsArray.push(newDomainObject);
-                    copy.identifier = newDomainObject.identifier;
+                    this.createNewDomainObject(domainObject, domainObject.composition, domainObject.type, 'duplicate', domainObject).then((newDomainObject) => {
+                        newDomainObjectsArray.push(newDomainObject);
+                        copy.identifier = newDomainObject.identifier;
+                    });
                 }
 
                 offsetKeys.forEach(key => {
-                    copy[key] += DUPLICATE_OFFSET
+                    copy[key] += DUPLICATE_OFFSET;
                 });
 
                 if (layoutItemStyle) {
@@ -696,47 +740,48 @@ export default {
         },
         mergeMultipleTelemetryViews(selection, viewType) {
             let identifiers = selection.map(selectedItem => {
-                    return selectedItem[0].context.layoutItem.identifier;
-                }),
-                firstDomainObject = selection[0][0].context.item,
-                firstLayoutItem = selection[0][0].context.layoutItem,
-                position = [firstLayoutItem.x, firstLayoutItem.y],
-                mockDomainObject = {
-                    name: 'Merged Telemetry Views',
-                    identifier: firstDomainObject.identifier
-                },
-                newDomainObject = this.createNewDomainObject(mockDomainObject, identifiers, viewType);
-
-            this.composition.add(newDomainObject);
-            this.addItem('subobject-view', newDomainObject, position);
-            this.removeItem(selection);
-            this.initSelectIndex = this.layoutItems.length - 1;
+                return selectedItem[0].context.layoutItem.identifier;
+            });
+            let firstDomainObject = selection[0][0].context.item;
+            let firstLayoutItem = selection[0][0].context.layoutItem;
+            let position = [firstLayoutItem.x, firstLayoutItem.y];
+            let mockDomainObject = {
+                name: 'Merged Telemetry Views',
+                identifier: firstDomainObject.identifier
+            };
+            this.createNewDomainObject(mockDomainObject, identifiers, viewType).then((newDomainObject) => {
+                this.composition.add(newDomainObject);
+                this.addItem('subobject-view', newDomainObject, position);
+                this.removeItem(selection);
+                this.initSelectIndex = this.layoutItems.length - 1;
+            });
         },
         mergeMultipleOverlayPlots(selection, viewType) {
-            let overlayPlots = selection.map(selectedItem => selectedItem[0].context.item),
-                overlayPlotIdentifiers = overlayPlots.map(overlayPlot => overlayPlot.identifier),
-                firstOverlayPlot = overlayPlots[0],
-                firstLayoutItem = selection[0][0].context.layoutItem,
-                position = [firstLayoutItem.x, firstLayoutItem.y],
-                mockDomainObject = {
-                    name: 'Merged Overlay Plots',
-                    identifier: firstOverlayPlot.identifier
-                },
-                newDomainObject = this.createNewDomainObject(mockDomainObject, overlayPlotIdentifiers, viewType),
-                newDomainObjectKeyString = this.openmct.objects.makeKeyString(newDomainObject.identifier),
-                internalDomainObjectKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
+            let overlayPlots = selection.map(selectedItem => selectedItem[0].context.item);
+            let overlayPlotIdentifiers = overlayPlots.map(overlayPlot => overlayPlot.identifier);
+            let firstOverlayPlot = overlayPlots[0];
+            let firstLayoutItem = selection[0][0].context.layoutItem;
+            let position = [firstLayoutItem.x, firstLayoutItem.y];
+            let mockDomainObject = {
+                name: 'Merged Overlay Plots',
+                identifier: firstOverlayPlot.identifier
+            };
+            this.createNewDomainObject(mockDomainObject, overlayPlotIdentifiers, viewType).then((newDomainObject) => {
+                let newDomainObjectKeyString = this.openmct.objects.makeKeyString(newDomainObject.identifier);
+                let internalDomainObjectKeyString = this.openmct.objects.makeKeyString(this.internalDomainObject.identifier);
 
-            this.composition.add(newDomainObject);
-            this.addItem('subobject-view', newDomainObject, position);
+                this.composition.add(newDomainObject);
+                this.addItem('subobject-view', newDomainObject, position);
 
-            overlayPlots.forEach(overlayPlot => {
-                if (overlayPlot.location === internalDomainObjectKeyString) {
-                    this.openmct.objects.mutate(overlayPlot, 'location', newDomainObjectKeyString);
-                }
+                overlayPlots.forEach(overlayPlot => {
+                    if (overlayPlot.location === internalDomainObjectKeyString) {
+                        this.openmct.objects.mutate(overlayPlot, 'location', newDomainObjectKeyString);
+                    }
+                });
+
+                this.removeItem(selection);
+                this.initSelectIndex = this.layoutItems.length - 1;
             });
-
-            this.removeItem(selection);
-            this.initSelectIndex = this.layoutItems.length - 1;
         },
         getTelemetryIdentifiers(domainObject) {
             let method = TELEMETRY_IDENTIFIER_FUNCTIONS[domainObject.type];
@@ -748,37 +793,40 @@ export default {
             }
         },
         switchViewType(context, viewType, selection) {
-            let domainObject = context.item,
-                layoutItem = context.layoutItem,
-                position = [layoutItem.x, layoutItem.y],
-                layoutType = 'subobject-view';
+            let domainObject = context.item;
+            let layoutItem = context.layoutItem;
+            let position = [layoutItem.x, layoutItem.y];
+            let layoutType = 'subobject-view';
 
             if (layoutItem.type === 'telemetry-view') {
-                let newDomainObject = this.createNewDomainObject(domainObject, [domainObject.identifier], viewType);
-
-                this.composition.add(newDomainObject);
-                this.addItem(layoutType, newDomainObject, position);
+                this.createNewDomainObject(domainObject, [domainObject.identifier], viewType).then((newDomainObject) => {
+                    this.composition.add(newDomainObject);
+                    this.addItem(layoutType, newDomainObject, position);
+                });
             } else {
                 this.getTelemetryIdentifiers(domainObject).then((identifiers) => {
                     if (viewType === 'telemetry-view') {
                         identifiers.forEach((identifier, index) => {
-                            let positionX = position[0] + (index * DUPLICATE_OFFSET),
-                                positionY = position[1] + (index * DUPLICATE_OFFSET);
+                            let positionX = position[0] + (index * DUPLICATE_OFFSET);
+                            let positionY = position[1] + (index * DUPLICATE_OFFSET);
 
                             this.convertToTelemetryView(identifier, [positionX, positionY]);
                         });
                     } else {
-                        let newDomainObject = this.createNewDomainObject(domainObject, identifiers, viewType);
-
-                        this.composition.add(newDomainObject);
-                        this.addItem(layoutType, newDomainObject, position);
+                        this.createNewDomainObject(domainObject, identifiers, viewType).then((newDomainObject) => {
+                            this.composition.add(newDomainObject);
+                            this.addItem(layoutType, newDomainObject, position);
+                        });
                     }
                 });
             }
 
             this.removeItem(selection);
             this.initSelectIndex = this.layoutItems.length - 1; //restore selection
+        },
+        toggleGrid() {
+            this.showGrid = !this.showGrid;
         }
     }
-}
+};
 </script>

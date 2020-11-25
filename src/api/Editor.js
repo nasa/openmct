@@ -1,6 +1,6 @@
 
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -40,6 +40,7 @@ export default class Editor extends EventEmitter {
         if (this.editing === true) {
             throw "Already editing";
         }
+
         this.editing = true;
         this.getTransactionService().startTransaction();
         this.emit('isEditing', true);
@@ -59,11 +60,12 @@ export default class Editor extends EventEmitter {
      * @private
      */
     save() {
-        return this.getTransactionService().commit().then((result)=>{
+        return this.getTransactionService().commit().then((result) => {
             this.editing = false;
             this.emit('isEditing', false);
-            return result
-        }).catch((error)=>{
+
+            return result;
+        }).catch((error) => {
             throw error;
         });
     }
@@ -88,6 +90,7 @@ export default class Editor extends EventEmitter {
         if (!this.transactionService) {
             this.transactionService = this.openmct.$injector.get('transactionService');
         }
+
         return this.transactionService;
     }
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -95,19 +95,30 @@ export default {
             cellLimitClasses: this.row.getCellLimitClasses(),
             componentList: Object.keys(this.headers).reduce((components, header) => {
                 components[header] = this.row.getCellComponentName(header) || 'table-cell';
-                return components
+
+                return components;
             }, {}),
-            selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
+            selectableColumns: Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
                 selectable[columnKeys] = this.row.columns[columnKeys].selectable;
+
                 return selectable;
-            }, {})
-        }
+            }, {}),
+            actionsViewContext: {
+                getViewContext: () => {
+                    return {
+                        viewHistoricalData: true,
+                        viewDatumAction: true,
+                        getDatum: this.getDatum
+                    };
+                }
+            }
+        };
     },
     computed: {
         listeners() {
             let listenersObject = {
                 click: this.markRow
-            }
+            };
 
             if (this.row.getContextMenuActions().length) {
                 listenersObject.contextmenu = this.showContextMenu;
@@ -159,7 +170,7 @@ export default {
                         row: this.row.objectKeyString,
                         column: columnKey
                     }
-                },{
+                }, {
                     element: this.openmct.layout.$refs.browseObject.$el,
                     context: {
                         item: this.openmct.router.path[0]
@@ -168,16 +179,27 @@ export default {
                 event.stopPropagation();
             }
         },
+        getDatum() {
+            return this.row.fullDatum;
+        },
         showContextMenu: function (event) {
             event.preventDefault();
 
-            this.openmct.objects.get(this.row.objectKeyString).then((domainObject) => {
+            this.markRow(event);
+
+            this.row.getContextualDomainObject(this.openmct, this.row.objectKeyString).then(domainObject => {
                 let contextualObjectPath = this.objectPath.slice();
                 contextualObjectPath.unshift(domainObject);
 
-                this.openmct.contextMenu._showContextMenuForObjectPath(contextualObjectPath, event.x, event.y, this.row.getContextMenuActions());
+                let actionsCollection = this.openmct.actions.get(contextualObjectPath, this.actionsViewContext);
+                let allActions = actionsCollection.getActionsObject();
+                let applicableActions = this.row.getContextMenuActions().map(key => allActions[key]);
+
+                if (applicableActions.length) {
+                    this.openmct.menus.showMenu(event.x, event.y, applicableActions);
+                }
             });
         }
     }
-}
+};
 </script>

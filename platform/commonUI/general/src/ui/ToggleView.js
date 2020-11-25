@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,7 @@ define([
     '../../res/templates/tree/toggle.html'
 ], function ($, toggleTemplate) {
     function ToggleView(state) {
-        this.expanded = !!state;
+        this.expanded = Boolean(state);
         this.callbacks = [];
         this.el = $(toggleTemplate);
         this.el.on('click', function () {
@@ -49,6 +49,7 @@ define([
 
     ToggleView.prototype.observe = function (callback) {
         this.callbacks.push(callback);
+
         return function () {
             this.callbacks = this.callbacks.filter(function (c) {
                 return c !== callback;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -45,7 +45,6 @@ define(
                     contains: ['a']
                 });
 
-
                 typeB = jasmine.createSpyObj(
                     'type B-- anything goes',
                     ['getKey', 'getDefinition']
@@ -89,7 +88,6 @@ define(
                     expect(policy.allow(mockParentObject, mockChildObject))
                         .toBeTruthy();
                 });
-
 
                 it('disallows when type doesn\'t match', function () {
 

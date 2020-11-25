@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,15 +29,15 @@ define([
     }
 
     ActionDialogDecorator.prototype.getActions = function (context) {
-        var mct = this.mct;
+        const mct = this.mct;
 
         return this.actionService.getActions(context).map(function (action) {
             if (action.dialogService) {
-                var domainObject = objectUtils.toNewFormat(
+                const domainObject = objectUtils.toNewFormat(
                     context.domainObject.getModel(),
                     objectUtils.parseKeyString(context.domainObject.getId())
                 );
-                var providers = mct.propertyEditors.get(domainObject);
+                const providers = mct.propertyEditors.get(domainObject);
 
                 if (providers.length > 0) {
                     action.dialogService = Object.create(action.dialogService);
@@ -49,6 +49,7 @@ define([
                     };
                 }
             }
+
             return action;
         });
     };

@@ -52,7 +52,7 @@
                 color: $colorKey !important;
                 position: absolute;
                 right: -18px;
-                top: 0;
+                top: $interiorMarginSm;
                 transform: translateX(100%);
                 width: $mobileMenuIconD;
                 z-index: 2;
@@ -81,7 +81,7 @@
                 flex: 0 0 auto;
 
                 + * {
-                    margin-top: $interiorMarginLg;
+                    margin-top: $interiorMargin;
                 }
             }
         }
@@ -99,6 +99,11 @@
 
         &__pane-tree {
             background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
+
+            [class*="expand-button"],
+            [class*="sync-tree-button"] {
+                display: none;
+            }
 
             &[class*="--collapsed"] {
                 [class*="collapse-button"] {
@@ -143,6 +148,7 @@
     /******************************* HEAD */
     &__main-view-browse-bar {
         flex: 0 0 auto;
+        margin-bottom: $interiorMargin; // Needs some additional visual separation
     }
 
     body.mobile & .l-shell__main-view-browse-bar {
@@ -153,7 +159,7 @@
     }
 
     &__head {
-        align-items: stretch;
+        align-items: center;
         background: $colorHeadBg;
         justify-content: space-between;
         padding: $interiorMargin $interiorMargin + 2;
@@ -162,14 +168,21 @@
             margin-left: $interiorMargin;
         }
 
-        [class*='__head__collapse-button'] {
-            align-self: start;
+        .l-shell__head__collapse-button {
+            color: $colorBtnMajorBg;
             flex: 0 0 auto;
-            margin-top: 6px;
+            font-size: 0.9em;
 
-            &:before {
-                content: $glyph-icon-arrow-down;
-                font-size: 1.1em;
+            &--collapse {
+                &:before {
+                    content: $glyph-icon-items-collapse;
+                }
+            }
+
+            &--expand {
+                &:before {
+                    content: $glyph-icon-items-expand;
+                }
             }
         }
 
@@ -183,12 +196,6 @@
         &--expanded {
             .c-indicator__label {
                 transition: none !important;
-            }
-
-            [class*='__head__collapse-button'] {
-                &:before {
-                    transform: rotate(180deg);
-                }
             }
         }
     }
@@ -221,8 +228,9 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
+        display: flex;
         flex: 1 1 auto !important;
-        height: 0; // Chrome 73 overflow bug fix
+        height: 100%; // Chrome 73 overflow bug fix
         overflow: auto;
     }
 
@@ -304,6 +312,10 @@
         display: inline-flex;
     }
 
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
     &__start,
     &__end,
     &__actions {
@@ -313,15 +325,25 @@
 
     &__actions,
     &__end {
+        .c-button {
+            &[class*='icon-']:before {
+                min-width: 1em;
+                text-align: center;
+            }
+        }
+
         > * + * {
-            margin-left: $interiorMargin;
+            margin-left: $interiorMarginSm;
         }
     }
 
     &__start {
         flex: 1 1 auto;
-        margin-right: $interiorMargin;
         min-width: 0; // Forces interior to compress when pushed on
+
+        [class*='button'] {
+            flex: 0 0 auto;
+        }
     }
 
     &__end {
@@ -330,16 +352,11 @@
 
     &__nav-to-parent-button,
     &__disclosure-button {
-        flex: 0 0 auto;
+        //flex: 0 0 auto;
     }
 
     &__nav-to-parent-button {
         // This is an icon-button
-        $p: $interiorMargin;
-        margin-right: $interiorMargin;
-        padding-left: $p;
-        padding-right: $p;
-
         .is-editing & {
             display: none;
         }
@@ -350,11 +367,20 @@
         flex: 0 1 auto;
     }
 
+    .c-object-label__name {
+        filter: $objectLabelNameFilter;
+    }
+
+    .c-object-label__type-icon {
+        opacity: $objectLabelTypeIconOpacity;
+    }
+
     &__object-name--w {
-        @include headerFont(1.4em);
+        @include headerFont(1.5em);
+        margin-left: $interiorMarginLg;
         min-width: 0;
 
-        .is-missing__indicator {
+        .is-status__indicator {
             right: -5px !important;
             top: -4px !important;
         }

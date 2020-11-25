@@ -46,6 +46,8 @@ define([
     './api/Branding',
     './plugins/licenses/plugin',
     './plugins/remove/plugin',
+    './plugins/move/plugin',
+    './plugins/duplicate/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -73,6 +75,8 @@ define([
     BrandingAPI,
     LicensesPlugin,
     RemoveActionPlugin,
+    MoveActionPlugin,
+    DuplicateActionPlugin,
     Vue
 ) {
     /**
@@ -102,19 +106,21 @@ define([
         };
         /* eslint-enable no-undef */
 
+        this.legacyBundle = {
+            extensions: {
+                services: [
+                    {
+                        key: "openmct",
+                        implementation: function ($injector) {
+                            this.$injector = $injector;
 
-        this.legacyBundle = { extensions: {
-            services: [
-                {
-                    key: "openmct",
-                    implementation: function ($injector) {
-                        this.$injector = $injector;
-                        return this;
-                    }.bind(this),
-                    depends: ['$injector']
-                }
-            ]
-        } };
+                            return this;
+                        }.bind(this),
+                        depends: ['$injector']
+                    }
+                ]
+            }
+        };
 
         /**
          * Tracks current selection state of the application.
@@ -240,7 +246,11 @@ define([
 
         this.overlays = new OverlayAPI.default();
 
-        this.contextMenu = new api.ContextMenuRegistry();
+        this.menus = new api.MenuAPI(this);
+
+        this.actions = new api.ActionsAPI(this);
+
+        this.status = new api.StatusAPI(this);
 
         this.router = new ApplicationRouter();
 
@@ -257,6 +267,8 @@ define([
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
+        this.install(MoveActionPlugin.default());
+        this.install(DuplicateActionPlugin.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(ImageryPlugin.default());
@@ -269,6 +281,7 @@ define([
         this.install(this.plugins.URLTimeSettingsSynchronizer());
         this.install(this.plugins.NotificationIndicator());
         this.install(this.plugins.NewFolderAction());
+        this.install(this.plugins.ViewDatumAction());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -290,8 +303,9 @@ define([
         let capabilityService = this.$injector.get('capabilityService');
 
         function instantiate(model, keyString) {
-            var capabilities = capabilityService.getCapabilities(model, keyString);
+            const capabilities = capabilityService.getCapabilities(model, keyString);
             model.id = keyString;
+
             return new DomainObjectImpl(keyString, model, capabilities);
         }
 
@@ -303,6 +317,7 @@ define([
                 .map((o) => {
                     let keyString = objectUtils.makeKeyString(o.identifier);
                     let oldModel = objectUtils.toOldFormat(o);
+
                     return instantiate(oldModel, keyString);
                 })
                 .reverse()
@@ -313,6 +328,7 @@ define([
         } else {
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
+
             return instantiate(oldModel, keyString);
         }
     };
@@ -372,8 +388,8 @@ define([
 
         // TODO: remove with legacy types.
         this.types.listKeys().forEach(function (typeKey) {
-            var type = this.types.get(typeKey);
-            var legacyDefinition = type.toLegacyDefinition();
+            const type = this.types.get(typeKey);
+            const legacyDefinition = type.toLegacyDefinition();
             legacyDefinition.key = typeKey;
             this.legacyExtension('types', legacyDefinition);
         }.bind(this));
@@ -391,7 +407,7 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        const startPromise = new Main()
+        const startPromise = new Main();
         startPromise.run(this)
             .then(function (angular) {
                 this.$angular = angular;
@@ -400,7 +416,7 @@ define([
                 this.$injector.get('objectService');
 
                 if (!isHeadlessMode) {
-                    var appLayout = new Vue({
+                    const appLayout = new Vue({
                         components: {
                             'Layout': Layout.default
                         },
@@ -414,6 +430,7 @@ define([
                     this.layout = appLayout.$refs.layout;
                     Browse(this);
                 }
+
                 this.router.start();
                 this.emit('start');
             }.bind(this));
@@ -421,8 +438,9 @@ define([
 
     MCT.prototype.startHeadless = function () {
         let unreachableNode = document.createElement('div');
+
         return this.start(unreachableNode, true);
-    }
+    };
 
     /**
      * Install a plugin in MCT.
@@ -437,6 +455,7 @@ define([
 
     MCT.prototype.destroy = function () {
         this.emit('destroy');
+        this.router.destroy();
     };
 
     MCT.prototype.plugins = plugins;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define */
 define(
     function () {
         "use strict";
@@ -57,6 +56,7 @@ define(
         RemsTelemetrySeries.prototype.getPointCount = function () {
             return this.data.length;
         };
+
         /**
          * The domain value at the given index. The Rems telemetry data is
          * time ordered, so the domain value is the time stamp of each data

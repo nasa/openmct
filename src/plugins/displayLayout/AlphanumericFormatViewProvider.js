@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,13 +31,13 @@ define([
             let parentObject = selectionPath[1].context.item;
             let selectedLayoutItem = selectionPath[0].context.layoutItem;
 
-            return parentObject &&
-                parentObject.type === 'layout' &&
-                selectedObject &&
-                selectedLayoutItem &&
-                selectedLayoutItem.type === 'telemetry-view' &&
-                openmct.telemetry.isTelemetryObject(selectedObject) &&
-                !options.showAsView.includes(selectedObject.type);
+            return parentObject
+                && parentObject.type === 'layout'
+                && selectedObject
+                && selectedLayoutItem
+                && selectedLayoutItem.type === 'telemetry-view'
+                && openmct.telemetry.isTelemetryObject(selectedObject)
+                && !options.showAsView.includes(selectedObject.type);
         }
 
         return {
@@ -52,6 +52,7 @@ define([
             },
             view: function (domainObject, objectPath) {
                 let component;
+
                 return {
                     show: function (element) {
                         component = new Vue({
@@ -63,19 +64,26 @@ define([
                             components: {
                                 AlphanumericFormatView: AlphanumericFormatView.default
                             },
-                            template: '<alphanumeric-format-view></alphanumeric-format-view>'
+                            template: '<alphanumeric-format-view ref="alphanumericFormatView"></alphanumeric-format-view>'
                         });
+                    },
+                    getViewContext() {
+                        if (component) {
+                            return component.$refs.alphanumericFormatView.getViewContext();
+                        } else {
+                            return {};
+                        }
                     },
                     destroy: function () {
                         component.$destroy();
                         component = undefined;
                     }
-                }
+                };
             },
             priority: function () {
                 return 1;
             }
-        }
+        };
     }
 
     return AlphanumericFormatViewProvider;

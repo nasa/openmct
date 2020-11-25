@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global require*/
-
 /**
  *  SearchSpec. Created by shale on 07/31/2015.
  */
@@ -35,7 +33,6 @@ define([
         [GenericSearchWorkerText],
         {type: 'application/javascript'}
     ));
-
 
     describe('GenericSearchWorker', function () {
         // If this test fails, make sure this path is correct

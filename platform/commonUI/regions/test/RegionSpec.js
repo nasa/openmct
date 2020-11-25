@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -38,8 +38,8 @@ define(
                 ];
             });
 
-            it("adding a region at a specified index adds it in that" +
-                " position", function () {
+            it("adding a region at a specified index adds it in that"
+                + " position", function () {
 
                 region.addRegion(part2, 1);
 
@@ -87,7 +87,6 @@ define(
                     expect(region.regions.length).toBe(3);
                     expect(region.regions.indexOf(part2)).toBe(-1);
                 });
-
 
                 it("with object matches that object", function () {
                     expect(region.regions.length).toBe(4);

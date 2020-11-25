@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -44,9 +44,9 @@ define([
             for (i = 0; i < size; i += 1) {
                 array.push(mockSearchResult);
             }
+
             return array;
         }
-
 
         beforeEach(function () {
             mockScope = jasmine.createSpyObj(
@@ -69,7 +69,11 @@ define([
             );
             mockSearchService.query.and.returnValue(mockPromise);
 
-            mockTypes = [{key: 'mock.type', name: 'Mock Type', cssClass: 'icon-object-unknown'}];
+            mockTypes = [{
+                key: 'mock.type',
+                name: 'Mock Type',
+                cssClass: 'icon-object-unknown'
+            }];
 
             mockSearchResult = jasmine.createSpyObj(
                 'searchResult',
@@ -80,7 +84,10 @@ define([
                 ['getModel']
             );
             mockSearchResult.object = mockDomainObject;
-            mockDomainObject.getModel.and.returnValue({name: 'Mock Object', type: 'mock.type'});
+            mockDomainObject.getModel.and.returnValue({
+                name: 'Mock Object',
+                type: 'mock.type'
+            });
 
             controller = new SearchController(mockScope, mockSearchService, mockTypes);
             controller.search();
@@ -166,13 +173,19 @@ define([
             // Flag should be false with empty input
             mockScope.ngModel.input = '';
             controller.search();
-            mockPromise.then.calls.mostRecent().args[0]({hits: [], total: 0});
+            mockPromise.then.calls.mostRecent().args[0]({
+                hits: [],
+                total: 0
+            });
             expect(mockScope.ngModel.search).toEqual(false);
 
             // Both the empty string and undefined should be 'empty input'
             mockScope.ngModel.input = undefined;
             controller.search();
-            mockPromise.then.calls.mostRecent().args[0]({hits: [], total: 0});
+            mockPromise.then.calls.mostRecent().args[0]({
+                hits: [],
+                total: 0
+            });
             expect(mockScope.ngModel.search).toEqual(false);
         });
 

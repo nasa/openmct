@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,7 +28,7 @@ define([
     /**
      * TODO: doc strings.
      */
-    var XAxisModel = Model.extend({
+    const XAxisModel = Model.extend({
         initialize: function (options) {
             this.plot = options.plot;
             this.set('label', options.model.name || '');
@@ -38,22 +38,24 @@ define([
                 }
             });
 
-            this.on('change:frozen', function (frozen, oldValue, model) {
+            this.on('change:frozen', ((frozen, oldValue, model) => {
                 if (!frozen) {
                     model.set('range', this.get('range'));
                 }
-            });
+            }));
 
             if (this.get('range')) {
                 this.set('range', this.get('range'));
             }
+
             this.listenTo(this, 'change:key', this.changeKey, this);
+            this.listenTo(this, 'resetSeries', this.resetSeries, this);
         },
         changeKey: function (newKey) {
-            var series = this.plot.series.first();
+            const series = this.plot.series.first();
             if (series) {
-                var xMetadata = series.metadata.value(newKey);
-                var xFormat = series.formats[newKey];
+                const xMetadata = series.metadata.value(newKey);
+                const xFormat = series.formats[newKey];
                 this.set('label', xMetadata.name);
                 this.set('format', xFormat.format.bind(xFormat));
             } else {
@@ -62,15 +64,20 @@ define([
                 });
                 this.set('label', newKey);
             }
+
             this.plot.series.forEach(function (plotSeries) {
                 plotSeries.set('xKey', newKey);
+            });
+        },
+        resetSeries: function () {
+            this.plot.series.forEach(function (plotSeries) {
                 plotSeries.reset();
             });
         },
         defaults: function (options) {
-            var bounds = options.openmct.time.bounds();
-            var timeSystem = options.openmct.time.timeSystem();
-            var format = options.openmct.$injector.get('formatService')
+            const bounds = options.openmct.time.bounds();
+            const timeSystem = options.openmct.time.timeSystem();
+            const format = options.openmct.$injector.get('formatService')
                 .getFormat(timeSystem.timeFormat);
 
             return {

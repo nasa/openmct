@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -77,7 +77,7 @@ define(
                     ]
                 );
                 mockDomainObject.hasCapability.and.callFake(function (name) {
-                    return !!capabilities[name];
+                    return Boolean(capabilities[name]);
                 });
                 mockDomainObject.getCapability.and.callFake(function (name) {
                     return capabilities[name];
@@ -150,8 +150,8 @@ define(
                     expect(mockEditAction.perform).toHaveBeenCalled();
                 });
 
-                it("uses the save-as action if object does not have an edit action" +
-                    " available", function () {
+                it("uses the save-as action if object does not have an edit action"
+                    + " available", function () {
                     capabilities.action.getActions.and.returnValue([]);
                     capabilities.action.perform.and.returnValue(mockPromise(undefined));
                     capabilities.editor.save.and.returnValue(promise);

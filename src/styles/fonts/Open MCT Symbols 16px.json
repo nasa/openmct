@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-    "created": 1593102875898
+    "created": 1602779919972
   },
   "iconSets": [
     {
@@ -752,7 +752,7 @@
           "tempChar": ""
         },
         {
-          "order": 114,
+          "order": 194,
           "id": 4,
           "name": "icon-font-size",
           "prevSize": 24,
@@ -816,12 +816,44 @@
           "tempChar": ""
         },
         {
+          "order": 190,
+          "id": 164,
+          "name": "icon-3-dots",
+          "prevSize": 24,
+          "code": 59959,
+          "tempChar": ""
+        },
+        {
+          "order": 193,
+          "id": 165,
+          "name": "icon-grid-on",
+          "prevSize": 24,
+          "code": 59960,
+          "tempChar": ""
+        },
+        {
+          "order": 192,
+          "id": 166,
+          "name": "icon-grid-off",
+          "prevSize": 24,
+          "code": 59961,
+          "tempChar": ""
+        },
+        {
+          "order": 191,
+          "id": 167,
+          "name": "icon-camera",
+          "prevSize": 24,
+          "code": 59962,
+          "tempChar": ""
+        },
+        {
           "order": 144,
           "id": 97,
           "name": "icon-activity",
           "prevSize": 24,
           "code": 60160,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 104,
@@ -829,7 +861,7 @@
           "name": "icon-activity-mode",
           "prevSize": 24,
           "code": 60161,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 137,
@@ -837,7 +869,7 @@
           "name": "icon-autoflow-tabular",
           "prevSize": 24,
           "code": 60162,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 115,
@@ -845,7 +877,7 @@
           "name": "icon-clock",
           "prevSize": 24,
           "code": 60163,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 2,
@@ -853,7 +885,7 @@
           "name": "icon-database",
           "prevSize": 24,
           "code": 60164,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 3,
@@ -861,7 +893,7 @@
           "name": "icon-database-query",
           "prevSize": 24,
           "code": 60165,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 67,
@@ -869,7 +901,7 @@
           "name": "icon-dataset",
           "prevSize": 24,
           "code": 60166,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 59,
@@ -877,7 +909,7 @@
           "name": "icon-datatable",
           "prevSize": 24,
           "code": 60167,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 136,
@@ -885,7 +917,7 @@
           "name": "icon-dictionary",
           "prevSize": 24,
           "code": 60168,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 51,
@@ -893,7 +925,7 @@
           "name": "icon-folder",
           "prevSize": 24,
           "code": 60169,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 147,
@@ -901,7 +933,7 @@
           "name": "icon-image",
           "prevSize": 24,
           "code": 60170,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 4,
@@ -909,7 +941,7 @@
           "name": "icon-layout",
           "prevSize": 24,
           "code": 60171,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 24,
@@ -917,7 +949,7 @@
           "name": "icon-object",
           "prevSize": 24,
           "code": 60172,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 52,
@@ -925,7 +957,7 @@
           "name": "icon-object-unknown",
           "prevSize": 24,
           "code": 60173,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 105,
@@ -933,7 +965,7 @@
           "name": "icon-packet",
           "prevSize": 24,
           "code": 60174,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 126,
@@ -941,7 +973,7 @@
           "name": "icon-page",
           "prevSize": 24,
           "code": 60175,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 130,
@@ -949,7 +981,7 @@
           "name": "icon-plot-overlay",
           "prevSize": 24,
           "code": 60176,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 80,
@@ -957,7 +989,7 @@
           "name": "icon-plot-stacked",
           "prevSize": 24,
           "code": 60177,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 134,
@@ -965,7 +997,7 @@
           "name": "icon-session",
           "prevSize": 24,
           "code": 60178,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 109,
@@ -973,7 +1005,7 @@
           "name": "icon-tabular",
           "prevSize": 24,
           "code": 60179,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 107,
@@ -981,7 +1013,7 @@
           "name": "icon-tabular-lad",
           "prevSize": 24,
           "code": 60180,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 106,
@@ -989,7 +1021,7 @@
           "name": "icon-tabular-lad-set",
           "prevSize": 24,
           "code": 60181,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 70,
@@ -997,7 +1029,7 @@
           "name": "icon-tabular-realtime",
           "prevSize": 24,
           "code": 60182,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 60,
@@ -1005,7 +1037,7 @@
           "name": "icon-tabular-scrolling",
           "prevSize": 24,
           "code": 60183,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 131,
@@ -1013,7 +1045,7 @@
           "name": "icon-telemetry",
           "prevSize": 24,
           "code": 60184,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 108,
@@ -1021,7 +1053,7 @@
           "name": "icon-timeline",
           "prevSize": 24,
           "code": 60185,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 81,
@@ -1029,7 +1061,7 @@
           "name": "icon-timer",
           "prevSize": 24,
           "code": 60186,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 69,
@@ -1037,7 +1069,7 @@
           "name": "icon-topic",
           "prevSize": 24,
           "code": 60187,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 79,
@@ -1045,7 +1077,7 @@
           "name": "icon-box-with-dashed-lines-v2",
           "prevSize": 24,
           "code": 60188,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 90,
@@ -1053,7 +1085,7 @@
           "name": "icon-summary-widget",
           "prevSize": 24,
           "code": 60189,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 92,
@@ -1061,7 +1093,7 @@
           "name": "icon-notebook",
           "prevSize": 24,
           "code": 60190,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 168,
@@ -1069,7 +1101,7 @@
           "name": "icon-tabs-view",
           "prevSize": 24,
           "code": 60191,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 117,
@@ -1077,7 +1109,7 @@
           "name": "icon-flexible-layout",
           "prevSize": 24,
           "code": 60192,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 166,
@@ -1085,7 +1117,7 @@
           "name": "icon-generator-sine",
           "prevSize": 24,
           "code": 60193,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 167,
@@ -1093,7 +1125,7 @@
           "name": "icon-generator-event",
           "prevSize": 24,
           "code": 60194,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 165,
@@ -1101,7 +1133,7 @@
           "name": "icon-gauge-v2",
           "prevSize": 24,
           "code": 60195,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 170,
@@ -1109,7 +1141,7 @@
           "name": "icon-spectra",
           "prevSize": 24,
           "code": 60196,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 171,
@@ -1117,7 +1149,7 @@
           "name": "icon-telemetry-spectra",
           "prevSize": 24,
           "code": 60197,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 172,
@@ -1125,7 +1157,7 @@
           "name": "icon-pushbutton",
           "prevSize": 24,
           "code": 60198,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 174,
@@ -1133,7 +1165,7 @@
           "name": "icon-conditional",
           "prevSize": 24,
           "code": 60199,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 178,
@@ -1141,7 +1173,7 @@
           "name": "icon-condition-widget",
           "prevSize": 24,
           "code": 60200,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 180,
@@ -1149,7 +1181,7 @@
           "name": "icon-alphanumeric",
           "prevSize": 24,
           "code": 60201,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 183,
@@ -1157,7 +1189,7 @@
           "name": "icon-image-telemetry",
           "prevSize": 24,
           "code": 60202,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -2686,16 +2718,25 @@
         {
           "id": 4,
           "paths": [
-            "M842.841 380.048h-120.956l-52.382 139.676 52.918 141.12 59.942-159.84 62.361 166.314h-119.884l34.019 90.717h119.884l39.695 105.836h105.836l-181.434-483.823z",
-            "M263.903 160.129l-263.903 703.742h153.944l57.729-153.944h280.397l57.729 153.944h153.944l-263.903-703.742zM261.154 577.976l90.717-241.911 90.717 241.911z"
+            "M1226.4 320h-176l-76.22 203.24 77 205.34 87.22-232.58 90.74 242h-174.44l49.5 132h174.44l57.76 154h154l-264-704z",
+            "M384 0l-384 1024h224l84-224h408l84 224h224l-384-1024zM380 608l132-352 132 352z"
           ],
-          "attrs": [],
+          "attrs": [
+            {},
+            {}
+          ],
           "grid": 16,
           "tags": [
             "icon-font-size-alt1"
           ],
+          "width": 1504,
+          "isMulticolor": false,
+          "isMulticolor2": false,
           "colorPermutations": {
-            "12552552551": []
+            "12552552551": [
+              {},
+              {}
+            ]
           }
         },
         {
@@ -2850,6 +2891,104 @@
           "colorPermutations": {
             "12552552551": [
               {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 164,
+          "paths": [
+            "M256 512c0 70.692-57.308 128-128 128s-128-57.308-128-128c0-70.692 57.308-128 128-128s128 57.308 128 128z",
+            "M640 512c0 70.692-57.308 128-128 128s-128-57.308-128-128c0-70.692 57.308-128 128-128s128 57.308 128 128z",
+            "M1024 512c0 70.692-57.308 128-128 128s-128-57.308-128-128c0-70.692 57.308-128 128-128s128 57.308 128 128z"
+          ],
+          "attrs": [
+            {},
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-3-dots"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 165,
+          "paths": [
+            "M1024 384v-128h-256v-256h-128v256h-256v-256h-128v256h-256v128h256v256h-256v128h256v256h128v-256h256v256h128v-256h256v-128h-256v-256zM640 640h-256v-256h256z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-grid-on"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 166,
+          "paths": [
+            "M256 551.4l128-157.6v-9.8h8l104-128h-112v-256h-128v256h-256v128h256v167.4z",
+            "M184 640h-184v128h80l104-128z",
+            "M768 472.6l-128 157.6v9.8h-8l-104 128h112v256h128v-256h256v-128h-256v-167.4z",
+            "M840 384h184v-128h-80l-104 128z",
+            "M832 0l-832 1024h192l832-1024h-192z"
+          ],
+          "attrs": [
+            {},
+            {},
+            {},
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-grid-off"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {},
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 167,
+          "paths": [
+            "M896 256h-128l-128-256h-256l-128 256h-128c-70.601 0.227-127.773 57.399-128 127.978l-0 0.022v512c0.227 70.601 57.399 127.773 127.978 128l0.022 0h768c70.601-0.227 127.773-57.399 128-127.978l0-0.022v-512c-0.227-70.601-57.399-127.773-127.978-128l-0.022-0zM512 864c-141.385 0-256-114.615-256-256s114.615-256 256-256c141.385 0 256 114.615 256 256v0c0 141.385-114.615 256-256 256v0z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "grid": 16,
+          "tags": [
+            "icon-camera"
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "colorPermutations": {
+            "12552552551": [
               {}
             ]
           }

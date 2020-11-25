@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -55,6 +55,7 @@ define(
             var angular = this.angular,
                 document = this.document,
                 $log = this.$log;
+
             return new Promise(function (resolve, reject) {
                 $log.info("Bootstrapping application " + (app || {}).name);
                 angular.element(document).ready(function () {

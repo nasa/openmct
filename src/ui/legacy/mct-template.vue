@@ -35,5 +35,5 @@ export default {
     destroyed() {
         this.$scope.$destroy();
     }
-}
+};
 </script>

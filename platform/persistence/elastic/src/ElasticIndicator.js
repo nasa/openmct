@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -86,12 +86,15 @@ define(
         ElasticIndicator.prototype.getCssClass = function () {
             return "c-indicator--clickable icon-suitcase";
         };
+
         ElasticIndicator.prototype.getGlyphClass = function () {
             return this.state.glyphClass;
         };
+
         ElasticIndicator.prototype.getText = function () {
             return this.state.text;
         };
+
         ElasticIndicator.prototype.getDescription = function () {
             return this.state.description;
         };

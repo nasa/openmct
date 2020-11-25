@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,11 +22,11 @@
 
 define([], function () {
     function StackedPlotController($scope, openmct, objectService, $element, exportImageService) {
-        var tickWidth = 0,
-            composition,
-            currentRequest,
-            unlisten,
-            tickWidthMap = {};
+        let tickWidth = 0;
+        let composition;
+        let currentRequest;
+        let unlisten;
+        let tickWidthMap = {};
 
         this.$element = $element;
         this.exportImageService = exportImageService;
@@ -36,13 +36,13 @@ define([], function () {
         $scope.telemetryObjects = [];
 
         function onDomainObjectChange(domainObject) {
-            var thisRequest = {
+            const thisRequest = {
                 pending: 0
             };
             currentRequest = thisRequest;
             $scope.currentRequest = thisRequest;
-            var telemetryObjects = $scope.telemetryObjects = [];
-            var thisTickWidthMap = {};
+            const telemetryObjects = $scope.telemetryObjects = [];
+            const thisTickWidthMap = {};
             tickWidthMap = thisTickWidthMap;
 
             if (unlisten) {
@@ -51,25 +51,25 @@ define([], function () {
             }
 
             function addChild(child) {
-                var id = openmct.objects.makeKeyString(child.identifier);
+                const id = openmct.objects.makeKeyString(child.identifier);
                 thisTickWidthMap[id] = 0;
                 thisRequest.pending += 1;
                 objectService.getObjects([id])
                     .then(function (objects) {
                         thisRequest.pending -= 1;
-                        var childObj = objects[id];
+                        const childObj = objects[id];
                         telemetryObjects.push(childObj);
                     });
             }
 
             function removeChild(childIdentifier) {
-                var id = openmct.objects.makeKeyString(childIdentifier);
+                const id = openmct.objects.makeKeyString(childIdentifier);
                 delete thisTickWidthMap[id];
-                var childObj = telemetryObjects.filter(function (c) {
+                const childObj = telemetryObjects.filter(function (c) {
                     return c.getId() === id;
                 })[0];
                 if (childObj) {
-                    var index = telemetryObjects.indexOf(childObj);
+                    const index = telemetryObjects.indexOf(childObj);
                     telemetryObjects.splice(index, 1);
                     $scope.$broadcast('plot:tickWidth', Math.max(...Object.values(tickWidthMap)));
                 }
@@ -90,6 +90,7 @@ define([], function () {
                     if (thisRequest !== currentRequest) {
                         return;
                     }
+
                     composition = openmct.composition.get(obj);
                     composition.on('add', addChild);
                     composition.on('remove', removeChild);
@@ -121,7 +122,7 @@ define([], function () {
 
         $scope.$on('plot:tickWidth', function ($e, width) {
             const plotId = $e.targetScope.domainObject.getId();
-            if (!tickWidthMap.hasOwnProperty(plotId)) {
+            if (!Object.prototype.hasOwnProperty.call(tickWidthMap, plotId)) {
                 return;
             }
 
@@ -157,6 +158,11 @@ define([], function () {
     StackedPlotController.prototype.toggleCursorGuide = function ($event) {
         this.cursorGuide = !this.cursorGuide;
         this.$scope.$broadcast('cursorguide', $event);
+    };
+
+    StackedPlotController.prototype.toggleGridLines = function ($event) {
+        this.gridLines = !this.gridLines;
+        this.$scope.$broadcast('toggleGridLines', $event);
     };
 
     return StackedPlotController;

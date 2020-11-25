@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -81,8 +81,8 @@ define(
             var parentObject = this.parentObject,
                 parentContext =
                     parentObject && parentObject.getCapability('context'),
-                parentPath = parentContext ?
-                    parentContext.getPath() : [this.parentObject];
+                parentPath = parentContext
+                    ? parentContext.getPath() : [this.parentObject];
 
             return parentPath.concat([this.domainObject]);
         };
@@ -98,12 +98,12 @@ define(
          *          object which exposed this capability.
          */
         ContextCapability.prototype.getRoot = function () {
-            var parentContext = this.parentObject &&
-                this.parentObject.getCapability('context');
+            var parentContext = this.parentObject
+                && this.parentObject.getCapability('context');
 
-            return parentContext ?
-                parentContext.getRoot() :
-                (this.parentObject || this.domainObject);
+            return parentContext
+                ? parentContext.getRoot()
+                : (this.parentObject || this.domainObject);
         };
 
         return ContextCapability;

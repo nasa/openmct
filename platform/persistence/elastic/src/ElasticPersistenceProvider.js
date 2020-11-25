@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -77,13 +77,14 @@ define(
         ElasticPersistenceProvider.prototype.get = function (subpath) {
             return this.request(subpath, "GET");
         };
+
         ElasticPersistenceProvider.prototype.put = function (subpath, value, params) {
             return this.request(subpath, "PUT", value, params);
         };
+
         ElasticPersistenceProvider.prototype.del = function (subpath) {
             return this.request(subpath, "DELETE");
         };
-
 
         // Handle an update error
         ElasticPersistenceProvider.prototype.handleError = function (response, key) {
@@ -91,12 +92,15 @@ define(
                 $q = this.$q;
             if ((response || {}).status === CONFLICT) {
                 error.key = "revision";
+
                 // Load the updated model, then reject the promise
                 return this.get(key).then(function (res) {
                     error.model = res[SRC];
+
                     return $q.reject(error);
                 });
             }
+
             // Reject the promise
             return this.$q.reject(error);
         };
@@ -106,6 +110,7 @@ define(
             if (response && response[SRC]) {
                 this.revs[response[SEQ_NO]] = response[SEQ_NO];
                 this.revs[response[PRIMARY_TERM]] = response[PRIMARY_TERM];
+
                 return response[SRC];
             } else {
                 return undefined;
@@ -119,6 +124,7 @@ define(
             if (response && !response.error) {
                 this.revs[SEQ_NO] = response[SEQ_NO];
                 this.revs[PRIMARY_TERM] = response[PRIMARY_TERM];
+
                 return response;
             } else {
                 return this.handleError(response, key);
@@ -135,7 +141,6 @@ define(
             return this.$q.when([]);
         };
 
-
         ElasticPersistenceProvider.prototype.createObject = function (space, key, value) {
             return this.put(key, value).then(this.checkResponse.bind(this));
         };
@@ -149,6 +154,7 @@ define(
             function checkUpdate(response) {
                 return self.checkResponse(response, key);
             }
+
             return this.put(key, value)
                 .then(checkUpdate);
         };

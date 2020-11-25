@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -129,8 +129,8 @@ define(
                 );
             });
 
-            it("invokes the overlay service with the correct parameters when" +
-                " a blocking dialog is requested", function () {
+            it("invokes the overlay service with the correct parameters when"
+                + " a blocking dialog is requested", function () {
                 var dialogModel = {};
                 expect(dialogService.showBlockingMessage(dialogModel)).not.toBe(false);
                 expect(mockOverlayService.createOverlay).toHaveBeenCalledWith(

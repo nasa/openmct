@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-/*global define*/
 
 define([
     "./src/chart/MCTChartDirective",
@@ -64,13 +62,14 @@ define([
     PlotTemplate
 ) {
 
-    var installed = false;
+    let installed = false;
 
     function PlotPlugin() {
         return function install(openmct) {
             if (installed) {
                 return;
             }
+
             installed = true;
 
             openmct.legacyRegistry.register("openmct/plot", {

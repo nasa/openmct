@@ -1,13 +1,25 @@
 <template>
 <div class="c-toolbar">
-    <component
-        :is="item.control"
-        v-for="(item, index) in structure"
-        :key="index"
-        :options="item"
-        @click="triggerMethod(item, $event)"
-        @change="updateObjectValue"
-    />
+    <div class="c-toolbar__element-controls">
+        <component
+            :is="item.control"
+            v-for="(item, index) in primaryStructure"
+            :key="index"
+            :options="item"
+            @change="updateObjectValue"
+            @click="triggerMethod(item, $event)"
+        />
+    </div>
+    <div class="c-toolbar__dimensions-and-controls">
+        <component
+            :is="item.control"
+            v-for="(item, index) in secondaryStructure"
+            :key="index"
+            :options="item"
+            @change="updateObjectValue"
+            @click="triggerMethod(item, $event)"
+        />
+    </div>
 </div>
 </template>
 
@@ -40,6 +52,14 @@ export default {
             structure: []
         };
     },
+    computed: {
+        primaryStructure() {
+            return this.structure.filter(item => !item.secondary);
+        },
+        secondaryStructure() {
+            return this.structure.filter(item => item.secondary);
+        }
+    },
     mounted() {
         this.openmct.selection.on('change', this.handleSelection);
         this.handleSelection(this.openmct.selection.get());
@@ -55,6 +75,7 @@ export default {
 
             if (selection.length === 0 || !selection[0][0]) {
                 this.structure = [];
+
                 return;
             }
 
@@ -68,7 +89,7 @@ export default {
                     toolbarItem.dialog.sections.forEach(section => {
                         section.rows.forEach(row => {
                             formKeys.push(row.key);
-                        })
+                        });
                     });
                     toolbarItem.formKeys = formKeys;
                 }
@@ -87,7 +108,7 @@ export default {
             if (!this.domainObjectsById[id]) {
                 this.domainObjectsById[id] = {
                     domainObject: domainObject
-                }
+                };
                 this.observeObject(domainObject, id);
             }
         },
@@ -134,7 +155,6 @@ export default {
                 value = this.getFormValue(domainObject, toolbarItem);
             } else {
                 let values = [];
-
                 if (applicableSelectedItems) {
                     applicableSelectedItems.forEach(selectionPath => {
                         values.push(this.getPropertyValue(domainObject, toolbarItem, selectionPath));
@@ -167,7 +187,7 @@ export default {
             let value = {};
             let values = {};
 
-            toolbarItem.formKeys.map(key => {
+            toolbarItem.formKeys.forEach(key => {
                 values[key] = [];
 
                 if (toolbarItem.applicableSelectedItems) {
@@ -179,12 +199,13 @@ export default {
                 }
             });
 
-            for (const key in values) {
+            for (let key in values) {
                 if (values[key].every(val => val === values[key][0])) {
                     value[key] = values[key][0];
                     toolbarItem.nonSpecific = false;
                 } else {
                     toolbarItem.nonSpecific = true;
+
                     return {};
                 }
             }
@@ -200,11 +221,11 @@ export default {
                     unObserveObject();
                 });
             }
+
             this.unObserveObjects = [];
         },
         updateObjectValue(value, item) {
             let changedItemId = this.openmct.objects.makeKeyString(item.domainObject.identifier);
-
             this.structure = this.structure.map(toolbarItem => {
                 if (toolbarItem.domainObject) {
                     let id = this.openmct.objects.makeKeyString(toolbarItem.domainObject.identifier);
@@ -220,7 +241,7 @@ export default {
             // If value is an object, iterate the toolbar structure and mutate all keys in form.
             // Otherwise, mutate the property.
             if (value === Object(value)) {
-                this.structure.map(s => {
+                this.structure.forEach(s => {
                     if (s.formKeys) {
                         s.formKeys.forEach(key => {
                             if (item.applicableSelectedItems) {
@@ -266,5 +287,5 @@ export default {
         this.openmct.editor.off('isEditing', this.handleEditing);
         this.removeListeners();
     }
-}
+};
 </script>

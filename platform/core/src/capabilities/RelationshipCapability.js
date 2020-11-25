@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -103,6 +103,7 @@ define(
                 if (!this.objectService) {
                     this.injectObjectService();
                 }
+
                 // Load from the underlying object service
                 this.lastPromise[key] = this.objectService.getObjects(ids)
                     .then(packageObject);
@@ -110,7 +111,6 @@ define(
 
             return this.lastPromise[key];
         };
-
 
         /**
          * Test to determine whether or not this capability should be exposed
@@ -120,7 +120,7 @@ define(
          * @returns {boolean} true if this object has relationships
          */
         RelationshipCapability.appliesTo = function (model) {
-            return !!(model || {}).relationships;
+            return Boolean((model || {}).relationships);
         };
 
         return RelationshipCapability;

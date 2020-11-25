@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -55,8 +55,8 @@ define(
                 mockCapabilityConstructor.and.returnValue(mockCapabilityInstance);
 
                 mockIdentifierService.generate.and.callFake(function (space) {
-                    return (space ? (space + ":") : "") +
-                            "some-id-" + (idCounter += 1);
+                    return (space ? (space + ":") : "")
+                            + "some-id-" + (idCounter += 1);
                 });
 
                 mockCacheService = jasmine.createSpyObj(

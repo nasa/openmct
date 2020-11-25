@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2018, United States Government
+ Open MCT, Copyright (c) 2014-2020, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -20,12 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <div class="c-object-label"
-     ng-class="{ 'is-missing': model.status === 'missing' }"
+     ng-class="{ 'is-status--missing': model.status === 'missing' }"
 >
     <div class="c-object-label__type-icon {{type.getCssClass()}}"
          ng-class="{ 'l-icon-link':location.isLink() }"
     >
-        <span class="is-missing__indicator" title="This item is missing"></span>
+        <span class="is-status__indicator" title="This item is missing or suspect"></span>
     </div>
     <div class='c-object-label__name'>{{model.name}}</div>
 </div>

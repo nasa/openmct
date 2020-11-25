@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 /*jslint es5: true */
 
 define(
@@ -95,27 +94,31 @@ define(
                         });
                     }
                 });
+
                 return data;
             }
 
             function fallbackToLocal() {
-                self.$log.warn("Loading REMS data failed, probably due to" +
-                    " cross origin policy. Falling back to local data");
+                self.$log.warn("Loading REMS data failed, probably due to"
+                    + " cross origin policy. Falling back to local data");
+
                 return self.$http.get(self.localDataURI);
             }
 
             //Filter results to match request parameters
             function filterResults(results) {
                 return results.filter(function (result) {
-                    return result.date >= (request.start || Number.MIN_VALUE) &&
-                        result.date <= (request.end || Number.MAX_VALUE);
+                    return result.date >= (request.start || Number.MIN_VALUE)
+                        && result.date <= (request.end || Number.MAX_VALUE);
                 });
             }
 
             function packageAndResolve(results) {
-                return {id: id, values: results};
+                return {
+                    id: id,
+                    values: results
+                };
             }
-
 
             return (this.promise = this.promise || this.$http.get(this.REMS_WS_URL))
                 .catch(fallbackToLocal)

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -56,7 +56,10 @@ define(
             }
 
             beforeEach(function () {
-                model = { someKey: "some value", name: "domain object"};
+                model = {
+                    someKey: "some value",
+                    name: "domain object"
+                };
 
                 mockPersistenceService = jasmine.createSpyObj(
                     "persistenceService",
@@ -96,9 +99,9 @@ define(
 
                 mockNewStyleDomainObject = Object.assign({}, model);
                 mockNewStyleDomainObject.identifier = {
-                    namespace: "",
-                    key: id
-                }
+                    namespace: SPACE,
+                    key: key
+                };
 
                 // Simulate mutation capability
                 mockDomainObject.useCapability.and.callFake(function (capability, mutator) {
@@ -150,9 +153,10 @@ define(
                     expect(model).toEqual(refreshModel);
                 });
 
-                it("does not trigger error notification on successful" +
-                    " persistence", function () {
+                it("does not trigger error notification on successful"
+                    + " persistence", function () {
                     let rejected = false;
+
                     return persistence.persist()
                         .catch(() => rejected = true)
                         .then(() => {
@@ -168,6 +172,7 @@ define(
                 });
                 it("rejects on falsey persistence result", function () {
                     let rejected = false;
+
                     return persistence.persist()
                         .catch(() => rejected = true)
                         .then(() => {
@@ -177,6 +182,7 @@ define(
 
                 it("notifies user on persistence failure", function () {
                     let rejected = false;
+
                     return persistence.persist()
                         .catch(() => rejected = true)
                         .then(() => {

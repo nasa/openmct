@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -54,7 +54,6 @@ define(
          * @method platform/entanglement.AbstractComposeService#validate
          */
 
-
         /**
          * Template class for Move, Copy, and Link actions.
          *
@@ -105,6 +104,7 @@ define(
             Object.keys(original).forEach(function (k) {
                 clone[k] = original[k];
             });
+
             return clone;
         };
 
@@ -130,10 +130,11 @@ define(
 
             validateLocation = function (newParentObj) {
                 var newContext = self.cloneContext();
-                newContext.selectedObject =  object;
+                newContext.selectedObject = object;
                 newContext.domainObject = newParentObj;
-                return composeService.validate(object, newParentObj) &&
-                    self.policyService.allow("action", self, newContext);
+
+                return composeService.validate(object, newParentObj)
+                    && self.policyService.allow("action", self, newContext);
             };
 
             return locationService.getLocationFromUser(
@@ -152,8 +153,8 @@ define(
             var applicableObject =
                 context.selectedObject || context.domainObject;
 
-            return !!(applicableObject &&
-                applicableObject.hasCapability('context'));
+            return Boolean(applicableObject
+                && applicableObject.hasCapability('context'));
         };
 
         return AbstractComposeAction;

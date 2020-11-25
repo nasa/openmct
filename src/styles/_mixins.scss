@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -43,13 +43,25 @@
 }
 
 [class*="icon-"] {
-    &:before, &:after
+    &:before
     {
         -webkit-font-smoothing: antialiased;
     }
 }
 
 /************************** EFFECTS */
+@mixin flash($animName: flash, $dur: 500ms, $dir: alternate, $iter: 20, $prop: background, $valStart: rgba($colorOk, 1), $valEnd: rgba($colorOk, 0)) {
+    @keyframes #{$animName} {
+        0%   { #{$prop}: $valStart; }
+        100% {  #{$prop}: $valEnd; }
+    }
+    animation-name: $animName;
+    animation-duration: $dur;
+    animation-direction: $dir;
+    animation-iteration-count: $iter;
+    animation-timing-function: ease-out;
+}
+
 @mixin mixedBg() {
     $c1: nth($mixedSettingBg, 1);
     $c2: nth($mixedSettingBg, 2);
@@ -117,31 +129,26 @@
     }
 }
 
-@mixin isMissing($absPos: false) {
+@mixin isStatus($absPos: false, $glyph: '', $color: $colorBodyFg) {
+    // Supports CSS classing as follows:
+    // is-status--missing, is-status--suspect, etc.
     // Common styles to be applied to tree items, object labels, grid and list item views
-    //opacity: 0.7;
-    //pointer-events: none; // Don't think we can do this, as disables title hover on icon element
 
-    .is-missing__indicator {
-        display: none ;
+    .is-status__indicator {
+        display: block ; // Set to display: none in status.scss
         text-shadow: $colorBodyBg 0 0 2px;
-        color: $colorAlert;
         font-family: symbolsfont;
 
-        &:before {
-            content: $glyph-icon-alert-triangle;
-        }
-    }
-
-    @if $absPos {
-        .is-missing__indicator {
+        @if $absPos {
             position: absolute;
             z-index: 3;
         }
-    }
 
-    &.is-missing .is-missing__indicator,
-    .is-missing .is-missing__indicator { display: block !important; }
+        &:before {
+            color: $color;
+            content: $glyph;
+        }
+    }
 }
 
 @mixin bgDiagonalStripes($c: yellow, $a: 0.1, $d: 40px) {
@@ -368,11 +375,21 @@
     &:focus {
         box-shadow: $shdwInputFoc;
     }
+}
 
-    @include hover() {
-        &:not(:focus) {
-            box-shadow: $shdwInputHov;
-        }
+@mixin inlineInput() {
+    @include reactive-input($bg: transparent);
+    box-shadow: none;
+    display: block !important;
+    min-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    overflow: hidden;
+    transition: all 250ms ease;
+    white-space: nowrap;
+
+    &:not(:focus) {
+        text-overflow: ellipsis;
     }
 }
 
@@ -443,28 +460,18 @@
     }
 
     @include hover() {
-        background: $colorBtnBgHov;
-        color: $colorBtnFgHov;
+        filter: $filterHov;
     }
 
     &[class*="--major"],
     &[class*='is-active']{
         background: $colorBtnMajorBg;
         color: $colorBtnMajorFg;
-
-        @include hover() {
-            background: $colorBtnMajorBgHov;
-            color: $colorBtnMajorFgHov;
-        }
     }
 
     &[class*='--caution'] {
-        background: $colorBtnCautionBg;
-        color: $colorBtnCautionFg;
-
-        &:hover {
-            background: $colorBtnCautionBgHov;
-        }
+        background: $colorBtnCautionBg !important;
+        color: $colorBtnCautionFg !important;
     }
 }
 
@@ -490,8 +497,8 @@
 }
 
 @mixin cClickIconButtonLayout() {
-    $pLR: 4px;
-    $pTB: 4px;
+    $pLR: 5px;
+    $pTB: 5px;
     padding: $pTB $pLR;
 
     &:before,
@@ -510,6 +517,7 @@
     @include cControl();
     @include cClickIconButtonLayout();
     background: none;
+    color: $colorClickIconButton;
     box-shadow: none;
     cursor: pointer;
     transition: $transOut;
@@ -518,11 +526,12 @@
     @include hover() {
         transition: $transIn;
         background: $colorClickIconButtonBgHov;
-        color: $colorClickIconButtonFgHov;
+        //color: $colorClickIconButtonFgHov;
+        filter: $filterHov;
     }
 
     &[class*="--major"] {
-        color: $colorKey;
+        color: $colorBtnMajorBg !important;
     }
 }
 
@@ -548,6 +557,67 @@
             left: auto; right: 0;
         }
     }
+}
+
+@mixin cArrowButtonBase($colorBg: transparent, $colorFg: $colorBtnFg, $filterHov: $filterHov) {
+    // Copied from branch new-tree-refactor
+
+    flex: 0 0 auto;
+    position: relative;
+    background: $colorBg;
+
+    &:before {
+        // Arrow shape
+        border-style: solid;
+        content: '';
+        display: block;
+        position: absolute;
+        left: 50%; top: 50%;
+        transform-origin: center;
+    }
+
+    &:before {
+        border-color: $colorFg;
+    }
+
+    @include hover {
+        filter: $filterHov;
+    }
+
+    &--up, &--prev {
+        &:before {
+            transform: translate(-30%, -50%) rotate(135deg);
+        }
+    }
+
+    &--down, &--next {
+        &:before {
+            transform: translate(-70%, -50%) rotate(-45deg);
+        }
+    }
+}
+
+@mixin cArrowButtonSizing($dimOuter: 48px) {
+    height: $dimOuter;
+    width: $dimOuter;
+    $dimInner: floor($dimOuter * 0.6);
+    $borderW: floor($dimInner * 0.3);
+    $backOffsetW: floor($dimInner * 0.4);
+
+    &:before {
+        height: $dimInner;
+        width: $dimInner;
+    }
+
+    &:before {
+        // Arrow shape
+        border-width: 0 $borderW $borderW 0;
+    }
+}
+
+@mixin cArrowButton() {
+    @include cArrowButtonBase();
+    @include cArrowButtonSizing();
 }
 
 @mixin hasMenu() {

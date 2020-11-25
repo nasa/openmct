@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,6 +23,6 @@ import RemoveAction from "./RemoveAction";
 
 export default function () {
     return function (openmct) {
-        openmct.contextMenu.registerAction(new RemoveAction(openmct));
-    }
+        openmct.actions.register(new RemoveAction(openmct));
+    };
 }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,6 +25,8 @@ export default class GoToOriginalAction {
         this.name = 'Go To Original';
         this.key = 'goToOriginal';
         this.description = 'Go to the original unlinked instance of this object';
+        this.group = 'action';
+        this.priority = 4;
 
         this._openmct = openmct;
     }

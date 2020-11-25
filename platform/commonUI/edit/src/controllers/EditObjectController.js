@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -30,11 +30,11 @@ define(
 
         function cancelEditing(domainObject) {
             var navigatedObject = domainObject,
-                editorCapability = navigatedObject &&
-                    navigatedObject.getCapability("editor");
+                editorCapability = navigatedObject
+                    && navigatedObject.getCapability("editor");
 
-            return editorCapability &&
-                editorCapability.finish();
+            return editorCapability
+                && editorCapability.finish();
         }
 
         /**

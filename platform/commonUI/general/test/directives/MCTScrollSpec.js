@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,6 @@ define(
         var EVENT_PROPERTY = "testProperty",
             ATTRIBUTE = "testAttribute",
             EXPRESSION = "some.expression";
-
 
         // MCTScroll is the commonality between mct-scroll-x and
         // mct-scroll-y; it gets the event property to watch and

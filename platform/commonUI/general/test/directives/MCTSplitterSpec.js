@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -98,7 +98,7 @@ define(
                     });
 
                     it("tell's the splitter when it is done resizing", function () {
-                        mockScope.splitter.move([10,0]);
+                        mockScope.splitter.move([10, 0]);
                         mockScope.splitter.endMove();
                         expect(mockSplitPane.endResizing).toHaveBeenCalledWith(testPosition + 10);
                     });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2018, United States Government
+ * Open MCT Web, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -104,10 +104,10 @@ export default {
         getMatchingConfig(options) {
             const matchers = {
                 clock(config) {
-                    return options.clock === config.clock
+                    return options.clock === config.clock;
                 },
                 timeSystem(config) {
-                    return options.timeSystem === config.timeSystem
+                    return options.timeSystem === config.timeSystem;
                 }
             };
 
@@ -130,5 +130,5 @@ export default {
         }
     }
 
-}
+};
 </script>

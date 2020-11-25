@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -74,6 +74,7 @@ define(
             it("allows model mutation to be aborted", function () {
                 mutation.invoke(function (m) {
                     m.number = m.number * 7;
+
                     return false; // Should abort change
                 });
                 // Number should not have been changed

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2018, United States Government
+ * Open MCT Web, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -141,10 +141,11 @@
             <ConductorMode class="c-conductor__mode-select" />
             <ConductorTimeSystem class="c-conductor__time-system-select" />
             <ConductorHistory
-                v-if="isFixed"
                 class="c-conductor__history-select"
-                :bounds="openmct.time.bounds()"
+                :offsets="openmct.time.clockOffsets()"
+                :bounds="bounds"
                 :time-system="timeSystem"
+                :mode="timeMode"
             />
         </div>
         <input
@@ -161,7 +162,7 @@ import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
-import ConductorHistory from './ConductorHistory.vue'
+import ConductorHistory from './ConductorHistory.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -190,6 +191,10 @@ export default {
                 start: offsets && durationFormatter.format(Math.abs(offsets.start)),
                 end: offsets && durationFormatter.format(Math.abs(offsets.end))
             },
+            bounds: {
+                start: bounds.start,
+                end: bounds.end
+            },
             formattedBounds: {
                 start: timeFormatter.format(bounds.start),
                 end: timeFormatter.format(bounds.end)
@@ -204,22 +209,34 @@ export default {
             altPressed: false,
             isPanning: false,
             isZooming: false
+        };
+    },
+    computed: {
+        timeMode() {
+            return this.isFixed ? 'fixed' : 'realtime';
         }
     },
     mounted() {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', this.setViewFromBounds);
+        this.openmct.time.on('bounds', this.handleNewBounds);
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
-        this.openmct.time.on('clockOffsets', this.setViewFromOffsets)
+        this.openmct.time.on('clockOffsets', this.setViewFromOffsets);
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
     },
     methods: {
+        handleNewBounds(bounds) {
+            this.setBounds(bounds);
+            this.setViewFromBounds(bounds);
+        },
+        setBounds(bounds) {
+            this.bounds = bounds;
+        },
         handleKeyDown(event) {
             if (event.key === 'Alt') {
                 this.altPressed = true;
@@ -246,13 +263,16 @@ export default {
             this.formattedBounds.end = this.timeFormatter.format(bounds.end);
         },
         endZoom(bounds) {
-            const _bounds = bounds ? bounds : this.openmct.time.bounds();
             this.isZooming = false;
 
-            this.openmct.time.bounds(_bounds);
+            if (bounds) {
+                this.openmct.time.bounds(bounds);
+            } else {
+                this.setViewFromBounds(this.bounds);
+            }
         },
         setTimeSystem(timeSystem) {
-            this.timeSystem = timeSystem
+            this.timeSystem = timeSystem;
             this.timeFormatter = this.getFormatter(timeSystem.timeFormat);
             this.durationFormatter = this.getFormatter(
                 timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
@@ -268,8 +288,10 @@ export default {
                     end: endOffset
                 });
             }
+
             if ($event) {
                 $event.preventDefault();
+
                 return false;
             }
         },
@@ -283,8 +305,10 @@ export default {
                     end: end
                 });
             }
+
             if ($event) {
                 $event.preventDefault();
+
                 return false;
             }
         },
@@ -311,7 +335,7 @@ export default {
         },
         getBoundsLimit() {
             const configuration = this.configuration.menuOptions
-                .filter(option => option.timeSystem ===  this.timeSystem.key)
+                .filter(option => option.timeSystem === this.timeSystem.key)
                 .find(option => option.limit);
 
             const limit = configuration ? configuration.limit : undefined;
@@ -405,10 +429,12 @@ export default {
             if (validationResult !== true) {
                 input.setCustomValidity(validationResult);
                 input.title = validationResult;
+
                 return false;
             } else {
                 input.setCustomValidity('');
                 input.title = '';
+
                 return true;
             }
         },
@@ -433,5 +459,5 @@ export default {
             this.submitForm();
         }
     }
-}
+};
 </script>

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -62,18 +62,23 @@ define([
         var workerRequest = {};
 
         props.forEach(function (prop) {
-            if (domainObject.telemetry && domainObject.telemetry.hasOwnProperty(prop)) {
+            if (domainObject.telemetry && Object.prototype.hasOwnProperty.call(domainObject.telemetry, prop)) {
                 workerRequest[prop] = domainObject.telemetry[prop];
             }
-            if (request && request.hasOwnProperty(prop)) {
+
+            if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
                 workerRequest[prop] = request[prop];
             }
-            if (!workerRequest.hasOwnProperty(prop)) {
+
+            if (!Object.prototype.hasOwnProperty.call(workerRequest, prop)) {
                 workerRequest[prop] = REQUEST_DEFAULTS[prop];
             }
+
             workerRequest[prop] = Number(workerRequest[prop]);
         });
+
         workerRequest.name = domainObject.name;
+
         return workerRequest;
     };
 
@@ -81,11 +86,13 @@ define([
         var workerRequest = this.makeWorkerRequest(domainObject, request);
         workerRequest.start = request.start;
         workerRequest.end = request.end;
+
         return this.workerInterface.request(workerRequest);
     };
 
     GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
         var workerRequest = this.makeWorkerRequest(domainObject, {});
+
         return this.workerInterface.subscribe(workerRequest, callback);
     };
 

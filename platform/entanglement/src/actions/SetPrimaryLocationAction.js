@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -41,6 +41,7 @@ define(
 
         SetPrimaryLocationAction.prototype.perform = function () {
             var location = this.domainObject.getCapability('location');
+
             return location.setPrimaryLocation(
                 location.getContextualLocation()
             );
@@ -48,8 +49,9 @@ define(
 
         SetPrimaryLocationAction.appliesTo = function (context) {
             var domainObject = context.domainObject;
-            return domainObject && domainObject.hasCapability("location") &&
-                (domainObject.getModel().location === undefined);
+
+            return domainObject && domainObject.hasCapability("location")
+                && (domainObject.getModel().location === undefined);
         };
 
         return SetPrimaryLocationAction;
