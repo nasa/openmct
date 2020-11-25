@@ -37,94 +37,110 @@ import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
 import stylesManager from '@/ui/inspector/styles/StylesManager';
 
 fdescribe("the inspector", () => {
-    mockLocalStorage();
-
     let openmct;
     let selection;
     let stylesViewComponent;
     let savedStylesViewComponent;
 
-    beforeEach((done) => {
-        spyOn(SavedStylesView.methods, 'showLimitReachedDialog').and.callThrough();
+    describe("when exists a selection", () => {
+        mockLocalStorage();
 
-        openmct = createOpenMct();
-        openmct.on('start', done);
-        openmct.startHeadless();
+        beforeEach((done) => {
+            spyOn(SavedStylesView.methods, 'showLimitReachedDialog').and.callThrough();
 
-        selection = mockTelemetryTableSelection;
+            openmct = createOpenMct();
+            openmct.on('start', done);
+            openmct.startHeadless();
 
-        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
-        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
-    });
+            selection = mockTelemetryTableSelection;
 
-    afterEach(() => {
-        stylesViewComponent.$destroy();
-        stylesViewComponent = undefined;
-        savedStylesViewComponent.$destroy();
-        savedStylesViewComponent = undefined;
+            stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+            savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
+        });
 
-        return resetApplicationState(openmct);
-    });
+        afterEach(() => {
+            stylesViewComponent.$destroy();
+            stylesViewComponent = undefined;
+            savedStylesViewComponent.$destroy();
+            savedStylesViewComponent = undefined;
 
-    it("should allow a style to be saved", () => {
-        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
+            return resetApplicationState(openmct);
+        });
 
-        stylesViewComponent.$children[0].saveStyle(mockStyle);
+        it("should allow a style to be saved", () => {
+            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
 
-        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
-    });
+            stylesViewComponent.$children[0].saveStyle(mockStyle);
 
-    it("should display all saved styles", () => {
-        expect(savedStylesViewComponent.$children[0].$children.length).toBe(0);
-        stylesViewComponent.$children[0].saveStyle(mockStyle);
+            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
+        });
 
-        Vue.nextTick().then(() => {
-            expect(savedStylesViewComponent.$children[0].$children.length).toBe(1);
+        it("should display all saved styles", () => {
+            expect(savedStylesViewComponent.$children[0].$children.length).toBe(0);
+            stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+            Vue.nextTick().then(() => {
+                expect(savedStylesViewComponent.$children[0].$children.length).toBe(1);
+            });
+        });
+
+        it("should allow a saved style to be applied", () => {
+
+        });
+
+        it("should allow a saved style to be deleted", () => {
+            stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
+
+            savedStylesViewComponent.$children[0].deleteStyle(0);
+
+            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
+        });
+
+        it("should prevent a style from being saved when the number of saved styles is at the limit", () => {
+            for (let i = 1; i <= 20; i++) {
+                stylesViewComponent.$children[0].saveStyle(mockStyle);
+            }
+
+            expect(SavedStylesView.methods.showLimitReachedDialog).not.toHaveBeenCalled();
+            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
+
+            stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+            expect(SavedStylesView.methods.showLimitReachedDialog).toHaveBeenCalled();
+            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
         });
     });
 
-    it("should allow a saved style to be applied", () => {
+    describe("when exists a selection that contains non-specific font styling", () => {
+        beforeEach(() => {
 
+        });
+
+        it("should allow the style to be saved", () => {
+
+        });
     });
 
-    it("should allow a saved style to be deleted", () => {
-        stylesViewComponent.$children[0].saveStyle(mockStyle);
+    describe("when exists a selection that contains mixed styling", () => {
+        beforeEach(() => {
 
-        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
+        });
 
-        savedStylesViewComponent.$children[0].deleteStyle(0);
+        it("should prevent the style from being saved", () => {
 
-        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
+        });
     });
 
-    it("should prevent a style from being saved when the number of saved styles is at the limit", () => {
-        for (let i = 1; i <= 20; i++) {
-            stylesViewComponent.$children[0].saveStyle(mockStyle);
-        }
+    describe("when exists a selection that contains non-specific font styling", () => {
+        beforeEach(() => {
 
-        expect(SavedStylesView.methods.showLimitReachedDialog).not.toHaveBeenCalled();
-        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
+        });
 
-        stylesViewComponent.$children[0].saveStyle(mockStyle);
+        it("should prevent the style from being saved", () => {
 
-        expect(SavedStylesView.methods.showLimitReachedDialog).toHaveBeenCalled();
-        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
-    });
-
-    it("should prevent a style from being saved when the selection has mixed styling", () => {
-
-    });
-
-    it("should prevent the style from being saved when the selection has non-specific font styling", () => {
-
-    });
-
-    it("should allow a style to be saved from a multi-selection", () => {
-
-    });
-
-    it("should allow a saved style to be applied", () => {
-
+        });
     });
 });
 
