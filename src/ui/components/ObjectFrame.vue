@@ -160,6 +160,7 @@ export default {
     mounted() {
         this.status = this.openmct.status.get(this.domainObject.identifier);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+        this.$refs.objectView.show(this.domainObject, undefined, false, this.objectPath);
     },
     beforeDestroy() {
         this.removeStatusListener();
@@ -167,9 +168,6 @@ export default {
         if (this.actionCollection) {
             this.unlistenToActionCollection();
         }
-    },
-    mounted() {
-        this.$refs.objectView.show(this.domainObject, undefined, false, this.objectPath);
     },
     methods: {
         expand() {

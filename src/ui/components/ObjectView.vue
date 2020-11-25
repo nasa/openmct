@@ -28,12 +28,12 @@ export default {
     },
     data() {
         return {
-            currentObject: this.object
+            domainObject: undefined
         };
     },
     computed: {
         objectFontStyle() {
-            return this.currentObject && this.currentObject.configuration && this.currentObject.configuration.fontStyle;
+            return this.domainObject && this.domainObject.configuration && this.domainObject.configuration.fontStyle;
         },
         fontSize() {
             return this.objectFontStyle ? this.objectFontStyle.fontSize : this.layoutFontSize;
@@ -42,16 +42,6 @@ export default {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         }
     },
-    data() {
-        return {
-            domainObject: undefined
-        };
-    },
-    // watch: {
-    //     domainObject(newObject, oldObject) {
-    //         this.debounceUpdateView();
-    //     }
-    // },
     destroyed() {
         this.clear();
         if (this.releaseEditModeHandler) {

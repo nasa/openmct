@@ -32,7 +32,7 @@ const ANY_OBJECT_EVENT = 'mutation';
  *
  * All Open MCT API functions that provide objects will provide MutableDomainObjects where possible, except
  * `openmct.objects.get()`, and will manage that object's lifecycle for you. Calling `openmct.objects.getMutable()`
- * will result in the creation of a new MutableDomainObject and you will be responsible for destroying it 
+ * will result in the creation of a new MutableDomainObject and you will be responsible for destroying it
  * (via openmct.objects.destroy) when you're done with it.
  *
  * @typedef MutableDomainObject
