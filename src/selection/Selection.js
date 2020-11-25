@@ -246,7 +246,7 @@ define(
                 element.removeEventListener('click', capture, true);
                 element.removeEventListener('click', selectCapture);
 
-                if (context.item.isMutable) {
+                if (context.item !== undefined && context.item.isMutable) {
                     this.openmct.objects.destroyMutable(context.item);
                 }
             }).bind(this);
