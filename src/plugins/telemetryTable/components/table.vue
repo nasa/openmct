@@ -631,7 +631,7 @@ export default {
         filterChanged(columnKey) {
             if (this.enableRegexSearch[columnKey]) {
                 if (this.isCompleteRegex(this.filters[columnKey])) {
-                    this.table.filteredRows.setColumnRegexFilter(columnKey, this.filters[columnKey].slice(1,-1));
+                    this.table.filteredRows.setColumnRegexFilter(columnKey, this.filters[columnKey].slice(1, -1));
                 } else {
                     return;
                 }
@@ -980,13 +980,13 @@ export default {
             this.$set(this.filters, key, '');
 
             if (this.enableRegexSearch[key] === undefined) {
-                this.$set(this.enableRegexSearch, key, true)
+                this.$set(this.enableRegexSearch, key, true);
             } else {
                 this.$set(this.enableRegexSearch, key, !this.enableRegexSearch[key]);
             }
         },
         isCompleteRegex(string) {
-            return (string.length > 2 && string[0] === '/' && string[string.length - 1] === '/')
+            return (string.length > 2 && string[0] === '/' && string[string.length - 1] === '/');
         },
         getViewContext() {
             return {

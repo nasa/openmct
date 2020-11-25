@@ -86,8 +86,8 @@ define(
                     return false;
                 }
 
-                return this.columnFilters[columnKey] &&
-                    filter.startsWith(this.columnFilters[columnKey])
+                return this.columnFilters[columnKey]
+                    && filter.startsWith(this.columnFilters[columnKey])
                     // startsWith check will otherwise fail when filter cleared
                     // because anyString.startsWith('') === true
                     && filter !== '';
