@@ -22,25 +22,29 @@
 
 import {
     createOpenMct,
-    resetApplicationState,
-    // mockLocalStorage
+    resetApplicationState
 } from 'utils/testing';
+import {
+    mockLocalStorage
+} from 'utils/testing/mockLocalStorage';
+import {
+    mockTelemetryTableSelection,
+    mockStyle
+} from './InspectorSpecMocks';
 import Vue from 'vue';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
 import stylesManager from '@/ui/inspector/styles/StylesManager';
 
-describe("the inspector", () => {
+fdescribe("the inspector", () => {
+    mockLocalStorage();
+
     let openmct;
     let element;
     let child;
     let selection;
     let stylesViewComponent;
     let savedStylesViewComponent;
-    let mockStyle;
-    let mockLocalStorage;
-    let mockGetItem;
-    let mockSetItem;
 
     beforeEach((done) => {
         spyOn(SavedStylesView.methods, 'showLimitReachedDialog').and.callThrough();
@@ -49,19 +53,7 @@ describe("the inspector", () => {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        mockLocalStorage = {};
-        mockGetItem = (key) => {
-            return mockLocalStorage[key];
-        };
-
-        mockSetItem = (key, value) => {
-            mockLocalStorage[key] = typeof value === 'string' ? value : JSON.stringify(value);
-        };
-
-        spyOn(Storage.prototype, 'getItem').and.callFake(mockGetItem);
-        spyOn(Storage.prototype, 'setItem').and.callFake(mockSetItem);
-
-        selection = getMockSelection();
+        selection = mockTelemetryTableSelection;
 
         element = document.createElement('div');
         child = document.createElement('div');
@@ -96,12 +88,6 @@ describe("the inspector", () => {
             },
             template: '<StylesView />'
         });
-
-        mockStyle = {
-            backgroundColor: "#ff0000",
-            border: "#ff0000",
-            color: "#ff0000"
-        };
     });
 
     afterEach(() => {
@@ -166,24 +152,11 @@ describe("the inspector", () => {
 
     });
 
+    it("should allow a style to be saved from a multi-selection", () => {
+
+    });
+
     it("should allow a saved style to be applied", () => {
 
     });
 });
-
-function getMockSelection() {
-    return [
-        [{
-            context: {
-                item: {
-                    configuration: {},
-                    type: 'table',
-                    identifier: {
-                        key: 'mock-telemetry-table-1',
-                        namespace: ''
-                    }
-                }
-            }
-        }]
-    ];
-}
