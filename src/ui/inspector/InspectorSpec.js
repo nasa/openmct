@@ -29,6 +29,7 @@ import {
 } from 'utils/testing/mockLocalStorage';
 import {
     mockTelemetryTableSelection,
+    mockMultiSelectionSameStyles,
     mockStyle
 } from './InspectorSpecMocks';
 import Vue from 'vue';
@@ -42,105 +43,109 @@ fdescribe("the inspector", () => {
     let stylesViewComponent;
     let savedStylesViewComponent;
 
-    describe("when exists a selection", () => {
-        mockLocalStorage();
+    mockLocalStorage();
 
-        beforeEach((done) => {
-            spyOn(SavedStylesView.methods, 'showLimitReachedDialog').and.callThrough();
+    beforeEach((done) => {
+        openmct = createOpenMct();
+        openmct.on('start', done);
+        openmct.startHeadless();
+    });
 
-            openmct = createOpenMct();
-            openmct.on('start', done);
-            openmct.startHeadless();
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
 
-            selection = mockTelemetryTableSelection;
+    it("should allow a style to be saved", () => {
+        selection = mockTelemetryTableSelection;
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-            stylesViewComponent = createViewComponent(StylesView, selection, openmct);
-            savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
+
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
+    });
+
+    it("should display all saved styles", () => {
+        selection = mockTelemetryTableSelection;
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
+
+        expect(savedStylesViewComponent.$children[0].$children.length).toBe(0);
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+        stylesViewComponent.$nextTick().then(() => {
+            expect(savedStylesViewComponent.$children[0].$children.length).toBe(1);
         });
+    });
 
-        afterEach(() => {
-            stylesViewComponent.$destroy();
-            stylesViewComponent = undefined;
-            savedStylesViewComponent.$destroy();
-            savedStylesViewComponent = undefined;
+    it("should allow a saved style to be applied", () => {
 
-            return resetApplicationState(openmct);
-        });
+    });
 
-        it("should allow a style to be saved", () => {
-            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
+    it("should allow a saved style to be deleted", () => {
+        selection = mockTelemetryTableSelection;
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
+
+        savedStylesViewComponent.$children[0].deleteStyle(0);
+
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
+    });
+
+    it("should prevent a style from being saved when the number of saved styles is at the limit", () => {
+        spyOn(SavedStylesView.methods, 'showLimitReachedDialog').and.callThrough();
+
+        selection = mockTelemetryTableSelection;
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
+
+        for (let i = 1; i <= 20; i++) {
             stylesViewComponent.$children[0].saveStyle(mockStyle);
+        }
+
+        expect(SavedStylesView.methods.showLimitReachedDialog).not.toHaveBeenCalled();
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
+
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+        expect(SavedStylesView.methods.showLimitReachedDialog).toHaveBeenCalled();
+        expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
+    });
+
+    it("should allow styles from multi-selections to be saved", () => {
+        spyOn(openmct.editor, 'isEditing').and.returnValue(true);
+
+        selection = mockMultiSelectionSameStyles;
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
+
+        stylesViewComponent.$nextTick().then(() => {
+            const styleEditorComponent = stylesViewComponent.$children[0].$children[0];
+            const saveStyleButton = styleEditorComponent.$children[styleEditorComponent.$children.length - 1];
+
+            expect(saveStyleButton.$listeners.click).not.toBe(undefined);
+
+            saveStyleButton.$listeners.click();
 
             expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
         });
-
-        it("should display all saved styles", () => {
-            expect(savedStylesViewComponent.$children[0].$children.length).toBe(0);
-            stylesViewComponent.$children[0].saveStyle(mockStyle);
-
-            Vue.nextTick().then(() => {
-                expect(savedStylesViewComponent.$children[0].$children.length).toBe(1);
-            });
-        });
-
-        it("should allow a saved style to be applied", () => {
-
-        });
-
-        it("should allow a saved style to be deleted", () => {
-            stylesViewComponent.$children[0].saveStyle(mockStyle);
-
-            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(1);
-
-            savedStylesViewComponent.$children[0].deleteStyle(0);
-
-            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(0);
-        });
-
-        it("should prevent a style from being saved when the number of saved styles is at the limit", () => {
-            for (let i = 1; i <= 20; i++) {
-                stylesViewComponent.$children[0].saveStyle(mockStyle);
-            }
-
-            expect(SavedStylesView.methods.showLimitReachedDialog).not.toHaveBeenCalled();
-            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
-
-            stylesViewComponent.$children[0].saveStyle(mockStyle);
-
-            expect(SavedStylesView.methods.showLimitReachedDialog).toHaveBeenCalled();
-            expect(savedStylesViewComponent.$children[0].savedStyles.length).toBe(20);
-        });
     });
 
-    describe("when exists a selection that contains non-specific font styling", () => {
-        beforeEach(() => {
+    it("should prevent mixed styles from being saved", () => {
+        selection = mockTelemetryTableSelection;
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-        });
-
-        it("should allow the style to be saved", () => {
-
-        });
     });
 
-    describe("when exists a selection that contains mixed styling", () => {
-        beforeEach(() => {
+    it("should prevent non-specific styles from being saved", () => {
 
-        });
-
-        it("should prevent the style from being saved", () => {
-
-        });
-    });
-
-    describe("when exists a selection that contains non-specific font styling", () => {
-        beforeEach(() => {
-
-        });
-
-        it("should prevent the style from being saved", () => {
-
-        });
     });
 });
 
@@ -166,5 +171,5 @@ function createViewComponent(
 
     config.components[component.name] = component;
 
-    return new Vue(config);
+    return new Vue(config).$mount();
 }
