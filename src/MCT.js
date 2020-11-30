@@ -46,6 +46,7 @@ define([
     './api/Branding',
     './plugins/licenses/plugin',
     './plugins/remove/plugin',
+    './plugins/move/plugin',
     './plugins/duplicate/plugin',
     'vue'
 ], function (
@@ -74,6 +75,7 @@ define([
     BrandingAPI,
     LicensesPlugin,
     RemoveActionPlugin,
+    MoveActionPlugin,
     DuplicateActionPlugin,
     Vue
 ) {
@@ -265,6 +267,7 @@ define([
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
+        this.install(MoveActionPlugin.default());
         this.install(DuplicateActionPlugin.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
