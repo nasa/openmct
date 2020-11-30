@@ -29,9 +29,13 @@ export class TelemetryCollection extends EventEmitter {
 
         this.openmct = openmct;
         this.domainObject = options.domainObject;
+        this.sortedTelemetry = [];
+
+        this.timeSystem(openmct.time.timeSystem());
+        this.lastBounds = openmct.time.bounds();
 
         this.historicalProvider = options.historicalProvider;
-        this.subscriptionProvider = options.subscription.provider;
+        this.subscriptionProvider = options.subscriptionProvider;
 
         this.options = options.options;
 
@@ -40,24 +44,33 @@ export class TelemetryCollection extends EventEmitter {
             remove: []
         };
 
-        if (this.historicalProvider) {
-            this.trackHistoricalTelemetry();
-        }
+        this.trackHistoricalTelemetry();
+        this.trackSubscriptionTelemetry();
 
-        if (this.subscriptionProvider) {
-            this.trackSubscriptionTelemetry();
-        }
-
-        this.lastBounds = openmct.time.bounds();
         this.subscribeToBounds();
+        this.trackTimeSystem();
     }
 
     trackHistoricalTelemetry() {
+        if (!this.historicalProvider) {
+            return;
+        }
 
+        // stuff
     }
 
     trackSubscriptionTelemetry() {
+        if (!this.subscriptionProvider) {
+            return;
+        }
+
         this.subscriptionService = new TelemetrySubscriptionService();
+        this.subscriptionService.subscribe(
+            this.domainObject,
+            this.processNewTelemetry,
+            this.subscriptionProvider,
+            this.options
+        );
     }
 
     on(event, callback, options) {
@@ -66,12 +79,7 @@ export class TelemetryCollection extends EventEmitter {
         }
 
         if (event === 'add') {
-            this.unsubscribe = this.subscriptionService.subscribe(
-                this.domainObject,
-                callback,
-                this.subscriptionProvider,
-                options
-            );
+            // add
         }
 
         if (event === 'remove') {
@@ -99,12 +107,69 @@ export class TelemetryCollection extends EventEmitter {
         this.listeners[event].splice(index, 1);
     }
 
-    // returns a boolean if there is more telemetry within the time bounds
+    addOne(datum) {
+        // if (this.sortOptions === undefined) {
+        //     throw 'Please specify sort options';
+        // }
+
+        // let isDuplicate = false;
+
+        // // Going to check for duplicates. Bound the search problem to
+        // // items around the given time. Use sortedIndex because it
+        // // employs a binary search which is O(log n). Can use binary search
+        // // because the array is guaranteed ordered due to sorted insertion.
+        // let startIx = this.sortedIndex(this.rows, row);
+        // let endIx = undefined;
+
+        // if (this.dupeCheck && startIx !== this.rows.length) {
+        //     endIx = this.sortedLastIndex(this.rows, row);
+
+        //     // Create an array of potential dupes, based on having the
+        //     // same time stamp
+        //     let potentialDupes = this.rows.slice(startIx, endIx + 1);
+        //     // Search potential dupes for exact dupe
+        //     isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, row));
+        // }
+
+        // if (!isDuplicate) {
+        //     this.rows.splice(endIx || startIx, 0, row);
+
+        //     return true;
+        // }
+
+        // return false;
+    }
+
+    // used to sort any new telemetry (page, historical, subscription)
+    processNewTelemetry(telemetryData) {
+        let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
+        let parsedValue;
+        let beforeStartOfBounds;
+        let afterEndOfBounds;
+
+        for (let datum of data) {
+            parsedValue = this.parseTime(datum[this.sortOptions.key]);
+            beforeStartOfBounds = parsedValue < this.lastBounds.start;
+            afterEndOfBounds = parsedValue > this.lastBounds.end;
+
+            if (!afterEndOfBounds && !beforeStartOfBounds) {
+                return this.addOne(datum);
+            } else if (afterEndOfBounds) {
+                this.futureBuffer.addOne(datum);
+            }
+        }
+    }
+
+    parseTime() {
+
+    }
+
+    // returns a boolean if there is more telemetry within the time bounds if the provider supports it
     hasMorePages() {
         return true;
     }
 
-    // will return the next "page" of telemetry
+    // will return the next "page" of telemetry if the provider supports it
     nextPage() {
 
     }
@@ -121,12 +186,83 @@ export class TelemetryCollection extends EventEmitter {
         return true;
     }
 
-    unsubscribeFromBounds() {
-        this.openmct.time.off('bounds', this.bounds);
+    bounds(bounds) {
+        let startChanged = this.lastBounds.start !== bounds.start;
+        let endChanged = this.lastBounds.end !== bounds.end;
+
+        let startIndex = 0;
+        let endIndex = 0;
+
+        let discarded = [];
+        let added = [];
+        let testValue = {
+            datum: {}
+        };
+
+        this.lastBounds = bounds;
+
+        if (startChanged) {
+            testValue.datum[this.sortOptions.key] = bounds.start;
+            // Calculate the new index of the first item within the bounds
+            startIndex = this.sortedIndex(this.rows, testValue);
+            discarded = this.rows.splice(0, startIndex);
+        }
+
+        if (endChanged) {
+            testValue.datum[this.sortOptions.key] = bounds.end;
+            // Calculate the new index of the last item in bounds
+            endIndex = this.sortedLastIndex(this.futureBuffer.rows, testValue);
+            added = this.futureBuffer.rows.splice(0, endIndex);
+            added.forEach((datum) => this.rows.push(datum));
+        }
+
+        if (discarded && discarded.length > 0) {
+            /**
+             * A `discarded` event is emitted when telemetry data fall out of
+             * bounds due to a bounds change event
+             * @type {object[]} discarded the telemetry data
+             * discarded as a result of the bounds change
+             */
+            this.emit('remove', discarded);
+        }
+
+        if (added && added.length > 0) {
+            /**
+             * An `added` event is emitted when a bounds change results in
+             * received telemetry falling within the new bounds.
+             * @type {object[]} added the telemetry data that is now within bounds
+             */
+            this.emit('add', added);
+        }
+    }
+
+    timeSystem(timeSystem) {
+        this.timeSystem = timeSystem;
+        this.timeKey = this.openmct.time.timeSystem().key;
+        this.formatter = this.openmct.telemetry.getValueFormatter({
+            key: this.timeKey,
+            source: this.timeKey,
+            format: this.timeKey
+        });
+        this.parseTime = this.formatter.parse;
+
+        // TODO: Reset right?
     }
 
     subscribeToBounds() {
         this.openmct.time.on('bounds', this.bounds);
+    }
+
+    unsubscribeFromBounds() {
+        this.openmct.time.off('bounds', this.bounds);
+    }
+
+    subscribeToTimeSystem() {
+        this.openmct.time.on('timeSystem', this.timeSystem);
+    }
+
+    unsubscribeFromTimeSystem() {
+        this.openmct.time.off('bounds', this.timeSystem);
     }
 
     destroy() {
