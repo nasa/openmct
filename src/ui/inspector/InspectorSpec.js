@@ -30,6 +30,8 @@ import {
 import {
     mockTelemetryTableSelection,
     mockMultiSelectionSameStyles,
+    mockMultiSelectionMixedStyles,
+    mockMultiSelectionNonSpecificStyles,
     mockStyle
 } from './InspectorSpecMocks';
 import Vue from 'vue';
@@ -126,8 +128,10 @@ fdescribe("the inspector", () => {
         savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
         stylesViewComponent.$nextTick().then(() => {
-            const styleEditorComponent = stylesViewComponent.$children[0].$children[0];
-            const saveStyleButton = styleEditorComponent.$children[styleEditorComponent.$children.length - 1];
+            const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
+            const styleEditorComponent = stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
+            const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
+            const saveStyleButton = styleEditorComponent.$children[saveStyleButtonIndex];
 
             expect(saveStyleButton.$listeners.click).not.toBe(undefined);
 
@@ -138,14 +142,37 @@ fdescribe("the inspector", () => {
     });
 
     it("should prevent mixed styles from being saved", () => {
-        selection = mockTelemetryTableSelection;
+        spyOn(openmct.editor, 'isEditing').and.returnValue(true);
+
+        selection = mockMultiSelectionMixedStyles;
         stylesViewComponent = createViewComponent(StylesView, selection, openmct);
         savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
+        stylesViewComponent.$nextTick().then(() => {
+            const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
+            const styleEditorComponent = stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
+            const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
+            const saveStyleButton = styleEditorComponent.$children[saveStyleButtonIndex];
+
+            expect(saveStyleButton.$listeners.click).toBe(undefined);
+        });
     });
 
     it("should prevent non-specific styles from being saved", () => {
+        spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
+        selection = mockMultiSelectionNonSpecificStyles;
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
+
+        stylesViewComponent.$nextTick().then(() => {
+            const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
+            const styleEditorComponent = stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
+            const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
+            const saveStyleButton = styleEditorComponent.$children[saveStyleButtonIndex];
+
+            expect(saveStyleButton.$listeners.click).toBe(undefined);
+        });
     });
 });
 
