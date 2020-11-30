@@ -33,13 +33,13 @@ import {
     mockMultiSelectionMixedStyles,
     mockMultiSelectionNonSpecificStyles,
     mockStyle
-} from './InspectorSpecMocks';
+} from './InspectorStylesSpecMocks';
 import Vue from 'vue';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
 import stylesManager from '@/ui/inspector/styles/StylesManager';
 
-fdescribe("the inspector", () => {
+xdescribe("the inspector", () => {
     let openmct;
     let selection;
     let stylesViewComponent;
