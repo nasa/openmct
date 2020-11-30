@@ -38,7 +38,6 @@ import Vue from 'vue';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
 import stylesManager from '@/ui/inspector/styles/StylesManager';
-import { options } from 'marked';
 
 fdescribe("the inspector", () => {
     let openmct;
@@ -195,29 +194,25 @@ fdescribe("the inspector", () => {
             expect(saveStyleButton.$listeners.click).toBe(undefined);
         });
     });
+
+    function createViewComponent(component) {
+        const element = document.createElement('div');
+        const child = document.createElement('div');
+        element.appendChild(child);
+
+        const config = {
+            provide: {
+                openmct,
+                selection,
+                stylesManager
+            },
+            el: element,
+            components: {},
+            template: `<${component.name} />`
+        };
+
+        config.components[component.name] = component;
+
+        return new Vue(config).$mount();
+    }
 });
-
-function createViewComponent(
-    component,
-    selection,
-    openmct
-) {
-    const element = document.createElement('div');
-    const child = document.createElement('div');
-    element.appendChild(child);
-
-    const config = {
-        provide: {
-            openmct,
-            selection,
-            stylesManager
-        },
-        el: element,
-        components: {},
-        template: `<${component.name} />`
-    };
-
-    config.components[component.name] = component;
-
-    return new Vue(config).$mount();
-}
