@@ -38,6 +38,7 @@ import Vue from 'vue';
 import StylesView from '@/plugins/condition/components/inspector/StylesView.vue';
 import SavedStylesView from '@/ui/inspector/styles/SavedStylesView.vue';
 import stylesManager from '@/ui/inspector/styles/StylesManager';
+import { options } from 'marked';
 
 fdescribe("the inspector", () => {
     let openmct;
@@ -83,7 +84,27 @@ fdescribe("the inspector", () => {
     });
 
     it("should allow a saved style to be applied", () => {
+        spyOn(openmct.editor, 'isEditing').and.returnValue(true);
 
+        selection = mockTelemetryTableSelection;
+        stylesViewComponent = createViewComponent(StylesView, selection, openmct);
+        savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
+
+        stylesViewComponent.$children[0].saveStyle(mockStyle);
+
+        stylesViewComponent.$nextTick().then(() => {
+            const styleSelectorComponent = savedStylesViewComponent.$children[0].$children[0];
+
+            styleSelectorComponent.selectStyle();
+
+            savedStylesViewComponent.$nextTick().then(() => {
+                const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
+                const styleEditorComponent = stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
+                const styles = styleEditorComponent.$children.filter(component => component.options.value === mockStyle.color);
+
+                expect(styles.length).toBe(3);
+            });
+        });
     });
 
     it("should allow a saved style to be deleted", () => {
