@@ -48,7 +48,7 @@ export default class DuplicateTask {
     }
 
     /**
-     * Execute the duplicate/copy task with the objects provided in the constructor.
+     * Execute the duplicate/copy task with the objects provided.
      * @returns {promise} Which will resolve with a clone of the object
      * once complete.
      */
@@ -79,7 +79,10 @@ export default class DuplicateTask {
     async buildDuplicationPlan() {
         let domainObjectClone = await this.duplicateObject(this.domainObject);
         if (domainObjectClone !== this.domainObject) {
+            console.log(domainObjectClone, 'is not');
             domainObjectClone.location = this.getId(this.parent);
+        } else {
+            console.log(domainObjectClone, 'is same as orig');
         }
 
         this.firstClone = domainObjectClone;
@@ -96,13 +99,13 @@ export default class DuplicateTask {
         let initialCount = this.clones.length;
         let dialog = this.openmct.overlays.progressDialog({
             progressPerc: 0,
-            message: `Duplicating ${initialCount} files.`,
+            message: `Duplicating ${initialCount} objects.`,
             iconClass: 'info',
             title: 'Duplicating'
         });
         let clonesDone = Promise.all(this.clones.map(clone => {
             let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
-            let message = `Duplicating ${initialCount - this.persisted} files.`;
+            let message = `Duplicating ${initialCount - this.persisted} objects.`;
 
             dialog.updateProgress(percentPersisted, message);
 

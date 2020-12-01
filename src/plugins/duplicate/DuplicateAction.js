@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import DuplicateTask from './DuplicateTask';
+import objectUtils from 'objectUtils';
 
 export default class DuplicateAction {
     constructor(openmct) {
@@ -62,7 +63,8 @@ export default class DuplicateAction {
         let dialogService = this.openmct.$injector.get('dialogService');
         let dialogForm = this.getDialogForm(originalObject, parent);
         let formState = {
-            name: originalObject.name
+            name: originalObject.name,
+            createParent: objectUtils.toOldFormat(originalObject)
         };
         let userInput = await dialogService.getUserInput(dialogForm, formState);
 
