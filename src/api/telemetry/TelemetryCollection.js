@@ -51,12 +51,19 @@ export class TelemetryCollection extends EventEmitter {
         this.trackTimeSystem();
     }
 
-    trackHistoricalTelemetry() {
+    async trackHistoricalTelemetry() {
         if (!this.historicalProvider) {
             return;
         }
 
-        // stuff
+        let historicalData = await this.historicalProvider.request.apply(this.historicalProvider, this.options).catch((rejected) => {
+            this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+            console.error(rejected);
+
+            return Promise.reject(rejected);
+        });
+
+        this.processNewTelemetry(historicalData);
     }
 
     trackSubscriptionTelemetry() {

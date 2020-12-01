@@ -21,45 +21,47 @@
  *****************************************************************************/
 
 class TelemetrySubscriptionService {
-    constructor() {
+    constructor(openmct) {
         if (!TelemetrySubscriptionService.instance) {
+            this.openmct = openmct;
             this.subscriptionCache = {};
+
             TelemetrySubscriptionService.instance = this;
         }
 
         return TelemetrySubscriptionService.instance; // eslint-disable-line no-constructor-return
     }
 
-}
+    subscribe(domainObject, callback, provider, options) {
+        const keyString = this.objectUtils.makeKeyString(domainObject.identifier);
+        let subscriber = this.subscriptionCache[keyString];
 
-subscribe(domainObject, callback, provider, options) {
-    const keyString = objectUtils.makeKeyString(domainObject.identifier);
-    let subscriber = this.subscriptionCache[keyString];
+        if (!subscriber) {
+            subscriber = this.subscriptionCache[keyString] = {
+                callbacks: [callback]
+            };
 
-    if (!subscriber) {
-        subscriber = this.subscriptionCache[keyString] = {
-            callbacks: [callback]
-        };
-    
-        subscriber.unsubscribe = provider
-            .subscribe(domainObject, function (value) {
-                subscriber.callbacks.forEach(function (cb) {
-                    cb(value);
-                });
-            }, options);
-    } else {
-        subscriber.callbacks.push(callback);
-    }
-
-    return function unsubscribe() {
-        subscriber.callbacks = subscriber.callbacks.filter((cb) => {
-            return cb !== callback;
-        });
-        if (subscriber.callbacks.length === 0) {
-            subscriber.unsubscribe();
-            delete this.subscriptionCache[keyString];
+            subscriber.unsubscribe = provider
+                .subscribe(domainObject, function (value) {
+                    subscriber.callbacks.forEach(function (cb) {
+                        cb(value);
+                    });
+                }, options);
+        } else {
+            subscriber.callbacks.push(callback);
         }
+
+        return () => {
+            subscriber.callbacks = subscriber.callbacks.filter((cb) => {
+                return cb !== callback;
+            });
+            if (subscriber.callbacks.length === 0) {
+                subscriber.unsubscribe();
+                delete this.subscriptionCache[keyString];
+            }
+        };
     }
+
 }
 
 function instance() {
