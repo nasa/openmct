@@ -154,6 +154,7 @@ export default class MoveAction {
         let parent = objectPath[1];
         let parentType = parent && this.openmct.types.get(parent.type);
         let child = objectPath[0];
+        let childType = child && this.openmct.types.get(child.type);
 
         if (child.locked || (parent && parent.locked)) {
             return false;
@@ -161,6 +162,8 @@ export default class MoveAction {
 
         return parentType
             && parentType.definition.creatable
+            && childType
+            && childType.definition.creatable
             && Array.isArray(parent.composition);
     }
 }

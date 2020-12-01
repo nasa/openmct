@@ -143,13 +143,16 @@ export default class DuplicateAction {
         let parent = objectPath[1];
         let parentType = parent && this.openmct.types.get(parent.type);
         let child = objectPath[0];
+        let childType = child && this.openmct.types.get(child.type);
         let locked = child.locked ? child.locked : parent && parent.locked;
 
         if (locked) {
             return false;
         }
 
-        return parentType
+        return childType
+            && childType.definition.creatable
+            && parentType
             && parentType.definition.creatable
             && Array.isArray(parent.composition);
     }

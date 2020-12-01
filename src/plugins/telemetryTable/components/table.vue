@@ -992,7 +992,7 @@ export default {
             return {
                 type: 'telemetry-table',
                 exportAllDataAsCSV: this.exportAllDataAsCSV,
-                exportMarkedRows: this.exportMarkedRows,
+                exportMarkedDataAsCSV: this.exportMarkedDataAsCSV,
                 unmarkAllRows: this.unmarkAllRows,
                 togglePauseByButton: this.togglePauseByButton,
                 expandColumns: this.recalculateColumnWidths,

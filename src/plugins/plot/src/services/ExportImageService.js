@@ -117,8 +117,10 @@ define(
          * @returns {promise}
          */
         ExportImageService.prototype.exportJPG = function (element, filename, className) {
+            const processedFilename = replaceDotsWithUnderscores(filename);
+
             return this.renderElement(element, "jpg", className).then(function (img) {
-                saveAs(img, filename);
+                saveAs(img, processedFilename);
             });
         };
 
@@ -130,8 +132,10 @@ define(
          * @returns {promise}
          */
         ExportImageService.prototype.exportPNG = function (element, filename, className) {
+            const processedFilename = replaceDotsWithUnderscores(filename);
+
             return this.renderElement(element, "png", className).then(function (img) {
-                saveAs(img, filename);
+                saveAs(img, processedFilename);
             });
         };
 
@@ -145,6 +149,12 @@ define(
         ExportImageService.prototype.exportPNGtoSRC = function (element, className) {
             return this.renderElement(element, "png", className);
         };
+
+        function replaceDotsWithUnderscores(filename) {
+            const regex = /\./gi;
+
+            return filename.replace(regex, '_');
+        }
 
         /**
          * canvas.toBlob() not supported in IE < 10, Opera, and Safari. This polyfill
