@@ -58,7 +58,7 @@ export default class DuplicateTask {
         this.filter = filter || this.isCreatable;
 
         await this.buildDuplicationPlan();
-        await this.persistObjects();
+        // await this.persistObjects();
         await this.addClonesToParent();
 
         return this.firstClone;
@@ -79,10 +79,7 @@ export default class DuplicateTask {
     async buildDuplicationPlan() {
         let domainObjectClone = await this.duplicateObject(this.domainObject);
         if (domainObjectClone !== this.domainObject) {
-            console.log(domainObjectClone, 'is not');
             domainObjectClone.location = this.getId(this.parent);
-        } else {
-            console.log(domainObjectClone, 'is same as orig');
         }
 
         this.firstClone = domainObjectClone;
@@ -106,7 +103,7 @@ export default class DuplicateTask {
         let clonesDone = Promise.all(this.clones.map(clone => {
             let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
             let message = `Duplicating ${initialCount - this.persisted} objects.`;
-
+            console.log('dupe: saving', clone.name);
             dialog.updateProgress(percentPersisted, message);
 
             return this.openmct.objects.save(clone);
@@ -125,6 +122,7 @@ export default class DuplicateTask {
     async addClonesToParent() {
         let parentComposition = this.openmct.composition.get(this.parent);
         await parentComposition.load();
+        console.log('dupe: adding clones to parent', this.parent.name);
         parentComposition.add(this.firstClone);
 
         return;
@@ -223,11 +221,13 @@ export default class DuplicateTask {
         const PERSIST_BOOL = false;
         let parentComposition = this.openmct.composition.get(parent);
         await parentComposition.load();
+        console.log('dupe: adding child to parent', child.name, parent.name);
         parentComposition.add(child, PERSIST_BOOL);
 
         //If a location is not specified, set it.
         if (setLocation && child.location === undefined) {
             let parentKeyString = this.getId(parent);
+            console.log('dupe: setting location for child to parent', child.name, parent.name);
             child.location = parentKeyString;
         }
     }

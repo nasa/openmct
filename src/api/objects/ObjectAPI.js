@@ -255,6 +255,7 @@ define([
      * @memberof module:openmct.ObjectAPI#
      */
     ObjectAPI.prototype.mutate = function (domainObject, path, value) {
+        console.log('mutate', domainObject.name, path, value);
         const mutableObject =
             new MutableObject(this.eventEmitter, domainObject);
 
