@@ -226,8 +226,7 @@ export default {
         createNotebookStorageObject() {
             const notebookMeta = {
                 name: this.internalDomainObject.name,
-                identifier: this.internalDomainObject.identifier,
-                keyString: objectUtils.makeKeyString(this.internalDomainObject.identifier)
+                identifier: this.internalDomainObject.identifier
             };
             const page = this.getSelectedPage();
             const section = this.getSelectedSection();
@@ -443,7 +442,7 @@ export default {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
             if (!defaultNotebookObject) {
                 setDefaultNotebook(this.openmct, notebookStorage);
-            } else if (objectUtils.makeKeyString(defaultNotebookObject.identifier) !== notebookStorage.notebookMeta.keyString) {
+            } else if (objectUtils.makeKeyString(defaultNotebookObject.identifier) !== objectUtils.makeKeyString(notebookStorage.notebookMeta.identifier)) {
                 this.removeDefaultClass(defaultNotebookObject);
                 setDefaultNotebook(this.openmct, notebookStorage, this.internalDomainObject);
             }
