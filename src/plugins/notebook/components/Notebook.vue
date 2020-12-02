@@ -225,7 +225,6 @@ export default {
         },
         createNotebookStorageObject() {
             const notebookMeta = {
-                name: this.internalDomainObject.name,
                 identifier: this.internalDomainObject.identifier
             };
             const page = this.getSelectedPage();

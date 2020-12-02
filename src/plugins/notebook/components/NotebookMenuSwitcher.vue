@@ -55,7 +55,7 @@ export default {
         this.setDefaultNotebookStatus();
     },
     methods: {
-        showMenu(event) {
+        async showMenu(event) {
             const notebookTypes = [];
             const defaultNotebook = getDefaultNotebook();
             const elementBoundingClientRect = this.$el.getBoundingClientRect();
@@ -63,7 +63,8 @@ export default {
             const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
             if (defaultNotebook) {
-                const name = defaultNotebook.notebookMeta.name;
+                const domainObject = await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+                const name = domainObject.name;
                 const sectionName = defaultNotebook.section.name;
                 const pageName = defaultNotebook.page.name;
                 const defaultPath = `${name} - ${sectionName} - ${pageName}`;
