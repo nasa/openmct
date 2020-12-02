@@ -22,6 +22,8 @@
 
 import uuid from 'uuid';
 
+const PERSIST_BOOL = false;
+
 /**
  * This class encapsulates the process of  duplicating/copying a domain object
  * and all of its children.
@@ -58,7 +60,7 @@ export default class DuplicateTask {
         this.filter = filter || this.isCreatable;
 
         await this.buildDuplicationPlan();
-        // await this.persistObjects();
+        await this.persistObjects();
         await this.addClonesToParent();
 
         return this.firstClone;
@@ -123,7 +125,7 @@ export default class DuplicateTask {
         let parentComposition = this.openmct.composition.get(this.parent);
         await parentComposition.load();
         console.log('dupe: adding clones to parent', this.parent.name);
-        parentComposition.add(this.firstClone);
+        parentComposition.add(this.firstClone, PERSIST_BOOL);
 
         return;
     }
@@ -204,7 +206,7 @@ export default class DuplicateTask {
             await previousPromise;
             let clonedComposee = await this.duplicateObject(nextComposee);
             idMap[this.getId(nextComposee)] = this.getId(clonedComposee);
-            await this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
+            this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
 
             return;
         }, Promise.resolve());
@@ -217,12 +219,13 @@ export default class DuplicateTask {
         return clonedParent;
     }
 
-    async composeChild(child, parent, setLocation) {
-        const PERSIST_BOOL = false;
-        let parentComposition = this.openmct.composition.get(parent);
-        await parentComposition.load();
+    composeChild(child, parent, setLocation) {
+        // let parentComposition = this.openmct.composition.get(parent);
+        // await parentComposition.load();
         console.log('dupe: adding child to parent', child.name, parent.name);
-        parentComposition.add(child, PERSIST_BOOL);
+        // parentComposition.add(child, PERSIST_BOOL);
+        let childKeyString = this.openmct.objects.makeKeyString(child.identifier);
+        parent.composition.push(childKeyString);
 
         //If a location is not specified, set it.
         if (setLocation && child.location === undefined) {
@@ -256,6 +259,11 @@ export default class DuplicateTask {
 
         if (clone.composition) {
             clone.composition = [];
+        }
+
+        // remove old ids
+        if (clone.id) {
+            delete clone.id;
         }
 
         clone.identifier = identifier;
