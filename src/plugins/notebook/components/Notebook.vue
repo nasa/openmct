@@ -110,7 +110,7 @@ import NotebookEntry from './NotebookEntry.vue';
 import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
-import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
+import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookName, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
@@ -225,7 +225,8 @@ export default {
         },
         createNotebookStorageObject() {
             const notebookMeta = {
-                identifier: this.internalDomainObject.identifier
+                identifier: this.internalDomainObject.identifier,
+                name: this.internalDomainObject.name
             };
             const page = this.getSelectedPage();
             const section = this.getSelectedSection();
@@ -520,6 +521,7 @@ export default {
             mutateObject(this.openmct, this.internalDomainObject, 'configuration.entries', notebookEntries);
         },
         updateInternalDomainObject(domainObject) {
+            setDefaultNotebookName(domainObject.identifier, domainObject.name);
             this.internalDomainObject = domainObject;
         },
         updateParams(sections) {
