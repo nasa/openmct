@@ -57,6 +57,7 @@ export default class DuplicateTask {
     async duplicate(domainObject, parent, filter) {
         this.domainObject = domainObject;
         this.parent = parent;
+        this.namespace = parent.identifier.namespace;
         this.filter = filter || this.isCreatable;
 
         await this.buildDuplicationPlan();
@@ -245,7 +246,7 @@ export default class DuplicateTask {
         let clone = JSON.parse(JSON.stringify(domainObject));
         let identifier = {
             key: uuid(),
-            namespace: domainObject.identifier.namespace
+            namespace: this.namespace
         };
 
         if (clone.modified || clone.persisted || clone.location) {
