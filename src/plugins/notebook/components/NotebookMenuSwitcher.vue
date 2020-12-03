@@ -17,7 +17,7 @@
 
 <script>
 import Snapshot from '../snapshot';
-import { getDefaultNotebook } from '../utils/notebook-storage';
+import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
 
 export default {
@@ -49,6 +49,8 @@ export default {
         };
     },
     mounted() {
+        validateNotebookStorageObject();
+
         this.notebookSnapshot = new Snapshot(this.openmct);
         this.setDefaultNotebookStatus();
     },
@@ -86,7 +88,7 @@ export default {
 
             this.openmct.menus.showMenu(x, y, notebookTypes);
         },
-        snapshot(notebook) {
+        snapshot(notebookType) {
             this.$nextTick(() => {
                 const element = document.querySelector('.c-overlay__contents')
                     || document.getElementsByClassName('l-shell__main-container')[0];
@@ -104,7 +106,7 @@ export default {
                     openmct: this.openmct
                 };
 
-                this.notebookSnapshot.capture(snapshotMeta, notebook.type, element);
+                this.notebookSnapshot.capture(snapshotMeta, notebookType, element);
             });
         },
         setDefaultNotebookStatus() {

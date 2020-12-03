@@ -205,20 +205,10 @@ tr {
     }
 
     &--missing {
-        @include isStatus();
-
-        .is-status__indicator:before {
-            color: $colorAlert;
-            content: $glyph-icon-alert-triangle;
-        }
+        @include isStatus($glyph: $glyph-icon-alert-triangle, $color: $colorAlert);
     }
 
     &--suspect {
-        @include isStatus();
-
-        .is-status__indicator:before {
-            color: $colorWarningLo;
-            content: $glyph-icon-alert-rect;
-        }
+        @include isStatus($glyph: $glyph-icon-alert-rect, $color: $colorWarningLo);
     }
 }
