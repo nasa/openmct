@@ -59,9 +59,11 @@ export default class DuplicateTask {
         this.parent = parent;
         this.namespace = parent.identifier.namespace;
         this.filter = filter || this.isCreatable;
-
+        console.log('build dupe plan');
         await this.buildDuplicationPlan();
+        console.log('persist objs');
         await this.persistObjects();
+        console.log('add clones to parent');
         await this.addClonesToParent();
 
         return this.firstClone;
@@ -86,6 +88,7 @@ export default class DuplicateTask {
         }
 
         this.firstClone = domainObjectClone;
+        console.log('first clone', this.firstClone.identifier.key);
 
         return;
     }
@@ -103,16 +106,38 @@ export default class DuplicateTask {
             iconClass: 'info',
             title: 'Duplicating'
         });
-        let clonesDone = Promise.all(this.clones.map(clone => {
+
+        // let clonesDone = Promise.all(this.clones.map(async (clone) => {
+        //     let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
+        //     let message = `Duplicating ${initialCount - this.persisted} objects.`;
+
+        //     dialog.updateProgress(percentPersisted, message);
+
+        //     return this.openmct.objects.save(clone);
+        // }));
+
+        // await clonesDone;
+
+        // let clonesDone = await this.clones.reduce(async (savePromise, nextClone) => {
+        //     await savePromise;
+
+        //     let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
+        //     let message = `Duplicating ${initialCount - this.persisted} objects.`;
+
+        //     dialog.updateProgress(percentPersisted, message);
+
+        //     return this.openmct.objects.save(nextClone);
+        // }, Promise.resolve());
+
+        for (let clone of this.clones) {
             let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
             let message = `Duplicating ${initialCount - this.persisted} objects.`;
-            console.log('dupe: saving', clone.name);
+
             dialog.updateProgress(percentPersisted, message);
 
-            return this.openmct.objects.save(clone);
-        }));
+            await this.openmct.objects.save(clone);
+        }
 
-        await clonesDone;
         dialog.dismiss();
         this.openmct.notifications.info(`Duplicated ${this.persisted} objects.`);
 
@@ -124,9 +149,10 @@ export default class DuplicateTask {
      */
     async addClonesToParent() {
         let parentComposition = this.openmct.composition.get(this.parent);
-        await parentComposition.load();
-        console.log('dupe: adding clones to parent', this.parent.name);
-        parentComposition.add(this.firstClone, PERSIST_BOOL);
+        let parentComp = await parentComposition.load();
+        console.log('parent comp', parentComp);
+        parentComposition.add(this.firstClone);
+        console.log('clone added');
 
         return;
     }
@@ -221,17 +247,12 @@ export default class DuplicateTask {
     }
 
     composeChild(child, parent, setLocation) {
-        // let parentComposition = this.openmct.composition.get(parent);
-        // await parentComposition.load();
-        console.log('dupe: adding child to parent', child.name, parent.name);
-        // parentComposition.add(child, PERSIST_BOOL);
         let childKeyString = this.openmct.objects.makeKeyString(child.identifier);
         parent.composition.push(childKeyString);
 
         //If a location is not specified, set it.
         if (setLocation && child.location === undefined) {
             let parentKeyString = this.getId(parent);
-            console.log('dupe: setting location for child to parent', child.name, parent.name);
             child.location = parentKeyString;
         }
     }
@@ -260,11 +281,6 @@ export default class DuplicateTask {
 
         if (clone.composition) {
             clone.composition = [];
-        }
-
-        // remove old ids
-        if (clone.id) {
-            delete clone.id;
         }
 
         clone.identifier = identifier;
