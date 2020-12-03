@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/testing';
 import NotebookPlugin from './plugin';
 import Vue from 'vue';
 
@@ -131,6 +131,96 @@ describe("Notebook plugin:", () => {
             const hasMajorElements = Boolean(searchElement && sidebarElement && pageViewElement);
 
             expect(hasMajorElements).toBe(true);
+        });
+    });
+
+    describe("Notebook Snapshots view:", () => {
+        let snapshotIndicator;
+        let drawerElement;
+
+        function clickSnapshotIndicator() {
+            const indicator = element.querySelector('.icon-camera');
+            // console.log('clickSnapshotIndicator', indicator);
+            const button = indicator.querySelector('button');
+            const clickEvent = createMouseEvent('click');
+
+            button.dispatchEvent(clickEvent);
+        }
+
+        beforeAll(() => {
+            snapshotIndicator = openmct.indicators.indicatorObjects
+                .find(indicator => indicator.key === 'notebook-snapshot-indicator').element;
+
+            element.append(snapshotIndicator);
+
+            return Vue.nextTick();
+        });
+
+        afterAll(() => {
+            snapshotIndicator.remove();
+            snapshotIndicator = undefined;
+
+            if (drawerElement) {
+                drawerElement.remove();
+                drawerElement = undefined;
+            }
+        });
+
+        beforeEach(() => {
+            drawerElement = document.querySelector('.l-shell__drawer');
+        });
+
+        afterEach(() => {
+            if (drawerElement) {
+                drawerElement.classList.remove('is-expanded');
+            }
+        });
+
+        it("has Snapshots indicator", () => {
+            const hasSnapshotIndicator = snapshotIndicator !== null && snapshotIndicator !== undefined;
+            expect(hasSnapshotIndicator).toBe(true);
+        });
+
+        it("snapshots container has class isExpanded", () => {
+            let classes = drawerElement.classList;
+            const isExpandedBefore = classes.contains('is-expanded');
+
+            clickSnapshotIndicator();
+            classes = drawerElement.classList;
+            const isExpandedAfterFirstClick = classes.contains('is-expanded');
+
+            const success = isExpandedBefore === false
+                && isExpandedAfterFirstClick === true;
+
+            expect(success).toBe(true);
+        });
+
+        it("snapshots container does not have class isExpanded", () => {
+            let classes = drawerElement.classList;
+            const isExpandedBefore = classes.contains('is-expanded');
+
+            clickSnapshotIndicator();
+            classes = drawerElement.classList;
+            const isExpandedAfterFirstClick = classes.contains('is-expanded');
+
+            clickSnapshotIndicator();
+            classes = drawerElement.classList;
+            const isExpandedAfterSecondClick = classes.contains('is-expanded');
+
+            const success = isExpandedBefore === false
+                && isExpandedAfterFirstClick === true
+                && isExpandedAfterSecondClick === false;
+
+            expect(success).toBe(true);
+        });
+
+        it("show notebook snapshots container text", () => {
+            clickSnapshotIndicator();
+
+            const notebookSnapshots = drawerElement.querySelector('.l-browse-bar__object-name');
+            const snapshotsText = notebookSnapshots.textContent.trim();
+
+            expect(snapshotsText).toBe('Notebook Snapshots');
         });
     });
 });
