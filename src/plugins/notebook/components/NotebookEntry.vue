@@ -14,6 +14,9 @@
                  class="c-ne__text"
                  :class="{'c-ne__input' : !readOnly }"
                  :contenteditable="!readOnly"
+                 tabindex="0"
+                 @keydown.enter.exact.prevent
+                 @keyup.enter.exact.prevent="updateEntryValue($event, entry.id)"
                  @blur="updateEntryValue($event, entry.id)"
                  @focus="updateCurrentEntryValue($event, entry.id)"
             >{{ entry.text }}</div>
@@ -33,6 +36,7 @@
     >
         <button class="c-icon-button c-icon-button--major icon-trash"
                 title="Delete this entry"
+                tabindex="-1"
                 @click="deleteEntry"
         >
         </button>
@@ -272,16 +276,21 @@ export default {
                 return;
             }
 
-            const entryPos = this.entryPosById(entryId);
+            target.blur();
+
             const value = target.textContent.trim();
-            if (this.currentEntryValue !== value) {
-                target.textContent = value;
-
-                const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-                entries[entryPos].text = value;
-
-                this.updateEntries(entries);
+            if (this.currentEntryValue === value) {
+                return;
             }
+
+            target.textContent = value;
+            this.currentEntryValue = value;
+
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+            const entryPos = this.entryPosById(entryId);
+            entries[entryPos].text = value;
+
+            this.updateEntries(entries);
         },
         updateEntries(entries) {
             this.$emit('updateEntries', entries);

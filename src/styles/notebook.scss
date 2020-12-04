@@ -292,6 +292,8 @@
         &:focus {
             background: $colorInputBg;
         }
+
+        white-space: pre-wrap;
     }
 
     &__section-and-page {
