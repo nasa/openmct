@@ -22,8 +22,6 @@
 
 import uuid from 'uuid';
 
-const PERSIST_BOOL = false;
-
 /**
  * This class encapsulates the process of  duplicating/copying a domain object
  * and all of its children.
@@ -115,28 +113,6 @@ export default class DuplicateTask {
 
         await clonesDone;
 
-        // let clonesDone = await this.clones.reduce(async (savePromise, nextClone) => {
-        //     await savePromise;
-
-        //     let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
-        //     let message = `Duplicating ${initialCount - this.persisted} objects.`;
-
-        //     dialog.updateProgress(percentPersisted, message);
-
-        //     return this.openmct.objects.save(nextClone);
-        // }, Promise.resolve());
-
-        // await clonesDone;
-
-        // for (let clone of this.clones) {
-        //     let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
-        //     let message = `Duplicating ${initialCount - this.persisted} objects.`;
-
-        //     dialog.updateProgress(percentPersisted, message);
-
-        //     await this.openmct.objects.save(clone);
-        // }
-
         dialog.dismiss();
         this.openmct.notifications.info(`Duplicated ${this.persisted} objects.`);
 
@@ -148,9 +124,8 @@ export default class DuplicateTask {
      */
     async addClonesToParent() {
         let parentComposition = this.openmct.composition.get(this.parent);
-        let parentComp = await parentComposition.load();
+        await parentComposition.load();
         parentComposition.add(this.firstClone);
-
 
         return;
     }
@@ -169,10 +144,7 @@ export default class DuplicateTask {
     async duplicateObject(originalObject) {
         // Check if the creatable (or other passed in filter).
         if (this.filter(originalObject)) {
-            // Clone original object
             let clone = this.cloneObjectModel(originalObject);
-
-            // Get children, if any
             let composeesCollection = this.openmct.composition.get(originalObject);
             let composees;
 
@@ -180,7 +152,6 @@ export default class DuplicateTask {
                 composees = await composeesCollection.load();
             }
 
-            // Recursively duplicate children
             return this.duplicateComposees(clone, composees);
         }
 
@@ -226,7 +197,6 @@ export default class DuplicateTask {
      */
     async duplicateComposees(clonedParent, composees = []) {
         let idMap = {};
-
         let allComposeesDuplicated = composees.reduce(async (previousPromise, nextComposee) => {
             await previousPromise;
             let clonedComposee = await this.duplicateObject(nextComposee);
@@ -265,7 +235,7 @@ export default class DuplicateTask {
         let clone = JSON.parse(JSON.stringify(domainObject));
         let identifier = {
             key: uuid(),
-            namespace: this.namespace
+            namespace: this.namespace // set to NEW parent's namespace
         };
 
         if (clone.modified || clone.persisted || clone.location) {
