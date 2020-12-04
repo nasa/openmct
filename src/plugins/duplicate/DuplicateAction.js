@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import DuplicateTask from './DuplicateTask';
-import objectUtils from 'objectUtils';
 
 export default class DuplicateAction {
     constructor(openmct) {

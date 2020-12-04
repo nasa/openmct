@@ -102,7 +102,7 @@ export default class DuplicateTask {
             title: 'Duplicating'
         });
 
-        let clonesDone = Promise.all(this.clones.map(async (clone) => {
+        let clonesDone = Promise.all(this.clones.map((clone) => {
             let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
             let message = `Duplicating ${initialCount - this.persisted} objects.`;
 
