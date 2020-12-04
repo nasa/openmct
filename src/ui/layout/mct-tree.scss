@@ -199,6 +199,14 @@
     }
 }
 
+.icon-arrow-nav-to-parent {
+    visibility: hidden;
+
+    &.is-enabled {
+        visibility: visible;
+    }
+}
+
 .c-nav {
     $dimension: $treeNavArrowD;
 

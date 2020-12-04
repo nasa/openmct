@@ -65,7 +65,7 @@
                 v-for="(ancestor, index) in focusedAncestors"
                 :key="ancestor.id"
                 :node="ancestor"
-                :show-up="index < focusedAncestors.length - 1"
+                :show-up="index !== 0 && index < focusedAncestors.length"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
                 @resetTree="beginNavigationRequest('handleReset', ancestor)"
@@ -404,13 +404,17 @@ export default {
 
             this.childrenSlideClass = 'up';
 
+            let index = this.tempAncestors.indexOf(node);
+
             this.tempAncestors = [...this.ancestors];
-            this.tempAncestors.splice(this.tempAncestors.indexOf(node) + 1);
+            this.tempAncestors.splice(index);
+
+            let parentNode = this.tempAncestors[index - 1];
 
             let objectPath = this.ancestorsAsObjects();
-            objectPath.splice(objectPath.indexOf(node.object) + 1);
+            objectPath.splice(objectPath.indexOf(node.object));
 
-            let childrenItems = await this.getChildrenAsTreeItems(node, objectPath, requestId);
+            let childrenItems = await this.getChildrenAsTreeItems(parentNode, objectPath, requestId);
 
             // if all is good, return true for successful navigation
             return this.updateTree(this.tempAncestors, childrenItems, requestId);
