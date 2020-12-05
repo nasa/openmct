@@ -35,6 +35,7 @@
         </div>
         <div class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
+             @click="showImage()"
         >
             <div class="c-imagery__main-image__image js-imageryView-image"
                  :style="{
@@ -44,18 +45,18 @@
                  :data-openmct-image-timestamp="time"
                  :data-openmct-object-keystring="keyString"
             ></div>
-        </div>
-        <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
-            <button class="c-nav c-nav--prev"
-                    title="Previous image"
-                    :disabled="isPrevDisabled"
-                    @click="prevImage()"
-            ></button>
-            <button class="c-nav c-nav--next"
-                    title="Next image"
-                    :disabled="isNextDisabled"
-                    @click="nextImage()"
-            ></button>
+            <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
+                <button class="c-nav c-nav--prev"
+                        title="Previous image"
+                        :disabled="isPrevDisabled"
+                        @click.stop="prevImage()"
+                ></button>
+                <button class="c-nav c-nav--next"
+                        title="Next image"
+                        :disabled="isNextDisabled"
+                        @click.stop="nextImage()"
+                ></button>
+            </div>
         </div>
 
         <div class="c-imagery__control-bar">
@@ -98,6 +99,7 @@
 
 <script>
 import moment from 'moment';
+import { openInImageLargeView } from '@/utils/imageLargeView';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -238,6 +240,14 @@ export default {
         this.openmct.time.off('clock', this.clockChange);
     },
     methods: {
+        showImage() {
+            const imageMeta = {
+                filters: this.filters,
+                time: this.time
+            };
+
+            openInImageLargeView(this.openmct, this.imageUrl, imageMeta);
+        },
         focusElement() {
             this.$el.focus();
         },
