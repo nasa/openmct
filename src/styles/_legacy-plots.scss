@@ -47,6 +47,7 @@ mct-plot {
 .c-plot,
 .gl-plot {
     overflow: hidden;
+    min-height: 100px;
 
         .s-status-taking-snapshot & {
         .c-control-bar {
@@ -79,7 +80,8 @@ mct-plot {
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
-        overflow: hidden;
+        overflow-y: scroll;
+        overflow-x: hidden;
     }
 
     &--stacked {
