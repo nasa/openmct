@@ -19,45 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import MoveAction from "./MoveAction";
 
-define([], function () {
-
-    /**
-     * Disallow moves when either the parent or the child are not
-     * modifiable by users.
-     * @constructor
-     * @implements {Policy}
-     * @memberof platform/entanglement
-     */
-    function MovePolicy() {
-    }
-
-    function parentOf(domainObject) {
-        var context = domainObject.getCapability('context');
-
-        return context && context.getParent();
-    }
-
-    function allowMutation(domainObject) {
-        var type = domainObject && domainObject.getCapability('type');
-
-        return Boolean(type && type.hasFeature('creation'));
-    }
-
-    function selectedObject(context) {
-        return context.selectedObject || context.domainObject;
-    }
-
-    MovePolicy.prototype.allow = function (action, context) {
-        var key = action.getMetadata().key;
-
-        if (key === 'move') {
-            return allowMutation(selectedObject(context))
-                && allowMutation(parentOf(selectedObject(context)));
-        }
-
-        return true;
+export default function () {
+    return function (openmct) {
+        openmct.actions.register(new MoveAction(openmct));
     };
-
-    return MovePolicy;
-});
+}
