@@ -7,7 +7,7 @@ export function openInImageLargeView(openmct, imageSrc, imageMeta) {
         brightness: 100,
         contrast: 100
     };
-    const filters = imageMeta
+    const filters = imageMeta && imageMeta.filters
         ? imageMeta.filters
         : DEFAULT_FILTERS;
 

@@ -99,7 +99,7 @@
 
 <script>
 import moment from 'moment';
-import { openInImageLargeView } from '@/utils/imageLargeView';
+import { openInImageLargeView } from '@/utils/imageLargeView/imageLargeView';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;

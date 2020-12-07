@@ -1,0 +1,17 @@
+.c-image-large {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__header {
+        flex: 0 0 auto;
+    }
+}
+
+.c-image-large img {
+    object-fit: contain;
+}
