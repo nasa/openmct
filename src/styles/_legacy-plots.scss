@@ -80,7 +80,7 @@ mct-plot {
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
     }
 
