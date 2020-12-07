@@ -22,6 +22,7 @@
         &__bg {
             background-color: $colorPlotBg;
             border: 1px solid transparent;
+            cursor: pointer;
             flex: 1 1 auto;
 
             &.unnsynced{
