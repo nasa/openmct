@@ -7,17 +7,19 @@ export function openInImageLargeView(openmct, imageSrc, imageMeta) {
         brightness: 100,
         contrast: 100
     };
+
+    const alt = imageMeta.alt || 'missing image';
     const filters = imageMeta && imageMeta.filters
         ? imageMeta.filters
         : DEFAULT_FILTERS;
-
-    const filter = `filter: brightness(${filters.brightness}%) contrast(${filters.contrast}%)`;
+    const style = `filter: brightness(${filters.brightness}%) contrast(${filters.contrast}%)`;
     const element = new Vue({
         data: () => {
             return {
+                alt,
                 imageSrc,
                 time: imageMeta.time,
-                filter
+                style
             };
         },
         template: ImageLargeView

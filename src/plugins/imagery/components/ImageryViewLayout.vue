@@ -242,6 +242,7 @@ export default {
     methods: {
         showImage() {
             const imageMeta = {
+                alt: this.domainObject.name,
                 filters: this.filters,
                 time: this.time
             };
