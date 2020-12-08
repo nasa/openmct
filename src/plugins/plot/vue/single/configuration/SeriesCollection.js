@@ -19,14 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import _ from 'lodash';
+
 import PlotSeries from "./PlotSeries";
 import Collection from "./Collection";
 import Color from "../lib/Color";
 import ColorPalette from "../lib/ColorPalette";
 
-const SeriesCollection = Collection.extend({
-    modelClass: PlotSeries,
-    initialize: function (options) {
+export default class SeriesCollection extends Collection {
+
+    initialize(options) {
+        super.initialize(options);
+        this.modelClass = PlotSeries;
         this.plot = options.plot;
         this.openmct = options.openmct;
         this.palette = new ColorPalette();
@@ -40,22 +44,22 @@ const SeriesCollection = Collection.extend({
         } else {
             this.watchTelemetryContainer(domainObject);
         }
-    },
-    trackPersistedConfig: function (domainObject) {
+    }
+    trackPersistedConfig(domainObject) {
         domainObject.configuration.series.forEach(function (seriesConfig) {
             const series = this.byIdentifier(seriesConfig.identifier);
             if (series) {
                 series.persistedConfig = seriesConfig;
             }
         }, this);
-    },
-    watchTelemetryContainer: function (domainObject) {
+    }
+    watchTelemetryContainer(domainObject) {
         const composition = this.openmct.composition.get(domainObject);
         this.listenTo(composition, 'add', this.addTelemetryObject, this);
         this.listenTo(composition, 'remove', this.removeTelemetryObject, this);
         composition.load();
-    },
-    addTelemetryObject: function (domainObject, index) {
+    }
+    addTelemetryObject(domainObject, index) {
         let seriesConfig = this.plot.getPersistedSeriesConfig(domainObject.identifier);
         const filters = this.plot.getPersistedFilters(domainObject.identifier);
         const plotObject = this.plot.get('domainObject');
@@ -88,8 +92,8 @@ const SeriesCollection = Collection.extend({
                 .getPersistedSeriesConfig(domainObject.identifier),
             filters: filters
         }));
-    },
-    removeTelemetryObject: function (identifier) {
+    }
+    removeTelemetryObject(identifier) {
         const plotObject = this.plot.get('domainObject');
         if (plotObject.type === 'telemetry.plot.overlay') {
 
@@ -120,8 +124,8 @@ const SeriesCollection = Collection.extend({
                 }.bind(this));
             }
         }
-    },
-    onSeriesAdd: function (series) {
+    }
+    onSeriesAdd(series) {
         let seriesColor = series.get('color');
         if (seriesColor) {
             if (!(seriesColor instanceof Color)) {
@@ -135,13 +139,13 @@ const SeriesCollection = Collection.extend({
         }
 
         this.listenTo(series, 'change:color', this.updateColorPalette, this);
-    },
-    onSeriesRemove: function (series) {
+    }
+    onSeriesRemove(series) {
         this.palette.return(series.get('color'));
         this.stopListening(series);
         series.destroy();
-    },
-    updateColorPalette: function (newColor, oldColor) {
+    }
+    updateColorPalette(newColor, oldColor) {
         this.palette.remove(newColor);
         const seriesWithColor = this.filter(function (series) {
             return series.get('color') === newColor;
@@ -149,8 +153,8 @@ const SeriesCollection = Collection.extend({
         if (!seriesWithColor) {
             this.palette.return(oldColor);
         }
-    },
-    byIdentifier: function (identifier) {
+    }
+    byIdentifier(identifier) {
         return this.filter(function (series) {
             const seriesIdentifier = series.get('identifier');
 
@@ -158,6 +162,4 @@ const SeriesCollection = Collection.extend({
                     && seriesIdentifier.key === identifier.key;
         })[0];
     }
-});
-
-export default SeriesCollection;
+}

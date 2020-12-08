@@ -19,12 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Model from './Model';
+import Model from "./Model";
 /**
      * TODO: doc strings.
      */
-const XAxisModel = Model.extend({
-    initialize: function (options) {
+export default class XAxisModel extends Model {
+    initialize(options) {
         this.plot = options.plot;
         this.set('label', options.model.name || '');
         this.on('change:range', function (newValue, oldValue, model) {
@@ -44,9 +44,10 @@ const XAxisModel = Model.extend({
         }
 
         this.listenTo(this, 'change:key', this.changeKey, this);
-        this.listenTo(this, 'resetSeries', this.resetSeries, this);
-    },
-    changeKey: function (newKey) {
+        //TODO: We shouldn't need this anymore
+        // this.listenTo(this, 'resetSeries', this.resetSeries, this);
+    }
+    changeKey(newKey) {
         const series = this.plot.series.first();
         if (series) {
             const xMetadata = series.metadata.value(newKey);
@@ -63,13 +64,13 @@ const XAxisModel = Model.extend({
         this.plot.series.forEach(function (plotSeries) {
             plotSeries.set('xKey', newKey);
         });
-    },
-    resetSeries: function () {
+    }
+    resetSeries() {
         this.plot.series.forEach(function (plotSeries) {
             plotSeries.reset();
         });
-    },
-    defaults: function (options) {
+    }
+    defaults(options) {
         const bounds = options.openmct.time.bounds();
         const timeSystem = options.openmct.time.timeSystem();
         const format = options.openmct.$injector.get('formatService')
@@ -86,6 +87,4 @@ const XAxisModel = Model.extend({
             frozen: false
         };
     }
-});
-
-export default XAxisModel;
+}

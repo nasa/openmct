@@ -22,74 +22,72 @@
 
 import EventEmitter from 'EventEmitter';
 import eventHelpers from "../lib/eventHelpers";
-import extend from "../lib/extend";
 import _ from 'lodash';
 
-function Model(options) {
-    if (!options) {
-        options = {};
+export default class Model extends EventEmitter {
+    constructor(options) {
+        super();
+
+        //need to do this as we're already extending EventEmitter
+        eventHelpers.extend(this);
+
+        if (!options) {
+            options = {};
+        }
+
+        this.id = options.id;
+        this.model = options.model;
+        this.collection = options.collection;
+        const defaults = this.defaults(options);
+        if (!this.model) {
+            this.model = options.model = defaults;
+        } else {
+            _.defaultsDeep(this.model, defaults);
+        }
+
+        this.initialize(options);
+        this.idAttr = 'id';
     }
 
-    this.id = options.id;
-    this.model = options.model;
-    this.collection = options.collection;
-    const defaults = this.defaults(options);
-    if (!this.model) {
-        this.model = options.model = defaults;
-    } else {
-        _.defaultsDeep(this.model, defaults);
+    defaults(options) {
+        return {};
     }
 
-    this.initialize(options);
-}
+    initialize(model) {
 
-Object.assign(Model.prototype, EventEmitter.prototype);
-eventHelpers.extend(Model.prototype);
+    }
 
-Model.extend = extend;
-
-Model.prototype.idAttr = 'id';
-
-Model.prototype.defaults = function (options) {
-    return {};
-};
-
-Model.prototype.initialize = function (model) {
-
-};
-
-/**
+    /**
      * Destroy the model, removing all listeners and subscriptions.
      */
-Model.prototype.destroy = function () {
-    this.emit('destroy');
-    this.removeAllListeners();
-};
+    destroy() {
+        this.emit('destroy');
+        this.removeAllListeners();
+    }
 
-Model.prototype.id = function () {
-    return this.get(this.idAttr);
-};
+    id() {
+        return this.get(this.idAttr);
+    }
 
-Model.prototype.get = function (attribute) {
-    return this.model[attribute];
-};
+    get(attribute) {
+        return this.model[attribute];
+    }
 
-Model.prototype.has = function (attribute) {
-    return _.has(this.model, attribute);
-};
+    has(attribute) {
+        return _.has(this.model, attribute);
+    }
 
-Model.prototype.set = function (attribute, value) {
-    const oldValue = this.model[attribute];
-    this.model[attribute] = value;
-    this.emit('change', attribute, value, oldValue, this);
-    this.emit('change:' + attribute, value, oldValue, this);
-};
+    set(attribute, value) {
+        const oldValue = this.model[attribute];
+        this.model[attribute] = value;
+        this.emit('change', attribute, value, oldValue, this);
+        this.emit('change:' + attribute, value, oldValue, this);
+    }
 
-Model.prototype.unset = function (attribute) {
-    const oldValue = this.model[attribute];
-    delete this.model[attribute];
-    this.emit('change', attribute, undefined, oldValue, this);
-    this.emit('change:' + attribute, undefined, oldValue, this);
-};
-
-export default Model;
+    unset(attribute) {
+        const oldValue = this.model[attribute];
+        delete this.model[attribute];
+        this.emit('change', attribute, undefined, oldValue, this);
+        this.emit('change:' + attribute, undefined, oldValue, this);
+    }
+}

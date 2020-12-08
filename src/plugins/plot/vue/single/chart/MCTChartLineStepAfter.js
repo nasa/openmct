@@ -22,27 +22,30 @@
 
 import MCTChartSeriesElement from './MCTChartSeriesElement';
 
-const MCTChartLineStepAfter = MCTChartSeriesElement.extend({
-    removePoint: function (point, index, count) {
+export default class MCTChartLineStepAfter extends MCTChartSeriesElement {
+    removePoint(point, index, count) {
         if (index > 0 && index / 2 < this.count) {
             this.buffer[index + 1] = this.buffer[index - 1];
         }
-    },
-    vertexCountForPointAtIndex: function (index) {
+    }
+
+    vertexCountForPointAtIndex(index) {
         if (index === 0 && this.count === 0) {
             return 2;
         }
 
         return 4;
-    },
-    startIndexForPointAtIndex: function (index) {
+    }
+
+    startIndexForPointAtIndex(index) {
         if (index === 0) {
             return 0;
         }
 
         return 2 + ((index - 1) * 4);
-    },
-    addPoint: function (point, start, count) {
+    }
+
+    addPoint(point, start, count) {
         if (start === 0 && this.count === 0) {
             // First point is easy.
             this.buffer[start] = point.x;
@@ -67,7 +70,5 @@ const MCTChartLineStepAfter = MCTChartSeriesElement.extend({
             }
         }
     }
-});
-
-export default MCTChartLineStepAfter;
+}
 

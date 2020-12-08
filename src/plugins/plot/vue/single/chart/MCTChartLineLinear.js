@@ -22,12 +22,10 @@
 
 import MCTChartSeriesElement from './MCTChartSeriesElement';
 
-const MCTChartLineLinear = MCTChartSeriesElement.extend({
-    addPoint: function (point, start, count) {
+export default class MCTChartLineLinear extends MCTChartSeriesElement {
+    addPoint(point, start, count) {
         this.buffer[start] = point.x;
         this.buffer[start + 1] = point.y;
     }
-});
-
-export default MCTChartLineLinear;
+}
 

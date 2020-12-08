@@ -20,24 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import _ from 'lodash';
+
 import Model from "./Model";
-import SeriesCollection from './SeriesCollection';
+import SeriesCollection from "./SeriesCollection";
 import XAxisModel from "./XAxisModel";
 import YAxisModel from "./YAxisModel";
 import LegendModel from "./LegendModel";
 /**
-     * PlotConfiguration model stores the configuration of a plot and some
-     * limited state.  The indiidual parts of the plot configuration model
-     * handle setting defaults and updating in response to various changes.
-     *
-     */
-const PlotConfigurationModel = Model.extend({
-
+ * PlotConfiguration model stores the configuration of a plot and some
+ * limited state.  The indiidual parts of the plot configuration model
+ * handle setting defaults and updating in response to various changes.
+ *
+ */
+export default class PlotConfigurationModel extends Model {
     /**
-         * Initializes all sub models and then passes references to submodels
-         * to those that need it.
-         */
-    initialize: function (options) {
+     * Initializes all sub models and then passes references to submodels
+     * to those that need it.
+     */
+    initialize(options) {
         this.openmct = options.openmct;
 
         this.xAxis = new XAxisModel({
@@ -73,11 +73,11 @@ const PlotConfigurationModel = Model.extend({
         this.legend.listenToSeriesCollection(this.series);
 
         this.listenTo(this, 'destroy', this.onDestroy, this);
-    },
+    }
     /**
-         * Retrieve the persisted series config for a given identifier.
-         */
-    getPersistedSeriesConfig: function (identifier) {
+     * Retrieve the persisted series config for a given identifier.
+     */
+    getPersistedSeriesConfig(identifier) {
         const domainObject = this.get('domainObject');
         if (!domainObject.configuration || !domainObject.configuration.series) {
             return;
@@ -87,11 +87,11 @@ const PlotConfigurationModel = Model.extend({
             return seriesConfig.identifier.key === identifier.key
                     && seriesConfig.identifier.namespace === identifier.namespace;
         })[0];
-    },
+    }
     /**
-         * Retrieve the persisted filters for a given identifier.
-         */
-    getPersistedFilters: function (identifier) {
+     * Retrieve the persisted filters for a given identifier.
+     */
+    getPersistedFilters(identifier) {
         const domainObject = this.get('domainObject');
         const keystring = this.openmct.objects.makeKeyString(identifier);
 
@@ -100,17 +100,17 @@ const PlotConfigurationModel = Model.extend({
         }
 
         return domainObject.configuration.filters[keystring];
-    },
+    }
     /**
-         * Update the domain object with the given value.
-         */
-    updateDomainObject: function (domainObject) {
+     * Update the domain object with the given value.
+     */
+    updateDomainObject(domainObject) {
         this.set('domainObject', domainObject);
-    },
+    }
     /**
-         * Clean up all objects and remove all listeners.
-         */
-    onDestroy: function () {
+     * Clean up all objects and remove all listeners.
+     */
+    onDestroy() {
         this.xAxis.destroy();
         this.yAxis.destroy();
         this.series.destroy();
@@ -118,12 +118,12 @@ const PlotConfigurationModel = Model.extend({
         if (this.removeMutationListener) {
             this.removeMutationListener();
         }
-    },
+    }
     /**
-         * Return defaults, which are extracted from the passed in domain
-         * object.
-         */
-    defaults: function (options) {
+     * Return defaults, which are extracted from the passed in domain
+     * object.
+     */
+    defaults(options) {
         return {
             series: [],
             domainObject: options.domainObject,
@@ -133,6 +133,4 @@ const PlotConfigurationModel = Model.extend({
             legend: _.cloneDeep(_.get(options.domainObject, 'configuration.legend', {}))
         };
     }
-});
-
-export default PlotConfigurationModel;
+}

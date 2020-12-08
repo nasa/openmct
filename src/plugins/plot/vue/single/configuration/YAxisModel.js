@@ -21,6 +21,7 @@
  *****************************************************************************/
 import _ from 'lodash';
 import Model from './Model';
+
 /**
      * YAxis model
       *
@@ -42,8 +43,8 @@ import Model from './Model';
      *         disabled.
      *
      */
-const YAxisModel = Model.extend({
-    initialize: function (options) {
+export default class YAxisModel extends Model {
+    initialize(options) {
         this.plot = options.plot;
         this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
         this.listenTo(this, 'change:autoscale', this.toggleAutoscale, this);
@@ -51,8 +52,8 @@ const YAxisModel = Model.extend({
         this.listenTo(this, 'change:frozen', this.toggleFreeze, this);
         this.listenTo(this, 'change:range', this.updateDisplayRange, this);
         this.updateDisplayRange(this.get('range'));
-    },
-    listenToSeriesCollection: function (seriesCollection) {
+    }
+    listenToSeriesCollection(seriesCollection) {
         this.seriesCollection = seriesCollection;
         this.listenTo(this.seriesCollection, 'add', (series => {
             this.trackSeries(series);
@@ -64,18 +65,18 @@ const YAxisModel = Model.extend({
         }), this);
         this.seriesCollection.forEach(this.trackSeries, this);
         this.updateFromSeries(this.seriesCollection);
-    },
-    updateDisplayRange: function (range) {
+    }
+    updateDisplayRange(range) {
         if (!this.get('autoscale')) {
             this.set('displayRange', range);
         }
-    },
-    toggleFreeze: function (frozen) {
+    }
+    toggleFreeze(frozen) {
         if (!frozen) {
             this.toggleAutoscale(this.get('autoscale'));
         }
-    },
-    applyPadding: function (range) {
+    }
+    applyPadding(range) {
         let padding = Math.abs(range.max - range.min) * this.get('autoscalePadding');
         if (padding === 0) {
             padding = 1;
@@ -85,13 +86,13 @@ const YAxisModel = Model.extend({
             min: range.min - padding,
             max: range.max + padding
         };
-    },
-    updatePadding: function (newPadding) {
+    }
+    updatePadding(newPadding) {
         if (this.get('autoscale') && !this.get('frozen') && this.has('stats')) {
             this.set('displayRange', this.applyPadding(this.get('stats')));
         }
-    },
-    calculateAutoscaleExtents: function (newStats) {
+    }
+    calculateAutoscaleExtents(newStats) {
         if (this.get('autoscale') && !this.get('frozen')) {
             if (!newStats) {
                 this.unset('displayRange');
@@ -99,8 +100,8 @@ const YAxisModel = Model.extend({
                 this.set('displayRange', this.applyPadding(newStats));
             }
         }
-    },
-    updateStats: function (seriesStats) {
+    }
+    updateStats(seriesStats) {
         if (!this.has('stats')) {
             this.set('stats', {
                 min: seriesStats.minValue,
@@ -128,16 +129,16 @@ const YAxisModel = Model.extend({
                 max: stats.max
             });
         }
-    },
-    resetStats: function () {
+    }
+    resetStats() {
         this.unset('stats');
         this.seriesCollection.forEach(function (series) {
             if (series.has('stats')) {
                 this.updateStats(series.get('stats'));
             }
         }, this);
-    },
-    trackSeries: function (series) {
+    }
+    trackSeries(series) {
         this.listenTo(series, 'change:stats', seriesStats => {
             if (!seriesStats) {
                 this.resetStats();
@@ -148,23 +149,23 @@ const YAxisModel = Model.extend({
         this.listenTo(series, 'change:yKey', () => {
             this.updateFromSeries(this.seriesCollection);
         });
-    },
-    untrackSeries: function (series) {
+    }
+    untrackSeries(series) {
         this.stopListening(series);
         this.resetStats();
         this.updateFromSeries(this.seriesCollection);
-    },
-    toggleAutoscale: function (autoscale) {
+    }
+    toggleAutoscale(autoscale) {
         if (autoscale && this.has('stats')) {
             this.set('displayRange', this.applyPadding(this.get('stats')));
         } else {
             this.set('displayRange', this.get('range'));
         }
-    },
+    }
     /**
          * Update yAxis format, values, and label from known series.
          */
-    updateFromSeries: function (series) {
+    updateFromSeries(series) {
         this.unset('displayRange');
         const plotModel = this.plot.get('domainObject');
         const label = _.get(plotModel, 'configuration.yAxis.label');
@@ -223,14 +224,12 @@ const YAxisModel = Model.extend({
                 return;
             }
         }
-    },
-    defaults: function (options) {
+    }
+    defaults(options) {
         return {
             frozen: false,
             autoscale: true,
             autoscalePadding: 0.1
         };
     }
-});
-
-export default YAxisModel;
+}

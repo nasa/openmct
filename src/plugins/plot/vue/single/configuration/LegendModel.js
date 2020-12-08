@@ -19,27 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Model from './Model';
+
+import Model from "./Model";
 /**
  * TODO: doc strings.
  */
-const LegendModel = Model.extend({
-    listenToSeriesCollection: function (seriesCollection) {
+export default class LegendModel extends Model {
+    listenToSeriesCollection(seriesCollection) {
         this.seriesCollection = seriesCollection;
         this.listenTo(this.seriesCollection, 'add', this.setHeight, this);
         this.listenTo(this.seriesCollection, 'remove', this.setHeight, this);
         this.listenTo(this, 'change:expanded', this.setHeight, this);
         this.set('expanded', this.get('expandByDefault'));
-    },
-    setHeight: function () {
+    }
+
+    setHeight() {
         const expanded = this.get('expanded');
         if (this.get('position') !== 'top') {
             this.set('height', '0px');
         } else {
             this.set('height', expanded ? (20 * (this.seriesCollection.size() + 1) + 40) + 'px' : '21px');
         }
-    },
-    defaults: function (options) {
+    }
+
+    defaults(options) {
         return {
             position: 'top',
             expandByDefault: false,
@@ -52,6 +55,4 @@ const LegendModel = Model.extend({
             showUnitsWhenExpanded: true
         };
     }
-});
-
-export default LegendModel;
+}
