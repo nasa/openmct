@@ -48,13 +48,14 @@ export default class DuplicateTask {
     }
 
     /**
-     * Execute the duplicate/copy task with the objects provided in the constructor.
+     * Execute the duplicate/copy task with the objects provided.
      * @returns {promise} Which will resolve with a clone of the object
      * once complete.
      */
     async duplicate(domainObject, parent, filter) {
         this.domainObject = domainObject;
         this.parent = parent;
+        this.namespace = parent.identifier.namespace;
         this.filter = filter || this.isCreatable;
 
         await this.buildDuplicationPlan();
@@ -96,13 +97,14 @@ export default class DuplicateTask {
         let initialCount = this.clones.length;
         let dialog = this.openmct.overlays.progressDialog({
             progressPerc: 0,
-            message: `Duplicating ${initialCount} files.`,
+            message: `Duplicating ${initialCount} objects.`,
             iconClass: 'info',
             title: 'Duplicating'
         });
-        let clonesDone = Promise.all(this.clones.map(clone => {
+
+        let clonesDone = Promise.all(this.clones.map((clone) => {
             let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
-            let message = `Duplicating ${initialCount - this.persisted} files.`;
+            let message = `Duplicating ${initialCount - this.persisted} objects.`;
 
             dialog.updateProgress(percentPersisted, message);
 
@@ -110,6 +112,7 @@ export default class DuplicateTask {
         }));
 
         await clonesDone;
+
         dialog.dismiss();
         this.openmct.notifications.info(`Duplicated ${this.persisted} objects.`);
 
@@ -141,10 +144,7 @@ export default class DuplicateTask {
     async duplicateObject(originalObject) {
         // Check if the creatable (or other passed in filter).
         if (this.filter(originalObject)) {
-            // Clone original object
             let clone = this.cloneObjectModel(originalObject);
-
-            // Get children, if any
             let composeesCollection = this.openmct.composition.get(originalObject);
             let composees;
 
@@ -152,7 +152,6 @@ export default class DuplicateTask {
                 composees = await composeesCollection.load();
             }
 
-            // Recursively duplicate children
             return this.duplicateComposees(clone, composees);
         }
 
@@ -198,12 +197,11 @@ export default class DuplicateTask {
      */
     async duplicateComposees(clonedParent, composees = []) {
         let idMap = {};
-
         let allComposeesDuplicated = composees.reduce(async (previousPromise, nextComposee) => {
             await previousPromise;
             let clonedComposee = await this.duplicateObject(nextComposee);
             idMap[this.getId(nextComposee)] = this.getId(clonedComposee);
-            await this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
+            this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
 
             return;
         }, Promise.resolve());
@@ -216,11 +214,9 @@ export default class DuplicateTask {
         return clonedParent;
     }
 
-    async composeChild(child, parent, setLocation) {
-        const PERSIST_BOOL = false;
-        let parentComposition = this.openmct.composition.get(parent);
-        await parentComposition.load();
-        parentComposition.add(child, PERSIST_BOOL);
+    composeChild(child, parent, setLocation) {
+        let childKeyString = this.openmct.objects.makeKeyString(child.identifier);
+        parent.composition.push(childKeyString);
 
         //If a location is not specified, set it.
         if (setLocation && child.location === undefined) {
@@ -239,7 +235,7 @@ export default class DuplicateTask {
         let clone = JSON.parse(JSON.stringify(domainObject));
         let identifier = {
             key: uuid(),
-            namespace: domainObject.identifier.namespace
+            namespace: this.namespace // set to NEW parent's namespace
         };
 
         if (clone.modified || clone.persisted || clone.location) {
