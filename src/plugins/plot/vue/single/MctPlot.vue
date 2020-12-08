@@ -516,8 +516,8 @@ export default {
         },
 
         startMarquee(event) {
-            this.canvas.removeClass('plot-drag');
-            this.canvas.addClass('plot-marquee');
+            this.canvas.classList.remove('plot-drag');
+            this.canvas.classList.add('plot-marquee');
 
             this.trackMousePosition(event);
             if (this.positionOverPlot) {
@@ -675,8 +675,8 @@ export default {
         },
 
         startPan(event) {
-            this.canvas.addClass('plot-drag');
-            this.canvas.removeClass('plot-marquee');
+            this.canvas.classList.add('plot-drag');
+            this.canvas.classList.remove('plot-marquee');
 
             this.trackMousePosition(event);
             this.freeze();
