@@ -34,12 +34,7 @@ const helperFunctions = {
             context: context,
             _cb: context ? callback.bind(context) : callback
         };
-        if (object.$watch && event.indexOf('change:') === 0) {
-            const scopePath = event.replace('change:', '');
-            listener.unlisten = object.$watch(scopePath, listener._cb, true);
-        } else if (object.$on) {
-            listener.unlisten = object.$on(event, listener._cb);
-        } else if (object.addEventListener) {
+        if (object.addEventListener) {
             object.addEventListener(event, listener._cb);
         } else {
             object.on(event, listener._cb);
