@@ -20,15 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<!--plot-legend-{{legend.get('position')}}-->
 <div class="gl-plot"
-     :class="{'plot-legend-expanded': legend.get('expanded'), 'plot-legend-collapsed': !legend.get('expanded')}"
+     :class="[{'plot-legend-expanded': legend.get('expanded'), 'plot-legend-collapsed': !legend.get('expanded')}, plotLegendPositionClass]"
 >
-    <!--    <plot-legend :cursor-locked="!!lockHighlightPoint"-->
-    <!--                 :show-highlights="!!highlights.length"-->
-    <!--                 :series="series"-->
-    <!--                 :legend="legend"-->
-    <!--    />-->
+    <plot-legend :cursor-locked="!!lockHighlightPoint"
+                 :show-highlights="!!highlights.length"
+                 :series="series"
+                 :legend="legend"
+    />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <div class="gl-plot-axis-area gl-plot-y has-local-controls"
              :style="{
@@ -238,6 +237,11 @@ export default {
             xKeyOptions: [],
             series: []
         };
+    },
+    computed: {
+        plotLegendPositionClass() {
+            return `plot-legend-${this.legend.get('position')}`;
+        }
     },
     watch: {
         gridLines(newGridLines) {

@@ -1,14 +1,13 @@
 <template>
-<div v-if="series.length > 0"
-     class="c-plot-legend gl-plot-legend"
+<div class="c-plot-legend gl-plot-legend"
      :class="{
          'hover-on-plot': showHighlights,
-         'is-legend-hidden': legend.get('hideLegendWhenSmall')
+         'is-legend-hidden': isLegendHidden
      }"
 >
     <div class="c-plot-legend__view-control gl-plot-legend__view-control c-disclosure-triangle is-enabled"
-         :class="{ 'c-disclosure-triangle--expanded': legend.get('expanded') }"
-         @click="legend.set('expanded', !legend.get('expanded'));"
+         :class="{ 'c-disclosure-triangle--expanded': isLegendExpanded }"
+         @click="expandLegend"
     >
     </div>
 
@@ -23,36 +22,12 @@
             <div class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
                  title="Cursor is point locked. Click anywhere in the plot to unlock."
             ></div>
-            <div v-for="(seriesObject, index) in series"
-                 :key="index"
-                 class="plot-legend-item"
-                 :class="{
-                     'is-status--missing': seriesObject.domainObject.status === 'missing'
-                 }"
-            >
-                <div class="plot-series-swatch-and-name">
-                    <span class="plot-series-color-swatch"
-                          :style="{ 'background-color': seriesObject.get('color').asHexString() }"
-                    >
-                    </span>
-                    <span class="is-status__indicator"
-                          title="This item is missing or suspect"
-                    ></span>
-                    <span class="plot-series-name">{{ seriesObject.nameWithUnit() }}</span>
-                </div>
-                <!--seriesObject.closest.mctLimitState.cssClass , value-to-display-{{ legend.get('valueToShowWhenCollapsed') }}-->
-                <div v-show="showHighlights && legend.get('valueToShowWhenCollapsed') !== 'none'"
-                     class="plot-series-value hover-value-enabled"
-                     :class="{ 'cursor-hover': (legend.get('valueToShowWhenCollapsed').indexOf('nearest') != -1) }"
-                >
-                    {{ legend.get('valueToShowWhenCollapsed') === 'nearestValue' ?
-                        seriesObject.formatY(seriesObject.closest) :
-                        legend.get('valueToShowWhenCollapsed') === 'nearestTimestamp' ?
-                            seriesObject.closest && seriesObject.formatX(seriesObject.closest) :
-                            seriesObject.formatY(seriesObject.get('stats')[legend.get('valueToShowWhenCollapsed') + 'Point'])
-                    }}
-                </div>
-            </div>
+            <plot-legend-item-collapsed v-for="(seriesObject, index) in series"
+                                        :key="index"
+                                        :show-highlights="showHighlights"
+                                        :value-to-show-when-collapsed="valueToShowWhenCollapsed"
+                                        :series-object="seriesObject"
+            />
         </div>
         <!-- EXPANDED PLOT LEGEND -->
         <div class="plot-wrapper-expanded-legend"
@@ -65,77 +40,33 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th v-if="legend.get('showTimestampWhenExpanded')">
+                        <th v-if="showTimestampWhenExpanded">
                             Timestamp
                         </th>
-                        <th v-if="legend.get('showValueWhenExpanded')">
+                        <th v-if="showValueWhenExpanded">
                             Value
                         </th>
-                        <th v-if="legend.get('showUnitsWhenExpanded')">
+                        <th v-if="showUnitsWhenExpanded">
                             Unit
                         </th>
-                        <th v-if="legend.get('showMinimumWhenExpanded')"
+                        <th v-if="showMinimumWhenExpanded"
                             class="mobile-hide"
                         >
                             Min
                         </th>
-                        <th v-if="legend.get('showMaximumWhenExpanded')"
+                        <th v-if="showMaximumWhenExpanded"
                             class="mobile-hide"
                         >
                             Max
                         </th>
                     </tr>
                 </thead>
-                <tbody v-if="loaded">
-                    <tr v-for="(seriesObject, index) in series"
-                        :key="index"
-                        class="plot-legend-item"
-                        :class="{
-                            'is-status--missing': seriesObject.domainObject.status === 'missing'
-                        }"
-                    >
-                        <td class="plot-series-swatch-and-name">
-                            <span class="plot-series-color-swatch"
-                                  :style="{ 'background-color': seriesObject.get('color').asHexString() }"
-                            >
-                            </span>
-                            <span class="is-status__indicator"
-                                  title="This item is missing or suspect"
-                            ></span>
-                            <span class="plot-series-name">{{ seriesObject.get('name') }}</span>
-                        </td>
-
-                        <td v-if="legend.get('showTimestampWhenExpanded')">
-                            <span class="plot-series-value cursor-hover hover-value-enabled">
-                                {{ seriesObject.closest && seriesObject.formatX(seriesObject.closest) }}
-                            </span>
-                        </td>
-                        <td v-if="legend.get('showValueWhenExpanded')">
-                            <!-- :class="series.closest.mctLimitState.cssClass" -->
-                            <span class="plot-series-value cursor-hover hover-value-enabled">
-                                {{ seriesObject.formatY(seriesObject.closest) }}
-                            </span>
-                        </td>
-                        <td v-if="legend.get('showUnitsWhenExpanded')">
-                            <span class="plot-series-value cursor-hover hover-value-enabled">
-                                {{ seriesObject.get('unit') }}
-                            </span>
-                        </td>
-                        <td v-if="legend.get('showMinimumWhenExpanded')"
-                            class="mobile-hide"
-                        >
-                            <span class="plot-series-value">
-                                {{ seriesObject.formatY(seriesObject.get('stats').minPoint) }}
-                            </span>
-                        </td>
-                        <td v-if="legend.get('showMaximumWhenExpanded')"
-                            class="mobile-hide"
-                        >
-                            <span class="plot-series-value">
-                                {{ seriesObject.formatY(seriesObject.get('stats').maxPoint) }}
-                            </span>
-                        </td>
-                    </tr>
+                <tbody>
+                    <plot-legend-item-expanded v-for="(seriesObject, index) in series"
+                                               :key="index"
+                                               :series-object="seriesObject"
+                                               :legend="legend"
+                    />
                 </tbody>
             </table>
         </div>
@@ -143,8 +74,13 @@
 </div>
 </template>
 <script>
-
+import PlotLegendItemCollapsed from "./PlotLegendItemCollapsed.vue";
+import PlotLegendItemExpanded from "./PlotLegendItemExpanded.vue";
 export default {
+    components: {
+        PlotLegendItemExpanded,
+        PlotLegendItemCollapsed
+    },
     props: {
         cursorLocked: {
             type: Boolean,
@@ -173,11 +109,21 @@ export default {
     },
     data() {
         return {
-            loaded: false
+            valueToShowWhenCollapsed: this.legend.get('valueToShowWhenCollapsed'),
+            isLegendHidden: this.legend.get('hideLegendWhenSmall') !== true,
+            isLegendExpanded: this.legend.get('expanded') === true,
+            showTimestampWhenExpanded: this.legend.get('showTimestampWhenExpanded') === true,
+            showValueWhenExpanded: this.legend.get('showValueWhenExpanded') === true,
+            showUnitsWhenExpanded: this.legend.get('showUnitsWhenExpanded') === true,
+            showMinimumWhenExpanded: this.legend.get('showMinimumWhenExpanded') === true,
+            showMaximumWhenExpanded: this.legend.get('showMaximumWhenExpanded') === true
         };
     },
-    mounted() {
-        this.loaded = true;
+    methods: {
+        expandLegend() {
+            this.isLegendExpanded = !this.isLegendExpanded;
+            this.legend.set('expanded', this.isLegendExpanded);
+        }
     }
 };
 
