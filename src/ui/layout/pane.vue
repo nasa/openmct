@@ -15,6 +15,7 @@
         v-if="handle"
         class="l-pane__handle"
         @mousedown="start"
+        @contextmenu.prevent
     ></div>
     <div class="l-pane__header">
         <span v-if="label"
