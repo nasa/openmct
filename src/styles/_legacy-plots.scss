@@ -141,6 +141,14 @@ mct-plot {
             left: 0;
         }
 
+        .gl-plot-chart-area, .gl-plot-chart-wrapper {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+        }
+
         .gl-plot-axis-area.gl-plot-x {
             top: auto;
             right: 0;

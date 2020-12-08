@@ -85,17 +85,17 @@ define([
                         }
                     ],
                     "views": [
-                        {
-                            "name": "Plot",
-                            "key": "plot-single",
-                            "cssClass": "icon-telemetry",
-                            "template": PlotTemplate,
-                            "needs": [
-                                "telemetry"
-                            ],
-                            "delegation": false,
-                            "priority": "mandatory"
-                        },
+                        // {
+                        //     "name": "Plot",
+                        //     "key": "plot-single",
+                        //     "cssClass": "icon-telemetry",
+                        //     "template": PlotTemplate,
+                        //     "needs": [
+                        //         "telemetry"
+                        //     ],
+                        //     "delegation": false,
+                        //     "priority": "mandatory"
+                        // },
                         {
                             "name": "Overlay Plot",
                             "key": "overlayPlot",

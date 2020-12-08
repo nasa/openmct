@@ -35,6 +35,7 @@ define([
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
+    './plot/vue/single/plugin',
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
@@ -76,6 +77,7 @@ define([
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
+    PlotVuePlugin,
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
@@ -168,6 +170,7 @@ define([
     plugins.ExampleImagery = ExampleImagery;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin;
+    plugins.PlotVue = PlotVuePlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
