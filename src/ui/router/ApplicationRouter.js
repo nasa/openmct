@@ -195,6 +195,7 @@ class ApplicationRouter extends EventEmitter {
     }
 
     hashChaged(p) {
+        this.emit('change:hash', p);
         this.handleLocationChange(p);
     }
 
