@@ -132,18 +132,21 @@ define([
         }
 
         function navigateToFirstChildOfRoot() {
-            openmct.objects.get('ROOT').then(rootObject => {
-                openmct.composition.get(rootObject).load()
-                    .then(children => {
-                        let lastChild = children[children.length - 1];
-                        if (!lastChild) {
-                            console.error('Unable to navigate to anything. No root objects found.');
-                        } else {
-                            let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
-                            openmct.router.setPath(`#/browse/${lastChildId}`);
-                        }
-                    });
-            });
+            openmct.objects.get('ROOT')
+                .then(rootObject => {
+                    openmct.composition.get(rootObject).load()
+                        .then(children => {
+                            let lastChild = children[children.length - 1];
+                            if (!lastChild) {
+                                console.error('Unable to navigate to anything. No root objects found.');
+                            } else {
+                                let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
+                                openmct.router.setPath(`#/browse/${lastChildId}`);
+                            }
+                        })
+                        .catch(e => console.error(e));
+                })
+                .catch(e => console.error(e));
         }
 
         function clearMutationListeners() {
