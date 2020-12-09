@@ -47,7 +47,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
 
         appHolder = undefined;
         openmct = undefined;
-        resolveFunction =  undefined;
+        resolveFunction = undefined;
 
         resetApplicationState(openmct);
     });
@@ -58,7 +58,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
 
             openmct.router.removeListener('change:hash', resolveFunction);
             done();
-        }
+        };
 
         openmct.router.on('change:hash', resolveFunction);
     });
@@ -82,7 +82,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
                 openmct.router.removeListener('change:hash', resolveFunction);
                 done();
             }
-        }
+        };
 
         openmct.router.on('change:hash', resolveFunction);
     });
@@ -100,7 +100,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
                 expect(success).toBe(true);
                 done();
             }
-        }
+        };
 
         openmct.router.on('change:hash', resolveFunction);
     });
@@ -122,9 +122,8 @@ describe("The URLTimeSettingsSynchronizer", () => {
                 expect(success).toBe(true);
                 done();
             }
-        }
+        };
 
         openmct.router.on('change:hash', resolveFunction);
     });
-
 });
