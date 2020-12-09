@@ -296,11 +296,9 @@ define([
             arguments[1] = {};
         }
 
-        const keyString = objectUtils.makeKeyString(domainObject.identifier);
-
         // historical setup
         this.standardizeRequestOptions(arguments[1]);
-        const historicalProvider = this.findRequestProvider.apply(this, arguments);
+        const historicalProvider = this.findRequestProvider(domainObject, arguments);
 
         // subscription setup
         const subscriptionProvider = this.findSubscriptionProvider(domainObject);
@@ -310,22 +308,13 @@ define([
             return Promise.reject('No providers found');
         }
 
-        // move this to telemetry collection
-        // historicalProvider.request.apply(historicalProvider, arguments).catch((rejected) => {
-        //     this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-        //     console.error(rejected);
-
-        //     return Promise.reject(rejected);
-        // });
-
         let telemetryCollectionOptions = {
-            domainObject,
             historicalProvider,
             subscriptionProvider,
-            options: arguments
-        }
+            arguments: arguments
+        };
 
-        return Promise.resolve(new TelemetryCollection(this.openmct, telemetryCollectionOptions));
+        return Promise.resolve(new TelemetryCollection(this.openmct, domainObject, telemetryCollectionOptions));
     };
 
     /**
