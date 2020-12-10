@@ -79,8 +79,9 @@ export default class DuplicateTask {
      */
     async buildDuplicationPlan() {
         let domainObjectClone = await this.duplicateObject(this.domainObject);
+
         if (domainObjectClone !== this.domainObject) {
-            domainObjectClone.location = this.getId(this.parent);
+            domainObjectClone.location = this.getKeyString(this.parent);
         }
 
         this.firstClone = domainObjectClone;
@@ -160,67 +161,73 @@ export default class DuplicateTask {
     }
 
     /**
-     * Update identifiers in a cloned object model (or part of
-     * a cloned object model) to reflect new identifiers after
-     * duplicating.
-     * @private
-     */
-    rewriteIdentifiers(obj, idMap) {
-        function lookupValue(value) {
-            return (typeof value === 'string' && idMap[value]) || value;
-        }
-
-        if (Array.isArray(obj)) {
-            obj.forEach((value, index) => {
-                obj[index] = lookupValue(value);
-                this.rewriteIdentifiers(obj[index], idMap);
-            });
-        } else if (obj && typeof obj === 'object') {
-            Object.keys(obj).forEach((key) => {
-                let value = obj[key];
-                obj[key] = lookupValue(value);
-                if (idMap[key]) {
-                    delete obj[key];
-                    obj[idMap[key]] = value;
-                }
-
-                this.rewriteIdentifiers(value, idMap);
-            });
-        }
-    }
-
-    /**
      * Given an array of objects composed by a parent, clone them, then
      * add them to the parent.
      * @private
      * @returns {*}
      */
     async duplicateComposees(clonedParent, composees = []) {
-        let idMap = {};
+        let idMappings = [];
         let allComposeesDuplicated = composees.reduce(async (previousPromise, nextComposee) => {
             await previousPromise;
+
             let clonedComposee = await this.duplicateObject(nextComposee);
-            idMap[this.getId(nextComposee)] = this.getId(clonedComposee);
-            this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
+
+            if (clonedComposee) {
+                idMappings.push({
+                    newId: clonedComposee.identifier,
+                    oldId: nextComposee.identifier
+                });
+                this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
+            }
 
             return;
         }, Promise.resolve());
 
         await allComposeesDuplicated;
 
-        this.rewriteIdentifiers(clonedParent, idMap);
+        clonedParent = this.rewriteIdentifiers(clonedParent, idMappings);
         this.clones.push(clonedParent);
 
         return clonedParent;
     }
 
+    /**
+     * Update identifiers in a cloned object model (or part of
+     * a cloned object model) to reflect new identifiers after
+     * duplicating.
+     * @private
+     */
+    rewriteIdentifiers(clonedParent, childIdMappings) {
+        for (let { newId, oldId } of childIdMappings) {
+            let newIdKeyString = this.openmct.objects.makeKeyString(newId);
+            let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
+
+            // regex replace keystrings
+            clonedParent = JSON.stringify(clonedParent).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
+
+            // parse reviver to replace identifiers
+            clonedParent = JSON.parse(clonedParent, (key, value) => {
+                if (Object.prototype.hasOwnProperty.call(value, 'key')
+                    && Object.prototype.hasOwnProperty.call(value, 'namespace')
+                    && value.key === oldId.key
+                    && value.namespace === oldId.namespace) {
+                    return newId;
+                } else {
+                    return value;
+                }
+            });
+        }
+
+        return clonedParent;
+    }
+
     composeChild(child, parent, setLocation) {
-        let childKeyString = this.openmct.objects.makeKeyString(child.identifier);
-        parent.composition.push(childKeyString);
+        parent.composition.push(child.identifier);
 
         //If a location is not specified, set it.
         if (setLocation && child.location === undefined) {
-            let parentKeyString = this.getId(parent);
+            let parentKeyString = this.getKeyString(parent);
             child.location = parentKeyString;
         }
     }
@@ -256,7 +263,7 @@ export default class DuplicateTask {
         return clone;
     }
 
-    getId(domainObject) {
+    getKeyString(domainObject) {
         return this.openmct.objects.makeKeyString(domainObject.identifier);
     }
 
