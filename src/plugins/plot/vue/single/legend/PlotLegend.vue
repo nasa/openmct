@@ -1,7 +1,7 @@
 <template>
 <div class="c-plot-legend gl-plot-legend"
      :class="{
-         'hover-on-plot': showHighlights,
+         'hover-on-plot': !!highlights.length,
          'is-legend-hidden': isLegendHidden
      }"
 >
@@ -22,11 +22,12 @@
             <div class="c-state-indicator__alert-cursor-lock icon-cursor-lock"
                  title="Cursor is point locked. Click anywhere in the plot to unlock."
             ></div>
-            <plot-legend-item-collapsed v-for="(seriesObject, index) in series"
-                                        :key="index"
-                                        :show-highlights="showHighlights"
-                                        :value-to-show-when-collapsed="valueToShowWhenCollapsed"
+            <plot-legend-item-collapsed v-for="seriesObject in series"
+                                        :key="seriesObject.keyString"
+                                        :highlights="highlights"
+                                        :value-to-show-when-collapsed="legend.get('valueToShowWhenCollapsed')"
                                         :series-object="seriesObject"
+                                        :closest="seriesObject.closest"
             />
         </div>
         <!-- EXPANDED PLOT LEGEND -->
@@ -62,9 +63,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <plot-legend-item-expanded v-for="(seriesObject, index) in series"
-                                               :key="index"
+                    <plot-legend-item-expanded v-for="seriesObject in series"
+                                               :key="seriesObject.keyString"
                                                :series-object="seriesObject"
+                                               :highlights="highlights"
                                                :legend="legend"
                     />
                 </tbody>
@@ -77,6 +79,7 @@
 import PlotLegendItemCollapsed from "./PlotLegendItemCollapsed.vue";
 import PlotLegendItemExpanded from "./PlotLegendItemExpanded.vue";
 export default {
+    inject: ['openmct', 'domainObject'],
     components: {
         PlotLegendItemExpanded,
         PlotLegendItemCollapsed
@@ -88,13 +91,13 @@ export default {
                 return false;
             }
         },
-        showHighlights: {
-            type: Boolean,
+        series: {
+            type: Array,
             default() {
-                return false;
+                return [];
             }
         },
-        series: {
+        highlights: {
             type: Array,
             default() {
                 return [];
@@ -109,7 +112,6 @@ export default {
     },
     data() {
         return {
-            valueToShowWhenCollapsed: this.legend.get('valueToShowWhenCollapsed'),
             isLegendHidden: this.legend.get('hideLegendWhenSmall') !== true,
             isLegendExpanded: this.legend.get('expanded') === true,
             showTimestampWhenExpanded: this.legend.get('showTimestampWhenExpanded') === true,

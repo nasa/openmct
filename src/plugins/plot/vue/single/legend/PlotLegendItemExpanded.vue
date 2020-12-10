@@ -60,6 +60,12 @@ export default {
                 return {};
             }
         },
+        highlights: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
         legend: {
             type: Object,
             required: true
@@ -79,25 +85,45 @@ export default {
             formattedYValue: '',
             formattedXValue: '',
             formattedMinY: '',
-            formattedMaxY: ''
+            formattedMaxY: '',
+            mctLimitStateClass: ''
         };
     },
-    computed: {
-        mctLimitStateClass() {
-            return this.seriesObject.closest ? `${ this.seriesObject.closest.mctLimitState.cssClass }` : '';
+    watch: {
+        highlights() {
+            this.initialize();
         }
     },
     mounted() {
-        this.isMissing = this.seriesObject.domainObject.status === 'missing';
-        this.colorAsHexString = this.seriesObject.get('color').asHexString();
-        this.name = this.seriesObject.get('name');
-        this.unit = this.seriesObject.get('unit');
-        this.formattedYValue = this.seriesObject.formatY(this.seriesObject.closest);
-        this.formattedXValue = this.seriesObject.formatX(this.seriesObject.closest);
-        const stats = this.seriesObject.get('stats');
-        if (stats) {
-            this.formattedMinY = this.seriesObject.formatY(stats.minPoint);
-            this.formattedMaxY = this.seriesObject.formatY(stats.maxPoint);
+        this.initialize();
+    },
+    methods: {
+        initialize() {
+            const seriesObject = this.highlights.length ? this.highlights[0].series : this.seriesObject;
+
+            this.isMissing = seriesObject.domainObject.status === 'missing';
+            this.colorAsHexString = seriesObject.get('color').asHexString();
+            this.name = seriesObject.get('name');
+            this.unit = seriesObject.get('unit');
+            const closest = seriesObject.closest;
+            if (closest) {
+                this.formattedYValue = seriesObject.formatY(closest);
+                this.formattedXValue = seriesObject.formatX(closest);
+                this.mctLimitStateClass = seriesObject.closest.mctLimitState ? seriesObject.closest.mctLimitState.cssClass : '';
+            } else {
+                this.formattedYValue = '';
+                this.formattedXValue = '';
+                this.mctLimitStateClass = '';
+            }
+
+            const stats = seriesObject.get('stats');
+            if (stats) {
+                this.formattedMinY = seriesObject.formatY(stats.minPoint);
+                this.formattedMaxY = seriesObject.formatY(stats.maxPoint);
+            } else {
+                this.formattedMinY = '';
+                this.formattedMaxY = '';
+            }
         }
     }
 };

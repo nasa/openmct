@@ -14,7 +14,7 @@
         ></span>
         <span class="plot-series-name">{{ nameWithUnit }}</span>
     </div>
-    <div v-show="showHighlights && (valueToShowWhenCollapsed !== 'none')"
+    <div v-show="!!highlights.length && (valueToShowWhenCollapsed !== 'none')"
          class="plot-series-value hover-value-enabled"
          :class="[{ 'cursor-hover': notNearest }, valueToDisplayWhenCollapsedClass, mctLimitStateClass]"
     >
@@ -39,10 +39,10 @@ export default {
                 return {};
             }
         },
-        showHighlights: {
-            type: Boolean,
+        highlights: {
+            type: Array,
             default() {
-                return false;
+                return [];
             }
         }
     },
@@ -53,13 +53,11 @@ export default {
             nameWithUnit: '',
             formattedYValue: '',
             formattedXValue: '',
+            mctLimitStateClass: '',
             formattedYValueFromStats: ''
         };
     },
     computed: {
-        mctLimitStateClass() {
-            return this.seriesObject.closest ? `${ this.seriesObject.closest.mctLimitState.cssClass }` : '';
-        },
         valueToDisplayWhenCollapsedClass() {
             return `value-to-display-${ this.valueToShowWhenCollapsed }`;
         },
@@ -67,15 +65,40 @@ export default {
             return (this.valueToShowWhenCollapsed.indexOf('nearest') > -1);
         }
     },
+    watch: {
+        highlights: {
+            handler() {
+                this.initialize();
+            }
+        }
+    },
     mounted() {
-        this.isMissing = this.seriesObject.domainObject.status === 'missing';
-        this.colorAsHexString = this.seriesObject.get('color').asHexString();
-        this.nameWithUnit = this.seriesObject.nameWithUnit();
-        this.formattedYValue = this.seriesObject.closest && this.seriesObject.formatY(this.seriesObject.closest);
-        this.formattedXValue = this.seriesObject.closest && this.seriesObject.formatX(this.seriesObject.closest);
-        const stats = this.seriesObject.get('stats');
-        if (stats) {
-            this.formattedYValueFromStats = this.seriesObject.formatY(stats[this.valueToShowWhenCollapsed + 'Point']);
+        this.initialize();
+    },
+    methods: {
+        initialize() {
+            const seriesObject = this.highlights.length ? this.highlights[0].series : this.seriesObject;
+            this.isMissing = seriesObject.domainObject.status === 'missing';
+            this.colorAsHexString = seriesObject.get('color').asHexString();
+            this.nameWithUnit = seriesObject.nameWithUnit();
+
+            const closest = seriesObject.closest;
+            if (closest) {
+                this.formattedYValue = seriesObject.formatY(closest);
+                this.formattedXValue = seriesObject.formatX(closest);
+                this.mctLimitStateClass = closest.mctLimitState ? `${closest.mctLimitState.cssClass}` : '';
+            } else {
+                this.formattedYValue = '';
+                this.formattedXValue = '';
+                this.mctLimitStateClass = '';
+            }
+
+            const stats = seriesObject.get('stats');
+            if (stats) {
+                this.formattedYValueFromStats = seriesObject.formatY(stats[this.valueToShowWhenCollapsed + 'Point']);
+            } else {
+                this.formattedYValueFromStats = '';
+            }
         }
     }
 };

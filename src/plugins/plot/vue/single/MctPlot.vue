@@ -20,13 +20,14 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="gl-plot"
-     :class="[{'plot-legend-expanded': legend.get('expanded'), 'plot-legend-collapsed': !legend.get('expanded')}, plotLegendPositionClass]"
+<div v-if="loaded"
+     class="gl-plot"
+     :class="[{'plot-legend-expanded': config.legend.get('expanded'), 'plot-legend-collapsed': !config.legend.get('expanded')}, plotLegendPositionClass]"
 >
     <plot-legend :cursor-locked="!!lockHighlightPoint"
-                 :show-highlights="!!highlights.length"
-                 :series="series"
-                 :legend="legend"
+                 :series="config.series.models"
+                 :highlights="highlights"
+                 :legend="config.legend"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <div class="gl-plot-axis-area gl-plot-y has-local-controls"
@@ -36,14 +37,14 @@
         >
 
             <div class="gl-plot-label gl-plot-y-label"
-                 :class="{'icon-gear': (yKeyOptions.length > 1 && series.length === 1)}"
-            >{{ yAxis.get('label') }}
+                 :class="{'icon-gear': (yKeyOptions.length > 1 && config.series.models.length === 1)}"
+            >{{ config.yAxis.get('label') }}
             </div>
 
-            <select v-if="yKeyOptions.length > 1 && series.length === 1"
+            <select v-if="yKeyOptions.length > 1 && config.series.models.length === 1"
                     v-model="yAxisLabel"
                     class="gl-plot-y-label__select local-controls--hidden"
-                    @change="toggleYAxisLabel(event)"
+                    @change="toggleYAxisLabel"
             >
                 <option v-for="(option, index) in yKeyOptions"
                         :key="index"
@@ -54,7 +55,7 @@
                 </option>
             </select>
 
-            <mct-ticks :axis="yAxis"
+            <mct-ticks :axis="config.yAxis"
                        :position="'top'"
                        @plotTickWidth="onTickWidthChange"
             />
@@ -73,13 +74,13 @@
                 </div>
 
                 <mct-ticks v-show="gridLines"
-                           :axis="xAxis"
+                           :axis="config.xAxis"
                            :position="'right'"
                            @plotTickWidth="onTickWidthChange"
                 />
 
                 <mct-ticks v-show="gridLines"
-                           :axis="yAxis"
+                           :axis="config.yAxis"
                            :position="'bottom'"
                            @plotTickWidth="onTickWidthChange"
                 />
@@ -87,7 +88,7 @@
                 <div ref="chartContainer"
                      class="gl-plot-chart-wrapper"
                 >
-                    <mct-chart :series-config="seriesConfig"
+                    <mct-chart :series-config="config"
                                :rectangles="rectangles"
                                :highlights="highlights"
                                @plotReinitializeCanvas="initCanvas"
@@ -137,7 +138,7 @@
             </div>
 
             <div class="gl-plot-axis-area gl-plot-x has-local-controls">
-                <mct-ticks :axis="xAxis"
+                <mct-ticks :axis="config.xAxis"
                            :position="'left'"
                            @plotTickWidth="onTickWidthChange"
                 />
@@ -146,7 +147,7 @@
                     class="gl-plot-label gl-plot-x-label"
                     :class="{'icon-gear': isEnabledXKeyToggle()}"
                 >
-                    {{ xAxis.get('label') }}
+                    {{ config.xAxis.get('label') }}
                 </div>
 
                 <select
@@ -177,6 +178,9 @@ import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 
+import PlotConfigurationModel from './configuration/PlotConfigurationModel';
+import configStore from './configuration/configStore';
+
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
@@ -185,32 +189,6 @@ export default {
         MctChart
     },
     props: {
-        seriesConfig: {
-            type: Object,
-            default() {
-                return {
-                    models: []
-                };
-            }
-        },
-        xAxis: {
-            type: Object,
-            default() {
-                return {};
-            }
-        },
-        yAxis: {
-            type: Object,
-            default() {
-                return {};
-            }
-        },
-        legend: {
-            type: Object,
-            default() {
-                return {};
-            }
-        },
         gridLines: {
             type: Boolean,
             default() {
@@ -235,12 +213,14 @@ export default {
             plotHistory: [],
             selectedXKeyOption: {},
             xKeyOptions: [],
-            series: []
+            config: {},
+            pending: 0,
+            loaded: false
         };
     },
     computed: {
         plotLegendPositionClass() {
-            return `plot-legend-${this.legend.get('position')}`;
+            return `plot-legend-${this.config.legend.get('position')}`;
         }
     },
     watch: {
@@ -250,30 +230,245 @@ export default {
         cursorGuide(newCursorGuide) {
             this.setCursorGuideVisibility(newCursorGuide);
         }
-        // xAxis: {
-        //     handler: 'onXAxisChange',
-        //     deep: true
-        // }
     },
     mounted() {
         eventHelpers.extend(this);
-        this.series = this.seriesConfig.series.models;
-        this.xScale = new LinearScale(this.xAxis.get('displayRange'));
-        this.yScale = new LinearScale(this.yAxis.get('displayRange'));
 
-        this.pan = undefined;
-        this.marquee = undefined;
+        this.config = this.getConfig();
 
-        this.chartElementBounds = undefined;
-        this.tickUpdate = false;
+        //TODO: Can replace all the listenTo calls with .on and .off
+        this.listenTo(this.config.series, 'add', this.addSeries, this);
+        this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+
+        this.config.series.models.forEach(this.addSeries, this);
+
+        this.filterObserver = this.openmct.objects.observe(
+            this.domainObject,
+            'configuration.filters',
+            this.updateFiltersAndResubscribe.bind(this)
+        );
+
+        this.openmct.objectViews.on('clearData', this.clearData);
+        this.followTimeConductor();
 
         //TODO: do this the Vue way
         // this.listenTo(this, 'plot:clearHistory', this.clear, this);
-        this.openmct.time.on('timeSystem', this.updateTimeSystem);
+        this.loaded = true;
 
-        this.initialize();
+        this.$nextTick(this.initialize);
+
+    },
+    beforeDestroy() {
+        this.destroy();
     },
     methods: {
+        followTimeConductor() {
+            this.openmct.time.on('bounds', this.updateDisplayBounds);
+            this.openmct.time.on('timeSystem', this.updateXAxis);
+            this.synchronized(true);
+        },
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            let config = configStore.get(configId);
+            if (!config) {
+                const newDomainObject = this.openmct.legacyObject(this.domainObject).useCapability('adapter');
+                config = new PlotConfigurationModel({
+                    id: configId,
+                    domainObject: newDomainObject,
+                    openmct: this.openmct
+                });
+                configStore.add(configId, config);
+            }
+
+            return config;
+        },
+        addSeries(series) {
+            this.listenTo(series, 'change:xKey', (xKey) => {
+                this.setDisplayRange(series, xKey);
+            }, this);
+            this.listenTo(series, 'change:yKey', () => {
+                this.loadSeriesData(series);
+            }, this);
+
+            this.listenTo(series, 'change:interpolate', () => {
+                this.loadSeriesData(series);
+            }, this);
+
+            this.loadSeriesData(series);
+        },
+
+        removeSeries(plotSeries) {
+            this.stopListening(plotSeries);
+        },
+
+        loadSeriesData(series) {
+            if (this.$parent.$refs.plotWrapper.offsetWidth === 0) {
+                this.scheduleLoad(series);
+
+                return;
+            }
+
+            this.startLoading();
+            const options = {
+                size: this.$parent.$refs.plotWrapper.offsetWidth,
+                domain: this.config.xAxis.get('key')
+            };
+
+            series.load(options)
+                .then(this.stopLoading.bind(this));
+        },
+
+        loadMoreData(range, purge) {
+            this.config.series.forEach(plotSeries => {
+                this.startLoading();
+                plotSeries.load({
+                    size: this.$parent.$refs.plotWrapper.offsetWidth,
+                    start: range.min,
+                    end: range.max,
+                    domain: this.config.xAxis.get('key')
+                })
+                    .then(this.stopLoading());
+                if (purge) {
+                    plotSeries.purgeRecordsOutsideRange(range);
+                }
+            });
+        },
+
+        scheduleLoad(series) {
+            if (!this.scheduledLoads) {
+                this.startLoading();
+                this.scheduledLoads = [];
+                this.checkForSize = setInterval(function () {
+                    if (this.$parent.$refs.plotWrapper.offsetWidth === 0) {
+                        return;
+                    }
+
+                    this.stopLoading();
+                    this.scheduledLoads.forEach(this.loadSeriesData, this);
+                    delete this.scheduledLoads;
+                    clearInterval(this.checkForSize);
+                    delete this.checkForSize;
+                }.bind(this));
+            }
+
+            if (this.scheduledLoads.indexOf(series) === -1) {
+                this.scheduledLoads.push(series);
+            }
+        },
+
+        startLoading() {
+            this.pending += 1;
+            this.updateLoading();
+        },
+
+        stopLoading() {
+        //TODO: Is Vue.$nextTick ok to replace $scope.$evalAsync?
+            this.$nextTick().then(() => {
+                this.pending -= 1;
+                this.updateLoading();
+            });
+        },
+
+        updateLoading() {
+            this.$emit('loadingUpdated', this.pending > 0);
+        },
+
+        updateFiltersAndResubscribe(updatedFilters) {
+            this.config.series.forEach(function (series) {
+                series.updateFiltersAndRefresh(updatedFilters[series.keyString]);
+            });
+        },
+
+        clearData() {
+            this.config.series.forEach(function (series) {
+                series.reset();
+            });
+        },
+
+        setDisplayRange(series, xKey) {
+            if (this.config.series.length !== 1) {
+                return;
+            }
+
+            const displayRange = series.getDisplayRange(xKey);
+            this.config.xAxis.set('range', displayRange);
+        },
+
+        /**
+       * Track latest display bounds.  Forces update when not receiving ticks.
+       */
+        updateDisplayBounds(bounds, isTick) {
+
+            const xAxisKey = this.config.xAxis.get('key');
+            const timeSystem = this.openmct.time.timeSystem();
+            const newRange = {
+                min: bounds.start,
+                max: bounds.end
+            };
+
+            if (xAxisKey !== timeSystem.key) {
+                this.syncXAxisToTimeSystem(timeSystem);
+            }
+
+            this.config.xAxis.set('range', newRange);
+            if (!isTick) {
+                this.skipReloadOnInteraction = true;
+                //TODO: how to do this with Vue?
+                this.$scope.$broadcast('plot:clearHistory');
+                this.skipReloadOnInteraction = false;
+                this.loadMoreData(newRange, true);
+            } else {
+                // Drop any data that is more than 1x (max-min) before min.
+                // Limit these purges to once a second.
+                if (!this.nextPurge || this.nextPurge < Date.now()) {
+                    const keepRange = {
+                        min: newRange.min - (newRange.max - newRange.min),
+                        max: newRange.max
+                    };
+                    this.config.series.forEach(function (series) {
+                        series.purgeRecordsOutsideRange(keepRange);
+                    });
+                    this.nextPurge = Date.now() + 1000;
+                }
+            }
+        },
+
+        /**
+       * Handle end of user viewport change: load more data for current display
+       * bounds, and mark view as synchronized if bounds match configured bounds.
+       * @private
+       */
+        onUserViewportChangeEnd() {
+            const xDisplayRange = this.config.xAxis.get('displayRange');
+            const xRange = this.config.xAxis.get('range');
+
+            if (!this.skipReloadOnInteraction) {
+                this.loadMoreData(xDisplayRange);
+            }
+
+            this.synchronized(xRange.min === xDisplayRange.min
+            && xRange.max === xDisplayRange.max);
+        },
+
+        /**
+       * Getter/setter for "synchronized" value.  If not synchronized and
+       * time conductor is in clock mode, will mark objects as unsynced so that
+       * displays can update accordingly.
+       * @private
+       */
+        synchronized(value) {
+            if (typeof value !== 'undefined') {
+                this._synchronized = value;
+                const isUnsynced = !value && this.openmct.time.clock();
+                const domainObject = this.openmct.legacyObject(this.domainObject);
+                if (domainObject.getCapability('status')) {
+                    domainObject.getCapability('status')
+                        .set('timeconductor-unsynced', isUnsynced);
+                }
+            }
+
+            return this._synchronized;
+        },
 
         initCanvas() {
             if (this.canvas) {
@@ -290,6 +485,16 @@ export default {
         },
 
         initialize() {
+            // Setup canvas etc.
+            this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
+            this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
+
+            this.pan = undefined;
+            this.marquee = undefined;
+
+            this.chartElementBounds = undefined;
+            this.tickUpdate = false;
+
             //TODO: Should this be an array or the mainCanvas?
             this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
 
@@ -298,23 +503,26 @@ export default {
             this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
             this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
 
-            this.yAxisLabel = this.yAxis.get('label');
+            this.config.yAxisLabel = this.config.yAxis.get('label');
 
             this.cursorGuideVertical = this.$refs.cursorGuideVertical;
             this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
 
             //TODO: Need to handle this the Vue way
             // this.listenTo(this, 'plot:highlight:set', this.onPlotHighlightSet, this);
+            this.listenTo(this.config.xAxis, 'resetSeries', this.setUpXAxisOptions, this);
+            this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
+            this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
 
             this.setUpXAxisOptions();
             this.setUpYAxisOptions();
         },
 
         setUpXAxisOptions() {
-            const xAxisKey = this.xAxis.get('key');
+            const xAxisKey = this.config.xAxis.get('key');
 
-            if (this.series.length === 1) {
-                let metadata = this.series[0].metadata;
+            if (this.config.series.models.length === 1) {
+                let metadata = this.config.series.models[0].metadata;
 
                 this.xKeyOptions = metadata
                     .valuesForHints(['domain'])
@@ -329,8 +537,8 @@ export default {
         },
 
         setUpYAxisOptions() {
-            if (this.series.length === 1) {
-                let metadata = this.series[0].metadata;
+            if (this.config.series.models.length === 1) {
+                let metadata = this.config.series.models[0].metadata;
 
                 this.yKeyOptions = metadata
                     .valuesForHints(['range'])
@@ -342,11 +550,11 @@ export default {
                     });
 
                 //  set yAxisLabel if none is set yet
-                if (this.yAxisLabel === 'none') {
-                    let yKey = this.series[0].model.yKey;
+                if (this.config.yAxisLabel === 'none') {
+                    let yKey = this.config.series.models[0].model.yKey;
                     let yKeyModel = this.yKeyOptions.filter(o => o.key === yKey)[0];
 
-                    this.yAxisLabel = yKeyModel.name;
+                    this.config.yAxisLabel = yKeyModel.name;
                 }
             } else {
                 this.yKeyOptions = undefined;
@@ -444,9 +652,9 @@ export default {
 
             if (!point) {
                 this.highlights = [];
-                this.series.forEach(series => delete series.closest);
+                this.config.series.models.forEach(series => delete series.closest);
             } else {
-                this.highlights = this.series
+                this.highlights = this.config.series.models
                     .filter(series => series.data.length > 0)
                     .map(series => {
                         series.closest = series.nearestPoint(point);
@@ -547,15 +755,16 @@ export default {
             );
             // Don't zoom if mouse moved less than 7.5 pixels.
             if (marqueeDistance > 7.5) {
-                this.xAxis.set('displayRange', {
+                this.config.xAxis.set('displayRange', {
                     min: Math.min(this.marquee.start.x, this.marquee.end.x),
                     max: Math.max(this.marquee.start.x, this.marquee.end.x)
                 });
-                this.yAxis.set('displayRange', {
+                this.config.yAxis.set('displayRange', {
                     min: Math.min(this.marquee.start.y, this.marquee.end.y),
                     max: Math.max(this.marquee.start.y, this.marquee.end.y)
                 });
                 this.$emit('userViewportChangeEnd');
+                this.onUserViewportChangeEnd();
             } else {
                 // A history entry is created by startMarquee, need to remove
                 // if marquee zoom doesn't occur.
@@ -567,8 +776,8 @@ export default {
         },
 
         zoom(zoomDirection, zoomFactor) {
-            const currentXaxis = this.xAxis.get('displayRange');
-            const currentYaxis = this.yAxis.get('displayRange');
+            const currentXaxis = this.config.xAxis.get('displayRange');
+            const currentYaxis = this.config.yAxis.get('displayRange');
 
             // when there is no plot data, the ranges can be undefined
             // in which case we should not perform zoom
@@ -583,22 +792,22 @@ export default {
             const yAxisDist = (currentYaxis.max - currentYaxis.min) * zoomFactor;
 
             if (zoomDirection === 'in') {
-                this.xAxis.set('displayRange', {
+                this.config.xAxis.set('displayRange', {
                     min: currentXaxis.min + xAxisDist,
                     max: currentXaxis.max - xAxisDist
                 });
 
-                this.yAxis.set('displayRange', {
+                this.config.yAxis.set('displayRange', {
                     min: currentYaxis.min + yAxisDist,
                     max: currentYaxis.max - yAxisDist
                 });
             } else if (zoomDirection === 'out') {
-                this.xAxis.set('displayRange', {
+                this.config.xAxis.set('displayRange', {
                     min: currentXaxis.min - xAxisDist,
                     max: currentXaxis.max + xAxisDist
                 });
 
-                this.yAxis.set('displayRange', {
+                this.config.yAxis.set('displayRange', {
                     min: currentYaxis.min - yAxisDist,
                     max: currentYaxis.max + yAxisDist
                 });
@@ -615,8 +824,8 @@ export default {
                 return;
             }
 
-            let xDisplayRange = this.xAxis.get('displayRange');
-            let yDisplayRange = this.yAxis.get('displayRange');
+            let xDisplayRange = this.config.xAxis.get('displayRange');
+            let yDisplayRange = this.config.yAxis.get('displayRange');
 
             // when there is no plot data, the ranges can be undefined
             // in which case we should not perform zoom
@@ -649,23 +858,23 @@ export default {
 
             if (event.wheelDelta < 0) {
 
-                this.xAxis.set('displayRange', {
+                this.config.xAxis.set('displayRange', {
                     min: xDisplayRange.min + ((xAxisDist * ZOOM_AMT) * xAxisMinDist),
                     max: xDisplayRange.max - ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
                 });
 
-                this.yAxis.set('displayRange', {
+                this.config.yAxis.set('displayRange', {
                     min: yDisplayRange.min + ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
                     max: yDisplayRange.max - ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
                 });
             } else if (event.wheelDelta >= 0) {
 
-                this.xAxis.set('displayRange', {
+                this.config.xAxis.set('displayRange', {
                     min: xDisplayRange.min - ((xAxisDist * ZOOM_AMT) * xAxisMinDist),
                     max: xDisplayRange.max + ((xAxisDist * ZOOM_AMT) * xAxisMaxDist)
                 });
 
-                this.yAxis.set('displayRange', {
+                this.config.yAxis.set('displayRange', {
                     min: yDisplayRange.min - ((yAxisDist * ZOOM_AMT) * yAxisMinDist),
                     max: yDisplayRange.max + ((yAxisDist * ZOOM_AMT) * yAxisMaxDist)
                 });
@@ -701,14 +910,14 @@ export default {
 
             const dX = this.pan.start.x - this.positionOverPlot.x;
             const dY = this.pan.start.y - this.positionOverPlot.y;
-            const xRange = this.xAxis.get('displayRange');
-            const yRange = this.yAxis.get('displayRange');
+            const xRange = this.config.xAxis.get('displayRange');
+            const yRange = this.config.yAxis.get('displayRange');
 
-            this.xAxis.set('displayRange', {
+            this.config.xAxis.set('displayRange', {
                 min: xRange.min + dX,
                 max: xRange.max + dX
             });
-            this.yAxis.set('displayRange', {
+            this.config.yAxis.set('displayRange', {
                 min: yRange.min + dY,
                 max: yRange.max + dY
             });
@@ -716,8 +925,8 @@ export default {
 
         trackHistory() {
             this.plotHistory.push({
-                x: this.xAxis.get('displayRange'),
-                y: this.yAxis.get('displayRange')
+                x: this.config.xAxis.get('displayRange'),
+                y: this.config.yAxis.get('displayRange')
             });
         },
 
@@ -727,13 +936,13 @@ export default {
         },
 
         freeze() {
-            this.yAxis.set('frozen', true);
-            this.xAxis.set('frozen', true);
+            this.config.yAxis.set('frozen', true);
+            this.config.xAxis.set('frozen', true);
         },
 
         clear() {
-            this.yAxis.set('frozen', false);
-            this.xAxis.set('frozen', false);
+            this.config.yAxis.set('frozen', false);
+            this.config.xAxis.set('frozen', false);
             this.plotHistory = [];
             this.$emit('userViewportChangeEnd');
         },
@@ -746,13 +955,9 @@ export default {
                 return;
             }
 
-            this.xAxis.set('displayRange', previousAxisRanges.x);
-            this.yAxis.set('displayRange', previousAxisRanges.y);
+            this.config.xAxis.set('displayRange', previousAxisRanges.x);
+            this.config.yAxis.set('displayRange', previousAxisRanges.y);
             this.$emit('userViewportChangeEnd');
-        },
-
-        destroy() {
-            this.stopListening();
         },
 
         setCursorGuideVisibility(cursorGuide) {
@@ -768,8 +973,8 @@ export default {
         },
 
         isEnabledXKeyToggle() {
-            const isSinglePlot = this.xKeyOptions && this.xKeyOptions.length > 1 && this.series.length === 1;
-            const isFrozen = this.xAxis.get('frozen');
+            const isSinglePlot = this.xKeyOptions && this.xKeyOptions.length > 1 && this.config.series.models.length === 1;
+            const isFrozen = this.config.xAxis.get('frozen');
             const inRealTimeMode = this.openmct.time.clock();
 
             return isSinglePlot && !isFrozen && !inRealTimeMode;
@@ -782,26 +987,48 @@ export default {
                 : undefined;
 
             if (dataForSelectedXKey !== undefined) {
-                this.xAxis.set('key', selectedXKey);
+                this.config.xAxis.set('key', selectedXKey);
             } else {
                 this.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.');
                 this.selectedXKeyOption.key = lastXKey;
             }
         },
 
-        toggleYAxisLabel(label, options, series) {
+        toggleYAxisLabel(data) {
+            console.log(data);
+            let options = this.yKeyOptions;
+            let label = this.yAxisLabel;
+            let series = this.config.series.models[0];
             let yAxisObject = options.filter(o => o.name === label)[0];
 
             if (yAxisObject) {
                 series.emit('change:yKey', yAxisObject.key);
-                this.yAxis.set('label', label);
-                this.yAxisLabel = label;
+                this.config.yAxis.set('label', label);
+                this.config.yAxisLabel = label;
             }
         },
-        updateTimeSystem(timeSystem) {
-            const xAxisKey = this.xAxis.get('key');
+        updateXAxis(timeSystem) {
+            const xAxisKey = this.config.xAxis.get('key');
             if (xAxisKey !== timeSystem.key) {
+                this.syncXAxisToTimeSystem(timeSystem);
                 this.setUpXAxisOptions();
+            }
+        },
+        syncXAxisToTimeSystem(timeSystem) {
+            this.config.xAxis.set('key', timeSystem.key);
+            this.config.xAxis.resetSeries();
+        },
+        destroy() {
+            configStore.deleteStore(this.config.id);
+
+            this.stopListening();
+            if (this.checkForSize) {
+                clearInterval(this.checkForSize);
+                delete this.checkForSize;
+            }
+
+            if (this.filterObserver) {
+                this.filterObserver();
             }
         }
     }
