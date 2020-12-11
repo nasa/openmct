@@ -1,5 +1,9 @@
 <template>
-<div class="pr-tc-input-menu">
+<div
+    class="pr-tc-input-menu"
+    @keydown.enter.prevent
+    @keyup.enter.prevent="submit"
+>
     <div class="pr-tim-labels">
         <div class="pr-time-label__hrs">Hrs</div>
         <div class="pr-time-label__mins">Mins</div>
@@ -78,6 +82,10 @@ export default {
     },
     mounted() {
         this.setOffset();
+        document.addEventListener('click', this.hide);
+    },
+    beforeDestroy() {
+        document.removeEventListener('click', this.hide);
     },
     methods: {
         format(ref) {
