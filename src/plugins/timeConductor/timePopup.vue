@@ -3,7 +3,7 @@
     class="pr-tc-input-menu"
     @keydown.enter.prevent
     @keyup.enter.prevent="submit"
-    @click.stop=""
+    @click.stop
 >
     <div class="pr-tim-labels">
         <div class="pr-time-label__hrs">Hrs</div>
