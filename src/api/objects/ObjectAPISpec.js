@@ -59,4 +59,73 @@ describe("The Object API", () => {
             });
         });
     });
+
+    describe("The get function", () => {
+        describe("when a provider is available", () => {
+            let mockProvider;
+            let mockInterceptor;
+            let anotherMockInterceptor;
+            let notApplicableMockInterceptor;
+            beforeEach(() => {
+                mockProvider = jasmine.createSpyObj("mock provider", [
+                    "get"
+                ]);
+                mockProvider.get.and.returnValue(Promise.resolve(mockDomainObject));
+
+                mockInterceptor = jasmine.createSpyObj("mock interceptor", [
+                    "appliesTo",
+                    "invoke"
+                ]);
+                mockInterceptor.appliesTo.and.returnValue(true);
+                mockInterceptor.invoke.and.callFake((identifier, object) => {
+                    return Object.assign({
+                        changed: true
+                    }, object);
+                });
+
+                anotherMockInterceptor = jasmine.createSpyObj("another mock interceptor", [
+                    "appliesTo",
+                    "invoke"
+                ]);
+                anotherMockInterceptor.appliesTo.and.returnValue(true);
+                anotherMockInterceptor.invoke.and.callFake((identifier, object) => {
+                    return Object.assign({
+                        alsoChanged: true
+                    }, object);
+                });
+
+                notApplicableMockInterceptor = jasmine.createSpyObj("not applicable mock interceptor", [
+                    "appliesTo",
+                    "invoke"
+                ]);
+                notApplicableMockInterceptor.appliesTo.and.returnValue(false);
+                notApplicableMockInterceptor.invoke.and.callFake((identifier, object) => {
+                    return Object.assign({
+                        shouldNotBeChanged: true
+                    }, object);
+                });
+                objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
+                objectAPI.addGetInterceptor(mockInterceptor);
+                objectAPI.addGetInterceptor(anotherMockInterceptor);
+                objectAPI.addGetInterceptor(notApplicableMockInterceptor);
+            });
+
+            it("Caches multiple requests for the same object", () => {
+                expect(mockProvider.get.calls.count()).toBe(0);
+                objectAPI.get(mockDomainObject.identifier);
+                expect(mockProvider.get.calls.count()).toBe(1);
+                objectAPI.get(mockDomainObject.identifier);
+                expect(mockProvider.get.calls.count()).toBe(1);
+            });
+
+            it("applies any applicable interceptors", () => {
+                expect(mockDomainObject.changed).toBeUndefined();
+                objectAPI.get(mockDomainObject.identifier).then((object) => {
+                    expect(object.changed).toBeTrue();
+                    expect(object.alsoChanged).toBeTrue();
+                    expect(object.shouldNotBeChanged).toBeUndefined();
+                });
+            });
+        });
+    });
 });

@@ -29,6 +29,10 @@
             filter: $objectLabelNameFilter;
         }
 
+        .c-object-label__type-icon {
+            opacity: $objectLabelTypeIconOpacity;
+        }
+
         &--non-domain-object .c-object-label__name {
             font-style: italic;
         }
@@ -55,6 +59,10 @@
                 left: 0;
             }
         }
+    }
+
+    &__saved-styles {
+        height: 300px;
     }
 
     .c-color-swatch {
@@ -160,6 +168,11 @@
             grid-column: 1 / 3;
         }
     }
+}
+
+/********************************************* INSPECTOR PROPERTIES TAB */
+.c-saved-style {
+    cursor: default;
 }
 
 /********************************************* LEGACY SUPPORT */

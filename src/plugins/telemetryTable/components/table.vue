@@ -23,8 +23,7 @@
 <div class="c-table-wrapper"
      :class="{ 'is-paused': paused }"
 >
-    <!-- main contolbar  start-->
-    <div v-if="!marking.useAlternateControlBar"
+    <div v-if="enableLegacyToolbar"
          class="c-table-control-bar c-control-bar"
     >
         <button
@@ -94,7 +93,6 @@
 
         <slot name="buttons"></slot>
     </div>
-    <!-- main controlbar end -->
 
     <!-- alternate controlbar start -->
     <div v-if="marking.useAlternateControlBar"
@@ -113,11 +111,11 @@
 
         <button
             :class="{'hide-nice': !markedRows.length}"
-            class="c-button icon-x labeled"
+            class="c-icon-button icon-x labeled"
             title="Deselect All"
             @click="unmarkAllRows()"
         >
-            <span class="c-button__label">{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }} </span>
+            <span class="c-icon-button__label">{{ `Deselect ${marking.disableMultiSelect ? '' : 'All'}` }} </span>
         </button>
 
         <slot name="buttons"></slot>
@@ -125,7 +123,7 @@
     <!-- alternate controlbar end  -->
 
     <div
-        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar"
+        class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar u-style-receiver js-style-receiver"
         :class="{
             'loading': loading,
             'is-paused' : paused
@@ -234,6 +232,10 @@
             class="c-telemetry-table__sizing js-telemetry-table__sizing"
             :style="sizingTableWidth"
         >
+            <sizing-row
+                :is-editing="isEditing"
+                @change-height="setRowHeight"
+            />
             <tr>
                 <template v-for="(title, key) in headers">
                     <th
@@ -253,7 +255,11 @@
                 :object-path="objectPath"
             />
         </table>
-        <telemetry-filter-indicator />
+        <table-footer-indicator
+            class="c-telemetry-table__footer"
+            :marked-rows="markedRows.length"
+            :total-rows="totalNumberOfRows"
+        />
     </div>
 </div><!-- closes c-table-wrapper -->
 </template>
@@ -262,10 +268,11 @@
 import TelemetryTableRow from './table-row.vue';
 import search from '../../../ui/components/search.vue';
 import TableColumnHeader from './table-column-header.vue';
-import TelemetryFilterIndicator from './TelemetryFilterIndicator.vue';
+import TableFooterIndicator from './table-footer-indicator.vue';
 import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import SizingRow from './sizing-row.vue';
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -277,8 +284,9 @@ export default {
         TelemetryTableRow,
         TableColumnHeader,
         search,
-        TelemetryFilterIndicator,
-        ToggleSwitch
+        TableFooterIndicator,
+        ToggleSwitch,
+        SizingRow
     },
     inject: ['table', 'openmct', 'objectPath'],
     props: {
@@ -291,12 +299,12 @@ export default {
             default: true
         },
         allowFiltering: {
-            'type': Boolean,
-            'default': true
+            type: Boolean,
+            default: true
         },
         allowSorting: {
-            'type': Boolean,
-            'default': true
+            type: Boolean,
+            default: true
         },
         marking: {
             type: Object,
@@ -308,6 +316,17 @@ export default {
                     rowName: '',
                     rowNamePlural: ""
                 };
+            }
+        },
+        enableLegacyToolbar: {
+            type: Boolean,
+            default: false
+        },
+        view: {
+            type: Object,
+            required: false,
+            default() {
+                return {};
             }
         }
     },
@@ -342,7 +361,8 @@ export default {
             paused: false,
             markedRows: [],
             isShowingMarkedRowsOnly: false,
-            hideHeaders: configuration.hideHeaders
+            hideHeaders: configuration.hideHeaders,
+            totalNumberOfRows: 0
         };
     },
     computed: {
@@ -383,6 +403,40 @@ export default {
         markedRows: {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
+
+                if (this.viewActionsCollection) {
+                    if (newVal.length > 0) {
+                        this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
+                    } else if (newVal.length === 0) {
+                        this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+                    }
+                }
+            }
+        },
+        paused: {
+            handler(newVal) {
+                if (this.viewActionsCollection) {
+                    if (newVal) {
+                        this.viewActionsCollection.hide(['pause-data']);
+                        this.viewActionsCollection.show(['play-data']);
+                    } else {
+                        this.viewActionsCollection.hide(['play-data']);
+                        this.viewActionsCollection.show(['pause-data']);
+                    }
+                }
+            }
+        },
+        isAutosizeEnabled: {
+            handler(newVal) {
+                if (this.viewActionsCollection) {
+                    if (newVal) {
+                        this.viewActionsCollection.show(['expand-columns']);
+                        this.viewActionsCollection.hide(['autosize-columns']);
+                    } else {
+                        this.viewActionsCollection.show(['autosize-columns']);
+                        this.viewActionsCollection.hide(['expand-columns']);
+                    }
+                }
             }
         }
     },
@@ -394,6 +448,11 @@ export default {
         this.rowsAdded = _.throttle(this.rowsAdded, 200);
         this.rowsRemoved = _.throttle(this.rowsRemoved, 200);
         this.scroll = _.throttle(this.scroll, 100);
+
+        if (!this.marking.useAlternateControlBar && !this.enableLegacyToolbar) {
+            this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.view);
+            this.initializeViewActions();
+        }
 
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
@@ -451,6 +510,8 @@ export default {
                     let filteredRows = this.table.filteredRows.getRows();
                     let filteredRowsLength = filteredRows.length;
 
+                    this.totalNumberOfRows = filteredRowsLength;
+
                     if (filteredRowsLength < VISIBLE_ROW_COUNT) {
                         end = filteredRowsLength;
                     } else {
@@ -499,7 +560,7 @@ export default {
             let columnWidths = {};
             let totalWidth = 0;
             let headerKeys = Object.keys(this.headers);
-            let sizingTableRow = this.sizingTable.children[0];
+            let sizingTableRow = this.sizingTable.children[1];
             let sizingCells = sizingTableRow.children;
 
             headerKeys.forEach((headerKey, headerIndex, array) => {
@@ -833,7 +894,7 @@ export default {
 
                 for (let i = firstRowIndex; i <= lastRowIndex; i++) {
                     let row = allRows[i];
-                    row.marked = true;
+                    this.$set(row, 'marked', true);
 
                     if (row !== baseRow) {
                         this.markedRows.push(row);
@@ -894,6 +955,46 @@ export default {
             this.isAutosizeEnabled = true;
 
             this.$nextTick().then(this.calculateColumnWidths);
+        },
+        getViewContext() {
+            return {
+                type: 'telemetry-table',
+                exportAllDataAsCSV: this.exportAllDataAsCSV,
+                exportMarkedDataAsCSV: this.exportMarkedDataAsCSV,
+                unmarkAllRows: this.unmarkAllRows,
+                togglePauseByButton: this.togglePauseByButton,
+                expandColumns: this.recalculateColumnWidths,
+                autosizeColumns: this.autosizeColumns
+            };
+        },
+        initializeViewActions() {
+            if (this.markedRows.length > 0) {
+                this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
+            } else if (this.markedRows.length === 0) {
+                this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+            }
+
+            if (this.paused) {
+                this.viewActionsCollection.hide(['pause-data']);
+                this.viewActionsCollection.show(['play-data']);
+            } else {
+                this.viewActionsCollection.hide(['play-data']);
+                this.viewActionsCollection.show(['pause-data']);
+            }
+
+            if (this.isAutosizeEnabled) {
+                this.viewActionsCollection.show(['expand-columns']);
+                this.viewActionsCollection.hide(['autosize-columns']);
+            } else {
+                this.viewActionsCollection.show(['autosize-columns']);
+                this.viewActionsCollection.hide(['expand-columns']);
+            }
+        },
+        setRowHeight(height) {
+            this.rowHeight = height;
+            this.setHeight();
+            this.calculateTableSize();
+            this.clearRowsAndRerender();
         }
     }
 };

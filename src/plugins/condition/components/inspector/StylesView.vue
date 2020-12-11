@@ -31,6 +31,11 @@
         <div class="c-inspect-styles__header">
             Object Style
         </div>
+        <FontStyleEditor
+            v-if="canStyleFont"
+            :font-style="consolidatedFontStyle"
+            @set-font-property="setFontProperty"
+        />
         <div class="c-inspect-styles__content">
             <div v-if="staticStyle"
                  class="c-inspect-styles__style"
@@ -39,7 +44,9 @@
                               :style-item="staticStyle"
                               :is-editing="allowEditing"
                               :mixed-styles="mixedStyles"
+                              :non-specific-font-properties="nonSpecificFontProperties"
                               @persist="updateStaticStyle"
+                              @save-style="saveStyle"
                 />
             </div>
             <button
@@ -58,10 +65,11 @@
         </div>
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <a v-if="conditionSetDomainObject"
-               class="c-object-label icon-conditional"
+               class="c-object-label"
                :href="navigateToPath"
                @click="navigateOrPreview"
             >
+                <span class="c-object-label__type-icon icon-conditional"></span>
                 <span class="c-object-label__name">{{ conditionSetDomainObject.name }}</span>
             </a>
             <template v-if="allowEditing">
@@ -80,6 +88,12 @@
             </template>
         </div>
 
+        <FontStyleEditor
+            v-if="canStyleFont"
+            :font-style="consolidatedFontStyle"
+            @set-font-property="setFontProperty"
+        />
+
         <div v-if="conditionsLoaded"
              class="c-inspect-styles__conditions"
         >
@@ -97,8 +111,10 @@
                 />
                 <style-editor class="c-inspect-styles__editor"
                               :style-item="conditionStyle"
+                              :non-specific-font-properties="nonSpecificFontProperties"
                               :is-editing="allowEditing"
                               @persist="updateConditionalStyle"
+                              @save-style="saveStyle"
                 />
             </div>
         </div>
@@ -108,6 +124,7 @@
 
 <script>
 
+import FontStyleEditor from '@/ui/inspector/styles/FontStyleEditor.vue';
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionSetIdentifierForItem } from "@/plugins/condition/utils/styleUtils";
@@ -116,16 +133,30 @@ import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
 import Vue from 'vue';
 
+const NON_SPECIFIC = '??';
+const NON_STYLEABLE_CONTAINER_TYPES = [
+    'layout',
+    'flexible-layout',
+    'tabs'
+];
+const NON_STYLEABLE_LAYOUT_ITEM_TYPES = [
+    'line-view',
+    'box-view',
+    'image-view'
+];
+
 export default {
     name: 'StylesView',
     components: {
+        FontStyleEditor,
         StyleEditor,
         ConditionError,
         ConditionDescription
     },
     inject: [
         'openmct',
-        'selection'
+        'selection',
+        'stylesManager'
     ],
     data() {
         return {
@@ -139,19 +170,80 @@ export default {
             conditionsLoaded: false,
             navigateToPath: '',
             selectedConditionId: '',
-            locked: false
+            items: [],
+            domainObject: undefined,
+            consolidatedFontStyle: {}
         };
     },
     computed: {
+        locked() {
+            return this.selection.some(selectionPath => {
+                const self = selectionPath[0].context.item;
+                const parent = selectionPath.length > 1 ? selectionPath[1].context.item : undefined;
+
+                return (self && self.locked) || (parent && parent.locked);
+            });
+        },
         allowEditing() {
             return this.isEditing && !this.locked;
+        },
+        styleableFontItems() {
+            return this.selection.filter(selectionPath => {
+                const item = selectionPath[0].context.item;
+                const itemType = item && item.type;
+                const layoutItem = selectionPath[0].context.layoutItem;
+                const layoutItemType = layoutItem && layoutItem.type;
+
+                if (itemType && NON_STYLEABLE_CONTAINER_TYPES.includes(itemType)) {
+                    return false;
+                }
+
+                if (layoutItemType && NON_STYLEABLE_LAYOUT_ITEM_TYPES.includes(layoutItemType)) {
+                    return false;
+                }
+
+                return true;
+            });
+        },
+        computedconsolidatedFontStyle() {
+            let consolidatedFontStyle;
+            const styles = [];
+
+            this.styleableFontItems.forEach(styleable => {
+                const fontStyle = this.getFontStyle(styleable[0]);
+
+                styles.push(fontStyle);
+            });
+
+            if (styles.length) {
+                const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
+                const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
+
+                consolidatedFontStyle = {
+                    fontSize: hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC,
+                    font: hasConsolidatedFont ? styles[0].font : NON_SPECIFIC
+                };
+            }
+
+            return consolidatedFontStyle;
+        },
+        nonSpecificFontProperties() {
+            if (!this.consolidatedFontStyle) {
+                return [];
+            }
+
+            return Object.keys(this.consolidatedFontStyle).filter(property => this.consolidatedFontStyle[property] === NON_SPECIFIC);
+        },
+        canStyleFont() {
+            return this.styleableFontItems.length && this.allowEditing;
         }
     },
     destroyed() {
         this.removeListeners();
+        this.openmct.editor.off('isEditing', this.setEditState);
+        this.stylesManager.off('styleSelected', this.applyStyleToSelection);
     },
     mounted() {
-        this.items = [];
         this.previewAction = new PreviewAction(this.openmct);
         this.isMultipleSelection = this.selection.length > 1;
         this.getObjectsAndItemsFromSelection();
@@ -166,7 +258,10 @@ export default {
             this.initializeStaticStyle();
         }
 
+        this.setConsolidatedFontStyle();
+
         this.openmct.editor.on('isEditing', this.setEditState);
+        this.stylesManager.on('styleSelected', this.applyStyleToSelection);
     },
     methods: {
         getObjectStyles() {
@@ -178,10 +273,10 @@ export default {
                 }
             } else if (this.items.length) {
                 const itemId = this.items[0].id;
-                if (this.domainObject.configuration && this.domainObject.configuration.objectStyles && this.domainObject.configuration.objectStyles[itemId]) {
+                if (this.domainObject && this.domainObject.configuration && this.domainObject.configuration.objectStyles && this.domainObject.configuration.objectStyles[itemId]) {
                     objectStyles = this.domainObject.configuration.objectStyles[itemId];
                 }
-            } else if (this.domainObject.configuration && this.domainObject.configuration.objectStyles) {
+            } else if (this.domainObject && this.domainObject.configuration && this.domainObject.configuration.objectStyles) {
                 objectStyles = this.domainObject.configuration.objectStyles;
             }
 
@@ -219,6 +314,18 @@ export default {
         isItemType(type, item) {
             return item && (item.type === type);
         },
+        canPersistObject(item) {
+            // for now the only way to tell if an object can be persisted is if it is creatable.
+            let creatable = false;
+            if (item) {
+                const type = this.openmct.types.get(item.type);
+                if (type && type.definition) {
+                    creatable = (type.definition.creatable === true);
+                }
+            }
+
+            return creatable;
+        },
         hasConditionalStyle(domainObject, layoutItem) {
             const id = layoutItem ? layoutItem.id : undefined;
 
@@ -235,12 +342,7 @@ export default {
             this.selection.forEach((selectionItem) => {
                 const item = selectionItem[0].context.item;
                 const layoutItem = selectionItem[0].context.layoutItem;
-                const layoutDomainObject = selectionItem[0].context.item;
                 const isChildItem = selectionItem.length > 1;
-
-                if (layoutDomainObject && layoutDomainObject.locked) {
-                    this.locked = true;
-                }
 
                 if (!isChildItem) {
                     domainObject = item;
@@ -251,7 +353,7 @@ export default {
                 } else {
                     this.canHide = true;
                     domainObject = selectionItem[1].context.item;
-                    if (item && !layoutItem || this.isItemType('subobject-view', layoutItem)) {
+                    if (item && !layoutItem || (this.isItemType('subobject-view', layoutItem) && this.canPersistObject(item))) {
                         subObjects.push(item);
                         itemStyle = getApplicableStylesForItem(item);
                         if (this.hasConditionalStyle(item)) {
@@ -275,7 +377,7 @@ export default {
             const {styles, mixedStyles} = getConsolidatedStyleValues(itemInitialStyles);
             this.initialStyles = styles;
             this.mixedStyles = mixedStyles;
-
+            // main layout
             this.domainObject = domainObject;
             this.removeListeners();
             if (this.domainObject) {
@@ -298,6 +400,7 @@ export default {
         isKeyItemId(key) {
             return (key !== 'styles')
                 && (key !== 'staticStyle')
+                && (key !== 'fontStyle')
                 && (key !== 'defaultConditionId')
                 && (key !== 'selectedConditionId')
                 && (key !== 'conditionSetIdentifier');
@@ -637,6 +740,124 @@ export default {
         },
         persist(domainObject, style) {
             this.openmct.objects.mutate(domainObject, 'configuration.objectStyles', style);
+        },
+        applyStyleToSelection(style) {
+            if (!this.allowEditing) {
+                return;
+            }
+
+            this.updateSelectionFontStyle(style);
+            this.updateSelectionStyle(style);
+        },
+        updateSelectionFontStyle(style) {
+            const fontSizeProperty = {
+                fontSize: style.fontSize
+            };
+            const fontProperty = {
+                font: style.font
+            };
+
+            this.setFontProperty(fontSizeProperty);
+            this.setFontProperty(fontProperty);
+        },
+        updateSelectionStyle(style) {
+            const foundStyle = this.findStyleByConditionId(this.selectedConditionId);
+
+            if (foundStyle && !this.isStaticAndConditionalStyles) {
+                Object.entries(style).forEach(([property, value]) => {
+                    if (foundStyle.style[property] !== undefined && foundStyle.style[property] !== value) {
+                        foundStyle.style[property] = value;
+                    }
+                });
+                this.getAndPersistStyles();
+            } else {
+                this.removeConditionSet();
+                Object.entries(style).forEach(([property, value]) => {
+                    if (this.staticStyle.style[property] !== undefined && this.staticStyle.style[property] !== value) {
+                        this.staticStyle.style[property] = value;
+                        this.getAndPersistStyles(property);
+                    }
+                });
+            }
+        },
+        saveStyle(style) {
+            const styleToSave = {
+                ...style,
+                ...this.consolidatedFontStyle
+            };
+
+            this.stylesManager.save(styleToSave);
+        },
+        setConsolidatedFontStyle() {
+            const styles = [];
+
+            this.styleableFontItems.forEach(styleable => {
+                const fontStyle = this.getFontStyle(styleable[0]);
+
+                styles.push(fontStyle);
+            });
+
+            if (styles.length) {
+                const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
+                const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
+
+                const fontSize = hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC;
+                const font = hasConsolidatedFont ? styles[0].font : NON_SPECIFIC;
+
+                this.$set(this.consolidatedFontStyle, 'fontSize', fontSize);
+                this.$set(this.consolidatedFontStyle, 'font', font);
+            }
+        },
+        getFontStyle(selectionPath) {
+            const item = selectionPath.context.item;
+            const layoutItem = selectionPath.context.layoutItem;
+            let fontStyle = item && item.configuration && item.configuration.fontStyle;
+
+            // support for legacy where font styling in layouts only
+            if (!fontStyle) {
+                fontStyle = {
+                    fontSize: layoutItem && layoutItem.fontSize || 'default',
+                    font: layoutItem && layoutItem.font || 'default'
+                };
+            }
+
+            return fontStyle;
+        },
+        setFontProperty(fontStyleObject) {
+            let layoutDomainObject;
+            const [property, value] = Object.entries(fontStyleObject)[0];
+
+            this.styleableFontItems.forEach(styleable => {
+                if (!this.isLayoutObject(styleable)) {
+                    const fontStyle = this.getFontStyle(styleable[0]);
+                    fontStyle[property] = value;
+
+                    this.openmct.objects.mutate(styleable[0].context.item, 'configuration.fontStyle', fontStyle);
+                } else {
+                    // all layoutItems in this context will share same parent layout
+                    if (!layoutDomainObject) {
+                        layoutDomainObject = styleable[1].context.item;
+                    }
+
+                    // save layout item font style to parent layout configuration
+                    const layoutItemIndex = styleable[0].context.index;
+                    const layoutItemConfiguration = layoutDomainObject.configuration.items[layoutItemIndex];
+
+                    layoutItemConfiguration[property] = value;
+                }
+            });
+
+            if (layoutDomainObject) {
+                this.openmct.objects.mutate(layoutDomainObject, 'configuration.items', layoutDomainObject.configuration.items);
+            }
+
+            // sync vue component on font update
+            this.$set(this.consolidatedFontStyle, property, value);
+        },
+        isLayoutObject(selectionPath) {
+            const layoutItemType = selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type;
+
+            return layoutItemType && layoutItemType !== 'subobject-view';
         }
     }
 };

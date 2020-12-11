@@ -35,6 +35,8 @@
         :object-path="currentObjectPath"
         :has-frame="item.hasFrame"
         :show-edit-view="false"
+        :layout-font-size="item.fontSize"
+        :layout-font="item.font"
     />
 </layout-frame>
 </template>
@@ -73,6 +75,8 @@ export default {
             y: position[1],
             identifier: domainObject.identifier,
             hasFrame: hasFrameByDefault(domainObject.type),
+            fontSize: 'default',
+            font: 'default',
             viewKey
         };
     },
@@ -138,14 +142,18 @@ export default {
             this.domainObject = domainObject;
             this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
             this.$nextTick(() => {
-                let childContext = this.$refs.objectFrame.getSelectionContext();
-                childContext.item = domainObject;
-                childContext.layoutItem = this.item;
-                childContext.index = this.index;
-                this.context = childContext;
-                this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, this.context, this.immediatelySelect || this.initSelect);
-                delete this.immediatelySelect;
+                let reference = this.$refs.objectFrame;
+
+                if (reference) {
+                    let childContext = this.$refs.objectFrame.getSelectionContext();
+                    childContext.item = domainObject;
+                    childContext.layoutItem = this.item;
+                    childContext.index = this.index;
+                    this.context = childContext;
+                    this.removeSelectable = this.openmct.selection.selectable(
+                        this.$el, this.context, this.immediatelySelect || this.initSelect);
+                    delete this.immediatelySelect;
+                }
             });
         }
     }

@@ -26,6 +26,7 @@ define([
     './MutableObject',
     './RootRegistry',
     './RootObjectProvider',
+    './InterceptorRegistry',
     'EventEmitter'
 ], function (
     _,
@@ -33,6 +34,7 @@ define([
     MutableObject,
     RootRegistry,
     RootObjectProvider,
+    InterceptorRegistry,
     EventEmitter
 ) {
 
@@ -47,6 +49,8 @@ define([
         this.providers = {};
         this.rootRegistry = new RootRegistry();
         this.rootProvider = new RootObjectProvider.default(this.rootRegistry);
+        this.cache = {};
+        this.interceptorRegistry = new InterceptorRegistry.default();
     }
 
     /**
@@ -154,6 +158,11 @@ define([
      *          has been saved, or be rejected if it cannot be saved
      */
     ObjectAPI.prototype.get = function (identifier) {
+        let keystring = this.makeKeyString(identifier);
+        if (this.cache[keystring] !== undefined) {
+            return this.cache[keystring];
+        }
+
         identifier = utils.parseKeyString(identifier);
         const provider = this.getProvider(identifier);
 
@@ -165,7 +174,19 @@ define([
             throw new Error('Provider does not support get!');
         }
 
-        return provider.get(identifier);
+        let objectPromise = provider.get(identifier);
+
+        this.cache[keystring] = objectPromise;
+
+        return objectPromise.then(result => {
+            delete this.cache[keystring];
+            const interceptors = this.listGetInterceptors(identifier, result);
+            interceptors.forEach(interceptor => {
+                result = interceptor.invoke(identifier, result);
+            });
+
+            return result;
+        });
     };
 
     ObjectAPI.prototype.delete = function () {
@@ -296,6 +317,27 @@ define([
                 return path;
             }
         });
+    };
+
+    /**
+     * Register an object interceptor that transforms a domain object requested via module:openmct.ObjectAPI.get
+     * The domain object will be transformed after it is retrieved from the persistence store
+     * The domain object will be transformed only if the interceptor is applicable to that domain object as defined by the InterceptorDef
+     *
+     * @param {module:openmct.InterceptorDef} interceptorDef the interceptor definition to add
+     * @method addGetInterceptor
+     * @memberof module:openmct.InterceptorRegistry#
+     */
+    ObjectAPI.prototype.addGetInterceptor = function (interceptorDef) {
+        this.interceptorRegistry.addInterceptor(interceptorDef);
+    };
+
+    /**
+     * Retrieve the interceptors for a given domain object.
+     * @private
+     */
+    ObjectAPI.prototype.listGetInterceptors = function (identifier, object) {
+        return this.interceptorRegistry.getInterceptors(identifier, object);
     };
 
     /**

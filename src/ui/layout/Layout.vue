@@ -5,6 +5,11 @@
         'is-editing': isEditing
     }"
 >
+
+    <div
+        id="splash-screen"
+    ></div>
+
     <div
         class="l-shell__head"
         :class="{
@@ -65,6 +70,7 @@
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
+                :action-collection="actionCollection"
                 @sync-tree-navigation="handleSyncTreeNavigation"
             />
             <toolbar
@@ -74,8 +80,9 @@
             <object-view
                 ref="browseObject"
                 class="l-shell__main-container"
-                :show-edit-view="true"
                 data-selectable
+                :show-edit-view="true"
+                @change-action-collection="setActionCollection"
             />
             <component
                 :is="conductorComponent"
@@ -139,8 +146,9 @@ export default {
             conductorComponent: undefined,
             isEditing: false,
             hasToolbar: false,
-            headExpanded,
-            triggerSync: false
+            actionCollection: undefined,
+            triggerSync: false,
+            headExpanded
         };
     },
     computed: {
@@ -214,6 +222,9 @@ export default {
             }
 
             this.hasToolbar = structure.length > 0;
+        },
+        setActionCollection(actionCollection) {
+            this.actionCollection = actionCollection;
         },
         handleSyncTreeNavigation() {
             this.triggerSync = !this.triggerSync;

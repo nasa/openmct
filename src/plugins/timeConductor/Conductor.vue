@@ -161,10 +161,11 @@
             <ConductorMode class="c-conductor__mode-select" />
             <ConductorTimeSystem class="c-conductor__time-system-select" />
             <ConductorHistory
-                v-if="isFixed"
                 class="c-conductor__history-select"
+                :offsets="openmct.time.clockOffsets()"
                 :bounds="bounds"
                 :time-system="timeSystem"
+                :mode="timeMode"
             />
         </div>
         <input
@@ -233,6 +234,11 @@ export default {
             showTCInputStart: false,
             showTCInputEnd: false
         };
+    },
+    computed: {
+        timeMode() {
+            return this.isFixed ? 'fixed' : 'realtime';
+        }
     },
     mounted() {
         document.addEventListener('keydown', this.handleKeyDown);

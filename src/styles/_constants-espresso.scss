@@ -173,6 +173,7 @@ $editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent
 $editUIAreaShdwSelected: $editUIAreaBaseColor 0 0 0 3px; // Edit area s-selected
 $editUIGridColorBg: rgba($editUIBaseColor, 0.2); // Background of layout editing area
 $editUIGridColorFg: rgba(#000, 0.1); // Grid lines in layout editing area
+$editDimensionsColor: #6a5ea6;
 $editFrameColor: $browseFrameColor; // Solid or dotted border applied to non-selected frames in a layout; move-bar on frame hover
 $editFrameBorder: 1px dotted $editFrameColor;
 $editFrameColorHov: $editUIColor; // Solid border hover on frames; hover should not be applied to selected objects
@@ -217,7 +218,7 @@ $colorBtnActiveFg: $colorOkFg;
 $colorBtnSelectedBg: $colorSelectedBg;
 $colorBtnSelectedFg: $colorSelectedFg;
 $colorClickIconButton: $colorKey;
-$colorClickIconButtonBgHov: rgba($colorKey, 0.6);
+$colorClickIconButtonBgHov: rgba($colorKey, 0.3);
 $colorClickIconButtonFgHov: $colorKeyHov;
 $colorDropHint: $colorKey;
 $colorDropHintBg: pushBack($colorDropHint, 10%);
@@ -376,6 +377,11 @@ $colorItemTreeEditingIcon: $editUIColor;
 $colorItemTreeVC: $colorDisclosureCtrl;
 $colorItemTreeVCHover: $colorDisclosureCtrlHov;
 $shdwItemTreeIcon: none;
+
+// Layout frame controls
+$frameControlsColorFg: white;
+$frameControlsColorBg: $colorKey;
+$frameControlsShdw: $shdwMenu;
 
 // Images
 $colorThumbHoverBg: $colorItemTreeHoverBg;
