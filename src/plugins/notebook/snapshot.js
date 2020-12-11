@@ -7,15 +7,14 @@ export default class Snapshot {
     constructor(openmct) {
         this.openmct = openmct;
         this.snapshotContainer = new SnapshotContainer(openmct);
-        this.exportImageService = openmct.$injector.get('exportImageService');
-        this.dialogService = openmct.$injector.get('dialogService');
 
         this.capture = this.capture.bind(this);
         this._saveSnapShot = this._saveSnapShot.bind(this);
     }
 
     capture(snapshotMeta, notebookType, domElement) {
-        this.exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
+        const exportImageService = this.openmct.$injector.get('exportImageService');
+        exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
             .then(function (blob) {
                 const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
