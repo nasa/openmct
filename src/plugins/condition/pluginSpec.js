@@ -404,7 +404,7 @@ describe('the plugin', function () {
                 provide: {
                     openmct: openmct,
                     selection: selection,
-                    stylesManager,
+                    stylesManager
                 },
                 el: viewContainer,
                 components: {
