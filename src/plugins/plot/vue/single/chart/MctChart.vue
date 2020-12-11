@@ -13,23 +13,19 @@ import MCTChartLineLinear from './MCTChartLineLinear';
 import MCTChartLineStepAfter from './MCTChartLineStepAfter';
 import MCTChartPointSet from './MCTChartPointSet';
 import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
+import configStore from "../configuration/configStore";
+import PlotConfigurationModel from "../configuration/PlotConfigurationModel";
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
 
 export default {
+    inject: ['openmct', 'domainObject'],
     props: {
         rectangles: {
             type: Array,
             default() {
                 return [];
-            }
-        },
-        seriesConfig: {
-            type: Object,
-            default() {
-                return {
-                };
             }
         },
         highlights: {
@@ -41,8 +37,7 @@ export default {
     },
     data() {
         return {
-            canvasTemplate: '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>',
-            series: []
+            canvasTemplate: '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>'
         };
     },
     watch: {
@@ -55,9 +50,8 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
-        this.series = this.seriesConfig.series.models;
-        this.xAxis = this.seriesConfig.xAxis;
-        this.yAxis = this.seriesConfig.yAxis;
+
+        this.config = this.getConfig();
         this.isDestroyed = false;
         this.lines = [];
         this.pointSets = [];
@@ -72,17 +66,32 @@ export default {
             this.draw();
         }
 
-        this.listenTo(this.seriesConfig.series, 'add', this.onSeriesAdd, this);
-        this.listenTo(this.seriesConfig.series, 'remove', this.onSeriesRemove, this);
-        this.listenTo(this.seriesConfig.yAxis, 'change:key', this.clearOffset, this);
-        this.listenTo(this.seriesConfig.yAxis, 'change', this.scheduleDraw);
-        this.listenTo(this.seriesConfig.xAxis, 'change', this.scheduleDraw);
-        this.series.forEach(this.onSeriesAdd, this);
+        this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
+        this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
+        this.listenTo(this.config.yAxis, 'change:key', this.clearOffset, this);
+        this.listenTo(this.config.yAxis, 'change', this.scheduleDraw);
+        this.listenTo(this.config.xAxis, 'change', this.scheduleDraw);
+        this.config.series.forEach(this.onSeriesAdd, this);
     },
     beforeDestroy() {
         this.destroy();
     },
     methods: {
+        getConfig() {
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            let config = configStore.get(configId);
+            if (!config) {
+                const newDomainObject = this.openmct.legacyObject(this.domainObject).useCapability('adapter');
+                config = new PlotConfigurationModel({
+                    id: configId,
+                    domainObject: newDomainObject,
+                    openmct: this.openmct
+                });
+                configStore.add(configId, config);
+            }
+
+            return config;
+        },
         reDraw(mode, o, series) {
             this.changeInterpolate(mode, o, series);
             this.changeMarkers(mode, o, series);
@@ -329,8 +338,8 @@ export default {
             }
         },
         updateViewport() {
-            const xRange = this.xAxis.get('displayRange');
-            const yRange = this.yAxis.get('displayRange');
+            const xRange = this.config.xAxis.get('displayRange');
+            const yRange = this.config.yAxis.get('displayRange');
 
             if (!xRange || !yRange) {
                 return;

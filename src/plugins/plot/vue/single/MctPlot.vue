@@ -30,36 +30,42 @@
                  :legend="config.legend"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <div class="gl-plot-axis-area gl-plot-y has-local-controls"
-             :style="{
-                 width: (tickWidth + 20) + 'px'
-             }"
-        >
+        <y-axis v-if="config.series.models.length === 1"
+                :tick-width="tickWidth"
+                :series-model="config.series.models[0]"
+                @yKeyChanged="setYAxisKey"
+                @tickWidthChanged="onTickWidthChange"
+        />
+        <!--        <div class="gl-plot-axis-area gl-plot-y has-local-controls"-->
+        <!--             :style="{-->
+        <!--                 width: (tickWidth + 20) + 'px'-->
+        <!--             }"-->
+        <!--        >-->
 
-            <div class="gl-plot-label gl-plot-y-label"
-                 :class="{'icon-gear': (yKeyOptions.length > 1 && config.series.models.length === 1)}"
-            >{{ config.yAxis.get('label') }}
-            </div>
+        <!--            <div class="gl-plot-label gl-plot-y-label"-->
+        <!--                 :class="{'icon-gear': (yKeyOptions.length > 1 && config.series.models.length === 1)}"-->
+        <!--            >{{ config.yAxis.get('label') }}-->
+        <!--            </div>-->
 
-            <select v-if="yKeyOptions.length > 1 && config.series.models.length === 1"
-                    v-model="yAxisLabel"
-                    class="gl-plot-y-label__select local-controls--hidden"
-                    @change="toggleYAxisLabel"
-            >
-                <option v-for="(option, index) in yKeyOptions"
-                        :key="index"
-                        :value="option.name"
-                        :selected="option.name === yAxisLabel"
-                >
-                    {{ option.name }}
-                </option>
-            </select>
+        <!--            <select v-if="yKeyOptions.length > 1 && config.series.models.length === 1"-->
+        <!--                    v-model="yAxisLabel"-->
+        <!--                    class="gl-plot-y-label__select local-controls&#45;&#45;hidden"-->
+        <!--                    @change="toggleYAxisLabel"-->
+        <!--            >-->
+        <!--                <option v-for="(option, index) in yKeyOptions"-->
+        <!--                        :key="index"-->
+        <!--                        :value="option.name"-->
+        <!--                        :selected="option.name === yAxisLabel"-->
+        <!--                >-->
+        <!--                    {{ option.name }}-->
+        <!--                </option>-->
+        <!--            </select>-->
 
-            <mct-ticks :axis="config.yAxis"
-                       :position="'top'"
-                       @plotTickWidth="onTickWidthChange"
-            />
-        </div>
+        <!--            <mct-ticks :axis="config.yAxis"-->
+        <!--                       :position="'top'"-->
+        <!--                       @plotTickWidth="onTickWidthChange"-->
+        <!--            />-->
+        <!--        </div>-->
         <div class="gl-plot-wrapper-display-area-and-x-axis"
              :style="{
                  left: (tickWidth + 20) + 'px'
@@ -74,13 +80,13 @@
                 </div>
 
                 <mct-ticks v-show="gridLines"
-                           :axis="config.xAxis"
+                           :axis-type="'xAxis'"
                            :position="'right'"
                            @plotTickWidth="onTickWidthChange"
                 />
 
                 <mct-ticks v-show="gridLines"
-                           :axis="config.yAxis"
+                           :axis-type="'yAxis'"
                            :position="'bottom'"
                            @plotTickWidth="onTickWidthChange"
                 />
@@ -136,33 +142,38 @@
                 >
                 </div>
             </div>
+            <x-axis v-if="config.series.models.length === 1"
+                    :series-model="config.series.models[0]"
+            />
+            <!--
+                    <div
+                    class="gl-plot-axis-area gl-plot-x has-local-controls"
+            >-->
+            <!--                <mct-ticks :axis="config.Axis"-->
+            <!--                           :position="'left'"-->
+            <!--                           @plotTickWidth="onTickWidthChange"-->
+            <!--                />-->
 
-            <div class="gl-plot-axis-area gl-plot-x has-local-controls">
-                <mct-ticks :axis="config.xAxis"
-                           :position="'left'"
-                           @plotTickWidth="onTickWidthChange"
-                />
+            <!--                <div-->
+            <!--                    class="gl-plot-label gl-plot-x-label"-->
+            <!--                    :class="{'icon-gear': isEnabledXKeyToggle()}"-->
+            <!--                >-->
+            <!--                    {{ config.Axis.get('label') }}-->
+            <!--                </div>-->
 
-                <div
-                    class="gl-plot-label gl-plot-x-label"
-                    :class="{'icon-gear': isEnabledXKeyToggle()}"
-                >
-                    {{ config.xAxis.get('label') }}
-                </div>
-
-                <select
-                    v-show="isEnabledXKeyToggle()"
-                    v-model="selectedXKeyOption.key"
-                    class="gl-plot-x-label__select local-controls--hidden"
-                    @change="toggleXKeyOption('{{selectedXKeyOption.key}}', series[0])"
-                >
-                    <option v-for="option in xKeyOptions"
-                            :key="option.key"
-                            :value="option.key"
-                    >{{ option.name }}
-                    </option>
-                </select>
-            </div>
+            <!--                <select-->
+            <!--                    v-show="isEnabledXKeyToggle()"-->
+            <!--                    v-model="selectedXKeyOption.key"-->
+            <!--                    class="gl-plot-x-label__select local-controls&#45;&#45;hidden"-->
+            <!--                    @change="toggleXKeyOption('{{selectedXKeyOption.key}}', series[0])"-->
+            <!--                >-->
+            <!--                    <option v-for="option in xKeyOptions"-->
+            <!--                            :key="option.key"-->
+            <!--                            :value="option.key"-->
+            <!--                    >{{ option.name }}-->
+            <!--                    </option>-->
+            <!--                </select>-->
+            <!--            </div>-->
 
         </div>
     </div>
@@ -174,16 +185,20 @@
 
 import eventHelpers from './lib/eventHelpers';
 import LinearScale from "./LinearScale";
+import PlotConfigurationModel from './configuration/PlotConfigurationModel';
+import configStore from './configuration/configStore';
+
 import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
-
-import PlotConfigurationModel from './configuration/PlotConfigurationModel';
-import configStore from './configuration/configStore';
+import XAxis from "./axis/XAxis.vue";
+import YAxis from "./axis/YAxis.vue";
 
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
+        XAxis,
+        YAxis,
         PlotLegend,
         MctTicks,
         MctChart
@@ -236,7 +251,6 @@ export default {
 
         this.config = this.getConfig();
 
-        //TODO: Can replace all the listenTo calls with .on and .off
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
 
@@ -251,8 +265,6 @@ export default {
         this.openmct.objectViews.on('clearData', this.clearData);
         this.followTimeConductor();
 
-        //TODO: do this the Vue way
-        // this.listenTo(this, 'plot:clearHistory', this.clear, this);
         this.loaded = true;
 
         this.$nextTick(this.initialize);
@@ -264,7 +276,6 @@ export default {
     methods: {
         followTimeConductor() {
             this.openmct.time.on('bounds', this.updateDisplayBounds);
-            this.openmct.time.on('timeSystem', this.updateXAxis);
             this.synchronized(true);
         },
         getConfig() {
@@ -398,23 +409,14 @@ export default {
        * Track latest display bounds.  Forces update when not receiving ticks.
        */
         updateDisplayBounds(bounds, isTick) {
-
-            const xAxisKey = this.config.xAxis.get('key');
-            const timeSystem = this.openmct.time.timeSystem();
             const newRange = {
                 min: bounds.start,
                 max: bounds.end
             };
-
-            if (xAxisKey !== timeSystem.key) {
-                this.syncXAxisToTimeSystem(timeSystem);
-            }
-
             this.config.xAxis.set('range', newRange);
             if (!isTick) {
                 this.skipReloadOnInteraction = true;
-                //TODO: how to do this with Vue?
-                this.$scope.$broadcast('plot:clearHistory');
+                this.clear();
                 this.skipReloadOnInteraction = false;
                 this.loadMoreData(newRange, true);
             } else {
@@ -475,7 +477,6 @@ export default {
                 this.stopListening(this.canvas);
             }
 
-            //TODO: Should this be an array or the mainCanvas?
             this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
 
             this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
@@ -495,7 +496,6 @@ export default {
             this.chartElementBounds = undefined;
             this.tickUpdate = false;
 
-            //TODO: Should this be an array or the mainCanvas?
             this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
 
             this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
@@ -508,57 +508,8 @@ export default {
             this.cursorGuideVertical = this.$refs.cursorGuideVertical;
             this.cursorGuideHorizontal = this.$refs.cursorGuideHorizontal;
 
-            //TODO: Need to handle this the Vue way
-            // this.listenTo(this, 'plot:highlight:set', this.onPlotHighlightSet, this);
-            this.listenTo(this.config.xAxis, 'resetSeries', this.setUpXAxisOptions, this);
             this.listenTo(this.config.xAxis, 'change:displayRange', this.onXAxisChange, this);
             this.listenTo(this.config.yAxis, 'change:displayRange', this.onYAxisChange, this);
-
-            this.setUpXAxisOptions();
-            this.setUpYAxisOptions();
-        },
-
-        setUpXAxisOptions() {
-            const xAxisKey = this.config.xAxis.get('key');
-
-            if (this.config.series.models.length === 1) {
-                let metadata = this.config.series.models[0].metadata;
-
-                this.xKeyOptions = metadata
-                    .valuesForHints(['domain'])
-                    .map(function (o) {
-                        return {
-                            name: o.name,
-                            key: o.key
-                        };
-                    });
-                this.selectedXKeyOption = this.getXKeyOption(xAxisKey);
-            }
-        },
-
-        setUpYAxisOptions() {
-            if (this.config.series.models.length === 1) {
-                let metadata = this.config.series.models[0].metadata;
-
-                this.yKeyOptions = metadata
-                    .valuesForHints(['range'])
-                    .map(function (o) {
-                        return {
-                            name: o.name,
-                            key: o.key
-                        };
-                    });
-
-                //  set yAxisLabel if none is set yet
-                if (this.config.yAxisLabel === 'none') {
-                    let yKey = this.config.series.models[0].model.yKey;
-                    let yKeyModel = this.yKeyOptions.filter(o => o.key === yKey)[0];
-
-                    this.config.yAxisLabel = yKeyModel.name;
-                }
-            } else {
-                this.yKeyOptions = undefined;
-            }
         },
 
         onXAxisChange(displayBounds) {
@@ -968,56 +919,10 @@ export default {
             this.gridLines = gridLines === true;
         },
 
-        getXKeyOption(key) {
-            return this.xKeyOptions.find(option => option.key === key);
+        setYAxisKey(yKey) {
+            this.config.series.models[0].emit('change:yKey', yKey);
         },
 
-        isEnabledXKeyToggle() {
-            const isSinglePlot = this.xKeyOptions && this.xKeyOptions.length > 1 && this.config.series.models.length === 1;
-            const isFrozen = this.config.xAxis.get('frozen');
-            const inRealTimeMode = this.openmct.time.clock();
-
-            return isSinglePlot && !isFrozen && !inRealTimeMode;
-        },
-
-        toggleXKeyOption(lastXKey, series) {
-            const selectedXKey = this.selectedXKeyOption.key;
-            const dataForSelectedXKey = series.data
-                ? series.data[0][selectedXKey]
-                : undefined;
-
-            if (dataForSelectedXKey !== undefined) {
-                this.config.xAxis.set('key', selectedXKey);
-            } else {
-                this.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.');
-                this.selectedXKeyOption.key = lastXKey;
-            }
-        },
-
-        toggleYAxisLabel(data) {
-            console.log(data);
-            let options = this.yKeyOptions;
-            let label = this.yAxisLabel;
-            let series = this.config.series.models[0];
-            let yAxisObject = options.filter(o => o.name === label)[0];
-
-            if (yAxisObject) {
-                series.emit('change:yKey', yAxisObject.key);
-                this.config.yAxis.set('label', label);
-                this.config.yAxisLabel = label;
-            }
-        },
-        updateXAxis(timeSystem) {
-            const xAxisKey = this.config.xAxis.get('key');
-            if (xAxisKey !== timeSystem.key) {
-                this.syncXAxisToTimeSystem(timeSystem);
-                this.setUpXAxisOptions();
-            }
-        },
-        syncXAxisToTimeSystem(timeSystem) {
-            this.config.xAxis.set('key', timeSystem.key);
-            this.config.xAxis.resetSeries();
-        },
         destroy() {
             configStore.deleteStore(this.config.id);
 

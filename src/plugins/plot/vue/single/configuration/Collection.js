@@ -34,7 +34,7 @@ export default class Collection extends Model {
     }
 
     modelFn(model) {
-        //TODO: Come back to this
+        //TODO: Come back to this - why are we doing this?
         if (model instanceof this.modelClass) {
             model.collection = this;
 

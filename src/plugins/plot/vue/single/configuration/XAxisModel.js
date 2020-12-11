@@ -44,8 +44,6 @@ export default class XAxisModel extends Model {
         }
 
         this.listenTo(this, 'change:key', this.changeKey, this);
-        //TODO: We shouldn't need this anymore
-        // this.listenTo(this, 'resetSeries', this.resetSeries, this);
     }
     changeKey(newKey) {
         const series = this.plot.series.first();

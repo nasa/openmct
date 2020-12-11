@@ -48,14 +48,17 @@
 <script>
 import eventHelpers from "./lib/eventHelpers";
 import { ticks, commonPrefix, commonSuffix } from "./tickUtils";
+import configStore from "./configuration/configStore";
 
 export default {
+    inject: ['openmct', 'domainObject'],
     props: {
-        axis: {
-            type: Object,
+        axisType: {
+            type: String,
             default() {
-                return {};
-            }
+                return '';
+            },
+            required: true
         },
         position: {
             required: true,
@@ -71,21 +74,32 @@ export default {
         };
     },
     mounted() {
-        // eventHelpers.extend(this);
+        eventHelpers.extend(this);
+
+        this.axis = this.getAxisFromConfig();
 
         this.tickCount = 4;
         this.tickUpdate = false;
-        this.axis.on('change:displayRange', this.updateTicks);
-        // this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
-        // this.listenTo(this.axis, 'change:format', this.updateTicks, this);
-        // this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
+        this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
+        this.listenTo(this.axis, 'change:format', this.updateTicks, this);
+        this.listenTo(this.axis, 'change:key', this.updateTicksForceRegeneration, this);
         this.updateTicks();
     },
     beforeDestroy() {
-        this.axis.off('change:displayRange', this.updateTicks);
         this.stopListening();
     },
     methods: {
+        getAxisFromConfig() {
+            if (!this.axisType) {
+                return;
+            }
+
+            const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            let config = configStore.get(configId);
+            if (config) {
+                return config[this.axisType];
+            }
+        },
         /**
        * Determine whether ticks should be regenerated for a given range.
        * Ticks are updated
