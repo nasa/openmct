@@ -36,36 +36,6 @@
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
         />
-        <!--        <div class="gl-plot-axis-area gl-plot-y has-local-controls"-->
-        <!--             :style="{-->
-        <!--                 width: (tickWidth + 20) + 'px'-->
-        <!--             }"-->
-        <!--        >-->
-
-        <!--            <div class="gl-plot-label gl-plot-y-label"-->
-        <!--                 :class="{'icon-gear': (yKeyOptions.length > 1 && config.series.models.length === 1)}"-->
-        <!--            >{{ config.yAxis.get('label') }}-->
-        <!--            </div>-->
-
-        <!--            <select v-if="yKeyOptions.length > 1 && config.series.models.length === 1"-->
-        <!--                    v-model="yAxisLabel"-->
-        <!--                    class="gl-plot-y-label__select local-controls&#45;&#45;hidden"-->
-        <!--                    @change="toggleYAxisLabel"-->
-        <!--            >-->
-        <!--                <option v-for="(option, index) in yKeyOptions"-->
-        <!--                        :key="index"-->
-        <!--                        :value="option.name"-->
-        <!--                        :selected="option.name === yAxisLabel"-->
-        <!--                >-->
-        <!--                    {{ option.name }}-->
-        <!--                </option>-->
-        <!--            </select>-->
-
-        <!--            <mct-ticks :axis="config.yAxis"-->
-        <!--                       :position="'top'"-->
-        <!--                       @plotTickWidth="onTickWidthChange"-->
-        <!--            />-->
-        <!--        </div>-->
         <div class="gl-plot-wrapper-display-area-and-x-axis"
              :style="{
                  left: (tickWidth + 20) + 'px'
@@ -145,35 +115,6 @@
             <x-axis v-if="config.series.models.length === 1"
                     :series-model="config.series.models[0]"
             />
-            <!--
-                    <div
-                    class="gl-plot-axis-area gl-plot-x has-local-controls"
-            >-->
-            <!--                <mct-ticks :axis="config.Axis"-->
-            <!--                           :position="'left'"-->
-            <!--                           @plotTickWidth="onTickWidthChange"-->
-            <!--                />-->
-
-            <!--                <div-->
-            <!--                    class="gl-plot-label gl-plot-x-label"-->
-            <!--                    :class="{'icon-gear': isEnabledXKeyToggle()}"-->
-            <!--                >-->
-            <!--                    {{ config.Axis.get('label') }}-->
-            <!--                </div>-->
-
-            <!--                <select-->
-            <!--                    v-show="isEnabledXKeyToggle()"-->
-            <!--                    v-model="selectedXKeyOption.key"-->
-            <!--                    class="gl-plot-x-label__select local-controls&#45;&#45;hidden"-->
-            <!--                    @change="toggleXKeyOption('{{selectedXKeyOption.key}}', series[0])"-->
-            <!--                >-->
-            <!--                    <option v-for="option in xKeyOptions"-->
-            <!--                            :key="option.key"-->
-            <!--                            :value="option.key"-->
-            <!--                    >{{ option.name }}-->
-            <!--                    </option>-->
-            <!--                </select>-->
-            <!--            </div>-->
 
         </div>
     </div>
