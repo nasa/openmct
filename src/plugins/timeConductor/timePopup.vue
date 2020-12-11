@@ -3,6 +3,7 @@
     class="pr-tc-input-menu"
     @keydown.enter.prevent
     @keyup.enter.prevent="submit"
+    @click.stop=""
 >
     <div class="pr-tim-labels">
         <div class="pr-time-label__hrs">Hrs</div>
@@ -51,10 +52,10 @@
     </div>
     <div class="pr-tim__buttons c-button-set c-button-set--strip-h">
         <button class="c-button icon-check"
-                @click="submit"
+                @click.prevent="submit"
         ></button>
         <button class="c-button icon-x"
-                @click="hide"
+                @click.prevent="hide"
         ></button>
     </div>
 </div>
@@ -109,7 +110,7 @@ export default {
             const padAmt = (ref === 'inputHrs') ? 3 : 2;
             const step = (ref === 'inputHrs') ? 1 : 5;
             const maxVal = (ref === 'inputHrs') ? 999 : 59;
-            let cv = Math.round(parseInt(this[ref]) / step) * step;
+            let cv = Math.round(parseInt(this[ref], 10) / step) * step;
             cv = Math.min(maxVal, Math.max(0, ($ev.deltaY < 0) ? cv + step : cv - step));
             this[ref] = cv.toString().padStart(padAmt, '0');
         },
