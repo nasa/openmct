@@ -6,7 +6,7 @@
     @keydown="arrowDownHandler"
     @mouseover="focusElement"
 >
-    <div class="c-imagery__main-image-wrapper has-local-controls js-imageryView-image">
+    <div class="c-imagery__main-image-wrapper has-local-controls">
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
             <span class="c-image-controls__sliders"
                   draggable="true"
@@ -36,7 +36,7 @@
         <div class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
         >
-            <div class="c-imagery__main-image__image"
+            <div class="c-imagery__main-image__image js-imageryView-image"
                  :style="{
                      'background-image': imageUrl ? `url(${imageUrl})` : 'none',
                      'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
