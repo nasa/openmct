@@ -22,14 +22,39 @@
 
 // import _ from 'lodash';
 import TelemetrySubscriptionService from './TelemetrySubscriptionService';
+
+function bindUs() {
+    return [
+        'trackHistoricalTelemetry',
+        'trackSubscriptionTelemetry',
+        'addPage',
+        'processNewTelemetry',
+        'hasMorePages',
+        'nextPage',
+        'bounds',
+        'timeSystem',
+        'on',
+        'off',
+        'emit',
+        'subscribeToBounds',
+        'unsubscribeFromBounds',
+        'subscribeToTimeSystem',
+        'unsubscribeFromTimeSystem',
+        'destroy'
+    ];
+}
+
 export class TelemetryCollection {
 
     constructor(openmct, domainObject, options) {
+        bindUs().forEach(method => this[method] = this[method].bind(this));
+
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.boundedTelemetry = [];
         this.futureBuffer = [];
 
+        this.parseTime = undefined;
         this.timeSystem(openmct.time.timeSystem());
         this.lastBounds = openmct.time.bounds();
 
@@ -47,7 +72,7 @@ export class TelemetryCollection {
         this.trackSubscriptionTelemetry();
 
         this.subscribeToBounds();
-        this.trackTimeSystem();
+        this.subscribeToTimeSystem();
     }
 
     // should we wait to track history until an 'add' listener is added?
@@ -57,8 +82,10 @@ export class TelemetryCollection {
         }
 
         // remove for reset
-        this.emit('remove', this.boundedTelemetry);
-        this.boundedTelemetry = [];
+        if (this.boundedTelemetry.length !== 0) {
+            this.emit('remove', this.boundedTelemetry);
+            this.boundedTelemetry = [];
+        }
 
         let historicalData = await this.historicalProvider.request.apply(this.domainObject, this.arguments).catch((rejected) => {
             this.openmct.notifications.error('Error requesting telemetry data, see console for details');
@@ -72,7 +99,7 @@ export class TelemetryCollection {
             // reset on requests, should only happen on initial load,
             // bounds manually changed and time system changes
             this.boundedTelemetry = historicalData;
-            this.emit('add', this.boundedTelemetry);
+            this.emit('add', [...this.boundedTelemetry]);
         }
     }
 
@@ -81,7 +108,7 @@ export class TelemetryCollection {
             return;
         }
 
-        this.subscriptionService = new TelemetrySubscriptionService();
+        this.subscriptionService = new TelemetrySubscriptionService(this.openmct);
         this.unsubscribe = this.subscriptionService.subscribe(
             this.domainObject,
             this.processNewTelemetry,
@@ -155,8 +182,6 @@ export class TelemetryCollection {
             // no need to mess with subscription
         }
 
-
-
         let startChanged = this.lastBounds.start !== bounds.start;
         let endChanged = this.lastBounds.end !== bounds.end;
 
@@ -207,13 +232,14 @@ export class TelemetryCollection {
     }
 
     timeSystem(timeSystem) {
-        this.timeKey = timeSystem.key;
-        this.formatter = this.openmct.telemetry.getValueFormatter({
-            key: this.timeKey,
-            source: this.timeKey,
-            format: this.timeKey
+        let timeKey = timeSystem.key;
+        let formatter = this.openmct.telemetry.getValueFormatter({
+            key: timeKey,
+            source: timeKey,
+            format: timeKey
         });
-        this.parseTime = this.formatter.parse;
+
+        this.parseTime = formatter.parse;
 
         // TODO: Reset right?
     }

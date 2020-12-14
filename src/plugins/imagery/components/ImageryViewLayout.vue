@@ -137,7 +137,8 @@ export default {
             refreshCSS: false,
             keyString: undefined,
             focusedImageIndex: undefined,
-            numericDuration: undefined
+            numericDuration: undefined,
+            telemetryCollection: undefined
         };
     },
     computed: {
@@ -222,6 +223,7 @@ export default {
         // kickoff
         this.subscribe();
         this.requestHistory();
+        this.requestTelemetry();
     },
     updated() {
         this.scrollToRight();
@@ -352,6 +354,15 @@ export default {
             if (!isTick) {
                 this.requestHistory();
             }
+        },
+        async requestTelemetry() {
+            this.telemetryCollection = await this.openmct.telemetry.requestTelemetryCollection(this.domainObject);
+            this.telemetryCollection.on('add', (data) => {
+                console.log('added data', data);
+            });
+            this.telemetryCollection.on('remove', (data) => {
+                console.log('removed data', data);
+            });
         },
         async requestHistory() {
             let bounds = this.openmct.time.bounds();

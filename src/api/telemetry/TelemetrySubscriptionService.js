@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import objectUtils from 'objectUtils';
 class TelemetrySubscriptionService {
     constructor(openmct) {
         if (!TelemetrySubscriptionService.instance) {
@@ -33,7 +34,7 @@ class TelemetrySubscriptionService {
     }
 
     subscribe(domainObject, callback, provider, options) {
-        const keyString = this.objectUtils.makeKeyString(domainObject.identifier);
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
         let subscriber = this.subscriptionCache[keyString];
 
         if (!subscriber) {
@@ -64,8 +65,8 @@ class TelemetrySubscriptionService {
 
 }
 
-function instance() {
-    return new TelemetrySubscriptionService();
+function instance(openmct) {
+    return new TelemetrySubscriptionService(openmct);
 }
 
 export default instance;
