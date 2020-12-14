@@ -143,9 +143,9 @@ export default {
                 this.openmct.notifications.alert(message);
             }
 
-            const link = `${location.host}${location.pathname}${hash}`;
-            const url = new URL(link);
-            window.location.href = url.hash;
+            const relativeHash = hash.slice(hash.indexOf('#'));
+            const url = new URL(relativeHash, `${location.protocol}//${location.host}${location.pathname}`);
+            window.location.hash = url.hash;
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
