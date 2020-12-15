@@ -307,7 +307,6 @@ export default {
     },
     methods: {
         async initialize() {
-            this.searchService = this.openmct.$injector.get('searchService');
             window.addEventListener('resize', this.handleWindowResize);
             this.backwardsCompatibilityCheck();
             await this.calculateHeights();
@@ -693,7 +692,10 @@ export default {
             }
         },
         async getSearchResults() {
-            let results = await this.searchService.query(this.searchValue);
+            const searchOptions = {
+                q: this.searchValue
+            };
+            const results = await this.openmct.objects.search(searchOptions);
             this.searchResultItems = [];
 
             for (let i = 0; i < results.hits.length; i++) {
