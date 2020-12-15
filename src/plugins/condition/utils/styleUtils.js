@@ -104,7 +104,7 @@ export function getConsolidatedStyleValues(multipleItemStyles) {
     const properties = Object.keys(styleProps);
     properties.forEach((property) => {
         const values = aggregatedStyleValues[property];
-        if (values.length) {
+        if (values && values.length) {
             if (values.every(value => value === values[0])) {
                 styleValues[property] = values[0];
             } else {
