@@ -10,16 +10,17 @@
             <span>{{ createdOnTime }}</span>
         </div>
         <div class="c-ne__content">
-            <div :id="entry.id"
-                 class="c-ne__text"
+            <div class="c-ne__text"
+                 tabindex="0"
+                 v-html="entry.text"
                  :class="{'c-ne__input' : !readOnly }"
                  :contenteditable="!readOnly"
-                 tabindex="0"
+                 :id="entry.id"
+                 @blur="updateEntryValue($event)"
                  @keydown.enter.exact.prevent
-                 @keyup.enter.exact.prevent="updateEntryValue($event, entry.id)"
-                 @blur="updateEntryValue($event, entry.id)"
-                 @focus="updateCurrentEntryValue($event, entry.id)"
-            >{{ entry.text }}</div>
+                 @keyup.enter.exact.prevent="updateEntryValueOnEnterKeyPress($event)"
+            >
+            </div>
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
                                :key="embed.id"
@@ -61,7 +62,7 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
-import { createNewEmbed, getEntryPosById, getNotebookEntries } from '../utils/notebook-entries';
+import { createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
 import Moment from 'moment';
 
 export default {
@@ -107,11 +108,6 @@ export default {
             }
         }
     },
-    data() {
-        return {
-            currentEntryValue: ''
-        };
-    },
     computed: {
         createdOnDate() {
             return this.formatTime(this.entry.createdOn, 'YYYY-MM-DD');
@@ -121,10 +117,21 @@ export default {
         }
     },
     mounted() {
-        this.updateEntries = this.updateEntries.bind(this);
         this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {
+        addNewEmbed(objectPath) {
+            const entryPos = getEntryPosById(this.entry.id, this.internalDomainObject, this.selectedSection, this.selectedPage);
+            const bounds = this.openmct.time.bounds();
+            const snapshotMeta = {
+                bounds,
+                link: null,
+                objectPath,
+                openmct: this.openmct
+            };
+            const newEmbed = createNewEmbed(snapshotMeta);
+            this.entry.embeds.push(newEmbed);
+        },
         cancelEditMode(event) {
             const isEditing = this.openmct.editor.isEditing();
             if (isEditing) {
@@ -136,63 +143,23 @@ export default {
             event.dataTransfer.dropEffect = "copy";
         },
         deleteEntry() {
-            const self = this;
-            const entryPosById = self.entryPosById(self.entry.id);
-            if (entryPosById === -1) {
-                return;
-            }
-
-            const dialog = this.openmct.overlays.dialog({
-                iconClass: 'alert',
-                message: 'This action will permanently delete this entry. Do you wish to continue?',
-                buttons: [
-                    {
-                        label: "Ok",
-                        emphasis: true,
-                        callback: () => {
-                            const entries = getNotebookEntries(self.domainObject, self.selectedSection, self.selectedPage);
-                            entries.splice(entryPosById, 1);
-                            self.updateEntries(entries);
-                            dialog.dismiss();
-                        }
-                    },
-                    {
-                        label: "Cancel",
-                        callback: () => {
-                            dialog.dismiss();
-                        }
-                    }
-                ]
-            });
+            this.$emit('deleteEntry', this.entry.id);
         },
         dropOnEntry($event) {
             event.stopImmediatePropagation();
 
             const snapshotId = $event.dataTransfer.getData('openmct/snapshot/id');
             if (snapshotId.length) {
-                this.moveSnapshot(snapshotId);
-
-                return;
+                const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
+                this.snapshotContainer.removeSnapshot(snapshotId);
+                this.entry.embeds.push(snapshot);
+            } else {
+                const data = $event.dataTransfer.getData('openmct/domain-object-path');
+                const objectPath = JSON.parse(data);
+                this.addNewEmbed(objectPath);
             }
 
-            const data = $event.dataTransfer.getData('openmct/domain-object-path');
-            const objectPath = JSON.parse(data);
-            const entryPos = this.entryPosById(this.entry.id);
-            const bounds = this.openmct.time.bounds();
-            const snapshotMeta = {
-                bounds,
-                link: null,
-                objectPath,
-                openmct: this.openmct
-            };
-            const newEmbed = createNewEmbed(snapshotMeta);
-            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-            const currentEntryEmbeds = entries[entryPos].embeds;
-            currentEntryEmbeds.push(newEmbed);
-            this.updateEntries(entries);
-        },
-        entryPosById(entryId) {
-            return getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
+            this.$emit('updateEntry', this.entry);
         },
         findPositionInArray(array, id) {
             let position = -1;
@@ -210,12 +177,6 @@ export default {
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
         },
-        moveSnapshot(snapshotId) {
-            const snapshot = this.snapshotContainer.getSnapshot(snapshotId);
-            this.entry.embeds.push(snapshot);
-            this.updateEntry(this.entry);
-            this.snapshotContainer.removeSnapshot(snapshotId);
-        },
         navigateToPage() {
             this.$emit('changeSectionPage', {
                 sectionId: this.result.section.id,
@@ -231,15 +192,8 @@ export default {
         removeEmbed(id) {
             const embedPosition = this.findPositionInArray(this.entry.embeds, id);
             this.entry.embeds.splice(embedPosition, 1);
-            this.updateEntry(this.entry);
-        },
-        updateCurrentEntryValue($event) {
-            if (this.readOnly) {
-                return;
-            }
 
-            const target = $event.target;
-            this.currentEntryValue = target ? target.textContent : '';
+            this.$emit('updateEntry', this.entry);
         },
         updateEmbed(newEmbed) {
             this.entry.embeds.some(e => {
@@ -251,49 +205,17 @@ export default {
                 return found;
             });
 
-            this.updateEntry(this.entry);
+            this.$emit('updateEntry', this.entry);
         },
-        updateEntry(newEntry) {
-            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-            entries.some(entry => {
-                const found = (entry.id === newEntry.id);
-                if (found) {
-                    entry = newEntry;
-                }
-
-                return found;
-            });
-
-            this.updateEntries(entries);
+        updateEntryValue($event) {
+            const value = $event.target.innerText;
+            if (value !== this.entry.text && value.match(/\S/)) {
+                this.entry.text = value;
+                this.$emit('updateEntry', this.entry);
+            }
         },
-        updateEntryValue($event, entryId) {
-            if (!this.domainObject || !this.selectedSection || !this.selectedPage) {
-                return;
-            }
-
-            const target = $event.target;
-            if (!target) {
-                return;
-            }
-
-            target.blur();
-
-            const value = target.textContent.trim();
-            if (this.currentEntryValue === value) {
-                return;
-            }
-
-            target.textContent = value;
-            this.currentEntryValue = value;
-
-            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
-            const entryPos = this.entryPosById(entryId);
-            entries[entryPos].text = value;
-
-            this.updateEntries(entries);
-        },
-        updateEntries(entries) {
-            this.$emit('updateEntries', entries);
+        updateEntryValueOnEnterKeyPress(event) {
+            event.target.blur();
         }
     }
 };
