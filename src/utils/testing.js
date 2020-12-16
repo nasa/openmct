@@ -306,37 +306,6 @@ function setMockObjects() {
                         key: "some-key-2"
                     }]
                 }
-            },
-            imageTelemetry: {
-                identifier: {
-                    namespace: "",
-                    key: "telemetry-object"
-                },
-                type: "test-telemetry-object",
-                name: "Test Telemetry Object",
-                telemetry: {
-                    values: [{
-                        key: "name",
-                        name: "Name",
-                        format: "string"
-                    }, {
-                        key: "utc",
-                        name: "Time",
-                        format: "utc",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        name: "Some attribute 1",
-                        key: "some-key-1",
-                        hints: {
-                            image: 1
-                        }
-                    }, {
-                        name: "Some attribute 2",
-                        key: "some-key-2"
-                    }]
-                }
             }
         },
         otherType: {
