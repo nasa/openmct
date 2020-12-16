@@ -23,43 +23,122 @@ import ImageryPlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct,
-    getMockObjects,
-    getLatestTelemetry,
     resetApplicationState
 } from 'utils/testing';
 
-// const TABLE_BODY_ROWS = '.js-lad-table__body__row';
-// const TABLE_BODY_FIRST_ROW = TABLE_BODY_ROWS + ':first-child';
-// const TABLE_BODY_FIRST_ROW_FIRST_DATA = TABLE_BODY_FIRST_ROW + ' .js-first-data';
-// const TABLE_BODY_FIRST_ROW_SECOND_DATA = TABLE_BODY_FIRST_ROW + ' .js-second-data';
-// const TABLE_BODY_FIRST_ROW_THIRD_DATA = TABLE_BODY_FIRST_ROW + ' .js-third-data';
-// const LAD_SET_TABLE_HEADERS = '.js-lad-table-set__table-headers';
+const ONE_MINUTE = 1000 * 60;
+const TEN_MINUTES = ONE_MINUTE * 10;
+const MAIN_IMAGE_CLASS = '.js-imageryView-image';
+const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
+const REFRESH_CSS_MS = 500;
 
-fdescribe("The Imagery Plugin", () => {
+function getImageInfo(doc) {
+    let imageElement = doc.querySelectorAll(MAIN_IMAGE_CLASS)[0];
+    let timestamp = imageElement.dataset.openmctImageTimestamp;
+    let identifier = imageElement.dataset.openmctObjectKeystring;
+    let url = imageElement.style.backgroundImage;
+
+    return {
+        timestamp,
+        identifier,
+        url
+    };
+}
+
+function isNew(doc) {
+    let newIcon = doc.querySelectorAll(NEW_IMAGE_CLASS);
+
+    return newIcon.length !== 0;
+}
+
+function generateTelemetry(start, count) {
+    let telemetry = [];
+
+    for (let i = 1, l = count + 1; i < l; i++) {
+        let stringRep = i + 'minute';
+        let logo = 'images/logo-openmct.svg';
+
+        telemetry.push({
+            "name": stringRep + " Imagery",
+            "utc": start + (i * ONE_MINUTE),
+            "url": location.host + '/' + logo + '?time=' + stringRep,
+            "timeId": stringRep
+        });
+    }
+
+    return telemetry;
+}
+
+describe("The Imagery View Layout", () => {
     const imageryKey = 'example.imagery';
+    const START = Date.now();
+    const COUNT = 10;
 
     let openmct;
     let imageryPlugin;
     let parent;
     let child;
-    let mockTelemetryObject = getMockObjects({
-        objectKeyStrings: ['imageTelemetry'],
-        format: 'utc'
-    }).imageTelemetry;
-    // let telemetryCount = 3;
-    // let timeFormat = 'utc';
-    // let mockObj = getMockObjects({
-    //     objectKeyStrings: ['ladTable', 'telemetry'],
-    //     format: timeFormat
-    // });
-    // let bounds = {
-    //     start: 0,
-    //     end: 4
-    // };
+    let timeFormat = 'utc';
+    let bounds = {
+        start: START - TEN_MINUTES,
+        end: START
+    };
+    let imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
+    let imageryObject = {
+        identifier: {
+            namespace: "",
+            key: "imageryId"
+        },
+        name: "Example Imagery",
+        type: "example.imagery",
+        location: "parentId",
+        modified: 0,
+        persisted: 0,
+        telemetry: {
+            values: [
+                {
+                    "name": "Image",
+                    "key": "url",
+                    "format": "image",
+                    "hints": {
+                        "image": 1,
+                        "priority": 3
+                    },
+                    "source": "url"
+                },
+                {
+                    "name": "Name",
+                    "key": "name",
+                    "source": "name",
+                    "hints": {
+                        "priority": 0
+                    }
+                },
+                {
+                    "name": "Time",
+                    "key": "utc",
+                    "format": "utc",
+                    "hints": {
+                        "domain": 2,
+                        "priority": 1
+                    },
+                    "source": "utc"
+                },
+                {
+                    "name": "Local Time",
+                    "key": "local",
+                    "format": "local-format",
+                    "hints": {
+                        "domain": 1,
+                        "priority": 2
+                    },
+                    "source": "local"
+                }
+            ]
+        }
+    };
 
-    // // add telemetry object as composition in lad table
-    // mockObj.ladTable.composition.push(mockObj.telemetry.identifier);
-
+    // this setups up the app
     beforeEach((done) => {
         const appHolder = document.createElement('div');
         appHolder.style.width = '640px';
@@ -76,12 +155,12 @@ fdescribe("The Imagery Plugin", () => {
         imageryPlugin = new ImageryPlugin();
         openmct.install(imageryPlugin);
 
-        // spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
 
-        // openmct.time.bounds({
-        //     start: bounds.start,
-        //     end: bounds.end
-        // });
+        openmct.time.timeSystem(timeFormat, {
+            start: 0,
+            end: 4
+        });
 
         openmct.on('start', done);
         openmct.startHeadless(appHolder);
@@ -91,140 +170,89 @@ fdescribe("The Imagery Plugin", () => {
         return resetApplicationState(openmct);
     });
 
-    it("should provide an imagery view only for image telemetry objects", () => {
-        let applicableViews = openmct.objectViews.get(mockTelemetryObject);
-
+    it("should provide an imagery view only for imagery producing objects", () => {
+        let applicableViews = openmct.objectViews.get(imageryObject);
         let imageryView = applicableViews.find(
-            (viewProvider) => viewProvider.key === imageryKey
-
+            viewProvider => viewProvider.key === imageryKey
         );
-        console.log(imageryView);
+
         expect(imageryView).toBeDefined();
     });
 
-    xdescribe('composition', () => {
-        // let ladTableCompositionCollection;
+    describe("imagery view", () => {
+        let applicableViews;
+        let imageryViewProvider;
+        let imageryView;
 
-        // beforeEach(() => {
-        //     ladTableCompositionCollection = openmct.composition.get(mockObj.ladTable);
-        //     ladTableCompositionCollection.load();
-        // });
+        beforeEach(async (done) => {
+            let telemetryRequestResolve;
+            let telemetryRequestPromise = new Promise((resolve) => {
+                telemetryRequestResolve = resolve;
+            });
 
-        // it("should accept telemetry producing objects", () => {
-        //     expect(() => {
-        //         ladTableCompositionCollection.add(mockObj.telemetry);
-        //     }).not.toThrow();
-        // });
+            openmct.telemetry.request.and.callFake(() => {
+                telemetryRequestResolve(imageTelemetry);
 
-        // it("should reject non-telemtry producing objects", () => {
-        //     expect(() => {
-        //         ladTableCompositionCollection.add(mockObj.ladTable);
-        //     }).toThrow();
-        // });
-    });
+                return telemetryRequestPromise;
+            });
 
-    xdescribe("table view", () => {
-        // let applicableViews;
-        // let ladTableViewProvider;
-        // let ladTableView;
-        // let anotherTelemetryObj = getMockObjects({
-        //     objectKeyStrings: ['telemetry'],
-        //     overwrite: {
-        //         telemetry: {
-        //             name: "New Telemetry Object",
-        //             identifier: {
-        //                 namespace: "",
-        //                 key: "another-telemetry-object"
-        //             }
-        //         }
-        //     }
-        // }).telemetry;
+            openmct.time.clock('local', {
+                start: bounds.start,
+                end: bounds.end + 100
+            });
 
-        // // add another telemetry object as composition in lad table to test multi rows
-        // mockObj.ladTable.composition.push(anotherTelemetryObj.identifier);
+            applicableViews = openmct.objectViews.get(imageryObject);
+            imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
+            imageryView = imageryViewProvider.view(imageryObject);
+            imageryView.show(child);
 
-        // beforeEach(async () => {
-        //     let telemetryRequestResolve;
-        //     let telemetryObjectResolve;
-        //     let anotherTelemetryObjectResolve;
-        //     let telemetryRequestPromise = new Promise((resolve) => {
-        //         telemetryRequestResolve = resolve;
-        //     });
-        //     let telemetryObjectPromise = new Promise((resolve) => {
-        //         telemetryObjectResolve = resolve;
-        //     });
-        //     let anotherTelemetryObjectPromise = new Promise((resolve) => {
-        //         anotherTelemetryObjectResolve = resolve;
-        //     });
+            await telemetryRequestPromise;
+            await Vue.nextTick();
 
-        //     openmct.telemetry.request.and.callFake(() => {
-        //         telemetryRequestResolve(mockTelemetry);
+            return done();
+        });
 
-        //         return telemetryRequestPromise;
-        //     });
-        //     openmct.objects.get.and.callFake((obj) => {
-        //         if (obj.key === 'telemetry-object') {
-        //             telemetryObjectResolve(mockObj.telemetry);
+        it("on mount should show the the most recent image", () => {
+            const imageInfo = getImageInfo(parent);
 
-        //             return telemetryObjectPromise;
-        //         } else {
-        //             anotherTelemetryObjectResolve(anotherTelemetryObj);
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
+        });
 
-        //             return anotherTelemetryObjectPromise;
-        //         }
-        //     });
+        it("should show the clicked thumbnail as the main image", async () => {
+            const target = imageTelemetry[5].url;
+            parent.querySelectorAll(`img[src='${target}']`)[0].click();
+            await Vue.nextTick();
+            const imageInfo = getImageInfo(parent);
 
-        //     openmct.time.bounds({
-        //         start: bounds.start,
-        //         end: bounds.end
-        //     });
+            expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
+        });
 
-        //     applicableViews = openmct.objectViews.get(mockObj.ladTable);
-        //     ladTableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === ladTableKey);
-        //     ladTableView = ladTableViewProvider.view(mockObj.ladTable, [mockObj.ladTable]);
-        //     ladTableView.show(child, true);
+        it("should show that an image is new", async (done) => {
+            await Vue.nextTick();
 
-        //     await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
-        //     await Vue.nextTick();
+            // used in code, need to wait to the 500ms here too
+            setTimeout(() => {
+                const imageIsNew = isNew(parent);
 
-        //     return;
-        // });
+                expect(imageIsNew).toBeTrue();
+                done();
+            }, REFRESH_CSS_MS);
+        });
 
-        // it("should show one row per object in the composition", () => {
-        //     const rowCount = parent.querySelectorAll(TABLE_BODY_ROWS).length;
-        //     expect(rowCount).toBe(mockObj.ladTable.composition.length);
-        // });
+        it("should show that an image is not new", async (done) => {
+            const target = imageTelemetry[2].url;
+            parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
-        // it("should show the most recent datum from the telemetry producing object", async () => {
-        //     const latestDatum = getLatestTelemetry(mockTelemetry, { timeFormat });
-        //     const expectedDate = utcTimeFormat(latestDatum[timeFormat]);
-        //     await Vue.nextTick();
-        //     const latestDate = parent.querySelector(TABLE_BODY_FIRST_ROW_SECOND_DATA).innerText;
-        //     expect(latestDate).toBe(expectedDate);
-        // });
+            await Vue.nextTick();
 
-        // it("should show the name provided for the the telemetry producing object", () => {
-        //     const rowName = parent.querySelector(TABLE_BODY_FIRST_ROW_FIRST_DATA).innerText;
+            // used in code, need to wait to the 500ms here too
+            setTimeout(() => {
+                const imageIsNew = isNew(parent);
 
-        //     const expectedName = mockObj.telemetry.name;
-        //     expect(rowName).toBe(expectedName);
-        // });
+                expect(imageIsNew).toBeFalse();
+                done();
+            }, REFRESH_CSS_MS);
+        });
 
-        // it("should show the correct values for the datum based on domain and range hints", async () => {
-        //     const range = mockObj.telemetry.telemetry.values.find((val) => {
-        //         return val.hints && val.hints.range !== undefined;
-        //     }).key;
-        //     const domain = mockObj.telemetry.telemetry.values.find((val) => {
-        //         return val.hints && val.hints.domain !== undefined;
-        //     }).key;
-        //     const mostRecentTelemetry = getLatestTelemetry(mockTelemetry, { timeFormat });
-        //     const rangeValue = mostRecentTelemetry[range];
-        //     const domainValue = utcTimeFormat(mostRecentTelemetry[domain]);
-        //     await Vue.nextTick();
-        //     const actualDomainValue = parent.querySelector(TABLE_BODY_FIRST_ROW_SECOND_DATA).innerText;
-        //     const actualRangeValue = parent.querySelector(TABLE_BODY_FIRST_ROW_THIRD_DATA).innerText;
-        //     expect(actualRangeValue).toBe(rangeValue);
-        //     expect(actualDomainValue).toBe(domainValue);
-        // });
     });
 });
