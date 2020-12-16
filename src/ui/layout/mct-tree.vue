@@ -226,7 +226,7 @@ export default {
             return this.mainTreeHeight - this.ancestorsHeight;
         },
         showNoItems() {
-            return this.visibleItems.length === 0 && !this.activeSearch;
+            return this.visibleItems.length === 0 && !this.activeSearch && !this.isLoading;
         },
         showNoSearchResults() {
             return this.searchValue && this.searchResultItems.length === 0 && !this.searchLoading;
@@ -276,7 +276,9 @@ export default {
         }
     },
     async mounted() {
-        this.initialize();
+        this.isLoading = true;
+
+        await this.initialize();
 
         let savedPath = this.getStoredTreePath();
         let rootComposition = await this.loadRoot();
@@ -302,26 +304,15 @@ export default {
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
         this.stopObservingAncestors();
-        document.removeEventListener('readystatechange', this.setTreeTopMargin);
     },
     methods: {
-        initialize() {
+        async initialize() {
             this.searchService = this.openmct.$injector.get('searchService');
             window.addEventListener('resize', this.handleWindowResize);
-            this.readyStateCheck();
             this.backwardsCompatibilityCheck();
-        },
-        readyStateCheck() {
-            if (document.readyState !== 'complete') {
-                document.addEventListener('readystatechange', this.onReadyState);
-            } else {
-                this.onReadyState();
-            }
-        },
-        onReadyState() {
-            if (document.readyState === 'complete') {
-                this.calculateHeights();
-            }
+            await this.calculateHeights();
+
+            return;
         },
         backwardsCompatibilityCheck() {
             let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
@@ -781,17 +772,44 @@ export default {
             return { height };
         },
         getElementStyleValue(el, style) {
+            if (!el) {
+                return;
+            }
+
             let styleString = window.getComputedStyle(el)[style];
             let index = styleString.indexOf('px');
 
             return Number(styleString.slice(0, index));
         },
         calculateHeights() {
-            this.mainTreeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
-            this.mainTreeHeight = this.$el.offsetHeight
-                - this.$refs.search.offsetHeight
-                - this.mainTreeTopMargin;
-            this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
+            const RECHECK = 100;
+
+            return new Promise((resolve, reject) => {
+
+                let checkHeights = () => {
+                    let treeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+                    if (
+                        this.$el
+                        && this.$refs.search
+                        && this.$refs.mainTree
+                        && this.$refs.dummyItem
+                        && this.$el.offsetHeight !== 0
+                        && treeTopMargin > 0
+                    ) {
+                        this.mainTreeTopMargin = treeTopMargin;
+                        this.mainTreeHeight = this.$el.offsetHeight
+                            - this.$refs.search.offsetHeight
+                            - this.mainTreeTopMargin;
+                        this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
+
+                        resolve();
+                    } else {
+                        setTimeout(checkHeights, RECHECK);
+                    }
+                };
+
+                checkHeights();
+            });
         }
     }
 };

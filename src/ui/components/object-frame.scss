@@ -2,20 +2,22 @@
     display: flex;
     flex-direction: column;
 
-    &.is-missing {
-        border: $borderMissing;
-    }
-
     /*************************** HEADER */
     &__header {
         flex: 0 0 auto;
         display: flex;
-        font-size: 1.05em;
+        justify-content: space-between;
         align-items: center;
         margin-bottom: $interiorMarginSm;
-        padding: 1px 2px;
+        overflow: hidden;
+        padding: 3px;
 
         .c-object-label {
+            font-size: 1.05em;
+            &__type-icon {
+                opacity: $objectLabelTypeIconOpacity;
+            }
+
             &__name {
                 filter: $objectLabelNameFilter;
             }
@@ -31,48 +33,122 @@
         }
     }
 
-    &--no-frame {
-        > .c-so-view__header {
-            display: none;
+    /*************************** FRAME CONTROLS */
+    &__frame-controls {
+        display: flex;
+        flex: 0 0 auto;
+
+        &__btns,
+        &__more {
+            flex: 0 0 auto;
         }
 
-        &.is-missing {
-            @include isMissing($absPos: true);
+        .is-in-small-container &,
+        .c-fl-frame & {
+            [class*="__label"] {
+                // button labels
+                display: none;
 
-            .is-missing__indicator {
-                top: $interiorMargin;
-                left: $interiorMargin;
             }
         }
     }
 
-    &__local-controls {
-        // View Large button
-        box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
-        position: absolute;
-        top: $interiorMargin; right: $interiorMargin;
-        z-index: 10;
+    /*************************** HIDDEN FRAME */
+    &--no-frame {
+        > .c-so-view__header {
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute;
+            top: 0; right: 0; bottom: auto; left: 0;
+            z-index: 2;
+
+            .c-object-label {
+                visibility: hidden;
+            }
+
+            .c-so-view__frame-controls {
+                background: $frameControlsColorBg;
+                border-radius: $controlCr;
+                box-shadow: $frameControlsShdw;
+                padding: 1px;
+                pointer-events: all;
+
+                .c-icon-button {
+                    color: $frameControlsColorFg;
+
+                    &:hover {
+                        background: rgba($frameControlsColorFg, 0.3);
+                    }
+                }
+
+                &__btns {
+                    display: none;
+                }
+
+                &:hover {
+                    [class*="__btns"] {
+                        display: block;
+                    }
+                }
+
+                [class*="__label"] {
+                    // button labels
+                    display: none;
+
+                }
+            }
+        }
+        &.c-so-view--layout {
+            // For sub-layouts with hidden frames, completely hide the header to avoid overlapping buttons
+            > .c-so-view__header {
+                display: none;
+            }
+        }
+
+        /* HOVERS */
+        &:hover {
+            > .c-so-view__header {
+                visibility: visible;
+            }
+        }
+
+        &[class*='is-status'] {
+            border: $borderMissing;
+        }
+    }
+
+    /*************************** OBJECT VIEW */
+    &__object-view {
+        flex: 1 1 auto;
+        height: 0; // Chrome 73 overflow bug fix
+        overflow: auto;
+
+        .u-fills-container {
+            // Expand component types that fill a container
+            @include abs();
+        }
     }
 
     .c-click-icon,
-    .c-button {
+    .c-button,
+    .c-icon-button {
         // Shrink buttons a bit when they appear in a frame
         border-radius: $smallCr !important;
         font-size: 0.9em;
-        padding: 3px 5px;
-    }
-
-    &__view-large {
-        display: none;
+        padding: 5px;
     }
 
     &.has-complex-content {
         > .c-so-view__view-large { display: block; }
     }
 
+    &.is-status--missing {
+        border: $borderMissing;
+    }
+
     &__object-view {
+        display: flex;
         flex: 1 1 auto;
-        height: 0; // Chrome 73 overflow bug fix
         overflow: auto;
 
         .u-fills-container {
@@ -84,6 +160,7 @@
 
 .l-angular-ov-wrapper {
     // This element is the recipient for object styling; cannot be display: contents
-    height: 100%;
+    flex: 1 1 auto;
     overflow: hidden;
+    display: block;
 }

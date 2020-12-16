@@ -21,32 +21,24 @@
  *****************************************************************************/
 
 define([
-    "./src/actions/MoveAction",
-    "./src/actions/CopyAction",
     "./src/actions/LinkAction",
     "./src/actions/SetPrimaryLocationAction",
     "./src/services/LocatingCreationDecorator",
     "./src/services/LocatingObjectDecorator",
     "./src/policies/CopyPolicy",
     "./src/policies/CrossSpacePolicy",
-    "./src/policies/MovePolicy",
     "./src/capabilities/LocationCapability",
-    "./src/services/MoveService",
     "./src/services/LinkService",
     "./src/services/CopyService",
     "./src/services/LocationService"
 ], function (
-    MoveAction,
-    CopyAction,
     LinkAction,
     SetPrimaryLocationAction,
     LocatingCreationDecorator,
     LocatingObjectDecorator,
     CopyPolicy,
     CrossSpacePolicy,
-    MovePolicy,
     LocationCapability,
-    MoveService,
     LinkService,
     CopyService,
     LocationService
@@ -61,40 +53,13 @@ define([
             "extensions": {
                 "actions": [
                     {
-                        "key": "move",
-                        "name": "Move",
-                        "description": "Move object to another location.",
-                        "cssClass": "icon-move",
-                        "category": "contextual",
-                        "implementation": MoveAction,
-                        "depends": [
-                            "policyService",
-                            "locationService",
-                            "moveService"
-                        ]
-                    },
-                    {
-                        "key": "copy",
-                        "name": "Duplicate",
-                        "description": "Duplicate object to another location.",
-                        "cssClass": "icon-duplicate",
-                        "category": "contextual",
-                        "implementation": CopyAction,
-                        "depends": [
-                            "$log",
-                            "policyService",
-                            "locationService",
-                            "copyService",
-                            "dialogService",
-                            "notificationService"
-                        ]
-                    },
-                    {
                         "key": "link",
                         "name": "Create Link",
                         "description": "Create Link to object in another location.",
                         "cssClass": "icon-link",
                         "category": "contextual",
+                        "group": "action",
+                        "priority": 7,
                         "implementation": LinkAction,
                         "depends": [
                             "policyService",
@@ -135,10 +100,6 @@ define([
                     {
                         "category": "action",
                         "implementation": CopyPolicy
-                    },
-                    {
-                        "category": "action",
-                        "implementation": MovePolicy
                     }
                 ],
                 "capabilities": [
@@ -154,17 +115,6 @@ define([
                     }
                 ],
                 "services": [
-                    {
-                        "key": "moveService",
-                        "name": "Move Service",
-                        "description": "Provides a service for moving objects",
-                        "implementation": MoveService,
-                        "depends": [
-                            "openmct",
-                            "linkService",
-                            "$q"
-                        ]
-                    },
                     {
                         "key": "linkService",
                         "name": "Link Service",

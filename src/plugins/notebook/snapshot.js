@@ -7,15 +7,14 @@ export default class Snapshot {
     constructor(openmct) {
         this.openmct = openmct;
         this.snapshotContainer = new SnapshotContainer(openmct);
-        this.exportImageService = openmct.$injector.get('exportImageService');
-        this.dialogService = openmct.$injector.get('dialogService');
 
         this.capture = this.capture.bind(this);
         this._saveSnapShot = this._saveSnapShot.bind(this);
     }
 
     capture(snapshotMeta, notebookType, domElement) {
-        this.exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
+        const exportImageService = this.openmct.$injector.get('exportImageService');
+        exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
             .then(function (blob) {
                 const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
@@ -49,7 +48,7 @@ export default class Snapshot {
             .then(domainObject => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
 
-                const defaultPath = `${domainObject.name} > ${notebookStorage.section.name} > ${notebookStorage.page.name}`;
+                const defaultPath = `${domainObject.name} - ${notebookStorage.section.name} - ${notebookStorage.page.name}`;
                 const msg = `Saved to Notebook ${defaultPath}`;
                 this._showNotification(msg);
             });

@@ -47,6 +47,7 @@ mct-plot {
 .c-plot,
 .gl-plot {
     overflow: hidden;
+    min-height: 100px;
 
         .s-status-taking-snapshot & {
         .c-control-bar {
@@ -59,14 +60,8 @@ mct-plot {
     }
 
     /*********************** MISSING ITEM INDICATORS */
-    .is-missing__indicator {
-        display: none;
-    }
-    .is-missing {
-        @include isMissing();
-        .is-missing__indicator {
-            font-size: 0.8em;
-        }
+    .is-status__indicator {
+        font-size: 0.8em;
     }
 }
 
@@ -85,7 +80,8 @@ mct-plot {
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     &--stacked {

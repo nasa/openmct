@@ -26,9 +26,12 @@ import objectUtils from 'objectUtils';
 import DisplayLayoutType from './DisplayLayoutType.js';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import AlphaNumericFormatViewProvider from './AlphanumericFormatViewProvider.js';
+import CopyToClipboardAction from './actions/CopyToClipboardAction';
 
 export default function DisplayLayoutPlugin(options) {
     return function (openmct) {
+        openmct.actions.register(new CopyToClipboardAction(openmct));
+
         openmct.objectViews.addProvider({
             key: 'layout.view',
             canView: function (domainObject) {
