@@ -10,15 +10,15 @@
             <span>{{ createdOnTime }}</span>
         </div>
         <div class="c-ne__content">
-            <div class="c-ne__text"
+            <div :id="entry.id"
+                 class="c-ne__text"
                  tabindex="0"
-                 v-html="entry.text"
-                 :class="{'c-ne__input' : !readOnly }"
+                 :class="{ 'c-ne__input' : !readOnly }"
                  :contenteditable="!readOnly"
-                 :id="entry.id"
                  @blur="updateEntryValue($event)"
                  @keydown.enter.exact.prevent
                  @keyup.enter.exact.prevent="updateEntryValueOnEnterKeyPress($event)"
+                 v-text="entry.text"
             >
             </div>
             <div class="c-snapshots c-ne__embeds">
@@ -62,7 +62,7 @@
 
 <script>
 import NotebookEmbed from './NotebookEmbed.vue';
-import { createNewEmbed, getNotebookEntries } from '../utils/notebook-entries';
+import { createNewEmbed } from '../utils/notebook-entries';
 import Moment from 'moment';
 
 export default {
@@ -121,7 +121,6 @@ export default {
     },
     methods: {
         addNewEmbed(objectPath) {
-            const entryPos = getEntryPosById(this.entry.id, this.internalDomainObject, this.selectedSection, this.selectedPage);
             const bounds = this.openmct.time.bounds();
             const snapshotMeta = {
                 bounds,
