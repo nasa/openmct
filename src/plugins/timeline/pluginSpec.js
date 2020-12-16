@@ -98,6 +98,10 @@ describe('the plugin', function () {
 
         beforeEach((done) => {
             planDomainObject = {
+                identifier: {
+                    key: 'test-object',
+                    namespace: ''
+                },
                 type: 'plan',
                 id: "test-object",
                 selectFile: {
