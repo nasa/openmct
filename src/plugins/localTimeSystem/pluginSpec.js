@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import LocalTimeFormat from './LocalTimeFormat.js';
-import LocalTimeSystem from './LocalTimeSystem.js';
+
 import {
     createOpenMct,
     resetApplicationState
@@ -48,7 +48,11 @@ describe("The local time", () => {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        localTimeSystem = new LocalTimeSystem();
+        localTimeSystem = openmct.time.timeSystem('local', {
+            start: 0,
+            end: 4
+        });
+
         localTimeFormatter = new LocalTimeFormat();
         dateString = localTimeFormatter.format(TIMESTAMP);
         timeStamp = localTimeFormatter.parse(DATESTRING);
@@ -68,11 +72,6 @@ describe("The local time", () => {
         });
 
         it("can be set to be the main time system", () => {
-            openmct.time.timeSystem('local', {
-                start: 0,
-                end: 4
-            });
-
             expect(openmct.time.timeSystem().key).toBe('local');
         });
 
