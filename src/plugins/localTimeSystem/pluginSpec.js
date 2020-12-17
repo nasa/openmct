@@ -39,10 +39,14 @@ describe("The local time", () => {
     let localTimeFormatter;
     let localTimeSystem;
 
-    beforeEach(() => {
+    beforeEach((done) => {
 
         openmct = createOpenMct();
+
         openmct.install(openmct.plugins.LocalTimeSystem());
+
+        openmct.on('start', done);
+        openmct.startHeadless();
 
         localTimeSystem = new LocalTimeSystem();
         localTimeFormatter = new LocalTimeFormat();
@@ -88,7 +92,7 @@ describe("The local time", () => {
         });
     });
 
-    describe("formatter", () => {
+    describe("formatter class", () => {
 
         it("will format a timestamp in local time format", () => {
             expect(localTimeFormatter.format(TIMESTAMP)).toBe(dateString);
@@ -101,6 +105,28 @@ describe("The local time", () => {
         it("will validate correctly", () => {
             expect(localTimeFormatter.validate(DATESTRING)).toBe(true);
             expect(localTimeFormatter.validate(JUNK)).toBe(false);
+        });
+    });
+
+    describe("formatter can be obtained from the telemetry API and", () => {
+        let formatter;
+
+        beforeEach(() => {
+            formatter = openmct.telemetry.getFormatter(LOCAL_FORMAT_KEY);
+            console.log(formatter);
+        });
+
+        it("will format a timestamp in local time format", () => {
+            expect(formatter.format(TIMESTAMP)).toBe(dateString);
+        });
+
+        it("will parse an local time Date String into milliseconds", () => {
+            expect(formatter.parse(DATESTRING)).toBe(timeStamp);
+        });
+
+        it("will validate correctly", () => {
+            expect(formatter.validate(DATESTRING)).toBe(true);
+            expect(formatter.validate(JUNK)).toBe(false);
         });
     });
 });
