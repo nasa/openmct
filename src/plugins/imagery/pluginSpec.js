@@ -23,7 +23,8 @@ import ImageryPlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationState,
+    simulateKeyEvent
 } from 'utils/testing';
 
 const ONE_MINUTE = 1000 * 60;
@@ -252,6 +253,53 @@ describe("The Imagery View Layout", () => {
                 expect(imageIsNew).toBeFalse();
                 done();
             }, REFRESH_CSS_MS);
+        });
+
+        it("should navigate via arrow keys", async () => {
+            let keyOpts = {
+                element: parent.querySelector('.c-imagery'),
+                key: 'ArrowLeft',
+                keyCode: 37,
+                type: 'keyup'
+            };
+
+            simulateKeyEvent(keyOpts);
+
+            await Vue.nextTick();
+
+            const imageInfo = getImageInfo(parent);
+
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
+        });
+
+        it("should navigate via numerous arrow keys", async () => {
+            let element = parent.querySelector('.c-imagery');
+            let type = 'keyup';
+            let leftKeyOpts = {
+                element,
+                type,
+                key: 'ArrowLeft',
+                keyCode: 37
+            };
+            let rightKeyOpts = {
+                element,
+                type,
+                key: 'ArrowRight',
+                keyCode: 39
+            };
+
+            // left thrice
+            simulateKeyEvent(leftKeyOpts);
+            simulateKeyEvent(leftKeyOpts);
+            simulateKeyEvent(leftKeyOpts);
+            // right once
+            simulateKeyEvent(rightKeyOpts);
+
+            await Vue.nextTick();
+
+            const imageInfo = getImageInfo(parent);
+
+            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
         });
 
     });

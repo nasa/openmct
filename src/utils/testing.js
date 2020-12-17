@@ -90,6 +90,26 @@ export function resetApplicationState(openmct) {
     return promise;
 }
 
+// required: key
+// optional: element, keyCode, type
+export function simulateKeyEvent(opts) {
+
+    if (!opts.key) {
+        console.warn('simulateKeyEvent needs a key');
+    }
+
+    let el = opts.element || document;
+    let key = opts.key;
+    let keyCode = opts.keyCode || key;
+    let type = opts.type || 'keydown';
+    let event = new Event(type);
+
+    event.keyCode = keyCode;
+    event.key = key;
+
+    el.dispatchEvent(event);
+}
+
 function clearBuiltinSpy(funcDefinition) {
     funcDefinition.object[funcDefinition.functionName] = funcDefinition.nativeFunction;
 }
