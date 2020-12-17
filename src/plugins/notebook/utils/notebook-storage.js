@@ -53,28 +53,6 @@ export function setDefaultNotebook(openmct, notebookStorage, domainObject) {
     saveDefaultNotebook(notebookStorage);
 }
 
-export function setDefaultNotebookName(identifier, name) {
-    const notebookStorage = getDefaultNotebook();
-
-    // there is no default notebook
-    if (!notebookStorage) {
-        return;
-    }
-
-    const notebookStorageKeyString = objectUtils.makeKeyString(notebookStorage.notebookMeta.identifier);
-    const notebookKeyString = objectUtils.makeKeyString(identifier);
-    if (notebookStorageKeyString !== notebookKeyString) {
-        return;
-    }
-
-    if (notebookStorage.notebookMeta.name === name) {
-        return;
-    }
-
-    notebookStorage.notebookMeta.name = name;
-    saveDefaultNotebook(notebookStorage);
-}
-
 export function setDefaultNotebookSection(section) {
     const notebookStorage = getDefaultNotebook();
 

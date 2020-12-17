@@ -44,26 +44,35 @@ export default {
     },
     data() {
         return {
-            notebookSnapshot: null,
+            notebookSnapshot: undefined,
             notebookTypes: []
         };
     },
     mounted() {
         validateNotebookStorageObject();
+        this.getDefaultNotebookObject();
 
         this.notebookSnapshot = new Snapshot(this.openmct);
         this.setDefaultNotebookStatus();
     },
     methods: {
-        showMenu(event) {
-            const notebookTypes = [];
+        async getDefaultNotebookObject() {
             const defaultNotebook = getDefaultNotebook();
+            const defaultNotebookObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+
+            return defaultNotebookObject;
+        },
+        async showMenu(event) {
+            const notebookTypes = [];
             const elementBoundingClientRect = this.$el.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
             const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
-            if (defaultNotebook) {
-                const name = defaultNotebook.notebookMeta.name;
+            const defaultNotebookObject = await this.getDefaultNotebookObject();
+            if (defaultNotebookObject) {
+                const name = defaultNotebookObject.name;
+
+                const defaultNotebook = getDefaultNotebook();
                 const sectionName = defaultNotebook.section.name;
                 const pageName = defaultNotebook.page.name;
                 const defaultPath = `${name} - ${sectionName} - ${pageName}`;
