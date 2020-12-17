@@ -48,7 +48,7 @@ describe("The local time", () => {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        localTimeSystem = openmct.time.timeSystem('local', {
+        localTimeSystem = openmct.time.timeSystem(LOCAL_SYSTEM_KEY, {
             start: 0,
             end: 4
         });
@@ -66,13 +66,13 @@ describe("The local time", () => {
 
         it("is installed", () => {
             let timeSystems = openmct.time.getAllTimeSystems();
-            let local = timeSystems.find(ts => ts.key === 'local');
+            let local = timeSystems.find(ts => ts.key === LOCAL_SYSTEM_KEY);
 
             expect(local).not.toEqual(-1);
         });
 
         it("can be set to be the main time system", () => {
-            expect(openmct.time.timeSystem().key).toBe('local');
+            expect(openmct.time.timeSystem().key).toBe(LOCAL_SYSTEM_KEY);
         });
 
         it("uses the local-format time format", () => {
@@ -112,7 +112,6 @@ describe("The local time", () => {
 
         beforeEach(() => {
             formatter = openmct.telemetry.getFormatter(LOCAL_FORMAT_KEY);
-            console.log(formatter);
         });
 
         it("will format a timestamp in local time format", () => {
