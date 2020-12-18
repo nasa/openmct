@@ -51,7 +51,7 @@ describe("The local time", () => {
             end: 4
         });
 
-        localTimeFormatter = new LocalTimeFormat();
+        localTimeFormatter = openmct.telemetry.getFormatter(LOCAL_FORMAT_KEY);
         dateString = localTimeFormatter.format(TIMESTAMP);
         timeStamp = localTimeFormatter.parse(DATESTRING);
     });
@@ -90,23 +90,18 @@ describe("The local time", () => {
     });
 
     describe("formatter can be obtained from the telemetry API and", () => {
-        let formatter;
-
-        beforeEach(() => {
-            formatter = openmct.telemetry.getFormatter(LOCAL_FORMAT_KEY);
-        });
 
         it("will format a timestamp in local time format", () => {
-            expect(formatter.format(TIMESTAMP)).toBe(dateString);
+            expect(localTimeFormatter.format(TIMESTAMP)).toBe(dateString);
         });
 
         it("will parse an local time Date String into milliseconds", () => {
-            expect(formatter.parse(DATESTRING)).toBe(timeStamp);
+            expect(localTimeFormatter.parse(DATESTRING)).toBe(timeStamp);
         });
 
         it("will validate correctly", () => {
-            expect(formatter.validate(DATESTRING)).toBe(true);
-            expect(formatter.validate(JUNK)).toBe(false);
+            expect(localTimeFormatter.validate(DATESTRING)).toBe(true);
+            expect(localTimeFormatter.validate(JUNK)).toBe(false);
         });
     });
 });
