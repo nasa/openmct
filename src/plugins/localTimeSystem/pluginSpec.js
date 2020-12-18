@@ -32,10 +32,6 @@ describe("The local time", () => {
     const TIMESTAMP = -14256000000;
     const DATESTRING = '1969-07-20 12:00:00.000 am';
     let openmct;
-    let dateString;
-    let timeStamp;
-    let localTimeFormatter;
-    let localTimeSystem;
 
     beforeEach((done) => {
 
@@ -46,14 +42,6 @@ describe("The local time", () => {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        localTimeSystem = openmct.time.timeSystem(LOCAL_SYSTEM_KEY, {
-            start: 0,
-            end: 4
-        });
-
-        localTimeFormatter = openmct.telemetry.getFormatter(LOCAL_FORMAT_KEY);
-        dateString = localTimeFormatter.format(TIMESTAMP);
-        timeStamp = localTimeFormatter.parse(DATESTRING);
     });
 
     afterEach(() => {
@@ -61,6 +49,15 @@ describe("The local time", () => {
     });
 
     describe("system", function () {
+
+        let localTimeSystem;
+
+        beforeEach(() => {
+            localTimeSystem = openmct.time.timeSystem(LOCAL_SYSTEM_KEY, {
+                start: 0,
+                end: 4
+            });
+        });
 
         it("is installed", () => {
             let timeSystems = openmct.time.getAllTimeSystems();
@@ -90,6 +87,16 @@ describe("The local time", () => {
     });
 
     describe("formatter can be obtained from the telemetry API and", () => {
+
+        let localTimeFormatter;
+        let dateString;
+        let timeStamp;
+
+        beforeEach(() => {
+            localTimeFormatter = openmct.telemetry.getFormatter(LOCAL_FORMAT_KEY);
+            dateString = localTimeFormatter.format(TIMESTAMP);
+            timeStamp = localTimeFormatter.parse(DATESTRING);
+        });
 
         it("will format a timestamp in local time format", () => {
             expect(localTimeFormatter.format(TIMESTAMP)).toBe(dateString);
