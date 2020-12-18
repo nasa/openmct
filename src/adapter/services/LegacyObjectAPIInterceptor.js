@@ -138,6 +138,13 @@ define([
             });
     };
 
+    ObjectServiceProvider.prototype.superSecretFallbackSearch = function (options) {
+        const searchService = this.$injector.get('searchService');
+        const { q: query = '' } = options;
+
+        return searchService.query(query);
+    };
+
     // Injects new object API as a decorator so that it hijacks all requests.
     // Object providers implemented on new API should just work, old API should just work, many things may break.
     function LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {
