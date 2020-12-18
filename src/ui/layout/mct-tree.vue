@@ -307,7 +307,9 @@ export default {
     },
     methods: {
         async initialize() {
-            this.searchService = this.openmct.$injector.get('searchService');
+            // required to index tree objects that do not have search providers
+            this.openmct.$injector.get('searchService');
+
             window.addEventListener('resize', this.handleWindowResize);
             this.backwardsCompatibilityCheck();
             await this.calculateHeights();
@@ -693,11 +695,13 @@ export default {
             }
         },
         async getSearchResults() {
-            const searchOptions = {
+            const options = {
                 q: this.searchValue
             };
-            const results = await this.openmct.objects.search(searchOptions);
             this.searchResultItems = [];
+
+
+            const results = await this.openmct.objects.search(options);
 
             for (let i = 0; i < results.hits.length; i++) {
                 let result = results.hits[i];
