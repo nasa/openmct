@@ -147,10 +147,15 @@ define([
      * @param {String} id to be indexed.
      */
     GenericSearchProvider.prototype.scheduleForIndexing = function (id) {
-        if (!this.indexedIds[id] && !this.pendingIndex[id]) {
-            this.indexedIds[id] = true;
-            this.pendingIndex[id] = true;
-            this.idsToIndex.push(id);
+        const identifier = objectUtils.parseKeyString(id);
+        const objectProvider = this.openmct.objects.getProvider(identifier);
+
+        if (!objectProvider && !objectProvider.search) {
+            if (!this.indexedIds[id] && !this.pendingIndex[id]) {
+                this.indexedIds[id] = true;
+                this.pendingIndex[id] = true;
+                this.idsToIndex.push(id);
+            }
         }
 
         this.keepIndexing();

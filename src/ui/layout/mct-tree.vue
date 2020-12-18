@@ -307,6 +307,7 @@ export default {
     },
     methods: {
         async initialize() {
+            this.searchService = this.openmct.$injector.get('searchService');
             window.addEventListener('resize', this.handleWindowResize);
             this.backwardsCompatibilityCheck();
             await this.calculateHeights();
