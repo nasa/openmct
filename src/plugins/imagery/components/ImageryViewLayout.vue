@@ -36,7 +36,7 @@
         <div class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
         >
-            <div class="c-imagery__main-image__image"
+            <div class="c-imagery__main-image__image js-imageryView-image"
                  :style="{
                      'background-image': imageUrl ? `url(${imageUrl})` : 'none',
                      'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
