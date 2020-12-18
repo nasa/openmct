@@ -57,6 +57,14 @@
     overflow-x: hidden;
     overflow-y: auto;
 
+    .icon-arrow-nav-to-parent {
+        visibility: hidden;
+    
+        &.is-enabled {
+            visibility: visible;
+        }
+    }
+
     li {
         position: relative;
         &[class*="__item-h"] {
@@ -93,6 +101,14 @@
 
             [class*="__name"] {
                 color: $colorItemTreeSelectedFg;
+            }
+        }
+
+        .icon-arrow-nav-to-parent {
+            visibility: hidden;
+        
+            &.is-enabled {
+                visibility: visible;
             }
         }
     }
@@ -196,14 +212,6 @@
             padding-bottom: $p;
             padding-top: $p;
         }
-    }
-}
-
-.icon-arrow-nav-to-parent {
-    visibility: hidden;
-
-    &.is-enabled {
-        visibility: visible;
     }
 }
 
