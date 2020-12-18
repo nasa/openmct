@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LocalTimeFormat from './LocalTimeFormat.js';
-
 import {
     createOpenMct,
     resetApplicationState
@@ -88,22 +86,6 @@ describe("The local time", () => {
             expect(localTimeSystem.name).toBeDefined();
             expect(localTimeSystem.cssClass).toBeDefined();
             expect(localTimeSystem.durationFormat).toBeDefined();
-        });
-    });
-
-    describe("formatter class", () => {
-
-        it("will format a timestamp in local time format", () => {
-            expect(localTimeFormatter.format(TIMESTAMP)).toBe(dateString);
-        });
-
-        it("will parse an local time Date String into milliseconds", () => {
-            expect(localTimeFormatter.parse(DATESTRING)).toBe(timeStamp);
-        });
-
-        it("will validate correctly", () => {
-            expect(localTimeFormatter.validate(DATESTRING)).toBe(true);
-            expect(localTimeFormatter.validate(JUNK)).toBe(false);
         });
     });
 
