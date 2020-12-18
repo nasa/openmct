@@ -96,13 +96,15 @@ export function simulateKeyEvent(opts) {
 
     if (!opts.key) {
         console.warn('simulateKeyEvent needs a key');
+
+        return;
     }
 
-    let el = opts.element || document;
-    let key = opts.key;
-    let keyCode = opts.keyCode || key;
-    let type = opts.type || 'keydown';
-    let event = new Event(type);
+    const el = opts.element || document;
+    const key = opts.key;
+    const keyCode = opts.keyCode || key;
+    const type = opts.type || 'keydown';
+    const event = new Event(type);
 
     event.keyCode = keyCode;
     event.key = key;
