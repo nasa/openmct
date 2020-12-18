@@ -150,7 +150,7 @@ define([
         const identifier = objectUtils.parseKeyString(id);
         const objectProvider = this.openmct.objects.getProvider(identifier);
 
-        if (!objectProvider && !objectProvider.search) {
+        if (objectProvider === undefined || objectProvider.search === undefined) {
             if (!this.indexedIds[id] && !this.pendingIndex[id]) {
                 this.indexedIds[id] = true;
                 this.pendingIndex[id] = true;
