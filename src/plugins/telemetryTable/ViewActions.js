@@ -30,13 +30,13 @@ let exportCSV = {
     },
     group: 'view'
 };
-let exportMarkedRows = {
+let exportMarkedDataAsCSV = {
     name: 'Export Marked Rows',
     key: 'export-csv-marked',
     description: "Export marked rows as CSV",
     cssClass: 'icon-download labeled',
     invoke: (objectPath, viewProvider) => {
-        viewProvider.getViewContext().exportMarkedRows();
+        viewProvider.getViewContext().exportMarkedDataAsCSV();
     },
     group: 'view'
 };
@@ -98,7 +98,7 @@ let autosizeColumns = {
 
 let viewActions = [
     exportCSV,
-    exportMarkedRows,
+    exportMarkedDataAsCSV,
     unmarkAllRows,
     pause,
     play,

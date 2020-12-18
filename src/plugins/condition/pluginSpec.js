@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from "utils/testing";
 import ConditionPlugin from "./plugin";
+import stylesManager from '@/ui/inspector/styles/StylesManager';
 import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
@@ -402,7 +403,8 @@ describe('the plugin', function () {
             component = new Vue({
                 provide: {
                     openmct: openmct,
-                    selection: selection
+                    selection: selection,
+                    stylesManager
                 },
                 el: viewContainer,
                 components: {
