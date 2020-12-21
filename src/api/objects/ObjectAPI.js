@@ -285,7 +285,7 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
         //Mutate original object
         MutableDomainObject.mutateObject(domainObject, path, value);
 
-        //Mutate temptary mutable object, in the process informing any other mutable instances
+        //Mutate temporary mutable object, in the process informing any other mutable instances
         mutableDomainObject.$set(path, value);
 
         //Destroy temporary mutable object
