@@ -198,10 +198,8 @@ define([
             if (this.returnMutables && this.publicAPI.objects.supportsMutation(child)) {
                 let keyString = this.publicAPI.objects.makeKeyString(child.identifier);
 
-                if (this.publicAPI.objects.supportsMutation(child)) {
-                    child = this.publicAPI.objects._toMutable(child);
-                    this.mutables[keyString] = child;
-                }
+                child = this.publicAPI.objects._toMutable(child);
+                this.mutables[keyString] = child;
             }
 
             this.emit('add', child);
