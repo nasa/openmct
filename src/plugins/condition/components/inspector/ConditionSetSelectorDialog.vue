@@ -41,7 +41,7 @@
         ></div>
         <!-- end loading -->
 
-        <div v-if="(allTreeItems.length === 0) || (searchValue && filteredTreeItems.length === 0)"
+        <div v-if="shouldDisplayNoResultsText"
              class="c-tree-and-search__no-results"
         >
             No results found
@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import search from '@/ui/components/search.vue';
 import ConditionSetDialogTreeItem from './ConditionSetDialogTreeItem.vue';
 
@@ -100,8 +101,22 @@ export default {
             selectedItem: undefined
         };
     },
+    computed: {
+        shouldDisplayNoResultsText() {
+            if (this.isLoading) {
+                return false;
+            }
+
+            return this.allTreeItems.length === 0
+                || (this.searchValue && this.filteredTreeItems.length === 0);
+        }
+    },
+    created() {
+        this.getDebouncedFilteredChildren = debounce(this.getFilteredChildren, 400);
+    },
     mounted() {
-        this.searchService = this.openmct.$injector.get('searchService');
+        // required to index tree objects that do not have search providers
+        // this.openmct.$injector.get('searchService');
         this.getAllChildren();
     },
     methods: {
@@ -124,7 +139,11 @@ export default {
                 });
         },
         getFilteredChildren() {
-            this.searchService.query(this.searchValue).then(children => {
+            const options = {
+                q: this.searchValue
+            };
+
+            this.openmct.objects.search(options).then(children => {
                 this.filteredTreeItems = children.hits.map(child => {
 
                     let context = child.object.getCapability('context');
@@ -148,13 +167,18 @@ export default {
                         navigateToParent
                     };
                 });
+
+                this.isLoading = false;
             });
         },
         searchTree(value) {
             this.searchValue = value;
+            this.isLoading = true;
 
             if (this.searchValue !== '') {
-                this.getFilteredChildren();
+                this.getDebouncedFilteredChildren();
+            } else {
+                this.isLoading = false;
             }
         },
         handleItemSelection(item, node) {
