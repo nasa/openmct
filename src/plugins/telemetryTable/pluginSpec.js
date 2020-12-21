@@ -109,6 +109,7 @@ describe("the plugin", () => {
         let applicableViews;
         let tableViewProvider;
         let tableView;
+        let tableInstance;
 
         beforeEach(() => {
             testTelemetryObject = {
@@ -175,6 +176,8 @@ describe("the plugin", () => {
             tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             tableView.show(child, true);
 
+            tableInstance = tableView._getTable();
+
             return telemetryPromise.then(() => Vue.nextTick());
         });
 
@@ -222,6 +225,42 @@ describe("the plugin", () => {
                 expect(fromColumnText).toEqual(secondColumnText);
                 expect(toColumnText).not.toEqual(secondColumnText);
                 expect(toColumnText).toEqual(firstColumnText);
+            });
+        });
+
+        it("Supports filtering telemetry by regular text search", () => {
+            tableInstance.filteredRows.setColumnFilter("some-key", "1");
+
+            return Vue.nextTick().then(() => {
+                let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+                
+                expect(filteredRowElements.length).toEqual(1);
+
+                tableInstance.filteredRows.setColumnFilter("some-key", "");
+
+                return Vue.nextTick().then(() => {
+                    let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+
+                    expect(allRowElements.length).toEqual(3);
+                });
+            });
+        });
+
+        it("Supports filtering using Regex", () => {
+            tableInstance.filteredRows.setColumnRegexFilter("some-key", "^some-value$");
+
+            return Vue.nextTick().then(() => {
+                let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+                
+                expect(filteredRowElements.length).toEqual(0);
+
+                tableInstance.filteredRows.setColumnRegexFilter("some-key", "^some-value");
+
+                return Vue.nextTick().then(() => {
+                    let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+
+                    expect(allRowElements.length).toEqual(3);
+                });
             });
         });
     });

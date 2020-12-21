@@ -100,6 +100,9 @@ define([
                     destroy: function (element) {
                         component.$destroy();
                         component = undefined;
+                    },
+                    _getTable: function () {
+                        return table;
                     }
                 };
 
