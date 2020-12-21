@@ -700,7 +700,6 @@ export default {
             };
             this.searchResultItems = [];
 
-
             const results = await this.openmct.objects.search(options);
 
             for (let i = 0; i < results.hits.length; i++) {
