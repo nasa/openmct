@@ -233,7 +233,7 @@ describe("the plugin", () => {
 
             return Vue.nextTick().then(() => {
                 let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-                
+
                 expect(filteredRowElements.length).toEqual(1);
 
                 tableInstance.filteredRows.setColumnFilter("some-key", "");
@@ -251,7 +251,7 @@ describe("the plugin", () => {
 
             return Vue.nextTick().then(() => {
                 let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
-                
+
                 expect(filteredRowElements.length).toEqual(0);
 
                 tableInstance.filteredRows.setColumnRegexFilter("some-key", "^some-value");
