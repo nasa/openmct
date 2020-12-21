@@ -49,8 +49,14 @@ define([
 
             currentObjectPath = openmct.router.path;
 
-            openmct.layout.$refs.browseObject.show(mutable || object, viewProvider.key, true, currentObjectPath);
-            openmct.layout.$refs.browseBar.domainObject = mutable || object;
+            if (mutable !== undefined) {
+                openmct.layout.$refs.browseObject.show(mutable, viewProvider.key, true, currentObjectPath);
+                openmct.layout.$refs.browseBar.domainObject = mutable;
+            } else {
+                openmct.layout.$refs.browseObject.show(object, viewProvider.key, true, currentObjectPath);
+                openmct.layout.$refs.browseBar.domainObject = object;
+            }
+
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }
 
