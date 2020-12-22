@@ -24,7 +24,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-fdescribe("the plugin", () => {
+describe("the plugin", () => {
     const NON_EDITABLE_FOLDER_KEY = 'noneditable.folder';
     let openmct;
 
