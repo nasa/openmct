@@ -33,7 +33,7 @@ define([
             name: 'Grid View',
             cssClass: 'icon-thumbs-strip',
             canView: function (domainObject) {
-                return domainObject.type === 'folder';
+                return domainObject.type === 'folder' || domainObject.type === 'noneditable.folder';
             },
             view: function (domainObject) {
                 let component;

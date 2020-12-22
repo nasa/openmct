@@ -35,7 +35,7 @@ define([
             name: 'List View',
             cssClass: 'icon-list-view',
             canView: function (domainObject) {
-                return domainObject.type === 'folder';
+                return domainObject.type === 'folder' || domainObject.type === 'noneditable.folder';
             },
             view: function (domainObject) {
                 let component;
