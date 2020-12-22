@@ -11,6 +11,10 @@ export default {
     inject: ["openmct"],
     props: {
         showEditView: Boolean,
+        defaultObject: {
+            type: Object,
+            default: undefined
+        },
         objectPath: {
             type: Array,
             default: () => {
@@ -28,7 +32,7 @@ export default {
     },
     data() {
         return {
-            domainObject: undefined
+            domainObject: this.defaultObject
         };
     },
     computed: {
