@@ -129,8 +129,13 @@ export default {
         }
     },
     mounted() {
-        this.openmct.objects.getMutable(this.item.identifier)
-            .then(this.setObject);
+        if (this.openmct.objects.supportsMutation(this.item.identifier)) {
+            this.openmct.objects.getMutable(this.item.identifier)
+                .then(this.setObject);
+        } else {
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
+        }
     },
     beforeDestroy() {
         if (this.removeSelectable) {
