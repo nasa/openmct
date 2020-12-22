@@ -180,6 +180,10 @@ ObjectAPI.prototype.get = function (identifier) {
  * the object can be mutated.
  */
 ObjectAPI.prototype.getMutable = function (identifier) {
+    if (!this.supportsMutation(identifier)) {
+        throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
+    }
+
     return this.get(identifier).then((object) => {
         return this._toMutable(object);
     });
@@ -316,11 +320,10 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
     }
 };
 
+/**
+ * @private
+ */
 ObjectAPI.prototype._toMutable = function (object) {
-    if (!this.supportsMutation(object.identifier)) {
-        throw new Error(`Object "${this.makeKeyString(object.identifier)}" does not support mutation.`);
-    }
-
     if (object.isMutable) {
         return object;
     } else {
