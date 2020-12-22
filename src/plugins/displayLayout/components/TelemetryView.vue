@@ -234,7 +234,10 @@ export default {
         }
 
         this.openmct.time.off("bounds", this.refreshData);
-        this.openmct.objects.destroyMutable(this.domainObject);
+
+        if (this.domainObject.isMutable) {
+            this.openmct.objects.destroyMutable(this.domainObject);
+        }
     },
     methods: {
         formattedValueForCopy() {
