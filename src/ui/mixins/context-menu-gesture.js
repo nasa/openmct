@@ -11,7 +11,7 @@ export default {
     data() {
         return {
             contextClickEnabled: false
-        }
+        };
     },
     mounted() {
         //TODO: touch support
