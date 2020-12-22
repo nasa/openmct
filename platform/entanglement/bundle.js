@@ -21,30 +21,24 @@
  *****************************************************************************/
 
 define([
-    "./src/actions/MoveAction",
     "./src/actions/LinkAction",
     "./src/actions/SetPrimaryLocationAction",
     "./src/services/LocatingCreationDecorator",
     "./src/services/LocatingObjectDecorator",
     "./src/policies/CopyPolicy",
     "./src/policies/CrossSpacePolicy",
-    "./src/policies/MovePolicy",
     "./src/capabilities/LocationCapability",
-    "./src/services/MoveService",
     "./src/services/LinkService",
     "./src/services/CopyService",
     "./src/services/LocationService"
 ], function (
-    MoveAction,
     LinkAction,
     SetPrimaryLocationAction,
     LocatingCreationDecorator,
     LocatingObjectDecorator,
     CopyPolicy,
     CrossSpacePolicy,
-    MovePolicy,
     LocationCapability,
-    MoveService,
     LinkService,
     CopyService,
     LocationService
@@ -58,21 +52,6 @@ define([
             "configuration": {},
             "extensions": {
                 "actions": [
-                    {
-                        "key": "move",
-                        "name": "Move",
-                        "description": "Move object to another location.",
-                        "cssClass": "icon-move",
-                        "category": "contextual",
-                        "group": "action",
-                        "priority": 9,
-                        "implementation": MoveAction,
-                        "depends": [
-                            "policyService",
-                            "locationService",
-                            "moveService"
-                        ]
-                    },
                     {
                         "key": "link",
                         "name": "Create Link",
@@ -121,10 +100,6 @@ define([
                     {
                         "category": "action",
                         "implementation": CopyPolicy
-                    },
-                    {
-                        "category": "action",
-                        "implementation": MovePolicy
                     }
                 ],
                 "capabilities": [
@@ -140,17 +115,6 @@ define([
                     }
                 ],
                 "services": [
-                    {
-                        "key": "moveService",
-                        "name": "Move Service",
-                        "description": "Provides a service for moving objects",
-                        "implementation": MoveService,
-                        "depends": [
-                            "openmct",
-                            "linkService",
-                            "$q"
-                        ]
-                    },
                     {
                         "key": "linkService",
                         "name": "Link Service",

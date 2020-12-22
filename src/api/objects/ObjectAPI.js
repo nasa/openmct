@@ -25,6 +25,7 @@ import MutableDomainObject from './MutableDomainObject';
 import RootRegistry from './RootRegistry';
 import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
+import InterceptorRegistry from './InterceptorRegistry';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -39,6 +40,7 @@ function ObjectAPI(typeRegistry) {
     this.rootRegistry = new RootRegistry();
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
+    this.interceptorRegistry = new InterceptorRegistry();
 }
 
 /**
@@ -153,11 +155,14 @@ ObjectAPI.prototype.get = function (identifier) {
     }
 
     let objectPromise = provider.get(identifier);
-
     this.cache[keystring] = objectPromise;
 
     return objectPromise.then(result => {
         delete this.cache[keystring];
+        const interceptors = this.listGetInterceptors(identifier, result);
+        interceptors.forEach(interceptor => {
+            result = interceptor.invoke(identifier, result);
+        });
 
         return result;
     });
@@ -257,6 +262,27 @@ ObjectAPI.prototype.save = function (domainObject) {
  */
 ObjectAPI.prototype.addRoot = function (key) {
     this.rootRegistry.addRoot(key);
+};
+
+/**
+ * Register an object interceptor that transforms a domain object requested via module:openmct.ObjectAPI.get
+ * The domain object will be transformed after it is retrieved from the persistence store
+ * The domain object will be transformed only if the interceptor is applicable to that domain object as defined by the InterceptorDef
+ *
+ * @param {module:openmct.InterceptorDef} interceptorDef the interceptor definition to add
+ * @method addGetInterceptor
+ * @memberof module:openmct.InterceptorRegistry#
+ */
+ObjectAPI.prototype.addGetInterceptor = function (interceptorDef) {
+    this.interceptorRegistry.addInterceptor(interceptorDef);
+};
+
+/**
+ * Retrieve the interceptors for a given domain object.
+ * @private
+ */
+ObjectAPI.prototype.listGetInterceptors = function (identifier, object) {
+    return this.interceptorRegistry.getInterceptors(identifier, object);
 };
 
 /**
