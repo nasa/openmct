@@ -122,7 +122,13 @@ define([
 
         function pathToObjects(path) {
             return Promise.all(path.map((keyString) => {
-                return openmct.objects.getMutable(keyString);
+                let identifier = openmct.objects.parseKeyString(keyString);
+
+                if (openmct.objects.supportsMutation(identifier)) {
+                    return openmct.objects.getMutable(identifier);
+                } else {
+                    return openmct.objects.get(identifier);
+                }
             }));
         }
 
