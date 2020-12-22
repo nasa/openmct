@@ -1,7 +1,10 @@
 <template>
 <tr
     class="c-list-item"
-    :class="{ 'is-alias': item.isAlias === true }"
+    :class="{
+        'is-alias': item.isAlias === true,
+        'is-context-clicked': contextClickEnabled
+    }"
     @click="navigate"
 >
     <td class="c-list-item__name">

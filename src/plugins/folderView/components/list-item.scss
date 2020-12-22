@@ -22,4 +22,8 @@
             @include isAlias();
         }
     }
+
+    &.is-context-clicked {
+        border: 1px solid $colorItemBg;
+    }
 }
