@@ -250,10 +250,17 @@ export default class Condition extends EventEmitter {
     }
 
     getTriggerDescription() {
-        return {
-            conjunction: TRIGGER_CONJUNCTION[this.trigger],
-            prefix: `${TRIGGER_LABEL[this.trigger]}: `
-        };
+        if (this.trigger) {
+            return {
+                conjunction: TRIGGER_CONJUNCTION[this.trigger],
+                prefix: `${TRIGGER_LABEL[this.trigger]}: `
+            };
+        } else {
+            return {
+                conjunction: '',
+                prefix: ''
+            };
+        }
     }
 
     requestLADConditionResult() {
