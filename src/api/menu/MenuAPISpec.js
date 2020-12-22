@@ -24,7 +24,7 @@ import MenuAPI from './MenuAPI';
 import Menu from './menu';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
-fdescribe ('The Menu API', () => {
+describe ('The Menu API', () => {
     let openmct;
     let menuAPI;
     let actionsArray;
