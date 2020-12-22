@@ -64,10 +64,11 @@ define([
 
         if (this.domainObject.isMutable) {
             this.returnMutables = true;
-            this.publicAPI.objects.observe(this.domainObject, '$_destroy', () => {
+            let unobserve = this.domainObject.$on('$_destroy', () => {
                 Object.values(this.mutables).forEach(mutable => {
                     this.publicAPI.objects.destroyMutable(mutable);
                 });
+                unobserve();
             });
         }
     }

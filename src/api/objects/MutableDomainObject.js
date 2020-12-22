@@ -21,6 +21,7 @@
  *****************************************************************************/
 import _ from 'lodash';
 import utils from './object-utils.js';
+import EventEmitter from 'EventEmitter';
 
 const ANY_OBJECT_EVENT = 'mutation';
 
@@ -41,8 +42,13 @@ const ANY_OBJECT_EVENT = 'mutation';
 class MutableDomainObject {
     constructor(eventEmitter) {
         Object.defineProperties(this, {
-            _eventEmitter: {
+            _globalEventEmitter: {
                 value: eventEmitter,
+                // Property should not be serialized
+                enumerable: false
+            },
+            _instanceEventEmitter: {
+                value: new EventEmitter(),
                 // Property should not be serialized
                 enumerable: false
             },
@@ -61,9 +67,9 @@ class MutableDomainObject {
     $observe(path, callback) {
         let fullPath = qualifiedEventName(this, path);
         let eventOff =
-            this._eventEmitter.off.bind(this._eventEmitter, fullPath, callback);
+            this._globalEventEmitter.off.bind(this._globalEventEmitter, fullPath, callback);
 
-        this._eventEmitter.on(fullPath, callback);
+        this._globalEventEmitter.on(fullPath, callback);
         this._observers.push(eventOff);
 
         return eventOff;
@@ -73,28 +79,33 @@ class MutableDomainObject {
         _.set(this, 'modified', Date.now());
 
         //Emit secret synchronization event first, so that all objects are in sync before subsequent events fired.
-        this._eventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);
+        this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);
 
         //Emit a general "any object" event
-        this._eventEmitter.emit(ANY_OBJECT_EVENT, this);
+        this._globalEventEmitter.emit(ANY_OBJECT_EVENT, this);
         //Emit wildcard event, with path so that callback knows what changed
-        this._eventEmitter.emit(qualifiedEventName(this, '*'), this, path, value);
+        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value);
 
         //Emit events specific to properties affected
         let parentPropertiesList = path.split('.');
         for (let index = parentPropertiesList.length; index > 0; index--) {
             let parentPropertyPath = parentPropertiesList.slice(0, index).join('.');
-            this._eventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath));
+            this._globalEventEmitter.emit(qualifiedEventName(this, parentPropertyPath), _.get(this, parentPropertyPath));
         }
 
         //TODO: Emit events for listeners of child properties when parent changes.
         // Do it at observer time - also register observers for parent attribute path.
     }
+    $on(event, callback) {
+        this._instanceEventEmitter.on(event, callback);
+
+        return () => this._instanceEventEmitter.off(event, callback);
+    }
     $destroy() {
         this._observers.forEach(observer => observer());
-        delete this._eventEmitter;
+        delete this._globalEventEmitter;
         delete this._observers;
-        this._eventEmitter.emit(qualifiedEventName(this, '$_destroy'));
+        this._instanceEventEmitter.emit('$_destroy');
     }
 
     static createMutable(object, mutationTopic) {
