@@ -20,7 +20,7 @@
             </div>
             <span
                 class="l-browse-bar__object-name c-object-label__name c-input-inline"
-                contenteditable
+                :contenteditable="type.creatable"
                 @blur="updateName"
                 @keydown.enter.prevent
                 @keyup.enter.prevent="updateNameOnEnterKeyPress"
