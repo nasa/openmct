@@ -11,11 +11,6 @@ describe("The Object API", () => {
         typeRegistry = jasmine.createSpyObj('typeRegistry', [
             'get'
         ]);
-        typeRegistry.get.and.returnValue({
-            definition: {
-                creatable: true
-            }
-        });
         objectAPI = new ObjectAPI(typeRegistry);
         mockDomainObject = {
             identifier: {
@@ -42,6 +37,7 @@ describe("The Object API", () => {
                     "update"
                 ]);
                 mockProvider.create.and.returnValue(Promise.resolve(true));
+                mockProvider.update.and.returnValue(Promise.resolve(true));
                 objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
             });
             it("Calls 'create' on provider if object is new", () => {
@@ -111,7 +107,9 @@ describe("The Object API", () => {
                 }
             };
             mockProvider = jasmine.createSpyObj("mock provider", [
-                "get"
+                "get",
+                "create",
+                "update"
             ]);
             mockProvider.get.and.returnValue(Promise.resolve(testObject));
             objectAPI.addProvider(TEST_NAMESPACE, mockProvider);

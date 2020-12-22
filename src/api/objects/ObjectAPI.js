@@ -171,16 +171,12 @@ ObjectAPI.prototype.get = function (identifier) {
  * committing to managing that lifecycle yourself. `.destroy` should be called when the object is no longer needed.
  *
  * @memberof {module:openmct.ObjectAPI#}
- * @returns {Promise.<MutableDomainObject|DomainObject>} a promise that will resolve with a MutableDomainObject if
- * the object can be mutated, or a DomainObject if not.
+ * @returns {Promise.<MutableDomainObject>} a promise that will resolve with a MutableDomainObject if
+ * the object can be mutated.
  */
 ObjectAPI.prototype.getMutable = function (identifier) {
     return this.get(identifier).then((object) => {
-        if (this.supportsMutation(object)) {
-            return this._toMutable(object);
-        } else {
-            return object;
-        }
+        return this._toMutable(object);
     });
 };
 
@@ -202,8 +198,9 @@ ObjectAPI.prototype.delete = function () {
     throw new Error('Delete not implemented');
 };
 
-ObjectAPI.prototype.isPersistable = function (domainObject) {
-    let provider = this.getProvider(domainObject.identifier);
+ObjectAPI.prototype.isPersistable = function (idOrKeyString) {
+    let identifier = utils.parseKeyString(idOrKeyString);
+    let provider = this.getProvider(identifier);
 
     return provider !== undefined
         && provider.create !== undefined
@@ -225,7 +222,7 @@ ObjectAPI.prototype.save = function (domainObject) {
     let savedResolve;
     let result;
 
-    if (!this.isPersistable(domainObject)) {
+    if (!this.isPersistable(domainObject.identifier)) {
         result = Promise.reject('Object provider does not support saving');
     } else if (hasAlreadyBeenPersisted(domainObject)) {
         result = Promise.resolve(true);
@@ -271,7 +268,7 @@ ObjectAPI.prototype.addRoot = function (key) {
  * @memberof module:openmct.ObjectAPI#
  */
 ObjectAPI.prototype.mutate = function (domainObject, path, value) {
-    if (!this.supportsMutation(domainObject)) {
+    if (!this.supportsMutation(domainObject.identifier)) {
         throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
     }
 
@@ -294,6 +291,10 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
 };
 
 ObjectAPI.prototype._toMutable = function (object) {
+    if (!this.supportsMutation(object.identifier)) {
+        throw new Error(`Object "${this.makeKeyString(object.identifier)}" does not support mutation.`);
+    }
+
     if (object.isMutable) {
         return object;
     } else {
@@ -301,12 +302,12 @@ ObjectAPI.prototype._toMutable = function (object) {
     }
 };
 
-ObjectAPI.prototype.supportsMutation = function (object) {
-    // Checking for mutability is a bit broken right now. This is an 80% solution,
-    // but does not work in some cases.
-    const type = this.typeRegistry.get(object.type);
-
-    return type && type.definition.creatable === true;
+/**
+ * @param module:openmct.ObjectAPI~Identifier identifier An object identifier
+ * @returns {boolean} true if the object can be mutated, otherwise returns false
+ */
+ObjectAPI.prototype.supportsMutation = function (identifier) {
+    return this.isPersistable(identifier);
 };
 
 /**
@@ -335,6 +336,14 @@ ObjectAPI.prototype.observe = function (domainObject, path, callback) {
  */
 ObjectAPI.prototype.makeKeyString = function (identifier) {
     return utils.makeKeyString(identifier);
+};
+
+/**
+ * @param {string} keyString A string representation of the given identifier, that is, a namespace and key separated by a colon.
+ * @returns {module:openmct.ObjectAPI~Identifier} An identifier object
+ */
+ObjectAPI.prototype.parseKeyString = function (keyString) {
+    return utils.parseKeyString(keyString);
 };
 
 /**

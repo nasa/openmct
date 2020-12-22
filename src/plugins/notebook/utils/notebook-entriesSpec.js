@@ -124,6 +124,10 @@ describe('Notebook Entries:', () => {
         openmct.types.addType('notebook', {
             creatable: true
         });
+        openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
+            'create',
+            'update'
+        ]));
         window.localStorage.setItem('notebook-storage', null);
 
         done();
