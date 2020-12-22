@@ -44,7 +44,7 @@ describe("the plugin", () => {
         const type = openmct.types.get(NON_EDITABLE_FOLDER_KEY);
 
         expect(type).toBeDefined();
-        expect(type.definition.creatable).toBeDefined();
+        expect(type.definition.creatable).toBeFalse();
     });
 
 });
