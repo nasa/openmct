@@ -38,7 +38,7 @@ class MenuAPI {
         this._showObjectMenu = this._showObjectMenu.bind(this);
     }
 
-    showMenu(x, y, actions, onDestroy) {
+    showMenu(x, y, actions, onDestroy, menuOptions = {}) {
         if (this.menuComponent) {
             this.menuComponent.dismiss();
         }
@@ -47,7 +47,8 @@ class MenuAPI {
             x,
             y,
             actions,
-            onDestroy
+            onDestroy,
+            ...menuOptions
         };
 
         this.menuComponent = new Menu(options);

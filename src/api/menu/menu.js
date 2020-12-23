@@ -30,6 +30,9 @@ class Menu extends EventEmitter {
         this.options = options;
 
         this.component = new Vue({
+            provide: {
+                options
+            },
             components: {
                 MenuComponent
             },
