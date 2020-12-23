@@ -75,7 +75,8 @@ export default class Condition extends EventEmitter {
             return;
         }
 
-        if (this.isTelemetryUsed(datum.id)) {
+        // if all the criteria in this condition have no telemetry, we want to force the condition result to evaluate
+        if (this.hasNoTelemetry() || this.isTelemetryUsed(datum.id)) {
 
             this.criteria.forEach(criterion => {
                 if (this.isAnyOrAllTelemetry(criterion)) {
@@ -91,6 +92,12 @@ export default class Condition extends EventEmitter {
 
     isAnyOrAllTelemetry(criterion) {
         return (criterion.telemetry && (criterion.telemetry === 'all' || criterion.telemetry === 'any'));
+    }
+
+    hasNoTelemetry() {
+        return this.criteria.every((criterion) => {
+            return !this.isAnyOrAllTelemetry(criterion) && criterion.telemetry === '';
+        });
     }
 
     isTelemetryUsed(id) {
