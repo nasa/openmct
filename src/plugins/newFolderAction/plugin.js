@@ -23,6 +23,6 @@ import NewFolderAction from './newFolderAction';
 
 export default function () {
     return function (openmct) {
-        openmct.contextMenu.registerAction(new NewFolderAction(openmct));
+        openmct.actions.register(new NewFolderAction(openmct));
     };
 }
