@@ -85,7 +85,8 @@ define([
     SearchAggregator.prototype.query = function (
         inputText,
         maxResults,
-        filter
+        filter,
+        indexOnly
     ) {
 
         var aggregator = this,
@@ -120,8 +121,22 @@ define([
                 modelResults = aggregator.applyFilter(modelResults, filter);
                 modelResults = aggregator.removeDuplicates(modelResults);
 
+                if (indexOnly) {
+                    return Promise.resolve(modelResults);
+                }
+
                 return aggregator.asObjectResults(modelResults);
             });
+    };
+
+    SearchAggregator.prototype.queryLite = function (
+        inputText,
+        maxResults,
+        filter
+    ) {
+        const INDEX_ONLY = true;
+
+        return this.query(inputText, maxResults, filter, INDEX_ONLY);
     };
 
     /**

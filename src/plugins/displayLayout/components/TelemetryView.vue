@@ -233,8 +233,9 @@ export default {
         formattedValueForCopy() {
             const timeFormatterKey = this.openmct.time.timeSystem().key;
             const timeFormatter = this.formats[timeFormatterKey];
+            const unit = this.unit ? ` ${this.unit}` : '';
 
-            return `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue} ${this.unit}`;
+            return `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue}${unit}`;
         },
         requestHistoricalData() {
             let bounds = this.openmct.time.bounds();
