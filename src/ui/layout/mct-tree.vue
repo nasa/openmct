@@ -694,14 +694,28 @@ export default {
                 }
             }
         },
-        async getSearchResults() {
+        getSearchResults() {
+            this.searchResultItems = [];
+
+            const promises = [];
             const options = {
                 q: this.searchValue
             };
-            this.searchResultItems = [];
 
-            const results = await this.openmct.objects.search(options);
+            const searchGenerator = this.openmct.objects.search(options);
 
+            for (let searchResultsPromise of searchGenerator) {
+                promises.push(searchResultsPromise);
+                searchResultsPromise.then(searchResults => {
+                    this.aggregateSearchResults(searchResults);
+                });
+            }
+
+            Promise.all(promises).then(() => {
+                this.searchLoading = false;
+            });
+        },
+        async aggregateSearchResults(results) {
             for (let i = 0; i < results.hits.length; i++) {
                 let result = results.hits[i];
                 let newStyleObject = objectUtils.toNewFormat(result.object.getModel(), result.object.getId());
@@ -722,8 +736,6 @@ export default {
 
                 this.searchResultItems.push(resultObject);
             }
-
-            this.searchLoading = false;
         },
         searchTree(value) {
             this.searchValue = value;

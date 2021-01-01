@@ -139,37 +139,52 @@ export default {
                 });
         },
         getFilteredChildren() {
+            this.filteredTreeItems = [];
+
+            const promises = [];
             const options = {
                 q: this.searchValue
             };
 
-            this.openmct.objects.search(options).then(children => {
-                this.filteredTreeItems = children.hits.map(child => {
+            const searchGenerator = this.openmct.objects.search(options);
 
-                    let context = child.object.getCapability('context');
-                    let object = child.object.useCapability('adapter');
-                    let objectPath = [];
-                    let navigateToParent;
-
-                    if (context) {
-                        objectPath = context.getPath().slice(1)
-                            .map(oldObject => oldObject.useCapability('adapter'))
-                            .reverse();
-                        navigateToParent = '/browse/' + objectPath.slice(1)
-                            .map((parent) => this.openmct.objects.makeKeyString(parent.identifier))
-                            .join('/');
-                    }
-
-                    return {
-                        id: this.openmct.objects.makeKeyString(object.identifier),
-                        object,
-                        objectPath,
-                        navigateToParent
-                    };
+            for (let searchResultsPromise of searchGenerator) {
+                promises.push(searchResultsPromise);
+                searchResultsPromise.then(searchResults => {
+                    this.aggregateFilteredChildren(searchResults);
                 });
+            }
 
+            Promise.all(promises).then(() => {
                 this.isLoading = false;
             });
+        },
+        aggregateFilteredChildren(results) {
+            const filteredTreeItemsBatch = results.hits.map(child => {
+
+                let context = child.object.getCapability('context');
+                let object = child.object.useCapability('adapter');
+                let objectPath = [];
+                let navigateToParent;
+
+                if (context) {
+                    objectPath = context.getPath().slice(1)
+                        .map(oldObject => oldObject.useCapability('adapter'))
+                        .reverse();
+                    navigateToParent = '/browse/' + objectPath.slice(1)
+                        .map((parent) => this.openmct.objects.makeKeyString(parent.identifier))
+                        .join('/');
+                }
+
+                return {
+                    id: this.openmct.objects.makeKeyString(object.identifier),
+                    object,
+                    objectPath,
+                    navigateToParent
+                };
+            });
+
+            this.filteredTreeItems = this.filteredTreeItems.concat(filteredTreeItemsBatch);
         },
         searchTree(value) {
             this.searchValue = value;

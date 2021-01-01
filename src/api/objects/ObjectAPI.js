@@ -189,16 +189,14 @@ define([
         });
     };
 
-    ObjectAPI.prototype.search = async function (options) {
-        const searchPromises = Object.values(this.providers)
-            .filter(provider => provider.search !== undefined)
-            .map(provider => provider.search(options));
+    ObjectAPI.prototype.search = function* (options) {
+        for (const provider of Object.values(this.providers)) {
+            if (provider.search !== undefined) {
+                yield provider.search(options);
+            }
+        }
 
-        const fallbackSearchPromise = this.fallbackProvider.superSecretFallbackSearch(options);
-
-        const results = await Promise.all([...searchPromises, fallbackSearchPromise]);
-
-        return results[0];
+        yield this.fallbackProvider.superSecretFallbackSearch(options);
     };
 
     ObjectAPI.prototype.delete = function () {
