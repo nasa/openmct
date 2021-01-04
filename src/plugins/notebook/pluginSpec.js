@@ -139,7 +139,7 @@ describe("Notebook plugin:", () => {
         let drawerElement;
 
         function clickSnapshotIndicator() {
-            const indicator = element.querySelector('.icon-notebook');
+            const indicator = element.querySelector('.icon-camera');
             const button = indicator.querySelector('button');
             const clickEvent = createMouseEvent('click');
 
@@ -157,8 +157,11 @@ describe("Notebook plugin:", () => {
 
         afterAll(() => {
             snapshotIndicator.remove();
+            snapshotIndicator = undefined;
+
             if (drawerElement) {
                 drawerElement.remove();
+                drawerElement = undefined;
             }
         });
 
@@ -185,10 +188,8 @@ describe("Notebook plugin:", () => {
             classes = drawerElement.classList;
             const isExpandedAfterFirstClick = classes.contains('is-expanded');
 
-            const success = isExpandedBefore === false
-                && isExpandedAfterFirstClick === true;
-
-            expect(success).toBe(true);
+            expect(isExpandedBefore).toBeFalse();
+            expect(isExpandedAfterFirstClick).toBeTrue();
         });
 
         it("snapshots container does not have class isExpanded", () => {
@@ -203,11 +204,9 @@ describe("Notebook plugin:", () => {
             classes = drawerElement.classList;
             const isExpandedAfterSecondClick = classes.contains('is-expanded');
 
-            const success = isExpandedBefore === false
-                && isExpandedAfterFirstClick === true
-                && isExpandedAfterSecondClick === false;
-
-            expect(success).toBe(true);
+            expect(isExpandedBefore).toBeFalse();
+            expect(isExpandedAfterFirstClick).toBeTrue();
+            expect(isExpandedAfterSecondClick).toBeFalse();
         });
 
         it("show notebook snapshots container text", () => {

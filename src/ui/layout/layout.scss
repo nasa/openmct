@@ -279,10 +279,12 @@
     }
 
     &__toolbar {
+        // Toolbar in the main shell, used by Display Layouts
         $p: $interiorMargin;
         background: $editUIBaseColor;
         border-radius: $basicCr;
         height: $p + 24px; // Need to standardize the height
+        justify-content: space-between;
         padding: $p;
     }
 }
@@ -333,7 +335,7 @@
         }
 
         > * + * {
-            margin-left: $interiorMargin;
+            margin-left: $interiorMarginSm;
         }
     }
 
@@ -371,12 +373,16 @@
         filter: $objectLabelNameFilter;
     }
 
+    .c-object-label__type-icon {
+        opacity: $objectLabelTypeIconOpacity;
+    }
+
     &__object-name--w {
         @include headerFont(1.5em);
         margin-left: $interiorMarginLg;
         min-width: 0;
 
-        .is-missing__indicator {
+        .is-status__indicator {
             right: -5px !important;
             top: -4px !important;
         }

@@ -28,6 +28,8 @@ export default class NewFolderAction {
         this.key = 'newFolder';
         this.description = 'Create a new folder';
         this.cssClass = 'icon-folder-new';
+        this.group = "action";
+        this.priority = 9;
 
         this._openmct = openmct;
         this._dialogForm = {

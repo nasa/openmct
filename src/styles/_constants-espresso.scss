@@ -218,7 +218,7 @@ $colorBtnActiveFg: $colorOkFg;
 $colorBtnSelectedBg: $colorSelectedBg;
 $colorBtnSelectedFg: $colorSelectedFg;
 $colorClickIconButton: $colorKey;
-$colorClickIconButtonBgHov: rgba($colorKey, 0.6);
+$colorClickIconButtonBgHov: rgba($colorKey, 0.3);
 $colorClickIconButtonFgHov: $colorKeyHov;
 $colorDropHint: $colorKey;
 $colorDropHintBg: pushBack($colorDropHint, 10%);
@@ -377,6 +377,11 @@ $colorItemTreeEditingIcon: $editUIColor;
 $colorItemTreeVC: $colorDisclosureCtrl;
 $colorItemTreeVCHover: $colorDisclosureCtrlHov;
 $shdwItemTreeIcon: none;
+
+// Layout frame controls
+$frameControlsColorFg: white;
+$frameControlsColorBg: $colorKey;
+$frameControlsShdw: $shdwMenu;
 
 // Images
 $colorThumbHoverBg: $colorItemTreeHoverBg;
