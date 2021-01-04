@@ -89,7 +89,7 @@ export default class DuplicateAction {
                         {
                             key: "name",
                             control: "textfield",
-                            name: "Folder Name",
+                            name: "Name",
                             pattern: "\\S+",
                             required: true,
                             cssClass: "l-input-lg"

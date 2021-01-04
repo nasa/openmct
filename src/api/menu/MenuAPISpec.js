@@ -31,6 +31,7 @@ describe ('The Menu API', () => {
     let x;
     let y;
     let result;
+    let onDestroy;
 
     beforeEach(() => {
         openmct = createOpenMct();
@@ -73,7 +74,9 @@ describe ('The Menu API', () => {
             let vueComponent;
 
             beforeEach(() => {
-                menuAPI.showMenu(x, y, actionsArray);
+                onDestroy = jasmine.createSpy('onDestroy');
+
+                menuAPI.showMenu(x, y, actionsArray, onDestroy);
                 vueComponent = menuAPI.menuComponent.component;
                 menuComponent = document.querySelector(".c-menu");
 
@@ -119,6 +122,12 @@ describe ('The Menu API', () => {
                 document.body.click();
 
                 expect(vueComponent.$destroy).toHaveBeenCalled();
+            });
+
+            it("invokes the onDestroy callback if passed in", () => {
+                document.body.click();
+
+                expect(onDestroy).toHaveBeenCalled();
             });
         });
     });

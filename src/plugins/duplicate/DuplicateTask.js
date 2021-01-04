@@ -48,13 +48,14 @@ export default class DuplicateTask {
     }
 
     /**
-     * Execute the duplicate/copy task with the objects provided in the constructor.
+     * Execute the duplicate/copy task with the objects provided.
      * @returns {promise} Which will resolve with a clone of the object
      * once complete.
      */
     async duplicate(domainObject, parent, filter) {
         this.domainObject = domainObject;
         this.parent = parent;
+        this.namespace = parent.identifier.namespace;
         this.filter = filter || this.isCreatable;
 
         await this.buildDuplicationPlan();
@@ -78,8 +79,9 @@ export default class DuplicateTask {
      */
     async buildDuplicationPlan() {
         let domainObjectClone = await this.duplicateObject(this.domainObject);
+
         if (domainObjectClone !== this.domainObject) {
-            domainObjectClone.location = this.getId(this.parent);
+            domainObjectClone.location = this.getKeyString(this.parent);
         }
 
         this.firstClone = domainObjectClone;
@@ -96,13 +98,14 @@ export default class DuplicateTask {
         let initialCount = this.clones.length;
         let dialog = this.openmct.overlays.progressDialog({
             progressPerc: 0,
-            message: `Duplicating ${initialCount} files.`,
+            message: `Duplicating ${initialCount} objects.`,
             iconClass: 'info',
             title: 'Duplicating'
         });
-        let clonesDone = Promise.all(this.clones.map(clone => {
+
+        let clonesDone = Promise.all(this.clones.map((clone) => {
             let percentPersisted = Math.ceil(100 * (++this.persisted / initialCount));
-            let message = `Duplicating ${initialCount - this.persisted} files.`;
+            let message = `Duplicating ${initialCount - this.persisted} objects.`;
 
             dialog.updateProgress(percentPersisted, message);
 
@@ -110,6 +113,7 @@ export default class DuplicateTask {
         }));
 
         await clonesDone;
+
         dialog.dismiss();
         this.openmct.notifications.info(`Duplicated ${this.persisted} objects.`);
 
@@ -141,10 +145,7 @@ export default class DuplicateTask {
     async duplicateObject(originalObject) {
         // Check if the creatable (or other passed in filter).
         if (this.filter(originalObject)) {
-            // Clone original object
             let clone = this.cloneObjectModel(originalObject);
-
-            // Get children, if any
             let composeesCollection = this.openmct.composition.get(originalObject);
             let composees;
 
@@ -152,42 +153,11 @@ export default class DuplicateTask {
                 composees = await composeesCollection.load();
             }
 
-            // Recursively duplicate children
             return this.duplicateComposees(clone, composees);
         }
 
         // Not creatable, creating a link, no need to iterate children
         return originalObject;
-    }
-
-    /**
-     * Update identifiers in a cloned object model (or part of
-     * a cloned object model) to reflect new identifiers after
-     * duplicating.
-     * @private
-     */
-    rewriteIdentifiers(obj, idMap) {
-        function lookupValue(value) {
-            return (typeof value === 'string' && idMap[value]) || value;
-        }
-
-        if (Array.isArray(obj)) {
-            obj.forEach((value, index) => {
-                obj[index] = lookupValue(value);
-                this.rewriteIdentifiers(obj[index], idMap);
-            });
-        } else if (obj && typeof obj === 'object') {
-            Object.keys(obj).forEach((key) => {
-                let value = obj[key];
-                obj[key] = lookupValue(value);
-                if (idMap[key]) {
-                    delete obj[key];
-                    obj[idMap[key]] = value;
-                }
-
-                this.rewriteIdentifiers(value, idMap);
-            });
-        }
     }
 
     /**
@@ -197,34 +167,67 @@ export default class DuplicateTask {
      * @returns {*}
      */
     async duplicateComposees(clonedParent, composees = []) {
-        let idMap = {};
-
+        let idMappings = [];
         let allComposeesDuplicated = composees.reduce(async (previousPromise, nextComposee) => {
             await previousPromise;
+
             let clonedComposee = await this.duplicateObject(nextComposee);
-            idMap[this.getId(nextComposee)] = this.getId(clonedComposee);
-            await this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
+
+            if (clonedComposee) {
+                idMappings.push({
+                    newId: clonedComposee.identifier,
+                    oldId: nextComposee.identifier
+                });
+                this.composeChild(clonedComposee, clonedParent, clonedComposee !== nextComposee);
+            }
 
             return;
         }, Promise.resolve());
 
         await allComposeesDuplicated;
 
-        this.rewriteIdentifiers(clonedParent, idMap);
+        clonedParent = this.rewriteIdentifiers(clonedParent, idMappings);
         this.clones.push(clonedParent);
 
         return clonedParent;
     }
 
-    async composeChild(child, parent, setLocation) {
-        const PERSIST_BOOL = false;
-        let parentComposition = this.openmct.composition.get(parent);
-        await parentComposition.load();
-        parentComposition.add(child, PERSIST_BOOL);
+    /**
+     * Update identifiers in a cloned object model (or part of
+     * a cloned object model) to reflect new identifiers after
+     * duplicating.
+     * @private
+     */
+    rewriteIdentifiers(clonedParent, childIdMappings) {
+        for (let { newId, oldId } of childIdMappings) {
+            let newIdKeyString = this.openmct.objects.makeKeyString(newId);
+            let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
+
+            // regex replace keystrings
+            clonedParent = JSON.stringify(clonedParent).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
+
+            // parse reviver to replace identifiers
+            clonedParent = JSON.parse(clonedParent, (key, value) => {
+                if (Object.prototype.hasOwnProperty.call(value, 'key')
+                    && Object.prototype.hasOwnProperty.call(value, 'namespace')
+                    && value.key === oldId.key
+                    && value.namespace === oldId.namespace) {
+                    return newId;
+                } else {
+                    return value;
+                }
+            });
+        }
+
+        return clonedParent;
+    }
+
+    composeChild(child, parent, setLocation) {
+        parent.composition.push(child.identifier);
 
         //If a location is not specified, set it.
         if (setLocation && child.location === undefined) {
-            let parentKeyString = this.getId(parent);
+            let parentKeyString = this.getKeyString(parent);
             child.location = parentKeyString;
         }
     }
@@ -239,7 +242,7 @@ export default class DuplicateTask {
         let clone = JSON.parse(JSON.stringify(domainObject));
         let identifier = {
             key: uuid(),
-            namespace: domainObject.identifier.namespace
+            namespace: this.namespace // set to NEW parent's namespace
         };
 
         if (clone.modified || clone.persisted || clone.location) {
@@ -260,7 +263,7 @@ export default class DuplicateTask {
         return clone;
     }
 
-    getId(domainObject) {
+    getKeyString(domainObject) {
         return this.openmct.objects.makeKeyString(domainObject.identifier);
     }
 
