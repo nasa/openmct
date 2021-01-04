@@ -2,8 +2,7 @@
 <tr
     class="c-list-item"
     :class="{
-        'is-alias': item.isAlias === true,
-        'is-context-clicked': contextClickEnabled
+        'is-alias': item.isAlias === true
     }"
     @click="navigate"
 >

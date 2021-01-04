@@ -55,10 +55,6 @@
         }
     }
 
-    &.is-context-clicked {
-        border: 1px solid $colorItemBg;
-    }
-
     &[class*='is-status--missing'],
     &[class*='is-status--suspect']{
         [class*='__type-icon'],

@@ -97,7 +97,7 @@
         }
 
         &.is-context-clicked {
-            border: 1px solid $colorItemTreeSelectedBg;
+            box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
         }
     }
 }
