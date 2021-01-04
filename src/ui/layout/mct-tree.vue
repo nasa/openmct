@@ -98,7 +98,11 @@
                     :style="scrollableStyles()"
                     @scroll="scrollItems"
                 >
-                    <div :style="{ height: childrenHeight + 'px' }">
+                    <!-- Regular Tree Items -->
+                    <div
+                        v-if="!activeSearch"
+                        :style="{ height: childrenHeight + 'px' }"
+                    >
                         <tree-item
                             v-for="(treeItem, index) in visibleItems"
                             :key="treeItem.id"
@@ -108,7 +112,32 @@
                             :item-index="index"
                             :item-height="itemHeight"
                             :virtual-scroll="true"
-                            :show-down="activeSearch ? false : true"
+                            :show-down="true"
+                            @expanded="beginNavigationRequest('handleExpanded', treeItem)"
+                        />
+                        <div
+                            v-if="showNoItems"
+                            :style="indicatorLeftOffset"
+                            class="c-tree__item c-tree__item--empty"
+                        >
+                            No items
+                        </div>
+                    </div>
+                    <!-- Search Result Items (Index Only) -->
+                    <div
+                        v-if="activeSearch"
+                        :style="{ height: childrenHeight + 'px' }"
+                    >
+                        <tree-item-lite
+                            v-for="(treeItem, index) in visibleItems"
+                            :key="treeItem.id"
+                            :node="treeItem"
+                            :left-offset="itemLeftOffset"
+                            :item-offset="itemOffset"
+                            :item-index="index"
+                            :item-height="itemHeight"
+                            :virtual-scroll="true"
+                            :show-down="false"
                             @expanded="beginNavigationRequest('handleExpanded', treeItem)"
                         />
                         <div
@@ -131,6 +160,7 @@
 <script>
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
+import treeItemLite from './tree-item-lite.vue';
 import search from '../components/search.vue';
 import objectUtils from 'objectUtils';
 import uuid from 'uuid';
@@ -145,7 +175,8 @@ export default {
     name: 'MctTree',
     components: {
         search,
-        treeItem
+        treeItem,
+        treeItemLite
     },
     props: {
         syncTreeNavigation: {
@@ -596,6 +627,21 @@ export default {
                 navigationPath
             };
         },
+        buildTreeItemLite(indexResult) {
+            let liteObject = {
+                identifier: objectUtils.parseKeyString(indexResult.id),
+                name: indexResult.name,
+                type: indexResult.type
+            };
+            let navigationPath = '';
+
+            return {
+                id: indexResult.id,
+                object: liteObject,
+                objectPath: [],
+                navigationPath
+            };
+        },
         // domainObject: the item we're building the path for (will be used in url and links)
         // objects: array of domainObjects representing path to domainobject passed in
         buildNavigationPath(domainObject, objects) {
@@ -693,29 +739,36 @@ export default {
             }
         },
         async getSearchResults() {
-            let results = await this.searchService.query(this.searchValue);
+            let results = await this.searchService.queryLite(this.searchValue);
             this.searchResultItems = [];
 
+            // build out tree-item-lite results
             for (let i = 0; i < results.hits.length; i++) {
                 let result = results.hits[i];
-                let newStyleObject = objectUtils.toNewFormat(result.object.getModel(), result.object.getId());
-                let objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
-
-                // removing the item itself, as the path we pass to buildTreeItem is a parent path
-                objectPath.shift();
-
-                // if root, remove, we're not using in object path for tree
-                let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
-                if (lastObject && lastObject.type === 'root') {
-                    objectPath.pop();
-                }
-
-                // we reverse the objectPath in the tree, so have to do it here first,
-                // since this one is already in the correct direction
-                let resultObject = this.buildTreeItem(newStyleObject, objectPath.reverse());
-
+                let resultObject = this.buildTreeItemLite(result);
                 this.searchResultItems.push(resultObject);
             }
+
+            // for (let i = 0; i < results.hits.length; i++) {
+            //     let result = results.hits[i];
+            //     let newStyleObject = objectUtils.toNewFormat(result.object.getModel(), result.object.getId());
+            //     let objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
+
+            //     // removing the item itself, as the path we pass to buildTreeItem is a parent path
+            //     objectPath.shift();
+
+            //     // if root, remove, we're not using in object path for tree
+            //     let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
+            //     if (lastObject && lastObject.type === 'root') {
+            //         objectPath.pop();
+            //     }
+
+            //     // we reverse the objectPath in the tree, so have to do it here first,
+            //     // since this one is already in the correct direction
+            //     let resultObject = this.buildTreeItem(newStyleObject, objectPath.reverse());
+
+            //     this.searchResultItems.push(resultObject);
+            // }
 
             this.searchLoading = false;
         },
