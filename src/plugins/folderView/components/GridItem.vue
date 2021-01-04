@@ -4,7 +4,7 @@
     :class="[{
         'is-alias': item.isAlias === true,
         'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1,
-        'is-context-clicked': contextClickEnabled
+        'is-context-clicked': contextClickActive
     }, statusClass]"
     :href="objectLink"
 >
