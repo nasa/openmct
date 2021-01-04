@@ -86,6 +86,7 @@ export default class StyleRuleManager extends EventEmitter {
     updateObjectStyleConfig(styleConfiguration) {
         if (!styleConfiguration || !styleConfiguration.conditionSetIdentifier) {
             this.initialize(styleConfiguration || {});
+            this.applyStaticStyle();
             this.destroy();
         } else {
             let isNewConditionSet = !this.conditionSetIdentifier
@@ -158,7 +159,6 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     destroy() {
-        this.applyStaticStyle();
         if (this.stopProvidingTelemetry) {
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
