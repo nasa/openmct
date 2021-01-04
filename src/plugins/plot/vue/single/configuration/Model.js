@@ -53,10 +53,6 @@ export default class Model extends EventEmitter {
         return {};
     }
 
-    initialize(model) {
-
-    }
-
     /**
      * Destroy the model, removing all listeners and subscriptions.
      */
