@@ -22,18 +22,22 @@
 
 define([
     './components/GridView.vue',
+    './constants.js',
     'vue'
 ], function (
     GridViewComponent,
+    constants,
     Vue
 ) {
     function FolderGridView(openmct) {
+        const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+
         return {
             key: 'grid',
             name: 'Grid View',
             cssClass: 'icon-thumbs-strip',
             canView: function (domainObject) {
-                return domainObject.type === 'folder' || domainObject.type === 'noneditable.folder';
+                return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
             },
             view: function (domainObject) {
                 let component;

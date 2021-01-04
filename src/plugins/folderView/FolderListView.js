@@ -22,20 +22,24 @@
 
 define([
     './components/ListView.vue',
+    './constants.js',
     'vue',
     'moment'
 ], function (
     ListViewComponent,
+    constants,
     Vue,
     Moment
 ) {
     function FolderListView(openmct) {
+        const ALLOWED_FOLDER_TYPES = constants.ALLOWED_FOLDER_TYPES;
+
         return {
             key: 'list-view',
             name: 'List View',
             cssClass: 'icon-list-view',
             canView: function (domainObject) {
-                return domainObject.type === 'folder' || domainObject.type === 'noneditable.folder';
+                return ALLOWED_FOLDER_TYPES.includes(domainObject.type);
             },
             view: function (domainObject) {
                 let component;
