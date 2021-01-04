@@ -10,7 +10,7 @@ export default {
     },
     data() {
         return {
-            contextClickEnabled: false
+            contextClickActive: false
         };
     },
     mounted() {
@@ -41,12 +41,12 @@ export default {
             let sortedActions = this.openmct.actions._groupAndSortActions(actions);
 
             this.openmct.menus.showMenu(event.clientX, event.clientY, sortedActions, this.onContextMenuDestroyed);
-            this.contextClickEnabled = true;
-            this.$emit('context-click-enabled', true);
+            this.contextClickActive = true;
+            this.$emit('context-click-active', true);
         },
         onContextMenuDestroyed() {
-            this.contextClickEnabled = false;
-            this.$emit('context-click-enabled', false);
+            this.contextClickActive = false;
+            this.$emit('context-click-active', false);
         }
     }
 };
