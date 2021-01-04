@@ -24,11 +24,14 @@
     ref="aboutLogo"
     class="l-shell__app-logo"
     @click="launchAbout"
+    @contextmenu.prevent="showContextMenu"
 ></div>
 </template>
 
 <script>
 import AboutDialog from './AboutDialog.vue';
+import { getThemeItems } from '../../plugins/themes/themeMenuItems';
+
 import Vue from 'vue';
 
 export default {
@@ -53,6 +56,9 @@ export default {
                 element: vm.$el,
                 size: 'large'
             });
+        },
+        showContextMenu(event) {
+            this.openmct.menus.showMenu(event.x, event.y, getThemeItems(this.openmct));
         }
     }
 };
