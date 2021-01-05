@@ -17,7 +17,7 @@
                  :contenteditable="!readOnly"
                  @blur="updateEntryValue($event)"
                  @keydown.enter.exact.prevent
-                 @keyup.enter.exact.prevent="updateEntryValueOnEnterKeyPress($event)"
+                 @keyup.enter.exact.prevent="forceBlur($event)"
                  v-text="entry.text"
             >
             </div>
@@ -173,6 +173,9 @@ export default {
 
             return position;
         },
+        forceBlur(event) {
+            event.target.blur();
+        },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
         },
@@ -212,9 +215,6 @@ export default {
                 this.entry.text = value;
                 this.$emit('updateEntry', this.entry);
             }
-        },
-        updateEntryValueOnEnterKeyPress(event) {
-            event.target.blur();
         }
     }
 };
