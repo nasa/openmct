@@ -277,9 +277,7 @@ define([
 
             modelResults.hits = event.data.results.map(function (hit) {
                 return {
-                    id: hit.id,
-                    name: hit.name,
-                    type: hit.type
+                    id: hit.id
                 };
             });
         }
