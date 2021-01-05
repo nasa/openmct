@@ -17,6 +17,9 @@ export default {
                     configuration: {}
                 }
             }
+        },
+        index: {
+            type: Number
         }
     },
     methods: {
@@ -32,6 +35,9 @@ export default {
     computed: {
         activityStyle() {
             return {
+                'position': 'absolute',
+                'top': `${this.index * (this.activityHeight + 2)}px`,
+                'left': `${this.start * 5}px`,
                 'backgroundColor': this.color,
                 'width': `${(this.end - this.start) * 30}px`,
                 'margin': '5px',
@@ -46,11 +52,16 @@ export default {
             name: this.domainObject.name,
             start: configuration.startTime,
             end: configuration.endTime,
-            color: configuration.color
+            color: configuration.color,
+            activityHeight: 0
         }
     },
     mounted() {
         this.unsubscribeFromDomainObjectChanges = this.openmct.objects.observe(this.domainObject, '*', this.onDomainObjectChange);
+
+        let boundingClientRect = this.$el.getBoundingClientRect();
+        
+        this.activityHeight = boundingClientRect.height;
     },
     beforeDestroy() {
         this.unsubscribeFromDomainObjectChanges();

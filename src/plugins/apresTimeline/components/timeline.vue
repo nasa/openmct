@@ -1,10 +1,11 @@
 <template>
   <div style="min-width: 100%">
-        <ul>
+        <ul style="min-width: 100%; min-height: 100%; position: relative;">
             <timeline-activity
-                v-for="activityDomainObject in activities"
+                v-for="(activityDomainObject, index) in activities"
                 :key="activityDomainObject.identifier.key"
                 :domainObject="activityDomainObject"
+                :index="index"
             />
         </ul>
   </div>
@@ -34,7 +35,8 @@ export default {
     data() {
         return {
             activities: [],
-            composition: this.openmct.composition.get(this.domainObject)
+            composition: this.openmct.composition.get(this.domainObject),
+            activityHeight: 0
         }
     },
     mounted() {
