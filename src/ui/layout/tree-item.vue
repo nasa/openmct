@@ -11,7 +11,8 @@
         class="c-tree__item"
         :class="{
             'is-alias': isAlias,
-            'is-navigated-object': navigated
+            'is-navigated-object': navigated,
+            'is-context-clicked': contextClickActive
         }"
     >
         <view-control
@@ -26,6 +27,7 @@
             :object-path="node.objectPath"
             :navigate-to-path="navigationPath"
             :style="{ paddingLeft: leftOffset }"
+            @context-click-active="setContextClickActive"
         />
         <view-control
             v-model="expanded"
@@ -91,7 +93,8 @@ export default {
         return {
             hasComposition: false,
             navigated: this.isNavigated(),
-            expanded: false
+            expanded: false,
+            contextClickActive: false
         };
     },
     computed: {
@@ -142,6 +145,9 @@ export default {
         },
         resetTreeHere() {
             this.$emit('resetTree', this.node);
+        },
+        setContextClickActive(active) {
+            this.contextClickActive = active;
         }
     }
 };
