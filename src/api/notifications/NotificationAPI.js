@@ -75,7 +75,12 @@ export default class NotificationAPI extends EventEmitter {
      * Info notifications are low priority informational messages for the user. They will be auto-destroy after a brief
      * period of time.
      * @param {string} message The message to display to the user
-     * @param {Object} options
+     * @param {Object} [options] object with following properties
+     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
+     *      link: {Object} Add a link to notifications for navigation
+     *              onClick: callback function
+     *              cssClass: css class name to add style on link
+     *              text: text to display for link
      * @returns {InfoNotification}
      */
     info(message, options = {}) {
@@ -92,7 +97,12 @@ export default class NotificationAPI extends EventEmitter {
     /**
      * Present an alert to the user.
      * @param {string} message The message to display to the user.
-     * @param {Object} options
+     * @param {Object} [options] object with following properties
+     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
+     *      link: {Object} Add a link to notifications for navigation
+     *              onClick: callback function
+     *              cssClass: css class name to add style on link
+     *              text: text to display for link
      * @returns {Notification}
      */
     alert(message, options = {}) {
@@ -108,7 +118,12 @@ export default class NotificationAPI extends EventEmitter {
     /**
      * Present an error message to the user
      * @param {string} message
-     * @param {Object} options
+     * @param {Object} [options] object with following properties
+     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
+     *      link: {Object} Add a link to notifications for navigation
+     *              onClick: callback function
+     *              cssClass: css class name to add style on link
+     *              text: text to display for link
      * @returns {Notification}
      */
     error(message, options = {}) {

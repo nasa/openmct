@@ -32,7 +32,7 @@
     <span v-if="haslink"
           class="c-message-banner__message"
           :class="[haslink ? getLinkProps.cssClass : '']"
-    >{{ getLinkProps.msg }}</span>
+    >{{ getLinkProps.text }}</span>
 
     <progress-bar
         v-if="activeModel.progressPerc !== undefined"
@@ -162,7 +162,7 @@ export default {
         maximize() {
             if (this.haslink) {
                 const linkProps = this.getLinkProps;
-                linkProps.callback();
+                linkProps.onClick();
 
                 activeNotification.dismiss();
 

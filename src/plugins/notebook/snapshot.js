@@ -74,10 +74,9 @@ export default class Snapshot {
         const options = {
             autoDismissTimeout: 30000,
             link: {
-                callback: this._navigateToNotebook(url),
                 cssClass: '',
-                label: 'Go to Notebook',
-                msg: 'click to view'
+                text: 'click to view',
+                onClick: this._navigateToNotebook(url)
             }
         };
 
