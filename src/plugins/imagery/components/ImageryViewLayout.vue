@@ -320,6 +320,10 @@ export default {
                 size: 'large',
                 dismissable: true
             });
+
+            this.$nextTick(() => {
+                imageViewLarge.focus();
+            });
         },
         boundsChange(bounds, isTick) {
             if (!isTick) {
