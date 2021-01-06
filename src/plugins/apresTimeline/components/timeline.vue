@@ -31,6 +31,13 @@ export default {
         },
         removeActivity(activityIndentifier) {
             console.log(activityIndentifier);
+        },
+        reorderActivities(reorderPlan) {
+            let oldActivities = this.activities.slice();
+
+            reorderPlan.forEach((reorderEvent) => {
+                this.$set(this.activities, reorderEvent.newIndex, oldActivities[reorderEvent.oldIndex]);
+            });
         }
     },
     data() {
@@ -43,6 +50,7 @@ export default {
     mounted() {
         this.composition.on('add', this.addActivity);
         this.composition.on('remove', this.removeActivity);
+        this.composition.on('reorder', this.reorderActivities);
         this.composition.load();
     },
     beforeDestroy() {
