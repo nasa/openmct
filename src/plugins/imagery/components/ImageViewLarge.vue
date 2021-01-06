@@ -1,8 +1,8 @@
 <template>
 <div class="c-imagery__main-image-wrapper has-local-controls"
-    tabindex="0"
-    @keyup="arrowUpHandler"
-    @keydown="arrowDownHandler"
+     tabindex="0"
+     @keyup="arrowUpHandler"
+     @keydown="arrowDownHandler"
 >
     <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
         <span class="c-image-controls__sliders"
@@ -134,9 +134,9 @@ export default {
         };
     },
     mounted() {
-        this.$nextTick(() =>{
+        this.$nextTick(() => {
             this.$el.focus();
-        })
+        });
     },
     methods: {
         arrowUpHandler(event) {
