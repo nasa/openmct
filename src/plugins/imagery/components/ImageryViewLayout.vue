@@ -1,82 +1,31 @@
 <template>
 <div
+    ref="imageViewLayout"
     tabindex="0"
     class="c-imagery"
     @keyup="arrowUpHandler"
     @keydown="arrowDownHandler"
     @mouseover="focusElement"
 >
-    <div class="c-imagery__main-image-wrapper has-local-controls">
-        <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
-            <span class="c-image-controls__sliders"
-                  draggable="true"
-                  @dragstart="startDrag"
-            >
-                <div class="c-image-controls__slider-wrapper icon-brightness">
-                    <input v-model="filters.brightness"
-                           type="range"
-                           min="0"
-                           max="500"
-                    >
-                </div>
-                <div class="c-image-controls__slider-wrapper icon-contrast">
-                    <input v-model="filters.contrast"
-                           type="range"
-                           min="0"
-                           max="500"
-                    >
-                </div>
-            </span>
-            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
-                <a class="s-icon-button icon-reset t-btn-reset"
-                   @click="filters={brightness: 100, contrast: 100}"
-                ></a>
-            </span>
-        </div>
-        <div class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused,'stale':false }"
-             @click="showImage()"
-        >
-            <div class="c-imagery__main-image__image js-imageryView-image"
-                 :style="{
-                     'background-image': imageUrl ? `url(${imageUrl})` : 'none',
-                     'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                 }"
-                 :data-openmct-image-timestamp="time"
-                 :data-openmct-object-keystring="keyString"
-            ></div>
-            <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
-                <button class="c-nav c-nav--prev"
-                        title="Previous image"
-                        :disabled="isPrevDisabled"
-                        @click.stop="prevImage()"
-                ></button>
-                <button class="c-nav c-nav--next"
-                        title="Next image"
-                        :disabled="isNextDisabled"
-                        @click.stop="nextImage()"
-                ></button>
-            </div>
-        </div>
-
-        <div class="c-imagery__control-bar">
-            <div class="c-imagery__time">
-                <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ time }}</div>
-                <div
-                    v-if="canTrackDuration"
-                    :class="{'c-imagery--new': isImageNew && !refreshCSS}"
-                    class="c-imagery__age icon-timer"
-                >{{ formattedDuration }}</div>
-            </div>
-            <div class="h-local-controls">
-                <button
-                    class="c-button icon-pause pause-play"
-                    :class="{'is-paused': isPaused}"
-                    @click="paused(!isPaused, 'button')"
-                ></button>
-            </div>
-        </div>
-    </div>
+    <ImageViewLarge ref="imageViewLarge"
+                    :can-track-duration="canTrackDuration"
+                    :formatted-duration="formattedDuration"
+                    :image-url="imageUrl"
+                    :is-image-new="isImageNew"
+                    :is-large-view="isLargeView"
+                    :is-next-disabled="isNextDisabled"
+                    :is-paused="isPaused"
+                    :is-prev-disabled="isPrevDisabled"
+                    :key-string="keyString"
+                    :refresh-c-s-s="refreshCSS"
+                    :time="time"
+                    @nextImage="nextImage()"
+                    @prevImage="prevImage()"
+                    @paused="paused"
+                    @showLargeView="showLargeView"
+                    @arrowUpHandler="arrowUpHandler"
+                    @arrowDownHandler="arrowDownHandler"
+    />
     <div ref="thumbsWrapper"
          class="c-imagery__thumbs-wrapper"
          :class="{'is-paused': isPaused}"
@@ -98,8 +47,9 @@
 </template>
 
 <script>
+import ImageViewLarge from './ImageViewLarge.vue';
+
 import moment from 'moment';
-import { openInImageLargeView } from '@/utils/imageLargeView/imageLargeView';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -119,18 +69,18 @@ const ARROW_LEFT = 37;
 
 export default {
     inject: ['openmct', 'domainObject'],
+    components: {
+        ImageViewLarge
+    },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
         return {
             autoScroll: true,
             durationFormatter: undefined,
-            filters: {
-                brightness: 100,
-                contrast: 100
-            },
             imageHistory: [],
             thumbnailClick: THUMBNAIL_CLICKED,
+            isLargeView: false,
             isPaused: false,
             metadata: {},
             requestCount: 0,
@@ -240,15 +190,6 @@ export default {
         this.openmct.time.off('clock', this.clockChange);
     },
     methods: {
-        showImage() {
-            const imageMeta = {
-                alt: this.domainObject.name,
-                filters: this.filters,
-                time: this.time
-            };
-
-            openInImageLargeView(this.openmct, this.imageUrl, imageMeta);
-        },
         focusElement() {
             this.$el.focus();
         },
@@ -305,7 +246,6 @@ export default {
             this.autoScroll = !disableScroll;
         },
         paused(state, type) {
-
             this.isPaused = state;
 
             if (type === 'button') {
@@ -358,6 +298,28 @@ export default {
             if (thumbnailClick && !this.isPaused) {
                 this.paused(true);
             }
+        },
+        showLargeView() {
+            this.isLargeView = true;
+
+            const imageViewLarge = this.$refs.imageViewLarge.$el;
+            const element = document.createElement('div');
+            element.classList = 'c-imagery';
+            element.appendChild(imageViewLarge);
+
+            const isPaused = this.isPaused;
+            this.paused(true, 'button');
+
+            this.openmct.overlays.overlay({
+                element,
+                onDestroy: () => {
+                    this.paused(isPaused, 'button');
+                    this.isLargeView = false;
+                    this.$refs.imageViewLayout.prepend(imageViewLarge);
+                },
+                size: 'large',
+                dismissable: true
+            });
         },
         boundsChange(bounds, isTick) {
             if (!isTick) {
