@@ -100,11 +100,13 @@ define([], function () {
      * @param {*} metadataValues
      */
     function createNormalizedDatum(datum, columns) {
-        return Object.values(columns).reduce((normalizedDatum, column) => {
-            normalizedDatum[column.getKey()] = column.getRawValue(datum);
+        const normalizedDatum = JSON.parse(JSON.stringify(datum));
 
-            return normalizedDatum;
-        }, {});
+        Object.values(columns).forEach(column => {
+            normalizedDatum[column.getKey()] = column.getRawValue(datum);
+        });
+
+        return normalizedDatum;
     }
 
     return TelemetryTableRow;
