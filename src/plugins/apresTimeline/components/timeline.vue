@@ -6,6 +6,7 @@
                 :key="activityDomainObject.identifier.key"
                 :domainObject="activityDomainObject"
                 :index="index"
+                :isEditing="isEditing"
             />
         </ul>
   </div>
