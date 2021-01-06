@@ -720,12 +720,14 @@ export default {
 
             for (const result of normalizedResults) {
                 let object = result.object;
+
                 if (object === undefined) {
                     object = await this.openmct.objects.get(result.identifier);
+                } else {
+                    object = objectUtils.toNewFormat(object.getModel(), object.getId());
                 }
 
-                const newStyleObject = objectUtils.toNewFormat(object.getModel(), object.getId());
-                const objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
+                const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
 
                 // removing the item itself, as the path we pass to buildTreeItem is a parent path
                 objectPath.shift();
@@ -738,7 +740,7 @@ export default {
 
                 // we reverse the objectPath in the tree, so have to do it here first,
                 // since this one is already in the correct direction
-                let resultObject = this.buildTreeItem(newStyleObject, objectPath.reverse());
+                let resultObject = this.buildTreeItem(object, objectPath.reverse());
 
                 this.searchResultItems.push(resultObject);
             }
