@@ -716,10 +716,14 @@ export default {
             });
         },
         async aggregateSearchResults(results) {
-            for (let i = 0; i < results.hits.length; i++) {
-                let result = results.hits[i];
-                let newStyleObject = objectUtils.toNewFormat(result.object.getModel(), result.object.getId());
-                let objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
+            const normalizedResults = results.hits ? results.hits : results;
+
+            for (const result of normalizedResults) {
+                const domainObject = await result.object
+                    ? result.object
+                    : this.openmct.objects.get(result.id);
+                const newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), domainObject.getId());
+                const objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
 
                 // removing the item itself, as the path we pass to buildTreeItem is a parent path
                 objectPath.shift();
