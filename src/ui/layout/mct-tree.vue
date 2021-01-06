@@ -721,7 +721,7 @@ export default {
             for (const result of normalizedResults) {
                 let object = result.object;
                 if (object === undefined) {
-                    object = await this.openmct.objects.get(result.id);
+                    object = await this.openmct.objects.get(result.identifier);
                 }
 
                 const newStyleObject = objectUtils.toNewFormat(object.getModel(), object.getId());
