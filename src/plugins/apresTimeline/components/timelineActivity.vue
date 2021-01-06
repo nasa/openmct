@@ -7,7 +7,7 @@
     </li>
 </template>
 <script>
-const PIXEL_MULTIPLIER = 5;
+const PIXEL_MULTIPLIER = 30;
 
 export default {
     inject: ['openmct'],
@@ -32,12 +32,11 @@ export default {
         activityStyle() {
             return {
                 'position': 'absolute',
-                'top': `${this.index * (this.activityHeight + 2)}px`,
+                'top': `${this.index * (this.activityHeight + 4)}px`,
                 'left': `${this.start * PIXEL_MULTIPLIER}px`,
                 'backgroundColor': this.color,
-                'width': `${(this.end - this.start) * 30}px`,
-                'margin': '5px',
-                'padding': '5px'
+                'width': `${this.width * PIXEL_MULTIPLIER}px`,
+                'padding': '10px'
             };
         }
     },
@@ -48,6 +47,7 @@ export default {
             name: this.domainObject.name,
             start: configuration.startTime,
             end: configuration.endTime,
+            width: configuration.endTime - configuration.startTime,
             color: configuration.color,
             activityHeight: 0
         }
@@ -59,6 +59,7 @@ export default {
             this.name = domainObject.name;
             this.start = configuration.startTime;
             this.end = configuration.endTime;
+            this.width = this.end - this.start;
             this.color = configuration.color;
         },
         onMouseDown(event) {
@@ -75,7 +76,7 @@ export default {
             let delta = (event.clientX - this.clientX) / PIXEL_MULTIPLIER;
 
             this.start += delta;
-            this.end += delta;
+            this.end = this.start + this.width;
 
             this.clientX = event.clientX;
         },
