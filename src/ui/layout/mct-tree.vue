@@ -719,10 +719,12 @@ export default {
             const normalizedResults = results.hits ? results.hits : results;
 
             for (const result of normalizedResults) {
-                const domainObject = await result.object
-                    ? result.object
-                    : this.openmct.objects.get(result.id);
-                const newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), domainObject.getId());
+                let object = result.object;
+                if (object === undefined) {
+                    object = await this.openmct.objects.get(result.id);
+                }
+
+                const newStyleObject = objectUtils.toNewFormat(object.getModel(), object.getId());
                 const objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
 
                 // removing the item itself, as the path we pass to buildTreeItem is a parent path
