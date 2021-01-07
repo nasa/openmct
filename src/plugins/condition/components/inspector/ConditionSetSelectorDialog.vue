@@ -63,7 +63,7 @@
         <!-- end main tree -->
 
         <!-- search tree -->
-        <ul v-if="searchValue"
+        <ul v-if="searchValue && !isLoading"
             class="c-tree-and-search__tree c-tree"
         >
             <condition-set-dialog-tree-item
