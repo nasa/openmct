@@ -83,6 +83,7 @@
 import debounce from 'lodash/debounce';
 import search from '@/ui/components/search.vue';
 import ConditionSetDialogTreeItem from './ConditionSetDialogTreeItem.vue';
+import objectUtils from 'objectUtils';
 
 export default {
     inject: ['openmct'],
