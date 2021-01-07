@@ -81,10 +81,9 @@ export default {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let config = configStore.get(configId);
             if (!config) {
-                const newDomainObject = this.openmct.legacyObject(this.domainObject).useCapability('adapter');
                 config = new PlotConfigurationModel({
                     id: configId,
-                    domainObject: newDomainObject,
+                    domainObject: this.domainObject,
                     openmct: this.openmct
                 });
                 configStore.add(configId, config);
