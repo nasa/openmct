@@ -140,13 +140,9 @@ export default {
         },
         getFilteredChildren() {
             this.filteredTreeItems = [];
-
             const promises = [];
-            const options = {
-                q: this.searchValue
-            };
 
-            const searchGenerator = this.openmct.objects.search(options);
+            const searchGenerator = this.openmct.objects.search(this.searchValue);
 
             for (let searchResultsPromise of searchGenerator) {
                 promises.push(searchResultsPromise);
@@ -159,22 +155,27 @@ export default {
                 this.isLoading = false;
             });
         },
-        aggregateFilteredChildren(results) {
-            const filteredTreeItemsBatch = results.hits.map(child => {
+        async aggregateFilteredChildren(results) {
+            const normalizedResults = results.hits ? results.hits : results;
 
-                let context = child.object.getCapability('context');
-                let object = child.object.useCapability('adapter');
-                let objectPath = [];
-                let navigateToParent;
+            const filteredTreeItemsBatch = await normalizedResults.map(async child => {
+                const isNewFormat = child.identifier !== undefined && child.object === undefined;
+                let object = isNewFormat
+                    ? child
+                    : child.object;
 
-                if (context) {
-                    objectPath = context.getPath().slice(1)
-                        .map(oldObject => oldObject.useCapability('adapter'))
-                        .reverse();
-                    navigateToParent = '/browse/' + objectPath.slice(1)
-                        .map((parent) => this.openmct.objects.makeKeyString(parent.identifier))
-                        .join('/');
+                if (!isNewFormat) {
+                    object = objectUtils.toNewFormat(object.getModel(), object.getId());
                 }
+
+                const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
+                objectPath.shift();
+                objectPath.reverse();
+
+                const navigateToParent = '/browse/'
+                    + objectPath.slice(1)
+                        .map(parent => this.openmct.objects.makeKeyString(parent.identifier))
+                        .join('/');
 
                 return {
                     id: this.openmct.objects.makeKeyString(object.identifier),
