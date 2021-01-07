@@ -100,18 +100,12 @@ export default {
             this.stopListening();
         },
 
-        /**
-       * Export view as JPG.
-       */
         exportJPG() {
             const plotElement = this.$refs.plotContainer;
 
             this.exportImageService.exportJPG(plotElement, 'plot.jpg', 'export-plot');
         },
 
-        /**
-       * Export view as PNG.
-       */
         exportPNG() {
             const plotElement = this.$refs.plotContainer;
 

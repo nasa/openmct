@@ -223,8 +223,6 @@ export default {
 
         doTickUpdate() {
             if (this.shouldCheckWidth) {
-                // TODO: Do we need to do something for these 2 $digests?
-                // this.$scope.$digest();
                 const tickElements = this.$refs.tickContainer.querySelectorAll('.gl-plot-tick > span');
 
                 const tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
@@ -236,7 +234,6 @@ export default {
                 this.shouldCheckWidth = false;
             }
 
-            // this.$scope.$digest();
             this.tickUpdate = false;
         }
     }

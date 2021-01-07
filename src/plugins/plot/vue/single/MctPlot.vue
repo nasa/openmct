@@ -481,8 +481,6 @@ export default {
             const newWidth = Math.max(width, this.tickWidth);
             if (newWidth !== this.tickWidth) {
                 this.tickWidth = newWidth;
-                //TODO: Do we need this?
-                // this.$scope.$digest();
             }
             // }
         },
@@ -516,8 +514,6 @@ export default {
             this.highlightValues(this.positionOverPlot.x);
             this.updateMarquee();
             this.updatePan();
-            //TODO: Do we need this?
-            // this.$scope.$digest();
             event.preventDefault();
         },
 
@@ -563,9 +559,6 @@ export default {
                         };
                     });
             }
-
-            //TODO: Do we need this?
-            // this.$scope.$digest();
         },
 
         untrackMousePosition() {
