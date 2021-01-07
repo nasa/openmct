@@ -296,25 +296,18 @@ define([
             arguments[1] = {};
         }
 
-        // historical setup
         this.standardizeRequestOptions(arguments[1]);
+
+        // historical setup, need access to provider in telemetry collection, so we
+        // can't just call 'request' there since we wouldn't be able to get the provider
         const historicalProvider = this.findRequestProvider(domainObject, arguments);
 
-        // subscription setup
-        const subscriptionProvider = this.findSubscriptionProvider(domainObject);
-
-        // check for no providers
-        if (!historicalProvider && !subscriptionProvider) {
-            return Promise.reject('No providers found');
-        }
-
-        let telemetryCollectionOptions = {
+        return new TelemetryCollection(
+            this.openmct,
+            domainObject,
             historicalProvider,
-            subscriptionProvider,
-            arguments: arguments
-        };
-
-        return Promise.resolve(new TelemetryCollection(this.openmct, domainObject, telemetryCollectionOptions));
+            arguments
+        );
     };
 
     /**

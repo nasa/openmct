@@ -20,68 +20,85 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// import _ from 'lodash';
-import TelemetrySubscriptionService from './TelemetrySubscriptionService';
+import _ from 'lodash';
 
 function bindUs() {
     return [
-        'trackHistoricalTelemetry',
-        'trackSubscriptionTelemetry',
+        'load',
+        'requestHistoricalTelemetry',
+        'initiateSubscriptionTelemetry',
         'addPage',
         'processNewTelemetry',
         'hasMorePages',
         'nextPage',
         'bounds',
         'timeSystem',
+        'reset',
         'on',
         'off',
         'emit',
-        'subscribeToBounds',
-        'unsubscribeFromBounds',
-        'subscribeToTimeSystem',
-        'unsubscribeFromTimeSystem',
+        'watchBounds',
+        'unwatchBounds',
+        'watchTimeSystem',
+        'unwatchTimeSystem',
         'destroy'
     ];
 }
 
 export class TelemetryCollection {
 
-    constructor(openmct, domainObject, options) {
+    constructor(openmct, domainObject, historicalProvider, options) {
         bindUs().forEach(method => this[method] = this[method].bind(this));
+
+        this.loaded = false;
+        this.loadBuffer = [];
 
         this.openmct = openmct;
         this.domainObject = domainObject;
+
         this.boundedTelemetry = [];
         this.futureBuffer = [];
 
         this.parseTime = undefined;
+        this.metadata = this.openmct.telemetry.getMetadata(domainObject);
+
         this.timeSystem(openmct.time.timeSystem());
         this.lastBounds = openmct.time.bounds();
 
-        this.historicalProvider = options.historicalProvider;
-        this.subscriptionProvider = options.subscriptionProvider;
+        this.unsubscribe = undefined;
+        this.historicalProvider = historicalProvider;
 
-        this.arguments = options.arguments;
+        this.arguments = options;
 
         this.listeners = {
             add: [],
             remove: []
         };
 
-        this.trackHistoricalTelemetry();
-        this.trackSubscriptionTelemetry();
+        this.requestHistoricalTelemetry();
+        this.initiateSubscriptionTelemetry();
 
-        this.subscribeToBounds();
-        this.subscribeToTimeSystem();
+        this.watchBounds();
+        this.watchTimeSystem();
     }
 
-    // should we wait to track history until an 'add' listener is added?
-    async trackHistoricalTelemetry() {
+    load() {
+        this.loaded = true;
+
+        if (this.loadBuffer.length) {
+            this.emit('add', this.loadBuffer);
+        }
+
+        delete this.loadBuffer;
+    }
+
+    async requestHistoricalTelemetry() {
         if (!this.historicalProvider) {
             return;
         }
 
         // remove for reset
+        // question: do we need to emit it? It's not out of bounds, it's just old
         if (this.boundedTelemetry.length !== 0) {
             this.emit('remove', this.boundedTelemetry);
             this.boundedTelemetry = [];
@@ -94,27 +111,21 @@ export class TelemetryCollection {
             return Promise.reject(rejected);
         });
 
-        // make sure it wasn't rejected
         if (Array.isArray(historicalData)) {
-            // reset on requests, should only happen on initial load,
-            // bounds manually changed and time system changes
-            this.boundedTelemetry = historicalData;
-            this.emit('add', [...this.boundedTelemetry]);
+            // store until loaded, unless loaded
+            if (this.loaded) {
+                this.processNewTelemetry(historicalData);
+            } else {
+                this.loadBuffer = historicalData;
+            }
         }
     }
 
-    trackSubscriptionTelemetry() {
-        if (!this.subscriptionProvider) {
-            return;
-        }
-
-        this.subscriptionService = new TelemetrySubscriptionService(this.openmct);
-        this.unsubscribe = this.subscriptionService.subscribe(
-            this.domainObject,
-            this.processNewTelemetry,
-            this.subscriptionProvider,
-            this.arguments
-        );
+    initiateSubscriptionTelemetry() {
+        this.unsubscribe = this.openmct.telemetry
+            .subscribe(this.domainObject, (datum) => {
+                this.processNewTelemetry(datum);
+            }, this.arguments);
     }
 
     // utilized by telemetry provider to add more data
@@ -124,7 +135,6 @@ export class TelemetryCollection {
 
     // used to sort any new telemetry (add/page, historical, subscription)
     processNewTelemetry(telemetryData) {
-
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
         let parsedValue;
         let beforeStartOfBounds;
@@ -168,80 +178,78 @@ export class TelemetryCollection {
         this.historicalProvider.nextPage(this.arguments, this);
     }
 
-    // when user changes bounds, or when bounds increment from a tick
+    // either user changes bounds or incremental tick
+    // when bounds change, data could be added OR removed
+    // here we update the current bounded telemetry and emit the results
     bounds(bounds, isTick) {
+
+        let startChanged = this.lastBounds.start !== bounds.start;
+        let endChanged = this.lastBounds.end !== bounds.end;
 
         this.lastBounds = bounds;
 
         if (isTick) {
             // need to check futureBuffer and need to check
             // if anything has fallen out of bounds
+            let startIndex = 0;
+            let endIndex = 0;
+
+            let discarded = [];
+            let added = [];
+            let testDatum = {};
+
+            if (startChanged) {
+                testDatum[this.timeKey] = bounds.start;
+                // Calculate the new index of the first item within the bounds
+                startIndex = _.sortedIndex(this.boundedTelemetry, testDatum);
+                discarded = this.boundedTelemetry.splice(0, startIndex);
+            }
+
+            if (endChanged) {
+                testDatum[this.timeKey] = bounds.end;
+                // Calculate the new index of the last item in bounds
+                endIndex = _.sortedLastIndex(this.futureBuffer, testDatum);
+                added = this.futureBuffer.splice(0, endIndex);
+                this.boundedTelemetry = [...this.boundedTelemetry, ...added];
+            }
+
+            if (discarded.length > 0) {
+                this.emit('remove', discarded);
+            }
+
+            if (added.length > 0) {
+                this.emit('add', added);
+            }
         } else {
-            // TODO: also reset right?
-            // need to reset and request history again
-            // no need to mess with subscription
+            // user bounds change, reset
+            this.reset();
         }
 
-        let startChanged = this.lastBounds.start !== bounds.start;
-        let endChanged = this.lastBounds.end !== bounds.end;
+    }
 
-        let startIndex = 0;
-        let endIndex = 0;
-
-        let discarded = [];
-        let added = [];
-        let testValue = {
-            datum: {}
-        };
-
-        this.lastBounds = bounds;
-
-        if (startChanged) {
-            testValue.datum[this.sortOptions.key] = bounds.start;
-            // Calculate the new index of the first item within the bounds
-            startIndex = this.sortedIndex(this.rows, testValue);
-            discarded = this.rows.splice(0, startIndex);
+    reset() {
+        if (!this.loaded) {
+            return;
         }
 
-        if (endChanged) {
-            testValue.datum[this.sortOptions.key] = bounds.end;
-            // Calculate the new index of the last item in bounds
-            endIndex = this.sortedLastIndex(this.futureBuffer.rows, testValue);
-            added = this.futureBuffer.rows.splice(0, endIndex);
-            added.forEach((datum) => this.rows.push(datum));
+        if (this.boundedTelemetry.length) {
+            this.emit('remove', this.boundedTelemetry);
+
+            this.boundedTelemetry = [];
+            this.futureBuffer = [];
         }
 
-        if (discarded.length > 0) {
-            /**
-             * A `discarded` event is emitted when telemetry data fall out of
-             * bounds due to a bounds change event
-             * @type {object[]} discarded the telemetry data
-             * discarded as a result of the bounds change
-             */
-            this.emit('remove', discarded);
-        }
-
-        if (added.length > 0) {
-            /**
-             * An `added` event is emitted when a bounds change results in
-             * received telemetry falling within the new bounds.
-             * @type {object[]} added the telemetry data that is now within bounds
-             */
-            this.emit('add', added);
-        }
+        this.requestHistoricalTelemetry();
     }
 
     timeSystem(timeSystem) {
         let timeKey = timeSystem.key;
-        let formatter = this.openmct.telemetry.getValueFormatter({
-            key: timeKey,
-            source: timeKey,
-            format: timeKey
-        });
+        let metadataValue = this.metadata.value(timeKey) || { format: timeKey };
+        let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
-        this.parseTime = formatter.parse;
-
-        // TODO: Reset right?
+        this.parseTime = (datum) => {
+            return valueFormatter.parse(datum);
+        };
     }
 
     on(event, callback, context) {
@@ -254,8 +262,8 @@ export class TelemetryCollection {
         }
 
         this.listeners[event].push({
-            callback: callback,
-            context: context
+            callback,
+            context
         });
     }
 
@@ -288,25 +296,25 @@ export class TelemetryCollection {
         });
     }
 
-    subscribeToBounds() {
+    watchBounds() {
         this.openmct.time.on('bounds', this.bounds);
     }
 
-    unsubscribeFromBounds() {
+    unwatchBounds() {
         this.openmct.time.off('bounds', this.bounds);
     }
 
-    subscribeToTimeSystem() {
+    watchTimeSystem() {
         this.openmct.time.on('timeSystem', this.timeSystem);
     }
 
-    unsubscribeFromTimeSystem() {
-        this.openmct.time.off('bounds', this.timeSystem);
+    unwatchTimeSystem() {
+        this.openmct.time.off('timeSystem', this.timeSystem);
     }
 
     destroy() {
-        this.unsubscribeFromBounds();
-        this.unsubscribeFromTimeSystem();
+        this.unwatchBounds();
+        this.unwatchTimeSystem();
         if (this.unsubscribe) {
             this.unsubscribe();
         }

@@ -355,14 +355,15 @@ export default {
                 this.requestHistory();
             }
         },
-        async requestTelemetry() {
-            this.telemetryCollection = await this.openmct.telemetry.requestTelemetryCollection(this.domainObject);
+        requestTelemetry() {
+            this.telemetryCollection = this.openmct.telemetry.requestTelemetryCollection(this.domainObject);
             this.telemetryCollection.on('add', (data) => {
                 console.log('added data', data);
             });
             this.telemetryCollection.on('remove', (data) => {
                 console.log('removed data', data);
             });
+            this.telemetryCollection.load();
         },
         async requestHistory() {
             let bounds = this.openmct.time.bounds();
