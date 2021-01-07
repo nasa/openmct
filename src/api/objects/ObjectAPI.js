@@ -196,7 +196,12 @@ define([
             }
         }
 
-        yield this.fallbackProvider.superSecretFallbackSearch(query, options);
+        yield this.fallbackProvider.superSecretFallbackSearch(query, options)
+            .then(results => {
+                return results.hits.map(hit =>
+                    utils.toNewFormat(hit.object.getModel(), hit.object.getId())
+                );
+            });
     };
 
     ObjectAPI.prototype.delete = function () {

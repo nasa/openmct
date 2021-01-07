@@ -712,19 +712,8 @@ export default {
             });
         },
         async aggregateSearchResults(results) {
-            const normalizedResults = results.hits ? results.hits : results;
-
-            for (const result of normalizedResults) {
-                const isNewFormat = result.identifier !== undefined && result.object === undefined;
-                let object = isNewFormat
-                    ? result
-                    : result.object;
-
-                if (!isNewFormat) {
-                    object = objectUtils.toNewFormat(object.getModel(), object.getId());
-                }
-
-                const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
+            for (const result of results) {
+                const objectPath = await this.openmct.objects.getOriginalPath(result.identifier);
 
                 // removing the item itself, as the path we pass to buildTreeItem is a parent path
                 objectPath.shift();
@@ -737,7 +726,7 @@ export default {
 
                 // we reverse the objectPath in the tree, so have to do it here first,
                 // since this one is already in the correct direction
-                let resultObject = this.buildTreeItem(object, objectPath.reverse());
+                let resultObject = this.buildTreeItem(result, objectPath.reverse());
 
                 this.searchResultItems.push(resultObject);
             }
