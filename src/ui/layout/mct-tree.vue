@@ -493,7 +493,7 @@ export default {
             if (!this.isLatestNavigationRequest(requestId)) {
                 return false;
             }
-            console.log('ancestors passed in', ancestors);
+
             // show or don't show root
             if (!this.multipleRootChildren && ancestors[0].id === 'ROOT') {
                 ancestors.shift();
