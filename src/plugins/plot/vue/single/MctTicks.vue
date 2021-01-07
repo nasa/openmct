@@ -12,6 +12,18 @@
             {{ tick.text }}
         </div>
     </div>
+    <div v-if="position === 'top'">
+        <div v-for="tick in ticks"
+             :key="tick.value"
+             class="gl-plot-tick gl-plot-y-tick-label"
+             :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
+             :title="tick.fullText || tick.text"
+             style="margin-top: -0.50em; direction: ltr;"
+        >
+            <span>{{ tick.text }}</span>
+        </div>
+    </div>
+    <!-- grid lines follow -->
     <div v-if="position === 'right'">
         <div v-for="tick in ticks"
              :key="tick.value"
@@ -29,17 +41,6 @@
              class="gl-plot-hash hash-h"
              :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
         >
-        </div>
-    </div>
-    <div v-if="position === 'top'">
-        <div v-for="tick in ticks"
-             :key="tick.value"
-             class="gl-plot-tick gl-plot-y-tick-label"
-             :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
-             :title="tick.fullText || tick.text"
-             style="margin-top: -0.50em; direction: ltr;"
-        >
-            <span>{{ tick.text }}</span>
         </div>
     </div>
 </div>
