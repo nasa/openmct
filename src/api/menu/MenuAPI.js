@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Menu from './menu.js';
+import Menu, { MENU_PLACEMENT } from './menu.js';
 
 /**
  * The MenuAPI allows the addition of new context menu actions, and for the context menu to be launched from
@@ -33,12 +33,32 @@ class MenuAPI {
     constructor(openmct) {
         this.openmct = openmct;
 
+        this.menuPlacement = MENU_PLACEMENT;
         this.showMenu = this.showMenu.bind(this);
+        this.showSuperMenu = this.showSuperMenu.bind(this);
+
         this._clearMenuComponent = this._clearMenuComponent.bind(this);
         this._showObjectMenu = this._showObjectMenu.bind(this);
     }
 
-    showMenu(x, y, actions, onDestroy, menuOptions = {}) {
+    showMenu(x, y, actions, menuOptions, onDestroy) {
+        this._createMenuComponent(x, y, actions, menuOptions, onDestroy);
+
+        this.menuComponent.showMenu();
+    }
+
+    showSuperMenu(x, y, actions, menuOptions) {
+        this._createMenuComponent(x, y, actions, menuOptions);
+
+        this.menuComponent.showSuperMenu();
+    }
+
+    _clearMenuComponent() {
+        this.menuComponent = undefined;
+        delete this.menuComponent;
+    }
+
+    _createMenuComponent(x, y, actions, menuOptions = {}) {
         if (this.menuComponent) {
             this.menuComponent.dismiss();
         }
@@ -47,17 +67,11 @@ class MenuAPI {
             x,
             y,
             actions,
-            onDestroy,
             ...menuOptions
         };
 
         this.menuComponent = new Menu(options);
         this.menuComponent.once('destroy', this._clearMenuComponent);
-    }
-
-    _clearMenuComponent() {
-        this.menuComponent = undefined;
-        delete this.menuComponent;
     }
 
     _showObjectMenu(objectPath, x, y, actionsToBeIncluded) {

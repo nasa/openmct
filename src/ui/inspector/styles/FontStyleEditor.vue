@@ -1,6 +1,8 @@
 <template>
 <div class="c-toolbar">
-    <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+    <div ref="fontSizeMenu"
+         class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left"
+    >
         <button
             class="c-icon-button c-button--menu icon-font-size"
             @click.prevent.stop="showFontSizeMenu"
@@ -8,7 +10,9 @@
             <span class="c-button__label">{{ fontStyle.fontSize }}</span>
         </button>
     </div>
-    <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+    <div ref="fontMenu"
+         class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left"
+    >
         <button
             class="c-icon-button c-button--menu icon-font"
             @click.prevent.stop="showFontMenu"
@@ -63,10 +67,18 @@ export default {
             this.$emit('set-font-property', { fontSize });
         },
         showFontMenu() {
-            this.openmct.menus.showMenu(event.x, event.y, this.fontMenu);
+            const elementBoundingClientRect = this.$refs.fontMenu.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.bottom;
+
+            this.openmct.menus.showMenu(x, y, this.fontMenu);
         },
         showFontSizeMenu() {
-            this.openmct.menus.showMenu(event.x, event.y, this.fontSizeMenu);
+            const elementBoundingClientRect = this.$refs.fontSizeMenu.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.bottom;
+
+            this.openmct.menus.showMenu(x, y, this.fontSizeMenu);
         }
     }
 };

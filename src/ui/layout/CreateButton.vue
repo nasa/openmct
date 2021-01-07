@@ -65,7 +65,7 @@ export default {
                 menuClass: 'c-create-menu'
             };
 
-            this.openmct.menus.showMenu(x, y, this.sortedItems, menuOptions);
+            this.openmct.menus.showSuperMenu(x, y, this.sortedItems, menuOptions);
         },
         create(key) {
             // Hack for support.  TODO: rewrite create action.
