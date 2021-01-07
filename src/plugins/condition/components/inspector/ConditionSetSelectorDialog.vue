@@ -157,18 +157,7 @@ export default {
             });
         },
         async aggregateFilteredChildren(results) {
-            const normalizedResults = results.hits ? results.hits : results;
-
-            const filteredTreeItemsBatch = await normalizedResults.map(async child => {
-                const isNewFormat = child.identifier !== undefined && child.object === undefined;
-                let object = isNewFormat
-                    ? child
-                    : child.object;
-
-                if (!isNewFormat) {
-                    object = objectUtils.toNewFormat(object.getModel(), object.getId());
-                }
-
+            const filteredTreeItemsBatch = await results.map(async object => {
                 const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
                 objectPath.shift();
                 objectPath.reverse();
