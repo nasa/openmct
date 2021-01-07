@@ -404,7 +404,12 @@ export default {
 
             this.childrenSlideClass = 'up';
 
-            this.tempAncestors = [...this.ancestors];
+            // check for edge case of initial load nav request before first load finished
+            // only shows on handle reset
+            if (this.ancestors.length !== 0) {
+                this.tempAncestors = [...this.ancestors];
+            }
+
             this.tempAncestors.splice(this.tempAncestors.indexOf(node) + 1);
 
             let objectPath = this.ancestorsAsObjects();
@@ -488,7 +493,7 @@ export default {
             if (!this.isLatestNavigationRequest(requestId)) {
                 return false;
             }
-
+            console.log('ancestors passed in', ancestors);
             // show or don't show root
             if (!this.multipleRootChildren && ancestors[0].id === 'ROOT') {
                 ancestors.shift();
