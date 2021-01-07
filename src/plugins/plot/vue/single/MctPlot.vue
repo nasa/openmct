@@ -22,7 +22,7 @@
 <template>
 <div v-if="loaded"
      class="gl-plot"
-     :class="[{'plot-legend-expanded': config.legend.get('expanded'), 'plot-legend-collapsed': !config.legend.get('expanded')}, plotLegendPositionClass]"
+     :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend :cursor-locked="!!lockHighlightPoint"
                  :series="config.series.models"
@@ -177,6 +177,13 @@ export default {
     computed: {
         plotLegendPositionClass() {
             return `plot-legend-${this.config.legend.get('position')}`;
+        },
+        plotLegendExpandedStateClass() {
+            if (this.config.legend.get('expanded')) {
+                return 'plot-legend-expanded';
+            } else {
+                return 'plot-legend-collapsed';
+            }
         }
     },
     watch: {
