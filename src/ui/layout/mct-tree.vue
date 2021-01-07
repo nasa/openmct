@@ -696,13 +696,9 @@ export default {
         },
         getSearchResults() {
             this.searchResultItems = [];
-
             const promises = [];
-            const options = {
-                q: this.searchValue
-            };
 
-            const searchGenerator = this.openmct.objects.search(options);
+            const searchGenerator = this.openmct.objects.search(this.searchValue);
 
             for (let searchResultsPromise of searchGenerator) {
                 promises.push(searchResultsPromise);
@@ -719,11 +715,12 @@ export default {
             const normalizedResults = results.hits ? results.hits : results;
 
             for (const result of normalizedResults) {
-                let object = result.object;
+                const isNewFormat = result.identifier !== undefined && result.object === undefined;
+                let object = isNewFormat
+                    ? result
+                    : result.object;
 
-                if (object === undefined) {
-                    object = await this.openmct.objects.get(result.identifier);
-                } else {
+                if (!isNewFormat) {
                     object = objectUtils.toNewFormat(object.getModel(), object.getId());
                 }
 

@@ -189,14 +189,14 @@ define([
         });
     };
 
-    ObjectAPI.prototype.search = function* (options) {
+    ObjectAPI.prototype.search = function* (query, options) {
         for (const provider of Object.values(this.providers)) {
             if (provider.search !== undefined) {
-                yield provider.search(options);
+                yield provider.search(query, options);
             }
         }
 
-        yield this.fallbackProvider.superSecretFallbackSearch(options);
+        yield this.fallbackProvider.superSecretFallbackSearch(query, options);
     };
 
     ObjectAPI.prototype.delete = function () {

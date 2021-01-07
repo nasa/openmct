@@ -138,11 +138,10 @@ define([
             });
     };
 
-    ObjectServiceProvider.prototype.superSecretFallbackSearch = function (options) {
-        const q = options.q || '';
+    ObjectServiceProvider.prototype.superSecretFallbackSearch = function (query, options) {
         const searchService = this.$injector.get('searchService');
 
-        return searchService.query(q);
+        return searchService.query(query);
     };
 
     // Injects new object API as a decorator so that it hijacks all requests.
