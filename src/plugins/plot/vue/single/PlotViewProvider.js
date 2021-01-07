@@ -31,7 +31,15 @@ export default function PlotViewProvider(openmct) {
 
         let metadata = openmct.telemetry.getMetadata(domainObject);
 
-        return metadata.values().length > 0;
+        console.log();
+        console.log();
+
+        return metadata.values().length > 0 && hasDomainAndRange(metadata);
+    }
+
+    function hasDomainAndRange(metadata) {
+        return (metadata.valuesForHints(['range']).length > 0
+            && metadata.valuesForHints(['domain']).length > 0);
     }
 
     return {
