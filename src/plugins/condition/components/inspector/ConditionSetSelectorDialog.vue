@@ -83,7 +83,6 @@
 import debounce from 'lodash/debounce';
 import search from '@/ui/components/search.vue';
 import ConditionSetDialogTreeItem from './ConditionSetDialogTreeItem.vue';
-import objectUtils from 'objectUtils';
 
 export default {
     inject: ['openmct'],
@@ -160,6 +159,12 @@ export default {
             const filteredTreeItemsBatch = await results.map(async object => {
                 const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
                 objectPath.shift();
+
+                let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
+                if (lastObject && lastObject.type === 'root') {
+                    objectPath.pop();
+                }
+
                 objectPath.reverse();
 
                 const navigateToParent = '/browse/'

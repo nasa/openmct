@@ -132,7 +132,6 @@
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
-import objectUtils from 'objectUtils';
 import uuid from 'uuid';
 
 const LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD = 'mct-tree-expanded';
