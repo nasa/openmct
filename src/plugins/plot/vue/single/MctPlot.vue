@@ -385,7 +385,6 @@ export default {
         /**
        * Handle end of user viewport change: load more data for current display
        * bounds, and mark view as synchronized if bounds match configured bounds.
-       * @private
        */
         onUserViewportChangeEnd() {
             const xDisplayRange = this.config.xAxis.get('displayRange');
@@ -403,7 +402,6 @@ export default {
        * Getter/setter for "synchronized" value.  If not synchronized and
        * time conductor is in clock mode, will mark objects as unsynced so that
        * displays can update accordingly.
-       * @private
        */
         synchronized(value) {
             if (typeof value !== 'undefined') {

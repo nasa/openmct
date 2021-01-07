@@ -109,7 +109,6 @@ export default {
        * c) if range exceeds size of tick range by more than one tick step,
        * d) if forced to regenerate (ex. changing x-axis metadata).
        *
-       * @private
        */
         shouldRegenerateTicks(range, forceRegeneration) {
             if (forceRegeneration) {
