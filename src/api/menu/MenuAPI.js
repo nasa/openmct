@@ -23,6 +23,24 @@
 import Menu, { MENU_PLACEMENT } from './menu.js';
 
 /**
+ * Popup Menu options
+ * @typedef {Object} MenuOptions
+ * @property {String} menuClass Class for popup menu
+ * @property {MENU_PLACEMENT} placement Placement for menu relative to click
+ * @property {Function} onDestroy callback function: invoked when menu is destroyed
+ */
+
+/**
+ * Popup Menu Item/action
+ * @typedef {Object} Action
+ * @property {String} cssClass Class for menu item
+ * @property {Boolean} isDisabled adds disable class if true
+ * @property {String} name Menu item text
+ * @property {String} description Menu item description
+ * @property {Function} callBack callback function: invoked when item is clicked
+ */
+
+/**
  * The MenuAPI allows the addition of new context menu actions, and for the context menu to be launched from
  * custom HTML elements.
  * @interface MenuAPI
@@ -41,12 +59,26 @@ class MenuAPI {
         this._showObjectMenu = this._showObjectMenu.bind(this);
     }
 
+    /**
+     * Show popup menu
+     * @param {number} x x-coordinates for popup
+     * @param {number} y x-coordinates for popup
+     * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions{@link Action} or collection of groups of actions {@link Action}
+     * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
+     */
     showMenu(x, y, actions, menuOptions) {
         this._createMenuComponent(x, y, actions, menuOptions);
 
         this.menuComponent.showMenu();
     }
 
+    /**
+     * Show popup menu with description of item on hover
+     * @param {number} x x-coordinates for popup
+     * @param {number} y x-coordinates for popup
+     * @param {Array.<Action>|Array.<Array.<Action>>} actions collection of actions {@link Action} or collection of groups of actions {@link Action}
+     * @param {MenuOptions} [menuOptions] [Optional] The {@link MenuOptions} options for Menu
+     */
     showSuperMenu(x, y, actions, menuOptions) {
         this._createMenuComponent(x, y, actions, menuOptions);
 
