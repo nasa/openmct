@@ -180,15 +180,14 @@ define([
      * @param id a model id
      * @param model a model
      */
-    GenericSearchProvider.prototype.index = function (id, model, type) {
+    GenericSearchProvider.prototype.index = function (id, model) {
         var provider = this;
 
         if (id !== 'ROOT') {
             this.worker.postMessage({
                 request: 'index',
-                model: model,
                 id: id,
-                type: type
+                model: model
             });
         }
 
@@ -226,7 +225,7 @@ define([
             .then(function (objects) {
                 delete provider.pendingIndex[idToIndex];
                 if (objects[idToIndex]) {
-                    provider.index(idToIndex, objects[idToIndex].model, objects[idToIndex].model.type);
+                    provider.index(idToIndex, objects[idToIndex].model);
                 }
             }, function () {
                 provider
