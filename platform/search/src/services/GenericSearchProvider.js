@@ -133,8 +133,7 @@ define([
                 let mutatedObjectModel = mutatedObject.getModel();
                 this.index(
                     mutatedObject.getId(),
-                    mutatedObjectModel,
-                    mutatedObjectModel.type
+                    mutatedObjectModel
 
                 );
             }
