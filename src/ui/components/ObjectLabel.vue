@@ -42,6 +42,10 @@ export default {
         navigateToPath: {
             type: String,
             default: undefined
+        },
+        propagate: {
+            type: Boolean,
+            default: true
         }
     },
     data() {
@@ -80,6 +84,10 @@ export default {
     },
     methods: {
         navigateOrPreview(event) {
+            if (!this.propagate) {
+                event.stopPropagation();
+            }
+
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 this.preview();
