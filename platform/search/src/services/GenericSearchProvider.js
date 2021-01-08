@@ -134,7 +134,6 @@ define([
                 this.index(
                     mutatedObject.getId(),
                     mutatedObjectModel
-
                 );
             }
         });
