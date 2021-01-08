@@ -65,7 +65,7 @@
                 v-for="(ancestor, index) in focusedAncestors"
                 :key="ancestor.id"
                 :node="ancestor"
-                :show-up="index < focusedAncestors.length - 1"
+                :show-up="index < focusedAncestors.length - 1 && initialLoad"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
                 @resetTree="beginNavigationRequest('handleReset', ancestor)"
@@ -156,6 +156,7 @@ export default {
     data() {
         return {
             root: undefined,
+            initialLoad: false,
             isLoading: false,
             mainTreeHeight: undefined,
             searchLoading: false,
@@ -388,11 +389,7 @@ export default {
 
             for (let i = 0; i < path.length; i++) {
                 let builtAncestor = this.buildTreeItem(path[i], path.slice(0, i));
-
-                // prevents the root from showing up temporarily during navigation requests if it shouldn't
-                if (builtAncestor.id !== 'ROOT' || builtAncestor.id === 'ROOT' && this.multipleRootChildren) {
-                    this.tempAncestors.push(builtAncestor);
-                }
+                this.tempAncestors.push(builtAncestor);
             }
 
             // load children for last ancestor
@@ -406,21 +403,12 @@ export default {
                 return false;
             }
 
-            let useTemporaryAncestors = false;
-
             this.childrenSlideClass = 'up';
 
-            // check for edge case of initial load nav request before first load finished
-            // only shows on handle reset
-            if (this.ancestors.length !== 0) {
-                this.tempAncestors = [...this.ancestors];
-            } else {
-                useTemporaryAncestors = true;
-            }
-
+            this.tempAncestors = [...this.ancestors];
             this.tempAncestors.splice(this.tempAncestors.indexOf(node) + 1);
 
-            let objectPath = this.ancestorsAsObjects(useTemporaryAncestors);
+            let objectPath = this.ancestorsAsObjects();
             objectPath.splice(objectPath.indexOf(node.object) + 1);
 
             let childrenItems = await this.getChildrenAsTreeItems(node, objectPath, requestId);
@@ -446,8 +434,8 @@ export default {
             return this.updateTree(this.tempAncestors, childrenItems, requestId);
 
         },
-        ancestorsAsObjects(useTemporary = false) {
-            let ancestorsCopy = useTemporary ? [...this.tempAncestors] : [...this.ancestors];
+        ancestorsAsObjects() {
+            let ancestorsCopy = [...this.ancestors];
 
             if (this.multipleRootChildren && ancestorsCopy[0].id === 'ROOT') {
                 // no root for object paths
@@ -511,6 +499,11 @@ export default {
 
             this.ancestors = ancestors;
             this.childItems = children;
+
+            // track when FIRST full load of tree happens
+            if (!this.initialLoad) {
+                this.initialLoad = true;
+            }
 
             // any new items added or removed handled here
             this.composition.on('add', this.addChild);
