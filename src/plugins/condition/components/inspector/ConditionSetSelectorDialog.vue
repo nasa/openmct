@@ -115,8 +115,6 @@ export default {
         this.getDebouncedFilteredChildren = debounce(this.getFilteredChildren, 400);
     },
     mounted() {
-        // required to index tree objects that do not have search providers
-        // this.openmct.$injector.get('searchService');
         this.getAllChildren();
     },
     methods: {
@@ -153,15 +151,10 @@ export default {
             });
         },
         async aggregateFilteredChildren(results) {
-            const filteredTreeItemsBatch = await results.map(async object => {
+            for (const object of results) {
                 const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
+
                 objectPath.shift();
-
-                let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
-                if (lastObject && lastObject.type === 'root') {
-                    objectPath.pop();
-                }
-
                 objectPath.reverse();
 
                 const navigateToParent = '/browse/'
@@ -169,15 +162,15 @@ export default {
                         .map(parent => this.openmct.objects.makeKeyString(parent.identifier))
                         .join('/');
 
-                return {
+                const filteredChild = {
                     id: this.openmct.objects.makeKeyString(object.identifier),
                     object,
                     objectPath,
                     navigateToParent
                 };
-            });
 
-            this.filteredTreeItems = this.filteredTreeItems.concat(filteredTreeItemsBatch);
+                this.filteredTreeItems.push(filteredChild);
+            }
         },
         searchTree(value) {
             this.searchValue = value;
