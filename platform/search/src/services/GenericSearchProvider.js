@@ -130,10 +130,9 @@ define([
         mutationTopic.listen(mutatedObject => {
             let editor = mutatedObject.getCapability('editor');
             if (!editor || !editor.inEditContext()) {
-                let mutatedObjectModel = mutatedObject.getModel();
                 this.index(
                     mutatedObject.getId(),
-                    mutatedObjectModel
+                    mutatedObject.getModel()
                 );
             }
         });
@@ -184,8 +183,8 @@ define([
         if (id !== 'ROOT') {
             this.worker.postMessage({
                 request: 'index',
-                id: id,
-                model: model
+                model: model,
+                id: id
             });
         }
 
