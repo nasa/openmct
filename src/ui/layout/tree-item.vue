@@ -6,8 +6,6 @@
         'position': virtualScroll ? 'absolute' : 'relative'
     }"
     class="c-tree__item-h"
-    @click="handleClick"
-    @contextmenu="handleContextMenu"
 >
     <div
         class="c-tree__item"
@@ -22,11 +20,9 @@
             class="c-tree__item__view-control"
             :control-class="'c-nav__up'"
             :enabled="showUp"
-            :propagate="false"
             @input="resetTreeHere"
         />
         <object-label
-            ref="objectLabel"
             :domain-object="node.object"
             :object-path="node.objectPath"
             :navigate-to-path="navigationPath"
@@ -38,7 +34,6 @@
             class="c-tree__item__view-control"
             :control-class="'c-nav__down'"
             :enabled="hasComposition && showDown"
-            :propagate="false"
         />
     </div>
 </div>
@@ -142,13 +137,6 @@ export default {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
     },
     methods: {
-        handleClick(event) {
-            this.$refs.objectLabel.$el.click();
-        },
-        handleContextMenu(event) {
-            this.$refs.objectLabel.showContextMenu(event);
-            event.stopPropagation();
-        },
         isNavigated() {
             return this.navigationPath === this.openmct.router.currentLocation.path;
         },
