@@ -59,7 +59,7 @@
 
     .icon-arrow-nav-to-parent {
         visibility: hidden;
-    
+
         &.is-enabled {
             visibility: visible;
         }
@@ -104,9 +104,13 @@
             }
         }
 
+        &.is-context-clicked {
+            box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
+        }
+
         .icon-arrow-nav-to-parent {
             visibility: hidden;
-        
+
             &.is-enabled {
                 visibility: visible;
             }
