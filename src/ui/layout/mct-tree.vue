@@ -389,6 +389,7 @@ export default {
             for (let i = 0; i < path.length; i++) {
                 let builtAncestor = this.buildTreeItem(path[i], path.slice(0, i));
 
+                // prevents the root from showing up temporarily during navigation requests if it shouldn't
                 if (builtAncestor.id !== 'ROOT' || builtAncestor.id === 'ROOT' && this.multipleRootChildren) {
                     this.tempAncestors.push(builtAncestor);
                 }
