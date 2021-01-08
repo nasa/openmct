@@ -152,10 +152,8 @@ export default {
         },
         async aggregateFilteredChildren(results) {
             for (const object of results) {
-                const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
-
-                objectPath.shift();
-                objectPath.reverse();
+                const originalPath = await this.openmct.objects.getOriginalPath(object.identifier);
+                const objectPath = originalPath.slice(1).reverse();
 
                 const navigateToParent = '/browse/'
                     + objectPath.slice(1)
