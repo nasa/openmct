@@ -41,8 +41,8 @@ class MenuAPI {
         this._showObjectMenu = this._showObjectMenu.bind(this);
     }
 
-    showMenu(x, y, actions, menuOptions, onDestroy) {
-        this._createMenuComponent(x, y, actions, menuOptions, onDestroy);
+    showMenu(x, y, actions, menuOptions) {
+        this._createMenuComponent(x, y, actions, menuOptions);
 
         this.menuComponent.showMenu();
     }

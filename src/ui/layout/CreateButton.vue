@@ -61,7 +61,6 @@ export default {
             const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
             const menuOptions = {
-                isShowDescription: true,
                 menuClass: 'c-create-menu'
             };
 
