@@ -31,7 +31,6 @@
             :object-path="node.objectPath"
             :navigate-to-path="navigationPath"
             :style="{ paddingLeft: leftOffset }"
-            :propagate="false"
             @context-click-active="setContextClickActive"
         />
         <view-control
@@ -148,6 +147,7 @@ export default {
         },
         handleContextMenu(event) {
             this.$refs.objectLabel.showContextMenu(event);
+            event.stopPropagation();
         },
         isNavigated() {
             return this.navigationPath === this.openmct.router.currentLocation.path;
