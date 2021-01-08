@@ -389,7 +389,7 @@ export default {
             for (let i = 0; i < path.length; i++) {
                 let builtAncestor = this.buildTreeItem(path[i], path.slice(0, i));
 
-                if (this.multipleRootChildren || !this.multipleRootChildren && builtAncestor.id !== 'ROOT') {
+                if (builtAncestor.id !== 'ROOT' || builtAncestor.id === 'ROOT' && this.multipleRootChildren) {
                     this.tempAncestors.push(builtAncestor);
                 }
             }
@@ -413,6 +413,7 @@ export default {
             // only shows on handle reset
             if (this.ancestors.length !== 0) {
                 this.tempAncestors = [...this.ancestors];
+            } else {
                 useTemporaryAncestors = true;
             }
 
