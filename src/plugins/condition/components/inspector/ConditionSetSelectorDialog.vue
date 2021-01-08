@@ -145,10 +145,7 @@ export default {
             const searchGenerator = this.openmct.objects.search(this.searchValue);
 
             for (let searchResultsPromise of searchGenerator) {
-                promises.push(searchResultsPromise);
-                searchResultsPromise.then(searchResults => {
-                    this.aggregateFilteredChildren(searchResults);
-                });
+                promises.push(searchResultsPromise).then(searchResults => this.aggregateFilteredChildren(searchResults));
             }
 
             Promise.all(promises).then(() => {
