@@ -388,7 +388,10 @@ export default {
 
             for (let i = 0; i < path.length; i++) {
                 let builtAncestor = this.buildTreeItem(path[i], path.slice(0, i));
-                this.tempAncestors.push(builtAncestor);
+
+                if (this.multipleRootChildren || !this.multipleRootChildren && builtAncestor.id !== 'ROOT') {
+                    this.tempAncestors.push(builtAncestor);
+                }
             }
 
             // load children for last ancestor
@@ -402,17 +405,20 @@ export default {
                 return false;
             }
 
+            let useTemporaryAncestors = false;
+
             this.childrenSlideClass = 'up';
 
             // check for edge case of initial load nav request before first load finished
             // only shows on handle reset
             if (this.ancestors.length !== 0) {
                 this.tempAncestors = [...this.ancestors];
+                useTemporaryAncestors = true;
             }
 
             this.tempAncestors.splice(this.tempAncestors.indexOf(node) + 1);
 
-            let objectPath = this.ancestorsAsObjects();
+            let objectPath = this.ancestorsAsObjects(useTemporaryAncestors);
             objectPath.splice(objectPath.indexOf(node.object) + 1);
 
             let childrenItems = await this.getChildrenAsTreeItems(node, objectPath, requestId);
@@ -438,8 +444,8 @@ export default {
             return this.updateTree(this.tempAncestors, childrenItems, requestId);
 
         },
-        ancestorsAsObjects() {
-            let ancestorsCopy = [...this.ancestors];
+        ancestorsAsObjects(useTemporary = false) {
+            let ancestorsCopy = useTemporary ? [...this.tempAncestors] : [...this.ancestors];
 
             if (this.multipleRootChildren && ancestorsCopy[0].id === 'ROOT') {
                 // no root for object paths
