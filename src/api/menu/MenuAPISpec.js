@@ -76,7 +76,11 @@ describe ('The Menu API', () => {
             beforeEach(() => {
                 onDestroy = jasmine.createSpy('onDestroy');
 
-                menuAPI.showMenu(x, y, actionsArray, onDestroy);
+                const menuOptions = {
+                    onDestroy
+                };
+
+                menuAPI.showMenu(x, y, actionsArray, menuOptions);
                 vueComponent = menuAPI.menuComponent.component;
                 menuComponent = document.querySelector(".c-menu");
 
