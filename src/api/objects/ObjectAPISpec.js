@@ -1,6 +1,6 @@
 import ObjectAPI from './ObjectAPI.js';
 
-describe("The Object API", () => {
+fdescribe("The Object API", () => {
     let objectAPI;
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
@@ -126,6 +126,47 @@ describe("The Object API", () => {
                     expect(object.shouldNotBeChanged).toBeUndefined();
                 });
             });
+        });
+    });
+
+    describe("the search function", () => {
+        it("uses each objects given provider's search function", () => {
+            const myMockProvider = jasmine.createSpyObj("mock provider", [
+                "search"
+            ]);
+            const myOtherMockProvider = jasmine.createSpyObj("another mock provider", [
+                "search"
+            ]);
+            const fallbackProvider = jasmine.createSpyObj("super secret fallback provider", [
+                "superSecretFallbackSearch"
+            ]);
+
+            myMockProvider.search.and.callFake(() => Promise.resolve(true));
+            myOtherMockProvider.search.and.callFake(() => Promise.resolve(true));
+            fallbackProvider.superSecretFallbackSearch.and.callFake(() => Promise.resolve(true));
+
+            objectAPI.addProvider('objects', myMockProvider);
+            objectAPI.addProvider('other-objects', myOtherMockProvider);
+            objectAPI.supersecretSetFallbackProvider(fallbackProvider);
+
+            const resultsGenerator = objectAPI.search('foo');
+            let nextResults = resultsGenerator.next();
+
+            while (!nextResults.done) {
+                nextResults = resultsGenerator.next();
+            }
+
+            expect(myMockProvider.search).toHaveBeenCalled();
+            expect(myOtherMockProvider.search).toHaveBeenCalled();
+            expect(fallbackProvider.superSecretFallbackSearch).toHaveBeenCalled();
+        });
+
+        it("uses the fallback indexed search for objects without a search function provided", () => {
+
+        });
+
+        it("provides a results generator so that consumers can process results from each provider immediately when available", () => {
+
         });
     });
 });
