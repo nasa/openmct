@@ -189,6 +189,22 @@ define([
         });
     };
 
+    /**
+     * Search for domain objects.
+     *
+     * Searches and combines results of each object provider search.
+     * Objects without search provided will have been indexed
+     * and will be searched using the fallback indexed search.
+     * Search results are asynchronous and resolve in parallel.
+     *
+     * @method search
+     * @memberof module:openmct.ObjectAPI#
+     * @param {string} query the term to search for
+     * @param {Object} options search options
+     * @returns {Generator.<Promise.<Array.<module:openmct.DomainObject>>>}
+     *          a generator (conforms to iterable/iterator protocols)
+     *          which yields promises resolving to arrays of domain objects.
+     */
     ObjectAPI.prototype.search = function* (query, options) {
         for (const provider of Object.values(this.providers)) {
             if (provider.search !== undefined) {
