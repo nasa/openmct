@@ -130,39 +130,62 @@ fdescribe("The Object API", () => {
     });
 
     describe("the search function", () => {
-        it("uses each objects given provider's search function", () => {
-            const myMockProvider = jasmine.createSpyObj("mock provider", [
+        let mockObjectProvider;
+        let anotherMockObjectProvider;
+        let mockFallbackProvider;
+        let resultsGenerator;
+        let fallbackProviderSearchResults;
+        let promises;
+
+        beforeEach(() => {
+            jasmine.clock().install();
+
+            fallbackProviderSearchResults = {
+                hits: []
+            };
+            promises = [];
+
+            mockObjectProvider = jasmine.createSpyObj("mock object provider", [
                 "search"
             ]);
-            const myOtherMockProvider = jasmine.createSpyObj("another mock provider", [
+            anotherMockObjectProvider = jasmine.createSpyObj("another mock object provider", [
                 "search"
             ]);
-            const fallbackProvider = jasmine.createSpyObj("super secret fallback provider", [
+            mockFallbackProvider = jasmine.createSpyObj("super secret fallback provider", [
                 "superSecretFallbackSearch"
             ]);
+            objectAPI.addProvider('objects', mockObjectProvider);
+            objectAPI.addProvider('other-objects', anotherMockObjectProvider);
+            objectAPI.supersecretSetFallbackProvider(mockFallbackProvider);
 
-            myMockProvider.search.and.callFake(() => Promise.resolve(true));
-            myOtherMockProvider.search.and.callFake(() => Promise.resolve(true));
-            fallbackProvider.superSecretFallbackSearch.and.callFake(() => Promise.resolve(true));
+            mockObjectProvider.search.and.callFake(() => delayedResolve(1000));
+            anotherMockObjectProvider.search.and.callFake(() => delayedResolve(20000));
+            mockFallbackProvider.superSecretFallbackSearch.and.callFake(() => delayedResolve(50, fallbackProviderSearchResults));
 
-            objectAPI.addProvider('objects', myMockProvider);
-            objectAPI.addProvider('other-objects', myOtherMockProvider);
-            objectAPI.supersecretSetFallbackProvider(fallbackProvider);
+            resultsGenerator = objectAPI.search('foo');
 
-            const resultsGenerator = objectAPI.search('foo');
-            let nextResults = resultsGenerator.next();
+            jasmine.clock().tick(30000);
 
-            while (!nextResults.done) {
-                nextResults = resultsGenerator.next();
+            for (const results of resultsGenerator) {
+                promises.push(results);
             }
 
-            expect(myMockProvider.search).toHaveBeenCalled();
-            expect(myOtherMockProvider.search).toHaveBeenCalled();
-            expect(fallbackProvider.superSecretFallbackSearch).toHaveBeenCalled();
+            function delayedResolve(time, value) {
+                return new Promise(resolve => setTimeout(() => resolve(value), time));
+            }
+        });
+
+        afterEach(() => {
+            jasmine.clock().uninstall();
+        });
+
+        it("uses each objects given provider's search function", () => {
+            expect(mockObjectProvider.search).toHaveBeenCalled();
+            expect(anotherMockObjectProvider.search).toHaveBeenCalled();
         });
 
         it("uses the fallback indexed search for objects without a search function provided", () => {
-
+            expect(mockFallbackProvider.superSecretFallbackSearch).toHaveBeenCalled();
         });
 
         it("provides a results generator so that consumers can process results from each provider immediately when available", () => {
