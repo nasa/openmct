@@ -5,8 +5,6 @@
         'position': virtualScroll ? 'absolute' : 'relative'
     }"
     class="c-tree__item-h"
-    @click.capture="handleClick"
-    @contextmenu.capture="handleContextMenu"
 >
     <div
         class="c-tree__item"
@@ -15,10 +13,12 @@
             'is-navigated-object': navigated,
             'is-context-clicked': contextClickActive
         }"
+        @click.capture="handleClick"
+        @contextmenu.capture="handleContextMenu"
     >
         <view-control
             v-model="expanded"
-            class="c-tree__item__view-control"
+            :class="VIEW_CONTROL_CLASS"
             :control-class="'c-nav__up'"
             :enabled="showUp"
             @input="resetTreeHere"
@@ -33,7 +33,7 @@
         />
         <view-control
             v-model="expanded"
-            class="c-tree__item__view-control"
+            :class="VIEW_CONTROL_CLASS"
             :control-class="'c-nav__down'"
             :enabled="hasComposition && showDown"
         />
@@ -93,6 +93,7 @@ export default {
         this.navigationPath = this.node.navigationPath;
 
         return {
+            VIEW_CONTROL_CLASS: 'c-tree__item__view-control',
             hasComposition: false,
             navigated: this.isNavigated(),
             expanded: false,
@@ -140,8 +141,16 @@ export default {
     },
     methods: {
         handleClick(event) {
+            let classList = [...event.target.classList];
+
+            // ignore for view control, let it handle the click
+            if (classList.includes(this.VIEW_CONTROL_CLASS) && classList.includes('is-enabled')) {
+                return;
+            }
+
             event.stopPropagation();
-            this.$refs.objectLabel.navigateOrPreview(event);
+
+            this.$refs.objectLabel.$el.click();
         },
         handleContextMenu(event) {
             event.stopPropagation();
