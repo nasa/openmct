@@ -1,13 +1,13 @@
 <template>
 <div
-    ref="me"
+    ref="treeItem"
     :style="{
         'top': virtualScroll ? itemTop : 'auto',
         'position': virtualScroll ? 'absolute' : 'relative'
     }"
     class="c-tree__item-h"
     @click="handleClick"
-    @contextmenu="handleContextMenu"
+    @contextmenu.capture="handleContextMenu"
 >
     <div
         class="c-tree__item"
@@ -22,7 +22,6 @@
             class="c-tree__item__view-control"
             :control-class="'c-nav__up'"
             :enabled="showUp"
-            :propagate="false"
             @input="resetTreeHere"
         />
         <object-label
@@ -38,7 +37,6 @@
             class="c-tree__item__view-control"
             :control-class="'c-nav__down'"
             :enabled="hasComposition && showDown"
-            :propagate="false"
         />
     </div>
 </div>
@@ -143,11 +141,13 @@ export default {
     },
     methods: {
         handleClick(event) {
+            console.log('tree click');
+            event.stopPropagation();
             this.$refs.objectLabel.$el.click();
         },
         handleContextMenu(event) {
-            this.$refs.objectLabel.showContextMenu(event);
             event.stopPropagation();
+            this.$refs.objectLabel.showContextMenu(event);
         },
         isNavigated() {
             return this.navigationPath === this.openmct.router.currentLocation.path;
