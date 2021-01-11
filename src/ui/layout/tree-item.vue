@@ -17,6 +17,7 @@
         @contextmenu.capture="handleContextMenu"
     >
         <view-control
+            ref="navUp"
             v-model="expanded"
             :class="VIEW_CONTROL_CLASS"
             :control-class="'c-nav__up'"
@@ -32,6 +33,7 @@
             @context-click-active="setContextClickActive"
         />
         <view-control
+            ref="navDown"
             v-model="expanded"
             :class="VIEW_CONTROL_CLASS"
             :control-class="'c-nav__down'"
@@ -44,8 +46,6 @@
 <script>
 import viewControl from '../components/viewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
-
-const VIEW_CONTROL_CLASS = 'c-tree__item__view-control';
 
 export default {
     name: 'TreeItem',
@@ -95,7 +95,6 @@ export default {
         this.navigationPath = this.node.navigationPath;
 
         return {
-            VIEW_CONTROL_CLASS,
             hasComposition: false,
             navigated: this.isNavigated(),
             expanded: false,
@@ -143,10 +142,8 @@ export default {
     },
     methods: {
         handleClick(event) {
-            let classList = [...event.target.classList];
-
-            // ignore for view control, let it handle the click
-            if (classList.includes(this.VIEW_CONTROL_CLASS) && classList.includes('is-enabled')) {
+            // skip for navigation, let viewControl handle click
+            if ([this.$refs.navUp.$el, this.$refs.navDown.$el].includes(event.target)) {
                 return;
             }
 
