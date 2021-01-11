@@ -80,7 +80,6 @@ export default {
     },
     methods: {
         navigateOrPreview(event) {
-            console.log('label click');
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 this.preview();

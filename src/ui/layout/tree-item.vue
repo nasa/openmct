@@ -6,7 +6,7 @@
         'position': virtualScroll ? 'absolute' : 'relative'
     }"
     class="c-tree__item-h"
-    @click="handleClick"
+    @click.capture="handleClick"
     @contextmenu.capture="handleContextMenu"
 >
     <div
@@ -141,9 +141,8 @@ export default {
     },
     methods: {
         handleClick(event) {
-            console.log('tree click');
             event.stopPropagation();
-            this.$refs.objectLabel.$el.click();
+            this.$refs.objectLabel.navigateOrPreview(event);
         },
         handleContextMenu(event) {
             event.stopPropagation();
