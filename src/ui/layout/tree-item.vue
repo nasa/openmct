@@ -45,6 +45,8 @@
 import viewControl from '../components/viewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
 
+const VIEW_CONTROL_CLASS = 'c-tree__item__view-control';
+
 export default {
     name: 'TreeItem',
     inject: ['openmct'],
@@ -93,7 +95,7 @@ export default {
         this.navigationPath = this.node.navigationPath;
 
         return {
-            VIEW_CONTROL_CLASS: 'c-tree__item__view-control',
+            VIEW_CONTROL_CLASS,
             hasComposition: false,
             navigated: this.isNavigated(),
             expanded: false,
