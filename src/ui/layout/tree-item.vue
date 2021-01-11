@@ -1,6 +1,5 @@
 <template>
 <div
-    ref="treeItem"
     :style="{
         'top': virtualScroll ? itemTop : 'auto',
         'position': virtualScroll ? 'absolute' : 'relative'
