@@ -19,7 +19,7 @@
         <view-control
             ref="navUp"
             v-model="expanded"
-            :class="VIEW_CONTROL_CLASS"
+            class="c-tree__item__view-control"
             :control-class="'c-nav__up'"
             :enabled="showUp"
             @input="resetTreeHere"
@@ -35,7 +35,7 @@
         <view-control
             ref="navDown"
             v-model="expanded"
-            :class="VIEW_CONTROL_CLASS"
+            class="c-tree__item__view-control"
             :control-class="'c-nav__down'"
             :enabled="hasComposition && showDown"
         />
