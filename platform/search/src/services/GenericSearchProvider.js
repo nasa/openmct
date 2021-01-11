@@ -125,13 +125,12 @@ define([
      * @param topic the topicService.
      */
     GenericSearchProvider.prototype.indexOnMutation = function (topic) {
-        var mutationTopic = topic('mutation'),
-            provider = this;
+        let mutationTopic = topic('mutation');
 
-        mutationTopic.listen(function (mutatedObject) {
-            var editor = mutatedObject.getCapability('editor');
+        mutationTopic.listen(mutatedObject => {
+            let editor = mutatedObject.getCapability('editor');
             if (!editor || !editor.inEditContext()) {
-                provider.index(
+                this.index(
                     mutatedObject.getId(),
                     mutatedObject.getModel()
                 );
@@ -267,6 +266,7 @@ define([
                 return {
                     id: hit.item.id,
                     model: hit.item.model,
+                    type: hit.item.type,
                     score: hit.matchCount
                 };
             });

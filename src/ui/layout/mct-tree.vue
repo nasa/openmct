@@ -65,7 +65,7 @@
                 v-for="(ancestor, index) in focusedAncestors"
                 :key="ancestor.id"
                 :node="ancestor"
-                :show-up="index < focusedAncestors.length - 1"
+                :show-up="index < focusedAncestors.length - 1 && initialLoad"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
                 @resetTree="beginNavigationRequest('handleReset', ancestor)"
@@ -155,6 +155,7 @@ export default {
     data() {
         return {
             root: undefined,
+            initialLoad: false,
             isLoading: false,
             mainTreeHeight: undefined,
             searchLoading: false,
@@ -499,6 +500,11 @@ export default {
 
             this.ancestors = ancestors;
             this.childItems = children;
+
+            // track when FIRST full load of tree happens
+            if (!this.initialLoad) {
+                this.initialLoad = true;
+            }
 
             // any new items added or removed handled here
             this.composition.on('add', this.addChild);
