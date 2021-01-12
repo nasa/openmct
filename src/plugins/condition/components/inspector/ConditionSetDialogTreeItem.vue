@@ -31,7 +31,6 @@
             v-model="expanded"
             class="c-tree__item__view-control"
             :enabled="hasChildren"
-            :propagate="false"
         />
         <div class="c-tree__item__label c-object-label">
             <div
