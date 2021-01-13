@@ -291,21 +291,9 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject) {
-        if (arguments.length === 1) {
-            arguments.length = 2;
-            arguments[1] = {};
-        }
-
-        this.standardizeRequestOptions(arguments[1]);
-
-        // historical setup, need access to provider in telemetry collection, so we
-        // can't just call 'request' there since we wouldn't be able to get the provider
-        const historicalProvider = this.findRequestProvider(domainObject, arguments);
-
         return new TelemetryCollection(
             this.openmct,
             domainObject,
-            historicalProvider,
             arguments
         );
     };

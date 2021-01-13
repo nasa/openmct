@@ -22,7 +22,7 @@
 
 import _ from 'lodash';
 
-function bindUs() {
+function methods() {
     return [
         'load',
         'requestHistoricalTelemetry',
@@ -47,12 +47,10 @@ function bindUs() {
 
 export class TelemetryCollection {
 
-    constructor(openmct, domainObject, historicalProvider, options) {
-        bindUs().forEach(method => this[method] = this[method].bind(this));
+    constructor(openmct, domainObject, options) {
+        methods().forEach(method => this[method] = this[method].bind(this));
 
         this.loaded = false;
-        this.loadBuffer = [];
-
         this.openmct = openmct;
         this.domainObject = domainObject;
 
@@ -62,11 +60,8 @@ export class TelemetryCollection {
         this.parseTime = undefined;
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);
 
-        this.timeSystem(openmct.time.timeSystem());
-        this.lastBounds = openmct.time.bounds();
-
         this.unsubscribe = undefined;
-        this.historicalProvider = historicalProvider;
+        this.historicalProvider = undefined;
 
         this.arguments = options;
 
@@ -74,34 +69,40 @@ export class TelemetryCollection {
             add: [],
             remove: []
         };
-
-        this.requestHistoricalTelemetry();
-        this.initiateSubscriptionTelemetry();
-
-        this.watchBounds();
-        this.watchTimeSystem();
     }
 
     load() {
-        this.loaded = true;
-
-        if (this.loadBuffer.length) {
-            this.emit('add', this.loadBuffer);
+        if (this.loaded) {
+            throw new Error('Telemetry Collection has already been loaded.');
         }
 
-        delete this.loadBuffer;
+        this.timeSystem(this.openmct.time.timeSystem());
+        this.lastBounds = this.openmct.time.bounds();
+
+        this.watchBounds();
+        this.watchTimeSystem();
+
+        this.initiateHistoricalRequests();
+        this.initiateSubscriptionTelemetry();
+
+        this.loaded = true;
+    }
+
+    initiateHistoricalRequests() {
+        if (this.arguments.length === 1) {
+            this.arguments.length = 2;
+            this.arguments[1] = {};
+        }
+
+        this.openmct.telemetry.standardizeRequestOptions(this.arguments[1]);
+        this.historicalProvider = this.openmct.telemetry.findRequestProvider(this.domainObject, this.arguments);
+
+        this.requestHistoricalTelemetry();
     }
 
     async requestHistoricalTelemetry() {
         if (!this.historicalProvider) {
             return;
-        }
-
-        // remove for reset
-        // question: do we need to emit it? It's not out of bounds, it's just old
-        if (this.boundedTelemetry.length !== 0) {
-            this.emit('remove', this.boundedTelemetry);
-            this.boundedTelemetry = [];
         }
 
         let historicalData = await this.historicalProvider.request.apply(this.domainObject, this.arguments).catch((rejected) => {
@@ -112,12 +113,7 @@ export class TelemetryCollection {
         });
 
         if (Array.isArray(historicalData)) {
-            // store until loaded, unless loaded
-            if (this.loaded) {
-                this.processNewTelemetry(historicalData);
-            } else {
-                this.loadBuffer = historicalData;
-            }
+            this.processNewTelemetry(historicalData);
         }
     }
 
@@ -161,17 +157,17 @@ export class TelemetryCollection {
         }
     }
 
-    // returns a boolean if there is more telemetry within the time bounds 
+    // returns a boolean if there is more telemetry within the time bounds
     // if the provider supports it
     hasMorePages() {
         return this.historicalProvider
-            && this.historicalProvider.supportsPaging()
+            && this.historicalProvider.supportsPaging && this.historicalProvider.supportsPaging()
             && this.historicalProvider.hasMorePages(this);
     }
 
     // will return the next "page" of telemetry if the provider supports it
     nextPage() {
-        if (!this.historicalProvider || !this.historicalProvider.supportsPaging()) {
+        if (!this.historicalProvider || !this.historicalProvider.supportsPaging()) { // add check for paging method
             throw new Error('Provider does not support paging');
         }
 
@@ -182,7 +178,6 @@ export class TelemetryCollection {
     // when bounds change, data could be added OR removed
     // here we update the current bounded telemetry and emit the results
     bounds(bounds, isTick) {
-
         let startChanged = this.lastBounds.start !== bounds.start;
         let endChanged = this.lastBounds.end !== bounds.end;
 
@@ -201,25 +196,27 @@ export class TelemetryCollection {
             if (startChanged) {
                 testDatum[this.timeKey] = bounds.start;
                 // Calculate the new index of the first item within the bounds
-                startIndex = _.sortedIndex(this.boundedTelemetry, testDatum);
+                startIndex = _.sortedIndexBy(this.boundedTelemetry, testDatum, datum => this.parseTime(datum));
                 discarded = this.boundedTelemetry.splice(0, startIndex);
             }
 
             if (endChanged) {
                 testDatum[this.timeKey] = bounds.end;
                 // Calculate the new index of the last item in bounds
-                endIndex = _.sortedLastIndex(this.futureBuffer, testDatum);
+                endIndex = _.sortedLastIndexBy(this.futureBuffer, testDatum, datum => this.parseTime(datum));
                 added = this.futureBuffer.splice(0, endIndex);
                 this.boundedTelemetry = [...this.boundedTelemetry, ...added];
             }
 
             if (discarded.length > 0) {
+                console.log('discarded has length remove');
                 this.emit('remove', discarded);
             }
 
             if (added.length > 0) {
                 this.emit('add', added);
             }
+
         } else {
             // user bounds change, reset
             this.reset();
@@ -228,28 +225,22 @@ export class TelemetryCollection {
     }
 
     reset() {
-        if (!this.loaded) {
-            return;
-        }
-
-        if (this.boundedTelemetry.length) {
-            this.emit('remove', this.boundedTelemetry);
-
-            this.boundedTelemetry = [];
-            this.futureBuffer = [];
-        }
+        this.boundedTelemetry = [];
+        this.futureBuffer = [];
 
         this.requestHistoricalTelemetry();
     }
 
     timeSystem(timeSystem) {
-        let timeKey = timeSystem.key;
-        let metadataValue = this.metadata.value(timeKey) || { format: timeKey };
+        this.timeKey = timeSystem.key;
+        let metadataValue = this.metadata.value(this.timeKey) || { format: this.timeKey };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (datum) => {
             return valueFormatter.parse(datum);
         };
+
+        this.reset();
     }
 
     on(event, callback, context) {
