@@ -286,7 +286,7 @@ export default {
                 event.preventDefault();
                 this.previewAction.invoke(this.objectPath);
             } else {
-                this.openmct.router.navigateToObject(this.navigateToPath);
+                this.openmct.router.navigate(this.navigateToPath);
             }
         },
         removeConditionSet() {

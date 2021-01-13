@@ -19,11 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    getAllSearchParams,
-    setAllSearchParams,
-    setLocationFromUrl
-} from 'utils/openmctLocation';
 
 const TIME_EVENTS = ['timeSystem', 'clock', 'clockOffsets'];
 const SEARCH_MODE = 'tc.mode';
@@ -75,14 +70,14 @@ export default class URLTimeSettingsSynchronizer {
 
         if (this.areTimeParametersValid(timeParameters)) {
             this.setTimeApiFromUrl(timeParameters);
-            setLocationFromUrl(this.openmct);
+            this.openmct.router.setLocationFromUrl();
         } else {
             this.setUrlFromTimeApi();
         }
     }
 
     parseParametersFromUrl() {
-        let searchParams = getAllSearchParams(this.openmct);
+        let searchParams = this.openmct.router.getAllSearchParams();
 
         let mode = searchParams.get(SEARCH_MODE);
         let timeSystem = searchParams.get(SEARCH_TIME_SYSTEM);
@@ -145,7 +140,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     setUrlFromTimeApi() {
-        let searchParams = getAllSearchParams(this.openmct);
+        let searchParams = this.openmct.router.getAllSearchParams();
         let clock = this.openmct.time.clock();
         let bounds = this.openmct.time.bounds();
         let clockOffsets = this.openmct.time.clockOffsets();
@@ -173,7 +168,7 @@ export default class URLTimeSettingsSynchronizer {
         }
 
         searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
-        setAllSearchParams(this.openmct, searchParams);
+        this.openmct.router.setAllSearchParams(searchParams);
     }
 
     areTimeParametersValid(timeParameters) {

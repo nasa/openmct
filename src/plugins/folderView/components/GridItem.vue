@@ -58,7 +58,7 @@ export default {
     },
     methods: {
         navigate() {
-            this.openmct.router.navigateToObject(this.objectLink);
+            this.openmct.router.navigate(this.objectLink);
         }
     }
 };

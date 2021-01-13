@@ -57,7 +57,7 @@ export default {
             return moment(timestamp).format(format);
         },
         navigate() {
-            this.openmct.router.navigateToObject(this.objectLink);
+            this.openmct.router.navigate(this.objectLink);
         }
     }
 };

@@ -336,7 +336,7 @@ export default {
             });
         },
         goToParent() {
-            this.openmct.router.navigateToObject(this.parentUrl);
+            this.openmct.router.navigate(this.parentUrl);
         },
         updateActionItems(actionItems) {
             this.statusBarItems = this.actionCollection.getStatusBarActions();

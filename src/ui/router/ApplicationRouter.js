@@ -25,23 +25,6 @@ const LocationBar = require('location-bar');
 const EventEmitter = require('EventEmitter');
 const _ = require('lodash');
 
-function paramsToObject(searchParams) {
-    let params = {};
-    for (let [key, value] of searchParams.entries()) {
-        if (params[key]) {
-            if (!Array.isArray(params[key])) {
-                params[key] = [params[key]];
-            }
-
-            params[key].push(value);
-        } else {
-            params[key] = value;
-        }
-    }
-
-    return params;
-}
-
 class ApplicationRouter extends EventEmitter {
     /**
      * events
@@ -58,13 +41,90 @@ class ApplicationRouter extends EventEmitter {
      * route(path, handler);
      * start(); Start routing.
      */
-    constructor() {
+    constructor(openmct) {
         super();
+
+        this.locationBar = new LocationBar();
+        this.openmct = openmct;
         this.routes = [];
         this.started = false;
-        this.locationBar = new LocationBar();
 
-        this.changeHash = _.debounce(this.changeHash.bind(this), 300);
+        this.setHash = _.debounce(this.setHash.bind(this), 300);
+    }
+
+    // Public Methods
+
+    destroy() {
+        this.locationBar.stop();
+    }
+
+    deleteSearchParam(paramName) {
+        let url = this.getHashRelativeURL();
+
+        url.searchParams.delete(paramName);
+        this.setLocationFromUrl();
+    }
+
+    /**
+     * @returns {URLSearchParams} A {@link https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries|URLSearchParams}
+     * object for accessing all current search parameters
+     */
+    getAllSearchParams() {
+        return this.getHashRelativeURL().searchParams;
+    }
+
+    getCurrentLocation() {
+        return this.currentLocation;
+    }
+
+    getHashRelativeURL() {
+        return this.getCurrentLocation().url;
+    }
+
+    getParams() {
+        return this.currentLocation.params;
+    }
+
+    getSearchParam(paramName) {
+        return this.getAllSearchParams().get(paramName);
+    }
+
+    navigate(hash) {
+        this.handleLocationChange(hash.substring(1));
+    }
+
+    route(matcher, callback) {
+        this.routes.push({
+            matcher,
+            callback
+        });
+    }
+
+    set(path, queryString) {
+        this.setHash(`${path}?${queryString}`);
+    }
+
+    /**
+     * Will replace all current search parameters with the ones defined in urlSearchParams
+     * @param {URLSearchParams} paramMap
+     */
+    setAllSearchParams() {
+        this.setLocationFromUrl();
+    }
+
+    setLocationFromUrl() {
+        this.updateTimeSettings();
+    }
+
+    setPath(path) {
+        this.handleLocationChange(path.substring(1));
+    }
+
+    setSearchParam(paramName, paramValue) {
+        let url = this.getHashRelativeURL();
+
+        url.searchParams.set(paramName, paramValue);
+        this.setLocationFromUrl();
     }
 
     /**
@@ -83,11 +143,42 @@ class ApplicationRouter extends EventEmitter {
         });
     }
 
-    destroy() {
-        this.locationBar.stop();
-        this.removeAllListeners();
+    update(path, params) {
+        let searchParams = this.currentLocation.url.searchParams;
+        for (let [key, value] of Object.entries(params)) {
+            if (typeof value === 'undefined') {
+                searchParams.delete(key);
+            } else {
+                searchParams.set(key, value);
+            }
+        }
+
+        this.set(path, searchParams.toString());
     }
 
+    /**
+     * Update route params. Takes an object of updates.  New parameters
+     */
+    updateParams(updateParams) {
+        let searchParams = this.currentLocation.url.searchParams;
+        Object.entries(updateParams).forEach(([key, value]) => {
+            if (typeof value === 'undefined') {
+                searchParams.delete(key);
+            } else {
+                searchParams.set(key, value);
+            }
+        });
+
+        this.setQueryString(searchParams.toString());
+    }
+
+    updateTimeSettings() {
+        const hash = `${this.currentLocation.path}?${this.currentLocation.getQueryString()}`;
+
+        this.setHash(hash);
+    }
+
+    // Private Methods
     createLocation(pathString) {
         if (pathString[0] !== '/') {
             pathString = '/' + pathString;
@@ -104,6 +195,31 @@ class ApplicationRouter extends EventEmitter {
             getQueryString: () => url.search.replace(/^\?/, ''),
             params: paramsToObject(url.searchParams)
         };
+    }
+
+    doPathChange(newPath, oldPath, newLocation) {
+        let route = this.routes.filter(r => r.matcher.test(newPath))[0];
+        if (route) {
+            route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
+        }
+
+        this.emit('change:path', newPath, oldPath);
+    }
+
+    doParamsChange(newParams, oldParams, newLocation) {
+        let changedParams = {};
+        Object.entries(newParams).forEach(([key, value]) => {
+            if (value !== oldParams[key]) {
+                changedParams[key] = value;
+            }
+        });
+        Object.keys(oldParams).forEach(key => {
+            if (!Object.prototype.hasOwnProperty.call(newParams, key)) {
+                changedParams[key] = undefined;
+            }
+        });
+
+        this.emit('change:params', newParams, oldParams, changedParams);
     }
 
     handleLocationChange(pathString) {
@@ -136,105 +252,35 @@ class ApplicationRouter extends EventEmitter {
         }
     }
 
-    doPathChange(newPath, oldPath, newLocation) {
-        let route = this.routes.filter(r => r.matcher.test(newPath))[0];
-        if (route) {
-            route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
-        }
-
-        this.emit('change:path', newPath, oldPath);
-    }
-
-    doParamsChange(newParams, oldParams, newLocation) {
-        let changedParams = {};
-        Object.entries(newParams).forEach(([key, value]) => {
-            if (value !== oldParams[key]) {
-                changedParams[key] = value;
-            }
-        });
-        Object.keys(oldParams).forEach(key => {
-            if (!Object.prototype.hasOwnProperty.call(newParams, key)) {
-                changedParams[key] = undefined;
-            }
-        });
-
-        this.emit('change:params', newParams, oldParams, changedParams);
-    }
-
-    /**
-     * Update route params.  Takes an object of updates.  New parameters
-     */
-    updateParams(updateParams) {
-        let searchParams = this.currentLocation.url.searchParams;
-        Object.entries(updateParams).forEach(([key, value]) => {
-            if (typeof value === 'undefined') {
-                searchParams.delete(key);
-            } else {
-                searchParams.set(key, value);
-            }
-        });
-
-        this.setQueryString(searchParams.toString());
-    }
-
-    getParams() {
-        return this.currentLocation.params;
-    }
-
-    update(path, params) {
-        let searchParams = this.currentLocation.url.searchParams;
-        for (let [key, value] of Object.entries(params)) {
-            if (typeof value === 'undefined') {
-                searchParams.delete(key);
-            } else {
-                searchParams.set(key, value);
-            }
-        }
-
-        this.set(path, searchParams.toString());
-    }
-
     hashChaged(p) {
         this.emit('change:hash', p);
         this.handleLocationChange(p);
     }
 
-    changeHash(hash) {
+    setHash(hash) {
         location.hash = '#' + hash.replace(/#/g, '');
-    }
-
-    updateTimeSettings() {
-        const hash = `${this.currentLocation.path}?${this.currentLocation.getQueryString()}`;
-
-        this.changeHash(hash);
-    }
-
-    navigateToObject(objectLink) {
-        this.handleLocationChange(objectLink.substring(1));
-    }
-
-    set(path, queryString) {
-        this.changeHash(`${path}?${queryString}`);
     }
 
     setQueryString(queryString) {
         this.handleLocationChange(`${this.currentLocation.path}?${queryString}`);
     }
+}
 
-    getCurrentLocation() {
-        return this.currentLocation;
+function paramsToObject(searchParams) {
+    let params = {};
+    for (let [key, value] of searchParams.entries()) {
+        if (params[key]) {
+            if (!Array.isArray(params[key])) {
+                params[key] = [params[key]];
+            }
+
+            params[key].push(value);
+        } else {
+            params[key] = value;
+        }
     }
 
-    setPath(path) {
-        this.handleLocationChange(path.substring(1));
-    }
-
-    route(matcher, callback) {
-        this.routes.push({
-            matcher,
-            callback
-        });
-    }
+    return params;
 }
 
 module.exports = ApplicationRouter;

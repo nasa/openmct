@@ -75,7 +75,7 @@ export default {
                 event.preventDefault();
                 this.preview();
             } else {
-                this.openmct.router.navigateToObject(this.objectLink);
+                this.openmct.router.navigate(this.objectLink);
             }
         },
         preview() {
