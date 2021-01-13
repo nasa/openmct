@@ -137,7 +137,8 @@ export default {
             refreshCSS: false,
             keyString: undefined,
             focusedImageIndex: undefined,
-            numericDuration: undefined
+            numericDuration: undefined,
+            metadataEndpoints: {}
         };
     },
     computed: {
@@ -222,6 +223,9 @@ export default {
         // kickoff
         this.subscribe();
         this.requestHistory();
+
+        // DELETE WHEN DONE
+        this.temporaryForImageEnhancements();
     },
     updated() {
         this.scrollToRight();
@@ -238,6 +242,65 @@ export default {
         this.openmct.time.off('clock', this.clockChange);
     },
     methods: {
+        // for testing, to be deleted
+        temporaryForImageEnhancements() {
+            this.searchService = this.openmct.$injector.get('searchService');
+            this.temporaryDev = true;
+        },
+        // return either rejected promise if no endpoint exists or a
+        // promise that will resolve in the requested  data
+        async getImageMetadataValue(key, datum) {
+            if (this.temporaryDev) {
+                const searchResults = await this.searchService.query(key);
+                const endpoint = searchResults.hits[0].id;
+                const options = {
+                    start: this.openmct.time.bounds().start,
+                    end: datum[this.timeKey],
+                    strategy: 'latest'
+                };
+                const domainObject = await this.openmct.objects.get(endpoint);
+                let results = await this.openmct.telemetry
+                    .request(domainObject, options);
+
+                if (results.length) {
+                    let resultDatum = results.pop();
+
+                    return resultDatum.sin;
+                } else {
+                    return Promise.reject();
+                }
+
+            } else {
+                const NO_ENDPOINT = 'no endpoint';
+
+                if (!this.metadataEndpoints[key]) {
+                    let endpoint = this.metadata.value(key);
+
+                    if (endpoint) {
+                        this.metadataEndpoints[key] = endpoint;
+                    } else {
+                        this.metadataEndpoints[key] = NO_ENDPOINT;
+                    }
+                }
+
+                if (this.metadataEndpoints[key] === NO_ENDPOINT) {
+                    return Promise.reject('No endpoint for key: ' + key);
+                }
+
+                const options = {
+                    start: this.openmct.time.bounds().start,
+                    end: datum[this.timeKey],
+                    strategy: 'latest'
+                };
+                const domainObject = await this.openmct.objects.get(this.metadataEndpoints[key]);
+
+                let results = await this.openmct.telemetry
+                    .request(domainObject, options);
+
+                return results.pop();
+            }
+
+        },
         focusElement() {
             this.$el.focus();
         },
