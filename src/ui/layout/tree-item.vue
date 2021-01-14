@@ -146,6 +146,7 @@ export default {
             if ([this.$refs.navUp.$el, this.$refs.navDown.$el].includes(event.target)) {
                 return;
             }
+
             event.stopPropagation();
             this.$refs.objectLabel.navigateOrPreview(event);
         },
