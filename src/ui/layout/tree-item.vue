@@ -146,10 +146,8 @@ export default {
             if ([this.$refs.navUp.$el, this.$refs.navDown.$el].includes(event.target)) {
                 return;
             }
-
             event.stopPropagation();
-
-            this.$refs.objectLabel.$el.click();
+            this.$refs.objectLabel.navigateOrPreview(event);
         },
         handleContextMenu(event) {
             event.stopPropagation();
