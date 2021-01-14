@@ -1,15 +1,15 @@
 <template>
 <div class="c-toolbar">
     <toolbar-select-menu
+        class="menus-to-left menus-no-icon"
         :options="fontSizeMenuOptions"
         @change="setFontSize"
-        class="menus-to-left menus-no-icon"
     />
     <div class="c-toolbar__separator"></div>
     <toolbar-select-menu
+        class="menus-to-left menus-no-icon"
         :options="fontMenuOptions"
         @change="setFont"
-        class="menus-to-left menus-no-icon"
     />
 </div>
 </template>
