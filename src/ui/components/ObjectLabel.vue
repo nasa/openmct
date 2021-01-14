@@ -3,7 +3,6 @@
     class="c-tree__item__label c-object-label"
     :class="[statusClass]"
     draggable="true"
-    :href="objectLink"
     @dragstart="dragStart"
     @click="navigateOrPreview"
 >
@@ -84,6 +83,8 @@ export default {
                 event.preventDefault();
                 this.preview();
             }
+
+            window.location.assign(this.objectLink);
         },
         preview() {
             if (this.previewAction.appliesTo(this.objectPath)) {
