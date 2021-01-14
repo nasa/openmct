@@ -66,6 +66,14 @@
                  :data-openmct-image-timestamp="time"
                  :data-openmct-object-keystring="keyString"
             ></div>
+            <!-- TODO - fix after protyping -->
+            <span
+                class="c-image-controls__compass-rose"
+            >
+                <CompassRose
+                    :heading="Math.PI"
+                />
+            </span>
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
             <button class="c-nav c-nav--prev"
@@ -115,12 +123,12 @@
             <div class="c-thumb__timestamp">{{ formatTime(datum) }}</div>
         </div>
     </div>
-    <CompassRose />
 </div>
 </template>
 
 <script>
 import moment from 'moment';
+import CompassRose from './CompassRose.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -140,6 +148,9 @@ const ARROW_LEFT = 37;
 
 export default {
     inject: ['openmct', 'domainObject'],
+    components: {
+        CompassRose
+    },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
