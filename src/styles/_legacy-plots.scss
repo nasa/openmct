@@ -204,6 +204,10 @@ mct-plot {
         }
     }
 
+    .gl-plot-ticks, .gl-plot-tick-wrapper {
+        height: 100%;
+    }
+
     .gl-plot-label,
     .l-plot-label {
         position: absolute;

@@ -1,6 +1,8 @@
 <template>
 <div ref="tickContainer">
-    <div v-if="position === 'left'">
+    <div v-if="position === 'left'"
+         class="gl-plot-tick-wrapper"
+    >
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-tick gl-plot-x-tick-label"
@@ -12,7 +14,9 @@
             {{ tick.text }}
         </div>
     </div>
-    <div v-if="position === 'top'">
+    <div v-if="position === 'top'"
+         class="gl-plot-tick-wrapper"
+    >
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-tick gl-plot-y-tick-label"
@@ -24,7 +28,9 @@
         </div>
     </div>
     <!-- grid lines follow -->
-    <div v-if="position === 'right'">
+    <div v-if="position === 'right'"
+         class="gl-plot-tick-wrapper"
+    >
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-hash hash-v"
@@ -35,7 +41,9 @@
         >
         </div>
     </div>
-    <div v-if="position === 'bottom'">
+    <div v-if="position === 'bottom'"
+         class="gl-plot-tick-wrapper"
+    >
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-hash hash-h"
@@ -158,7 +166,7 @@ export default {
                 delete this.max;
                 delete this.interval;
                 delete this.tickRange;
-                delete this.ticks;
+                this.ticks = [];
                 delete this.shouldCheckWidth;
 
                 return;
