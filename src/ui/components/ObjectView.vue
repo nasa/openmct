@@ -6,6 +6,11 @@
 import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
+const defaultOptions = {
+    layoutFontSize: '',
+    layoutFont: '',
+    showEditView: false
+};
 
 export default {
     inject: ["openmct"],
@@ -14,20 +19,17 @@ export default {
             type: Object,
             default: undefined
         },
-        showEditView: Boolean,
         objectPath: {
             type: Array,
             default: () => {
                 return [];
             }
         },
-        layoutFontSize: {
-            type: String,
-            default: ''
-        },
-        layoutFont: {
-            type: String,
-            default: ''
+        options: {
+            type: Object,
+            default() {
+                return defaultOptions;
+            }
         }
     },
     data() {
@@ -40,10 +42,10 @@ export default {
             return this.currentObject && this.currentObject.configuration && this.currentObject.configuration.fontStyle;
         },
         fontSize() {
-            return this.objectFontStyle ? this.objectFontStyle.fontSize : this.layoutFontSize;
+            return this.objectFontStyle ? this.objectFontStyle.fontSize : this.options.layoutFontSize;
         },
         font() {
-            return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
+            return this.objectFontStyle ? this.objectFontStyle.font : this.options.layoutFont;
         }
     },
     watch: {
@@ -84,6 +86,7 @@ export default {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
     },
     mounted() {
+        this.options = Object.assign(this.options || {}, defaultOptions);
         this.updateView();
         this.$el.addEventListener('dragover', this.onDragOver, {
             capture: true
@@ -195,17 +198,17 @@ export default {
 
             let objectPath = this.currentObjectPath || this.objectPath;
 
-            if (provider.edit && this.showEditView) {
+            if (provider.edit && this.options.showEditView) {
                 if (this.openmct.editor.isEditing()) {
                     this.currentView = provider.edit(this.currentObject, true, objectPath);
                 } else {
-                    this.currentView = provider.view(this.currentObject, objectPath);
+                    this.currentView = provider.view(this.currentObject, objectPath, this.options);
                 }
 
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
-                this.currentView = provider.view(this.currentObject, objectPath);
+                this.currentView = provider.view(this.currentObject, objectPath, this.options);
 
                 if (this.currentView.onEditModeChange) {
                     this.openmct.editor.on('isEditing', this.invokeEditModeHandler);

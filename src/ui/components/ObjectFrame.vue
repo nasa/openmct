@@ -89,10 +89,8 @@
         ref="objectView"
         class="c-so-view__object-view"
         :object="domainObject"
-        :show-edit-view="showEditView"
         :object-path="objectPath"
-        :layout-font-size="layoutFontSize"
-        :layout-font="layoutFont"
+        :options="{layoutFontSize: layoutFontSize, layoutFont: layoutFont, showEditView: showEditView}"
         @change-action-collection="setActionCollection"
     />
 </div>

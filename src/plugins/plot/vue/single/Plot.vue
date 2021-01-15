@@ -23,7 +23,9 @@
 <div ref="plotWrapper"
      class="c-plot holder holder-plot has-control-bar"
 >
-    <div class="c-control-bar">
+    <div v-if="!options.compact"
+         class="c-control-bar"
+    >
         <span class="c-button-set c-button-set--strip-h">
             <button class="c-button icon-download"
                     title="Export This View's Data as PNG"
@@ -60,6 +62,7 @@
         ></div>
         <mct-plot :grid-lines="gridLines"
                   :cursor-guide="cursorGuide"
+                  :options="options"
                   @loadingUpdated="loadingUpdated"
         />
     </div>
@@ -75,12 +78,22 @@ export default {
     components: {
         MctPlot
     },
+    props: {
+        options: {
+            type: Object,
+            default() {
+                return {
+                    compact: false
+                };
+            }
+        }
+    },
     data() {
         return {
             //Don't think we need this as it appears to be stacked plot specific
             // hideExportButtons: false
             cursorGuide: false,
-            gridLines: true,
+            gridLines: !this.options.compact,
             loading: false
         };
     },

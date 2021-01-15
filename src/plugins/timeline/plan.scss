@@ -1,9 +1,7 @@
-.c-timeline {
-  $h: 18px;
-  $tickYPos: ($h / 2) + 12px + 10px;
+.c-plan {
+  $h: 20px;
+  $tickYPos: ($h / 2) + 12px + 5px;
   $tickXPos: 100px;
-
-  height: 100%;
 
   svg {
     text-rendering: geometricPrecision;
@@ -14,7 +12,7 @@
       transform: translateY($tickYPos) translateX($tickXPos);
 
       g {
-         //Each tick. These move on drag.
+        //Each tick. These move on drag.
         line {
           // Line beneath ticks
           display: none;
@@ -38,8 +36,6 @@
       stroke: none;
     }
   }
-
-
 
   .nowMarker {
     width: 2px;

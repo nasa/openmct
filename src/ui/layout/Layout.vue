@@ -81,7 +81,7 @@
                 ref="browseObject"
                 class="l-shell__main-container"
                 data-selectable
-                :show-edit-view="true"
+                :options="{showEditView: true}"
                 @change-action-collection="setActionCollection"
             />
             <component

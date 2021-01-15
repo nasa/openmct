@@ -26,18 +26,18 @@ import Vue from 'vue';
 export default function TimelineViewProvider(openmct) {
 
     return {
-        key: 'timeline.view',
-        name: 'Timeline',
+        key: 'time-strip.view',
+        name: 'TimeStrip',
         cssClass: 'icon-clock',
         canView(domainObject) {
-            return domainObject.type === 'plan';
+            return domainObject.type === 'time-strip';
         },
 
         canEdit(domainObject) {
-            return domainObject.type === 'plan';
+            return domainObject.type === 'time-strip';
         },
 
-        view: function (domainObject) {
+        view: function (domainObject, objectPath) {
             let component;
 
             return {
@@ -49,7 +49,9 @@ export default function TimelineViewProvider(openmct) {
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            domainObject,
+                            composition: openmct.composition.get(domainObject),
+                            objectPath
                         },
                         template: '<timeline-view-layout></timeline-view-layout>'
                     });

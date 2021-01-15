@@ -1,6 +1,6 @@
 <template>
 <div ref="axisHolder"
-     class="c-timeline-plan"
+     class="c-plan"
 >
     <div class="nowMarker"><span class="icon-arrow-down"></span></div>
 </div>
@@ -27,16 +27,23 @@ const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 const TIMELINE_HEIGHT = 30;
 //This offset needs to be re-considered
-const TIMELINE_OFFSET_HEIGHT = 70;
 const GROUP_OFFSET = 100;
 
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
-        "renderingEngine": {
+        options: {
+            type: Object,
+            default() {
+                return {
+                    compact: false
+                };
+            }
+        },
+        renderingEngine: {
             type: String,
             default() {
-                return 'canvas';
+                return 'svg';
             }
         }
     },
@@ -137,12 +144,12 @@ export default {
             this.width = axisHolder.clientWidth;
             this.offsetWidth = this.width - GROUP_OFFSET;
 
-            const axisHolderParent = this.$parent.$refs.planHolder;
-            this.height = Math.round(axisHolderParent.getBoundingClientRect().height);
+            this.height = Math.round(axisHolder.getBoundingClientRect().height);
 
             if (this.useSVG) {
                 this.svgElement.attr("width", this.width);
                 this.svgElement.attr("height", this.height);
+                this.canvas.height = 0;
             } else {
                 this.svgElement.attr("height", 50);
                 this.canvas.width = this.width;
@@ -335,13 +342,14 @@ export default {
             };
         },
         getPlanHeight(activityRows) {
-            return parseInt(activityRows[activityRows.length - 1], 10) + TIMELINE_OFFSET_HEIGHT;
+            return parseInt(activityRows[activityRows.length - 1], 10);
         },
         drawPlan() {
             const activityRows = Object.keys(this.activitiesByRow);
             if (activityRows.length) {
 
                 let planHeight = this.getPlanHeight(activityRows);
+                //TODO: Need to figure out how to remove the unnecessary height here when rendered in the time-strip
                 planHeight = Math.max(this.height, planHeight);
                 if (this.useSVG) {
                     this.svgElement.attr("height", planHeight);
@@ -394,7 +402,7 @@ export default {
             this.svgElement.append("rect")
                 .attr("class", "activity")
                 .attr("x", item.start + GROUP_OFFSET)
-                .attr("y", rectY + TIMELINE_HEIGHT)
+                .attr("y", rectY)
                 .attr("width", item.rectWidth)
                 .attr("height", ROW_HEIGHT)
                 .attr('fill', activity.color)

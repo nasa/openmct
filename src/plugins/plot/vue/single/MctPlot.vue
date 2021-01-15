@@ -49,7 +49,7 @@
                     ></span>
                 </div>
 
-                <mct-ticks v-show="gridLines"
+                <mct-ticks v-show="gridLines && !options.compact"
                            :axis-type="'xAxis'"
                            :position="'right'"
                            @plotTickWidth="onTickWidthChange"
@@ -112,7 +112,7 @@
                 >
                 </div>
             </div>
-            <x-axis v-if="config.series.models.length === 1"
+            <x-axis v-if="config.series.models.length === 1 && !options.compact"
                     :series-model="config.series.models[0]"
             />
 
@@ -145,6 +145,14 @@ export default {
         MctChart
     },
     props: {
+        options: {
+            type: Object,
+            default() {
+                return {
+                    compact: false
+                };
+            }
+        },
         gridLines: {
             type: Boolean,
             default() {

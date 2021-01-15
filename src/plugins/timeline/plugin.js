@@ -21,15 +21,16 @@
  *****************************************************************************/
 
 import TimelineViewProvider from './TimelineViewProvider';
+import PlanViewProvider from './PlanViewProvider';
 
 export default function () {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',
             key: 'plan',
-            description: 'An activity timeline',
+            description: 'A plan',
             creatable: true,
-            cssClass: 'icon-timeline',
+            cssClass: 'icon-calendar',
             form: [
                 {
                     name: 'Upload Plan (JSON File)',
@@ -43,6 +44,17 @@ export default function () {
             initialize: function (domainObject) {
             }
         });
+        openmct.types.addType('time-strip', {
+            name: 'Time Strip',
+            key: 'time-strip',
+            description: 'An activity timeline',
+            creatable: true,
+            cssClass: 'icon-timeline',
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+            }
+        });
+        openmct.objectViews.addProvider(new PlanViewProvider(openmct));
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
     };
 }

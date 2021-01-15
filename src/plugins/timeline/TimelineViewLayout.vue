@@ -24,22 +24,81 @@
 <div ref="planHolder"
      class="c-timeline"
 >
-    <plan :rendering-engine="'canvas'" />
+    <div
+        v-for="item in items"
+        :key="item.keyString"
+        class="c-timeline__object-holder"
+    >
+        <div v-if="item.domainObject.type !== 'plan'"
+             class="c-timeline__object-label"
+        >
+            <div class="c-object-label__type-icon"
+                 :class="item.type.definition.cssClass"
+            >
+            </div>
+            {{ item.domainObject.name }}
+        </div>
+        <object-view
+            class="c-timeline__object"
+            :class="{'c-timeline__object-offset': item.domainObject.type !== 'plan'}"
+            :object="item.domainObject"
+            data-selectable
+            :options="item.options"
+            :object-path="item.objectPath"
+        />
+    </div>
+    <!--    <plan :rendering-engine="'canvas'" />-->
 </div>
 </template>
 
 <script>
-import Plan from './Plan.vue';
+// import Plan from './Plan.vue';
+import ObjectView from '@/ui/components/ObjectView.vue';
+
+const unknownObjectType = {
+    definition: {
+        cssClass: 'icon-object-unknown',
+        name: 'Unknown Type'
+    }
+};
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
     components: {
-        Plan
+        ObjectView
     },
     data() {
         return {
-            plans: []
+            // plans: [],
+            items: []
         };
+    },
+    mounted() {
+        if (this.composition) {
+            this.composition.on('add', this.addItem);
+            this.composition.load();
+        }
+    },
+    methods: {
+        addItem(domainObject) {
+            let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
+            let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+            let objectPath = [domainObject].concat(this.objectPath.slice());
+            let options = {
+                compact: true,
+                layoutFontSize: '',
+                layoutFont: ''
+            };
+            let item = {
+                domainObject,
+                objectPath,
+                type,
+                keyString,
+                options
+            };
+
+            this.items.push(item);
+        }
     }
 };
 </script>

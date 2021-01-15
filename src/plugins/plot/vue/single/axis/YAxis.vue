@@ -5,7 +5,6 @@
          width: (tickWidth + 20) + 'px'
      }"
 >
-
     <div class="gl-plot-label gl-plot-y-label"
          :class="{'icon-gear': (yKeyOptions.length > 1)}"
     >{{ yAxisLabel }}
@@ -26,6 +25,7 @@
     </select>
 
     <mct-ticks :axis-type="'yAxis'"
+               class="gl-plot-ticks"
                :position="'top'"
                @plotTickWidth="onTickWidthChange"
     />

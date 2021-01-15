@@ -1,0 +1,35 @@
+.c-timeline {
+  $h: 18px;
+  $tickYPos: ($h / 2) + 12px + 10px;
+  $tickXPos: 100px;
+
+  height: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+  flex: 1 1 auto;
+
+  &__object-holder {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    overflow: auto;
+    border-bottom: 1px solid #fff;
+
+  }
+
+  &__object-label {
+    color: #fff;
+    width: 100px;
+    display: inline-flex;
+    border-right: 1px solid #fff;
+  }
+
+  &__object {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1 1 auto;
+    //height: 0; // Chrome 73 oveflow bug fix
+  }
+}
