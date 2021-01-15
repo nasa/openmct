@@ -71,7 +71,8 @@
                 class="c-image-controls__compass-rose"
             >
                 <CompassRose
-                    :heading="Math.PI"
+                    :rover-heading="-30"
+                    :sun-heading="50"
                 />
             </span>
         </div>
