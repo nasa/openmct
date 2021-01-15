@@ -67,14 +67,11 @@
                  :data-openmct-object-keystring="keyString"
             ></div>
             <!-- TODO - fix after protyping -->
-            <span
-                class="c-image-controls__compass-rose"
-            >
-                <CompassRose
-                    :rover-heading="-30"
-                    :sun-heading="50"
-                />
-            </span>
+            <CompassRose
+                :rover-heading="-30"
+                :sun-heading="50"
+                :cam-field-of-view="70"
+            />
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
             <button class="c-nav c-nav--prev"

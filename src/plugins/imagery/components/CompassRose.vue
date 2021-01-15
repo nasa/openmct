@@ -30,6 +30,13 @@
             class="c-nsew__ticks"
             viewBox="0 0 100 100"
         >
+            <circle
+                cx="50"
+                cy="50"
+                r="50"
+                fill="transparent"
+                @click="toggleBezelLock"
+            />
             <polygon
                 class="c-nsew__tick c-tick-n"
                 points="50,0 57,5 43,5"
@@ -55,26 +62,26 @@
                 width="2"
                 height="5"
             />
-            <!-- text elements here must be rotated to -1 * the amount applied to `c-nsew` -->
+
             <text
                 class="c-nsew__label c-label-n"
                 text-anchor="middle"
-                :transform="northTransform"
+                :transform="northTextTransform"
             >N</text>
             <text
                 class="c-nsew__label c-label-e"
                 text-anchor="middle"
-                :transform="eastTransform"
+                :transform="eastTextTransform"
             >E</text>
             <text
                 class="c-nsew__label c-label-w"
                 text-anchor="middle"
-                :transform="southTransform"
+                :transform="southTextTransform"
             >W</text>
             <text
                 class="c-nsew__label c-label-s"
                 text-anchor="middle"
-                :transform="westTransform"
+                :transform="westTextTransform"
             >S</text>
         </svg>
     </div>
@@ -91,20 +98,20 @@
     ></div>
 
     <div
+        v-if="showCamFOV"
         class="c-cam-field"
-        style="transform: rotate(0deg)"
+        :style="camFieldHeadingStyle"
     >
-        <!-- Camera FOV is handled with two elements. Set rotate for each to half of the FOV, and note that `half-l` must be a negative version of that number. For a camera FOV of 70 deg, `half-l` would be `rotate(-35deg)` and `half-r` would be `rotate(35deg)` -->
         <div class="cam-field-half cam-field-half-l">
             <div
                 class="cam-field-area"
-                style="transform: translateX(50%) rotate(-35deg)"
+                :style="camFOVStyleLeftHalf"
             ></div>
         </div>
         <div class="cam-field-half cam-field-half-r">
             <div
                 class="cam-field-area"
-                style="transform: translateX(-50%) rotate(35deg)"
+                :style="camFOVStyleRightHalf"
             ></div>
         </div>
     </div>
@@ -123,35 +130,47 @@ export default {
         sunHeading: {
             type: Number,
             required: true
+        },
+        camFieldOfView: {
+            type: Number,
+            default: undefined
         }
     },
 
     data() {
         return {
-            lockBezel: false
+            lockBezel: true
         };
     },
 
     computed: {
+        compassRoverHeading() {
+            return this.lockBezel ? this.getDegrees(this.roverHeading) : 0;
+        },
         north() {
-            return this.lockBezel ? 0 : this.getDegrees(360 - this.roverHeading);
+            return this.getDegrees(this.compassRoverHeading - this.roverHeading);
         },
         rotateFrameStyle() {
             return { transform: `rotate(${this.north}deg)` };
         },
-        northTransform() {
-            return this.cardinalPointsTransform.north;
+        northTextTransform() {
+            return this.cardinalPointsTextTransform.north;
         },
-        eastTransform() {
-            return this.cardinalPointsTransform.east;
+        eastTextTransform() {
+            return this.cardinalPointsTextTransform.east;
         },
-        southTransform() {
-            return this.cardinalPointsTransform.south;
+        southTextTransform() {
+            return this.cardinalPointsTextTransform.south;
         },
-        westTransform() {
-            return this.cardinalPointsTransform.west;
+        westTextTransform() {
+            return this.cardinalPointsTextTransform.west;
         },
-        cardinalPointsTransform() {
+        cardinalPointsTextTransform() {
+            /**
+             * cardinal points text must be rotated
+             * in the opposite direction that north is rotated
+             * to keep text vertically oriented
+             */
             const rotation = `rotate(${-this.north})`;
 
             return {
@@ -162,10 +181,13 @@ export default {
             };
         },
         roverHeadingStyle() {
-            const rotation = this.getDegrees(this.north + this.roverHeading);
-
             return {
-                transform: `translateX(-50%) rotate(${rotation}deg)`
+                transform: `translateX(-50%) rotate(${this.compassRoverHeading}deg)`
+            };
+        },
+        camFieldHeadingStyle() {
+            return {
+                transform: `rotate(${this.compassRoverHeading}deg)`
             };
         },
         sunHeadingStyle() {
@@ -174,14 +196,36 @@ export default {
             return {
                 transform: `rotate(${rotation}deg)`
             };
+        },
+        showCamFOV() {
+            return this.camFieldOfView > 0;
+        },
+        camFOVStyleLeftHalf() {
+            return this.camFOVStyle.left;
+        },
+        camFOVStyleRightHalf() {
+            return this.camFOVStyle.right;
+        },
+        camFOVStyle() {
+            /**
+             * Camera field of view is handled with two elements.
+             * left element is half of the FOV angle rotated counter-clockwise
+             * right element is half of the FOV angle rotated clockwise
+             */
+            return {
+                left: {
+                    transform: `translateX(50%) rotate(${-this.camFieldOfView / 2}deg)`
+                },
+                right: {
+                    transform: `translateX(-50%) rotate(${this.camFieldOfView / 2}deg)`
+                }
+            };
         }
     },
-
-    mounted() {
-
-    },
-
     methods: {
+        toggleBezelLock() {
+            this.lockBezel = !this.lockBezel;
+        },
         getDegrees(degrees) {
             const base = degrees % 360;
 
