@@ -1,7 +1,7 @@
 import ImageryViewLayout from './components/ImageryViewLayout.vue';
 import Vue from 'vue';
 
-export default function ImageryViewProvider(openmct) {
+export default function ImageryViewProvider(openmct, configuration) {
     const type = 'example.imagery';
 
     function hasImageTelemetry(domainObject) {
@@ -32,7 +32,8 @@ export default function ImageryViewProvider(openmct) {
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            domainObject,
+                            configuration
                         },
                         template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
                     });

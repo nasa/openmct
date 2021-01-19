@@ -61,9 +61,23 @@
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
                 <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ time }}</div>
+                <!-- Imagery Age Freshness -->
                 <div
                     v-if="canTrackDuration"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
+                    class="c-imagery__age icon-timer"
+                >{{ formattedDuration }}</div>
+                <!-- Rover Position Freshness -->
+                <div>isFresh {{ roverPositionIsFresh }}</div>
+                <div
+                    v-if="roverPositionIsFresh !== undefined"
+                    :class="{'c-imagery--new': roverPositionIsFresh}"
+                    class="c-imagery__age icon-timer"
+                >{{ roverPositionIsFresh ? 'ROVER' : '' }}</div>
+                <!-- Rover Camera Position Freshness -->
+                <div
+                    v-if="cameraPositionIsFresh !== undefined"
+                    :class="{'c-imagery--new': cameraPositionIsFresh && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
             </div>
@@ -116,7 +130,7 @@ const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'configuration'],
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
@@ -138,7 +152,13 @@ export default {
             keyString: undefined,
             focusedImageIndex: undefined,
             numericDuration: undefined,
-            metadataEndpoints: {}
+            metadataEndpoints: {},
+            roverPositionIsFresh: undefined,
+            cameraPositionIsFresh: undefined,
+            roverPositionState: {},
+            cameraPositionState: {},
+            canTrackRoverPositionFreshness: undefined,
+            canTrackCameraPositionFreshness: undefined
         };
     },
     computed: {
@@ -202,9 +222,14 @@ export default {
         focusedImageIndex() {
             this.trackDuration();
             this.resetAgeCSS();
+            this.determineRoverFreshness();
+            this.determineCameraPositionFreshness();
         }
     },
     mounted() {
+        // DELETE WHEN DONE
+        this.temporaryForImageEnhancements();
+
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
@@ -219,13 +244,27 @@ export default {
         // initialize
         this.timeKey = this.timeSystem.key;
         this.timeFormatter = this.getFormatter(this.timeKey);
+        this.roverPositionKeys = ['Rover Heading', 'Rover Roll', 'Rover Pitch', 'Rover Yaw'];
+        this.cameraPositionKeys = ['Camera Tilt', 'Camera Pan'];
 
         // kickoff
         this.subscribe();
         this.requestHistory();
 
-        // DELETE WHEN DONE
-        this.temporaryForImageEnhancements();
+        // will need to make this a configurable in the future
+        this.canTrackRoverPositionFreshness = this.roverPositionTrackingApplicable();
+        this.canTrackCameraPositionFreshness = this.cameraPositionTrackingApplicable();
+        this.roverTrackingInterval = 500; // ms tracking
+        this.cameraTrackingInterval = 500; // ms tracking
+
+        // stay up to date for rover position and camera position
+        if (this.canTrackRoverPositionFreshness) {
+            this.trackRoverPosition();
+        }
+
+        if (this.canTrackCameraPositionFreshness) {
+            this.trackCameraPosition();
+        }
     },
     updated() {
         this.scrollToRight();
@@ -240,6 +279,14 @@ export default {
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
+
+        if (this.cancelRoverTrackingInterval) {
+            window.clearInterval(this.cancelRoverTrackingInterval);
+        }
+
+        if (this.cancelCameraTrackingInterval) {
+            window.clearInterval(this.cancelCameraTrackingInterval);
+        }
     },
     methods: {
         // for testing, to be deleted
@@ -249,13 +296,18 @@ export default {
         },
         // return either rejected promise if no endpoint exists or a
         // promise that will resolve in the requested  data
-        async getImageMetadataValue(key, datum) {
+        async getImageMetadataValue(key, timestamp) {
             if (this.temporaryDev) {
                 const searchResults = await this.searchService.query(key);
-                const endpoint = searchResults.hits[0].id;
+                const endpoint = searchResults.hits[0] && searchResults.hits[0].id ? searchResults.hits[0].id : undefined;
+
+                if (!endpoint) {
+                    return;
+                }
+
                 const options = {
                     start: this.openmct.time.bounds().start,
-                    end: datum[this.timeKey],
+                    end: timestamp,
                     strategy: 'latest'
                 };
                 const domainObject = await this.openmct.objects.get(endpoint);
@@ -274,28 +326,36 @@ export default {
                 const NO_ENDPOINT = 'no endpoint';
 
                 if (!this.metadataEndpoints[key]) {
-                    let endpoint = this.metadata.value(key);
+                    let endpoint = {
+                        id: this.metadata.value(key),
+                        domainObject: undefined
+                    };
 
-                    if (endpoint) {
-                        this.metadataEndpoints[key] = endpoint;
+                    if (endpoint.id) {
+                        this.metadataEndpoints[key].id = endpoint;
                     } else {
-                        this.metadataEndpoints[key] = NO_ENDPOINT;
+                        this.metadataEndpoints[key].id = NO_ENDPOINT;
                     }
                 }
 
-                if (this.metadataEndpoints[key] === NO_ENDPOINT) {
+                if (this.metadataEndpoints[key].id === NO_ENDPOINT) {
                     return Promise.reject('No endpoint for key: ' + key);
                 }
 
+                // cache domain object (observe too? not sure if it's necessary)
+                if (!this.metadataEndpoints[key].domainObject) {
+                    this.metadataEndpoints[key].domainObject = await this.openmct.objects.get(this.metadataEndpoints[key].id);
+                }
+
+                // latest result(s), not gauranteed to be implemented
                 const options = {
                     start: this.openmct.time.bounds().start,
                     end: datum[this.timeKey],
                     strategy: 'latest'
                 };
-                const domainObject = await this.openmct.objects.get(this.metadataEndpoints[key]);
 
                 let results = await this.openmct.telemetry
-                    .request(domainObject, options);
+                    .request(this.metadataEndpoints[key].domainObject, options);
 
                 return results.pop();
             }
@@ -467,6 +527,83 @@ export default {
             let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
             return valueFormatter;
+        },
+        roverPositionTrackingApplicable() {
+            let canTrack = false; // possibly false first, depending on if we need all or one
+
+            for (const key of this.roverPositionKeys) {
+                // do we need ALL to be available or will one work?
+                if (this.metadata.value(key)) {
+                    canTrack = true;
+                }
+            }
+
+            // Force true, will remove
+            if (this.temporaryDev) {
+                return true;
+            }
+
+            return canTrack;
+        },
+        async determineRoverFreshness() {
+            if (this.canTrackRoverPositionFreshness === false) {
+                return;
+            }
+
+            let noChanges = true;
+
+            // set up state tracking
+            for (const key of this.roverPositionKeys) {
+                try {
+                    let currentState = await this.getImageMetadataValue(key, this.focusedImage[this.timeKey]);
+                    currentState = currentState.toFixed(1);
+
+                    if (currentState !== this.roverPositionState[key]) {
+                        this.roverPositionState[key] = currentState;
+                        this.roverPositionIsFresh = false;
+                        noChanges = false;
+                    }
+                } catch (err) {
+                    this.roverPositionIsFresh = undefined;
+                }
+            }
+
+            if (noChanges) {
+                this.roverPositionIsFresh = true;
+            }
+
+            console.log('roverPosition is fresh', this.roverPositionIsFresh);
+
+        },
+        trackRoverPosition() {
+            this.cancelRoverTrackingInterval = window.setInterval(this.determineRoverFreshness, this.roverTrackingInterval);
+        },
+        cameraPositionTrackingApplicable() {
+            let canTrack = false; // possibly false first, depending on if we need all or one
+
+            for (const key of this.cameraPositionKeys) {
+                // do we need ALL to be available or will one work?
+                if (this.metadata.value(key)) {
+                    canTrack = true;
+                }
+            }
+
+            // will remove
+            if (this.temporaryDev) {
+                return true;
+            }
+
+            return canTrack;
+        },
+        determineCameraPositionFreshness() {
+            if (this.canTrackCameraPositionFreshness === false) {
+                return;
+            }
+
+            this.cameraPositionIsFresh = undefined;
+        },
+        trackCameraPosition() {
+            this.cancelCameraTrackingInterval = window.setInterval(this.determineCameraFreshness, this.cameraTrackingInterval);
         },
         trackDuration() {
             if (this.canTrackDuration) {
