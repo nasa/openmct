@@ -55,7 +55,7 @@
         <object-view
             v-if="internalDomainObject.keep_alive ? currentTab : isCurrent(tab)"
             class="c-tabs-view__object"
-            :object="tab.domainObject"
+            :default-object="tab.domainObject"
             :object-path="tab.objectPath"
         />
     </div>

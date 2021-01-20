@@ -50,6 +50,10 @@ describe('The ActionCollection', () => {
                 }
             }
         ];
+        openmct.objects.addProvider('', jasmine.createSpyObj('mockMutableObjectProvider', [
+            'create',
+            'update'
+        ]));
         mockView = {
             getViewContext: () => {
                 return {

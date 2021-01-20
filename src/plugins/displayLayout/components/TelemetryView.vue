@@ -212,14 +212,20 @@ export default {
         }
     },
     mounted() {
-        this.openmct.objects.get(this.item.identifier)
-            .then(this.setObject);
+        if (this.openmct.objects.supportsMutation(this.item.identifier)) {
+            this.openmct.objects.getMutable(this.item.identifier)
+                .then(this.setObject);
+        } else {
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
+        }
+
         this.openmct.time.on("bounds", this.refreshData);
 
         this.status = this.openmct.status.get(this.item.identifier);
         this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
     },
-    destroyed() {
+    beforeDestroy() {
         this.removeSubscription();
         this.removeStatusListener();
 
@@ -228,6 +234,10 @@ export default {
         }
 
         this.openmct.time.off("bounds", this.refreshData);
+
+        if (this.domainObject.isMutable) {
+            this.openmct.objects.destroyMutable(this.domainObject);
+        }
     },
     methods: {
         formattedValueForCopy() {

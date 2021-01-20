@@ -148,8 +148,7 @@ export default {
             }
 
             event.stopPropagation();
-
-            this.$refs.objectLabel.$el.click();
+            this.$refs.objectLabel.navigateOrPreview(event);
         },
         handleContextMenu(event) {
             event.stopPropagation();
