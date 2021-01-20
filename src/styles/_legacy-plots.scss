@@ -76,7 +76,7 @@ mct-plot {
         margin-bottom: $interiorMargin;
     }
 
-    .l-view-section {
+    .l-view-section, .c-plot--stacked-container {
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;

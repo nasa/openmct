@@ -31,7 +31,8 @@
         </button>
     </div>
     <stacked-overlay-plot v-for="object in compositionObjects"
-                          :key="object.identifier.key"
+                          :key="object.id"
+                          class="c-plot--stacked-container"
                           :object="object"
                           :grid-lines="gridLines"
                           :cursor-guide="cursorGuide"
@@ -39,6 +40,7 @@
                           @plotTickWidth="onTickWidthChange"
                           @loadingUpdated="loadingUpdated"
     />
+</div>
 </div>
 </template>
 

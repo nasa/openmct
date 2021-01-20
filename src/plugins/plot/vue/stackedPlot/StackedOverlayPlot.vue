@@ -67,13 +67,15 @@ export default {
             const object = this.object;
 
             const getProps = this.getProps;
+            let viewContainer = document.createElement('div');
+            this.$el.append(viewContainer);
 
             this.component = new Vue({
                 provide: {
                     openmct,
                     domainObject: object
                 },
-                el: this.$el,
+                el: viewContainer,
                 components: {
                     MctPlot
                 },
