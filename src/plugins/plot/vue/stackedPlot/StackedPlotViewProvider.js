@@ -20,31 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from './Plot.vue';
+import StackedPlot from './StackedPlot.vue';
 import Vue from 'vue';
 
-export default function PlotViewProvider(openmct) {
-    function hasTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasDomainAndRange(metadata);
-    }
-
-    function hasDomainAndRange(metadata) {
-        return (metadata.valuesForHints(['range']).length > 0
-            && metadata.valuesForHints(['domain']).length > 0);
-    }
-
+export default function StackedPlotViewProvider(openmct) {
     return {
-        key: 'plot-single',
-        name: 'Plot',
+        key: 'plot-stacked',
+        name: 'Stacked Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject) {
-            return domainObject.type === 'plot-single' || hasTelemetry(domainObject);
+            return domainObject.type === 'telemetry.plot.stacked';
+        },
+
+        canEdit(domainObject) {
+            return domainObject.type === 'telemetry.plot.stacked';
         },
 
         view: function (domainObject) {
@@ -55,13 +44,14 @@ export default function PlotViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            Plot
+                            StackedPlot
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            domainObject,
+                            composition: openmct.composition.get(domainObject)
                         },
-                        template: '<plot></plot>'
+                        template: '<stacked-plot></stacked-plot>'
                     });
                 },
                 destroy: function () {

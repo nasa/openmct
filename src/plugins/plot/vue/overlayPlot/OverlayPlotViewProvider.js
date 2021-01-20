@@ -20,31 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from './Plot.vue';
+import Plot from '../single/Plot.vue';
 import Vue from 'vue';
 
-export default function PlotViewProvider(openmct) {
-    function hasTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasDomainAndRange(metadata);
-    }
-
-    function hasDomainAndRange(metadata) {
-        return (metadata.valuesForHints(['range']).length > 0
-            && metadata.valuesForHints(['domain']).length > 0);
-    }
-
+export default function OverlayPlotViewProvider(openmct) {
     return {
-        key: 'plot-single',
-        name: 'Plot',
+        key: 'plot-overlay',
+        name: 'Overlay Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject) {
-            return domainObject.type === 'plot-single' || hasTelemetry(domainObject);
+            return domainObject.type === 'telemetry.plot.overlay';
+        },
+
+        canEdit(domainObject) {
+            return domainObject.type === 'telemetry.plot.overlay';
         },
 
         view: function (domainObject) {
