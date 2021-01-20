@@ -125,6 +125,7 @@
 </template>
 
 <script>
+import _ from 'lodash';
 import moment from 'moment';
 import CompassRose from './CompassRose.vue';
 
@@ -169,8 +170,10 @@ export default {
             refreshCSS: false,
             keyString: undefined,
             focusedImageIndex: undefined,
+            focusedImageRelatedData: {},
             numericDuration: undefined,
-            metadataEndpoints: {}
+            metadataEndpoints: {},
+            relatedTelemetry: {}
         };
     },
     computed: {
@@ -234,6 +237,7 @@ export default {
         focusedImageIndex() {
             this.trackDuration();
             this.resetAgeCSS();
+            this.updateRelatedTelemetryForFocusedImage();
         }
     },
     async mounted() {
@@ -261,16 +265,14 @@ export default {
         this.requestHistory();
         await this.initializeRelatedTelemetry();
 
-        // DELETE
-        // examples for requesting historical data for a relatedTelemetry key
-        // and for subscribing to a relatedTelemetry key
-        // example for 'Rover Heading'
-        // ***********************************************************************
-        // let results = await this.relatedTelemetry['Rover Heading'].request();
-        // this.relatedTelemetry['Rover Heading'].subscribe((data) => {
-        //     console.log('subscribe test', data);
-        // });
-        // ***********************************************************************
+        // for when people are scrolling through images quickly
+        _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
+
+        // examples
+        // if (this.hasRelatedTelemetry) {
+        //     this.relatedTelemetry['Rover Heading'].subscribe(datum => console.log(datum));
+        //     console.log(await this.getMostRecentRelatedTelemetry('Rover Roll', this.imageHistory[4]));
+        // }
     },
     updated() {
         this.scrollToRight();
@@ -314,6 +316,7 @@ export default {
                     dev: true,
                     realtime: key,
                     historical: key,
+                    valueKey: 'sin',
                     devInit: async () => {
                         const searchResults = await this.searchService.query(key);
                         const endpoint = searchResults.hits[0].id;
@@ -370,7 +373,7 @@ export default {
                 }
 
                 if (historicalId) {
-                    // check for on-telemetry data
+                    // check for on-telemetry data, will need to handle things differently if this is the case
                     if (historicalId[0] === '.') {
                         this.relatedTelemetry[key].valueOnTelemetry = true;
                     }
@@ -379,7 +382,7 @@ export default {
                         this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
                     }
 
-                    this.relatedTelemetry[key].request = async (options) => {
+                    this.relatedTelemetry[key].request = async (options = {}) => {
                         let results = await this.openmct.telemetry
                             .request(this.relatedTelemetry[key].historicalDomainObject, options);
 
@@ -391,7 +394,12 @@ export default {
 
                     // set up listeners
                     this.relatedTelemetry[key].listeners = [];
-                    this.relatedTelemetry[key].subscribe = (callback) => {
+                    this.relatedTelemetry[key].subscribe = async (callback) => {
+
+                        if (!this.relatedTelemetry[key].trackingData) {
+                            await this.trackDataForKey(key);
+                        }
+
                         if (!this.relatedTelemetry[key].listeners.includes(callback)) {
                             this.relatedTelemetry[key].listeners.push(callback);
 
@@ -407,24 +415,71 @@ export default {
                         this.relatedTelemetry[key].realtimeDomainObject = await this.openmct.objects.get(realtimeId);
                     }
 
-                    this.relatedTelemetry[key].unsubscribe = this.openmct.telemetry.subscribe(
-                        this.relatedTelemetry[key].realtimeDomainObject,
-                        datum => {
-                            this.relatedTelemetry[key].latest = datum;
-                            this.relatedTelemetry[key].listeners.forEach(callback => {
-                                callback(datum);
-                            });
-                        }
-                    );
                 }
             }
 
         },
-        async requestRelatedTelemetry(key) {
-            if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historicalDomainObject) {
-                let data = await this.openmct.telemetry.request(this.relatedTelemetry[key].historicalDomainObject);
+        async getMostRecentRelatedTelemetry(key, targetDatum) {
+            if (!this.hasRelatedTelemetry) {
+                throw new Error(`${this.domainObject.name} does not have any related telemetry`);
+            }
 
-                return data;
+            if (!this.relatedTelemetry[key]) {
+                throw new Error(`${key} does not exist on related telemetry`);
+            }
+
+            if (!this.relatedTelemetry[key].trackingData) {
+                await this.trackDataForKey(key);
+            }
+
+            let mostRecentSubset = this.relatedTelemetry[key].historicalData.filter(datum => datum[this.timeKey] <= targetDatum[this.timeKey]);
+            let mostRecent = mostRecentSubset.pop();
+
+            if (this.relatedTelemetry[key].valueKey) {
+                mostRecent = mostRecent[this.relatedTelemetry[key].valueKey];
+            }
+
+            return mostRecent;
+        },
+        async trackDataForKey(key) {
+            // historical
+            if (this.relatedTelemetry[key].historical) {
+                this.relatedTelemetry[key].historicalData = await this.relatedTelemetry[key].request();
+                this.relatedTelemetry[key].trackingHistoricalData = true;
+            }
+
+            // realtime
+            if (this.relatedTelemetry[key].realtime) {
+                this.relatedTelemetry[key].unsubscribe = this.openmct.telemetry.subscribe(
+                    this.relatedTelemetry[key].realtimeDomainObject, datum => {
+                        // store the latest relatedTelemetryKey
+                        this.$set(this.relatedTelemetry[key], 'latest', datum);
+
+                        // if any additional listeners
+                        this.relatedTelemetry[key].listeners.forEach(callback => {
+                            callback(datum);
+                        });
+
+                        // add to historical if applicable
+                        if (this.relatedTelemetry[key].historicalData !== undefined) {
+                            this.relatedTelemetry[key].historicalData.push(datum);
+                        } else {
+                            // store for later
+                        }
+                    }
+                );
+
+                this.relatedTelemetry[key].isSubscribed = true;
+            }
+        },
+        async updateRelatedTelemetryForFocusedImage() {
+            if (!this.hasRelatedTelemetry) {
+                return;
+            }
+
+            for (let key of this.relatedTelemetry.keys) {
+                let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
+                this.$set(this.focusedImageRelatedData, key, value);
             }
         },
         focusElement() {
