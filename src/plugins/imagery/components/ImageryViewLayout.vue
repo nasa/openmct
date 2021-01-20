@@ -58,18 +58,22 @@
         <div class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
         >
-            <div class="c-imagery__main-image__image js-imageryView-image"
-                 :style="{
-                     'background-image': imageUrl ? `url(${imageUrl})` : 'none',
-                     'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                 }"
-                 :data-openmct-image-timestamp="time"
-                 :data-openmct-object-keystring="keyString"
+            <div
+                ref="image"
+                class="c-imagery__main-image__image js-imageryView-image"
+                :style="{
+                    'background-image': imageUrl ? `url(${imageUrl})` : 'none',
+                    'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                }"
+                :data-openmct-image-timestamp="time"
+                :data-openmct-object-keystring="keyString"
             ></div>
             <!-- TODO - fix after protyping -->
+            <CompassHUD />
+            <!-- TODO - fix after protyping -->
             <CompassRose
-                :rover-heading="-30"
-                :sun-heading="50"
+                :rover-heading="220"
+                :sun-heading="250"
                 :cam-field-of-view="70"
             />
         </div>
@@ -128,6 +132,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import CompassRose from './CompassRose.vue';
+import CompassHUD from './CompassHUD.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -148,7 +153,8 @@ const ARROW_LEFT = 37;
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        CompassRose
+        CompassRose,
+        CompassHUD
     },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
@@ -238,6 +244,11 @@ export default {
             this.trackDuration();
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
+        },
+        imageUrl() {
+            if (this.imageUrl !== undefined) {
+                this.getImageNaturalDimensions();
+            }
         }
     },
     async mounted() {
@@ -753,6 +764,21 @@ export default {
         },
         isLeftOrRightArrowKey(keyCode) {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
+        },
+        getImageNaturalDimensions() {
+            const img = new Image();
+            img.src = this.imageUrl;
+            img.addEventListener('load', (data) => {
+                console.log(data);
+                console.log(img);
+                this.imageNaturalHeight = img.naturalHeight;
+                this.imageNaturalWidth = img.naturalWidth;
+                console.log(img.naturalHeight);
+                console.log(img.naturalWidth);
+                console.log(img.height);
+                console.log(img.width);
+
+            }, { once: true });
         }
     }
 };
