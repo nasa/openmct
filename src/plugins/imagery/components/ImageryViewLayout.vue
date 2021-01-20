@@ -204,7 +204,7 @@ export default {
             this.resetAgeCSS();
         }
     },
-    mounted() {
+    async mounted() {
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
@@ -213,8 +213,12 @@ export default {
         // set
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+        this.imageHints = this.metadata.valuesForHints(['image'])[0];
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-        this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
+        this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
+
+        // DELETE WHEN DONE
+        this.temporaryForImageEnhancements();
 
         // initialize
         this.timeKey = this.timeSystem.key;
@@ -223,9 +227,18 @@ export default {
         // kickoff
         this.subscribe();
         this.requestHistory();
+        await this.initializeRelatedTelemetry();
 
-        // DELETE WHEN DONE
-        this.temporaryForImageEnhancements();
+        // DELETE
+        // examples for requesting historical data for a relatedTelemetry key
+        // and for subscribing to a relatedTelemetry key
+        // example for 'Rover Heading'
+        // ***********************************************************************
+        // let results = await this.relatedTelemetry['Rover Heading'].request();
+        // this.relatedTelemetry['Rover Heading'].subscribe((data) => {
+        //     console.log('subscribe test', data);
+        // });
+        // ***********************************************************************
     },
     updated() {
         this.scrollToRight();
@@ -240,66 +253,147 @@ export default {
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
+
+        // unsubscribe from related telemetry
+        if (this.hasRelatedTelemetry) {
+            for (let key of this.relatedTelemetry.keys) {
+                if (this.relatedTelemetry[key].unsubscribe) {
+                    this.relatedTelemetry[key].unsubscribe();
+                }
+            }
+        }
     },
     methods: {
-        // for testing, to be deleted
+        // for local dev, to be DELETED
         temporaryForImageEnhancements() {
+            let roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
+            let cameraKeys = ['Camera Pan', 'Camera Tilt'];
+
             this.searchService = this.openmct.$injector.get('searchService');
             this.temporaryDev = true;
-        },
-        // return either rejected promise if no endpoint exists or a
-        // promise that will resolve in the requested  data
-        async getImageMetadataValue(key, datum) {
-            if (this.temporaryDev) {
-                const searchResults = await this.searchService.query(key);
-                const endpoint = searchResults.hits[0].id;
-                const options = {
-                    start: this.openmct.time.bounds().start,
-                    end: datum[this.timeKey],
-                    strategy: 'latest'
-                };
-                const domainObject = await this.openmct.objects.get(endpoint);
-                let results = await this.openmct.telemetry
-                    .request(domainObject, options);
 
-                if (results.length) {
-                    let resultDatum = results.pop();
+            // mock related telemetry metadata
+            this.imageHints.relatedTelemetry = {};
 
-                    return resultDatum.sin;
-                } else {
-                    return Promise.reject();
-                }
+            // populate temp keys in imageHints for local testing
+            [...roverKeys, ...cameraKeys].forEach(key => {
 
-            } else {
-                const NO_ENDPOINT = 'no endpoint';
+                this.imageHints.relatedTelemetry[key] = {
+                    dev: true,
+                    realtime: key,
+                    historical: key,
+                    devInit: async () => {
+                        const searchResults = await this.searchService.query(key);
+                        const endpoint = searchResults.hits[0].id;
+                        const domainObject = await this.openmct.objects.get(endpoint);
 
-                if (!this.metadataEndpoints[key]) {
-                    let endpoint = this.metadata.value(key);
-
-                    if (endpoint) {
-                        this.metadataEndpoints[key] = endpoint;
-                    } else {
-                        this.metadataEndpoints[key] = NO_ENDPOINT;
+                        return domainObject;
                     }
-                }
-
-                if (this.metadataEndpoints[key] === NO_ENDPOINT) {
-                    return Promise.reject('No endpoint for key: ' + key);
-                }
-
-                const options = {
-                    start: this.openmct.time.bounds().start,
-                    end: datum[this.timeKey],
-                    strategy: 'latest'
                 };
-                const domainObject = await this.openmct.objects.get(this.metadataEndpoints[key]);
+            });
+        },
+        async initializeRelatedTelemetry() {
+            if (this.imageHints.relatedTelemetry === undefined) {
+                this.hasRelatedTelemetry = false;
 
-                let results = await this.openmct.telemetry
-                    .request(domainObject, options);
-
-                return results.pop();
+                return;
             }
 
+            // DELETE
+            if (this.temporaryDev) {
+                let searchIndexBuildDelay = new Promise((resolve, reject) => {
+                    setTimeout(resolve, 3000);
+                });
+
+                await searchIndexBuildDelay;
+            }
+
+            let keys = Object.keys(this.imageHints.relatedTelemetry);
+
+            this.hasRelatedTelemetry = true;
+            this.relatedTelemetry = {
+                keys,
+                ...this.imageHints.relatedTelemetry
+            };
+
+            // grab historical and subscribe to realtime
+            for (let key of keys) {
+                let historicalId = this.relatedTelemetry[key].historical;
+                let realtimeId = this.relatedTelemetry[key].realtime;
+                let sameId = false;
+
+                if (historicalId && realtimeId && historicalId === realtimeId) {
+
+                    // DELETE temp
+                    if (this.relatedTelemetry[key].dev) {
+                        this.relatedTelemetry[key].historicalDomainObject = await this.relatedTelemetry[key].devInit();
+                        delete this.relatedTelemetry[key].dev;
+                        delete this.relatedTelemetry[key].devInit;
+                    } else {
+                        this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
+                    }
+
+                    this.relatedTelemetry[key].realtimeDomainObject = this.relatedTelemetry[key].historicalDomainObject;
+                    sameId = true;
+                }
+
+                if (historicalId) {
+                    // check for on-telemetry data
+                    if (historicalId[0] === '.') {
+                        this.relatedTelemetry[key].valueOnTelemetry = true;
+                    }
+
+                    if (!sameId) {
+                        this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
+                    }
+
+                    this.relatedTelemetry[key].request = async () => {
+                        let results = await this.openmct.telemetry
+                            .request(this.relatedTelemetry[key].historicalDomainObject);
+
+                        return results;
+                    };
+                }
+
+                if (realtimeId) {
+
+                    // set up listeners
+                    this.relatedTelemetry[key].listeners = [];
+                    this.relatedTelemetry[key].subscribe = (callback) => {
+                        if (!this.relatedTelemetry[key].listeners.includes(callback)) {
+                            this.relatedTelemetry[key].listeners.push(callback);
+
+                            return () => {
+                                this.relatedTelemetry[key].listeners.remove(callback);
+                            };
+                        } else {
+                            return () => {};
+                        }
+                    };
+
+                    if (!sameId) {
+                        this.relatedTelemetry[key].realtimeDomainObject = await this.openmct.objects.get(realtimeId);
+                    }
+
+                    this.relatedTelemetry[key].unsubscribe = this.openmct.telemetry.subscribe(
+                        this.relatedTelemetry[key].realtimeDomainObject,
+                        datum => {
+                            this.relatedTelemetry[key].latest = datum;
+                            this.relatedTelemetry[key].listeners.forEach(callback => {
+                                callback(datum);
+                            });
+                        }
+                    );
+                }
+            }
+
+        },
+        async requestRelatedTelemetry(key) {
+            if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historicalDomainObject) {
+                let data = await this.openmct.telemetry.request(this.relatedTelemetry[key].historicalDomainObject);
+
+                return data;
+            }
         },
         focusElement() {
             this.$el.focus();
