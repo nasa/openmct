@@ -85,33 +85,33 @@ define([
                         }
                     ],
                     "views": [
-                        // {
-                        //     "name": "Plot",
-                        //     "key": "plot-single",
-                        //     "cssClass": "icon-telemetry",
-                        //     "template": PlotTemplate,
-                        //     "needs": [
-                        //         "telemetry"
-                        //     ],
-                        //     "delegation": false,
-                        //     "priority": "mandatory"
-                        // },
-                        // {
-                        //     "name": "Overlay Plot",
-                        //     "key": "overlayPlot",
-                        //     "cssClass": "icon-plot-overlay",
-                        //     "type": "telemetry.plot.overlay",
-                        //     "template": PlotTemplate,
-                        //     "editable": true
-                        // },
-                        // {
-                        //     "name": "Stacked Plot",
-                        //     "key": "stackedPlot",
-                        //     "cssClass": "icon-plot-stacked",
-                        //     "type": "telemetry.plot.stacked",
-                        //     "template": StackedPlotTemplate,
-                        //     "editable": true
-                        // }
+                        {
+                            "name": "Plot",
+                            "key": "plot-single",
+                            "cssClass": "icon-telemetry",
+                            "template": PlotTemplate,
+                            "needs": [
+                                "telemetry"
+                            ],
+                            "delegation": false,
+                            "priority": "mandatory"
+                        },
+                        {
+                            "name": "Overlay Plot",
+                            "key": "overlayPlot",
+                            "cssClass": "icon-plot-overlay",
+                            "type": "telemetry.plot.overlay",
+                            "template": PlotTemplate,
+                            "editable": true
+                        },
+                        {
+                            "name": "Stacked Plot",
+                            "key": "stackedPlot",
+                            "cssClass": "icon-plot-stacked",
+                            "type": "telemetry.plot.stacked",
+                            "template": StackedPlotTemplate,
+                            "editable": true
+                        }
                     ],
                     "directives": [
                         {
