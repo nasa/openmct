@@ -347,9 +347,9 @@ export default {
                         this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
                     }
 
-                    this.relatedTelemetry[key].request = async () => {
+                    this.relatedTelemetry[key].request = async (options) => {
                         let results = await this.openmct.telemetry
-                            .request(this.relatedTelemetry[key].historicalDomainObject);
+                            .request(this.relatedTelemetry[key].historicalDomainObject, options);
 
                         return results;
                     };
