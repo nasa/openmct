@@ -445,10 +445,18 @@ export default {
                 return;
             }
 
+            const image = this.imageHistory[this.focusedImageIndex];
+
             for (let key of this.relatedTelemetry.keys) {
                 let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
+
+                image[key] = value;
+
+                // @Jamie can remove this if you only need metadata on this.focusedImage
                 this.$set(this.focusedImageRelatedData, key, value);
             }
+
+            this.imageHistory.splice(this.focusedImageIndex, 1, image);
         },
         focusElement() {
             this.$el.focus();
