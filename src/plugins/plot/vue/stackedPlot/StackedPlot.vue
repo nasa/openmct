@@ -30,28 +30,27 @@
         >
         </button>
     </div>
-    <stacked-overlay-plot v-for="object in compositionObjects"
-                          :key="object.id"
-                          class="c-plot--stacked-container"
-                          :object="object"
-                          :grid-lines="gridLines"
-                          :cursor-guide="cursorGuide"
-                          :plot-tick-width="maxTickWidth"
-                          @plotTickWidth="onTickWidthChange"
-                          @loadingUpdated="loadingUpdated"
+    <stacked-plot-item v-for="object in compositionObjects"
+                       :key="object.id"
+                       class="c-plot--stacked-container"
+                       :object="object"
+                       :grid-lines="gridLines"
+                       :cursor-guide="cursorGuide"
+                       :plot-tick-width="maxTickWidth"
+                       @plotTickWidth="onTickWidthChange"
+                       @loadingUpdated="loadingUpdated"
     />
-</div>
 </div>
 </template>
 
 <script>
 import eventHelpers from "@/plugins/plot/vue/single/lib/eventHelpers";
-import StackedOverlayPlot from "@/plugins/plot/vue/stackedPlot/StackedOverlayPlot.vue";
+import StackedPlotItem from "@/plugins/plot/vue/stackedPlot/StackedPlotItem.vue";
 
 export default {
     inject: ['openmct', 'domainObject', 'composition'],
     components: {
-        StackedOverlayPlot
+        StackedPlotItem
     },
     data() {
         return {
