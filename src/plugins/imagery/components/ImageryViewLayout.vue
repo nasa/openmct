@@ -388,6 +388,18 @@ export default {
             }
 
         },
+        async rerequestRelatedTelemetry() {
+            if (!this.hasRelatedTelemetry) {
+                return;
+            }
+            console.log('rereqeusting');
+            for (let key of this.relatedTelemetry.keys) {
+                if (this.relatedTelemetry[key].trackingHistoricalData) {
+                    this.relatedTelemetry[key].historicalData = [];
+                    this.relatedTelemetry[key].historicalData = await this.relatedTelemetry[key].request();
+                }
+            }
+        },
         async getMostRecentRelatedTelemetry(key, targetDatum) {
             if (!this.hasRelatedTelemetry) {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
@@ -448,16 +460,13 @@ export default {
 
             const image = this.imageHistory[this.focusedImageIndex];
 
+            // set data ON image telemetry as well as in focusedImageRelatedData
             for (let key of this.relatedTelemetry.keys) {
                 let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
                 image[key] = value;
-
-                // @Jamie can remove this if you only need metadata on this.focusedImage
                 this.$set(this.focusedImageRelatedData, key, value);
             }
-
-            this.imageHistory.splice(this.focusedImageIndex, 1, image);
         },
         focusElement() {
             this.$el.focus();
@@ -572,6 +581,7 @@ export default {
         boundsChange(bounds, isTick) {
             if (!isTick) {
                 this.requestHistory();
+                this.rerequestRelatedTelemetry();
             }
         },
         async requestHistory() {
