@@ -270,6 +270,7 @@ export default {
         temporaryForImageEnhancements() {
             let roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
             let cameraKeys = ['Camera Pan', 'Camera Tilt'];
+            let sunKeys = ['Sun Orientation'];
 
             this.searchService = this.openmct.$injector.get('searchService');
             this.temporaryDev = true;
@@ -278,7 +279,7 @@ export default {
             this.imageHints.relatedTelemetry = {};
 
             // populate temp keys in imageHints for local testing
-            [...roverKeys, ...cameraKeys].forEach(key => {
+            [...roverKeys, ...cameraKeys, ...sunKeys].forEach(key => {
 
                 this.imageHints.relatedTelemetry[key] = {
                     dev: true,
