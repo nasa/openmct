@@ -61,7 +61,7 @@
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
                 <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ time }}</div>
-                
+
                 <!-- image fresh -->
                 <div
                     v-if="canTrackDuration"
@@ -129,7 +129,7 @@ const ONE_HOUR = ONE_MINUTE * 60;
 const EIGHT_HOURS = 8 * ONE_HOUR;
 const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 
-const DECIMAL_COMPARISON_TOLERANCE = 3;
+const DECIMAL_COMPARISON_TOLERANCE = 1;
 
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
@@ -220,31 +220,36 @@ export default {
             return result;
         },
         roverPositionIsFresh() {
-            if (!this.hasRelatedTelemetry) {
-                return undefined;
+            let isFresh = undefined;
+            let latest = this.latestRelatedTelemetry;
+            let focused = this.focusedImageRelatedData;
+
+            if (this.hasRelatedTelemetry) {
+                isFresh = true;
+                for (let key of this.roverKeys) {
+                    if (!this.equalWithinTolerance(latest[key], focused[key])) {
+                        isFresh = false;
+                    }
+                }
             }
 
-            for (let key of this.roverKeys) {
-                if (!this.equalWithinTolerance(this.latestRelatedTelemetry[key], this.focusedImageRelatedData[key])) {
-                    return false;
-                }
-            };
-
-            return true;
+            return isFresh;
         },
         cameraPositionIsFresh() {
-            console.log('camera fresh?');
-            if (!this.hasRelatedTelemetry) {
-                return undefined;
+            let isFresh = undefined;
+            let latest = this.latestRelatedTelemetry;
+            let focused = this.focusedImageRelatedData;
+
+            if (this.hasRelatedTelemetry) {
+                isFresh = true;
+                for (let key of this.cameraKeys) {
+                    if (!this.equalWithinTolerance(latest[key], focused[key])) {
+                        isFresh = false;
+                    }
+                }
             }
 
-            for (let key of this.cameraKeys) {
-                if (!this.equalWithinTolerance(this.latestRelatedTelemetry[key], this.focusedImageRelatedData[key])) {
-                    return false;
-                }
-            };
-
-            return true;
+            return isFresh;
         }
     },
     watch: {
@@ -252,9 +257,6 @@ export default {
             this.trackDuration();
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
-        },
-        latestRelatedTelemetry() {
-            console.log('latest changed', this.latestRelatedTelemetry);
         }
     },
     async mounted() {
@@ -290,12 +292,6 @@ export default {
 
         // for when people are scrolling through images quickly
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
-
-        // examples
-        // if (this.hasRelatedTelemetry) {
-        //     this.relatedTelemetry['Rover Heading'].subscribe(datum => console.log(datum));
-        //     console.log(await this.getMostRecentRelatedTelemetry('Rover Roll', this.imageHistory[4]));
-        // }
     },
     updated() {
         this.scrollToRight();
@@ -508,8 +504,6 @@ export default {
                 let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
                 image[key] = value;
-
-                // @Jamie can remove this if you only need metadata on this.focusedImage
                 this.$set(this.focusedImageRelatedData, key, value);
             }
 
@@ -798,6 +792,10 @@ export default {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
         },
         equalWithinTolerance(numOne, numTwo) {
+            if (numOne === undefined || numTwo === undefined) {
+                return false;
+            }
+
             const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
 
             return Math.floor(numOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(numTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
