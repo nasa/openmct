@@ -277,6 +277,9 @@ export default {
         this.imageHints = this.metadata.valuesForHints(['image'])[0];
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
+        this.roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
+        this.cameraKeys = ['Camera Pan', 'Camera Tilt'];
+        this.sunKeys = ['Sun Orientation'];
 
         // DELETE WHEN DONE
         this.temporaryForImageEnhancements();
@@ -325,9 +328,6 @@ export default {
     methods: {
         // for local dev, to be DELETED
         temporaryForImageEnhancements() {
-            let roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
-            let cameraKeys = ['Camera Pan', 'Camera Tilt'];
-            let sunKeys = ['Sun Orientation'];
 
             this.searchService = this.openmct.$injector.get('searchService');
             this.temporaryDev = true;
@@ -336,7 +336,7 @@ export default {
             this.imageHints.relatedTelemetry = {};
 
             // populate temp keys in imageHints for local testing
-            [...roverKeys, ...cameraKeys, ...sunKeys].forEach(key => {
+            [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
 
                 this.imageHints.relatedTelemetry[key] = {
                     dev: true,
