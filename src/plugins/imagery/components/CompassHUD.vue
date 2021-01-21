@@ -1,7 +1,8 @@
 <template>
 <div
     class="c-compass-hud"
-    style="transform-origin: left bottom; transform: skew(0,0.5deg)"
+    width="40px"
+    style="transform-origin: left bottom; transform: skew(0,0.5deg) translateX(60px); width: 500px;"
 >
     <div
         class="c-compass-hud__dir"

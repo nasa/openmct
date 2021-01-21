@@ -59,7 +59,7 @@
              :class="{'paused unnsynced': isPaused,'stale':false }"
         >
             <div
-                ref="image"
+                ref="imageContainer"
                 class="c-imagery__main-image__image js-imageryView-image"
                 :style="{
                     'background-image': imageUrl ? `url(${imageUrl})` : 'none',
@@ -180,7 +180,9 @@ export default {
             focusedImageRelatedData: {},
             numericDuration: undefined,
             metadataEndpoints: {},
-            relatedTelemetry: {}
+            relatedTelemetry: {},
+            imageContainerWidth: undefined,
+            imageContainerHeight: undefined
         };
     },
     computed: {
@@ -301,6 +303,8 @@ export default {
         //     this.relatedTelemetry['Rover Heading'].subscribe(datum => console.log(datum));
         //     console.log(await this.getMostRecentRelatedTelemetry('Rover Roll', this.imageHistory[4]));
         // }
+
+        this.pollResizeImageContainerID = setInterval(this.pollResizeImageContainer, 200);
     },
     updated() {
         this.scrollToRight();
@@ -324,6 +328,8 @@ export default {
                 }
             }
         }
+
+        clearInterval(this.pollResizeImageContainerID);
     },
     methods: {
         // for local dev, to be DELETED
@@ -792,16 +798,17 @@ export default {
             const img = new Image();
             img.src = this.imageUrl;
             img.addEventListener('load', (data) => {
-                // console.log(data);
-                // console.log(img);
-                this.imageNaturalHeight = img.naturalHeight;
-                this.imageNaturalWidth = img.naturalWidth;
-                // console.log(img.naturalHeight);
-                // console.log(img.naturalWidth);
-                // console.log(img.height);
-                // console.log(img.width);
-
+                this.focusedImageAspectRatio = img.naturalHeight / img.naturalWidth;
             }, { once: true });
+        },
+        pollResizeImageContainer() {
+            if (this.$refs.imageContainer.clientWidth !== this.imageContainerWidth) {
+                this.imageContainerWidth = this.$refs.imageContainer.clientWidth;
+            }
+
+            if (this.$refs.imageContainer.clientHeight !== this.imageContainerHeight) {
+                this.imageContainerHeight = this.$refs.imageContainer.clientHeight;
+            }
         }
     }
 };
