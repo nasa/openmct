@@ -26,7 +26,6 @@ describe('The Notifiation API', () => {
     let notificationAPIInstance;
     let defaultTimeout = 4000;
 
-
     beforeEach(() => {
         notificationAPIInstance = new NotificationAPI();
     });
@@ -38,7 +37,7 @@ describe('The Notifiation API', () => {
     describe('the info method', () => {
         let message = 'Example Notification Message';
         let severity = 'info';
-        let notificationModel
+        let notificationModel;
 
         beforeEach(() => {
             notificationModel = notificationAPIInstance.info(message).model;
