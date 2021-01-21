@@ -72,9 +72,10 @@
             <CompassHUD />
             <!-- TODO - fix after protyping -->
             <CompassRose
-                :rover-heading="220"
-                :sun-heading="250"
-                :cam-field-of-view="70"
+                v-if="shouldDisplayCompassRose"
+                :rover-heading="metadataRoverHeading"
+                :sun-heading="metadataSunHeading"
+                :cam-field-of-view="metadataCamFieldOfView"
             />
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
@@ -237,6 +238,19 @@ export default {
             }
 
             return result;
+        },
+        shouldDisplayCompassRose() {
+            return this.focusedImage !== undefined
+                && this.metadataRoverHeading !== undefined;
+        },
+        metadataRoverHeading() {
+            return this.focusedImage && this.focusedImage['Rover Heading'];
+        },
+        metadataSunHeading() {
+            return 250;
+        },
+        metadataCamFieldOfView() {
+            return 70;
         }
     },
     watch: {
@@ -777,14 +791,14 @@ export default {
             const img = new Image();
             img.src = this.imageUrl;
             img.addEventListener('load', (data) => {
-                console.log(data);
-                console.log(img);
+                // console.log(data);
+                // console.log(img);
                 this.imageNaturalHeight = img.naturalHeight;
                 this.imageNaturalWidth = img.naturalWidth;
-                console.log(img.naturalHeight);
-                console.log(img.naturalWidth);
-                console.log(img.height);
-                console.log(img.width);
+                // console.log(img.naturalHeight);
+                // console.log(img.naturalWidth);
+                // console.log(img.height);
+                // console.log(img.width);
 
             }, { once: true });
         }
