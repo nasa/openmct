@@ -247,7 +247,7 @@ export default {
             return this.focusedImage && this.focusedImage['Rover Heading'];
         },
         metadataSunHeading() {
-            return 250;
+            return this.focusedImage && this.focusedImage['Sun Orientation'];
         },
         metadataCamFieldOfView() {
             return 70;
