@@ -88,7 +88,6 @@
     <object-view
         ref="objectView"
         class="c-so-view__object-view"
-        :object="domainObject"
         :show-edit-view="showEditView"
         :object-path="objectPath"
         :layout-font-size="layoutFontSize"
@@ -161,6 +160,7 @@ export default {
     mounted() {
         this.status = this.openmct.status.get(this.domainObject.identifier);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+        this.$refs.objectView.show(this.domainObject, undefined, false, this.objectPath);
     },
     beforeDestroy() {
         this.removeStatusListener();
