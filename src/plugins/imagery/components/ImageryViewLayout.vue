@@ -61,8 +61,24 @@
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
                 <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ time }}</div>
+                
+                <!-- image fresh -->
                 <div
                     v-if="canTrackDuration"
+                    :class="{'c-imagery--new': isImageNew && !refreshCSS}"
+                    class="c-imagery__age icon-timer"
+                >{{ formattedDuration }}</div>
+
+                <!-- rover position fresh -->
+                <div
+                    v-if="roverPositionIsFresh !== undefined"
+                    :class="{'c-imagery--new': isImageNew && !refreshCSS}"
+                    class="c-imagery__age icon-timer"
+                >{{ formattedDuration }}</div>
+
+                <!-- camera position fresh -->
+                <div
+                    v-if="cameraPositionIsFresh !== undefined"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
@@ -113,6 +129,8 @@ const ONE_HOUR = ONE_MINUTE * 60;
 const EIGHT_HOURS = 8 * ONE_HOUR;
 const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 
+const DECIMAL_COMPARISON_TOLERANCE = 3;
+
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
@@ -141,7 +159,8 @@ export default {
             focusedImageRelatedData: {},
             numericDuration: undefined,
             metadataEndpoints: {},
-            relatedTelemetry: {}
+            relatedTelemetry: {},
+            latestRelatedTelemetry: {}
         };
     },
     computed: {
@@ -199,6 +218,33 @@ export default {
             }
 
             return result;
+        },
+        roverPositionIsFresh() {
+            if (!this.hasRelatedTelemetry) {
+                return undefined;
+            }
+
+            for (let key of this.roverKeys) {
+                if (!this.equalWithinTolerance(this.latestRelatedTelemetry[key], this.focusedImageRelatedData[key])) {
+                    return false;
+                }
+            };
+
+            return true;
+        },
+        cameraPositionIsFresh() {
+            console.log('camera fresh?');
+            if (!this.hasRelatedTelemetry) {
+                return undefined;
+            }
+
+            for (let key of this.cameraKeys) {
+                if (!this.equalWithinTolerance(this.latestRelatedTelemetry[key], this.focusedImageRelatedData[key])) {
+                    return false;
+                }
+            };
+
+            return true;
         }
     },
     watch: {
@@ -206,6 +252,9 @@ export default {
             this.trackDuration();
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
+        },
+        latestRelatedTelemetry() {
+            console.log('latest changed', this.latestRelatedTelemetry);
         }
     },
     async mounted() {
@@ -220,6 +269,8 @@ export default {
         this.imageHints = this.metadata.valuesForHints(['image'])[0];
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
+        this.roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
+        this.cameraKeys = ['Camera Pan', 'Camera Tilt'];
 
         // DELETE WHEN DONE
         this.temporaryForImageEnhancements();
@@ -232,6 +283,9 @@ export default {
         this.subscribe();
         this.requestHistory();
         await this.initializeRelatedTelemetry();
+
+        // track latest telemetry values for rover and camera for comparison
+        this.trackLatestRelatedTelemetry();
 
         // for when people are scrolling through images quickly
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
@@ -268,9 +322,6 @@ export default {
     methods: {
         // for local dev, to be DELETED
         temporaryForImageEnhancements() {
-            let roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
-            let cameraKeys = ['Camera Pan', 'Camera Tilt'];
-
             this.searchService = this.openmct.$injector.get('searchService');
             this.temporaryDev = true;
 
@@ -278,7 +329,7 @@ export default {
             this.imageHints.relatedTelemetry = {};
 
             // populate temp keys in imageHints for local testing
-            [...roverKeys, ...cameraKeys].forEach(key => {
+            [...this.roverKeys, ...this.cameraKeys].forEach(key => {
 
                 this.imageHints.relatedTelemetry[key] = {
                     dev: true,
@@ -410,6 +461,10 @@ export default {
             return mostRecent;
         },
         async trackDataForKey(key) {
+            if (this.relatedTelemetry[key].trackingData) {
+                return;
+            }
+
             // historical
             if (this.relatedTelemetry[key].historical) {
                 this.relatedTelemetry[key].historicalData = await this.relatedTelemetry[key].request();
@@ -436,9 +491,9 @@ export default {
                         }
                     }
                 );
-
-                this.relatedTelemetry[key].isSubscribed = true;
             }
+
+            this.relatedTelemetry[key].trackingData = true;
         },
         async updateRelatedTelemetryForFocusedImage() {
             if (!this.hasRelatedTelemetry) {
@@ -449,6 +504,16 @@ export default {
                 let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
                 this.$set(this.focusedImageRelatedData, key, value);
             }
+        },
+        trackLatestRelatedTelemetry() {
+            [...this.roverKeys, ...this.cameraKeys].forEach(key => {
+                if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
+                    this.relatedTelemetry[key].subscribe((datum) => {
+                        let valueKey = this.relatedTelemetry[key].valueKey || 'sin';
+                        this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
+                    });
+                }
+            });
         },
         focusElement() {
             this.$el.focus();
@@ -721,6 +786,11 @@ export default {
         },
         isLeftOrRightArrowKey(keyCode) {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
+        },
+        equalWithinTolerance(numOne, numTwo) {
+            const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
+
+            return Math.floor(numOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(numTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
         }
     }
 };
