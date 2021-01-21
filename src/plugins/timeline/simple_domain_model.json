@@ -1,0 +1,111 @@
+{
+	"actionTypes": [
+		{
+			"name": "DRAW_SHAPE",
+			"parameters": [
+				{
+					"name": "shape",
+					"type": {
+						"name": "string",
+						"restrictSet": [
+							"circle",
+							"square",
+							"triangle"
+						]
+					},
+					"start": 1593702000000,
+					"end": 1593706200000,
+					"color": "fuchsia",
+					"textColor": "black",
+					"default": "circle"
+				},
+				{
+					"name": "color",
+					"type": {
+						"name": "string",
+						"restrictSet": [
+							"black",
+							"blue",
+							"red",
+							"green"
+						]
+					},
+					"start": 1593716130000,
+					"end": 1593716160000,
+					"color": "fuchsia",
+					"textColor": "black",
+					"default": "black"
+				},
+				{
+					"name": "thickness",
+					"type": {
+						"name": "float",
+						"restrictRange": {
+							"lbType": ">=",
+							"lbVal": 0.5,
+							"ubType": "<=",
+							"ubVal": 5.0
+						}
+					},
+					"start": 1593701730000,
+					"end": 1593716130000,
+					"color": "fuchsia",
+					"textColor": "black",
+					"duration": 180
+				},
+				{
+					"name": "DRAW_LINE",
+					"parameters": [
+						{
+							"name": "startArrow",
+							"type": {
+								"name": "string",
+								"restrictSet": [
+									"none",
+									"right",
+									"left",
+									"both"
+								]
+							},
+
+							"start": 1593703200000,
+							"end": 1593704400000,
+							"color": "fuchsia",
+							"textColor": "black",
+							"default": "none"
+						},
+						{
+							"name": "color",
+							"type": {
+								"name": "string",
+								"restrictSet": [
+									"black",
+									"blue",
+									"red",
+									"green"
+								]
+							}
+						},
+						{
+							"name": "thickness",
+							"type": {
+								"name": "float",
+								"restrictRange": {
+									"lbType": ">=",
+									"lbVal": 0.5,
+									"ubType": "<="
+								}
+							},
+							"start": 1593670530000,
+							"end": 1593692130000,
+							"color": "fuchsia",
+							"textColor": "black",
+							"duration": 120
+						}
+					]
+				}
+			]
+		}
+	]
+}
+

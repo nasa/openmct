@@ -38,7 +38,8 @@ export default {
     },
     data() {
         return {
-            plans: []
+            plans: [],
+            Chronicles: []
         };
     }
 };

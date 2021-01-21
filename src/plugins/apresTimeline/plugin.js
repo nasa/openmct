@@ -14,7 +14,17 @@ export default function () {
                 }
             }
         );
+        openmct.types.addType(
+            'apres.table.type',
+            {
+                name: 'Apres Table Activity',
+                cssClass: 'icon-pause',
+                creatable: true,
+                initialize: function (domainObject) {
 
+                }
+            }
+        );
         openmct.types.addType(
             'apres.activity.type',
             {
@@ -67,6 +77,6 @@ export default function () {
         );
 
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-        // openmct.objectViews.addProvider(new ActivityViewProvider(openmct));
+        openmct.objectViews.addProvider(new ActivityViewProvider(openmct));
     }
 };

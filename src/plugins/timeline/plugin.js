@@ -41,6 +41,8 @@ export default function () {
                 }
             ],
             initialize: function (domainObject) {
+                domainObject.composition=[];
+                domainObject.keep_alive = true;
             }
         });
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
