@@ -103,7 +103,19 @@ export default class CouchObjectProvider {
     }
 
     async getChanges(type) {
-        const response = await fetch(this.url + '/_changes?feed=continuous');
+        const response = await fetch(this.url + '/_changes?feed=continuous&filter=_selector', {
+            method: 'POST',
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body: JSON.stringify({
+                "selector": {
+                    "model": {
+                        "type": type || 'folder'
+                    }
+                }
+            })
+        });
         const reader = response.body.getReader();
         let completed = false;
 
