@@ -102,6 +102,43 @@ export default class CouchObjectProvider {
         return this.request(identifier.key, "GET").then(this.getModel.bind(this));
     }
 
+    async getChanges(type) {
+        const response = await fetch(this.url + '/_changes?feed=continuous');
+        const reader = response.body.getReader();
+        let completed = false;
+
+        while (!completed) {
+            const {done, value} = await reader.read();
+            //done is true when we lose connection with the provider
+            if (done) {
+                completed = true;
+            }
+
+            if (value) {
+                let chunk = new Uint8Array(value.length);
+                chunk.set(value, 0);
+                const decodedChunk = new TextDecoder("utf-8").decode(chunk).split('\n');
+                if (decodedChunk.length && decodedChunk[decodedChunk.length - 1] === '') {
+                    console.log('received chunk');
+                    let documents = [];
+                    decodedChunk.forEach((doc, index) => {
+                        try {
+                            documents.push(JSON.parse(doc));
+                        } catch (e) {
+                            //do nothing;
+                        }
+                    });
+                    //notify something, somehow, that we just received some changes from couchDB
+                    console.log(documents);
+                }
+            }
+
+        }
+
+        //We're done receiving from the provider. No more chunks.
+        console.log('done');
+    }
+
     getIntermediateResponse() {
         let intermediateResponse = {};
         intermediateResponse.promise = new Promise(function (resolve, reject) {
