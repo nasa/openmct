@@ -405,21 +405,23 @@ export default {
                 }
 
                 if (historicalId) {
-                    // check for on-telemetry data, will need to handle things differently if this is the case
+                    // if . is present in realtime endpoint id, then the data for this item
+                    // will appear on the image telemetry itself, no need to sets up a request
                     if (historicalId[0] === '.') {
                         this.relatedTelemetry[key].valueOnTelemetry = true;
+                    } else {
+
+                        if (!sameId) {
+                            this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
+                        }
+
+                        this.relatedTelemetry[key].request = async (options = {}) => {
+                            let results = await this.openmct.telemetry
+                                .request(this.relatedTelemetry[key].historicalDomainObject, options);
+
+                            return results;
+                        };
                     }
-
-                    if (!sameId) {
-                        this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
-                    }
-
-                    this.relatedTelemetry[key].request = async (options = {}) => {
-                        let results = await this.openmct.telemetry
-                            .request(this.relatedTelemetry[key].historicalDomainObject, options);
-
-                        return results;
-                    };
                 }
 
                 if (realtimeId) {
@@ -451,6 +453,18 @@ export default {
             }
 
         },
+        async rerequestRelatedTelemetry() {
+            if (!this.hasRelatedTelemetry) {
+                return;
+            }
+
+            for (let key of this.relatedTelemetry.keys) {
+                if (this.relatedTelemetry[key].trackingHistoricalData) {
+                    this.relatedTelemetry[key].historicalData = [];
+                    this.relatedTelemetry[key].historicalData = await this.relatedTelemetry[key].request();
+                }
+            }
+        },
         async getMostRecentRelatedTelemetry(key, targetDatum) {
             if (!this.hasRelatedTelemetry) {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
@@ -464,6 +478,16 @@ export default {
                 await this.trackDataForKey(key);
             }
 
+            if (this.relatedTelemetry[key].valueOnTelemetry) {
+                if (targetDatum[key]) {
+                    return targetDatum[key];
+                } else {
+                    console.warn(`Related Telemetry for ${key} does NOT exist on this telemetry datum as implied.`);
+
+                    return;
+                }
+            }
+
             let mostRecentSubset = this.relatedTelemetry[key].historicalData.filter(datum => datum[this.timeKey] <= targetDatum[this.timeKey]);
             let mostRecent = mostRecentSubset.pop();
 
@@ -475,7 +499,7 @@ export default {
         },
         async trackDataForKey(key) {
             // historical
-            if (this.relatedTelemetry[key].historical) {
+            if (this.relatedTelemetry[key].historical && !this.relatedTelemetry[key].valueOnTelemetry) {
                 this.relatedTelemetry[key].historicalData = await this.relatedTelemetry[key].request();
                 this.relatedTelemetry[key].trackingHistoricalData = true;
             }
@@ -496,7 +520,7 @@ export default {
                         if (this.relatedTelemetry[key].historicalData !== undefined) {
                             this.relatedTelemetry[key].historicalData.push(datum);
                         } else {
-                            // store for later
+                            // store for later?
                         }
                     }
                 );
@@ -511,16 +535,13 @@ export default {
 
             const image = this.imageHistory[this.focusedImageIndex];
 
+            // set data ON image telemetry as well as in focusedImageRelatedData
             for (let key of this.relatedTelemetry.keys) {
                 let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
                 image[key] = value;
-
-                // @Jamie can remove this if you only need metadata on this.focusedImage
                 this.$set(this.focusedImageRelatedData, key, value);
             }
-
-            this.imageHistory.splice(this.focusedImageIndex, 1, image);
         },
         focusElement() {
             this.$el.focus();
@@ -635,6 +656,7 @@ export default {
         boundsChange(bounds, isTick) {
             if (!isTick) {
                 this.requestHistory();
+                this.rerequestRelatedTelemetry();
             }
         },
         async requestHistory() {
