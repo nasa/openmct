@@ -79,6 +79,17 @@ export default class ConditionManager extends EventEmitter {
         delete this.subscriptions[id];
         delete this.telemetryObjects[id];
         this.removeConditionTelemetryObjects();
+
+        //force re-computation of condition set result as we might be in a state where
+        // there is no telemetry datum coming in for a while or at all.
+        let latestTimestamp = getLatestTimestamp(
+            {},
+            {},
+            this.timeSystems,
+            this.openmct.time.timeSystem()
+        );
+        this.updateConditionResults({id: id});
+        this.updateCurrentCondition(latestTimestamp);
     }
 
     initialize() {
@@ -336,14 +347,17 @@ export default class ConditionManager extends EventEmitter {
         let timestamp = {};
         timestamp[timeSystemKey] = normalizedDatum[timeSystemKey];
 
+        this.updateConditionResults(normalizedDatum);
+        this.updateCurrentCondition(timestamp);
+    }
+
+    updateConditionResults(normalizedDatum) {
         //We want to stop when the first condition evaluates to true.
         this.conditions.some((condition) => {
             condition.updateResult(normalizedDatum);
 
             return condition.result === true;
         });
-
-        this.updateCurrentCondition(timestamp);
     }
 
     updateCurrentCondition(timestamp) {

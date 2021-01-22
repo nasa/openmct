@@ -36,6 +36,7 @@
                 v-for="item in items"
                 :key="item.key"
                 :domain-object="item.domainObject"
+                :object-path="objectPath"
                 :has-units="hasUnits"
             />
         </tbody>
@@ -47,9 +48,19 @@
 import LadRow from './LADRow.vue';
 
 export default {
-    inject: ['openmct', 'domainObject', 'objectPath'],
+    inject: ['openmct'],
     components: {
         LadRow
+    },
+    props: {
+        domainObject: {
+            type: Object,
+            required: true
+        },
+        objectPath: {
+            type: Array,
+            required: true
+        }
     },
     data() {
         return {
