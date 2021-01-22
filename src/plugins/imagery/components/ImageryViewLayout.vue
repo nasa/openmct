@@ -73,15 +73,15 @@
                 <div
                     v-if="roverPositionIsFresh !== undefined"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
-                    class="c-imagery__age icon-timer"
-                >{{ formattedDuration }}</div>
+                    class="c-imagery__age icon-check"
+                >POS</div>
 
                 <!-- camera position fresh -->
                 <div
                     v-if="cameraPositionIsFresh !== undefined"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
-                    class="c-imagery__age icon-timer"
-                >{{ formattedDuration }}</div>
+                    class="c-imagery__age icon-check"
+                >CAM</div>
             </div>
             <div class="h-local-controls">
                 <button
