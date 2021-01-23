@@ -22,7 +22,7 @@
 <template>
 <div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
     <button
-        class="c-button--menu c-mode-button"
+        class="c-button--menu"
         @click.prevent="toggle"
     >
         <span class="c-button__label">{{ selectedMode.name }}</span>

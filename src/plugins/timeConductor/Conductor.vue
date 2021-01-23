@@ -82,16 +82,13 @@
                     @hide="hideAllTimePopups"
                     @update="timePopUpdate"
                 />
-                <input
-                    ref="startOffset"
-                    v-model="offsets.start"
-                    class="c-input--hrs-min-sec"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllOffsets(); submitForm()"
-                    @click="showTimePopupStart"
+                <button
+                        @click="showTimePopupStart"
+                        class="c-button c-conductor__delta-button"
+                        ref="startOffset"
                 >
+                    {{ offsets.start }}
+                </button>
             </div>
 
             <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
@@ -133,16 +130,13 @@
                     @hide="hideAllTimePopups"
                     @update="timePopUpdate"
                 />
-                <input
+                <button
                     ref="endOffset"
-                    v-model="offsets.end"
-                    class="c-input--hrs-min-sec"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllOffsets(); submitForm()"
+                    class="c-button c-conductor__delta-button"
                     @click="showTimePopupEnd"
                 >
+                    {{offsets.end}}
+                </button>
             </div>
 
             <conductor-axis

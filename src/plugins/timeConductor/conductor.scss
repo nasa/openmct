@@ -207,14 +207,10 @@
 }
 
 .is-realtime-mode {
-    .c-conductor__controls button {
+    .c-conductor__controls button,
+    .c-conductor__delta-button {
         @include themedButton($colorTimeBg);
         color: $colorTimeFg;
-
-        &:hover {
-            background: $colorTimeHov !important;
-            color: $colorTimeFg !important;
-        }
     }
 
     .c-conductor-input {
