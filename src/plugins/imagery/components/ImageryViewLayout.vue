@@ -327,7 +327,7 @@ export default {
 
             // grab historical and subscribe to realtime
             for (let key of keys) {
-                let historicalId; 
+                let historicalId;
                 let realtimeId;
 
                 if (this.relatedTelemetry[key].historical) {
