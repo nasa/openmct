@@ -129,8 +129,6 @@ const ONE_HOUR = ONE_MINUTE * 60;
 const EIGHT_HOURS = 8 * ONE_HOUR;
 const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 
-const DECIMAL_COMPARISON_TOLERANCE = 1;
-
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
@@ -227,8 +225,16 @@ export default {
             if (this.hasRelatedTelemetry) {
                 isFresh = true;
                 for (let key of this.roverKeys) {
-                    if (!this.equalWithinTolerance(latest[key], focused[key])) {
-                        isFresh = false;
+                    // if we have related telemetry for this key, we have an areEqual function,
+                    // and we have values for latest and focued
+                    if (
+                        this.relatedTelemetry[key]
+                        && typeof this.relatedTelemetry[key].areEqual === 'function'
+                        && latest[key] && focused[key]
+                    ) {
+                        if (!this.relatedTelemetry[key].areEqual(latest[key], focused[key])) {
+                            isFresh = false;
+                        }
                     }
                 }
             }
@@ -243,8 +249,16 @@ export default {
             if (this.hasRelatedTelemetry) {
                 isFresh = true;
                 for (let key of this.cameraKeys) {
-                    if (!this.equalWithinTolerance(latest[key], focused[key])) {
-                        isFresh = false;
+                    // if we have related telemetry for this key, we have an areEqual function,
+                    // and we have values for latest and focued
+                    if (
+                        this.relatedTelemetry[key]
+                        && typeof this.relatedTelemetry[key].areEqual === 'function'
+                        && latest[key] && focused[key]
+                    ) {
+                        if (!this.relatedTelemetry[key].areEqual(latest[key], focused[key])) {
+                            isFresh = false;
+                        }
                     }
                 }
             }
@@ -331,9 +345,20 @@ export default {
 
                 this.imageHints.relatedTelemetry[key] = {
                     dev: true,
-                    realtime: key,
-                    historical: key,
-                    valueKey: 'sin',
+                    areEqual: function (valueOne, valueTwo) {
+                        const DECIMAL_COMPARISON_TOLERANCE = 1;
+                        const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
+
+                        return Math.floor(valueOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(valueTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
+                    },
+                    realtime: {
+                        telemetryObjectId: key,
+                        valueKey: 'sin'
+                    },
+                    historical: {
+                        telemetryObjectId: key,
+                        valueKey: 'sin'
+                    },
                     devInit: async () => {
                         const searchResults = await this.searchService.query(key);
                         const endpoint = searchResults.hits[0].id;
@@ -370,35 +395,42 @@ export default {
 
             // grab historical and subscribe to realtime
             for (let key of keys) {
-                let historicalId = this.relatedTelemetry[key].historical;
-                let realtimeId = this.relatedTelemetry[key].realtime;
+                let historicalId; 
+                let realtimeId;
 
-                if (historicalId) {
-                    // if . is present in realtime endpoint id, then the data for this item
-                    // will appear on the image telemetry itself, no need to sets up a request
-                    if (historicalId[0] === '.') {
-                        this.relatedTelemetry[key].valueOnTelemetry = true;
+                if (this.relatedTelemetry[key].historical) {
+                    if (this.relatedTelemetry[key].historical.telemetryObjectId) {
+                        historicalId = this.relatedTelemetry[key].historical.telemetryObjectId;
                     } else {
-
-                        // DELETE temp
-                        if (this.relatedTelemetry[key].dev) {
-                            this.relatedTelemetry[key].historicalDomainObject = await this.relatedTelemetry[key].devInit();
-                        } else {
-                            this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
-                        }
-
-                        this.relatedTelemetry[key].requestLatestFor = async (datum) => {
-                            const options = {
-                                start: this.openmct.time.bounds().start,
-                                end: datum[this.timeKey],
-                                strategy: 'latest'
-                            };
-                            let results = await this.openmct.telemetry
-                                .request(this.relatedTelemetry[key].historicalDomainObject, options);
-
-                            return results.pop();
-                        };
+                        this.relatedTelemetry[key].historicalValuesOnTelemetry = true;
                     }
+                }
+
+                if (this.relatedTelemetry[key].realtime && this.relatedTelemetry[key].realtime.telemetryObjectId) {
+                    realtimeId = this.relatedTelemetry[key].realtime.telemetryObjectId;
+                }
+
+                // if we have a historical object id, then values will NOT be on the imagery datum
+                if (historicalId) {
+
+                    // DELETE temp
+                    if (this.relatedTelemetry[key].dev) {
+                        this.relatedTelemetry[key].historicalDomainObject = await this.relatedTelemetry[key].devInit();
+                    } else {
+                        this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
+                    }
+
+                    this.relatedTelemetry[key].requestLatestFor = async (datum) => {
+                        const options = {
+                            start: this.openmct.time.bounds().start,
+                            end: datum[this.timeKey],
+                            strategy: 'latest'
+                        };
+                        let results = await this.openmct.telemetry
+                            .request(this.relatedTelemetry[key].historicalDomainObject, options);
+
+                        return results[results.length - 1];
+                    };
                 }
 
                 if (realtimeId) {
@@ -443,9 +475,11 @@ export default {
             }
 
             let mostRecent;
+            let valueKey = this.relatedTelemetry[key].historical.valueKey;
+            let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
 
-            if (this.relatedTelemetry[key].valueOnTelemetry) {
-                mostRecent = targetDatum[this.relatedTelemetry[key].valueKey];
+            if (valuesOnTelemetry) {
+                mostRecent = targetDatum[valueKey];
 
                 if (mostRecent) {
                     return mostRecent;
@@ -458,7 +492,7 @@ export default {
 
             mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
-            return mostRecent[this.relatedTelemetry[key].valueKey];
+            return mostRecent[valueKey];
         },
         // will subscribe to data for this key if not already done
         subscribeToDataForKey(key) {
@@ -488,17 +522,23 @@ export default {
 
             // set data ON image telemetry as well as in focusedImageRelatedData
             for (let key of this.relatedTelemetry.keys) {
-                let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
+                if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historical) {
+                    let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
+                    let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
-                image[key] = value;
-                this.$set(this.focusedImageRelatedData, key, value);
+                    if (!valuesOnTelemetry) {
+                        image[key] = value; // manually add to telemetry
+                    }
+
+                    this.$set(this.focusedImageRelatedData, key, value);
+                }
             }
         },
         trackLatestRelatedTelemetry() {
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
-                        let valueKey = this.relatedTelemetry[key].valueKey || 'sin';
+                        let valueKey = this.relatedTelemetry[key].realtime.valueKey;
                         this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
                     });
                 }
@@ -775,15 +815,6 @@ export default {
         },
         isLeftOrRightArrowKey(keyCode) {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
-        },
-        equalWithinTolerance(numOne, numTwo) {
-            if (numOne === undefined || numTwo === undefined) {
-                return false;
-            }
-
-            const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
-
-            return Math.floor(numOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(numTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
         }
     }
 };
