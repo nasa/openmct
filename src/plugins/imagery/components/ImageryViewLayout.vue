@@ -372,22 +372,6 @@ export default {
             for (let key of keys) {
                 let historicalId = this.relatedTelemetry[key].historical;
                 let realtimeId = this.relatedTelemetry[key].realtime;
-                let sameId = false;
-
-                if (historicalId && realtimeId && historicalId === realtimeId) {
-
-                    // DELETE temp
-                    if (this.relatedTelemetry[key].dev) {
-                        this.relatedTelemetry[key].historicalDomainObject = await this.relatedTelemetry[key].devInit();
-                        delete this.relatedTelemetry[key].dev;
-                        delete this.relatedTelemetry[key].devInit;
-                    } else {
-                        this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
-                    }
-
-                    this.relatedTelemetry[key].realtimeDomainObject = this.relatedTelemetry[key].historicalDomainObject;
-                    sameId = true;
-                }
 
                 if (historicalId) {
                     // if . is present in realtime endpoint id, then the data for this item
@@ -396,7 +380,10 @@ export default {
                         this.relatedTelemetry[key].valueOnTelemetry = true;
                     } else {
 
-                        if (!sameId) {
+                        // DELETE temp
+                        if (this.relatedTelemetry[key].dev) {
+                            this.relatedTelemetry[key].historicalDomainObject = await this.relatedTelemetry[key].devInit();
+                        } else {
                             this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
                         }
 
@@ -410,6 +397,12 @@ export default {
                 }
 
                 if (realtimeId) {
+
+                    if (this.relatedTelemetry[key].dev) {
+                        this.relatedTelemetry[key].realtimeDomainObject = await this.relatedTelemetry[key].devInit();
+                    } else {
+                        this.relatedTelemetry[key].realtimeDomainObject = await this.openmct.objects.get(realtimeId);
+                    }
 
                     // set up listeners
                     this.relatedTelemetry[key].listeners = [];
@@ -430,11 +423,8 @@ export default {
                         }
                     };
 
-                    if (!sameId) {
-                        this.relatedTelemetry[key].realtimeDomainObject = await this.openmct.objects.get(realtimeId);
-                    }
-
                 }
+
             }
 
         },
