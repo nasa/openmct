@@ -78,5 +78,6 @@ export default function () {
 
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
         openmct.objectViews.addProvider(new ActivityViewProvider(openmct));
+        openmct.objectViews.addProvider(new Chronicle(openmct));
     }
 };
