@@ -19,21 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LadTable from './components/LADTable.vue';
+
+import StackedPlot from './StackedPlot.vue';
 import Vue from 'vue';
 
-export default function LADTableViewProvider(openmct) {
+export default function StackedPlotViewProvider(openmct) {
     return {
-        key: 'LadTable',
-        name: 'LAD Table',
-        cssClass: 'icon-tabular-lad',
-        canView: function (domainObject) {
-            return domainObject.type === 'LadTable';
+        key: 'plot-stacked',
+        name: 'Stacked Plot',
+        cssClass: 'icon-telemetry',
+        canView(domainObject) {
+            return domainObject.type === 'telemetry.plot.stacked';
         },
-        canEdit: function (domainObject) {
-            return domainObject.type === 'LadTable';
+
+        canEdit(domainObject) {
+            return domainObject.type === 'telemetry.plot.stacked';
         },
-        view: function (domainObject, objectPath) {
+
+        view: function (domainObject) {
             let component;
 
             return {
@@ -41,28 +44,21 @@ export default function LADTableViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            LadTableComponent: LadTable
-                        },
-                        data: () => {
-                            return {
-                                domainObject,
-                                objectPath
-                            };
+                            StackedPlot
                         },
                         provide: {
-                            openmct
+                            openmct,
+                            domainObject,
+                            composition: openmct.composition.get(domainObject)
                         },
-                        template: '<lad-table-component :domain-object="domainObject" :object-path="objectPath"></lad-table-component>'
+                        template: '<stacked-plot></stacked-plot>'
                     });
                 },
-                destroy: function (element) {
+                destroy: function () {
                     component.$destroy();
                     component = undefined;
                 }
             };
-        },
-        priority: function () {
-            return 1;
         }
     };
 }

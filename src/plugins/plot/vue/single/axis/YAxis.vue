@@ -5,12 +5,14 @@
          width: (tickWidth + 20) + 'px'
      }"
 >
-    <div class="gl-plot-label gl-plot-y-label"
+
+    <div v-if="singleSeries"
+         class="gl-plot-label gl-plot-y-label"
          :class="{'icon-gear': (yKeyOptions.length > 1)}"
     >{{ yAxisLabel }}
     </div>
 
-    <select v-if="yKeyOptions.length > 1"
+    <select v-if="yKeyOptions.length > 1 && singleSeries"
             v-model="yAxisLabel"
             class="gl-plot-y-label__select local-controls--hidden"
             @change="toggleYAxisLabel"
@@ -42,6 +44,12 @@ export default {
         MctTicks
     },
     props: {
+        singleSeries: {
+            type: Boolean,
+            default() {
+                return true;
+            }
+        },
         seriesModel: {
             type: Object,
             default() {

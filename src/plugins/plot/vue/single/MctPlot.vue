@@ -30,8 +30,9 @@
                  :legend="config.legend"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis v-if="config.series.models.length === 1"
+        <y-axis v-if="config.series.models.length > 0"
                 :tick-width="tickWidth"
+                :single-series="config.series.models.length === 1"
                 :series-model="config.series.models[0]"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
@@ -112,7 +113,7 @@
                 >
                 </div>
             </div>
-            <x-axis v-if="config.series.models.length === 1 && !options.compact"
+            <x-axis v-if="config.series.models.length > 0 && !options.compact"
                     :series-model="config.series.models[0]"
             />
 
@@ -164,6 +165,12 @@ export default {
             default() {
                 return true;
             }
+        },
+        plotTickWidth: {
+            type: Number,
+            default() {
+                return 0;
+            }
         }
     },
     data() {
@@ -195,6 +202,9 @@ export default {
         }
     },
     watch: {
+        plotTickWidth(newTickWidth) {
+            this.onTickWidthChange(newTickWidth, true);
+        },
         gridLines(newGridLines) {
             this.setGridLinesVisibility(newGridLines);
         },
@@ -477,18 +487,19 @@ export default {
             }
         },
 
-        onTickWidthChange(width) {
-            //TODO: check domain object of sender
-            // if (event.targetScope.domainObject !== this.domainObject) {
-            //     // Always accept tick width if it comes from a different object.
-            //     this.tickWidth = width;
-            // } else {
-            // Otherwise, only accept tick with if it's larger.
-            const newWidth = Math.max(width, this.tickWidth);
-            if (newWidth !== this.tickWidth) {
-                this.tickWidth = newWidth;
+        onTickWidthChange(width, fromDifferentObject) {
+            if (fromDifferentObject) {
+                // Always accept tick width if it comes from a different object.
+                this.tickWidth = width;
+            } else {
+                // Otherwise, only accept tick with if it's larger.
+                const newWidth = Math.max(width, this.tickWidth);
+                if (newWidth !== this.tickWidth) {
+                    this.tickWidth = newWidth;
+                }
             }
-            // }
+
+            this.$emit('plotTickWidth', this.tickWidth);
         },
 
         trackMousePosition(event) {
