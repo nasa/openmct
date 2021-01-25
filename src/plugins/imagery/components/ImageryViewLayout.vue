@@ -579,7 +579,6 @@ export default {
         boundsChange(bounds, isTick) {
             if (!isTick) {
                 this.requestHistory();
-                this.rerequestRelatedTelemetry();
             }
         },
         async requestHistory() {
