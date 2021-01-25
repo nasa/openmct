@@ -26,12 +26,8 @@ describe('The Notifiation API', () => {
     let notificationAPIInstance;
     let defaultTimeout = 4000;
 
-    beforeEach(() => {
+    beforeAll(() => {
         notificationAPIInstance = new NotificationAPI();
-    });
-
-    afterEach(() => {
-        notificationAPIInstance.dismissAllNotifications();
     });
 
     describe('the info method', () => {
@@ -39,11 +35,11 @@ describe('The Notifiation API', () => {
         let severity = 'info';
         let notificationModel;
 
-        beforeEach(() => {
+        beforeAll(() => {
             notificationModel = notificationAPIInstance.info(message).model;
         });
 
-        afterEach(() => {
+        afterAll(() => {
             notificationAPIInstance.dismissAllNotifications();
         });
 
@@ -65,11 +61,11 @@ describe('The Notifiation API', () => {
         let severity = 'alert';
         let notificationModel;
 
-        beforeEach(() => {
+        beforeAll(() => {
             notificationModel = notificationAPIInstance.alert(message).model;
         });
 
-        afterEach(() => {
+        afterAll(() => {
             notificationAPIInstance.dismissAllNotifications();
         });
 
@@ -91,11 +87,11 @@ describe('The Notifiation API', () => {
         let severity = 'error';
         let notificationModel;
 
-        beforeEach(() => {
+        beforeAll(() => {
             notificationModel = notificationAPIInstance.error(message).model;
         });
 
-        afterEach(() => {
+        afterAll(() => {
             notificationAPIInstance.dismissAllNotifications();
         });
 
@@ -123,7 +119,7 @@ describe('The Notifiation API', () => {
         let updatedPercentage;
         let updatedMessage;
 
-        beforeEach(() => {
+        beforeAll(() => {
             notification = notificationAPIInstance.progress(title, percentage1, message1);
             notification.on('progress', (percentage, text) => {
                 updatedPercentage = percentage;
@@ -131,7 +127,7 @@ describe('The Notifiation API', () => {
             });
         });
 
-        afterEach(() => {
+        afterAll(() => {
             notificationAPIInstance.dismissAllNotifications();
         });
 
