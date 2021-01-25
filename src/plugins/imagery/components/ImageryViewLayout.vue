@@ -58,7 +58,7 @@
         <div class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
         >
-            <div
+            <!-- <div
                 ref="imageContainer"
                 class="c-imagery__main-image__image js-imageryView-image"
                 :style="{
@@ -67,9 +67,28 @@
                 }"
                 :data-openmct-image-timestamp="time"
                 :data-openmct-object-keystring="keyString"
-            ></div>
+            ></div> -->
+
+            <img
+                ref="focusedImage"
+                class="c-imagery__main-image__image js-imageryView-image"
+                :src="imageUrl"
+                :style="{
+                    'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                }"
+                :data-openmct-image-timestamp="time"
+                :data-openmct-object-keystring="keyString"
+            >
+
             <!-- TODO - fix after protyping -->
-            <CompassHUD />
+            <CompassHUD
+                v-if="shouldDisplayCompassHUD"
+                :rover-heading="metadataRoverHeading"
+                :sun-heading="metadataSunHeading"
+                :container-width="imageContainerWidth"
+                :container-height="imageContainerHeight"
+                :natural-aspect-ratio="focusedImageNaturalAspectRatio"
+            />
             <!-- TODO - fix after protyping -->
             <CompassRose
                 v-if="shouldDisplayCompassRose"
@@ -181,6 +200,7 @@ export default {
             numericDuration: undefined,
             metadataEndpoints: {},
             relatedTelemetry: {},
+            focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
             imageContainerHeight: undefined
         };
@@ -245,6 +265,11 @@ export default {
             return this.focusedImage !== undefined
                 && this.metadataRoverHeading !== undefined;
         },
+        shouldDisplayCompassHUD() {
+            return this.focusedImage !== undefined
+                && this.metadataRoverHeading !== undefined
+                && this.imageContainerWidth !== undefined;
+        },
         metadataRoverHeading() {
             return this.focusedImage && this.focusedImage['Rover Heading'];
         },
@@ -304,7 +329,7 @@ export default {
         //     console.log(await this.getMostRecentRelatedTelemetry('Rover Roll', this.imageHistory[4]));
         // }
 
-        this.pollResizeImageContainerID = setInterval(this.pollResizeImageContainer, 200);
+        this.pollResizeImageContainerID = setInterval(this.pollResizeImageContainer, 300);
     },
     updated() {
         this.scrollToRight();
@@ -817,19 +842,19 @@ export default {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
         },
         getImageNaturalDimensions() {
-            const img = new Image();
-            img.src = this.imageUrl;
+            const img = this.$refs.focusedImage;
+
             img.addEventListener('load', (data) => {
-                this.focusedImageAspectRatio = img.naturalHeight / img.naturalWidth;
+                this.focusedImageNaturalAspectRatio = img.naturalWidth / img.naturalHeight;
             }, { once: true });
         },
         pollResizeImageContainer() {
-            if (this.$refs.imageContainer.clientWidth !== this.imageContainerWidth) {
-                this.imageContainerWidth = this.$refs.imageContainer.clientWidth;
+            if (this.$refs.focusedImage.clientWidth !== this.imageContainerWidth) {
+                this.imageContainerWidth = this.$refs.focusedImage.clientWidth;
             }
 
-            if (this.$refs.imageContainer.clientHeight !== this.imageContainerHeight) {
-                this.imageContainerHeight = this.$refs.imageContainer.clientHeight;
+            if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
+                this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
             }
         }
     }

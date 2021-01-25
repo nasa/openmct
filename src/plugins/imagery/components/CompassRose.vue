@@ -121,15 +121,15 @@
 <script>
 export default {
     props: {
-        // assumption is degrees from north
+        // degrees from north heading
         roverHeading: {
             type: Number,
             required: true
         },
-        // assumption is degrees from north
+        // degrees from north heading
         sunHeading: {
             type: Number,
-            required: true
+            default: undefined
         },
         camFieldOfView: {
             type: Number,

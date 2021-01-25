@@ -29,6 +29,24 @@ $elemBg: rgba(black, 0.7);
   svg, div {
     position: absolute;
   }
+
+  &__container {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      pointer-events: none;
+  }
+
+  &__display {
+      height: 30px;
+      pointer-events: all;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+  }
   
   &__range {
     border: 1px solid $interfaceKeyColor;
