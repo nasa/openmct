@@ -387,11 +387,16 @@ export default {
                             this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
                         }
 
-                        this.relatedTelemetry[key].request = async (options = {}) => {
+                        this.relatedTelemetry[key].requestLatestFor = async (datum) => {
+                            const options = {
+                                start: this.openmct.time.bounds().start,
+                                end: datum[this.timeKey],
+                                strategy: 'latest'
+                            };
                             let results = await this.openmct.telemetry
                                 .request(this.relatedTelemetry[key].historicalDomainObject, options);
 
-                            return results;
+                            return results.pop();
                         };
                     }
                 }
@@ -437,24 +442,23 @@ export default {
                 throw new Error(`${key} does not exist on related telemetry`);
             }
 
+            let mostRecent;
+
             if (this.relatedTelemetry[key].valueOnTelemetry) {
-                if (targetDatum[key]) {
-                    return targetDatum[key];
+                mostRecent = targetDatum[this.relatedTelemetry[key].valueKey];
+
+                if (mostRecent) {
+                    return mostRecent;
                 } else {
-                    console.warn(`Related Telemetry for ${key} does NOT exist on this telemetry datum as implied.`);
+                    console.warn(`Related Telemetry for ${key} does NOT exist on this telemetry datum as configuration implied.`);
 
                     return;
                 }
             }
 
-            let mostRecentSubset = this.relatedTelemetry[key].historicalData.filter(datum => datum[this.timeKey] <= targetDatum[this.timeKey]);
-            let mostRecent = mostRecentSubset.pop();
+            mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
-            if (this.relatedTelemetry[key].valueKey) {
-                mostRecent = mostRecent[this.relatedTelemetry[key].valueKey];
-            }
-
-            return mostRecent;
+            return mostRecent[this.relatedTelemetry[key].valueKey];
         },
         // will subscribe to data for this key if not already done
         subscribeToDataForKey(key) {
