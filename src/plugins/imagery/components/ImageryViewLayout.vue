@@ -511,7 +511,7 @@ export default {
             }
         },
         trackLatestRelatedTelemetry() {
-            [...this.roverKeys, ...this.cameraKeys].forEach(key => {
+            [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
                         let valueKey = this.relatedTelemetry[key].valueKey || 'sin';
