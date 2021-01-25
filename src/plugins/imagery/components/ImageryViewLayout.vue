@@ -428,18 +428,6 @@ export default {
             }
 
         },
-        async rerequestRelatedTelemetry() {
-            if (!this.hasRelatedTelemetry) {
-                return;
-            }
-
-            for (let key of this.relatedTelemetry.keys) {
-                if (this.relatedTelemetry[key].trackingHistoricalData) {
-                    this.relatedTelemetry[key].historicalData = [];
-                    this.relatedTelemetry[key].historicalData = await this.relatedTelemetry[key].request();
-                }
-            }
-        },
         async getMostRecentRelatedTelemetry(key, targetDatum) {
             if (!this.hasRelatedTelemetry) {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
@@ -645,7 +633,6 @@ export default {
         boundsChange(bounds, isTick) {
             if (!isTick) {
                 this.requestHistory();
-                this.rerequestRelatedTelemetry();
             }
         },
         async requestHistory() {
