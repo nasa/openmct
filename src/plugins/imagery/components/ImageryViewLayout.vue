@@ -322,7 +322,6 @@ export default {
 
         // for when people are scrolling through images quickly
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
-<<<<<<< HEAD
 
         // examples
         // if (this.hasRelatedTelemetry) {
@@ -331,8 +330,6 @@ export default {
         // }
 
         this.pollResizeImageContainerID = setInterval(this.pollResizeImageContainer, 300);
-=======
->>>>>>> imagery-enhancements
     },
     updated() {
         this.scrollToRight();
