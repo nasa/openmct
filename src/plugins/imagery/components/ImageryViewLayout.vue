@@ -287,7 +287,7 @@ export default {
         this.requestHistory();
         await this.initializeRelatedTelemetry();
 
-        // track latest telemetry values for rover and camera for comparison
+        // track latest telemetry values for rover, camera and sun for comparison
         this.trackLatestRelatedTelemetry();
 
         // for when people are scrolling through images quickly
@@ -408,8 +408,8 @@ export default {
                     this.relatedTelemetry[key].listeners = [];
                     this.relatedTelemetry[key].subscribe = async (callback) => {
 
-                        if (!this.relatedTelemetry[key].trackingData) {
-                            await this.trackDataForKey(key);
+                        if (!this.relatedTelemetry[key].isSubscribed) {
+                            this.subscribeToDataForKey(key);
                         }
 
                         if (!this.relatedTelemetry[key].listeners.includes(callback)) {
@@ -437,10 +437,6 @@ export default {
                 throw new Error(`${key} does not exist on related telemetry`);
             }
 
-            if (!this.relatedTelemetry[key].trackingData) {
-                await this.trackDataForKey(key);
-            }
-
             if (this.relatedTelemetry[key].valueOnTelemetry) {
                 if (targetDatum[key]) {
                     return targetDatum[key];
@@ -460,40 +456,24 @@ export default {
 
             return mostRecent;
         },
-        async trackDataForKey(key) {
-            if (this.relatedTelemetry[key].trackingData) {
+        // will subscribe to data for this key if not already done
+        subscribeToDataForKey(key) {
+            if (this.relatedTelemetry[key].isSubscribed) {
                 return;
             }
 
-            // historical
-            if (this.relatedTelemetry[key].historical && !this.relatedTelemetry[key].valueOnTelemetry) {
-                this.relatedTelemetry[key].historicalData = await this.relatedTelemetry[key].request();
-                this.relatedTelemetry[key].trackingHistoricalData = true;
-            }
-
-            // realtime
-            if (this.relatedTelemetry[key].realtime) {
+            if (this.relatedTelemetry[key].realtimeDomainObject) {
                 this.relatedTelemetry[key].unsubscribe = this.openmct.telemetry.subscribe(
                     this.relatedTelemetry[key].realtimeDomainObject, datum => {
-                        // store the latest relatedTelemetryKey
-                        this.$set(this.relatedTelemetry[key], 'latest', datum);
-
-                        // if any additional listeners
                         this.relatedTelemetry[key].listeners.forEach(callback => {
                             callback(datum);
                         });
 
-                        // add to historical if applicable
-                        if (this.relatedTelemetry[key].historicalData !== undefined) {
-                            this.relatedTelemetry[key].historicalData.push(datum);
-                        } else {
-                            // store for later?
-                        }
                     }
                 );
-            }
 
-            this.relatedTelemetry[key].trackingData = true;
+                this.relatedTelemetry[key].isSubscribed = true;
+            }
         },
         async updateRelatedTelemetryForFocusedImage() {
             if (!this.hasRelatedTelemetry) {
