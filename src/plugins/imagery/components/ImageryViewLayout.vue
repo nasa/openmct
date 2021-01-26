@@ -79,22 +79,14 @@
                 :data-openmct-image-timestamp="time"
                 :data-openmct-object-keystring="keyString"
             >
-
-            <!-- TODO - fix after protyping -->
-            <CompassHUD
-                v-if="shouldDisplayCompassHUD"
+            <Compass
                 :rover-heading="metadataRoverHeading"
+                :cam-field-of-view="metadataCamFieldOfView"
                 :sun-heading="metadataSunHeading"
                 :container-width="imageContainerWidth"
                 :container-height="imageContainerHeight"
                 :natural-aspect-ratio="focusedImageNaturalAspectRatio"
-            />
-            <!-- TODO - fix after protyping -->
-            <CompassRose
-                v-if="shouldDisplayCompassRose"
-                :rover-heading="metadataRoverHeading"
-                :sun-heading="metadataSunHeading"
-                :cam-field-of-view="metadataCamFieldOfView"
+                :focused-image="focusedImage"
             />
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
@@ -151,8 +143,7 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
-import CompassRose from './CompassRose.vue';
-import CompassHUD from './CompassHUD.vue';
+import Compass from './Compass/Compass.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -173,8 +164,7 @@ const ARROW_LEFT = 37;
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        CompassRose,
-        CompassHUD
+        Compass
     },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
@@ -260,15 +250,6 @@ export default {
             }
 
             return result;
-        },
-        shouldDisplayCompassRose() {
-            return this.focusedImage !== undefined
-                && this.metadataRoverHeading !== undefined;
-        },
-        shouldDisplayCompassHUD() {
-            return this.focusedImage !== undefined
-                && this.metadataRoverHeading !== undefined
-                && this.imageContainerWidth !== undefined;
         },
         metadataRoverHeading() {
             return this.focusedImage && this.focusedImage['Rover Heading'];

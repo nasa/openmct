@@ -12,8 +12,17 @@ $elemBg: rgba(black, 0.7);
   color: green;  
 }
 
+.c-compass {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none;
+}
+
 /***************************** COMPASS HUD */
-.c-compass-hud {
+.c-hud {
   // To be placed within a imagery view, in the bounding box of the image
   $m: 1px;
   $padTB: 2px;
@@ -28,15 +37,6 @@ $elemBg: rgba(black, 0.7);
   
   svg, div {
     position: absolute;
-  }
-
-  &__container {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 1;
-      pointer-events: none;
   }
 
   &__display {
@@ -70,7 +70,7 @@ $elemBg: rgba(black, 0.7);
     opacity: 0.5;
   }
   
-  .c-sun {
+  &__sun {
     $s: 10px;
     @include sun('circle farthest-side at bottom');
     bottom: $padTB + 2px;

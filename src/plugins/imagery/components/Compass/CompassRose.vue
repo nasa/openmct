@@ -21,7 +21,9 @@
  *****************************************************************************/
 
 <template>
-<div class="c-direction-rose">
+<div
+    class="c-direction-rose"
+>
     <div
         class="c-nsew"
         :style="rotateFrameStyle"

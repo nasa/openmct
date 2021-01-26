@@ -1,0 +1,95 @@
+<template>
+<div
+    class="c-compass"
+    :style="compassHUDStyle"
+>
+    <CompassHUD
+        v-if="shouldDisplayCompassHUD"
+        :rover-heading="roverHeading"
+        :sun-heading="sunHeading"
+        :container-width="containerWidth"
+        :container-height="containerHeight"
+        :natural-aspect-ratio="naturalAspectRatio"
+    />
+    <CompassRose
+        v-if="shouldDisplayCompassRose"
+        :rover-heading="roverHeading"
+        :sun-heading="sunHeading"
+        :cam-field-of-view="camFieldOfView"
+    />
+</div>
+</template>
+
+<script>
+import CompassHUD from './CompassHUD.vue';
+import CompassRose from './CompassRose.vue';
+
+export default {
+    components: {
+        CompassHUD,
+        CompassRose
+    },
+    props: {
+        containerWidth: {
+            type: Number,
+            default: undefined
+        },
+        containerHeight: {
+            type: Number,
+            default: undefined
+        },
+        naturalAspectRatio: {
+            type: Number,
+            default: undefined
+        },
+        // degrees from north heading
+        roverHeading: {
+            type: Number,
+            default: undefined
+        },
+        // degrees from north heading
+        sunHeading: {
+            type: Number,
+            default: undefined
+        },
+        camFieldOfView: {
+            type: Number,
+            default: undefined
+        },
+        focusedImage: {
+            type: Object,
+            default: undefined
+        }
+    },
+    computed: {
+        shouldDisplayCompassRose() {
+            return this.focusedImage !== undefined
+                && this.roverHeading !== undefined;
+        },
+        shouldDisplayCompassHUD() {
+            return this.focusedImage !== undefined
+                && this.roverHeading !== undefined
+                && this.containerWidth !== undefined;
+        },
+        compassHUDStyle() {
+            const containerAspectRatio = this.containerWidth / this.containerHeight;
+
+            let width;
+            let height;
+
+            if (containerAspectRatio < this.naturalAspectRatio) {
+                width = '100%';
+                height = `${ this.containerWidth / this.naturalAspectRatio }px`;
+            } else {
+                width = `${ this.containerHeight * this.naturalAspectRatio }px`;
+                height = '100%';
+            }
+
+            return {
+                width: width,
+                height: height
+            };
+        }
+    }
+};
+</script>
