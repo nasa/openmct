@@ -375,6 +375,10 @@
     &:focus {
         box-shadow: $shdwInputFoc;
     }
+
+    &::selection {
+        background: rgba($colorKeySelectedBg, 0.5);
+    }
 }
 
 @mixin inlineInput() {

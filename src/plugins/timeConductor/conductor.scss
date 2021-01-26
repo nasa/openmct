@@ -235,15 +235,20 @@
 
 // Prototype
 [class^='pr-tc-input-menu'] {
+    // Uses ^= here to target both start and end menus
     background: $colorBodyBg;
     border-radius: $controlCr;
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    grid-column-gap: 3px;
+    grid-row-gap: 4px;
+    align-items: start;
+
     filter: brightness(1.4);
     box-shadow: $shdwMenu;
     padding: $interiorMargin;
     position: absolute;
-    width: 170px;
-    height: 90px;
-    bottom: 20px;
+    bottom: 24px;
     z-index: 99;
 
     &[class*='--start'] {
@@ -253,56 +258,26 @@
     &[class*='--end'] {
         right: 0;
     }
-
-    > * + * {
-        margin-top: $interiorMargin;
-    }
 }
 
-[class^='pr-tim'] {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-
-    > * + * {
-        //margin-left: $interiorMarginSm;
-    }
-    &[class*='labels'] {
+[class^='pr-time'] {
+    &[class*='label'] {
         font-size: 0.8em;
-
-        [class*='__'] {
-            opacity: 0.6;
-            width: 50px;
-        }
-
-        [class*='_hrs'] {
-            width: 67px;
-        }
+        opacity: 0.6;
+        text-transform: uppercase;
     }
 
-    &[class*='inputs'] {
-        //background: deeppink;
-        border: 1px solid rgba($colorBodyFg, 0.2);
-        border-radius: $controlCr;
-        padding: 2px;
+    &[class*='controls'] {
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
 
         input {
+            height: 22px;
+            line-height: 22px;
+            margin-right: $interiorMarginSm;
             font-size: 1.25em;
             width: 42px;
         }
-
-        [class*='_hrs'] {
-            width: 52px;
-        }
-
-        [class*="colon"] {
-            padding: 0 2px;
-        }
-
     }
-
-    &[class*='__buttons'] {
-        justify-content: flex-end;
-    }
-
 }

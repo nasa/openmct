@@ -5,30 +5,31 @@
     @keyup.enter.prevent="submit"
     @click.stop
 >
-    <div class="pr-tim-labels">
-        <div class="pr-time-label__hrs">Hrs</div>
-        <div class="pr-time-label__mins">Mins</div>
-        <div class="pr-time-label__secs">Secs</div>
-    </div>
-    <div class="pr-tim-inputs">
+    <div class="pr-time-label__hrs">Hrs</div>
+    <div class="pr-time-label__mins">Mins</div>
+    <div class="pr-time-label__secs">Secs</div>
+
+    <div class="pr-time-controls">
         <input
             ref="inputHrs"
             v-model="inputHrs"
-            class="pr-time-input__hrs"
+            class="pr-time-controls__hrs"
             step="1"
             type="number"
             min="0"
-            max="999"
+            max="23"
             @focusin="selectAll($event)"
             @focusout="format('inputHrs')"
             @wheel="increment($event, 'inputHrs')"
         >
-        <span class="pr-tim-colon">:</span>
+        :
+    </div>
+    <div class="pr-time-controls">
         <input
             ref="inputMins"
             v-model="inputMins"
             type="number"
-            class="pr-time-input__mins"
+            class="pr-time-controls__mins"
             min="0"
             max="59"
             step="1"
@@ -36,12 +37,14 @@
             @focusout="format('inputMins')"
             @wheel="increment($event, 'inputMins')"
         >
-        <span class="pr-tim-colon">:</span>
+        :
+    </div>
+    <div class="pr-time-controls">
         <input
             ref="inputSecs"
             v-model="inputSecs"
             type="number"
-            class="pr-time-input__secs"
+            class="pr-time-controls__secs"
             min="0"
             max="59"
             step="1"
@@ -49,14 +52,14 @@
             @focusout="format('inputSecs')"
             @wheel="increment($event, 'inputSecs')"
         >
-    </div>
-    <div class="pr-tim__buttons c-button-set c-button-set--strip-h">
-        <button class="c-button icon-check"
-                @click.prevent="submit"
-        ></button>
-        <button class="c-button icon-x"
-                @click.prevent="hide"
-        ></button>
+        <div class="pr-time__buttons">
+            <button class="c-button c-button--major icon-check"
+                    @click.prevent="submit"
+            ></button>
+            <button class="c-button icon-x"
+                    @click.prevent="hide"
+            ></button>
+        </div>
     </div>
 </div>
 </template>
@@ -76,7 +79,7 @@ export default {
     },
     data() {
         return {
-            inputHrs: '000',
+            inputHrs: '00',
             inputMins: '00',
             inputSecs: '00'
         };
@@ -91,8 +94,7 @@ export default {
     methods: {
         format(ref) {
             const curVal = this[ref];
-            const padAmt = (ref === 'inputHrs') ? 3 : 2;
-            this[ref] = curVal.padStart(padAmt, '0');
+            this[ref] = curVal.padStart(2, '0');
         },
         submit() {
             this.$emit('update', {
@@ -107,16 +109,14 @@ export default {
         },
         increment($ev, ref) {
             $ev.preventDefault();
-            const padAmt = (ref === 'inputHrs') ? 3 : 2;
             const step = (ref === 'inputHrs') ? 1 : 5;
-            const maxVal = (ref === 'inputHrs') ? 999 : 59;
+            const maxVal = (ref === 'inputHrs') ? 23 : 59;
             let cv = Math.round(parseInt(this[ref], 10) / step) * step;
             cv = Math.min(maxVal, Math.max(0, ($ev.deltaY < 0) ? cv + step : cv - step));
-            this[ref] = cv.toString().padStart(padAmt, '0');
+            this[ref] = cv.toString().padStart(2, '0');
         },
         setOffset() {
             [this.inputHrs, this.inputMins, this.inputSecs] = this.offset.split(':');
-            this.inputHrs = this.inputHrs.padStart(3, '0');
             this.$refs.inputHrs.focus();
         },
         selectAll($ev) {
