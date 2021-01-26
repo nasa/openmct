@@ -80,9 +80,7 @@
                 :data-openmct-object-keystring="keyString"
             >
             <Compass
-                :rover-heading="metadataRoverHeading"
-                :cam-field-of-view="metadataCamFieldOfView"
-                :sun-heading="metadataSunHeading"
+                v-if="shouldDisplayCompass"
                 :container-width="imageContainerWidth"
                 :container-height="imageContainerHeight"
                 :natural-aspect-ratio="focusedImageNaturalAspectRatio"
@@ -251,14 +249,11 @@ export default {
 
             return result;
         },
-        metadataRoverHeading() {
-            return this.focusedImage && this.focusedImage['Rover Heading'];
-        },
-        metadataSunHeading() {
-            return this.focusedImage && this.focusedImage['Sun Orientation'];
-        },
-        metadataCamFieldOfView() {
-            return 70;
+        shouldDisplayCompass() {
+            return this.focusedImage !== undefined
+                && this.focusedImageNaturalAspectRatio !== undefined
+                && this.imageContainerWidth !== undefined
+                && this.imageContainerHeight !== undefined;
         }
     },
     watch: {
@@ -266,11 +261,7 @@ export default {
             this.trackDuration();
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
-        },
-        imageUrl() {
-            if (this.imageUrl !== undefined) {
-                this.getImageNaturalDimensions();
-            }
+            this.getImageNaturalDimensions();
         }
     },
     async mounted() {
@@ -814,9 +805,12 @@ export default {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
         },
         getImageNaturalDimensions() {
+            this.focusedImageNaturalAspectRatio = undefined;
+
             const img = this.$refs.focusedImage;
 
-            img.addEventListener('load', (data) => {
+            // TODO - should probably cache this
+            img.addEventListener('load', () => {
                 this.focusedImageNaturalAspectRatio = img.naturalWidth / img.naturalHeight;
             }, { once: true });
         },

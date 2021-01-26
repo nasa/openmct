@@ -42,20 +42,6 @@ export default {
             type: Number,
             default: undefined
         },
-        // degrees from north heading
-        roverHeading: {
-            type: Number,
-            default: undefined
-        },
-        // degrees from north heading
-        sunHeading: {
-            type: Number,
-            default: undefined
-        },
-        camFieldOfView: {
-            type: Number,
-            default: undefined
-        },
         focusedImage: {
             type: Object,
             default: undefined
@@ -70,6 +56,17 @@ export default {
             return this.focusedImage !== undefined
                 && this.roverHeading !== undefined
                 && this.containerWidth !== undefined;
+        },
+        // degrees from north heading
+        roverHeading() {
+            return this.focusedImage && this.focusedImage['Rover Heading'];
+        },
+        // degrees from north heading
+        sunHeading() {
+            return this.focusedImage && this.focusedImage['Sun Orientation'];
+        },
+        camFieldOfView() {
+            return 70;
         },
         compassHUDStyle() {
             const containerAspectRatio = this.containerWidth / this.containerHeight;
