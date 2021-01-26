@@ -71,16 +71,14 @@
 
                 <!-- rover position fresh -->
                 <div
-                    v-if="roverPositionIsFresh !== undefined"
-                    :class="{'c-imagery--new': isImageNew && !refreshCSS}"
-                    class="c-imagery__age icon-check"
+                    v-if="hasRelatedTelemetry && roverPositionIsFresh"
+                    class="c-imagery__age icon-check c-imagery--new"
                 >POS</div>
 
                 <!-- camera position fresh -->
                 <div
-                    v-if="cameraPositionIsFresh !== undefined"
-                    :class="{'c-imagery--new': isImageNew && !refreshCSS}"
-                    class="c-imagery__age icon-check"
+                    v-if="hasRelatedTelemetry && cameraPositionIsFresh"
+                    class="c-imagery__age icon-check c-imagery--new"
                 >CAM</div>
             </div>
             <div class="h-local-controls">
@@ -157,6 +155,7 @@ export default {
             focusedImageRelatedData: {},
             numericDuration: undefined,
             metadataEndpoints: {},
+            hasRelatedTelemetry: false,
             relatedTelemetry: {},
             latestRelatedTelemetry: {}
         };
@@ -300,9 +299,11 @@ export default {
         this.subscribe();
         this.requestHistory();
         await this.initializeRelatedTelemetry();
+        this.updateRelatedTelemetryForFocusedImage();
 
         // track latest telemetry values for rover, camera and sun for comparison
         this.trackLatestRelatedTelemetry();
+
 
         // for when people are scrolling through images quickly
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
@@ -371,8 +372,6 @@ export default {
         },
         async initializeRelatedTelemetry() {
             if (this.imageHints.relatedTelemetry === undefined) {
-                this.hasRelatedTelemetry = false;
-
                 return;
             }
 
