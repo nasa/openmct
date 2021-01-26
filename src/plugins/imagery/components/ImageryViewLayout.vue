@@ -84,7 +84,7 @@
                 :container-width="imageContainerWidth"
                 :container-height="imageContainerHeight"
                 :natural-aspect-ratio="focusedImageNaturalAspectRatio"
-                :focused-image="focusedImage"
+                :image="focusedImage"
             />
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">

@@ -7,9 +7,6 @@
         v-if="shouldDisplayCompassHUD"
         :rover-heading="roverHeading"
         :sun-heading="sunHeading"
-        :container-width="containerWidth"
-        :container-height="containerHeight"
-        :natural-aspect-ratio="naturalAspectRatio"
     />
     <CompassRose
         v-if="shouldDisplayCompassRose"
@@ -32,38 +29,35 @@ export default {
     props: {
         containerWidth: {
             type: Number,
-            default: undefined
+            required: true
         },
         containerHeight: {
             type: Number,
-            default: undefined
+            required: true
         },
         naturalAspectRatio: {
             type: Number,
-            default: undefined
+            required: true
         },
-        focusedImage: {
+        image: {
             type: Object,
-            default: undefined
+            required: true
         }
     },
     computed: {
         shouldDisplayCompassRose() {
-            return this.focusedImage !== undefined
-                && this.roverHeading !== undefined;
+            return this.roverHeading !== undefined;
         },
         shouldDisplayCompassHUD() {
-            return this.focusedImage !== undefined
-                && this.roverHeading !== undefined
-                && this.containerWidth !== undefined;
+            return this.roverHeading !== undefined;
         },
         // degrees from north heading
         roverHeading() {
-            return this.focusedImage && this.focusedImage['Rover Heading'];
+            return this.image['Rover Heading'];
         },
         // degrees from north heading
         sunHeading() {
-            return this.focusedImage && this.focusedImage['Sun Orientation'];
+            return this.image['Sun Orientation'];
         },
         camFieldOfView() {
             return 70;

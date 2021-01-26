@@ -21,18 +21,6 @@
 <script>
 export default {
     props: {
-        containerWidth: {
-            type: Number,
-            required: true
-        },
-        containerHeight: {
-            type: Number,
-            required: true
-        },
-        naturalAspectRatio: {
-            type: Number,
-            required: true
-        },
         // degrees from north heading
         roverHeading: {
             type: Number,
