@@ -120,9 +120,7 @@ export default {
             this.numberSelect('inputHrs');
         },
         numberSelect(input) {
-            const SWITCH_DELAY = 50;
-
-            this.$refs.inputHrs.focus();
+            this.$refs[input].focus();
 
             // change to text, select, then change back to number
             // number inputs do not support select()
