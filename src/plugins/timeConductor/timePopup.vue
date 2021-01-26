@@ -117,7 +117,23 @@ export default {
         },
         setOffset() {
             [this.inputHrs, this.inputMins, this.inputSecs] = this.offset.split(':');
+            this.numberSelect('inputHrs');
+        },
+        numberSelect(input) {
+            const SWITCH_DELAY = 50;
+
             this.$refs.inputHrs.focus();
+
+            // change to text, select, then change back to number
+            // number inputs do not support select()
+            this.$nextTick(() => {
+                this.$refs[input].setAttribute('type', 'text');
+                this.$refs[input].select();
+
+                this.$nextTick(() => {
+                    this.$refs[input].setAttribute('type', 'number');
+                });
+            });
         },
         selectAll($ev) {
             $ev.target.select();
