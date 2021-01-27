@@ -229,6 +229,10 @@
             box-shadow: none;
             color: $colorTime;
             pointer-events: none;
+
+            &[disabled] {
+                opacity: 1 !important;
+            }
         }
     }
 }
