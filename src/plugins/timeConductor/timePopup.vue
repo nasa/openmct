@@ -143,6 +143,7 @@ export default {
             let cv = Math.round(parseInt(this[ref], 10) / step) * step;
             cv = Math.min(maxVal, Math.max(0, ($ev.deltaY < 0) ? cv + step : cv - step));
             this[ref] = cv.toString().padStart(2, '0');
+            this.validate();
         },
         setOffset() {
             [this.inputHrs, this.inputMins, this.inputSecs] = this.offset.split(':');
