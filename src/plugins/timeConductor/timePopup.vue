@@ -19,6 +19,8 @@
             min="0"
             max="23"
             title="Enter 0 - 23"
+            @change="validate()"
+            @keyup="validate()"
             @focusin="selectAll($event)"
             @focusout="format('inputHrs')"
             @wheel="increment($event, 'inputHrs')"
@@ -35,6 +37,8 @@
             max="59"
             title="Enter 0 - 59"
             step="1"
+            @change="validate()"
+            @keyup="validate()"
             @focusin="selectAll($event)"
             @focusout="format('inputMins')"
             @wheel="increment($event, 'inputMins')"
@@ -51,13 +55,17 @@
             max="59"
             title="Enter 0 - 59"
             step="1"
+            @change="validate()"
+            @keyup="validate()"
             @focusin="selectAll($event)"
             @focusout="format('inputSecs')"
             @wheel="increment($event, 'inputSecs')"
         >
         <div class="pr-time__buttons">
-            <button class="c-button c-button--major icon-check"
-                    @click.prevent="submit"
+            <button
+                class="c-button c-button--major icon-check"
+                :disabled="isDisabled"
+                @click.prevent="submit"
             ></button>
             <button class="c-button icon-x"
                     @click.prevent="hide"
@@ -84,7 +92,8 @@ export default {
         return {
             inputHrs: '00',
             inputMins: '00',
-            inputSecs: '00'
+            inputSecs: '00',
+            isDisabled: false
         };
     },
     mounted() {
@@ -98,6 +107,23 @@ export default {
         format(ref) {
             const curVal = this[ref];
             this[ref] = curVal.padStart(2, '0');
+        },
+        validate() {
+            let disabled = false;
+            let refs = ['inputHrs', 'inputMins', 'inputSecs'];
+
+            for (let ref of refs) {
+                let min = Number(this.$refs[ref].min);
+                let max = Number(this.$refs[ref].max);
+                let value = Number(this.$refs[ref].value);
+
+                if (value > max || value < min) {
+                    disabled = true;
+                    break;
+                }
+            }
+
+            this.isDisabled = disabled;
         },
         submit() {
             this.$emit('update', {
