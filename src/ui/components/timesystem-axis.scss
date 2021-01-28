@@ -1,6 +1,7 @@
-.c-plan {
-  $h: 20px;
-  $tickYPos: ($h / 2) + 12px + 5px;
+.c-timesystem-axis {
+  $h: 18px;
+  height: 50px;
+  $tickYPos: ($h / 2) + 12px + 10px;
   $tickXPos: 100px;
 
   svg {
@@ -10,14 +11,6 @@
     > g.axis {
       // Overall Tick holder
       transform: translateY($tickYPos) translateX($tickXPos);
-
-      g {
-        //Each tick. These move on drag.
-        line {
-          // Line beneath ticks
-          display: none;
-        }
-      }
     }
 
     text:not(.activity) {
@@ -30,10 +23,6 @@
       stroke-linecap: butt;
       stroke-linejoin: bevel;
       stroke-width: 6px;
-    }
-
-    text.activity {
-      stroke: none;
     }
   }
 

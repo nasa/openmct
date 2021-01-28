@@ -1,0 +1,17 @@
+.c-plan {
+  $h: 20px;
+
+  &-content {
+    margin-top: -30px;
+  }
+
+  svg {
+    text-rendering: geometricPrecision;
+    width: 100%;
+    height: 100%;
+
+    text.activity {
+      stroke: none;
+    }
+  }
+}

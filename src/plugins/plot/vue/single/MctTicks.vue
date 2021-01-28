@@ -56,7 +56,7 @@
 
 <script>
 import eventHelpers from "./lib/eventHelpers";
-import { ticks, commonPrefix, commonSuffix } from "./tickUtils";
+import { ticks, commonPrefix, commonSuffix, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/configStore";
 
 export default {
@@ -87,7 +87,7 @@ export default {
 
         this.axis = this.getAxisFromConfig();
 
-        this.tickCount = 4;
+        this.tickCount = this.axisType === 'xAxis' ? 6 : 4;
         this.tickUpdate = false;
         this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
         this.listenTo(this.axis, 'change:format', this.updateTicks, this);
@@ -188,29 +188,7 @@ export default {
                     step: newTicks[1] - newTicks[0]
                 };
 
-                newTicks = newTicks
-                    .map(function (tickValue) {
-                        return {
-                            value: tickValue,
-                            text: format(tickValue)
-                        };
-                    }, this);
-
-                if (newTicks.length && typeof newTicks[0].text === 'string') {
-                    const tickText = newTicks.map(function (t) {
-                        return t.text;
-                    });
-                    const prefix = tickText.reduce(commonPrefix);
-                    const suffix = tickText.reduce(commonSuffix);
-                    newTicks.forEach(function (t) {
-                        t.fullText = t.text;
-                        if (suffix.length) {
-                            t.text = t.text.slice(prefix.length, -suffix.length);
-                        } else {
-                            t.text = t.text.slice(prefix.length);
-                        }
-                    });
-                }
+                newTicks = getFormattedTicks(newTicks, format);
 
                 this.ticks = newTicks;
                 this.shouldCheckWidth = true;

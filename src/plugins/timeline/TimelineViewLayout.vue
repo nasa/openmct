@@ -21,39 +21,46 @@
 *****************************************************************************/
 
 <template>
-<div ref="planHolder"
-     class="c-timeline"
->
-    <div
-        v-for="item in items"
-        :key="item.keyString"
-        class="c-timeline__object-holder"
-    >
-        <div v-if="item.domainObject.type !== 'plan'"
-             class="c-timeline__object-label"
+<div class="c-timeline">
+    <timeline-axis v-if="viewBounds"
+                   :bounds="viewBounds"
+                   :time-system="timeSystem"
+                   :content-height="height"
+                   :rendering-engine="'svg'"
+    />
+    <div ref="contentHolder">
+        <div
+            v-for="item in items"
+            :key="item.keyString"
+            class="c-timeline__object-holder"
         >
-            <div class="c-object-label__type-icon"
-                 :class="item.type.definition.cssClass"
+            <div v-if="item.domainObject.type !== 'plan'"
+                 class="c-timeline__object-label"
             >
+                <div class="c-object-label__type-icon"
+                     :class="item.type.definition.cssClass"
+                >
+                </div>
+                {{ item.domainObject.name }}
             </div>
-            {{ item.domainObject.name }}
+            <object-view
+                class="c-timeline__object"
+                :class="{'c-timeline__object-offset': item.domainObject.type !== 'plan'}"
+                :default-object="item.domainObject"
+                data-selectable
+                :options="item.options"
+                :object-path="item.objectPath"
+            />
         </div>
-        <object-view
-            class="c-timeline__object"
-            :class="{'c-timeline__object-offset': item.domainObject.type !== 'plan'}"
-            :object="item.domainObject"
-            data-selectable
-            :options="item.options"
-            :object-path="item.objectPath"
-        />
-    </div>
     <!--    <plan :rendering-engine="'canvas'" />-->
+    </div>
 </div>
 </template>
 
 <script>
 // import Plan from './Plan.vue';
 import ObjectView from '@/ui/components/ObjectView.vue';
+import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 
 const unknownObjectType = {
     definition: {
@@ -65,12 +72,16 @@ const unknownObjectType = {
 export default {
     inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
     components: {
-        ObjectView
+        ObjectView,
+        TimelineAxis
     },
     data() {
         return {
             // plans: [],
-            items: []
+            items: [],
+            viewBounds: undefined,
+            timeSystem: undefined,
+            height: 0
         };
     },
     mounted() {
@@ -78,6 +89,14 @@ export default {
             this.composition.on('add', this.addItem);
             this.composition.load();
         }
+
+        this.updateViewBounds();
+        this.openmct.time.on("timeSystem", this.updateTimeSystem);
+        this.openmct.time.on("bounds", this.updateViewBounds);
+    },
+    beforeDestroy() {
+        this.openmct.time.off("timeSystem", this.updateTimeSystem);
+        this.openmct.time.off("bounds", this.updateViewBounds);
     },
     methods: {
         addItem(domainObject) {
@@ -98,6 +117,19 @@ export default {
             };
 
             this.items.push(item);
+            this.updateContentHeight();
+        },
+        updateContentHeight() {
+            this.height = Math.round(this.$refs.contentHolder.getBoundingClientRect().height);
+        },
+        updateViewBounds() {
+            this.viewBounds = this.openmct.time.bounds();
+            if (this.timeSystem === undefined) {
+                this.timeSystem = this.openmct.time.timeSystem();
+            }
+        },
+        updateTimeSystem() {
+            this.timeSystem = this.openmct.time.timeSystem();
         }
     }
 };

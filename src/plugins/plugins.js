@@ -59,10 +59,11 @@ define([
     './newFolderAction/plugin',
     './persistence/couch/plugin',
     './defaultRootName/plugin',
-    './timeline/plugin',
+    './plan/plugin',
     './viewDatumAction/plugin',
     './interceptors/plugin',
-    './performanceIndicator/plugin'
+    './performanceIndicator/plugin',
+    './timeline/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -102,10 +103,11 @@ define([
     NewFolderAction,
     CouchDBPlugin,
     DefaultRootName,
-    Timeline,
+    Plan,
     ViewDatumAction,
     ObjectInterceptors,
-    PerformanceIndicator
+    PerformanceIndicator,
+    Timeline
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -199,10 +201,11 @@ define([
     plugins.NewFolderAction = NewFolderAction.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
-    plugins.Timeline = Timeline.default;
+    plugins.Plan = Plan.default;
     plugins.ViewDatumAction = ViewDatumAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
     plugins.PerformanceIndicator = PerformanceIndicator.default;
+    plugins.Timeline = Timeline.default;
 
     return plugins;
 });

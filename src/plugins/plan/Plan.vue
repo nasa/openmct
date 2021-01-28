@@ -1,16 +1,20 @@
 <template>
-<div ref="axisHolder"
-     class="c-plan"
->
-    <div class="nowMarker"><span class="icon-arrow-down"></span></div>
-</div>
-</template>
+<div class="c-plan">
+    <timeline-axis v-if="viewBounds && !options.compact"
+                   :bounds="viewBounds"
+                   :time-system="timeSystem"
+                   :content-height="height"
+                   :rendering-engine="renderingEngine"
+    />
+    <div ref="planHolder"
+         class="c-plan-content"
+    ></div>
+</div></template>
 
 <script>
 import * as d3Selection from 'd3-selection';
-import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
-import utcMultiTimeFormat from "@/plugins/timeConductor/utcMultiTimeFormat";
+import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
 
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
@@ -20,17 +24,20 @@ const TEXT_LEFT_PADDING = 5;
 const ROW_PADDING = 12;
 // const DEFAULT_DURATION_FORMATTER = 'duration';
 const RESIZE_POLL_INTERVAL = 200;
-const PIXELS_PER_TICK = 100;
-const PIXELS_PER_TICK_WIDE = 200;
+// const PIXELS_PER_TICK = 100;
+// const PIXELS_PER_TICK_WIDE = 200;
 const ROW_HEIGHT = 30;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
-const TIMELINE_HEIGHT = 30;
+const PLAN_UPPER_OFFSET = 30;
 //This offset needs to be re-considered
 const GROUP_OFFSET = 100;
 
 export default {
     inject: ['openmct', 'domainObject'],
+    components: {
+        TimelineAxis
+    },
     props: {
         options: {
             type: Object,
@@ -47,18 +54,21 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            viewBounds: undefined,
+            timeSystem: undefined,
+            height: 0
+        };
+    },
     mounted() {
         this.validateJSON(this.domainObject.selectFile.body);
         if (this.renderingEngine === 'svg') {
             this.useSVG = true;
         }
 
-        this.container = d3Selection.select(this.$refs.axisHolder);
+        this.container = d3Selection.select(this.$refs.planHolder);
         this.svgElement = this.container.append("svg:svg");
-        // draw x axis with labels. CSS is used to position them.
-        this.axisElement = this.svgElement.append("g")
-            .attr("class", "axis");
-        this.xAxis = d3Axis.axisTop();
 
         this.canvas = this.container.append('canvas').node();
         this.canvasContext = this.canvas.getContext('2d');
@@ -84,7 +94,7 @@ export default {
             this.setScaleAndPlotActivities();
         },
         resize() {
-            if (this.$refs.axisHolder.clientWidth !== this.width) {
+            if (this.$refs.planHolder.clientWidth !== this.width) {
                 this.setDimensions();
                 this.updateViewBounds();
             }
@@ -100,33 +110,22 @@ export default {
         },
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
-            // this.viewBounds.end = this.viewBounds.end + (30 * 60 * 1000);
+            if (this.timeSystem === undefined) {
+                this.timeSystem = this.openmct.time.timeSystem();
+            }
+
             this.setScaleAndPlotActivities();
         },
-        updateNowMarker() {
-            if (this.openmct.time.clock() === undefined) {
-                let nowMarker = document.querySelector('.nowMarker');
-                if (nowMarker) {
-                    nowMarker.parentNode.removeChild(nowMarker);
-                }
-            } else {
-                let nowMarker = document.querySelector('.nowMarker');
-                if (nowMarker) {
-                    const svgEl = d3Selection.select(this.svgElement).node();
-                    const height = this.useSVG ? svgEl.style('height') : this.canvas.height + 'px';
-                    nowMarker.style.height = height;
-                    const now = this.xScale(Date.now());
-                    nowMarker.style.left = now + GROUP_OFFSET + 'px';
-                }
+        setScaleAndPlotActivities(timeSystem) {
+            if (timeSystem !== undefined) {
+                this.timeSystem = timeSystem;
             }
-        },
-        setScaleAndPlotActivities() {
-            this.setScale();
+
+            this.setScale(this.timeSystem);
             this.clearPreviousActivities();
             if (this.xScale) {
                 this.calculatePlanLayout();
                 this.drawPlan();
-                this.updateNowMarker();
             }
         },
         clearPreviousActivities() {
@@ -137,14 +136,14 @@ export default {
             }
         },
         setDimensions() {
-            const axisHolder = this.$refs.axisHolder;
-            const rect = axisHolder.getBoundingClientRect();
+            const planHolder = this.$refs.planHolder;
+            const rect = planHolder.getBoundingClientRect();
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
-            this.width = axisHolder.clientWidth;
+            this.width = planHolder.clientWidth;
             this.offsetWidth = this.width - GROUP_OFFSET;
 
-            this.height = Math.round(axisHolder.getBoundingClientRect().height);
+            this.height = Math.round(planHolder.getBoundingClientRect().height);
 
             if (this.useSVG) {
                 this.svgElement.attr("width", this.width);
@@ -180,17 +179,6 @@ export default {
             }
 
             this.xScale.range([PADDING, this.offsetWidth - PADDING * 2]);
-
-            this.xAxis.scale(this.xScale);
-            this.xAxis.tickFormat(utcMultiTimeFormat);
-
-            this.axisElement.call(this.xAxis);
-
-            if (this.width > 1800) {
-                this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK_WIDE);
-            } else {
-                this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK);
-            }
         },
         isActivityInBounds(activity) {
             return (activity.start < this.viewBounds.end) && (activity.end > this.viewBounds.start);
@@ -333,7 +321,7 @@ export default {
                 groupHeadingBorder = row + ROW_PADDING + OUTER_TEXT_PADDING;
                 groupHeadingRow = groupHeadingBorder + OUTER_TEXT_PADDING;
             } else {
-                groupHeadingRow = TIMELINE_HEIGHT + OUTER_TEXT_PADDING;
+                groupHeadingRow = PLAN_UPPER_OFFSET + OUTER_TEXT_PADDING;
             }
 
             return {
@@ -398,7 +386,7 @@ export default {
             }
 
             const activity = item.activity;
-            const rectY = row + TIMELINE_HEIGHT;
+            const rectY = row + PLAN_UPPER_OFFSET;
             this.svgElement.append("rect")
                 .attr("class", "activity")
                 .attr("x", item.start + GROUP_OFFSET)
@@ -412,7 +400,7 @@ export default {
                 this.svgElement.append("text").text(line)
                     .attr("class", "activity")
                     .attr("x", item.textStart + GROUP_OFFSET)
-                    .attr("y", item.textY + TIMELINE_HEIGHT + (index * LINE_HEIGHT))
+                    .attr("y", item.textY + PLAN_UPPER_OFFSET + (index * LINE_HEIGHT))
                     .attr('fill', activity.textColor);
             });
             //TODO: Ending border
@@ -436,7 +424,7 @@ export default {
 
             const activity = item.activity;
             const rectX = item.start;
-            const rectY = row + TIMELINE_HEIGHT;
+            const rectY = row + PLAN_UPPER_OFFSET;
             const rectWidth = item.rectWidth;
             this.canvasContext.fillStyle = activity.color;
             this.canvasContext.strokeStyle = "lightgray";
@@ -446,7 +434,7 @@ export default {
             this.canvasContext.fillStyle = activity.textColor;
 
             item.textLines.forEach((line, index) => {
-                this.canvasContext.fillText(line, item.textStart + GROUP_OFFSET, item.textY + TIMELINE_HEIGHT + (index * LINE_HEIGHT));
+                this.canvasContext.fillText(line, item.textStart + GROUP_OFFSET, item.textY + PLAN_UPPER_OFFSET + (index * LINE_HEIGHT));
             });
             //TODO: Ending border
         }

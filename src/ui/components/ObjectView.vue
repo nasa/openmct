@@ -15,7 +15,6 @@ const defaultOptions = {
 export default {
     inject: ["openmct"],
     props: {
-        showEditView: Boolean,
         defaultObject: {
             type: Object,
             default: undefined
@@ -191,7 +190,7 @@ export default {
 
             if (provider.edit && this.options.showEditView) {
                 if (this.openmct.editor.isEditing()) {
-                    this.currentView = provider.edit(this.domainObject, true, objectPath);
+                    this.currentView = provider.edit(this.domainObject, true, objectPath, this.options);
                 } else {
                     this.currentView = provider.view(this.domainObject, objectPath, this.options);
                 }

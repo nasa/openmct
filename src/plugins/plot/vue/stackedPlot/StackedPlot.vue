@@ -34,6 +34,7 @@
                        :key="object.id"
                        class="c-plot--stacked-container"
                        :object="object"
+                       :options="options"
                        :grid-lines="gridLines"
                        :cursor-guide="cursorGuide"
                        :plot-tick-width="maxTickWidth"
@@ -51,6 +52,14 @@ export default {
     inject: ['openmct', 'domainObject', 'composition'],
     components: {
         StackedPlotItem
+    },
+    props: {
+        options: {
+            type: Object,
+            default() {
+                return {};
+            }
+        }
     },
     data() {
         return {

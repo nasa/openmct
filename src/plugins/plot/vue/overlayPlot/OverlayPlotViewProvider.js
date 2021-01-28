@@ -36,7 +36,7 @@ export default function OverlayPlotViewProvider(openmct) {
             return domainObject.type === 'telemetry.plot.overlay';
         },
 
-        view: function (domainObject) {
+        view: function (domainObject, objectPath, options) {
             let component;
 
             return {
@@ -50,7 +50,12 @@ export default function OverlayPlotViewProvider(openmct) {
                             openmct,
                             domainObject
                         },
-                        template: '<plot></plot>'
+                        data() {
+                            return {
+                                options
+                            };
+                        },
+                        template: '<plot :options="options"></plot>'
                     });
                 },
                 destroy: function () {

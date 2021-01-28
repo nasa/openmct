@@ -90,11 +90,11 @@ define([
                     enumerations: [
                         {
                             value: 0,
-                            string: "OFF"
+                            string: "OFF-VERYLONG"
                         },
                         {
                             value: 1,
-                            string: "ON"
+                            string: "ON-VERYLONG"
                         }
                     ],
                     hints: {

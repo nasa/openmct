@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from "utils/testing";
-import TimelinePlugin from "./plugin";
+import TimelinePlugin from "../plan/plugin";
 import Vue from 'vue';
 import TimelineViewLayout from "./TimelineViewLayout.vue";
 

@@ -36,7 +36,7 @@ export default function StackedPlotViewProvider(openmct) {
             return domainObject.type === 'telemetry.plot.stacked';
         },
 
-        view: function (domainObject) {
+        view: function (domainObject, objectPath, options) {
             let component;
 
             return {
@@ -51,7 +51,12 @@ export default function StackedPlotViewProvider(openmct) {
                             domainObject,
                             composition: openmct.composition.get(domainObject)
                         },
-                        template: '<stacked-plot></stacked-plot>'
+                        data() {
+                            return {
+                                options
+                            };
+                        },
+                        template: '<stacked-plot :options="options"></stacked-plot>'
                     });
                 },
                 destroy: function () {

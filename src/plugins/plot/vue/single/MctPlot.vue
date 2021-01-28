@@ -368,6 +368,7 @@ export default {
 
             const displayRange = series.getDisplayRange(xKey);
             this.config.xAxis.set('range', displayRange);
+
         },
 
         /**
