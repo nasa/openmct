@@ -233,6 +233,8 @@ export default {
 
         this.loaded = true;
 
+        //We're referencing the canvas elements from the mct-chart in the initialize method.
+        // So we need $nextTick to ensure the component is fully mounted before we can initialize stuff.
         this.$nextTick(this.initialize);
 
     },
@@ -405,7 +407,7 @@ export default {
        * Handle end of user viewport change: load more data for current display
        * bounds, and mark view as synchronized if bounds match configured bounds.
        */
-        onUserViewportChangeEnd() {
+        userViewportChangeEnd() {
             const xDisplayRange = this.config.xAxis.get('displayRange');
             const xRange = this.config.xAxis.get('range');
 
@@ -672,8 +674,7 @@ export default {
                     min: Math.min(this.marquee.start.y, this.marquee.end.y),
                     max: Math.max(this.marquee.start.y, this.marquee.end.y)
                 });
-                this.$emit('userViewportChangeEnd');
-                this.onUserViewportChangeEnd();
+                this.userViewportChangeEnd();
             } else {
                 // A history entry is created by startMarquee, need to remove
                 // if marquee zoom doesn't occur.
@@ -722,7 +723,7 @@ export default {
                 });
             }
 
-            this.$emit('userViewportChangeEnd');
+            this.userViewportChangeEnd();
         },
 
         wheelZoom(event) {
@@ -792,7 +793,7 @@ export default {
             this.stillZooming = window.setTimeout(function () {
                 this.plotHistory.push(plotHistoryStep);
                 plotHistoryStep = undefined;
-                this.$emit('userViewportChangeEnd');
+                this.userViewportChangeEnd();
             }.bind(this), 250);
         },
 
@@ -841,7 +842,7 @@ export default {
 
         endPan() {
             this.pan = undefined;
-            this.$emit('userViewportChangeEnd');
+            this.userViewportChangeEnd();
         },
 
         freeze() {
@@ -853,7 +854,7 @@ export default {
             this.config.yAxis.set('frozen', false);
             this.config.xAxis.set('frozen', false);
             this.plotHistory = [];
-            this.$emit('userViewportChangeEnd');
+            this.userViewportChangeEnd();
         },
 
         back() {
@@ -866,7 +867,7 @@ export default {
 
             this.config.xAxis.set('displayRange', previousAxisRanges.x);
             this.config.yAxis.set('displayRange', previousAxisRanges.y);
-            this.$emit('userViewportChangeEnd');
+            this.userViewportChangeEnd();
         },
 
         setCursorGuideVisibility(cursorGuide) {
