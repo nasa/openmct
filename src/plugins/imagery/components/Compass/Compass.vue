@@ -6,6 +6,7 @@
     <CompassHUD
         v-if="shouldDisplayCompassHUD"
         :rover-heading="roverHeading"
+        :rover-roll="roverRoll"
         :sun-heading="sunHeading"
         :camera-field-of-view="cameraFieldOfView"
         :camera-pan="cameraPan"

@@ -1,6 +1,7 @@
 <template>
 <div
     class="c-compass__hud c-hud"
+    :style="skewCompassHUDStyle"
 >
     <div
         v-for="point in visibleCompassPoints"
@@ -76,6 +77,10 @@ export default {
             type: Number,
             required: true
         },
+        roverRoll: {
+            type: Number,
+            default: undefined
+        },
         sunHeading: {
             type: Number,
             default: undefined
@@ -90,14 +95,36 @@ export default {
         }
     },
     computed: {
+        skewCompassHUDStyle() {
+            if (this.roverRoll === undefined || this.roverRoll === 0) {
+                return;
+            }
+
+            const origin = this.roverRoll > 0 ? 'left bottom' : 'right top';
+
+            return {
+                'transform-origin': origin,
+                transform: `skew(0, ${ this.roverRoll }deg`
+            };
+        },
+        unSkewCompassHUDStyle() {
+            if (this.roverRoll === undefined || this.roverRoll === 0) {
+                return;
+            }
+
+            return {
+                transform: `translateY(-50%) skew(0, ${ -this.roverRoll }deg`
+            };
+        },
         visibleCompassPoints() {
             return COMPASS_POINTS
                 .filter(point => inRange(point.degrees, this.visibleRange))
                 .map(point => {
                     const percentage = percentOfRange(point.degrees, this.visibleRange);
-                    point.style = {
-                        left: `${ percentage * 100 }%`
-                    };
+                    point.style = Object.assign(
+                        { left: `${ percentage * 100 }%` },
+                        this.unSkewCompassHUDStyle
+                    );
 
                     return point;
                 });
