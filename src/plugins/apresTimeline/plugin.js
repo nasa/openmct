@@ -1,5 +1,7 @@
 import ActivityViewProvider from './activityViewProvider';
 import TimelineViewProvider from './timelineViewProvider';
+import Chronicles from './chronicles';
+
 
 export default function () {
     return function install(openmct) {
@@ -11,6 +13,17 @@ export default function () {
                 creatable: true,
                 initialize: function (domainObject) {
                     domainObject.composition = [];
+                }
+            }
+        );
+        openmct.types.addType(
+            'apres.chronicles.type',
+            {
+                name: 'Apres Chronicles Activity',
+                cssClass: 'icon-pause',
+                creatable: true,
+                initialize: function (domainObject) {
+
                 }
             }
         );
@@ -78,6 +91,7 @@ export default function () {
 
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
         openmct.objectViews.addProvider(new ActivityViewProvider(openmct));
-        openmct.objectViews.addProvider(new Chronicle(openmct));
+        openmct.objectViews.addProvider(new Chronicles(openmct));
+        openmct.telemetry.addProvider(Chronicles);
     }
 };

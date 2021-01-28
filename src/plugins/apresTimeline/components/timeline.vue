@@ -14,6 +14,8 @@
 
 <script>
 import TimelineActivity from './timelineActivity.vue';
+import Chronicles from './chronicles.vue';
+
 
 export default {
     inject: ['openmct', 'objectPath', 'domainObject'],
@@ -23,7 +25,8 @@ export default {
         }
     },
     components: {
-        TimelineActivity
+        TimelineActivity,
+        Chronicles //state Chronicles
     },
     methods: {
         addActivity(activityDomainObject) {
@@ -43,6 +46,7 @@ export default {
     data() {
         return {
             activities: [],
+            chronicles: [],
             composition: this.openmct.composition.get(this.domainObject),
             activityHeight: 0
         }

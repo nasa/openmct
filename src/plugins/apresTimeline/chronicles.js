@@ -1,6 +1,5 @@
-function Chronicle() {
-    return function install (openmct) {
-        let provider = {
+let provider;
+export default provider =   {
             supportsRequest: function (domainObject) {
                 return domainObject.type === 'example.telemetry';
             },
@@ -16,7 +15,3 @@ function Chronicle() {
                     });
             }
         };
-
-        openmct.telemetry.addProvider(provider);
-    }
-}

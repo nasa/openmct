@@ -1,19 +1,19 @@
 import Vue from 'vue';
-import activityComponent from './components/activity.vue';
+import timelineComponent from './components/timelineActivity.vue';
 
 export default class activityViewProvider {
     constructor() {
-        this.name = 'activity';
-        this.key = 'apres.activity.view';
+        this.name = 'chronicle';
+        this.key = 'apres.chronicle.view';
         this.priority = 1;
     }
 
     canView(domainObject) {
-        return domainObject.type === 'apres.activity.type';
+        return domainObject.type === 'apres.chronicle.type';
     }
 
     canEdit(domainObject) {
-        return domainObject.type === 'apres.activity.type';
+        return domainObject.type === 'apres.chronicle.type';
     }
 
     view(domainObject, objectPath, isEditing) {
@@ -24,7 +24,7 @@ export default class activityViewProvider {
                 component = new Vue({
                     el: element,
                     components: {
-                        activityComponent: activityComponent
+                        timelineComponent: timelineComponent
                     },
                     data() {
                         return {
@@ -35,18 +35,8 @@ export default class activityViewProvider {
                         openmct,
                         domainObject,
                         objectPath
-                    }
-                    /*,
-                    template:
-                    `
-                      <timeline-component
-                          :isEditing="isEditing"
-                       domain-object>
-                      </timeline-component>`*/
+                    },
                 });
-            },
-            onEditModeChange: (isEditing) => {
-                component.isEditing = isEditing;
             },
             destroy: () => {
                 component.$destroy();

@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import timelineComponent from './components/timeline.vue';
+import activityComponent from "./components/activity.vue";
+import chroniclesComponent from './components/chronicles.vue';
 
 export default class TimelineViewProvider{
     constructor(openmct) {
@@ -26,7 +28,10 @@ export default class TimelineViewProvider{
                 component = new Vue({
                     el: element,
                     components: {
-                        timelineComponent: timelineComponent
+                        timelineComponent: timelineComponent,
+                        activityComponent: activityComponent,
+                        chroniclesComponent: chroniclesComponent
+
                     },
                     data() {
                         return {
