@@ -226,12 +226,10 @@ export default {
                 for (let key of this.roverKeys) {
                     // if we have related telemetry for this key, we have an areEqual function,
                     // and we have values for latest and focued
-                    if (
-                        this.relatedTelemetry[key]
-                        && typeof this.relatedTelemetry[key].areEqual === 'function'
-                        && latest[key] && focused[key]
-                    ) {
-                        if (!this.relatedTelemetry[key].areEqual(latest[key], focused[key])) {
+                    let tolerance = this.relatedTelemetry[key].tolerance || 1;
+
+                    if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                        if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
                             isFresh = false;
                         }
                     }
@@ -250,12 +248,10 @@ export default {
                 for (let key of this.cameraKeys) {
                     // if we have related telemetry for this key, we have an areEqual function,
                     // and we have values for latest and focued
-                    if (
-                        this.relatedTelemetry[key]
-                        && typeof this.relatedTelemetry[key].areEqual === 'function'
-                        && latest[key] && focused[key]
-                    ) {
-                        if (!this.relatedTelemetry[key].areEqual(latest[key], focused[key])) {
+                    let tolerance = this.relatedTelemetry[key].tolerance || 1;
+
+                    if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                        if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
                             isFresh = false;
                         }
                     }
@@ -304,7 +300,6 @@ export default {
         // track latest telemetry values for rover, camera and sun for comparison
         this.trackLatestRelatedTelemetry();
 
-
         // for when people are scrolling through images quickly
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
     },
@@ -346,12 +341,7 @@ export default {
 
                 this.imageHints.relatedTelemetry[key] = {
                     dev: true,
-                    areEqual: function (valueOne, valueTwo) {
-                        const DECIMAL_COMPARISON_TOLERANCE = 1;
-                        const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
-
-                        return Math.floor(valueOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(valueTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
-                    },
+                    tolerance: 1,
                     realtime: {
                         telemetryObjectId: key,
                         valueKey: 'sin'
@@ -814,6 +804,12 @@ export default {
         },
         isLeftOrRightArrowKey(keyCode) {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
+        },
+        equalWithinTolerance(valueOne, valueTwo, tolerance) {
+            const DECIMAL_COMPARISON_TOLERANCE = tolerance;
+            const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
+
+            return Math.floor(valueOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(valueTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
         }
     }
 };
