@@ -100,20 +100,20 @@
     ></div>
 
     <div
-        v-if="showCamFOV"
+        v-if="showCameraFOV"
         class="c-cam-field"
-        :style="camFieldHeadingStyle"
+        :style="cameraFOVHeadingStyle"
     >
         <div class="cam-field-half cam-field-half-l">
             <div
                 class="cam-field-area"
-                :style="camFOVStyleLeftHalf"
+                :style="cameraFOVStyleLeftHalf"
             ></div>
         </div>
         <div class="cam-field-half cam-field-half-r">
             <div
                 class="cam-field-area"
-                :style="camFOVStyleRightHalf"
+                :style="cameraFOVStyleRightHalf"
             ></div>
         </div>
     </div>
@@ -125,17 +125,19 @@ import { normalizeDegrees } from './utils';
 
 export default {
     props: {
-        // degrees from north heading
         roverHeading: {
             type: Number,
             required: true
         },
-        // degrees from north heading
         sunHeading: {
             type: Number,
             default: undefined
         },
-        camFieldOfView: {
+        cameraFieldOfView: {
+            type: Number,
+            default: undefined
+        },
+        cameraPan: {
             type: Number,
             default: undefined
         }
@@ -155,7 +157,7 @@ export default {
             return normalizeDegrees(this.compassRoverHeading - this.roverHeading);
         },
         rotateFrameStyle() {
-            return { transform: `rotate(${this.north}deg)` };
+            return { transform: `rotate(${ this.north }deg)` };
         },
         northTextTransform() {
             return this.cardinalPointsTextTransform.north;
@@ -175,65 +177,56 @@ export default {
              * in the opposite direction that north is rotated
              * to keep text vertically oriented
              */
-            const rotation = `rotate(${-this.north})`;
+            const rotation = `rotate(${ -this.north })`;
 
             return {
-                north: `translate(50,15) ${rotation}`,
-                east: `translate(87,50) ${rotation}`,
-                south: `translate(13,50) ${rotation}`,
-                west: `translate(50,87) ${rotation}`
+                north: `translate(50,15) ${ rotation }`,
+                east: `translate(87,50) ${ rotation }`,
+                south: `translate(13,50) ${ rotation }`,
+                west: `translate(50,87) ${ rotation }`
             };
         },
         roverHeadingStyle() {
             return {
-                transform: `translateX(-50%) rotate(${this.compassRoverHeading}deg)`
+                transform: `translateX(-50%) rotate(${ this.compassRoverHeading }deg)`
             };
         },
-        camFieldHeadingStyle() {
+        cameraFOVHeading() {
+            return this.compassRoverHeading + this.cameraPan;
+        },
+        cameraFOVHeadingStyle() {
             return {
-                transform: `rotate(${this.compassRoverHeading}deg)`
+                transform: `rotate(${ this.cameraFOVHeading }deg)`
             };
         },
         sunHeadingStyle() {
             const rotation = normalizeDegrees(this.north + this.sunHeading);
 
             return {
-                transform: `rotate(${rotation}deg)`
+                transform: `rotate(${ rotation }deg)`
             };
         },
-        showCamFOV() {
-            return this.camFieldOfView > 0;
+        showCameraFOV() {
+            return this.cameraPan !== undefined && this.cameraFieldOfView > 0;
         },
-        camFOVStyleLeftHalf() {
-            return this.camFOVStyle.left;
-        },
-        camFOVStyleRightHalf() {
-            return this.camFOVStyle.right;
-        },
-        camFOVStyle() {
-            /**
-             * Camera field of view is handled with two elements.
-             * left element is half of the FOV angle rotated counter-clockwise
-             * right element is half of the FOV angle rotated clockwise
-             */
+        // left half of camera field of view
+        // rotated counter-clockwise from camera field of view heading
+        cameraFOVStyleLeftHalf() {
             return {
-                left: {
-                    transform: `translateX(50%) rotate(${-this.camFieldOfView / 2}deg)`
-                },
-                right: {
-                    transform: `translateX(-50%) rotate(${this.camFieldOfView / 2}deg)`
-                }
+                transform: `translateX(50%) rotate(${ -this.cameraFieldOfView / 2 }deg)`
+            };
+        },
+        // right half of camera field of view
+        // rotated clockwise from camera field of view heading
+        cameraFOVStyleRightHalf() {
+            return {
+                transform: `translateX(-50%) rotate(${ this.cameraFieldOfView / 2 }deg)`
             };
         }
     },
     methods: {
         toggleBezelLock() {
             this.lockBezel = !this.lockBezel;
-        },
-        getDegrees(degrees) {
-            const base = degrees % 360;
-
-            return base >= 0 ? base : 360 + base;
         }
     }
 };

@@ -72,17 +72,19 @@ const COMPASS_POINTS = [
 
 export default {
     props: {
-        // degrees from north heading
         roverHeading: {
             type: Number,
             required: true
         },
-        // degrees from north heading
         sunHeading: {
             type: Number,
             default: undefined
         },
-        camFieldOfView: {
+        cameraFieldOfView: {
+            type: Number,
+            default: undefined
+        },
+        cameraPan: {
             type: Number,
             default: undefined
         }
@@ -117,15 +119,13 @@ export default {
             return normalizeDegrees(this.roverHeading);
         },
         visibleRange() {
-            return [
-                normalizeDegrees(this.normalizedRoverHeading - this.camFieldOfView / 2),
-                normalizeDegrees(this.normalizedRoverHeading + this.camFieldOfView / 2)
-            ];
-        }
-    },
-    methods: {
-        getPointPositionStyle(degrees) {
+            const min = normalizeDegrees(this.normalizedRoverHeading + this.cameraPan - this.cameraFieldOfView / 2);
+            const max = normalizeDegrees(this.normalizedRoverHeading + this.cameraPan + this.cameraFieldOfView / 2);
 
+            return [
+                min,
+                max
+            ];
         }
     }
 };

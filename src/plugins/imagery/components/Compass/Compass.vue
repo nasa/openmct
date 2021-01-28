@@ -7,13 +7,15 @@
         v-if="shouldDisplayCompassHUD"
         :rover-heading="roverHeading"
         :sun-heading="sunHeading"
-        :cam-field-of-view="camFieldOfView"
+        :camera-field-of-view="cameraFieldOfView"
+        :camera-pan="cameraPan"
     />
     <CompassRose
         v-if="shouldDisplayCompassRose"
         :rover-heading="roverHeading"
         :sun-heading="sunHeading"
-        :cam-field-of-view="camFieldOfView"
+        :camera-field-of-view="cameraFieldOfView"
+        :camera-pan="cameraPan"
     />
 </div>
 </template>
@@ -58,11 +60,27 @@ export default {
         roverHeading() {
             return this.image['Rover Heading'];
         },
+        roverRoll() {
+            return this.image['Rover Roll'];
+        },
+        roverYaw() {
+            return this.image['Rover Yaw'];
+        },
+        roverPitch() {
+            return this.image['Rover Pitch'];
+        },
         // degrees from north heading
         sunHeading() {
             return this.image['Sun Orientation'];
         },
-        camFieldOfView() {
+        // degrees from rover heading
+        cameraPan() {
+            return this.image['Camera Pan'];
+        },
+        cameraTilt() {
+            return this.image['Camera Tilt'];
+        },
+        cameraFieldOfView() {
             return CAM_FIELD_OF_VIEW;
         },
         compassDimensionsStyle() {
