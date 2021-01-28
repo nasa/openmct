@@ -18,7 +18,7 @@ $elemBg: rgba(black, 0.7);
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 1;
-    pointer-events: none;
+    @include userSelectNone;
 }
 
 /***************************** COMPASS HUD */
@@ -185,6 +185,7 @@ $elemBg: rgba(black, 0.7);
   position: absolute;
   bottom: 10px; left: 10px;
   clip-path: circle(50% at 50% 50%);
+  border-radius: 100%;
   
   svg, div {
     position: absolute;

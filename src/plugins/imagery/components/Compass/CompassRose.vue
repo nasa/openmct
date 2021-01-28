@@ -23,6 +23,7 @@
 <template>
 <div
     class="c-direction-rose"
+    @click="toggleBezelLock"
 >
     <div
         class="c-nsew"
@@ -37,7 +38,6 @@
                 cy="50"
                 r="50"
                 fill="transparent"
-                @click="toggleBezelLock"
             />
             <polygon
                 class="c-nsew__tick c-tick-n"
