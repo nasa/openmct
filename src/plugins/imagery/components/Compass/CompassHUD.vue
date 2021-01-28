@@ -107,23 +107,13 @@ export default {
                 transform: `skew(0, ${ this.roverRoll }deg`
             };
         },
-        unSkewCompassHUDStyle() {
-            if (this.roverRoll === undefined || this.roverRoll === 0) {
-                return;
-            }
-
-            return {
-                transform: `translateY(-50%) skew(0, ${ -this.roverRoll }deg`
-            };
-        },
         visibleCompassPoints() {
             return COMPASS_POINTS
                 .filter(point => inRange(point.degrees, this.visibleRange))
                 .map(point => {
                     const percentage = percentOfRange(point.degrees, this.visibleRange);
                     point.style = Object.assign(
-                        { left: `${ percentage * 100 }%` },
-                        this.unSkewCompassHUDStyle
+                        { left: `${ percentage * 100 }%` }
                     );
 
                     return point;
