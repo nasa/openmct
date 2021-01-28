@@ -441,7 +441,7 @@ export default {
 
                     // set up listeners
                     this.relatedTelemetry[key].listeners = [];
-                    this.relatedTelemetry[key].subscribe = async (callback) => {
+                    this.relatedTelemetry[key].subscribe = (callback) => {
 
                         if (!this.relatedTelemetry[key].isSubscribed) {
                             this.subscribeToDataForKey(key);
