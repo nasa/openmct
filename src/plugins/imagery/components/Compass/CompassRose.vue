@@ -121,6 +121,8 @@
 </template>
 
 <script>
+import { normalizeDegrees } from './utils';
+
 export default {
     props: {
         // degrees from north heading
@@ -147,10 +149,10 @@ export default {
 
     computed: {
         compassRoverHeading() {
-            return this.lockBezel ? this.getDegrees(this.roverHeading) : 0;
+            return this.lockBezel ? normalizeDegrees(this.roverHeading) : 0;
         },
         north() {
-            return this.getDegrees(this.compassRoverHeading - this.roverHeading);
+            return normalizeDegrees(this.compassRoverHeading - this.roverHeading);
         },
         rotateFrameStyle() {
             return { transform: `rotate(${this.north}deg)` };
@@ -193,7 +195,7 @@ export default {
             };
         },
         sunHeadingStyle() {
-            const rotation = this.getDegrees(this.north + this.sunHeading);
+            const rotation = normalizeDegrees(this.north + this.sunHeading);
 
             return {
                 transform: `rotate(${rotation}deg)`

@@ -1,12 +1,13 @@
 <template>
 <div
     class="c-compass"
-    :style="compassHUDStyle"
+    :style="compassDimensionsStyle"
 >
     <CompassHUD
         v-if="shouldDisplayCompassHUD"
         :rover-heading="roverHeading"
         :sun-heading="sunHeading"
+        :cam-field-of-view="camFieldOfView"
     />
     <CompassRose
         v-if="shouldDisplayCompassRose"
@@ -20,6 +21,8 @@
 <script>
 import CompassHUD from './CompassHUD.vue';
 import CompassRose from './CompassRose.vue';
+
+const CAM_FIELD_OF_VIEW = 70;
 
 export default {
     components: {
@@ -60,9 +63,9 @@ export default {
             return this.image['Sun Orientation'];
         },
         camFieldOfView() {
-            return 70;
+            return CAM_FIELD_OF_VIEW;
         },
-        compassHUDStyle() {
+        compassDimensionsStyle() {
             const containerAspectRatio = this.containerWidth / this.containerHeight;
 
             let width;
