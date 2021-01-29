@@ -8,9 +8,6 @@ $elemBg: rgba(black, 0.7);
   background: radial-gradient(#{$position}, $color, $color $gradEdgePerc, rgba($color, 0.4) $gradEdgePerc + 5%, transparent);
   
 }
-.c-rover-body {
-  color: green;  
-}
 
 .c-compass {
     position: absolute;

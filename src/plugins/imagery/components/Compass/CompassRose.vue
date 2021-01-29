@@ -33,12 +33,6 @@
             class="c-nsew__ticks"
             viewBox="0 0 100 100"
         >
-            <circle
-                cx="50"
-                cy="50"
-                r="50"
-                fill="transparent"
-            />
             <polygon
                 class="c-nsew__tick c-tick-n"
                 points="50,0 57,5 43,5"
