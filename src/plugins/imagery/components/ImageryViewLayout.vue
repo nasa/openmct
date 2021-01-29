@@ -285,7 +285,10 @@ export default {
         this.sunKeys = ['Sun Orientation'];
 
         // DELETE WHEN DONE
-        this.temporaryForImageEnhancements();
+        console.log('imageHints', this.imageHints);
+        if (!this.imageHints.relatedTelemetry) {
+            this.temporaryForImageEnhancements();
+        }
 
         // initialize
         this.timeKey = this.timeSystem.key;
