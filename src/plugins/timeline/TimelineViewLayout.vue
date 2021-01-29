@@ -22,13 +22,24 @@
 
 <template>
 <div class="c-timeline">
-    <timeline-axis v-if="viewBounds"
-                   :bounds="viewBounds"
-                   :time-system="timeSystem"
-                   :content-height="height"
-                   :rendering-engine="'svg'"
-    />
-    <div ref="contentHolder">
+    <div v-for="timeSystemItem in timeSystems"
+         :key="timeSystemItem.timeSystem.key"
+         class="c-timeline__object-holder-fixed"
+    >
+        <div class="c-timeline__object-label">
+            {{ timeSystemItem.timeSystem.name }}
+        </div>
+        <timeline-axis
+            class="c-timeline__object"
+            :bounds="timeSystemItem.bounds"
+            :time-system="timeSystemItem.timeSystem"
+            :content-height="height"
+            :rendering-engine="'svg'"
+        />
+    </div>
+    <div ref="contentHolder"
+         class="c-timeline__objects"
+    >
         <div
             v-for="item in items"
             :key="item.keyString"
@@ -58,7 +69,6 @@
 </template>
 
 <script>
-// import Plan from './Plan.vue';
 import ObjectView from '@/ui/components/ObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 
@@ -79,8 +89,7 @@ export default {
         return {
             // plans: [],
             items: [],
-            viewBounds: undefined,
-            timeSystem: undefined,
+            timeSystems: [],
             height: 0
         };
     },
@@ -90,13 +99,7 @@ export default {
             this.composition.load();
         }
 
-        this.updateViewBounds();
-        this.openmct.time.on("timeSystem", this.updateTimeSystem);
-        this.openmct.time.on("bounds", this.updateViewBounds);
-    },
-    beforeDestroy() {
-        this.openmct.time.off("timeSystem", this.updateTimeSystem);
-        this.openmct.time.off("bounds", this.updateViewBounds);
+        this.getTimeSystems();
     },
     methods: {
         addItem(domainObject) {
@@ -122,14 +125,20 @@ export default {
         updateContentHeight() {
             this.height = Math.round(this.$refs.contentHolder.getBoundingClientRect().height);
         },
-        updateViewBounds() {
-            this.viewBounds = this.openmct.time.bounds();
-            if (this.timeSystem === undefined) {
-                this.timeSystem = this.openmct.time.timeSystem();
-            }
+        getTimeSystems() {
+            const timeSystems = this.openmct.time.getAllTimeSystems();
+            timeSystems.forEach(timeSystem => {
+                this.timeSystems.push({
+                    timeSystem,
+                    bounds: this.getBoundsForTimeSystem(timeSystem)
+                });
+            });
         },
-        updateTimeSystem() {
-            this.timeSystem = this.openmct.time.timeSystem();
+        getBoundsForTimeSystem(timeSystem) {
+            const currentBounds = this.openmct.time.bounds();
+
+            //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
+            return currentBounds;
         }
     }
 };

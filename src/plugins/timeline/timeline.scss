@@ -7,14 +7,26 @@
   flex-flow: column nowrap;
   flex: 1 1 auto;
 
+  &__objects {
+    display: flex;
+    flex-flow: column nowrap;
+    flex: 1 1 auto;
+  }
+
   &__object-holder {
     flex: 1 1 auto;
+    flex-flow: row nowrap;
     display: flex;
-    flex-direction: row;
     height: 100%;
     overflow: auto;
     border-bottom: 1px solid #fff;
+  }
 
+  &__object-holder-fixed {
+    flex: 0 0 auto;
+    flex-flow: row nowrap;
+    display: flex;
+    border-bottom: 1px solid #fff;
   }
 
   &__object-label {

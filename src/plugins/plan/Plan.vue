@@ -346,9 +346,29 @@ export default {
                     this.canvas.height = planHeight;
                 }
 
-                activityRows.forEach((key) => {
+                activityRows.forEach((key, index) => {
                     const items = this.activitiesByRow[key];
                     const row = parseInt(key, 10);
+                    //Draw the right border for headings once
+                    if (index === 0) {
+                        if (this.useSVG) {
+                            this.svgElement.append("line")
+                                .attr("class", "activity")
+                                .attr("x1", 100)
+                                .attr("y1", row)
+                                .attr("x2", 100)
+                                .attr("y2", planHeight)
+                                .attr('stroke', "white");
+                        } else {
+                            this.canvasContext.strokeStyle = "white";
+                            this.canvasContext.beginPath();
+                            this.canvasContext.moveTo(100, row);
+                            this.canvasContext.lineTo(100, planHeight);
+                            this.canvasContext.stroke();
+                        }
+
+                    }
+
                     items.forEach((item) => {
 
                         //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
