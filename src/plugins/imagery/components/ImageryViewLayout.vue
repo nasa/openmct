@@ -130,6 +130,8 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
+const FRAME_ID_KEY = 'frame_id';
+
 export default {
     inject: ['openmct', 'domainObject'],
     data() {
@@ -152,12 +154,14 @@ export default {
             refreshCSS: false,
             keyString: undefined,
             focusedImageIndex: undefined,
-            focusedImageRelatedData: {},
+            focusedImageRelatedData: {}, // update to focusedImageRelatedTelemetry once all merged
+            focusedImageFrameId: undefined,
             numericDuration: undefined,
             metadataEndpoints: {},
             hasRelatedTelemetry: false,
             relatedTelemetry: {},
-            latestRelatedTelemetry: {}
+            latestRelatedTelemetry: {},
+            latestFrameId: undefined
         };
     },
     computed: {
@@ -234,6 +238,11 @@ export default {
                         }
                     }
                 }
+
+                // last check to make sure in the same frame
+                if (isFresh) {
+                    isFresh = this.latestFrameId === this.focusedImageFrameId;
+                }
             }
 
             return isFresh;
@@ -245,16 +254,22 @@ export default {
 
             if (this.hasRelatedTelemetry) {
                 isFresh = true;
-                for (let key of this.cameraKeys) {
-                    // if we have related telemetry for this key, we have an areEqual function,
-                    // and we have values for latest and focued
-                    let tolerance = this.relatedTelemetry[key].tolerance || 1;
 
-                    if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                        if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
-                            isFresh = false;
+                // camera freshness relies on rover position freshness
+                if (this.roverPositionIsFresh) {
+                    for (let key of this.cameraKeys) {
+                        // if we have related telemetry for this key, we have an areEqual function,
+                        // and we have values for latest and focued
+                        let tolerance = this.relatedTelemetry[key].tolerance || 1;
+
+                        if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                            if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
+                                isFresh = false;
+                            }
                         }
                     }
+                } else {
+                    isFresh = false;
                 }
             }
 
@@ -280,6 +295,7 @@ export default {
         this.imageHints = this.metadata.valuesForHints(['image'])[0];
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
+        this.telemetryKeyWithFrameId = 'Rover Heading';
         this.roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
         this.cameraKeys = ['Camera Pan', 'Camera Tilt'];
         this.sunKeys = ['Sun Orientation'];
@@ -457,6 +473,23 @@ export default {
             }
 
         },
+        async getMostRecentFrameId(key, targetDatum) {
+            if (!this.hasRelatedTelemetry) {
+                throw new Error(`${this.domainObject.name} does not have any related telemetry`);
+            }
+
+            let mostRecent;
+            let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
+
+            if (valuesOnTelemetry) {
+                mostRecent = targetDatum[FRAME_ID_KEY];
+            }
+
+            mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
+
+            return mostRecent[FRAME_ID_KEY];
+
+        },
         async getMostRecentRelatedTelemetry(key, targetDatum) {
             if (!this.hasRelatedTelemetry) {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
@@ -525,6 +558,9 @@ export default {
                     this.$set(this.focusedImageRelatedData, key, value);
                 }
             }
+
+            // get frame ID
+            this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
         },
         trackLatestRelatedTelemetry() {
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
@@ -532,6 +568,11 @@ export default {
                     this.relatedTelemetry[key].subscribe((datum) => {
                         let valueKey = this.relatedTelemetry[key].realtime.valueKey;
                         this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
+
+                        // if it is the telemetry with the frame ID track latest
+                        if (key === this.telemetryKeyWithFrameId) {
+                            this.latestFrameId = datum[FRAME_ID_KEY];
+                        }
                     });
                 }
             });
