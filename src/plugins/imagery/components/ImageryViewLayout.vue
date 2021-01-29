@@ -286,12 +286,6 @@ export default {
         // for when people are scrolling through images quickly
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
 
-        // examples
-        // if (this.hasRelatedTelemetry) {
-        //     this.relatedTelemetry['Rover Heading'].subscribe(datum => console.log(datum));
-        //     console.log(await this.getMostRecentRelatedTelemetry('Rover Roll', this.imageHistory[4]));
-        // }
-
         this.pollResizeImageContainerID = setInterval(this.pollResizeImageContainer, 300);
     },
     updated() {
