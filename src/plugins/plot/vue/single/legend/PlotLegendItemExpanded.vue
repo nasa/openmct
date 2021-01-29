@@ -90,16 +90,19 @@ export default {
         };
     },
     watch: {
-        highlights() {
-            this.initialize();
+        highlights(newHighlights) {
+            const highlightedObject = newHighlights.find(highlight => highlight.series.keyString === this.seriesObject.keyString);
+            if (newHighlights.length === 0 || highlightedObject) {
+                this.initialize(highlightedObject);
+            }
         }
     },
     mounted() {
         this.initialize();
     },
     methods: {
-        initialize() {
-            const seriesObject = this.highlights.length ? this.highlights[0].series : this.seriesObject;
+        initialize(highlightedObject) {
+            const seriesObject = highlightedObject ? highlightedObject.series : this.seriesObject;
 
             this.isMissing = seriesObject.domainObject.status === 'missing';
             this.colorAsHexString = seriesObject.get('color').asHexString();
