@@ -360,7 +360,12 @@ export default {
 
                 this.imageHints.relatedTelemetry[key] = {
                     dev: true,
-                    tolerance: 1,
+                    areEqual: function (valueOne, valueTwo) {
+                        const DECIMAL_COMPARISON_TOLERANCE = 1;
+                        const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
+
+                        return Math.floor(valueOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(valueTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
+                    },
                     realtime: {
                         telemetryObjectId: key,
                         valueKey: 'sin'
