@@ -39,10 +39,11 @@ define([], function () {
             const thisRequest = {
                 pending: 0
             };
-            currentRequest = thisRequest;
-            $scope.currentRequest = thisRequest;
             const telemetryObjects = $scope.telemetryObjects = [];
             const thisTickWidthMap = {};
+
+            currentRequest = thisRequest;
+            $scope.currentRequest = thisRequest;
             tickWidthMap = thisTickWidthMap;
 
             if (unlisten) {
@@ -52,14 +53,10 @@ define([], function () {
 
             function addChild(child) {
                 const id = openmct.objects.makeKeyString(child.identifier);
+                const legacyObject = openmct.legacyObject(child);
+
                 thisTickWidthMap[id] = 0;
-                thisRequest.pending += 1;
-                objectService.getObjects([id])
-                    .then(function (objects) {
-                        thisRequest.pending -= 1;
-                        const childObj = objects[id];
-                        telemetryObjects.push(childObj);
-                    });
+                telemetryObjects.push(legacyObject);
             }
 
             function removeChild(childIdentifier) {
@@ -84,6 +81,7 @@ define([], function () {
             }
 
             thisRequest.pending += 1;
+
             openmct.objects.get(domainObject.getId())
                 .then(function (obj) {
                     thisRequest.pending -= 1;

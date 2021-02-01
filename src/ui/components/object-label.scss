@@ -29,13 +29,21 @@
         transform: scale(0.5);
     }
 
-    &[class*='is-status--missing'],
-    &[class*='is-status--suspect'] {
+    &.is-status--missing,
+    &.is-status--suspect {
         [class*='__type-icon'] {
             &:before,
             &:after {
                 opacity: $opacityMissing;
             }
+        }
+    }
+
+    &.is-status--notebook-default {
+        &:after {
+            content: $glyph-icon-notebook-page;
+            display: block;
+            margin-left: $interiorMargin;
         }
     }
 }

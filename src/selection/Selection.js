@@ -70,11 +70,8 @@ define(
             if (multiSelect) {
                 this.handleMultiSelect(selectable);
             } else {
-                this.setSelectionStyles(selectable);
-                this.selected = [selectable];
+                this.handleSingleSelect(selectable);
             }
-
-            this.emit('change', this.selected);
         };
 
         /**
@@ -86,6 +83,20 @@ define(
             } else {
                 this.addSelectionAttributes(selectable);
                 this.selected.push(selectable);
+            }
+
+            this.emit('change', this.selected);
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.handleSingleSelect = function (selectable) {
+            if (!_.isEqual([selectable], this.selected)) {
+                this.setSelectionStyles(selectable);
+                this.selected = [selectable];
+
+                this.emit('change', this.selected);
             }
         };
 
@@ -230,11 +241,8 @@ define(
             element.addEventListener('click', capture, true);
             element.addEventListener('click', selectCapture);
 
-            let unlisten = undefined;
             if (context.item) {
-                unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
-                    context.item = newItem;
-                });
+                context.item = this.openmct.objects._toMutable(context.item);
             }
 
             if (select) {
@@ -245,14 +253,14 @@ define(
                 }
             }
 
-            return function () {
+            return (function () {
                 element.removeEventListener('click', capture, true);
                 element.removeEventListener('click', selectCapture);
 
-                if (unlisten !== undefined) {
-                    unlisten();
+                if (context.item !== undefined && context.item.isMutable) {
+                    this.openmct.objects.destroyMutable(context.item);
                 }
-            };
+            }).bind(this);
         };
 
         return Selection;

@@ -46,6 +46,8 @@ define([
     './api/Branding',
     './plugins/licenses/plugin',
     './plugins/remove/plugin',
+    './plugins/move/plugin',
+    './plugins/duplicate/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -73,6 +75,8 @@ define([
     BrandingAPI,
     LicensesPlugin,
     RemoveActionPlugin,
+    MoveActionPlugin,
+    DuplicateActionPlugin,
     Vue
 ) {
     /**
@@ -215,7 +219,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name objects
          */
-        this.objects = new api.ObjectAPI();
+        this.objects = new api.ObjectAPI.default(this.types);
 
         /**
          * An interface for retrieving and interpreting telemetry data associated
@@ -263,6 +267,8 @@ define([
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
+        this.install(MoveActionPlugin.default());
+        this.install(DuplicateActionPlugin.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(ImageryPlugin.default());
@@ -276,6 +282,7 @@ define([
         this.install(this.plugins.NotificationIndicator());
         this.install(this.plugins.NewFolderAction());
         this.install(this.plugins.ViewDatumAction());
+        this.install(this.plugins.ObjectInterceptors());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -364,7 +371,7 @@ define([
      *        MCT; if undefined, MCT will be run in the body of the document
      */
     MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
-        if (!this.plugins.DisplayLayout._installed) {
+        if (this.types.get('layout') === undefined) {
             this.install(this.plugins.DisplayLayout({
                 showAsView: ['summary-widget']
             }));

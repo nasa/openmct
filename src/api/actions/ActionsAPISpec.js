@@ -22,22 +22,41 @@
 
 import ActionsAPI from './ActionsAPI';
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import ActionCollection from './ActionCollection';
 
 describe('The Actions API', () => {
     let openmct;
     let actionsAPI;
     let mockAction;
     let mockObjectPath;
+    let mockObjectPathAction;
     let mockViewContext1;
 
     beforeEach(() => {
         openmct = createOpenMct();
         actionsAPI = new ActionsAPI(openmct);
+        mockObjectPathAction = {
+            name: 'Test Action Object Path',
+            key: 'test-action-object-path',
+            cssClass: 'test-action-object-path',
+            description: 'This is a test action for object path',
+            group: 'action',
+            priority: 9,
+            appliesTo: (objectPath) => {
+                if (objectPath.length) {
+                    return objectPath[0].type === 'fake-folder';
+                }
+
+                return false;
+            },
+            invoke: () => {
+            }
+        };
         mockAction = {
-            name: 'Test Action',
-            key: 'test-action',
-            cssClass: 'test-action',
-            description: 'This is a test action',
+            name: 'Test Action View',
+            key: 'test-action-view',
+            cssClass: 'test-action-view',
+            description: 'This is a test action for view',
             group: 'action',
             priority: 9,
             appliesTo: (objectPath, view = {}) => {
@@ -45,8 +64,6 @@ describe('The Actions API', () => {
                     let viewContext = view.getViewContext();
 
                     return viewContext.onlyAppliesToTestCase;
-                } else if (objectPath.length) {
-                    return objectPath[0].type === 'fake-folder';
                 }
 
                 return false;
@@ -100,9 +117,32 @@ describe('The Actions API', () => {
     describe("get method", () => {
         beforeEach(() => {
             actionsAPI.register(mockAction);
+            actionsAPI.register(mockObjectPathAction);
         });
 
-        it("returns an object with relevant actions when invoked with objectPath only", () => {
+        it("returns an ActionCollection when invoked with an objectPath only", () => {
+            let actionCollection = actionsAPI.get(mockObjectPath);
+            let instanceOfActionCollection = actionCollection instanceof ActionCollection;
+
+            expect(instanceOfActionCollection).toBeTrue();
+        });
+
+        it("returns an ActionCollection when invoked with an objectPath and view", () => {
+            let actionCollection = actionsAPI.get(mockObjectPath, mockViewContext1);
+            let instanceOfActionCollection = actionCollection instanceof ActionCollection;
+
+            expect(instanceOfActionCollection).toBeTrue();
+        });
+
+        it("returns relevant actions when invoked with objectPath only", () => {
+            let actionCollection = actionsAPI.get(mockObjectPath);
+            let action = actionCollection.getActionsObject()[mockObjectPathAction.key];
+
+            expect(action.key).toEqual(mockObjectPathAction.key);
+            expect(action.name).toEqual(mockObjectPathAction.name);
+        });
+
+        it("returns relevant actions when invoked with objectPath and view", () => {
             let actionCollection = actionsAPI.get(mockObjectPath, mockViewContext1);
             let action = actionCollection.getActionsObject()[mockAction.key];
 

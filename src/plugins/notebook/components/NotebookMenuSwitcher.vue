@@ -17,7 +17,7 @@
 
 <script>
 import Snapshot from '../snapshot';
-import { getDefaultNotebook } from '../utils/notebook-storage';
+import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
 
 export default {
@@ -44,36 +44,46 @@ export default {
     },
     data() {
         return {
-            notebookSnapshot: null,
+            notebookSnapshot: undefined,
             notebookTypes: []
         };
     },
     mounted() {
+        validateNotebookStorageObject();
+        this.getDefaultNotebookObject();
+
         this.notebookSnapshot = new Snapshot(this.openmct);
         this.setDefaultNotebookStatus();
     },
     methods: {
-        showMenu(event) {
-            const notebookTypes = [];
+        async getDefaultNotebookObject() {
             const defaultNotebook = getDefaultNotebook();
+            const defaultNotebookObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+
+            return defaultNotebookObject;
+        },
+        async showMenu(event) {
+            const notebookTypes = [];
             const elementBoundingClientRect = this.$el.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
             const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
-            if (defaultNotebook) {
-                const domainObject = defaultNotebook.domainObject;
+            const defaultNotebookObject = await this.getDefaultNotebookObject();
+            if (defaultNotebookObject) {
+                const name = defaultNotebookObject.name;
 
-                if (domainObject.location) {
-                    const defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+                const defaultNotebook = getDefaultNotebook();
+                const sectionName = defaultNotebook.section.name;
+                const pageName = defaultNotebook.page.name;
+                const defaultPath = `${name} - ${sectionName} - ${pageName}`;
 
-                    notebookTypes.push({
-                        cssClass: 'icon-notebook',
-                        name: `Save to Notebook ${defaultPath}`,
-                        callBack: () => {
-                            return this.snapshot(NOTEBOOK_DEFAULT);
-                        }
-                    });
-                }
+                notebookTypes.push({
+                    cssClass: 'icon-notebook',
+                    name: `Save to Notebook ${defaultPath}`,
+                    callBack: () => {
+                        return this.snapshot(NOTEBOOK_DEFAULT);
+                    }
+                });
             }
 
             notebookTypes.push({
@@ -86,7 +96,7 @@ export default {
 
             this.openmct.menus.showMenu(x, y, notebookTypes);
         },
-        snapshot(notebook) {
+        snapshot(notebookType) {
             this.$nextTick(() => {
                 const element = document.querySelector('.c-overlay__contents')
                     || document.getElementsByClassName('l-shell__main-container')[0];
@@ -104,7 +114,7 @@ export default {
                     openmct: this.openmct
                 };
 
-                this.notebookSnapshot.capture(snapshotMeta, notebook.type, element);
+                this.notebookSnapshot.capture(snapshotMeta, notebookType, element);
             });
         },
         setDefaultNotebookStatus() {

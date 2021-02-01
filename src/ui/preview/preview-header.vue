@@ -5,7 +5,7 @@
             class="l-browse-bar__object-name--w c-object-label"
         >
             <div class="c-object-label__type-icon"
-                 :class="type.cssClass"
+                 :class="type.definition.cssClass"
             ></div>
             <span class="l-browse-bar__object-name c-object-label__name">
                 {{ domainObject.name }}

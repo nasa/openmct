@@ -1,13 +1,12 @@
+import objectUtils from 'objectUtils';
+
 const NOTEBOOK_LOCAL_STORAGE = 'notebook-storage';
-let currentNotebookObject = null;
+let currentNotebookObjectIdentifier = null;
 let unlisten = null;
 
 function defaultNotebookObjectChanged(newDomainObject) {
     if (newDomainObject.location !== null) {
-        currentNotebookObject = newDomainObject;
-        const notebookStorage = getDefaultNotebook();
-        notebookStorage.domainObject = newDomainObject;
-        saveDefaultNotebook(notebookStorage);
+        currentNotebookObjectIdentifier = newDomainObject.identifier;
 
         return;
     }
@@ -20,10 +19,9 @@ function defaultNotebookObjectChanged(newDomainObject) {
     clearDefaultNotebook();
 }
 
-function observeDefaultNotebookObject(openmct, notebookStorage) {
-    const domainObject = notebookStorage.domainObject;
-    if (currentNotebookObject
-            && currentNotebookObject.identifier.key === domainObject.identifier.key) {
+function observeDefaultNotebookObject(openmct, notebookMeta, domainObject) {
+    if (currentNotebookObjectIdentifier
+            && objectUtils.makeKeyString(currentNotebookObjectIdentifier) === objectUtils.makeKeyString(notebookMeta.identifier)) {
         return;
     }
 
@@ -32,7 +30,7 @@ function observeDefaultNotebookObject(openmct, notebookStorage) {
         unlisten = null;
     }
 
-    unlisten = openmct.objects.observe(notebookStorage.domainObject, '*', defaultNotebookObjectChanged);
+    unlisten = openmct.objects.observe(domainObject, '*', defaultNotebookObjectChanged);
 }
 
 function saveDefaultNotebook(notebookStorage) {
@@ -40,7 +38,7 @@ function saveDefaultNotebook(notebookStorage) {
 }
 
 export function clearDefaultNotebook() {
-    currentNotebookObject = null;
+    currentNotebookObjectIdentifier = null;
     window.localStorage.setItem(NOTEBOOK_LOCAL_STORAGE, null);
 }
 
@@ -50,8 +48,8 @@ export function getDefaultNotebook() {
     return JSON.parse(notebookStorage);
 }
 
-export function setDefaultNotebook(openmct, notebookStorage) {
-    observeDefaultNotebookObject(openmct, notebookStorage);
+export function setDefaultNotebook(openmct, notebookStorage, domainObject) {
+    observeDefaultNotebookObject(openmct, notebookStorage.notebookMeta, domainObject);
     saveDefaultNotebook(notebookStorage);
 }
 
@@ -66,4 +64,25 @@ export function setDefaultNotebookPage(page) {
     const notebookStorage = getDefaultNotebook();
     notebookStorage.page = page;
     saveDefaultNotebook(notebookStorage);
+}
+
+export function validateNotebookStorageObject() {
+    const notebookStorage = getDefaultNotebook();
+
+    let valid = false;
+    if (notebookStorage) {
+        Object.entries(notebookStorage).forEach(([key, value]) => {
+            const validKey = key !== undefined && key !== null;
+            const validValue = value !== undefined && value !== null;
+            valid = validKey && validValue;
+        });
+    }
+
+    if (valid) {
+        return notebookStorage;
+    }
+
+    console.warn('Invalid Notebook object, clearing default notebook storage');
+
+    clearDefaultNotebook();
 }

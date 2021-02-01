@@ -87,7 +87,8 @@ export default class CouchObjectProvider {
             }
 
             //Sometimes CouchDB returns the old rev which fetching the object if there is a document update in progress
-            if (!this.objectQueue[key].pending) {
+            //Only update the rev if it's the first time we're getting the object from CouchDB. Subsequent revs should only be updated by updates.
+            if (!this.objectQueue[key].pending && !this.objectQueue[key].rev) {
                 this.objectQueue[key].updateRevision(response[REV]);
             }
 

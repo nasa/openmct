@@ -20,40 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ['./AbstractComposeAction'],
-    function (AbstractComposeAction) {
-
-        /**
-         * The MoveAction is available from context menus and allows a user to
-         * move an object to another location of their choosing.
-         *
-         * @implements {Action}
-         * @constructor
-         * @memberof platform/entanglement
-         */
-        function MoveAction(policyService, locationService, moveService, context) {
-            AbstractComposeAction.apply(
-                this,
-                [policyService, locationService, moveService, context, "Move"]
-            );
-        }
-
-        MoveAction.prototype = Object.create(AbstractComposeAction.prototype);
-
-        MoveAction.appliesTo = function (context) {
-            var applicableObject =
-                context.selectedObject || context.domainObject;
-
-            if (applicableObject && applicableObject.model.locked) {
-                return false;
+export default function MissingObjectInterceptor(openmct) {
+    openmct.objects.addGetInterceptor({
+        appliesTo: (identifier, domainObject) => {
+            return identifier.key !== 'mine';
+        },
+        invoke: (identifier, object) => {
+            if (object === undefined) {
+                return {
+                    identifier,
+                    type: 'unknown',
+                    name: 'Missing: ' + openmct.objects.makeKeyString(identifier)
+                };
             }
 
-            return Boolean(applicableObject
-                && applicableObject.hasCapability('context'));
-        };
-
-        return MoveAction;
-    }
-);
-
+            return object;
+        }
+    });
+}

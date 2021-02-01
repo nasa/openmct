@@ -59,7 +59,9 @@ define([
     './persistence/couch/plugin',
     './defaultRootName/plugin',
     './timeline/plugin',
-    './viewDatumAction/plugin'
+    './viewDatumAction/plugin',
+    './interceptors/plugin',
+    './performanceIndicator/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -99,7 +101,9 @@ define([
     CouchDBPlugin,
     DefaultRootName,
     Timeline,
-    ViewDatumAction
+    ViewDatumAction,
+    ObjectInterceptors,
+    PerformanceIndicator
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -194,6 +198,8 @@ define([
     plugins.DefaultRootName = DefaultRootName.default;
     plugins.Timeline = Timeline.default;
     plugins.ViewDatumAction = ViewDatumAction.default;
+    plugins.ObjectInterceptors = ObjectInterceptors.default;
+    plugins.PerformanceIndicator = PerformanceIndicator.default;
 
     return plugins;
 });
