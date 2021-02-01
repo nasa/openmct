@@ -39,10 +39,12 @@ describe('the plugin', () => {
             identifier: {
                 namespace: 'mct',
                 key: 'some-value'
-            }
+            },
+            type: 'mock-type'
         };
         openmct = createOpenMct(false);
         openmct.install(new CouchPlugin(testPath));
+        openmct.types.addType('mock-type', {creatable: true});
 
         element = document.createElement('div');
         child = document.createElement('div');

@@ -62,7 +62,10 @@ describe('Notebook Storage:', () => {
     beforeEach((done) => {
         openmct = createOpenMct();
         window.localStorage.setItem('notebook-storage', null);
-
+        openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
+            'create',
+            'update'
+        ]));
         done();
     });
 
