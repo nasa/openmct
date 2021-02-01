@@ -93,10 +93,10 @@ export default {
         },
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
-            //Add a 30 min padding to the end bounds to look ahead
-            let endDate = new Date(this.viewBounds.end);
-            endDate.setMinutes(endDate.getMinutes() + 30);
-            this.viewBounds.end = endDate.getTime();
+            //Add a 50% padding to the end bounds to look ahead
+            let timespan = (this.viewBounds.end - this.viewBounds.start);
+            let padding = timespan / 2;
+            this.viewBounds.end = this.viewBounds.end + padding;
             this.setScaleAndPlotActivities();
         },
         updateNowMarker() {
