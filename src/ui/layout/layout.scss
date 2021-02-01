@@ -279,10 +279,12 @@
     }
 
     &__toolbar {
+        // Toolbar in the main shell, used by Display Layouts
         $p: $interiorMargin;
         background: $editUIBaseColor;
         border-radius: $basicCr;
         height: $p + 24px; // Need to standardize the height
+        justify-content: space-between;
         padding: $p;
     }
 }

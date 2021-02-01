@@ -60,7 +60,8 @@ define([
     './defaultRootName/plugin',
     './timeline/plugin',
     './viewDatumAction/plugin',
-    './interceptors/plugin'
+    './interceptors/plugin',
+    './performanceIndicator/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -101,7 +102,8 @@ define([
     DefaultRootName,
     Timeline,
     ViewDatumAction,
-    ObjectInterceptors
+    ObjectInterceptors,
+    PerformanceIndicator
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -197,6 +199,7 @@ define([
     plugins.Timeline = Timeline.default;
     plugins.ViewDatumAction = ViewDatumAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
+    plugins.PerformanceIndicator = PerformanceIndicator.default;
 
     return plugins;
 });
