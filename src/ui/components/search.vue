@@ -41,21 +41,29 @@ export default {
                 this.$listeners,
                 {
                     input: function (event) {
-                        vm.$emit('input', event.target.value);
-                        vm.active = (event.target.value.length > 0);
+                        vm.changeInputValue(event.target.value);
                     }
                 }
             );
         }
     },
+    mounted() {
+        this.changeInputValue(this.value);
+    },
     watch: {
         value(inputValue) {
             if (!inputValue.length) {
                 this.clearInput();
+            } else {
+                this.changeInputValue(inputValue);
             }
         }
     },
     methods: {
+        changeInputValue(value) {
+            this.$emit('input', value);
+            this.active = (value.length > 0);
+        },
         clearInput() {
             // Clear the user's input and set 'active' to false
             this.$emit('clear', '');
