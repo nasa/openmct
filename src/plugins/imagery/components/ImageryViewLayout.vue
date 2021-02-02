@@ -223,7 +223,7 @@ export default {
         // set
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
-        this.imageHints = this.metadata.valuesForHints(['image'])[0];
+        this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
         this.roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
@@ -274,7 +274,6 @@ export default {
     methods: {
         // for local dev, to be DELETED
         temporaryForImageEnhancements() {
-
             this.searchService = this.openmct.$injector.get('searchService');
             this.temporaryDev = true;
 
