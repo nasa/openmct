@@ -518,7 +518,7 @@ export default {
                     return;
                 }
             }
-
+            console.log('req latest key', key);
             mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
             return mostRecent[valueKey];
