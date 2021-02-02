@@ -548,8 +548,6 @@ export default {
                 return;
             }
 
-            const image = this.imageHistory[this.focusedImageIndex];
-
             // set data ON image telemetry as well as in focusedImageRelatedData
             for (let key of this.relatedTelemetry.keys) {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historical) {
@@ -557,7 +555,7 @@ export default {
                     let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
                     if (!valuesOnTelemetry) {
-                        image[key] = value; // manually add to telemetry
+                        this.imageHistory[this.focusedImageIndex][key] = value; // manually add to telemetry
                     }
 
                     this.$set(this.focusedImageRelatedData, key, value);
