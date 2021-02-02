@@ -30,6 +30,41 @@
         :style="rotateFrameStyle"
     >
         <svg
+            class="c-nsew__minor-ticks"
+            viewBox="0 0 100 100"
+        >
+            <rect
+                    class="c-nsew__tick c-tick-ne"
+                    x="49"
+                    y="0"
+                    width="2"
+                    height="5"
+            />
+            <rect
+                    class="c-nsew__tick c-tick-se"
+                    x="95"
+                    y="49"
+                    width="5"
+                    height="2"
+            />
+            <rect
+                    class="c-nsew__tick c-tick-sw"
+                    x="49"
+                    y="95"
+                    width="2"
+                    height="5"
+            />
+            <rect
+                    class="c-nsew__tick c-tick-nw"
+                    x="0"
+                    y="49"
+                    width="5"
+                    height="2"
+            />
+
+        </svg>
+
+        <svg
             class="c-nsew__ticks"
             viewBox="0 0 100 100"
         >
