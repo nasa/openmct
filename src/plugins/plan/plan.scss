@@ -2,13 +2,30 @@
   $h: 20px;
 
   &-content {
-    margin-top: -30px;
+
+    display: grid;
+    grid-template-columns: 100px 100px 1fr;
+    grid-column-gap: 1px;
+    grid-row-gap: 1px;
+
+    div {
+      padding: 5px 8px;
+      background: #eee;
+
+      div {
+        padding: 0;
+      }
+    }
+
+    .lane-label {
+      background: #ccc !important;
+      grid-column: span 2;
+    }
   }
 
   svg {
     text-rendering: geometricPrecision;
     width: 100%;
-    height: 100%;
 
     text.activity {
       stroke: none;
