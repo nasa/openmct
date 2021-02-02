@@ -116,6 +116,8 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
+const FRAME_ID_KEY = 'frame_id';
+
 export default {
     inject: ['openmct', 'domainObject'],
     data() {
@@ -138,10 +140,14 @@ export default {
             refreshCSS: false,
             keyString: undefined,
             focusedImageIndex: undefined,
-            focusedImageRelatedData: {},
+            focusedImageRelatedData: {}, // update to focusedImageRelatedTelemetry once all merged
+            focusedImageFrameId: undefined,
             numericDuration: undefined,
             metadataEndpoints: {},
-            relatedTelemetry: {}
+            hasRelatedTelemetry: false,
+            relatedTelemetry: {},
+            latestRelatedTelemetry: {},
+            latestFrameId: undefined
         };
     },
     computed: {
@@ -306,8 +312,6 @@ export default {
         },
         async initializeRelatedTelemetry() {
             if (this.imageHints.relatedTelemetry === undefined) {
-                this.hasRelatedTelemetry = false;
-
                 return;
             }
 
