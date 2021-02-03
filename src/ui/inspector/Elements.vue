@@ -82,10 +82,6 @@ export default {
         this.openmct.editor.off('isEditing', this.setEditState);
         this.openmct.selection.off('change', this.showSelection);
 
-        if (this.mutationUnobserver) {
-            this.mutationUnobserver();
-        }
-
         if (this.compositionUnlistener) {
             this.compositionUnlistener();
         }
@@ -106,18 +102,11 @@ export default {
             this.listeners = [];
             this.parentObject = selection && selection[0] && selection[0][0].context.item;
 
-            if (this.mutationUnobserver) {
-                this.mutationUnobserver();
-            }
-
             if (this.compositionUnlistener) {
                 this.compositionUnlistener();
             }
 
             if (this.parentObject) {
-                this.mutationUnobserver = this.openmct.objects.observe(this.parentObject, '*', (updatedModel) => {
-                    this.parentObject = updatedModel;
-                });
                 this.composition = this.openmct.composition.get(this.parentObject);
 
                 if (this.composition) {

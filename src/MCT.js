@@ -219,7 +219,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name objects
          */
-        this.objects = new api.ObjectAPI();
+        this.objects = new api.ObjectAPI.default(this.types);
 
         /**
          * An interface for retrieving and interpreting telemetry data associated
@@ -371,7 +371,7 @@ define([
      *        MCT; if undefined, MCT will be run in the body of the document
      */
     MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
-        if (!this.plugins.DisplayLayout._installed) {
+        if (this.types.get('layout') === undefined) {
             this.install(this.plugins.DisplayLayout({
                 showAsView: ['summary-widget']
             }));

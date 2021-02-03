@@ -15,7 +15,7 @@
         ></span>
     </div>
     <div class="c-tree__item__name c-object-label__name">
-        {{ observedObject.name }}
+        {{ domainObject.name }}
     </div>
 </a>
 </template>
@@ -45,13 +45,12 @@ export default {
     },
     data() {
         return {
-            observedObject: this.domainObject,
             status: ''
         };
     },
     computed: {
         typeClass() {
-            let type = this.openmct.types.get(this.observedObject.type);
+            let type = this.openmct.types.get(this.domainObject.type);
             if (!type) {
                 return 'icon-object-unknown';
             }
@@ -63,15 +62,8 @@ export default {
         }
     },
     mounted() {
-        if (this.observedObject) {
-            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
-                this.observedObject = newObject;
-            });
-            this.$once('hook:destroyed', removeListener);
-        }
-
-        this.removeStatusListener = this.openmct.status.observe(this.observedObject.identifier, this.setStatus);
-        this.status = this.openmct.status.get(this.observedObject.identifier);
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+        this.status = this.openmct.status.get(this.domainObject.identifier);
         this.previewAction = new PreviewAction(this.openmct);
     },
     destroyed() {
@@ -101,7 +93,7 @@ export default {
              * that point. If dragged object can be composed by navigated object, then indicate with presence of
              * 'composable-domain-object' in data transfer
              */
-            if (this.openmct.composition.checkPolicy(navigatedObject, this.observedObject)) {
+            if (this.openmct.composition.checkPolicy(navigatedObject, this.domainObject)) {
                 event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
 
