@@ -32,7 +32,8 @@
     function indexItem(id, model) {
         indexedItems.push({
             id: id,
-            name: model.name.toLowerCase()
+            name: model.name.toLowerCase(),
+            type: model.type
         });
     }
 

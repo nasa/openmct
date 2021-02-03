@@ -129,12 +129,21 @@ export default {
         }
     },
     mounted() {
-        this.openmct.objects.get(this.item.identifier)
-            .then(this.setObject);
+        if (this.openmct.objects.supportsMutation(this.item.identifier)) {
+            this.openmct.objects.getMutable(this.item.identifier)
+                .then(this.setObject);
+        } else {
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
+        }
     },
-    destroyed() {
+    beforeDestroy() {
         if (this.removeSelectable) {
             this.removeSelectable();
+        }
+
+        if (this.domainObject.isMutable) {
+            this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
     methods: {
