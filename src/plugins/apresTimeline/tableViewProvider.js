@@ -1,58 +1,3 @@
-import Vue from 'vue';
-import timelineComponent from './components/timelineActivity.vue';
-
-class tableViewProvider {
-    constructor() {
-        this.name = 'TableView';
-        this.key = 'apres.table.view';
-        this.priority = 1;
-    }
-
-    canView(domainObject) {
-        return domainObject.type === 'apres.table.type';
-    }
-
-    canEdit(domainObject) {
-        return domainObject.type === 'apres.table.type';
-    }
-
-    view(domainObject, objectPath, isEditing) {
-        let component;
-
-        return {
-            show: (element) => {
-                component = new Vue({
-                    el: element,
-                    components: {
-                        timelineComponent: timelineComponent
-                    },
-                    data() {
-                        return {
-                            isEditing: isEditing
-                        }
-                    },
-                    provide: {
-                        openmct,
-                        domainObject,
-                        objectPath
-                    },
-                    template: `
-                      <timeline-component
-                          :isEditing="isEditing"
-                          domain-object
-                      >
-                      </timeline-component>`
-                });
-            },
-            onEditModeChange: (isEditing) => {
-                component.isEditing = isEditing;
-            },
-            destroy: () => {
-                component.$destroy();
-            }
-        }
-    }
-}
 let exportCSV = {
     name: 'Export Table Data',
     key: 'export-csv-all',
@@ -129,4 +74,4 @@ viewActions.forEach(action => {
     };
 });
 
-export default viewActions;
+

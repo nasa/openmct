@@ -1,6 +1,6 @@
 import ActivityViewProvider from './activityViewProvider';
 import TimelineViewProvider from './timelineViewProvider';
-import Chronicles from './chronicles';
+import ChroniclesViewProvider from './chroniclesViewProvider';
 
 
 export default function () {
@@ -17,32 +17,62 @@ export default function () {
             }
         );
         openmct.types.addType(
-            'apres.chronicles.type',
+            'apres.timeZone.type',
             {
-                name: 'Apres Chronicles Activity',
-                cssClass: 'icon-pause',
-                creatable: true,
-                initialize: function (domainObject) {
-
-                }
+                name: 'Apres Time Zone',
+                cssClass: 'icon-hourglass',
+                creatable: true
             }
         );
         openmct.types.addType(
-            'apres.table.type',
+            'apres.chronicle.type',
             {
-                name: 'Apres Table Activity',
-                cssClass: 'icon-pause',
+                name: 'APRES State Chronicle',
+                cssClass: 'icon-arrow-left',
                 creatable: true,
-                initialize: function (domainObject) {
-
-                }
+                
+                form: [
+                    {
+                        name: "Start Time",
+                        control: "numberField",
+                        cssClass: "l-input-sm l-numeric",
+                        key: "startTime",
+                        required: true,
+                        property: [
+                            "configuration",
+                            "startTime"
+                        ]
+                    },
+                    {
+                        name: "End Time",
+                        control: "numberField",
+                        cssClass: "l-input-sm l-numeric",
+                        key: "endTime",
+                        required: true,
+                        property: [
+                            "configuration",
+                            "endTime"
+                        ]
+                    },
+                    {
+                        name: "State Name",
+                        control: "textfield",
+                        cssClass: "l-input-sm l-text",
+                        key: "stateName",
+                        required: true,
+                        property: [
+                            "configuration",
+                            "stateName"
+                        ]
+                    }
+                ]
             }
         );
         openmct.types.addType(
             'apres.activity.type',
             {
-                name: 'Apres Timeline Activity',
-                cssClass: 'icon-activity',
+                name: 'Apres Activity (Action/Process)',
+                cssClass: 'icon-plus-in-rect',
                 creatable: true,
                 initialize: function (domainObject) {
                     domainObject.configuration = {
@@ -54,7 +84,7 @@ export default function () {
                 form: [
                     {
                         name: "Start Time",
-                        control: "numberfield",
+                        control: "numberField",
                         cssClass: "l-input-sm l-numeric",
                         key: "startTime",
                         required: true,
@@ -65,7 +95,7 @@ export default function () {
                     },
                     {
                         name: "End Time",
-                        control: "numberfield",
+                        control: "numberField",
                         cssClass: "l-input-sm l-numeric",
                         key: "endTime",
                         required: true,
@@ -91,7 +121,7 @@ export default function () {
 
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
         openmct.objectViews.addProvider(new ActivityViewProvider(openmct));
-        openmct.objectViews.addProvider(new Chronicles(openmct));
-        openmct.telemetry.addProvider(Chronicles);
+        openmct.objectViews.addProvider(new ChroniclesViewProvider(openmct));
+        //openmct.telemetry.addProvider(Chronicles);
     }
 };

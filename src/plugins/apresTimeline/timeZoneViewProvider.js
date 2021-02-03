@@ -1,17 +1,18 @@
 import Vue from 'vue';
-export default class chroniclesViewProvider{
+
+export default class  timeZoneViewProvider {
     constructor() {
-        this.name = 'chronicle';
-        this.key = 'apres.chronicle.view';
+        this.name = 'timeZone';
+        this.key = 'apres.timeZone.view';
         this.priority = 1;
     }
 
     canView(domainObject) {
-        return domainObject.type === 'apres.chronicle.type';
+        return domainObject.type === 'apres.timeZone.type';
     }
 
     canEdit(domainObject) {
-        return domainObject.type === 'apres.chronicle.type';
+        return domainObject.type === 'apres.timeZone.type';
     }
 
     view(domainObject, objectPath, isEditing) {
@@ -21,6 +22,8 @@ export default class chroniclesViewProvider{
             show: (element) => {
                 component = new Vue({
                     el: element,
+                    components: {
+                    },
                     data() {
                         return {
                             isEditing: isEditing

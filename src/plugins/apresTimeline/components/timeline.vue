@@ -32,8 +32,8 @@ export default {
         addActivity(activityDomainObject) {
             this.activities.push(activityDomainObject);
         },
-        removeActivity(activityIndentifier) {
-            console.log(activityIndentifier);
+        removeActivity(activityIdentifier) {
+            console.log(activityIdentifier);
         },
         reorderActivities(reorderPlan) {
             let oldActivities = this.activities.slice();
