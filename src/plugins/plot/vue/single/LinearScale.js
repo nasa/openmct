@@ -25,53 +25,56 @@
  * `scale` return the range value associated with a domain value.
  * `invert` return the domain value associated with range value.
  */
-function LinearScale(domain) {
-    this.domain(domain);
+
+class LinearScale {
+    constructor(domain) {
+        this.domain(domain);
+    }
+
+    domain(newDomain) {
+        if (newDomain) {
+            this._domain = newDomain;
+            this._domainDenominator = newDomain.max - newDomain.min;
+        }
+
+        return this._domain;
+    }
+
+    range(newRange) {
+        if (newRange) {
+            this._range = newRange;
+            this._rangeDenominator = newRange.max - newRange.min;
+        }
+
+        return this._range;
+    }
+
+    scale(domainValue) {
+        if (!this._domain || !this._range) {
+            return;
+        }
+
+        const domainOffset = domainValue - this._domain.min;
+        const rangeFraction = domainOffset - this._domainDenominator;
+        const rangeOffset = rangeFraction * this._rangeDenominator;
+        const rangeValue = rangeOffset + this._range.min;
+
+        return rangeValue;
+    }
+
+    invert(rangeValue) {
+        if (!this._domain || !this._range) {
+            return;
+        }
+
+        const rangeOffset = rangeValue - this._range.min;
+        const domainFraction = rangeOffset / this._rangeDenominator;
+        const domainOffset = domainFraction * this._domainDenominator;
+        const domainValue = domainOffset + this._domain.min;
+
+        return domainValue;
+    }
 }
-
-LinearScale.prototype.domain = function (newDomain) {
-    if (newDomain) {
-        this._domain = newDomain;
-        this._domainDenominator = newDomain.max - newDomain.min;
-    }
-
-    return this._domain;
-};
-
-LinearScale.prototype.range = function (newRange) {
-    if (newRange) {
-        this._range = newRange;
-        this._rangeDenominator = newRange.max - newRange.min;
-    }
-
-    return this._range;
-};
-
-LinearScale.prototype.scale = function (domainValue) {
-    if (!this._domain || !this._range) {
-        return;
-    }
-
-    const domainOffset = domainValue - this._domain.min;
-    const rangeFraction = domainOffset - this._domainDenominator;
-    const rangeOffset = rangeFraction * this._rangeDenominator;
-    const rangeValue = rangeOffset + this._range.min;
-
-    return rangeValue;
-};
-
-LinearScale.prototype.invert = function (rangeValue) {
-    if (!this._domain || !this._range) {
-        return;
-    }
-
-    const rangeOffset = rangeValue - this._range.min;
-    const domainFraction = rangeOffset / this._rangeDenominator;
-    const domainOffset = domainFraction * this._domainDenominator;
-    const domainValue = domainOffset + this._domain.min;
-
-    return domainValue;
-};
 
 export default LinearScale;
 
