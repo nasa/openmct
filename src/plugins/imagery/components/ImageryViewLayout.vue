@@ -285,6 +285,7 @@ export default {
     },
     async mounted() {
         // listen
+        console.log('test');
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
@@ -448,7 +449,7 @@ export default {
                         return results[results.length - 1];
                     };
                 }
-
+                console.log('realtime id', realtimeId);
                 if (realtimeId) {
 
                     if (this.relatedTelemetry[key].dev) {
@@ -532,6 +533,7 @@ export default {
         },
         // will subscribe to data for this key if not already done
         subscribeToDataForKey(key) {
+            console.log('subscribe to data for key')
             if (this.relatedTelemetry[key].isSubscribed) {
                 return;
             }
@@ -540,6 +542,7 @@ export default {
                 this.relatedTelemetry[key].unsubscribe = this.openmct.telemetry.subscribe(
                     this.relatedTelemetry[key].realtimeDomainObject, datum => {
                         this.relatedTelemetry[key].listeners.forEach(callback => {
+                            console.log('subscription: key', datum);
                             callback(datum);
                         });
 
@@ -572,9 +575,11 @@ export default {
             this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
         },
         trackLatestRelatedTelemetry() {
+            console.log('track latest');
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
+                        console.log('latest', key, datum);
                         let valueKey = this.relatedTelemetry[key].realtime.valueKey;
                         this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
 
