@@ -1,17 +1,12 @@
 <template>
 <div>
     <div class="c-tree__item menus-to-left">
-        <span class="c-disclosure-triangle is-enabled flex-elem"
-              :class="{ 'c-disclosure-triangle--expanded': expanded }"
+        <span :class="{ disclosureTriangleCss }"
               @click="toggleExpanded"
         >
         </span>
-        <div class="c-object-label"
-             :class="{ 'is-status--missing': series.oldObject.model.status === 'missing' }"
-        >
-            <div class="c-object-label__type-icon {{series.oldObject.type.getCssClass()}}"
-                 :class="{ 'l-icon-link':series.oldObject.location.isLink() }"
-            >
+        <div :class="{ objectLabelCss }">
+            <div :class="{ linkCss }">
                 <span class="is-status__indicator"
                       title="This item is missing or suspect"
                 ></span>
@@ -28,11 +23,13 @@
                  title="The field to be plotted as a value for this series."
             >Value</div>
             <div class="grid-cell value">
-                <select v-model="form.yKey">
+                <select :v-model="yKey"
+                        @change="updateForm('yKey')"
+                >
                     <option v-for="option in yKeyOptions"
                             :key="option.value"
-                            value="{{option.value}}"
-                            :selected="option.value == form.yKey"
+                            :value="option.value"
+                            :selected="option.value == yKey"
                     >
                         {{ option.name }}
                     </option>
@@ -44,7 +41,7 @@
                  title="The rendering method to join lines for this series."
             >Line Method</div>
             <div class="grid-cell value">
-                <select v-model="form.interpolate">
+                <select v-model="interpolate">
                     <option value="none">None</option>
                     <option value="linear">Linear interpolate</option>
                     <option value="stepAfter">Step after</option>
@@ -56,18 +53,18 @@
                  title="Whether markers are displayed."
             >Markers</div>
             <div class="grid-cell value">
-                <input v-model="form.markers"
+                <input v-model="markers"
                        type="checkbox"
                 >
                 <select
-                    v-show="form.markers"
-                    v-model="form.markerShape"
+                    v-show="markers"
+                    v-model="markerShape"
                 >
                     <option
                         v-for="option in markerShapeOptions"
                         :key="option.value"
                         :value="option.value"
-                        :selected="option.value == form.markerShape"
+                        :selected="option.value == markerShape"
                     >
                         {{ option.name }}
                     </option>
@@ -79,25 +76,26 @@
                  title="Display markers visually denoting points in alarm."
             >Alarm Markers</div>
             <div class="grid-cell value">
-                <input v-model="form.alarmMarkers"
+                <input v-model="alarmMarkers"
                        type="checkbox"
                 >
             </div>
         </li>
-        <li v-show="form.markers || form.alarmMarkers"
+        <li v-show="markers || alarmMarkers"
             class="grid-row"
         >
             <div class="grid-cell label"
                  title="The size of regular and alarm markers for this series."
             >Marker Size:</div>
-            <div class="grid-cell value"><input v-model="form.markerSize"
+            <div class="grid-cell value"><input v-model="markerSize"
                                                 class="c-input--flex"
                                                 type="text"
             ></div>
         </li>
+        <!-- Use the swatch component here instead -->
         <!--        <li class="grid-row"-->
         <!--            ng-controller="ClickAwayController as toggle"-->
-        <!--            ng-show="form.interpolate !== 'none' || form.markers"-->
+        <!--            ng-show="interpolate !== 'none' || markers"-->
         <!--        >-->
         <!--            <div class="grid-cell label"-->
         <!--                 title="Manually set the plot line and marker color for this series."-->
@@ -135,18 +133,151 @@
 </template>
 
 <script>
+import { MARKER_SHAPES } from "../../single/draw/MarkerShapes";
 
 export default {
+    inject: ['openmct', 'domainObject'],
+    props: {
+        series: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
+        formModel: {
+            type: String,
+            default() {
+                return '';
+            }
+        }
+    },
     data() {
         return {
-
+            expanded: false,
+            model: {},
+            markerShapeOptions: [],
+            yKey: '',
+            interpolate: '',
+            markers: '',
+            markerShape: '',
+            alarmMarkers: '',
+            markerSize: ''
         };
     },
+    computed: {
+        objectLabelCss() {
+            return this.series.oldObject.model.status === 'missing' ? 'c-object-label is-status--missing' : 'c-object-label';
+        },
+        seriesCss() {
+            return `c-object-label__type-icon ${this.series.oldObject.type.getCssClass()}`;
+        },
+        linkCss() {
+            return this.series.oldObject.location.isLink() ? 'l-icon-link' : '';
+        },
+        disclosureTriangleCss() {
+            return this.expanded ? 'c-disclosure-triangle is-enabled flex-elem c-disclosure-triangle--expanded' : 'c-disclosure-triangle is-enabled flex-elem';
+        }
+    },
     mounted() {
-
+        this.initialize();
     },
     methods: {
+        initialize: function () {
+            this.fields = [
+                {
+                    modelProp: 'yKey',
+                    objectPath: this.dynamicPathForKey('yKey')
+                },
+                {
+                    modelProp: 'interpolate',
+                    objectPath: this.dynamicPathForKey('interpolate')
+                },
+                {
+                    modelProp: 'markers',
+                    objectPath: this.dynamicPathForKey('markers')
+                },
+                {
+                    modelProp: 'markerShape',
+                    objectPath: this.dynamicPathForKey('markerShape')
+                },
+                {
+                    modelProp: 'markerSize',
+                    coerce: Number,
+                    objectPath: this.dynamicPathForKey('markerSize')
+                },
+                {
+                    modelProp: 'alarmMarkers',
+                    coerce: Boolean,
+                    objectPath: this.dynamicPathForKey('alarmMarkers')
+                }
+            ];
 
+            const metadata = this.model.metadata;
+            this.yKeyOptions = metadata
+                .valuesForHints(['range'])
+                .map(function (o) {
+                    return {
+                        name: o.key,
+                        value: o.key
+                    };
+                });
+            this.markerShapeOptions = Object.entries(MARKER_SHAPES)
+                .map(([key, obj]) => {
+                    return {
+                        name: obj.label,
+                        value: key
+                    };
+                });
+        },
+        dynamicPathForKey(key) {
+            return function (object, model) {
+                const modelIdentifier = model.get('identifier');
+                const index = object.configuration.series.findIndex(s => {
+                    return _.isEqual(s.identifier, modelIdentifier);
+                });
+
+                return 'configuration.series[' + index + '].' + key;
+            };
+        },
+        /**
+       * Set the color for the current plot series.  If the new color was
+       * already assigned to a different plot series, then swap the colors.
+       */
+        setColor: function (color) {
+            const oldColor = this.model.get('color');
+            const otherSeriesWithColor = this.model.collection.filter(function (s) {
+                return s.get('color') === color;
+            })[0];
+
+            this.model.set('color', color);
+
+            const getPath = this.dynamicPathForKey('color');
+            const seriesColorPath = getPath(this.domainObject, this.model);
+
+            this.openmct.objects.mutate(
+                this.domainObject,
+                seriesColorPath,
+                color.asHexString()
+            );
+
+            if (otherSeriesWithColor) {
+                otherSeriesWithColor.set('color', oldColor);
+
+                const otherSeriesColorPath = getPath(
+                    this.domainObject,
+                    otherSeriesWithColor
+                );
+
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    otherSeriesColorPath,
+                    oldColor.asHexString()
+                );
+            }
+        },
+        toggleExpanded() {
+            this.expanded = !this.expanded;
+        }
     }
 };
 

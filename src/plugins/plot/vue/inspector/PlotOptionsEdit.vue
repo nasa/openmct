@@ -26,81 +26,15 @@
         <li v-for="series in plotSeries"
             :key="series.key"
         >
-            <plot-options-editable-item :series="series" />
+            <series-form :series="series"
+                         :form-model="'series'"
+            />
         </li>
     </ul>
-    <div class="grid-properties"
-         ng-show="!!config.series.models.length"
-         ng-controller="PlotYAxisFormController"
-         form-model="config.yAxis"
-    >
-        <ul class="l-inspector-part">
-            <h2>Y Axis</h2>
-            <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Manually override how the Y axis is labeled."
-                >Label</div>
-                <div class="grid-cell value"><input class="c-input--flex"
-                                                    type="text"
-                                                    ng-model="form.label"
-                ></div>
-            </li>
-        </ul>
-        <ul class="l-inspector-part">
-            <h2>Y Axis Scaling</h2>
-            <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Automatically scale the Y axis to keep all values in view."
-                >Autoscale</div>
-                <div class="grid-cell value"><input type="checkbox"
-                                                    ng-model="form.autoscale"
-                ></div>
-            </li>
-            <li class="grid-row"
-                ng-show="form.autoscale"
-            >
-                <div class="grid-cell label"
-                     title="Percentage of padding above and below plotted min and max values. 0.1, 1.0, etc."
-                >
-                    Padding</div>
-                <div class="grid-cell value">
-                    <input class="c-input--flex"
-                           type="text"
-                           ng-model="form.autoscalePadding"
-                    >
-                </div>
-            </li>
-        </ul>
-        <ul class="l-inspector-part"
-            ng-show="!form.autoscale"
-        >
-            <div class="grid-span-all form-error"
-                 ng-show="!form.autoscale && validation.range"
-            >
-                {{ validation.range }}
-            </div>
-            <li class="grid-row force-border">
-                <div class="grid-cell label"
-                     title="Minimum Y axis value."
-                >Minimum Value</div>
-                <div class="grid-cell value">
-                    <input class="c-input--flex"
-                           type="number"
-                           ng-model="form.range.min"
-                    >
-                </div>
-            </li>
-            <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Maximum Y axis value."
-                >Maximum Value</div>
-                <div class="grid-cell value"><input class="c-input--flex"
-                                                    type="number"
-                                                    ng-model="form.range.max"
-                ></div>
-            </li>
-        </ul>
-    </div>
+    <yAxis-form v-show="!!config.series.models.length"
+                class="grid-properties"
+                :form-model="'yAxis'"
+    />
     <div class="grid-properties"
          ng-show="!!config.series.models.length"
     >
@@ -183,10 +117,67 @@
 </div>
 </template>
 <script>
-import PlotOptionsEditableItem from "./PlotOptionsEditableItem.vue";
+import SeriesForm from "@/plugins/plot/vue/inspector/forms/SeriesForm";
+import eventHelpers from "@/plugins/plot/vue/single/lib/eventHelpers";
+import configStore from "@/plugins/plot/vue/single/configuration/configStore";
+
 export default {
+    inject: ['openmct', 'domainObject'],
     components: {
-        PlotOptionsEditableItem
+        SeriesForm
+    },
+    data() {
+        return {
+            config: {},
+            plotSeries: []
+        };
+    },
+    mounted() {
+        eventHelpers.extend(this);
+        this.config = this.getConfig();
+        this.registerListeners();
+    },
+    beforeDestroy() {
+        this.stopListening();
+        this.unlisten();
+    },
+    methods: {
+        getConfig() {
+            this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const config = configStore.get(this.configId);
+            if (!config) {
+                //TODO: Is this necessary?
+                this.$nextTick(this.getConfig);
+
+                return;
+            }
+
+            return config;
+        },
+        registerListeners() {
+            this.updateDomainObject(this.config.get('domainObject'));
+            this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+
+            this.listenTo(this.config.series, 'add', this.addSeries, this);
+            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+
+            this.config.series.forEach(this.addSeries, this);
+        },
+
+        updateDomainObject(domainObject) {
+            this.domainObject = domainObject;
+            this.formDomainObject = domainObject;
+        },
+
+        addSeries(series, index) {
+            this.plotSeries[index] = series;
+            series.locateOldObject(this.domainObject);
+        },
+
+        resetAllSeries() {
+            this.plotSeries = [];
+            this.config.series.forEach(this.addSeries, this);
+        }
     }
 };
 </script>

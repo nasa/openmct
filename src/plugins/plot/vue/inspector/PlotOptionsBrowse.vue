@@ -120,9 +120,13 @@ export default {
     components: {
         PlotOptionsItem
     },
+    data() {
+        return {
+            config: {}
+        };
+    },
     mounted() {
         eventHelpers.extend(this);
-        this.plotSeries = [];
         this.config = this.getConfig();
         this.registerListeners();
     },
@@ -135,7 +139,8 @@ export default {
             this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             const config = configStore.get(this.configId);
             if (!config) {
-                this.$nextTick(this.setUpScope);
+                //TODO: Is this necessary?
+                this.$nextTick(this.getConfig);
 
                 return;
             }
@@ -145,26 +150,11 @@ export default {
         registerListeners() {
             this.updateDomainObject(this.config.get('domainObject'));
             this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
-
-            this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
-
-            this.config.series.forEach(this.addSeries, this);
         },
 
         updateDomainObject(domainObject) {
             this.domainObject = domainObject;
             this.formDomainObject = domainObject;
-        },
-
-        addSeries(series, index) {
-            this.plotSeries[index] = series;
-            series.locateOldObject(this.domainObject);
-        },
-
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
         }
     }
 };
