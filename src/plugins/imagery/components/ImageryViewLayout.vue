@@ -235,11 +235,13 @@ export default {
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
                         if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
                             isFresh = false;
+                            console.log(key + ' is not fresh', latest[key], focused[key]);
                         }
                     }
                 }
 
                 // last check to make sure in the same frame
+                // if no frame, comparison will still be equal undefined === undefined
                 if (isFresh) {
                     isFresh = this.latestFrameId === this.focusedImageFrameId;
                 }
@@ -285,7 +287,7 @@ export default {
     },
     async mounted() {
         // listen
-        console.log('test');
+        console.log('testing viper');
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
@@ -449,7 +451,7 @@ export default {
                         return results[results.length - 1];
                     };
                 }
-                console.log('realtime id', realtimeId);
+
                 if (realtimeId) {
 
                     if (this.relatedTelemetry[key].dev) {
@@ -526,14 +528,13 @@ export default {
                     return;
                 }
             }
-            console.log('req latest key', key);
+
             mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
             return mostRecent[valueKey];
         },
         // will subscribe to data for this key if not already done
         subscribeToDataForKey(key) {
-            console.log('subscribe to data for key')
             if (this.relatedTelemetry[key].isSubscribed) {
                 return;
             }
@@ -542,7 +543,6 @@ export default {
                 this.relatedTelemetry[key].unsubscribe = this.openmct.telemetry.subscribe(
                     this.relatedTelemetry[key].realtimeDomainObject, datum => {
                         this.relatedTelemetry[key].listeners.forEach(callback => {
-                            console.log('subscription: key', datum);
                             callback(datum);
                         });
 
@@ -575,11 +575,9 @@ export default {
             this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
         },
         trackLatestRelatedTelemetry() {
-            console.log('track latest');
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
-                        console.log('latest', key, datum);
                         let valueKey = this.relatedTelemetry[key].realtime.valueKey;
                         this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
 
