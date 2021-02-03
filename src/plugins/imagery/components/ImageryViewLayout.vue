@@ -301,7 +301,6 @@ export default {
         this.sunKeys = ['Sun Orientation'];
 
         // DELETE WHEN DONE
-        console.log('imageHints', this.imageHints);
         if (!this.imageHints.relatedTelemetry) {
             this.temporaryForImageEnhancements();
         }
@@ -387,6 +386,11 @@ export default {
             if (this.imageHints.relatedTelemetry === undefined) {
                 return;
             }
+            
+            let loadedResolve;
+            this.relatedTelemetryLoaded = new Promise((resolve, reject) => {
+                loadedResolve = resolve;
+            });
 
             // DELETE
             if (this.temporaryDev) {
@@ -476,6 +480,7 @@ export default {
 
             }
 
+            loadedResolve();
         },
         async getMostRecentFrameId(key, targetDatum) {
             if (!this.hasRelatedTelemetry) {
@@ -502,6 +507,8 @@ export default {
             if (!this.relatedTelemetry[key]) {
                 throw new Error(`${key} does not exist on related telemetry`);
             }
+
+            await this.relatedTelemetryLoaded;
 
             let mostRecent;
             let valueKey = this.relatedTelemetry[key].historical.valueKey;
