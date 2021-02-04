@@ -282,6 +282,7 @@ export default {
     },
     watch: {
         focusedImageIndex() {
+            console.log('focused image index changed');
             this.trackDuration();
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
@@ -558,7 +559,7 @@ export default {
             if (!this.hasRelatedTelemetry) {
                 return;
             }
-
+            console.log('update related telem');
             // set data ON image telemetry as well as in focusedImageRelatedData
             for (let key of this.relatedTelemetry.keys) {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historical) {
