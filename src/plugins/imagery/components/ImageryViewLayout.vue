@@ -189,7 +189,7 @@ export default {
             refreshCSS: false,
             keyString: undefined,
             focusedImageIndex: undefined,
-            focusedImageRelatedData: {}, // update to focusedImageRelatedTelemetry once all merged
+            focusedImageRelatedTelemetry: {}, // update to focusedImageRelatedTelemetry once all merged
             focusedImageFrameId: undefined,
             numericDuration: undefined,
             metadataEndpoints: {},
@@ -267,7 +267,7 @@ export default {
         roverPositionIsFresh() {
             let isFresh = undefined;
             let latest = this.latestRelatedTelemetry;
-            let focused = this.focusedImageRelatedData;
+            let focused = this.focusedImageRelatedTelemetry;
 
             if (this.hasRelatedTelemetry) {
                 isFresh = true;
@@ -295,7 +295,7 @@ export default {
         cameraPositionIsFresh() {
             let isFresh = undefined;
             let latest = this.latestRelatedTelemetry;
-            let focused = this.focusedImageRelatedData;
+            let focused = this.focusedImageRelatedTelemetry;
 
             if (this.hasRelatedTelemetry) {
                 isFresh = true;
@@ -604,7 +604,7 @@ export default {
                 return;
             }
 
-            // set data ON image telemetry as well as in focusedImageRelatedData
+            // set data ON image telemetry as well as in focusedImageRelatedTelemetry
             for (let key of this.relatedTelemetry.keys) {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historical) {
                     let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
@@ -614,7 +614,7 @@ export default {
                         this.$set(this.imageHistory[this.focusedImageIndex], key, value); // manually add to telemetry
                     }
 
-                    this.$set(this.focusedImageRelatedData, key, value);
+                    this.$set(this.focusedImageRelatedTelemetry, key, value);
                 }
             }
 
