@@ -10,15 +10,14 @@
 import * as d3Selection from 'd3-selection';
 import * as d3Axis from 'd3-axis';
 import * as d3Scale from 'd3-scale';
-import { ticks } from "@/plugins/plot/vue/single/tickUtils";
+import utcMultiTimeFormat from '@/plugins/timeConductor/utcMultiTimeFormat';
 
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
 const RESIZE_POLL_INTERVAL = 200;
-// const PIXELS_PER_TICK = 100;
-// const PIXELS_PER_TICK_WIDE = 200;
+const PIXELS_PER_TICK = 100;
+const PIXELS_PER_TICK_WIDE = 200;
 //This offset needs to be re-considered
-const GROUP_OFFSET = 100;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -46,6 +45,12 @@ export default {
             default() {
                 return 'svg';
             }
+        },
+        offset: {
+            type: Number,
+            default() {
+                return 0;
+            }
         }
     },
     watch: {
@@ -65,7 +70,9 @@ export default {
         this.svgElement = this.container.append("svg:svg");
         // draw x axis with labels. CSS is used to position them.
         this.axisElement = this.svgElement.append("g")
-            .attr("class", "axis");
+            .attr("class", "axis")
+            .attr('font-size', '1.3em')
+            .attr("transform", "translate(0,20)");
 
         this.setDimensions();
         this.drawAxis(this.bounds, this.timeSystem);
@@ -96,14 +103,14 @@ export default {
                     height = Number(height) + this.contentHeight;
                     nowMarker.style.height = height + 'px';
                     const now = this.xScale(Date.now());
-                    nowMarker.style.left = now + GROUP_OFFSET + 'px';
+                    nowMarker.style.left = now + this.offset + 'px';
                 }
             }
         },
         setDimensions() {
             const axisHolder = this.$refs.axisHolder;
             this.width = axisHolder.clientWidth;
-            this.offsetWidth = this.width - GROUP_OFFSET;
+            this.offsetWidth = this.width - this.offset;
 
             this.height = Math.round(axisHolder.getBoundingClientRect().height);
 
@@ -144,16 +151,15 @@ export default {
 
             this.xScale.range([PADDING, this.offsetWidth - PADDING * 2]);
         },
-        setAxis(bounds) {
+        setAxis() {
             this.xAxis = d3Axis.axisTop(this.xScale);
-            function format(value) {
-                return new Date(value).toISOString();
+            this.xAxis.tickFormat(utcMultiTimeFormat);
+
+            if (this.width > 1800) {
+                this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK_WIDE);
+            } else {
+                this.xAxis.ticks(this.offsetWidth / PIXELS_PER_TICK);
             }
-
-            this.xAxis.tickFormat(format);
-
-            let tickValues = ticks(bounds.start, bounds.end, 6);
-            this.xAxis.tickValues(tickValues);
         }
     }
 };

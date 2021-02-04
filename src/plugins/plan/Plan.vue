@@ -98,7 +98,11 @@ export default {
             this.setScaleAndPlotActivities();
         },
         resize() {
-            const clientWidth = this.options.clientWidth || this.$refs.planHolder.clientWidth;
+            let clientWidth = this.$refs.planHolder.clientWidth;
+            if (this.options.clientWidth !== undefined) {
+                clientWidth = this.options.clientWidth;
+            }
+
             if (clientWidth !== this.width) {
                 this.setDimensions();
                 this.updateViewBounds();
@@ -142,7 +146,11 @@ export default {
             const rect = planHolder.getBoundingClientRect();
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
-            this.width = this.options.clientWidth || planHolder.clientWidth;
+            if (this.options.clientWidth !== undefined) {
+                this.width = this.options.clientWidth;
+            } else {
+                this.width = planHolder.clientWidth;
+            }
 
             this.height = Math.round(planHolder.getBoundingClientRect().height);
         },
@@ -310,11 +318,13 @@ export default {
             const svgHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
             let groupSVGContainer = this.container.append('div');
             groupSVGContainer.attr("class", "c-plan-content__lane-object");
-            let groupSVGInnerContainer = groupSVGContainer.append('div');
-            groupSVGInnerContainer.attr("height", "100%");
-            let groupSVG = groupSVGInnerContainer.append('svg');
+            let groupSVG = groupSVGContainer.append('svg');
             groupSVG.attr("height", svgHeight);
-            groupSVG.attr("width", this.width - groupLabel.node().getBoundingClientRect().width);
+            if (this.options.clientWidth !== undefined) {
+                groupSVG.attr("width", this.width - groupLabel.node().getBoundingClientRect().width);
+            } else {
+                groupSVG.attr("width", this.width);
+            }
 
             return {
                 groupLabel,
