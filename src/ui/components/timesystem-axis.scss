@@ -1,8 +1,8 @@
 .c-timesystem-axis {
-  $h: 18px;
-  height: 50px;
-  $tickYPos: ($h / 2) + 12px + 10px;
-  $tickXPos: 100px;
+  $h: 20px;
+  height: $h;
+  $tickYPos: $h;
+  $tickXPos: 100px; // Left offset for plot legends. TODO: make this a property set by the view.
 
   svg {
     text-rendering: geometricPrecision;
@@ -16,7 +16,7 @@
     text:not(.activity) {
       // Tick labels
       fill: $colorBodyFg;
-      font-size: 1em;
+      font-size: 1.15em; // TODO:
       paint-order: stroke;
       font-weight: bold;
       stroke: $colorBodyBg;
