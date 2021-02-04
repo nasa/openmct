@@ -121,13 +121,14 @@
             </div>
         </div>
     </div>
-    <div ref="thumbsWrapper"
-         class="c-imagery__thumbs-wrapper"
-         :class="{'is-paused': isPaused}"
-         @scroll="handleScroll"
+    <div
+        ref="thumbsWrapper"
+        class="c-imagery__thumbs-wrapper"
+        :class="{'is-paused': isPaused}"
+        @scroll="handleScroll"
     >
         <div v-for="(datum, index) in imageHistory"
-             :key="datum.url"
+             :key="datum[timeKey]"
              class="c-imagery__thumb c-thumb"
              :class="{ selected: focusedImageIndex === index && isPaused }"
              @click="setFocusedImage(index, thumbnailClick)"
