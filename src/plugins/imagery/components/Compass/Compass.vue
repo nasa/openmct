@@ -81,27 +81,24 @@ export default {
         },
         // degrees from north heading
         roverHeading() {
-            return this.image['Rover Heading'];
+            return this.image.heading;
         },
         roverRoll() {
-            return this.image['Rover Roll'];
-        },
-        roverYaw() {
-            return this.image['Rover Yaw'];
+            return this.image.roll;
         },
         roverPitch() {
-            return this.image['Rover Pitch'];
+            return this.image.pitch;
         },
         // degrees from north heading
         sunHeading() {
-            return this.image['Sun Orientation'];
+            return this.image.sunOrientation;
         },
         // degrees from rover heading
         cameraPan() {
-            return this.image['Camera Pan'];
+            return this.image.cameraPan;
         },
         cameraTilt() {
-            return this.image['Camera Tilt'];
+            return this.image.cameraTilt;
         },
         cameraFieldOfView() {
             return CAM_FIELD_OF_VIEW;

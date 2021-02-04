@@ -259,7 +259,6 @@ export default {
             return result;
         },
         shouldDisplayCompass() {
-            console.log('should compass', this.focusedImage, this.focusedImageNaturalAspectRatio, this.imageContainerWidth, this.imageContainerHeight);
             return this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
@@ -323,14 +322,7 @@ export default {
         }
     },
     watch: {
-        latestRelatedTelemetry() {
-            console.log('latest related telemetry has changed');
-        },
-        focusedImageRelatedData() {
-            console.log('focused related telemetry has changed');
-        },
         focusedImageIndex() {
-            console.log('focused image index changed');
             this.trackDuration();
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
@@ -339,7 +331,6 @@ export default {
     },
     async mounted() {
         // listen
-        console.log('testing viper: 41231');
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
@@ -350,10 +341,10 @@ export default {
         this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
-        this.telemetryKeyWithFrameId = 'Rover Heading';
-        this.roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
-        this.cameraKeys = ['Camera Pan', 'Camera Tilt'];
-        this.sunKeys = ['Sun Orientation'];
+        this.telemetryKeyWithFrameId = 'heading';
+        this.roverKeys = ['heading', 'roll', 'pitch'];
+        this.cameraKeys = ['cameraPan', 'cameraTilt'];
+        this.sunKeys = ['sunOrientation'];
 
         // DELETE WHEN DONE
         if (!this.imageHints.relatedTelemetry) {
@@ -631,7 +622,6 @@ export default {
             this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
         },
         trackLatestRelatedTelemetry() {
-            console.log('begin tracking latest');
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
