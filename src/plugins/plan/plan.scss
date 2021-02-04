@@ -1,30 +1,27 @@
 .c-plan {
 
-  &-content {
+  @include abs();
 
+  &-content {
     display: grid;
     grid-template-columns: 100px 100px 1fr;
     grid-column-gap: 1px;
     grid-row-gap: 1px;
+    width: 100%;
 
-    div {
-      padding: 5px 8px;
-      background: #eee;
-
-      div {
-        padding: 0;
-      }
+    [class*='__lane-label'] {
+      background: rgba($colorBodyFg, 0.2); // TODO: convert to theme constant
+      color: $colorBodyFg; // TODO: convert to theme constant
+      padding: $interiorMarginSm;
     }
 
-    .lane-label {
-      background: #ccc !important;
+    [class*='--span-cols'] {
       grid-column: span 2;
     }
   }
 
   svg {
     text-rendering: geometricPrecision;
-    width: 100%;
 
     text.activity {
       stroke: none;

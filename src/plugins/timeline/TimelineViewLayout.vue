@@ -21,56 +21,60 @@
 *****************************************************************************/
 
 <template>
-    <div class="c-timeline-holder">
-        <div class="c-timeline">
-            <div v-for="timeSystemItem in timeSystems"
-                      :key="timeSystemItem.timeSystem.key"
-                      class="u-contents"
+<div ref="timelineHolder"
+     class="c-timeline-holder"
+>
+    <div class="c-timeline">
+        <div v-for="timeSystemItem in timeSystems"
+             :key="timeSystemItem.timeSystem.key"
+             class="u-contents"
+        >
+            <div class="c-timeline__lane-label"
+                 :class="{'c-timeline__lane-label--span-cols': true}"
             >
-                <div class="c-timeline__lane-label"
-                    :class="{'c-timeline__lane-label--span-cols': true}"
+                {{ timeSystemItem.timeSystem.name }}
+            </div>
+            <timeline-axis
+                class="c-timeline__lane-object"
+                :bounds="timeSystemItem.bounds"
+                :time-system="timeSystemItem.timeSystem"
+                :content-height="height"
+                :rendering-engine="'svg'"
+            />
+        </div>
+
+        <div ref="contentHolder"
+             class="u-contents c-timeline__objects c-timeline__content-holder"
+        >
+            <div
+                v-for="item in items"
+                :key="item.keyString"
+                class="u-contents c-timeline__content"
+            >
+                <div v-if="item.domainObject.type !== 'plan'"
+                     class="c-timeline__lane-label c-timeline__lane-label--span-cols c-object-label"
                 >
-                    {{ timeSystemItem.timeSystem.name }}
+                    <div class="c-object-label__type-icon"
+                         :class="item.type.definition.cssClass"
+                    >
+                    </div>
+                    <div class="c-object-label__name">
+                        {{ item.domainObject.name }}
+                    </div>
                 </div>
-                <timeline-axis
-                        class="c-timeline__lane-object"
-                        :bounds="timeSystemItem.bounds"
-                        :time-system="timeSystemItem.timeSystem"
-                        :content-height="height"
-                        :rendering-engine="'svg'"
+                <object-view
+                    class="c-timeline__lane-object c-timeline__lane-object--domain-object"
+                    :class="{'c-timeline__object-offset': item.domainObject.type !== 'plan'}"
+                    :default-object="item.domainObject"
+                    data-selectable
+                    :options="item.options"
+                    :object-path="item.objectPath"
                 />
             </div>
-
-            <div ref="contentHolder" class="u-contents c-timeline__objects c-timeline__content-holder">
-                <div
-                    v-for="item in items"
-                    :key="item.keyString"
-                    class="u-contents c-timeline__content"
-                >
-                    <div v-if="item.domainObject.type !== 'plan'"
-                         class="c-timeline__lane-label c-timeline__lane-label--span-cols c-object-label"
-                    >
-                        <div class="c-object-label__type-icon"
-                             :class="item.type.definition.cssClass"
-                        >
-                        </div>
-                        <div class="c-object-label__name">
-                            {{ item.domainObject.name }}
-                        </div>
-                    </div>
-                    <object-view
-                        class="c-timeline__lane-object c-timeline__lane-object--domain-object"
-                        :class="{'c-timeline__object-offset': item.domainObject.type !== 'plan'}"
-                        :default-object="item.domainObject"
-                        data-selectable
-                        :options="item.options"
-                        :object-path="item.objectPath"
-                    />
-                </div>
             <!--    <plan :rendering-engine="'canvas'" />-->
-            </div>
         </div>
     </div>
+</div>
 </template>
 
 <script>
@@ -114,7 +118,8 @@ export default {
             let options = {
                 compact: true,
                 layoutFontSize: '',
-                layoutFont: ''
+                layoutFont: '',
+                clientWidth: Math.round(this.$refs.timelineHolder.getBoundingClientRect().width)
             };
             let item = {
                 domainObject,

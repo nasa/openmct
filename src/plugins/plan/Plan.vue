@@ -2,16 +2,27 @@
 <div ref="plan"
      class="c-plan"
 >
-    <timeline-axis v-if="viewBounds && !options.compact"
-                   :bounds="viewBounds"
-                   :time-system="timeSystem"
-                   :content-height="height"
-                   :rendering-engine="renderingEngine"
-    />
+    <div v-if="viewBounds && !options.compact"
+         class="c-plan-content u-contents"
+    >
+        <div class="c-plan-content__lane-label"
+             :class="{'c-plan-content__lane-label--span-cols': true}"
+        >
+            {{ timeSystem.name }}
+        </div>
+        <timeline-axis
+            class="c-plan-content__lane-object"
+            :bounds="viewBounds"
+            :time-system="timeSystem"
+            :content-height="height"
+            :rendering-engine="renderingEngine"
+        />
+    </div>
     <div ref="planHolder"
-         class="c-plan-content"
+         class="c-plan-content u-contents"
     ></div>
-</div></template>
+</div>
+</template>
 
 <script>
 import * as d3Selection from 'd3-selection';
@@ -63,6 +74,7 @@ export default {
         this.container = d3Selection.select(this.$refs.planHolder);
 
         this.canvas = this.$refs.plan.appendChild(document.createElement('canvas'));
+        this.canvas.height = 0;
         this.canvasContext = this.canvas.getContext('2d');
 
         this.setDimensions();
@@ -86,7 +98,8 @@ export default {
             this.setScaleAndPlotActivities();
         },
         resize() {
-            if (this.$refs.planHolder.clientWidth !== this.width) {
+            const clientWidth = this.options.clientWidth || this.$refs.planHolder.clientWidth;
+            if (clientWidth !== this.width) {
                 this.setDimensions();
                 this.updateViewBounds();
             }
@@ -117,20 +130,19 @@ export default {
             this.clearPreviousActivities();
             if (this.xScale) {
                 this.calculatePlanLayout();
-                console.log(this.groupActivities);
                 this.drawPlan();
             }
         },
         clearPreviousActivities() {
-            d3Selection.selectAll(".lane-label").remove();
-            d3Selection.selectAll(".lane-svg").remove();
+            d3Selection.selectAll(".c-plan-content__lane-label").remove();
+            d3Selection.selectAll(".c-plan-content__lane-object").remove();
         },
         setDimensions() {
             const planHolder = this.$refs.planHolder;
             const rect = planHolder.getBoundingClientRect();
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
-            this.width = planHolder.clientWidth;
+            this.width = this.options.clientWidth || planHolder.clientWidth;
 
             this.height = Math.round(planHolder.getBoundingClientRect().height);
         },
@@ -290,18 +302,19 @@ export default {
         },
         getGroupContainer(activityRows, heading) {
             let groupLabel = this.container.append('div');
-            groupLabel.attr("class", "lane-label");
+            groupLabel.attr("class", "c-plan-content__lane-label c-plan-content__lane-label--span-cols");
             groupLabel.html(heading);
 
             const rows = Object.keys(activityRows);
             const lastActivityRow = rows[rows.length - 1];
             const svgHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
             let groupSVGContainer = this.container.append('div');
-            groupSVGContainer.attr("class", "lane-svg");
+            groupSVGContainer.attr("class", "c-plan-content__lane-object");
             let groupSVGInnerContainer = groupSVGContainer.append('div');
             groupSVGInnerContainer.attr("height", "100%");
             let groupSVG = groupSVGInnerContainer.append('svg');
             groupSVG.attr("height", svgHeight);
+            groupSVG.attr("width", this.width - groupLabel.node().getBoundingClientRect().width);
 
             return {
                 groupLabel,
