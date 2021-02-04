@@ -92,11 +92,25 @@
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
                 <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ time }}</div>
+
+                <!-- image fresh -->
                 <div
                     v-if="canTrackDuration"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
+
+                <!-- rover position fresh -->
+                <div
+                    v-if="hasRelatedTelemetry && roverPositionIsFresh"
+                    class="c-imagery__age icon-check c-imagery--new"
+                >POS</div>
+
+                <!-- camera position fresh -->
+                <div
+                    v-if="hasRelatedTelemetry && cameraPositionIsFresh"
+                    class="c-imagery__age icon-check c-imagery--new"
+                >CAM</div>
             </div>
             <div class="h-local-controls">
                 <button
@@ -245,14 +259,78 @@ export default {
             return result;
         },
         shouldDisplayCompass() {
+            console.log('should compass', this.focusedImage, this.focusedImageNaturalAspectRatio, this.imageContainerWidth, this.imageContainerHeight);
             return this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
                 && this.imageContainerHeight !== undefined;
+        },
+        roverPositionIsFresh() {
+            let isFresh = undefined;
+            let latest = this.latestRelatedTelemetry;
+            let focused = this.focusedImageRelatedData;
+
+            if (this.hasRelatedTelemetry) {
+                isFresh = true;
+                for (let key of this.roverKeys) {
+                    // if we have related telemetry for this key, we have an areEqual function,
+                    // and we have values for latest and focued
+                    let tolerance = this.relatedTelemetry[key].tolerance || 1;
+
+                    if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                        if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
+                            isFresh = false;
+                        }
+                    }
+                }
+
+                // last check to make sure in the same frame
+                // if no frame, comparison will still be equal undefined === undefined
+                if (isFresh) {
+                    isFresh = this.latestFrameId === this.focusedImageFrameId;
+                }
+            }
+
+            return isFresh;
+        },
+        cameraPositionIsFresh() {
+            let isFresh = undefined;
+            let latest = this.latestRelatedTelemetry;
+            let focused = this.focusedImageRelatedData;
+
+            if (this.hasRelatedTelemetry) {
+                isFresh = true;
+
+                // camera freshness relies on rover position freshness
+                if (this.roverPositionIsFresh) {
+                    for (let key of this.cameraKeys) {
+                        // if we have related telemetry for this key, we have an areEqual function,
+                        // and we have values for latest and focued
+                        let tolerance = this.relatedTelemetry[key].tolerance || 1;
+
+                        if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                            if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
+                                isFresh = false;
+                            }
+                        }
+                    }
+                } else {
+                    isFresh = false;
+                }
+            }
+
+            return isFresh;
         }
     },
     watch: {
+        latestRelatedTelemetry() {
+            console.log('latest related telemetry has changed');
+        },
+        focusedImageRelatedData() {
+            console.log('focused related telemetry has changed');
+        },
         focusedImageIndex() {
+            console.log('focused image index changed');
             this.trackDuration();
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
@@ -261,6 +339,7 @@ export default {
     },
     async mounted() {
         // listen
+        console.log('testing viper: 41231');
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
@@ -271,6 +350,7 @@ export default {
         this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
+        this.telemetryKeyWithFrameId = 'Rover Heading';
         this.roverKeys = ['Rover Heading', 'Rover Roll', 'Rover Yaw', 'Rover Pitch'];
         this.cameraKeys = ['Camera Pan', 'Camera Tilt'];
         this.sunKeys = ['Sun Orientation'];
@@ -288,6 +368,10 @@ export default {
         this.subscribe();
         this.requestHistory();
         await this.initializeRelatedTelemetry();
+        this.updateRelatedTelemetryForFocusedImage();
+
+        // track latest telemetry values for rover, camera and sun for comparison
+        this.trackLatestRelatedTelemetry();
 
         // for when people are scrolling through images quickly
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
@@ -361,7 +445,7 @@ export default {
             if (this.imageHints.relatedTelemetry === undefined) {
                 return;
             }
-            
+
             let loadedResolve;
             this.relatedTelemetryLoaded = new Promise((resolve, reject) => {
                 loadedResolve = resolve;
@@ -457,6 +541,23 @@ export default {
 
             loadedResolve();
         },
+        async getMostRecentFrameId(key, targetDatum) {
+            if (!this.hasRelatedTelemetry) {
+                throw new Error(`${this.domainObject.name} does not have any related telemetry`);
+            }
+
+            let mostRecent;
+            let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
+
+            if (valuesOnTelemetry) {
+                mostRecent = targetDatum[FRAME_ID_KEY];
+            }
+
+            mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
+
+            return mostRecent[FRAME_ID_KEY];
+
+        },
         async getMostRecentRelatedTelemetry(key, targetDatum) {
             if (!this.hasRelatedTelemetry) {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
@@ -512,8 +613,6 @@ export default {
                 return;
             }
 
-            const image = this.imageHistory[this.focusedImageIndex];
-
             // set data ON image telemetry as well as in focusedImageRelatedData
             for (let key of this.relatedTelemetry.keys) {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historical) {
@@ -521,12 +620,31 @@ export default {
                     let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
                     if (!valuesOnTelemetry) {
-                        image[key] = value; // manually add to telemetry
+                        this.$set(this.imageHistory[this.focusedImageIndex], key, value); // manually add to telemetry
                     }
 
                     this.$set(this.focusedImageRelatedData, key, value);
                 }
             }
+
+            // get frame ID
+            this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
+        },
+        trackLatestRelatedTelemetry() {
+            console.log('begin tracking latest');
+            [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
+                if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
+                    this.relatedTelemetry[key].subscribe((datum) => {
+                        let valueKey = this.relatedTelemetry[key].realtime.valueKey;
+                        this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
+
+                        // if it is the telemetry with the frame ID track latest
+                        if (key === this.telemetryKeyWithFrameId) {
+                            this.latestFrameId = datum[FRAME_ID_KEY];
+                        }
+                    });
+                }
+            });
         },
         focusElement() {
             this.$el.focus();
@@ -811,6 +929,10 @@ export default {
             }, { once: true });
         },
         pollResizeImageContainer() {
+            if (!this.$refs.focusedImage) {
+                return;
+            }
+
             if (this.$refs.focusedImage.clientWidth !== this.imageContainerWidth) {
                 this.imageContainerWidth = this.$refs.focusedImage.clientWidth;
             }
@@ -818,6 +940,12 @@ export default {
             if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
                 this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
             }
+        },
+        equalWithinTolerance(valueOne, valueTwo, tolerance) {
+            const DECIMAL_COMPARISON_TOLERANCE = tolerance;
+            const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
+
+            return Math.floor(valueOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(valueTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
         }
     }
 };

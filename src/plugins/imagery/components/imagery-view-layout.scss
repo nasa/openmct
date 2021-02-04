@@ -71,13 +71,14 @@
     }
 
     &__age {
-        border-radius: $controlCr;
+        border-radius: $smallCr;
         display: flex;
         flex-shrink: 0;
-        align-items: baseline;
-        padding: 1px $interiorMarginSm;
+        align-items: center;
+        padding: 2px $interiorMarginSm;
 
         &:before {
+            font-size: 0.9em;
             opacity: 0.5;
             margin-right: $interiorMarginSm;
         }
@@ -86,8 +87,9 @@
     &--new {
         // New imagery
         $bgColor: $colorOk;
+        color: $colorOkFg;
         background: rgba($bgColor, 0.5);
-        @include flash($animName: flashImageAge, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
+        @include flash($animName: flashImageAge, $iter: 2, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
     }
 
     &__thumbs-wrapper {
