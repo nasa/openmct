@@ -236,7 +236,6 @@ export default {
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
                         if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
                             isFresh = false;
-                            console.log(key + ' is not fresh', latest[key], focused[key]);
                         }
                     }
                 }
@@ -290,7 +289,7 @@ export default {
     },
     async mounted() {
         // listen
-        console.log('testing viper: 123');
+        console.log('testing viper: 321');
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
@@ -559,7 +558,7 @@ export default {
             if (!this.hasRelatedTelemetry) {
                 return;
             }
-            console.log('update related telem');
+
             // set data ON image telemetry as well as in focusedImageRelatedData
             for (let key of this.relatedTelemetry.keys) {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historical) {
@@ -569,7 +568,7 @@ export default {
                     if (!valuesOnTelemetry) {
                         this.imageHistory[this.focusedImageIndex][key] = value; // manually add to telemetry
                     }
-                    console.log('setting related focused for', key);
+
                     this.$set(this.focusedImageRelatedData, key, value);
                 }
             }
@@ -581,7 +580,6 @@ export default {
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
-                        console.log('setting latest for ', key);
                         let valueKey = this.relatedTelemetry[key].realtime.valueKey;
                         this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
 
