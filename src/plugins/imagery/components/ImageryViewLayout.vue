@@ -221,6 +221,7 @@ export default {
             return result;
         },
         roverPositionIsFresh() {
+            console.log('rover check');
             let isFresh = undefined;
             let latest = this.latestRelatedTelemetry;
             let focused = this.focusedImageRelatedData;
@@ -250,6 +251,7 @@ export default {
             return isFresh;
         },
         cameraPositionIsFresh() {
+            console.log('camera check');
             let isFresh = undefined;
             let latest = this.latestRelatedTelemetry;
             let focused = this.focusedImageRelatedData;
@@ -287,7 +289,7 @@ export default {
     },
     async mounted() {
         // listen
-        console.log('testing viper');
+        console.log('testing viper: 123');
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
@@ -566,7 +568,7 @@ export default {
                     if (!valuesOnTelemetry) {
                         this.imageHistory[this.focusedImageIndex][key] = value; // manually add to telemetry
                     }
-
+                    console.log('setting related focused for', key);
                     this.$set(this.focusedImageRelatedData, key, value);
                 }
             }
@@ -578,6 +580,7 @@ export default {
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
+                        console.log('setting latest for ', key);
                         let valueKey = this.relatedTelemetry[key].realtime.valueKey;
                         this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
 
