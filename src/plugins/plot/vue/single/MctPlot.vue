@@ -894,6 +894,9 @@ export default {
             if (this.filterObserver) {
                 this.filterObserver();
             }
+
+            this.openmct.time.off('bounds', this.updateDisplayBounds);
+            this.openmct.objectViews.off('clearData', this.clearData);
         }
     }
 };
