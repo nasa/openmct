@@ -221,7 +221,6 @@ export default {
             return result;
         },
         roverPositionIsFresh() {
-            console.log('rover check');
             let isFresh = undefined;
             let latest = this.latestRelatedTelemetry;
             let focused = this.focusedImageRelatedData;
@@ -250,7 +249,6 @@ export default {
             return isFresh;
         },
         cameraPositionIsFresh() {
-            console.log('camera check');
             let isFresh = undefined;
             let latest = this.latestRelatedTelemetry;
             let focused = this.focusedImageRelatedData;
@@ -280,6 +278,12 @@ export default {
         }
     },
     watch: {
+        latestRelatedTelemetry() {
+            console.log('latest related telemetry has changed');
+        },
+        focusedImageRelatedData() {
+            console.log('focused related telemetry has changed');
+        },
         focusedImageIndex() {
             console.log('focused image index changed');
             this.trackDuration();
@@ -289,7 +293,7 @@ export default {
     },
     async mounted() {
         // listen
-        console.log('testing viper: 321');
+        console.log('testing viper: 41231');
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
@@ -391,7 +395,7 @@ export default {
             if (this.imageHints.relatedTelemetry === undefined) {
                 return;
             }
-            
+
             let loadedResolve;
             this.relatedTelemetryLoaded = new Promise((resolve, reject) => {
                 loadedResolve = resolve;
@@ -577,6 +581,7 @@ export default {
             this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
         },
         trackLatestRelatedTelemetry() {
+            console.log('begin tracking latest');
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
