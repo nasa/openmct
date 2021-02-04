@@ -19,7 +19,7 @@
         />
     </div>
     <div ref="planHolder"
-         class="c-plan-content u-contents"
+         class="c-plan__contents c-plan-content u-contents"
     ></div>
 </div>
 </template>
@@ -138,8 +138,8 @@ export default {
             }
         },
         clearPreviousActivities() {
-            d3Selection.selectAll(".c-plan-content__lane-label").remove();
-            d3Selection.selectAll(".c-plan-content__lane-object").remove();
+            d3Selection.selectAll(".c-plan__contents .c-plan-content__lane-label").remove();
+            d3Selection.selectAll(".c-plan__contents .c-plan-content__lane-object").remove();
         },
         setDimensions() {
             const planHolder = this.$refs.planHolder;
@@ -323,7 +323,7 @@ export default {
             if (this.options.clientWidth !== undefined) {
                 groupSVG.attr("width", this.width - groupLabel.node().getBoundingClientRect().width);
             } else {
-                groupSVG.attr("width", this.width);
+                groupSVG.attr("width", this.width - groupLabel.node().getBoundingClientRect().width);
             }
 
             return {
