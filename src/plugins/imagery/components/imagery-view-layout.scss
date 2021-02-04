@@ -23,6 +23,7 @@
             background-color: $colorPlotBg;
             border: 1px solid transparent;
             flex: 1 1 auto;
+            height: 0;
 
             &.unnsynced{
                 @include sUnsynced();
@@ -30,10 +31,9 @@
         }
 
         &__image {
-            @include abs(); // Safari fix
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: contain;
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
         }
     }
 

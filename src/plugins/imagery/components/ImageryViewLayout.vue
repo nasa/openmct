@@ -1,3 +1,25 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div
     tabindex="0"
@@ -36,14 +58,23 @@
         <div class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
         >
-            <div class="c-imagery__main-image__image js-imageryView-image"
-                 :style="{
-                     'background-image': imageUrl ? `url(${imageUrl})` : 'none',
-                     'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                 }"
-                 :data-openmct-image-timestamp="time"
-                 :data-openmct-object-keystring="keyString"
-            ></div>
+            <img
+                ref="focusedImage"
+                class="c-imagery__main-image__image js-imageryView-image"
+                :src="imageUrl"
+                :style="{
+                    'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                }"
+                :data-openmct-image-timestamp="time"
+                :data-openmct-object-keystring="keyString"
+            >
+            <Compass
+                v-if="shouldDisplayCompass"
+                :container-width="imageContainerWidth"
+                :container-height="imageContainerHeight"
+                :natural-aspect-ratio="focusedImageNaturalAspectRatio"
+                :image="focusedImage"
+            />
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
             <button class="c-nav c-nav--prev"
@@ -99,6 +130,7 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
+import Compass from './Compass/Compass.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -120,6 +152,9 @@ const FRAME_ID_KEY = 'frame_id';
 
 export default {
     inject: ['openmct', 'domainObject'],
+    components: {
+        Compass
+    },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
@@ -147,7 +182,10 @@ export default {
             hasRelatedTelemetry: false,
             relatedTelemetry: {},
             latestRelatedTelemetry: {},
-            latestFrameId: undefined
+            latestFrameId: undefined,
+            focusedImageNaturalAspectRatio: undefined,
+            imageContainerWidth: undefined,
+            imageContainerHeight: undefined
         };
     },
     computed: {
@@ -205,6 +243,12 @@ export default {
             }
 
             return result;
+        },
+        shouldDisplayCompass() {
+            return this.focusedImage !== undefined
+                && this.focusedImageNaturalAspectRatio !== undefined
+                && this.imageContainerWidth !== undefined
+                && this.imageContainerHeight !== undefined;
         }
     },
     watch: {
@@ -212,6 +256,7 @@ export default {
             this.trackDuration();
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
+            this.getImageNaturalDimensions();
         }
     },
     async mounted() {
@@ -246,6 +291,8 @@ export default {
 
         // for when people are scrolling through images quickly
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
+
+        this.pollResizeImageContainerID = setInterval(this.pollResizeImageContainer, 300);
     },
     updated() {
         this.scrollToRight();
@@ -269,6 +316,8 @@ export default {
                 }
             }
         }
+
+        clearInterval(this.pollResizeImageContainerID);
     },
     methods: {
         // for local dev, to be DELETED
@@ -750,6 +799,25 @@ export default {
         },
         isLeftOrRightArrowKey(keyCode) {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
+        },
+        getImageNaturalDimensions() {
+            this.focusedImageNaturalAspectRatio = undefined;
+
+            const img = this.$refs.focusedImage;
+
+            // TODO - should probably cache this
+            img.addEventListener('load', () => {
+                this.focusedImageNaturalAspectRatio = img.naturalWidth / img.naturalHeight;
+            }, { once: true });
+        },
+        pollResizeImageContainer() {
+            if (this.$refs.focusedImage.clientWidth !== this.imageContainerWidth) {
+                this.imageContainerWidth = this.$refs.focusedImage.clientWidth;
+            }
+
+            if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
+                this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
+            }
         }
     }
 };
