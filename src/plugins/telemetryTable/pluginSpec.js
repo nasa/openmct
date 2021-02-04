@@ -68,6 +68,10 @@ describe("the plugin", () => {
             end: 4
         });
 
+        openmct.types.addType('test-object', {
+            creatable: true
+        });
+
         spyOnBuiltins(['requestAnimationFrame']);
         window.requestAnimationFrame.and.callFake((callBack) => {
             callBack();

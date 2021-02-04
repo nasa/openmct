@@ -56,11 +56,13 @@ define([
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
     './newFolderAction/plugin',
+    './nonEditableFolder/plugin',
     './persistence/couch/plugin',
     './defaultRootName/plugin',
     './timeline/plugin',
     './viewDatumAction/plugin',
-    './interceptors/plugin'
+    './interceptors/plugin',
+    './performanceIndicator/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -97,11 +99,13 @@ define([
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
     NewFolderAction,
+    NonEditableFolder,
     CouchDBPlugin,
     DefaultRootName,
     Timeline,
     ViewDatumAction,
-    ObjectInterceptors
+    ObjectInterceptors,
+    PerformanceIndicator
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -192,11 +196,13 @@ define([
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
+    plugins.NonEditableFolder = NonEditableFolder.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
     plugins.Timeline = Timeline.default;
     plugins.ViewDatumAction = ViewDatumAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
+    plugins.PerformanceIndicator = PerformanceIndicator.default;
 
     return plugins;
 });

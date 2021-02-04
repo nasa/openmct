@@ -23,13 +23,6 @@ import * as NotebookEntries from './notebook-entries';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 const notebookStorage = {
-    domainObject: {
-        name: 'notebook',
-        identifier: {
-            namespace: '',
-            key: 'test-notebook'
-        }
-    },
     notebookMeta: {
         name: 'notebook',
         identifier: {
@@ -120,6 +113,13 @@ let openmct;
 describe('Notebook Entries:', () => {
     beforeEach(done => {
         openmct = createOpenMct();
+        openmct.types.addType('notebook', {
+            creatable: true
+        });
+        openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
+            'create',
+            'update'
+        ]));
         window.localStorage.setItem('notebook-storage', null);
 
         done();

@@ -41,7 +41,8 @@
         indexedItems.push({
             id: id,
             vector: vector,
-            model: model
+            model: model,
+            type: model.type
         });
     }
 

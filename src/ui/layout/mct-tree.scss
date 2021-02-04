@@ -95,6 +95,10 @@
                 color: $colorItemTreeSelectedFg;
             }
         }
+
+        &.is-context-clicked {
+            box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
+        }
     }
 }
 
