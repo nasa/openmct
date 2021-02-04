@@ -1,45 +1,27 @@
+.c-timeline-holder {
+  @include abs();
+}
+
 .c-timeline {
-  $h: 18px;
+  display: grid;
+  grid-template-columns: 100px 100px 1fr;
+  grid-column-gap: 1px;
+  grid-row-gap: 1px;
+  width: 100%;
 
-  height: 100%;
-
-  display: flex;
-  flex-flow: column nowrap;
-  flex: 1 1 auto;
-
-  &__objects {
-    display: flex;
-    flex-flow: column nowrap;
-    flex: 1 1 auto;
+  [class*='__lane-label'] {
+    background: rgba($colorBodyFg, 0.2); // TODO: convert to theme constant
+    color: $colorBodyFg; // TODO: convert to theme constant
+    padding: $interiorMarginSm;
   }
 
-  &__object-holder {
-    flex: 1 1 auto;
-    flex-flow: row nowrap;
-    display: flex;
-    height: 100%;
-    overflow: auto;
-    border-bottom: 1px solid #fff;
+  [class*='--span-cols'] {
+    grid-column: span 2;
   }
 
-  &__object-holder-fixed {
-    flex: 0 0 auto;
-    flex-flow: row nowrap;
-    display: flex;
-    border-bottom: 1px solid #fff;
-  }
-
-  &__object-label {
-    color: #fff;
-    width: 100px;
-    display: inline-flex;
-    border-right: 1px solid #fff;
-  }
-
-  &__object {
-    display: flex;
-    flex-flow: column nowrap;
-    flex: 1 1 auto;
-    //height: 0; // Chrome 73 oveflow bug fix
+  &__lane-object {
+    &--domain-object {
+      min-height: 100px; // TODO: need a better strategy to account for stacked plots and planned
+    }
   }
 }
