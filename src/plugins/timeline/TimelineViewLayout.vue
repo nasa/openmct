@@ -65,6 +65,7 @@
                 <object-view
                     class="c-timeline__lane-object c-timeline__lane-object--domain-object"
                     :class="{'c-timeline__object-offset': item.domainObject.type !== 'plan'}"
+                    :style="{'min-height': item.height}"
                     :default-object="item.domainObject"
                     data-selectable
                     :options="item.options"
@@ -121,12 +122,14 @@ export default {
                 layoutFont: '',
                 clientWidth: Math.round(this.$refs.timelineHolder.getBoundingClientRect().width)
             };
+            let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
             let item = {
                 domainObject,
                 objectPath,
                 type,
                 keyString,
-                options
+                options,
+                height
             };
 
             this.items.push(item);
