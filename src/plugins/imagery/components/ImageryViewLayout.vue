@@ -272,12 +272,10 @@ export default {
             if (this.hasRelatedTelemetry) {
                 isFresh = true;
                 for (let key of this.roverKeys) {
-                    // if we have related telemetry for this key, we have an areEqual function,
-                    // and we have values for latest and focued
-                    let tolerance = this.relatedTelemetry[key].tolerance || 1;
+                    let compare = this.relatedTelemetry[key].comparisonFunction;
 
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                        if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
+                        if (!compare(latest[key], focused[key])) {
                             isFresh = false;
                         }
                     }
@@ -303,12 +301,10 @@ export default {
                 // camera freshness relies on rover position freshness
                 if (this.roverPositionIsFresh) {
                     for (let key of this.cameraKeys) {
-                        // if we have related telemetry for this key, we have an areEqual function,
-                        // and we have values for latest and focued
-                        let tolerance = this.relatedTelemetry[key].tolerance || 1;
+                        let compare = this.relatedTelemetry[key].comparisonFunction;
 
                         if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                            if (!this.equalWithinTolerance(latest[key], focused[key], tolerance)) {
+                            if (!compare(latest[key], focused[key])) {
                                 isFresh = false;
                             }
                         }
@@ -408,7 +404,7 @@ export default {
 
                 this.imageHints.relatedTelemetry[key] = {
                     dev: true,
-                    areEqual: function (valueOne, valueTwo) {
+                    comparisonFunction: function (valueOne, valueTwo) {
                         const DECIMAL_COMPARISON_TOLERANCE = 1;
                         const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
 
@@ -930,12 +926,6 @@ export default {
             if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
                 this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
             }
-        },
-        equalWithinTolerance(valueOne, valueTwo, tolerance) {
-            const DECIMAL_COMPARISON_TOLERANCE = tolerance;
-            const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
-
-            return Math.floor(valueOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(valueTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
         }
     }
 };
