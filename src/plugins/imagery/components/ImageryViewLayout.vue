@@ -269,10 +269,8 @@ export default {
             if (this.hasRelatedTelemetry) {
                 isFresh = true;
                 for (let key of this.roverKeys) {
-                    let compare = this.relatedTelemetry[key].comparisonFunction;
-
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                        if (!compare(latest[key], focused[key])) {
+                        if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
                             isFresh = false;
                         }
                     }
@@ -292,10 +290,8 @@ export default {
                 // camera freshness relies on rover position freshness
                 if (this.roverPositionIsFresh) {
                     for (let key of this.cameraKeys) {
-                        let compare = this.relatedTelemetry[key].comparisonFunction;
-
                         if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                            if (!compare(latest[key], focused[key])) {
+                            if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
                                 isFresh = false;
                             }
                         }
