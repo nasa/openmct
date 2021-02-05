@@ -551,6 +551,10 @@ export default {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
             }
 
+            if (!targetDatum) {
+                return;
+            }
+
             if (!this.relatedTelemetry[key]) {
                 throw new Error(`${key} does not exist on related telemetry`);
             }
