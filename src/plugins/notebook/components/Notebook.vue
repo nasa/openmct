@@ -415,6 +415,12 @@ export default {
                 return s;
             });
 
+            const selectedSectionId = this.selectedSection && this.selectedSection.id;
+            const selectedPageId = this.selectedPage && this.selectedPage.id;
+            if (selectedPageId === pageId && selectedSectionId === sectionId) {
+                return;
+            }
+
             this.sectionsChanged({ sections });
         },
         newEntry(embed = null) {
