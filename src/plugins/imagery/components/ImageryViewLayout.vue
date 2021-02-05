@@ -372,6 +372,11 @@ export default {
                     this.relatedTelemetry[key].unsubscribe();
                 }
             }
+
+            // clean up domain object so related is fresh each time
+            if (this.imageHints.relatedTelemetry) {
+                delete this.imageHints.relatedTelemetry;
+            }
         }
 
         clearInterval(this.pollResizeImageContainerID);
