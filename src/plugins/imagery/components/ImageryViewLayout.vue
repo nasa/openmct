@@ -486,7 +486,7 @@ export default {
                     this.relatedTelemetry[key].requestLatestFor = async (datum) => {
                         const options = {
                             start: this.openmct.time.bounds().start,
-                            end: datum[this.timeKey],
+                            end: datum[this.timeKey] || datum.timestamp,
                             strategy: 'latest'
                         };
                         let results = await this.openmct.telemetry
