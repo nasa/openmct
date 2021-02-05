@@ -197,7 +197,7 @@ export default {
             hasRelatedTelemetry: false,
             relatedTelemetry: {},
             latestRelatedTelemetry: {},
-            latestFrameId: undefined,
+            // latestFrameId: undefined,
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
             imageContainerHeight: undefined
@@ -284,9 +284,9 @@ export default {
 
                 // last check to make sure in the same frame
                 // if no frame, comparison will still be equal undefined === undefined
-                if (isFresh) {
-                    isFresh = this.latestFrameId === this.focusedImageFrameId;
-                }
+                // if (isFresh) {
+                //     isFresh = this.latestFrameId === this.focusedImageFrameId;
+                // }
             }
 
             return isFresh;
@@ -616,7 +616,7 @@ export default {
             }
 
             // get frame ID
-            this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
+            // this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
         },
         trackLatestRelatedTelemetry() {
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
@@ -626,9 +626,9 @@ export default {
                         this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
 
                         // if it is the telemetry with the frame ID track latest
-                        if (key === this.telemetryKeyWithFrameId) {
-                            this.latestFrameId = datum[FRAME_ID_KEY];
-                        }
+                        // if (key === this.telemetryKeyWithFrameId) {
+                        //     this.latestFrameId = datum[FRAME_ID_KEY];
+                        // }
                     });
                 }
             });
