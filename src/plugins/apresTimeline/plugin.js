@@ -30,11 +30,17 @@ export default function () {
                 name: 'APRES State Chronicle',
                 cssClass: 'icon-arrow-left',
                 creatable: true,
-                
+                initialize: function (domainObject) {
+                    domainObject.configuration = {
+                        startTime: 0,
+                        endTime: 10,
+                        state: [],
+                    };
+                },
                 form: [
                     {
                         name: "Start Time",
-                        control: "numberField",
+                        control: "numberfield",
                         cssClass: "l-input-sm l-numeric",
                         key: "startTime",
                         required: true,
@@ -45,7 +51,7 @@ export default function () {
                     },
                     {
                         name: "End Time",
-                        control: "numberField",
+                        control: "numberfield",
                         cssClass: "l-input-sm l-numeric",
                         key: "endTime",
                         required: true,
@@ -84,7 +90,7 @@ export default function () {
                 form: [
                     {
                         name: "Start Time",
-                        control: "numberField",
+                        control: "numberfield",
                         cssClass: "l-input-sm l-numeric",
                         key: "startTime",
                         required: true,
@@ -95,7 +101,7 @@ export default function () {
                     },
                     {
                         name: "End Time",
-                        control: "numberField",
+                        control: "numberfield",
                         cssClass: "l-input-sm l-numeric",
                         key: "endTime",
                         required: true,
