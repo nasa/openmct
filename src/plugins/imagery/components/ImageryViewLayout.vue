@@ -163,8 +163,6 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
-// const FRAME_ID_KEY = 'frame_id';
-
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
@@ -191,13 +189,11 @@ export default {
             keyString: undefined,
             focusedImageIndex: undefined,
             focusedImageRelatedTelemetry: {}, // update to focusedImageRelatedTelemetry once all merged
-            // focusedImageFrameId: undefined,
             numericDuration: undefined,
             metadataEndpoints: {},
             hasRelatedTelemetry: false,
             relatedTelemetry: {},
             latestRelatedTelemetry: {},
-            // latestFrameId: undefined,
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
             imageContainerHeight: undefined
@@ -281,12 +277,6 @@ export default {
                         }
                     }
                 }
-
-                // last check to make sure in the same frame
-                // if no frame, comparison will still be equal undefined === undefined
-                // if (isFresh) {
-                //     isFresh = this.latestFrameId === this.focusedImageFrameId;
-                // }
             }
 
             return isFresh;
@@ -338,7 +328,6 @@ export default {
         this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
-        // this.telemetryKeyWithFrameId = 'heading';
         this.roverKeys = ['heading', 'roll', 'pitch'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
@@ -529,30 +518,9 @@ export default {
 
             loadedResolve();
         },
-        // async getMostRecentFrameId(key, targetDatum) {
-        //     if (!this.hasRelatedTelemetry) {
-        //         throw new Error(`${this.domainObject.name} does not have any related telemetry`);
-        //     }
-
-        //     let mostRecent;
-        //     let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
-
-        //     if (valuesOnTelemetry) {
-        //         mostRecent = targetDatum[FRAME_ID_KEY];
-        //     }
-
-        //     mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
-
-        //     return mostRecent[FRAME_ID_KEY];
-
-        // },
         async getMostRecentRelatedTelemetry(key, targetDatum) {
             if (!this.hasRelatedTelemetry) {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
-            }
-
-            if (!targetDatum) {
-                return;
             }
 
             if (!this.relatedTelemetry[key]) {
@@ -601,7 +569,7 @@ export default {
             }
         },
         async updateRelatedTelemetryForFocusedImage() {
-            if (!this.hasRelatedTelemetry) {
+            if (!this.hasRelatedTelemetry || !this.focusedImage) {
                 return;
             }
 
@@ -618,9 +586,6 @@ export default {
                     this.$set(this.focusedImageRelatedTelemetry, key, value);
                 }
             }
-
-            // get frame ID
-            // this.latestFrameId = await this.getMostRecentFrameId(this.telemetryKeyWithFrameId, this.focusedImage);
         },
         trackLatestRelatedTelemetry() {
             [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
@@ -628,11 +593,6 @@ export default {
                     this.relatedTelemetry[key].subscribe((datum) => {
                         let valueKey = this.relatedTelemetry[key].realtime.valueKey;
                         this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
-
-                        // if it is the telemetry with the frame ID track latest
-                        // if (key === this.telemetryKeyWithFrameId) {
-                        //     this.latestFrameId = datum[FRAME_ID_KEY];
-                        // }
                     });
                 }
             });
