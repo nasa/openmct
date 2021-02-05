@@ -2,6 +2,11 @@
 
   @include abs();
 
+  .activity-bounds {
+    fill-opacity: 0.5;
+    rx: 5px;
+  }
+
   &-content {
     display: grid;
     grid-template-columns: 100px 100px 1fr;

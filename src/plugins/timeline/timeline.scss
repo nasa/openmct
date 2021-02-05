@@ -20,6 +20,10 @@
   }
 
   &__lane-object {
+      .c-plan {
+          display: contents;
+      }
+
     &--domain-object {
       min-height: 100px; // TODO: need a better strategy to account for stacked plots and planned
     }

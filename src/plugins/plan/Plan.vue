@@ -36,7 +36,7 @@ const INNER_TEXT_PADDING = 17;
 const TEXT_LEFT_PADDING = 5;
 const ROW_PADDING = 12;
 const RESIZE_POLL_INTERVAL = 200;
-const ROW_HEIGHT = 30;
+const ROW_HEIGHT = 25;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 
@@ -352,17 +352,16 @@ export default {
         plotSVG(item, row, svgElement) {
             const activity = item.activity;
             svgElement.append("rect")
-                .attr("class", "activity")
+                .attr("class", "activity-bounds")
                 .attr("x", item.start)
                 .attr("y", row)
                 .attr("width", item.rectWidth)
                 .attr("height", ROW_HEIGHT)
-                .attr('fill', activity.color)
-                .attr('stroke', "lightgray");
+                .attr('fill', activity.color);
 
             item.textLines.forEach((line, index) => {
                 svgElement.append("text").text(line)
-                    .attr("class", "activity")
+                    .attr("class", "activity-label")
                     .attr("x", item.textStart)
                     .attr("y", item.textY + (index * LINE_HEIGHT))
                     .attr('fill', activity.textColor);

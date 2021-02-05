@@ -64,7 +64,7 @@
                 </div>
                 <object-view
                     class="c-timeline__lane-object c-timeline__lane-object--domain-object"
-                    :class="{'c-timeline__object-offset': item.domainObject.type !== 'plan'}"
+                    :class="{'u-contents': item.domainObject.type === 'plan'}"
                     :style="{'min-height': item.height}"
                     :default-object="item.domainObject"
                     data-selectable
