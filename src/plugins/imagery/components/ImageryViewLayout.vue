@@ -163,7 +163,7 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
-const FRAME_ID_KEY = 'frame_id';
+// const FRAME_ID_KEY = 'frame_id';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -191,7 +191,7 @@ export default {
             keyString: undefined,
             focusedImageIndex: undefined,
             focusedImageRelatedTelemetry: {}, // update to focusedImageRelatedTelemetry once all merged
-            focusedImageFrameId: undefined,
+            // focusedImageFrameId: undefined,
             numericDuration: undefined,
             metadataEndpoints: {},
             hasRelatedTelemetry: false,
@@ -338,7 +338,7 @@ export default {
         this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
-        this.telemetryKeyWithFrameId = 'heading';
+        // this.telemetryKeyWithFrameId = 'heading';
         this.roverKeys = ['heading', 'roll', 'pitch'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
@@ -529,23 +529,23 @@ export default {
 
             loadedResolve();
         },
-        async getMostRecentFrameId(key, targetDatum) {
-            if (!this.hasRelatedTelemetry) {
-                throw new Error(`${this.domainObject.name} does not have any related telemetry`);
-            }
+        // async getMostRecentFrameId(key, targetDatum) {
+        //     if (!this.hasRelatedTelemetry) {
+        //         throw new Error(`${this.domainObject.name} does not have any related telemetry`);
+        //     }
 
-            let mostRecent;
-            let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
+        //     let mostRecent;
+        //     let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
 
-            if (valuesOnTelemetry) {
-                mostRecent = targetDatum[FRAME_ID_KEY];
-            }
+        //     if (valuesOnTelemetry) {
+        //         mostRecent = targetDatum[FRAME_ID_KEY];
+        //     }
 
-            mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
+        //     mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
 
-            return mostRecent[FRAME_ID_KEY];
+        //     return mostRecent[FRAME_ID_KEY];
 
-        },
+        // },
         async getMostRecentRelatedTelemetry(key, targetDatum) {
             if (!this.hasRelatedTelemetry) {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
