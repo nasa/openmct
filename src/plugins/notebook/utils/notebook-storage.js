@@ -64,8 +64,8 @@ export async function getDefaultNotebookLink(openmct, domainObject = null) {
     return `#/browse/${path}?sectionId=${section.id}&pageId=${page.id}`;
 }
 
-export function setDefaultNotebook(openmct, notebookStorage) {
-    observeDefaultNotebookObject(openmct, notebookStorage);
+export function setDefaultNotebook(openmct, notebookStorage, domainObject) {
+    observeDefaultNotebookObject(openmct, notebookStorage, domainObject);
     saveDefaultNotebook(notebookStorage);
 }
 
