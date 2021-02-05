@@ -372,11 +372,6 @@ export default {
                     this.relatedTelemetry[key].unsubscribe();
                 }
             }
-
-            // clean up domain object so related is fresh each time
-            if (this.imageHints.relatedTelemetry) {
-                delete this.imageHints.relatedTelemetry;
-            }
         }
 
         clearInterval(this.pollResizeImageContainerID);
@@ -439,7 +434,7 @@ export default {
             }
 
             let keys = Object.keys(this.imageHints.relatedTelemetry);
-            console.log('initialize related', { ...this.imageHints.relatedTelemetry });
+
             this.hasRelatedTelemetry = true;
             this.relatedTelemetry = {
                 keys,
