@@ -44,38 +44,46 @@ export default {
     },
     data() {
         return {
-            notebookSnapshot: null,
+            notebookSnapshot: undefined,
             notebookTypes: []
         };
     },
     mounted() {
         validateNotebookStorageObject();
+        this.getDefaultNotebookObject();
 
         this.notebookSnapshot = new Snapshot(this.openmct);
         this.setDefaultNotebookStatus();
     },
     methods: {
-        showMenu(event) {
-            const notebookTypes = [];
+        async getDefaultNotebookObject() {
             const defaultNotebook = getDefaultNotebook();
+            const defaultNotebookObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+
+            return defaultNotebookObject;
+        },
+        async showMenu(event) {
+            const notebookTypes = [];
             const elementBoundingClientRect = this.$el.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
             const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
-            if (defaultNotebook) {
-                const domainObject = defaultNotebook.domainObject;
+            const defaultNotebookObject = await this.getDefaultNotebookObject();
+            if (defaultNotebookObject) {
+                const name = defaultNotebookObject.name;
 
-                if (domainObject.location) {
-                    const defaultPath = `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+                const defaultNotebook = getDefaultNotebook();
+                const sectionName = defaultNotebook.section.name;
+                const pageName = defaultNotebook.page.name;
+                const defaultPath = `${name} - ${sectionName} - ${pageName}`;
 
-                    notebookTypes.push({
-                        cssClass: 'icon-notebook',
-                        name: `Save to Notebook ${defaultPath}`,
-                        callBack: () => {
-                            return this.snapshot(NOTEBOOK_DEFAULT);
-                        }
-                    });
-                }
+                notebookTypes.push({
+                    cssClass: 'icon-notebook',
+                    name: `Save to Notebook ${defaultPath}`,
+                    callBack: () => {
+                        return this.snapshot(NOTEBOOK_DEFAULT);
+                    }
+                });
             }
 
             notebookTypes.push({

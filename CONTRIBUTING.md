@@ -182,7 +182,7 @@ The following guidelines are provided for anyone contributing source code to the
 1. Avoid the use of "magic" values.
    eg.
    ```JavaScript
-   Const UNAUTHORIZED = 401
+   const UNAUTHORIZED = 401;
    if (responseCode === UNAUTHORIZED)
    ```
    is preferable to

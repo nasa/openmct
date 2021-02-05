@@ -61,6 +61,7 @@ define([
             const newStyleObject = utils.toNewFormat(legacyObject.getModel(), legacyObject.getId());
             const keystring = utils.makeKeyString(newStyleObject.identifier);
 
+            this.eventEmitter.emit(keystring + ':$_synchronize_model', newStyleObject);
             this.eventEmitter.emit(keystring + ":*", newStyleObject);
             this.eventEmitter.emit('mutation', newStyleObject);
         }.bind(this);
