@@ -434,7 +434,7 @@ export default {
             }
 
             let keys = Object.keys(this.imageHints.relatedTelemetry);
-
+            console.log('initialize related', { ...this.imageHints.relatedTelemetry });
             this.hasRelatedTelemetry = true;
             this.relatedTelemetry = {
                 keys,
