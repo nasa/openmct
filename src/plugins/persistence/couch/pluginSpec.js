@@ -71,8 +71,8 @@ describe('the plugin', () => {
         }));
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    afterEach(async () => {
+        await resetApplicationState(openmct);
     });
 
     it('gets an object', () => {

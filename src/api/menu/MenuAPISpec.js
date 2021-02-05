@@ -58,8 +58,8 @@ describe ('The Menu API', () => {
         y = 16;
     });
 
-    afterEach(() => {
-        resetApplicationState(openmct);
+    afterEach(async () => {
+        await resetApplicationState(openmct);
     });
 
     describe("showMenu method", () => {
