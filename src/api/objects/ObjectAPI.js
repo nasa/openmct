@@ -168,6 +168,62 @@ ObjectAPI.prototype.get = function (identifier) {
     });
 };
 
+ObjectAPI.prototype.deSynchronize = function (identifier) {
+    const provider = this.getProvider(identifier);
+
+    if (!provider) {
+        throw new Error('No Provider Matched');
+    }
+
+    if (!provider.abortGetChanges) {
+        throw new Error('Provider does not support continuous feed!');
+    }
+
+    provider.abortGetChanges(identifier);
+};
+
+ObjectAPI.prototype.synchronize = function (identifier, options) {
+    const provider = this.getProvider(identifier);
+
+    if (!provider) {
+        throw new Error('No Provider Matched');
+    }
+
+    if (!provider.getChanges) {
+        throw new Error('Provider does not support continuous feed!');
+    }
+
+    let objectPromise = provider.getChanges(identifier, options);
+
+    return objectPromise.then(response => {
+        return response;
+    });
+};
+
+/**
+ * Refresh a domain object.
+ * @param {module:openmct.DomainObject} domainObject the object to refresh
+ * @param {string} path the property to refresh
+ * @param {*} value the new value for this property
+ * @method refresh
+ * @memberof module:openmct.ObjectAPI#
+ */
+ObjectAPI.prototype.refresh = function (domainObject, path, value) {
+    if (domainObject.isMutable) {
+        domainObject.$refresh(path, value);
+    } else {
+        //Creating a temporary mutable domain object allows other mutable instances of the
+        //object to be kept in sync.
+        let mutableDomainObject = this._toMutable(domainObject);
+
+        //Mutate temporary mutable object, in the process informing any other mutable instances
+        mutableDomainObject.$refresh(path, value);
+
+        //Destroy temporary mutable object
+        this.destroyMutable(mutableDomainObject);
+    }
+};
+
 /**
  * Will fetch object for the given identifier, returning a version of the object that will automatically keep
  * itself updated as it is mutated. Before using this function, you should ask yourself whether you really need it.

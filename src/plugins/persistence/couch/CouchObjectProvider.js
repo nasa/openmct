@@ -25,6 +25,7 @@ import CouchObjectQueue from "./CouchObjectQueue";
 
 const REV = "_rev";
 const ID = "_id";
+const HEARTBEAT = 50000;
 
 export default class CouchObjectProvider {
     constructor(openmct, url, namespace) {
@@ -32,6 +33,7 @@ export default class CouchObjectProvider {
         this.url = url;
         this.namespace = namespace;
         this.objectQueue = {};
+        this.controllers = {};
     }
 
     request(subPath, method, value) {
@@ -102,19 +104,41 @@ export default class CouchObjectProvider {
         return this.request(identifier.key, "GET").then(this.getModel.bind(this));
     }
 
-    async getChanges(type) {
-        const response = await fetch(this.url + '/_changes?feed=continuous&filter=_selector', {
+    abortGetChanges(identifier) {
+        const controller = this.controllers[identifier.key];
+        if (controller) {
+            controller.abort();
+            this.controllers[identifier.key] = undefined;
+        }
+    }
+
+    async getChanges(identifier, options) {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        if (this.controllers[identifier.key]) {
+            this.abortGetChanges(identifier);
+        }
+
+        this.controllers[identifier.key] = controller;
+
+        let intermediateResponse = this.getIntermediateResponse();
+        let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
+
+        let body = {};
+        let callback = options.callback;
+        if (options.filter) {
+            url = `${url}&filter=_selector`;
+            body = JSON.stringify(options.filter);
+        }
+
+        const response = await fetch(url, {
             method: 'POST',
+            signal,
             headers: {
                 "Content-Type": 'application/json'
             },
-            body: JSON.stringify({
-                "selector": {
-                    "model": {
-                        "type": type || 'folder'
-                    }
-                }
-            })
+            body
         });
         const reader = response.body.getReader();
         let completed = false;
@@ -131,24 +155,32 @@ export default class CouchObjectProvider {
                 chunk.set(value, 0);
                 const decodedChunk = new TextDecoder("utf-8").decode(chunk).split('\n');
                 if (decodedChunk.length && decodedChunk[decodedChunk.length - 1] === '') {
-                    console.log('received chunk');
+                    console.log('Received update from server');
                     let documents = [];
                     decodedChunk.forEach((doc, index) => {
                         try {
-                            documents.push(JSON.parse(doc));
+                            const object = JSON.parse(doc);
+                            object.identifier = {
+                                namespace: identifier.namespace,
+                                key: object.id
+                            };
+                            documents.push(object);
                         } catch (e) {
                             //do nothing;
                         }
                     });
                     //notify something, somehow, that we just received some changes from couchDB
-                    console.log(documents);
+                    callback(documents);
                 }
             }
 
         }
 
         //We're done receiving from the provider. No more chunks.
-        console.log('done');
+        intermediateResponse.resolve(true);
+
+        return intermediateResponse.promise;
+
     }
 
     getIntermediateResponse() {

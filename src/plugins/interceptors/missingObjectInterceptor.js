@@ -19,11 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import {PLANS_FOLDER_KEY} from "@/plugins/synchronizedFolder/SynchronizedObjectsProvider";
 
 export default function MissingObjectInterceptor(openmct) {
     openmct.objects.addGetInterceptor({
         appliesTo: (identifier, domainObject) => {
-            return identifier.key !== 'mine';
+            return identifier.key !== 'mine' && identifier.key !== PLANS_FOLDER_KEY;
         },
         invoke: (identifier, object) => {
             if (object === undefined) {
