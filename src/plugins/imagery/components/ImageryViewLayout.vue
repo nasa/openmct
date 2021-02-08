@@ -270,7 +270,6 @@ export default {
                 isFresh = true;
                 for (let key of this.roverKeys) {
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                        console.log('POS check', key, latest[key], focused[key]);
                         if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
                             isFresh = false;
                         }
@@ -294,7 +293,6 @@ export default {
                 if (this.roverPositionIsFresh) {
                     for (let key of this.cameraKeys) {
                         if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                            console.log('CAM check', key, latest[key], focused[key]);
                             if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
                                 isFresh = false;
                             }
@@ -433,11 +431,7 @@ export default {
 
                 if (realtimeId) {
 
-                    if (this.relatedTelemetry[key].dev) {
-                        this.relatedTelemetry[key].realtimeDomainObject = await this.relatedTelemetry[key].devInit();
-                    } else {
-                        this.relatedTelemetry[key].realtimeDomainObject = await this.openmct.objects.get(realtimeId);
-                    }
+                    this.relatedTelemetry[key].realtimeDomainObject = await this.openmct.objects.get(realtimeId);
 
                     // set up listeners
                     this.relatedTelemetry[key].listeners = [];
