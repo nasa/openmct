@@ -188,7 +188,7 @@ export default {
             refreshCSS: false,
             keyString: undefined,
             focusedImageIndex: undefined,
-            focusedImageRelatedTelemetry: {}, // update to focusedImageRelatedTelemetry once all merged
+            focusedImageRelatedTelemetry: {},
             numericDuration: undefined,
             metadataEndpoints: {},
             hasRelatedTelemetry: false,
