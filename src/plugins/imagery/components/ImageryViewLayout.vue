@@ -334,11 +334,6 @@ export default {
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
 
-        // DELETE WHEN DONE
-        if (!this.imageHints.relatedTelemetry) {
-            this.temporaryForImageEnhancements();
-        }
-
         // initialize
         this.timeKey = this.timeSystem.key;
         this.timeFormatter = this.getFormatter(this.timeKey);
@@ -383,43 +378,6 @@ export default {
         clearInterval(this.pollResizeImageContainerID);
     },
     methods: {
-        // for local dev, to be DELETED
-        temporaryForImageEnhancements() {
-            this.searchService = this.openmct.$injector.get('searchService');
-            this.temporaryDev = true;
-
-            // mock related telemetry metadata
-            this.imageHints.relatedTelemetry = {};
-
-            // populate temp keys in imageHints for local testing
-            [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
-
-                this.imageHints.relatedTelemetry[key] = {
-                    dev: true,
-                    comparisonFunction: function (valueOne, valueTwo) {
-                        const DECIMAL_COMPARISON_TOLERANCE = 1;
-                        const WHOLE = Math.pow(10, DECIMAL_COMPARISON_TOLERANCE);
-
-                        return Math.floor(valueOne.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE) === Math.floor(valueTwo.toFixed(DECIMAL_COMPARISON_TOLERANCE) * WHOLE);
-                    },
-                    realtime: {
-                        telemetryObjectId: key,
-                        valueKey: 'sin'
-                    },
-                    historical: {
-                        telemetryObjectId: key,
-                        valueKey: 'sin'
-                    },
-                    devInit: async () => {
-                        const searchResults = await this.searchService.query(key);
-                        const endpoint = searchResults.hits[0].id;
-                        const domainObject = await this.openmct.objects.get(endpoint);
-
-                        return domainObject;
-                    }
-                };
-            });
-        },
         async initializeRelatedTelemetry() {
             if (this.imageHints.relatedTelemetry === undefined) {
                 return;
@@ -429,15 +387,6 @@ export default {
             this.relatedTelemetryLoaded = new Promise((resolve, reject) => {
                 loadedResolve = resolve;
             });
-
-            // DELETE
-            if (this.temporaryDev) {
-                let searchIndexBuildDelay = new Promise((resolve, reject) => {
-                    setTimeout(resolve, 3000);
-                });
-
-                await searchIndexBuildDelay;
-            }
 
             let keys = Object.keys(this.imageHints.relatedTelemetry);
 
@@ -467,12 +416,7 @@ export default {
                 // if we have a historical object id, then values will NOT be on the imagery datum
                 if (historicalId) {
 
-                    // DELETE temp
-                    if (this.relatedTelemetry[key].dev) {
-                        this.relatedTelemetry[key].historicalDomainObject = await this.relatedTelemetry[key].devInit();
-                    } else {
-                        this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
-                    }
+                    this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
 
                     this.relatedTelemetry[key].requestLatestFor = async (datum) => {
                         const options = {
