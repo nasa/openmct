@@ -152,7 +152,8 @@ export default {
     data() {
         return {
             domainObject: this.layoutObject,
-            newFrameLocation: []
+            newFrameLocation: [],
+            identifierMap: {}
         };
     },
     computed: {
@@ -171,9 +172,11 @@ export default {
         }
     },
     mounted() {
+        this.buildIdentifierMap();
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('remove', this.removeChildObject);
         this.composition.on('add', this.addFrame);
+        this.composition.load();
 
         this.RemoveAction = new RemoveAction(this.openmct);
 
@@ -186,6 +189,14 @@ export default {
         this.unobserve();
     },
     methods: {
+        buildIdentifierMap() {
+            this.containers.forEach(container => {
+                container.frames.forEach(frame => {
+                    let keystring = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
+                    this.identifierMap[keystring] = true;
+                });
+            });
+        },
         areAllContainersEmpty() {
             return !this.containers.filter(container => container.frames.length).length;
         },
@@ -236,16 +247,21 @@ export default {
             this.newFrameLocation = [containerIndex, insertFrameIndex];
         },
         addFrame(domainObject) {
-            let containerIndex = this.newFrameLocation.length ? this.newFrameLocation[0] : 0;
-            let container = this.containers[containerIndex];
-            let frameIndex = this.newFrameLocation.length ? this.newFrameLocation[1] : container.frames.length;
-            let frame = new Frame(domainObject.identifier);
+            let keystring = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-            container.frames.splice(frameIndex + 1, 0, frame);
-            sizeItems(container.frames, frame);
+            if (!this.identifierMap[keystring]) {
+                let containerIndex = this.newFrameLocation.length ? this.newFrameLocation[0] : 0;
+                let container = this.containers[containerIndex];
+                let frameIndex = this.newFrameLocation.length ? this.newFrameLocation[1] : container.frames.length;
+                let frame = new Frame(domainObject.identifier);
 
-            this.newFrameLocation = [];
-            this.persist(containerIndex);
+                container.frames.splice(frameIndex + 1, 0, frame);
+                sizeItems(container.frames, frame);
+
+                this.newFrameLocation = [];
+                this.persist(containerIndex);
+                this.identifierMap[keystring] = true;
+            }
         },
         deleteFrame(frameId) {
             let container = this.containers
@@ -261,9 +277,12 @@ export default {
                 });
         },
         removeFromComposition(identifier) {
-            return this.openmct.objects.get(identifier).then((childDomainObject) => {
-                this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
-            });
+            let keystring = this.openmct.objects.makeKeyString(identifier);
+
+            this.identifierMap[keystring] = undefined;
+            delete this.identifierMap[keystring];
+
+            this.composition.remove(identifier);
         },
         setSelectionToParent() {
             this.$el.click();
