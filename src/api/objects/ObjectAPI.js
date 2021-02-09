@@ -169,35 +169,34 @@ ObjectAPI.prototype.get = function (identifier) {
 };
 
 ObjectAPI.prototype.deSynchronize = function (identifier) {
-    const provider = this.getProvider(identifier);
-
-    if (!provider) {
-        throw new Error('No Provider Matched');
+    if (this.supportsSynchronize(identifier)) {
+        const provider = this.getProvider(identifier);
+        provider.abortGetChanges(identifier);
+    } else {
+        throw new Error('Provider does not support object synchronization!');
     }
-
-    if (!provider.abortGetChanges) {
-        throw new Error('Provider does not support continuous feed!');
-    }
-
-    provider.abortGetChanges(identifier);
 };
 
 ObjectAPI.prototype.synchronize = function (identifier, options) {
-    const provider = this.getProvider(identifier);
+    if (this.supportsSynchronize(identifier)) {
+        const provider = this.getProvider(identifier);
+        let objectPromise = provider.getChanges(identifier, options);
 
-    if (!provider) {
-        throw new Error('No Provider Matched');
+        return objectPromise.then(response => {
+            return response;
+        });
+    } else {
+        throw new Error('Provider does not support object synchronization!');
     }
+};
 
-    if (!provider.getChanges) {
-        throw new Error('Provider does not support continuous feed!');
-    }
+ObjectAPI.prototype.supportsSynchronize = function (idOrKeyString) {
+    let identifier = utils.parseKeyString(idOrKeyString);
+    let provider = this.getProvider(identifier);
 
-    let objectPromise = provider.getChanges(identifier, options);
-
-    return objectPromise.then(response => {
-        return response;
-    });
+    return provider !== undefined
+        && provider.getChanges !== undefined
+        && provider.abortGetChanges !== undefined;
 };
 
 /**

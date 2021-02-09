@@ -11,25 +11,33 @@ export class SynchronizedObjectsProvider {
             key: PLANS_FOLDER_KEY
         };
 
-        this.openmct.objects.get(identifier).then((domainObject) => {
-            if (!domainObject.location) {
-                this.openmct.objects.get({
-                    namespace: COUCHDB_PERSISTENCE_SPACE,
-                    key: MY_ITEMS_LOCATION
-                }).then((parentObject) => {
-                    domainObject.location = this.openmct.objects.makeKeyString(parentObject.identifier);
-                    domainObject.modified = Date.now();
-                    this.openmct.objects.save(domainObject).then((object) => {
-                        const parentComposition = this.openmct.composition.get(parentObject);
-                        parentComposition.add(domainObject);
-                        parentComposition.load();
-                        this.initialize(domainObject);
-                    });
-                });
+        const allowed = this.openmct.objects.supportsSynchronize(identifier);
 
-            } else {
+        if (allowed) {
+            this.openmct.objects.get(identifier).then((domainObject) => {
+                if (!domainObject.location) {
+                    this.createFolderAndInitialize(domainObject);
+
+                } else {
+                    this.initialize(domainObject);
+                }
+            });
+        }
+    }
+
+    createFolderAndInitialize(domainObject) {
+        this.openmct.objects.get({
+            namespace: COUCHDB_PERSISTENCE_SPACE,
+            key: MY_ITEMS_LOCATION
+        }).then((parentObject) => {
+            domainObject.location = this.openmct.objects.makeKeyString(parentObject.identifier);
+            domainObject.modified = Date.now();
+            this.openmct.objects.save(domainObject).then(() => {
+                const parentComposition = this.openmct.composition.get(parentObject);
+                parentComposition.add(domainObject);
+                parentComposition.load();
                 this.initialize(domainObject);
-            }
+            });
         });
     }
 
