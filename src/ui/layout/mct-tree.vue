@@ -704,7 +704,8 @@ export default {
             this.searchResultItems = [];
 
             const promises = this.openmct.objects.search(this.searchValue)
-                .then(results => this.aggregateSearchResults(results));
+                .map(promise => promise
+                    .then(results => this.aggregateSearchResults(results)));
 
             Promise.all(promises).then(() => {
                 this.searchLoading = false;

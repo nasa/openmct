@@ -141,7 +141,8 @@ export default {
             this.filteredTreeItems = [];
 
             const promises = this.openmct.objects.search(this.searchValue)
-                .then(results => this.aggregateFilteredChildren(results));
+                .map(promise => promise
+                    .then(results => this.aggregateFilteredChildren(results)));
 
             Promise.all(promises).then(() => {
                 this.isLoading = false;
