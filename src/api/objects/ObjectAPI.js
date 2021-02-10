@@ -329,6 +329,34 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
     if (!this.supportsMutation(domainObject.identifier)) {
         throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
     }
+
+    if (domainObject.isMutable) {
+        domainObject.$set(path, value);
+    } else {
+        //Creating a temporary mutable domain object allows other mutable instances of the
+        //object to be kept in sync.
+        let mutableDomainObject = this._toMutable(domainObject);
+
+        //Mutate original object
+        MutableDomainObject.mutateObject(domainObject, path, value);
+
+        //Mutate temporary mutable object, in the process informing any other mutable instances
+        mutableDomainObject.$set(path, value);
+
+        //Destroy temporary mutable object
+        this.destroyMutable(mutableDomainObject);
+    }
+};
+
+/**
+ * @private
+ */
+ObjectAPI.prototype._toMutable = function (object) {
+    if (object.isMutable) {
+        return object;
+    } else {
+        return MutableDomainObject.createMutable(object, this.eventEmitter);
+    }
 };
 
 /**
