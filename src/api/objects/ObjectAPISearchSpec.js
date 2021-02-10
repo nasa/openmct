@@ -1,6 +1,6 @@
 import ObjectAPI from './ObjectAPI.js';
 
-describe("The Object API Search Function", () => {
+fdescribe("The Object API Search Function", () => {
     const MOCK_PROVIDER_KEY = 'mockProvider';
     const ANOTHER_MOCK_PROVIDER_KEY = 'anotherMockProvider';
     const MOCK_PROVIDER_SEARCH_DELAY = 15000;
@@ -12,7 +12,6 @@ describe("The Object API Search Function", () => {
     let mockObjectProvider;
     let anotherMockObjectProvider;
     let mockFallbackProvider;
-    let resultsGenerator;
     let fallbackProviderSearchResults;
     let resultsPromises;
 
@@ -77,11 +76,7 @@ describe("The Object API Search Function", () => {
             )
         );
 
-        resultsGenerator = objectAPI.search('foo');
-
-        for (const resultsPromise of resultsGenerator) {
-            resultsPromises.push(resultsPromise);
-        }
+        resultsPromises = objectAPI.search('foo');
 
         jasmine.clock().tick(TOTAL_TIME_ELAPSED);
     });
@@ -97,11 +92,6 @@ describe("The Object API Search Function", () => {
 
     it("uses the fallback indexed search for objects without a search function provided", () => {
         expect(mockFallbackProvider.superSecretFallbackSearch).toHaveBeenCalled();
-    });
-
-    it("provides results as a generator so that consumers can process each providers results when returned", () => {
-        expect(resultsGenerator.next).toBeDefined();
-        expect(resultsGenerator.next().done).toBeTrue();
     });
 
     it("provides each providers results as promises that resolve in parallel", async () => {

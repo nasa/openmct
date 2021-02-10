@@ -187,7 +187,7 @@ ObjectAPI.prototype.get = function (identifier) {
 ObjectAPI.prototype.search = function (query, options) {
     const searchPromises = Object.values(this.providers)
         .filter(provider => provider.search !== undefined)
-        .forEach(provider => provider.search(query, options));
+        .map(provider => provider.search(query, options));
 
     searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, options)
         .then(results => results.hits
