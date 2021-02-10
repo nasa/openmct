@@ -211,14 +211,6 @@ export default {
     },
     watch: {
         domainObject() {
-            if (this.mutationObserver) {
-                this.mutationObserver();
-            }
-
-            this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
-                this.domainObject = domainObject;
-            });
-
             if (this.removeStatusListener) {
                 this.removeStatusListener();
             }
