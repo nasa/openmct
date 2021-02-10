@@ -137,14 +137,11 @@ export default {
                 });
         },
         getFilteredChildren() {
+            // clear any previous search results
             this.filteredTreeItems = [];
-            const promises = [];
 
-            const searchGenerator = this.openmct.objects.search(this.searchValue);
-
-            for (let searchResultsPromise of searchGenerator) {
-                promises.push(searchResultsPromise.then(searchResults => this.aggregateFilteredChildren(searchResults)));
-            }
+            const promises = this.openmct.objects.search(this.searchValue)
+                .then(results => this.aggregateFilteredChildren(results));
 
             Promise.all(promises).then(() => {
                 this.isLoading = false;

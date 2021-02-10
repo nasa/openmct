@@ -171,7 +171,7 @@ ObjectAPI.prototype.get = function (identifier) {
 /**
  * Search for domain objects.
  *
- * Searches and combines results of each object provider search.
+ * Object providersSearches and combines results of each object provider search.
  * Objects without search provided will have been indexed
  * and will be searched using the fallback indexed search.
  * Search results are asynchronous and resolve in parallel.
@@ -180,23 +180,20 @@ ObjectAPI.prototype.get = function (identifier) {
  * @memberof module:openmct.ObjectAPI#
  * @param {string} query the term to search for
  * @param {Object} options search options
- * @returns {Generator.<Promise.<Array.<module:openmct.DomainObject>>>}
- *          a generator (conforms to iterable/iterator protocols)
- *          which yields promises resolving to arrays of domain objects.
+ * @returns {Array.<Promise.<module:openmct.DomainObject>>}
+ *          an array of promises returned from each object provider's search function
+ *          each resolving to domain objects matching provided search query and options.
  */
-ObjectAPI.prototype.search = function* (query, options) {
-    for (const provider of Object.values(this.providers)) {
-        if (provider.search !== undefined) {
-            yield provider.search(query, options);
-        }
-    }
+ObjectAPI.prototype.search = function (query, options) {
+    const searchPromises = Object.values(this.providers)
+        .filter(provider => provider.search !== undefined)
+        .forEach(provider => provider.search(query, options));
 
-    yield this.fallbackProvider.superSecretFallbackSearch(query, options)
-        .then(results => {
-            return results.hits.map(hit =>
-                utils.toNewFormat(hit.object.getModel(), hit.object.getId())
-            );
-        });
+    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, options)
+        .then(results => results.hits
+            .map(hit => utils.toNewFormat(hit.object.getModel(), hit.object.getId()))));
+
+    return searchPromises;
 };
 
 /**
@@ -331,8 +328,103 @@ ObjectAPI.prototype.listGetInterceptors = function (identifier, object) {
 ObjectAPI.prototype.mutate = function (domainObject, path, value) {
     if (!this.supportsMutation(domainObject.identifier)) {
         throw `Error: Attempted to mutate immutable object ${domainObject.name}`;
+<<<<<<< Updated upstream
+=======
     }
 
+    if (domainObject.isMutable) {
+        domainObject.$set(path, value);
+    } else {
+        //Creating a temporary mutable domain object allows other mutable instances of the
+        //object to be kept in sync.
+        let mutableDomainObject = this._toMutable(domainObject);
+
+        //Mutate original object
+        MutableDomainObject.mutateObject(domainObject, path, value);
+
+        //Mutate temporary mutable object, in the process informing any other mutable instances
+        mutableDomainObject.$set(path, value);
+
+        //Destroy temporary mutable object
+        this.destroyMutable(mutableDomainObject);
+    }
+};
+
+/**
+ * @private
+ */
+ObjectAPI.prototype._toMutable = function (object) {
+    if (object.isMutable) {
+        return object;
+    } else {
+        return MutableDomainObject.createMutable(object, this.eventEmitter);
+>>>>>>> Stashed changes
+    }
+};
+
+/**
+ * @param module:openmct.ObjectAPI~Identifier identifier An object identifier
+ * @returns {boolean} true if the object can be mutated, otherwise returns false
+ */
+ObjectAPI.prototype.supportsMutation = function (identifier) {
+    return this.isPersistable(identifier);
+};
+
+/**
+ * Observe changes to a domain object.
+ * @param {module:openmct.DomainObject} object the object to observe
+ * @param {string} path the property to observe
+ * @param {Function} callback a callback to invoke when new values for
+ *        this property are observed
+ * @method observe
+ * @memberof module:openmct.ObjectAPI#
+ */
+ObjectAPI.prototype.observe = function (domainObject, path, callback) {
+    if (domainObject.isMutable) {
+        return domainObject.$observe(path, callback);
+    } else {
+        let mutable = this._toMutable(domainObject);
+        mutable.$observe(path, callback);
+
+        return () => mutable.$destroy();
+    }
+};
+
+/**
+ * @param {module:openmct.ObjectAPI~Identifier} identifier
+ * @returns {string} A string representation of the given identifier, including namespace and key
+ */
+ObjectAPI.prototype.makeKeyString = function (identifier) {
+    return utils.makeKeyString(identifier);
+};
+
+/**
+ * @param {string} keyString A string representation of the given identifier, that is, a namespace and key separated by a colon.
+ * @returns {module:openmct.ObjectAPI~Identifier} An identifier object
+ */
+ObjectAPI.prototype.parseKeyString = function (keyString) {
+    return utils.parseKeyString(keyString);
+};
+
+/**
+ * Given any number of identifiers, will return true if they are all equal, otherwise false.
+ * @param {module:openmct.ObjectAPI~Identifier[]} identifiers
+ */
+ObjectAPI.prototype.areIdsEqual = function (...identifiers) {
+    return identifiers.map(utils.parseKeyString)
+        .every(identifier => {
+            return identifier === identifiers[0]
+                || (identifier.namespace === identifiers[0].namespace
+                    && identifier.key === identifiers[0].key);
+        });
+};
+
+ObjectAPI.prototype.getOriginalPath = function (identifier, path = []) {
+    return this.get(identifier).then((domainObject) => {
+        path.push(domainObject);
+        let location = domainObject.location;
+
+<<<<<<< Updated upstream
     if (domainObject.isMutable) {
         domainObject.$set(path, value);
     } else {
@@ -424,6 +516,8 @@ ObjectAPI.prototype.getOriginalPath = function (identifier, path = []) {
         path.push(domainObject);
         let location = domainObject.location;
 
+=======
+>>>>>>> Stashed changes
         if (location) {
             return this.getOriginalPath(utils.parseKeyString(location), path);
         } else {

@@ -700,14 +700,11 @@ export default {
             }
         },
         getSearchResults() {
+            // clear any previous search results
             this.searchResultItems = [];
-            const promises = [];
 
-            const searchGenerator = this.openmct.objects.search(this.searchValue);
-
-            for (let searchResultsPromise of searchGenerator) {
-                promises.push(searchResultsPromise.then(searchResults => this.aggregateSearchResults(searchResults)));
-            }
+            const promises = this.openmct.objects.search(this.searchValue)
+                .then(results => this.aggregateSearchResults(results));
 
             Promise.all(promises).then(() => {
                 this.searchLoading = false;
