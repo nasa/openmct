@@ -9,7 +9,8 @@ import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 const defaultOptions = {
     layoutFontSize: '',
     layoutFont: '',
-    showEditView: false
+    showEditView: false,
+    viewKey: ''
 };
 
 export default {
@@ -76,7 +77,6 @@ export default {
         this.debounceUpdateView = _.debounce(this.updateView, 10);
     },
     mounted() {
-        this.options = Object.assign(this.options || {}, defaultOptions);
         this.updateView();
         this.$el.addEventListener('dragover', this.onDragOver, {
             capture: true
@@ -306,8 +306,17 @@ export default {
                 event.stopPropagation();
             }
         },
+        getViewKey() {
+            let viewKey = this.viewKey;
+            if (this.options.viewKey) {
+                viewKey = this.options.viewKey;
+            }
+
+            return viewKey;
+        },
         getViewProvider() {
-            let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
+
+            let provider = this.openmct.objectViews.getByProviderKey(this.getViewKey());
 
             if (!provider) {
                 provider = this.openmct.objectViews.get(this.domainObject)[0];

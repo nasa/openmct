@@ -40,15 +40,11 @@ export default function PlotViewProvider(openmct) {
     }
 
     return {
-        key: 'plot-single',
+        key: 'plot-simple',
         name: 'Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject) {
-            return domainObject.type === 'plot-single' || hasTelemetry(domainObject);
-        },
-
-        canEdit(domainObject) {
-            return domainObject.type === 'plot-single';
+            return hasTelemetry(domainObject, openmct);
         },
 
         view: function (domainObject, objectPath, options) {

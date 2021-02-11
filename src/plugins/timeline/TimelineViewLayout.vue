@@ -89,6 +89,18 @@ const unknownObjectType = {
     }
 };
 
+function getViewKey(domainObject, openmct) {
+    let viewKey = '';
+    const plotView = openmct.objectViews.get(domainObject).find((view) => {
+        return view.key.startsWith('plot-') && view.key !== 'plot-single';
+    });
+    if (plotView) {
+        viewKey = plotView.key;
+    }
+
+    return viewKey;
+}
+
 export default {
     inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
     components: {
@@ -103,9 +115,16 @@ export default {
             height: 0
         };
     },
+    beforeDestroy() {
+        this.composition.off('add', this.addItem);
+        this.composition.off('remove', this.removeItem);
+        this.composition.off('reorder', this.reorder);
+    },
     mounted() {
         if (this.composition) {
             this.composition.on('add', this.addItem);
+            this.composition.on('remove', this.removeItem);
+            this.composition.on('reorder', this.reorder);
             this.composition.load();
         }
 
@@ -116,11 +135,14 @@ export default {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let objectPath = [domainObject].concat(this.objectPath.slice());
+            let viewKey = getViewKey(domainObject, this.openmct);
+
             let options = {
                 compact: true,
                 layoutFontSize: '',
                 layoutFont: '',
-                clientWidth: Math.round(this.$refs.timelineHolder.getBoundingClientRect().width)
+                clientWidth: Math.round(this.$refs.timelineHolder.getBoundingClientRect().width),
+                viewKey
             };
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
             let item = {
@@ -134,6 +156,16 @@ export default {
 
             this.items.push(item);
             this.updateContentHeight();
+        },
+        removeItem(identifier) {
+            let index = this.items.findIndex(item => this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier));
+            this.items.splice(index, 1);
+        },
+        reorder(reorderPlan) {
+            let oldItems = this.items.slice();
+            reorderPlan.forEach((reorderEvent) => {
+                this.$set(this.items, reorderEvent.newIndex, oldItems[reorderEvent.oldIndex]);
+            });
         },
         updateContentHeight() {
             this.height = Math.round(this.$refs.contentHolder.getBoundingClientRect().height);
