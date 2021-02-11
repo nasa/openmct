@@ -123,6 +123,8 @@ export default class CouchObjectProvider {
         this.controllers[identifier.key] = controller;
 
         let intermediateResponse = this.getIntermediateResponse();
+        // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
+        // style=main_only returns only the current winning revision of the document
         let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
 
         let body = {};
