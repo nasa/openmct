@@ -68,10 +68,10 @@ import viewControl from '@/ui/components/viewControl.vue';
 
 export default {
     name: 'ConditionSetDialogTreeItem',
-    inject: ['openmct'],
     components: {
         viewControl
     },
+    inject: ['openmct'],
     props: {
         node: {
             type: Object,

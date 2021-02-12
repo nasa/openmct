@@ -72,8 +72,8 @@ const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 
 export default {
-    inject: ['openmct', 'configuration'],
     mixins: [toggleMixin],
+    inject: ['openmct', 'configuration'],
     props: {
         bounds: {
             type: Object,

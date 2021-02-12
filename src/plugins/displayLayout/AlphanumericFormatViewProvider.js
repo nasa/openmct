@@ -56,13 +56,13 @@ define([
                 return {
                     show: function (element) {
                         component = new Vue({
-                            provide: {
-                                openmct,
-                                objectPath
-                            },
                             el: element,
                             components: {
                                 AlphanumericFormatView: AlphanumericFormatView.default
+                            },
+                            provide: {
+                                openmct,
+                                objectPath
                             },
                             template: '<alphanumeric-format-view ref="alphanumericFormatView"></alphanumeric-format-view>'
                         });

@@ -80,11 +80,11 @@ export default {
             viewKey
         };
     },
-    inject: ['openmct', 'objectPath'],
     components: {
         ObjectFrame,
         LayoutFrame
     },
+    inject: ['openmct', 'objectPath'],
     props: {
         item: {
             type: Object,
