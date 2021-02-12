@@ -51,11 +51,11 @@ export default {
             url: element.url
         };
     },
-    inject: ['openmct'],
     components: {
         LayoutFrame
     },
     mixins: [conditionalStylesMixin],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,

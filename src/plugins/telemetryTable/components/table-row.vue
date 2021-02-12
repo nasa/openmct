@@ -46,10 +46,10 @@
 import TableCell from './table-cell.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         TableCell
     },
+    inject: ['openmct'],
     props: {
         headers: {
             type: Object,

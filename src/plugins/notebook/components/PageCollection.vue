@@ -22,10 +22,10 @@ import { getDefaultNotebook } from '../utils/notebook-storage';
 import Page from './PageComponent.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         Page
     },
+    inject: ['openmct'],
     props: {
         defaultPageId: {
             type: String,

@@ -32,10 +32,10 @@
 import Plan from './Plan.vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         Plan
     },
+    inject: ['openmct', 'domainObject'],
     data() {
         return {
             plans: []

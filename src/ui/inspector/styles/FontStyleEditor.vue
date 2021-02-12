@@ -23,10 +23,10 @@ import {
 } from '@/ui/inspector/styles/constants';
 
 export default {
-    inject: ['openmct'],
     components: {
         ToolbarSelectMenu
     },
+    inject: ['openmct'],
     props: {
         fontStyle: {
             type: Object,

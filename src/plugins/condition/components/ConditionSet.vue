@@ -58,11 +58,11 @@ import TestData from './TestData.vue';
 import ConditionCollection from './ConditionCollection.vue';
 
 export default {
-    inject: ["openmct", "domainObject"],
     components: {
         TestData,
         ConditionCollection
     },
+    inject: ["openmct", "domainObject"],
     props: {
         isEditing: Boolean
     },

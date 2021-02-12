@@ -195,11 +195,11 @@ import { TRIGGER, TRIGGER_LABEL } from "@/plugins/condition/utils/constants";
 import uuid from 'uuid';
 
 export default {
-    inject: ['openmct'],
     components: {
         Criterion,
         ConditionDescription
     },
+    inject: ['openmct'],
     props: {
         currentConditionId: {
             type: String,
