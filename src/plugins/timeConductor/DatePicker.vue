@@ -108,8 +108,8 @@ const TIME_OPTIONS = (function makeRanges() {
 }());
 
 export default {
-    inject: ['openmct'],
     mixins: [toggleMixin],
+    inject: ['openmct'],
     props: {
         defaultDateTime: {
             type: String,

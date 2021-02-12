@@ -53,13 +53,13 @@ define([
                 return {
                     show: function (element) {
                         component = new Vue({
-                            provide: {
-                                openmct,
-                                tableConfiguration
-                            },
                             el: element,
                             components: {
                                 TableConfiguration: TableConfigurationComponent.default
+                            },
+                            provide: {
+                                openmct,
+                                tableConfiguration
                             },
                             template: '<table-configuration></table-configuration>'
                         });

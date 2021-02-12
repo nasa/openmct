@@ -140,12 +140,12 @@ const ROOT_PATH = 'browse';
 const ITEM_BUFFER = 5;
 
 export default {
-    inject: ['openmct'],
     name: 'MctTree',
     components: {
         search,
         treeItem
     },
+    inject: ['openmct'],
     props: {
         syncTreeNavigation: {
             type: Boolean,

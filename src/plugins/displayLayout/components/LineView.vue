@@ -99,8 +99,8 @@ export default {
             stroke: '#717171'
         };
     },
-    inject: ['openmct'],
     mixins: [conditionalStylesMixin],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,
