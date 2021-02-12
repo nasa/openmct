@@ -126,7 +126,7 @@ class ApplicationRouter extends EventEmitter {
     }
 
     /**
-     * Navgate to given hash and update current location object and notify listerns about location change
+     * Navgate to given hash and update current location object and notify listeners about location change
      *
      * @param {string} paramName name of searchParam to get from current url searchParams
      *
@@ -137,7 +137,7 @@ class ApplicationRouter extends EventEmitter {
     }
 
     /**
-     * Add routes listerners
+     * Add routes listeners
      *
      * @param {string} matcher Regex to match value in url
      * @param {@function} callback function called when found match in url
