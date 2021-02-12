@@ -100,15 +100,14 @@ function getViewKey(domainObject, openmct) {
 }
 
 export default {
-    inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
     components: {
         ObjectView,
         TimelineAxis,
         SwimLane
     },
+    inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
     data() {
         return {
-            // plans: [],
             items: [],
             timeSystems: [],
             height: 0

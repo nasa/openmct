@@ -110,10 +110,10 @@ const SIMPLE_CONTENT_TYPES = [
 ];
 
 export default {
-    inject: ['openmct'],
     components: {
         ObjectView
     },
+    inject: ['openmct'],
     props: {
         domainObject: {
             type: Object,

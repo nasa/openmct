@@ -131,13 +131,13 @@ describe('the plugin', function () {
             let viewContainer = document.createElement('div');
             child.append(viewContainer);
             component = new Vue({
-                provide: {
-                    openmct: openmct,
-                    domainObject: planDomainObject
-                },
                 el: viewContainer,
                 components: {
                     TimelineViewLayout
+                },
+                provide: {
+                    openmct: openmct,
+                    domainObject: planDomainObject
                 },
                 template: '<timeline-view-layout/>'
             });
