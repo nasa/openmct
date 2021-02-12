@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from '../timeline/TimelineViewProvider';
 import PlanViewProvider from './PlanViewProvider';
 
 export default function () {

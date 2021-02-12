@@ -105,7 +105,7 @@ define([
     NonEditableFolder,
     CouchDBPlugin,
     DefaultRootName,
-    Plan,
+    PlanLayout,
     ViewDatumAction,
     ObjectInterceptors,
     PerformanceIndicator,
@@ -204,7 +204,7 @@ define([
     plugins.NonEditableFolder = NonEditableFolder.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
-    plugins.Plan = Plan.default;
+    plugins.PlanLayout = PlanLayout.default;
     plugins.ViewDatumAction = ViewDatumAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
     plugins.PerformanceIndicator = PerformanceIndicator.default;
