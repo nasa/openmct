@@ -48,7 +48,7 @@ define([
             this.providers.push(function () {
                 return key;
             });
-        } else if (_.isFunction(key)) {
+        } else if (typeof key === "function") {
             this.providers.push(key);
         }
     };

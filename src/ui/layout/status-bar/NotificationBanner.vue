@@ -68,10 +68,10 @@ function updateMaxProgressBar(progressPerc, progressText) {
 }
 
 export default {
-    inject: ['openmct'],
     components: {
         ProgressBar: ProgressBar
     },
+    inject: ['openmct'],
     data() {
         return {
             activeModel: {
