@@ -55,11 +55,9 @@
                 <swim-lane :icon-class="item.type.definition.cssClass"
                            :min-height="item.height"
                            :show-ucontents="item.domainObject.type === 'plan'"
-                           :hide-label="item.domainObject.type === 'plan'"
+                           :span-rows="item.domainObject.type === 'plan'"
                 >
-                    <template v-if="item.domainObject.type !== 'plan'"
-                              slot="label"
-                    >
+                    <template slot="label">
                         {{ item.domainObject.name }}
                     </template>
                     <object-view
@@ -142,7 +140,8 @@ export default {
                 compact: true,
                 layoutFontSize: '',
                 layoutFont: '',
-                clientWidth: Math.round(this.$refs.timelineHolder.getBoundingClientRect().width),
+                // Find a better way of getting the parent's width when a plan is inside the time-strip
+                clientWidth: Math.round(this.$refs.timelineHolder.getBoundingClientRect().width - 200),
                 viewKey,
                 isChildObject: true
             };

@@ -38,6 +38,7 @@ const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 25;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
+const EDGE_ROUNDING = 10;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -136,8 +137,7 @@ export default {
             }
         },
         clearPreviousActivities() {
-            d3Selection.selectAll(".c-plan__contents .c-swim-lane__lane-label").remove();
-            d3Selection.selectAll(".c-plan__contents .c-swim-lane__lane-object").remove();
+            d3Selection.selectAll(".c-plan__contents > div").remove();
         },
         setDimensions() {
             const planHolder = this.$refs.plan;
@@ -145,9 +145,9 @@ export default {
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
             if (this.options.clientWidth !== undefined) {
-                this.width = this.options.clientWidth - 200;
+                this.width = this.options.clientWidth;
             } else {
-                this.width = planHolder.clientWidth - 200;
+                this.width = planHolder.clientWidth;
             }
 
             this.height = Math.round(planHolder.getBoundingClientRect().height);
@@ -313,7 +313,7 @@ export default {
         },
         getGroupContainer(activityRows, heading) {
             const rows = Object.keys(activityRows);
-            const showParentClass = !this.options.isChildObject;
+            const isNested = this.options.isChildObject;
             let component = new Vue({
                 components: {
                     SwimLane
@@ -321,10 +321,10 @@ export default {
                 data() {
                     return {
                         heading,
-                        showParentClass
+                        isNested
                     };
                 },
-                template: `<swim-lane :show-parent-class="showParentClass"><template slot="label">{{heading}}</template><template slot="object"><svg></svg></template></swim-lane>`
+                template: `<swim-lane :is-nested="isNested"><template slot="label">{{heading}}</template><template slot="object"><svg></svg></template></swim-lane>`
             });
 
             this.$refs.planHolder.appendChild(component.$mount().$el);
@@ -411,17 +411,18 @@ export default {
             let rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 
             if (item.activity.exceeds.start) {
-                width = width + 5;
+                width = width + EDGE_ROUNDING;
             }
 
             if (item.activity.exceeds.end) {
-                width = width + 5;
+                width = width + EDGE_ROUNDING;
             }
 
             this.setNSAttributesForElement(rectElement, {
                 class: 'activity-bounds',
-                x: item.activity.exceeds.start ? item.start - 5 : item.start,
+                x: item.activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
                 y: row,
+                rx: EDGE_ROUNDING,
                 width: width,
                 height: String(ROW_HEIGHT),
                 fill: activity.color

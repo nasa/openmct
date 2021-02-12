@@ -1,10 +1,10 @@
 <template>
 <div class="u-contents"
-     :class="{'c-swim-lane': showParentClass}"
+     :class="{'c-swim-lane': !isNested}"
 >
 
-    <div v-if="!hideLabel"
-         class="c-swim-lane__lane-label c-swim-lane__lane-label--span-cols c-object-label"
+    <div class="c-swim-lane__lane-label c-object-label"
+         :class="{'c-swim-lane__lane-label--span-rows': spanRows, 'c-swim-lane__lane-label--span-cols': (!spanRows && !isNested)}"
     >
         <div v-if="iconClass"
              class="c-object-label__type-icon"
@@ -49,13 +49,13 @@ export default {
                 return false;
             }
         },
-        showParentClass: {
+        isNested: {
             type: Boolean,
             default() {
-                return true;
+                return false;
             }
         },
-        hideLabel: {
+        spanRows: {
             type: Boolean,
             default() {
                 return false;
