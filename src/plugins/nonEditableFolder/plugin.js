@@ -20,13 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "EventEmitter"
-], function (
-    EventEmitter
-) {
-    /**
-     * Provides a singleton event bus for sharing between objects.
-     */
-    return new EventEmitter();
-});
+export default function () {
+    return function (openmct) {
+        openmct.types.addType("noneditable.folder", {
+            name: "Non-Editable Folder",
+            key: "noneditable.folder",
+            description: "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
+            cssClass: "icon-folder",
+            creatable: false
+        });
+    };
+}
