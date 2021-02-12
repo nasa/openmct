@@ -82,13 +82,6 @@ const VERTEX_SHADER = `
  * @param {CanvasElement} canvas the canvas object to render upon
  * @throws {Error} an error is thrown if WebGL is unavailable.
  */
-/**
- * Create a draw api utilizing WebGL.
- *
- * @constructor
- * @param {CanvasElement} canvas the canvas object to render upon
- * @throws {Error} an error is thrown if WebGL is unavailable.
- */
 function DrawWebGL(canvas, overlay) {
     this.canvas = canvas;
     this.gl = this.canvas.getContext("webgl", { preserveDrawingBuffer: true })
