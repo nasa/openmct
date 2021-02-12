@@ -37,11 +37,11 @@ define([
         return function install(openmct) {
             if (installIndicator) {
                 let component = new Vue ({
-                    provide: {
-                        openmct
-                    },
                     components: {
                         GlobalClearIndicator: GlobaClearIndicator.default
+                    },
+                    provide: {
+                        openmct
                     },
                     template: '<GlobalClearIndicator></GlobalClearIndicator>'
                 });

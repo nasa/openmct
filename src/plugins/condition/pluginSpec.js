@@ -401,14 +401,14 @@ describe('the plugin', function () {
             let viewContainer = document.createElement('div');
             child.append(viewContainer);
             component = new Vue({
+                el: viewContainer,
+                components: {
+                    StylesView
+                },
                 provide: {
                     openmct: openmct,
                     selection: selection,
                     stylesManager
-                },
-                el: viewContainer,
-                components: {
-                    StylesView
                 },
                 template: '<styles-view/>'
             });

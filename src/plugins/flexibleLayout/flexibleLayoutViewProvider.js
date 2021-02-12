@@ -44,14 +44,14 @@ define([
                 return {
                     show: function (element, isEditing) {
                         component = new Vue({
+                            el: element,
+                            components: {
+                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
+                            },
                             provide: {
                                 openmct,
                                 objectPath,
                                 layoutObject: domainObject
-                            },
-                            el: element,
-                            components: {
-                                FlexibleLayoutComponent: FlexibleLayoutComponent.default
                             },
                             data() {
                                 return {
