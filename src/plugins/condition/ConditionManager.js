@@ -341,7 +341,7 @@ export default class ConditionManager extends EventEmitter {
     }
 
     shouldEvaluateNewTelemetry(currentTimestamp) {
-        return this.openmct.time.boundsVal.end >= currentTimestamp;
+        return this.openmct.time.bounds().end >= currentTimestamp;
     }
 
     telemetryReceived(endpoint, datum) {
