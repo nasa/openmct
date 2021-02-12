@@ -41,7 +41,7 @@
         </div>
     </div>
     <ul
-        v-if="expanded"
+        v-if="expanded && !isLoading"
         class="c-tree"
     >
         <li
