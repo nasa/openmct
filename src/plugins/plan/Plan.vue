@@ -41,11 +41,11 @@ const MAX_TEXT_WIDTH = 300;
 const EDGE_ROUNDING = 10;
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         TimelineAxis,
         SwimLane
     },
+    inject: ['openmct', 'domainObject'],
     props: {
         options: {
             type: Object,

@@ -60,10 +60,10 @@ import MctTicks from "../MctTicks.vue";
 import configStore from "../configuration/configStore";
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         MctTicks
     },
+    inject: ['openmct', 'domainObject'],
     props: {
         singleSeries: {
             type: Boolean,

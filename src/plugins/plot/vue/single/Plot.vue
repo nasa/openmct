@@ -74,10 +74,10 @@ import eventHelpers from "./lib/eventHelpers";
 import MctPlot from './MctPlot.vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         MctPlot
     },
+    inject: ['openmct', 'domainObject'],
     props: {
         options: {
             type: Object,

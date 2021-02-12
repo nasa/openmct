@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-
+<div></div>
 </template>
 <script>
 
@@ -99,13 +99,13 @@ export default {
             this.$el.append(viewContainer);
 
             this.component = new Vue({
-                provide: {
-                    openmct,
-                    domainObject: object
-                },
                 el: viewContainer,
                 components: {
                     MctPlot
+                },
+                provide: {
+                    openmct,
+                    domainObject: object
                 },
                 data() {
                     return {

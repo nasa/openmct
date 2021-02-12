@@ -137,7 +137,6 @@ import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         XAxis,
         YAxis,
@@ -145,6 +144,7 @@ export default {
         MctTicks,
         MctChart
     },
+    inject: ['openmct', 'domainObject'],
     props: {
         options: {
             type: Object,

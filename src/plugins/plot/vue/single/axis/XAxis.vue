@@ -57,10 +57,10 @@ import eventHelpers from '../lib/eventHelpers';
 import configStore from "../configuration/configStore";
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         MctTicks
     },
+    inject: ['openmct', 'domainObject'],
     props: {
         seriesModel: {
             type: Object,
