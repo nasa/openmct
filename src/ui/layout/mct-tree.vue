@@ -132,7 +132,6 @@
 import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
-import objectUtils from 'objectUtils';
 import uuid from 'uuid';
 
 const LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD = 'mct-tree-expanded';
@@ -308,7 +307,9 @@ export default {
     },
     methods: {
         async initialize() {
-            this.searchService = this.openmct.$injector.get('searchService');
+            // required to index tree objects that do not have search providers
+            this.openmct.$injector.get('searchService');
+
             window.addEventListener('resize', this.handleWindowResize);
             this.backwardsCompatibilityCheck();
             await this.calculateHeights();
@@ -698,14 +699,21 @@ export default {
                 }
             }
         },
-        async getSearchResults() {
-            let results = await this.searchService.query(this.searchValue);
+        getSearchResults() {
+            // clear any previous search results
             this.searchResultItems = [];
 
-            for (let i = 0; i < results.hits.length; i++) {
-                let result = results.hits[i];
-                let newStyleObject = objectUtils.toNewFormat(result.object.getModel(), result.object.getId());
-                let objectPath = await this.openmct.objects.getOriginalPath(newStyleObject.identifier);
+            const promises = this.openmct.objects.search(this.searchValue)
+                .map(promise => promise
+                    .then(results => this.aggregateSearchResults(results)));
+
+            Promise.all(promises).then(() => {
+                this.searchLoading = false;
+            });
+        },
+        async aggregateSearchResults(results) {
+            for (const result of results) {
+                const objectPath = await this.openmct.objects.getOriginalPath(result.identifier);
 
                 // removing the item itself, as the path we pass to buildTreeItem is a parent path
                 objectPath.shift();
@@ -718,12 +726,10 @@ export default {
 
                 // we reverse the objectPath in the tree, so have to do it here first,
                 // since this one is already in the correct direction
-                let resultObject = this.buildTreeItem(newStyleObject, objectPath.reverse());
+                let resultObject = this.buildTreeItem(result, objectPath.reverse());
 
                 this.searchResultItems.push(resultObject);
             }
-
-            this.searchLoading = false;
         },
         searchTree(value) {
             this.searchValue = value;
