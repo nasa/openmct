@@ -145,9 +145,9 @@ export default {
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
             if (this.options.clientWidth !== undefined) {
-                this.width = this.options.clientWidth;
+                this.width = this.options.clientWidth - 200;
             } else {
-                this.width = planHolder.clientWidth;
+                this.width = planHolder.clientWidth - 200;
             }
 
             this.height = Math.round(planHolder.getBoundingClientRect().height);
@@ -246,7 +246,7 @@ export default {
                         const activityNameWidth = this.getTextWidth(activity.name) + TEXT_LEFT_PADDING;
                         //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
                         const activityNameFitsRect = (rectWidth >= activityNameWidth);
-                        const textStart = (activityNameFitsRect ? rectX : (rectX + rectWidth)) + TEXT_LEFT_PADDING;
+                        const textStart = (activityNameFitsRect ? rectX : rectY) + TEXT_LEFT_PADDING;
 
                         let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
                         const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
@@ -267,13 +267,17 @@ export default {
                             activity: {
                                 color: activity.color,
                                 textColor: activity.textColor,
-                                name: activity.name
+                                name: activity.name,
+                                exceeds: {
+                                    start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
+                                    end: this.xScale(this.viewBounds.end) < this.xScale(activity.end)
+                                }
                             },
                             textLines: textLines,
                             textStart: textStart,
                             textY: textY,
                             start: rectX,
-                            end: activityNameFitsRect ? rectX + rectWidth : textStart + textWidth,
+                            end: activityNameFitsRect ? rectY : textStart + textWidth,
                             rectWidth: rectWidth
                         });
                     }
@@ -333,11 +337,7 @@ export default {
                 const svgHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
 
                 groupSVG.setAttributeNS("null", "height", String(svgHeight));
-                if (this.options.clientWidth !== undefined) {
-                    groupSVG.setAttributeNS(null, "width", String(this.width - groupLabel.getBoundingClientRect().width));
-                } else {
-                    groupSVG.setAttributeNS(null, "width", String(this.width - groupLabel.getBoundingClientRect().width));
-                }
+                groupSVG.setAttributeNS(null, "width", String(this.width));
             } else {
                 groupSVG.setAttributeNS(null, "height", "30");
                 groupSVG.setAttributeNS(null, "width", "200");
@@ -407,15 +407,26 @@ export default {
         },
         plotActivity(item, row, svgElement) {
             const activity = item.activity;
+            let width = item.rectWidth;
             let rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+            if (item.activity.exceeds.start) {
+                width = width + 5;
+            }
+
+            if (item.activity.exceeds.end) {
+                width = width + 5;
+            }
+
             this.setNSAttributesForElement(rectElement, {
                 class: 'activity-bounds',
-                x: item.start,
+                x: item.activity.exceeds.start ? item.start - 5 : item.start,
                 y: row,
-                width: item.rectWidth,
+                width: width,
                 height: String(ROW_HEIGHT),
                 fill: activity.color
             });
+
             svgElement.appendChild(rectElement);
 
             item.textLines.forEach((line, index) => {
