@@ -74,9 +74,9 @@ export default {
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 this.preview();
+            } else {
+                window.location.assign(this.objectLink);
             }
-
-            window.location.assign(this.objectLink);
         },
         preview() {
             if (this.previewAction.appliesTo(this.objectPath)) {
