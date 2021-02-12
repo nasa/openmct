@@ -98,11 +98,11 @@ export default {
             font: 'default'
         };
     },
-    inject: ['openmct', 'objectPath'],
     components: {
         LayoutFrame
     },
     mixins: [conditionalStylesMixin],
+    inject: ['openmct', 'objectPath'],
     props: {
         item: {
             type: Object,

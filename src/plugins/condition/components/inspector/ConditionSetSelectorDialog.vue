@@ -85,12 +85,12 @@ import search from '@/ui/components/search.vue';
 import ConditionSetDialogTreeItem from './ConditionSetDialogTreeItem.vue';
 
 export default {
-    inject: ['openmct'],
     name: 'ConditionSetSelectorDialog',
     components: {
         search,
         ConditionSetDialogTreeItem
     },
+    inject: ['openmct'],
     data() {
         return {
             expanded: false,

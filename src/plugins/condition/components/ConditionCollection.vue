@@ -81,10 +81,10 @@ import Condition from './Condition.vue';
 import ConditionManager from '../ConditionManager';
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         Condition
     },
+    inject: ['openmct', 'domainObject'],
     props: {
         isEditing: Boolean,
         testData: {

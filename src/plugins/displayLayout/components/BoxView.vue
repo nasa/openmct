@@ -51,11 +51,11 @@ export default {
             height: 5
         };
     },
-    inject: ['openmct'],
     components: {
         LayoutFrame
     },
     mixins: [conditionalStylesMixin],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,
