@@ -29,18 +29,19 @@
              :key="timeSystemItem.timeSystem.key"
              class="u-contents"
         >
-            <div class="c-timeline__lane-label"
-                 :class="{'c-timeline__lane-label--span-cols': true}"
-            >
-                {{ timeSystemItem.timeSystem.name }}
-            </div>
-            <timeline-axis
-                class="c-timeline__lane-object"
-                :bounds="timeSystemItem.bounds"
-                :time-system="timeSystemItem.timeSystem"
-                :content-height="height"
-                :rendering-engine="'svg'"
-            />
+            <swim-lane>
+                <template slot="label">
+                    {{ timeSystemItem.timeSystem.name }}
+                </template>
+                <template slot="object">
+                    <timeline-axis :bounds="timeSystemItem.bounds"
+                                   :time-system="timeSystemItem.timeSystem"
+                                   :content-height="height"
+                                   :rendering-engine="'svg'"
+                    />
+                </template>
+
+            </swim-lane>
         </div>
 
         <div ref="contentHolder"
@@ -51,26 +52,24 @@
                 :key="item.keyString"
                 class="u-contents c-timeline__content"
             >
-                <div v-if="item.domainObject.type !== 'plan'"
-                     class="c-timeline__lane-label c-timeline__lane-label--span-cols c-object-label"
+                <swim-lane :icon-class="item.type.definition.cssClass"
+                           :min-height="item.height"
+                           :show-ucontents="item.domainObject.type === 'plan'"
+                           :hide-label="item.domainObject.type === 'plan'"
                 >
-                    <div class="c-object-label__type-icon"
-                         :class="item.type.definition.cssClass"
+                    <template v-if="item.domainObject.type !== 'plan'"
+                              slot="label"
                     >
-                    </div>
-                    <div class="c-object-label__name">
                         {{ item.domainObject.name }}
-                    </div>
-                </div>
-                <object-view
-                    class="c-timeline__lane-object c-timeline__lane-object--domain-object"
-                    :class="{'u-contents': item.domainObject.type === 'plan'}"
-                    :style="{'min-height': item.height}"
-                    :default-object="item.domainObject"
-                    data-selectable
-                    :options="item.options"
-                    :object-path="item.objectPath"
-                />
+                    </template>
+                    <object-view
+                        slot="object"
+                        class="u-contents"
+                        :default-object="item.domainObject"
+                        :options="item.options"
+                        :object-path="item.objectPath"
+                    />
+                </swim-lane>
             </div>
             <!--    <plan :rendering-engine="'canvas'" />-->
         </div>
@@ -81,6 +80,7 @@
 <script>
 import ObjectView from '@/ui/components/ObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
+import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 
 const unknownObjectType = {
     definition: {
@@ -105,7 +105,8 @@ export default {
     inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
     components: {
         ObjectView,
-        TimelineAxis
+        TimelineAxis,
+        SwimLane
     },
     data() {
         return {
@@ -142,7 +143,8 @@ export default {
                 layoutFontSize: '',
                 layoutFont: '',
                 clientWidth: Math.round(this.$refs.timelineHolder.getBoundingClientRect().width),
-                viewKey
+                viewKey,
+                isChildObject: true
             };
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
             let item = {

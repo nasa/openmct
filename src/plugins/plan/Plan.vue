@@ -2,25 +2,22 @@
 <div ref="plan"
      class="c-plan"
 >
-    <div v-if="viewBounds && !options.compact"
-         class="c-plan-content u-contents"
-    >
-        <div class="c-plan-content__lane-label"
-             :class="{'c-plan-content__lane-label--span-cols': true}"
-        >
-            {{ timeSystem.name }}
-        </div>
-        <timeline-axis
-            class="c-plan-content__lane-object"
-            :bounds="viewBounds"
-            :time-system="timeSystem"
-            :content-height="height"
-            :rendering-engine="renderingEngine"
-        />
-    </div>
+    <template v-if="viewBounds && !options.compact">
+        <swim-lane>
+            <template slot="label">{{ timeSystem.name }}</template>
+            <timeline-axis
+                slot="object"
+                :bounds="viewBounds"
+                :time-system="timeSystem"
+                :content-height="height"
+                :rendering-engine="renderingEngine"
+            />
+        </swim-lane>
+    </template>
     <div ref="planHolder"
-         class="c-plan__contents c-plan-content u-contents"
-    ></div>
+         class="c-plan__contents u-contents"
+    >
+    </div>
 </div>
 </template>
 
@@ -28,6 +25,8 @@
 import * as d3Selection from 'd3-selection';
 import * as d3Scale from 'd3-scale';
 import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
+import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
+import Vue from "vue";
 
 //TODO: UI direction needed for the following property values
 const PADDING = 1;
@@ -43,7 +42,8 @@ const MAX_TEXT_WIDTH = 300;
 export default {
     inject: ['openmct', 'domainObject'],
     components: {
-        TimelineAxis
+        TimelineAxis,
+        SwimLane
     },
     props: {
         options: {
@@ -71,8 +71,6 @@ export default {
     mounted() {
         this.validateJSON(this.domainObject.selectFile.body);
 
-        this.container = d3Selection.select(this.$refs.planHolder);
-
         this.canvas = this.$refs.plan.appendChild(document.createElement('canvas'));
         this.canvas.height = 0;
         this.canvasContext = this.canvas.getContext('2d');
@@ -98,7 +96,7 @@ export default {
             this.setScaleAndPlotActivities();
         },
         resize() {
-            let clientWidth = this.$refs.planHolder.clientWidth;
+            let clientWidth = this.$refs.plan.clientWidth;
             if (this.options.clientWidth !== undefined) {
                 clientWidth = this.options.clientWidth;
             }
@@ -138,11 +136,11 @@ export default {
             }
         },
         clearPreviousActivities() {
-            d3Selection.selectAll(".c-plan__contents .c-plan-content__lane-label").remove();
-            d3Selection.selectAll(".c-plan__contents .c-plan-content__lane-object").remove();
+            d3Selection.selectAll(".c-plan__contents .c-swim-lane__lane-label").remove();
+            d3Selection.selectAll(".c-plan__contents .c-swim-lane__lane-object").remove();
         },
         setDimensions() {
-            const planHolder = this.$refs.planHolder;
+            const planHolder = this.$refs.plan;
             const rect = planHolder.getBoundingClientRect();
             this.left = Math.round(rect.left);
             this.top = Math.round(rect.top);
@@ -268,7 +266,8 @@ export default {
                         activitiesByRow[currentRow].push({
                             activity: {
                                 color: activity.color,
-                                textColor: activity.textColor
+                                textColor: activity.textColor,
+                                name: activity.name
                             },
                             textLines: textLines,
                             textStart: textStart,
@@ -309,21 +308,39 @@ export default {
             return activityText.length ? activityText : [line];
         },
         getGroupContainer(activityRows, heading) {
-            let groupLabel = this.container.append('div');
-            groupLabel.attr("class", "c-plan-content__lane-label c-plan-content__lane-label--span-cols");
-            groupLabel.html(heading);
-
             const rows = Object.keys(activityRows);
-            const lastActivityRow = rows[rows.length - 1];
-            const svgHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
-            let groupSVGContainer = this.container.append('div');
-            groupSVGContainer.attr("class", "c-plan-content__lane-object");
-            let groupSVG = groupSVGContainer.append('svg');
-            groupSVG.attr("height", svgHeight);
-            if (this.options.clientWidth !== undefined) {
-                groupSVG.attr("width", this.width - groupLabel.node().getBoundingClientRect().width);
+            const showParentClass = !this.options.isChildObject;
+            let component = new Vue({
+                components: {
+                    SwimLane
+                },
+                data() {
+                    return {
+                        heading,
+                        showParentClass
+                    };
+                },
+                template: `<swim-lane :show-parent-class="showParentClass"><template slot="label">{{heading}}</template><template slot="object"><svg></svg></template></swim-lane>`
+            });
+
+            this.$refs.planHolder.appendChild(component.$mount().$el);
+
+            let groupLabel = component.$el.querySelector('div:nth-child(1)');
+            let groupSVG = component.$el.querySelector('svg');
+
+            if (rows.length) {
+                const lastActivityRow = rows[rows.length - 1];
+                const svgHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
+
+                groupSVG.setAttributeNS("null", "height", String(svgHeight));
+                if (this.options.clientWidth !== undefined) {
+                    groupSVG.setAttributeNS(null, "width", String(this.width - groupLabel.getBoundingClientRect().width));
+                } else {
+                    groupSVG.setAttributeNS(null, "width", String(this.width - groupLabel.getBoundingClientRect().width));
+                }
             } else {
-                groupSVG.attr("width", this.width - groupLabel.node().getBoundingClientRect().width);
+                groupSVG.setAttributeNS(null, "height", "30");
+                groupSVG.setAttributeNS(null, "width", "200");
             }
 
             return {
@@ -339,33 +356,82 @@ export default {
                 const groupElements = this.getGroupContainer(activitiesByRow, heading);
                 let groupSVG = groupElements.groupSVG;
 
-                Object.keys(activitiesByRow).forEach((row) => {
+                let activityRows = Object.keys(activitiesByRow);
+                if (activityRows.length <= 0) {
+                    this.plotNoItems(groupSVG);
+                }
+
+                activityRows.forEach((row) => {
                     const items = activitiesByRow[row];
                     items.forEach(item => {
                     //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
-                        this.plotSVG(item, parseInt(row, 10), groupSVG);
+                        this.plotActivity(item, parseInt(row, 10), groupSVG);
                     });
                 });
 
             });
         },
-        plotSVG(item, row, svgElement) {
+        plotNoItems(svgElement) {
+            let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            this.setNSAttributesForElement(textElement, {
+                x: "10",
+                y: "20",
+                class: "no-activities"
+            });
+            textElement.innerHTML = 'No activities at this time';
+
+            svgElement.appendChild(textElement);
+        },
+        setNSAttributesForElement(element, attributes) {
+            Object.keys(attributes).forEach((key) => {
+                element.setAttributeNS(null, key, attributes[key]);
+            });
+        },
+        // Experimental for now - unused
+        addForeignElement(svgElement, label, x, y) {
+            let foreign = document.createElementNS('http://www.w3.org/2000/svg', "foreignObject");
+            this.setNSAttributesForElement(foreign, {
+                width: String(MAX_TEXT_WIDTH),
+                height: String(LINE_HEIGHT * 2),
+                x: x,
+                y: y
+            });
+
+            let textEl = document.createElement('div');
+            let textNode = document.createTextNode(label);
+            textEl.appendChild(textNode);
+
+            foreign.appendChild(textEl);
+
+            svgElement.appendChild(foreign);
+        },
+        plotActivity(item, row, svgElement) {
             const activity = item.activity;
-            svgElement.append("rect")
-                .attr("class", "activity-bounds")
-                .attr("x", item.start)
-                .attr("y", row)
-                .attr("width", item.rectWidth)
-                .attr("height", ROW_HEIGHT)
-                .attr('fill', activity.color);
+            let rectElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            this.setNSAttributesForElement(rectElement, {
+                class: 'activity-bounds',
+                x: item.start,
+                y: row,
+                width: item.rectWidth,
+                height: String(ROW_HEIGHT),
+                fill: activity.color
+            });
+            svgElement.appendChild(rectElement);
 
             item.textLines.forEach((line, index) => {
-                svgElement.append("text").text(line)
-                    .attr("class", "activity-label")
-                    .attr("x", item.textStart)
-                    .attr("y", item.textY + (index * LINE_HEIGHT))
-                    .attr('fill', activity.textColor);
+                let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                this.setNSAttributesForElement(textElement, {
+                    class: 'activity-label',
+                    x: item.textStart,
+                    y: item.textY + (index * LINE_HEIGHT),
+                    fill: activity.textColor
+                });
+
+                const textNode = document.createTextNode(line);
+                textElement.appendChild(textNode);
+                svgElement.appendChild(textElement);
             });
+            // this.addForeignElement(svgElement, activity.name, item.textStart, item.textY - LINE_HEIGHT);
         }
     }
 };
