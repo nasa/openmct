@@ -30,11 +30,11 @@ class Menu extends EventEmitter {
         this.options = options;
 
         this.component = new Vue({
-            provide: {
-                actions: options.actions
-            },
             components: {
                 MenuComponent
+            },
+            provide: {
+                actions: options.actions
             },
             template: '<menu-component />'
         });

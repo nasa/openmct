@@ -57,10 +57,10 @@
 import LadRow from './LADRow.vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         LadRow
     },
+    inject: ['openmct', 'domainObject'],
     data() {
         return {
             ladTableObjects: [],
