@@ -41,7 +41,7 @@
         </div>
     </div>
     <ul
-        v-if="expanded"
+        v-if="expanded && !isLoading"
         class="c-tree"
     >
         <li
@@ -68,10 +68,10 @@ import viewControl from '@/ui/components/viewControl.vue';
 
 export default {
     name: 'ConditionSetDialogTreeItem',
-    inject: ['openmct'],
     components: {
         viewControl
     },
+    inject: ['openmct'],
     props: {
         node: {
             type: Object,

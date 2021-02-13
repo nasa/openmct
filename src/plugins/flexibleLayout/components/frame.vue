@@ -58,10 +58,10 @@
 import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         ObjectFrame
     },
+    inject: ['openmct'],
     props: {
         frame: {
             type: Object,

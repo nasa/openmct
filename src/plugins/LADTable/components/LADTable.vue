@@ -48,10 +48,10 @@
 import LadRow from './LADRow.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         LadRow
     },
+    inject: ['openmct'],
     props: {
         domainObject: {
             type: Object,
