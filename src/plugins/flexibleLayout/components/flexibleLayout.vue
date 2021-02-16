@@ -94,7 +94,6 @@ import Container from '../utils/container';
 import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
-import RemoveAction from '../../remove/RemoveAction.js';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -177,8 +176,6 @@ export default {
         this.composition.on('remove', this.removeChildObject);
         this.composition.on('add', this.addFrame);
         this.composition.load();
-
-        this.RemoveAction = new RemoveAction(this.openmct);
 
         this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
@@ -271,10 +268,11 @@ export default {
                 .filter((f => f.id === frameId))[0];
 
             this.removeFromComposition(frame.domainObjectIdentifier)
-                .then(() => {
-                    sizeToFill(container.frames);
-                    this.setSelectionToParent();
-                });
+
+            this.$nextTick().then(() => {
+                sizeToFill(container.frames);
+                this.setSelectionToParent();
+            });
         },
         removeFromComposition(identifier) {
             let keystring = this.openmct.objects.makeKeyString(identifier);
@@ -282,7 +280,7 @@ export default {
             this.identifierMap[keystring] = undefined;
             delete this.identifierMap[keystring];
 
-            this.composition.remove(identifier);
+            this.composition.remove({identifier});
         },
         setSelectionToParent() {
             this.$el.click();
