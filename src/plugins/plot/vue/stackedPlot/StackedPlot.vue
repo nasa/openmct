@@ -70,10 +70,10 @@ import eventHelpers from "@/plugins/plot/vue/single/lib/eventHelpers";
 import StackedPlotItem from "@/plugins/plot/vue/stackedPlot/StackedPlotItem.vue";
 
 export default {
-    inject: ['openmct', 'domainObject', 'composition'],
     components: {
         StackedPlotItem
     },
+    inject: ['openmct', 'domainObject', 'composition'],
     data() {
         return {
             hideExportButtons: false,

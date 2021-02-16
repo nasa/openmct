@@ -71,10 +71,10 @@ import eventHelpers from "./lib/eventHelpers";
 import MctPlot from './MctPlot.vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         MctPlot
     },
+    inject: ['openmct', 'domainObject'],
     data() {
         return {
             //Don't think we need this as it appears to be stacked plot specific

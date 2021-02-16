@@ -23,8 +23,9 @@
 import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
+import StackedPlot from "../stackedPlot/StackedPlot.vue";
 
-fdescribe('the plugin', function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -181,6 +182,134 @@ fdescribe('the plugin', function () {
             plotView.show(child, true);
 
             return Vue.nextTick();
+        });
+
+        it("Renders a collapsed legend for every telemetry", () => {
+            let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
+            expect(legend.length).toBe(1);
+            expect(legend[0].innerHTML).toEqual('Test Object');
+        });
+
+        it("Renders an expanded legend for every telemetry", () => {
+            let legendControl = element.querySelector('.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle');
+            const clickEvent = createMouseEvent('click');
+
+            legendControl.dispatchEvent(clickEvent);
+
+            let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
+            expect(legend.length).toBe(6);
+        });
+
+        it("Renders X-axis ticks for the telemetry object", () => {
+            let xAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper');
+            expect(xAxisElement.length).toBe(1);
+
+            let ticks = xAxisElement[0].querySelectorAll('.gl-plot-tick');
+            expect(ticks.length).toBe(5);
+        });
+
+        it("Renders Y-axis options for the telemetry object", () => {
+            let yAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select');
+            expect(yAxisElement.length).toBe(1);
+            //Object{name: 'Some attribute', key: 'some-key'}, Object{name: 'Another attribute', key: 'some-other-key'}
+            let options = yAxisElement[0].querySelectorAll('option');
+            expect(options.length).toBe(2);
+            expect(options[0].value).toBe('Some attribute');
+            expect(options[1].value).toBe('Another attribute');
+        });
+    });
+
+    describe("The stacked plot view", () => {
+        let testTelemetryObject;
+        let stackedPlotObject;
+        let component;
+        let compositionAPI;
+        let mockComposition;
+        let plotViewComponentObject;
+
+        beforeEach(() => {
+
+            const getFunc = openmct.$injector.get;
+            spyOn(openmct.$injector, 'get')
+                .withArgs('exportImageService').and.returnValue({
+                    exportPNG: () => {},
+                    exportJPG: () => {}
+                })
+                .and.callFake(getFunc);
+
+            compositionAPI = openmct.composition;
+            mockComposition = jasmine.createSpyObj('composition', ['load', 'on', 'off']);
+            mockComposition.load.and.callFake(() => {});
+            mockComposition.on.and.callFake(() => {});
+            mockComposition.off.and.callFake(() => {});
+
+            spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
+
+            stackedPlotObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-plot"
+                },
+                type: "telemetry.plot.stacked",
+                name: "Test Stacked Plot",
+                composition: []
+            };
+
+            testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
+            let viewContainer = document.createElement('div');
+            child.append(viewContainer);
+            component = new Vue({
+                el: viewContainer,
+                components: {
+                    StackedPlot
+                },
+                provide: {
+                    openmct: openmct,
+                    domainObject: stackedPlotObject,
+                    composition: openmct.composition.get(stackedPlotObject)
+                },
+                template: '<stacked-plot></stacked-plot>'
+            });
+
+            return Vue.nextTick().then(() => {
+                plotViewComponentObject = component.$root.$children[0];
+                plotViewComponentObject.compositionObjects = [testTelemetryObject];
+            });
+        });
+
+        afterEach(() => {
+            component.$destroy();
+            component = undefined;
         });
 
         it("Renders a collapsed legend for every telemetry", () => {

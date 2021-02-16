@@ -100,11 +100,11 @@
 import PlotLegendItemCollapsed from "./PlotLegendItemCollapsed.vue";
 import PlotLegendItemExpanded from "./PlotLegendItemExpanded.vue";
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         PlotLegendItemExpanded,
         PlotLegendItemCollapsed
     },
+    inject: ['openmct', 'domainObject'],
     props: {
         cursorLocked: {
             type: Boolean,
