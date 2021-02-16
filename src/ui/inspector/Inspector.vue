@@ -66,10 +66,6 @@ import StylesInspectorView from '@/ui/inspector/styles/StylesInspectorView.vue';
 import SavedStylesInspectorView from '@/ui/inspector/styles/SavedStylesInspectorView.vue';
 
 export default {
-    provide: {
-        stylesManager: stylesManager
-    },
-    inject: ['openmct'],
     components: {
         StylesInspectorView,
         SavedStylesInspectorView,
@@ -81,6 +77,10 @@ export default {
         Location,
         InspectorViews
     },
+    provide: {
+        stylesManager: stylesManager
+    },
+    inject: ['openmct'],
     props: {
         isEditing: {
             type: Boolean,

@@ -19,7 +19,8 @@
                 ></span>
             </div>
             <span
-                class="l-browse-bar__object-name c-object-label__name c-input-inline"
+                class="l-browse-bar__object-name c-object-label__name"
+                :class="{ 'c-input-inline' : type.creatable}"
                 :contenteditable="type.creatable"
                 @blur="updateName"
                 @keydown.enter.prevent
@@ -124,11 +125,11 @@ import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwit
 const PLACEHOLDER_OBJECT = {};
 
 export default {
-    inject: ['openmct'],
     components: {
         NotebookMenuSwitcher,
         ViewSwitcher
     },
+    inject: ['openmct'],
     props: {
         actionCollection: {
             type: Object,
