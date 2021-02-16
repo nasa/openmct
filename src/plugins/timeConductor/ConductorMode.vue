@@ -63,8 +63,8 @@
 import toggleMixin from '../../ui/mixins/toggle-mixin';
 
 export default {
-    inject: ['openmct', 'configuration'],
     mixins: [toggleMixin],
+    inject: ['openmct', 'configuration'],
     data: function () {
         let activeClock = this.openmct.time.clock();
         if (activeClock !== undefined) {

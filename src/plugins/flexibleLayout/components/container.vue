@@ -87,12 +87,12 @@ import DropHint from './dropHint.vue';
 const MIN_FRAME_SIZE = 5;
 
 export default {
-    inject: ['openmct'],
     components: {
         FrameComponent,
         ResizeHandle,
         DropHint
     },
+    inject: ['openmct'],
     props: {
         container: {
             type: Object,

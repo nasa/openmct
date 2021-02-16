@@ -125,11 +125,11 @@ import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwit
 const PLACEHOLDER_OBJECT = {};
 
 export default {
-    inject: ['openmct'],
     components: {
         NotebookMenuSwitcher,
         ViewSwitcher
     },
+    inject: ['openmct'],
     props: {
         actionCollection: {
             type: Object,
