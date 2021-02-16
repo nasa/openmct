@@ -67,17 +67,17 @@ define([
                             components: {
                                 TableComponent: TableComponent.default
                             },
+                            provide: {
+                                openmct,
+                                table,
+                                objectPath
+                            },
                             data() {
                                 return {
                                     isEditing: editMode,
                                     markingProp,
                                     view
                                 };
-                            },
-                            provide: {
-                                openmct,
-                                table,
-                                objectPath
                             },
                             template: '<table-component ref="tableComponent" :isEditing="isEditing" :marking="markingProp" :view="view"/>'
                         });

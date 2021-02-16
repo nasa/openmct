@@ -169,6 +169,34 @@ ObjectAPI.prototype.get = function (identifier) {
 };
 
 /**
+ * Search for domain objects.
+ *
+ * Object providersSearches and combines results of each object provider search.
+ * Objects without search provided will have been indexed
+ * and will be searched using the fallback indexed search.
+ * Search results are asynchronous and resolve in parallel.
+ *
+ * @method search
+ * @memberof module:openmct.ObjectAPI#
+ * @param {string} query the term to search for
+ * @param {Object} options search options
+ * @returns {Array.<Promise.<module:openmct.DomainObject>>}
+ *          an array of promises returned from each object provider's search function
+ *          each resolving to domain objects matching provided search query and options.
+ */
+ObjectAPI.prototype.search = function (query, options) {
+    const searchPromises = Object.values(this.providers)
+        .filter(provider => provider.search !== undefined)
+        .map(provider => provider.search(query, options));
+
+    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, options)
+        .then(results => results.hits
+            .map(hit => utils.toNewFormat(hit.object.getModel(), hit.object.getId()))));
+
+    return searchPromises;
+};
+
+/**
  * Will fetch object for the given identifier, returning a version of the object that will automatically keep
  * itself updated as it is mutated. Before using this function, you should ask yourself whether you really need it.
  * The platform will provide mutable objects to views automatically if the underlying object can be mutated. The

@@ -43,14 +43,14 @@ export default function LADTableViewProvider(openmct) {
                         components: {
                             LadTableComponent: LadTable
                         },
+                        provide: {
+                            openmct
+                        },
                         data: () => {
                             return {
                                 domainObject,
                                 objectPath
                             };
-                        },
-                        provide: {
-                            openmct
                         },
                         template: '<lad-table-component :domain-object="domainObject" :object-path="objectPath"></lad-table-component>'
                     });
