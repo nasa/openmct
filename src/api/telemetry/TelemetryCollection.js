@@ -65,6 +65,8 @@ export class TelemetryCollection {
 
         this.arguments = options;
 
+        this.collectionState = undefined;
+
         this.listeners = {
             add: [],
             remove: []
@@ -99,7 +101,8 @@ export class TelemetryCollection {
 
         this.requestHistoricalTelemetry();
     }
-
+    // need to work out how requestHistorical and nextPage work
+    // together when provider supports paging
     async requestHistoricalTelemetry() {
         if (!this.historicalProvider) {
             return;
@@ -124,8 +127,10 @@ export class TelemetryCollection {
             }, this.arguments);
     }
 
-    // utilized by telemetry provider to add more data
-    addPage(telemetryData) {
+    // utilized by telemetry provider to add more data as well as
+    // pass in the current state of the telemetry collection (which the telemetry collection will hold)
+    addPage(telemetryData, collectionState) {
+        this.collectionState = collectionState;
         this.processNewTelemetry(telemetryData);
     }
 
@@ -161,17 +166,24 @@ export class TelemetryCollection {
     // if the provider supports it
     hasMorePages() {
         return this.historicalProvider
-            && this.historicalProvider.supportsPaging && this.historicalProvider.supportsPaging()
+            && this.historicalProvider.supportsPaging
+            && this.historicalProvider.supportsPaging()
+            && this.historicalProvider.hasMorePages
             && this.historicalProvider.hasMorePages(this);
     }
 
-    // will return the next "page" of telemetry if the provider supports it
+    // will trigger the next page for the provider if it supports it,
+    // addPage will be passed in as a callback to receive the telemetry and updated state
     nextPage() {
-        if (!this.historicalProvider || !this.historicalProvider.supportsPaging()) { // add check for paging method
+        if (
+            !this.historicalProvider
+            || !this.historicalProvider.supportsPaging()
+            || !this.historicalProvider.nextPage
+        ) {
             throw new Error('Provider does not support paging');
         }
 
-        this.historicalProvider.nextPage(this.arguments, this);
+        this.historicalProvider.nextPage(this.addPage, this.collectionState);
     }
 
     // either user changes bounds or incremental tick
@@ -229,6 +241,7 @@ export class TelemetryCollection {
         this.futureBuffer = [];
 
         this.requestHistoricalTelemetry();
+        // possible unsubscribe/resubscribe...
     }
 
     timeSystem(timeSystem) {
