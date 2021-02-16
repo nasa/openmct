@@ -170,7 +170,7 @@ export default {
             return this.domainObject.configuration.rowsLayout;
         },
         allContainersAreEmpty() {
-            return !this.containers.filter(container => container.frames.length).length;
+            return this.containers.every(container => container.frames.length === 0);
         }
     },
     mounted() {
