@@ -28,7 +28,7 @@
     ></div>
 
     <div
-        v-if="areAllContainersEmpty()"
+        v-if="allContainersAreEmpty"
         class="c-fl__empty"
     >
         <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
@@ -168,6 +168,9 @@ export default {
         },
         rowsLayout() {
             return this.domainObject.configuration.rowsLayout;
+        },
+        allContainersAreEmpty() {
+            return !this.containers.filter(container => container.frames.length).length;
         }
     },
     mounted() {
@@ -176,14 +179,10 @@ export default {
         this.composition.on('remove', this.removeChildObject);
         this.composition.on('add', this.addFrame);
         this.composition.load();
-
-        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
         this.composition.off('remove', this.removeChildObject);
         this.composition.off('add', this.addFrame);
-
-        this.unobserve();
     },
     methods: {
         buildIdentifierMap() {
@@ -193,9 +192,6 @@ export default {
                     this.identifierMap[keystring] = true;
                 });
             });
-        },
-        areAllContainersEmpty() {
-            return !this.containers.filter(container => container.frames.length).length;
         },
         addContainer() {
             let container = new Container();
@@ -267,7 +263,7 @@ export default {
                 .frames
                 .filter((f => f.id === frameId))[0];
 
-            this.removeFromComposition(frame.domainObjectIdentifier)
+            this.removeFromComposition(frame.domainObjectIdentifier);
 
             this.$nextTick().then(() => {
                 sizeToFill(container.frames);
