@@ -221,6 +221,7 @@ describe('the plugin', function () {
 
     describe("The stacked plot view", () => {
         let testTelemetryObject;
+        let testTelemetryObject2;
         let stackedPlotObject;
         let component;
         let compositionAPI;
@@ -286,6 +287,37 @@ describe('the plugin', function () {
                 }
             };
 
+            testTelemetryObject2 = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object2"
+                },
+                type: "test-object",
+                name: "Test Object2",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key2",
+                        name: "Some attribute2",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key2",
+                        name: "Another attribute2",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
             let viewContainer = document.createElement('div');
             child.append(viewContainer);
             component = new Vue({
@@ -303,7 +335,7 @@ describe('the plugin', function () {
 
             return Vue.nextTick().then(() => {
                 plotViewComponentObject = component.$root.$children[0];
-                plotViewComponentObject.compositionObjects = [testTelemetryObject];
+                plotViewComponentObject.compositionObjects = [testTelemetryObject, testTelemetryObject2];
             });
         });
 
@@ -314,8 +346,9 @@ describe('the plugin', function () {
 
         it("Renders a collapsed legend for every telemetry", () => {
             let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
-            expect(legend.length).toBe(1);
+            expect(legend.length).toBe(2);
             expect(legend[0].innerHTML).toEqual('Test Object');
+            expect(legend[1].innerHTML).toEqual('Test Object2');
         });
 
         it("Renders an expanded legend for every telemetry", () => {
@@ -325,25 +358,33 @@ describe('the plugin', function () {
             legendControl.dispatchEvent(clickEvent);
 
             let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
-            expect(legend.length).toBe(6);
+            expect(legend.length).toBe(12);
         });
 
         it("Renders X-axis ticks for the telemetry object", () => {
             let xAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper');
-            expect(xAxisElement.length).toBe(1);
+            expect(xAxisElement.length).toBe(2);
 
             let ticks = xAxisElement[0].querySelectorAll('.gl-plot-tick');
+            expect(ticks.length).toBe(5);
+
+            ticks = xAxisElement[1].querySelectorAll('.gl-plot-tick');
             expect(ticks.length).toBe(5);
         });
 
         it("Renders Y-axis options for the telemetry object", () => {
             let yAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select');
-            expect(yAxisElement.length).toBe(1);
+            expect(yAxisElement.length).toBe(2);
             //Object{name: 'Some attribute', key: 'some-key'}, Object{name: 'Another attribute', key: 'some-other-key'}
             let options = yAxisElement[0].querySelectorAll('option');
             expect(options.length).toBe(2);
             expect(options[0].value).toBe('Some attribute');
             expect(options[1].value).toBe('Another attribute');
+
+            options = yAxisElement[1].querySelectorAll('option');
+            expect(options.length).toBe(2);
+            expect(options[0].value).toBe('Some attribute2');
+            expect(options[1].value).toBe('Another attribute2');
         });
     });
 
