@@ -87,6 +87,7 @@ export default function NotebookPlugin() {
         openmct.types.addType('notebook', notebookType);
 
         const snapshotContainer = new SnapshotContainer(openmct);
+        openmct.snapshotContainer = snapshotContainer;
         const notebookSnapshotIndicator = new Vue ({
             provide: {
                 openmct,
