@@ -61,10 +61,10 @@ import { createNewEmbed, getEntryPosById, getNotebookEntries } from '../utils/no
 import Moment from 'moment';
 
 export default {
-    inject: ['openmct', 'snapshotContainer'],
     components: {
         NotebookEmbed
     },
+    inject: ['openmct', 'snapshotContainer'],
     props: {
         domainObject: {
             type: Object,
