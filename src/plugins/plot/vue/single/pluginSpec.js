@@ -327,6 +327,24 @@ describe('the plugin', function () {
             let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
             expect(legend.length).toBe(6);
         });
+
+        it("Renders X-axis ticks for the telemetry object", () => {
+            let xAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper');
+            expect(xAxisElement.length).toBe(1);
+
+            let ticks = xAxisElement[0].querySelectorAll('.gl-plot-tick');
+            expect(ticks.length).toBe(5);
+        });
+
+        it("Renders Y-axis options for the telemetry object", () => {
+            let yAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select');
+            expect(yAxisElement.length).toBe(1);
+            //Object{name: 'Some attribute', key: 'some-key'}, Object{name: 'Another attribute', key: 'some-other-key'}
+            let options = yAxisElement[0].querySelectorAll('option');
+            expect(options.length).toBe(2);
+            expect(options[0].value).toBe('Some attribute');
+            expect(options[1].value).toBe('Another attribute');
+        });
     });
 
 });
