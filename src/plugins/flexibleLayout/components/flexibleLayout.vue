@@ -140,12 +140,12 @@ function sizeToFill(items) {
 }
 
 export default {
-    inject: ['openmct', 'objectPath', 'layoutObject'],
     components: {
         ContainerComponent,
         ResizeHandle,
         DropHint
     },
+    inject: ['openmct', 'objectPath', 'layoutObject'],
     props: {
         isEditing: Boolean
     },

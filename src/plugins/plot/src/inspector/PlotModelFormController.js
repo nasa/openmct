@@ -136,7 +136,7 @@ define([
             };
         }
 
-        if (objectPath && !_.isFunction(objectPath)) {
+        if (objectPath && (typeof objectPath !== "function")) {
             const staticObjectPath = objectPath;
             objectPath = function () {
                 return staticObjectPath;

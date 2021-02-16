@@ -59,11 +59,11 @@ export default {
             font: 'default'
         };
     },
-    inject: ['openmct'],
     components: {
         LayoutFrame
     },
     mixins: [conditionalStylesMixin],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,
