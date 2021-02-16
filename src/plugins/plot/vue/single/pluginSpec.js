@@ -20,11 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
+import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 
-describe('the plugin', function () {
+fdescribe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -183,16 +183,20 @@ describe('the plugin', function () {
             return Vue.nextTick();
         });
 
-        it("Renders a legend for every telemetry", () => {
+        it("Renders a collapsed legend for every telemetry", () => {
             let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
             expect(legend.length).toBe(1);
             expect(legend[0].innerHTML).toEqual('Test Object');
         });
 
-        it("Renders a legend for every telemetry", () => {
-            let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
-            expect(legend.length).toBe(1);
-            expect(legend[0].innerHTML).toEqual('Test Object');
+        it("Renders an expanded legend for every telemetry", () => {
+            let legendControl = element.querySelector('.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle');
+            const clickEvent = createMouseEvent('click');
+
+            legendControl.dispatchEvent(clickEvent);
+
+            let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
+            expect(legend.length).toBe(6);
         });
     });
 
