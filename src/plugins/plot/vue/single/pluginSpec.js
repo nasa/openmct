@@ -20,10 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
+import {createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
 import PlotVuePlugin from "./plugin";
+import Vue from "vue";
 
-fdescribe('the plugin', function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -34,7 +35,8 @@ fdescribe('the plugin', function () {
         appHolder.style.height = '480px';
 
         openmct = createOpenMct();
-        openmct.install(new PlotVuePlugin());
+
+        openmct.install(new PlotVuePlugin(openmct));
 
         element = document.createElement('div');
         element.style.width = '640px';
@@ -44,20 +46,29 @@ fdescribe('the plugin', function () {
         child.style.height = '480px';
         element.appendChild(child);
 
-        openmct.time.bounds({
-            start: 1597160002854,
-            end: 1597181232854
+        openmct.time.timeSystem('utc', {
+            start: 0,
+            end: 4
+        });
+
+        openmct.types.addType('test-object', {
+            creatable: true
+        });
+
+        spyOnBuiltins(['requestAnimationFrame']);
+        window.requestAnimationFrame.and.callFake((callBack) => {
+            callBack();
         });
 
         openmct.on('start', done);
         openmct.startHeadless(appHolder);
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    afterEach(async () => {
+        await resetApplicationState();
     });
 
-    describe('the plot view', () => {
+    describe('the plot views', () => {
 
         it('provides a plot view for objects with telemetry', () => {
             const testTelemetryObject = {
@@ -116,6 +127,73 @@ fdescribe('the plugin', function () {
             expect(plotView).toBeDefined();
         });
 
+    });
+
+    describe("The single plot view", () => {
+        let testTelemetryObject;
+        let applicableViews;
+        let plotViewProvider;
+        let plotView;
+
+        beforeEach(() => {
+
+            const getFunc = openmct.$injector.get;
+            spyOn(openmct.$injector, 'get')
+                .withArgs('exportImageService').and.returnValue({
+                    exportPNG: () => {},
+                    exportJPG: () => {}
+                })
+                .and.callFake(getFunc);
+            testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
+            applicableViews = openmct.objectViews.get(testTelemetryObject);
+            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'plot-single');
+            plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
+            plotView.show(child, true);
+
+            return Vue.nextTick();
+        });
+
+        it("Renders a legend for every telemetry", () => {
+            let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
+            expect(legend.length).toBe(1);
+            expect(legend[0].innerHTML).toEqual('Test Object');
+        });
+
+        it("Renders a legend for every telemetry", () => {
+            let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
+            expect(legend.length).toBe(1);
+            expect(legend[0].innerHTML).toEqual('Test Object');
+        });
     });
 
 });
