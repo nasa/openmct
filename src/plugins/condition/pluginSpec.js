@@ -476,7 +476,7 @@ describe('the plugin', function () {
 
     });
 
-    fdescribe('the condition check for staleness', () => {
+    describe('the condition check for staleness', () => {
         let conditionSetDomainObject;
 
         beforeEach(() => {
