@@ -41,7 +41,7 @@ define([
                 form: [
                     {
                         "key": "keep_alive",
-                        "name": "Keep Tabs Alive",
+                        "name": "Eager Load Tabs",
                         "control": "select",
                         "options": [
                             {
