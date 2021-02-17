@@ -15,27 +15,15 @@
             id="inspector-elements-tree"
             class="c-tree c-elements-pool__tree"
         >
-            <li
+            <element-item
                 v-for="(element, index) in elements"
                 :key="element.identifier.key"
-                @drop="moveTo(index)"
-                @dragover="allowDrop"
-            >
-                <div
-                    class="c-tree__item c-elements-pool__item"
-                    draggable="true"
-                    @dragstart="moveFrom(index)"
-                >
-                    <span
-                        v-if="elements.length > 1 && isEditing"
-                        class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"
-                    ></span>
-                    <object-label
-                        :domain-object="element"
-                        :object-path="[element, parentObject]"
-                    />
-                </div>
-            </li>
+                :index="index"
+                :element-object="element"
+                :parent-object="parentObject"
+                @drop-custom="moveTo(index)"
+                @dragstart-custom="moveFrom(index)"
+            />
             <li
                 class="js-last-place"
                 @drop="moveToIndex(elements.length)"
@@ -51,12 +39,12 @@
 <script>
 import _ from 'lodash';
 import Search from '../components/search.vue';
-import ObjectLabel from '../components/ObjectLabel.vue';
+import ElementItem from './ElementItem.vue';
 
 export default {
     components: {
         'Search': Search,
-        'ObjectLabel': ObjectLabel
+        'ElementItem': ElementItem
     },
     inject: ['openmct'],
     data() {
@@ -66,7 +54,8 @@ export default {
             parentObject: undefined,
             currentSearch: '',
             isDragging: false,
-            selection: []
+            selection: [],
+            contextClickTracker: {}
         };
     },
     mounted() {
@@ -147,9 +136,6 @@ export default {
                 return element !== undefined
                     && element.name.toLowerCase().search(this.currentSearch) !== -1;
             });
-        },
-        allowDrop(event) {
-            event.preventDefault();
         },
         moveTo(moveToIndex) {
             this.composition.reorder(this.moveFromIndex, moveToIndex);

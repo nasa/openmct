@@ -27,6 +27,10 @@
         transform: translateY(-2px);
         width: $d; height: $d;
     }
+
+    &.is-context-clicked {
+        box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
+    }
 }
 
 .js-last-place {
