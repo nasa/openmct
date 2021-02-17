@@ -372,6 +372,23 @@ describe("the plugin", function () {
             expect(ticks.length).toBe(5);
         });
 
+        it("Renders Y-axis ticks for the telemetry object", (done) => {
+            plotViewComponentObject.$children[0].component.$children[0].config.yAxis.set('displayRange', {
+                min: 10,
+                max: 20
+            });
+            Vue.nextTick(() => {
+                let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper");
+                expect(yAxisElement.length).toBe(2);
+                let ticks = yAxisElement[0].querySelectorAll(".gl-plot-tick");
+                expect(ticks.length).toBe(6);
+
+                ticks = yAxisElement[1].querySelectorAll(".gl-plot-tick");
+                expect(ticks.length).toBe(0);
+                done();
+            });
+        });
+
         it("Renders Y-axis options for the telemetry object", () => {
             let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select");
             expect(yAxisElement.length).toBe(2);
