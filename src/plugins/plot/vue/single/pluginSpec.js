@@ -25,7 +25,7 @@ import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "../stackedPlot/StackedPlot.vue";
 
-fdescribe("the plugin", function () {
+describe("the plugin", function () {
     let element;
     let child;
     let openmct;
@@ -392,18 +392,27 @@ fdescribe("the plugin", function () {
             let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
             let visible = 0;
             gridLinesContainer.forEach(el => {
-                if (window.getComputedStyle(el).display !== "none") {
+                if (el.style.display !== "none") {
                     visible++;
                 }
             });
             expect(visible).toBe(4);
         });
 
-        it("hides grid lines for all telemetry objects", () => {
+        it("hides grid lines for all telemetry objects", (done) => {
             expect(plotViewComponentObject.gridLines).toBeTrue();
             plotViewComponentObject.toggleGridLines();
             Vue.nextTick(() => {
                 expect(plotViewComponentObject.gridLines).toBeFalse();
+                let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
+                let visible = 0;
+                gridLinesContainer.forEach(el => {
+                    if (el.style.display !== "none") {
+                        visible++;
+                    }
+                });
+                expect(visible).toBe(0);
+                done();
             });
         });
     });
