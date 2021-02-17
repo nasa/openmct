@@ -335,7 +335,7 @@ describe("the plugin", function () {
 
             return Vue.nextTick().then(() => {
                 plotViewComponentObject = component.$root.$children[0];
-                plotViewComponentObject.compositionObjects = [testTelemetryObject, testTelemetryObject2];
+                plotViewComponentObject.compositionObjects = [testTelemetryObject];
             });
         });
 
@@ -346,9 +346,8 @@ describe("the plugin", function () {
 
         it("Renders a collapsed legend for every telemetry", () => {
             let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
-            expect(legend.length).toBe(2);
+            expect(legend.length).toBe(1);
             expect(legend[0].innerHTML).toEqual("Test Object");
-            expect(legend[1].innerHTML).toEqual("Test Object2");
         });
 
         it("Renders an expanded legend for every telemetry", () => {
@@ -358,17 +357,14 @@ describe("the plugin", function () {
             legendControl.dispatchEvent(clickEvent);
 
             let legend = element.querySelectorAll(".plot-wrapper-expanded-legend .plot-legend-item td");
-            expect(legend.length).toBe(12);
+            expect(legend.length).toBe(6);
         });
 
         it("Renders X-axis ticks for the telemetry object", () => {
             let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
-            expect(xAxisElement.length).toBe(2);
+            expect(xAxisElement.length).toBe(1);
 
             let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-            expect(ticks.length).toBe(5);
-
-            ticks = xAxisElement[1].querySelectorAll(".gl-plot-tick");
             expect(ticks.length).toBe(5);
         });
 
@@ -379,29 +375,20 @@ describe("the plugin", function () {
             });
             Vue.nextTick(() => {
                 let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-tick-wrapper");
-                expect(yAxisElement.length).toBe(2);
+                expect(yAxisElement.length).toBe(1);
                 let ticks = yAxisElement[0].querySelectorAll(".gl-plot-tick");
                 expect(ticks.length).toBe(6);
-
-                ticks = yAxisElement[1].querySelectorAll(".gl-plot-tick");
-                expect(ticks.length).toBe(0);
                 done();
             });
         });
 
         it("Renders Y-axis options for the telemetry object", () => {
             let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select");
-            expect(yAxisElement.length).toBe(2);
-            //Object{name: "Some attribute", key: "some-key"}, Object{name: "Another attribute", key: "some-other-key"}
+            expect(yAxisElement.length).toBe(1);
             let options = yAxisElement[0].querySelectorAll("option");
             expect(options.length).toBe(2);
             expect(options[0].value).toBe("Some attribute");
             expect(options[1].value).toBe("Another attribute");
-
-            options = yAxisElement[1].querySelectorAll("option");
-            expect(options.length).toBe(2);
-            expect(options[0].value).toBe("Some attribute2");
-            expect(options[1].value).toBe("Another attribute2");
         });
 
         it("shows grid lines for all telemetry objects", () => {
@@ -413,7 +400,7 @@ describe("the plugin", function () {
                     visible++;
                 }
             });
-            expect(visible).toBe(4);
+            expect(visible).toBe(2);
         });
 
         it("hides grid lines for all telemetry objects", (done) => {
@@ -429,6 +416,26 @@ describe("the plugin", function () {
                     }
                 });
                 expect(visible).toBe(0);
+                done();
+            });
+        });
+
+        it('plots a new series when a new telemetry object is added', (done) => {
+            plotViewComponentObject.compositionObjects.push(testTelemetryObject2);
+            Vue.nextTick(() => {
+                let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
+                expect(legend.length).toBe(2);
+                expect(legend[1].innerHTML).toEqual("Test Object2");
+                done();
+            });
+        });
+
+        it("Renders a new series when added to one of the plot", (done) => {
+            plotViewComponentObject.$children[0].component.$children[0].config.series.addTelemetryObject(testTelemetryObject2);
+            Vue.nextTick(() => {
+                let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
+                expect(legend.length).toBe(2);
+                expect(legend[1].innerHTML).toEqual("Test Object2");
                 done();
             });
         });
