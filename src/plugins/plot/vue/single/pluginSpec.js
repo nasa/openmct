@@ -25,43 +25,43 @@ import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "../stackedPlot/StackedPlot.vue";
 
-describe('the plugin', function () {
+fdescribe("the plugin", function () {
     let element;
     let child;
     let openmct;
 
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
+        const appHolder = document.createElement("div");
+        appHolder.style.width = "640px";
+        appHolder.style.height = "480px";
 
         openmct = createOpenMct();
 
         openmct.install(new PlotVuePlugin(openmct));
 
-        element = document.createElement('div');
-        element.style.width = '640px';
-        element.style.height = '480px';
-        child = document.createElement('div');
-        child.style.width = '640px';
-        child.style.height = '480px';
+        element = document.createElement("div");
+        element.style.width = "640px";
+        element.style.height = "480px";
+        child = document.createElement("div");
+        child.style.width = "640px";
+        child.style.height = "480px";
         element.appendChild(child);
 
-        openmct.time.timeSystem('utc', {
+        openmct.time.timeSystem("utc", {
             start: 0,
             end: 4
         });
 
-        openmct.types.addType('test-object', {
+        openmct.types.addType("test-object", {
             creatable: true
         });
 
-        spyOnBuiltins(['requestAnimationFrame']);
+        spyOnBuiltins(["requestAnimationFrame"]);
         window.requestAnimationFrame.and.callFake((callBack) => {
             callBack();
         });
 
-        openmct.on('start', done);
+        openmct.on("start", done);
         openmct.startHeadless(appHolder);
     });
 
@@ -69,9 +69,9 @@ describe('the plugin', function () {
         await resetApplicationState();
     });
 
-    describe('the plot views', () => {
+    describe("the plot views", () => {
 
-        it('provides a plot view for objects with telemetry', () => {
+        it("provides a plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
                 type: "test-object",
@@ -92,11 +92,11 @@ describe('the plugin', function () {
             };
 
             const applicableViews = openmct.objectViews.get(testTelemetryObject);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === 'plot-single');
+            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
             expect(plotView).toBeDefined();
         });
 
-        it('provides an overlay plot view for objects with telemetry', () => {
+        it("provides an overlay plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
                 type: "telemetry.plot.overlay",
@@ -108,11 +108,11 @@ describe('the plugin', function () {
             };
 
             const applicableViews = openmct.objectViews.get(testTelemetryObject);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === 'plot-overlay');
+            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-overlay");
             expect(plotView).toBeDefined();
         });
 
-        it('provides a stacked plot view for objects with telemetry', () => {
+        it("provides a stacked plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
                 type: "telemetry.plot.stacked",
@@ -124,7 +124,7 @@ describe('the plugin', function () {
             };
 
             const applicableViews = openmct.objectViews.get(testTelemetryObject);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === 'plot-stacked');
+            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-stacked");
             expect(plotView).toBeDefined();
         });
 
@@ -139,8 +139,8 @@ describe('the plugin', function () {
         beforeEach(() => {
 
             const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, 'get')
-                .withArgs('exportImageService').and.returnValue({
+            spyOn(openmct.$injector, "get")
+                .withArgs("exportImageService").and.returnValue({
                     exportPNG: () => {},
                     exportJPG: () => {}
                 })
@@ -177,7 +177,7 @@ describe('the plugin', function () {
             };
 
             applicableViews = openmct.objectViews.get(testTelemetryObject);
-            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'plot-single');
+            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
             plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             plotView.show(child, true);
 
@@ -185,37 +185,37 @@ describe('the plugin', function () {
         });
 
         it("Renders a collapsed legend for every telemetry", () => {
-            let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
+            let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
             expect(legend.length).toBe(1);
-            expect(legend[0].innerHTML).toEqual('Test Object');
+            expect(legend[0].innerHTML).toEqual("Test Object");
         });
 
         it("Renders an expanded legend for every telemetry", () => {
-            let legendControl = element.querySelector('.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle');
-            const clickEvent = createMouseEvent('click');
+            let legendControl = element.querySelector(".c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle");
+            const clickEvent = createMouseEvent("click");
 
             legendControl.dispatchEvent(clickEvent);
 
-            let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
+            let legend = element.querySelectorAll(".plot-wrapper-expanded-legend .plot-legend-item td");
             expect(legend.length).toBe(6);
         });
 
         it("Renders X-axis ticks for the telemetry object", () => {
-            let xAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper');
+            let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
             expect(xAxisElement.length).toBe(1);
 
-            let ticks = xAxisElement[0].querySelectorAll('.gl-plot-tick');
+            let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
             expect(ticks.length).toBe(5);
         });
 
         it("Renders Y-axis options for the telemetry object", () => {
-            let yAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select');
+            let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select");
             expect(yAxisElement.length).toBe(1);
-            //Object{name: 'Some attribute', key: 'some-key'}, Object{name: 'Another attribute', key: 'some-other-key'}
-            let options = yAxisElement[0].querySelectorAll('option');
+            //Object{name: "Some attribute", key: "some-key"}, Object{name: "Another attribute", key: "some-other-key"}
+            let options = yAxisElement[0].querySelectorAll("option");
             expect(options.length).toBe(2);
-            expect(options[0].value).toBe('Some attribute');
-            expect(options[1].value).toBe('Another attribute');
+            expect(options[0].value).toBe("Some attribute");
+            expect(options[1].value).toBe("Another attribute");
         });
     });
 
@@ -231,20 +231,20 @@ describe('the plugin', function () {
         beforeEach(() => {
 
             const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, 'get')
-                .withArgs('exportImageService').and.returnValue({
+            spyOn(openmct.$injector, "get")
+                .withArgs("exportImageService").and.returnValue({
                     exportPNG: () => {},
                     exportJPG: () => {}
                 })
                 .and.callFake(getFunc);
 
             compositionAPI = openmct.composition;
-            mockComposition = jasmine.createSpyObj('composition', ['load', 'on', 'off']);
+            mockComposition = jasmine.createSpyObj("composition", ["load", "on", "off"]);
             mockComposition.load.and.callFake(() => {});
             mockComposition.on.and.callFake(() => {});
             mockComposition.off.and.callFake(() => {});
 
-            spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
+            spyOn(compositionAPI, "get").and.returnValue(mockComposition);
 
             stackedPlotObject = {
                 identifier: {
@@ -318,7 +318,7 @@ describe('the plugin', function () {
                 }
             };
 
-            let viewContainer = document.createElement('div');
+            let viewContainer = document.createElement("div");
             child.append(viewContainer);
             component = new Vue({
                 el: viewContainer,
@@ -330,7 +330,7 @@ describe('the plugin', function () {
                     domainObject: stackedPlotObject,
                     composition: openmct.composition.get(stackedPlotObject)
                 },
-                template: '<stacked-plot></stacked-plot>'
+                template: "<stacked-plot></stacked-plot>"
             });
 
             return Vue.nextTick().then(() => {
@@ -345,46 +345,66 @@ describe('the plugin', function () {
         });
 
         it("Renders a collapsed legend for every telemetry", () => {
-            let legend = element.querySelectorAll('.plot-wrapper-collapsed-legend .plot-series-name');
+            let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
             expect(legend.length).toBe(2);
-            expect(legend[0].innerHTML).toEqual('Test Object');
-            expect(legend[1].innerHTML).toEqual('Test Object2');
+            expect(legend[0].innerHTML).toEqual("Test Object");
+            expect(legend[1].innerHTML).toEqual("Test Object2");
         });
 
         it("Renders an expanded legend for every telemetry", () => {
-            let legendControl = element.querySelector('.c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle');
-            const clickEvent = createMouseEvent('click');
+            let legendControl = element.querySelector(".c-plot-legend__view-control.gl-plot-legend__view-control.c-disclosure-triangle");
+            const clickEvent = createMouseEvent("click");
 
             legendControl.dispatchEvent(clickEvent);
 
-            let legend = element.querySelectorAll('.plot-wrapper-expanded-legend .plot-legend-item td');
+            let legend = element.querySelectorAll(".plot-wrapper-expanded-legend .plot-legend-item td");
             expect(legend.length).toBe(12);
         });
 
         it("Renders X-axis ticks for the telemetry object", () => {
-            let xAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper');
+            let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
             expect(xAxisElement.length).toBe(2);
 
-            let ticks = xAxisElement[0].querySelectorAll('.gl-plot-tick');
+            let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
             expect(ticks.length).toBe(5);
 
-            ticks = xAxisElement[1].querySelectorAll('.gl-plot-tick');
+            ticks = xAxisElement[1].querySelectorAll(".gl-plot-tick");
             expect(ticks.length).toBe(5);
         });
 
         it("Renders Y-axis options for the telemetry object", () => {
-            let yAxisElement = element.querySelectorAll('.gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select');
+            let yAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-y .gl-plot-y-label__select");
             expect(yAxisElement.length).toBe(2);
-            //Object{name: 'Some attribute', key: 'some-key'}, Object{name: 'Another attribute', key: 'some-other-key'}
-            let options = yAxisElement[0].querySelectorAll('option');
+            //Object{name: "Some attribute", key: "some-key"}, Object{name: "Another attribute", key: "some-other-key"}
+            let options = yAxisElement[0].querySelectorAll("option");
             expect(options.length).toBe(2);
-            expect(options[0].value).toBe('Some attribute');
-            expect(options[1].value).toBe('Another attribute');
+            expect(options[0].value).toBe("Some attribute");
+            expect(options[1].value).toBe("Another attribute");
 
-            options = yAxisElement[1].querySelectorAll('option');
+            options = yAxisElement[1].querySelectorAll("option");
             expect(options.length).toBe(2);
-            expect(options[0].value).toBe('Some attribute2');
-            expect(options[1].value).toBe('Another attribute2');
+            expect(options[0].value).toBe("Some attribute2");
+            expect(options[1].value).toBe("Another attribute2");
+        });
+
+        it("shows grid lines for all telemetry objects", () => {
+            expect(plotViewComponentObject.gridLines).toBeTrue();
+            let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
+            let visible = 0;
+            gridLinesContainer.forEach(el => {
+                if (window.getComputedStyle(el).display !== "none") {
+                    visible++;
+                }
+            });
+            expect(visible).toBe(4);
+        });
+
+        it("hides grid lines for all telemetry objects", () => {
+            expect(plotViewComponentObject.gridLines).toBeTrue();
+            plotViewComponentObject.toggleGridLines();
+            Vue.nextTick(() => {
+                expect(plotViewComponentObject.gridLines).toBeFalse();
+            });
         });
     });
 

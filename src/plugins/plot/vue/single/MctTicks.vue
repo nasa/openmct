@@ -21,7 +21,9 @@
 -->
 
 <template>
-<div ref="tickContainer">
+<div ref="tickContainer"
+     class="u-contents js-ticks"
+>
     <div v-if="position === 'left'"
          class="gl-plot-tick-wrapper"
     >
@@ -50,9 +52,7 @@
         </div>
     </div>
     <!-- grid lines follow -->
-    <div v-if="position === 'right'"
-         class="gl-plot-tick-wrapper"
-    >
+    <template v-if="position === 'right'">
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-hash hash-v"
@@ -62,17 +62,15 @@
              }"
         >
         </div>
-    </div>
-    <div v-if="position === 'bottom'"
-         class="gl-plot-tick-wrapper"
-    >
+    </template>
+    <template v-if="position === 'bottom'">
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-hash hash-h"
              :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
         >
         </div>
-    </div>
+    </template>
 </div>
 </template>
 
