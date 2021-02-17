@@ -110,6 +110,8 @@ export default class CouchObjectProvider {
             controller.abort();
             this.controllers[identifier.key] = undefined;
         }
+
+        return true;
     }
 
     async getChanges(identifier, options) {

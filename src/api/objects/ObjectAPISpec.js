@@ -256,6 +256,29 @@ describe("The Object API", () => {
             });
         });
     });
+
+    describe("The synchronize function", () => {
+        describe("when a provider is available", () => {
+            let mockProvider;
+            beforeEach(() => {
+                mockProvider = jasmine.createSpyObj("mock provider", [
+                    "getChanges",
+                    "abortGetChanges"
+                ]);
+                mockProvider.getChanges.and.returnValue(Promise.resolve(true));
+                mockProvider.abortGetChanges.and.returnValue(Promise.resolve(true));
+                objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
+            });
+            it("Calls 'synchronize' on provider", () => {
+                objectAPI.synchronize(mockDomainObject.identifier, {});
+                expect(mockProvider.getChanges).toHaveBeenCalled();
+            });
+            it("Calls 'deSynchronize' on provider", () => {
+                objectAPI.deSynchronize(mockDomainObject.identifier);
+                expect(mockProvider.abortGetChanges).toHaveBeenCalled();
+            });
+        });
+    });
 });
 
 function hasOwnProperty(object, property) {
