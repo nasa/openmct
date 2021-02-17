@@ -47,12 +47,12 @@ define([
                 return {
                     show: function (element) {
                         component = new Vue({
-                            provide: {
-                                openmct
-                            },
                             el: element,
                             components: {
                                 FiltersView: FiltersView.default
+                            },
+                            provide: {
+                                openmct
                             },
                             template: '<filters-view></filters-view>'
                         });

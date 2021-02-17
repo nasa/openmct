@@ -49,11 +49,11 @@ import ObjectLabel from '../components/ObjectLabel.vue';
 
 export default {
     name: 'TreeItem',
-    inject: ['openmct'],
     components: {
         viewControl,
         ObjectLabel
     },
+    inject: ['openmct'],
     props: {
         node: {
             type: Object,

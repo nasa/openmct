@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,39 +20,4 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
-
-    function RootRegistry() {
-        this.providers = [];
-    }
-
-    RootRegistry.prototype.getRoots = function () {
-        const promises = this.providers.map(function (provider) {
-            return provider();
-        });
-
-        return Promise.all(promises)
-            .then(_.flatten);
-    };
-
-    function isKey(key) {
-        return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
-    }
-
-    RootRegistry.prototype.addRoot = function (key) {
-        if (isKey(key) || (Array.isArray(key) && key.every(isKey))) {
-            this.providers.push(function () {
-                return key;
-            });
-        } else if (typeof key === "function") {
-            this.providers.push(key);
-        }
-    };
-
-    return RootRegistry;
-
-});
+export const ALLOWED_FOLDER_TYPES = ['folder', 'noneditable.folder'];

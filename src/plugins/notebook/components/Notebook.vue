@@ -118,13 +118,13 @@ import objectUtils from 'objectUtils';
 import { throttle } from 'lodash';
 
 export default {
-    inject: ['openmct', 'domainObject', 'snapshotContainer'],
     components: {
         NotebookEntry,
         Search,
         SearchResults,
         Sidebar
     },
+    inject: ['openmct', 'domainObject', 'snapshotContainer'],
     data() {
         return {
             defaultPageId: getDefaultNotebook() ? getDefaultNotebook().page.id : '',

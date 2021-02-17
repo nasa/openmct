@@ -283,6 +283,7 @@ define([
         this.install(this.plugins.NewFolderAction());
         this.install(this.plugins.ViewDatumAction());
         this.install(this.plugins.ObjectInterceptors());
+        this.install(this.plugins.NonEditableFolder());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

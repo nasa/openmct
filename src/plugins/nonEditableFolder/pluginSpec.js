@@ -19,40 +19,32 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import {
+    createOpenMct,
+    resetApplicationState
+} from 'utils/testing';
 
-define([
-    'lodash'
-], function (
-    _
-) {
+describe("the plugin", () => {
+    const NON_EDITABLE_FOLDER_KEY = 'noneditable.folder';
+    let openmct;
 
-    function RootRegistry() {
-        this.providers = [];
-    }
+    beforeEach((done) => {
+        openmct = createOpenMct();
+        openmct.install(openmct.plugins.NonEditableFolder());
 
-    RootRegistry.prototype.getRoots = function () {
-        const promises = this.providers.map(function (provider) {
-            return provider();
-        });
+        openmct.on('start', done);
+        openmct.startHeadless();
+    });
 
-        return Promise.all(promises)
-            .then(_.flatten);
-    };
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
 
-    function isKey(key) {
-        return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
-    }
+    it('adds the new non-editable folder type', () => {
+        const type = openmct.types.get(NON_EDITABLE_FOLDER_KEY);
 
-    RootRegistry.prototype.addRoot = function (key) {
-        if (isKey(key) || (Array.isArray(key) && key.every(isKey))) {
-            this.providers.push(function () {
-                return key;
-            });
-        } else if (typeof key === "function") {
-            this.providers.push(key);
-        }
-    };
-
-    return RootRegistry;
+        expect(type).toBeDefined();
+        expect(type.definition.creatable).toBeFalse();
+    });
 
 });
