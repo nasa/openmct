@@ -28,7 +28,7 @@
     ></div>
 
     <div
-        v-if="areAllContainersEmpty()"
+        v-if="allContainersAreEmpty"
         class="c-fl__empty"
     >
         <span class="c-fl__empty-message">This Flexible Layout is currently empty</span>
@@ -94,7 +94,6 @@ import Container from '../utils/container';
 import Frame from '../utils/frame';
 import ResizeHandle from './resizeHandle.vue';
 import DropHint from './dropHint.vue';
-import RemoveAction from '../../remove/RemoveAction.js';
 
 const MIN_CONTAINER_SIZE = 5;
 
@@ -152,7 +151,8 @@ export default {
     data() {
         return {
             domainObject: this.layoutObject,
-            newFrameLocation: []
+            newFrameLocation: [],
+            identifierMap: {}
         };
     },
     computed: {
@@ -168,26 +168,30 @@ export default {
         },
         rowsLayout() {
             return this.domainObject.configuration.rowsLayout;
+        },
+        allContainersAreEmpty() {
+            return this.containers.every(container => container.frames.length === 0);
         }
     },
     mounted() {
+        this.buildIdentifierMap();
         this.composition = this.openmct.composition.get(this.domainObject);
         this.composition.on('remove', this.removeChildObject);
         this.composition.on('add', this.addFrame);
-
-        this.RemoveAction = new RemoveAction(this.openmct);
-
-        this.unobserve = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+        this.composition.load();
     },
     beforeDestroy() {
         this.composition.off('remove', this.removeChildObject);
         this.composition.off('add', this.addFrame);
-
-        this.unobserve();
     },
     methods: {
-        areAllContainersEmpty() {
-            return !this.containers.filter(container => container.frames.length).length;
+        buildIdentifierMap() {
+            this.containers.forEach(container => {
+                container.frames.forEach(frame => {
+                    let keystring = this.openmct.objects.makeKeyString(frame.domainObjectIdentifier);
+                    this.identifierMap[keystring] = true;
+                });
+            });
         },
         addContainer() {
             let container = new Container();
@@ -236,16 +240,21 @@ export default {
             this.newFrameLocation = [containerIndex, insertFrameIndex];
         },
         addFrame(domainObject) {
-            let containerIndex = this.newFrameLocation.length ? this.newFrameLocation[0] : 0;
-            let container = this.containers[containerIndex];
-            let frameIndex = this.newFrameLocation.length ? this.newFrameLocation[1] : container.frames.length;
-            let frame = new Frame(domainObject.identifier);
+            let keystring = this.openmct.objects.makeKeyString(domainObject.identifier);
 
-            container.frames.splice(frameIndex + 1, 0, frame);
-            sizeItems(container.frames, frame);
+            if (!this.identifierMap[keystring]) {
+                let containerIndex = this.newFrameLocation.length ? this.newFrameLocation[0] : 0;
+                let container = this.containers[containerIndex];
+                let frameIndex = this.newFrameLocation.length ? this.newFrameLocation[1] : container.frames.length;
+                let frame = new Frame(domainObject.identifier);
 
-            this.newFrameLocation = [];
-            this.persist(containerIndex);
+                container.frames.splice(frameIndex + 1, 0, frame);
+                sizeItems(container.frames, frame);
+
+                this.newFrameLocation = [];
+                this.persist(containerIndex);
+                this.identifierMap[keystring] = true;
+            }
         },
         deleteFrame(frameId) {
             let container = this.containers
@@ -254,16 +263,20 @@ export default {
                 .frames
                 .filter((f => f.id === frameId))[0];
 
-            this.removeFromComposition(frame.domainObjectIdentifier)
-                .then(() => {
-                    sizeToFill(container.frames);
-                    this.setSelectionToParent();
-                });
+            this.removeFromComposition(frame.domainObjectIdentifier);
+
+            this.$nextTick().then(() => {
+                sizeToFill(container.frames);
+                this.setSelectionToParent();
+            });
         },
         removeFromComposition(identifier) {
-            return this.openmct.objects.get(identifier).then((childDomainObject) => {
-                this.RemoveAction.removeFromComposition(this.domainObject, childDomainObject);
-            });
+            let keystring = this.openmct.objects.makeKeyString(identifier);
+
+            this.identifierMap[keystring] = undefined;
+            delete this.identifierMap[keystring];
+
+            this.composition.remove({identifier});
         },
         setSelectionToParent() {
             this.$el.click();
