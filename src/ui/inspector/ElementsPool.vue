@@ -20,8 +20,9 @@
                 :index="index"
                 :element-object="element"
                 :parent-object="parentObject"
-                @drop-custom="moveTo(index)"
+                :allow-drop="allowDrop"
                 @dragstart-custom="moveFrom(index)"
+                @drop-custom="moveTo(index)"
             />
             <li
                 class="js-last-place"
@@ -53,7 +54,8 @@ export default {
             parentObject: undefined,
             currentSearch: '',
             selection: [],
-            contextClickTracker: {}
+            contextClickTracker: {},
+            allowDrop: false
         };
     },
     mounted() {
@@ -136,9 +138,13 @@ export default {
             });
         },
         moveTo(moveToIndex) {
-            this.composition.reorder(this.moveFromIndex, moveToIndex);
+            if (this.allowDrop) {
+                this.composition.reorder(this.moveFromIndex, moveToIndex);
+                this.allowDrop = false;
+            }
         },
         moveFrom(index) {
+            this.allowDrop = true;
             this.moveFromIndex = index;
         }
     }

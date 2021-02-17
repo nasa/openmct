@@ -3,7 +3,7 @@
     draggable="true"
     @dragstart="emitDragStartEvent"
     @dragenter="onDragenter"
-    @dragover="allowDrop"
+    @dragover="onDragover"
     @dragleave="onDragleave"
     @drop="emitDropEvent"
 >
@@ -54,6 +54,9 @@ export default {
             default: () => {
                 return {};
             }
+        },
+        allowDrop: {
+            type: Boolean
         }
     },
     data() {
@@ -63,19 +66,21 @@ export default {
         };
     },
     methods: {
-        allowDrop(event) {
+        onDragover(event) {
             event.preventDefault();
         },
         emitDropEvent(event) {
             this.$emit('drop-custom', this.index);
             this.hover = false;
         },
-        emitDragStartEvent() {
+        emitDragStartEvent(event) {
             this.$emit('dragstart-custom', this.index);
         },
         onDragenter(event) {
-            this.hover = true;
-            this.dragElement = event.target.parentElement;
+            if (this.allowDrop) {
+                this.hover = true;
+                this.dragElement = event.target.parentElement;
+            }
         },
         onDragleave(event) {
             if (event.target.parentElement === this.dragElement) {
