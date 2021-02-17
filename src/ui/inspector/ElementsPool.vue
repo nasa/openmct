@@ -8,7 +8,6 @@
     />
     <div
         class="c-elements-pool__elements"
-        :class="{'is-dragging': isDragging}"
     >
         <ul
             v-if="elements.length > 0"
@@ -53,7 +52,6 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             parentObject: undefined,
             currentSearch: '',
-            isDragging: false,
             selection: [],
             contextClickTracker: {}
         };
@@ -141,13 +139,7 @@ export default {
             this.composition.reorder(this.moveFromIndex, moveToIndex);
         },
         moveFrom(index) {
-            this.isDragging = true;
             this.moveFromIndex = index;
-            document.addEventListener('dragend', this.hideDragStyling);
-        },
-        hideDragStyling() {
-            this.isDragging = false;
-            document.removeEventListener('dragend', this.hideDragStyling);
         }
     }
 };
