@@ -421,7 +421,7 @@ describe("the plugin", function () {
         });
 
         it('plots a new series when a new telemetry object is added', (done) => {
-            plotViewComponentObject.compositionObjects.push(testTelemetryObject2);
+            plotViewComponentObject.addChild(testTelemetryObject2);
             Vue.nextTick(() => {
                 let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
                 expect(legend.length).toBe(2);
@@ -430,12 +430,34 @@ describe("the plugin", function () {
             });
         });
 
-        it("Renders a new series when added to one of the plot", (done) => {
+        it('removes plots from series when a telemetry object is removed', (done) => {
+            plotViewComponentObject.removeChild(testTelemetryObject.identifier);
+            Vue.nextTick(() => {
+                let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
+                expect(legend.length).toBe(0);
+                done();
+            });
+        });
+
+        it("Renders a new series when added to one of the plots", (done) => {
             plotViewComponentObject.$children[0].component.$children[0].config.series.addTelemetryObject(testTelemetryObject2);
             Vue.nextTick(() => {
                 let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
                 expect(legend.length).toBe(2);
                 expect(legend[1].innerHTML).toEqual("Test Object2");
+                done();
+            });
+        });
+
+        it("Adds a new point to the plot", (done) => {
+            let originalLength = plotViewComponentObject.$children[0].component.$children[0].config.series.models[0].data.length;
+            plotViewComponentObject.$children[0].component.$children[0].config.series.models[0].add({
+                utc: 2,
+                'some-key': 1,
+                'some-other-key': 2
+            });
+            Vue.nextTick(() => {
+                expect(plotViewComponentObject.$children[0].component.$children[0].config.series.models[0].data.length).toEqual(originalLength + 1);
                 done();
             });
         });
