@@ -391,6 +391,15 @@ describe("the plugin", function () {
             expect(options[1].value).toBe("Another attribute");
         });
 
+        it("turns on cursor Guides all telemetry objects", (done) => {
+            expect(plotViewComponentObject.cursorGuide).toBeFalse();
+            plotViewComponentObject.toggleCursorGuide();
+            Vue.nextTick(() => {
+                expect(plotViewComponentObject.$children[0].component.$children[0].cursorGuide).toBeTrue();
+                done();
+            });
+        });
+
         it("shows grid lines for all telemetry objects", () => {
             expect(plotViewComponentObject.gridLines).toBeTrue();
             let gridLinesContainer = element.querySelectorAll(".gl-plot-display-area .js-ticks");
