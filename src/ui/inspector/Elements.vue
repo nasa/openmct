@@ -54,11 +54,11 @@ import Search from '../components/search.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         'Search': Search,
         'ObjectLabel': ObjectLabel
     },
+    inject: ['openmct'],
     data() {
         return {
             elements: [],
