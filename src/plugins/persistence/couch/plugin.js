@@ -26,6 +26,7 @@ const PERSISTENCE_SPACE = 'mct';
 
 export default function CouchPlugin(url) {
     return function install(openmct) {
-        openmct.objects.addProvider(PERSISTENCE_SPACE, new CouchObjectProvider(openmct, url, NAMESPACE));
+        install.couchProvider = new CouchObjectProvider(openmct, url, NAMESPACE);
+        openmct.objects.addProvider(PERSISTENCE_SPACE, install.couchProvider);
     };
 }

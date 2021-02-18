@@ -104,6 +104,59 @@ export default class CouchObjectProvider {
         return this.request(identifier.key, "GET").then(this.getModel.bind(this));
     }
 
+    async getObjectsByFilter(filter) {
+        let objects = [];
+
+        let url = `${this.url}/_find`;
+        let body = {};
+
+        if (filter) {
+            body = JSON.stringify(filter);
+        }
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body
+        });
+
+        const reader = response.body.getReader();
+        let completed = false;
+
+        while (!completed) {
+            const {done, value} = await reader.read();
+            //done is true when we lose connection with the provider
+            if (done) {
+                completed = true;
+            }
+
+            if (value) {
+                let chunk = new Uint8Array(value.length);
+                chunk.set(value, 0);
+                const decodedChunk = new TextDecoder("utf-8").decode(chunk);
+                try {
+                    const json = JSON.parse(decodedChunk);
+                    if (json) {
+                        let docs = json.docs;
+                        docs.forEach(doc => {
+                            let object = this.getModel(doc);
+                            if (object) {
+                                objects.push(object);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    //do nothing
+                }
+            }
+
+        }
+
+        return objects;
+    }
+
     abortGetChanges(identifier) {
         const controller = this.controllers[identifier.key];
         if (controller) {
