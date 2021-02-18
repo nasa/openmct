@@ -116,6 +116,7 @@ import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, 
 import objectUtils from 'objectUtils';
 
 import { throttle } from 'lodash';
+import objectLink from '../../../ui/mixins/object-link';
 
 export default {
     components: {
@@ -183,7 +184,9 @@ export default {
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
         this.formatSidebar();
+
         window.addEventListener('orientationchange', this.formatSidebar);
+        window.addEventListener("hashchange", this.navigateToSectionPage, false);
 
         this.navigateToSectionPage();
     },
@@ -191,6 +194,9 @@ export default {
         if (this.unlisten) {
             this.unlisten();
         }
+
+        window.removeEventListener('orientationchange', this.formatSidebar);
+        window.removeEventListener("hashchange", this.navigateToSectionPage);
     },
     updated: function () {
         this.$nextTick(() => {
@@ -226,15 +232,17 @@ export default {
         },
         createNotebookStorageObject() {
             const notebookMeta = {
-                identifier: this.internalDomainObject.identifier
+                name: this.internalDomainObject.name,
+                identifier: this.internalDomainObject.identifier,
+                link: this.getLinktoNotebook()
             };
             const page = this.getSelectedPage();
             const section = this.getSelectedSection();
 
             return {
                 notebookMeta,
-                section,
-                page
+                page,
+                section
             };
         },
         deleteEntry(entryId) {
@@ -341,6 +349,20 @@ export default {
 
             return this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier);
         },
+        getLinktoNotebook() {
+            const objectPath = this.openmct.router.path;
+            const link = objectLink.computed.objectLink.call({
+                objectPath,
+                openmct: this.openmct
+            });
+
+            const selectedSection = this.selectedSection;
+            const selectedPage = this.selectedPage;
+            const sectionId = selectedSection ? selectedSection.id : '';
+            const pageId = selectedPage ? selectedPage.id : '';
+
+            return `${link}?sectionId=${sectionId}&pageId=${pageId}`;
+        },
         getPage(section, id) {
             return section.pages.find(p => p.id === id);
         },
@@ -424,6 +446,12 @@ export default {
 
                 return s;
             });
+
+            const selectedSectionId = this.selectedSection && this.selectedSection.id;
+            const selectedPageId = this.selectedPage && this.selectedPage.id;
+            if (selectedPageId === pageId && selectedSectionId === sectionId) {
+                return;
+            }
 
             this.sectionsChanged({ sections });
         },
