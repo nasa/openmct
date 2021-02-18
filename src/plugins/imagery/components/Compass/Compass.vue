@@ -27,15 +27,15 @@
 >
     <CompassHUD
         v-if="shouldDisplayCompassHUD"
-        :rover-heading="roverHeading"
-        :rover-roll="roverRoll"
+        :heading="heading"
+        :roll="roll"
         :sun-heading="sunHeading"
         :camera-field-of-view="cameraFieldOfView"
         :camera-pan="cameraPan"
     />
     <CompassRose
         v-if="shouldDisplayCompassRose"
-        :rover-heading="roverHeading"
+        :heading="heading"
         :sun-heading="sunHeading"
         :camera-field-of-view="cameraFieldOfView"
         :camera-pan="cameraPan"
@@ -74,26 +74,26 @@ export default {
     },
     computed: {
         shouldDisplayCompassRose() {
-            return this.roverHeading !== undefined;
+            return this.heading !== undefined;
         },
         shouldDisplayCompassHUD() {
-            return this.roverHeading !== undefined;
+            return this.heading !== undefined;
         },
         // degrees from north heading
-        roverHeading() {
+        heading() {
             return this.image.heading;
         },
-        roverRoll() {
+        roll() {
             return this.image.roll;
         },
-        roverPitch() {
+        pitch() {
             return this.image.pitch;
         },
         // degrees from north heading
         sunHeading() {
             return this.image.sunOrientation;
         },
-        // degrees from rover heading
+        // degrees from spacecraft heading
         cameraPan() {
             return this.image.cameraPan;
         },

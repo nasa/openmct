@@ -118,8 +118,8 @@
     </div>
 
     <div
-        class="c-rover-body"
-        :style="roverHeadingStyle"
+        class="c-spacecraft-body"
+        :style="headingStyle"
     >
     </div>
 
@@ -154,7 +154,7 @@ import { normalizeDegrees } from './utils';
 
 export default {
     props: {
-        roverHeading: {
+        heading: {
             type: Number,
             required: true
         },
@@ -179,11 +179,11 @@ export default {
     },
 
     computed: {
-        compassRoverHeading() {
-            return this.lockBezel ? normalizeDegrees(this.roverHeading) : 0;
+        compassHeading() {
+            return this.lockBezel ? normalizeDegrees(this.heading) : 0;
         },
         north() {
-            return normalizeDegrees(this.compassRoverHeading - this.roverHeading);
+            return normalizeDegrees(this.compassHeading - this.heading);
         },
         rotateFrameStyle() {
             return { transform: `rotate(${ this.north }deg)` };
@@ -215,13 +215,13 @@ export default {
                 west: `translate(50,87) ${ rotation }`
             };
         },
-        roverHeadingStyle() {
+        headingStyle() {
             return {
-                transform: `translateX(-50%) rotate(${ this.compassRoverHeading }deg)`
+                transform: `translateX(-50%) rotate(${ this.compassHeading }deg)`
             };
         },
         cameraFOVHeading() {
-            return this.compassRoverHeading + this.cameraPan;
+            return this.compassHeading + this.cameraPan;
         },
         cameraFOVHeadingStyle() {
             return {

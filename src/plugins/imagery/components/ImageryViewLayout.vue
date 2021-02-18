@@ -100,15 +100,15 @@
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
 
-                <!-- rover position fresh -->
+                <!-- spacecraft position fresh -->
                 <div
-                    v-if="hasRelatedTelemetry && roverPositionIsFresh"
+                    v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
                     class="c-imagery__age icon-check c-imagery--new"
                 >POS</div>
 
                 <!-- camera position fresh -->
                 <div
-                    v-if="hasRelatedTelemetry && cameraPositionIsFresh"
+                    v-if="relatedTelemetry.hasRelatedTelemetry && isCameraPositionFresh"
                     class="c-imagery__age icon-check c-imagery--new"
                 >CAM</div>
             </div>
@@ -146,6 +146,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import Compass from './Compass/Compass.vue';
+import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -164,10 +165,10 @@ const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         Compass
     },
+    inject: ['openmct', 'domainObject'],
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
@@ -191,8 +192,7 @@ export default {
             focusedImageRelatedTelemetry: {},
             numericDuration: undefined,
             metadataEndpoints: {},
-            hasRelatedTelemetry: false,
-            relatedTelemetry: {},
+            relatedTelemetry: {}, // ADD related
             latestRelatedTelemetry: {},
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
@@ -261,14 +261,14 @@ export default {
                 && this.imageContainerWidth !== undefined
                 && this.imageContainerHeight !== undefined;
         },
-        roverPositionIsFresh() {
+        isSpacecraftPositionFresh() {
             let isFresh = undefined;
             let latest = this.latestRelatedTelemetry;
             let focused = this.focusedImageRelatedTelemetry;
 
-            if (this.hasRelatedTelemetry) {
+            if (this.relatedTelemetry.hasRelatedTelemetry) {
                 isFresh = true;
-                for (let key of this.roverKeys) {
+                for (let key of this.spacecraftKeys) {
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
                         if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
                             isFresh = false;
@@ -281,16 +281,16 @@ export default {
 
             return isFresh;
         },
-        cameraPositionIsFresh() {
+        isCameraPositionFresh() {
             let isFresh = undefined;
             let latest = this.latestRelatedTelemetry;
             let focused = this.focusedImageRelatedTelemetry;
 
-            if (this.hasRelatedTelemetry) {
+            if (this.relatedTelemetry.hasRelatedTelemetry) {
                 isFresh = true;
 
-                // camera freshness relies on rover position freshness
-                if (this.roverPositionIsFresh) {
+                // camera freshness relies on spacecraft position freshness
+                if (this.isSpacecraftPositionFresh) {
                     for (let key of this.cameraKeys) {
                         if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
                             if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
@@ -328,7 +328,9 @@ export default {
         this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
-        this.roverKeys = ['heading', 'roll', 'pitch'];
+
+        // related telemetry keys
+        this.spacecraftKeys = ['heading', 'roll', 'pitch'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
 
@@ -339,16 +341,20 @@ export default {
         // kickoff
         this.subscribe();
         this.requestHistory();
-        await this.initializeRelatedTelemetry();
+
+        await this.initiateRelatedTelemetry();
+
         this.updateRelatedTelemetryForFocusedImage();
 
-        // track latest telemetry values for rover, camera and sun for comparison
+        // track latest telemetry values for spacecraft, camera and sun for comparison
         this.trackLatestRelatedTelemetry();
 
-        // for when people are scrolling through images quickly
+        // for scrolling through images quickly and resizing the object view
         _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
+        _.debounce(this.resizeImageContainer, 400);
 
-        this.pollResizeImageContainerID = setInterval(this.pollResizeImageContainer, 300);
+        this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
+        this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
     },
     updated() {
         this.scrollToRight();
@@ -359,13 +365,16 @@ export default {
             delete this.unsubscribe;
         }
 
+        this.imageContainerResizeObserver.disconnect();
+
         this.stopDurationTracking();
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
 
+        // ADD related destroy
         // unsubscribe from related telemetry
-        if (this.hasRelatedTelemetry) {
+        if (this.relatedTelemetry.hasRelatedTelemetry) {
             for (let key of this.relatedTelemetry.keys) {
                 if (this.relatedTelemetry[key].unsubscribe) {
                     this.relatedTelemetry[key].unsubscribe();
@@ -373,93 +382,22 @@ export default {
             }
         }
 
-        clearInterval(this.pollResizeImageContainerID);
+        clearInterval(this.imageContainerResizeObserver);
     },
     methods: {
-        async initializeRelatedTelemetry() {
-            if (this.imageHints.relatedTelemetry === undefined) {
-                return;
+        async initiateRelatedTelemetry() {
+            this.relatedTelemetry = new RelatedTelemetry(
+                this.openmct,
+                this.domainObject,
+                [...this.spacecraftKeys, ...this.cameraKeys, ...this.sunKeys]
+            );
+
+            if (this.relatedTelemetry.hasRelatedTelemetry) {
+                await this.relatedTelemetry.load();
             }
-
-            let loadedResolve;
-            this.relatedTelemetryLoaded = new Promise((resolve, reject) => {
-                loadedResolve = resolve;
-            });
-
-            let keys = Object.keys(this.imageHints.relatedTelemetry);
-
-            this.hasRelatedTelemetry = true;
-            this.relatedTelemetry = {
-                keys,
-                ...this.imageHints.relatedTelemetry
-            };
-
-            // grab historical and subscribe to realtime
-            for (let key of keys) {
-                let historicalId;
-                let realtimeId;
-
-                if (this.relatedTelemetry[key].historical) {
-                    if (this.relatedTelemetry[key].historical.telemetryObjectId) {
-                        historicalId = this.relatedTelemetry[key].historical.telemetryObjectId;
-                    } else {
-                        this.relatedTelemetry[key].historicalValuesOnTelemetry = true;
-                    }
-                }
-
-                if (this.relatedTelemetry[key].realtime && this.relatedTelemetry[key].realtime.telemetryObjectId) {
-                    realtimeId = this.relatedTelemetry[key].realtime.telemetryObjectId;
-                }
-
-                // if we have a historical object id, then values will NOT be on the imagery datum
-                if (historicalId) {
-
-                    this.relatedTelemetry[key].historicalDomainObject = await this.openmct.objects.get(historicalId);
-
-                    this.relatedTelemetry[key].requestLatestFor = async (datum) => {
-                        const options = {
-                            start: this.openmct.time.bounds().start,
-                            end: datum[this.timeKey] || datum.timestamp,
-                            strategy: 'latest'
-                        };
-                        let results = await this.openmct.telemetry
-                            .request(this.relatedTelemetry[key].historicalDomainObject, options);
-
-                        return results[results.length - 1];
-                    };
-                }
-
-                if (realtimeId) {
-
-                    this.relatedTelemetry[key].realtimeDomainObject = await this.openmct.objects.get(realtimeId);
-
-                    // set up listeners
-                    this.relatedTelemetry[key].listeners = [];
-                    this.relatedTelemetry[key].subscribe = (callback) => {
-
-                        if (!this.relatedTelemetry[key].isSubscribed) {
-                            this.subscribeToDataForKey(key);
-                        }
-
-                        if (!this.relatedTelemetry[key].listeners.includes(callback)) {
-                            this.relatedTelemetry[key].listeners.push(callback);
-
-                            return () => {
-                                this.relatedTelemetry[key].listeners.remove(callback);
-                            };
-                        } else {
-                            return () => {};
-                        }
-                    };
-
-                }
-
-            }
-
-            loadedResolve();
         },
         async getMostRecentRelatedTelemetry(key, targetDatum) {
-            if (!this.hasRelatedTelemetry) {
+            if (!this.relatedTelemetry.hasRelatedTelemetry) {
                 throw new Error(`${this.domainObject.name} does not have any related telemetry`);
             }
 
@@ -467,11 +405,9 @@ export default {
                 throw new Error(`${key} does not exist on related telemetry`);
             }
 
-            await this.relatedTelemetryLoaded;
-
             let mostRecent;
             let valueKey = this.relatedTelemetry[key].historical.valueKey;
-            let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
+            let valuesOnTelemetry = this.relatedTelemetry[key].hasTelemetryOnDatum;
 
             if (valuesOnTelemetry) {
                 mostRecent = targetDatum[valueKey];
@@ -509,14 +445,14 @@ export default {
             }
         },
         async updateRelatedTelemetryForFocusedImage() {
-            if (!this.hasRelatedTelemetry || !this.focusedImage) {
+            if (!this.relatedTelemetry.hasRelatedTelemetry || !this.focusedImage) {
                 return;
             }
 
             // set data ON image telemetry as well as in focusedImageRelatedTelemetry
             for (let key of this.relatedTelemetry.keys) {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historical) {
-                    let valuesOnTelemetry = this.relatedTelemetry[key].historicalValuesOnTelemetry;
+                    let valuesOnTelemetry = this.relatedTelemetry[key].hasTelemetryOnDatum;
                     let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 
                     if (!valuesOnTelemetry) {
@@ -528,7 +464,7 @@ export default {
             }
         },
         trackLatestRelatedTelemetry() {
-            [...this.roverKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
+            [...this.spacecraftKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
                         let valueKey = this.relatedTelemetry[key].realtime.valueKey;
@@ -819,11 +755,7 @@ export default {
                 this.focusedImageNaturalAspectRatio = img.naturalWidth / img.naturalHeight;
             }, { once: true });
         },
-        pollResizeImageContainer() {
-            if (!this.$refs.focusedImage) {
-                return;
-            }
-
+        resizeImageContainer() {
             if (this.$refs.focusedImage.clientWidth !== this.imageContainerWidth) {
                 this.imageContainerWidth = this.$refs.focusedImage.clientWidth;
             }

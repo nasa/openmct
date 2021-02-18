@@ -95,11 +95,11 @@ const COMPASS_POINTS = [
 
 export default {
     props: {
-        roverHeading: {
+        heading: {
             type: Number,
             required: true
         },
-        roverRoll: {
+        roll: {
             type: Number,
             default: undefined
         },
@@ -118,15 +118,15 @@ export default {
     },
     computed: {
         skewCompassHUDStyle() {
-            if (this.roverRoll === undefined || this.roverRoll === 0) {
+            if (this.roll === undefined || this.roll === 0) {
                 return;
             }
 
-            const origin = this.roverRoll > 0 ? 'left bottom' : 'right top';
+            const origin = this.roll > 0 ? 'left bottom' : 'right top';
 
             return {
                 'transform-origin': origin,
-                transform: `skew(0, ${ this.roverRoll }deg`
+                transform: `skew(0, ${ this.roll }deg`
             };
         },
         visibleCompassPoints() {
@@ -154,12 +154,12 @@ export default {
         normalizedSunHeading() {
             return normalizeDegrees(this.sunHeading);
         },
-        normalizedRoverHeading() {
-            return normalizeDegrees(this.roverHeading);
+        normalizedHeading() {
+            return normalizeDegrees(this.heading);
         },
         visibleRange() {
-            const min = normalizeDegrees(this.normalizedRoverHeading + this.cameraPan - this.cameraFieldOfView / 2);
-            const max = normalizeDegrees(this.normalizedRoverHeading + this.cameraPan + this.cameraFieldOfView / 2);
+            const min = normalizeDegrees(this.normalizedHeading + this.cameraPan - this.cameraFieldOfView / 2);
+            const max = normalizeDegrees(this.normalizedHeading + this.cameraPan + this.cameraFieldOfView / 2);
 
             return [
                 min,
