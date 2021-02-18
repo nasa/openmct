@@ -314,8 +314,18 @@ export default {
             return activityText.length ? activityText : [line];
         },
         getGroupContainer(activityRows, heading) {
+            let svgHeight = 30;
+            let svgWidth = 200;
+
             const rows = Object.keys(activityRows);
             const isNested = this.options.isChildObject;
+
+            if (rows.length) {
+                const lastActivityRow = rows[rows.length - 1];
+                svgHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
+                svgWidth = this.width;
+            }
+
             let component = new Vue({
                 components: {
                     SwimLane
@@ -323,27 +333,18 @@ export default {
                 data() {
                     return {
                         heading,
-                        isNested
+                        isNested,
+                        height: svgHeight,
+                        width: svgWidth
                     };
                 },
-                template: `<swim-lane :is-nested="isNested"><template slot="label">{{heading}}</template><template slot="object"><svg></svg></template></swim-lane>`
+                template: `<swim-lane :is-nested="isNested"><template slot="label">{{heading}}</template><template slot="object"><svg :height="height" :width="width"></svg></template></swim-lane>`
             });
 
             this.$refs.planHolder.appendChild(component.$mount().$el);
 
             let groupLabel = component.$el.querySelector('div:nth-child(1)');
             let groupSVG = component.$el.querySelector('svg');
-
-            if (rows.length) {
-                const lastActivityRow = rows[rows.length - 1];
-                const svgHeight = parseInt(lastActivityRow, 10) + ROW_HEIGHT;
-
-                groupSVG.setAttributeNS("null", "height", String(svgHeight));
-                groupSVG.setAttributeNS(null, "width", String(this.width));
-            } else {
-                groupSVG.setAttributeNS(null, "height", "30");
-                groupSVG.setAttributeNS(null, "width", "200");
-            }
 
             return {
                 groupLabel,
