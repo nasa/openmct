@@ -452,6 +452,17 @@ describe("the plugin", function () {
             });
         });
 
+        it("Changes the label of the y axis when the option changes", (done) => {
+            let selectEl = element.querySelector('.gl-plot-y-label__select');
+            selectEl.value = 'Another attribute';
+            selectEl.dispatchEvent(new Event("change"));
+
+            Vue.nextTick(() => {
+                expect(config.yAxis.get('label')).toEqual('Another attribute');
+                done();
+            });
+        });
+
         it("Renders a new series when added to one of the plots", (done) => {
             config.series.addTelemetryObject(testTelemetryObject2);
             Vue.nextTick(() => {
