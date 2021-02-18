@@ -39,6 +39,8 @@ const ROW_HEIGHT = 25;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 const EDGE_ROUNDING = 10;
+const DEFAULT_COLOR = 'yellow';
+const DEFAULT_TEXT_COLOR = 'white';
 
 export default {
     components: {
@@ -265,8 +267,8 @@ export default {
 
                         activitiesByRow[currentRow].push({
                             activity: {
-                                color: activity.color,
-                                textColor: activity.textColor,
+                                color: activity.color || DEFAULT_COLOR,
+                                textColor: activity.textColor || DEFAULT_TEXT_COLOR,
                                 name: activity.name,
                                 exceeds: {
                                     start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
