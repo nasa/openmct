@@ -97,7 +97,8 @@
                                :selected-page="getSelectedPage()"
                                :selected-section="getSelectedSection()"
                                :read-only="false"
-                               @updateEntries="updateEntries"
+                               @deleteEntry="deleteEntry"
+                               @updateEntry="updateEntry"
                 />
             </div>
         </div>
@@ -111,10 +112,11 @@ import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
 import { throttle } from 'lodash';
+import objectLink from '../../../ui/mixins/object-link';
 
 export default {
     components: {
@@ -182,7 +184,9 @@ export default {
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
         this.formatSidebar();
+
         window.addEventListener('orientationchange', this.formatSidebar);
+        window.addEventListener("hashchange", this.navigateToSectionPage, false);
 
         this.navigateToSectionPage();
     },
@@ -190,6 +194,9 @@ export default {
         if (this.unlisten) {
             this.unlisten();
         }
+
+        window.removeEventListener('orientationchange', this.formatSidebar);
+        window.removeEventListener("hashchange", this.navigateToSectionPage);
     },
     updated: function () {
         this.$nextTick(() => {
@@ -225,16 +232,49 @@ export default {
         },
         createNotebookStorageObject() {
             const notebookMeta = {
-                identifier: this.internalDomainObject.identifier
+                name: this.internalDomainObject.name,
+                identifier: this.internalDomainObject.identifier,
+                link: this.getLinktoNotebook()
             };
             const page = this.getSelectedPage();
             const section = this.getSelectedSection();
 
             return {
                 notebookMeta,
-                section,
-                page
+                page,
+                section
             };
+        },
+        deleteEntry(entryId) {
+            const self = this;
+            const entryPos = getEntryPosById(entryId, this.internalDomainObject, this.selectedSection, this.selectedPage);
+            if (entryPos === -1) {
+                this.openmct.notifications.alert('Warning: unable to delete entry');
+                console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
+
+                return;
+            }
+
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will permanently delete this entry. Do you wish to continue?',
+                buttons: [
+                    {
+                        label: "Ok",
+                        emphasis: true,
+                        callback: () => {
+                            const entries = getNotebookEntries(self.internalDomainObject, self.selectedSection, self.selectedPage);
+                            entries.splice(entryPos, 1);
+                            self.updateEntries(entries);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: "Cancel",
+                        callback: () => dialog.dismiss()
+                    }
+                ]
+            });
         },
         dragOver(event) {
             event.preventDefault();
@@ -308,6 +348,20 @@ export default {
             }
 
             return this.openmct.objects.get(oldNotebookStorage.notebookMeta.identifier);
+        },
+        getLinktoNotebook() {
+            const objectPath = this.openmct.router.path;
+            const link = objectLink.computed.objectLink.call({
+                objectPath,
+                openmct: this.openmct
+            });
+
+            const selectedSection = this.selectedSection;
+            const selectedPage = this.selectedPage;
+            const sectionId = selectedSection ? selectedSection.id : '';
+            const pageId = selectedPage ? selectedPage.id : '';
+
+            return `${link}?sectionId=${sectionId}&pageId=${pageId}`;
         },
         getPage(section, id) {
             return section.pages.find(p => p.id === id);
@@ -392,6 +446,12 @@ export default {
 
                 return s;
             });
+
+            const selectedSectionId = this.selectedSection && this.selectedSection.id;
+            const selectedPageId = this.selectedPage && this.selectedPage.id;
+            if (selectedPageId === pageId && selectedSectionId === sectionId) {
+                return;
+            }
 
             this.sectionsChanged({ sections });
         },
@@ -511,6 +571,13 @@ export default {
             }
 
             setDefaultNotebookSection(section);
+        },
+        updateEntry(entry) {
+            const entries = getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage);
+            const entryPos = getEntryPosById(entry.id, this.internalDomainObject, this.selectedSection, this.selectedPage);
+            entries[entryPos] = entry;
+
+            this.updateEntries(entries);
         },
         updateEntries(entries) {
             const configuration = this.internalDomainObject.configuration;
