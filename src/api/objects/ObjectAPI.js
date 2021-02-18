@@ -168,61 +168,6 @@ ObjectAPI.prototype.get = function (identifier) {
     });
 };
 
-ObjectAPI.prototype.deSynchronize = function (identifier) {
-    if (this.supportsSynchronize(identifier)) {
-        const provider = this.getProvider(identifier);
-        provider.abortGetChanges(identifier);
-    } else {
-        throw new Error('Provider does not support object synchronization!');
-    }
-};
-
-ObjectAPI.prototype.synchronize = function (identifier, options) {
-    if (this.supportsSynchronize(identifier)) {
-        const provider = this.getProvider(identifier);
-        let objectPromise = provider.getChanges(identifier, options);
-
-        return objectPromise.then(response => {
-            return response;
-        });
-    } else {
-        throw new Error('Provider does not support object synchronization!');
-    }
-};
-
-ObjectAPI.prototype.supportsSynchronize = function (idOrKeyString) {
-    let identifier = utils.parseKeyString(idOrKeyString);
-    let provider = this.getProvider(identifier);
-
-    return provider !== undefined
-        && provider.getChanges !== undefined
-        && provider.abortGetChanges !== undefined;
-};
-
-/**
- * Refresh a domain object.
- * @param {module:openmct.DomainObject} domainObject the object to refresh
- * @param {string} path the property to refresh
- * @param {*} value the new value for this property
- * @method refresh
- * @memberof module:openmct.ObjectAPI#
- */
-ObjectAPI.prototype.refresh = function (domainObject, path, value) {
-    if (domainObject.isMutable) {
-        domainObject.$refresh(path, value);
-    } else {
-        //Creating a temporary mutable domain object allows other mutable instances of the
-        //object to be kept in sync.
-        let mutableDomainObject = this._toMutable(domainObject);
-
-        //Mutate temporary mutable object, in the process informing any other mutable instances
-        mutableDomainObject.$refresh(path, value);
-
-        //Destroy temporary mutable object
-        this.destroyMutable(mutableDomainObject);
-    }
-};
-
 /**
  * Search for domain objects.
  *
