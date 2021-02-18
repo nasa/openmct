@@ -24,6 +24,7 @@ import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} f
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "../stackedPlot/StackedPlot.vue";
+import configStore from "@/plugins/plot/vue/single/configuration/configStore";
 
 describe("the plugin", function () {
     let element;
@@ -222,6 +223,7 @@ describe("the plugin", function () {
     describe("The stacked plot view", () => {
         let testTelemetryObject;
         let testTelemetryObject2;
+        let config;
         let stackedPlotObject;
         let component;
         let compositionAPI;
@@ -336,6 +338,8 @@ describe("the plugin", function () {
             return Vue.nextTick().then(() => {
                 plotViewComponentObject = component.$root.$children[0];
                 plotViewComponentObject.compositionObjects = [testTelemetryObject];
+                const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+                config = configStore.get(configId);
             });
         });
 
@@ -369,7 +373,7 @@ describe("the plugin", function () {
         });
 
         it("Renders Y-axis ticks for the telemetry object", (done) => {
-            plotViewComponentObject.$children[0].component.$children[0].config.yAxis.set('displayRange', {
+            config.yAxis.set('displayRange', {
                 min: 10,
                 max: 20
             });
@@ -449,7 +453,7 @@ describe("the plugin", function () {
         });
 
         it("Renders a new series when added to one of the plots", (done) => {
-            plotViewComponentObject.$children[0].component.$children[0].config.series.addTelemetryObject(testTelemetryObject2);
+            config.series.addTelemetryObject(testTelemetryObject2);
             Vue.nextTick(() => {
                 let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
                 expect(legend.length).toBe(2);
@@ -459,20 +463,20 @@ describe("the plugin", function () {
         });
 
         it("Adds a new point to the plot", (done) => {
-            let originalLength = plotViewComponentObject.$children[0].component.$children[0].config.series.models[0].data.length;
-            plotViewComponentObject.$children[0].component.$children[0].config.series.models[0].add({
+            let originalLength = config.series.models[0].data.length;
+            config.series.models[0].add({
                 utc: 2,
                 'some-key': 1,
                 'some-other-key': 2
             });
             Vue.nextTick(() => {
-                expect(plotViewComponentObject.$children[0].component.$children[0].config.series.models[0].data.length).toEqual(originalLength + 1);
+                expect(config.series.models[0].data.length).toEqual(originalLength + 1);
                 done();
             });
         });
 
         it("updates the xscale", (done) => {
-            plotViewComponentObject.$children[0].component.$children[0].config.xAxis.set('displayRange', {
+            config.xAxis.set('displayRange', {
                 min: 0,
                 max: 10
             });
@@ -486,7 +490,7 @@ describe("the plugin", function () {
         });
 
         it("updates the yscale", (done) => {
-            plotViewComponentObject.$children[0].component.$children[0].config.yAxis.set('displayRange', {
+            config.yAxis.set('displayRange', {
                 min: 10,
                 max: 20
             });
