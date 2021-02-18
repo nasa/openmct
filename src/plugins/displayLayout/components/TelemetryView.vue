@@ -235,7 +235,7 @@ export default {
 
         this.openmct.time.off("bounds", this.refreshData);
 
-        if (this.domainObject.isMutable) {
+        if (this.domainObject && this.domainObject.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },

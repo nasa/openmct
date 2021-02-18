@@ -142,7 +142,7 @@ export default {
             this.removeSelectable();
         }
 
-        if (this.domainObject.isMutable) {
+        if (this.domainObject && this.domainObject.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
