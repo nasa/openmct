@@ -24,6 +24,7 @@ import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} f
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "../stackedPlot/StackedPlot.vue";
+import configStore from "@/plugins/plot/vue/single/configuration/configStore";
 
 describe("the plugin", function () {
     let element;
@@ -222,6 +223,7 @@ describe("the plugin", function () {
     describe("The stacked plot view", () => {
         let testTelemetryObject;
         let testTelemetryObject2;
+        let config;
         let stackedPlotObject;
         let component;
         let compositionAPI;
@@ -336,6 +338,8 @@ describe("the plugin", function () {
             return Vue.nextTick().then(() => {
                 plotViewComponentObject = component.$root.$children[0];
                 plotViewComponentObject.compositionObjects = [testTelemetryObject];
+                const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+                config = configStore.get(configId);
             });
         });
 
@@ -369,7 +373,7 @@ describe("the plugin", function () {
         });
 
         it("Renders Y-axis ticks for the telemetry object", (done) => {
-            plotViewComponentObject.$children[0].component.$children[0].config.yAxis.set('displayRange', {
+            config.yAxis.set('displayRange', {
                 min: 10,
                 max: 20
             });
@@ -389,6 +393,15 @@ describe("the plugin", function () {
             expect(options.length).toBe(2);
             expect(options[0].value).toBe("Some attribute");
             expect(options[1].value).toBe("Another attribute");
+        });
+
+        it("turns on cursor Guides all telemetry objects", (done) => {
+            expect(plotViewComponentObject.cursorGuide).toBeFalse();
+            plotViewComponentObject.toggleCursorGuide();
+            Vue.nextTick(() => {
+                expect(plotViewComponentObject.$children[0].component.$children[0].cursorGuide).toBeTrue();
+                done();
+            });
         });
 
         it("shows grid lines for all telemetry objects", () => {
@@ -421,7 +434,7 @@ describe("the plugin", function () {
         });
 
         it('plots a new series when a new telemetry object is added', (done) => {
-            plotViewComponentObject.compositionObjects.push(testTelemetryObject2);
+            plotViewComponentObject.addChild(testTelemetryObject2);
             Vue.nextTick(() => {
                 let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
                 expect(legend.length).toBe(2);
@@ -430,12 +443,73 @@ describe("the plugin", function () {
             });
         });
 
-        it("Renders a new series when added to one of the plot", (done) => {
-            plotViewComponentObject.$children[0].component.$children[0].config.series.addTelemetryObject(testTelemetryObject2);
+        it('removes plots from series when a telemetry object is removed', (done) => {
+            plotViewComponentObject.removeChild(testTelemetryObject.identifier);
+            Vue.nextTick(() => {
+                let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
+                expect(legend.length).toBe(0);
+                done();
+            });
+        });
+
+        it("Changes the label of the y axis when the option changes", (done) => {
+            let selectEl = element.querySelector('.gl-plot-y-label__select');
+            selectEl.value = 'Another attribute';
+            selectEl.dispatchEvent(new Event("change"));
+
+            Vue.nextTick(() => {
+                expect(config.yAxis.get('label')).toEqual('Another attribute');
+                done();
+            });
+        });
+
+        it("Renders a new series when added to one of the plots", (done) => {
+            config.series.addTelemetryObject(testTelemetryObject2);
             Vue.nextTick(() => {
                 let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
                 expect(legend.length).toBe(2);
                 expect(legend[1].innerHTML).toEqual("Test Object2");
+                done();
+            });
+        });
+
+        it("Adds a new point to the plot", (done) => {
+            let originalLength = config.series.models[0].data.length;
+            config.series.models[0].add({
+                utc: 2,
+                'some-key': 1,
+                'some-other-key': 2
+            });
+            Vue.nextTick(() => {
+                expect(config.series.models[0].data.length).toEqual(originalLength + 1);
+                done();
+            });
+        });
+
+        it("updates the xscale", (done) => {
+            config.xAxis.set('displayRange', {
+                min: 0,
+                max: 10
+            });
+            Vue.nextTick(() => {
+                expect(plotViewComponentObject.$children[0].component.$children[0].xScale.domain()).toEqual({
+                    min: 0,
+                    max: 10
+                });
+                done();
+            });
+        });
+
+        it("updates the yscale", (done) => {
+            config.yAxis.set('displayRange', {
+                min: 10,
+                max: 20
+            });
+            Vue.nextTick(() => {
+                expect(plotViewComponentObject.$children[0].component.$children[0].yScale.domain()).toEqual({
+                    min: 10,
+                    max: 20
+                });
                 done();
             });
         });
