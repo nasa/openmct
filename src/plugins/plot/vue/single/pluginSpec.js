@@ -470,6 +470,34 @@ describe("the plugin", function () {
                 done();
             });
         });
+
+        it("updates the xscale", (done) => {
+            plotViewComponentObject.$children[0].component.$children[0].config.xAxis.set('displayRange', {
+                min: 0,
+                max: 10
+            });
+            Vue.nextTick(() => {
+                expect(plotViewComponentObject.$children[0].component.$children[0].xScale.domain()).toEqual({
+                    min: 0,
+                    max: 10
+                });
+                done();
+            });
+        });
+
+        it("updates the yscale", (done) => {
+            plotViewComponentObject.$children[0].component.$children[0].config.yAxis.set('displayRange', {
+                min: 10,
+                max: 20
+            });
+            Vue.nextTick(() => {
+                expect(plotViewComponentObject.$children[0].component.$children[0].yScale.domain()).toEqual({
+                    min: 10,
+                    max: 20
+                });
+                done();
+            });
+        });
     });
 
 });
