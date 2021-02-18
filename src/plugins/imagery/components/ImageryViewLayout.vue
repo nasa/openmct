@@ -381,8 +381,6 @@ export default {
                 }
             }
         }
-
-        clearInterval(this.imageContainerResizeObserver);
     },
     methods: {
         async initiateRelatedTelemetry() {
