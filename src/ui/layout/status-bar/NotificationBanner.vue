@@ -29,6 +29,11 @@
     @click="maximize()"
 >
     <span class="c-message-banner__message">{{ activeModel.message }}</span>
+    <span v-if="haslink"
+          class="c-message-banner__message"
+          :class="[haslink ? getLinkProps.cssClass : '']"
+    >{{ getLinkProps.text }}</span>
+
     <progress-bar
         v-if="activeModel.progressPerc !== undefined"
         class="c-message-banner__progress-bar"
@@ -43,6 +48,7 @@
 
 <script>
 import ProgressBar from '../../components/ProgressBar.vue';
+
 let activeNotification = undefined;
 let maximizedDialog = undefined;
 let minimizeButton = {
@@ -78,11 +84,20 @@ export default {
                 message: undefined,
                 progressPerc: undefined,
                 progressText: undefined,
-                minimized: undefined
+                minimized: undefined,
+                options: undefined
             }
         };
     },
     computed: {
+        haslink() {
+            const options = this.activeModel.options;
+
+            return options && options.link;
+        },
+        getLinkProps() {
+            return this.activeModel.options.link;
+        },
         progressWidth() {
             return {
                 width: this.activeModel.progress + '%'
@@ -145,6 +160,15 @@ export default {
             activeNotification.off('destroy', dismissMaximizedDialog);
         },
         maximize() {
+            if (this.haslink) {
+                const linkProps = this.getLinkProps;
+                linkProps.onClick();
+
+                activeNotification.dismiss();
+
+                return;
+            }
+
             if (this.activeModel.progressPerc !== undefined) {
                 maximizedDialog = this.openmct.overlays.progressDialog({
                     buttons: [minimizeButton],
@@ -164,6 +188,5 @@ export default {
             }
         }
     }
-
 };
 </script>
