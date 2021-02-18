@@ -342,7 +342,7 @@ export default {
         this.subscribe();
         this.requestHistory();
 
-        await this.initiateRelatedTelemetry();
+        await this.initializeRelatedTelemetry();
 
         this.updateRelatedTelemetryForFocusedImage();
 
@@ -383,7 +383,7 @@ export default {
         }
     },
     methods: {
-        async initiateRelatedTelemetry() {
+        async initializeRelatedTelemetry() {
             this.relatedTelemetry = new RelatedTelemetry(
                 this.openmct,
                 this.domainObject,
