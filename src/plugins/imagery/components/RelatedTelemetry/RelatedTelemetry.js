@@ -20,8 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function copyObject(obj) {
-    return JSON.parse(JSON.stringify(obj));
+function copyRelatedMetadata(metadata) {
+    let compare = metadata.comparisonFunction;
+    let copiedMetadata = JSON.parse(JSON.stringify(metadata));
+    copiedMetadata.comparisonFunction = compare;
+
+    return copiedMetadata;
 }
 
 export default class RelatedTelemetry {
@@ -31,7 +35,7 @@ export default class RelatedTelemetry {
         this._domainObject = domainObject;
 
         let metadata = this._openmct.telemetry.getMetadata(this._domainObject);
-        let imageHints = copyObject(metadata.valuesForHints(['image'])[0]);
+        let imageHints = metadata.valuesForHints(['image'])[0];
 
         this.hasRelatedTelemetry = imageHints.relatedTelemetry !== undefined;
 
@@ -44,7 +48,7 @@ export default class RelatedTelemetry {
             // grab related telemetry metadata
             for (let key of this.keys) {
                 if (imageHints.relatedTelemetry[key]) {
-                    this[key] = imageHints.relatedTelemetry[key];
+                    this[key] = copyRelatedMetadata(imageHints.relatedTelemetry[key]);
                 }
             }
 
