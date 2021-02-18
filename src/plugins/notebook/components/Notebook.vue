@@ -97,7 +97,8 @@
                                :selected-page="getSelectedPage()"
                                :selected-section="getSelectedSection()"
                                :read-only="false"
-                               @updateEntries="updateEntries"
+                               @deleteEntry="deleteEntry"
+                               @updateEntry="updateEntry"
                 />
             </div>
         </div>
@@ -111,7 +112,7 @@ import Search from '@/ui/components/search.vue';
 import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
-import { addNotebookEntry, createNewEmbed, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
+import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
 import { throttle } from 'lodash';
@@ -243,6 +244,37 @@ export default {
                 page,
                 section
             };
+        },
+        deleteEntry(entryId) {
+            const self = this;
+            const entryPos = getEntryPosById(entryId, this.internalDomainObject, this.selectedSection, this.selectedPage);
+            if (entryPos === -1) {
+                this.openmct.notifications.alert('Warning: unable to delete entry');
+                console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
+
+                return;
+            }
+
+            const dialog = this.openmct.overlays.dialog({
+                iconClass: 'alert',
+                message: 'This action will permanently delete this entry. Do you wish to continue?',
+                buttons: [
+                    {
+                        label: "Ok",
+                        emphasis: true,
+                        callback: () => {
+                            const entries = getNotebookEntries(self.internalDomainObject, self.selectedSection, self.selectedPage);
+                            entries.splice(entryPos, 1);
+                            self.updateEntries(entries);
+                            dialog.dismiss();
+                        }
+                    },
+                    {
+                        label: "Cancel",
+                        callback: () => dialog.dismiss()
+                    }
+                ]
+            });
         },
         dragOver(event) {
             event.preventDefault();
@@ -539,6 +571,13 @@ export default {
             }
 
             setDefaultNotebookSection(section);
+        },
+        updateEntry(entry) {
+            const entries = getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage);
+            const entryPos = getEntryPosById(entry.id, this.internalDomainObject, this.selectedSection, this.selectedPage);
+            entries[entryPos] = entry;
+
+            this.updateEntries(entries);
         },
         updateEntries(entries) {
             const configuration = this.internalDomainObject.configuration;
