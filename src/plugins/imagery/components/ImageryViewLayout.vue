@@ -192,7 +192,7 @@ export default {
             focusedImageRelatedTelemetry: {},
             numericDuration: undefined,
             metadataEndpoints: {},
-            relatedTelemetry: {}, // ADD related
+            relatedTelemetry: {},
             latestRelatedTelemetry: {},
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
@@ -342,11 +342,9 @@ export default {
         this.subscribe();
         this.requestHistory();
 
+        // related telemetry
         await this.initializeRelatedTelemetry();
-
         this.updateRelatedTelemetryForFocusedImage();
-
-        // track latest telemetry values for spacecraft, camera and sun for comparison
         this.trackLatestRelatedTelemetry();
 
         // for scrolling through images quickly and resizing the object view
@@ -367,12 +365,15 @@ export default {
 
         this.imageContainerResizeObserver.disconnect();
 
+        if (this.relatedTelemetry.hasRelatedTelemetry) {
+            this.relatedTelemetry.destroy();
+        }
+
         this.stopDurationTracking();
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
 
-        // ADD related destroy
         // unsubscribe from related telemetry
         if (this.relatedTelemetry.hasRelatedTelemetry) {
             for (let key of this.relatedTelemetry.keys) {
