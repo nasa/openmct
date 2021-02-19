@@ -13,6 +13,12 @@
         </div>
     </div>
     <div class="l-browse-bar__end">
+        <NotebookMenuSwitcher v-if="notebookEnabled"
+                              :domain-object="domainObject"
+                              :object-path="path"
+                              :ignoreLink="true"
+                              class="c-notebook-snapshot-menubutton"
+        />
         <view-switcher
             :v-if="!hideViewSwitcher"
             :views="views"
@@ -39,6 +45,8 @@
 
 <script>
 import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+
 const HIDDEN_ACTIONS = [
     'remove',
     'move',
@@ -50,6 +58,7 @@ export default {
         'openmct'
     ],
     components: {
+        NotebookMenuSwitcher,
         ViewSwitcher
     },
     props: {
@@ -88,7 +97,9 @@ export default {
         return {
             type: this.openmct.types.get(this.domainObject.type),
             statusBarItems: [],
-            menuActionItems: []
+            menuActionItems: [],
+            notebookEnabled: this.openmct.types.get('notebook'),
+            path: []
         };
     },
     watch: {
@@ -105,6 +116,14 @@ export default {
         if (this.actionCollection) {
             this.actionCollection.on('update', this.updateActionItems);
             this.updateActionItems(this.actionCollection.getActionsObject());
+        }
+
+        if (this.notebookEnabled) {
+            this.openmct.objects
+                .getOriginalPath(this.domainObject.identifier)
+                .then(objectPath => {
+                    this.path = objectPath;
+                });
         }
     },
     methods: {

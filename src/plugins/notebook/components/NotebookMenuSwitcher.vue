@@ -62,6 +62,12 @@ export default {
 
             return defaultNotebookObject;
         },
+        linkToObject() {
+            return '#/browse/' + this.objectPath
+                        .map(o => o && this.openmct.objects.makeKeyString(o.identifier))
+                        .reverse()
+                        .join('/');
+        },
         async showMenu(event) {
             const notebookTypes = [];
             const elementBoundingClientRect = this.$el.getBoundingClientRect();
@@ -102,11 +108,10 @@ export default {
                     || document.getElementsByClassName('l-shell__main-container')[0];
 
                 const bounds = this.openmct.time.bounds();
+                const objectPath = this.objectPath || this.openmct.router.path;
                 const link = !this.ignoreLink
                     ? window.location.hash
-                    : null;
-
-                const objectPath = this.objectPath || this.openmct.router.path;
+                    : this.linkToObject();
                 const snapshotMeta = {
                     bounds,
                     link,
