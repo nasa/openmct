@@ -65,7 +65,7 @@
                 v-for="(ancestor, index) in focusedAncestors"
                 :key="ancestor.id"
                 :node="ancestor"
-                :show-up="index !== 0 && index < focusedAncestors.length  && initialLoad"
+                :show-up="index !== 0 && index < focusedAncestors.length && initialLoad"
                 :show-down="false"
                 :left-offset="index * 10 + 'px'"
                 @resetTree="beginNavigationRequest('handleReset', ancestor)"
