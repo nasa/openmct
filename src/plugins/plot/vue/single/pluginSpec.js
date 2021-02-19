@@ -25,20 +25,49 @@ import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "../stackedPlot/StackedPlot.vue";
 import configStore from "@/plugins/plot/vue/single/configuration/configStore";
+import EventEmitter from "EventEmitter";
 
 describe("the plugin", function () {
     let element;
     let child;
     let openmct;
+    let telemetryPromise;
+    let cleanupFirst;
 
     beforeEach((done) => {
-        const appHolder = document.createElement("div");
-        appHolder.style.width = "640px";
-        appHolder.style.height = "480px";
+        const testTelemetry = [
+            {
+                'utc': 1,
+                'some-key': 'some-value 1',
+                'some-other-key': 'some-other-value 1'
+            },
+            {
+                'utc': 2,
+                'some-key': 'some-value 2',
+                'some-other-key': 'some-other-value 2'
+            },
+            {
+                'utc': 3,
+                'some-key': 'some-value 3',
+                'some-other-key': 'some-other-value 3'
+            }
+        ];
+        cleanupFirst = [];
 
         openmct = createOpenMct();
 
-        openmct.install(new PlotVuePlugin(openmct));
+        let telemetryPromiseResolve;
+        telemetryPromise = new Promise((resolve) => {
+            telemetryPromiseResolve = resolve;
+        });
+
+        spyOn(openmct.telemetry, 'request').and.callFake(() => {
+            telemetryPromiseResolve(testTelemetry);
+
+            return telemetryPromise;
+        });
+
+        openmct.install(new PlotVuePlugin());
 
         element = document.createElement("div");
         element.style.width = "640px";
@@ -47,6 +76,7 @@ describe("the plugin", function () {
         child.style.width = "640px";
         child.style.height = "480px";
         element.appendChild(child);
+        document.body.appendChild(element);
 
         openmct.time.timeSystem("utc", {
             start: 0,
@@ -63,11 +93,23 @@ describe("the plugin", function () {
         });
 
         openmct.on("start", done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
     });
 
-    afterEach(async () => {
-        await resetApplicationState();
+    afterEach((done) => {
+        // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
+        // teardown, which causes problems
+        // This is hacky, we should find a better approach here.
+        setTimeout(() => {
+            //Cleanup code that needs to happen before dom elements start being destroyed
+            cleanupFirst.forEach(cleanup => cleanup());
+            cleanupFirst = [];
+            document.body.removeChild(element);
+
+            configStore.deleteAll();
+
+            resetApplicationState(openmct).then(done);
+        });
     });
 
     describe("the plot views", () => {
@@ -128,7 +170,6 @@ describe("the plugin", function () {
             let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-stacked");
             expect(plotView).toBeDefined();
         });
-
     });
 
     describe("The single plot view", () => {
@@ -138,7 +179,6 @@ describe("the plugin", function () {
         let plotView;
 
         beforeEach(() => {
-
             const getFunc = openmct.$injector.get;
             spyOn(openmct.$injector, "get")
                 .withArgs("exportImageService").and.returnValue({
@@ -146,6 +186,7 @@ describe("the plugin", function () {
                     exportJPG: () => {}
                 })
                 .and.callFake(getFunc);
+
             testTelemetryObject = {
                 identifier: {
                     namespace: "",
@@ -181,6 +222,10 @@ describe("the plugin", function () {
             plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
             plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             plotView.show(child, true);
+
+            cleanupFirst.push(() => {
+                plotView.destroy();
+            });
 
             return Vue.nextTick();
         });
@@ -226,12 +271,10 @@ describe("the plugin", function () {
         let config;
         let stackedPlotObject;
         let component;
-        let compositionAPI;
         let mockComposition;
         let plotViewComponentObject;
 
         beforeEach(() => {
-
             const getFunc = openmct.$injector.get;
             spyOn(openmct.$injector, "get")
                 .withArgs("exportImageService").and.returnValue({
@@ -240,22 +283,13 @@ describe("the plugin", function () {
                 })
                 .and.callFake(getFunc);
 
-            compositionAPI = openmct.composition;
-            mockComposition = jasmine.createSpyObj("composition", ["load", "on", "off"]);
-            mockComposition.load.and.callFake(() => {});
-            mockComposition.on.and.callFake(() => {});
-            mockComposition.off.and.callFake(() => {});
-
-            spyOn(compositionAPI, "get").and.returnValue(mockComposition);
-
             stackedPlotObject = {
                 identifier: {
                     namespace: "",
                     key: "test-plot"
                 },
                 type: "telemetry.plot.stacked",
-                name: "Test Stacked Plot",
-                composition: []
+                name: "Test Stacked Plot"
             };
 
             testTelemetryObject = {
@@ -320,6 +354,15 @@ describe("the plugin", function () {
                 }
             };
 
+            mockComposition = new EventEmitter();
+            mockComposition.load = () => {
+                mockComposition.emit('add', testTelemetryObject);
+
+                return [testTelemetryObject];
+            };
+
+            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
             let viewContainer = document.createElement("div");
             child.append(viewContainer);
             component = new Vue({
@@ -335,17 +378,18 @@ describe("the plugin", function () {
                 template: "<stacked-plot></stacked-plot>"
             });
 
-            return Vue.nextTick().then(() => {
-                plotViewComponentObject = component.$root.$children[0];
-                plotViewComponentObject.compositionObjects = [testTelemetryObject];
-                const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
-                config = configStore.get(configId);
+            cleanupFirst.push(() => {
+                component.$destroy();
+                component = undefined;
             });
-        });
 
-        afterEach(() => {
-            component.$destroy();
-            component = undefined;
+            return telemetryPromise
+                .then(Vue.nextTick())
+                .then(() => {
+                    plotViewComponentObject = component.$root.$children[0];
+                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+                    config = configStore.get(configId);
+                });
         });
 
         it("Renders a collapsed legend for every telemetry", () => {
@@ -434,7 +478,7 @@ describe("the plugin", function () {
         });
 
         it('plots a new series when a new telemetry object is added', (done) => {
-            plotViewComponentObject.addChild(testTelemetryObject2);
+            mockComposition.emit('add', testTelemetryObject2);
             Vue.nextTick(() => {
                 let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
                 expect(legend.length).toBe(2);
@@ -444,7 +488,7 @@ describe("the plugin", function () {
         });
 
         it('removes plots from series when a telemetry object is removed', (done) => {
-            plotViewComponentObject.removeChild(testTelemetryObject.identifier);
+            mockComposition.emit('remove', testTelemetryObject.identifier);
             Vue.nextTick(() => {
                 let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
                 expect(legend.length).toBe(0);
@@ -464,7 +508,7 @@ describe("the plugin", function () {
         });
 
         it("Renders a new series when added to one of the plots", (done) => {
-            config.series.addTelemetryObject(testTelemetryObject2);
+            mockComposition.emit('add', testTelemetryObject2);
             Vue.nextTick(() => {
                 let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
                 expect(legend.length).toBe(2);

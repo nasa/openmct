@@ -30,6 +30,10 @@ ConfigStore.prototype.deleteStore = function (id) {
     }
 };
 
+ConfigStore.prototype.deleteAll = function () {
+    Object.keys(this.store).forEach(id => this.deleteStore(id));
+};
+
 ConfigStore.prototype.add = function (id, config) {
     this.store[id] = config;
 };
