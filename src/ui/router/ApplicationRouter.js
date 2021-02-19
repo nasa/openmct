@@ -82,6 +82,7 @@ class ApplicationRouter extends EventEmitter {
 
     destroy() {
         this.locationBar.stop();
+        this.removeAllListeners();
     }
 
     handleLocationChange(pathString) {
