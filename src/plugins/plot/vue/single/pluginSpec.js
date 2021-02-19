@@ -97,7 +97,7 @@ describe("the plugin", function () {
     });
 
     afterEach((done) => {
-        // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after 
+        // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
         // teardown, which causes problems
         // This is hacky, we should find a better approach here.
         setTimeout(() => {
