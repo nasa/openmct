@@ -128,7 +128,7 @@
         @scroll="handleScroll"
     >
         <div v-for="(datum, index) in imageHistory"
-             :key="datum[timeKey]"
+             :key="datum.url + datum[timeKey]"
              class="c-imagery__thumb c-thumb"
              :class="{ selected: focusedImageIndex === index && isPaused }"
              @click="setFocusedImage(index, thumbnailClick)"
@@ -592,6 +592,7 @@ export default {
             this.requestCount++;
             const requestId = this.requestCount;
             this.imageHistory = [];
+
             let data = await this.openmct.telemetry
                 .request(this.domainObject, bounds) || [];
 
