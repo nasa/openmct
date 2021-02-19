@@ -26,6 +26,7 @@ import RootRegistry from './RootRegistry';
 import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
+import IdentifierProvider from '../../../platform/core/src/identifiers/IdentifierProvider.js';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -38,6 +39,7 @@ function ObjectAPI(typeRegistry) {
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
+    this.identifierService = new IdentifierProvider();
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
@@ -56,11 +58,15 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
+    //handles the '' vs 'mct' namespace issue
+    const keyString = utils.makeKeyString(identifier);
+    const namespace = this.identifierService.parse(keyString).getSpace();
+
     if (identifier.key === 'ROOT') {
         return this.rootProvider;
     }
 
-    return this.providers[identifier.namespace] || this.fallbackProvider;
+    return this.providers[namespace] || this.fallbackProvider;
 };
 
 /**
