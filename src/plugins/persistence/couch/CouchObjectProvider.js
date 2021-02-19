@@ -28,13 +28,16 @@ const ID = "_id";
 const HEARTBEAT = 50000;
 
 export default class CouchObjectProvider {
-    constructor(openmct, url, namespace) {
+    constructor(openmct, options, namespace) {
         this.openmct = openmct;
-        this.url = url;
+        this.url = options.url;
         this.namespace = namespace;
         this.objectQueue = {};
-        this.controllers = {};
         this.observers = {};
+
+        this.observeObjectChanges(options.filter).then(() => {
+            //do nothing
+        });
     }
 
     request(subPath, method, value) {
@@ -168,25 +171,24 @@ export default class CouchObjectProvider {
         };
     }
 
-    abortGetChanges(identifier) {
-        const controller = this.controllers[identifier.key];
-        if (controller) {
-            controller.abort();
-            this.controllers[identifier.key] = undefined;
+    abortGetChanges() {
+        if (this.controller) {
+            this.controller.abort();
+            this.controller = undefined;
         }
 
         return true;
     }
 
-    async observeObjectChanges(identifier, filter) {
+    async observeObjectChanges(filter) {
         const controller = new AbortController();
         const signal = controller.signal;
 
-        if (this.controllers[identifier.key]) {
-            this.abortGetChanges(identifier);
+        if (this.controller) {
+            this.abortGetChanges();
         }
 
-        this.controllers[identifier.key] = controller;
+        this.controller = controller;
 
         let intermediateResponse = this.getIntermediateResponse();
         // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
@@ -227,7 +229,7 @@ export default class CouchObjectProvider {
                         try {
                             const object = JSON.parse(doc);
                             object.identifier = {
-                                namespace: identifier.namespace,
+                                namespace: this.namespace,
                                 key: object.id
                             };
                             let keyString = this.openmct.objects.makeKeyString(object.identifier);

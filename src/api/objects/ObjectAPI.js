@@ -39,7 +39,7 @@ function ObjectAPI(typeRegistry) {
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
-    this.identifierService = new IdentifierProvider();
+    this.identifierService = new IdentifierProvider('mct');
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
