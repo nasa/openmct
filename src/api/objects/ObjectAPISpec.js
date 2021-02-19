@@ -136,8 +136,10 @@ describe("The Object API", () => {
 
     describe("the mutation API", () => {
         let testObject;
+        let updatedTestObject;
         let mutable;
         let mockProvider;
+        let callbacks = [];
 
         beforeEach(function () {
             objectAPI = new ObjectAPI(typeRegistry);
@@ -154,12 +156,26 @@ describe("The Object API", () => {
                     }
                 }
             };
+            updatedTestObject = Object.assign({otherAttribute: 'changed-attribute-value'}, testObject);
             mockProvider = jasmine.createSpyObj("mock provider", [
                 "get",
                 "create",
-                "update"
+                "update",
+                "observe",
+                "observeObjectChanges"
             ]);
             mockProvider.get.and.returnValue(Promise.resolve(testObject));
+            mockProvider.observeObjectChanges.and.callFake(() => {
+                callbacks[0](updatedTestObject);
+                callbacks.splice(0, 1);
+            });
+            mockProvider.observe.and.callFake((id, callback) => {
+                if (callbacks.length === 0) {
+                    callbacks.push(callback);
+                } else {
+                    callbacks[0] = callback;
+                }
+            });
             objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
 
             return objectAPI.getMutable(testObject.identifier)
@@ -190,6 +206,13 @@ describe("The Object API", () => {
 
             it('that is identical to original object when serialized', function () {
                 expect(JSON.stringify(mutable)).toEqual(JSON.stringify(testObject));
+            });
+
+            it('that observes for object changes', function () {
+                let mockListener = jasmine.createSpy('mockListener');
+                objectAPI.observe(testObject, '*', mockListener);
+                mockProvider.observeObjectChanges();
+                expect(mockListener).toHaveBeenCalled();
             });
         });
 

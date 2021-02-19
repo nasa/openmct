@@ -97,13 +97,13 @@ class MutableDomainObject {
         // Do it at observer time - also register observers for parent attribute path.
     }
 
-    $refresh(path, value) {
+    $refresh(model) {
         //TODO: Currently we are updating the entire object.
         // In the future we could update a specific property of the object using the 'path' parameter.
-        this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), value);
+        this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), model);
 
         //Emit wildcard event, with path so that callback knows what changed
-        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, path, value);
+        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this, '', model);
     }
 
     $on(event, callback) {

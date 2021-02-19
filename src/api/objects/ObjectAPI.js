@@ -207,13 +207,29 @@ ObjectAPI.prototype.search = function (query, options) {
  * @returns {Promise.<MutableDomainObject>} a promise that will resolve with a MutableDomainObject if
  * the object can be mutated.
  */
-ObjectAPI.prototype.getMutable = function (identifier) {
-    if (!this.supportsMutation(identifier)) {
-        throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
+ObjectAPI.prototype.getMutable = function (idOrKeyString) {
+    if (!this.supportsMutation(idOrKeyString)) {
+        throw new Error(`Object "${this.makeKeyString(idOrKeyString)}" does not support mutation.`);
     }
 
-    return this.get(identifier).then((object) => {
-        return this._toMutable(object);
+    return this.get(idOrKeyString).then((object) => {
+        const mutableDomainObject = this._toMutable(object);
+
+        // Check if provider supports realtime updates
+        let identifier = utils.parseKeyString(idOrKeyString);
+        let provider = this.getProvider(identifier);
+
+        if (provider !== undefined
+            && provider.observe !== undefined) {
+            let unobserve = provider.observe(identifier, (updatedModel) => {
+                mutableDomainObject.$refresh(updatedModel);
+            });
+            mutableDomainObject.$on('$destroy', () => {
+                unobserve();
+            });
+        }
+
+        return mutableDomainObject;
     });
 };
 

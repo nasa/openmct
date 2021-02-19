@@ -34,6 +34,7 @@ export default class CouchObjectProvider {
         this.namespace = namespace;
         this.objectQueue = {};
         this.controllers = {};
+        this.observers = {};
     }
 
     request(subPath, method, value) {
@@ -157,6 +158,16 @@ export default class CouchObjectProvider {
         return objects;
     }
 
+    observe(identifier, callback) {
+        const keyString = this.openmct.objects.makeKeyString(identifier);
+        this.observers[keyString] = this.observers[keyString] || [];
+        this.observers[keyString].push(callback);
+
+        return () => {
+            this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
+        };
+    }
+
     abortGetChanges(identifier) {
         const controller = this.controllers[identifier.key];
         if (controller) {
@@ -167,7 +178,7 @@ export default class CouchObjectProvider {
         return true;
     }
 
-    async getChanges(identifier, options) {
+    async observeObjectChanges(identifier, filter) {
         const controller = new AbortController();
         const signal = controller.signal;
 
@@ -183,10 +194,9 @@ export default class CouchObjectProvider {
         let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
 
         let body = {};
-        let callback = options.callback;
-        if (options.filter) {
+        if (filter) {
             url = `${url}&filter=_selector`;
-            body = JSON.stringify(options.filter);
+            body = JSON.stringify(filter);
         }
 
         const response = await fetch(url, {
@@ -213,7 +223,6 @@ export default class CouchObjectProvider {
                 const decodedChunk = new TextDecoder("utf-8").decode(chunk).split('\n');
                 if (decodedChunk.length && decodedChunk[decodedChunk.length - 1] === '') {
                     console.log('Received update from server');
-                    let documents = [];
                     decodedChunk.forEach((doc, index) => {
                         try {
                             const object = JSON.parse(doc);
@@ -221,13 +230,19 @@ export default class CouchObjectProvider {
                                 namespace: identifier.namespace,
                                 key: object.id
                             };
-                            documents.push(object);
+                            let keyString = this.openmct.objects.makeKeyString(object.identifier);
+                            let observersForObject = this.observers[keyString];
+
+                            if (observersForObject) {
+                                observersForObject.forEach(async (observer) => {
+                                    const updatedObject = await this.get(object.identifier);
+                                    observer(updatedObject);
+                                });
+                            }
                         } catch (e) {
                             //do nothing;
                         }
                     });
-                    //notify something, somehow, that we just received some changes from couchDB
-                    callback(documents);
                 }
             }
 
