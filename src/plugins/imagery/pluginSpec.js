@@ -37,7 +37,7 @@ function getImageInfo(doc) {
     let imageElement = doc.querySelectorAll(MAIN_IMAGE_CLASS)[0];
     let timestamp = imageElement.dataset.openmctImageTimestamp;
     let identifier = imageElement.dataset.openmctObjectKeystring;
-    let url = imageElement.style.backgroundImage;
+    let url = imageElement.src;
 
     return {
         timestamp,
@@ -70,7 +70,7 @@ function generateTelemetry(start, count) {
     return telemetry;
 }
 
-describe("The Imagery View Layout", () => {
+fdescribe("The Imagery View Layout", () => {
     const imageryKey = 'example.imagery';
     const START = Date.now();
     const COUNT = 10;
