@@ -26,7 +26,6 @@ import RootRegistry from './RootRegistry';
 import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
-import IdentifierProvider from '../../../platform/core/src/identifiers/IdentifierProvider.js';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -34,12 +33,15 @@ import IdentifierProvider from '../../../platform/core/src/identifiers/Identifie
  * @memberof module:openmct
  */
 
-function ObjectAPI(typeRegistry) {
+function ObjectAPI(typeRegistry, openmct) {
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
-    this.identifierService = new IdentifierProvider('mct');
+    this.injectIdentifierService = function () {
+        this.identifierService = openmct.$injector.get("identifierService");
+    };
+
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
@@ -54,13 +56,26 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
 };
 
 /**
+ * @private
+ */
+ObjectAPI.prototype.getIdentifierService = function () {
+    // Lazily acquire identifier service
+    if (!this.identifierService) {
+        this.injectIdentifierService();
+    }
+
+    return this.identifierService;
+};
+
+/**
  * Retrieve the provider for a given identifier.
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
     //handles the '' vs 'mct' namespace issue
     const keyString = utils.makeKeyString(identifier);
-    const namespace = this.identifierService.parse(keyString).getSpace();
+    const identifierService = this.getIdentifierService();
+    const namespace = identifierService.parse(keyString).getSpace();
 
     if (identifier.key === 'ROOT') {
         return this.rootProvider;

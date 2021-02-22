@@ -3,6 +3,8 @@ import ObjectAPI from './ObjectAPI.js';
 describe("The Object API", () => {
     let objectAPI;
     let typeRegistry;
+    let openmct = {};
+    let mockIdentifierService;
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
@@ -11,7 +13,19 @@ describe("The Object API", () => {
         typeRegistry = jasmine.createSpyObj('typeRegistry', [
             'get'
         ]);
-        objectAPI = new ObjectAPI(typeRegistry);
+        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
+        mockIdentifierService = jasmine.createSpyObj(
+            'identifierService',
+            ['parse']
+        );
+        mockIdentifierService.parse.and.returnValue({
+            getSpace: () => {
+                return TEST_NAMESPACE;
+            }
+        });
+
+        openmct.$injector.get.and.returnValue(mockIdentifierService);
+        objectAPI = new ObjectAPI(typeRegistry, openmct);
         mockDomainObject = {
             identifier: {
                 namespace: TEST_NAMESPACE,
@@ -142,7 +156,7 @@ describe("The Object API", () => {
         let callbacks = [];
 
         beforeEach(function () {
-            objectAPI = new ObjectAPI(typeRegistry);
+            objectAPI = new ObjectAPI(typeRegistry, openmct);
             testObject = {
                 identifier: {
                     namespace: TEST_NAMESPACE,
@@ -176,6 +190,7 @@ describe("The Object API", () => {
                     callbacks[0] = callback;
                 }
             });
+
             objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
 
             return objectAPI.getMutable(testObject.identifier)

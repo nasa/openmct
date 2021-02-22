@@ -29,15 +29,18 @@ const HEARTBEAT = 50000;
 
 export default class CouchObjectProvider {
     constructor(openmct, options, namespace) {
+        console.log(options);
         this.openmct = openmct;
         this.url = options.url;
         this.namespace = namespace;
         this.objectQueue = {};
+        this.observeEnabled = options.disableObserve !== true;
         this.observers = {};
-
-        this.observeObjectChanges(options.filter).then(() => {
-            //do nothing
-        });
+        if (this.observeEnabled) {
+            this.observeObjectChanges(options.filter).then((response) => {
+                //do nothing
+            });
+        }
     }
 
     request(subPath, method, value) {
@@ -162,6 +165,10 @@ export default class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
+        if (!this.observeEnabled) {
+            return;
+        }
+
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);
@@ -181,6 +188,12 @@ export default class CouchObjectProvider {
     }
 
     async observeObjectChanges(filter) {
+        let intermediateResponse = this.getIntermediateResponse();
+
+        if (!this.observeEnabled) {
+            intermediateResponse.reject('Observe for changes is disabled');
+        }
+
         const controller = new AbortController();
         const signal = controller.signal;
 
@@ -189,8 +202,6 @@ export default class CouchObjectProvider {
         }
 
         this.controller = controller;
-
-        let intermediateResponse = this.getIntermediateResponse();
         // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
         // style=main_only returns only the current winning revision of the document
         let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
