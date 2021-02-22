@@ -28,8 +28,13 @@ const ID = "_id";
 const HEARTBEAT = 50000;
 
 export default class CouchObjectProvider {
+    // options {
+    //      url: couchdb url,
+    //      disableObserve: disable auto feed from couchdb to keep objects in sync,
+    //      filter: selector to find objects to sync in couchdb
+    //      }
     constructor(openmct, options, namespace) {
-        console.log(options);
+        options = this._normalize(options);
         this.openmct = openmct;
         this.url = options.url;
         this.namespace = namespace;
@@ -37,10 +42,19 @@ export default class CouchObjectProvider {
         this.observeEnabled = options.disableObserve !== true;
         this.observers = {};
         if (this.observeEnabled) {
-            this.observeObjectChanges(options.filter).then((response) => {
-                //do nothing
-            });
+            this.observeObjectChanges(options.filter);
         }
+    }
+
+    //backwards compatibility, options used to be a url. Now it's an object
+    _normalize(options) {
+        if (typeof options === 'string') {
+            return {
+                url: options
+            };
+        }
+
+        return options;
     }
 
     request(subPath, method, value) {
@@ -235,7 +249,6 @@ export default class CouchObjectProvider {
                 chunk.set(value, 0);
                 const decodedChunk = new TextDecoder("utf-8").decode(chunk).split('\n');
                 if (decodedChunk.length && decodedChunk[decodedChunk.length - 1] === '') {
-                    console.log('Received update from server');
                     decodedChunk.forEach((doc, index) => {
                         try {
                             const object = JSON.parse(doc);
