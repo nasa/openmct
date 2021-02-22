@@ -37,7 +37,7 @@ function getImageInfo(doc) {
     let imageElement = doc.querySelectorAll(MAIN_IMAGE_CLASS)[0];
     let timestamp = imageElement.dataset.openmctImageTimestamp;
     let identifier = imageElement.dataset.openmctObjectKeystring;
-    let url = imageElement.style.backgroundImage;
+    let url = imageElement.src;
 
     return {
         timestamp,

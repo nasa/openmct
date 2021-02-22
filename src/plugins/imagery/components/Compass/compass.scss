@@ -5,7 +5,7 @@ $elemBg: rgba(black, 0.7);
 @mixin sun($position: 'circle closest-side') {
     $color: #ff9900;
     $gradEdgePerc: 60%;
-  background: radial-gradient(#{$position}, $color, $color $gradEdgePerc, rgba($color, 0.4) $gradEdgePerc + 5%, transparent);
+    background: radial-gradient(#{$position}, $color, $color $gradEdgePerc, rgba($color, 0.4) $gradEdgePerc + 5%, transparent);
 
 }
 
@@ -24,8 +24,6 @@ $elemBg: rgba(black, 0.7);
   $m: 1px;
   $padTB: 2px;
   $padLR: $padTB;
-  background: $elemBg;
-  border-radius: 3px;
   color: $interfaceKeyColor;
   font-size: 0.8em;
   position: absolute;
@@ -56,7 +54,7 @@ $elemBg: rgba(black, 0.7);
     // NSEW
     display: inline-block;
     font-weight: bold;
-    text-shadow: black 0 0 3px;
+    text-shadow: 0 1px 2px black;
     top: 50%;
     transform: translate(-50%,-50%);
     z-index: 2;
