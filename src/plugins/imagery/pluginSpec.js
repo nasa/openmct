@@ -207,6 +207,8 @@ describe("The Imagery View Layout", () => {
             imageryView = imageryViewProvider.view(imageryObject);
             imageryView.show(child);
 
+            console.log(imageryView);
+
             await telemetryRequestPromise;
             await Vue.nextTick();
 
