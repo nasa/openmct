@@ -31,9 +31,6 @@ export default function (couchPlugin, searchFilter) {
                     return objects.map(object => object.identifier);
                 });
             }
-            // TODO: Composition providers also support dynamic composition by emitting events when children are added or removed.
-            // on(){},
-            // off(){}
         });
     };
 
