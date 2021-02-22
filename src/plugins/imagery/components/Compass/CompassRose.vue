@@ -131,7 +131,7 @@
     <div
         v-if="showCameraFOV"
         class="c-cam-field"
-        :style="cameraFOVHeadingStyle"
+        :style="cameraHeadingStyle"
     >
         <div class="cam-field-half cam-field-half-l">
             <div
@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { normalizeDegrees } from './utils';
+import { rotate } from './utils';
 
 export default {
     props: {
@@ -168,7 +168,7 @@ export default {
         },
         cameraPan: {
             type: Number,
-            default: undefined
+            required: true
         }
     },
 
@@ -179,11 +179,14 @@ export default {
     },
 
     computed: {
+        cameraHeading() {
+            return rotate(this.heading, this.cameraPan);
+        },
         compassHeading() {
-            return this.lockBezel ? normalizeDegrees(this.heading) : 0;
+            return this.lockBezel ? this.cameraHeading : 0;
         },
         north() {
-            return normalizeDegrees(this.compassHeading - this.heading);
+            return rotate(this.compassHeading, -this.cameraHeading);
         },
         rotateFrameStyle() {
             return { transform: `rotate(${ this.north }deg)` };
@@ -216,20 +219,21 @@ export default {
             };
         },
         headingStyle() {
+            const rotation = rotate(this.north, this.heading);
+
             return {
-                transform: `translateX(-50%) rotate(${ this.compassHeading }deg)`
+                transform: `translateX(-50%) rotate(${ rotation }deg)`
             };
         },
-        cameraFOVHeading() {
-            return this.compassHeading + this.cameraPan;
-        },
-        cameraFOVHeadingStyle() {
+        cameraHeadingStyle() {
+            const rotation = rotate(this.north, this.cameraHeading);
+
             return {
-                transform: `rotate(${ this.cameraFOVHeading }deg)`
+                transform: `rotate(${ rotation }deg)`
             };
         },
         sunHeadingStyle() {
-            const rotation = normalizeDegrees(this.north + this.sunHeading);
+            const rotation = rotate(this.north, this.sunHeading);
 
             return {
                 transform: `rotate(${ rotation }deg)`

@@ -26,18 +26,17 @@
     :style="compassDimensionsStyle"
 >
     <CompassHUD
-        v-if="shouldDisplayCompassHUD"
+        v-if="hasCameraFieldOfView"
         :heading="heading"
-        :roll="roll"
         :sun-heading="sunHeading"
-        :camera-field-of-view="cameraFieldOfView"
+        :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
     />
     <CompassRose
-        v-if="shouldDisplayCompassRose"
+        v-if="hasCameraFieldOfView"
         :heading="heading"
         :sun-heading="sunHeading"
-        :camera-field-of-view="cameraFieldOfView"
+        :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
     />
 </div>
@@ -47,7 +46,7 @@
 import CompassHUD from './CompassHUD.vue';
 import CompassRose from './CompassRose.vue';
 
-const CAM_FIELD_OF_VIEW = 70;
+const CAMERA_ANGLE_OF_VIEW = 70;
 
 export default {
     components: {
@@ -73,35 +72,29 @@ export default {
         }
     },
     computed: {
-        shouldDisplayCompassRose() {
-            return this.heading !== undefined;
+        hasCameraFieldOfView() {
+            return this.heading !== undefined && this.cameraPan !== undefined;
         },
-        shouldDisplayCompassHUD() {
-            return this.heading !== undefined;
-        },
-        // degrees from north heading
+        // compass direction from north in degrees
         heading() {
             return this.image.heading;
-        },
-        roll() {
-            return this.image.roll;
         },
         pitch() {
             return this.image.pitch;
         },
-        // degrees from north heading
+        // compass direction from north in degrees
         sunHeading() {
             return this.image.sunOrientation;
         },
-        // degrees from spacecraft heading
+        // relative direction from heading in degrees
         cameraPan() {
             return this.image.cameraPan;
         },
         cameraTilt() {
             return this.image.cameraTilt;
         },
-        cameraFieldOfView() {
-            return CAM_FIELD_OF_VIEW;
+        cameraAngleOfView() {
+            return CAMERA_ANGLE_OF_VIEW;
         },
         compassDimensionsStyle() {
             const containerAspectRatio = this.containerWidth / this.containerHeight;

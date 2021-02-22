@@ -1,4 +1,10 @@
-export function normalizeDegrees(degrees) {
+export function rotate(direction, ...rotations) {
+    const rotation = rotations.reduce((a, b) => a + b, 0);
+
+    return normalizeCompassDirection(direction + rotation);
+}
+
+export function normalizeCompassDirection(degrees) {
     const base = degrees % 360;
 
     return base >= 0 ? base : 360 + base;
@@ -24,21 +30,4 @@ export function percentOfRange(degrees, [min, max]) {
     }
 
     return (distance - minRange) / (maxRange - minRange);
-}
-
-export function normalizeSemiCircleDegrees(rawDegrees) {
-    // in case tony hawk is providing us degrees
-    let degrees = rawDegrees % 360;
-
-    // westward degrees are between 0 and -180 exclusively
-    if (degrees > 180) {
-        degrees = degrees - 360;
-    }
-
-    // eastward degrees are between 0 and 180 inclusively
-    if (degrees <= -180) {
-        degrees = 360 - degrees;
-    }
-
-    return degrees;
 }
