@@ -25,13 +25,18 @@ import Vue from 'vue';
 const COMPASS_ROSE_CLASS = '.c-direction-rose';
 const COMPASS_HUD_CLASS = '.c-compass__hud';
 
-describe("The Compass component", () => {
+fdescribe("The Compass component", () => {
     let app;
     let instance;
 
     beforeEach(() => {
         let imageDatum = {
-            heading: 100
+            heading: 100,
+            roll: 90,
+            pitch: 90,
+            cameraTilt: 100,
+            cameraPan: 90,
+            sunAngle: 90
         };
         let propsData = {
             containerWidth: 600,
@@ -64,7 +69,7 @@ describe("The Compass component", () => {
         it("should display a compass rose", () => {
             let compassRoseElement = instance.$el.querySelector(COMPASS_ROSE_CLASS
             );
-            console.log(instance.$el);
+
             expect(compassRoseElement).toBeDefined();
         });
 
