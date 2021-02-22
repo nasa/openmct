@@ -70,7 +70,7 @@ function generateTelemetry(start, count) {
     return telemetry;
 }
 
-fdescribe("The Imagery View Layout", () => {
+describe("The Imagery View Layout", () => {
     const imageryKey = 'example.imagery';
     const START = Date.now();
     const COUNT = 10;

@@ -25,7 +25,7 @@ import Vue from 'vue';
 const COMPASS_ROSE_CLASS = '.c-direction-rose';
 const COMPASS_HUD_CLASS = '.c-compass__hud';
 
-fdescribe("The Compass component", () => {
+describe("The Compass component", () => {
     let app;
     let instance;
 
