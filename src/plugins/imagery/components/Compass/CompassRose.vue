@@ -169,15 +169,12 @@ export default {
         cameraPan: {
             type: Number,
             required: true
+        },
+        lockBezel: {
+            type: Boolean,
+            required: true
         }
     },
-
-    data() {
-        return {
-            lockBezel: true
-        };
-    },
-
     computed: {
         cameraHeading() {
             return rotate(this.heading, this.cameraPan);
@@ -259,7 +256,7 @@ export default {
     },
     methods: {
         toggleBezelLock() {
-            this.lockBezel = !this.lockBezel;
+            this.$emit('toggle-lock-bezel');
         }
     }
 };

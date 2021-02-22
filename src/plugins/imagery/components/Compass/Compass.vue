@@ -38,6 +38,8 @@
         :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
+        :lock-bezel="lockBezel"
+        @toggle-lock-bezel="toggleLockBezel"
     />
 </div>
 </template>
@@ -70,6 +72,11 @@ export default {
             type: Object,
             required: true
         }
+    },
+    data() {
+        return {
+            lockBezel: true
+        };
     },
     computed: {
         hasCameraFieldOfView() {
@@ -115,6 +122,9 @@ export default {
                 height: height
             };
         }
+    },
+    toggleLockBezel() {
+        this.lockBezel = !this.lockBezel;
     }
 };
 </script>
