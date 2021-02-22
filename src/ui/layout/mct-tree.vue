@@ -134,8 +134,6 @@ import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
 import uuid from 'uuid';
 
-const LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD = 'mct-tree-expanded';
-const LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE = 'mct-expanded-tree-node';
 const ROOT_PATH = 'browse';
 const ITEM_BUFFER = 5;
 
@@ -280,22 +278,19 @@ export default {
 
         await this.initialize();
 
-        let savedPath = this.getStoredTreePath();
         let rootComposition = await this.loadRoot();
+        let path = ROOT_PATH;
 
         if (!rootComposition) {
             return;
         }
 
-        if (!savedPath) {
-            savedPath = ROOT_PATH;
-            if (!this.multipleRootChildren && rootComposition[0]) {
-                let id = this.openmct.objects.makeKeyString(rootComposition[0].identifier);
-                savedPath += '/' + id;
-            }
+        if (!this.multipleRootChildren && rootComposition[0]) {
+            let id = this.openmct.objects.makeKeyString(rootComposition[0].identifier);
+            path += '/' + id;
         }
 
-        this.beginNavigationRequest('jumpTo', savedPath);
+        this.beginNavigationRequest('jumpTo', path);
     },
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
@@ -311,26 +306,10 @@ export default {
             this.openmct.$injector.get('searchService');
 
             window.addEventListener('resize', this.handleWindowResize);
-            this.backwardsCompatibilityCheck();
+
             await this.calculateHeights();
 
             return;
-        },
-        backwardsCompatibilityCheck() {
-            let oldTreeExpanded = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD));
-
-            if (oldTreeExpanded) {
-                localStorage.removeItem(LOCAL_STORAGE_KEY__TREE_EXPANDED__OLD);
-            }
-
-            let newTreeExpanded = this.getStoredTreePath();
-
-            if (newTreeExpanded) {
-                // see if it's in a deprecated format
-                if (newTreeExpanded.indexOf('mine') === 0) {
-                    localStorage.setItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE, JSON.stringify('browse/' + newTreeExpanded));
-                }
-            }
         },
         async loadRoot() {
             this.root = await this.openmct.objects.get('ROOT');
@@ -364,7 +343,6 @@ export default {
 
             if (success && this.isLatestNavigationRequest(requestId)) {
                 this.isLoading = false;
-                this.storeCurrentTreePath();
             }
         },
         isLatestNavigationRequest(requestId) {
@@ -745,16 +723,8 @@ export default {
                 this.searchLoading = false;
             }
         },
-        getStoredTreePath() {
-            return JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE));
-        },
-        storeCurrentTreePath() {
-            if (!this.searchValue) {
-                localStorage.setItem(LOCAL_STORAGE_KEY__EXPANDED_TREE_NODE, JSON.stringify(this.currentTreePath));
-            }
-        },
         currentPathIsActivePath() {
-            return this.getStoredTreePath() === this.currentlyViewedObjectParentPath();
+            return this.currentTreePath === this.currentlyViewedObjectParentPath();
         },
         currentlyViewedObjectId() {
             let currentPath = this.openmct.router.currentLocation.path;
