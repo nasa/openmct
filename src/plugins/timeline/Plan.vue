@@ -78,8 +78,10 @@ export default {
     },
     methods: {
         observeForChanges(mutatedObject) {
-            this.validateJSON(mutatedObject.selectFile.body);
-            this.setScaleAndPlotActivities();
+            if (mutatedObject.selectFile) {
+                this.validateJSON(mutatedObject.selectFile.body);
+                this.setScaleAndPlotActivities();
+            }
         },
         resize() {
             if (this.$refs.axisHolder.clientWidth !== this.width) {
