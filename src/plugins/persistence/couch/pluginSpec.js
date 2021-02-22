@@ -52,20 +52,6 @@ describe('the plugin', () => {
         openmct = createOpenMct(false);
 
         spyOnBuiltins(['fetch'], window);
-        // fetch.and.returnValue(Promise.resolve({
-        //     body: {
-        //         getReader: () => {
-        //             return {
-        //                 read: () => {
-        //                     return Promise.resolve({
-        //                         done: true,
-        //                         value: {}
-        //                     });
-        //                 }
-        //             };
-        //         }
-        //     }
-        // }));
 
         openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
         mockIdentifierService = jasmine.createSpyObj(
