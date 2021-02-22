@@ -38,7 +38,7 @@
         :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
-        :lock-bezel="lockBezel"
+        :lock-bezel="options.lock"
         @toggle-lock-bezel="toggleLockBezel"
     />
 </div>
@@ -71,12 +71,11 @@ export default {
         image: {
             type: Object,
             required: true
+        },
+        options: {
+            type: Object,
+            required: true
         }
-    },
-    data() {
-        return {
-            lockBezel: true
-        };
     },
     computed: {
         hasCameraFieldOfView() {
@@ -123,8 +122,10 @@ export default {
             };
         }
     },
-    toggleLockBezel() {
-        this.lockBezel = !this.lockBezel;
+    methods: {
+        toggleLockBezel() {
+            this.$emit('toggle-lock-compass');
+        }
     }
 };
 </script>

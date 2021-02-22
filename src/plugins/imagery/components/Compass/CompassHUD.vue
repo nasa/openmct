@@ -23,7 +23,6 @@
 <template>
 <div
     class="c-compass__hud c-hud"
-    :style="skewCompassHUDStyle"
 >
     <div
         v-for="point in visibleCompassPoints"
@@ -109,7 +108,7 @@ export default {
             type: Number,
             default: undefined
         },
-        cameraFieldOfView: {
+        cameraAngleOfView: {
             type: Number,
             default: undefined
         },
@@ -157,8 +156,8 @@ export default {
         },
         visibleRange() {
             return [
-                rotate(this.heading, this.cameraPan, -this.cameraFieldOfView / 2),
-                rotate(this.heading, this.cameraPan, this.cameraFieldOfView / 2)
+                rotate(this.heading, this.cameraPan, -this.cameraAngleOfView / 2),
+                rotate(this.heading, this.cameraPan, this.cameraAngleOfView / 2)
             ];
         }
     }

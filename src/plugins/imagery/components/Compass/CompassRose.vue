@@ -23,7 +23,7 @@
 <template>
 <div
     class="c-direction-rose"
-    @click="toggleBezelLock"
+    @click="toggleLockBezel"
 >
     <div
         class="c-nsew"
@@ -162,7 +162,7 @@ export default {
             type: Number,
             default: undefined
         },
-        cameraFieldOfView: {
+        cameraAngleOfView: {
             type: Number,
             default: undefined
         },
@@ -237,25 +237,25 @@ export default {
             };
         },
         showCameraFOV() {
-            return this.cameraPan !== undefined && this.cameraFieldOfView > 0;
+            return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
         },
         // left half of camera field of view
         // rotated counter-clockwise from camera field of view heading
         cameraFOVStyleLeftHalf() {
             return {
-                transform: `translateX(50%) rotate(${ -this.cameraFieldOfView / 2 }deg)`
+                transform: `translateX(50%) rotate(${ -this.cameraAngleOfView / 2 }deg)`
             };
         },
         // right half of camera field of view
         // rotated clockwise from camera field of view heading
         cameraFOVStyleRightHalf() {
             return {
-                transform: `translateX(-50%) rotate(${ this.cameraFieldOfView / 2 }deg)`
+                transform: `translateX(-50%) rotate(${ this.cameraAngleOfView / 2 }deg)`
             };
         }
     },
     methods: {
-        toggleBezelLock() {
+        toggleLockBezel() {
             this.$emit('toggle-lock-bezel');
         }
     }
