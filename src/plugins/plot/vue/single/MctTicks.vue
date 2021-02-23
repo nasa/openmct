@@ -107,7 +107,7 @@ export default {
 
         this.axis = this.getAxisFromConfig();
 
-        this.tickCount = this.axisType === 'xAxis' ? 6 : 4;
+        this.tickCount = 4;
         this.tickUpdate = false;
         this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
         this.listenTo(this.axis, 'change:format', this.updateTicks, this);
