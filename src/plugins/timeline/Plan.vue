@@ -61,6 +61,11 @@ export default {
         this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
         this.openmct.time.on("bounds", this.updateViewBounds);
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+        if (this.openmct.objects.supportsMutation(this.domainObject.identifier)) {
+            this.openmct.objects.getMutable(this.domainObject.identifier)
+                .then(this.observeForChanges);
+        }
+
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     },
     destroyed() {
@@ -73,8 +78,10 @@ export default {
     },
     methods: {
         observeForChanges(mutatedObject) {
-            this.validateJSON(mutatedObject.selectFile.body);
-            this.setScaleAndPlotActivities();
+            if (mutatedObject.selectFile) {
+                this.validateJSON(mutatedObject.selectFile.body);
+                this.setScaleAndPlotActivities();
+            }
         },
         resize() {
             if (this.$refs.axisHolder.clientWidth !== this.width) {

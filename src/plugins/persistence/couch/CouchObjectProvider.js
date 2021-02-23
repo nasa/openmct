@@ -25,13 +25,36 @@ import CouchObjectQueue from "./CouchObjectQueue";
 
 const REV = "_rev";
 const ID = "_id";
+const HEARTBEAT = 50000;
 
 export default class CouchObjectProvider {
-    constructor(openmct, url, namespace) {
+    // options {
+    //      url: couchdb url,
+    //      disableObserve: disable auto feed from couchdb to keep objects in sync,
+    //      filter: selector to find objects to sync in couchdb
+    //      }
+    constructor(openmct, options, namespace) {
+        options = this._normalize(options);
         this.openmct = openmct;
-        this.url = url;
+        this.url = options.url;
         this.namespace = namespace;
         this.objectQueue = {};
+        this.observeEnabled = options.disableObserve !== true;
+        this.observers = {};
+        if (this.observeEnabled) {
+            this.observeObjectChanges(options.filter);
+        }
+    }
+
+    //backwards compatibility, options used to be a url. Now it's an object
+    _normalize(options) {
+        if (typeof options === 'string') {
+            return {
+                url: options
+            };
+        }
+
+        return options;
     }
 
     request(subPath, method, value) {
@@ -100,6 +123,162 @@ export default class CouchObjectProvider {
 
     get(identifier) {
         return this.request(identifier.key, "GET").then(this.getModel.bind(this));
+    }
+
+    async getObjectsByFilter(filter) {
+        let objects = [];
+
+        let url = `${this.url}/_find`;
+        let body = {};
+
+        if (filter) {
+            body = JSON.stringify(filter);
+        }
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body
+        });
+
+        const reader = response.body.getReader();
+        let completed = false;
+
+        while (!completed) {
+            const {done, value} = await reader.read();
+            //done is true when we lose connection with the provider
+            if (done) {
+                completed = true;
+            }
+
+            if (value) {
+                let chunk = new Uint8Array(value.length);
+                chunk.set(value, 0);
+                const decodedChunk = new TextDecoder("utf-8").decode(chunk);
+                try {
+                    const json = JSON.parse(decodedChunk);
+                    if (json) {
+                        let docs = json.docs;
+                        docs.forEach(doc => {
+                            let object = this.getModel(doc);
+                            if (object) {
+                                objects.push(object);
+                            }
+                        });
+                    }
+                } catch (e) {
+                    //do nothing
+                }
+            }
+
+        }
+
+        return objects;
+    }
+
+    observe(identifier, callback) {
+        if (!this.observeEnabled) {
+            return;
+        }
+
+        const keyString = this.openmct.objects.makeKeyString(identifier);
+        this.observers[keyString] = this.observers[keyString] || [];
+        this.observers[keyString].push(callback);
+
+        return () => {
+            this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
+        };
+    }
+
+    abortGetChanges() {
+        if (this.controller) {
+            this.controller.abort();
+            this.controller = undefined;
+        }
+
+        return true;
+    }
+
+    async observeObjectChanges(filter) {
+        let intermediateResponse = this.getIntermediateResponse();
+
+        if (!this.observeEnabled) {
+            intermediateResponse.reject('Observe for changes is disabled');
+        }
+
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        if (this.controller) {
+            this.abortGetChanges();
+        }
+
+        this.controller = controller;
+        // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
+        // style=main_only returns only the current winning revision of the document
+        let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
+
+        let body = {};
+        if (filter) {
+            url = `${url}&filter=_selector`;
+            body = JSON.stringify(filter);
+        }
+
+        const response = await fetch(url, {
+            method: 'POST',
+            signal,
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body
+        });
+        const reader = response.body.getReader();
+        let completed = false;
+
+        while (!completed) {
+            const {done, value} = await reader.read();
+            //done is true when we lose connection with the provider
+            if (done) {
+                completed = true;
+            }
+
+            if (value) {
+                let chunk = new Uint8Array(value.length);
+                chunk.set(value, 0);
+                const decodedChunk = new TextDecoder("utf-8").decode(chunk).split('\n');
+                if (decodedChunk.length && decodedChunk[decodedChunk.length - 1] === '') {
+                    decodedChunk.forEach((doc, index) => {
+                        try {
+                            const object = JSON.parse(doc);
+                            object.identifier = {
+                                namespace: this.namespace,
+                                key: object.id
+                            };
+                            let keyString = this.openmct.objects.makeKeyString(object.identifier);
+                            let observersForObject = this.observers[keyString];
+
+                            if (observersForObject) {
+                                observersForObject.forEach(async (observer) => {
+                                    const updatedObject = await this.get(object.identifier);
+                                    observer(updatedObject);
+                                });
+                            }
+                        } catch (e) {
+                            //do nothing;
+                        }
+                    });
+                }
+            }
+
+        }
+
+        //We're done receiving from the provider. No more chunks.
+        intermediateResponse.resolve(true);
+
+        return intermediateResponse.promise;
+
     }
 
     getIntermediateResponse() {
