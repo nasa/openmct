@@ -10,7 +10,6 @@
     text:not(.activity) {
       // Tick labels
       fill: $colorBodyFg;
-      //font-size: 1.15em; // TODO:
       paint-order: stroke;
       font-weight: bold;
       stroke: $colorBodyBg;
