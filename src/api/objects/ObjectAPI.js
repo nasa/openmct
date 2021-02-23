@@ -33,11 +33,15 @@ import InterceptorRegistry from './InterceptorRegistry';
  * @memberof module:openmct
  */
 
-function ObjectAPI(typeRegistry) {
+function ObjectAPI(typeRegistry, openmct) {
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
+    this.injectIdentifierService = function () {
+        this.identifierService = openmct.$injector.get("identifierService");
+    };
+
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
@@ -52,15 +56,32 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
 };
 
 /**
+ * @private
+ */
+ObjectAPI.prototype.getIdentifierService = function () {
+    // Lazily acquire identifier service
+    if (!this.identifierService) {
+        this.injectIdentifierService();
+    }
+
+    return this.identifierService;
+};
+
+/**
  * Retrieve the provider for a given identifier.
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
+    //handles the '' vs 'mct' namespace issue
+    const keyString = utils.makeKeyString(identifier);
+    const identifierService = this.getIdentifierService();
+    const namespace = identifierService.parse(keyString).getSpace();
+
     if (identifier.key === 'ROOT') {
         return this.rootProvider;
     }
 
-    return this.providers[identifier.namespace] || this.fallbackProvider;
+    return this.providers[namespace] || this.fallbackProvider;
 };
 
 /**
@@ -207,13 +228,29 @@ ObjectAPI.prototype.search = function (query, options) {
  * @returns {Promise.<MutableDomainObject>} a promise that will resolve with a MutableDomainObject if
  * the object can be mutated.
  */
-ObjectAPI.prototype.getMutable = function (identifier) {
-    if (!this.supportsMutation(identifier)) {
-        throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
+ObjectAPI.prototype.getMutable = function (idOrKeyString) {
+    if (!this.supportsMutation(idOrKeyString)) {
+        throw new Error(`Object "${this.makeKeyString(idOrKeyString)}" does not support mutation.`);
     }
 
-    return this.get(identifier).then((object) => {
-        return this._toMutable(object);
+    return this.get(idOrKeyString).then((object) => {
+        const mutableDomainObject = this._toMutable(object);
+
+        // Check if provider supports realtime updates
+        let identifier = utils.parseKeyString(idOrKeyString);
+        let provider = this.getProvider(identifier);
+
+        if (provider !== undefined
+            && provider.observe !== undefined) {
+            let unobserve = provider.observe(identifier, (updatedModel) => {
+                mutableDomainObject.$refresh(updatedModel);
+            });
+            mutableDomainObject.$on('$destroy', () => {
+                unobserve();
+            });
+        }
+
+        return mutableDomainObject;
     });
 };
 
