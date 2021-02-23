@@ -118,20 +118,6 @@ export default {
         }
     },
     computed: {
-        /* only useful if combined with tilt to find horizon
-        skewCompassHUDStyle() {
-            if (this.roll === undefined || this.roll === 0) {
-                return;
-            }
-
-            const origin = this.roll > 0 ? 'left bottom' : 'right top';
-
-            return {
-                'transform-origin': origin,
-                transform: `skew(0, ${ this.roll }deg`
-            };
-        },
-        */
         visibleCompassPoints() {
             return COMPASS_POINTS
                 .filter(point => inRange(point.degrees, this.visibleRange))

@@ -74,7 +74,7 @@
                 :container-height="imageContainerHeight"
                 :natural-aspect-ratio="focusedImageNaturalAspectRatio"
                 :image="focusedImage"
-                :options="compass"
+                :lock-compass="lockCompass"
                 @toggle-lock-compass="toggleLockCompass"
             />
         </div>
@@ -199,10 +199,7 @@ export default {
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
-            compass: {
-                display: true, // for manual disabling if obtrusive
-                lock: true // lock compass rose to camera view
-            }
+            lockCompass: true
         };
     },
     computed: {
@@ -771,7 +768,7 @@ export default {
             }
         },
         toggleLockCompass() {
-            this.compass.lock = !this.compass.lock;
+            this.lockCompass = !this.lockCompass;
         }
     }
 };

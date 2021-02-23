@@ -23,7 +23,7 @@
 <template>
 <div
     class="c-direction-rose"
-    @click="toggleLockBezel"
+    @click="toggleLockCompass"
 >
     <div
         class="c-nsew"
@@ -170,7 +170,7 @@ export default {
             type: Number,
             required: true
         },
-        lockBezel: {
+        lockCompass: {
             type: Boolean,
             required: true
         }
@@ -180,7 +180,7 @@ export default {
             return rotate(this.heading, this.cameraPan);
         },
         compassHeading() {
-            return this.lockBezel ? this.cameraHeading : 0;
+            return this.lockCompass ? this.cameraHeading : 0;
         },
         north() {
             return rotate(this.compassHeading, -this.cameraHeading);
@@ -255,8 +255,8 @@ export default {
         }
     },
     methods: {
-        toggleLockBezel() {
-            this.$emit('toggle-lock-bezel');
+        toggleLockCompass() {
+            this.$emit('toggle-lock-compass');
         }
     }
 };

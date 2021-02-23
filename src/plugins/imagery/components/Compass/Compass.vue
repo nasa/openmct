@@ -38,8 +38,8 @@
         :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
-        :lock-bezel="options.lock"
-        @toggle-lock-bezel="toggleLockBezel"
+        :lock-compass="lockCompass"
+        @toggle-lock-compass="toggleLockCompass"
     />
 </div>
 </template>
@@ -72,8 +72,8 @@ export default {
             type: Object,
             required: true
         },
-        options: {
-            type: Object,
+        lockCompass: {
+            type: Boolean,
             required: true
         }
     },
@@ -123,7 +123,7 @@ export default {
         }
     },
     methods: {
-        toggleLockBezel() {
+        toggleLockCompass() {
             this.$emit('toggle-lock-compass');
         }
     }
