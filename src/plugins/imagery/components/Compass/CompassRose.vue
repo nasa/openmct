@@ -23,7 +23,7 @@
 <template>
 <div
     class="c-direction-rose"
-    @click="toggleBezelLock"
+    @click="toggleLockCompass"
 >
     <div
         class="c-nsew"
@@ -131,7 +131,7 @@
     <div
         v-if="showCameraFOV"
         class="c-cam-field"
-        :style="cameraFOVHeadingStyle"
+        :style="cameraHeadingStyle"
     >
         <div class="cam-field-half cam-field-half-l">
             <div
@@ -150,7 +150,7 @@
 </template>
 
 <script>
-import { normalizeDegrees } from './utils';
+import { rotate } from './utils';
 
 export default {
     props: {
@@ -162,28 +162,28 @@ export default {
             type: Number,
             default: undefined
         },
-        cameraFieldOfView: {
+        cameraAngleOfView: {
             type: Number,
             default: undefined
         },
         cameraPan: {
             type: Number,
-            default: undefined
+            required: true
+        },
+        lockCompass: {
+            type: Boolean,
+            required: true
         }
     },
-
-    data() {
-        return {
-            lockBezel: true
-        };
-    },
-
     computed: {
+        cameraHeading() {
+            return rotate(this.heading, this.cameraPan);
+        },
         compassHeading() {
-            return this.lockBezel ? normalizeDegrees(this.heading) : 0;
+            return this.lockCompass ? this.cameraHeading : 0;
         },
         north() {
-            return normalizeDegrees(this.compassHeading - this.heading);
+            return rotate(this.compassHeading, -this.cameraHeading);
         },
         rotateFrameStyle() {
             return { transform: `rotate(${ this.north }deg)` };
@@ -216,46 +216,47 @@ export default {
             };
         },
         headingStyle() {
+            const rotation = rotate(this.north, this.heading);
+
             return {
-                transform: `translateX(-50%) rotate(${ this.compassHeading }deg)`
+                transform: `translateX(-50%) rotate(${ rotation }deg)`
             };
         },
-        cameraFOVHeading() {
-            return this.compassHeading + this.cameraPan;
-        },
-        cameraFOVHeadingStyle() {
+        cameraHeadingStyle() {
+            const rotation = rotate(this.north, this.cameraHeading);
+
             return {
-                transform: `rotate(${ this.cameraFOVHeading }deg)`
+                transform: `rotate(${ rotation }deg)`
             };
         },
         sunHeadingStyle() {
-            const rotation = normalizeDegrees(this.north + this.sunHeading);
+            const rotation = rotate(this.north, this.sunHeading);
 
             return {
                 transform: `rotate(${ rotation }deg)`
             };
         },
         showCameraFOV() {
-            return this.cameraPan !== undefined && this.cameraFieldOfView > 0;
+            return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
         },
         // left half of camera field of view
         // rotated counter-clockwise from camera field of view heading
         cameraFOVStyleLeftHalf() {
             return {
-                transform: `translateX(50%) rotate(${ -this.cameraFieldOfView / 2 }deg)`
+                transform: `translateX(50%) rotate(${ -this.cameraAngleOfView / 2 }deg)`
             };
         },
         // right half of camera field of view
         // rotated clockwise from camera field of view heading
         cameraFOVStyleRightHalf() {
             return {
-                transform: `translateX(-50%) rotate(${ this.cameraFieldOfView / 2 }deg)`
+                transform: `translateX(-50%) rotate(${ this.cameraAngleOfView / 2 }deg)`
             };
         }
     },
     methods: {
-        toggleBezelLock() {
-            this.lockBezel = !this.lockBezel;
+        toggleLockCompass() {
+            this.$emit('toggle-lock-compass');
         }
     }
 };

@@ -23,7 +23,6 @@
 <template>
 <div
     class="c-compass__hud c-hud"
-    :style="skewCompassHUDStyle"
 >
     <div
         v-for="point in visibleCompassPoints"
@@ -45,7 +44,7 @@
 
 <script>
 import {
-    normalizeDegrees,
+    rotate,
     inRange,
     percentOfRange
 } from './utils';
@@ -99,36 +98,20 @@ export default {
             type: Number,
             required: true
         },
-        roll: {
-            type: Number,
-            default: undefined
-        },
         sunHeading: {
             type: Number,
             default: undefined
         },
-        cameraFieldOfView: {
+        cameraAngleOfView: {
             type: Number,
             default: undefined
         },
         cameraPan: {
             type: Number,
-            default: undefined
+            required: true
         }
     },
     computed: {
-        skewCompassHUDStyle() {
-            if (this.roll === undefined || this.roll === 0) {
-                return;
-            }
-
-            const origin = this.roll > 0 ? 'left bottom' : 'right top';
-
-            return {
-                'transform-origin': origin,
-                transform: `skew(0, ${ this.roll }deg`
-            };
-        },
         visibleCompassPoints() {
             return COMPASS_POINTS
                 .filter(point => inRange(point.degrees, this.visibleRange))
@@ -142,28 +125,19 @@ export default {
                 });
         },
         isSunInRange() {
-            return inRange(this.normalizedSunHeading, this.visibleRange);
+            return inRange(this.sunHeading, this.visibleRange);
         },
         sunPositionStyle() {
-            const percentage = percentOfRange(this.normalizedSunHeading, this.visibleRange);
+            const percentage = percentOfRange(this.sunHeading, this.visibleRange);
 
             return {
                 left: `${ percentage * 100 }%`
             };
         },
-        normalizedSunHeading() {
-            return normalizeDegrees(this.sunHeading);
-        },
-        normalizedHeading() {
-            return normalizeDegrees(this.heading);
-        },
         visibleRange() {
-            const min = normalizeDegrees(this.normalizedHeading + this.cameraPan - this.cameraFieldOfView / 2);
-            const max = normalizeDegrees(this.normalizedHeading + this.cameraPan + this.cameraFieldOfView / 2);
-
             return [
-                min,
-                max
+                rotate(this.heading, this.cameraPan, -this.cameraAngleOfView / 2),
+                rotate(this.heading, this.cameraPan, this.cameraAngleOfView / 2)
             ];
         }
     }

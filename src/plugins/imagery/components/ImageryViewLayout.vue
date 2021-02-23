@@ -74,6 +74,8 @@
                 :container-height="imageContainerHeight"
                 :natural-aspect-ratio="focusedImageNaturalAspectRatio"
                 :image="focusedImage"
+                :lock-compass="lockCompass"
+                @toggle-lock-compass="toggleLockCompass"
             />
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
@@ -196,7 +198,8 @@ export default {
             latestRelatedTelemetry: {},
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
-            imageContainerHeight: undefined
+            imageContainerHeight: undefined,
+            lockCompass: true
         };
     },
     computed: {
@@ -763,6 +766,9 @@ export default {
             if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
                 this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
             }
+        },
+        toggleLockCompass() {
+            this.lockCompass = !this.lockCompass;
         }
     }
 };
