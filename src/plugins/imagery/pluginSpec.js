@@ -32,6 +32,19 @@ const TEN_MINUTES = ONE_MINUTE * 10;
 const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
 const REFRESH_CSS_MS = 500;
+const TOLERANCE = 0.50;
+
+function comparisonFunction(valueOne, valueTwo) {
+    let larger = valueOne;
+    let smaller = valueTwo;
+
+    if (larger < smaller) {
+        larger = valueTwo;
+        smaller = valueOne;
+    }
+
+    return (larger - smaller) < TOLERANCE;
+}
 
 function getImageInfo(doc) {
     let imageElement = doc.querySelectorAll(MAIN_IMAGE_CLASS)[0];
@@ -63,7 +76,8 @@ function generateTelemetry(start, count) {
             "name": stringRep + " Imagery",
             "utc": start + (i * ONE_MINUTE),
             "url": location.host + '/' + logo + '?time=' + stringRep,
-            "timeId": stringRep
+            "timeId": stringRep,
+            "value": 100
         });
     }
 
@@ -105,7 +119,51 @@ describe("The Imagery View Layout", () => {
                         "image": 1,
                         "priority": 3
                     },
-                    "source": "url"
+                    "source": "url",
+                    "relatedTelemetry": {
+                        "heading": {
+                            "comparisonFunction": comparisonFunction,
+                            "historical": {
+                                "telemetryObjectId": "heading",
+                                "valueKey": "value"
+                            }
+                        },
+                        "roll": {
+                            "comparisonFunction": comparisonFunction,
+                            "historical": {
+                                "telemetryObjectId": "roll",
+                                "valueKey": "value"
+                            }
+                        },
+                        "pitch": {
+                            "comparisonFunction": comparisonFunction,
+                            "historical": {
+                                "telemetryObjectId": "pitch",
+                                "valueKey": "value"
+                            }
+                        },
+                        "cameraPan": {
+                            "comparisonFunction": comparisonFunction,
+                            "historical": {
+                                "telemetryObjectId": "cameraPan",
+                                "valueKey": "value"
+                            }
+                        },
+                        "cameraTilt": {
+                            "comparisonFunction": comparisonFunction,
+                            "historical": {
+                                "telemetryObjectId": "cameraTilt",
+                                "valueKey": "value"
+                            }
+                        },
+                        "sunOrientation": {
+                            "comparisonFunction": comparisonFunction,
+                            "historical": {
+                                "telemetryObjectId": "sunOrientation",
+                                "valueKey": "value"
+                            }
+                        }
+                    }
                 },
                 {
                     "name": "Name",
@@ -150,6 +208,11 @@ describe("The Imagery View Layout", () => {
         parent = document.createElement('div');
         child = document.createElement('div');
         parent.appendChild(child);
+
+        spyOn(window, 'ResizeObserver').and.returnValue({
+            observe() {},
+            disconnect() {}
+        });
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
@@ -206,8 +269,6 @@ describe("The Imagery View Layout", () => {
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject);
             imageryView.show(child);
-
-            console.log(imageryView);
 
             await telemetryRequestPromise;
             await Vue.nextTick();
