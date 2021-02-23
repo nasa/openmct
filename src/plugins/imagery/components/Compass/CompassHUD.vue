@@ -98,12 +98,6 @@ export default {
             type: Number,
             required: true
         },
-        /* only useful if combined with tilt to find horizon
-        roll: {
-            type: Number,
-            default: undefined
-        },
-        */
         sunHeading: {
             type: Number,
             default: undefined
