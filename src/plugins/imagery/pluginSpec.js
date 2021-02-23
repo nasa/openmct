@@ -215,6 +215,10 @@ describe("The Imagery View Layout", () => {
             return done();
         });
 
+        afterEach(() => {
+            imageryView.destroy();
+        });
+
         it("on mount should show the the most recent image", () => {
             const imageInfo = getImageInfo(parent);
 

@@ -36,7 +36,7 @@ describe("The Compass component", () => {
             pitch: 90,
             cameraTilt: 100,
             cameraPan: 90,
-            sunAngle: 90
+            sunAngle: 30
         };
         let propsData = {
             containerWidth: 600,
