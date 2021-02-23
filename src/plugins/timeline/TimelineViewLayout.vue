@@ -64,12 +64,11 @@
                         slot="object"
                         class="u-contents"
                         :default-object="item.domainObject"
-                        :options="item.options"
+                        :object-view-key="item.viewKey"
                         :object-path="item.objectPath"
                     />
                 </swim-lane>
             </div>
-            <!--    <plan :rendering-engine="'canvas'" />-->
         </div>
     </div>
 </div>
@@ -135,22 +134,13 @@ export default {
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let viewKey = getViewKey(domainObject, this.openmct);
 
-            let options = {
-                compact: true,
-                layoutFontSize: '',
-                layoutFont: '',
-                // Find a better way of getting the parent's width when a plan is inside the time-strip
-                clientWidth: Math.round(this.$refs.timelineHolder.getBoundingClientRect().width - 200),
-                viewKey,
-                isChildObject: true
-            };
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
             let item = {
                 domainObject,
                 objectPath,
                 type,
                 keyString,
-                options,
+                viewKey,
                 height
             };
 

@@ -39,6 +39,10 @@ export default function PlotViewProvider(openmct) {
             && metadata.valuesForHints(['domain']).length > 0);
     }
 
+    function isCompactView(objectPath) {
+        return objectPath.find(object => object.type === 'time-strip');
+    }
+
     return {
         key: 'plot-simple',
         name: 'Plot',
@@ -47,11 +51,12 @@ export default function PlotViewProvider(openmct) {
             return hasTelemetry(domainObject, openmct);
         },
 
-        view: function (domainObject, objectPath, options) {
+        view: function (domainObject, objectPath) {
             let component;
 
             return {
                 show: function (element) {
+                    let isCompact = isCompactView(objectPath);
                     component = new Vue({
                         el: element,
                         components: {
@@ -63,7 +68,9 @@ export default function PlotViewProvider(openmct) {
                         },
                         data() {
                             return {
-                                options
+                                options: {
+                                    compact: isCompact
+                                }
                             };
                         },
                         template: '<plot :options="options"></plot>'

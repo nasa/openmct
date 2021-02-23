@@ -24,6 +24,9 @@ import Plan from './Plan.vue';
 import Vue from 'vue';
 
 export default function PlanViewProvider(openmct) {
+    function isCompactView(objectPath) {
+        return objectPath.find(object => object.type === 'time-strip') !== undefined;
+    }
 
     return {
         key: 'plan.view',
@@ -37,11 +40,12 @@ export default function PlanViewProvider(openmct) {
             return domainObject.type === 'plan';
         },
 
-        view: function (domainObject, objectPath, options) {
+        view: function (domainObject, objectPath) {
             let component;
 
             return {
                 show: function (element) {
+                    let isCompact = isCompactView(objectPath);
                     component = new Vue({
                         el: element,
                         components: {
@@ -53,7 +57,10 @@ export default function PlanViewProvider(openmct) {
                         },
                         data() {
                             return {
-                                options
+                                options: {
+                                    compact: isCompact,
+                                    isChildObject: isCompact
+                                }
                             };
                         },
                         template: '<plan :options="options"></plan>'

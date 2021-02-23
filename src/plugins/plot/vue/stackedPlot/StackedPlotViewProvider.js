@@ -24,6 +24,10 @@ import StackedPlot from './StackedPlot.vue';
 import Vue from 'vue';
 
 export default function StackedPlotViewProvider(openmct) {
+    function isCompactView(objectPath) {
+        return objectPath.find(object => object.type === 'time-strip');
+    }
+
     return {
         key: 'plot-stacked',
         name: 'Stacked Plot',
@@ -36,11 +40,13 @@ export default function StackedPlotViewProvider(openmct) {
             return domainObject.type === 'telemetry.plot.stacked';
         },
 
-        view: function (domainObject, objectPath, options) {
+        view: function (domainObject, objectPath) {
             let component;
 
             return {
                 show: function (element) {
+                    let isCompact = isCompactView(objectPath);
+
                     component = new Vue({
                         el: element,
                         components: {
@@ -53,7 +59,9 @@ export default function StackedPlotViewProvider(openmct) {
                         },
                         data() {
                             return {
-                                options
+                                options: {
+                                    compact: isCompact
+                                }
                             };
                         },
                         template: '<stacked-plot :options="options"></stacked-plot>'

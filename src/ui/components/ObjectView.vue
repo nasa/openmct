@@ -6,16 +6,11 @@
 import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
-const defaultOptions = {
-    layoutFontSize: '',
-    layoutFont: '',
-    showEditView: false,
-    viewKey: ''
-};
 
 export default {
     inject: ["openmct"],
     props: {
+        showEditView: Boolean,
         defaultObject: {
             type: Object,
             default: undefined
@@ -26,11 +21,17 @@ export default {
                 return [];
             }
         },
-        options: {
-            type: Object,
-            default() {
-                return defaultOptions;
-            }
+        layoutFontSize: {
+            type: String,
+            default: ''
+        },
+        layoutFont: {
+            type: String,
+            default: ''
+        },
+        objectViewKey: {
+            type: String,
+            default: ''
         }
     },
     data() {
@@ -43,10 +44,10 @@ export default {
             return this.domainObject && this.domainObject.configuration && this.domainObject.configuration.fontStyle;
         },
         fontSize() {
-            return this.objectFontStyle ? this.objectFontStyle.fontSize : this.options.layoutFontSize;
+            return this.objectFontStyle ? this.objectFontStyle.fontSize : this.layoutFontSize;
         },
         font() {
-            return this.objectFontStyle ? this.objectFontStyle.font : this.options.layoutFont;
+            return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         }
     },
     destroyed() {
@@ -188,17 +189,17 @@ export default {
 
             let objectPath = this.currentObjectPath || this.objectPath;
 
-            if (provider.edit && this.options.showEditView) {
+            if (provider.edit && this.showEditView) {
                 if (this.openmct.editor.isEditing()) {
-                    this.currentView = provider.edit(this.domainObject, true, objectPath, this.options);
+                    this.currentView = provider.edit(this.domainObject, true, objectPath);
                 } else {
-                    this.currentView = provider.view(this.domainObject, objectPath, this.options);
+                    this.currentView = provider.view(this.domainObject, objectPath);
                 }
 
                 this.openmct.editor.on('isEditing', this.toggleEditView);
                 this.releaseEditModeHandler = () => this.openmct.editor.off('isEditing', this.toggleEditView);
             } else {
-                this.currentView = provider.view(this.domainObject, objectPath, this.options);
+                this.currentView = provider.view(this.domainObject, objectPath);
 
                 if (this.currentView.onEditModeChange) {
                     this.openmct.editor.on('isEditing', this.invokeEditModeHandler);
@@ -308,8 +309,8 @@ export default {
         },
         getViewKey() {
             let viewKey = this.viewKey;
-            if (this.options.viewKey) {
-                viewKey = this.options.viewKey;
+            if (this.objectViewKey) {
+                viewKey = this.objectViewKey;
             }
 
             return viewKey;

@@ -99,15 +99,23 @@ export default {
             this.setScaleAndPlotActivities();
         },
         resize() {
-            let clientWidth = this.$refs.plan.clientWidth;
-            if (this.options.clientWidth !== undefined) {
-                clientWidth = this.options.clientWidth;
-            }
+            let clientWidth = this.getClientWidth();
 
             if (clientWidth !== this.width) {
                 this.setDimensions();
                 this.updateViewBounds();
             }
+        },
+        getClientWidth() {
+            let clientWidth = this.$refs.plan.clientWidth;
+
+            //this is a hack - need a better way to find the parent of this component
+            let parent = this.$el.closest('.l-shell__main-container');
+            if (parent) {
+                return parent.getBoundingClientRect().width - 200;
+            }
+
+            return clientWidth;
         },
         validateJSON(jsonString) {
             try {
@@ -143,14 +151,7 @@ export default {
         },
         setDimensions() {
             const planHolder = this.$refs.plan;
-            const rect = planHolder.getBoundingClientRect();
-            this.left = Math.round(rect.left);
-            this.top = Math.round(rect.top);
-            if (this.options.clientWidth !== undefined) {
-                this.width = this.options.clientWidth;
-            } else {
-                this.width = planHolder.clientWidth;
-            }
+            this.width = this.getClientWidth();
 
             this.height = Math.round(planHolder.getBoundingClientRect().height);
         },
