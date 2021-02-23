@@ -64,6 +64,7 @@ define([
     './viewDatumAction/plugin',
     './interceptors/plugin',
     './performanceIndicator/plugin',
+    './CouchDBSearchFolder/plugin',
     './timeline/plugin'
 ], function (
     _,
@@ -109,6 +110,7 @@ define([
     ViewDatumAction,
     ObjectInterceptors,
     PerformanceIndicator,
+    CouchDBSearchFolder,
     Timeline
 ) {
     const bundleMap = {
@@ -208,6 +210,7 @@ define([
     plugins.ViewDatumAction = ViewDatumAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
     plugins.PerformanceIndicator = PerformanceIndicator.default;
+    plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
     plugins.Timeline = Timeline.default;
 
     return plugins;
