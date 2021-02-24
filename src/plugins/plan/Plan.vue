@@ -108,10 +108,12 @@ export default {
         getClientWidth() {
             let clientWidth = this.$refs.plan.clientWidth;
 
-            //this is a hack - need a better way to find the parent of this component
-            let parent = this.openmct.layout.$refs.browseObject.$el;
-            if (parent) {
-                return parent.getBoundingClientRect().width - 200;
+            if (!clientWidth) {
+                //this is a hack - need a better way to find the parent of this component
+                let parent = this.openmct.layout.$refs.browseObject.$el;
+                if (parent) {
+                    clientWidth = parent.getBoundingClientRect().width - 200;
+                }
             }
 
             return clientWidth;
