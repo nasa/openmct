@@ -104,11 +104,6 @@ describe('the plugin', function () {
         let planView;
 
         beforeEach((done) => {
-            spyOn(openmct.layout.$refs.browseObject.$el, 'getBoundingClientRect');
-            openmct.layout.$refs.browseObject.$el.getBoundingClientRect.and.returnValue({
-                width: 1200,
-                height: 800
-            });
             planDomainObject = {
                 identifier: {
                     key: 'test-object',
