@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
+import {createOpenMct, resetApplicationState} from "utils/testing";
 import PlanPlugin from "../plan/plugin";
 import Vue from 'vue';
 
@@ -52,9 +52,8 @@ describe('the plugin', function () {
             start: 1597160002854,
             end: 1597181232854
         });
-
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.start(appHolder);
     });
 
     afterEach(() => {
@@ -92,9 +91,24 @@ describe('the plugin', function () {
 
     describe('the plan view displays activities', () => {
         let planDomainObject;
+        let mockObjectPath = [
+            {
+                identifier: {
+                    key: 'test',
+                    namespace: ''
+                },
+                type: 'time-strip',
+                name: 'Test Parent Object'
+            }
+        ];
         let planView;
 
         beforeEach((done) => {
+            spyOn(openmct.layout.$refs.browseObject.$el, 'getBoundingClientRect');
+            openmct.layout.$refs.browseObject.$el.getBoundingClientRect.and.returnValue({
+                width: 1200,
+                height: 800
+            });
             planDomainObject = {
                 identifier: {
                     key: 'test-object',
@@ -128,9 +142,7 @@ describe('the plugin', function () {
 
             const applicableViews = openmct.objectViews.get(planDomainObject);
             planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
-            let view = planView.view(planDomainObject, null, {
-                clientWidth: 1200
-            });
+            let view = planView.view(planDomainObject, mockObjectPath);
             view.show(child, true);
 
             return Vue.nextTick().then(() => {
@@ -139,13 +151,12 @@ describe('the plugin', function () {
         });
 
         it('loads activities into the view', () => {
-            const svgEls = element.querySelectorAll('.c-plan__contents .c-swim-lane');
-            console.log(svgEls);
+            const svgEls = element.querySelectorAll('.c-plan__contents svg');
             expect(svgEls.length).toEqual(1);
         });
 
         it('displays the group label', () => {
-            const labelEl = element.querySelector('.c-plan__contents .c-swim-lane__lane-label--span-cols .c-object-label__name');
+            const labelEl = element.querySelector('.c-plan__contents .c-object-label .c-object-label__name');
             expect(labelEl.innerHTML).toEqual('TEST-GROUP');
         });
 

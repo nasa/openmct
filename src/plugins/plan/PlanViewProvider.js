@@ -46,6 +46,7 @@ export default function PlanViewProvider(openmct) {
             return {
                 show: function (element) {
                     let isCompact = isCompactView(objectPath);
+
                     component = new Vue({
                         el: element,
                         components: {
