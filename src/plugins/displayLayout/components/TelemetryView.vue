@@ -131,7 +131,8 @@ export default {
             domainObject: undefined,
             formats: undefined,
             viewKey: `alphanumeric-format-${Math.random()}`,
-            status: ''
+            status: '',
+            mutablePromise: undefined
         };
     },
     computed: {
@@ -213,7 +214,7 @@ export default {
     },
     mounted() {
         if (this.openmct.objects.supportsMutation(this.item.identifier)) {
-            this.openmct.objects.getMutable(this.item.identifier)
+            this.mutablePromise = this.openmct.objects.getMutable(this.item.identifier)
                 .then(this.setObject);
         } else {
             this.openmct.objects.get(this.item.identifier)
@@ -235,7 +236,11 @@ export default {
 
         this.openmct.time.off("bounds", this.refreshData);
 
-        if (this.domainObject.isMutable) {
+        if (this.mutablePromise) {
+            this.mutablePromise.then(() => {
+                this.openmct.objects.destroyMutable(this.domainObject);
+            });
+        } else {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
@@ -296,6 +301,7 @@ export default {
         },
         setObject(domainObject) {
             this.domainObject = domainObject;
+            this.mutablePromise = undefined;
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
