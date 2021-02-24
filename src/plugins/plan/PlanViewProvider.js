@@ -20,35 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from './Plot.vue';
+import Plan from './Plan.vue';
 import Vue from 'vue';
 
-export default function PlotViewProvider(openmct) {
-    function hasTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasDomainAndRange(metadata);
-    }
-
-    function hasDomainAndRange(metadata) {
-        return (metadata.valuesForHints(['range']).length > 0
-            && metadata.valuesForHints(['domain']).length > 0);
-    }
-
+export default function PlanViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        return objectPath.find(object => object.type === 'time-strip') !== undefined;
     }
 
     return {
-        key: 'plot-simple',
-        name: 'Plot',
-        cssClass: 'icon-telemetry',
+        key: 'plan.view',
+        name: 'Plan',
+        cssClass: 'icon-calendar',
         canView(domainObject) {
-            return hasTelemetry(domainObject, openmct);
+            return domainObject.type === 'plan';
+        },
+
+        canEdit(domainObject) {
+            return domainObject.type === 'plan';
         },
 
         view: function (domainObject, objectPath) {
@@ -57,10 +46,11 @@ export default function PlotViewProvider(openmct) {
             return {
                 show: function (element) {
                     let isCompact = isCompactView(objectPath);
+
                     component = new Vue({
                         el: element,
                         components: {
-                            Plot
+                            Plan
                         },
                         provide: {
                             openmct,
@@ -69,11 +59,12 @@ export default function PlotViewProvider(openmct) {
                         data() {
                             return {
                                 options: {
-                                    compact: isCompact
+                                    compact: isCompact,
+                                    isChildObject: isCompact
                                 }
                             };
                         },
-                        template: '<plot :options="options"></plot>'
+                        template: '<plan :options="options"></plan>'
                     });
                 },
                 destroy: function () {

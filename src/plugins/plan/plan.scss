@@ -1,0 +1,24 @@
+.c-plan {
+
+  @include abs();
+
+  svg {
+    text-rendering: geometricPrecision;
+
+    .activity-label, .no-activities {
+      stroke: none;
+    }
+
+    .no-activities {
+      fill: #383838;
+    }
+
+    .activity-bounds {
+      fill-opacity: 0.5;
+    }
+  }
+
+  canvas {
+    display: none;
+  }
+}

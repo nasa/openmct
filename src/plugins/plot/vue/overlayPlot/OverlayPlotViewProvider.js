@@ -24,6 +24,10 @@ import Plot from '../single/Plot.vue';
 import Vue from 'vue';
 
 export default function OverlayPlotViewProvider(openmct) {
+    function isCompactView(objectPath) {
+        return objectPath.find(object => object.type === 'time-strip');
+    }
+
     return {
         key: 'plot-overlay',
         name: 'Overlay Plot',
@@ -36,11 +40,12 @@ export default function OverlayPlotViewProvider(openmct) {
             return domainObject.type === 'telemetry.plot.overlay';
         },
 
-        view: function (domainObject) {
+        view: function (domainObject, objectPath) {
             let component;
 
             return {
                 show: function (element) {
+                    let isCompact = isCompactView(objectPath);
                     component = new Vue({
                         el: element,
                         components: {
@@ -50,7 +55,14 @@ export default function OverlayPlotViewProvider(openmct) {
                             openmct,
                             domainObject
                         },
-                        template: '<plot></plot>'
+                        data() {
+                            return {
+                                options: {
+                                    compact: isCompact
+                                }
+                            };
+                        },
+                        template: '<plot :options="options"></plot>'
                     });
                 },
                 destroy: function () {

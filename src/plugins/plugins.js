@@ -60,11 +60,12 @@ define([
     './nonEditableFolder/plugin',
     './persistence/couch/plugin',
     './defaultRootName/plugin',
-    './timeline/plugin',
+    './plan/plugin',
     './viewDatumAction/plugin',
     './interceptors/plugin',
     './performanceIndicator/plugin',
-    './CouchDBSearchFolder/plugin'
+    './CouchDBSearchFolder/plugin',
+    './timeline/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -105,11 +106,12 @@ define([
     NonEditableFolder,
     CouchDBPlugin,
     DefaultRootName,
-    Timeline,
+    PlanLayout,
     ViewDatumAction,
     ObjectInterceptors,
     PerformanceIndicator,
-    CouchDBSearchFolder
+    CouchDBSearchFolder,
+    Timeline
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -204,11 +206,12 @@ define([
     plugins.NonEditableFolder = NonEditableFolder.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
-    plugins.Timeline = Timeline.default;
+    plugins.PlanLayout = PlanLayout.default;
     plugins.ViewDatumAction = ViewDatumAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
     plugins.PerformanceIndicator = PerformanceIndicator.default;
     plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
+    plugins.Timeline = Timeline.default;
 
     return plugins;
 });
