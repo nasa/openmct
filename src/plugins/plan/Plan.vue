@@ -112,11 +112,11 @@ export default {
                 //this is a hack - need a better way to find the parent of this component
                 let parent = this.openmct.layout.$refs.browseObject.$el;
                 if (parent) {
-                    clientWidth = parent.getBoundingClientRect().width - 200;
+                    clientWidth = parent.getBoundingClientRect().width;
                 }
             }
 
-            return clientWidth;
+            return clientWidth - 200;
         },
         validateJSON(jsonString) {
             try {
