@@ -36,6 +36,12 @@ export default {
                 return {};
             }
         },
+        options: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         gridLines: {
             type: Boolean,
             default() {
@@ -108,7 +114,7 @@ export default {
                         loadingUpdated
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" @plotTickWidth="onTickWidthChange" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @loadingUpdated="loadingUpdated"/></div>'
             });
         },
         onTickWidthChange() {
@@ -122,7 +128,8 @@ export default {
                 gridLines: this.gridLines,
                 cursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,
-                loading: this.loading
+                loading: this.loading,
+                options: this.options
             };
         }
     }

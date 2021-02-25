@@ -50,7 +50,7 @@
                     ></span>
                 </div>
 
-                <mct-ticks v-show="gridLines"
+                <mct-ticks v-show="gridLines && !options.compact"
                            :axis-type="'xAxis'"
                            :position="'right'"
                            @plotTickWidth="onTickWidthChange"
@@ -113,7 +113,7 @@
                 >
                 </div>
             </div>
-            <x-axis v-if="config.series.models.length > 0"
+            <x-axis v-if="config.series.models.length > 0 && !options.compact"
                     :series-model="config.series.models[0]"
             />
 
@@ -146,6 +146,14 @@ export default {
     },
     inject: ['openmct', 'domainObject'],
     props: {
+        options: {
+            type: Object,
+            default() {
+                return {
+                    compact: false
+                };
+            }
+        },
         gridLines: {
             type: Boolean,
             default() {
@@ -885,6 +893,9 @@ export default {
             if (this.filterObserver) {
                 this.filterObserver();
             }
+
+            this.openmct.time.off('bounds', this.updateDisplayBounds);
+            this.openmct.objectViews.off('clearData', this.clearData);
         }
     }
 };

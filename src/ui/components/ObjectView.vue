@@ -28,6 +28,10 @@ export default {
         layoutFont: {
             type: String,
             default: ''
+        },
+        objectViewKey: {
+            type: String,
+            default: ''
         }
     },
     data() {
@@ -303,8 +307,17 @@ export default {
                 event.stopPropagation();
             }
         },
+        getViewKey() {
+            let viewKey = this.viewKey;
+            if (this.objectViewKey) {
+                viewKey = this.objectViewKey;
+            }
+
+            return viewKey;
+        },
         getViewProvider() {
-            let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
+
+            let provider = this.openmct.objectViews.getByProviderKey(this.getViewKey());
 
             if (!provider) {
                 provider = this.openmct.objectViews.get(this.domainObject)[0];

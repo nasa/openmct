@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2020, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,43 +20,51 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ImageryViewLayout from './components/ImageryViewLayout.vue';
+import Plan from './Plan.vue';
 import Vue from 'vue';
 
-export default function ImageryViewProvider(openmct) {
-    const type = 'example.imagery';
-
-    function hasImageTelemetry(domainObject) {
-        const metadata = openmct.telemetry.getMetadata(domainObject);
-        if (!metadata) {
-            return false;
-        }
-
-        return metadata.valuesForHints(['image']).length > 0;
+export default function PlanViewProvider(openmct) {
+    function isCompactView(objectPath) {
+        return objectPath.find(object => object.type === 'time-strip') !== undefined;
     }
 
     return {
-        key: type,
-        name: 'Imagery Layout',
-        cssClass: 'icon-image',
-        canView: function (domainObject) {
-            return hasImageTelemetry(domainObject);
+        key: 'plan.view',
+        name: 'Plan',
+        cssClass: 'icon-calendar',
+        canView(domainObject) {
+            return domainObject.type === 'plan';
         },
-        view: function (domainObject) {
+
+        canEdit(domainObject) {
+            return domainObject.type === 'plan';
+        },
+
+        view: function (domainObject, objectPath) {
             let component;
 
             return {
                 show: function (element) {
+                    let isCompact = isCompactView(objectPath);
+
                     component = new Vue({
                         el: element,
                         components: {
-                            ImageryViewLayout
+                            Plan
                         },
                         provide: {
                             openmct,
                             domainObject
                         },
-                        template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
+                        data() {
+                            return {
+                                options: {
+                                    compact: isCompact,
+                                    isChildObject: isCompact
+                                }
+                            };
+                        },
+                        template: '<plan :options="options"></plan>'
                     });
                 },
                 destroy: function () {

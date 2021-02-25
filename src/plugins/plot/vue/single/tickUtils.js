@@ -87,3 +87,31 @@ export function commonSuffix(a, b) {
 
     return a.slice(a.length - breakpoint);
 }
+
+export function getFormattedTicks(newTicks, format) {
+    newTicks = newTicks
+        .map(function (tickValue) {
+            return {
+                value: tickValue,
+                text: format(tickValue)
+            };
+        });
+
+    if (newTicks.length && typeof newTicks[0].text === 'string') {
+        const tickText = newTicks.map(function (t) {
+            return t.text;
+        });
+        const prefix = tickText.reduce(commonPrefix);
+        const suffix = tickText.reduce(commonSuffix);
+        newTicks.forEach(function (t) {
+            t.fullText = t.text;
+            if (suffix.length) {
+                t.text = t.text.slice(prefix.length, -suffix.length);
+            } else {
+                t.text = t.text.slice(prefix.length);
+            }
+        });
+    }
+
+    return newTicks;
+}
