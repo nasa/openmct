@@ -84,10 +84,6 @@ export default {
         this.openmct.time.on("bounds", this.updateViewBounds);
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
-        if (this.openmct.objects.supportsMutation(this.domainObject.identifier)) {
-            this.mutablePromise = this.openmct.objects.getMutable(this.domainObject.identifier)
-                .then(this.observeForChanges);
-        }
     },
     beforeDestroy() {
         clearInterval(this.resizeTimer);
@@ -95,14 +91,6 @@ export default {
         this.openmct.time.off("bounds", this.updateViewBounds);
         if (this.unlisten) {
             this.unlisten();
-        }
-
-        if (this.mutablePromise) {
-            this.mutablePromise.then(() => {
-                this.openmct.objects.destroyMutable(this.domainObject);
-            });
-        } else {
-            this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
     methods: {
