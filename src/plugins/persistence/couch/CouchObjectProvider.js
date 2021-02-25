@@ -145,7 +145,8 @@ export default class CouchObjectProvider {
 
         const reader = response.body.getReader();
         let completed = false;
-
+        let decoder = new TextDecoder("utf-8");
+        let decodedChunk = '';
         while (!completed) {
             const {done, value} = await reader.read();
             //done is true when we lose connection with the provider
@@ -156,23 +157,24 @@ export default class CouchObjectProvider {
             if (value) {
                 let chunk = new Uint8Array(value.length);
                 chunk.set(value, 0);
-                const decodedChunk = new TextDecoder("utf-8").decode(chunk);
-                try {
-                    const json = JSON.parse(decodedChunk);
-                    if (json) {
-                        let docs = json.docs;
-                        docs.forEach(doc => {
-                            let object = this.getModel(doc);
-                            if (object) {
-                                objects.push(object);
-                            }
-                        });
-                    }
-                } catch (e) {
-                    //do nothing
-                }
+                const partial = decoder.decode(chunk, {stream: !completed});
+                decodedChunk = decodedChunk + partial;
             }
+        }
 
+        try {
+            const json = JSON.parse(decodedChunk);
+            if (json) {
+                let docs = json.docs;
+                docs.forEach(doc => {
+                    let object = this.getModel(doc);
+                    if (object) {
+                        objects.push(object);
+                    }
+                });
+            }
+        } catch (e) {
+            //do nothing
         }
 
         return objects;

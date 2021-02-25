@@ -129,16 +129,16 @@
         :class="{'is-paused': isPaused}"
         @scroll="handleScroll"
     >
-        <div v-for="(datum, index) in imageHistory"
-             :key="datum.url + datum[timeKey]"
+        <div v-for="(image, index) in imageHistory"
+             :key="image.url + image.time"
              class="c-imagery__thumb c-thumb"
              :class="{ selected: focusedImageIndex === index && isPaused }"
              @click="setFocusedImage(index, thumbnailClick)"
         >
             <img class="c-thumb__image"
-                 :src="formatImageUrl(datum)"
+                 :src="image.url"
             >
-            <div class="c-thumb__timestamp">{{ formatTime(datum) }}</div>
+            <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
         </div>
     </div>
 </div>
@@ -631,7 +631,12 @@ export default {
                 return;
             }
 
-            this.imageHistory.push(datum);
+            let image = { ...datum };
+            image.formattedTime = this.formatTime(datum);
+            image.url = this.formatImageUrl(datum);
+            image.time = datum[this.timeKey];
+
+            this.imageHistory.push(image);
 
             if (setFocused) {
                 this.setFocusedImage(this.imageHistory.length - 1);
