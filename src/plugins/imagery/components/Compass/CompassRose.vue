@@ -124,6 +124,7 @@
     </div>
 
     <div
+        v-if="showSunHeading"
         class="c-sun"
         :style="sunHeadingStyle"
     ></div>
@@ -228,6 +229,9 @@ export default {
             return {
                 transform: `rotate(${ rotation }deg)`
             };
+        },
+        showSunHeading() {
+            return this.sunHeading !== undefined;
         },
         sunHeadingStyle() {
             const rotation = rotate(this.north, this.sunHeading);
