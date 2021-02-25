@@ -85,7 +85,7 @@ export default {
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     },
-    destroyed() {
+    beforeDestroy() {
         clearInterval(this.resizeTimer);
         this.openmct.time.off("timeSystem", this.setScaleAndPlotActivities);
         this.openmct.time.off("bounds", this.updateViewBounds);

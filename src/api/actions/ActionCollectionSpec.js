@@ -29,9 +29,22 @@ describe('The ActionCollection', () => {
     let mockApplicableActions;
     let mockObjectPath;
     let mockView;
+    let mockIdentifierService;
 
     beforeEach(() => {
         openmct = createOpenMct();
+        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
+        mockIdentifierService = jasmine.createSpyObj(
+            'identifierService',
+            ['parse']
+        );
+        mockIdentifierService.parse.and.returnValue({
+            getSpace: () => {
+                return '';
+            }
+        });
+
+        openmct.$injector.get.and.returnValue(mockIdentifierService);
         mockObjectPath = [
             {
                 name: 'mock folder',
