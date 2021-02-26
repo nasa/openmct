@@ -55,7 +55,7 @@
                 <swim-lane :icon-class="item.type.definition.cssClass"
                            :min-height="item.height"
                            :show-ucontents="item.domainObject.type === 'plan'"
-                           :span-rows="item.domainObject.type === 'plan'"
+                           :span-rows-count="item.rowCount"
                 >
                     <template slot="label">
                         {{ item.domainObject.name }}
@@ -78,6 +78,7 @@
 import ObjectView from '@/ui/components/ObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
+import { getValidatedPlan } from "../plan/util";
 
 const unknownObjectType = {
     definition: {
@@ -133,6 +134,10 @@ export default {
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let viewKey = getViewKey(domainObject, this.openmct);
+            let rowCount = 0;
+            if (domainObject.type === 'plan') {
+                rowCount = Object.keys(getValidatedPlan(domainObject)).length;
+            }
 
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
             let item = {
@@ -141,6 +146,7 @@ export default {
                 type,
                 keyString,
                 viewKey,
+                rowCount,
                 height
             };
 

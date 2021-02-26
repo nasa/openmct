@@ -4,7 +4,8 @@
 >
 
     <div class="c-swimlane__lane-label c-object-label"
-         :class="{'c-swimlane__lane-label--span-rows': spanRows, 'c-swimlane__lane-label--span-cols': (!spanRows && !isNested)}"
+         :class="{'c-swimlane__lane-label--span-cols': (!spanRowsCount && !isNested)}"
+         :style="gridRowSpan"
     >
         <div v-if="iconClass"
              class="c-object-label__type-icon"
@@ -55,10 +56,19 @@ export default {
                 return false;
             }
         },
-        spanRows: {
-            type: Boolean,
+        spanRowsCount: {
+            type: Number,
             default() {
-                return false;
+                return 0;
+            }
+        }
+    },
+    computed: {
+        gridRowSpan() {
+            if (this.spanRowsCount) {
+                return `grid-row: span ${this.spanRowsCount}`;
+            } else {
+                return '';
             }
         }
     }

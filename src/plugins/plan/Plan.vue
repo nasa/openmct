@@ -26,6 +26,7 @@ import * as d3Selection from 'd3-selection';
 import * as d3Scale from 'd3-scale';
 import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
+import { getValidatedPlan } from "./util";
 import Vue from "vue";
 
 //TODO: UI direction needed for the following property values
@@ -72,7 +73,7 @@ export default {
         };
     },
     mounted() {
-        this.validateJSON(this.domainObject.selectFile.body);
+        this.getPlanData(this.domainObject);
 
         this.canvas = this.$refs.plan.appendChild(document.createElement('canvas'));
         this.canvas.height = 0;
@@ -118,14 +119,8 @@ export default {
 
             return clientWidth - 200;
         },
-        validateJSON(jsonString) {
-            try {
-                this.json = JSON.parse(jsonString);
-            } catch (e) {
-                return false;
-            }
-
-            return true;
+        getPlanData(domainObject) {
+            this.planData = getValidatedPlan(domainObject);
         },
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
@@ -231,14 +226,14 @@ export default {
             return (currentRow || 0);
         },
         calculatePlanLayout() {
-            let groups = Object.keys(this.json);
+            let groups = Object.keys(this.planData);
             this.groupActivities = {};
 
             groups.forEach((key, index) => {
                 let activitiesByRow = {};
                 let currentRow = 0;
 
-                let activities = this.json[key];
+                let activities = this.planData[key];
                 activities.forEach((activity) => {
                     if (this.isActivityInBounds(activity)) {
                         const currentStart = Math.max(this.viewBounds.start, activity.start);
@@ -430,7 +425,7 @@ export default {
                 class: 'activity-bounds',
                 x: item.activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
                 y: row,
-                rx: (width < EDGE_ROUNDING * 2)? 0 : EDGE_ROUNDING,
+                rx: (width < EDGE_ROUNDING * 2) ? 0 : EDGE_ROUNDING,
                 width: width,
                 height: String(ROW_HEIGHT),
                 fill: activity.color
