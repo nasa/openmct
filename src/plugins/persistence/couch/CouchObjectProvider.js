@@ -58,9 +58,7 @@ export default class CouchObjectProvider {
     }
 
     request(subPath, method, value, abortSignal) {
-        let fetchOptions = {
-            method: method
-        };
+        let fetchOptions = { method };
 
         if (value) {
             fetchOptions.body = JSON.stringify(value);
