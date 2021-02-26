@@ -7,8 +7,8 @@
     width: 100%;
 
     [class*='__lane-label'] {
-        background: rgba($colorBodyFg, 0.2); // TODO: convert to theme constant
-        color: $colorBodyFg; // TODO: convert to theme constant
+        background: rgba($colorBodyFg, 0.2);
+        color: $colorBodyFg;
         padding: $interiorMarginSm;
     }
 

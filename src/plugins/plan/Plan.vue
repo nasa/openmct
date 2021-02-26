@@ -1,6 +1,6 @@
 <template>
 <div ref="plan"
-     class="c-plan"
+     class="c-plan c-timeline-holder"
 >
     <template v-if="viewBounds && !options.compact">
         <swim-lane>
