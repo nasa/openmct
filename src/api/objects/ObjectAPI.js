@@ -33,11 +33,15 @@ import InterceptorRegistry from './InterceptorRegistry';
  * @memberof module:openmct
  */
 
-function ObjectAPI(typeRegistry) {
+function ObjectAPI(typeRegistry, openmct) {
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
+    this.injectIdentifierService = function () {
+        this.identifierService = openmct.$injector.get("identifierService");
+    };
+
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
@@ -52,15 +56,32 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
 };
 
 /**
+ * @private
+ */
+ObjectAPI.prototype.getIdentifierService = function () {
+    // Lazily acquire identifier service
+    if (!this.identifierService) {
+        this.injectIdentifierService();
+    }
+
+    return this.identifierService;
+};
+
+/**
  * Retrieve the provider for a given identifier.
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
+    //handles the '' vs 'mct' namespace issue
+    const keyString = utils.makeKeyString(identifier);
+    const identifierService = this.getIdentifierService();
+    const namespace = identifierService.parse(keyString).getSpace();
+
     if (identifier.key === 'ROOT') {
         return this.rootProvider;
     }
 
-    return this.providers[identifier.namespace] || this.fallbackProvider;
+    return this.providers[namespace] || this.fallbackProvider;
 };
 
 /**
@@ -352,11 +373,29 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
  * @private
  */
 ObjectAPI.prototype._toMutable = function (object) {
+    let mutableObject;
+
     if (object.isMutable) {
-        return object;
+        mutableObject = object;
     } else {
-        return MutableDomainObject.createMutable(object, this.eventEmitter);
+        mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
     }
+
+    // Check if provider supports realtime updates
+    let identifier = utils.parseKeyString(mutableObject.identifier);
+    let provider = this.getProvider(identifier);
+
+    if (provider !== undefined
+        && provider.observe !== undefined) {
+        let unobserve = provider.observe(identifier, (updatedModel) => {
+            mutableObject.$refresh(updatedModel);
+        });
+        mutableObject.$on('$destroy', () => {
+            unobserve();
+        });
+    }
+
+    return mutableObject;
 };
 
 /**

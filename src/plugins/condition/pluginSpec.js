@@ -543,7 +543,6 @@ describe('the plugin', function () {
         });
 
         it('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
-
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
             conditionMgr.on('conditionSetResultUpdated', mockListener);
             conditionMgr.telemetryObjects = {
@@ -565,7 +564,7 @@ describe('the plugin', function () {
         });
 
         it('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
-            const date = Date.now();
+            const date = 1;
             conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input = ["0.4"];
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
             conditionMgr.on('conditionSetResultUpdated', mockListener);
