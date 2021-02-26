@@ -38,7 +38,7 @@ const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 25;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
-const EDGE_ROUNDING = 10;
+const EDGE_ROUNDING = 5;
 const DEFAULT_COLOR = 'yellow';
 const DEFAULT_TEXT_COLOR = 'white';
 
@@ -423,11 +423,14 @@ export default {
                 width = width + EDGE_ROUNDING;
             }
 
+            width = Math.max(width, 1); // Set width to a minimum of 1
+
+            // rx: don't round corners if the width of the rect is smaller than the rounding radius
             this.setNSAttributesForElement(rectElement, {
                 class: 'activity-bounds',
                 x: item.activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
                 y: row,
-                rx: EDGE_ROUNDING,
+                rx: (width < EDGE_ROUNDING * 2)? 0 : EDGE_ROUNDING,
                 width: width,
                 height: String(ROW_HEIGHT),
                 fill: activity.color

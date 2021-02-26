@@ -1,10 +1,10 @@
 <template>
 <div class="u-contents"
-     :class="{'c-swim-lane': !isNested}"
+     :class="{'c-swimlane': !isNested}"
 >
 
-    <div class="c-swim-lane__lane-label c-object-label"
-         :class="{'c-swim-lane__lane-label--span-rows': spanRows, 'c-swim-lane__lane-label--span-cols': (!spanRows && !isNested)}"
+    <div class="c-swimlane__lane-label c-object-label"
+         :class="{'c-swimlane__lane-label--span-rows': spanRows, 'c-swimlane__lane-label--span-cols': (!spanRows && !isNested)}"
     >
         <div v-if="iconClass"
              class="c-object-label__type-icon"
@@ -17,7 +17,7 @@
         </div>
 
     </div>
-    <div class="c-swim-lane__lane-object"
+    <div class="c-swimlane__lane-object"
          :style="{'min-height': minHeight}"
          :class="{'u-contents': showUcontents}"
          data-selectable
