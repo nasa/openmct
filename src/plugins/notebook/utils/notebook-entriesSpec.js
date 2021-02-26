@@ -109,10 +109,23 @@ const selectedPage = {
 };
 
 let openmct;
+let mockIdentifierService;
 
 describe('Notebook Entries:', () => {
     beforeEach(done => {
         openmct = createOpenMct();
+        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
+        mockIdentifierService = jasmine.createSpyObj(
+            'identifierService',
+            ['parse']
+        );
+        mockIdentifierService.parse.and.returnValue({
+            getSpace: () => {
+                return '';
+            }
+        });
+
+        openmct.$injector.get.and.returnValue(mockIdentifierService);
         openmct.types.addType('notebook', {
             creatable: true
         });

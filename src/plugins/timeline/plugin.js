@@ -20,27 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from './TimelineViewProvider';
+import TimelineViewProvider from '../timeline/TimelineViewProvider';
 
 export default function () {
     return function install(openmct) {
-        openmct.types.addType('plan', {
-            name: 'Plan',
-            key: 'plan',
+        openmct.types.addType('time-strip', {
+            name: 'Time Strip',
+            key: 'time-strip',
             description: 'An activity timeline',
             creatable: true,
             cssClass: 'icon-timeline',
-            form: [
-                {
-                    name: 'Upload Plan (JSON File)',
-                    key: 'selectFile',
-                    control: 'file-input',
-                    required: true,
-                    text: 'Select File',
-                    type: 'application/json'
-                }
-            ],
             initialize: function (domainObject) {
+                domainObject.composition = [];
             }
         });
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
