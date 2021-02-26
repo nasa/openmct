@@ -143,8 +143,8 @@ define([
         const searchService = this.$injector.get('searchService');
 
         // need to pass the options object down,
-        // gotta pass in null for maxResults and filter on query
-        return searchService.query(query, null, null, options);
+        // gotta pass in undefined for maxResults and filter on query
+        return searchService.query(query, undefined, undefined, options);
     };
 
     // Injects new object API as a decorator so that it hijacks all requests.
