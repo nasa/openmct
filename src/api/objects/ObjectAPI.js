@@ -228,29 +228,13 @@ ObjectAPI.prototype.search = function (query, options) {
  * @returns {Promise.<MutableDomainObject>} a promise that will resolve with a MutableDomainObject if
  * the object can be mutated.
  */
-ObjectAPI.prototype.getMutable = function (idOrKeyString) {
-    if (!this.supportsMutation(idOrKeyString)) {
-        throw new Error(`Object "${this.makeKeyString(idOrKeyString)}" does not support mutation.`);
+ObjectAPI.prototype.getMutable = function (identifier) {
+    if (!this.supportsMutation(identifier)) {
+        throw new Error(`Object "${this.makeKeyString(identifier)}" does not support mutation.`);
     }
 
-    return this.get(idOrKeyString).then((object) => {
-        const mutableDomainObject = this._toMutable(object);
-
-        // Check if provider supports realtime updates
-        let identifier = utils.parseKeyString(idOrKeyString);
-        let provider = this.getProvider(identifier);
-
-        if (provider !== undefined
-            && provider.observe !== undefined) {
-            let unobserve = provider.observe(identifier, (updatedModel) => {
-                mutableDomainObject.$refresh(updatedModel);
-            });
-            mutableDomainObject.$on('$destroy', () => {
-                unobserve();
-            });
-        }
-
-        return mutableDomainObject;
+    return this.get(identifier).then((object) => {
+        return this._toMutable(object);
     });
 };
 
@@ -389,11 +373,29 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
  * @private
  */
 ObjectAPI.prototype._toMutable = function (object) {
+    let mutableObject;
+
     if (object.isMutable) {
-        return object;
+        mutableObject = object;
     } else {
-        return MutableDomainObject.createMutable(object, this.eventEmitter);
+        mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
     }
+
+    // Check if provider supports realtime updates
+    let identifier = utils.parseKeyString(mutableObject.identifier);
+    let provider = this.getProvider(identifier);
+
+    if (provider !== undefined
+        && provider.observe !== undefined) {
+        let unobserve = provider.observe(identifier, (updatedModel) => {
+            mutableObject.$refresh(updatedModel);
+        });
+        mutableObject.$on('$destroy', () => {
+            unobserve();
+        });
+    }
+
+    return mutableObject;
 };
 
 /**

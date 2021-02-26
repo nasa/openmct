@@ -1,4 +1,4 @@
-export default function (couchPlugin, searchFilter) {
+export default function (folderName, couchPlugin, searchFilter) {
     return function install(openmct) {
         const couchProvider = couchPlugin.couchProvider;
 
@@ -15,7 +15,7 @@ export default function (couchPlugin, searchFilter) {
                     return Promise.resolve({
                         identifier,
                         type: 'folder',
-                        name: "CouchDB Documents"
+                        name: folderName || "CouchDB Documents"
                     });
                 }
             }
