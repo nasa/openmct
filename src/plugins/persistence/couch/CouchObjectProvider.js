@@ -132,7 +132,7 @@ export default class CouchObjectProvider {
     }
 
     get(identifier, abortSignal) {
-        return this.request(identifier.key, "GET").then(this.getModel.bind(this));
+        return this.request(identifier.key, "GET", undefined, abortSignal).then(this.getModel.bind(this));
     }
 
     async getObjectsByFilter(filter) {
