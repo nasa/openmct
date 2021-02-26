@@ -714,7 +714,7 @@ export default {
                 objectPath.shift();
 
                 // if root, remove, we're not using in object path for tree
-                let lastObject = objectPath.length - 1 ? objectPath[objectPath.length - 1] : false;
+                let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
                 if (lastObject && lastObject.type === 'root') {
                     objectPath.pop();
                 }
