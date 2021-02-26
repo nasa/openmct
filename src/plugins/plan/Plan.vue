@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import * as d3Selection from 'd3-selection';
 import * as d3Scale from 'd3-scale';
 import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
@@ -143,7 +142,8 @@ export default {
             }
         },
         clearPreviousActivities() {
-            d3Selection.selectAll(".c-plan__contents > div").remove();
+            let activities = this.$el.querySelectorAll(".c-plan__contents > div");
+            activities.forEach(activity => activity.remove());
         },
         setDimensions() {
             const planHolder = this.$refs.plan;
