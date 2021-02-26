@@ -235,6 +235,12 @@ export default {
     },
     watch: {
         syncTreeNavigation() {
+            // if there is an abort controller, then a search is in progress and will need to be canceled
+            if (this.abortController) {
+                this.abortController.abort();
+                delete this.abortController;
+            }
+
             this.searchValue = '';
 
             if (!this.openmct.router.path) {
@@ -685,12 +691,19 @@ export default {
             // clear any previous search results
             this.searchResultItems = [];
 
-            const promises = this.openmct.objects.search(this.searchValue)
+            // an abort controller will be passed in that will be used 
+            // to cancel an active searches if necessary
+            this.abortController = new AbortController();
+            const abortSignal = this.abortController.signal;
+
+            const promises = this.openmct.objects.search(this.searchValue, { signal: abortSignal })
                 .map(promise => promise
                     .then(results => this.aggregateSearchResults(results)));
 
             Promise.all(promises).then(() => {
                 this.searchLoading = false;
+            }).catch(reason => {
+                console.log('search aborted?', reason);
             });
         },
         async aggregateSearchResults(results) {
@@ -714,13 +727,21 @@ export default {
             }
         },
         searchTree(value) {
+            // if an abort controller exists, regardless of the value passed in,
+            // there is an active search that should be cancled
+            if (this.abortController) {
+                this.abortController.abort();
+                delete this.abortController;
+            }
+
             this.searchValue = value;
             this.searchLoading = true;
 
             if (this.searchValue !== '') {
                 this.getSearchResults();
             } else {
-                this.searchLoading = false;
+                    this.searchLoading = false;
+                }
             }
         },
         currentPathIsActivePath() {
