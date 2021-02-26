@@ -142,7 +142,9 @@ define([
     ObjectServiceProvider.prototype.superSecretFallbackSearch = function (query, options) {
         const searchService = this.$injector.get('searchService');
 
-        return searchService.query(query);
+        // need to pass the options object down,
+        // gotta pass in null for maxResults and filter on query
+        return searchService.query(query, null, null, options);
     };
 
     // Injects new object API as a decorator so that it hijacks all requests.
@@ -150,13 +152,19 @@ define([
     function LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {
         const eventEmitter = openmct.objects.eventEmitter;
 
-        this.getObjects = function (keys) {
+        this.getObjects = function (keys, options) {
             const results = {};
 
             const promises = keys.map(function (keyString) {
                 const key = utils.parseKeyString(keyString);
+                let signal;
 
-                return openmct.objects.get(key)
+                // if there is an AbortController signal, pass it to the object providers
+                if (options && options.signal) {
+                    signal = options.signal;
+                }
+
+                return openmct.objects.get(key, signal)
                     .then(function (object) {
                         object = utils.toOldFormat(object);
                         results[keyString] = instantiate(object, keyString);

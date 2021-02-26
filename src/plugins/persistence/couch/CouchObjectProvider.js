@@ -57,11 +57,21 @@ export default class CouchObjectProvider {
         return options;
     }
 
-    request(subPath, method, value) {
-        return fetch(this.url + '/' + subPath, {
-            method: method,
-            body: JSON.stringify(value)
-        }).then(response => response.json())
+    request(subPath, method, value, abortSignal) {
+        let fetchOptions = {
+            method: method
+        };
+
+        if (value) {
+            fetchOptions.body = JSON.stringify(value);
+        }
+
+        if (abortSignal) {
+            fetchOptions.signal = abortSignal;
+        }
+
+        return fetch(this.url + '/' + subPath, fetchOptions)
+            .then(response => response.json())
             .then(function (response) {
                 return response;
             }, function () {
@@ -121,7 +131,7 @@ export default class CouchObjectProvider {
         }
     }
 
-    get(identifier) {
+    get(identifier, abortSignal) {
         return this.request(identifier.key, "GET").then(this.getModel.bind(this));
     }
 

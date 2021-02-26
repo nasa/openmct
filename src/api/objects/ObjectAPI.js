@@ -154,18 +154,19 @@ ObjectAPI.prototype.addProvider = function (namespace, provider) {
  * @method get
  * @memberof module:openmct.ObjectProvider#
  * @param {string} key the key for the domain object to load
+ * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
  * @returns {Promise} a promise which will resolve when the domain object
  *          has been saved, or be rejected if it cannot be saved
  */
 
-ObjectAPI.prototype.get = function (identifier) {
+ObjectAPI.prototype.get = function (identifier, abortSignal) {
     let keystring = this.makeKeyString(identifier);
     if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
     }
 
     identifier = utils.parseKeyString(identifier);
-    const provider = this.getProvider(identifier);
+    const provider = this.getProvider(identifier, abortSignal);
 
     if (!provider) {
         throw new Error('No Provider Matched');
