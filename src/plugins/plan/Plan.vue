@@ -40,8 +40,7 @@ const ROW_HEIGHT = 25;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
 const EDGE_ROUNDING = 5;
-const DEFAULT_COLOR = 'yellow';
-const DEFAULT_TEXT_COLOR = 'white';
+const DEFAULT_COLOR = '#cc9922';
 
 export default {
     components: {
@@ -246,6 +245,7 @@ export default {
                         //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
                         const activityNameFitsRect = (rectWidth >= activityNameWidth);
                         const textStart = (activityNameFitsRect ? rectX : rectY) + TEXT_LEFT_PADDING;
+                        const color = activity.color || DEFAULT_COLOR;
 
                         let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
                         const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
@@ -264,8 +264,8 @@ export default {
 
                         activitiesByRow[currentRow].push({
                             activity: {
-                                color: activity.color || DEFAULT_COLOR,
-                                textColor: activity.textColor || DEFAULT_TEXT_COLOR,
+                                color: color,
+                                textColor: activity.textColor || (activityNameFitsRect) ? this.getContrastingColor(color) : '',
                                 name: activity.name,
                                 exceeds: {
                                     start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
@@ -274,6 +274,7 @@ export default {
                             },
                             textLines: textLines,
                             textStart: textStart,
+                            activityNameFitsRect: activityNameFitsRect,
                             textY: textY,
                             start: rectX,
                             end: activityNameFitsRect ? rectY : textStart + textWidth,
@@ -436,7 +437,7 @@ export default {
             item.textLines.forEach((line, index) => {
                 let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 this.setNSAttributesForElement(textElement, {
-                    class: 'activity-label',
+                    class: item.activityNameFitsRect ? "activity-label" : "activity-label activity-label--outside-rect",
                     x: item.textStart,
                     y: item.textY + (index * LINE_HEIGHT),
                     fill: activity.textColor
@@ -447,6 +448,26 @@ export default {
                 svgElement.appendChild(textElement);
             });
             // this.addForeignElement(svgElement, activity.name, item.textStart, item.textY - LINE_HEIGHT);
+        },
+        cutHex(h, start, end) {
+            const hStr = (h.charAt(0) === '#') ? h.substring(1,7) : h;
+            return parseInt(hStr.substring(start, end), 16);
+        },
+        getContrastingColor(hexColor) {
+            // https://codepen.io/davidhalford/pen/ywEva/
+            // TODO: move this into a general utility function?
+            const cThreshold = 130;
+
+            if (hexColor.indexOf('#') === -1) {
+                // We weren't given a hex color
+                return "#ff0000";
+            }
+            const hR = this.cutHex(hexColor, 0, 2);
+            const hG = this.cutHex(hexColor, 2, 4);
+            const hB = this.cutHex(hexColor, 4, 6);
+
+            const cBrightness = ((hR * 299) + (hG * 587) + (hB * 114)) / 1000;
+            return cBrightness > cThreshold ? "#000000" : "#ffffff";
         }
     }
 };
