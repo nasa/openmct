@@ -127,6 +127,7 @@ export default {
         }
 
         this.getTimeSystems();
+        this.openmct.time.on("bounds", this.updateViewBounds);
     },
     methods: {
         addItem(domainObject) {
@@ -180,6 +181,12 @@ export default {
 
             //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
             return currentBounds;
+        },
+        updateViewBounds(bounds) {
+            let currentTimeSystem = this.timeSystems.find(item => item.timeSystem.key === this.openmct.time.timeSystem().key);
+            if (currentTimeSystem) {
+                currentTimeSystem.bounds = bounds;
+            }
         }
     }
 };

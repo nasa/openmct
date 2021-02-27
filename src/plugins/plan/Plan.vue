@@ -246,6 +246,12 @@ export default {
                         const activityNameFitsRect = (rectWidth >= activityNameWidth);
                         const textStart = (activityNameFitsRect ? rectX : rectY) + TEXT_LEFT_PADDING;
                         const color = activity.color || DEFAULT_COLOR;
+                        let textColor = '';
+                        if (activity.textColor) {
+                            textColor = activity.textColor;
+                        } else if (activityNameFitsRect) {
+                            textColor = this.getContrastingColor(color);
+                        }
 
                         let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
                         const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
@@ -265,7 +271,7 @@ export default {
                         activitiesByRow[currentRow].push({
                             activity: {
                                 color: color,
-                                textColor: activity.textColor || (activityNameFitsRect) ? this.getContrastingColor(color) : '',
+                                textColor: textColor,
                                 name: activity.name,
                                 exceeds: {
                                     start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
@@ -274,7 +280,7 @@ export default {
                             },
                             textLines: textLines,
                             textStart: textStart,
-                            activityNameFitsRect: activityNameFitsRect,
+                            textClass: activityNameFitsRect ? "" : "activity-label--outside-rect",
                             textY: textY,
                             start: rectX,
                             end: activityNameFitsRect ? rectY : textStart + textWidth,
@@ -437,7 +443,7 @@ export default {
             item.textLines.forEach((line, index) => {
                 let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 this.setNSAttributesForElement(textElement, {
-                    class: item.activityNameFitsRect ? "activity-label" : "activity-label activity-label--outside-rect",
+                    class: `activity-label ${item.textClass}`,
                     x: item.textStart,
                     y: item.textY + (index * LINE_HEIGHT),
                     fill: activity.textColor
@@ -450,7 +456,8 @@ export default {
             // this.addForeignElement(svgElement, activity.name, item.textStart, item.textY - LINE_HEIGHT);
         },
         cutHex(h, start, end) {
-            const hStr = (h.charAt(0) === '#') ? h.substring(1,7) : h;
+            const hStr = (h.charAt(0) === '#') ? h.substring(1, 7) : h;
+
             return parseInt(hStr.substring(start, end), 16);
         },
         getContrastingColor(hexColor) {
@@ -462,11 +469,13 @@ export default {
                 // We weren't given a hex color
                 return "#ff0000";
             }
+
             const hR = this.cutHex(hexColor, 0, 2);
             const hG = this.cutHex(hexColor, 2, 4);
             const hB = this.cutHex(hexColor, 4, 6);
 
             const cBrightness = ((hR * 299) + (hG * 587) + (hB * 114)) / 1000;
+
             return cBrightness > cThreshold ? "#000000" : "#ffffff";
         }
     }
