@@ -213,7 +213,16 @@ ObjectAPI.prototype.search = function (query, options) {
 
     searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, options)
         .then(results => results.hits
-            .map(hit => utils.toNewFormat(hit.object.getModel(), hit.object.getId()))));
+            .map(hit => {
+                let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
+                const interceptors = this.listGetInterceptors(domainObject.identifier, domainObject);
+
+                interceptors.forEach(interceptor => {
+                    domainObject = interceptor.invoke(domainObject.identifier, domainObject);
+                });
+
+                return domainObject;
+            })));
 
     return searchPromises;
 };
