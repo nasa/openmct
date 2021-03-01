@@ -57,16 +57,12 @@ export default class CouchObjectProvider {
         return options;
     }
 
-    request(subPath, method, value, abortSignal) {
-        let fetchOptions = { method };
-
-        if (value) {
-            fetchOptions.body = JSON.stringify(value);
-        }
-
-        if (abortSignal) {
-            fetchOptions.signal = abortSignal;
-        }
+    request(subPath, method, body, signal) {
+        let fetchOptions = {
+            method,
+            body,
+            signal
+        };
 
         return fetch(this.url + '/' + subPath, fetchOptions)
             .then(response => response.json())
