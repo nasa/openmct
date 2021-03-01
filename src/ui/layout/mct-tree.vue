@@ -704,6 +704,10 @@ export default {
                 this.searchLoading = false;
             }).catch(reason => {
                 console.log('search aborted?', reason);
+            }).finally(() => {
+                if (this.abortController) {
+                    delete this.abortController;
+                }
             });
         },
         async aggregateSearchResults(results) {
