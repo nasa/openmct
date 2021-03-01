@@ -201,17 +201,17 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
  * @method search
  * @memberof module:openmct.ObjectAPI#
  * @param {string} query the term to search for
- * @param {Object} options search options
+ * @param {AbortController.signal} abortSignal (optional) signal to cancel downstream fetch requests
  * @returns {Array.<Promise.<module:openmct.DomainObject>>}
  *          an array of promises returned from each object provider's search function
  *          each resolving to domain objects matching provided search query and options.
  */
-ObjectAPI.prototype.search = function (query, options) {
+ObjectAPI.prototype.search = function (query, abortSignal) {
     const searchPromises = Object.values(this.providers)
         .filter(provider => provider.search !== undefined)
-        .map(provider => provider.search(query, options));
+        .map(provider => provider.search(query, abortSignal));
 
-    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, options)
+    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, abortSignal)
         .then(results => results.hits
             .map(hit => {
                 let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());

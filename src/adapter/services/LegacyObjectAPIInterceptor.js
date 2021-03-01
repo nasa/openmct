@@ -139,12 +139,12 @@ define([
             });
     };
 
-    ObjectServiceProvider.prototype.superSecretFallbackSearch = function (query, options) {
+    ObjectServiceProvider.prototype.superSecretFallbackSearch = function (query, abortSignal) {
         const searchService = this.$injector.get('searchService');
 
-        // need to pass the options object down,
-        // gotta pass in undefined for maxResults and filter on query
-        return searchService.query(query, undefined, undefined, options);
+        // need to pass the abortSignal down, so need to
+        // pass in undefined for maxResults and filter on query
+        return searchService.query(query, undefined, undefined, abortSignal);
     };
 
     // Injects new object API as a decorator so that it hijacks all requests.
@@ -152,19 +152,14 @@ define([
     function LegacyObjectAPIInterceptor(openmct, ROOTS, instantiate, topic, objectService) {
         const eventEmitter = openmct.objects.eventEmitter;
 
-        this.getObjects = function (keys, options) {
+        this.getObjects = function (keys, abortSignal) {
             const results = {};
 
             const promises = keys.map(function (keyString) {
                 const key = utils.parseKeyString(keyString);
                 let signal;
 
-                // if there is an AbortController signal, pass it to the object providers
-                if (options && options.signal) {
-                    signal = options.signal;
-                }
-
-                return openmct.objects.get(key, signal)
+                return openmct.objects.get(key, abortSignal)
                     .then(function (object) {
                         object = utils.toOldFormat(object);
                         results[keyString] = instantiate(object, keyString);

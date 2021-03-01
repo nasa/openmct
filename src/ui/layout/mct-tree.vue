@@ -696,7 +696,7 @@ export default {
             this.abortController = new AbortController();
             const abortSignal = this.abortController.signal;
 
-            const promises = this.openmct.objects.search(this.searchValue, { signal: abortSignal })
+            const promises = this.openmct.objects.search(this.searchValue, abortSignal)
                 .map(promise => promise
                     .then(results => this.aggregateSearchResults(results)));
 
