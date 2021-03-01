@@ -317,7 +317,8 @@ export default class CouchObjectProvider {
         this.enqueueObject(key, model, intermediateResponse);
         this.objectQueue[key].pending = true;
         const queued = this.objectQueue[key].dequeue();
-        this.request(key, "PUT", new CouchDocument(key, queued.model)).then((response) => {
+        let document = new CouchDocument(key, queued.model);
+        this.request(key, "PUT", document).then((response) => {
             this.checkResponse(response, queued.intermediateResponse);
         });
 
@@ -328,7 +329,8 @@ export default class CouchObjectProvider {
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
-            this.request(key, "PUT", new CouchDocument(key, queued.model, this.objectQueue[key].rev)).then((response) => {
+            let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
+            this.request(key, "PUT", document).then((response) => {
                 this.checkResponse(response, queued.intermediateResponse);
             });
         }
