@@ -166,7 +166,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     }
 
     identifier = utils.parseKeyString(identifier);
-    const provider = this.getProvider(identifier, abortSignal);
+    const provider = this.getProvider(identifier);
 
     if (!provider) {
         throw new Error('No Provider Matched');
@@ -176,7 +176,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
         throw new Error('Provider does not support get!');
     }
 
-    let objectPromise = provider.get(identifier);
+    let objectPromise = provider.get(identifier, abortSignal);
     this.cache[keystring] = objectPromise;
 
     return objectPromise.then(result => {
