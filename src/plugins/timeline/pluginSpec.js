@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from "utils/testing";
 import TimelinePlugin from "./plugin";
+import Vue from 'vue';
 
 describe('the plugin', function () {
     let objectDef;
@@ -47,7 +48,7 @@ describe('the plugin', function () {
         child.style.height = '480px';
         element.appendChild(child);
 
-        openmct.time.bounds({
+        openmct.time.timeSystem('utc', {
             start: 1597160002854,
             end: 1597181232854
         });
@@ -75,18 +76,32 @@ describe('the plugin', function () {
         it('is creatable', () => {
             expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
+    });
 
-        it('provides a timeline view', () => {
+    describe('the view', () => {
+        let timelineView;
+
+        beforeEach((done) => {
             const testViewObject = {
                 id: "test-object",
                 type: "time-strip"
             };
 
             const applicableViews = openmct.objectViews.get(testViewObject);
-            let timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
+            timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
+            let view = timelineView.view(testViewObject, element);
+            view.show(child, true);
+            Vue.nextTick(done);
+        });
+
+        it('provides a view', () => {
             expect(timelineView).toBeDefined();
         });
 
+        it('displays a time axis', () => {
+            const el = element.querySelector('.c-timesystem-axis');
+            expect(el).toBeDefined();
+        });
     });
 
 });

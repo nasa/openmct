@@ -1,6 +1,6 @@
 <template>
 <div ref="plan"
-     class="c-plan"
+     class="c-plan c-timeline-holder"
 >
     <template v-if="viewBounds && !options.compact">
         <swim-lane>
@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import * as d3Selection from 'd3-selection';
 import * as d3Scale from 'd3-scale';
 import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
+import { getValidatedPlan } from "./util";
 import Vue from "vue";
 
 //TODO: UI direction needed for the following property values
@@ -38,9 +38,8 @@ const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 25;
 const LINE_HEIGHT = 12;
 const MAX_TEXT_WIDTH = 300;
-const EDGE_ROUNDING = 10;
-const DEFAULT_COLOR = 'yellow';
-const DEFAULT_TEXT_COLOR = 'white';
+const EDGE_ROUNDING = 5;
+const DEFAULT_COLOR = '#cc9922';
 
 export default {
     components: {
@@ -72,7 +71,7 @@ export default {
         };
     },
     mounted() {
-        this.validateJSON(this.domainObject.selectFile.body);
+        this.getPlanData(this.domainObject);
 
         this.canvas = this.$refs.plan.appendChild(document.createElement('canvas'));
         this.canvas.height = 0;
@@ -118,14 +117,8 @@ export default {
 
             return clientWidth - 200;
         },
-        validateJSON(jsonString) {
-            try {
-                this.json = JSON.parse(jsonString);
-            } catch (e) {
-                return false;
-            }
-
-            return true;
+        getPlanData(domainObject) {
+            this.planData = getValidatedPlan(domainObject);
         },
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
@@ -148,7 +141,8 @@ export default {
             }
         },
         clearPreviousActivities() {
-            d3Selection.selectAll(".c-plan__contents > div").remove();
+            let activities = this.$el.querySelectorAll(".c-plan__contents > div");
+            activities.forEach(activity => activity.remove());
         },
         setDimensions() {
             const planHolder = this.$refs.plan;
@@ -231,14 +225,14 @@ export default {
             return (currentRow || 0);
         },
         calculatePlanLayout() {
-            let groups = Object.keys(this.json);
+            let groups = Object.keys(this.planData);
             this.groupActivities = {};
 
             groups.forEach((key, index) => {
                 let activitiesByRow = {};
                 let currentRow = 0;
 
-                let activities = this.json[key];
+                let activities = this.planData[key];
                 activities.forEach((activity) => {
                     if (this.isActivityInBounds(activity)) {
                         const currentStart = Math.max(this.viewBounds.start, activity.start);
@@ -251,6 +245,13 @@ export default {
                         //TODO: Fix bug for SVG where the rectWidth is not proportional to the canvas measuredWidth of the text
                         const activityNameFitsRect = (rectWidth >= activityNameWidth);
                         const textStart = (activityNameFitsRect ? rectX : rectY) + TEXT_LEFT_PADDING;
+                        const color = activity.color || DEFAULT_COLOR;
+                        let textColor = '';
+                        if (activity.textColor) {
+                            textColor = activity.textColor;
+                        } else if (activityNameFitsRect) {
+                            textColor = this.getContrastingColor(color);
+                        }
 
                         let textLines = this.getActivityDisplayText(this.canvasContext, activity.name, activityNameFitsRect);
                         const textWidth = textStart + this.getTextWidth(textLines[0]) + TEXT_LEFT_PADDING;
@@ -269,8 +270,8 @@ export default {
 
                         activitiesByRow[currentRow].push({
                             activity: {
-                                color: activity.color || DEFAULT_COLOR,
-                                textColor: activity.textColor || DEFAULT_TEXT_COLOR,
+                                color: color,
+                                textColor: textColor,
                                 name: activity.name,
                                 exceeds: {
                                     start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
@@ -279,6 +280,7 @@ export default {
                             },
                             textLines: textLines,
                             textStart: textStart,
+                            textClass: activityNameFitsRect ? "" : "activity-label--outside-rect",
                             textY: textY,
                             start: rectX,
                             end: activityNameFitsRect ? rectY : textStart + textWidth,
@@ -423,11 +425,14 @@ export default {
                 width = width + EDGE_ROUNDING;
             }
 
+            width = Math.max(width, 1); // Set width to a minimum of 1
+
+            // rx: don't round corners if the width of the rect is smaller than the rounding radius
             this.setNSAttributesForElement(rectElement, {
                 class: 'activity-bounds',
                 x: item.activity.exceeds.start ? item.start - EDGE_ROUNDING : item.start,
                 y: row,
-                rx: EDGE_ROUNDING,
+                rx: (width < EDGE_ROUNDING * 2) ? 0 : EDGE_ROUNDING,
                 width: width,
                 height: String(ROW_HEIGHT),
                 fill: activity.color
@@ -438,7 +443,7 @@ export default {
             item.textLines.forEach((line, index) => {
                 let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
                 this.setNSAttributesForElement(textElement, {
-                    class: 'activity-label',
+                    class: `activity-label ${item.textClass}`,
                     x: item.textStart,
                     y: item.textY + (index * LINE_HEIGHT),
                     fill: activity.textColor
@@ -449,6 +454,29 @@ export default {
                 svgElement.appendChild(textElement);
             });
             // this.addForeignElement(svgElement, activity.name, item.textStart, item.textY - LINE_HEIGHT);
+        },
+        cutHex(h, start, end) {
+            const hStr = (h.charAt(0) === '#') ? h.substring(1, 7) : h;
+
+            return parseInt(hStr.substring(start, end), 16);
+        },
+        getContrastingColor(hexColor) {
+            // https://codepen.io/davidhalford/pen/ywEva/
+            // TODO: move this into a general utility function?
+            const cThreshold = 130;
+
+            if (hexColor.indexOf('#') === -1) {
+                // We weren't given a hex color
+                return "#ff0000";
+            }
+
+            const hR = this.cutHex(hexColor, 0, 2);
+            const hG = this.cutHex(hexColor, 2, 4);
+            const hB = this.cutHex(hexColor, 4, 6);
+
+            const cBrightness = ((hR * 299) + (hG * 587) + (hB * 114)) / 1000;
+
+            return cBrightness > cThreshold ? "#000000" : "#ffffff";
         }
     }
 };
