@@ -117,6 +117,8 @@ export default {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
+        this.openmct.time.off("bounds", this.updateViewBounds);
+
     },
     mounted() {
         if (this.composition) {
