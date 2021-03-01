@@ -691,7 +691,7 @@ export default {
             // clear any previous search results
             this.searchResultItems = [];
 
-            // an abort controller will be passed in that will be used 
+            // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
             this.abortController = new AbortController();
             const abortSignal = this.abortController.signal;
