@@ -703,7 +703,7 @@ export default {
             Promise.all(promises).then(() => {
                 this.searchLoading = false;
             }).catch(reason => {
-                console.log('search aborted?', reason);
+                // search aborted
             }).finally(() => {
                 if (this.abortController) {
                     delete this.abortController;
