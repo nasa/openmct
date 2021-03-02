@@ -64,6 +64,11 @@ export default class CouchObjectProvider {
             signal
         };
 
+        // stringify body if needed
+        if (fetchOptions.body) {
+            fetchOptions.body = JSON.stringify(fetchOptions.body);
+        }
+
         return fetch(this.url + '/' + subPath, fetchOptions)
             .then(response => response.json())
             .then(function (response) {
