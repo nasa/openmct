@@ -401,7 +401,7 @@ export default {
         // unsubscribe from related telemetry
         if (this.relatedTelemetry.hasRelatedTelemetry) {
             for (let key of this.relatedTelemetry.keys) {
-                if (this.relatedTelemetry[key].unsubscribe) {
+                if (this.relatedTelemetry[key] && this.relatedTelemetry[key].unsubscribe) {
                     this.relatedTelemetry[key].unsubscribe();
                 }
             }
