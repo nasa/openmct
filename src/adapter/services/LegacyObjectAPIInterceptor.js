@@ -157,7 +157,6 @@ define([
 
             const promises = keys.map(function (keyString) {
                 const key = utils.parseKeyString(keyString);
-                let signal;
 
                 return openmct.objects.get(key, abortSignal)
                     .then(function (object) {
