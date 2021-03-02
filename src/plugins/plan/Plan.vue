@@ -385,7 +385,7 @@ export default {
                 y: "20",
                 class: "activity-label--outside-rect"
             });
-            textElement.innerHTML = 'No activities within current timeframe';
+            textElement.innerHTML = 'No activities within timeframe';
 
             svgElement.appendChild(textElement);
         },
