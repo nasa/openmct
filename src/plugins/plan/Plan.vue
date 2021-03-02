@@ -383,9 +383,9 @@ export default {
             this.setNSAttributesForElement(textElement, {
                 x: "10",
                 y: "20",
-                class: "no-activities"
+                class: "activity-label--outside-rect"
             });
-            textElement.innerHTML = 'No activities at this time';
+            textElement.innerHTML = 'No activities within timeframe';
 
             svgElement.appendChild(textElement);
         },
