@@ -181,10 +181,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
 
     return objectPromise.then(result => {
         delete this.cache[keystring];
-        const interceptors = this.listGetInterceptors(identifier, result);
-        interceptors.forEach(interceptor => {
-            result = interceptor.invoke(identifier, result);
-        });
+        this.applyInterceptors(result);
 
         return result;
     });
@@ -215,11 +212,7 @@ ObjectAPI.prototype.search = function (query, abortSignal) {
         .then(results => results.hits
             .map(hit => {
                 let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
-                const interceptors = this.listGetInterceptors(domainObject.identifier, domainObject);
-
-                interceptors.forEach(interceptor => {
-                    domainObject = interceptor.invoke(domainObject.identifier, domainObject);
-                });
+                this.applyInterceptors(domainObject);
 
                 return domainObject;
             })));
@@ -346,6 +339,17 @@ ObjectAPI.prototype.addGetInterceptor = function (interceptorDef) {
  */
 ObjectAPI.prototype.listGetInterceptors = function (identifier, object) {
     return this.interceptorRegistry.getInterceptors(identifier, object);
+};
+
+/**
+ * Inovke interceptors if applicable for a given domain object.
+ * @private
+ */
+ObjectAPI.prototype.applyInterceptors = function (domainObject) {
+    const interceptors = this.listGetInterceptors(domainObject.identifier, domainObject);
+    interceptors.forEach(interceptor => {
+        domainObject = interceptor.invoke(domainObject.identifier, domainObject);
+    });
 };
 
 /**
