@@ -159,10 +159,14 @@ export default {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
         },
         views() {
+            if (this.openmct.router.started !== true) {
+                return [];
+            }
+
             return this
                 .openmct
                 .objectViews
-                .get(this.domainObject)
+                .get(this.domainObject, this.openmct.router.path)
                 .map((p) => {
                     return {
                         key: p.key,
@@ -197,7 +201,7 @@ export default {
             if (currentViewKey !== undefined) {
                 let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
 
-                return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
+                return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject, this.openmct.router.path);
             }
 
             return false;

@@ -320,7 +320,8 @@ export default {
             let provider = this.openmct.objectViews.getByProviderKey(this.getViewKey());
 
             if (!provider) {
-                provider = this.openmct.objectViews.get(this.domainObject)[0];
+                let objectPath = this.currentObjectPath || this.objectPath;
+                provider = this.openmct.objectViews.get(this.domainObject, objectPath)[0];
                 if (!provider) {
                     return;
                 }
@@ -329,10 +330,11 @@ export default {
             return provider;
         },
         editIfEditable(event) {
+            let objectPath = this.currentObjectPath || this.objectPath;
             let provider = this.getViewProvider();
             if (provider
                 && provider.canEdit
-                && provider.canEdit(this.domainObject)
+                && provider.canEdit(this.domainObject, objectPath)
                 && this.isEditingAllowed()
                 && !this.openmct.editor.isEditing()) {
                 this.openmct.editor.edit();
