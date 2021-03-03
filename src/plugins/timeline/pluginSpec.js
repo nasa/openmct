@@ -29,8 +29,27 @@ describe('the plugin', function () {
     let element;
     let child;
     let openmct;
+    let mockObjectPath;
 
     beforeEach((done) => {
+        mockObjectPath = [
+            {
+                name: 'mock folder',
+                type: 'fake-folder',
+                identifier: {
+                    key: 'mock-folder',
+                    namespace: ''
+                }
+            },
+            {
+                name: 'mock parent folder',
+                type: 'time-strip',
+                identifier: {
+                    key: 'mock-parent-folder',
+                    namespace: ''
+                }
+            }
+        ];
         const appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
@@ -87,7 +106,7 @@ describe('the plugin', function () {
                 type: "time-strip"
             };
 
-            const applicableViews = openmct.objectViews.get(testViewObject);
+            const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
             timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
             let view = timelineView.view(testViewObject, element);
             view.show(child, true);
