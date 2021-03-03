@@ -273,9 +273,7 @@ export default {
                 isFresh = true;
                 for (let key of this.spacecraftPositionKeys) {
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                        if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
-                            isFresh = false;
-                        }
+                        isFresh = Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
                     } else {
                         isFresh = false;
                     }
@@ -293,9 +291,7 @@ export default {
                 isFresh = true;
                 for (let key of this.spacecraftOrientationKeys) {
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                        if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
-                            isFresh = false;
-                        }
+                        isFresh = Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
                     } else {
                         isFresh = false;
                     }
@@ -316,9 +312,7 @@ export default {
                 if (this.isSpacecraftPositionFresh && this.isSpacecraftOrientationFresh) {
                     for (let key of this.cameraKeys) {
                         if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                            if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
-                                isFresh = false;
-                            }
+                            isFresh = Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
                         } else {
                             isFresh = false;
                         }
