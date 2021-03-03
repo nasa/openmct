@@ -711,10 +711,6 @@ export default {
             });
         },
         async aggregateSearchResults(results, abortSignal) {
-            if (abortSignal.aborted) {
-                return;
-            }
-
             for (const result of results) {
                 if (!abortSignal.aborted) {
                     const objectPath = await this.openmct.objects.getOriginalPath(result.identifier);
