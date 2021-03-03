@@ -44,7 +44,11 @@ define(['EventEmitter'], function (EventEmitter) {
      * @returns {module:openmct.ViewProvider[]} any providers
      *          which can provide views of this object
      */
-    ViewRegistry.prototype.get = function (item, objectPath = []) {
+    ViewRegistry.prototype.get = function (item, objectPath) {
+        if (objectPath === undefined) {
+            throw "objectPath must be provided to get applicable views for an object";
+        }
+
         function byPriority(providerA, providerB) {
             let priorityA = providerA.priority ? providerA.priority(item) : DEFAULT_VIEW_PRIORITY;
             let priorityB = providerB.priority ? providerB.priority(item) : DEFAULT_VIEW_PRIORITY;

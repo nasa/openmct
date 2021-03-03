@@ -159,10 +159,16 @@ export default {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
         },
         views() {
+            let objectPath = [];
+            if (this.openmct.router.started) {
+                //if this is called before the router path has been initialized, then path can be []
+                objectPath = this.openmct.router.path;
+            }
+
             return this
                 .openmct
                 .objectViews
-                .get(this.domainObject, this.openmct.router.path)
+                .get(this.domainObject, objectPath)
                 .map((p) => {
                     return {
                         key: p.key,
