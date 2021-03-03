@@ -159,7 +159,7 @@ export default {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
         },
         views() {
-            if (this.openmct.router.started !== true) {
+            if (this.domainObject && (this.openmct.router.started !== true)) {
                 return [];
             }
 
