@@ -68,12 +68,14 @@ export default class RelatedTelemetry {
 
         await Promise.all(
             this.keys.map(async (key) => {
-                if (this[key].historical) {
-                    await this._initializeHistorical(key);
-                }
+                if (this[key]) {
+                    if (this[key].historical) {
+                        await this._initializeHistorical(key);
+                    }
 
-                if (this[key].realtime && this[key].realtime.telemetryObjectId) {
-                    await this._intializeRealtime(key);
+                    if (this[key].realtime && this[key].realtime.telemetryObjectId) {
+                        await this._intializeRealtime(key);
+                    }
                 }
             })
         );
@@ -153,7 +155,7 @@ export default class RelatedTelemetry {
     destroy() {
         this._openmct.time.off('timeSystem', this._timeSystemChange);
         for (let key of this.keys) {
-            if (this[key].unsubscribe) {
+            if (this[key] && this[key].unsubscribe) {
                 this[key].unsubscribe();
             }
         }
