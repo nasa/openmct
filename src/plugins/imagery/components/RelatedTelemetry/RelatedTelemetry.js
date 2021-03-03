@@ -76,7 +76,7 @@ export default class RelatedTelemetry {
                     if (this[key].realtime && this[key].realtime.telemetryObjectId) {
                         await this._intializeRealtime(key);
                     }
-                };
+                }
             })
         );
     }
