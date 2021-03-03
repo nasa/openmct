@@ -8,34 +8,22 @@
     />
     <div
         class="c-elements-pool__elements"
-        :class="{'is-dragging': isDragging}"
     >
         <ul
             v-if="elements.length > 0"
             id="inspector-elements-tree"
             class="c-tree c-elements-pool__tree"
         >
-            <li
+            <element-item
                 v-for="(element, index) in elements"
                 :key="element.identifier.key"
-                @drop="moveTo(index)"
-                @dragover="allowDrop"
-            >
-                <div
-                    class="c-tree__item c-elements-pool__item"
-                    draggable="true"
-                    @dragstart="moveFrom(index)"
-                >
-                    <span
-                        v-if="elements.length > 1 && isEditing"
-                        class="c-elements-pool__grippy c-grippy c-grippy--vertical-drag"
-                    ></span>
-                    <object-label
-                        :domain-object="element"
-                        :object-path="[element, parentObject]"
-                    />
-                </div>
-            </li>
+                :index="index"
+                :element-object="element"
+                :parent-object="parentObject"
+                :allow-drop="allowDrop"
+                @dragstart-custom="moveFrom(index)"
+                @drop-custom="moveTo(index)"
+            />
             <li
                 class="js-last-place"
                 @drop="moveToIndex(elements.length)"
@@ -51,12 +39,12 @@
 <script>
 import _ from 'lodash';
 import Search from '../components/search.vue';
-import ObjectLabel from '../components/ObjectLabel.vue';
+import ElementItem from './ElementItem.vue';
 
 export default {
     components: {
         'Search': Search,
-        'ObjectLabel': ObjectLabel
+        'ElementItem': ElementItem
     },
     inject: ['openmct'],
     data() {
@@ -65,8 +53,9 @@ export default {
             isEditing: this.openmct.editor.isEditing(),
             parentObject: undefined,
             currentSearch: '',
-            isDragging: false,
-            selection: []
+            selection: [],
+            contextClickTracker: {},
+            allowDrop: false
         };
     },
     mounted() {
@@ -148,20 +137,15 @@ export default {
                     && element.name.toLowerCase().search(this.currentSearch) !== -1;
             });
         },
-        allowDrop(event) {
-            event.preventDefault();
-        },
         moveTo(moveToIndex) {
-            this.composition.reorder(this.moveFromIndex, moveToIndex);
+            if (this.allowDrop) {
+                this.composition.reorder(this.moveFromIndex, moveToIndex);
+                this.allowDrop = false;
+            }
         },
         moveFrom(index) {
-            this.isDragging = true;
+            this.allowDrop = true;
             this.moveFromIndex = index;
-            document.addEventListener('dragend', this.hideDragStyling);
-        },
-        hideDragStyling() {
-            this.isDragging = false;
-            document.removeEventListener('dragend', this.hideDragStyling);
         }
     }
 };
