@@ -271,11 +271,27 @@ export default {
 
             if (this.relatedTelemetry.hasRelatedTelemetry) {
                 isFresh = true;
-                for (let key of this.spacecraftKeys) {
+                for (let key of this.spacecraftPositionKeys) {
                     if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                        if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
-                            isFresh = false;
-                        }
+                        isFresh = Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
+                    } else {
+                        isFresh = false;
+                    }
+                }
+            }
+
+            return isFresh;
+        },
+        isSpacecraftOrientationFresh() {
+            let isFresh = undefined;
+            let latest = this.latestRelatedTelemetry;
+            let focused = this.focusedImageRelatedTelemetry;
+
+            if (this.relatedTelemetry.hasRelatedTelemetry) {
+                isFresh = true;
+                for (let key of this.spacecraftOrientationKeys) {
+                    if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                        isFresh = Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
                     } else {
                         isFresh = false;
                     }
@@ -293,12 +309,10 @@ export default {
                 isFresh = true;
 
                 // camera freshness relies on spacecraft position freshness
-                if (this.isSpacecraftPositionFresh) {
+                if (this.isSpacecraftPositionFresh && this.isSpacecraftOrientationFresh) {
                     for (let key of this.cameraKeys) {
                         if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
-                            if (!this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key])) {
-                                isFresh = false;
-                            }
+                            isFresh = Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
                         } else {
                             isFresh = false;
                         }
@@ -333,7 +347,8 @@ export default {
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
 
         // related telemetry keys
-        this.spacecraftKeys = ['heading', 'roll', 'pitch'];
+        this.spacecraftPositionKeys = ['positionX', 'positionY', 'positionZ'];
+        this.spacecraftOrientationKeys = ['heading', 'roll', 'pitch'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
 
@@ -380,7 +395,7 @@ export default {
         // unsubscribe from related telemetry
         if (this.relatedTelemetry.hasRelatedTelemetry) {
             for (let key of this.relatedTelemetry.keys) {
-                if (this.relatedTelemetry[key].unsubscribe) {
+                if (this.relatedTelemetry[key] && this.relatedTelemetry[key].unsubscribe) {
                     this.relatedTelemetry[key].unsubscribe();
                 }
             }
@@ -391,7 +406,7 @@ export default {
             this.relatedTelemetry = new RelatedTelemetry(
                 this.openmct,
                 this.domainObject,
-                [...this.spacecraftKeys, ...this.cameraKeys, ...this.sunKeys]
+                [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys]
             );
 
             if (this.relatedTelemetry.hasRelatedTelemetry) {
@@ -466,7 +481,7 @@ export default {
             }
         },
         trackLatestRelatedTelemetry() {
-            [...this.spacecraftKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
+            [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
                 if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
                     this.relatedTelemetry[key].subscribe((datum) => {
                         let valueKey = this.relatedTelemetry[key].realtime.valueKey;

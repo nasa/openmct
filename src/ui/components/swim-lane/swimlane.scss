@@ -16,10 +16,6 @@
         grid-column: span 2;
     }
 
-    [class*='--span-rows'] {
-        grid-row: span 4;
-    }
-
     &__lane-object {
         background: rgba(black, 0.1);
 
