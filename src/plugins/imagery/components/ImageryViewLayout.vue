@@ -348,7 +348,7 @@ export default {
 
         // related telemetry keys
         this.spacecraftPositionKeys = ['positionX', 'positionY', 'positionZ'];
-        this.spacecraftOrientationKeys = ['heading', 'roll', 'pitch'];
+        this.spacecraftOrientationKeys = ['heading'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
 
