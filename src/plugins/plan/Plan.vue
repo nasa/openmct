@@ -94,7 +94,7 @@ export default {
     },
     methods: {
         observeForChanges(mutatedObject) {
-            this.validateJSON(mutatedObject.selectFile.body);
+            this.getPlanData(mutatedObject);
             this.setScaleAndPlotActivities();
         },
         resize() {

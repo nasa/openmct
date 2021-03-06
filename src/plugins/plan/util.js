@@ -1,10 +1,14 @@
 export function getValidatedPlan(domainObject) {
-    let jsonString = domainObject.selectFile.body;
+    let body = domainObject.selectFile.body;
     let json = {};
-    try {
-        json = JSON.parse(jsonString);
-    } catch (e) {
-        return json;
+    if (typeof body === 'string') {
+        try {
+            json = JSON.parse(body);
+        } catch (e) {
+            return json;
+        }
+    } else {
+        json = body;
     }
 
     return json;
