@@ -73,7 +73,7 @@ export default class RelatedTelemetry {
                         await this._initializeHistorical(key);
                     }
 
-                    if (this[key].realtime && this[key].realtime.telemetryObjectId) {
+                    if (this[key].realtime && this[key].realtime.telemetryObjectId && this[key].realtime.telemetryObjectId !== '') {
                         await this._intializeRealtime(key);
                     }
                 }
@@ -82,7 +82,9 @@ export default class RelatedTelemetry {
     }
 
     async _initializeHistorical(key) {
-        if (this[key].historical.telemetryObjectId) {
+        if (!this[key].historical.telemetryObjectId) {
+            this[key].historical.hasTelemetryOnDatum = true;
+        } else if (this[key].historical.telemetryObjectId !== '') {
             this[key].historicalDomainObject = await this._openmct.objects.get(this[key].historical.telemetryObjectId);
 
             this[key].requestLatestFor = async (datum) => {
@@ -96,8 +98,6 @@ export default class RelatedTelemetry {
 
                 return results[results.length - 1];
             };
-        } else {
-            this[key].historical.hasTelemetryOnDatum = true;
         }
     }
 
