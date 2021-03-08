@@ -348,7 +348,7 @@ export default {
 
         // related telemetry keys
         this.spacecraftPositionKeys = ['positionX', 'positionY', 'positionZ'];
-        this.spacecraftOrientationKeys = ['heading', 'roll', 'pitch'];
+        this.spacecraftOrientationKeys = ['heading'];
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
 
@@ -468,7 +468,12 @@ export default {
 
             // set data ON image telemetry as well as in focusedImageRelatedTelemetry
             for (let key of this.relatedTelemetry.keys) {
-                if (this.relatedTelemetry[key] && this.relatedTelemetry[key].historical) {
+                if (
+                    this.relatedTelemetry[key]
+                    && this.relatedTelemetry[key].historical
+                    && this.relatedTelemetry[key].requestLatestFor
+
+                ) {
                     let valuesOnTelemetry = this.relatedTelemetry[key].hasTelemetryOnDatum;
                     let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
 

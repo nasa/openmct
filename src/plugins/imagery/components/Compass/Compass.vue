@@ -27,7 +27,6 @@
 >
     <CompassHUD
         v-if="hasCameraFieldOfView"
-        :heading="heading"
         :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
@@ -79,25 +78,19 @@ export default {
     },
     computed: {
         hasCameraFieldOfView() {
-            return this.heading !== undefined && this.cameraPan !== undefined;
+            return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
         },
-        // compass direction from north in degrees
+        // horizontal rotation from north in degrees
         heading() {
             return this.image.heading;
         },
-        pitch() {
-            return this.image.pitch;
-        },
-        // compass direction from north in degrees
+        // horizontal rotation from north in degrees
         sunHeading() {
             return this.image.sunOrientation;
         },
-        // relative direction from heading in degrees
+        // horizontal rotation from north in degrees
         cameraPan() {
             return this.image.cameraPan;
-        },
-        cameraTilt() {
-            return this.image.cameraTilt;
         },
         cameraAngleOfView() {
             return CAMERA_ANGLE_OF_VIEW;
