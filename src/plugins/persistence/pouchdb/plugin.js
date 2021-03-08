@@ -21,13 +21,15 @@
  *****************************************************************************/
 
 import PouchObjectProvider from './PouchObjectProvider';
+import PouchObjectProvider2 from './PouchObjectProvider2';
 const NAMESPACE = '';
 const PERSISTENCE_SPACE = 'mct';
 
 export default function PouchPlugin(options) {
     return function install(openmct) {
-
-        install.pouchProvider = new PouchObjectProvider(openmct, options, NAMESPACE);
+        options = options || {name: 'openmct', remoteCouch: 'http://127.0.0.1:5984/openmct'};
+        // install.pouchProvider = new PouchObjectProvider(openmct, options, NAMESPACE);
+        install.pouchProvider = new PouchObjectProvider2(openmct, options, NAMESPACE);
         openmct.objects.addProvider(PERSISTENCE_SPACE, install.pouchProvider);
     };
 }

@@ -22,6 +22,7 @@
 
 import PouchDocument from './PouchDocument';
 import PouchDB from 'pouchdb';
+import CouchObjectQueue from "../couch/CouchObjectQueue";
 
 const ID = "_id";
 
