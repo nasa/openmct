@@ -1,23 +1,28 @@
-export function rotate(direction, ...rotations) {
+/**
+ *
+ * sums an arbitrary number of absolute rotations
+ * (meaning rotations relative to one common direction 0)
+ * normalizes the rotation to the range [0, 360)
+ *
+ * @param  {...number} rotations in degrees
+ * @returns {number} normalized sum of all rotations - [0, 360) degrees
+ */
+export function rotate(...rotations) {
     const rotation = rotations.reduce((a, b) => a + b, 0);
 
-    return normalizeCompassDirection(direction + rotation);
-}
-
-export function normalizeCompassDirection(degrees) {
-    const base = degrees % 360;
-
-    return base >= 0 ? base : 360 + base;
+    return normalizeCompassDirection(rotation);
 }
 
 export function inRange(degrees, [min, max]) {
+    const point = rotate(degrees);
+
     return min > max
-        ? (degrees >= min && degrees < 360) || (degrees <= max && degrees >= 0)
-        : degrees >= min && degrees <= max;
+        ? (point >= min && point < 360) || (point <= max && point >= 0)
+        : point >= min && point <= max;
 }
 
 export function percentOfRange(degrees, [min, max]) {
-    let distance = degrees;
+    let distance = rotate(degrees);
     let minRange = min;
     let maxRange = max;
 
@@ -30,4 +35,10 @@ export function percentOfRange(degrees, [min, max]) {
     }
 
     return (distance - minRange) / (maxRange - minRange);
+}
+
+function normalizeCompassDirection(degrees) {
+    const base = degrees % 360;
+
+    return base >= 0 ? base : 360 + base;
 }
