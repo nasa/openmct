@@ -140,11 +140,7 @@ export default class CouchObjectProvider {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
 
-            //Sometimes CouchDB returns the old rev which fetching the object if there is a document update in progress
-            //Only update the rev if it's the first time we're getting the object from CouchDB. Subsequent revs should only be updated by updates.
-            if (!this.objectQueue[key].pending && !this.objectQueue[key].rev) {
-                this.objectQueue[key].updateRevision(response[REV]);
-            }
+            this.objectQueue[key].updateRevision(response[REV]);
 
             return object;
         } else {
@@ -196,7 +192,7 @@ export default class CouchObjectProvider {
         this.objectQueue[key].pending = true;
         const queued = this.objectQueue[key].dequeue();
         let document = new CouchDocument(key, queued.model);
-        this.pouchdb.put(key, document).then((response) => {
+        this.pouchdb.put(document).then((response) => {
             this.checkResponse(response, queued.intermediateResponse);
         });
 
@@ -216,7 +212,6 @@ export default class CouchObjectProvider {
     }
 
     update(model) {
-        console.log('update called');
         let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
         this.enqueueObject(key, model, intermediateResponse);
