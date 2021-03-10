@@ -58,7 +58,7 @@ export default {
         };
     },
     mounted() {
-        this.views = this.openmct.objectViews.get(this.domainObject).map((view) => {
+        this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view) => {
             view.callBack = () => {
                 return this.setView(view);
             };

@@ -33,8 +33,27 @@ describe("the plugin", function () {
     let openmct;
     let telemetryPromise;
     let cleanupFirst;
+    let mockObjectPath;
 
     beforeEach((done) => {
+        mockObjectPath = [
+            {
+                name: 'mock folder',
+                type: 'fake-folder',
+                identifier: {
+                    key: 'mock-folder',
+                    namespace: ''
+                }
+            },
+            {
+                name: 'mock parent folder',
+                type: 'time-strip',
+                identifier: {
+                    key: 'mock-parent-folder',
+                    namespace: ''
+                }
+            }
+        ];
         const testTelemetry = [
             {
                 'utc': 1,
@@ -134,7 +153,7 @@ describe("the plugin", function () {
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject);
+            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
             let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-simple");
             expect(plotView).toBeDefined();
         });
@@ -150,7 +169,7 @@ describe("the plugin", function () {
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject);
+            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
             let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-overlay");
             expect(plotView).toBeDefined();
         });
@@ -166,7 +185,7 @@ describe("the plugin", function () {
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject);
+            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
             let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-stacked");
             expect(plotView).toBeDefined();
         });
@@ -218,7 +237,7 @@ describe("the plugin", function () {
                 }
             };
 
-            applicableViews = openmct.objectViews.get(testTelemetryObject);
+            applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
             plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-simple");
             plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             plotView.show(child, true);
