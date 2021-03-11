@@ -47,8 +47,8 @@ export default function PlotViewProvider(openmct) {
         key: 'plot-simple',
         name: 'Plot',
         cssClass: 'icon-telemetry',
-        canView(domainObject) {
-            return hasTelemetry(domainObject, openmct);
+        canView(domainObject, objectPath) {
+            return isCompactView(objectPath) && hasTelemetry(domainObject, openmct);
         },
 
         view: function (domainObject, objectPath) {

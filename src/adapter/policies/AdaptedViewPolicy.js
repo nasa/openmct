@@ -32,7 +32,7 @@ define([], function () {
         if (Object.prototype.hasOwnProperty.call(view, 'provider')) {
             const domainObject = legacyObject.useCapability('adapter');
 
-            return view.provider.canView(domainObject);
+            return view.provider.canView(domainObject, this.openmct.router.path);
         }
 
         return true;

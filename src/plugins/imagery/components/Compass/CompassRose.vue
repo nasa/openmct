@@ -27,7 +27,7 @@
 >
     <div
         class="c-nsew"
-        :style="rotateFrameStyle"
+        :style="compassRoseStyle"
     >
         <svg
             class="c-nsew__minor-ticks"
@@ -118,21 +118,21 @@
     </div>
 
     <div
+        v-if="hasHeading"
         class="c-spacecraft-body"
         :style="headingStyle"
     >
     </div>
 
     <div
-        v-if="showSunHeading"
+        v-if="hasSunHeading"
         class="c-sun"
         :style="sunHeadingStyle"
     ></div>
 
     <div
-        v-if="showCameraFOV"
         class="c-cam-field"
-        :style="cameraHeadingStyle"
+        :style="cameraPanStyle"
     >
         <div class="cam-field-half cam-field-half-l">
             <div
@@ -177,16 +177,10 @@ export default {
         }
     },
     computed: {
-        cameraHeading() {
-            return rotate(this.heading, this.cameraPan);
-        },
-        compassHeading() {
-            return this.lockCompass ? this.cameraHeading : 0;
-        },
         north() {
-            return rotate(this.compassHeading, -this.cameraHeading);
+            return this.lockCompass ? rotate(-this.cameraPan) : 0;
         },
-        rotateFrameStyle() {
+        compassRoseStyle() {
             return { transform: `rotate(${ this.north }deg)` };
         },
         northTextTransform() {
@@ -216,6 +210,9 @@ export default {
                 west: `translate(50,87) ${ rotation }`
             };
         },
+        hasHeading() {
+            return this.heading !== undefined;
+        },
         headingStyle() {
             const rotation = rotate(this.north, this.heading);
 
@@ -223,14 +220,7 @@ export default {
                 transform: `translateX(-50%) rotate(${ rotation }deg)`
             };
         },
-        cameraHeadingStyle() {
-            const rotation = rotate(this.north, this.cameraHeading);
-
-            return {
-                transform: `rotate(${ rotation }deg)`
-            };
-        },
-        showSunHeading() {
+        hasSunHeading() {
             return this.sunHeading !== undefined;
         },
         sunHeadingStyle() {
@@ -240,18 +230,22 @@ export default {
                 transform: `rotate(${ rotation }deg)`
             };
         },
-        showCameraFOV() {
-            return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
+        cameraPanStyle() {
+            const rotation = rotate(this.north, this.cameraPan);
+
+            return {
+                transform: `rotate(${ rotation }deg)`
+            };
         },
         // left half of camera field of view
-        // rotated counter-clockwise from camera field of view heading
+        // rotated counter-clockwise from camera pan angle
         cameraFOVStyleLeftHalf() {
             return {
                 transform: `translateX(50%) rotate(${ -this.cameraAngleOfView / 2 }deg)`
             };
         },
         // right half of camera field of view
-        // rotated clockwise from camera field of view heading
+        // rotated clockwise from camera pan angle
         cameraFOVStyleRightHalf() {
             return {
                 transform: `translateX(-50%) rotate(${ this.cameraAngleOfView / 2 }deg)`

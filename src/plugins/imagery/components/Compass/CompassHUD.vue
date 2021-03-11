@@ -94,10 +94,6 @@ const COMPASS_POINTS = [
 
 export default {
     props: {
-        heading: {
-            type: Number,
-            required: true
-        },
         sunHeading: {
             type: Number,
             default: undefined
@@ -136,8 +132,8 @@ export default {
         },
         visibleRange() {
             return [
-                rotate(this.heading, this.cameraPan, -this.cameraAngleOfView / 2),
-                rotate(this.heading, this.cameraPan, this.cameraAngleOfView / 2)
+                rotate(this.cameraPan, -this.cameraAngleOfView / 2),
+                rotate(this.cameraPan, this.cameraAngleOfView / 2)
             ];
         }
     }

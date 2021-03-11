@@ -83,7 +83,7 @@ describe('the plugin', function () {
             }
         };
 
-        const applicableViews = openmct.objectViews.get(testViewObject);
+        const applicableViews = openmct.objectViews.get(testViewObject, []);
         let displayLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'layout.view');
         expect(displayLayoutViewProvider).toBeDefined();
     });

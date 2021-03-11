@@ -235,6 +235,12 @@ export default {
     },
     watch: {
         syncTreeNavigation() {
+            // if there is an abort controller, then a search is in progress and will need to be canceled
+            if (this.abortController) {
+                this.abortController.abort();
+                delete this.abortController;
+            }
+
             this.searchValue = '';
 
             if (!this.openmct.router.path) {
@@ -685,35 +691,55 @@ export default {
             // clear any previous search results
             this.searchResultItems = [];
 
-            const promises = this.openmct.objects.search(this.searchValue)
+            // an abort controller will be passed in that will be used
+            // to cancel an active searches if necessary
+            this.abortController = new AbortController();
+            const abortSignal = this.abortController.signal;
+
+            const promises = this.openmct.objects.search(this.searchValue, abortSignal)
                 .map(promise => promise
-                    .then(results => this.aggregateSearchResults(results)));
+                    .then(results => this.aggregateSearchResults(results, abortSignal)));
 
             Promise.all(promises).then(() => {
                 this.searchLoading = false;
+            }).catch(reason => {
+                // search aborted
+            }).finally(() => {
+                if (this.abortController) {
+                    delete this.abortController;
+                }
             });
         },
-        async aggregateSearchResults(results) {
+        async aggregateSearchResults(results, abortSignal) {
             for (const result of results) {
-                const objectPath = await this.openmct.objects.getOriginalPath(result.identifier);
+                if (!abortSignal.aborted) {
+                    const objectPath = await this.openmct.objects.getOriginalPath(result.identifier);
 
-                // removing the item itself, as the path we pass to buildTreeItem is a parent path
-                objectPath.shift();
+                    // removing the item itself, as the path we pass to buildTreeItem is a parent path
+                    objectPath.shift();
 
-                // if root, remove, we're not using in object path for tree
-                let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
-                if (lastObject && lastObject.type === 'root') {
-                    objectPath.pop();
+                    // if root, remove, we're not using in object path for tree
+                    let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
+                    if (lastObject && lastObject.type === 'root') {
+                        objectPath.pop();
+                    }
+
+                    // we reverse the objectPath in the tree, so have to do it here first,
+                    // since this one is already in the correct direction
+                    let resultObject = this.buildTreeItem(result, objectPath.reverse());
+
+                    this.searchResultItems.push(resultObject);
                 }
-
-                // we reverse the objectPath in the tree, so have to do it here first,
-                // since this one is already in the correct direction
-                let resultObject = this.buildTreeItem(result, objectPath.reverse());
-
-                this.searchResultItems.push(resultObject);
             }
         },
         searchTree(value) {
+            // if an abort controller exists, regardless of the value passed in,
+            // there is an active search that should be cancled
+            if (this.abortController) {
+                this.abortController.abort();
+                delete this.abortController;
+            }
+
             this.searchValue = value;
             this.searchLoading = true;
 

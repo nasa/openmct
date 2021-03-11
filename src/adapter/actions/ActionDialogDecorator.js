@@ -37,7 +37,7 @@ define([
                     context.domainObject.getModel(),
                     objectUtils.parseKeyString(context.domainObject.getId())
                 );
-                const providers = mct.propertyEditors.get(domainObject);
+                const providers = mct.propertyEditors.get(domainObject, mct.router.path);
 
                 if (providers.length > 0) {
                     action.dialogService = Object.create(action.dialogService);

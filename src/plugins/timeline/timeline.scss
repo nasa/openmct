@@ -1,7 +1,4 @@
 .c-timeline-holder {
-  @include abs();
-}
-
-.c-timeline {
-
+    @include abs();
+    overflow-x: hidden;
 }
