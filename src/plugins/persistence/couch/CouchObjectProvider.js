@@ -82,7 +82,7 @@ export default class CouchObjectProvider {
     // track the rev if it's valid, otherwise return false to
     // indicate that the request failed.
     // persist any queued objects
-    checkResponse(response, intermediateResponse) {
+    checkResponse(response, intermediateResponse, key) {
         let requestSuccess = false;
         const id = response ? response.id : undefined;
         let rev;
@@ -103,6 +103,8 @@ export default class CouchObjectProvider {
             if (this.objectQueue[id].hasNext()) {
                 this.updateQueued(id);
             }
+        } else {
+            this.objectQueue[key].pending = false;
         }
     }
 
@@ -119,8 +121,7 @@ export default class CouchObjectProvider {
             }
 
             //Sometimes CouchDB returns the old rev which fetching the object if there is a document update in progress
-            //Only update the rev if it's the first time we're getting the object from CouchDB. Subsequent revs should only be updated by updates.
-            if (!this.objectQueue[key].pending && !this.objectQueue[key].rev) {
+            if (!this.objectQueue[key].pending) {
                 this.objectQueue[key].updateRevision(response[REV]);
             }
 
@@ -324,7 +325,7 @@ export default class CouchObjectProvider {
         const queued = this.objectQueue[key].dequeue();
         let document = new CouchDocument(key, queued.model);
         this.request(key, "PUT", document).then((response) => {
-            this.checkResponse(response, queued.intermediateResponse);
+            this.checkResponse(response, queued.intermediateResponse, key);
         });
 
         return intermediateResponse.promise;
@@ -336,7 +337,7 @@ export default class CouchObjectProvider {
             const queued = this.objectQueue[key].dequeue();
             let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
             this.request(key, "PUT", document).then((response) => {
-                this.checkResponse(response, queued.intermediateResponse);
+                this.checkResponse(response, queued.intermediateResponse, key);
             });
         }
     }

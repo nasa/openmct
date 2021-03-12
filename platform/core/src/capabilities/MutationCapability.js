@@ -141,11 +141,17 @@ define(
                 if (mutationResult !== false) {
                     // Copy values if result was a different object
                     // (either our clone or some other new thing)
-                    if (model !== result) {
+                    let modelHasChanged = JSON.stringify(model) !== JSON.stringify(result);
+                    if (modelHasChanged) {
                         copyValues(model, result);
                     }
 
-                    model.modified = useTimestamp ? timestamp : now();
+                    if (modelHasChanged
+                        || (useTimestamp !== undefined)
+                        || (model.modified === undefined)) {
+                        model.modified = useTimestamp ? timestamp : now();
+                    }
+
                     notifyListeners(model);
                 }
 
