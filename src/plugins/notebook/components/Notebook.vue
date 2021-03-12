@@ -375,15 +375,34 @@ export default {
             }
 
             const output = [];
-            const entries = this.internalDomainObject.configuration.entries;
+            const { entries, sections } = this.internalDomainObject.configuration;
             const sectionKeys = Object.keys(entries);
+            const searchText = this.search.toLowerCase();
+
+            for (const section of sections) {
+                if (section.name && section.name.toLowerCase().includes(searchText)) {
+                    output.push({
+                        section
+                    });
+                }
+
+                for (const page of section.pages) {
+                    if (page.name && page.name.toLowerCase().includes(searchText)) {
+                        output.push({
+                            page
+                        });
+                    }
+                }
+            }
+
             sectionKeys.forEach(sectionKey => {
+
                 const pages = entries[sectionKey];
                 const pageKeys = Object.keys(pages);
                 pageKeys.forEach(pageKey => {
                     const pageEntries = entries[sectionKey][pageKey];
                     pageEntries.forEach(entry => {
-                        if (entry.text && entry.text.toLowerCase().includes(this.search.toLowerCase())) {
+                        if (entry.text && entry.text.toLowerCase().includes(searchText)) {
                             const section = this.getSection(sectionKey);
                             output.push({
                                 section,
