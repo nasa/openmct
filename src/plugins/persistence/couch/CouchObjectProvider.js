@@ -26,6 +26,7 @@ import CouchObjectQueue from "./CouchObjectQueue";
 const REV = "_rev";
 const ID = "_id";
 const HEARTBEAT = 50000;
+const ALL_DOCS = "_all_docs?include_docs=true";
 
 export default class CouchObjectProvider {
     // options {
@@ -67,6 +68,9 @@ export default class CouchObjectProvider {
         // stringify body if needed
         if (fetchOptions.body) {
             fetchOptions.body = JSON.stringify(fetchOptions.body);
+            fetchOptions.headers = {
+                "Content-Type": "application/json"
+            };
         }
 
         return fetch(this.url + '/' + subPath, fetchOptions)
@@ -131,7 +135,49 @@ export default class CouchObjectProvider {
     }
 
     get(identifier, abortSignal) {
-        return this.request(identifier.key, "GET", undefined, abortSignal).then(this.getModel.bind(this));
+        return new Promise((resolve, reject) => {
+            this.batchIds = this.batchIds || [];
+            this.batchIds.push(identifier.key);
+
+            if (this.bulkPromise === undefined) {
+                this.bulkPromise = new Promise((bulkResolve, bulkReject) => {
+                    setTimeout(() => {
+                        let batchIds = this.batchIds;
+                        delete this.batchIds;
+                        delete this.bulkPromise;
+
+                        this.bulkGet(batchIds, abortSignal)
+                            .then(bulkResolve)
+                            .catch(bulkReject);
+                    });
+                });
+            }
+
+            this.bulkPromise
+                .then((domainObjectMap) => {
+                    resolve(domainObjectMap[identifier.key]);
+                })
+                .catch(error => reject(error));
+        });
+    }
+
+    bulkGet(ids, signal) {
+        //Remove dupes
+        ids = Array.from(new Set(ids));
+
+        const query = {
+            'keys': ids
+        };
+
+        return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
+            return response.rows.reduce((map, row) => {
+                if (row.doc !== undefined) {
+                    map[row.key] = this.getModel(row.doc);
+                }
+
+                return map;
+            }, {});
+        });
     }
 
     search(query, abortSignal) {
