@@ -134,7 +134,21 @@ export default class CouchObjectProvider {
         return this.request(identifier.key, "GET", undefined, abortSignal).then(this.getModel.bind(this));
     }
 
-    async getObjectsByFilter(filter) {
+    search(query, abortSignal) {
+        const filter = {
+            "selector": {
+                "model": {
+                    "name": {
+                        "$regex": `(?i)${query}`
+                    }
+                }
+            }
+        };
+
+        return this.getObjectsByFilter(filter, abortSignal);
+    }
+
+    async getObjectsByFilter(filter, abortSignal) {
         let objects = [];
 
         let url = `${this.url}/_find`;
@@ -149,6 +163,7 @@ export default class CouchObjectProvider {
             headers: {
                 "Content-Type": "application/json"
             },
+            signal: abortSignal,
             body
         });
 
