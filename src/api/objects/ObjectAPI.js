@@ -180,7 +180,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     this.cache[keystring] = objectPromise;
 
     return objectPromise.then(result => {
-        delete this.cache[keystring];
+        //delete this.cache[keystring];
         result = this.applyGetInterceptors(identifier, result);
 
         return result;
