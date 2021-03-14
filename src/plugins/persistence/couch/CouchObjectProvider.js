@@ -145,10 +145,14 @@ export default class CouchObjectProvider {
                         let batchIds = this.batchIds;
                         delete this.batchIds;
                         delete this.bulkPromise;
-
-                        this.bulkGet(batchIds, abortSignal)
-                            .then(bulkResolve)
-                            .catch(bulkReject);
+                        if (batchIds.length === 1) {
+                            this.request(identifier.key, "GET", undefined, abortSignal)
+                                .then((result) => resolve(this.getModel(result)));
+                        } else {
+                            this.bulkGet(batchIds, abortSignal)
+                                .then(bulkResolve)
+                                .catch(bulkReject);
+                        }
                     });
                 });
             }

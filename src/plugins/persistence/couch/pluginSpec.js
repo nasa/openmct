@@ -143,5 +143,9 @@ describe('the plugin', () => {
 
             expect(couchProvider.updateQueued).toHaveBeenCalledTimes(2);
         });
+
+        describe('batches object requests', () => {
+            //NEED TO MAKE SURE THERE ARE NO RACE CONDITIONS WHERE REQUESTS FOR OBJECTS ARE DROPPED
+        });
     });
 });
