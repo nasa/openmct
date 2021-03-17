@@ -415,7 +415,7 @@ export default {
 
                             // entryHits: (unique) go in
                             // pageHits: with no entry (would be in alrady if entry hit) go in if the page isn't in already
-                            // sectionHits: only, that aren't in already go in
+                            // sectionHits: no page or entry hits and section hit (everything else covered)
                             if (
                                 entryHit
                                 || (!entryHit && (pageHit && this.notInResults('page', page, output)))
