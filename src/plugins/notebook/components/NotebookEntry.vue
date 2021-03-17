@@ -219,9 +219,6 @@ export default {
         forceBlur(event) {
             event.target.blur();
         },
-        formatEntryResult() {
-            return this.result.entry.text;
-        },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
         },
