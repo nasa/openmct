@@ -135,9 +135,14 @@
              :class="{ selected: focusedImageIndex === index && isPaused }"
              @click="setFocusedImage(index, thumbnailClick)"
         >
-            <img class="c-thumb__image"
-                 :src="image.url"
+            <a :href="image.url"
+               :download="image && image.filename || ''"
+               @click.prevent
             >
+                <img class="c-thumb__image"
+                     :src="image.url"
+                >
+            </a>
             <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
         </div>
     </div>
