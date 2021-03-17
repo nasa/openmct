@@ -413,30 +413,20 @@ export default {
                                 resultPage = this.getPage(section, pageKeys[0]);
                             }
 
-                            // all entryHits will be unique, the go in
-                            // any page hits without section (or entry handled above) go in
+                            // entryHits: (unique) go in
+                            // pageHits: with no entry (would be in alrady if entry hit) go in if the page isn't in already
+                            // sectionHits: only, that aren't in already go in
                             if (
                                 entryHit
                                 || (!entryHit && (pageHit && this.notInResults('page', page, output)))
                                 || (!entryHit && !pageHit && (sectionHit && this.notInResults('section', section, output)))
                             ) {
-                                console.log('###### IN ######');
-                                console.log('entryHit', entryHit);
-                                console.log('pageHit', pageHit);
-                                console.log('sectionHit', sectionHit);
-                                console.log('section not in results', this.notInResults('section', section, output));
                                 output.push({
                                     metadata: resultMetadata,
                                     section,
                                     page: resultPage,
                                     entry
                                 });
-                            } else {
-                                console.log('###### OUT ######');
-                                console.log('entryHit', entryHit);
-                                console.log('pageHit', pageHit);
-                                console.log('sectionHit', sectionHit);
-                                console.log(section.name, page.name, entry.text);
                             }
                         }
 
