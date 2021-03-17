@@ -3,14 +3,14 @@
     <div class="c-notebook__head">
         <Search class="c-notebook__search"
                 :value="search"
-                @input="throttledSearchItem"
-                @clear="throttledSearchItem"
+                @input="search = $event"
+                @clear="resetSearch()"
         />
     </div>
     <SearchResults v-if="search.length"
                    ref="searchResults"
                    :domain-object="internalDomainObject"
-                   :results="searchedEntries"
+                   :results="searchResults"
                    @changeSectionPage="changeSelectedSection"
                    @updateEntries="updateEntries"
     />
@@ -115,7 +115,7 @@ import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaul
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
-import { throttle } from 'lodash';
+import _ from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
 
 export default {
@@ -134,6 +134,7 @@ export default {
             focusEntryId: null,
             internalDomainObject: this.domainObject,
             search: '',
+            searchResults: [],
             showTime: 0,
             showNav: false,
             sidebarCoversEntries: false
@@ -156,9 +157,6 @@ export default {
         pages() {
             return this.getPages() || [];
         },
-        searchedEntries() {
-            return this.getSearchResults();
-        },
         sections() {
             return this.internalDomainObject.configuration.sections || [];
         },
@@ -178,8 +176,13 @@ export default {
             return this.sections.find(section => section.isSelected);
         }
     },
+    watch: {
+        search() {
+            this.getSearchResults();
+        }
+    },
     beforeMount() {
-        this.throttledSearchItem = throttle(this.searchItem, 500);
+        this.getSearchResults = _.debounce(this.getSearchResults, 500);
     },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
@@ -228,7 +231,7 @@ export default {
             });
 
             this.sectionsChanged({ sections });
-            this.throttledSearchItem('');
+            this.resetSearch();
         },
         createNotebookStorageObject() {
             const notebookMeta = {
@@ -375,46 +378,78 @@ export default {
             }
 
             const output = [];
-            const { entries, sections } = this.internalDomainObject.configuration;
+            const entries = this.internalDomainObject.configuration.entries;
             const sectionKeys = Object.keys(entries);
-            const searchText = this.search.toLowerCase();
-
-            for (const section of sections) {
-                if (section.name && section.name.toLowerCase().includes(searchText)) {
-                    output.push({
-                        section
-                    });
-                }
-
-                for (const page of section.pages) {
-                    if (page.name && page.name.toLowerCase().includes(searchText)) {
-                        output.push({
-                            page
-                        });
-                    }
-                }
-            }
+            const searchTextLower = this.search.toLowerCase();
+            const originalSearchText = this.search;
 
             sectionKeys.forEach(sectionKey => {
-
                 const pages = entries[sectionKey];
                 const pageKeys = Object.keys(pages);
+                const section = this.getSection(sectionKey);
+                const sectionHit = section.name && section.name.toLowerCase().includes(searchTextLower);
+
                 pageKeys.forEach(pageKey => {
                     const pageEntries = entries[sectionKey][pageKey];
+                    const page = this.getPage(section, pageKey);
+                    const pageHit = page.name && page.name.toLowerCase().includes(searchTextLower);
+
                     pageEntries.forEach(entry => {
-                        if (entry.text && entry.text.toLowerCase().includes(searchText)) {
-                            const section = this.getSection(sectionKey);
-                            output.push({
-                                section,
-                                page: this.getPage(section, pageKey),
-                                entry
-                            });
+                        const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
+
+                        if (sectionHit || pageHit || entryHit) {
+                            const resultMetadata = {
+                                searchTextLower,
+                                originalSearchText,
+                                sectionHit,
+                                pageHit,
+                                entryHit
+                            };
+                            let resultPage = page;
+
+                            // if there is no page hit or entryHit (just section),
+                            // then we show first page by default
+                            if (sectionHit && !pageHit && !entryHit) {
+                                resultPage = this.getPage(section, pageKeys[0]);
+                            }
+
+                            // all entryHits will be unique, the go in
+                            // any page hits without section (or entry handled above) go in
+                            if (
+                                entryHit
+                                || (!entryHit && (pageHit && this.notInResults('page', page, output)))
+                                || (!entryHit && !pageHit && (sectionHit && this.notInResults('section', section, output)))
+                            ) {
+                                console.log('###### IN ######');
+                                console.log('entryHit', entryHit);
+                                console.log('pageHit', pageHit);
+                                console.log('sectionHit', sectionHit);
+                                console.log('section not in results', this.notInResults('section', section, output));
+                                output.push({
+                                    metadata: resultMetadata,
+                                    section,
+                                    page: resultPage,
+                                    entry
+                                });
+                            } else {
+                                console.log('###### OUT ######');
+                                console.log('entryHit', entryHit);
+                                console.log('pageHit', pageHit);
+                                console.log('sectionHit', sectionHit);
+                                console.log(section.name, page.name, entry.text);
+                            }
                         }
+
                     });
                 });
             });
 
-            return output;
+            this.searchResults = output;
+        },
+        notInResults(type, item, results) {
+            let whatsLeft = results.filter((result) => result[type].id === item.id);
+
+            return whatsLeft.length === 0;
         },
         getPages() {
             const selectedSection = this.getSelectedSection();
@@ -475,12 +510,12 @@ export default {
             this.sectionsChanged({ sections });
         },
         newEntry(embed = null) {
-            this.search = '';
+            this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage, embed);
             this.focusEntryId = id;
-            this.search = '';
+            this.resetSearch();
         },
         orientationChange() {
             this.formatSidebar();
@@ -510,8 +545,9 @@ export default {
 
             this.openmct.status.delete(domainObject.identifier);
         },
-        searchItem(input) {
-            this.search = input;
+        resetSearch() {
+            this.search = '';
+            this.searchResults = [];
         },
         toggleNav() {
             this.showNav = !this.showNav;

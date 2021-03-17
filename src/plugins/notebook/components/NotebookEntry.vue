@@ -10,17 +10,32 @@
             <span>{{ createdOnTime }}</span>
         </div>
         <div class="c-ne__content">
-            <div :id="entry.id"
-                 class="c-ne__text"
-                 tabindex="0"
-                 :class="{ 'c-ne__input' : !readOnly }"
-                 :contenteditable="!readOnly"
-                 @blur="updateEntryValue($event)"
-                 @keydown.enter.exact.prevent
-                 @keyup.enter.exact.prevent="forceBlur($event)"
-                 v-text="entry.text"
-            >
-            </div>
+            <template v-if="readOnly && result">
+                <div
+                    :id="entry.id"
+                    class="c-ne__text highlight"
+                    tabindex="0"
+                >
+                    <TextHighlight
+                        :text="result.metadata.entryHit ? entry.text : `[ no result for '${result.metadata.originalSearchText}' in entry ]`"
+                        :highlight="result.metadata.entryHit ? result.metadata.originalSearchText : ''"
+                        :highlight-class="'search-highlight'"
+                    />
+                </div>
+            </template>
+            <template v-else>
+                <div
+                    :id="entry.id"
+                    class="c-ne__text c-ne__input"
+                    tabindex="0"
+                    contenteditable
+                    @blur="updateEntryValue($event)"
+                    @keydown.enter.exact.prevent
+                    @keyup.enter.exact.prevent="forceBlur($event)"
+                    v-text="entry.text"
+                >
+                </div>
+            </template>
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
                                :key="embed.id"
@@ -45,14 +60,18 @@
     <div v-if="readOnly"
          class="c-ne__section-and-page"
     >
-        <a class="c-click-link"
-           @click="navigateToSection()"
+        <a
+            class="c-click-link"
+            :class="{ 'search-highlight': result.metadata.sectionHit }"
+            @click="navigateToSection()"
         >
             {{ result.section.name }}
         </a>
         <span class="icon-arrow-right"></span>
-        <a class="c-click-link"
-           @click="navigateToPage()"
+        <a
+            class="c-click-link"
+            :class="{ 'search-highlight': result.metadata.pageHit }"
+            @click="navigateToPage()"
         >
             {{ result.page.name }}
         </a>
@@ -64,10 +83,12 @@
 import NotebookEmbed from './NotebookEmbed.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import Moment from 'moment';
+import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 
 export default {
     components: {
-        NotebookEmbed
+        NotebookEmbed,
+        TextHighlight
     },
     inject: ['openmct', 'snapshotContainer'],
     props: {
@@ -117,6 +138,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.result);
         this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {
@@ -175,6 +197,11 @@ export default {
         },
         forceBlur(event) {
             event.target.blur();
+        },
+        formatEntryResult() {
+            console.log(this.result);
+
+            return this.result.entry.text;
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);

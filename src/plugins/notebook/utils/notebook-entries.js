@@ -173,7 +173,7 @@ export function deleteNotebookEntries(openmct, domainObject, selectedSection, se
     if (!domainObject || !selectedSection) {
         return;
     }
-    console.log(selectedPage);
+
     const configuration = domainObject.configuration;
     const entries = configuration.entries || {};
 
