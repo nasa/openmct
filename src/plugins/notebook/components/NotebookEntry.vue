@@ -138,7 +138,6 @@ export default {
         }
     },
     mounted() {
-        console.log(this.result);
         this.dropOnEntry = this.dropOnEntry.bind(this);
     },
     methods: {
@@ -199,8 +198,6 @@ export default {
             event.target.blur();
         },
         formatEntryResult() {
-            console.log(this.result);
-
             return this.result.entry.text;
         },
         formatTime(unixTime, timeFormat) {
