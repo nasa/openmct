@@ -109,7 +109,8 @@ export default {
     data() {
         return {
             domainObject: undefined,
-            currentObjectPath: []
+            currentObjectPath: [],
+            mutablePromise: undefined
         };
     },
     watch: {
@@ -130,7 +131,7 @@ export default {
     },
     mounted() {
         if (this.openmct.objects.supportsMutation(this.item.identifier)) {
-            this.openmct.objects.getMutable(this.item.identifier)
+            this.mutablePromise = this.openmct.objects.getMutable(this.item.identifier)
                 .then(this.setObject);
         } else {
             this.openmct.objects.get(this.item.identifier)
@@ -142,13 +143,18 @@ export default {
             this.removeSelectable();
         }
 
-        if (this.domainObject.isMutable) {
+        if (this.mutablePromise) {
+            this.mutablePromise.then(() => {
+                this.openmct.objects.destroyMutable(this.domainObject);
+            });
+        } else {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
     methods: {
         setObject(domainObject) {
             this.domainObject = domainObject;
+            this.mutablePromise = undefined;
             this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
             this.$nextTick(() => {
                 let reference = this.$refs.objectFrame;

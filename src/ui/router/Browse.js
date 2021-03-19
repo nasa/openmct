@@ -43,7 +43,7 @@ define([
                 mutable = undefined;
             }
 
-            if (openmct.objects.supportsMutation(object)) {
+            if (openmct.objects.supportsMutation(object.identifier)) {
                 mutable = openmct.objects._toMutable(object);
             }
 
@@ -100,13 +100,13 @@ define([
 
                 document.title = browseObject.name; //change document title to current object in main view
 
-                if (currentProvider && currentProvider.canView(browseObject)) {
+                if (currentProvider && currentProvider.canView(browseObject, openmct.router.path)) {
                     viewObject(browseObject, currentProvider);
 
                     return;
                 }
 
-                let defaultProvider = openmct.objectViews.get(browseObject)[0];
+                let defaultProvider = openmct.objectViews.get(browseObject, openmct.router.path)[0];
                 if (defaultProvider) {
                     openmct.router.updateParams({
                         view: defaultProvider.key

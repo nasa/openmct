@@ -22,7 +22,7 @@
 
 <template>
 <div class="c-plot c-plot--stacked holder holder-plot has-control-bar">
-    <div v-show="!hideExportButtons"
+    <div v-show="!hideExportButtons && !options.compact"
          class="c-control-bar"
     >
         <span class="c-button-set c-button-set--strip-h">
@@ -56,6 +56,7 @@
                        :key="object.id"
                        class="c-plot--stacked-container"
                        :object="object"
+                       :options="options"
                        :grid-lines="gridLines"
                        :cursor-guide="cursorGuide"
                        :plot-tick-width="maxTickWidth"
@@ -74,6 +75,14 @@ export default {
         StackedPlotItem
     },
     inject: ['openmct', 'domainObject', 'composition'],
+    props: {
+        options: {
+            type: Object,
+            default() {
+                return {};
+            }
+        }
+    },
     data() {
         return {
             hideExportButtons: false,
