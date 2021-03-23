@@ -39,8 +39,8 @@
                     tabindex="0"
                 >
                     <TextHighlight
-                        :text="result.metadata.entryHit ? entry.text : `[ no result for '${result.metadata.originalSearchText}' in entry ]`"
-                        :highlight="result.metadata.entryHit ? result.metadata.originalSearchText : ''"
+                        :text="entryText"
+                        :highlight="highlightText"
                         :highlight-class="'search-highlight'"
                     />
                 </div>
@@ -157,6 +157,24 @@ export default {
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
+        },
+        entryText() {
+            let text = this.entry.text;
+
+            if (!this.result.metadata.entryHit) {
+                text = `[ no result for '${this.result.metadata.originalSearchText}' in entry ]`;
+            }
+
+            return text;
+        },
+        highlightText() {
+            let text = '';
+
+            if (this.result.metadata.entryHit) {
+                text = this.result.metadata.originalSearchText;
+            }
+
+            return text;
         }
     },
     mounted() {

@@ -137,7 +137,7 @@ import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaul
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
-import _ from 'lodash';
+import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
 
 export default {
@@ -204,7 +204,7 @@ export default {
         }
     },
     beforeMount() {
-        this.getSearchResults = _.debounce(this.getSearchResults, 500);
+        this.getSearchResults = debounce(this.getSearchResults, 500);
     },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
