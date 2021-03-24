@@ -539,7 +539,6 @@ export default {
             this.updateDefaultNotebook(notebookStorage);
             const id = addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage, embed);
             this.focusEntryId = id;
-            this.resetSearch();
         },
         orientationChange() {
             this.formatSidebar();
