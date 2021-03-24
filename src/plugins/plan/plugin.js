@@ -36,7 +36,7 @@ export default function () {
                     key: 'selectFile',
                     control: 'file-input',
                     required: true,
-                    text: 'Select File',
+                    text: 'Select File...',
                     type: 'application/json'
                 }
             ],
