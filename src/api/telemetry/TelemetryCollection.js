@@ -28,23 +28,24 @@ import _ from 'lodash';
 function methods() {
     return [
         'load',
-        'requestHistoricalTelemetry',
-        'initiateSubscriptionTelemetry',
-        '_addPage',
-        '_processNewTelemetry',
-        'hasMorePages',
-        'nextPage',
-        'bounds',
-        'timeSystem',
-        'reset',
         'on',
         'off',
-        'emit',
-        'watchBounds',
-        'unwatchBounds',
-        'watchTimeSystem',
-        'unwatchTimeSystem',
-        'destroy'
+        'hasMorePages',
+        'nextPage',
+        'destroy',
+        '_requestHistoricalTelemetry',
+        '_initiateHistoricalRequests',
+        '_initiateSubscriptionTelemetry',
+        '_addPage',
+        '_processNewTelemetry',
+        '_bounds',
+        '_timeSystem',
+        '_reset',
+        '_emit',
+        '_watchBounds',
+        '_unwatchBounds',
+        '_watchTimeSystem',
+        '_unwatchTimeSystem'
     ];
 }
 
@@ -53,7 +54,7 @@ function methods() {
 export class TelemetryCollection {
     /**
      * Creates a Telemetry Collection
-     * 
+     *
      * @param  {object} openmct - Openm MCT
      * @param  {object} domainObject - Domain Object to user for telemetry collection
      * @param  {object} options - Any options or args passed in from request/subscribe
@@ -92,22 +93,104 @@ export class TelemetryCollection {
             throw new Error('Telemetry Collection has already been loaded.');
         }
 
-        this.timeSystem(this.openmct.time.timeSystem());
+        this._timeSystem(this.openmct.time.timeSystem());
         this.lastBounds = this.openmct.time.bounds();
 
-        this.watchBounds();
-        this.watchTimeSystem();
+        this._watchBounds();
+        this._watchTimeSystem();
 
-        this.initiateHistoricalRequests();
-        this.initiateSubscriptionTelemetry();
+        this._initiateHistoricalRequests();
+        this._initiateSubscriptionTelemetry();
 
         this.loaded = true;
     }
+
+    /**
+     * returns if there is more telemetry within the time bounds
+     * if the provider supports it
+     *
+     * @returns {boolean}
+     */
+    hasMorePages() {
+        return this.historicalProvider
+            && this.historicalProvider.supportsPaging
+            && this.historicalProvider.supportsPaging()
+            && this.historicalProvider.hasMorePages
+            && this.historicalProvider.hasMorePages(this);
+    }
+
+    /**
+     * will trigger the next page for the provider if it supports it,
+     * _addPage will be passed in as a callback to receive the telemetry and updated state
+     */
+    nextPage() {
+        if (
+            !this.historicalProvider
+            || !this.historicalProvider.supportsPaging()
+            || !this.historicalProvider.nextPage
+        ) {
+            throw new Error('Provider does not support paging');
+        }
+
+        this.historicalProvider.nextPage(this._addPage, this.collectionState);
+    }
+
+    /**
+     * @param  {string} event - add, remove
+     * @param  {requestCallback} callback - callback to be executed when event happens,
+     * should accept an array of added telemetry data
+     * @param  {object} [context] - optional context to use
+     */
+    on(event, callback, context) {
+        if (!this.listeners[event]) {
+            throw new Error('Event not supported by Telemetry Collections: ' + event);
+        }
+
+        if (this.listeners[event].includes(callback)) {
+            throw new Error('Tried to add a listener that is already registered');
+        }
+
+        this.listeners[event].push({
+            callback,
+            context
+        });
+    }
+
+    /**
+     * @param  {string} event - add, remove
+     * @param  {requestCallback} callback - callback to be executed when event happens,
+     * should accept an array of removed
+     * telemetry data
+     */
+    off(event, callback) {
+        if (!this.listeners[event]) {
+            throw new Error('Event not supported by Telemetry Collections: ' + event);
+        }
+
+        if (!this.listeners[event].includes(callback)) {
+            throw new Error('Tried to remove a listener that does not exist');
+        }
+
+        this.listeners[event].remove(callback);
+    }
+
+    /**
+     * can/should be called by the requester of the telemetry collection
+     * to remove any listeners
+     */
+    destroy() {
+        this._unwatchBounds();
+        this._unwatchTimeSystem();
+        if (this.unsubscribe) {
+            this.unsubscribe();
+        }
+    }
+
     /**
      * Sets up  the telemetry collection for historical requests,
      * this uses the "standardizeRequestOptions" from Telemetry API
      */
-    initiateHistoricalRequests() {
+    _initiateHistoricalRequests() {
         if (this.arguments.length === 1) {
             this.arguments.length = 2;
             this.arguments[1] = {};
@@ -116,12 +199,12 @@ export class TelemetryCollection {
         this.openmct.telemetry.standardizeRequestOptions(this.arguments[1]);
         this.historicalProvider = this.openmct.telemetry.findRequestProvider(this.domainObject, this.arguments);
 
-        this.requestHistoricalTelemetry();
+        this._requestHistoricalTelemetry();
     }
     /**
      * If a historical provider exists, then historical requests will be made
      */
-    async requestHistoricalTelemetry() {
+    async _requestHistoricalTelemetry() {
         if (!this.historicalProvider) {
             return;
         }
@@ -140,7 +223,7 @@ export class TelemetryCollection {
     /**
      * This uses the built in subscription function from Telemetry API
      */
-    initiateSubscriptionTelemetry() {
+    _initiateSubscriptionTelemetry() {
         this.unsubscribe = this.openmct.telemetry
             .subscribe(this.domainObject, (datum) => {
                 this._processNewTelemetry(datum);
@@ -192,38 +275,8 @@ export class TelemetryCollection {
         }
 
         if (added.length) {
-            this.emit('add', added);
+            this._emit('add', added);
         }
-    }
-
-    /**
-     * returns if there is more telemetry within the time bounds
-     * if the provider supports it
-     *
-     * @returns {boolean}
-     */
-    hasMorePages() {
-        return this.historicalProvider
-            && this.historicalProvider.supportsPaging
-            && this.historicalProvider.supportsPaging()
-            && this.historicalProvider.hasMorePages
-            && this.historicalProvider.hasMorePages(this);
-    }
-
-    /**
-     * will trigger the next page for the provider if it supports it,
-     * _addPage will be passed in as a callback to receive the telemetry and updated state
-     */
-    nextPage() {
-        if (
-            !this.historicalProvider
-            || !this.historicalProvider.supportsPaging()
-            || !this.historicalProvider.nextPage
-        ) {
-            throw new Error('Provider does not support paging');
-        }
-
-        this.historicalProvider.nextPage(this._addPage, this.collectionState);
     }
 
     /**
@@ -235,7 +288,7 @@ export class TelemetryCollection {
      * @param  {boolean} [tick] `true` if the bounds update was due to
      * a "tick" event (ie. was an automatic update), false otherwise.
      */
-    bounds(bounds, isTick) {
+    _bounds(bounds, isTick) {
         let startChanged = this.lastBounds.start !== bounds.start;
         let endChanged = this.lastBounds.end !== bounds.end;
 
@@ -268,16 +321,16 @@ export class TelemetryCollection {
 
             if (discarded.length > 0) {
                 console.log('discarded has length remove');
-                this.emit('remove', discarded);
+                this._emit('remove', discarded);
             }
 
             if (added.length > 0) {
-                this.emit('add', added);
+                this._emit('add', added);
             }
 
         } else {
             // user bounds change, reset
-            this.reset();
+            this._reset();
         }
 
     }
@@ -288,11 +341,11 @@ export class TelemetryCollection {
      *
      * @todo handle subscriptions more granually
      */
-    reset() {
+    _reset() {
         this.boundedTelemetry = [];
         this.futureBuffer = [];
 
-        this.requestHistoricalTelemetry();
+        this._requestHistoricalTelemetry();
         // possible unsubscribe/resubscribe...
     }
 
@@ -303,7 +356,7 @@ export class TelemetryCollection {
      * @param  {TimeSystem} timeSystem - the value of the currently applied
      * Time System
      */
-    timeSystem(timeSystem) {
+    _timeSystem(timeSystem) {
         this.timeKey = timeSystem.key;
         let metadataValue = this.metadata.value(this.timeKey) || { format: this.timeKey };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
@@ -312,49 +365,16 @@ export class TelemetryCollection {
             return valueFormatter.parse(datum);
         };
 
-        this.reset();
+        this._reset();
     }
 
     /**
-     * @param  {string} event - add, remove
-     * @param  {requestCallback} callback - callback to be executed when event happens,
-     * should accept an array of added telemetry data
-     * @param  {object} [context] - optional context to use
+     * will call all the listeners for the event type and pass in the payload
+     *
+     * @param  {string} event event type, 'add' or 'remove'
+     * @param  {Object[]} payload array of telemetry objects
      */
-    on(event, callback, context) {
-        if (!this.listeners[event]) {
-            throw new Error('Event not supported by Telemetry Collections: ' + event);
-        }
-
-        if (this.listeners[event].includes(callback)) {
-            throw new Error('Tried to add a listener that is already registered');
-        }
-
-        this.listeners[event].push({
-            callback,
-            context
-        });
-    }
-
-    /**
-     * @param  {string} event - add, remove
-     * @param  {requestCallback} callback - callback to be executed when event happens,
-     * should accept an array of removed
-     * telemetry data
-     */
-    off(event, callback) {
-        if (!this.listeners[event]) {
-            throw new Error('Event not supported by Telemetry Collections: ' + event);
-        }
-
-        if (!this.listeners[event].includes(callback)) {
-            throw new Error('Tried to remove a listener that does not exist');
-        }
-
-        this.listeners[event].remove(callback);
-    }
-
-    emit(event, payload) {
+    _emit(event, payload) {
         if (!this.listeners[event].length) {
             return;
         }
@@ -370,28 +390,31 @@ export class TelemetryCollection {
         });
     }
 
-    watchBounds() {
-        this.openmct.time.on('bounds', this.bounds);
+    /**
+     * adds the _bounds callback to the 'bounds' timeAPI listener
+     */
+    _watchBounds() {
+        this.openmct.time.on('bounds', this._bounds);
     }
 
-    unwatchBounds() {
-        this.openmct.time.off('bounds', this.bounds);
+    /**
+     * removes the _bounds callback from the 'bounds' timeAPI listener
+     */
+    _unwatchBounds() {
+        this.openmct.time.off('bounds', this._bounds);
     }
 
-    watchTimeSystem() {
-        this.openmct.time.on('timeSystem', this.timeSystem);
+    /**
+     * adds the _timeSystem callback to the 'timeSystem' timeAPI listener
+     */
+    _watchTimeSystem() {
+        this.openmct.time.on('timeSystem', this._timeSystem);
     }
 
-    unwatchTimeSystem() {
-        this.openmct.time.off('timeSystem', this.timeSystem);
+    /**
+     * removes the _timeSystem callback from the 'timeSystem' timeAPI listener
+     */
+    _unwatchTimeSystem() {
+        this.openmct.time.off('timeSystem', this._timeSystem);
     }
-
-    destroy() {
-        this.unwatchBounds();
-        this.unwatchTimeSystem();
-        if (this.unsubscribe) {
-            this.unsubscribe();
-        }
-    }
-
 }
