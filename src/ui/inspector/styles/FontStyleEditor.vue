@@ -7,7 +7,7 @@
             class="c-icon-button c-button--menu icon-font-size"
             @click.prevent.stop="showFontSizeMenu"
         >
-            <span class="c-button__label">{{ fontStyle.fontSize }}</span>
+            <span class="c-button__label">{{ fontSizeLabel }}</span>
         </button>
     </div>
     <div ref="fontMenu"
@@ -17,7 +17,7 @@
             class="c-icon-button c-button--menu icon-font"
             @click.prevent.stop="showFontMenu"
         >
-            <span class="c-button__label">{{ fontStyle.font }}</span>
+            <span class="c-button__label">{{ fontTypeLable }}</span>
         </button>
     </div>
 </div>
@@ -34,10 +34,29 @@ export default {
     props: {
         fontStyle: {
             type: Object,
-            required: true
+            required: true,
+            default: () => {
+                return {};
+            }
         }
     },
     computed: {
+        fontTypeLable() {
+            const fontType = FONTS.find(f => f.value === this.fontStyle.font);
+            if (!fontType) {
+                return '??';
+            }
+
+            return fontType.name || fontType.value || FONTS[0].name;
+        },
+        fontSizeLabel() {
+            const fontSize = FONT_SIZES.find(f => f.value === this.fontStyle.fontSize);
+            if (!fontSize) {
+                return '??';
+            }
+
+            return fontSize.name || fontSize.value || FONT_SIZES[0].name;
+        },
         fontMenu() {
             return FONTS.map(font => {
                 return {
