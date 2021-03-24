@@ -140,6 +140,10 @@ import objectUtils from 'objectUtils';
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
 
+function objectCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
+
 export default {
     components: {
         NotebookEntry,
@@ -409,51 +413,59 @@ export default {
                 const pages = entries[sectionKey];
                 const pageKeys = Object.keys(pages);
                 const section = this.getSection(sectionKey);
-                const sectionHit = section.name && section.name.toLowerCase().includes(searchTextLower);
+                let resultMetadata = {
+                    originalSearchText,
+                    sectionHit: section.name && section.name.toLowerCase().includes(searchTextLower)
+                };
 
                 pageKeys.forEach(pageKey => {
                     const pageEntries = entries[sectionKey][pageKey];
                     const page = this.getPage(section, pageKey);
-                    const pageHit = page.name && page.name.toLowerCase().includes(searchTextLower);
+                    resultMetadata.pageHit = page.name && page.name.toLowerCase().includes(searchTextLower);
 
                     pageEntries.forEach(entry => {
                         const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
 
-                        if (sectionHit || pageHit || entryHit) {
-                            const resultMetadata = {
-                                searchTextLower,
-                                originalSearchText,
-                                sectionHit,
-                                pageHit,
-                                entryHit
-                            };
-                            let resultPage = page;
+                        // any entry hit goes in, it's the most unique of the hits
+                        if (entryHit) {
+                            resultMetadata.entryHit = entryHit;
 
-                            // if there is no page hit or entryHit (just section),
-                            // then we show first page by default
-                            if (sectionHit && !pageHit && !entryHit) {
-                                resultPage = this.getPage(section, pageKeys[0]);
-                            }
-
-                            // entryHits: (unique) go in
-                            // pageHits: with no entry (would be in alrady if entry hit) go in if the page isn't in already
-                            // sectionHits: no page or entry hits and section hit (everything else covered)
-                            if (
-                                entryHit
-                                || (!entryHit && (pageHit && this.notInResults('page', page, output)))
-                                || (!entryHit && !pageHit && (sectionHit && this.notInResults('section', section, output)))
-                            ) {
-                                output.push({
-                                    metadata: resultMetadata,
-                                    section,
-                                    page: resultPage,
-                                    entry
-                                });
-                            }
+                            output.push(objectCopy({
+                                metadata: resultMetadata,
+                                section,
+                                page,
+                                entry
+                            }));
                         }
 
+
                     });
+                    // all entries checked, now in pages,
+                    // if page hit, but not in results, need to add
+                    if (resultMetadata.pageHit && this.notInResults('page', page, output)) {
+                        resultMetadata.entryHit = false;
+
+                        output.push(objectCopy({
+                            metadata: resultMetadata,
+                            section,
+                            page
+                        }));
+                    }
+
                 });
+                // all pages checked, now in sections,
+                // if section hit, but not in results, need to add and default page
+                if (resultMetadata.sectionHit && this.notInResults('section', section, output)) {
+                    resultMetadata.entryHit = false;
+                    resultMetadata.pageHit = false;
+
+                    output.push(objectCopy({
+                        metadata: resultMetadata,
+                        section,
+                        page: this.getPage(section, pageKeys[0])
+                    }));
+                }
+
             });
 
             this.searchResults = output;
