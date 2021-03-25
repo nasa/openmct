@@ -231,7 +231,7 @@ export class TelemetryCollection {
     }
 
     /**
-     * Utilized by telemetry provider to add more data as well as
+     * call back for telemetry provider to add more data as well as
      * pass in the current state of the telemetry collection
      * (which the telemetry collection will hold)
      *

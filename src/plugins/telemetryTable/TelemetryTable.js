@@ -93,9 +93,11 @@ define([
 
         initialize() {
             if (this.domainObject.type === 'table') {
+                console.log('table initialized');
                 this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
                 this.loadComposition();
             } else {
+                console.log('object initialized on table');
                 this.addTelemetryObject(this.domainObject);
             }
         }
