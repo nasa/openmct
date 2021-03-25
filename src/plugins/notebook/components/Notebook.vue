@@ -408,6 +408,9 @@ export default {
             const sectionKeys = Object.keys(entries);
             const searchTextLower = this.search.toLowerCase();
             const originalSearchText = this.search;
+            let sectionTrackPageHit;
+            let pageTrackEntryHit;
+            let sectionTrackEntryHit;
 
             sectionKeys.forEach(sectionKey => {
                 const pages = entries[sectionKey];
@@ -417,11 +420,18 @@ export default {
                     originalSearchText,
                     sectionHit: section.name && section.name.toLowerCase().includes(searchTextLower)
                 };
+                sectionTrackPageHit = false;
+                sectionTrackEntryHit = false;
 
                 pageKeys.forEach(pageKey => {
                     const pageEntries = entries[sectionKey][pageKey];
                     const page = this.getPage(section, pageKey);
                     resultMetadata.pageHit = page.name && page.name.toLowerCase().includes(searchTextLower);
+                    pageTrackEntryHit = false;
+
+                    if (resultMetadata.pageHit) {
+                        sectionTrackPageHit = true;
+                    }
 
                     pageEntries.forEach(entry => {
                         const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
@@ -429,6 +439,8 @@ export default {
                         // any entry hit goes in, it's the most unique of the hits
                         if (entryHit) {
                             resultMetadata.entryHit = entryHit;
+                            pageTrackEntryHit = true;
+                            sectionTrackEntryHit = true;
 
                             output.push(objectCopy({
                                 metadata: resultMetadata,
@@ -442,7 +454,7 @@ export default {
                     });
                     // all entries checked, now in pages,
                     // if page hit, but not in results, need to add
-                    if (resultMetadata.pageHit && this.notInResults('page', page, output)) {
+                    if (resultMetadata.pageHit && !pageTrackEntryHit) {
                         resultMetadata.entryHit = false;
 
                         output.push(objectCopy({
@@ -455,7 +467,7 @@ export default {
                 });
                 // all pages checked, now in sections,
                 // if section hit, but not in results, need to add and default page
-                if (resultMetadata.sectionHit && this.notInResults('section', section, output)) {
+                if (resultMetadata.sectionHit && !sectionTrackPageHit && !sectionTrackEntryHit) {
                     resultMetadata.entryHit = false;
                     resultMetadata.pageHit = false;
 
@@ -469,11 +481,6 @@ export default {
             });
 
             this.searchResults = output;
-        },
-        notInResults(type, item, results) {
-            let whatsLeft = results.filter((result) => result[type].id === item.id);
-
-            return whatsLeft.length === 0;
         },
         getPages() {
             const selectedSection = this.getSelectedSection();
