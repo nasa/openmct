@@ -25,7 +25,7 @@ import TabsLayout from './plugin';
 import Vue from "vue";
 import EventEmitter from "EventEmitter";
 
-fdescribe('the plugin', function () {
+describe('the plugin', function () {
     let element;
     let child;
     let openmct;
