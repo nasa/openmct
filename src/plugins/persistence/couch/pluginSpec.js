@@ -32,18 +32,42 @@ describe('the plugin', () => {
     let child;
     let provider;
     let testPath = '/test/db';
+    let options;
+    let mockIdentifierService;
     let mockDomainObject;
 
     beforeEach((done) => {
         mockDomainObject = {
             identifier: {
-                namespace: 'mct',
+                namespace: '',
                 key: 'some-value'
             },
             type: 'mock-type'
         };
+        options = {
+            url: testPath,
+            filter: {},
+            disableObserve: true
+        };
         openmct = createOpenMct(false);
-        openmct.install(new CouchPlugin(testPath));
+
+        spyOnBuiltins(['fetch'], window);
+
+        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
+        mockIdentifierService = jasmine.createSpyObj(
+            'identifierService',
+            ['parse']
+        );
+        mockIdentifierService.parse.and.returnValue({
+            getSpace: () => {
+                return 'mct';
+            }
+        });
+
+        openmct.$injector.get.and.returnValue(mockIdentifierService);
+
+        openmct.install(new CouchPlugin(options));
+
         openmct.types.addType('mock-type', {creatable: true});
 
         element = document.createElement('div');
@@ -57,62 +81,67 @@ describe('the plugin', () => {
         spyOn(provider, 'get').and.callThrough();
         spyOn(provider, 'create').and.callThrough();
         spyOn(provider, 'update').and.callThrough();
-
-        spyOnBuiltins(['fetch'], window);
-        fetch.and.returnValue(Promise.resolve({
-            json: () => {
-                return {
-                    ok: true,
-                    _id: 'some-value',
-                    _rev: 1,
-                    model: {}
-                };
-            }
-        }));
     });
 
     afterEach(() => {
         return resetApplicationState(openmct);
     });
 
-    it('gets an object', () => {
-        openmct.objects.get(mockDomainObject.identifier).then((result) => {
-            expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
+    describe('the provider', () => {
+        let mockPromise;
+        beforeEach(() => {
+            mockPromise = Promise.resolve({
+                json: () => {
+                    return {
+                        ok: true,
+                        _id: 'some-value',
+                        _rev: 1,
+                        model: {}
+                    };
+                }
+            });
+            fetch.and.returnValue(mockPromise);
         });
-    });
 
-    it('creates an object', () => {
-        openmct.objects.save(mockDomainObject).then((result) => {
-            expect(provider.create).toHaveBeenCalled();
-            expect(result).toBeTrue();
-        });
-    });
-
-    it('updates an object', () => {
-        openmct.objects.save(mockDomainObject).then((result) => {
-            expect(result).toBeTrue();
-            expect(provider.create).toHaveBeenCalled();
-            openmct.objects.save(mockDomainObject).then((updatedResult) => {
-                expect(updatedResult).toBeTrue();
-                expect(provider.update).toHaveBeenCalled();
+        it('gets an object', () => {
+            openmct.objects.get(mockDomainObject.identifier).then((result) => {
+                expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
             });
         });
-    });
 
-    it('updates queued objects', () => {
-        let couchProvider = new CouchObjectProvider(openmct, 'http://localhost', '');
-        let intermediateResponse = couchProvider.getIntermediateResponse();
-        spyOn(couchProvider, 'updateQueued');
-        couchProvider.enqueueObject(mockDomainObject.identifier.key, mockDomainObject, intermediateResponse);
-        couchProvider.objectQueue[mockDomainObject.identifier.key].updateRevision(1);
-        couchProvider.update(mockDomainObject);
-        expect(couchProvider.objectQueue[mockDomainObject.identifier.key].hasNext()).toBe(2);
-        couchProvider.checkResponse({
-            ok: true,
-            rev: 2,
-            id: mockDomainObject.identifier.key
-        }, intermediateResponse);
+        it('creates an object', () => {
+            openmct.objects.save(mockDomainObject).then((result) => {
+                expect(provider.create).toHaveBeenCalled();
+                expect(result).toBeTrue();
+            });
+        });
 
-        expect(couchProvider.updateQueued).toHaveBeenCalledTimes(2);
+        it('updates an object', () => {
+            openmct.objects.save(mockDomainObject).then((result) => {
+                expect(result).toBeTrue();
+                expect(provider.create).toHaveBeenCalled();
+                openmct.objects.save(mockDomainObject).then((updatedResult) => {
+                    expect(updatedResult).toBeTrue();
+                    expect(provider.update).toHaveBeenCalled();
+                });
+            });
+        });
+
+        it('updates queued objects', () => {
+            let couchProvider = new CouchObjectProvider(openmct, options, '');
+            let intermediateResponse = couchProvider.getIntermediateResponse();
+            spyOn(couchProvider, 'updateQueued');
+            couchProvider.enqueueObject(mockDomainObject.identifier.key, mockDomainObject, intermediateResponse);
+            couchProvider.objectQueue[mockDomainObject.identifier.key].updateRevision(1);
+            couchProvider.update(mockDomainObject);
+            expect(couchProvider.objectQueue[mockDomainObject.identifier.key].hasNext()).toBe(2);
+            couchProvider.checkResponse({
+                ok: true,
+                rev: 2,
+                id: mockDomainObject.identifier.key
+            }, intermediateResponse);
+
+            expect(couchProvider.updateQueued).toHaveBeenCalledTimes(2);
+        });
     });
 });

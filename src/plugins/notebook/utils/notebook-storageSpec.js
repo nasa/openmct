@@ -56,11 +56,24 @@ const notebookStorage = {
     }
 };
 
-let openmct = createOpenMct();
+let openmct;
+let mockIdentifierService;
 
 describe('Notebook Storage:', () => {
     beforeEach((done) => {
         openmct = createOpenMct();
+        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
+        mockIdentifierService = jasmine.createSpyObj(
+            'identifierService',
+            ['parse']
+        );
+        mockIdentifierService.parse.and.returnValue({
+            getSpace: () => {
+                return '';
+            }
+        });
+
+        openmct.$injector.get.and.returnValue(mockIdentifierService);
         window.localStorage.setItem('notebook-storage', null);
         openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
             'create',

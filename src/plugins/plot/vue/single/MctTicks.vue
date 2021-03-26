@@ -1,5 +1,29 @@
+<!--
+ Open MCT, Copyright (c) 2014-2020, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+
 <template>
-<div ref="tickContainer">
+<div ref="tickContainer"
+     class="u-contents js-ticks"
+>
     <div v-if="position === 'left'"
          class="gl-plot-tick-wrapper"
     >
@@ -28,9 +52,7 @@
         </div>
     </div>
     <!-- grid lines follow -->
-    <div v-if="position === 'right'"
-         class="gl-plot-tick-wrapper"
-    >
+    <template v-if="position === 'right'">
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-hash hash-v"
@@ -40,23 +62,21 @@
              }"
         >
         </div>
-    </div>
-    <div v-if="position === 'bottom'"
-         class="gl-plot-tick-wrapper"
-    >
+    </template>
+    <template v-if="position === 'bottom'">
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-hash hash-h"
              :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
         >
         </div>
-    </div>
+    </template>
 </div>
 </template>
 
 <script>
 import eventHelpers from "./lib/eventHelpers";
-import { ticks, commonPrefix, commonSuffix } from "./tickUtils";
+import { ticks, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/configStore";
 
 export default {
@@ -188,29 +208,7 @@ export default {
                     step: newTicks[1] - newTicks[0]
                 };
 
-                newTicks = newTicks
-                    .map(function (tickValue) {
-                        return {
-                            value: tickValue,
-                            text: format(tickValue)
-                        };
-                    }, this);
-
-                if (newTicks.length && typeof newTicks[0].text === 'string') {
-                    const tickText = newTicks.map(function (t) {
-                        return t.text;
-                    });
-                    const prefix = tickText.reduce(commonPrefix);
-                    const suffix = tickText.reduce(commonSuffix);
-                    newTicks.forEach(function (t) {
-                        t.fullText = t.text;
-                        if (suffix.length) {
-                            t.text = t.text.slice(prefix.length, -suffix.length);
-                        } else {
-                            t.text = t.text.slice(prefix.length);
-                        }
-                    });
-                }
+                newTicks = getFormattedTicks(newTicks, format);
 
                 this.ticks = newTicks;
                 this.shouldCheckWidth = true;

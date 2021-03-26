@@ -219,7 +219,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name objects
          */
-        this.objects = new api.ObjectAPI.default(this.types);
+        this.objects = new api.ObjectAPI.default(this.types, this);
 
         /**
          * An interface for retrieving and interpreting telemetry data associated
@@ -283,6 +283,7 @@ define([
         this.install(this.plugins.NewFolderAction());
         this.install(this.plugins.ViewDatumAction());
         this.install(this.plugins.ObjectInterceptors());
+        this.install(this.plugins.NonEditableFolder());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

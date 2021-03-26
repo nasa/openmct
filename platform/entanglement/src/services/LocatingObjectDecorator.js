@@ -37,7 +37,7 @@ define(
             this.$q = $q;
         }
 
-        LocatingObjectDecorator.prototype.getObjects = function (ids) {
+        LocatingObjectDecorator.prototype.getObjects = function (ids, abortSignal) {
             var $q = this.$q,
                 $log = this.$log,
                 objectService = this.objectService,
@@ -79,7 +79,7 @@ define(
                         });
                 }
 
-                return objectService.getObjects([id]).then(attachContext);
+                return objectService.getObjects([id], abortSignal).then(attachContext);
             }
 
             ids.forEach(function (id) {

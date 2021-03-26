@@ -20,13 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "EventEmitter"
-], function (
-    EventEmitter
-) {
-    /**
-     * Provides a singleton event bus for sharing between objects.
-     */
-    return new EventEmitter();
-});
+import PlanViewProvider from './PlanViewProvider';
+
+export default function () {
+    return function install(openmct) {
+        openmct.types.addType('plan', {
+            name: 'Plan',
+            key: 'plan',
+            description: 'A plan',
+            creatable: true,
+            cssClass: 'icon-calendar',
+            form: [
+                {
+                    name: 'Upload Plan (JSON File)',
+                    key: 'selectFile',
+                    control: 'file-input',
+                    required: true,
+                    text: 'Select File',
+                    type: 'application/json'
+                }
+            ],
+            initialize: function (domainObject) {
+            }
+        });
+        openmct.objectViews.addProvider(new PlanViewProvider(openmct));
+    };
+}
+
