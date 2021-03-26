@@ -335,7 +335,6 @@
     }
 }
 
-
 @mixin labelValidate($sym, $c) {
     > .label {
         @include glyphAfter($sym);
@@ -371,4 +370,8 @@ body.desktop .form-row.validates > .label {
         height: 100%;
         line-height: 200%;
     }
+}
+
+.req {
+    color: $colorFormRequired;
 }
