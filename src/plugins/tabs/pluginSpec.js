@@ -105,6 +105,10 @@ describe('the plugin', function () {
         expect(tabsLayoutDefinition.definition.name).toEqual('Tabs View');
     });
 
+    it('is creatable', () => {
+        expect(tabsLayoutDefinition.definition.creatable).toEqual(true);
+    });
+
     describe('the view', function () {
         let tabsLayoutViewProvider;
         let mockComposition;
@@ -126,6 +130,18 @@ describe('the plugin', function () {
 
         it('provides a view', () => {
             expect(tabsLayoutViewProvider).toBeDefined();
+        });
+
+        it('renders tab element', () => {
+            const tabsElements = element.querySelectorAll('.c-tabs');
+
+            expect(tabsElements.length).toBe(1);
+        });
+
+        it('renders empty tab element with msg', () => {
+            const tabsElement = element.querySelector('.c-tabs');
+
+            expect(tabsElement.innerText.trim()).toEqual('Drag objects here to add them to this view.');
         });
     });
 
