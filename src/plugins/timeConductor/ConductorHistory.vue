@@ -20,59 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="c-ctrl-wrapper c-ctrl-wrapper--menus-up">
-    <button class="c-button--menu c-history-button icon-history"
-            @click.prevent="toggle"
-    >
-        <span class="c-button__label">History</span>
-    </button>
-    <div v-if="open"
-         class="c-menu c-conductor__history-menu"
-    >
-        <ul v-if="hasHistoryPresets">
-            <li
-                v-for="preset in presets"
-                :key="preset.label"
-                class="icon-clock"
-                @click="selectPresetBounds(preset.bounds)"
-            >
-                {{ preset.label }}
-            </li>
-        </ul>
-
-        <div
-            v-if="hasHistoryPresets"
-            class="c-menu__section-separator"
-        ></div>
-
-        <div class="c-menu__section-hint">
-            Past timeframes, ordered by latest first
-        </div>
-
-        <ul>
-            <li
-                v-for="(timespan, index) in historyForCurrentTimeSystem"
-                :key="index"
-                class="icon-history"
-                @click="selectTimespan(timespan)"
-            >
-                {{ formatTime(timespan.start) }} - {{ formatTime(timespan.end) }}
-            </li>
-        </ul>
+<div ref="historyButton"
+     class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
+>
+    <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
+        <button
+            class="c-button--menu c-history-button icon-history"
+            @click.prevent.stop="showHistoryMenu"
+        >
+            <span class="c-button__label">History</span>
+        </button>
     </div>
 </div>
 </template>
 
 <script>
-import toggleMixin from '../../ui/mixins/toggle-mixin';
-
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 
 export default {
-    mixins: [toggleMixin],
     inject: ['openmct', 'configuration'],
     props: {
         bounds: {
@@ -116,9 +84,6 @@ export default {
         },
         isFixed() {
             return this.openmct.time.clock() === undefined;
-        },
-        hasHistoryPresets() {
-            return this.timeSystem.isUTCBased && this.presets.length;
         },
         historyForCurrentTimeSystem() {
             const history = this[this.currentHistory][this.timeSystem.key];
@@ -168,6 +133,36 @@ export default {
         this.initializeHistoryIfNoHistory();
     },
     methods: {
+        getHistoryMenuItems() {
+            const history = this.historyForCurrentTimeSystem.map(timespan => {
+                return {
+                    cssClass: 'icon-history',
+                    name: `${this.formatTime(timespan.start)} - ${this.formatTime(timespan.end)}`,
+                    description: `${this.formatTime(timespan.start)} - ${this.formatTime(timespan.end)}`,
+                    callBack: () => this.selectTimespan(timespan)
+                };
+            });
+
+            history.unshift({
+                cssClass: 'c-menu__section-hint',
+                description: 'Past timeframes, ordered by latest first',
+                isDisabled: true,
+                name: 'Past timeframes, ordered by latest first',
+                callBack: () => {}
+            });
+
+            return history;
+        },
+        getPresetMenuItems() {
+            return this.presets.map(preset => {
+                return {
+                    cssClass: 'icon-clock',
+                    name: preset.label,
+                    description: preset.label,
+                    callBack: () => this.selectPresetBounds(preset.bounds)
+                };
+            });
+        },
         getHistoryFromLocalStorage() {
             const localStorageHistory = localStorage.getItem(this.storageKey);
             const history = localStorageHistory ? JSON.parse(localStorageHistory) : undefined;
@@ -265,6 +260,28 @@ export default {
             }).formatter;
 
             return (isNegativeOffset ? '-' : '') + formatter.format(time);
+        },
+        showHistoryMenu() {
+            const elementBoundingClientRect = this.$refs.historyButton.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.y;
+
+            const menuOptions = {
+                menuClass: 'c-conductor__history-menu',
+                placement: this.openmct.menus.menuPlacement.TOP_RIGHT
+            };
+
+            const menuActions = [];
+
+            const presets = this.getPresetMenuItems();
+            if (presets.length) {
+                menuActions.push(presets);
+            }
+
+            const history = this.getHistoryMenuItems();
+            menuActions.push(history);
+
+            this.openmct.menus.showMenu(x, y, menuActions, menuOptions);
         }
     }
 };
