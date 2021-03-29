@@ -32,12 +32,12 @@ export default function StackedPlotViewProvider(openmct) {
         key: 'plot-stacked',
         name: 'Stacked Plot',
         cssClass: 'icon-telemetry',
-        canView(domainObject) {
-            return domainObject.type === 'telemetry.plot.stacked';
+        canView(domainObject, objectPath) {
+            return isCompactView(objectPath) && domainObject.type === 'telemetry.plot.stacked';
         },
 
-        canEdit(domainObject) {
-            return domainObject.type === 'telemetry.plot.stacked';
+        canEdit(domainObject, objectPath) {
+            return isCompactView(objectPath) && domainObject.type === 'telemetry.plot.stacked';
         },
 
         view: function (domainObject, objectPath) {

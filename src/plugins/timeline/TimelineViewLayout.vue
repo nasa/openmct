@@ -55,7 +55,7 @@
                 <swim-lane :icon-class="item.type.definition.cssClass"
                            :min-height="item.height"
                            :show-ucontents="item.domainObject.type === 'plan'"
-                           :span-rows="item.domainObject.type === 'plan'"
+                           :span-rows-count="item.rowCount"
                 >
                     <template slot="label">
                         {{ item.domainObject.name }}
@@ -78,6 +78,7 @@
 import ObjectView from '@/ui/components/ObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
+import { getValidatedPlan } from "../plan/util";
 
 const unknownObjectType = {
     definition: {
@@ -86,9 +87,9 @@ const unknownObjectType = {
     }
 };
 
-function getViewKey(domainObject, openmct) {
+function getViewKey(domainObject, objectPath, openmct) {
     let viewKey = '';
-    const plotView = openmct.objectViews.get(domainObject).find((view) => {
+    const plotView = openmct.objectViews.get(domainObject, objectPath).find((view) => {
         return view.key.startsWith('plot-') && view.key !== 'plot-single';
     });
     if (plotView) {
@@ -116,6 +117,8 @@ export default {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
+        this.openmct.time.off("bounds", this.updateViewBounds);
+
     },
     mounted() {
         if (this.composition) {
@@ -126,13 +129,18 @@ export default {
         }
 
         this.getTimeSystems();
+        this.openmct.time.on("bounds", this.updateViewBounds);
     },
     methods: {
         addItem(domainObject) {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let objectPath = [domainObject].concat(this.objectPath.slice());
-            let viewKey = getViewKey(domainObject, this.openmct);
+            let viewKey = getViewKey(domainObject, objectPath, this.openmct);
+            let rowCount = 0;
+            if (domainObject.type === 'plan') {
+                rowCount = Object.keys(getValidatedPlan(domainObject)).length;
+            }
 
             let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
             let item = {
@@ -141,6 +149,7 @@ export default {
                 type,
                 keyString,
                 viewKey,
+                rowCount,
                 height
             };
 
@@ -174,6 +183,12 @@ export default {
 
             //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
             return currentBounds;
+        },
+        updateViewBounds(bounds) {
+            let currentTimeSystem = this.timeSystems.find(item => item.timeSystem.key === this.openmct.time.timeSystem().key);
+            if (currentTimeSystem) {
+                currentTimeSystem.bounds = bounds;
+            }
         }
     }
 };

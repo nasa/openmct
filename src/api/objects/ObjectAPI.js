@@ -154,11 +154,12 @@ ObjectAPI.prototype.addProvider = function (namespace, provider) {
  * @method get
  * @memberof module:openmct.ObjectProvider#
  * @param {string} key the key for the domain object to load
+ * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
  * @returns {Promise} a promise which will resolve when the domain object
  *          has been saved, or be rejected if it cannot be saved
  */
 
-ObjectAPI.prototype.get = function (identifier) {
+ObjectAPI.prototype.get = function (identifier, abortSignal) {
     let keystring = this.makeKeyString(identifier);
     if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
@@ -175,15 +176,12 @@ ObjectAPI.prototype.get = function (identifier) {
         throw new Error('Provider does not support get!');
     }
 
-    let objectPromise = provider.get(identifier);
+    let objectPromise = provider.get(identifier, abortSignal);
     this.cache[keystring] = objectPromise;
 
     return objectPromise.then(result => {
         delete this.cache[keystring];
-        const interceptors = this.listGetInterceptors(identifier, result);
-        interceptors.forEach(interceptor => {
-            result = interceptor.invoke(identifier, result);
-        });
+        result = this.applyGetInterceptors(identifier, result);
 
         return result;
     });
@@ -200,19 +198,24 @@ ObjectAPI.prototype.get = function (identifier) {
  * @method search
  * @memberof module:openmct.ObjectAPI#
  * @param {string} query the term to search for
- * @param {Object} options search options
+ * @param {AbortController.signal} abortSignal (optional) signal to cancel downstream fetch requests
  * @returns {Array.<Promise.<module:openmct.DomainObject>>}
  *          an array of promises returned from each object provider's search function
  *          each resolving to domain objects matching provided search query and options.
  */
-ObjectAPI.prototype.search = function (query, options) {
+ObjectAPI.prototype.search = function (query, abortSignal) {
     const searchPromises = Object.values(this.providers)
         .filter(provider => provider.search !== undefined)
-        .map(provider => provider.search(query, options));
+        .map(provider => provider.search(query, abortSignal));
 
-    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, options)
+    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, abortSignal)
         .then(results => results.hits
-            .map(hit => utils.toNewFormat(hit.object.getModel(), hit.object.getId()))));
+            .map(hit => {
+                let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
+                domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
+
+                return domainObject;
+            })));
 
     return searchPromises;
 };
@@ -336,6 +339,19 @@ ObjectAPI.prototype.addGetInterceptor = function (interceptorDef) {
  */
 ObjectAPI.prototype.listGetInterceptors = function (identifier, object) {
     return this.interceptorRegistry.getInterceptors(identifier, object);
+};
+
+/**
+ * Inovke interceptors if applicable for a given domain object.
+ * @private
+ */
+ObjectAPI.prototype.applyGetInterceptors = function (identifier, domainObject) {
+    const interceptors = this.listGetInterceptors(identifier, domainObject);
+    interceptors.forEach(interceptor => {
+        domainObject = interceptor.invoke(identifier, domainObject);
+    });
+
+    return domainObject;
 };
 
 /**

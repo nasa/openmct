@@ -82,7 +82,7 @@ describe('the plugin', function () {
                 type: "plan"
             };
 
-            const applicableViews = openmct.objectViews.get(testViewObject);
+            const applicableViews = openmct.objectViews.get(testViewObject, []);
             let planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
             expect(planView).toBeDefined();
         });
@@ -135,7 +135,7 @@ describe('the plugin', function () {
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(planDomainObject);
+            const applicableViews = openmct.objectViews.get(planDomainObject, []);
             planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
             let view = planView.view(planDomainObject, mockObjectPath);
             view.show(child, true);

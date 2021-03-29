@@ -57,11 +57,20 @@ export default class CouchObjectProvider {
         return options;
     }
 
-    request(subPath, method, value) {
-        return fetch(this.url + '/' + subPath, {
-            method: method,
-            body: JSON.stringify(value)
-        }).then(response => response.json())
+    request(subPath, method, body, signal) {
+        let fetchOptions = {
+            method,
+            body,
+            signal
+        };
+
+        // stringify body if needed
+        if (fetchOptions.body) {
+            fetchOptions.body = JSON.stringify(fetchOptions.body);
+        }
+
+        return fetch(this.url + '/' + subPath, fetchOptions)
+            .then(response => response.json())
             .then(function (response) {
                 return response;
             }, function () {
@@ -121,8 +130,8 @@ export default class CouchObjectProvider {
         }
     }
 
-    get(identifier) {
-        return this.request(identifier.key, "GET").then(this.getModel.bind(this));
+    get(identifier, abortSignal) {
+        return this.request(identifier.key, "GET", undefined, abortSignal).then(this.getModel.bind(this));
     }
 
     async getObjectsByFilter(filter) {
@@ -313,7 +322,8 @@ export default class CouchObjectProvider {
         this.enqueueObject(key, model, intermediateResponse);
         this.objectQueue[key].pending = true;
         const queued = this.objectQueue[key].dequeue();
-        this.request(key, "PUT", new CouchDocument(key, queued.model)).then((response) => {
+        let document = new CouchDocument(key, queued.model);
+        this.request(key, "PUT", document).then((response) => {
             this.checkResponse(response, queued.intermediateResponse);
         });
 
@@ -324,7 +334,8 @@ export default class CouchObjectProvider {
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
-            this.request(key, "PUT", new CouchDocument(key, queued.model, this.objectQueue[key].rev)).then((response) => {
+            let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
+            this.request(key, "PUT", document).then((response) => {
                 this.checkResponse(response, queued.intermediateResponse);
             });
         }

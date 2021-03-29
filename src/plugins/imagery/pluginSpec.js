@@ -235,7 +235,7 @@ describe("The Imagery View Layout", () => {
     });
 
     it("should provide an imagery view only for imagery producing objects", () => {
-        let applicableViews = openmct.objectViews.get(imageryObject);
+        let applicableViews = openmct.objectViews.get(imageryObject, []);
         let imageryView = applicableViews.find(
             viewProvider => viewProvider.key === imageryKey
         );
@@ -265,7 +265,7 @@ describe("The Imagery View Layout", () => {
                 end: bounds.end + 100
             });
 
-            applicableViews = openmct.objectViews.get(imageryObject);
+            applicableViews = openmct.objectViews.get(imageryObject, []);
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject);
             imageryView.show(child);

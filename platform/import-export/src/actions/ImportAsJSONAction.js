@@ -177,7 +177,7 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
                             key: 'selectFile',
                             control: 'file-input',
                             required: true,
-                            text: 'Select File'
+                            text: 'Select File...'
                         }
                     ]
                 }

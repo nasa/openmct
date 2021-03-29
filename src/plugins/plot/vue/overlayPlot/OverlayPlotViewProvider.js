@@ -32,12 +32,12 @@ export default function OverlayPlotViewProvider(openmct) {
         key: 'plot-overlay',
         name: 'Overlay Plot',
         cssClass: 'icon-telemetry',
-        canView(domainObject) {
-            return domainObject.type === 'telemetry.plot.overlay';
+        canView(domainObject, objectPath) {
+            return isCompactView(objectPath) && domainObject.type === 'telemetry.plot.overlay';
         },
 
-        canEdit(domainObject) {
-            return domainObject.type === 'telemetry.plot.overlay';
+        canEdit(domainObject, objectPath) {
+            return isCompactView(objectPath) && domainObject.type === 'telemetry.plot.overlay';
         },
 
         view: function (domainObject, objectPath) {

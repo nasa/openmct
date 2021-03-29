@@ -271,11 +271,6 @@ export default {
             });
         },
         removeFromComposition(identifier) {
-            let keystring = this.openmct.objects.makeKeyString(identifier);
-
-            this.identifierMap[keystring] = undefined;
-            delete this.identifierMap[keystring];
-
             this.composition.remove({identifier});
         },
         setSelectionToParent() {
@@ -354,6 +349,9 @@ export default {
         },
         removeChildObject(identifier) {
             let removeIdentifier = this.openmct.objects.makeKeyString(identifier);
+
+            this.identifierMap[removeIdentifier] = undefined;
+            delete this.identifierMap[removeIdentifier];
 
             this.containers.forEach(container => {
                 container.frames = container.frames.filter(frame => {

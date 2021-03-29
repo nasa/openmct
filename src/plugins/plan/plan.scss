@@ -1,21 +1,16 @@
 .c-plan {
-
-  @include abs();
-
   svg {
     text-rendering: geometricPrecision;
 
-    .activity-label, .no-activities {
+    text {
       stroke: none;
     }
 
-    .no-activities {
-      fill: #383838;
-    }
-
-    .activity-bounds {
-      fill-opacity: 0.5;
-    }
+      .activity-label {
+          &--outside-rect {
+              fill: $colorBodyFg !important;
+          }
+      }
   }
 
   canvas {

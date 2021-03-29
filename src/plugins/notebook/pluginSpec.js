@@ -101,7 +101,7 @@ describe("Notebook plugin:", () => {
                 creatable: true
             };
 
-            const applicableViews = openmct.objectViews.get(notebookViewObject);
+            const applicableViews = openmct.objectViews.get(notebookViewObject, []);
             notebookViewProvider = applicableViews.find(viewProvider => viewProvider.key === notebookObject.key);
             notebookView = notebookViewProvider.view(notebookViewObject);
 
