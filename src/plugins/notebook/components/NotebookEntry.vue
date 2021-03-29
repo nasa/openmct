@@ -1,3 +1,25 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div class="c-notebook__entry c-ne has-local-controls"
      @dragover="changeCursor"
@@ -10,17 +32,32 @@
             <span>{{ createdOnTime }}</span>
         </div>
         <div class="c-ne__content">
-            <div :id="entry.id"
-                 class="c-ne__text"
-                 tabindex="0"
-                 :class="{ 'c-ne__input' : !readOnly }"
-                 :contenteditable="!readOnly"
-                 @blur="updateEntryValue($event)"
-                 @keydown.enter.exact.prevent
-                 @keyup.enter.exact.prevent="forceBlur($event)"
-                 v-text="entry.text"
-            >
-            </div>
+            <template v-if="readOnly && result">
+                <div
+                    :id="entry.id"
+                    class="c-ne__text highlight"
+                    tabindex="0"
+                >
+                    <TextHighlight
+                        :text="entryText"
+                        :highlight="highlightText"
+                        :highlight-class="'search-highlight'"
+                    />
+                </div>
+            </template>
+            <template v-else>
+                <div
+                    :id="entry.id"
+                    class="c-ne__text c-ne__input"
+                    tabindex="0"
+                    contenteditable
+                    @blur="updateEntryValue($event)"
+                    @keydown.enter.exact.prevent
+                    @keyup.enter.exact.prevent="forceBlur($event)"
+                    v-text="entry.text"
+                >
+                </div>
+            </template>
             <div class="c-snapshots c-ne__embeds">
                 <NotebookEmbed v-for="embed in entry.embeds"
                                :key="embed.id"
@@ -45,14 +82,18 @@
     <div v-if="readOnly"
          class="c-ne__section-and-page"
     >
-        <a class="c-click-link"
-           @click="navigateToSection()"
+        <a
+            class="c-click-link"
+            :class="{ 'search-highlight': result.metadata.sectionHit }"
+            @click="navigateToSection()"
         >
             {{ result.section.name }}
         </a>
         <span class="icon-arrow-right"></span>
-        <a class="c-click-link"
-           @click="navigateToPage()"
+        <a
+            class="c-click-link"
+            :class="{ 'search-highlight': result.metadata.pageHit }"
+            @click="navigateToPage()"
         >
             {{ result.page.name }}
         </a>
@@ -64,10 +105,12 @@
 import NotebookEmbed from './NotebookEmbed.vue';
 import { createNewEmbed } from '../utils/notebook-entries';
 import Moment from 'moment';
+import TextHighlight from '../../../utils/textHighlight/TextHighlight.vue';
 
 export default {
     components: {
-        NotebookEmbed
+        NotebookEmbed,
+        TextHighlight
     },
     inject: ['openmct', 'snapshotContainer'],
     props: {
@@ -114,6 +157,24 @@ export default {
         },
         createdOnTime() {
             return this.formatTime(this.entry.createdOn, 'HH:mm:ss');
+        },
+        entryText() {
+            let text = this.entry.text;
+
+            if (!this.result.metadata.entryHit) {
+                text = `[ no result for '${this.result.metadata.originalSearchText}' in entry ]`;
+            }
+
+            return text;
+        },
+        highlightText() {
+            let text = '';
+
+            if (this.result.metadata.entryHit) {
+                text = this.result.metadata.originalSearchText;
+            }
+
+            return text;
         }
     },
     mounted() {
