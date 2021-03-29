@@ -1,16 +1,38 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div class="c-notebook">
     <div class="c-notebook__head">
         <Search class="c-notebook__search"
                 :value="search"
-                @input="throttledSearchItem"
-                @clear="throttledSearchItem"
+                @input="search = $event"
+                @clear="resetSearch()"
         />
     </div>
     <SearchResults v-if="search.length"
                    ref="searchResults"
                    :domain-object="internalDomainObject"
-                   :results="searchedEntries"
+                   :results="searchResults"
                    @changeSectionPage="changeSelectedSection"
                    @updateEntries="updateEntries"
     />
@@ -115,8 +137,12 @@ import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaul
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import objectUtils from 'objectUtils';
 
-import { throttle } from 'lodash';
+import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
+
+function objectCopy(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 
 export default {
     components: {
@@ -134,6 +160,7 @@ export default {
             focusEntryId: null,
             internalDomainObject: this.domainObject,
             search: '',
+            searchResults: [],
             showTime: 0,
             showNav: false,
             sidebarCoversEntries: false
@@ -156,9 +183,6 @@ export default {
         pages() {
             return this.getPages() || [];
         },
-        searchedEntries() {
-            return this.getSearchResults();
-        },
         sections() {
             return this.internalDomainObject.configuration.sections || [];
         },
@@ -178,8 +202,13 @@ export default {
             return this.sections.find(section => section.isSelected);
         }
     },
+    watch: {
+        search() {
+            this.getSearchResults();
+        }
+    },
     beforeMount() {
-        this.throttledSearchItem = throttle(this.searchItem, 500);
+        this.getSearchResults = debounce(this.getSearchResults, 500);
     },
     mounted() {
         this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
@@ -228,7 +257,7 @@ export default {
             });
 
             this.sectionsChanged({ sections });
-            this.throttledSearchItem('');
+            this.resetSearch();
         },
         createNotebookStorageObject() {
             const notebookMeta = {
@@ -377,25 +406,79 @@ export default {
             const output = [];
             const entries = this.internalDomainObject.configuration.entries;
             const sectionKeys = Object.keys(entries);
+            const searchTextLower = this.search.toLowerCase();
+            const originalSearchText = this.search;
+            let sectionTrackPageHit;
+            let pageTrackEntryHit;
+            let sectionTrackEntryHit;
+
             sectionKeys.forEach(sectionKey => {
                 const pages = entries[sectionKey];
                 const pageKeys = Object.keys(pages);
+                const section = this.getSection(sectionKey);
+                let resultMetadata = {
+                    originalSearchText,
+                    sectionHit: section.name && section.name.toLowerCase().includes(searchTextLower)
+                };
+                sectionTrackPageHit = false;
+                sectionTrackEntryHit = false;
+
                 pageKeys.forEach(pageKey => {
                     const pageEntries = entries[sectionKey][pageKey];
+                    const page = this.getPage(section, pageKey);
+                    resultMetadata.pageHit = page.name && page.name.toLowerCase().includes(searchTextLower);
+                    pageTrackEntryHit = false;
+
+                    if (resultMetadata.pageHit) {
+                        sectionTrackPageHit = true;
+                    }
+
                     pageEntries.forEach(entry => {
-                        if (entry.text && entry.text.toLowerCase().includes(this.search.toLowerCase())) {
-                            const section = this.getSection(sectionKey);
-                            output.push({
+                        const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
+
+                        // any entry hit goes in, it's the most unique of the hits
+                        if (entryHit) {
+                            resultMetadata.entryHit = entryHit;
+                            pageTrackEntryHit = true;
+                            sectionTrackEntryHit = true;
+
+                            output.push(objectCopy({
+                                metadata: resultMetadata,
                                 section,
-                                page: this.getPage(section, pageKey),
+                                page,
                                 entry
-                            });
+                            }));
                         }
                     });
+                    // all entries checked, now in pages,
+                    // if page hit, but not in results, need to add
+                    if (resultMetadata.pageHit && !pageTrackEntryHit) {
+                        resultMetadata.entryHit = false;
+
+                        output.push(objectCopy({
+                            metadata: resultMetadata,
+                            section,
+                            page
+                        }));
+                    }
+
                 });
+                // all pages checked, now in sections,
+                // if section hit, but not in results, need to add and default page
+                if (resultMetadata.sectionHit && !sectionTrackPageHit && !sectionTrackEntryHit) {
+                    resultMetadata.entryHit = false;
+                    resultMetadata.pageHit = false;
+
+                    output.push(objectCopy({
+                        metadata: resultMetadata,
+                        section,
+                        page: this.getPage(section, pageKeys[0])
+                    }));
+                }
+
             });
 
-            return output;
+            this.searchResults = output;
         },
         getPages() {
             const selectedSection = this.getSelectedSection();
@@ -456,12 +539,11 @@ export default {
             this.sectionsChanged({ sections });
         },
         newEntry(embed = null) {
-            this.search = '';
+            this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage, embed);
             this.focusEntryId = id;
-            this.search = '';
         },
         orientationChange() {
             this.formatSidebar();
@@ -491,8 +573,9 @@ export default {
 
             this.openmct.status.delete(domainObject.identifier);
         },
-        searchItem(input) {
-            this.search = input;
+        resetSearch() {
+            this.search = '';
+            this.searchResults = [];
         },
         toggleNav() {
             this.showNav = !this.showNav;
