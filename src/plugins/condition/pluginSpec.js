@@ -136,7 +136,7 @@ describe('the plugin', function () {
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testViewObject);
+            const applicableViews = openmct.objectViews.get(testViewObject, []);
             let conditionSetView = applicableViews.find((viewProvider) => viewProvider.key === 'conditionSet.view');
             expect(conditionSetView).toBeDefined();
         });

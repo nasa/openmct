@@ -22,7 +22,7 @@
         <div
             v-for="(tab, index) in tabsList"
             :key="tab.keyString"
-            class="c-tab c-tabs-view__tab"
+            class="c-tab c-tabs-view__tab js-tab"
             :class="{
                 'is-current': isCurrent(tab)
             }"
