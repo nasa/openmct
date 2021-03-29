@@ -56,6 +56,7 @@ define([
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.telemetryCollection = undefined;
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);

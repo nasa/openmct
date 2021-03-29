@@ -32,6 +32,7 @@ function methods() {
         'off',
         'hasMorePages',
         'nextPage',
+        'updateOptions',
         'destroy',
         '_requestHistoricalTelemetry',
         '_initiateHistoricalRequests',
@@ -81,7 +82,9 @@ export class TelemetryCollection {
 
         this.listeners = {
             add: [],
-            remove: []
+            remove: [],
+            timesystem: [],
+            bounds: []
         };
     }
     /**
@@ -133,6 +136,24 @@ export class TelemetryCollection {
         }
 
         this.historicalProvider.nextPage(this._addPage, this.collectionState);
+    }
+
+    /**
+     * provides a way to update the options for the telemetry request and subscription
+     * doing so will trigger a lite reset (no re-reqeustiong data yet) and then a
+     * re-initialization of request and subscription
+     *
+     * @param  {Object} options - options to send into request/subscription providers
+     */
+    updateOptions(options) {
+        const SKIP_RESET_REQUEST = true;
+
+        this._reset(SKIP_RESET_REQUEST);
+        this.arguments = options;
+
+        // will update options and providers if necesarry
+        this._initiateHistoricalRequests();
+        this._initiateSubscriptionTelemetry();
     }
 
     /**
@@ -224,6 +245,11 @@ export class TelemetryCollection {
      * This uses the built in subscription function from Telemetry API
      */
     _initiateSubscriptionTelemetry() {
+
+        if (this.unsubscribe) {
+            this.unsubscribe();
+        }
+
         this.unsubscribe = this.openmct.telemetry
             .subscribe(this.domainObject, (datum) => {
                 this._processNewTelemetry(datum);
@@ -294,6 +320,8 @@ export class TelemetryCollection {
 
         this.lastBounds = bounds;
 
+        this._emit('bounds', ...arguments);
+
         if (isTick) {
             // need to check futureBuffer and need to check
             // if anything has fallen out of bounds
@@ -320,7 +348,6 @@ export class TelemetryCollection {
             }
 
             if (discarded.length > 0) {
-                console.log('discarded has length remove');
                 this._emit('remove', discarded);
             }
 
@@ -333,20 +360,6 @@ export class TelemetryCollection {
             this._reset();
         }
 
-    }
-
-    /**
-     * Reset the telemetry data of the collection, and re-request
-     * historical telemetry
-     *
-     * @todo handle subscriptions more granually
-     */
-    _reset() {
-        this.boundedTelemetry = [];
-        this.futureBuffer = [];
-
-        this._requestHistoricalTelemetry();
-        // possible unsubscribe/resubscribe...
     }
 
     /**
@@ -365,27 +378,46 @@ export class TelemetryCollection {
             return valueFormatter.parse(datum);
         };
 
+        this._emit('timesystem', timeSystem);
         this._reset();
+    }
+
+    /**
+     * Reset the telemetry data of the collection, and re-request
+     * historical telemetry
+     *
+     * @param  {boolean} skipRequest - skip requesting history, default false
+     *
+     * @todo handle subscriptions more granually
+     */
+    _reset(skipRequest = false) {
+        this.boundedTelemetry = [];
+        this.futureBuffer = [];
+
+        if (skipRequest) {
+            return;
+        }
+
+        this._requestHistoricalTelemetry();
+        // possible unsubscribe/resubscribe...
     }
 
     /**
      * will call all the listeners for the event type and pass in the payload
      *
      * @param  {string} event event type, 'add' or 'remove'
-     * @param  {Object[]} payload array of telemetry objects
+     * @param  {Object[]} payload arguments to pass to the cvent callback
      */
-    _emit(event, payload) {
+    _emit(event, ...args) {
         if (!this.listeners[event].length) {
             return;
         }
 
-        payload = [...payload];
-
         this.listeners[event].forEach((listener) => {
             if (listener.context) {
-                listener.callback.apply(listener.context, payload);
+                listener.callback.apply(listener.context, ...args);
             } else {
-                listener.callback(payload);
+                listener.callback(...args);
             }
         });
     }
