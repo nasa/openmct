@@ -449,8 +449,6 @@ export default {
                                 entry
                             }));
                         }
-
-
                     });
                     // all entries checked, now in pages,
                     // if page hit, but not in results, need to add
