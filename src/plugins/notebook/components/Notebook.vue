@@ -434,29 +434,28 @@ export default {
                     }
 
                     // check for no entries first
-                    if (!entries[sectionKey] || !entries[sectionKey][pageKey]) {
-                        return;
+                    if (entries[sectionKey]) {
+                        const pageEntries = entries[sectionKey][pageKey];
+
+                        pageEntries.forEach(entry => {
+                            const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
+
+                            // any entry hit goes in, it's the most unique of the hits
+                            if (entryHit) {
+                                resultMetadata.entryHit = entryHit;
+                                pageTrackEntryHit = true;
+                                sectionTrackEntryHit = true;
+
+                                output.push(objectCopy({
+                                    metadata: resultMetadata,
+                                    section,
+                                    page,
+                                    entry
+                                }));
+                            }
+                        });
                     }
 
-                    const pageEntries = entries[sectionKey][pageKey];
-
-                    pageEntries.forEach(entry => {
-                        const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
-
-                        // any entry hit goes in, it's the most unique of the hits
-                        if (entryHit) {
-                            resultMetadata.entryHit = entryHit;
-                            pageTrackEntryHit = true;
-                            sectionTrackEntryHit = true;
-
-                            output.push(objectCopy({
-                                metadata: resultMetadata,
-                                section,
-                                page,
-                                entry
-                            }));
-                        }
-                    });
                     // all entries checked, now in pages,
                     // if page hit, but not in results, need to add
                     if (resultMetadata.pageHit && !pageTrackEntryHit) {
@@ -470,6 +469,7 @@ export default {
                     }
 
                 });
+
                 // all pages checked, now in sections,
                 // if section hit, but not in results, need to add and default page
                 if (resultMetadata.sectionHit && !sectionTrackPageHit && !sectionTrackEntryHit) {
