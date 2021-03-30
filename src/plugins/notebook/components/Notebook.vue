@@ -404,8 +404,9 @@ export default {
             }
 
             const output = [];
+            const sections = this.internalDomainObject.configuration.sections;
             const entries = this.internalDomainObject.configuration.entries;
-            const sectionKeys = Object.keys(entries);
+            const sectionKeys = sections.map((section) => section.id);
             const searchTextLower = this.search.toLowerCase();
             const originalSearchText = this.search;
             let sectionTrackPageHit;
@@ -413,8 +414,8 @@ export default {
             let sectionTrackEntryHit;
 
             sectionKeys.forEach(sectionKey => {
-                const pages = entries[sectionKey];
-                const pageKeys = Object.keys(pages);
+                const pages = sections.find((section) => section.id === sectionKey).pages;
+                const pageKeys = pages.map((page) => page.id);
                 const section = this.getSection(sectionKey);
                 let resultMetadata = {
                     originalSearchText,
@@ -424,7 +425,6 @@ export default {
                 sectionTrackEntryHit = false;
 
                 pageKeys.forEach(pageKey => {
-                    const pageEntries = entries[sectionKey][pageKey];
                     const page = this.getPage(section, pageKey);
                     resultMetadata.pageHit = page.name && page.name.toLowerCase().includes(searchTextLower);
                     pageTrackEntryHit = false;
@@ -432,6 +432,13 @@ export default {
                     if (resultMetadata.pageHit) {
                         sectionTrackPageHit = true;
                     }
+
+                    // check for no entries first
+                    if (!entries[sectionKey] || !entries[sectionKey][pageKey]) {
+                        return;
+                    }
+
+                    const pageEntries = entries[sectionKey][pageKey];
 
                     pageEntries.forEach(entry => {
                         const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
