@@ -406,17 +406,14 @@ export default {
             const output = [];
             const sections = this.internalDomainObject.configuration.sections;
             const entries = this.internalDomainObject.configuration.entries;
-            const sectionKeys = sections.map((section) => section.id);
             const searchTextLower = this.search.toLowerCase();
             const originalSearchText = this.search;
             let sectionTrackPageHit;
             let pageTrackEntryHit;
             let sectionTrackEntryHit;
 
-            sectionKeys.forEach(sectionKey => {
-                const pages = sections.find((section) => section.id === sectionKey).pages;
-                const pageKeys = pages.map((page) => page.id);
-                const section = this.getSection(sectionKey);
+            sections.forEach(section => {
+                const pages = section.pages;
                 let resultMetadata = {
                     originalSearchText,
                     sectionHit: section.name && section.name.toLowerCase().includes(searchTextLower)
@@ -424,8 +421,7 @@ export default {
                 sectionTrackPageHit = false;
                 sectionTrackEntryHit = false;
 
-                pageKeys.forEach(pageKey => {
-                    const page = this.getPage(section, pageKey);
+                pages.forEach(page => {
                     resultMetadata.pageHit = page.name && page.name.toLowerCase().includes(searchTextLower);
                     pageTrackEntryHit = false;
 
@@ -434,8 +430,8 @@ export default {
                     }
 
                     // check for no entries first
-                    if (entries[sectionKey]) {
-                        const pageEntries = entries[sectionKey][pageKey];
+                    if (entries[section.id]) {
+                        const pageEntries = entries[section.id][page.id];
 
                         pageEntries.forEach(entry => {
                             const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
@@ -479,7 +475,7 @@ export default {
                     output.push(objectCopy({
                         metadata: resultMetadata,
                         section,
-                        page: this.getPage(section, pageKeys[0])
+                        page: pages[0]
                     }));
                 }
 
