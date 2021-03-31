@@ -404,18 +404,16 @@ export default {
             }
 
             const output = [];
+            const sections = this.internalDomainObject.configuration.sections;
             const entries = this.internalDomainObject.configuration.entries;
-            const sectionKeys = Object.keys(entries);
             const searchTextLower = this.search.toLowerCase();
             const originalSearchText = this.search;
             let sectionTrackPageHit;
             let pageTrackEntryHit;
             let sectionTrackEntryHit;
 
-            sectionKeys.forEach(sectionKey => {
-                const pages = entries[sectionKey];
-                const pageKeys = Object.keys(pages);
-                const section = this.getSection(sectionKey);
+            sections.forEach(section => {
+                const pages = section.pages;
                 let resultMetadata = {
                     originalSearchText,
                     sectionHit: section.name && section.name.toLowerCase().includes(searchTextLower)
@@ -423,9 +421,7 @@ export default {
                 sectionTrackPageHit = false;
                 sectionTrackEntryHit = false;
 
-                pageKeys.forEach(pageKey => {
-                    const pageEntries = entries[sectionKey][pageKey];
-                    const page = this.getPage(section, pageKey);
+                pages.forEach(page => {
                     resultMetadata.pageHit = page.name && page.name.toLowerCase().includes(searchTextLower);
                     pageTrackEntryHit = false;
 
@@ -433,23 +429,29 @@ export default {
                         sectionTrackPageHit = true;
                     }
 
-                    pageEntries.forEach(entry => {
-                        const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
+                    // check for no entries first
+                    if (entries[section.id]) {
+                        const pageEntries = entries[section.id][page.id];
 
-                        // any entry hit goes in, it's the most unique of the hits
-                        if (entryHit) {
-                            resultMetadata.entryHit = entryHit;
-                            pageTrackEntryHit = true;
-                            sectionTrackEntryHit = true;
+                        pageEntries.forEach(entry => {
+                            const entryHit = entry.text && entry.text.toLowerCase().includes(searchTextLower);
 
-                            output.push(objectCopy({
-                                metadata: resultMetadata,
-                                section,
-                                page,
-                                entry
-                            }));
-                        }
-                    });
+                            // any entry hit goes in, it's the most unique of the hits
+                            if (entryHit) {
+                                resultMetadata.entryHit = entryHit;
+                                pageTrackEntryHit = true;
+                                sectionTrackEntryHit = true;
+
+                                output.push(objectCopy({
+                                    metadata: resultMetadata,
+                                    section,
+                                    page,
+                                    entry
+                                }));
+                            }
+                        });
+                    }
+
                     // all entries checked, now in pages,
                     // if page hit, but not in results, need to add
                     if (resultMetadata.pageHit && !pageTrackEntryHit) {
@@ -463,6 +465,7 @@ export default {
                     }
 
                 });
+
                 // all pages checked, now in sections,
                 // if section hit, but not in results, need to add and default page
                 if (resultMetadata.sectionHit && !sectionTrackPageHit && !sectionTrackEntryHit) {
@@ -472,7 +475,7 @@ export default {
                     output.push(objectCopy({
                         metadata: resultMetadata,
                         section,
-                        page: this.getPage(section, pageKeys[0])
+                        page: pages[0]
                     }));
                 }
 
