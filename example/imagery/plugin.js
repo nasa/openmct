@@ -139,6 +139,14 @@ define([
                                 hints: {
                                     image: 1
                                 }
+                            },
+                            {
+                                name: 'Image Download Name',
+                                key: 'imageDownloadName',
+                                format: 'imageDownloadName',
+                                hints: {
+                                    imageDownloadName: 1
+                                }
                             }
                         ]
                     };

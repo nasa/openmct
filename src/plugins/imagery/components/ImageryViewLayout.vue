@@ -87,8 +87,9 @@
              :class="{ selected: focusedImageIndex === index && isPaused }"
              @click="setFocusedImage(index, thumbnailClick)"
         >
-            <img class="c-thumb__image"
-                 :src="formatImageUrl(datum)"
+            <a :href="datum.url"
+               :download="datum.imageDownloadName"
+               @click.prevent
             >
             <div class="c-thumb__timestamp">{{ formatTime(datum) }}</div>
         </div>
@@ -156,6 +157,9 @@ export default {
         canTrackDuration() {
             return this.openmct.time.clock() && this.timeSystem.isUTCBased;
         },
+        focusedImageDownloadName() {
+            return this.getImageDownloadName(this.focusedImage);
+        },
         isNextDisabled() {
             let disabled = false;
 
@@ -214,6 +218,7 @@ export default {
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
+        this.imageDownloadNameHints = { ...this.metadata.valuesForHints(['imageDownloadName'])[0]};
 
         // initialize
         this.timeKey = this.timeSystem.key;
@@ -274,6 +279,15 @@ export default {
 
             // Replace ISO "T" with a space to allow wrapping
             return dateTimeStr.replace("T", " ");
+        },
+        getImageDownloadName(datum) {
+            let imageDownloadName = '';
+            if (datum) {
+                const key = this.imageDownloadNameHints.key;
+                imageDownloadName = datum[key];
+            }
+
+            return imageDownloadName;
         },
         parseTime(datum) {
             if (!datum) {
@@ -393,6 +407,7 @@ export default {
                 return;
             }
 
+            datum.imageDownloadName = this.getImageDownloadName(datum);
             this.imageHistory.push(datum);
 
             if (setFocused) {
