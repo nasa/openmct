@@ -46,7 +46,7 @@
                     {{ config.yAxis.get('autoscale') ? (config.yAxis.get('autoscalePadding')) : "" }}
                 </div>
             </li>
-            <li v-if="!autoscale && config.yAxis.get('range')"
+            <li v-if="!config.yAxis.get('autoscale') && config.yAxis.get('range')"
                 class="grid-row"
             >
                 <div class="grid-cell label"
@@ -54,7 +54,7 @@
                 >Minimum value</div>
                 <div class="grid-cell value">{{ config.yAxis.get('range').min }}</div>
             </li>
-            <li v-if="!autoscale && config.yAxis.get('range')"
+            <li v-if="!config.yAxis.get('autoscale') && config.yAxis.get('range')"
                 class="grid-row"
             >
                 <div class="grid-cell label"
@@ -122,7 +122,6 @@ export default {
     data() {
         return {
             config: undefined,
-            autoscale: '',
             loaded: false,
             plotSeries: []
         };
