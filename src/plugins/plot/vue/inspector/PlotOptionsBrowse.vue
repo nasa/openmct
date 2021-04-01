@@ -19,15 +19,14 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<template>
-<div>
+<template xmlns="http://www.w3.org/1999/html">
+<div v-if="config && loaded">
     <ul class="c-tree">
         <h2 title="Plot series display properties in this object">Plot Series</h2>
-        <li v-for="series in config.series.models"
-            :key="series.key"
-        >
-            <plot-options-item :series="series" />
-        </li><!-- end repeat -->
+        <plot-options-item v-for="series in plotSeries"
+                           :key="series.key"
+                           :series="series"
+        />
     </ul>
     <div class="grid-properties">
         <ul class="l-inspector-part">
@@ -47,7 +46,7 @@
                     {{ config.yAxis.get('autoscale') ? (config.yAxis.get('autoscalePadding')) : "" }}
                 </div>
             </li>
-            <li v-if="!form.yAxis.autoscale"
+            <li v-if="!autoscale && config.yAxis.get('range')"
                 class="grid-row"
             >
                 <div class="grid-cell label"
@@ -55,7 +54,7 @@
                 >Minimum value</div>
                 <div class="grid-cell value">{{ config.yAxis.get('range').min }}</div>
             </li>
-            <li v-if="!form.yAxis.autoscale"
+            <li v-if="!autoscale && config.yAxis.get('range')"
                 class="grid-row"
             >
                 <div class="grid-cell label"
@@ -116,45 +115,50 @@ import configStore from "../single/configuration/configStore";
 import eventHelpers from "../single/lib/eventHelpers";
 
 export default {
-    inject: ['openmct', 'domainObject'],
     components: {
         PlotOptionsItem
     },
+    inject: ['openmct', 'domainObject'],
     data() {
         return {
-            config: {}
+            config: undefined,
+            autoscale: '',
+            loaded: false,
+            plotSeries: []
         };
     },
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
         this.registerListeners();
+        this.loaded = true;
     },
     beforeDestroy() {
         this.stopListening();
-        this.unlisten();
     },
     methods: {
         getConfig() {
             this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const config = configStore.get(this.configId);
-            if (!config) {
-                //TODO: Is this necessary?
-                this.$nextTick(this.getConfig);
 
-                return;
-            }
+            return configStore.get(this.configId);
 
-            return config;
         },
         registerListeners() {
-            this.updateDomainObject(this.config.get('domainObject'));
-            this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.updateDomainObject);
+            this.config.series.forEach(this.addSeries, this);
+
+            this.listenTo(this.config.series, 'add', this.addSeries, this);
+            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
         },
 
-        updateDomainObject(domainObject) {
-            this.domainObject = domainObject;
-            this.formDomainObject = domainObject;
+        addSeries(series, index) {
+            this.plotSeries[index] = series;
+            console.log(this.plotSeries);
+        },
+
+        resetAllSeries() {
+            console.log('resetting');
+            this.plotSeries = [];
+            this.config.series.forEach(this.addSeries, this);
         }
     }
 };

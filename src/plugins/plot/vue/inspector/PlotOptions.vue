@@ -22,16 +22,22 @@
 <template>
 <div>
     <div v-if="canEdit">
-        <!--        <plot-options-edit />-->
+        <plot-options-edit />
     </div>
     <div v-if="!canEdit">
-        <!--        <plot-options-browse />-->
+        <plot-options-browse />
     </div>
 </div>
 </template>
 
 <script>
+import PlotOptionsBrowse from "@/plugins/plot/vue/inspector/PlotOptionsBrowse.vue";
+import PlotOptionsEdit from "@/plugins/plot/vue/inspector/PlotOptionsEdit.vue";
 export default {
+    components: {
+        PlotOptionsBrowse,
+        PlotOptionsEdit
+    },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
@@ -40,8 +46,6 @@ export default {
     },
     computed: {
         canEdit() {
-            console.log(this.domainObject.locked);
-
             return this.isEditing && !this.domainObject.locked;
         }
     },
