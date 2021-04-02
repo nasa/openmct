@@ -4,7 +4,7 @@
          class="c-ne__embed__snap-thumb"
          @click="openSnapshot()"
     >
-        <img :src="embed.snapshot.src">
+        <img :src="thumbnailImage">
     </div>
     <div class="c-ne__embed__info">
         <div class="c-ne__embed__name">
@@ -59,6 +59,11 @@ export default {
     computed: {
         createdOn() {
             return this.formatTime(this.embed.createdOn, 'YYYY-MM-DD HH:mm:ss');
+        },
+        thumbnailImage() {
+            return this.embed.snapshot.thumbnailImage
+                ? this.embed.snapshot.thumbnailImage.src
+                : this.embed.snapshot.src;
         }
     },
     mounted() {
@@ -115,7 +120,7 @@ export default {
             });
 
             painterroInstance.intialize();
-            painterroInstance.show(this.embed.snapshot.src);
+            painterroInstance.show(this.embed.snapshot.fullSizeImage.src);
         },
         changeLocation() {
             const hash = this.embed.historicLink;
@@ -160,6 +165,8 @@ export default {
         },
         openSnapshot() {
             const self = this;
+
+            console.log(this.embed.snapshot);
             this.snapshot = new Vue({
                 data: () => {
                     return {
@@ -217,6 +224,7 @@ export default {
             this.$emit('updateEmbed', embed);
         },
         updateSnapshot(snapshotObject) {
+            console.log(this.embed.snapshot);
             this.embed.snapshot = snapshotObject;
             this.updateEmbed(this.embed);
         }

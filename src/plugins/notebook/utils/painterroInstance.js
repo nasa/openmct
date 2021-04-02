@@ -52,6 +52,7 @@ export default class PainterroInstance {
     }
 
     saveHandler(image, done) {
+        console.log('saveHandler');
         if (this.isSave) {
             const self = this;
             const url = image.asBlob();

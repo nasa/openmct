@@ -14,12 +14,20 @@ export default class Snapshot {
 
     capture(snapshotMeta, notebookType, domElement) {
         const exportImageService = this.openmct.$injector.get('exportImageService');
-        exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
-            .then(function (blob) {
+
+        const options = {
+            classname: 's-status-taking-snapshot',
+            thumbnailSize: {
+                width: 50,
+                height: 50
+            }
+        }
+        exportImageService.exportPNGtoSRC(domElement, options)
+            .then(function ({blob, thumbnail}) {
                 const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function () {
-                    this._saveSnapShot(notebookType, reader.result, snapshotMeta);
+                    this._saveSnapShot(notebookType, reader.result, thumbnail, snapshotMeta);
                 }.bind(this);
             }.bind(this));
     }
@@ -27,8 +35,14 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveSnapShot(notebookType, imageUrl, snapshotMeta) {
-        const snapshot = imageUrl ? { src: imageUrl } : '';
+    _saveSnapShot(notebookType, imageUrl, thumbnail, snapshotMeta) {
+        // TODO: create Domain object and store identifier for it in fullSizeImage
+        const fullSizeImage = { src: imageUrl };
+        const thumbnailImage = { src: thumbnail || '' };
+        const snapshot = {
+            fullSizeImage,
+            thumbnailImage
+        }
         const embed = createNewEmbed(snapshotMeta, snapshot);
         if (notebookType === NOTEBOOK_DEFAULT) {
             this._saveToDefaultNoteBook(embed);
