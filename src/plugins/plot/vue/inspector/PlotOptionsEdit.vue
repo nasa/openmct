@@ -88,7 +88,6 @@ export default {
 
         addSeries(series, index) {
             this.plotSeries[index] = series;
-            console.log(this.plotSeries);
         },
 
         resetAllSeries() {
