@@ -174,6 +174,36 @@ describe("the plugin", function () {
             expect(plotView).toBeDefined();
         });
 
+        it('provides an inspector view for overlay plots', () => {
+            let selection = [
+                [
+                    {
+                        context: {
+                            item: {
+                                id: "test-object",
+                                type: "telemetry.plot.overlay",
+                                telemetry: {
+                                    values: [{
+                                        key: "some-key"
+                                    }]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        context: {
+                            item: {
+                                type: 'time-strip'
+                            }
+                        }
+                    }
+                ]
+            ];
+            const plotInspectorView = openmct.inspectorViews.get(selection);
+            console.log(plotInspectorView);
+            expect(plotInspectorView.length).toEqual(1);
+        });
+
         it("provides a stacked plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
