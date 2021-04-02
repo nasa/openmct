@@ -41,7 +41,7 @@ export default {
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            isEditing: false
+            isEditing: this.openmct.editor.isEditing()
         };
     },
     computed: {

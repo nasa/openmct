@@ -20,13 +20,81 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div>
-
+<div v-if="config && loaded">
+    <ul class="c-tree">
+        <h2 title="Display properties for this object">Plot Series</h2>
+        <li v-for="series in plotSeries"
+            :key="series.key"
+        >
+            <series-form :series="series" />
+        </li>
+    </ul>
+    <y-axis-form v-show="!!plotSeries.length"
+                 class="grid-properties"
+                 :y-axis="config.yAxis"
+    />
+    <ul class="l-inspector-part">
+        <h2 title="Legend options">Legend</h2>
+        <legend-form v-show="!!plotSeries.length"
+                     class="grid-properties"
+                     :legend="config.legend"
+        />
+    </ul>
 </div>
 </template>
 <script>
+import SeriesForm from "@/plugins/plot/vue/inspector/forms/SeriesForm.vue";
+import YAxisForm from "@/plugins/plot/vue/inspector/forms/YAxisForm.vue";
+import LegendForm from "@/plugins/plot/vue/inspector/forms/LegendForm.vue";
+import eventHelpers from "@/plugins/plot/vue/single/lib/eventHelpers";
+import configStore from "@/plugins/plot/vue/single/configuration/configStore";
 
 export default {
+    components: {
+        LegendForm,
+        SeriesForm,
+        YAxisForm
+    },
+    inject: ['openmct', 'domainObject'],
+    data() {
+        return {
+            config: {},
+            plotSeries: [],
+            loaded: false
+        };
+    },
+    mounted() {
+        eventHelpers.extend(this);
+        this.config = this.getConfig();
+        this.registerListeners();
+        this.loaded = true;
+    },
+    beforeDestroy() {
+        this.stopListening();
+    },
+    methods: {
+        getConfig() {
+            this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
+            return configStore.get(this.configId);
+
+        },
+        registerListeners() {
+            this.config.series.forEach(this.addSeries, this);
+
+            this.listenTo(this.config.series, 'add', this.addSeries, this);
+            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
+        },
+
+        addSeries(series, index) {
+            this.plotSeries[index] = series;
+            console.log(this.plotSeries);
+        },
+
+        resetAllSeries() {
+            this.plotSeries = [];
+            this.config.series.forEach(this.addSeries, this);
+        }
+    }
 };
 </script>

@@ -151,11 +151,9 @@ export default {
 
         addSeries(series, index) {
             this.plotSeries[index] = series;
-            console.log(this.plotSeries);
         },
 
         resetAllSeries() {
-            console.log('resetting');
             this.plotSeries = [];
             this.config.series.forEach(this.addSeries, this);
         }

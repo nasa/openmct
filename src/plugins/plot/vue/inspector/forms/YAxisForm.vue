@@ -9,6 +9,7 @@
             <div class="grid-cell value"><input v-model="label"
                                                 class="c-input--flex"
                                                 type="text"
+                                                @change="updateForm('label')"
             ></div>
         </li>
     </ul>
@@ -20,6 +21,7 @@
             >Auto scale</div>
             <div class="grid-cell value"><input v-model="autoscale"
                                                 type="checkbox"
+                                                @change="updateForm('autoscale')"
             ></div>
         </li>
         <li v-show="autoscale"
@@ -33,6 +35,7 @@
                 <input v-model="autoscalePadding"
                        class="c-input--flex"
                        type="text"
+                       @change="updateForm('autoscalePadding')"
                 >
             </div>
         </li>
@@ -53,6 +56,7 @@
                 <input v-model="rangeMin"
                        class="c-input--flex"
                        type="number"
+                       @change="updateForm('range')"
                 >
             </div>
         </li>
@@ -63,6 +67,7 @@
             <div class="grid-cell value"><input v-model="rangeMax"
                                                 class="c-input--flex"
                                                 type="number"
+                                                @change="updateForm('range')"
             ></div>
         </li>
     </ul>
@@ -70,23 +75,16 @@
 </template>
 
 <script>
-import LinkFields from "./LinkFields";
+import { objectPath, validate, coerce } from "./formUtil";
+import _ from "lodash";
 
 export default {
-    mixins: {
-        LinkFields
-    },
+    inject: ['openmct', 'domainObject'],
     props: {
-        series: {
+        yAxis: {
             type: Object,
             default() {
                 return {};
-            }
-        },
-        formModel: {
-            type: String,
-            default() {
-                return '';
             }
         }
     },
@@ -96,11 +94,13 @@ export default {
             autoscale: '',
             autoscalePadding: '',
             rangeMin: '',
-            rangeMax: ''
+            rangeMax: '',
+            validation: {}
         };
     },
     mounted() {
         this.initialize();
+        this.initFormValues();
     },
     methods: {
         initialize: function () {
@@ -174,6 +174,48 @@ export default {
                     }
                 }
             ];
+        },
+        initFormValues() {
+            this.label = this.yAxis.get('label');
+            this.autoscale = this.yAxis.get('autoscale');
+            this.autoscalePadding = this.yAxis.get('autoscalePadding');
+            this.rangeMin = this.yAxis.get('range').min;
+            this.rangeMax = this.yAxis.get('range').max;
+        },
+        updateForm(formKey) {
+            let newVal;
+            if (formKey === 'range') {
+                newVal = {
+                    min: this.rangeMin,
+                    max: this.rangeMax
+                };
+            } else {
+                newVal = this[formKey];
+            }
+
+            const oldVal = this.yAxis.get(formKey);
+            const formField = this.fields.find((field) => field.modelProp === formKey);
+
+            const path = objectPath(formField.objectPath);
+            const validationResult = validate(newVal, this.yAxis, formField.validate);
+            if (validationResult === true) {
+                delete this.validation[formKey];
+            } else {
+                this.validation[formKey] = validationResult;
+
+                return;
+            }
+
+            if (!_.isEqual(coerce(newVal, formField.coerce), coerce(oldVal, formField.coerce))) {
+                this.yAxis.set(formKey, coerce(newVal, formField.coerce));
+                if (path) {
+                    this.openmct.objects.mutate(
+                        this.domainObject,
+                        path(this.domainObject, this.yAxis),
+                        coerce(newVal, formField.coerce)
+                    );
+                }
+            }
         }
     }
 };

@@ -1,19 +1,22 @@
 <template>
-<div>
-    <div class="c-tree__item menus-to-left">
-        <span :class="{ disclosureTriangleCss }"
+<ul>
+    <li class="c-tree__item menus-to-left">
+        <span class="c-disclosure-triangle is-enabled flex-elem"
+              :class="expandedCssClass"
               @click="toggleExpanded"
         >
         </span>
-        <div :class="{ objectLabelCss }">
-            <div :class="{ linkCss }">
+        <div :class="objectLabelCss">
+            <div class="c-object-label__type-icon"
+                 :class="[seriesCss, linkCss]"
+            >
                 <span class="is-status__indicator"
                       title="This item is missing or suspect"
                 ></span>
             </div>
-            <div class="c-object-label__name">{{ series.oldObject.model.name }}</div>
+            <div class="c-object-label__name">{{ series.domainObject.name }}</div>
         </div>
-    </div>
+    </li>
     <ul v-show="expanded"
         class="grid-properties"
     >
@@ -23,7 +26,7 @@
                  title="The field to be plotted as a value for this series."
             >Value</div>
             <div class="grid-cell value">
-                <select :v-model="yKey"
+                <select v-model="yKey"
                         @change="updateForm('yKey')"
                 >
                     <option v-for="option in yKeyOptions"
@@ -41,7 +44,9 @@
                  title="The rendering method to join lines for this series."
             >Line Method</div>
             <div class="grid-cell value">
-                <select v-model="interpolate">
+                <select v-model="interpolate"
+                        @change="updateForm('interpolate')"
+                >
                     <option value="none">None</option>
                     <option value="linear">Linear interpolate</option>
                     <option value="stepAfter">Step after</option>
@@ -55,10 +60,12 @@
             <div class="grid-cell value">
                 <input v-model="markers"
                        type="checkbox"
+                       @change="updateForm('markers')"
                 >
                 <select
                     v-show="markers"
                     v-model="markerShape"
+                    @change="updateForm('markerShape')"
                 >
                     <option
                         v-for="option in markerShapeOptions"
@@ -78,6 +85,7 @@
             <div class="grid-cell value">
                 <input v-model="alarmMarkers"
                        type="checkbox"
+                       @change="updateForm('alarmMarkers')"
                 >
             </div>
         </li>
@@ -90,6 +98,7 @@
             <div class="grid-cell value"><input v-model="markerSize"
                                                 class="c-input--flex"
                                                 type="text"
+                                                @change="updateForm('markerSize')"
             ></div>
         </li>
         <!-- Use the swatch component here instead -->
@@ -129,11 +138,13 @@
         <!--            </div>-->
         <!--        </li>-->
     </ul>
-</div>
+</ul>
 </template>
 
 <script>
 import { MARKER_SHAPES } from "../../single/draw/MarkerShapes";
+import { objectPath, validate, coerce } from "./formUtil";
+import _ from 'lodash';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -143,43 +154,56 @@ export default {
             default() {
                 return {};
             }
-        },
-        formModel: {
-            type: String,
-            default() {
-                return '';
-            }
         }
     },
     data() {
         return {
             expanded: false,
-            model: {},
             markerShapeOptions: [],
-            yKey: '',
-            interpolate: '',
-            markers: '',
-            markerShape: '',
-            alarmMarkers: '',
-            markerSize: ''
+            yKey: this.series.get('yKey'),
+            yKeyOptions: [],
+            interpolate: this.series.get('interpolate'),
+            markers: this.series.get('markers'),
+            markerShape: this.series.get('markerShape'),
+            alarmMarkers: this.series.get('alarmMarkers'),
+            markerSize: this.series.get('markerSize'),
+            validation: {}
         };
     },
     computed: {
         objectLabelCss() {
-            return this.series.oldObject.model.status === 'missing' ? 'c-object-label is-status--missing' : 'c-object-label';
+            return this.status ? `c-object-label is-status--${this.status}'` : 'c-object-label';
         },
         seriesCss() {
-            return `c-object-label__type-icon ${this.series.oldObject.type.getCssClass()}`;
+            let legacyObject = this.openmct.legacyObject(this.series.domainObject);
+            let type = legacyObject.getCapability('type');
+
+            return type ? `c-object-label__type-icon ${type.getCssClass()}` : `c-object-label__type-icon`;
         },
         linkCss() {
-            return this.series.oldObject.location.isLink() ? 'l-icon-link' : '';
+            let cssClass = '';
+            let legacyObject = this.openmct.legacyObject(this.series.domainObject);
+            let location = legacyObject.getCapability('location');
+            if (location && location.isLink()) {
+                cssClass = 'l-icon-link';
+            }
+
+            return cssClass;
         },
-        disclosureTriangleCss() {
-            return this.expanded ? 'c-disclosure-triangle is-enabled flex-elem c-disclosure-triangle--expanded' : 'c-disclosure-triangle is-enabled flex-elem';
+        expandedCssClass() {
+            return this.expanded ? 'c-disclosure-triangle--expanded' : '';
         }
     },
     mounted() {
         this.initialize();
+
+        this.status = this.openmct.status.get(this.series.domainObject.identifier);
+        this.removeStatusListener = this.openmct.status.observe(this.series.domainObject.identifier, this.setStatus);
+    },
+    beforeDestroy() {
+        if (this.removeStatusListener) {
+            this.removeStatusListener();
+        }
     },
     methods: {
         initialize: function () {
@@ -212,7 +236,7 @@ export default {
                 }
             ];
 
-            const metadata = this.model.metadata;
+            const metadata = this.series.metadata;
             this.yKeyOptions = metadata
                 .valuesForHints(['range'])
                 .map(function (o) {
@@ -244,15 +268,15 @@ export default {
        * already assigned to a different plot series, then swap the colors.
        */
         setColor: function (color) {
-            const oldColor = this.model.get('color');
-            const otherSeriesWithColor = this.model.collection.filter(function (s) {
+            const oldColor = this.series.get('color');
+            const otherSeriesWithColor = this.series.collection.filter(function (s) {
                 return s.get('color') === color;
             })[0];
 
-            this.model.set('color', color);
+            this.series.set('color', color);
 
             const getPath = this.dynamicPathForKey('color');
-            const seriesColorPath = getPath(this.domainObject, this.model);
+            const seriesColorPath = getPath(this.domainObject, this.series);
 
             this.openmct.objects.mutate(
                 this.domainObject,
@@ -277,6 +301,35 @@ export default {
         },
         toggleExpanded() {
             this.expanded = !this.expanded;
+        },
+        updateForm(formKey) {
+            const newVal = this[formKey];
+            const oldVal = this.series.get(formKey);
+            const formField = this.fields.find((field) => field.modelProp === formKey);
+
+            const path = objectPath(formField.objectPath);
+            const validationResult = validate(newVal, this.series, formField.validate);
+            if (validationResult === true) {
+                delete this.validation[formKey];
+            } else {
+                this.validation[formKey] = validationResult;
+
+                return;
+            }
+
+            if (!_.isEqual(coerce(newVal, formField.coerce), coerce(oldVal, formField.coerce))) {
+                this.series.set(formKey, coerce(newVal, formField.coerce));
+                if (path) {
+                    this.openmct.objects.mutate(
+                        this.domainObject,
+                        path(this.domainObject, this.series),
+                        coerce(newVal, formField.coerce)
+                    );
+                }
+            }
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
 };
