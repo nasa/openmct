@@ -29,6 +29,13 @@ define([
 ) {
     return function plugin() {
         return function install(openmct) {
+            openmct.types.addType('folder', {
+                name: "Folder",
+                key: "folder",
+                description: "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
+                cssClass: "icon-folder",
+                creatable: true
+            });
             openmct.objectViews.addProvider(new FolderGridView(openmct));
             openmct.objectViews.addProvider(new FolderListView(openmct));
         };

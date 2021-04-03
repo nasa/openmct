@@ -20,28 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "./UTCTimeSystem",
-    "./LocalClock",
-    "./UTCTimeFormat",
-    "./DurationFormat"
-], function (
-    UTCTimeSystem,
-    LocalClock,
-    UTCTimeFormat,
-    DurationFormat
-) {
-    /**
-     * Install a time system that supports UTC times. It also installs a local
-     * clock source that ticks every 100ms, providing UTC times.
-     */
-    return function () {
-        return function (openmct) {
-            const timeSystem = new UTCTimeSystem();
-            openmct.time.addTimeSystem(timeSystem);
-            openmct.time.addClock(new LocalClock(100));
-            openmct.telemetry.addFormat(new UTCTimeFormat());
-            openmct.telemetry.addFormat(new DurationFormat());
-        };
+import LocalStorageObjectProvider from './LocalStorageObjectProvider';
+
+export default function (namespace = '', storageSpace = 'mct') {
+    return function (openmct) {
+        openmct.objects.addProvider(namespace, new LocalStorageObjectProvider(storageSpace));
     };
-});
+}

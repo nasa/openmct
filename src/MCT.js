@@ -284,6 +284,7 @@ define([
         this.install(this.plugins.ViewDatumAction());
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
+        this.install(this.plugins.Devices());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -403,39 +404,24 @@ define([
             this.router.setPath('/browse/');
         });
 
-        /**
-         * Fired by [MCT]{@link module:openmct.MCT} when the application
-         * is started.
-         * @event start
-         * @memberof module:openmct.MCT~
-         */
-        const startPromise = new Main();
-        startPromise.run(this)
-            .then(function (angular) {
-                this.$angular = angular;
-                // OpenMCT Object provider doesn't operate properly unless
-                // something has depended upon objectService.  Cool, right?
-                this.$injector.get('objectService');
+        if (!isHeadlessMode) {
+            const appLayout = new Vue({
+                components: {
+                    'Layout': Layout.default
+                },
+                provide: {
+                    openmct: this
+                },
+                template: '<Layout ref="layout"></Layout>'
+            });
+            domElement.appendChild(appLayout.$mount().$el);
 
-                if (!isHeadlessMode) {
-                    const appLayout = new Vue({
-                        components: {
-                            'Layout': Layout.default
-                        },
-                        provide: {
-                            openmct: this
-                        },
-                        template: '<Layout ref="layout"></Layout>'
-                    });
-                    domElement.appendChild(appLayout.$mount().$el);
+            this.layout = appLayout.$refs.layout;
+            Browse(this);
+        }
 
-                    this.layout = appLayout.$refs.layout;
-                    Browse(this);
-                }
-
-                this.router.start();
-                this.emit('start');
-            }.bind(this));
+        this.router.start();
+        this.emit('start');
     };
 
     MCT.prototype.startHeadless = function () {

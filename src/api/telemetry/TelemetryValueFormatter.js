@@ -28,8 +28,7 @@ define([
     printj
 ) {
 
-    // TODO: needs reference to formatService;
-    function TelemetryValueFormatter(valueMetadata, formatService) {
+    function TelemetryValueFormatter(valueMetadata, formatters) {
         const numberFormatter = {
             parse: function (x) {
                 return Number(x);
@@ -44,8 +43,7 @@ define([
 
         this.valueMetadata = valueMetadata;
         try {
-            this.formatter = formatService
-                .getFormat(valueMetadata.format, valueMetadata);
+            this.formatter = formatters.get(valueMetadata.format);
         } catch (e) {
             // TODO: Better formatting
             this.formatter = numberFormatter;

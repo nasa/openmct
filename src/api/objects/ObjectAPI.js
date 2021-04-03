@@ -38,9 +38,6 @@ function ObjectAPI(typeRegistry, openmct) {
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
-    this.injectIdentifierService = function () {
-        this.identifierService = openmct.$injector.get("identifierService");
-    };
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
@@ -56,32 +53,15 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
 };
 
 /**
- * @private
- */
-ObjectAPI.prototype.getIdentifierService = function () {
-    // Lazily acquire identifier service
-    if (!this.identifierService) {
-        this.injectIdentifierService();
-    }
-
-    return this.identifierService;
-};
-
-/**
  * Retrieve the provider for a given identifier.
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
-    //handles the '' vs 'mct' namespace issue
-    const keyString = utils.makeKeyString(identifier);
-    const identifierService = this.getIdentifierService();
-    const namespace = identifierService.parse(keyString).getSpace();
-
     if (identifier.key === 'ROOT') {
         return this.rootProvider;
     }
 
-    return this.providers[namespace] || this.fallbackProvider;
+    return this.providers[identifier.namespace] || this.fallbackProvider;
 };
 
 /**

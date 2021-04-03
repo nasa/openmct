@@ -116,11 +116,9 @@ define([
      * @private
      */
     DefaultMetadataProvider.prototype.typeHasTelemetry = function (domainObject) {
-        if (!this.typeService) {
-            this.typeService = this.openmct.$injector.get('typeService');
-        }
+        const type = this.openmct.types.get(domainObject.type);
 
-        return Boolean(this.typeService.getType(domainObject.type).typeDef.telemetry);
+        return Boolean(type.definition.telemetry);
     };
 
     return DefaultMetadataProvider;

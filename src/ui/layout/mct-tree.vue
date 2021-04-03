@@ -308,9 +308,6 @@ export default {
     },
     methods: {
         async initialize() {
-            // required to index tree objects that do not have search providers
-            this.openmct.$injector.get('searchService');
-
             window.addEventListener('resize', this.handleWindowResize);
 
             await this.calculateHeights();

@@ -13,7 +13,7 @@
         </div>
         <span v-if="!singleSelectNonObject"
               class="c-inspector__selected c-object-label__name"
-        >{{ item.name }}</span>
+        >{{ domainObject.name }}</span>
         <div v-if="singleSelectNonObject"
              class="c-inspector__selected c-inspector__selected--non-domain-object  c-object-label"
         >
@@ -36,7 +36,7 @@ export default {
     inject: ['openmct'],
     data() {
         return {
-            domainObject: {},
+            domainObject: undefined,
             keyString: undefined,
             multiSelect: false,
             itemsSelected: 0,
@@ -44,21 +44,22 @@ export default {
         };
     },
     computed: {
-        item() {
-            return this.domainObject || {};
-        },
         type() {
-            return this.openmct.types.get(this.item.type);
+            if (this.domainObject !== undefined) {
+                return this.openmct.types.get(this.domainObject.type);
+            } else {
+                return undefined;
+            }
         },
         typeCssClass() {
-            if (this.type.definition.cssClass === undefined) {
+            if (this.type === undefined || this.type.definition.cssClass === undefined) {
                 return 'icon-object';
             }
 
             return this.type.definition.cssClass;
         },
         singleSelectNonObject() {
-            return !this.item.identifier && !this.multiSelect;
+            return !this.domainObject && !this.multiSelect;
         },
         statusClass() {
             return this.status ? `is-status--${this.status}` : '';

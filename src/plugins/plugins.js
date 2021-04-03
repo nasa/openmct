@@ -65,7 +65,9 @@ define([
     './interceptors/plugin',
     './performanceIndicator/plugin',
     './CouchDBSearchFolder/plugin',
-    './timeline/plugin'
+    './localStorage/plugin',
+    './timeline/plugin',
+    './devices/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -111,10 +113,11 @@ define([
     ObjectInterceptors,
     PerformanceIndicator,
     CouchDBSearchFolder,
-    Timeline
+    LocalStorage,
+    Timeline,
+    Devices
 ) {
     const bundleMap = {
-        LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
         Elasticsearch: 'platform/persistence/elastic'
     };
@@ -127,12 +130,14 @@ define([
         };
     });
 
+    plugins.LocalStorage = LocalStorage.default;
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
 
     plugins.ImportExport = ImportExport;
 
     plugins.StaticRootPlugin = StaticRootPlugin;
+    plugins.Devices = Devices.default;
 
     /**
      * A tabular view showing the latest values of multiple telemetry points at

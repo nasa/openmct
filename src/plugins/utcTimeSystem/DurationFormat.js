@@ -21,27 +21,42 @@
  *****************************************************************************/
 
 define([
-    "./UTCTimeSystem",
-    "./LocalClock",
-    "./UTCTimeFormat",
-    "./DurationFormat"
+    'moment'
 ], function (
-    UTCTimeSystem,
-    LocalClock,
-    UTCTimeFormat,
-    DurationFormat
+    moment
 ) {
+
+    const DATE_FORMAT = "HH:mm:ss";
+    const DATE_FORMATS = [
+        DATE_FORMAT
+    ];
+
     /**
-     * Install a time system that supports UTC times. It also installs a local
-     * clock source that ticks every 100ms, providing UTC times.
+     * Formatter for duration. Uses moment to produce a date from a given
+     * value, but output is formatted to display only time. Can be used for
+     * specifying a time duration. For specifying duration, it's best to
+     * specify a date of January 1, 1970, as the ms offset will equal the
+     * duration represented by the time.
+     *
+     * @implements {Format}
+     * @constructor
+     * @memberof platform/commonUI/formats
      */
-    return function () {
-        return function (openmct) {
-            const timeSystem = new UTCTimeSystem();
-            openmct.time.addTimeSystem(timeSystem);
-            openmct.time.addClock(new LocalClock(100));
-            openmct.telemetry.addFormat(new UTCTimeFormat());
-            openmct.telemetry.addFormat(new DurationFormat());
-        };
+    function DurationFormat() {
+        this.key = "duration";
+    }
+
+    DurationFormat.prototype.format = function (value) {
+        return moment.utc(value).format(DATE_FORMAT);
     };
+
+    DurationFormat.prototype.parse = function (text) {
+        return moment.duration(text).asMilliseconds();
+    };
+
+    DurationFormat.prototype.validate = function (text) {
+        return moment.utc(text, DATE_FORMATS, true).isValid();
+    };
+
+    return DurationFormat;
 });
