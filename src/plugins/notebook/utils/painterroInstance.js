@@ -1,4 +1,5 @@
 import Painterro from 'painterro';
+import { getThumbnailURLFromimageUrl } from './notebook-image';
 
 const DEFAULT_CONFIG = {
     activeColor: '#ff0000',
@@ -52,22 +53,30 @@ export default class PainterroInstance {
     }
 
     saveHandler(image, done) {
-        console.log('saveHandler');
         if (this.isSave) {
             const self = this;
             const url = image.asBlob();
+
             const reader = new window.FileReader();
             reader.readAsDataURL(url);
-            reader.onloadend = () => {
-                const snapshot = reader.result;
+            reader.onloadend = async () => {
+                const fullSizeImageURL = reader.result;
+                const thumbnailURL = await getThumbnailURLFromimageUrl(fullSizeImageURL);
                 const snapshotObject = {
-                    src: snapshot,
-                    type: url.type,
-                    size: url.size,
-                    modified: Date.now()
+                    fullSizeImage: {
+                        src: fullSizeImageURL,
+                        type: url.type,
+                        size: url.size,
+                        modified: Date.now()
+                    },
+                    thumbnailImage: {
+                        src: thumbnailURL,
+                        modified: Date.now()
+                    }
                 };
 
                 self.saveCallback(snapshotObject);
+                done(true);
             };
         }
 

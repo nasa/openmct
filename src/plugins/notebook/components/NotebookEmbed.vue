@@ -166,7 +166,6 @@ export default {
         openSnapshot() {
             const self = this;
 
-            console.log(this.embed.snapshot);
             this.snapshot = new Vue({
                 data: () => {
                     return {
@@ -224,8 +223,8 @@ export default {
             this.$emit('updateEmbed', embed);
         },
         updateSnapshot(snapshotObject) {
-            console.log(this.embed.snapshot);
-            this.embed.snapshot = snapshotObject;
+            this.embed.snapshot.fullSizeImage = snapshotObject.fullSizeImage;
+            this.embed.snapshot.thumbnailImage = snapshotObject.thumbnailImage;
             this.updateEmbed(this.embed);
         }
     }
