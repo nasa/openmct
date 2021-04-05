@@ -24,8 +24,8 @@
  * Module defining MutationCapability. Created by vwoeltje on 11/12/14.
  */
 define(
-    [],
-    function () {
+    ['lodash'],
+    function (_) {
 
         var GENERAL_TOPIC = "mutation",
             TOPIC_PREFIX = "mutation:";
@@ -141,7 +141,7 @@ define(
                 if (mutationResult !== false) {
                     // Copy values if result was a different object
                     // (either our clone or some other new thing)
-                    let modelHasChanged = JSON.stringify(model) !== JSON.stringify(result);
+                    let modelHasChanged = _.isEqual(model, result);
                     if (modelHasChanged) {
                         copyValues(model, result);
                     }
