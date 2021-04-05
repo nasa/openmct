@@ -426,12 +426,6 @@ export default {
         synchronized(value) {
             if (typeof value !== 'undefined') {
                 this._synchronized = value;
-                const isUnsynced = !value && this.openmct.time.clock();
-                const domainObject = this.openmct.legacyObject(this.domainObject);
-                if (domainObject.getCapability('status')) {
-                    domainObject.getCapability('status')
-                        .set('timeconductor-unsynced', isUnsynced);
-                }
             }
 
             return this._synchronized;

@@ -42,12 +42,7 @@ define([
         };
 
         this.valueMetadata = valueMetadata;
-        try {
-            this.formatter = formatters.get(valueMetadata.format);
-        } catch (e) {
-            // TODO: Better formatting
-            this.formatter = numberFormatter;
-        }
+        this.formatter = formatters.get(valueMetadata.format) || numberFormatter;
 
         if (valueMetadata.format === 'enum') {
             this.formatter = {};

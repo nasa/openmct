@@ -40,7 +40,7 @@ export default function PlotViewProvider(openmct) {
     }
 
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        return true;
     }
 
     return {

@@ -438,7 +438,11 @@ define([
      * @returns {Format}
      */
     TelemetryAPI.prototype.getFormatter = function (key) {
-        return this.formatters.get(key);
+        if (this.formatters.has(key)) {
+            return this.formatters.get(key);
+        } else {
+            throw new Error(`Unknown type ${key}`);
+        }
     };
 
     /**

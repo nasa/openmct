@@ -100,7 +100,7 @@ export default {
     mounted() {
         eventHelpers.extend(this);
 
-        this.exportImageService = this.openmct.$injector.get('exportImageService');
+        //this.exportImageService = this.openmct.$injector.get('exportImageService');
     },
     beforeDestroy() {
         this.destroy();
