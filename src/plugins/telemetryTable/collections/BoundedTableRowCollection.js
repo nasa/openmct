@@ -34,34 +34,36 @@ define(
             constructor(openmct) {
                 super();
 
-                this.futureBuffer = new SortedTableRowCollection();
                 this.openmct = openmct;
-
                 this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
-                this.bounds = this.bounds.bind(this);
-
                 this.sortByTimeSystem(openmct.time.timeSystem());
 
-                this.lastBounds = openmct.time.bounds();
+                // this.futureBuffer = new SortedTableRowCollection();
 
-                this.subscribeToBounds();
+                // this.bounds = this.bounds.bind(this);
+
+                // this.lastBounds = openmct.time.bounds();
+
+                // this.subscribeToBounds();
             }
 
             addOne(item) {
-                let parsedValue = this.getValueForSortColumn(item);
-                // Insert into either in-bounds array, or the future buffer.
-                // Data in the future buffer will be re-evaluated for possible
-                // insertion on next bounds change
-                let beforeStartOfBounds = parsedValue < this.lastBounds.start;
-                let afterEndOfBounds = parsedValue > this.lastBounds.end;
 
-                if (!afterEndOfBounds && !beforeStartOfBounds) {
-                    return super.addOne(item);
-                } else if (afterEndOfBounds) {
-                    this.futureBuffer.addOne(item);
-                }
+                return super.addOne(item);
+                // let parsedValue = this.getValueForSortColumn(item);
+                // // Insert into either in-bounds array, or the future buffer.
+                // // Data in the future buffer will be re-evaluated for possible
+                // // insertion on next bounds change
+                // let beforeStartOfBounds = parsedValue < this.lastBounds.start;
+                // let afterEndOfBounds = parsedValue > this.lastBounds.end;
 
-                return false;
+                // if (!afterEndOfBounds && !beforeStartOfBounds) {
+                //     return super.addOne(item);
+                // } else if (afterEndOfBounds) {
+                //     this.futureBuffer.addOne(item);
+                // }
+
+                // return false;
             }
 
             sortByTimeSystem(timeSystem) {
@@ -75,10 +77,14 @@ define(
                     format: timeSystem.timeFormat
                 });
                 this.parseTime = formatter.parse.bind(formatter);
-                this.futureBuffer.sortBy({
-                    key: timeSystem.key,
-                    direction: 'asc'
-                });
+                // this.futureBuffer.sortBy({
+                //     key: timeSystem.key,
+                //     direction: 'asc'
+                // });
+            }
+
+            getValueForSortColumn(row) {
+                return this.parseTime(row.datum[this.sortOptions.key]);
             }
 
             /**
@@ -95,71 +101,67 @@ define(
              * @fires TelemetryCollection#discarded
              * @param bounds
              */
-            bounds(bounds) {
-                let startChanged = this.lastBounds.start !== bounds.start;
-                let endChanged = this.lastBounds.end !== bounds.end;
+            // bounds(bounds) {
+            //     let startChanged = this.lastBounds.start !== bounds.start;
+            //     let endChanged = this.lastBounds.end !== bounds.end;
 
-                let startIndex = 0;
-                let endIndex = 0;
+            //     let startIndex = 0;
+            //     let endIndex = 0;
 
-                let discarded = [];
-                let added = [];
-                let testValue = {
-                    datum: {}
-                };
+            //     let discarded = [];
+            //     let added = [];
+            //     let testValue = {
+            //         datum: {}
+            //     };
 
-                this.lastBounds = bounds;
+            //     this.lastBounds = bounds;
 
-                if (startChanged) {
-                    testValue.datum[this.sortOptions.key] = bounds.start;
-                    // Calculate the new index of the first item within the bounds
-                    startIndex = this.sortedIndex(this.rows, testValue);
-                    discarded = this.rows.splice(0, startIndex);
-                }
+            //     if (startChanged) {
+            //         testValue.datum[this.sortOptions.key] = bounds.start;
+            //         // Calculate the new index of the first item within the bounds
+            //         startIndex = this.sortedIndex(this.rows, testValue);
+            //         discarded = this.rows.splice(0, startIndex);
+            //     }
 
-                if (endChanged) {
-                    testValue.datum[this.sortOptions.key] = bounds.end;
-                    // Calculate the new index of the last item in bounds
-                    endIndex = this.sortedLastIndex(this.futureBuffer.rows, testValue);
-                    added = this.futureBuffer.rows.splice(0, endIndex);
-                    added.forEach((datum) => this.rows.push(datum));
-                }
+            //     if (endChanged) {
+            //         testValue.datum[this.sortOptions.key] = bounds.end;
+            //         // Calculate the new index of the last item in bounds
+            //         endIndex = this.sortedLastIndex(this.futureBuffer.rows, testValue);
+            //         added = this.futureBuffer.rows.splice(0, endIndex);
+            //         added.forEach((datum) => this.rows.push(datum));
+            //     }
 
-                if (discarded && discarded.length > 0) {
-                    /**
-                     * A `discarded` event is emitted when telemetry data fall out of
-                     * bounds due to a bounds change event
-                     * @type {object[]} discarded the telemetry data
-                     * discarded as a result of the bounds change
-                     */
-                    this.emit('remove', discarded);
-                }
+            //     if (discarded && discarded.length > 0) {
+            //         /**
+            //          * A `discarded` event is emitted when telemetry data fall out of
+            //          * bounds due to a bounds change event
+            //          * @type {object[]} discarded the telemetry data
+            //          * discarded as a result of the bounds change
+            //          */
+            //         this.emit('remove', discarded);
+            //     }
 
-                if (added && added.length > 0) {
-                    /**
-                     * An `added` event is emitted when a bounds change results in
-                     * received telemetry falling within the new bounds.
-                     * @type {object[]} added the telemetry data that is now within bounds
-                     */
-                    this.emit('add', added);
-                }
-            }
+            //     if (added && added.length > 0) {
+            //         /**
+            //          * An `added` event is emitted when a bounds change results in
+            //          * received telemetry falling within the new bounds.
+            //          * @type {object[]} added the telemetry data that is now within bounds
+            //          */
+            //         this.emit('add', added);
+            //     }
+            // }
 
-            getValueForSortColumn(row) {
-                return this.parseTime(row.datum[this.sortOptions.key]);
-            }
+            // unsubscribeFromBounds() {
+            //     this.openmct.time.off('bounds', this.bounds);
+            // }
 
-            unsubscribeFromBounds() {
-                this.openmct.time.off('bounds', this.bounds);
-            }
+            // subscribeToBounds() {
+            //     this.openmct.time.on('bounds', this.bounds);
+            // }
 
-            subscribeToBounds() {
-                this.openmct.time.on('bounds', this.bounds);
-            }
-
-            destroy() {
-                this.unsubscribeFromBounds();
-            }
+            // destroy() {
+            //     this.unsubscribeFromBounds();
+            // }
         }
 
         return BoundedTableRowCollection;

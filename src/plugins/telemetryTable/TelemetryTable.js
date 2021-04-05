@@ -48,7 +48,7 @@ define([
             this.domainObject = domainObject;
             this.openmct = openmct;
             this.rowCount = 100;
-            this.subscriptions = {};
+            // this.subscriptions = {};
             this.tableComposition = undefined;
             this.telemetryObjects = [];
             this.datumCache = [];
@@ -56,13 +56,13 @@ define([
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.telemetryCollection = undefined;
+            this.telemetryCollections = {};
 
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
             this.refreshData = this.refreshData.bind(this);
-            this.requestDataFor = this.requestDataFor.bind(this);
+            // this.requestDataFor = this.requestDataFor.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
@@ -94,11 +94,9 @@ define([
 
         initialize() {
             if (this.domainObject.type === 'table') {
-                console.log('table initialized');
                 this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
                 this.loadComposition();
             } else {
-                console.log('object initialized on table');
                 this.addTelemetryObject(this.domainObject);
             }
         }
@@ -118,24 +116,27 @@ define([
             this.filteredRows.sortBy(sortOptions);
         }
 
-        loadComposition() {
+        async loadComposition() {
             this.tableComposition = this.openmct.composition.get(this.domainObject);
+
             if (this.tableComposition !== undefined) {
-                this.tableComposition.load().then((composition) => {
+                let composition = await this.tableComposition.load();
 
-                    composition = composition.filter(this.isTelemetryObject);
-                    composition.forEach(this.addTelemetryObject);
+                composition = composition.filter(this.isTelemetryObject);
+                composition.forEach(this.addTelemetryObject);
 
-                    this.tableComposition.on('add', this.addTelemetryObject);
-                    this.tableComposition.on('remove', this.removeTelemetryObject);
-                });
+                this.tableComposition.on('add', this.addTelemetryObject);
+                console.log('setting up remove listener');
+                this.tableComposition.on('remove', this.removeTelemetryObject);
             }
         }
 
         addTelemetryObject(telemetryObject) {
+            console.log('telemtable.js: add telem object', telemetryObject.name);
             this.addColumnsForObject(telemetryObject, true);
-            this.requestDataFor(telemetryObject);
-            this.subscribeTo(telemetryObject);
+            this.requestTelemetryCollectionFor(telemetryObject);
+            // this.requestDataFor(telemetryObject);
+            // this.subscribeTo(telemetryObject);
             this.telemetryObjects.push(telemetryObject);
 
             this.emit('object-added', telemetryObject);
@@ -144,45 +145,88 @@ define([
         updateFilters() {
             this.filteredRows.clear();
             this.boundedRows.clear();
-            Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
 
-            this.telemetryObjects.forEach(this.requestDataFor.bind(this));
-            this.telemetryObjects.forEach(this.subscribeTo.bind(this));
+            this.telemetryObjects.forEach(this.requestTelemetryCollectionFor.bind(this));
+
+            // Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
+
+            // this.telemetryObjects.forEach(this.requestDataFor.bind(this));
+            // this.telemetryObjects.forEach(this.subscribeTo.bind(this));
         }
 
         removeTelemetryObject(objectIdentifier) {
+            console.log('telemtable.js remove', objectIdentifier);
             this.configuration.removeColumnsForObject(objectIdentifier, true);
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             this.boundedRows.removeAllRowsForObject(keyString);
-            this.unsubscribe(keyString);
+            this.telemetryCollections[keyString].destroy();
+            this.telemetryCollections[keyString] = undefined;
+            delete this.telemetryCollections[keyString];
+            // this.unsubscribe(keyString);
             this.telemetryObjects = this.telemetryObjects.filter((object) => !_.eq(objectIdentifier, object.identifier));
 
             this.emit('object-removed', objectIdentifier);
         }
 
-        requestDataFor(telemetryObject) {
+        requestTelemetryCollectionFor(telemetryObject) {
             this.incrementOutstandingRequests();
+
+            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            let columnMap = this.getColumnMapForObject(keyString);
+            let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
 
-            return this.openmct.telemetry.request(telemetryObject, requestOptions)
-                .then(telemetryData => {
-                    //Check that telemetry object has not been removed since telemetry was requested.
-                    if (!this.telemetryObjects.includes(telemetryObject)) {
-                        return;
-                    }
+            if (this.telemetryCollections[keyString]) {
+                this.telemetryCollections[keyString].destroy();
+                this.telemetryCollections[keyString] = undefined;
+                delete this.telemetryCollections[keyString];
+            }
 
-                    let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                    let columnMap = this.getColumnMapForObject(keyString);
-                    let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-                    this.processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator);
-                }).finally(() => {
-                    this.decrementOutstandingRequests();
-                });
+            this.telemetryCollections[keyString] = this.openmct.telemetry
+                .requestTelemetryCollection(telemetryObject, requestOptions);
+
+            this.telemetryCollections[keyString].on('add', (telemetry) => {
+                //Check that telemetry object has not been removed since telemetry was requested.
+                if (!this.telemetryObjects.includes(telemetryObject)) {
+                    return;
+                }
+
+                // only cache realtime
+                if (this.paused) {
+                    let cacheData = {
+                        telemetry,
+                        columnMap,
+                        keyString,
+                        limitEvaluator
+                    };
+
+                    this.datumCache.push(cacheData);
+                } else {
+                    this.processTelemetryData(telemetry, columnMap, keyString, limitEvaluator);
+                }
+            });
+
+            this.telemetryCollections[keyString].on('remove', (data) => {
+                // need to remove from bounded row collection
+            });
+
+            // load historical and realtime telemetry
+            this.telemetryCollections[keyString].load();
+
+            this.decrementOutstandingRequests();
         }
 
-        processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
+        processTelemetryData(telemetryData, columnMap, keyString, limitEvaluator) {
             let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             this.boundedRows.add(telemetryRows);
+        }
+
+        processDatumCache() {
+
+            this.datumCache.forEach(cachedDatum => {
+                this.processTelemetryData(cachedDatum.telemetry, cachedDatum.columnMap, cachedDatum.keyString, cachedDatum.limitEvaluator);
+            });
+            this.datumCache = [];
         }
 
         /**
@@ -212,7 +256,8 @@ define([
                 this.filteredRows.clear();
                 this.boundedRows.clear();
                 this.boundedRows.sortByTimeSystem(this.openmct.time.timeSystem());
-                this.telemetryObjects.forEach(this.requestDataFor);
+                this.telemetryObjects.forEach(this.requestTelemetryCollectionFor.bind(this));
+                // this.telemetryObjects.forEach(this.requestDataFor);
             }
         }
 
@@ -259,43 +304,61 @@ define([
             return new TelemetryTableUnitColumn(this.openmct, metadatum);
         }
 
-        subscribeTo(telemetryObject) {
-            let subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
-            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            let columnMap = this.getColumnMapForObject(keyString);
-            let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+        // requestDataFor(telemetryObject) {
+        //     this.incrementOutstandingRequests();
+        //     let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
 
-            this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
-                //Check that telemetry object has not been removed since telemetry was requested.
-                if (!this.telemetryObjects.includes(telemetryObject)) {
-                    return;
-                }
+        //     return this.openmct.telemetry.request(telemetryObject, requestOptions)
+        //         .then(telemetryData => {
+        //             //Check that telemetry object has not been removed since telemetry was requested.
+        //             if (!this.telemetryObjects.includes(telemetryObject)) {
+        //                 return;
+        //             }
 
-                if (this.paused) {
-                    let realtimeDatum = {
-                        datum,
-                        columnMap,
-                        keyString,
-                        limitEvaluator
-                    };
+        //             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        //             let columnMap = this.getColumnMapForObject(keyString);
+        //             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+        //             this.processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator);
+        //         }).finally(() => {
+        //             this.decrementOutstandingRequests();
+        //         });
+        // }
 
-                    this.datumCache.push(realtimeDatum);
-                } else {
-                    this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator);
-                }
-            }, subscribeOptions);
-        }
+        // processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
+        //     let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+        //     this.boundedRows.add(telemetryRows);
+        // }
 
-        processDatumCache() {
-            this.datumCache.forEach(cachedDatum => {
-                this.processRealtimeDatum(cachedDatum.datum, cachedDatum.columnMap, cachedDatum.keyString, cachedDatum.limitEvaluator);
-            });
-            this.datumCache = [];
-        }
+        // subscribeTo(telemetryObject) {
+        //     let subscribeOptions = this.buildOptionsFromConfiguration(telemetryObject);
+        //     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        //     let columnMap = this.getColumnMapForObject(keyString);
+        //     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-        processRealtimeDatum(datum, columnMap, keyString, limitEvaluator) {
-            this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
-        }
+        //     this.subscriptions[keyString] = this.openmct.telemetry.subscribe(telemetryObject, (datum) => {
+        //         //Check that telemetry object has not been removed since telemetry was requested.
+        //         if (!this.telemetryObjects.includes(telemetryObject)) {
+        //             return;
+        //         }
+
+        //         if (this.paused) {
+        //             let realtimeDatum = {
+        //                 datum,
+        //                 columnMap,
+        //                 keyString,
+        //                 limitEvaluator
+        //             };
+
+        //             this.datumCache.push(realtimeDatum);
+        //         } else {
+        //             this.processRealtimeDatum(datum, columnMap, keyString, limitEvaluator);
+        //         }
+        //     }, subscribeOptions);
+        // }
+
+        // processRealtimeDatum(datum, columnMap, keyString, limitEvaluator) {
+        //     this.boundedRows.add(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+        // }
 
         isTelemetryObject(domainObject) {
             return Object.prototype.hasOwnProperty.call(domainObject, 'telemetry');
@@ -310,10 +373,10 @@ define([
             return {filters} || {};
         }
 
-        unsubscribe(keyString) {
-            this.subscriptions[keyString]();
-            delete this.subscriptions[keyString];
-        }
+        // unsubscribe(keyString) {
+        //     this.subscriptions[keyString]();
+        //     delete this.subscriptions[keyString];
+        // }
 
         sortBy(sortOptions) {
             this.filteredRows.sortBy(sortOptions);
@@ -327,19 +390,20 @@ define([
 
         pause() {
             this.paused = true;
-            this.boundedRows.unsubscribeFromBounds();
+            // this.boundedRows.unsubscribeFromBounds();
         }
 
         unpause() {
             this.paused = false;
             this.processDatumCache();
-            this.boundedRows.subscribeToBounds();
+            // this.boundedRows.subscribeToBounds();
         }
 
         destroy() {
-            this.boundedRows.destroy();
+            console.log('destroy table');
+            // this.boundedRows.destroy();
+            // Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.filteredRows.destroy();
-            Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
             this.openmct.time.off('timeSystem', this.refreshData);
 

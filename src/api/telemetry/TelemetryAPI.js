@@ -290,11 +290,11 @@ define([
      * @returns {Promise.<object[]>} a promise for an array of
      *          telemetry data
      */
-    TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject) {
+    TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject, ...args) {
         return new TelemetryCollection(
             this.openmct,
             domainObject,
-            arguments
+            ...args
         );
     };
 
@@ -320,6 +320,7 @@ define([
         }
 
         this.standardizeRequestOptions(arguments[1]);
+
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
             return Promise.reject('No provider found');
