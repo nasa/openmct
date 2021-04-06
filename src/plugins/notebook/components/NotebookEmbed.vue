@@ -25,11 +25,14 @@
 
 <script>
 import Moment from 'moment';
-import PopupMenu from './PopupMenu.vue';
 import PreviewAction from '../../../ui/preview/PreviewAction';
 import RemoveDialog from '../utils/removeDialog';
 import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
+
+import { updateNotebookImageDomainObject } from '../utils/notebook-image';
+
+import PopupMenu from './PopupMenu.vue';
 import Vue from 'vue';
 
 export default {
@@ -90,7 +93,7 @@ export default {
                 template: '<div id="snap-annotation"></div>'
             }).$mount();
 
-            const painterroInstance = new PainterroInstance(annotateVue.$el, this.updateSnapshot);
+            const painterroInstance = new PainterroInstance(annotateVue.$el);
             const annotateOverlay = this.openmct.overlays.overlay({
                 element: annotateVue.$el,
                 size: 'large',
@@ -107,10 +110,12 @@ export default {
                     {
                         label: 'Save',
                         callback: () => {
-                            painterroInstance.save();
-                            annotateOverlay.dismiss();
-                            this.snapshotOverlay.dismiss();
-                            this.openSnapshot();
+                            painterroInstance.save((snapshotObject) => {
+                                annotateOverlay.dismiss();
+                                this.snapshotOverlay.dismiss();
+                                this.updateSnapshot(snapshotObject);
+                                this.openSnapshotOverlay(snapshotObject.fullSizeImage.src);
+                            });
                         }
                     }
                 ],
@@ -120,7 +125,19 @@ export default {
             });
 
             painterroInstance.intialize();
-            painterroInstance.show(this.embed.snapshot.fullSizeImage.src);
+
+            const fullSizeImageObjectIdentifier = this.embed.snapshot.fullSizeImageObjectIdentifier;
+            if (!fullSizeImageObjectIdentifier) {
+                // legacy image data stored in embed
+                painterroInstance.show(this.embed.snapshot.src);
+
+                return;
+            }
+
+            this.openmct.objects.get(fullSizeImageObjectIdentifier)
+                .then(object => {
+                    painterroInstance.show(object.configuration.fullSizeImageURL);
+                });
         },
         changeLocation() {
             const hash = this.embed.historicLink;
@@ -174,7 +191,7 @@ export default {
 
             this.openmct.objects.get(fullSizeImageObjectIdentifier)
                 .then(object => {
-                    this.openSnapshotOverlay(object.configuration.fullSizeImage);
+                    this.openSnapshotOverlay(object.configuration.fullSizeImageURL);
                 });
         },
         openSnapshotOverlay(src) {
@@ -239,8 +256,9 @@ export default {
             this.$emit('updateEmbed', embed);
         },
         updateSnapshot(snapshotObject) {
-            this.embed.snapshot.fullSizeImage = snapshotObject.fullSizeImage;
             this.embed.snapshot.thumbnailImage = snapshotObject.thumbnailImage;
+
+            updateNotebookImageDomainObject(this.openmct, this.embed.snapshot.fullSizeImageObjectIdentifier, snapshotObject.fullSizeImage, snapshotObject.thumbnailImage);
             this.updateEmbed(this.embed);
         }
     }

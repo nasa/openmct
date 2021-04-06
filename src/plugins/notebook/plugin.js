@@ -91,8 +91,8 @@ export default function NotebookPlugin() {
             creatable: false,
             initialize: domainObject => {
                 domainObject.configuration = {
-                    fullSizeImage: undefined,
-                    thumbnailImage: undefined
+                    fullSizeImageURL: undefined,
+                    thumbnailImageURL: undefined
                 };
             },
         }

@@ -26,11 +26,11 @@ const DEFAULT_CONFIG = {
 };
 
 export default class PainterroInstance {
-    constructor(element, saveCallback) {
+    constructor(element) {
         this.elementId = element.id;
         this.isSave = false;
         this.painterroInstance = null;
-        this.saveCallback = saveCallback;
+        this.saveCallback;
     }
 
     dismiss() {
@@ -47,7 +47,8 @@ export default class PainterroInstance {
         this.painterro = Painterro(this.config);
     }
 
-    save() {
+    save(callback) {
+        this.saveCallback = callback;
         this.isSave = true;
         this.painterroInstance.save();
     }
@@ -75,12 +76,13 @@ export default class PainterroInstance {
                     }
                 };
 
-                self.saveCallback(snapshotObject);
+                this.saveCallback(snapshotObject);
+
                 done(true);
             };
+        } else {
+            done(true);
         }
-
-        done(true);
     }
 
     show(src) {

@@ -122,19 +122,14 @@ define(
         };
 
         ExportImageService.prototype.getThumbnail = function (canvas, mimeType, size) {
-            const extra_canvas = document.createElement('canvas');
-            extra_canvas.setAttribute('width', size.width);
-            extra_canvas.setAttribute('height', size.height);
-            const ctx = extra_canvas.getContext('2d');
+            const thumbnailCanvas = document.createElement('canvas');
+            thumbnailCanvas.setAttribute('width', size.width);
+            thumbnailCanvas.setAttribute('height', size.height);
+            const ctx = thumbnailCanvas.getContext('2d');
             ctx.globalCompositeOperation = "copy";
-            ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, 70, 70);
+            ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, size.width, size.height);
 
-            var img = new Image();
-            img.src = extra_canvas.toDataURL();
-
-            document.body.appendChild(img);
-
-            return extra_canvas.toDataURL(mimeType);
+            return thumbnailCanvas.toDataURL(mimeType);
         };
 
         /**

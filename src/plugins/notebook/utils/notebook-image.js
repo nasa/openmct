@@ -6,7 +6,7 @@ const DEFAULT_SIZE = {
 };
 
 
-export function createNotebookImageDomainObject(fullSizeImage, thumbnailImage, snapshotMeta) {
+export function createNotebookImageDomainObject(openmct, fullSizeImageURL, thumbnailImageURL) {
     const identifier = {
         key: uuid(),
         namespace: ''
@@ -18,13 +18,13 @@ export function createNotebookImageDomainObject(fullSizeImage, thumbnailImage, s
         type: viewType,
         identifier,
         configuration: {
-            fullSizeImage,
-            thumbnailImage
+            fullSizeImageURL,
+            thumbnailImageURL
         }
     };
 
     return new Promise((resolve, reject) => {
-        snapshotMeta.openmct.objects.save(object)
+        openmct.objects.save(object)
             .then(result => {
                 if (result) {
                     resolve(object);
@@ -47,10 +47,6 @@ export function getThumbnailURLFromCanvas (canvas, size = DEFAULT_SIZE) {
     ctx.globalCompositeOperation = "copy";
     ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, size.width, size.height);
 
-    // var img = new Image();
-    // img.src = thumbnailCanvas.toDataURL();
-    // document.body.appendChild(img);
-
     return thumbnailCanvas.toDataURL('image/png');
 };
 
@@ -71,4 +67,15 @@ export function getThumbnailURLFromimageUrl (imageUrl, size = DEFAULT_SIZE) {
 
         image.src = imageUrl;
     });
+}
+
+export function updateNotebookImageDomainObject(openmct, identifier, fullSizeImage, thumbnailImageURL) {
+    openmct.objects.get(identifier)
+        .then(domainObject => {
+            const configuration = domainObject.configuration;
+            configuration.fullSizeImageURL = fullSizeImage.src;
+            configuration.thumbnailImageURL = thumbnailImageURL;
+
+            openmct.objects.mutate(domainObject, 'configuration', configuration);
+        });
 }

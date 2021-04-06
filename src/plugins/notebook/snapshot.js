@@ -18,7 +18,7 @@ export default class Snapshot {
         const exportImageService = this.openmct.$injector.get('exportImageService');
 
         const options = {
-            classname: 's-status-taking-snapshot',
+            className: 's-status-taking-snapshot',
             thumbnailSize: {
                 width: 50,
                 height: 50
@@ -37,10 +37,10 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveSnapShot(notebookType, imageUrl, thumbnail, snapshotMeta) {
-        createNotebookImageDomainObject(imageUrl, thumbnail, snapshotMeta)
+    _saveSnapShot(notebookType, fullSizeImageURL, thumbnailImageURL, snapshotMeta) {
+        createNotebookImageDomainObject(this.openmct, fullSizeImageURL, thumbnailImageURL)
             .then(object => {
-                const thumbnailImage = { src: thumbnail || '' };
+                const thumbnailImage = { src: thumbnailImageURL || '' };
                 const snapshot = {
                     fullSizeImageObjectIdentifier: object.identifier,
                     thumbnailImage
