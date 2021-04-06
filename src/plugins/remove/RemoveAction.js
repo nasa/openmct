@@ -34,7 +34,6 @@ export default class RemoveAction {
     invoke(objectPath) {
         let object = objectPath[0];
         let parent = objectPath[1];
-        console.log('remove', object.name, parent.name);
         this.showConfirmDialog(object).then(() => {
             this.removeFromComposition(parent, object);
             if (this.inNavigationPath(object)) {
@@ -86,11 +85,10 @@ export default class RemoveAction {
         let composition = parent.composition.filter(id =>
             !this.openmct.objects.areIdsEqual(id, child.identifier)
         );
-
         try {
             this.openmct.objects.mutate(parent, 'composition', composition);
         } catch(err) {
-            console.log('mutate err', err);
+            console.log('error', err);
         }
 
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
