@@ -99,7 +99,11 @@ define(
                 return new Promise(function (resolve, reject) {
                     if (thumbnailSize) {
                         const thumbnail = self.getThumbnail(canvas, mimeType, thumbnailSize);
-                        return canvas.toBlob(blob => resolve({ blob, thumbnail }), mimeType);
+
+                        return canvas.toBlob(blob => resolve({
+                            blob,
+                            thumbnail
+                        }), mimeType);
                     }
 
                     return canvas.toBlob(blob => resolve({ blob }), mimeType);
@@ -142,7 +146,10 @@ define(
         ExportImageService.prototype.exportJPG = function (element, filename, className) {
             const processedFilename = replaceDotsWithUnderscores(filename);
 
-            return this.renderElement(element, {imageType:'jpg', className})
+            return this.renderElement(element, {
+                imageType: 'jpg',
+                className
+            })
                 .then(function (img) {
                     saveAs(img.blob, processedFilename);
                 });
@@ -158,7 +165,10 @@ define(
         ExportImageService.prototype.exportPNG = function (element, filename, className) {
             const processedFilename = replaceDotsWithUnderscores(filename);
 
-            return this.renderElement(element, {imageType:'png', className})
+            return this.renderElement(element, {
+                imageType: 'png',
+                className
+            })
                 .then(function (img) {
                     saveAs(img.blob, processedFilename);
                 });
@@ -173,7 +183,10 @@ define(
 
         ExportImageService.prototype.exportPNGtoSRC = function (element, options) {
 
-            return this.renderElement(element, { imageType:'png', ...options });
+            return this.renderElement(element, {
+                imageType: 'png',
+                ...options
+            });
         };
 
         function replaceDotsWithUnderscores(filename) {

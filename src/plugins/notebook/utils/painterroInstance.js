@@ -29,8 +29,8 @@ export default class PainterroInstance {
     constructor(element) {
         this.elementId = element.id;
         this.isSave = false;
-        this.painterroInstance = null;
-        this.saveCallback;
+        this.painterroInstance = undefined;
+        this.saveCallback = undefined;
     }
 
     dismiss() {
@@ -55,7 +55,6 @@ export default class PainterroInstance {
 
     saveHandler(image, done) {
         if (this.isSave) {
-            const self = this;
             const url = image.asBlob();
 
             const reader = new window.FileReader();

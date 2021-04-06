@@ -1,10 +1,9 @@
 import uuid from 'uuid';
 
 const DEFAULT_SIZE = {
-    width: 50,
-    height: 50
+    width: 30,
+    height: 30
 };
-
 
 export function createNotebookImageDomainObject(openmct, fullSizeImageURL, thumbnailImageURL) {
     const identifier = {
@@ -36,10 +35,10 @@ export function createNotebookImageDomainObject(openmct, fullSizeImageURL, thumb
                 console.error(e);
                 reject();
             });
-    })
+    });
 }
 
-export function getThumbnailURLFromCanvas (canvas, size = DEFAULT_SIZE) {
+export function getThumbnailURLFromCanvas(canvas, size = DEFAULT_SIZE) {
     const thumbnailCanvas = document.createElement('canvas');
     thumbnailCanvas.setAttribute('width', size.width);
     thumbnailCanvas.setAttribute('height', size.height);
@@ -48,11 +47,11 @@ export function getThumbnailURLFromCanvas (canvas, size = DEFAULT_SIZE) {
     ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, size.width, size.height);
 
     return thumbnailCanvas.toDataURL('image/png');
-};
+}
 
-export function getThumbnailURLFromimageUrl (imageUrl, size = DEFAULT_SIZE) {
+export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
     return new Promise(resolve => {
-        const image =  new Image();
+        const image = new Image();
 
         const canvas = document.createElement('canvas');
         canvas.width = size.width;
@@ -63,7 +62,7 @@ export function getThumbnailURLFromimageUrl (imageUrl, size = DEFAULT_SIZE) {
                 .drawImage(image, 0, 0, size.width, size.height);
 
             resolve(canvas.toDataURL('image/png'));
-        }
+        };
 
         image.src = imageUrl;
     });

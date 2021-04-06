@@ -20,10 +20,10 @@ export default class Snapshot {
         const options = {
             className: 's-status-taking-snapshot',
             thumbnailSize: {
-                width: 50,
-                height: 50
+                width: 30,
+                height: 30
             }
-        }
+        };
         exportImageService.exportPNGtoSRC(domElement, options)
             .then(function ({blob, thumbnail}) {
                 const reader = new window.FileReader();
@@ -44,7 +44,7 @@ export default class Snapshot {
                 const snapshot = {
                     fullSizeImageObjectIdentifier: object.identifier,
                     thumbnailImage
-                }
+                };
                 const embed = createNewEmbed(snapshotMeta, snapshot);
                 if (notebookType === NOTEBOOK_DEFAULT) {
                     this._saveToDefaultNoteBook(embed);

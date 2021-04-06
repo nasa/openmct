@@ -94,8 +94,8 @@ export default function NotebookPlugin() {
                     fullSizeImageURL: undefined,
                     thumbnailImageURL: undefined
                 };
-            },
-        }
+            }
+        };
         openmct.types.addType('notebookSnapshotImage', notebookSnapshotImageType);
 
         const snapshotContainer = new SnapshotContainer(openmct);
