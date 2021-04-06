@@ -1,7 +1,43 @@
+import uuid from 'uuid';
+
 const DEFAULT_SIZE = {
     width: 50,
     height: 50
 };
+
+
+export function createNotebookImageDomainObject(fullSizeImage, thumbnailImage, snapshotMeta) {
+    const identifier = {
+        key: uuid(),
+        namespace: ''
+    };
+    const viewType = 'notebookSnapshotImage';
+
+    const object = {
+        name: 'Notebook Snapshot Image',
+        type: viewType,
+        identifier,
+        configuration: {
+            fullSizeImage,
+            thumbnailImage
+        }
+    };
+
+    return new Promise((resolve, reject) => {
+        snapshotMeta.openmct.objects.save(object)
+            .then(result => {
+                if (result) {
+                    resolve(object);
+                }
+
+                reject();
+            })
+            .catch(e => {
+                console.error(e);
+                reject();
+            });
+    })
+}
 
 export function getThumbnailURLFromCanvas (canvas, size = DEFAULT_SIZE) {
     const thumbnailCanvas = document.createElement('canvas');

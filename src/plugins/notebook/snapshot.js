@@ -1,6 +1,8 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
 import { getDefaultNotebook, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
+import { createNotebookImageDomainObject } from './utils/notebook-image';
+
 import SnapshotContainer from './snapshot-container';
 
 export default class Snapshot {
@@ -36,21 +38,22 @@ export default class Snapshot {
      * @private
      */
     _saveSnapShot(notebookType, imageUrl, thumbnail, snapshotMeta) {
-        // TODO: create Domain object and store identifier for it in fullSizeImage
-        const fullSizeImage = { src: imageUrl };
-        const thumbnailImage = { src: thumbnail || '' };
-        const snapshot = {
-            fullSizeImage,
-            thumbnailImage
-        }
-        const embed = createNewEmbed(snapshotMeta, snapshot);
-        if (notebookType === NOTEBOOK_DEFAULT) {
-            this._saveToDefaultNoteBook(embed);
+        createNotebookImageDomainObject(imageUrl, thumbnail, snapshotMeta)
+            .then(object => {
+                const thumbnailImage = { src: thumbnail || '' };
+                const snapshot = {
+                    fullSizeImageObjectIdentifier: object.identifier,
+                    thumbnailImage
+                }
+                const embed = createNewEmbed(snapshotMeta, snapshot);
+                if (notebookType === NOTEBOOK_DEFAULT) {
+                    this._saveToDefaultNoteBook(embed);
 
-            return;
-        }
+                    return;
+                }
 
-        this._saveToNotebookSnapshots(embed);
+                this._saveToNotebookSnapshots(embed);
+            });
     }
 
     /**

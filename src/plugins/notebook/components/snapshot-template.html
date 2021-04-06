@@ -4,9 +4,9 @@
         <div class="l-browse-bar__start">
             <div class="l-browse-bar__object-name--w">
                 <span class="c-object-label l-browse-bar__object-name"
-                    v-bind:class="embed.cssClass"
+                    v-bind:class="cssClass"
                 >
-                    <span class="c-object-label__name">{{ embed.name }}</span>
+                    <span class="c-object-label__name">{{ name }}</span>
                 </span>
             </div>
         </div>
@@ -40,7 +40,7 @@
     <div
         ref="snapshot-image"
         class="c-notebook-snapshot__image"
-        :style="{ backgroundImage: 'url(' + embed.snapshot.fullSizeImage.src + ')' }"
+        :style="{ backgroundImage: 'url(' + src + ')' }"
     >
     </div>
 </div>

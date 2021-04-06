@@ -85,6 +85,19 @@ export default function NotebookPlugin() {
         };
         openmct.types.addType(NOTEBOOK_TYPE, notebookType);
 
+        const notebookSnapshotImageType = {
+            name: 'Notebook Snapshot Image Storage',
+            description: 'Notebook Snapshot Image Storage object',
+            creatable: false,
+            initialize: domainObject => {
+                domainObject.configuration = {
+                    fullSizeImage: undefined,
+                    thumbnailImage: undefined
+                };
+            },
+        }
+        openmct.types.addType('notebookSnapshotImage', notebookSnapshotImageType);
+
         const snapshotContainer = new SnapshotContainer(openmct);
         const notebookSnapshotIndicator = new Vue ({
             components: {

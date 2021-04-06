@@ -164,13 +164,29 @@ export default {
             removeDialog.show();
         },
         openSnapshot() {
+            const fullSizeImageObjectIdentifier = this.embed.snapshot.fullSizeImageObjectIdentifier;
+            if (!fullSizeImageObjectIdentifier) {
+                // legacy image data stored in embed
+                this.openSnapshotOverlay(this.embed.snapshot.src);
+
+                return;
+            }
+
+            this.openmct.objects.get(fullSizeImageObjectIdentifier)
+                .then(object => {
+                    this.openSnapshotOverlay(object.configuration.fullSizeImage);
+                });
+        },
+        openSnapshotOverlay(src) {
             const self = this;
 
             this.snapshot = new Vue({
                 data: () => {
                     return {
                         createdOn: this.createdOn,
-                        embed: this.embed
+                        name: this.embed.name,
+                        cssClass: this.embed.cssClass,
+                        src
                     };
                 },
                 methods: {
