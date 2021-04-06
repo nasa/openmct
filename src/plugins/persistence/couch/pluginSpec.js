@@ -103,26 +103,29 @@ describe('the plugin', () => {
             fetch.and.returnValue(mockPromise);
         });
 
-        it('gets an object', () => {
+        it('gets an object', (done) => {
             openmct.objects.get(mockDomainObject.identifier).then((result) => {
                 expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
+                done();
             });
         });
 
-        it('creates an object', () => {
+        it('creates an object', (done) => {
             openmct.objects.save(mockDomainObject).then((result) => {
                 expect(provider.create).toHaveBeenCalled();
                 expect(result).toBeTrue();
+                done();
             });
         });
 
-        it('updates an object', () => {
+        it('updates an object', (done) => {
             openmct.objects.save(mockDomainObject).then((result) => {
                 expect(result).toBeTrue();
                 expect(provider.create).toHaveBeenCalled();
                 openmct.objects.save(mockDomainObject).then((updatedResult) => {
                     expect(updatedResult).toBeTrue();
                     expect(provider.update).toHaveBeenCalled();
+                    done();
                 });
             });
         });

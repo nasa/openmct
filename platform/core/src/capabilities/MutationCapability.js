@@ -141,7 +141,7 @@ define(
                 if (mutationResult !== false) {
                     // Copy values if result was a different object
                     // (either our clone or some other new thing)
-                    let modelHasChanged = !_.isEqual(model, result);
+                    let modelHasChanged = _.isEqual(model, result) === false;
                     if (modelHasChanged) {
                         copyValues(model, result);
                     }
