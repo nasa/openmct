@@ -111,6 +111,7 @@ export default {
                 domainObject: domainObject,
                 metadataWithFilters
             };
+            console.log('filters view', childObject);
 
             if (metadataWithFilters.length) {
                 this.$set(this.children, keyString, childObject);
@@ -142,6 +143,10 @@ export default {
         },
         removeChildren(identifier) {
             let keyString = this.openmct.objects.makeKeyString(identifier);
+            if (!this.children[keyString]) {
+                return;
+            }
+
             let globalFiltersToRemove = this.getGlobalFiltersToRemove(keyString);
 
             if (globalFiltersToRemove.length > 0) {
@@ -158,7 +163,7 @@ export default {
         },
         getGlobalFiltersToRemove(keyString) {
             let filtersToRemove = new Set();
-
+            console.log('getglobalfilters', keyString);
             this.children[keyString].metadataWithFilters.forEach(metadatum => {
                 let keepFilter = false;
                 Object.keys(this.children).forEach(childKeyString => {

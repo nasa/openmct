@@ -63,6 +63,7 @@ define([
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
             this.refreshData = this.refreshData.bind(this);
             // this.requestDataFor = this.requestDataFor.bind(this);
+            this.requestTelemetryCollectionFor = this.requestTelemetryCollectionFor.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
@@ -126,7 +127,6 @@ define([
                 composition.forEach(this.addTelemetryObject);
 
                 this.tableComposition.on('add', this.addTelemetryObject);
-                console.log('setting up remove listener');
                 this.tableComposition.on('remove', this.removeTelemetryObject);
             }
         }
@@ -222,7 +222,6 @@ define([
         }
 
         processDatumCache() {
-
             this.datumCache.forEach(cachedDatum => {
                 this.processTelemetryData(cachedDatum.telemetry, cachedDatum.columnMap, cachedDatum.keyString, cachedDatum.limitEvaluator);
             });
@@ -256,7 +255,7 @@ define([
                 this.filteredRows.clear();
                 this.boundedRows.clear();
                 this.boundedRows.sortByTimeSystem(this.openmct.time.timeSystem());
-                this.telemetryObjects.forEach(this.requestTelemetryCollectionFor.bind(this));
+                this.telemetryObjects.forEach(this.requestTelemetryCollectionFor);
                 // this.telemetryObjects.forEach(this.requestDataFor);
             }
         }
