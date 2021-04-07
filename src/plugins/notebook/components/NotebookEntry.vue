@@ -62,7 +62,6 @@
                 <NotebookEmbed v-for="embed in entry.embeds"
                                :key="embed.id"
                                :embed="embed"
-                               :entry="entry"
                                @removeEmbed="removeEmbed"
                                @updateEmbed="updateEmbed"
                 />
