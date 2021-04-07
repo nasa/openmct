@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -271,11 +271,6 @@ export default {
             });
         },
         removeFromComposition(identifier) {
-            let keystring = this.openmct.objects.makeKeyString(identifier);
-
-            this.identifierMap[keystring] = undefined;
-            delete this.identifierMap[keystring];
-
             this.composition.remove({identifier});
         },
         setSelectionToParent() {
@@ -354,6 +349,9 @@ export default {
         },
         removeChildObject(identifier) {
             let removeIdentifier = this.openmct.objects.makeKeyString(identifier);
+
+            this.identifierMap[removeIdentifier] = undefined;
+            delete this.identifierMap[removeIdentifier];
 
             this.containers.forEach(container => {
                 container.frames = container.frames.filter(frame => {

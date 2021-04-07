@@ -20,7 +20,7 @@
             ref="navUp"
             v-model="expanded"
             class="c-tree__item__view-control"
-            :control-class="'c-nav__up'"
+            :control-class="'icon-arrow-nav-to-parent'"
             :enabled="showUp"
             @input="resetTreeHere"
         />
