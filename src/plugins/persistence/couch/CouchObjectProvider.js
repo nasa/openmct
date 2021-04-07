@@ -42,6 +42,8 @@ export default class CouchObjectProvider {
         this.objectQueue = {};
         this.observeEnabled = options.disableObserve !== true;
         this.observers = {};
+        this.batchIds = [];
+
         if (this.observeEnabled) {
             this.observeObjectChanges(options.filter);
         }
@@ -135,33 +137,52 @@ export default class CouchObjectProvider {
     }
 
     get(identifier, abortSignal) {
-        return new Promise((resolve, reject) => {
-            this.batchIds = this.batchIds || [];
-            this.batchIds.push(identifier.key);
+        this.batchIds.push(identifier.key);
 
-            if (this.bulkPromise === undefined) {
-                this.bulkPromise = new Promise((bulkResolve, bulkReject) => {
-                    setTimeout(() => {
-                        let batchIds = this.batchIds;
-                        delete this.batchIds;
-                        delete this.bulkPromise;
-                        if (batchIds.length === 1) {
-                            this.request(identifier.key, "GET", undefined, abortSignal)
-                                .then((result) => resolve(this.getModel(result)));
-                        } else {
-                            this.bulkGet(batchIds, abortSignal)
-                                .then(bulkResolve)
-                                .catch(bulkReject);
-                        }
+        if (this.bulkPromise === undefined) {
+            this.bulkPromise = this.deferBatchedGet(abortSignal);
+        }
+
+        return this.bulkPromise
+            .then((domainObjectMap) => {
+                return domainObjectMap[identifier.key];
+            });
+    }
+
+    deferBatchedGet(abortSignal) {
+        // We until the next event loop cycle to "collect" all of the get
+        // requests triggered in this iteration of the event loop
+
+        return this.waitOneEventCycle().then(() => {
+            let batchIds = this.batchIds;
+
+            this.clearBatch();
+
+            if (batchIds.length === 1) {
+                let objectKey = batchIds[0];
+
+                //If there's only one request, just do a regular get
+                return this.request(batchIds[0], "GET", undefined, abortSignal)
+                    .then(result => {
+                        let objectMap = {};
+                        objectMap[objectKey] = this.getModel(result);
+
+                        return objectMap;
                     });
-                });
+            } else {
+                return this.bulkGet(batchIds, abortSignal);
             }
+        });
+    }
 
-            this.bulkPromise
-                .then((domainObjectMap) => {
-                    resolve(domainObjectMap[identifier.key]);
-                })
-                .catch(error => reject(error));
+    clearBatch() {
+        this.batchIds = [];
+        delete this.bulkPromise;
+    }
+
+    waitOneEventCycle() {
+        return new Promise((resolve) => {
+            setTimeout(resolve);
         });
     }
 
