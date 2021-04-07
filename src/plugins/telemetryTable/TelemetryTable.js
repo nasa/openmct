@@ -132,7 +132,6 @@ define([
         }
 
         addTelemetryObject(telemetryObject) {
-            console.log('telemtable.js: add telem object', telemetryObject.name);
             this.addColumnsForObject(telemetryObject, true);
             this.requestTelemetryCollectionFor(telemetryObject);
             // this.requestDataFor(telemetryObject);
@@ -155,7 +154,6 @@ define([
         }
 
         removeTelemetryObject(objectIdentifier) {
-            console.log('telemtable.js remove', objectIdentifier);
             this.configuration.removeColumnsForObject(objectIdentifier, true);
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             this.boundedRows.removeAllRowsForObject(keyString);
@@ -208,6 +206,7 @@ define([
 
             this.telemetryCollections[keyString].on('remove', (data) => {
                 // need to remove from bounded row collection
+                console.log('remove!', data);
             });
 
             // load historical and realtime telemetry
@@ -217,7 +216,8 @@ define([
         }
 
         processTelemetryData(telemetryData, columnMap, keyString, limitEvaluator) {
-            let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+            let timeKey = this.openmct.time.timeSystem().key;
+            let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator, timeKey));
             this.boundedRows.add(telemetryRows);
         }
 
@@ -399,7 +399,6 @@ define([
         }
 
         destroy() {
-            console.log('destroy table');
             // this.boundedRows.destroy();
             // Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.filteredRows.destroy();
