@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -111,10 +111,10 @@ const SIMPLE_CONTENT_TYPES = [
 ];
 
 export default {
-    inject: ['openmct'],
     components: {
         ObjectView
     },
+    inject: ['openmct'],
     props: {
         domainObject: {
             type: Object,

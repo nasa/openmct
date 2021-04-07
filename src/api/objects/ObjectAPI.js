@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,11 +33,15 @@ import InterceptorRegistry from './InterceptorRegistry';
  * @memberof module:openmct
  */
 
-function ObjectAPI(typeRegistry) {
+function ObjectAPI(typeRegistry, openmct) {
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
+    this.injectIdentifierService = function () {
+        this.identifierService = openmct.$injector.get("identifierService");
+    };
+
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
@@ -52,15 +56,32 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
 };
 
 /**
+ * @private
+ */
+ObjectAPI.prototype.getIdentifierService = function () {
+    // Lazily acquire identifier service
+    if (!this.identifierService) {
+        this.injectIdentifierService();
+    }
+
+    return this.identifierService;
+};
+
+/**
  * Retrieve the provider for a given identifier.
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
+    //handles the '' vs 'mct' namespace issue
+    const keyString = utils.makeKeyString(identifier);
+    const identifierService = this.getIdentifierService();
+    const namespace = identifierService.parse(keyString).getSpace();
+
     if (identifier.key === 'ROOT') {
         return this.rootProvider;
     }
 
-    return this.providers[identifier.namespace] || this.fallbackProvider;
+    return this.providers[namespace] || this.fallbackProvider;
 };
 
 /**
@@ -133,11 +154,12 @@ ObjectAPI.prototype.addProvider = function (namespace, provider) {
  * @method get
  * @memberof module:openmct.ObjectProvider#
  * @param {string} key the key for the domain object to load
+ * @param {AbortController.signal} abortSignal (optional) signal to abort fetch requests
  * @returns {Promise} a promise which will resolve when the domain object
  *          has been saved, or be rejected if it cannot be saved
  */
 
-ObjectAPI.prototype.get = function (identifier) {
+ObjectAPI.prototype.get = function (identifier, abortSignal) {
     let keystring = this.makeKeyString(identifier);
     if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
@@ -154,18 +176,48 @@ ObjectAPI.prototype.get = function (identifier) {
         throw new Error('Provider does not support get!');
     }
 
-    let objectPromise = provider.get(identifier);
+    let objectPromise = provider.get(identifier, abortSignal);
     this.cache[keystring] = objectPromise;
 
     return objectPromise.then(result => {
         delete this.cache[keystring];
-        const interceptors = this.listGetInterceptors(identifier, result);
-        interceptors.forEach(interceptor => {
-            result = interceptor.invoke(identifier, result);
-        });
+        result = this.applyGetInterceptors(identifier, result);
 
         return result;
     });
+};
+
+/**
+ * Search for domain objects.
+ *
+ * Object providersSearches and combines results of each object provider search.
+ * Objects without search provided will have been indexed
+ * and will be searched using the fallback indexed search.
+ * Search results are asynchronous and resolve in parallel.
+ *
+ * @method search
+ * @memberof module:openmct.ObjectAPI#
+ * @param {string} query the term to search for
+ * @param {AbortController.signal} abortSignal (optional) signal to cancel downstream fetch requests
+ * @returns {Array.<Promise.<module:openmct.DomainObject>>}
+ *          an array of promises returned from each object provider's search function
+ *          each resolving to domain objects matching provided search query and options.
+ */
+ObjectAPI.prototype.search = function (query, abortSignal) {
+    const searchPromises = Object.values(this.providers)
+        .filter(provider => provider.search !== undefined)
+        .map(provider => provider.search(query, abortSignal));
+
+    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, abortSignal)
+        .then(results => results.hits
+            .map(hit => {
+                let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
+                domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
+
+                return domainObject;
+            })));
+
+    return searchPromises;
 };
 
 /**
@@ -290,6 +342,19 @@ ObjectAPI.prototype.listGetInterceptors = function (identifier, object) {
 };
 
 /**
+ * Inovke interceptors if applicable for a given domain object.
+ * @private
+ */
+ObjectAPI.prototype.applyGetInterceptors = function (identifier, domainObject) {
+    const interceptors = this.listGetInterceptors(identifier, domainObject);
+    interceptors.forEach(interceptor => {
+        domainObject = interceptor.invoke(identifier, domainObject);
+    });
+
+    return domainObject;
+};
+
+/**
  * Modify a domain object.
  * @param {module:openmct.DomainObject} object the object to mutate
  * @param {string} path the property to modify
@@ -324,11 +389,29 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
  * @private
  */
 ObjectAPI.prototype._toMutable = function (object) {
+    let mutableObject;
+
     if (object.isMutable) {
-        return object;
+        mutableObject = object;
     } else {
-        return MutableDomainObject.createMutable(object, this.eventEmitter);
+        mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
     }
+
+    // Check if provider supports realtime updates
+    let identifier = utils.parseKeyString(mutableObject.identifier);
+    let provider = this.getProvider(identifier);
+
+    if (provider !== undefined
+        && provider.observe !== undefined) {
+        let unobserve = provider.observe(identifier, (updatedModel) => {
+            mutableObject.$refresh(updatedModel);
+        });
+        mutableObject.$on('$destroy', () => {
+            unobserve();
+        });
+    }
+
+    return mutableObject;
 };
 
 /**

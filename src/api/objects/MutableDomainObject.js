@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -96,6 +96,16 @@ class MutableDomainObject {
         //TODO: Emit events for listeners of child properties when parent changes.
         // Do it at observer time - also register observers for parent attribute path.
     }
+
+    $refresh(model) {
+        //TODO: Currently we are updating the entire object.
+        // In the future we could update a specific property of the object using the 'path' parameter.
+        this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), model);
+
+        //Emit wildcard event, with path so that callback knows what changed
+        this._globalEventEmitter.emit(qualifiedEventName(this, '*'), this);
+    }
+
     $on(event, callback) {
         this._instanceEventEmitter.on(event, callback);
 

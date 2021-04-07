@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2020, United States Government
+ * Open MCT Web, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -168,7 +168,6 @@ import ConductorHistory from './ConductorHistory.vue';
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
-    inject: ['openmct', 'configuration'],
     components: {
         ConductorMode,
         ConductorTimeSystem,
@@ -177,6 +176,7 @@ export default {
         ConductorModeIcon,
         ConductorHistory
     },
+    inject: ['openmct', 'configuration'],
     data() {
         let bounds = this.openmct.time.bounds();
         let offsets = this.openmct.time.clockOffsets();
