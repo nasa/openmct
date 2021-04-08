@@ -90,14 +90,20 @@ export default {
         this.composition.load();
         this.unobserve = this.openmct.objects.observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
         this.unobserveGlobalFilters = this.openmct.objects.observe(this.providedObject, 'configuration.globalFilters', this.updateGlobalFilters);
-        this.unobserveAllMutation = this.openmct.objects.observe(this.providedObject, '*', (mutatedObject) => this.providedObject = mutatedObject);
+        if (this.providedObject.isMutable !== true) {
+            this.unobserveAllMutation = this.openmct.objects.observe(this.providedObject, '*', (mutatedObject) => {
+                this.providedObject = mutatedObject;
+            });
+        }
     },
     beforeDestroy() {
         this.composition.off('add', this.addChildren);
         this.composition.off('remove', this.removeChildren);
         this.unobserve();
         this.unobserveGlobalFilters();
-        this.unobserveAllMutation();
+        if (this.unobserveAllMutation) {
+            this.unobserveAllMutation();
+        }
     },
     methods: {
         addChildren(domainObject) {
@@ -158,25 +164,28 @@ export default {
         },
         getGlobalFiltersToRemove(keyString) {
             let filtersToRemove = new Set();
+            const child = this.children[keyString];
+            if (child && child.metadataWithFilters) {
+                const metadataWithFilters = child.metadataWithFilters;
+                metadataWithFilters.forEach(metadatum => {
+                    let keepFilter = false;
+                    Object.keys(this.children).forEach(childKeyString => {
+                        if (childKeyString !== keyString) {
+                            let filterMatched = this.children[childKeyString].metadataWithFilters.some(childMetadatum => childMetadatum.key === metadatum.key);
 
-            this.children[keyString].metadataWithFilters.forEach(metadatum => {
-                let keepFilter = false;
-                Object.keys(this.children).forEach(childKeyString => {
-                    if (childKeyString !== keyString) {
-                        let filterMatched = this.children[childKeyString].metadataWithFilters.some(childMetadatum => childMetadatum.key === metadatum.key);
+                            if (filterMatched) {
+                                keepFilter = true;
 
-                        if (filterMatched) {
-                            keepFilter = true;
-
-                            return;
+                                return;
+                            }
                         }
+                    });
+
+                    if (!keepFilter) {
+                        filtersToRemove.add(metadatum.key);
                     }
                 });
-
-                if (!keepFilter) {
-                    filtersToRemove.add(metadatum.key);
-                }
-            });
+            }
 
             return Array.from(filtersToRemove);
         },

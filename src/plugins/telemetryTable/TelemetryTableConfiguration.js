@@ -38,7 +38,9 @@ define([
             //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
             this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
 
-            this.unlistenFromMutation = openmct.objects.observe(domainObject, '*', this.objectMutated);
+            if (domainObject.isMutable !== true) {
+                this.unlistenFromMutation = openmct.objects.observe(domainObject, '*', this.objectMutated);
+            }
         }
 
         getConfiguration() {
@@ -165,7 +167,9 @@ define([
         }
 
         destroy() {
-            this.unlistenFromMutation();
+            if (this.unlistenFromMutation) {
+                this.unlistenFromMutation();
+            }
         }
     }
 
