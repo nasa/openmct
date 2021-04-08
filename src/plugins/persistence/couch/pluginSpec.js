@@ -143,9 +143,103 @@ describe('the plugin', () => {
 
             expect(couchProvider.updateQueued).toHaveBeenCalledTimes(2);
         });
-
-        describe('batches object requests', () => {
-            //NEED TO MAKE SURE THERE ARE NO RACE CONDITIONS WHERE REQUESTS FOR OBJECTS ARE DROPPED
+    });
+    describe('batches requests', () => {
+        let mockPromise;
+        beforeEach(() => {
+            mockPromise = Promise.resolve({
+                json: () => {
+                    return {
+                        total_rows: 0,
+                        rows: []
+                    };
+                }
+            });
+            fetch.and.returnValue(mockPromise);
         });
+        it('for multiple simultaneous gets', () => {
+            const objectIds = [
+                {
+                    namespace: '',
+                    key: 'object-1'
+                }, {
+                    namespace: '',
+                    key: 'object-2'
+                }, {
+                    namespace: '',
+                    key: 'object-3'
+                }
+            ];
+
+            const getAllObjects = Promise.all(
+                objectIds.map((identifier) =>
+                    openmct.objects.get(identifier)
+                ));
+
+            return getAllObjects.then(() => {
+                const requestUrl = fetch.calls.mostRecent().args[0];
+                const requestMethod = fetch.calls.mostRecent().args[1].method;
+
+                expect(fetch).toHaveBeenCalledTimes(1);
+                expect(requestUrl.includes('_all_docs')).toBeTrue();
+                expect(requestMethod).toEqual('POST');
+            });
+        });
+        it('but not for single gets', () => {
+            const objectId = {
+                namespace: '',
+                key: 'object-1'
+            };
+
+            const getObject = openmct.objects.get(objectId);
+
+            return getObject.then(() => {
+                const requestUrl = fetch.calls.mostRecent().args[0];
+                const requestMethod = fetch.calls.mostRecent().args[1].method;
+
+                expect(fetch).toHaveBeenCalledTimes(1);
+                expect(requestUrl.endsWith(`${objectId.key}`)).toBeTrue();
+                expect(requestMethod).toEqual('GET');
+            });
+        });
+    });
+    describe('implements server-side search', () => {
+        let mockPromise;
+        beforeEach(() => {
+            mockPromise = Promise.resolve({
+                body: {
+                    getReader() {
+                        return {
+                            read() {
+                                return Promise.resolve({
+                                    done: true,
+                                    value: undefined
+                                });
+                            }
+                        };
+                    }
+                }
+            });
+            fetch.and.returnValue(mockPromise);
+        });
+
+        it("using Couch's 'find' endpoint", () => {
+            return Promise.all(openmct.objects.search('test')).then(() => {
+                const requestUrl = fetch.calls.mostRecent().args[0];
+
+                expect(fetch).toHaveBeenCalled();
+                expect(requestUrl.endsWith('_find')).toBeTrue();
+            });
+        });
+
+        it("and supports search by object name", () => {
+            return Promise.all(openmct.objects.search('test')).then(() => {
+                const requestPayload = JSON.parse(fetch.calls.mostRecent().args[1].body);
+
+                expect(requestPayload).toBeDefined();
+                expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
+            });
+        });
+
     });
 });
