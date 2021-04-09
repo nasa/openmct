@@ -27,10 +27,10 @@ export async function notebookImageMigration(openmct, identifier, object) {
                     const fullSizeImageURL = snapshot.src;
                     if (fullSizeImageURL) {
                         const thumbnailImageURL = await getThumbnailURLFromimageUrl(fullSizeImageURL);
-                        const object = await createNotebookImageDomainObject(openmct, fullSizeImageURL, thumbnailImageURL);
+                        const notebookImageDomainObject = await createNotebookImageDomainObject(openmct, fullSizeImageURL, thumbnailImageURL);
 
                         embed.snapshot = {
-                            fullSizeImageObjectIdentifier: object.identifier,
+                            fullSizeImageObjectIdentifier: notebookImageDomainObject.identifier,
                             thumbnailImage: { src: thumbnailImageURL || '' }
                         };
 

@@ -24,7 +24,7 @@ import { notebookImageMigration } from '../notebook/utils/notebook-migration';
 export default function notebookInterceptor(openmct) {
     openmct.objects.addGetInterceptor({
         appliesTo: (identifier, domainObject) => {
-            return domainObject.type === 'notebook';
+            return domainObject && domainObject.type === 'notebook';
         },
         invoke: (identifier, domainObject) => {
             notebookImageMigration(openmct, identifier, domainObject);
