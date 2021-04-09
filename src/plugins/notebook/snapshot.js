@@ -1,7 +1,7 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
 import { getDefaultNotebook, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
-import { createNotebookImageDomainObject } from './utils/notebook-image';
+import { createNotebookImageDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
 
 import SnapshotContainer from './snapshot-container';
 
@@ -19,10 +19,7 @@ export default class Snapshot {
 
         const options = {
             className: 's-status-taking-snapshot',
-            thumbnailSize: {
-                width: 30,
-                height: 30
-            }
+            thumbnailSize: DEFAULT_SIZE
         };
         exportImageService.exportPNGtoSRC(domElement, options)
             .then(function ({blob, thumbnail}) {

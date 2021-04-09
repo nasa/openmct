@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 
-const DEFAULT_SIZE = {
+export const DEFAULT_SIZE = {
     width: 30,
     height: 30
 };
