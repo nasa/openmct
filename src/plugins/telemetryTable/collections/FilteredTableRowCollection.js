@@ -29,7 +29,7 @@ define(
     ) {
         class FilteredTableRowCollection extends SortedTableRowCollection {
             constructor(masterCollection) {
-                super();
+                super(masterCollection.openmct);
 
                 this.masterCollection = masterCollection;
                 this.columnFilters = {};

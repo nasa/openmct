@@ -47,24 +47,23 @@ define(
                 // this.subscribeToBounds();
             }
 
-            addOne(item) {
+            // addOne(item) {
+            //     return super.addOne(item);
+            //     // let parsedValue = this.getValueForSortColumn(item);
+            //     // // Insert into either in-bounds array, or the future buffer.
+            //     // // Data in the future buffer will be re-evaluated for possible
+            //     // // insertion on next bounds change
+            //     // let beforeStartOfBounds = parsedValue < this.lastBounds.start;
+            //     // let afterEndOfBounds = parsedValue > this.lastBounds.end;
 
-                return super.addOne(item);
-                // let parsedValue = this.getValueForSortColumn(item);
-                // // Insert into either in-bounds array, or the future buffer.
-                // // Data in the future buffer will be re-evaluated for possible
-                // // insertion on next bounds change
-                // let beforeStartOfBounds = parsedValue < this.lastBounds.start;
-                // let afterEndOfBounds = parsedValue > this.lastBounds.end;
+            //     // if (!afterEndOfBounds && !beforeStartOfBounds) {
+            //     //     return super.addOne(item);
+            //     // } else if (afterEndOfBounds) {
+            //     //     this.futureBuffer.addOne(item);
+            //     // }
 
-                // if (!afterEndOfBounds && !beforeStartOfBounds) {
-                //     return super.addOne(item);
-                // } else if (afterEndOfBounds) {
-                //     this.futureBuffer.addOne(item);
-                // }
-
-                // return false;
-            }
+            //     // return false;
+            // }
 
             sortByTimeSystem(timeSystem) {
                 this.sortBy({
@@ -85,6 +84,20 @@ define(
 
             getValueForSortColumn(row) {
                 return this.parseTime(row.datum[this.sortOptions.key]);
+            }
+
+            removeRowsFor(telemetryData, keystring) {
+                let discarded = [];
+                const rowIdMap = telemetryData.map((datum) => {
+                    return keystring + this.parseTime(datum);
+                });
+
+                rowIdMap.forEach(id => {
+                    const index = this.rows.findIndex(row => row.rowId === id);
+                    discarded = [...discarded, ...this.rows.splice(index, 1)];
+                });
+
+                this.emit('remove', discarded);
             }
 
             /**

@@ -37,11 +37,16 @@ define(
          * @constructor
          */
         class SortedTableRowCollection extends EventEmitter {
-            constructor() {
+            constructor(openmct) {
                 super();
+                console.log('this', this);
+                this.openmct = openmct;
 
                 this.dupeCheck = false;
                 this.rows = [];
+
+                this.sortByTimeSystem = this.sortByTimeSystem.bind(this);
+                this.sortByTimeSystem(openmct.time.timeSystem());
 
                 this.add = this.add.bind(this);
                 this.remove = this.remove.bind(this);
@@ -162,6 +167,23 @@ define(
                 }
             }
 
+            sortByTimeSystem(timeSystem) {
+                this.sortBy({
+                    key: timeSystem.key,
+                    direction: 'asc'
+                });
+                let formatter = this.openmct.telemetry.getValueFormatter({
+                    key: timeSystem.key,
+                    source: timeSystem.key,
+                    format: timeSystem.timeFormat
+                });
+                this.parseTime = formatter.parse.bind(formatter);
+                // this.futureBuffer.sortBy({
+                //     key: timeSystem.key,
+                //     direction: 'asc'
+                // });
+            }
+
             /**
              * Sorts the telemetry collection based on the provided sort field
              * specifier. Subsequent inserts are sorted to maintain specified sport
@@ -227,8 +249,26 @@ define(
                 this.emit('remove', removed);
             }
 
+            removeRowsFor(telemetryData, keystring) {
+                let discarded = [];
+                const rowIdMap = telemetryData.map((datum) => {
+                    return keystring + this.parseTime(datum);
+                });
+
+                rowIdMap.forEach(id => {
+                    const index = this.rows.findIndex(row => row.rowId === id);
+                    discarded = [...discarded, ...this.rows.splice(index, 1)];
+                });
+
+                this.emit('remove', discarded);
+            }
+
+            // getValueForSortColumn(row) {
+            //     return row.getParsedValue(this.sortOptions.key);
+            // }
+
             getValueForSortColumn(row) {
-                return row.getParsedValue(this.sortOptions.key);
+                return this.parseTime(row.datum[this.sortOptions.key]);
             }
 
             remove(removedRows) {

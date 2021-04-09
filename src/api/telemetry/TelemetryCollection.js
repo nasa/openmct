@@ -200,7 +200,6 @@ export class TelemetryCollection {
      * to remove any listeners
      */
     destroy() {
-        console.log('tc destroyed', this.domainObject.name);
         this._unwatchBounds();
         this._unwatchTimeSystem();
         if (this.unsubscribe) {
@@ -418,9 +417,9 @@ export class TelemetryCollection {
 
         this.listeners[event].forEach((listener) => {
             if (listener.context) {
-                listener.callback.apply(listener.context, ...args);
+                listener.callback.apply(listener.context, args);
             } else {
-                listener.callback(...args);
+                listener.callback(args);
             }
         });
     }
