@@ -430,7 +430,7 @@ export default {
                     }
 
                     // check for no entries first
-                    if (entries[section.id]) {
+                    if (entries[section.id] && entries[section.id][page.id]) {
                         const pageEntries = entries[section.id][page.id];
 
                         pageEntries.forEach(entry => {
