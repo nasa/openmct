@@ -84,10 +84,14 @@ export default class CouchObjectProvider {
             });
     }
 
-    // Check the response to a create/update/delete request;
-    // track the rev if it's valid, otherwise return false to
-    // indicate that the request failed.
-    // persist any queued objects
+    /**
+     * Check the response to a create/update/delete request;
+     * track the rev if it's valid, otherwise return false to
+     * indicate that the request failed.
+     * persist any queued objects
+     * @private
+     */
+
     checkResponse(response, intermediateResponse) {
         let requestSuccess = false;
         const id = response ? response.id : undefined;
@@ -112,6 +116,9 @@ export default class CouchObjectProvider {
         }
     }
 
+    /**
+     * @private
+     */
     getModel(response) {
         if (response && response.model) {
             let key = response[ID];
@@ -149,6 +156,9 @@ export default class CouchObjectProvider {
             });
     }
 
+    /**
+     * @private
+     */
     deferBatchedGet(abortSignal) {
         // We until the next event loop cycle to "collect" all of the get
         // requests triggered in this iteration of the event loop
@@ -162,33 +172,48 @@ export default class CouchObjectProvider {
                 let objectKey = batchIds[0];
 
                 //If there's only one request, just do a regular get
-                return this.request(batchIds[0], "GET", undefined, abortSignal)
-                    .then(result => {
-                        let objectMap = {};
-                        objectMap[objectKey] = this.getModel(result);
-
-                        return objectMap;
-                    });
+                return this.request(objectKey, "GET", undefined, abortSignal)
+                    .then(this.returnAsMap(objectKey));
             } else {
                 return this.bulkGet(batchIds, abortSignal);
             }
         });
     }
 
+    /**
+     * @private
+     */
+    returnAsMap(objectKey) {
+        return (result) => {
+            let objectMap = {};
+            objectMap[objectKey] = this.getModel(result);
+
+            return objectMap;
+        };
+    }
+
+    /**
+     * @private
+     */
     clearBatch() {
         this.batchIds = [];
         delete this.bulkPromise;
     }
 
+    /**
+     * @private
+     */
     waitOneEventCycle() {
         return new Promise((resolve) => {
             setTimeout(resolve);
         });
     }
 
+    /**
+     * @private
+     */
     bulkGet(ids, signal) {
-        //Remove dupes
-        ids = Array.from(new Set(ids));
+        ids = this.removeDuplicates(ids);
 
         const query = {
             'keys': ids
@@ -203,6 +228,13 @@ export default class CouchObjectProvider {
                 return map;
             }, {});
         });
+    }
+
+    /**
+     * @private
+     */
+    removeDuplicates(array) {
+        return Array.from(new Set(array));
     }
 
     search(query, abortSignal) {
@@ -289,6 +321,9 @@ export default class CouchObjectProvider {
         };
     }
 
+    /**
+     * @private
+     */
     abortGetChanges() {
         if (this.controller) {
             this.controller.abort();
@@ -298,6 +333,9 @@ export default class CouchObjectProvider {
         return true;
     }
 
+    /**
+     * @private
+     */
     async observeObjectChanges(filter) {
         let intermediateResponse = this.getIntermediateResponse();
 
@@ -378,6 +416,9 @@ export default class CouchObjectProvider {
 
     }
 
+    /**
+     * @private
+     */
     getIntermediateResponse() {
         let intermediateResponse = {};
         intermediateResponse.promise = new Promise(function (resolve, reject) {
@@ -388,6 +429,9 @@ export default class CouchObjectProvider {
         return intermediateResponse;
     }
 
+    /**
+     * @private
+     */
     enqueueObject(key, model, intermediateResponse) {
         if (this.objectQueue[key]) {
             this.objectQueue[key].enqueue({
@@ -416,6 +460,9 @@ export default class CouchObjectProvider {
         return intermediateResponse.promise;
     }
 
+    /**
+     * @private
+     */
     updateQueued(key) {
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
