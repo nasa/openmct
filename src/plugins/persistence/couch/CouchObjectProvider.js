@@ -95,6 +95,7 @@ export default class CouchObjectProvider {
         let requestSuccess = false;
         const id = response ? response.id : undefined;
         let rev;
+
         if (response && response.ok) {
             rev = response.rev;
             requestSuccess = true;
@@ -219,13 +220,17 @@ export default class CouchObjectProvider {
         };
 
         return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
-            return response.rows.reduce((map, row) => {
-                if (row.doc !== undefined) {
-                    map[row.key] = this.getModel(row.doc);
-                }
+            if (response && response.rows !== undefined) {
+                return response.rows.reduce((map, row) => {
+                    if (row.doc !== undefined) {
+                        map[row.key] = this.getModel(row.doc);
+                    }
 
-                return map;
-            }, {});
+                    return map;
+                }, {});
+            } else {
+                return {};
+            }
         });
     }
 
