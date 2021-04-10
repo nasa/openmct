@@ -24,7 +24,6 @@ import {
     createOpenMct,
     resetApplicationState, spyOnBuiltins
 } from 'utils/testing';
-import CouchObjectProvider from './CouchObjectProvider';
 
 describe('the plugin', () => {
     let openmct;
@@ -42,7 +41,8 @@ describe('the plugin', () => {
                 namespace: '',
                 key: 'some-value'
             },
-            type: 'mock-type'
+            type: 'mock-type',
+            modified: 0
         };
         options = {
             url: testPath,
@@ -95,6 +95,7 @@ describe('the plugin', () => {
                     return {
                         ok: true,
                         _id: 'some-value',
+                        id: 'some-value',
                         _rev: 1,
                         model: {}
                     };
@@ -104,44 +105,31 @@ describe('the plugin', () => {
         });
 
         it('gets an object', () => {
-            openmct.objects.get(mockDomainObject.identifier).then((result) => {
+            return openmct.objects.get(mockDomainObject.identifier).then((result) => {
                 expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
             });
         });
 
         it('creates an object', () => {
-            openmct.objects.save(mockDomainObject).then((result) => {
+            return openmct.objects.save(mockDomainObject).then((result) => {
                 expect(provider.create).toHaveBeenCalled();
                 expect(result).toBeTrue();
             });
         });
 
         it('updates an object', () => {
-            openmct.objects.save(mockDomainObject).then((result) => {
+            return openmct.objects.save(mockDomainObject).then((result) => {
                 expect(result).toBeTrue();
                 expect(provider.create).toHaveBeenCalled();
-                openmct.objects.save(mockDomainObject).then((updatedResult) => {
+
+                //Set modified timestamp it detects a change and persists the updated model.
+                mockDomainObject.modified = Date.now();
+
+                return openmct.objects.save(mockDomainObject).then((updatedResult) => {
                     expect(updatedResult).toBeTrue();
                     expect(provider.update).toHaveBeenCalled();
                 });
             });
-        });
-
-        it('updates queued objects', () => {
-            let couchProvider = new CouchObjectProvider(openmct, options, '');
-            let intermediateResponse = couchProvider.getIntermediateResponse();
-            spyOn(couchProvider, 'updateQueued');
-            couchProvider.enqueueObject(mockDomainObject.identifier.key, mockDomainObject, intermediateResponse);
-            couchProvider.objectQueue[mockDomainObject.identifier.key].updateRevision(1);
-            couchProvider.update(mockDomainObject);
-            expect(couchProvider.objectQueue[mockDomainObject.identifier.key].hasNext()).toBe(2);
-            couchProvider.checkResponse({
-                ok: true,
-                rev: 2,
-                id: mockDomainObject.identifier.key
-            }, intermediateResponse);
-
-            expect(couchProvider.updateQueued).toHaveBeenCalledTimes(2);
         });
     });
     describe('batches requests', () => {
@@ -185,6 +173,7 @@ describe('the plugin', () => {
                 expect(requestMethod).toEqual('POST');
             });
         });
+
         it('but not for single gets', () => {
             const objectId = {
                 namespace: '',
