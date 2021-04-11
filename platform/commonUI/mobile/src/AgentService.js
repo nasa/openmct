@@ -25,7 +25,7 @@
  *
  * @namespace platform/commonUI/mobile
  */
-define(
+ define(
     [],
     function () {
 
@@ -34,17 +34,15 @@ define(
          * info using a comparison between the userAgent and key
          * device names
          * @constructor
-         * @param $window Angular-injected instance of the window
          * @memberof platform/commonUI/mobile
          */
-        function AgentService($window) {
-            var userAgent = $window.navigator.userAgent,
+        function AgentService() {
+            var userAgent = window.navigator.userAgent,
                 matches = userAgent.match(/iPad|iPhone|Android/i) || [];
 
             this.userAgent = userAgent;
             this.mobileName = matches[0];
-            this.$window = $window;
-            this.touchEnabled = ($window.ontouchstart !== undefined);
+            this.touchEnabled = (window.ontouchstart !== undefined);
         }
 
         /**
@@ -103,7 +101,7 @@ define(
          * @returns {boolean} true in portrait mode
          */
         AgentService.prototype.isPortrait = function () {
-            return this.$window.innerWidth < this.$window.innerHeight;
+            return window.innerWidth < window.innerHeight;
         };
 
         /**

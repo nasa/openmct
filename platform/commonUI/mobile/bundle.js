@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
+ define([
     "./src/MCTDevice",
     "./src/AgentService",
     "./src/DeviceClassifier"
@@ -46,18 +46,14 @@ define([
                 "services": [
                     {
                         "key": "agentService",
-                        "implementation": AgentService,
-                        "depends": [
-                            "$window"
-                        ]
+                        "implementation": AgentService
                     }
                 ],
                 "runs": [
                     {
                         "implementation": DeviceClassifier,
                         "depends": [
-                            "agentService",
-                            "$document"
+                            "agentService"
                         ]
                     }
                 ]
