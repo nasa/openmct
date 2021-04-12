@@ -113,6 +113,9 @@ class MutableDomainObject {
     }
     $destroy() {
         this._observers.forEach(observer => observer());
+        //TODO: the following deletes will not work since they're not configurable properties.
+        // Also, this._globalEventEmitter doesn't seem to change after the above observer listeners are 'removed'
+        // Also, probably need to pop items off this._observers here or the items will remain on the array.
         delete this._globalEventEmitter;
         delete this._observers;
         this._instanceEventEmitter.emit('$_destroy');
