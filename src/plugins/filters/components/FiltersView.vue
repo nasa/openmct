@@ -90,20 +90,12 @@ export default {
         this.composition.load();
         this.unobserve = this.openmct.objects.observe(this.providedObject, 'configuration.filters', this.updatePersistedFilters);
         this.unobserveGlobalFilters = this.openmct.objects.observe(this.providedObject, 'configuration.globalFilters', this.updateGlobalFilters);
-        if (this.providedObject.isMutable !== true) {
-            this.unobserveAllMutation = this.openmct.objects.observe(this.providedObject, '*', (mutatedObject) => {
-                this.providedObject = mutatedObject;
-            });
-        }
     },
     beforeDestroy() {
         this.composition.off('add', this.addChildren);
         this.composition.off('remove', this.removeChildren);
         this.unobserve();
         this.unobserveGlobalFilters();
-        if (this.unobserveAllMutation) {
-            this.unobserveAllMutation();
-        }
     },
     methods: {
         addChildren(domainObject) {
