@@ -161,6 +161,8 @@ define([
             configuration.columnOrder = columnOrder;
             this.updateConfiguration(configuration);
         }
+
+        destroy() {}
     }
 
     return TelemetryTableConfiguration;
