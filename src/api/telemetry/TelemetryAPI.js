@@ -281,14 +281,13 @@ define([
      * (start, end, etc.), sort order, and strategies for retrieving
      * telemetry (aggregation, latest available, etc.).
      *
-     * @method request
+     * @method requestTelemetryCollection
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry
-     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+     * @param {module:openmct.TelemetryAPI~TelemetryRequest} args
      *        options for this historical request
-     * @returns {Promise.<object[]>} a promise for an array of
-     *          telemetry data
+     * @returns {TelemetryCollection} a TelemetryCollection instance
      */
     TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject, ...args) {
         return new TelemetryCollection(
@@ -320,7 +319,6 @@ define([
         }
 
         this.standardizeRequestOptions(arguments[1]);
-
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
             return Promise.reject('No provider found');

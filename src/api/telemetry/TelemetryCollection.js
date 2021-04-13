@@ -58,9 +58,9 @@ export class TelemetryCollection {
      *
      * @param  {object} openmct - Openm MCT
      * @param  {object} domainObject - Domain Object to user for telemetry collection
-     * @param  {object} args - Any args passed in from request/subscribe
+     * @param  {object} options - Any options passed in from request/subscribe
      */
-    constructor(openmct, domainObject, ...args) {
+    constructor(openmct, domainObject, options = {}) {
         methods().forEach(method => this[method] = this[method].bind(this));
 
         this.loaded = false;
@@ -76,7 +76,7 @@ export class TelemetryCollection {
         this.unsubscribe = undefined;
         this.historicalProvider = undefined;
 
-        this.arguments = [this.domainObject, ...args];
+        this.options = options;
 
         this.collectionState = undefined;
 
@@ -145,11 +145,11 @@ export class TelemetryCollection {
      *
      * @param  {Object} options - options to send into request/subscription providers
      */
-    updateOptions() {
+    updateOptions(options) {
         const SKIP_RESET_REQUEST = true;
 
         this._reset(SKIP_RESET_REQUEST);
-        this.arguments = [this.domainObject, ...arguments];
+        this.options = options;
 
         // will update options and providers if necesarry
         this._initiateHistoricalRequests();
@@ -212,14 +212,9 @@ export class TelemetryCollection {
      * this uses the "standardizeRequestOptions" from Telemetry API
      */
     _initiateHistoricalRequests() {
-        if (this.arguments.length === 1) {
-            this.arguments.length = 2;
-            this.arguments[1] = {};
-        }
-
-        this.openmct.telemetry.standardizeRequestOptions(this.arguments[1]);
+        this.openmct.telemetry.standardizeRequestOptions(this.options);
         this.historicalProvider = this.openmct.telemetry.
-            findRequestProvider.apply(this.openmct.telemetry, this.arguments);
+            findRequestProvider(this.domainObject, this.options);
 
         this._requestHistoricalTelemetry();
     }
@@ -231,8 +226,8 @@ export class TelemetryCollection {
             return;
         }
 
-        let historicalData = await this.historicalProvider.request
-            .apply(this.historicalProvider, this.arguments).catch((rejected) => {
+        let historicalData = await this.historicalProvider.request(this.domainObject, this.options)
+            .catch((rejected) => {
                 this.openmct.notifications.error('Error requesting telemetry data, see console for details');
                 console.error(rejected);
 
@@ -255,7 +250,7 @@ export class TelemetryCollection {
         this.unsubscribe = this.openmct.telemetry
             .subscribe(this.domainObject, (datum) => {
                 this._processNewTelemetry(datum);
-            }, this.arguments);
+            }, this.options);
     }
 
     /**
