@@ -414,7 +414,7 @@ export class TelemetryCollection {
             if (listener.context) {
                 listener.callback.apply(listener.context, args);
             } else {
-                listener.callback(args);
+                listener.callback(...args);
             }
         });
     }

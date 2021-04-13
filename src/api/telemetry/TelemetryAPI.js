@@ -285,8 +285,8 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry
-     * @param {module:openmct.TelemetryAPI~TelemetryRequest} args
-     *        options for this historical request
+     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+     *        options for this telemetry collection request
      * @returns {TelemetryCollection} a TelemetryCollection instance
      */
     TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject, options = {}) {
