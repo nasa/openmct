@@ -168,8 +168,8 @@ define([
             this.telemetryCollections[keyString] = this.openmct.telemetry
                 .requestTelemetryCollection(telemetryObject, requestOptions);
 
-            this.telemetryCollections[keyString].on('remove', telemetryRemover, this);
-            this.telemetryCollections[keyString].on('add', telemetryProcessor, this);
+            this.telemetryCollections[keyString].on('remove', telemetryRemover);
+            this.telemetryCollections[keyString].on('add', telemetryProcessor);
             this.telemetryCollections[keyString].load();
 
             this.decrementOutstandingRequests();
