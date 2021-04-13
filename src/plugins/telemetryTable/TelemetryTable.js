@@ -149,7 +149,7 @@ define([
             this.configuration.removeColumnsForObject(objectIdentifier, true);
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             this.sortedRows.removeAllRowsForObject(keyString);
-            this.resetTelemetryCollection(keyString);
+            this.removeTelemetryCollection(keyString);
             this.telemetryObjects = this.telemetryObjects.filter((object) => !_.eq(objectIdentifier, object.identifier));
 
             this.emit('object-removed', objectIdentifier);
@@ -163,7 +163,7 @@ define([
             const telemetryProcessor = this.getTelemetryProcessor(telemetryObject, keyString);
             const telemetryRemover = this.getTelemetryRemover(keyString);
 
-            this.resetTelemetryCollection(keyString, telemetryProcessor, telemetryRemover);
+            this.removeTelemetryCollection(keyString);
 
             this.telemetryCollections[keyString] = this.openmct.telemetry
                 .requestTelemetryCollection(telemetryObject, requestOptions);
@@ -175,7 +175,7 @@ define([
             this.decrementOutstandingRequests();
         }
 
-        resetTelemetryCollection(keyString) {
+        removeTelemetryCollection(keyString) {
             if (this.telemetryCollections[keyString]) {
                 this.telemetryCollections[keyString].destroy();
                 this.telemetryCollections[keyString] = undefined;
@@ -351,10 +351,7 @@ define([
 
         destroy() {
             let keystrings = Object.keys(this.telemetryCollections);
-
-            for (let keyString of keystrings) {
-                this.telemetryCollections[keyString].destroy();
-            }
+            keystrings.forEach(this.removeTelemetryCollection);
 
             this.filteredRows.destroy();
             this.openmct.time.off('bounds', this.refreshData);
