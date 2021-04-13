@@ -178,10 +178,6 @@ define(
                     format: timeSystem.timeFormat
                 });
                 this.parseTime = formatter.parse.bind(formatter);
-                // this.futureBuffer.sortBy({
-                //     key: timeSystem.key,
-                //     direction: 'asc'
-                // });
             }
 
             /**
@@ -262,10 +258,6 @@ define(
 
                 this.emit('remove', discarded);
             }
-
-            // getValueForSortColumn(row) {
-            //     return row.getParsedValue(this.sortOptions.key);
-            // }
 
             getValueForSortColumn(row) {
                 return this.parseTime(row.datum[this.sortOptions.key]);
