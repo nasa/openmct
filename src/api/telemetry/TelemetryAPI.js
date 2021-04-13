@@ -289,11 +289,11 @@ define([
      *        options for this historical request
      * @returns {TelemetryCollection} a TelemetryCollection instance
      */
-    TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject, ...args) {
+    TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject, options = {}) {
         return new TelemetryCollection(
             this.openmct,
             domainObject,
-            ...args
+            options
         );
     };
 

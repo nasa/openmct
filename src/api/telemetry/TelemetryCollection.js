@@ -58,9 +58,9 @@ export class TelemetryCollection {
      *
      * @param  {object} openmct - Openm MCT
      * @param  {object} domainObject - Domain Object to user for telemetry collection
-     * @param  {object} options - Any options passed in from request/subscribe
+     * @param  {object} options - Any options passed in for request/subscribe
      */
-    constructor(openmct, domainObject, options = {}) {
+    constructor(openmct, domainObject, options) {
         methods().forEach(method => this[method] = this[method].bind(this));
 
         this.loaded = false;
