@@ -655,7 +655,7 @@ export default {
          * Calculates height based on total number of rows, and sets table height.
          */
         setHeight() {
-            let filteredRowsLength = this.table.filteredRows.getRows().length;
+            let filteredRowsLength = this.table.filteredRows.getRowsLength();
             this.totalHeight = this.rowHeight * filteredRowsLength - 1;
             // Set element height directly to avoid having to wait for Vue to update DOM
             // which causes subsequent scroll to use an out of date height.

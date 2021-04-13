@@ -106,7 +106,6 @@ define([
         }
 
         createTableRowCollections() {
-            console.log('create table collections');
             this.sortedRows = new SortedTableRowCollection(this.openmct);
             this.filteredRows = new FilteredTableRowCollection(this.sortedRows);
 

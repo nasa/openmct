@@ -39,7 +39,7 @@ define(
         class SortedTableRowCollection extends EventEmitter {
             constructor(openmct) {
                 super();
-                console.log('this', this);
+
                 this.openmct = openmct;
 
                 this.dupeCheck = false;
@@ -281,6 +281,10 @@ define(
 
             getRows() {
                 return this.rows;
+            }
+
+            getRowsLength() {
+                return this.rows.length;
             }
 
             clear() {
