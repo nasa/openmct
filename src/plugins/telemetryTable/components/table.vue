@@ -471,7 +471,6 @@ export default {
         this.contentTable = this.$el.querySelector('.js-telemetry-table__content');
         this.sizingTable = this.$el.querySelector('.js-telemetry-table__sizing');
         this.headersHolderEl = this.$el.querySelector('.js-table__headers-w');
-        console.log('scrollable', this.scrollable);
         this.table.configuration.on('change', this.updateConfiguration);
 
         this.calculateTableSize();
