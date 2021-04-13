@@ -44,24 +44,21 @@ define(
         describe("DeviceClassifier", function () {
             var mockAgentService,
                 mockDocument,
-                mockBody;
+                mockClassList;
 
             beforeEach(function () {
                 mockAgentService = jasmine.createSpyObj(
                     'agentService',
                     AGENT_SERVICE_METHODS
                 );
-                mockDocument = jasmine.createSpyObj(
-                    '$document',
-                    ['find']
+
+                mockClassList = jasmine.createSpyObj(
+                    'classList',
+                    ['add']
                 );
-                mockBody = jasmine.createSpyObj(
-                    'body',
-                    ['addClass']
-                );
-                mockDocument.find.and.callFake(function (sel) {
-                    return sel === 'body' && mockBody;
-                });
+
+                mockDocument = jasmine.createSpyObj('document', {}, { body: { classList: mockClassList } });
+
                 AGENT_SERVICE_METHODS.forEach(function (m) {
                     mockAgentService[m].and.returnValue(false);
                 });
@@ -79,6 +76,7 @@ define(
                         trueMethods.forEach(function (m) {
                             mockAgentService[m].and.returnValue(true);
                         });
+
                         classifier = new DeviceClassifier(
                             mockAgentService,
                             mockDocument
@@ -89,7 +87,7 @@ define(
                         Object.keys(DeviceMatchers).filter(function (m) {
                             return DeviceMatchers[m](mockAgentService);
                         }).forEach(function (key) {
-                            expect(mockBody.addClass)
+                            expect(mockDocument.body.classList.add)
                                 .toHaveBeenCalledWith(key);
                         });
                     });
@@ -98,7 +96,7 @@ define(
                         Object.keys(DeviceMatchers).filter(function (m) {
                             return !DeviceMatchers[m](mockAgentService);
                         }).forEach(function (key) {
-                            expect(mockBody.addClass)
+                            expect(mockDocument.body.classList.add)
                                 .not.toHaveBeenCalledWith(key);
                         });
                     });

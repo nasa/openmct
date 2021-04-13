@@ -34,17 +34,17 @@ define(
          * info using a comparison between the userAgent and key
          * device names
          * @constructor
-         * @param $window Angular-injected instance of the window
+         * @param window the broser object model
          * @memberof platform/commonUI/mobile
          */
-        function AgentService($window) {
-            var userAgent = $window.navigator.userAgent,
+        function AgentService(window) {
+            var userAgent = window.navigator.userAgent,
                 matches = userAgent.match(/iPad|iPhone|Android/i) || [];
 
             this.userAgent = userAgent;
             this.mobileName = matches[0];
-            this.$window = $window;
-            this.touchEnabled = ($window.ontouchstart !== undefined);
+            this.window = window;
+            this.touchEnabled = (window.ontouchstart !== undefined);
         }
 
         /**
@@ -79,9 +79,9 @@ define(
          */
         AgentService.prototype.isAndroidTablet = function () {
             if (this.mobileName === 'Android') {
-                if (this.isPortrait() && window.innerWidth >= 768) {
+                if (this.isPortrait() && this.window.innerWidth >= 768) {
                     return true;
-                } else if (this.isLandscape() && window.innerHeight >= 768) {
+                } else if (this.isLandscape() && this.window.innerHeight >= 768) {
                     return true;
                 }
             } else {
@@ -103,7 +103,7 @@ define(
          * @returns {boolean} true in portrait mode
          */
         AgentService.prototype.isPortrait = function () {
-            return this.$window.innerWidth < this.$window.innerHeight;
+            return this.window.innerWidth < this.window.innerHeight;
         };
 
         /**

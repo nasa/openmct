@@ -48,8 +48,20 @@ define([
                         "key": "agentService",
                         "implementation": AgentService,
                         "depends": [
-                            "$window"
+                            "window"
                         ]
+                    },
+                    {
+                        "key": "window",
+                        "implementation": function () {
+                            return window;
+                        }
+                    },
+                    {
+                        "key": "document",
+                        "implementation": function () {
+                            return document;
+                        }
                     }
                 ],
                 "runs": [
@@ -57,7 +69,7 @@ define([
                         "implementation": DeviceClassifier,
                         "depends": [
                             "agentService",
-                            "$document"
+                            "document"
                         ]
                     }
                 ]

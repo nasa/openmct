@@ -39,15 +39,15 @@ define(
          *
          * @param {platform/commonUI/mobile.AgentService} agentService
          *        the service used to examine the user agent
-         * @param $document Angular's jqLite-wrapped document element
+         * @param document the HTML DOM document object
          * @constructor
          */
-        function MobileClassifier(agentService, $document) {
-            var body = $document.find('body');
+        function MobileClassifier(agentService, document) {
+            var body = document.body;
 
             Object.keys(DeviceMatchers).forEach(function (key, index, array) {
                 if (DeviceMatchers[key](agentService)) {
-                    body.addClass(key);
+                    body.classList.add(key);
                 }
             });
 
@@ -56,11 +56,11 @@ define(
 
                 mediaQuery.addListener(function (event) {
                     if (event.matches) {
-                        body.removeClass('portrait');
-                        body.addClass('landscape');
+                        body.classList.remove('portrait');
+                        body.classList.add('landscape');
                     } else {
-                        body.removeClass('landscape');
-                        body.addClass('portrait');
+                        body.classList.remove('landscape');
+                        body.classList.add('portrait');
                     }
                 });
             }
