@@ -29,6 +29,16 @@
     @mouseover="focusElement"
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
+        <div class="h-local-controls h-local-controls--overlay-actions c-local-controls--show-on-hover c-image-actions__actions">
+            <span class="c-image-actions__action-wrapper icon-save">
+                <a  :href="'/proxyUrl?url=' + imageUrl"
+                    :download="imageUrl.split('/').reverse()[0]"
+                    target="_blank"
+                    class="action"
+                >Download Image</a>
+            </span>
+        </div>
+
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
             <span class="c-image-controls__sliders"
                   draggable="true"

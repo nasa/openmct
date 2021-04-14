@@ -148,6 +148,33 @@
     }
 }
 
+/*************************************** IMAGERY ACTIONS*/
+.c-imagery {
+    .h-local-controls--overlay-actions {
+        position: absolute;
+        right: $interiorMargin; top: $interiorMargin;
+        z-index: 2;
+        background: $colorLocalControlOvrBg;
+        border-radius: $basicCr;
+        max-width: 160px;
+        min-width: 70px;
+        width: 35%;
+        align-items: center;
+        padding: $interiorMargin $interiorMarginLg;
+    }
+}
+
+.c-image-actions {
+    &__action-wrapper {
+        display: flex;
+        align-items: center;
+
+        &:before {
+            margin-right: $interiorMargin;
+        }
+    }
+}
+
 /*************************************** IMAGERY LOCAL CONTROLS*/
 .c-imagery {
     .h-local-controls--overlay-content {
