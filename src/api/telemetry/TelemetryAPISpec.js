@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import TelemetryAPI from './TelemetryAPI';
+const { TelemetryCollection } = require("./TelemetryCollection");
 
 describe('Telemetry API', function () {
     const NO_PROVIDER = 'No provider found';
@@ -342,6 +343,7 @@ describe('Telemetry API', function () {
             }).finally(done);
         });
     });
+
     describe('metadata', function () {
         let mockMetadata = {};
         let mockObjectType = {
@@ -359,6 +361,7 @@ describe('Telemetry API', function () {
             });
             mockTypeService.getType.and.returnValue(mockObjectType);
         });
+
         it('respects explicit priority', function () {
             mockMetadata.values = [
                 {
@@ -569,6 +572,42 @@ describe('Telemetry API', function () {
                 expect(values[index].key).toBe(key);
             });
         });
+    });
+
+    describe('telemetry collections', () => {
+        let domainObject;
+        let mockMetadata = {};
+        let mockObjectType = {
+            typeDef: {}
+        };
+
+        beforeEach(function () {
+            openmct.telemetry = telemetryAPI;
+            telemetryAPI.addProvider({
+                key: 'mockMetadataProvider',
+                supportsMetadata() {
+                    return true;
+                },
+                getMetadata() {
+                    return mockMetadata;
+                }
+            });
+            mockTypeService.getType.and.returnValue(mockObjectType);
+            domainObject = {
+                identifier: {
+                    key: 'a',
+                    namespace: 'b'
+                },
+                type: 'sample-type'
+            };
+        });
+
+        it('when requested, returns an instance of telemetry collection', () => {
+            const telemetryCollection = telemetryAPI.requestTelemetryCollection(domainObject);
+
+            expect(telemetryCollection).toBeInstanceOf(TelemetryCollection);
+        });
+
     });
 });
 
