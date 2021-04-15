@@ -22,7 +22,7 @@
 import TelemetryAPI from './TelemetryAPI';
 const { TelemetryCollection } = require("./TelemetryCollection");
 
-xdescribe('Telemetry API', function () {
+describe('Telemetry API', function () {
     const NO_PROVIDER = 'No provider found';
     let openmct;
     let telemetryAPI;

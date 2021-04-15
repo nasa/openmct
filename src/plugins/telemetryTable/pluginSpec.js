@@ -43,11 +43,12 @@ class MockDataTransfer {
     }
 }
 
-xdescribe("the plugin", () => {
+describe("the plugin", () => {
     let openmct;
     let tablePlugin;
     let element;
     let child;
+    let historicalProvider;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -57,7 +58,12 @@ xdescribe("the plugin", () => {
         tablePlugin = new TablePlugin();
         openmct.install(tablePlugin);
 
-        spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
+        historicalProvider = {
+            request: () => {
+                return Promise.resolve([]);
+            }
+        };
+        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
 
         element = document.createElement('div');
         child = document.createElement('div');
@@ -166,11 +172,12 @@ xdescribe("the plugin", () => {
             let telemetryPromise = new Promise((resolve) => {
                 telemetryPromiseResolve = resolve;
             });
-            openmct.telemetry.request.and.callFake(() => {
+
+            historicalProvider.request = () => {
                 telemetryPromiseResolve(testTelemetry);
 
                 return telemetryPromise;
-            });
+            };
 
             openmct.router.path = [testTelemetryObject];
 
