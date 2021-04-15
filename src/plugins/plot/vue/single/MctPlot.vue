@@ -85,6 +85,22 @@
                         >
                         </button>
                     </div>
+                    <div v-if="isRealTime"
+                         class="c-button-set c-button-set--strip-h"
+                    >
+                        <button class="c-button icon-pause"
+                                title="Pause"
+                                :disabled="isFrozen"
+                                @click="pause()"
+                        >
+                        </button>
+                        <button class="c-button icon-arrow-right"
+                                title="Play"
+                                :disabled="!isFrozen"
+                                @click="play()"
+                        >
+                        </button>
+                    </div>
                     <div class="c-button-set c-button-set--strip-h"
                          :disabled="!plotHistory.length"
                     >
@@ -186,10 +202,14 @@ export default {
             xKeyOptions: [],
             config: {},
             pending: 0,
+            isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false
         };
     },
     computed: {
+        isFrozen() {
+            return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+        },
         plotLegendPositionClass() {
             return `plot-legend-${this.config.legend.get('position')}`;
         },
@@ -243,6 +263,7 @@ export default {
     },
     methods: {
         followTimeConductor() {
+            this.openmct.time.on('clock', this.updateRealTime);
             this.openmct.time.on('bounds', this.updateDisplayBounds);
             this.synchronized(true);
         },
@@ -370,6 +391,9 @@ export default {
 
             const displayRange = series.getDisplayRange(xKey);
             this.config.xAxis.set('range', displayRange);
+        },
+        updateRealTime(clock) {
+            this.isRealTime = clock !== undefined;
         },
 
         /**
@@ -881,6 +905,14 @@ export default {
             this.config.series.models[0].emit('change:yKey', yKey);
         },
 
+        pause() {
+            this.freeze();
+        },
+
+        play() {
+            this.clear();
+        },
+
         destroy() {
             configStore.deleteStore(this.config.id);
 
@@ -894,6 +926,7 @@ export default {
                 this.filterObserver();
             }
 
+            this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
             this.openmct.objectViews.off('clearData', this.clearData);
         }
