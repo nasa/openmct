@@ -19,8 +19,8 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<template xmlns="http://www.w3.org/1999/html">
-<div v-if="config && loaded">
+<template>
+<div v-if="loaded">
     <ul class="c-tree">
         <h2 title="Plot series display properties in this object">Plot Series</h2>
         <plot-options-item v-for="series in plotSeries"
@@ -28,7 +28,9 @@
                            :series="series"
         />
     </ul>
-    <div class="grid-properties">
+    <div v-if="plotSeries.length"
+         class="grid-properties"
+    >
         <ul class="l-inspector-part">
             <h2 title="Y axis settings for this object">Y Axis</h2>
             <li class="grid-row">
@@ -127,6 +129,7 @@ export default {
         };
     },
     mounted() {
+
         eventHelpers.extend(this);
         this.config = this.getConfig();
         this.registerListeners();
@@ -150,7 +153,7 @@ export default {
         },
 
         addSeries(series, index) {
-            this.plotSeries[index] = series;
+            this.$set(this.plotSeries, index, series);
         },
 
         resetAllSeries() {

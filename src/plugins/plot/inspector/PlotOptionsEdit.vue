@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="config && loaded">
+<div v-if="loaded">
     <ul class="c-tree">
         <h2 title="Display properties for this object">Plot Series</h2>
         <li v-for="series in plotSeries"
@@ -87,7 +87,7 @@ export default {
         },
 
         addSeries(series, index) {
-            this.plotSeries[index] = series;
+            this.$set(this.plotSeries, index, series);
         },
 
         resetAllSeries() {
