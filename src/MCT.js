@@ -252,6 +252,8 @@ define([
 
         this.status = new api.StatusAPI(this);
 
+        this.forms = new api.FormsAPI.default(this);
+
         this.router = new ApplicationRouter();
 
         this.branding = BrandingAPI.default;

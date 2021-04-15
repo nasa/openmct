@@ -19,46 +19,22 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import EditPropertiesAction from './actions/EditPropertiesAction';
 
-define([
-    './actions/ActionsAPI',
-    './composition/CompositionAPI',
-    './Editor',
-    './forms/FormsAPI',
-    './indicators/IndicatorAPI',
-    './menu/MenuAPI',
-    './notifications/NotificationAPI',
-    './objects/ObjectAPI',
-    './status/StatusAPI',
-    './telemetry/TelemetryAPI',
-    './time/TimeAPI',
-    './types/TypeRegistry'
-], function (
-    ActionsAPI,
-    CompositionAPI,
-    EditorAPI,
-    FormsAPI,
-    IndicatorAPI,
-    MenuAPI,
-    NotificationAPI,
-    ObjectAPI,
-    StatusAPI,
-    TelemetryAPI,
-    TimeAPI,
-    TypeRegistry
-) {
-    return {
-        ActionsAPI: ActionsAPI.default,
-        CompositionAPI: CompositionAPI,
-        EditorAPI: EditorAPI,
-        FormsAPI: FormsAPI,
-        IndicatorAPI: IndicatorAPI,
-        MenuAPI: MenuAPI.default,
-        NotificationAPI: NotificationAPI.default,
-        ObjectAPI: ObjectAPI,
-        StatusAPI: StatusAPI.default,
-        TelemetryAPI: TelemetryAPI,
-        TimeAPI: TimeAPI,
-        TypeRegistry: TypeRegistry,
-    };
-});
+export default class FormsAPI {
+    constructor(openmct) {
+        openmct.actions.register(new EditPropertiesAction(openmct));
+    }
+
+    addControl(name, actions) {
+        // TODO:
+    }
+
+    showForm() {
+
+    }
+
+    save() {
+
+    }
+}
