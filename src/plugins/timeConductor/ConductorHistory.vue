@@ -140,7 +140,7 @@ export default {
             const history = this.historyForCurrentTimeSystem.map(timespan => {
                 let name;
                 let startTime = this.formatTime(timespan.start);
-                let description = `${this.formatTime(timespan.start)} - ${this.formatTime(timespan.end)}`;
+                let description = `${startTime} - ${this.formatTime(timespan.end)}`;
 
                 if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
                     name = `Starting ${startTime} ${this.getDuration(timespan.end - timespan.start)}`;
