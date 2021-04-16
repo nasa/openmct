@@ -35,8 +35,6 @@
 </template>
 
 <script>
-// import moment from 'moment';
-
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
