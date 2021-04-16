@@ -35,10 +35,16 @@
 </template>
 
 <script>
+// import moment from 'moment';
+
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
+const ONE_MINUTE = 60 * 1000;
+const ONE_HOUR = ONE_MINUTE * 60;
+const EIGHT_HOURS = 8 * ONE_HOUR;
+const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -135,10 +141,20 @@ export default {
     methods: {
         getHistoryMenuItems() {
             const history = this.historyForCurrentTimeSystem.map(timespan => {
+                let name;
+                let startTime = this.formatTime(timespan.start);
+                let description = `${this.formatTime(timespan.start)} - ${this.formatTime(timespan.end)}`;
+
+                if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
+                    name = `Starting ${startTime} ${this.getDuration(timespan.end - timespan.start)}`;
+                } else {
+                    name = `${startTime} - ${this.formatTime(timespan.end)}`;
+                }
+
                 return {
                     cssClass: 'icon-history',
-                    name: `${this.formatTime(timespan.start)} - ${this.formatTime(timespan.end)}`,
-                    description: `${this.formatTime(timespan.start)} - ${this.formatTime(timespan.end)}`,
+                    name,
+                    description,
                     callBack: () => this.selectTimespan(timespan)
                 };
             });
@@ -162,6 +178,23 @@ export default {
                     callBack: () => this.selectPresetBounds(preset.bounds)
                 };
             });
+        },
+        getDuration(numericDuration) {
+            let result;
+            let age;
+
+            if (numericDuration > TWENTYFOUR_HOURS) {
+                age = (numericDuration / TWENTYFOUR_HOURS).toFixed(2);
+                result = ` for ${age} days`;
+            } else if (numericDuration > ONE_HOUR) {
+                age = (numericDuration / ONE_HOUR).toFixed(2);
+                result = ` for ${age} hours`;
+            } else {
+                age = (numericDuration / ONE_MINUTE).toFixed(2);
+                result = ` for ${age} mins`;
+            }
+
+            return result;
         },
         getHistoryFromLocalStorage() {
             const localStorageHistory = localStorage.getItem(this.storageKey);
