@@ -53,7 +53,7 @@ define([
                 }
             });
 
-            return testUtils.resetApplicationState(openmct);
+            return testUtils.resetApplicationStatePromise(openmct);
         });
 
         it("exposes plugins", function () {

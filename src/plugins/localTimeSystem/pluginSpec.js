@@ -22,7 +22,7 @@
 
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationStatePromise
 } from 'utils/testing';
 
 describe("The local time", () => {
@@ -45,7 +45,7 @@ describe("The local time", () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     describe("system", function () {

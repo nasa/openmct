@@ -23,7 +23,7 @@ import RemoveActionPlugin from './plugin.js';
 import RemoveAction from './RemoveAction.js';
 import {
     createOpenMct,
-    resetApplicationState,
+    resetApplicationStatePromise,
     getMockObjects
 } from 'utils/testing';
 
@@ -72,7 +72,7 @@ describe("The Remove Action plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        resetApplicationStatePromise(openmct);
     });
 
     it("should be defined", () => {

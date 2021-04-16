@@ -25,7 +25,7 @@ import {
     createOpenMct,
     createMouseEvent,
     spyOnBuiltins,
-    resetApplicationState
+    resetApplicationStatePromise
 } from 'utils/testing';
 
 class MockDataTransfer {
@@ -82,7 +82,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     describe("defines a table object", function () {

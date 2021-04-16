@@ -26,7 +26,7 @@ import {
     getMockObjects,
     getMockTelemetry,
     getLatestTelemetry,
-    resetApplicationState
+    resetApplicationStatePromise
 } from 'utils/testing';
 
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
@@ -67,10 +67,6 @@ describe("The LAD Table", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         parent = document.createElement('div');
@@ -90,11 +86,11 @@ describe("The LAD Table", () => {
         });
 
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     it("should provide a table view only for lad table objects", () => {
@@ -113,7 +109,8 @@ describe("The LAD Table", () => {
 
         beforeEach(() => {
             ladTableCompositionCollection = openmct.composition.get(mockObj.ladTable);
-            ladTableCompositionCollection.load();
+
+            return ladTableCompositionCollection.load();
         });
 
         it("should accept telemetry producing objects", () => {
@@ -192,8 +189,6 @@ describe("The LAD Table", () => {
 
             await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
             await Vue.nextTick();
-
-            return;
         });
 
         it("should show one row per object in the composition", () => {
@@ -264,11 +259,6 @@ describe("The LAD Table Set", () => {
     mockObj.ladTableSet.composition.push(mockObj.ladTable.identifier);
 
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         parent = document.createElement('div');
@@ -288,11 +278,11 @@ describe("The LAD Table Set", () => {
         });
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     it("should provide a lad table set view only for lad table set objects", () => {
@@ -311,7 +301,8 @@ describe("The LAD Table Set", () => {
 
         beforeEach(() => {
             ladTableSetCompositionCollection = openmct.composition.get(mockObj.ladTableSet);
-            ladTableSetCompositionCollection.load();
+
+            return ladTableSetCompositionCollection.load();
         });
 
         it("should accept lad table objects", () => {
@@ -398,15 +389,13 @@ describe("The LAD Table Set", () => {
 
             await Promise.all([telemetryRequestPromise, ladObjectPromise, anotherLadObjectPromise]);
             await Vue.nextTick();
-
-            return;
         });
 
-        it("should show one row per lad table object in the composition", () => {
+        // TODO this should be fixed
+        xit("should show one row per lad table object in the composition", () => {
             const rowCount = parent.querySelectorAll(LAD_SET_TABLE_HEADERS).length;
 
             expect(rowCount).toBe(mockObj.ladTableSet.composition.length);
-            pending();
         });
     });
 });

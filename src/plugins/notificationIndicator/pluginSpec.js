@@ -24,7 +24,7 @@ import NotificationIndicatorPlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationStatePromise
 } from 'utils/testing';
 
 describe('the plugin', () => {
@@ -57,7 +57,7 @@ describe('the plugin', () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     describe('the indicator plugin element', () => {

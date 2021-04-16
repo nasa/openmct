@@ -1,5 +1,5 @@
 import CustomStringFormatter from './CustomStringFormatter';
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, resetApplicationStatePromise } from 'utils/testing';
 
 const CUSTOM_FORMATS = [
     {
@@ -55,7 +55,7 @@ describe('CustomStringFormatter', function () {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     it('adds custom format sclk', () => {

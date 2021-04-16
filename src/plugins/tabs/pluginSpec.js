@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, resetApplicationStatePromise } from 'utils/testing';
 import TabsLayout from './plugin';
 import Vue from "vue";
 import EventEmitter from "EventEmitter";
@@ -98,7 +98,7 @@ describe('the plugin', function () {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     it('defines a tabs object type with the correct key', () => {
@@ -113,7 +113,7 @@ describe('the plugin', function () {
         let tabsLayoutViewProvider;
         let mockComposition;
 
-        beforeEach((done) => {
+        beforeEach(() => {
             mockComposition = new EventEmitter();
             mockComposition.load = () => {
                 return Promise.resolve([telemetryItem1]);
@@ -125,7 +125,8 @@ describe('the plugin', function () {
             tabsLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'tabs');
             let view = tabsLayoutViewProvider.view(testViewObject, []);
             view.show(child, true);
-            Vue.nextTick(done);
+
+            return Vue.nextTick();
         });
 
         it('provides a view', () => {

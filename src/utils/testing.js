@@ -64,7 +64,7 @@ export function clearBuiltinSpies() {
     nativeFunctions = [];
 }
 
-export function resetApplicationState(openmct) {
+export function resetApplicationStatePromise(openmct) {
     let promise;
 
     clearBuiltinSpies();

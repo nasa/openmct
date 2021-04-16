@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
+import { createOpenMct, resetApplicationStatePromise } from "utils/testing";
 import TimelinePlugin from "./plugin";
 import Vue from 'vue';
 
@@ -77,7 +77,7 @@ describe('the plugin', function () {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     let mockObject = {

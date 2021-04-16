@@ -1,5 +1,5 @@
 import StatusAPI from './StatusAPI.js';
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, resetApplicationStatePromise } from '../../utils/testing';
 
 describe("The Status API", () => {
     let statusAPI;
@@ -22,7 +22,7 @@ describe("The Status API", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     describe("set function", () => {

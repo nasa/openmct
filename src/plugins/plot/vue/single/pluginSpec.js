@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
+import {createMouseEvent, createOpenMct, resetApplicationStatePromise, spyOnBuiltins} from "utils/testing";
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "../stackedPlot/StackedPlot.vue";
@@ -127,7 +127,7 @@ describe("the plugin", function () {
 
             configStore.deleteAll();
 
-            resetApplicationState(openmct).then(done);
+            resetApplicationStatePromise(openmct).then(done);
         });
     });
 

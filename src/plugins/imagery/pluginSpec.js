@@ -23,7 +23,7 @@ import ImageryPlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct,
-    resetApplicationState,
+    resetApplicationStatePromise,
     simulateKeyEvent
 } from 'utils/testing';
 
@@ -199,10 +199,6 @@ describe("The Imagery View Layout", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         parent = document.createElement('div');
@@ -227,11 +223,11 @@ describe("The Imagery View Layout", () => {
         });
 
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     it("should provide an imagery view only for imagery producing objects", () => {
@@ -248,7 +244,7 @@ describe("The Imagery View Layout", () => {
         let imageryViewProvider;
         let imageryView;
 
-        beforeEach(async (done) => {
+        beforeEach(async () => {
             let telemetryRequestResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
@@ -272,8 +268,6 @@ describe("The Imagery View Layout", () => {
 
             await telemetryRequestPromise;
             await Vue.nextTick();
-
-            return done();
         });
 
         afterEach(() => {

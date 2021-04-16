@@ -21,7 +21,7 @@
  *****************************************************************************/
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationStatePromise
 } from 'utils/testing';
 
 describe("the plugin", () => {
@@ -44,7 +44,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     it('installs the new folder action', () => {
@@ -79,7 +79,7 @@ describe("the plugin", () => {
             spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
             spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 
-            newFolderAction.invoke(mockObjectPath);
+            return newFolderAction.invoke(mockObjectPath);
         });
 
         it('gets user input for folder name', () => {

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ActionCollection from './ActionCollection';
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, resetApplicationStatePromise } from '../../utils/testing';
 
 describe('The ActionCollection', () => {
     let openmct;
@@ -119,7 +119,8 @@ describe('The ActionCollection', () => {
 
     afterEach(() => {
         actionCollection.destroy();
-        resetApplicationState(openmct);
+
+        return resetApplicationStatePromise(openmct);
     });
 
     describe("disable method invoked with action keys", () => {

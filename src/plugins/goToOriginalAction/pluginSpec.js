@@ -21,7 +21,7 @@
  *****************************************************************************/
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationStatePromise
 } from 'utils/testing';
 
 describe("the plugin", () => {
@@ -39,7 +39,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     it('installs the go to folder action', () => {
@@ -63,7 +63,8 @@ describe("the plugin", () => {
                     key: 'test'
                 }
             }));
-            goToFolderAction.invoke(mockObjectPath);
+
+            return goToFolderAction.invoke(mockObjectPath);
         });
 
         it('goes to the original location', () => {

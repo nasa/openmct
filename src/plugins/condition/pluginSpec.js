@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
+import { createOpenMct, resetApplicationStatePromise } from "utils/testing";
 import ConditionPlugin from "./plugin";
 import stylesManager from '@/ui/inspector/styles/StylesManager';
 import StylesView from "./components/inspector/StylesView.vue";
@@ -103,7 +103,7 @@ describe('the plugin', function () {
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        return resetApplicationStatePromise(openmct);
     });
 
     let mockConditionSetObject = {
