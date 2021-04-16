@@ -41,8 +41,7 @@ const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 const ONE_MINUTE = 60 * 1000;
 const ONE_HOUR = ONE_MINUTE * 60;
-const EIGHT_HOURS = 8 * ONE_HOUR;
-const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
+const TWENTYFOUR_HOURS = ONE_HOUR * 24;
 
 export default {
     inject: ['openmct', 'configuration'],
