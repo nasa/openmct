@@ -145,7 +145,7 @@ export default {
                 if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
                     name = `Starting ${startTime} ${this.getDuration(timespan.end - timespan.start)}`;
                 } else {
-                    name = `${startTime} - ${this.formatTime(timespan.end)}`;
+                    name = description;
                 }
 
                 return {
