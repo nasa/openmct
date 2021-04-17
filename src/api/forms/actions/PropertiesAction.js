@@ -24,66 +24,10 @@ export default class PropertiesAction {
         this.openmct = openmct;
     }
 
-    invoke(objectPath) {
-// Start:Testing
-// const parent = document.createElement('div');
-// formElements.forEach(e => {
-//     const child = document.createElement('div');
-//     const spanKey = document.createElement('span');
-//     const spanValue = document.createElement('span');
-
-//     spanKey.textContent = e.key;
-//     spanValue.textContent = e.value;
-//     child.appendChild(spanKey);
-//     child.appendChild(spanValue);
-//     parent.appendChild(child);
-// });
-// End:Testing
-
-        // let overlay = this.openmct.overlays.overlay({
-        //     element: parent,   //TODO: create and show new form component
-        //     size: 'small',
-        //     buttons: [
-        //         {
-        //             label: 'Done',
-        //             // TODO: save form values into domain object properties
-        //             callback: () => overlay.dismiss()
-        //         }
-        //     ],
-        //     onDestroy: () => {
-        //     }
-        // });
-    }
-
     /**
      * @private
      */
-    _getForm(objectPath) {
-        const definition = this._getTypeDefination(objectPath[0].type);
-
-        return definition.form;
-    }
-
-    /**
-     * @private
-     */
-    _getFormElements(objectPath) {
-        const form = this._getForm(objectPath);
-        const domainObject = objectPath[0];
-        const formElements = [];
-        form.forEach(element => {
-            const value = element.property.reduce((acc, property) => acc[property], domainObject);
-            formElements.push({key: element.key, value});
-        });
-
-        return formElements;
-    }
-
-
-    /**
-     * @private
-     */
-     _getTypeDefination(type) {
+     _getTypeDefinition(type) {
         const TypeDefinition = this.openmct.types.get(type);
 
         return TypeDefinition.definition;

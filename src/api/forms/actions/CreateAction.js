@@ -20,54 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import PropertiesAction from './PropertiesAction';
-import FormProperties from '../components/Form-properties.vue';
 
 export default class CreateAction extends PropertiesAction {
-    constructor(openmct, key, parentDomainObject) {
+    constructor(openmct, type, parentDomainObject) {
         super(openmct);
 
-        this.key = key;
+        this.type = type;
         this.parentDomainObject = parentDomainObject;
     }
 
     invoke() {
-        const definition = this._getTypeDefination(this.key);
-
-        console.log('CreateAction invoke, Show form', definition.form);
-
-        // if save navigateAndEdit
-        // this.openmct.editor.cancel();
-    }
-
-    showForm(element) {
-        let overlay = this.openmct.overlays.overlay({
-            element,   //TODO: create and show new form component
-            size: 'small',
-            buttons: [
-                {
-                    label: 'Done',
-                    // TODO: save form values into domain object properties
-                    callback: () => overlay.dismiss()
-                }
-            ],
-            onDestroy: () => {
-            }
-        });
-    }
-
-    navigateAndEdit(object) {
-        let objectPath = object.getCapability('context').getPath(),
-            url = '#/browse/' + objectPath
-                .slice(1)
-                .map(function (o) {
-                    return o && openmct.objects.makeKeyString(o.getId());
-                })
-                .join('/');
-
-        window.location.href = url;
-
-        if (isFirstViewEditable(object.useCapability('adapter'), objectPath)) {
-            openmct.editor.edit();
-        }
+        this.openmct.forms.showCreateForm(this.type, this.parentDomainObject);
     }
 }
