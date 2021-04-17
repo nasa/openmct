@@ -20,21 +20,153 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EditPropertiesAction from './actions/EditPropertiesAction';
+import CreateWizard from './CreateWizard';
+
+import FormProperties from './components/FormProperties.vue';
+
+import Vue from 'vue';
+
+export const CONTROLS = [
+    "autocomplete",
+    "button",
+    "checkbox",
+    "color",
+    "composite",
+    "datetime",
+    "dialog-button",
+    "file-input",
+    "menu-button",
+    "numberfield",
+    "radio",
+    "select",
+    "textarea",
+    "textfield"
+];
 
 export default class FormsAPI {
     constructor(openmct) {
-        openmct.actions.register(new EditPropertiesAction(openmct));
+        this.openmct = openmct;
+        this.controls = {};
+
+        this.init();
     }
 
     addControl(name, actions) {
-        // TODO:
+        const control = this.controls[name];
+        if (control) {
+           this.openmct.notifications.error(`Error: provided form control '${name}', already exists`);
+
+           return;
+        }
+
+        this.controls[name] = actions;
     }
 
-    showForm() {
-
+    getAllControls() {
+        return this.controls;
     }
 
-    save() {
+    getControl(name) {
+        const control = this.controls[name];
+        if (control) {
+           this.openmct.notifications.error(`Error: form control '${name}', does not exist`);
+        }
 
+        return controls;
+    }
+
+    showForm(domainObject, formStructure) {
+        const changes = {};
+        const vm = new Vue({
+            components: { FormProperties },
+            provide: {
+                openmct: this.openmct
+            },
+            data() {
+                return {
+                    formStructure,
+                    onChange
+                };
+            },
+            template: '<FormProperties :model="formStructure" @onChange="onChange"></FormProperties>'
+        }).$mount();
+
+        let overlay = this.openmct.overlays.overlay({
+            element: vm.$el,
+            size: 'small',
+            buttons: [
+                {
+                    label: 'OK',
+                    emphasis: 'true',
+                    callback: () => {
+                        overlay.dismiss();
+                        this.save(domainObject, changes);
+                    }
+                },
+                {
+                    label: 'Cancel',
+                    callback: () => overlay.dismiss()
+                }
+            ],
+            onDestroy: () => vm.$destroy()
+        });
+
+        function onChange(data) {
+            console.log(data.model, data.value);
+            const property = data.model.property;
+            let key = data.model.key;
+            if (property && property.length) {
+                key = property.join('.');
+            }
+
+            changes[key] = data.value;
+        }
+    }
+
+    showEditForm(objectPath) {
+        const createWizard = new CreateWizard(this.openmct, objectPath[0], objectPath[1]);
+        const formStructure = createWizard.getFormStructure(false);
+
+        this.showForm(objectPath[0], formStructure);
+    }
+
+    showCreateForm(type, parentDomainObject) {
+        const typeDefinition = this.openmct.types.get(type);
+        const definition = typeDefinition.definition;
+        const domainObject = {
+            type,
+            location: this.openmct.objects.makeKeyString(parentDomainObject.identifier)
+        };
+
+        if (definition.initialize) {
+            definition.initialize(domainObject);
+        }
+
+        // domainObject.modified = Date.now();
+        const createWizard = new CreateWizard(this.openmct, domainObject, parentDomainObject);
+        const formStructure = createWizard.getFormStructure(true);
+
+        this.showForm(domainObject, formStructure);
+    }
+
+    save(domainObject, changes) {
+        console.log('save', domainObject, changes);
+    }
+
+    // Private methods
+    /**
+     * @private
+     */
+    _addDefaultFormControls() {
+        CONTROLS.forEach(control => {
+            this.addControl(control);
+        });
+    }
+
+    // Init
+    init() {
+        this.openmct.actions.register(new EditPropertiesAction(this.openmct));
+
+        this._addDefaultFormControls();
     }
 }
