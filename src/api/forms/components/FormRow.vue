@@ -31,6 +31,7 @@ import AutoCompleteField from "@/api/forms/components/controls/AutoCompleteField
 import Composite from "@/api/forms/components/controls/Composite.vue";
 import NumberField from "@/api/forms/components/controls/NumberField.vue";
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
+import TextArea from "@/api/forms/components/controls/TextArea.vue";
 import TextField from "@/api/forms/components/controls/TextField.vue";
 
 const CONTROL_TYPE_VIEW_MAP = {
@@ -38,6 +39,7 @@ const CONTROL_TYPE_VIEW_MAP = {
     'composite': Composite,
     'numberfield': NumberField,
     'select': SelectField,
+    'textarea': TextArea,
     'textfield': TextField,
 };
 
@@ -102,19 +104,9 @@ export default {
         }
     },
     methods: {
-        // Check if an element is defined; the map step of isNonEmpty
         isDefined(element) {
             return typeof element !== 'undefined';
         },
-
-        /**
-         * Check if an array contains anything other than
-         * undefined elements.
-         * @param {Array} value the array to check
-         * @returns {boolean} true if any non-undefined
-         *          element is in the array
-         * @memberof platform/forms.CompositeController#
-         */
         isNonEmpty(value) {
             return Array.isArray(value) && value.some(this.isDefined);
         },

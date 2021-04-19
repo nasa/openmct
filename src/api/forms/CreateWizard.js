@@ -4,12 +4,12 @@
  * Administration. All rights reserved.
  *
  * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
+ * 'License'); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations
  * under the License.
@@ -43,6 +43,47 @@ export default class CreateWizard {
         this.properties = this.type.definition.form || [];
     }
 
+    addNotes(sections) {
+        const row = {
+            control: 'textarea',
+            cssClass: 'l-textarea-sm',
+            key: 'notes',
+            name: 'Notes',
+            required: false,
+            value: this.domainObject.notes
+        };
+
+        console.log('addNotes', this.domainObject);
+
+        sections.forEach(section => {
+            if (section.name !== 'Properties') {
+                return;
+            }
+
+            section.rows.unshift(row);
+        });
+    }
+
+    addTitle(sections) {
+        const row = {
+            control: 'textfield',
+            cssClass: 'l-input-lg',
+            key: 'name',
+            name: 'Title',
+            pattern: '\S+',
+            required: true,
+            value: this.domainObject.name
+        };
+
+        sections.forEach(section => {
+            if (section.name !== 'Properties') {
+                return;
+            }
+
+            section.rows.unshift(row);
+        });
+    }
+
     /**
      * Get the form model for this wizard; this is a description
      * that will be rendered to an HTML form. See the
@@ -60,9 +101,10 @@ export default class CreateWizard {
         let self = this;
 
         sections.push({
-            name: "Properties",
+            name: 'Properties',
             rows: this.properties.map((property, index) => {
                 // Property definition is same as form row definition
+                console.log('property', property);
                 let row = JSON.parse(JSON.stringify(property));
 
                 // Use index as the key into the formValue;
@@ -78,7 +120,10 @@ export default class CreateWizard {
             })
         });
 
-        // Ensure there is always a "save in" section
+        this.addNotes(sections);
+        this.addTitle(sections);
+
+        // Ensure there is always a 'save in' section
         if (includeLocation) {
             function validateLocation(parent) {
                 return parent && self.openmct.composition.checkPolicy(parent.useCapability('adapter'), domainObject.useCapability('adapter'));
@@ -86,19 +131,19 @@ export default class CreateWizard {
 
             sections.push({
                 name: 'Location',
-                cssClass: "grows",
+                cssClass: 'grows',
                 rows: [{
-                    name: "Save In",
-                    control: "locator",
+                    name: 'Save In',
+                    control: 'locator',
                     validate: validateLocation.bind(this),
-                    key: "createParent"
+                    key: 'createParent'
                 }]
             });
         }
 
         return {
             sections: sections,
-            name: "Create a New " + this.type.definition.name
+            name: 'Create a New ' + this.type.definition.name
         };
     }
 
@@ -123,7 +168,7 @@ export default class CreateWizard {
 
         this.updateNamespaceFromParent(parent);
 
-        this.domainObject.useCapability("mutation", function () {
+        this.domainObject.useCapability('mutation', function () {
             return formModel;
         });
 
