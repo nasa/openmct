@@ -151,6 +151,23 @@ export default class FormsAPI {
 
     save(domainObject, changes) {
         console.log('save', domainObject, changes);
+
+        Object.entries(changes).forEach(([key, value]) => {
+            const properties = key.split('.');
+            let object = domainObject;
+            properties.forEach(property => {
+                if (typeof object[property] === 'object' && object[property] !== null) {
+                    object = object[property];
+                } else {
+                    object[property] = value;
+                }
+            });
+
+            object = value;
+        });
+
+        console.log('domainObject', domainObject);
+        // domainObject.getCapability("editor").save();
     }
 
     // Private methods

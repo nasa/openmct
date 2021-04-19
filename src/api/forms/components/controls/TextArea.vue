@@ -24,7 +24,7 @@
     <span class="field control"
           :class="model.cssClass"
     >
-        <input v-model="field"
+        <textarea v-model="field"
                type="text"
                :size="model.size"
                @blur="blur()"
