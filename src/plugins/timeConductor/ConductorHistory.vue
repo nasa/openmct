@@ -41,7 +41,7 @@ const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 const ONE_MINUTE = 60 * 1000;
 const ONE_HOUR = ONE_MINUTE * 60;
-const TWENTYFOUR_HOURS = ONE_HOUR * 24;
+const ONE_DAY = ONE_HOUR * 24;
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -180,15 +180,15 @@ export default {
             let result;
             let age;
 
-            if (numericDuration > TWENTYFOUR_HOURS) {
-                age = (numericDuration / TWENTYFOUR_HOURS).toFixed(2);
-                result = ` for ${age} days`;
+            if (numericDuration > ONE_DAY) {
+                age = (numericDuration / ONE_DAY).toFixed(2);
+                result = `for ${age} days`;
             } else if (numericDuration > ONE_HOUR) {
                 age = (numericDuration / ONE_HOUR).toFixed(2);
-                result = ` for ${age} hours`;
+                result = `for ${age} hours`;
             } else {
                 age = (numericDuration / ONE_MINUTE).toFixed(2);
-                result = ` for ${age} mins`;
+                result = `for ${age} mins`;
             }
 
             return result;
