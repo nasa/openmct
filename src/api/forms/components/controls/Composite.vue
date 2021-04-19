@@ -20,11 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<span
->
+<span>
     <CompositeItem v-for="(item, index) in model.items"
                     :key="item.name"
                     :first="index < 1"
+                    :value="JSON.stringify(model.value[index])"
                     :item="item"
                     @onChange="onChange"
     />

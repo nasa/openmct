@@ -23,7 +23,7 @@
 <div :class="compositeCssClass">
     <FormRow :css-class="item.cssClass"
              :first="first"
-             :row="item"
+             :row="row"
              @onChange="onChange"
     />
     <span class="composite-control-label">
@@ -46,20 +46,26 @@ export default {
         first: {
             type: Boolean,
             required: true
+        },
+        value: {
+            type: String
         }
     },
     computed: {
         compositeCssClass() {
             return `l-composite-control l-${this.item.control}`;
+        },
+        row() {
+            const row = this.item;
+            row.value = JSON.parse(this.value);
+
+            return row;
         }
     },
     methods: {
         onChange(data) {
             this.$emit('onChange', data);
         }
-    },
-    mounted() {
-        console.log('composite item', this.model);
     }
 };
 </script>
