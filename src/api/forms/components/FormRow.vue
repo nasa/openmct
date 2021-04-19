@@ -3,7 +3,8 @@
      :class="rowClass"
      @onChange="onChange"
 >
-    <div class="c-form__row__label label flex-elem"
+    <div v-if="row.name"
+         class="c-form__row__label label flex-elem"
          :title="row.description"
     >
         {{ row.name }}
