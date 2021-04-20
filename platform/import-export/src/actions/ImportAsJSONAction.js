@@ -154,7 +154,8 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
         tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
 
         return JSON.parse(tree, (key, value) => {
-            if (value !== null
+            if (value !== undefined
+                && value !== null
                 && Object.prototype.hasOwnProperty.call(value, 'key')
                 && Object.prototype.hasOwnProperty.call(value, 'namespace')
                 && value.key === oldId.key
