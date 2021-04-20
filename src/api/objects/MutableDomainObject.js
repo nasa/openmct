@@ -112,9 +112,11 @@ class MutableDomainObject {
         return () => this._instanceEventEmitter.off(event, callback);
     }
     $destroy() {
-        this._observers.forEach(observer => observer());
-        delete this._globalEventEmitter;
-        delete this._observers;
+        while (this._observers.length > 0) {
+            const observer = this._observers.pop();
+            observer();
+        }
+
         this._instanceEventEmitter.emit('$_destroy');
     }
 
