@@ -403,6 +403,10 @@ export default class PlotSeries extends Model {
      * @public
      */
     updateFiltersAndRefresh(updatedFilters) {
+        if (updatedFilters === undefined) {
+            return;
+        }
+
         let deepCopiedFilters = JSON.parse(JSON.stringify(updatedFilters));
 
         if (this.filters && !_.isEqual(this.filters, deepCopiedFilters)) {
