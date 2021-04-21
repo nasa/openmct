@@ -82,7 +82,9 @@ export default class Condition extends EventEmitter {
                 if (this.isAnyOrAllTelemetry(criterion)) {
                     criterion.updateResult(datum, this.conditionManager.telemetryObjects);
                 } else {
-                    criterion.updateResult(datum);
+                    if (criterion.usesTelemetry(datum.id)) {
+                        criterion.updateResult(datum);
+                    }
                 }
             });
 
@@ -102,7 +104,7 @@ export default class Condition extends EventEmitter {
 
     isTelemetryUsed(id) {
         return this.criteria.some(criterion => {
-            return this.isAnyOrAllTelemetry(criterion) || criterion.telemetryObjectIdAsString === id;
+            return this.isAnyOrAllTelemetry(criterion) || criterion.usesTelemetry(id);
         });
     }
 
