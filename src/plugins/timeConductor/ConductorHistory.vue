@@ -181,21 +181,21 @@ export default {
             let age;
 
             if (numericDuration > ONE_DAY - 1) {
-                age = this.normalizeNumber((numericDuration / ONE_DAY).toFixed(2));
+                age = this.normalizeAge((numericDuration / ONE_DAY).toFixed(2));
                 result = `+ ${age} day`;
 
                 if (age !== 1) {
                     result += 's';
                 }
             } else if (numericDuration > ONE_HOUR - 1) {
-                age = this.normalizeNumber((numericDuration / ONE_HOUR).toFixed(2));
+                age = this.normalizeAge((numericDuration / ONE_HOUR).toFixed(2));
                 result = `+ ${age} hour`;
 
                 if (age !== 1) {
                     result += 's';
                 }
             } else {
-                age = this.normalizeNumber((numericDuration / ONE_MINUTE).toFixed(2));
+                age = this.normalizeAge((numericDuration / ONE_MINUTE).toFixed(2));
                 result = `+ ${age} min`;
 
                 if (age !== 1) {
@@ -205,7 +205,7 @@ export default {
 
             return result;
         },
-        normalizeNumber(num) {
+        normalizeAge(num) {
             const hundredtized = num * 100;
             const isWhole = hundredtized % 100 === 0;
 
