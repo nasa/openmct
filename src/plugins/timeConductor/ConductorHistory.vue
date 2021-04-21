@@ -143,7 +143,7 @@ export default {
                 let description = `${startTime} - ${this.formatTime(timespan.end)}`;
 
                 if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
-                    name = `Starting ${startTime} ${this.getDuration(timespan.end - timespan.start)}`;
+                    name = `${startTime} ${this.getDuration(timespan.end - timespan.start)}`;
                 } else {
                     name = description;
                 }
@@ -180,18 +180,36 @@ export default {
             let result;
             let age;
 
-            if (numericDuration > ONE_DAY) {
-                age = (numericDuration / ONE_DAY).toFixed(2);
-                result = `for ${age} days`;
-            } else if (numericDuration > ONE_HOUR) {
-                age = (numericDuration / ONE_HOUR).toFixed(2);
-                result = `for ${age} hours`;
+            if (numericDuration > ONE_DAY - 1) {
+                age = this.normalizeNumber((numericDuration / ONE_DAY).toFixed(2));
+                result = `+ ${age} day`;
+
+                if (age !== 1) {
+                    result += 's';
+                }
+            } else if (numericDuration > ONE_HOUR - 1) {
+                age = this.normalizeNumber((numericDuration / ONE_HOUR).toFixed(2));
+                result = `+ ${age} hour`;
+
+                if (age !== 1) {
+                    result += 's';
+                }
             } else {
-                age = (numericDuration / ONE_MINUTE).toFixed(2);
-                result = `for ${age} mins`;
+                age = this.normalizeNumber((numericDuration / ONE_MINUTE).toFixed(2));
+                result = `+ ${age} min`;
+
+                if (age !== 1) {
+                    result += 's';
+                }
             }
 
             return result;
+        },
+        normalizeNumber(num) {
+            const hundredtized = num * 100;
+            const isWhole = hundredtized % 100 === 0;
+
+            return isWhole ? hundredtized / 100 : num;
         },
         getHistoryFromLocalStorage() {
             const localStorageHistory = localStorage.getItem(this.storageKey);
@@ -214,24 +232,16 @@ export default {
                 start: this.isFixed ? this.bounds.start : this.offsets.start,
                 end: this.isFixed ? this.bounds.end : this.offsets.end
             };
-            let self = this;
 
-            function isNotEqual(entry) {
-                const start = entry.start !== self.start;
-                const end = entry.end !== self.end;
+            // no dupes
+            currentHistory = currentHistory.filter(ts => !(ts.start === timespan.start && ts.end === timespan.end));
+            currentHistory.unshift(timespan); // add to front
 
-                return start || end;
+            if (currentHistory.length > this.records) {
+                currentHistory.length = this.records;
             }
 
-            currentHistory = currentHistory.filter(isNotEqual, timespan);
-
-            while (currentHistory.length >= this.records) {
-                currentHistory.pop();
-            }
-
-            currentHistory.unshift(timespan);
             this.$set(this[this.currentHistory], key, currentHistory);
-
             this.persistHistoryToLocalStorage();
         },
         selectTimespan(timespan) {
