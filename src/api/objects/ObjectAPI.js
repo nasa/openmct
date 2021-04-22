@@ -520,8 +520,10 @@ ObjectAPI.prototype.getOriginalPath = function (identifier, path = []) {
  */
 
 function hasAlreadyBeenPersisted(domainObject) {
-    return domainObject.persisted !== undefined
-        && domainObject.persisted === domainObject.modified;
+    const result = domainObject.persisted !== undefined
+        && domainObject.persisted >= domainObject.modified;
+
+    return result;
 }
 
 export default ObjectAPI;
