@@ -39,6 +39,9 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
+const ONE_MINUTE = 60 * 1000;
+const ONE_HOUR = ONE_MINUTE * 60;
+const ONE_DAY = ONE_HOUR * 24;
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -135,10 +138,20 @@ export default {
     methods: {
         getHistoryMenuItems() {
             const history = this.historyForCurrentTimeSystem.map(timespan => {
+                let name;
+                let startTime = this.formatTime(timespan.start);
+                let description = `${startTime} - ${this.formatTime(timespan.end)}`;
+
+                if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
+                    name = `${startTime} ${this.getDuration(timespan.end - timespan.start)}`;
+                } else {
+                    name = description;
+                }
+
                 return {
                     cssClass: 'icon-history',
-                    name: `${this.formatTime(timespan.start)} - ${this.formatTime(timespan.end)}`,
-                    description: `${this.formatTime(timespan.start)} - ${this.formatTime(timespan.end)}`,
+                    name,
+                    description,
                     callBack: () => this.selectTimespan(timespan)
                 };
             });
@@ -163,6 +176,41 @@ export default {
                 };
             });
         },
+        getDuration(numericDuration) {
+            let result;
+            let age;
+
+            if (numericDuration > ONE_DAY - 1) {
+                age = this.normalizeAge((numericDuration / ONE_DAY).toFixed(2));
+                result = `+ ${age} day`;
+
+                if (age !== 1) {
+                    result += 's';
+                }
+            } else if (numericDuration > ONE_HOUR - 1) {
+                age = this.normalizeAge((numericDuration / ONE_HOUR).toFixed(2));
+                result = `+ ${age} hour`;
+
+                if (age !== 1) {
+                    result += 's';
+                }
+            } else {
+                age = this.normalizeAge((numericDuration / ONE_MINUTE).toFixed(2));
+                result = `+ ${age} min`;
+
+                if (age !== 1) {
+                    result += 's';
+                }
+            }
+
+            return result;
+        },
+        normalizeAge(num) {
+            const hundredtized = num * 100;
+            const isWhole = hundredtized % 100 === 0;
+
+            return isWhole ? hundredtized / 100 : num;
+        },
         getHistoryFromLocalStorage() {
             const localStorageHistory = localStorage.getItem(this.storageKey);
             const history = localStorageHistory ? JSON.parse(localStorageHistory) : undefined;
@@ -184,24 +232,16 @@ export default {
                 start: this.isFixed ? this.bounds.start : this.offsets.start,
                 end: this.isFixed ? this.bounds.end : this.offsets.end
             };
-            let self = this;
 
-            function isNotEqual(entry) {
-                const start = entry.start !== self.start;
-                const end = entry.end !== self.end;
+            // no dupes
+            currentHistory = currentHistory.filter(ts => !(ts.start === timespan.start && ts.end === timespan.end));
+            currentHistory.unshift(timespan); // add to front
 
-                return start || end;
+            if (currentHistory.length > this.records) {
+                currentHistory.length = this.records;
             }
 
-            currentHistory = currentHistory.filter(isNotEqual, timespan);
-
-            while (currentHistory.length >= this.records) {
-                currentHistory.pop();
-            }
-
-            currentHistory.unshift(timespan);
             this.$set(this[this.currentHistory], key, currentHistory);
-
             this.persistHistoryToLocalStorage();
         },
         selectTimespan(timespan) {
