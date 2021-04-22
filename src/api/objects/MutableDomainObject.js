@@ -76,7 +76,10 @@ class MutableDomainObject {
     }
     $set(path, value) {
         _.set(this, path, value);
-        _.set(this, 'modified', Date.now());
+
+        if (path !== 'persisted' && path !== 'modified') {
+            _.set(this, 'modified', Date.now());
+        }
 
         //Emit secret synchronization event first, so that all objects are in sync before subsequent events fired.
         this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);

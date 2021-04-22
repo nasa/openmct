@@ -26,6 +26,7 @@ import CouchObjectQueue from "./CouchObjectQueue";
 const REV = "_rev";
 const ID = "_id";
 const HEARTBEAT = 50000;
+const ALL_DOCS = "_all_docs?include_docs=true";
 
 export default class CouchObjectProvider {
     // options {
@@ -41,6 +42,8 @@ export default class CouchObjectProvider {
         this.objectQueue = {};
         this.observeEnabled = options.disableObserve !== true;
         this.observers = {};
+        this.batchIds = [];
+
         if (this.observeEnabled) {
             this.observeObjectChanges(options.filter);
         }
@@ -67,6 +70,9 @@ export default class CouchObjectProvider {
         // stringify body if needed
         if (fetchOptions.body) {
             fetchOptions.body = JSON.stringify(fetchOptions.body);
+            fetchOptions.headers = {
+                "Content-Type": "application/json"
+            };
         }
 
         return fetch(this.url + '/' + subPath, fetchOptions)
@@ -78,14 +84,18 @@ export default class CouchObjectProvider {
             });
     }
 
-    // Check the response to a create/update/delete request;
-    // track the rev if it's valid, otherwise return false to
-    // indicate that the request failed.
-    // persist any queued objects
-    checkResponse(response, intermediateResponse, key) {
+    /**
+     * Check the response to a create/update/delete request;
+     * track the rev if it's valid, otherwise return false to
+     * indicate that the request failed.
+     * persist any queued objects
+     * @private
+     */
+    checkResponse(response, intermediateResponse) {
         let requestSuccess = false;
         const id = response ? response.id : undefined;
         let rev;
+
         if (response && response.ok) {
             rev = response.rev;
             requestSuccess = true;
@@ -108,6 +118,9 @@ export default class CouchObjectProvider {
         }
     }
 
+    /**
+     * @private
+     */
     getModel(response) {
         if (response && response.model) {
             let key = response[ID];
@@ -132,10 +145,118 @@ export default class CouchObjectProvider {
     }
 
     get(identifier, abortSignal) {
-        return this.request(identifier.key, "GET", undefined, abortSignal).then(this.getModel.bind(this));
+        this.batchIds.push(identifier.key);
+
+        if (this.bulkPromise === undefined) {
+            this.bulkPromise = this.deferBatchedGet(abortSignal);
+        }
+
+        return this.bulkPromise
+            .then((domainObjectMap) => {
+                return domainObjectMap[identifier.key];
+            });
     }
 
-    async getObjectsByFilter(filter) {
+    /**
+     * @private
+     */
+    deferBatchedGet(abortSignal) {
+        // We until the next event loop cycle to "collect" all of the get
+        // requests triggered in this iteration of the event loop
+
+        return this.waitOneEventCycle().then(() => {
+            let batchIds = this.batchIds;
+
+            this.clearBatch();
+
+            if (batchIds.length === 1) {
+                let objectKey = batchIds[0];
+
+                //If there's only one request, just do a regular get
+                return this.request(objectKey, "GET", undefined, abortSignal)
+                    .then(this.returnAsMap(objectKey));
+            } else {
+                return this.bulkGet(batchIds, abortSignal);
+            }
+        });
+    }
+
+    /**
+     * @private
+     */
+    returnAsMap(objectKey) {
+        return (result) => {
+            let objectMap = {};
+            objectMap[objectKey] = this.getModel(result);
+
+            return objectMap;
+        };
+    }
+
+    /**
+     * @private
+     */
+    clearBatch() {
+        this.batchIds = [];
+        delete this.bulkPromise;
+    }
+
+    /**
+     * @private
+     */
+    waitOneEventCycle() {
+        return new Promise((resolve) => {
+            setTimeout(resolve);
+        });
+    }
+
+    /**
+     * @private
+     */
+    bulkGet(ids, signal) {
+        ids = this.removeDuplicates(ids);
+
+        const query = {
+            'keys': ids
+        };
+
+        return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
+            if (response && response.rows !== undefined) {
+                return response.rows.reduce((map, row) => {
+                    if (row.doc !== undefined) {
+                        map[row.key] = this.getModel(row.doc);
+                    }
+
+                    return map;
+                }, {});
+            } else {
+                return {};
+            }
+        });
+    }
+
+    /**
+     * @private
+     */
+    removeDuplicates(array) {
+        return Array.from(new Set(array));
+    }
+
+    search(query, abortSignal) {
+        const filter = {
+            "selector": {
+                "model": {
+                    "name": {
+                        "$regex": `(?i)${query}`
+                    }
+                }
+            }
+        };
+
+        return this.getObjectsByFilter(filter, abortSignal);
+    }
+
+    async getObjectsByFilter(filter, abortSignal) {
         let objects = [];
 
         let url = `${this.url}/_find`;
@@ -150,6 +271,7 @@ export default class CouchObjectProvider {
             headers: {
                 "Content-Type": "application/json"
             },
+            signal: abortSignal,
             body
         });
 
@@ -204,6 +326,9 @@ export default class CouchObjectProvider {
         };
     }
 
+    /**
+     * @private
+     */
     abortGetChanges() {
         if (this.controller) {
             this.controller.abort();
@@ -213,6 +338,9 @@ export default class CouchObjectProvider {
         return true;
     }
 
+    /**
+     * @private
+     */
     async observeObjectChanges(filter) {
         let intermediateResponse = this.getIntermediateResponse();
 
@@ -293,6 +421,9 @@ export default class CouchObjectProvider {
 
     }
 
+    /**
+     * @private
+     */
     getIntermediateResponse() {
         let intermediateResponse = {};
         intermediateResponse.promise = new Promise(function (resolve, reject) {
@@ -303,6 +434,9 @@ export default class CouchObjectProvider {
         return intermediateResponse;
     }
 
+    /**
+     * @private
+     */
     enqueueObject(key, model, intermediateResponse) {
         if (this.objectQueue[key]) {
             this.objectQueue[key].enqueue({
@@ -331,6 +465,9 @@ export default class CouchObjectProvider {
         return intermediateResponse.promise;
     }
 
+    /**
+     * @private
+     */
     updateQueued(key) {
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
