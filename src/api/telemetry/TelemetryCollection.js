@@ -21,38 +21,11 @@
  *****************************************************************************/
 
 import _ from 'lodash';
-
-/**
- * Binds class methods
- */
-function methods() {
-    return [
-        'load',
-        'on',
-        'off',
-        'hasMorePages',
-        'nextPage',
-        'updateOptions',
-        'destroy',
-        '_requestHistoricalTelemetry',
-        '_initiateHistoricalRequests',
-        '_initiateSubscriptionTelemetry',
-        '_addPage',
-        '_processNewTelemetry',
-        '_bounds',
-        '_timeSystem',
-        '_reset',
-        '_emit',
-        '_watchBounds',
-        '_unwatchBounds',
-        '_watchTimeSystem',
-        '_unwatchTimeSystem'
-    ];
-}
+import EventEmitter from 'EventEmitter';
 
 /** Class representing a Telemetry Collection. */
 
-export class TelemetryCollection {
+export class TelemetryCollection extends EventEmitter {
     /**
      * Creates a Telemetry Collection
      *
@@ -61,7 +34,7 @@ export class TelemetryCollection {
      * @param  {object} options - Any options passed in for request/subscribe
      */
     constructor(openmct, domainObject, options) {
-        methods().forEach(method => this[method] = this[method].bind(this));
+        super();
 
         this.loaded = false;
         this.openmct = openmct;
@@ -80,12 +53,7 @@ export class TelemetryCollection {
 
         this.collectionState = undefined;
 
-        this.listeners = {
-            add: [],
-            remove: [],
-            timesystem: [],
-            bounds: []
-        };
+        this.lastBounds = undefined;
     }
     /**
      * This will load start the requests for historical and realtime data,
@@ -154,45 +122,6 @@ export class TelemetryCollection {
         // will update options and providers if necesarry
         this._initiateHistoricalRequests();
         this._initiateSubscriptionTelemetry();
-    }
-
-    /**
-     * @param  {string} event - add, remove
-     * @param  {requestCallback} callback - callback to be executed when event happens,
-     * should accept an array of added telemetry data
-     * @param  {object} [context] - optional context to use
-     */
-    on(event, callback, context) {
-        if (!this.listeners[event]) {
-            throw new Error('Event not supported by Telemetry Collections: ' + event);
-        }
-
-        if (this.listeners[event].includes(callback)) {
-            throw new Error('Tried to add a listener that is already registered');
-        }
-
-        this.listeners[event].push({
-            callback,
-            context
-        });
-    }
-
-    /**
-     * @param  {string} event - add, remove
-     * @param  {requestCallback} callback - callback to be executed when event happens,
-     * should accept an array of removed
-     * telemetry data
-     */
-    off(event, callback) {
-        if (!this.listeners[event]) {
-            throw new Error('Event not supported by Telemetry Collections: ' + event);
-        }
-
-        if (!this.listeners[event].includes(callback)) {
-            throw new Error('Tried to remove a listener that does not exist');
-        }
-
-        this.listeners[event].remove(callback);
     }
 
     /**
@@ -298,7 +227,7 @@ export class TelemetryCollection {
         }
 
         if (added.length) {
-            this._emit('add', added);
+            this.emit('add', added);
         }
     }
 
@@ -317,7 +246,7 @@ export class TelemetryCollection {
 
         this.lastBounds = bounds;
 
-        this._emit('bounds', ...arguments);
+        this.emit('bounds', ...arguments);
 
         if (isTick) {
             // need to check futureBuffer and need to check
@@ -345,11 +274,11 @@ export class TelemetryCollection {
             }
 
             if (discarded.length > 0) {
-                this._emit('remove', discarded);
+                this.emit('remove', discarded);
             }
 
             if (added.length > 0) {
-                this._emit('add', added);
+                this.emit('add', added);
             }
 
         } else {
@@ -375,7 +304,7 @@ export class TelemetryCollection {
             return valueFormatter.parse(datum);
         };
 
-        this._emit('timesystem', timeSystem);
+        this.emit('timesystem', timeSystem);
         this._reset();
     }
 
@@ -400,50 +329,30 @@ export class TelemetryCollection {
     }
 
     /**
-     * will call all the listeners for the event type and pass in the args
-     *
-     * @param  {string} event event type, 'add' or 'remove'
-     * @param  {arguments} args arguments to pass to the cvent callback
-     */
-    _emit(event, ...args) {
-        if (!this.listeners[event].length) {
-            return;
-        }
-
-        this.listeners[event].forEach((listener) => {
-            if (listener.context) {
-                listener.callback.apply(listener.context, args);
-            } else {
-                listener.callback(...args);
-            }
-        });
-    }
-
-    /**
      * adds the _bounds callback to the 'bounds' timeAPI listener
      */
     _watchBounds() {
-        this.openmct.time.on('bounds', this._bounds);
+        this.openmct.time.on('bounds', this._bounds, this);
     }
 
     /**
      * removes the _bounds callback from the 'bounds' timeAPI listener
      */
     _unwatchBounds() {
-        this.openmct.time.off('bounds', this._bounds);
+        this.openmct.time.off('bounds', this._bounds, this);
     }
 
     /**
      * adds the _timeSystem callback to the 'timeSystem' timeAPI listener
      */
     _watchTimeSystem() {
-        this.openmct.time.on('timeSystem', this._timeSystem);
+        this.openmct.time.on('timeSystem', this._timeSystem, this);
     }
 
     /**
      * removes the _timeSystem callback from the 'timeSystem' timeAPI listener
      */
     _unwatchTimeSystem() {
-        this.openmct.time.off('timeSystem', this._timeSystem);
+        this.openmct.time.off('timeSystem', this._timeSystem, this);
     }
 }
