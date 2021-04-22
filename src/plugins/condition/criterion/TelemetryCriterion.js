@@ -58,6 +58,10 @@ export default class TelemetryCriterion extends EventEmitter {
         }
     }
 
+    usesTelemetry(id) {
+        return this.telemetryObjectIdAsString && (this.telemetryObjectIdAsString === id);
+    }
+
     subscribeForStaleData() {
         if (this.stalenessSubscription) {
             this.stalenessSubscription.clear();

@@ -237,11 +237,13 @@ define(
 
             const capture = this.capture.bind(this, selectable);
             const selectCapture = this.selectCapture.bind(this, selectable);
+            let removeMutable = false;
 
             element.addEventListener('click', capture, true);
             element.addEventListener('click', selectCapture);
 
-            if (context.item) {
+            if (context.item && context.item.isMutable !== true) {
+                removeMutable = true;
                 context.item = this.openmct.objects._toMutable(context.item);
             }
 
@@ -257,7 +259,7 @@ define(
                 element.removeEventListener('click', capture, true);
                 element.removeEventListener('click', selectCapture);
 
-                if (context.item !== undefined && context.item.isMutable) {
+                if (context.item !== undefined && context.item.isMutable && removeMutable === true) {
                     this.openmct.objects.destroyMutable(context.item);
                 }
             }).bind(this);
