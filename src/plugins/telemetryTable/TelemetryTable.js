@@ -116,17 +116,18 @@ define([
             this.filteredRows.sortBy(sortOptions);
         }
 
-        async loadComposition() {
+        loadComposition() {
             this.tableComposition = this.openmct.composition.get(this.domainObject);
 
             if (this.tableComposition !== undefined) {
-                let composition = await this.tableComposition.load();
+                this.tableComposition.load().then((composition) => {
 
-                composition = composition.filter(this.isTelemetryObject);
-                composition.forEach(this.addTelemetryObject);
+                    composition = composition.filter(this.isTelemetryObject);
+                    composition.forEach(this.addTelemetryObject);
 
-                this.tableComposition.on('add', this.addTelemetryObject);
-                this.tableComposition.on('remove', this.removeTelemetryObject);
+                    this.tableComposition.on('add', this.addTelemetryObject);
+                    this.tableComposition.on('remove', this.removeTelemetryObject);
+                });
             }
         }
 
