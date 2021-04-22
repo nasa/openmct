@@ -710,25 +710,25 @@ export default {
                 }
             });
         },
-        async aggregateSearchResults(results, abortSignal) {
+        aggregateSearchResults(results, abortSignal) {
             for (const result of results) {
                 if (!abortSignal.aborted) {
-                    const objectPath = await this.openmct.objects.getOriginalPath(result.identifier);
+                    this.openmct.objects.getOriginalPath(result.identifier).then((objectPath) => {
+                        // removing the item itself, as the path we pass to buildTreeItem is a parent path
+                        objectPath.shift();
 
-                    // removing the item itself, as the path we pass to buildTreeItem is a parent path
-                    objectPath.shift();
+                        // if root, remove, we're not using in object path for tree
+                        let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
+                        if (lastObject && lastObject.type === 'root') {
+                            objectPath.pop();
+                        }
 
-                    // if root, remove, we're not using in object path for tree
-                    let lastObject = objectPath.length ? objectPath[objectPath.length - 1] : false;
-                    if (lastObject && lastObject.type === 'root') {
-                        objectPath.pop();
-                    }
+                        // we reverse the objectPath in the tree, so have to do it here first,
+                        // since this one is already in the correct direction
+                        let resultObject = this.buildTreeItem(result, objectPath.reverse());
 
-                    // we reverse the objectPath in the tree, so have to do it here first,
-                    // since this one is already in the correct direction
-                    let resultObject = this.buildTreeItem(result, objectPath.reverse());
-
-                    this.searchResultItems.push(resultObject);
+                        this.searchResultItems.push(resultObject);
+                    });
                 }
             }
         },
