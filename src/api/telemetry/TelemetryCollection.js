@@ -155,17 +155,17 @@ export class TelemetryCollection extends EventEmitter {
             return;
         }
 
-        let historicalData = await this.historicalProvider.request(this.domainObject, this.options)
-            .catch((rejected) => {
-                this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-                console.error(rejected);
+        let historicalData;
 
-                return Promise.reject(rejected);
-            });
-
-        if (Array.isArray(historicalData)) {
-            this._processNewTelemetry(historicalData);
+        try {
+            historicalData = await this.historicalProvider.request(this.domainObject, this.options);
+        } catch (error) {
+            console.error('Error requesting telemetry data...');
+            throw new Error(error);
         }
+
+        this._processNewTelemetry(historicalData);
+
     }
     /**
      * This uses the built in subscription function from Telemetry API
