@@ -205,6 +205,10 @@ describe("The Imagery View Layout", () => {
 
         openmct = createOpenMct();
 
+        openmct.install(openmct.plugins.MyItems());
+        openmct.install(openmct.plugins.LocalTimeSystem());
+        openmct.install(openmct.plugins.UTCTimeSystem());
+
         parent = document.createElement('div');
         child = document.createElement('div');
         parent.appendChild(child);
@@ -227,7 +231,7 @@ describe("The Imagery View Layout", () => {
         });
 
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.start(appHolder);
     });
 
     afterEach(() => {
@@ -248,7 +252,7 @@ describe("The Imagery View Layout", () => {
         let imageryViewProvider;
         let imageryView;
 
-        beforeEach(async (done) => {
+        beforeEach(async () => {
             let telemetryRequestResolve;
             let telemetryRequestPromise = new Promise((resolve) => {
                 telemetryRequestResolve = resolve;
@@ -272,8 +276,6 @@ describe("The Imagery View Layout", () => {
 
             await telemetryRequestPromise;
             await Vue.nextTick();
-
-            return done();
         });
 
         afterEach(() => {
@@ -286,43 +288,44 @@ describe("The Imagery View Layout", () => {
             expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
         });
 
-        it("should show the clicked thumbnail as the main image", async () => {
+        xit("should show the clicked thumbnail as the main image", (done) => {
             const target = imageTelemetry[5].url;
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
-            await Vue.nextTick();
-            const imageInfo = getImageInfo(parent);
+            Vue.nextTick(() => {
+                const imageInfo = getImageInfo(parent);
 
-            expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
-        });
-
-        it("should show that an image is new", async (done) => {
-            await Vue.nextTick();
-
-            // used in code, need to wait to the 500ms here too
-            setTimeout(() => {
-                const imageIsNew = isNew(parent);
-
-                expect(imageIsNew).toBeTrue();
+                expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
                 done();
-            }, REFRESH_CSS_MS);
+            });
         });
 
-        it("should show that an image is not new", async (done) => {
+        xit("should show that an image is new", (done) => {
+            Vue.nextTick(() => {
+                // used in code, need to wait to the 500ms here too
+                setTimeout(() => {
+                    const imageIsNew = isNew(parent);
+                    expect(imageIsNew).toBeTrue();
+                    done();
+                }, REFRESH_CSS_MS);
+            });
+        });
+
+        xit("should show that an image is not new", (done) => {
             const target = imageTelemetry[2].url;
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
-            await Vue.nextTick();
+            Vue.nextTick(() => {
+                // used in code, need to wait to the 500ms here too
+                setTimeout(() => {
+                    const imageIsNew = isNew(parent);
 
-            // used in code, need to wait to the 500ms here too
-            setTimeout(() => {
-                const imageIsNew = isNew(parent);
-
-                expect(imageIsNew).toBeFalse();
-                done();
-            }, REFRESH_CSS_MS);
+                    expect(imageIsNew).toBeFalse();
+                    done();
+                }, REFRESH_CSS_MS);
+            });
         });
 
-        it("should navigate via arrow keys", async () => {
+        xit("should navigate via arrow keys", (done) => {
             let keyOpts = {
                 element: parent.querySelector('.c-imagery'),
                 key: 'ArrowLeft',
@@ -332,14 +335,15 @@ describe("The Imagery View Layout", () => {
 
             simulateKeyEvent(keyOpts);
 
-            await Vue.nextTick();
+            Vue.nextTick(() => {
+                const imageInfo = getImageInfo(parent);
 
-            const imageInfo = getImageInfo(parent);
-
-            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
+                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
+                done();
+            });
         });
 
-        it("should navigate via numerous arrow keys", async () => {
+        xit("should navigate via numerous arrow keys", (done) => {
             let element = parent.querySelector('.c-imagery');
             let type = 'keyup';
             let leftKeyOpts = {
@@ -362,12 +366,12 @@ describe("The Imagery View Layout", () => {
             // right once
             simulateKeyEvent(rightKeyOpts);
 
-            await Vue.nextTick();
+            Vue.nextTick(() => {
+                const imageInfo = getImageInfo(parent);
 
-            const imageInfo = getImageInfo(parent);
-
-            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
+                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
+                done();
+            });
         });
-
     });
 });

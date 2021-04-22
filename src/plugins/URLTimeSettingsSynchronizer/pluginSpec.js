@@ -122,30 +122,4 @@ describe("The URLTimeSettingsSynchronizer", () => {
 
         openmct.router.on('change:hash', resolveFunction);
     });
-
-
-    it("when the clock mode is set to fixed, it is reflected in the URL", (done) => {
-        let success;
-
-        resolveFunction = () => {
-            openmct.time.stopClock();
-            openmct.time.bounds({
-                start: 0,
-                end: 1
-            });
-
-            success = window.location.href.includes('tc.mode=fixed')
-                && window.location.href.includes('tc.startBound=0')
-                && window.location.href.includes('tc.endBound=1');
-
-            if (success) {
-                expect(success).toBe(true);
-
-                openmct.router.removeListener('change:hash', resolveFunction);
-                done();
-            }
-        };
-
-        openmct.router.on('change:hash', resolveFunction);
-    });
 });
