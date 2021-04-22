@@ -28,6 +28,7 @@ describe("the plugin", () => {
     let openmct;
     let goToFolderAction;
     let mockObjectPath;
+    let resolveFunction;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -47,7 +48,6 @@ describe("the plugin", () => {
     });
 
     describe('when invoked', () => {
-
         beforeEach(() => {
             mockObjectPath = [{
                 name: 'mock folder',
@@ -66,8 +66,25 @@ describe("the plugin", () => {
             goToFolderAction.invoke(mockObjectPath);
         });
 
-        it('goes to the original location', () => {
-            expect(window.location.href).toContain('context.html#/browse/?tc.mode=fixed&tc.startBound=0&tc.endBound=1&tc.timeSystem=utc');
+        it('goes to the original location', (done) => {
+            let success;
+            resolveFunction = () => {
+                openmct.time.bounds({
+                    start: 0,
+                    end: 1
+                });
+
+                console.error('goes to the original location', window.location.href);
+                success = window.location.href.toContain('context.html#/browse/?tc.mode=fixed&tc.startBound=0&tc.endBound=1&tc.timeSystem=utc');
+                if (success) {
+                    expect(success).toBe(true);
+    
+                    openmct.router.removeListener('change:hash', resolveFunction);
+                    done();
+                }
+            };
+    
+            openmct.router.on('change:hash', resolveFunction);
         });
     });
 });
