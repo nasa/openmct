@@ -4,6 +4,10 @@
       class="form c-form"
       autocomplete="off"
 >
+    <div class="c-overlay__top-bar">
+        <div class="c-overlay__dialog-title">{{model.title}}</div>
+        <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
+    </div>
     <span v-for="section in model.sections"
           :key="section.name"
           class="l-form-section c-form__section"

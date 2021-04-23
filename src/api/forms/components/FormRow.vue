@@ -10,7 +10,7 @@
         {{ row.name }}
     </div>
     <div class="c-form__row__controls controls flex-elem">
-        <div v-if="row.control && row.control !== 'locator'"
+        <div v-if="row.control"
              class="c-form__controls-wrapper wrapper"
         >
             <component
@@ -30,6 +30,7 @@
 <script>
 import AutoCompleteField from "@/api/forms/components/controls/AutoCompleteField.vue";
 import Composite from "@/api/forms/components/controls/Composite.vue";
+import Locator from "@/api/forms/components/controls/Locator.vue";
 import NumberField from "@/api/forms/components/controls/NumberField.vue";
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
 import TextArea from "@/api/forms/components/controls/TextArea.vue";
@@ -38,6 +39,7 @@ import TextField from "@/api/forms/components/controls/TextField.vue";
 const CONTROL_TYPE_VIEW_MAP = {
     'autocomplete': AutoCompleteField,
     'composite': Composite,
+    'locator': Locator,
     'numberfield': NumberField,
     'select': SelectField,
     'textarea': TextArea,
@@ -114,6 +116,9 @@ export default {
         onChange(data) {
             this.$emit('onChange', data);
         }
+    },
+    mounted() {
+        console.log(this.row);
     }
 };
 </script>

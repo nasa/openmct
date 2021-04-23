@@ -24,6 +24,7 @@ import CreateWizard from './CreateWizard';
 
 import FormProperties from './components/FormProperties.vue';
 
+import uuid from 'uuid';
 import Vue from 'vue';
 
 export const CONTROLS = [
@@ -47,6 +48,8 @@ export default class FormsAPI {
     constructor(openmct) {
         this.openmct = openmct;
         this.controls = {};
+
+        this.parentDomainObject = {};
 
         this.init();
     }
@@ -75,7 +78,8 @@ export default class FormsAPI {
         return controls;
     }
 
-    showForm(domainObject, formStructure) {
+    showForm(domainObject, formStructure, isEdit) {
+        const self = this;
         const changes = {};
         const vm = new Vue({
             components: { FormProperties },
@@ -100,7 +104,7 @@ export default class FormsAPI {
                     emphasis: 'true',
                     callback: () => {
                         overlay.dismiss();
-                        this.save(domainObject, changes);
+                        this.save(domainObject, changes, isEdit);
                     }
                 },
                 {
@@ -112,46 +116,57 @@ export default class FormsAPI {
         });
 
         function onChange(data) {
-            console.log(data.model, data.value);
-            const property = data.model.property;
-            let key = data.model.key;
-            if (property && property.length) {
-                key = property.join('.');
+            const parentDomainObject = data.parentDomainObject;
+            if (parentDomainObject) {
+                self.parentDomainObject = parentDomainObject;
             }
 
-            changes[key] = data.value;
+            if (data.model) {
+                const property = data.model.property;
+                let key = data.model.key;
+                if (property && property.length) {
+                    key = property.join('.');
+                }
+
+                changes[key] = data.value;
+            }
         }
     }
 
     showEditForm(objectPath) {
         const createWizard = new CreateWizard(this.openmct, objectPath[0], objectPath[1]);
         const formStructure = createWizard.getFormStructure(false);
+        formStructure.title = 'Edit ' + objectPath[0].name;
 
-        this.showForm(objectPath[0], formStructure);
+        this.showForm(objectPath[0], formStructure, true);
     }
 
     showCreateForm(type, parentDomainObject) {
+        this.parentDomainObject = parentDomainObject;
+
         const typeDefinition = this.openmct.types.get(type);
         const definition = typeDefinition.definition;
         const domainObject = {
             type,
-            location: this.openmct.objects.makeKeyString(parentDomainObject.identifier)
+            identifier: {
+                key: uuid(),
+                namespace: parentDomainObject.identifier.namespace
+            }
         };
 
         if (definition.initialize) {
             definition.initialize(domainObject);
         }
 
-        // domainObject.modified = Date.now();
         const createWizard = new CreateWizard(this.openmct, domainObject, parentDomainObject);
         const formStructure = createWizard.getFormStructure(true);
+
+        formStructure.title = 'Create a New ' + definition.name;
 
         this.showForm(domainObject, formStructure);
     }
 
-    save(domainObject, changes) {
-        console.log('save', domainObject, changes);
-
+    async save(domainObject, changes, isEdit) {
         Object.entries(changes).forEach(([key, value]) => {
             const properties = key.split('.');
             let object = domainObject;
@@ -166,8 +181,17 @@ export default class FormsAPI {
             object = value;
         });
 
-        console.log('domainObject', domainObject);
-        // domainObject.getCapability("editor").save();
+        domainObject.modified = Date.now();
+        domainObject.location = this.openmct.objects.makeKeyString(this.parentDomainObject.identifier);
+        domainObject.identifier.namespace = this.parentDomainObject.identifier.namespace;
+
+        let objectSaved = await this.openmct.objects.save(domainObject);
+        if (!isEdit && objectSaved) {
+            const compositionCollection = await openmct.composition.get(this.parentDomainObject);
+            compositionCollection.add(domainObject);
+
+            this._navigateAndEdit(domainObject);
+        }
     }
 
     // Private methods
@@ -178,6 +202,19 @@ export default class FormsAPI {
         CONTROLS.forEach(control => {
             this.addControl(control);
         });
+    }
+
+    async _navigateAndEdit(domainObject) {
+        const objectPath = await this.openmct.objects.getOriginalPath(domainObject.identifier);
+
+        const url = '#/browse/' + objectPath
+                        .slice(1)
+                        .map(object => object && this.openmct.objects.makeKeyString(object.identifier.key))
+                        .reverse()
+                        .join('/');
+
+        window.location.href = url;
+        this.openmct.editor.edit();
     }
 
     // Init
