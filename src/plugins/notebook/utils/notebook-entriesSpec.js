@@ -112,7 +112,7 @@ let openmct;
 let mockIdentifierService;
 
 describe('Notebook Entries:', () => {
-    beforeEach(done => {
+    beforeEach(() => {
         openmct = createOpenMct();
         openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
         mockIdentifierService = jasmine.createSpyObj(
@@ -134,13 +134,12 @@ describe('Notebook Entries:', () => {
             'update'
         ]));
         window.localStorage.setItem('notebook-storage', null);
-
-        done();
     });
 
     afterEach(() => {
         notebookDomainObject.configuration.entries[selectedSection.id][selectedPage.id] = [];
-        resetApplicationStatePromise(openmct);
+
+        return resetApplicationStatePromise(openmct);
     });
 
     it('getNotebookEntries has no entries', () => {
@@ -149,12 +148,11 @@ describe('Notebook Entries:', () => {
         expect(entries.length).toEqual(0);
     });
 
-    it('addNotebookEntry adds entry', (done) => {
+    it('addNotebookEntry adds entry', () => {
         const unlisten = openmct.objects.observe(notebookDomainObject, '*', (object) => {
             const entries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
 
             expect(entries.length).toEqual(1);
-            done();
             unlisten();
         });
 

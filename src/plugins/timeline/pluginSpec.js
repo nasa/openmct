@@ -50,9 +50,6 @@ describe('the plugin', function () {
                 }
             }
         ];
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
 
         openmct = createOpenMct();
         openmct.install(new TimelinePlugin());
@@ -73,7 +70,7 @@ describe('the plugin', function () {
         });
 
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
@@ -100,7 +97,7 @@ describe('the plugin', function () {
     describe('the view', () => {
         let timelineView;
 
-        beforeEach((done) => {
+        beforeEach(() => {
             const testViewObject = {
                 id: "test-object",
                 type: "time-strip"
@@ -110,7 +107,8 @@ describe('the plugin', function () {
             timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
             let view = timelineView.view(testViewObject, element);
             view.show(child, true);
-            Vue.nextTick(done);
+
+            return Vue.nextTick();
         });
 
         it('provides a view', () => {

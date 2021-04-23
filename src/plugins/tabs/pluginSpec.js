@@ -151,7 +151,7 @@ describe('the plugin', function () {
         let mockComposition;
         let count = 0;
 
-        beforeEach((done) => {
+        beforeEach(() => {
             mockComposition = new EventEmitter();
             mockComposition.load = () => {
                 if (count === 0) {
@@ -169,7 +169,8 @@ describe('the plugin', function () {
             tabsLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'tabs');
             let view = tabsLayoutViewProvider.view(testViewObject, []);
             view.show(child, true);
-            Vue.nextTick(done);
+
+            return Vue.nextTick();
         });
 
         it ('renders a tab for each item', () => {

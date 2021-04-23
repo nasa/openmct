@@ -29,9 +29,10 @@ describe('the plugin', function () {
     let element;
     let child;
     let openmct;
+    let appHolder;
 
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
+        appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
 
@@ -103,7 +104,7 @@ describe('the plugin', function () {
         ];
         let planView;
 
-        beforeEach((done) => {
+        beforeEach(() => {
             planDomainObject = {
                 identifier: {
                     key: 'test-object',
@@ -140,9 +141,7 @@ describe('the plugin', function () {
             let view = planView.view(planDomainObject, mockObjectPath);
             view.show(child, true);
 
-            return Vue.nextTick().then(() => {
-                done();
-            });
+            return Vue.nextTick();
         });
 
         it('loads activities into the view', () => {
