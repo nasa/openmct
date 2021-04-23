@@ -44,7 +44,7 @@ export default class URLTimeSettingsSynchronizer {
         this.setUrlFromTimeApi = this.setUrlFromTimeApi.bind(this);
         this.updateBounds = this.updateBounds.bind(this);
 
-        openmct.on('start', this.initialize);
+        // openmct.on('start', this.initialize);
         openmct.on('destroy', this.destroy);
     }
 

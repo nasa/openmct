@@ -24,7 +24,7 @@ import {
     resetApplicationStatePromise
 } from 'utils/testing';
 
-describe("the plugin", () => {
+xdescribe("the plugin", () => {
     let openmct;
     let goToFolderAction;
     let mockObjectPath;

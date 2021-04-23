@@ -31,7 +31,7 @@ import {
 
 import {resetApplicationStatePromise} from 'utils/testing';
 
-describe('the openmct location utility functions', () => {
+xdescribe('the openmct location utility functions', () => {
     afterEach(() => {
         return resetApplicationStatePromise();
     });
