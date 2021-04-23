@@ -23,7 +23,7 @@
 <template>
 <div
     class="c-compass"
-    :style="compassDimensionsStyle"
+    :style="`width: ${ sizedImageDimensions.width }px; height: ${ sizedImageDimensions.height }px`"
 >
     <CompassHUD
         v-if="hasCameraFieldOfView"
@@ -34,6 +34,7 @@
     <CompassRose
         v-if="hasCameraFieldOfView"
         :heading="heading"
+        :sized-image-width="sizedImageDimensions.width"
         :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
@@ -77,6 +78,19 @@ export default {
         }
     },
     computed: {
+        sizedImageDimensions() {
+            let dim = {};
+            if ((this.containerWidth / this.containerHeight) > this.naturalAspectRatio) {
+                // container is wider than image
+                dim.width = this.containerHeight * this.naturalAspectRatio;
+                dim.height = this.containerHeight;
+            } else {
+                // container is taller than image
+                dim.width = this.containerWidth;
+                dim.height = this.containerWidth * this.naturalAspectRatio;
+            }
+            return dim;
+        },
         hasCameraFieldOfView() {
             return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
         },
@@ -94,25 +108,6 @@ export default {
         },
         cameraAngleOfView() {
             return CAMERA_ANGLE_OF_VIEW;
-        },
-        compassDimensionsStyle() {
-            const containerAspectRatio = this.containerWidth / this.containerHeight;
-
-            let width;
-            let height;
-
-            if (containerAspectRatio < this.naturalAspectRatio) {
-                width = '100%';
-                height = `${ this.containerWidth / this.naturalAspectRatio }px`;
-            } else {
-                width = `${ this.containerHeight * this.naturalAspectRatio }px`;
-                height = '100%';
-            }
-
-            return {
-                width: width,
-                height: height
-            };
         }
     },
     methods: {
