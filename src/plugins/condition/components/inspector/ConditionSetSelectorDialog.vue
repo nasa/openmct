@@ -22,7 +22,9 @@
 
 <template>
 <div class="u-contents">
-    <div class="c-overlay__top-bar">
+    <div v-if="!hideTitle"
+         class="c-overlay__top-bar"
+    >
         <div class="c-overlay__dialog-title">Select Condition Set</div>
     </div>
     <div class="c-overlay__contents-main c-selector c-tree-and-search">
@@ -91,6 +93,22 @@ export default {
         ConditionSetDialogTreeItem
     },
     inject: ['openmct'],
+    props: {
+        hideTitle: {
+            type: Boolean,
+            required: false,
+            default() {
+                return false;
+            }
+        },
+        ignoreTypeCheck: {
+            type: Boolean,
+            required: false,
+            default() {
+                return false;
+            }
+        }
+    },
     data() {
         return {
             expanded: false,
@@ -178,7 +196,7 @@ export default {
             }
         },
         handleItemSelection(item, node) {
-            if (item && item.type === 'conditionSet') {
+            if (item && (this.ignoreTypeCheck || item.type === 'conditionSet')) {
                 const parentId = (node.objectPath && node.objectPath.length > 1) ? node.objectPath[1].identifier : undefined;
                 this.selectedItem = {
                     itemId: item.identifier,

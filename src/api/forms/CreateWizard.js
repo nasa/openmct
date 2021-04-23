@@ -53,8 +53,6 @@ export default class CreateWizard {
             value: this.domainObject.notes
         };
 
-        console.log('addNotes', this.domainObject);
-
         sections.forEach(section => {
             if (section.name !== 'Properties') {
                 return;
@@ -102,22 +100,12 @@ export default class CreateWizard {
 
         sections.push({
             name: 'Properties',
-            rows: this.properties.map((property, index) => {
-                // Property definition is same as form row definition
-                console.log('property', property);
-                let row = JSON.parse(JSON.stringify(property));
+            rows: this.properties.map(property => {
+                    const row = JSON.parse(JSON.stringify(property));
+                    row.value = this.getValue(row);
 
-                // Use index as the key into the formValue;
-                // this correlates to the indexing provided by
-                // getInitialFormValue
-                // row.key = index;
-                row.value = this.getValue(row);
-
-                return row;
-            }).filter(function (row) {
-                // Only show rows which have defined controls
-                return row && row.control;
-            })
+                    return row;
+                }).filter(row => row && row.control)
         });
 
         this.addNotes(sections);
@@ -134,7 +122,10 @@ export default class CreateWizard {
                 cssClass: 'grows',
                 rows: [{
                     name: 'Save In',
+                    cssClass: 'grows',
                     control: 'locator',
+                    domainObject,
+                    parent: this.parent,
                     validate: validateLocation.bind(this),
                     key: 'createParent'
                 }]
@@ -142,8 +133,7 @@ export default class CreateWizard {
         }
 
         return {
-            sections: sections,
-            name: 'Create a New ' + this.type.definition.name
+            sections
         };
     }
 
