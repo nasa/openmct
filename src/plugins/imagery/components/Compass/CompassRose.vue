@@ -22,7 +22,8 @@
 
 <template>
 <div class="w-direction-rose"
-     :class="compassRoseSizing">
+     :class="compassRoseSizing"
+>
     <div
         class="c-direction-rose"
         @click="toggleLockCompass"
@@ -185,15 +186,20 @@ export default {
     },
     computed: {
         compassRoseSizing() {
+            let compassRoseSizing = '';
             if (this.sizedImageWidth < 300) {
-                return '--rose-small --rose-min';
+                compassRoseSizing = '--rose-small --rose-min';
             }
+
             if (this.sizedImageWidth < 500) {
-                return '--rose-small';
+                compassRoseSizing = '--rose-small';
             }
+
             if (this.sizedImageWidth > 1000) {
-                return '--rose-max';
+                compassRoseSizing = '--rose-max';
             }
+
+            return compassRoseSizing;
         },
         compassRoseStyle() {
             return { transform: `rotate(${ this.north }deg)` };

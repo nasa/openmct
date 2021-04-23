@@ -79,17 +79,18 @@ export default {
     },
     computed: {
         sizedImageDimensions() {
-            let dim = {};
+            let sizedImageDimensions = {};
             if ((this.containerWidth / this.containerHeight) > this.naturalAspectRatio) {
                 // container is wider than image
-                dim.width = this.containerHeight * this.naturalAspectRatio;
-                dim.height = this.containerHeight;
+                sizedImageDimensions.width = this.containerHeight * this.naturalAspectRatio;
+                sizedImageDimensions.height = this.containerHeight;
             } else {
                 // container is taller than image
-                dim.width = this.containerWidth;
-                dim.height = this.containerWidth * this.naturalAspectRatio;
+                sizedImageDimensions.width = this.containerWidth;
+                sizedImageDimensions.height = this.containerWidth * this.naturalAspectRatio;
             }
-            return dim;
+
+            return sizedImageDimensions;
         },
         hasCameraFieldOfView() {
             return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
