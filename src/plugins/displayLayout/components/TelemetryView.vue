@@ -240,7 +240,7 @@ export default {
             this.mutablePromise.then(() => {
                 this.openmct.objects.destroyMutable(this.domainObject);
             });
-        } else {
+        } else if (this.domainObject.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },

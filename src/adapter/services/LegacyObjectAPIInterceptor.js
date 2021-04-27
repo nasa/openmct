@@ -52,7 +52,7 @@ define([
 
             oldStyleObject.getCapability('mutation').mutate(function () {
                 return utils.toOldFormat(newStyleObject);
-            });
+            }, newStyleObject.modified);
 
             removeGeneralTopicListener = this.generalTopic.listen(handleLegacyMutation);
         }.bind(this);
