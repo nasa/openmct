@@ -115,6 +115,15 @@
                         >
                         </button>
                     </div>
+                    <div v-if="isTimeOutOfSync"
+                         class="c-button-set c-button-set--strip-h"
+                    >
+                        <button class="c-button icon-clock"
+                                title="Synchronize time conductor"
+                                @click="showSynchronizeDialog()"
+                        >
+                        </button>
+                    </div>
                 </div>
 
                 <!--Cursor guides-->
@@ -203,7 +212,8 @@ export default {
             config: {},
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
-            loaded: false
+            loaded: false,
+            isTimeOutOfSync: false
         };
     },
     computed: {
@@ -247,6 +257,7 @@ export default {
             'configuration.filters',
             this.updateFiltersAndResubscribe
         );
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
         this.followTimeConductor();
@@ -448,13 +459,17 @@ export default {
        * displays can update accordingly.
        */
         synchronized(value) {
+            const isLocalClock = this.openmct.time.clock();
+
             if (typeof value !== 'undefined') {
                 this._synchronized = value;
-                const isUnsynced = !value && this.openmct.time.clock();
-                const domainObject = this.openmct.legacyObject(this.domainObject);
-                if (domainObject.getCapability('status')) {
-                    domainObject.getCapability('status')
-                        .set('timeconductor-unsynced', isUnsynced);
+                this.isTimeOutOfSync = value !== true;
+
+                const isUnsynced = isLocalClock && !value;
+                if (isUnsynced) {
+                    this.openmct.status.set(this.domainObject.identifier, 'timeconductor-unsynced');
+                } else {
+                    this.openmct.status.set(this.domainObject.identifier, '');
                 }
             }
 
@@ -913,6 +928,51 @@ export default {
             this.clear();
         },
 
+        showSynchronizeDialog() {
+            const isLocalClock = this.openmct.time.clock();
+            if (isLocalClock !== undefined) {
+                const message = `
+                This will change the time conductor mode to fixed time span with the new time bounds for all views.
+                Do you want to continue?
+            `;
+
+                let dialog = this.openmct.overlays.dialog({
+                    title: 'Synchronize time conductor',
+                    iconClass: 'alert',
+                    size: 'fit',
+                    message: message,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            callback: () => {
+                                dialog.dismiss();
+                                this.synchronizeTimeConductor();
+                            }
+                        },
+                        {
+                            label: 'Cancel',
+                            callback: () => {
+                                dialog.dismiss();
+                            }
+                        }
+                    ]
+                });
+            } else {
+                this.openmct.notifications.alert('Time conductor bounds have changed.');
+                this.synchronizeTimeConductor();
+            }
+        },
+
+        synchronizeTimeConductor() {
+            this.openmct.time.stopClock();
+            const range = this.config.xAxis.get('displayRange');
+            this.openmct.time.bounds({
+                start: range.min,
+                end: range.max
+            });
+            this.isTimeOutOfSync = false;
+        },
+
         destroy() {
             configStore.deleteStore(this.config.id);
 
@@ -926,9 +986,16 @@ export default {
                 this.filterObserver();
             }
 
+            if (this.removeStatusListener) {
+                this.removeStatusListener();
+            }
+
             this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
             this.openmct.objectViews.off('clearData', this.clearData);
+        },
+        updateStatus(status) {
+            this.$emit('statusUpdated', status);
         }
     }
 };
