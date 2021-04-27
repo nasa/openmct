@@ -96,6 +96,10 @@ export default class LinkAction {
                 return false;
             }
 
+            if (parentObject.getModel().locked) {
+                return false;
+            }
+
             // can contain
             return this.openmct.composition.checkPolicy(
                 parentObject.useCapability('adapter'),
