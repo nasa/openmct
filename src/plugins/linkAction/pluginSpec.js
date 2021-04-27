@@ -97,9 +97,9 @@ describe("The Link Action plugin", () => {
 
     it("should make the link action available for an appropriate domainObject", () => {
         let actions = openmct.actions.get([childObject]);
-        let linkAction = actions.filter(action => action.key === LINK_ACITON_KEY);
+        let action = actions.filter(a => a.key === LINK_ACITON_KEY);
 
-        expect(linkAction.length).toEqual(1);
+        expect(action.length).toEqual(1);
     });
 
     describe("when linking an object in a new parent", () => {
