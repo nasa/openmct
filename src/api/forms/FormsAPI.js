@@ -78,9 +78,11 @@ export default class FormsAPI {
         return controls;
     }
 
-    showForm(domainObject, formStructure, isEdit) {
+    showForm(domainObject, formStructure, parentDomainObject, isEdit) {
         const self = this;
         const changes = {};
+        this.parentDomainObject = parentDomainObject;
+
         const vm = new Vue({
             components: { FormProperties },
             provide: {
@@ -160,7 +162,6 @@ export default class FormsAPI {
 
         const createWizard = new CreateWizard(this.openmct, domainObject, parentDomainObject);
         const formStructure = createWizard.getFormStructure(true);
-
         formStructure.title = 'Create a New ' + definition.name;
 
         this.showForm(domainObject, formStructure);
@@ -185,11 +186,13 @@ export default class FormsAPI {
         domainObject.location = this.openmct.objects.makeKeyString(this.parentDomainObject.identifier);
         domainObject.identifier.namespace = this.parentDomainObject.identifier.namespace;
 
+        console.log(domainObject, changes, this.parentDomainObject);
         let objectSaved = await this.openmct.objects.save(domainObject);
+
         if (!isEdit && objectSaved) {
+            // TODO: call lovator validate if exists
             const compositionCollection = await openmct.composition.get(this.parentDomainObject);
             compositionCollection.add(domainObject);
-
             this._navigateAndEdit(domainObject);
         }
     }
