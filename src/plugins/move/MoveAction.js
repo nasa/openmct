@@ -35,16 +35,7 @@ export default class MoveAction {
         let object = objectPath[0];
         let inNavigationPath = this.inNavigationPath(object);
         let oldParent = objectPath[1];
-        let dialogService = this.openmct.$injector.get('dialogService');
-        let dialogForm = this.getDialogForm(object, oldParent);
-        let userInput;
-
-        try {
-            userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
-        } catch (err) {
-            // user canceled, most likely
-            return;
-        }
+        this.getDialogForm(object, oldParent);
 
         // if we need to update name
         if (object.name !== userInput.name) {
@@ -103,18 +94,19 @@ export default class MoveAction {
     }
 
     getDialogForm(object, parent) {
-        return {
-            name: "Move Item",
+        const formStructure =  {
+            title: "Move Item",
             sections: [
                 {
                     rows: [
                         {
                             key: "name",
                             control: "textfield",
-                            name: "Name",
+                            name: "Title",
                             pattern: "\\S+",
                             required: true,
-                            cssClass: "l-input-lg"
+                            cssClass: "l-input-lg",
+                            value: object.name
                         },
                         {
                             name: "Location",
@@ -126,6 +118,8 @@ export default class MoveAction {
                 }
             ]
         };
+
+        this.openmct.forms.showForm(object, formStructure, parent);
     }
 
     validate(object, currentParent) {
