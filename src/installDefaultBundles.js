@@ -90,7 +90,6 @@ define([
     '../platform/framework/src/load/Bundle',
     '../platform/identity/bundle',
     '../platform/persistence/aggregator/bundle',
-    '../platform/persistence/couch/bundle',
     '../platform/persistence/elastic/bundle',
     '../platform/persistence/local/bundle',
     '../platform/persistence/queue/bundle',
