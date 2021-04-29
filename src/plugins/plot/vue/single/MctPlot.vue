@@ -89,20 +89,29 @@
                          class="c-button-set c-button-set--strip-h"
                     >
                         <button class="c-button icon-pause"
-                                title="Pause"
-                                :disabled="isFrozen"
+                                title="Pause incoming real-time data"
+                                v-if="!isFrozen"
                                 @click="pause()"
                         >
                         </button>
-                        <button class="c-button icon-arrow-right"
-                                title="Play"
-                                :disabled="!isFrozen"
+                        <button class="c-button icon-arrow-right pause-play is-paused"
+                                title="Resume displaying real-time data"
+                                v-if="isFrozen"
                                 @click="play()"
                         >
                         </button>
                     </div>
+                    <div v-if="isTimeOutOfSync || isFrozen"
+                         class="c-button-set c-button-set--strip-h"
+                    >
+                        <button class="c-button icon-clock"
+                                title="Synchronize Time Conductor"
+                                @click="showSynchronizeDialog()"
+                        >
+                        </button>
+                    </div>
                     <div class="c-button-set c-button-set--strip-h"
-                         :disabled="!plotHistory.length"
+                         v-if="plotHistory.length"
                     >
                         <button class="c-button icon-arrow-left"
                                 title="Restore previous pan/zoom"
@@ -112,15 +121,6 @@
                         <button class="c-button icon-reset"
                                 title="Reset pan/zoom"
                                 @click="clear()"
-                        >
-                        </button>
-                    </div>
-                    <div v-if="isTimeOutOfSync"
-                         class="c-button-set c-button-set--strip-h"
-                    >
-                        <button class="c-button icon-clock"
-                                title="Synchronize time conductor"
-                                @click="showSynchronizeDialog()"
                         >
                         </button>
                     </div>
@@ -932,12 +932,12 @@ export default {
             const isLocalClock = this.openmct.time.clock();
             if (isLocalClock !== undefined) {
                 const message = `
-                This will change the time conductor mode to fixed time span with the new time bounds for all views.
+                This action will change the Time Conductor mode to Fixed Timespan mode with these time bounds for all views.
                 Do you want to continue?
             `;
 
                 let dialog = this.openmct.overlays.dialog({
-                    title: 'Synchronize time conductor',
+                    title: 'Synchronize Time Conductor',
                     iconClass: 'alert',
                     size: 'fit',
                     message: message,
