@@ -112,7 +112,7 @@
                      @click="toggleSwatch()"
                 >
                     <span class="c-color-swatch"
-                          :style="{ background: series.get('color').asHexString() }"
+                          :style="{ background: seriesColorAsHex }"
                     >
                     </span>
                 </div>
@@ -196,6 +196,9 @@ export default {
         },
         expandedCssClass() {
             return this.expanded ? 'c-disclosure-triangle--expanded' : '';
+        },
+        seriesColorAsHex() {
+            return this.series.get('color').asHexString();
         }
     },
     mounted() {

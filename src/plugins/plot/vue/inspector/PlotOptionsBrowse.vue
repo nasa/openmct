@@ -35,32 +35,32 @@
                 <div class="grid-cell label"
                      title="Manually override how the Y axis is labeled."
                 >Label</div>
-                <div class="grid-cell value">{{ config.yAxis.get('label') ? config.yAxis.get('label') : "Not defined" }}</div>
+                <div class="grid-cell value">{{ label ? label : "Not defined" }}</div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="Automatically scale the Y axis to keep all values in view."
                 >Autoscale</div>
                 <div class="grid-cell value">
-                    {{ config.yAxis.get('autoscale') ? "Enabled: " : "Disabled" }}
-                    {{ config.yAxis.get('autoscale') ? (config.yAxis.get('autoscalePadding')) : "" }}
+                    {{ autoscale ? "Enabled: " : "Disabled" }}
+                    {{ autoscale ? autoscalePadding : "" }}
                 </div>
             </li>
-            <li v-if="!config.yAxis.get('autoscale') && config.yAxis.get('range')"
+            <li v-if="!autoscale && rangeMin"
                 class="grid-row"
             >
                 <div class="grid-cell label"
                      title="Minimum Y axis value."
                 >Minimum value</div>
-                <div class="grid-cell value">{{ config.yAxis.get('range').min }}</div>
+                <div class="grid-cell value">{{ rangeMin }}</div>
             </li>
-            <li v-if="!config.yAxis.get('autoscale') && config.yAxis.get('range')"
+            <li v-if="!autoscale && rangeMax"
                 class="grid-row"
             >
                 <div class="grid-cell label"
                      title="Maximum Y axis value."
                 >Maximum value</div>
-                <div class="grid-cell value">{{ config.yAxis.get('range').max }}</div>
+                <div class="grid-cell value">{{ rangeMax }}</div>
             </li>
         </ul>
         <ul class="l-inspector-part">
@@ -69,26 +69,26 @@
                 <div class="grid-cell label"
                      title="The position of the legend relative to the plot display area."
                 >Position</div>
-                <div class="grid-cell value capitalize">{{ config.legend.get('position') }}</div>
+                <div class="grid-cell value capitalize">{{ position }}</div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="Hide the legend when the plot is small"
                 >Hide when plot small</div>
-                <div class="grid-cell value">{{ config.legend.get('hideLegendWhenSmall') ? "Yes" : "No" }}</div>
+                <div class="grid-cell value">{{ hideLegendWhenSmall ? "Yes" : "No" }}</div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="Show the legend expanded by default"
                 >Expand by Default</div>
-                <div class="grid-cell value">{{ config.legend.get('expandByDefault') ? "Yes" : "No" }}</div>
+                <div class="grid-cell value">{{ expandByDefault ? "Yes" : "No" }}</div>
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="What to display in the legend when it's collapsed."
                 >Show when collapsed:</div>
                 <div class="grid-cell value">{{
-                    config.legend.get('valueToShowWhenCollapsed').replace('nearest', '')
+                    valueToShowWhenCollapsed.replace('nearest', '')
                 }}
                 </div>
             </li>
@@ -97,11 +97,11 @@
                      title="What to display in the legend when it's expanded."
                 >Show when expanded:</div>
                 <div class="grid-cell value comma-list">
-                    <span v-if="config.legend.get('showTimestampWhenExpanded')">Timestamp</span>
-                    <span v-if="config.legend.get('showValueWhenExpanded')">Value</span>
-                    <span v-if="config.legend.get('showMinimumWhenExpanded')">Min</span>
-                    <span v-if="config.legend.get('showMaximumWhenExpanded')">Max</span>
-                    <span v-if="config.legend.get('showUnitsWhenExpanded')">Units</span>
+                    <span v-if="showTimestampWhenExpanded">Timestamp</span>
+                    <span v-if="showValueWhenExpanded">Value</span>
+                    <span v-if="showMinimumWhenExpanded">Min</span>
+                    <span v-if="showMaximumWhenExpanded">Max</span>
+                    <span v-if="showUnitsWhenExpanded">Units</span>
                 </div>
             </li>
         </ul>
@@ -122,6 +122,20 @@ export default {
     data() {
         return {
             config: undefined,
+            label: '',
+            autoscale: '',
+            autoscalePadding: '',
+            rangeMin: '',
+            rangeMax: '',
+            position: '',
+            hideLegendWhenSmall: '',
+            expandByDefault: '',
+            valueToShowWhenCollapsed: '',
+            showTimestampWhenExpanded: '',
+            showValueWhenExpanded: '',
+            showMinimumWhenExpanded: '',
+            showMaximumWhenExpanded: '',
+            showUnitsWhenExpanded: '',
             loaded: false,
             plotSeries: []
         };
@@ -129,6 +143,7 @@ export default {
     mounted() {
         eventHelpers.extend(this);
         this.config = this.getConfig();
+        this.initConfiguration();
         this.registerListeners();
         this.loaded = true;
     },
@@ -136,6 +151,26 @@ export default {
         this.stopListening();
     },
     methods: {
+        initConfiguration() {
+            this.label = this.config.yAxis.get('label');
+            this.autoscale = this.config.yAxis.get('autoscale');
+            this.autoscalePadding = this.config.yAxis.get('autoscalePadding');
+            const range = this.config.yAxis.get('range');
+            if (range) {
+                this.rangeMin = range.min;
+                this.rangeMax = range.max;
+            }
+
+            this.position = this.config.legend.get('position');
+            this.hideLegendWhenSmall = this.config.legend.get('hideLegendWhenSmall');
+            this.expandByDefault = this.config.legend.get('expandByDefault');
+            this.valueToShowWhenCollapsed = this.config.legend.get('valueToShowWhenCollapsed');
+            this.showTimestampWhenExpanded = this.config.legend.get('showTimestampWhenExpanded');
+            this.showValueWhenExpanded = this.config.legend.get('showValueWhenExpanded');
+            this.showMinimumWhenExpanded = this.config.legend.get('showMinimumWhenExpanded');
+            this.showMaximumWhenExpanded = this.config.legend.get('showMaximumWhenExpanded');
+            this.showUnitsWhenExpanded = this.config.legend.get('showUnitsWhenExpanded');
+        },
         getConfig() {
             this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
