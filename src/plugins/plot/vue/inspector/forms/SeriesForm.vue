@@ -101,42 +101,42 @@
                                                 @change="updateForm('markerSize')"
             ></div>
         </li>
-        <!-- Use the swatch component here instead -->
-        <!--        <li class="grid-row"-->
-        <!--            ng-controller="ClickAwayController as toggle"-->
-        <!--            ng-show="interpolate !== 'none' || markers"-->
-        <!--        >-->
-        <!--            <div class="grid-cell label"-->
-        <!--                 title="Manually set the plot line and marker color for this series."-->
-        <!--            >Color</div>-->
-        <!--            <div class="grid-cell value">-->
-        <!--                <div class="c-click-swatch c-click-swatch&#45;&#45;menu"-->
-        <!--                     ng-click="toggle.toggle()"-->
-        <!--                >-->
-        <!--                    <span class="c-color-swatch"-->
-        <!--                          ng-style="{ background: series.get('color').asHexString() }"-->
-        <!--                    >-->
-        <!--                    </span>-->
-        <!--                </div>-->
-        <!--                <div class="c-palette c-palette&#45;&#45;color">-->
-        <!--                    <div class="c-palette__items"-->
-        <!--                         ng-show="toggle.isActive()"-->
-        <!--                    >-->
-        <!--                        <div class="u-contents"-->
-        <!--                             ng-repeat="group in config.series.palette.groups()"-->
-        <!--                        >-->
-        <!--                            <div class="c-palette__item"-->
-        <!--                                 ng-repeat="color in group"-->
-        <!--                                 ng-class="{ 'selected': series.get('color').equalTo(color) }"-->
-        <!--                                 ng-style="{ background: color.asHexString() }"-->
-        <!--                                 ng-click="setColor(color)"-->
-        <!--                            >-->
-        <!--                            </div>-->
-        <!--                        </div>-->
-        <!--                    </div>-->
-        <!--                </div>-->
-        <!--            </div>-->
-        <!--        </li>-->
+        <li v-show="interpolate !== 'none' || markers"
+            class="grid-row"
+        >
+            <div class="grid-cell label"
+                 title="Manually set the plot line and marker color for this series."
+            >Color</div>
+            <div class="grid-cell value">
+                <div class="c-click-swatch c-click-swatch--menu"
+                     @click="toggleSwatch()"
+                >
+                    <span class="c-color-swatch"
+                          :style="{ background: series.get('color').asHexString() }"
+                    >
+                    </span>
+                </div>
+                <div class="c-palette c-palette--color">
+                    <div v-show="swatchActive"
+                         class="c-palette__items"
+                    >
+                        <div v-for="(group, index) in colorPalette"
+                             :key="index"
+                             class="u-contents"
+                        >
+                            <div v-for="(color, colorIndex) in group"
+                                 :key="colorIndex"
+                                 class="c-palette__item"
+                                 :class="{ 'selected': series.get('color').equalTo(color) }"
+                                 :style="{ background: color.asHexString() }"
+                                 @click="setColor(color)"
+                            >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </li>
     </ul>
 </ul>
 </template>
@@ -167,10 +167,14 @@ export default {
             markerShape: this.series.get('markerShape'),
             alarmMarkers: this.series.get('alarmMarkers'),
             markerSize: this.series.get('markerSize'),
-            validation: {}
+            validation: {},
+            swatchActive: false
         };
     },
     computed: {
+        colorPalette() {
+            return this.series.collection.palette.groups();
+        },
         objectLabelCss() {
             return this.status ? `c-object-label is-status--${this.status}'` : 'c-object-label';
         },
@@ -330,6 +334,9 @@ export default {
         },
         setStatus(status) {
             this.status = status;
+        },
+        toggleSwatch() {
+            this.swatchActive = !this.swatchActive;
         }
     }
 };
