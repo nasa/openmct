@@ -175,7 +175,6 @@ export default {
             this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
             return configStore.get(this.configId);
-
         },
         registerListeners() {
             this.config.series.forEach(this.addSeries, this);
