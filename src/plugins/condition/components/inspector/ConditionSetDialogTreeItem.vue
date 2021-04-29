@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2020, United States Government
+* Open MCT, Copyright (c) 2014-2021, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -41,7 +41,7 @@
         </div>
     </div>
     <ul
-        v-if="expanded"
+        v-if="expanded && !isLoading"
         class="c-tree"
     >
         <li
@@ -68,10 +68,10 @@ import viewControl from '@/ui/components/viewControl.vue';
 
 export default {
     name: 'ConditionSetDialogTreeItem',
-    inject: ['openmct'],
     components: {
         viewControl
     },
+    inject: ['openmct'],
     props: {
         node: {
             type: Object,
