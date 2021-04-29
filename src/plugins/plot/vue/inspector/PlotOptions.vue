@@ -24,7 +24,7 @@
     <div v-if="canEdit">
         <plot-options-edit />
     </div>
-    <div v-if="!canEdit">
+    <div v-else>
         <plot-options-browse />
     </div>
 </div>
