@@ -72,16 +72,21 @@ export default class FormsAPI {
     getControl(name) {
         const control = this.controls[name];
         if (control) {
-           this.openmct.notifications.error(`Error: form control '${name}', does not exist`);
+            console.error(`Error: form control '${name}', does not exist`);
         }
 
-        return controls;
+        return control;
     }
 
-    showForm(domainObject, formStructure, parentDomainObject, isEdit) {
+    showForm(formStructure, options) {
         const self = this;
         const changes = {};
-        this.parentDomainObject = parentDomainObject;
+
+        this.parentDomainObject = options.parentDomainObject;
+        const domainObject = options.domainObject;
+        const isEdit = options.isEdit;
+        const onSave = options.onSave;
+        const onDismiss = options.onDismiss;
 
         const vm = new Vue({
             components: { FormProperties },
@@ -106,18 +111,32 @@ export default class FormsAPI {
                     emphasis: 'true',
                     callback: () => {
                         overlay.dismiss();
-                        this.save(domainObject, changes, isEdit);
+                        if (onSave) {
+                            onSave(domainObject, this.parentDomainObject);
+                        } else {
+                            this.save(domainObject, changes, isEdit);
+                        }
                     }
                 },
                 {
                     label: 'Cancel',
-                    callback: () => overlay.dismiss()
+                    callback: () => {
+                        overlay.dismiss();
+
+                        if (onDismiss) {
+                            onDismiss();
+                        }
+                    }
                 }
             ],
             onDestroy: () => vm.$destroy()
         });
 
         function onChange(data) {
+            if (options.onChange) {
+                options.onChange(data);
+            }
+
             const parentDomainObject = data.parentDomainObject;
             if (parentDomainObject) {
                 self.parentDomainObject = parentDomainObject;
@@ -140,7 +159,12 @@ export default class FormsAPI {
         const formStructure = createWizard.getFormStructure(false);
         formStructure.title = 'Edit ' + objectPath[0].name;
 
-        this.showForm(objectPath[0], formStructure, true);
+        const options = {
+            domainObject: objectPath[0],
+            isEdit: true
+        };
+
+        this.showForm(formStructure, options);
     }
 
     showCreateForm(type, parentDomainObject) {
@@ -164,7 +188,11 @@ export default class FormsAPI {
         const formStructure = createWizard.getFormStructure(true);
         formStructure.title = 'Create a New ' + definition.name;
 
-        this.showForm(domainObject, formStructure);
+        const options = {
+            domainObject
+        };
+
+        this.showForm(formStructure, options);
     }
 
     async save(domainObject, changes, isEdit) {
