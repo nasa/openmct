@@ -28,7 +28,7 @@
                      title="The field to be plotted as a value for this series."
                 >Value</div>
                 <div class="grid-cell value">
-                    {{ series.get('yKey') }}
+                    {{ yKey }}
                 </div>
             </li>
             <li class="grid-row">
@@ -39,7 +39,7 @@
                     'none': 'None',
                     'linear': 'Linear interpolation',
                     'stepAfter': 'Step After'
-                }[series.get('interpolate')] }}
+                }[interpolate] }}
                 </div>
             </li>
             <li class="grid-row">
@@ -47,7 +47,7 @@
                      title="Whether markers are displayed, and their size."
                 >Markers</div>
                 <div class="grid-cell value">
-                    {{ series.markerOptionsDisplayText() }}
+                    {{ markerOptionsDisplayText }}
                 </div>
             </li>
             <li class="grid-row">
@@ -55,7 +55,7 @@
                      title="Display markers visually denoting points in alarm."
                 >Alarm Markers</div>
                 <div class="grid-cell value">
-                    {{ series.get('alarmMarkers') ? "Enabled" : "Disabled" }}
+                    {{ alarmMarkers ? "Enabled" : "Disabled" }}
                 </div>
             </li>
             <li class="grid-row">
@@ -65,7 +65,7 @@
                 <div class="grid-cell value">
                     <span class="c-color-swatch"
                           :style="{
-                              'background': series.get('color').asHexString()
+                              'background': seriesHexColor
                           }"
                     >
                     </span>
@@ -117,6 +117,21 @@ export default {
         },
         statusClass() {
             return (this.status) ? `is-status--${this.status}` : '';
+        },
+        yKey() {
+            return this.series.get('yKey');
+        },
+        interpolate() {
+            return this.series.get('interpolate');
+        },
+        markerOptionsDisplayText() {
+            return this.series.markerOptionsDisplayText();
+        },
+        alarmMarkers() {
+            return this.series.get('alarmMarkers');
+        },
+        seriesHexColor() {
+            return this.series.get('color').asHexString();
         }
     },
     mounted() {

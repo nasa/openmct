@@ -222,11 +222,15 @@ define([
         getColumnMapForObject(objectKeyString) {
             let columns = this.configuration.getColumns();
 
-            return columns[objectKeyString].reduce((map, column) => {
-                map[column.getKey()] = column;
+            if (columns[objectKeyString]) {
+                return columns[objectKeyString].reduce((map, column) => {
+                    map[column.getKey()] = column;
 
-                return map;
-            }, {});
+                    return map;
+                }, {});
+            }
+
+            return {};
         }
 
         addColumnsForObject(telemetryObject) {
