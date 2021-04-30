@@ -74,25 +74,9 @@ export default {
             // 4. perform action.
             return this.openmct.objects.get(this.openmct.router.path[0].identifier)
                 .then((currentObject) => {
-                    console.log('type', key);
                     const createAction = new CreateAction(this.openmct, key, currentObject);
 
                     createAction.invoke();
-
-
-                    // let legacyContextualParent = this.convertToLegacy(currentObject);
-                    // let legacyType = this.openmct.$injector.get('typeService').getType(key);
-                    // let context = {
-                    //     key: "create",
-                    //     domainObject: legacyContextualParent // should be same as parent object.
-                    // };
-                    // let action = new CreateAction(
-                    //     legacyType,
-                    //     legacyContextualParent,
-                    //     context,
-                    //     this.openmct
-                    // );
-
                 });
         },
         convertToLegacy(domainObject) {
