@@ -1,8 +1,9 @@
 <template>
 <div
     :style="{
-        'top': virtualScroll ? itemTop : 'auto',
-        'position': virtualScroll ? 'absolute' : 'relative'
+        'top': itemTop,
+        'position': 'absolute',
+        'padding-left': leftOffset
     }"
     class="c-tree__item-h"
 >
@@ -17,27 +18,17 @@
         @contextmenu.capture="handleContextMenu"
     >
         <view-control
-            ref="navUp"
+            ref="navigate"
             v-model="expanded"
             class="c-tree__item__view-control"
-            :control-class="'icon-arrow-nav-to-parent'"
-            :enabled="showUp"
-            @input="resetTreeHere"
+            :enabled="hasComposition"
         />
         <object-label
             ref="objectLabel"
             :domain-object="node.object"
             :object-path="node.objectPath"
             :navigate-to-path="navigationPath"
-            :style="{ paddingLeft: leftOffset }"
             @context-click-active="setContextClickActive"
-        />
-        <view-control
-            ref="navDown"
-            v-model="expanded"
-            class="c-tree__item__view-control"
-            :control-class="'c-nav__down'"
-            :enabled="hasComposition && showDown"
         />
     </div>
 </div>
@@ -59,17 +50,13 @@ export default {
             type: Object,
             required: true
         },
-        leftOffset: {
-            type: String,
-            default: '0px'
-        },
-        showUp: {
+        isOpen: {
             type: Boolean,
             default: false
         },
-        showDown: {
-            type: Boolean,
-            default: true
+        leftOffset: {
+            type: String,
+            default: '0px'
         },
         itemIndex: {
             type: Number,
@@ -85,10 +72,6 @@ export default {
             type: Number,
             required: false,
             default: 0
-        },
-        virtualScroll: {
-            type: Boolean,
-            default: false
         }
     },
     data() {
@@ -97,7 +80,7 @@ export default {
         return {
             hasComposition: false,
             navigated: this.isNavigated(),
-            expanded: false,
+            expanded: this.isOpen,
             contextClickActive: false
         };
     },
@@ -115,6 +98,9 @@ export default {
         },
         itemTop() {
             return (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
+        },
+        showOpen() {
+            return this.isOpen;
         }
     },
     watch: {
@@ -143,7 +129,7 @@ export default {
     methods: {
         handleClick(event) {
             // skip for navigation, let viewControl handle click
-            if ([this.$refs.navUp.$el, this.$refs.navDown.$el].includes(event.target)) {
+            if (this.$refs.navigate.$el === event.target) {
                 return;
             }
 
@@ -159,9 +145,6 @@ export default {
         },
         highlightIfNavigated() {
             this.navigated = this.isNavigated();
-        },
-        resetTreeHere() {
-            this.$emit('resetTree', this.node);
         },
         setContextClickActive(active) {
             this.contextClickActive = active;
