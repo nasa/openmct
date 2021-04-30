@@ -21,7 +21,7 @@
             ref="navigate"
             v-model="expanded"
             class="c-tree__item__view-control"
-            :enabled="hasComposition"
+            :enabled="!activeSearch && hasComposition"
         />
         <object-label
             ref="objectLabel"
@@ -51,6 +51,10 @@ export default {
             required: true
         },
         isOpen: {
+            type: Boolean,
+            default: false
+        },
+        activeSearch: {
             type: Boolean,
             default: false
         },
@@ -98,9 +102,6 @@ export default {
         },
         itemTop() {
             return (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
-        },
-        showOpen() {
-            return this.isOpen;
         }
     },
     watch: {
@@ -122,6 +123,7 @@ export default {
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
+
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
