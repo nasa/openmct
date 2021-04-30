@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import PropertiesAction from './PropertiesAction';
-
+import CreateWizard from '../CreateWizard';
 export default class EditPropertiesAction extends PropertiesAction {
     constructor(openmct) {
         super(openmct);
@@ -30,8 +30,9 @@ export default class EditPropertiesAction extends PropertiesAction {
         this.description = 'Edit properties of this object.';
         this.cssClass = 'major icon-pencil';
         this.hideInDefaultMenu = true;
-        this.group= 'action';
-        this.priority= 10;
+        this.group = 'action';
+        this.priority = 10;
+        this.formProperties = {}
     }
 
     appliesTo(objectPath) {
@@ -41,6 +42,83 @@ export default class EditPropertiesAction extends PropertiesAction {
     }
 
     invoke(objectPath) {
-        this.openmct.forms.showEditForm(objectPath);
+        this._showEditForm(objectPath);
+    }
+
+    // Private methods
+
+    _onChange(data) {
+        if (data.model) {
+            const property = data.model.property;
+            let key = data.model.key;
+            if (property && property.length) {
+                key = property.join('.');
+            }
+
+            this.formProperties[key] = data.value;
+        }
+    }
+
+    async _onSave(domainObject) {
+        Object.entries(this.formProperties).forEach(([key, value]) => {
+            const properties = key.split('.');
+            let object = domainObject;
+            properties.forEach(property => {
+                if (typeof object[property] === 'object' && object[property] !== null) {
+                    object = object[property];
+                } else {
+                    object[property] = value;
+                }
+            });
+
+            object = value;
+        });
+
+        domainObject.modified = Date.now();
+
+        // Show saving progress dialog
+        let dialog = this.openmct.overlays.progressDialog({
+            progressPerc: 'unknown',
+            message: 'Do not navigate away from this page or close this browser tab while this message is displayed.',
+            iconClass: 'info',
+            title: 'Saving'
+        });
+
+        const success = await this.openmct.objects.save(domainObject);
+        if (success) {
+            this.openmct.notifications.info('Save successful');
+        } else {
+            this.openmct.notifications.error('Error saving objects');
+            console.error(error);
+        }
+
+        dialog.dismiss();
+    }
+
+    async _navigateAndEdit(domainObject) {
+        const objectPath = await this.openmct.objects.getOriginalPath(domainObject.identifier);
+
+        const url = '#/browse/' + objectPath
+                        .slice(1)
+                        .map(object => object && this.openmct.objects.makeKeyString(object.identifier.key))
+                        .reverse()
+                        .join('/');
+
+        window.location.href = url;
+        this.openmct.editor.edit();
+    }
+
+    _showEditForm(objectPath) {
+        const createWizard = new CreateWizard(this.openmct, objectPath[0], objectPath[1]);
+        const formStructure = createWizard.getFormStructure(false);
+        formStructure.title = 'Edit ' + objectPath[0].name;
+
+        const options = {
+            domainObject: objectPath[0],
+            onSave: this._onSave.bind(this),
+            onChange: this._onChange.bind(this),
+        };
+
+        this.openmct.forms.showForm(formStructure, options);
     }
 }
