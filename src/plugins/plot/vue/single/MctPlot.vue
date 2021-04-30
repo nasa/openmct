@@ -85,6 +85,20 @@
                         >
                         </button>
                     </div>
+                    <div class="c-button-set c-button-set--strip-h"
+                         v-if="plotHistory.length"
+                    >
+                        <button class="c-button icon-arrow-left"
+                                title="Restore previous pan/zoom"
+                                @click="back()"
+                        >
+                        </button>
+                        <button class="c-button icon-reset"
+                                title="Reset pan/zoom"
+                                @click="clear()"
+                        >
+                        </button>
+                    </div>
                     <div v-if="isRealTime"
                          class="c-button-set c-button-set--strip-h"
                     >
@@ -107,20 +121,6 @@
                         <button class="c-button icon-clock"
                                 title="Synchronize Time Conductor"
                                 @click="showSynchronizeDialog()"
-                        >
-                        </button>
-                    </div>
-                    <div class="c-button-set c-button-set--strip-h"
-                         v-if="plotHistory.length"
-                    >
-                        <button class="c-button icon-arrow-left"
-                                title="Restore previous pan/zoom"
-                                @click="back()"
-                        >
-                        </button>
-                        <button class="c-button icon-reset"
-                                title="Reset pan/zoom"
-                                @click="clear()"
                         >
                         </button>
                     </div>
@@ -932,7 +932,7 @@ export default {
             const isLocalClock = this.openmct.time.clock();
             if (isLocalClock !== undefined) {
                 const message = `
-                This action will change the Time Conductor mode to Fixed Timespan mode with these time bounds for all views.
+                This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
                 Do you want to continue?
             `;
 
