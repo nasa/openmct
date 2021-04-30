@@ -18,6 +18,13 @@ export default function PlotsInspectorViewProvider(openmct) {
         },
         view: function (selection) {
             let component;
+            let objectPath;
+
+            if (selection.length) {
+                objectPath = selection[0].map((selectionItem) => {
+                    return selectionItem.context.item;
+                });
+            }
 
             return {
                 show: function (element) {
@@ -28,7 +35,8 @@ export default function PlotsInspectorViewProvider(openmct) {
                         },
                         provide: {
                             openmct,
-                            domainObject: selection[0][0].context.item
+                            domainObject: selection[0][0].context.item,
+                            path: objectPath
                         },
                         template: '<plot-options></plot-options>'
                     });

@@ -1,6 +1,8 @@
 <template>
 <ul>
-    <li class="c-tree__item menus-to-left">
+    <li class="c-tree__item menus-to-left"
+        :class="isAliasCss"
+    >
         <span class="c-disclosure-triangle is-enabled flex-elem"
               :class="expandedCssClass"
               @click="toggleExpanded"
@@ -8,7 +10,7 @@
         </span>
         <div :class="objectLabelCss">
             <div class="c-object-label__type-icon"
-                 :class="[seriesCss, linkCss]"
+                 :class="[seriesCss]"
             >
                 <span class="is-status__indicator"
                       title="This item is missing or suspect"
@@ -147,7 +149,7 @@ import { objectPath, validate, coerce } from "./formUtil";
 import _ from 'lodash';
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         series: {
             type: Object,
@@ -179,17 +181,15 @@ export default {
             return this.status ? `c-object-label is-status--${this.status}'` : 'c-object-label';
         },
         seriesCss() {
-            let legacyObject = this.openmct.legacyObject(this.series.domainObject);
-            let type = legacyObject.getCapability('type');
+            let type = this.openmct.types.get(this.series.domainObject.type);
 
-            return type ? `c-object-label__type-icon ${type.getCssClass()}` : `c-object-label__type-icon`;
+            return type.definition.cssClass ? `c-object-label__type-icon ${type.definition.cssClass}` : `c-object-label__type-icon`;
         },
-        linkCss() {
+        isAliasCss() {
             let cssClass = '';
-            let legacyObject = this.openmct.legacyObject(this.series.domainObject);
-            let location = legacyObject.getCapability('location');
-            if (location && location.isLink()) {
-                cssClass = 'l-icon-link';
+            const domainObjectPath = [this.series.domainObject, ...this.path];
+            if (this.openmct.objects.isObjectPathToALink(this.series.domainObject, domainObjectPath)) {
+                cssClass = 'is-alias';
             }
 
             return cssClass;

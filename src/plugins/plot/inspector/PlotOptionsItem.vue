@@ -1,6 +1,8 @@
 <template>
 <ul>
-    <li class="c-tree__item menus-to-left">
+    <li class="c-tree__item menus-to-left"
+        :class="isAliasClass"
+    >
         <span class="c-disclosure-triangle is-enabled flex-elem"
               :class="expandedCssClass"
               @click="toggleExpanded"
@@ -78,7 +80,7 @@
 
 <script>
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         series: {
             type: Object,
@@ -93,17 +95,20 @@ export default {
         };
     },
     computed: {
-        getSeriesClass() {
+        isAliasClass() {
             let cssClass = '';
-            let legacyObject = this.openmct.legacyObject(this.series.domainObject);
-            let location = legacyObject.getCapability('location');
-            if (location && location.isLink()) {
-                cssClass = 'l-icon-link';
+            const domainObjectPath = [this.series.domainObject, ...this.path];
+            if (this.openmct.objects.isObjectPathToALink(this.series.domainObject, domainObjectPath)) {
+                cssClass = 'is-alias';
             }
 
-            let type = legacyObject.getCapability('type');
-            if (type) {
-                cssClass = `${cssClass} ${type.getCssClass()}`;
+            return cssClass;
+        },
+        getSeriesClass() {
+            let cssClass = '';
+            let type = this.openmct.types.get(this.series.domainObject.type);
+            if (type.definition.cssClass) {
+                cssClass = `${cssClass} ${type.definition.cssClass}`;
             }
 
             return cssClass;

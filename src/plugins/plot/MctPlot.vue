@@ -226,6 +226,7 @@ export default {
             'configuration.filters',
             this.updateFiltersAndResubscribe
         );
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
         this.followTimeConductor();
@@ -426,10 +427,10 @@ export default {
             if (typeof value !== 'undefined') {
                 this._synchronized = value;
                 const isUnsynced = !value && this.openmct.time.clock();
-                const domainObject = this.openmct.legacyObject(this.domainObject);
-                if (domainObject.getCapability('status')) {
-                    domainObject.getCapability('status')
-                        .set('timeconductor-unsynced', isUnsynced);
+                if (isUnsynced) {
+                    this.openmct.status.set(this.domainObject.identifier, 'timeconductor-unsynced');
+                } else {
+                    this.openmct.status.set(this.domainObject.identifier, '');
                 }
             }
 
@@ -893,8 +894,15 @@ export default {
                 this.filterObserver();
             }
 
+            if (this.removeStatusListener) {
+                this.removeStatusListener();
+            }
+
             this.openmct.time.off('bounds', this.updateDisplayBounds);
             this.openmct.objectViews.off('clearData', this.clearData);
+        },
+        updateStatus(status) {
+            this.$emit('statusUpdated', status);
         }
     }
 };
