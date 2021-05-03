@@ -19,7 +19,7 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
-<template xmlns="http://www.w3.org/1999/html">
+<template>
 <div v-if="config && loaded"
      class="js-plot-options-browse"
 >
