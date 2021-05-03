@@ -20,7 +20,7 @@
         </div>
     </li>
     <ul v-show="expanded"
-        class="grid-properties"
+        class="grid-properties js-plot-options-edit-properties"
     >
         <li class="grid-row">
             <!-- Value to be displayed -->

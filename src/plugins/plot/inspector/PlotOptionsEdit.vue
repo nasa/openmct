@@ -20,7 +20,9 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div v-if="loaded">
+<div v-if="loaded"
+     class="js-plot-options-edit"
+>
     <ul class="c-tree">
         <h2 title="Display properties for this object">Plot Series</h2>
         <li v-for="series in plotSeries"
