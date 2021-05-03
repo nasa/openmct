@@ -91,6 +91,10 @@
                :download="datum.imageDownloadName"
                @click.prevent
             >
+                <img class="c-thumb__image"
+                     :src="datum.url"
+                >
+            </a>
             <div class="c-thumb__timestamp">{{ formatTime(datum) }}</div>
         </div>
     </div>
