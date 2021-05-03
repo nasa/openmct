@@ -139,7 +139,7 @@ export default class CreateWizard {
 
     getValue(row) {
         if (row.property) {
-            return row.property.reduce((acc, property) => acc[property], this.domainObject);
+            return row.property.reduce((acc, property) => acc && acc[property], this.domainObject);
         } else {
             return this.domainObject[row.key];
         }
