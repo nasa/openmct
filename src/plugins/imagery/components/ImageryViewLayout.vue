@@ -135,7 +135,7 @@
              :class="{ selected: focusedImageIndex === index && isPaused }"
              @click="setFocusedImage(index, thumbnailClick)"
         >
-            <a :href="image.url"
+            <a href=""
                :download="image.imageDownloadName"
                @click.prevent
             >
