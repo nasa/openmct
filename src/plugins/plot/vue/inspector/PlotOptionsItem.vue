@@ -22,7 +22,7 @@
     <li v-show="expanded"
         class="c-tree__item menus-to-left"
     >
-        <ul class="grid-properties">
+        <ul class="grid-properties js-plot-options-browse-properties">
             <li class="grid-row">
                 <div class="grid-cell label"
                      title="The field to be plotted as a value for this series."
