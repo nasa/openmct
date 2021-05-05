@@ -106,19 +106,13 @@ export default {
     },
     watch: {
         expanded() {
-            this.$emit('expanded', this.domainObject);
+            this.$emit('expanded');
         }
     },
     mounted() {
-        let objectComposition = this.openmct.composition.get(this.node.object);
-
         this.domainObject = this.node.object;
-        let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
-            this.domainObject = newObject;
-        });
 
-        this.$once('hook:destroyed', removeListener);
-        if (objectComposition) {
+        if (this.openmct.composition.get(this.domainObject)) {
             this.hasComposition = true;
         }
 
@@ -127,6 +121,7 @@ export default {
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
+        this.$emit('tree-item-destoyed', this.navigationPath);
     },
     methods: {
         handleClick(event) {
@@ -148,6 +143,12 @@ export default {
         highlightIfNavigated() {
             this.navigated = this.isNavigated();
         },
+        // listenForCompositionChanges() {
+        //     this.removeListener = this.openmct.objects.observe(this.domainObject, 'composition', (composition) => {
+        //         console.log('composition changes for', this.domainObject.name);
+        //         this.$emit('composition-change', composition);
+        //     });
+        // },
         setContextClickActive(active) {
             this.contextClickActive = active;
         }
