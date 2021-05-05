@@ -85,8 +85,8 @@
                         >
                         </button>
                     </div>
-                    <div class="c-button-set c-button-set--strip-h"
-                         v-if="plotHistory.length"
+                    <div v-if="plotHistory.length"
+                         class="c-button-set c-button-set--strip-h"
                     >
                         <button class="c-button icon-arrow-left"
                                 title="Restore previous pan/zoom"
@@ -102,15 +102,15 @@
                     <div v-if="isRealTime"
                          class="c-button-set c-button-set--strip-h"
                     >
-                        <button class="c-button icon-pause"
+                        <button v-if="!isFrozen"
+                                class="c-button icon-pause"
                                 title="Pause incoming real-time data"
-                                v-if="!isFrozen"
                                 @click="pause()"
                         >
                         </button>
-                        <button class="c-button icon-arrow-right pause-play is-paused"
+                        <button v-if="isFrozen"
+                                class="c-button icon-arrow-right pause-play is-paused"
                                 title="Resume displaying real-time data"
-                                v-if="isFrozen"
                                 @click="play()"
                         >
                         </button>
@@ -466,14 +466,21 @@ export default {
                 this.isTimeOutOfSync = value !== true;
 
                 const isUnsynced = isLocalClock && !value;
-                if (isUnsynced) {
-                    this.openmct.status.set(this.domainObject.identifier, 'timeconductor-unsynced');
-                } else {
-                    this.openmct.status.set(this.domainObject.identifier, '');
-                }
+                this.setStatus(isUnsynced);
             }
 
             return this._synchronized;
+        },
+
+        setStatus(isNotInSync) {
+            const outOfSync = isNotInSync === true
+                || this.isTimeOutOfSync === true
+                || this.isFrozen === true;
+            if (outOfSync === true) {
+                this.openmct.status.set(this.domainObject.identifier, 'timeconductor-unsynced');
+            } else {
+                this.openmct.status.set(this.domainObject.identifier, '');
+            }
         },
 
         initCanvas() {
@@ -768,7 +775,8 @@ export default {
             const ZOOM_AMT = 0.1;
             event.preventDefault();
 
-            if (!this.positionOverPlot) {
+            if (event.wheelDelta === undefined
+                || !this.positionOverPlot) {
                 return;
             }
 
@@ -886,11 +894,13 @@ export default {
         freeze() {
             this.config.yAxis.set('frozen', true);
             this.config.xAxis.set('frozen', true);
+            this.setStatus();
         },
 
         clear() {
             this.config.yAxis.set('frozen', false);
             this.config.xAxis.set('frozen', false);
+            this.setStatus();
             this.plotHistory = [];
             this.userViewportChangeEnd();
         },
