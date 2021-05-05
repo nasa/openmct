@@ -83,7 +83,7 @@
 </div>
 </template>
 <script>
-import {coerce, objectPath, validate} from "@/plugins/plot/inspector/forms/formUtil";
+import {coerce, objectPath, validate} from "./formUtil";
 import _ from "lodash";
 
 export default {

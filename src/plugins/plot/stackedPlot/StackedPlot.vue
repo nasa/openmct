@@ -67,8 +67,8 @@
 </template>
 
 <script>
-import eventHelpers from "@/plugins/plot/lib/eventHelpers";
-import StackedPlotItem from "@/plugins/plot/stackedPlot/StackedPlotItem.vue";
+import eventHelpers from "../lib/eventHelpers";
+import StackedPlotItem from "./StackedPlotItem.vue";
 
 export default {
     components: {

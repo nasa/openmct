@@ -45,11 +45,11 @@
 </div>
 </template>
 <script>
-import SeriesForm from "@/plugins/plot/inspector/forms/SeriesForm.vue";
-import YAxisForm from "@/plugins/plot/inspector/forms/YAxisForm.vue";
-import LegendForm from "@/plugins/plot/inspector/forms/LegendForm.vue";
-import eventHelpers from "@/plugins/plot/lib/eventHelpers";
-import configStore from "@/plugins/plot/configuration/configStore";
+import SeriesForm from "./forms/SeriesForm.vue";
+import YAxisForm from "./forms/YAxisForm.vue";
+import LegendForm from "./forms/LegendForm.vue";
+import eventHelpers from "../lib/eventHelpers";
+import configStore from "../configuration/configStore";
 
 export default {
     components: {

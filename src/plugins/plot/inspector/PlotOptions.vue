@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import PlotOptionsBrowse from "@/plugins/plot/inspector/PlotOptionsBrowse.vue";
-import PlotOptionsEdit from "@/plugins/plot/inspector/PlotOptionsEdit.vue";
+import PlotOptionsBrowse from "./PlotOptionsBrowse.vue";
+import PlotOptionsEdit from "./PlotOptionsEdit.vue";
 export default {
     components: {
         PlotOptionsBrowse,
