@@ -37,8 +37,6 @@ define([
             this.objectMutated = this.objectMutated.bind(this);
             //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
             this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
-
-            this.unlistenFromMutation = openmct.objects.observe(domainObject, '*', this.objectMutated);
         }
 
         getConfiguration() {
@@ -164,9 +162,7 @@ define([
             this.updateConfiguration(configuration);
         }
 
-        destroy() {
-            this.unlistenFromMutation();
-        }
+        destroy() {}
     }
 
     return TelemetryTableConfiguration;

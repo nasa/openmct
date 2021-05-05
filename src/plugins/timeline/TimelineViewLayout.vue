@@ -52,22 +52,10 @@
                 :key="item.keyString"
                 class="u-contents c-timeline__content"
             >
-                <swim-lane :icon-class="item.type.definition.cssClass"
-                           :min-height="item.height"
-                           :show-ucontents="item.domainObject.type === 'plan'"
-                           :span-rows-count="item.rowCount"
-                >
-                    <template slot="label">
-                        {{ item.domainObject.name }}
-                    </template>
-                    <object-view
-                        slot="object"
-                        class="u-contents"
-                        :default-object="item.domainObject"
-                        :object-view-key="item.viewKey"
-                        :object-path="item.objectPath"
-                    />
-                </swim-lane>
+                <timeline-object-view
+                    class="u-contents"
+                    :item="item"
+                />
             </div>
         </div>
     </div>
@@ -75,7 +63,7 @@
 </template>
 
 <script>
-import ObjectView from '@/ui/components/ObjectView.vue';
+import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedPlan } from "../plan/util";
@@ -101,7 +89,7 @@ function getViewKey(domainObject, objectPath, openmct) {
 
 export default {
     components: {
-        ObjectView,
+        TimelineObjectView,
         TimelineAxis,
         SwimLane
     },
@@ -158,6 +146,7 @@ export default {
         },
         removeItem(identifier) {
             let index = this.items.findIndex(item => this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier));
+            this.removeSelectable(this.items[index]);
             this.items.splice(index, 1);
         },
         reorder(reorderPlan) {
