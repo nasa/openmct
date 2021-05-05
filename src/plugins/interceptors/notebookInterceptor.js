@@ -27,7 +27,7 @@ export default function notebookInterceptor(openmct) {
             return domainObject && domainObject.type === 'notebook';
         },
         invoke: (identifier, domainObject) => {
-            notebookImageMigration(openmct, identifier, domainObject);
+            notebookImageMigration(openmct, domainObject);
 
             return domainObject;
         }

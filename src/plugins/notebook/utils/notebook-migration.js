@@ -1,8 +1,7 @@
 import { createNotebookImageDomainObject, getThumbnailURLFromimageUrl } from './notebook-image';
 import { mutateObject } from './notebook-entries';
 
-export async function notebookImageMigration(openmct, identifier, object) {
-    const domainObject = object || await openmct.objects.get(identifier);
+export function notebookImageMigration(openmct, domainObject) {
     const configuration = domainObject.configuration;
     const notebookEntries = configuration.entries;
 
