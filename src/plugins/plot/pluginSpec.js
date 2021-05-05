@@ -24,10 +24,10 @@ import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} f
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "./stackedPlot/StackedPlot.vue";
-import configStore from "@/plugins/plot/configuration/configStore";
+import configStore from "./configuration/configStore";
 import EventEmitter from "EventEmitter";
-import PlotOptions from "../inspector/PlotOptions.vue";
-import PlotConfigurationModel from "@/plugins/plot/vue/single/configuration/PlotConfigurationModel";
+import PlotOptions from "./inspector/PlotOptions.vue";
+import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
 
 describe("the plugin", function () {
     let element;
