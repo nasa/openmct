@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -103,7 +103,7 @@ describe("the plugin", () => {
             }
         };
 
-        const applicableViews = openmct.objectViews.get(testTelemetryObject);
+        const applicableViews = openmct.objectViews.get(testTelemetryObject, []);
         let tableView = applicableViews.find((viewProvider) => viewProvider.key === 'table');
         expect(tableView).toBeDefined();
     });
@@ -175,7 +175,7 @@ describe("the plugin", () => {
 
             openmct.router.path = [testTelemetryObject];
 
-            applicableViews = openmct.objectViews.get(testTelemetryObject);
+            applicableViews = openmct.objectViews.get(testTelemetryObject, []);
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
             tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             tableView.show(child, true);

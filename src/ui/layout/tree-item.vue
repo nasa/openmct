@@ -20,7 +20,7 @@
             ref="navUp"
             v-model="expanded"
             class="c-tree__item__view-control"
-            :control-class="'c-nav__up'"
+            :control-class="'icon-arrow-nav-to-parent'"
             :enabled="showUp"
             @input="resetTreeHere"
         />
@@ -49,11 +49,11 @@ import ObjectLabel from '../components/ObjectLabel.vue';
 
 export default {
     name: 'TreeItem',
-    inject: ['openmct'],
     components: {
         viewControl,
         ObjectLabel
     },
+    inject: ['openmct'],
     props: {
         node: {
             type: Object,
