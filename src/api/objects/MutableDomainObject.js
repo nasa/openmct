@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -76,7 +76,10 @@ class MutableDomainObject {
     }
     $set(path, value) {
         _.set(this, path, value);
-        _.set(this, 'modified', Date.now());
+
+        if (path !== 'persisted' && path !== 'modified') {
+            _.set(this, 'modified', Date.now());
+        }
 
         //Emit secret synchronization event first, so that all objects are in sync before subsequent events fired.
         this._globalEventEmitter.emit(qualifiedEventName(this, '$_synchronize_model'), this);
@@ -112,9 +115,11 @@ class MutableDomainObject {
         return () => this._instanceEventEmitter.off(event, callback);
     }
     $destroy() {
-        this._observers.forEach(observer => observer());
-        delete this._globalEventEmitter;
-        delete this._observers;
+        while (this._observers.length > 0) {
+            const observer = this._observers.pop();
+            observer();
+        }
+
         this._instanceEventEmitter.emit('$_destroy');
     }
 

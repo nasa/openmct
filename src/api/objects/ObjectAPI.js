@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -161,6 +161,7 @@ ObjectAPI.prototype.addProvider = function (namespace, provider) {
 
 ObjectAPI.prototype.get = function (identifier, abortSignal) {
     let keystring = this.makeKeyString(identifier);
+
     if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
     }
@@ -176,15 +177,16 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
         throw new Error('Provider does not support get!');
     }
 
-    let objectPromise = provider.get(identifier, abortSignal);
-    this.cache[keystring] = objectPromise;
-
-    return objectPromise.then(result => {
+    let objectPromise = provider.get(identifier, abortSignal).then(result => {
         delete this.cache[keystring];
         result = this.applyGetInterceptors(identifier, result);
 
         return result;
     });
+
+    this.cache[keystring] = objectPromise;
+
+    return objectPromise;
 };
 
 /**
@@ -520,8 +522,10 @@ ObjectAPI.prototype.getOriginalPath = function (identifier, path = []) {
  */
 
 function hasAlreadyBeenPersisted(domainObject) {
-    return domainObject.persisted !== undefined
-        && domainObject.persisted === domainObject.modified;
+    const result = domainObject.persisted !== undefined
+        && domainObject.persisted >= domainObject.modified;
+
+    return result;
 }
 
 export default ObjectAPI;

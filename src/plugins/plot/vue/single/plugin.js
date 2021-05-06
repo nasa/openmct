@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,12 +23,14 @@
 import PlotViewProvider from './PlotViewProvider';
 import OverlayPlotViewProvider from '../overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from '../stackedPlot/StackedPlotViewProvider';
+import PlotsInspectorViewProvider from '../inspector/PlotsInspectorViewProvider';
 
 export default function () {
     return function install(openmct) {
         openmct.objectViews.addProvider(new StackedPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
     };
 }
 
