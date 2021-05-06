@@ -344,6 +344,11 @@ export default {
                 const layoutItem = selectionItem[0].context.layoutItem;
                 const isChildItem = selectionItem.length > 1;
 
+                if (!item && !layoutItem) {
+                    // cases where selection is used for table cells
+                    return;
+                }
+
                 if (!isChildItem) {
                     domainObject = item;
                     itemStyle = getApplicableStylesForItem(item);
