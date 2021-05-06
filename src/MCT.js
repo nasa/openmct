@@ -274,6 +274,7 @@ define([
         this.install(ImageryPlugin.default());
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
+        this.install(this.plugins.OpenInNewTabAction());
         this.install(this.plugins.ImportExport());
         this.install(this.plugins.WebPage());
         this.install(this.plugins.Condition());
