@@ -124,7 +124,9 @@
                 v-for="n  in 3" :key="n"
             >
                 <div class="c-inspect-properties__value --span-all">
-                    Link {{n}}
+                    <a href="http://www.google.com" target="_blank" class="icon-chain-links">
+                        Link {{n}} Name
+                    </a>
                 </div>
             </li>
         </ul>
