@@ -135,9 +135,14 @@
              :class="{ selected: focusedImageIndex === index && isPaused }"
              @click="setFocusedImage(index, thumbnailClick)"
         >
-            <img class="c-thumb__image"
-                 :src="image.url"
+            <a href=""
+               :download="image.imageDownloadName"
+               @click.prevent
             >
+                <img class="c-thumb__image"
+                     :src="image.url"
+                >
+            </a>
             <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
         </div>
     </div>
@@ -217,6 +222,9 @@ export default {
         },
         canTrackDuration() {
             return this.openmct.time.clock() && this.timeSystem.isUTCBased;
+        },
+        focusedImageDownloadName() {
+            return this.getImageDownloadName(this.focusedImage);
         },
         isNextDisabled() {
             let disabled = false;
@@ -345,6 +353,7 @@ export default {
         this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
         this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
+        this.imageDownloadNameHints = { ...this.metadata.valuesForHints(['imageDownloadName'])[0]};
 
         // related telemetry keys
         this.spacecraftPositionKeys = ['positionX', 'positionY', 'positionZ'];
@@ -532,6 +541,15 @@ export default {
             // Replace ISO "T" with a space to allow wrapping
             return dateTimeStr.replace("T", " ");
         },
+        getImageDownloadName(datum) {
+            let imageDownloadName = '';
+            if (datum) {
+                const key = this.imageDownloadNameHints.key;
+                imageDownloadName = datum[key];
+            }
+
+            return imageDownloadName;
+        },
         parseTime(datum) {
             if (!datum) {
                 return;
@@ -655,6 +673,7 @@ export default {
             image.formattedTime = this.formatTime(datum);
             image.url = this.formatImageUrl(datum);
             image.time = datum[this.timeKey];
+            image.imageDownloadName = this.getImageDownloadName(datum);
 
             this.imageHistory.push(image);
 
@@ -777,6 +796,9 @@ export default {
             this.focusedImageNaturalAspectRatio = undefined;
 
             const img = this.$refs.focusedImage;
+            if (!img) {
+                return;
+            }
 
             // TODO - should probably cache this
             img.addEventListener('load', () => {
