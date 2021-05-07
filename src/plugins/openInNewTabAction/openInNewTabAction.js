@@ -22,35 +22,34 @@
 
  export default class OpenInNewTab {
     constructor(openmct) {
-        this.name = 'Henry open in new tab';
+        this.name = 'Henry Open In New Tab';
         this.key = 'newTab';
-        this.description = 'Open domain object in new tab';
-        this.group = 'action';
-        this.priority = 4;
-
+        this.description = 'Open in a new browser tab';
+        this.group = "windowing";
+        this.priority = 10;
+        this.cssClass = "icon-new-window";
 
         this._openmct = openmct;
     }
     invoke(objectPath) {
-        // here's the logic
-        console.log('henry invoke');
-        // objectPath[0] is the domain object
-        // this._openmct.objects.getOriginalPath(objectPath[0].identifier)
-        //     .then((originalPath) => {
-        //         let url = '#/browse/' + originalPath
-        //             .map(function (o) {
-        //                 return o && this._openmct.objects.makeKeyString(o.identifier);
-        //             }.bind(this))
-        //             .reverse()
-        //             .slice(1)
-        //             .join('/');
-
-        //         window.location.href = url;
-        //     });
+        // here's the logic 
+        //  objectPath[0] = domainobject
+        // $window = window
+        let domainObject = objectPath[0];
+        this._openmct.objects.getOriginalPath(domainObject.identifier)
+        .then((originalPath) => {
+            let url = '#/browse/' + originalPath
+                .map(function (o) {
+                    return o && this._openmct.objects.makeKeyString(o.identifier);
+                }.bind(this))
+                .reverse()
+                .slice(1)
+                .join('/');
+                window.open.apply(window, [url, '_blank']);
+        });
     }
     appliesTo(objectPath) {
         // this controlls where this component should show
-        console.log('henry appliesTo', objectPath);
         // let parentKeystring = objectPath[1] && this._openmct.objects.makeKeyString(objectPath[1].identifier);
 
         // if (!parentKeystring) {
@@ -60,21 +59,4 @@
         // return (parentKeystring !== objectPath[0].location);
         return true;
     }
-    urlForNewTab(mode, domainObject) {
-        var search = this.$location.search(),
-        arr = [];
-    for (var key in search) {
-        if (Object.prototype.hasOwnProperty.call(search, key)) {
-            arr.push(key + '=' + search[key]);
-        }
-    }
-
-    var searchPath = "?" + arr.join('&'),
-        newTabPath =
-            "#" + this.urlForLocation(mode, domainObject)
-                    + searchPath;
-
-    return newTabPath;
-    }
-
 }
