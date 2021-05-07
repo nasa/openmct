@@ -19,9 +19,10 @@
     >
         <view-control
             ref="navigate"
-            v-model="expanded"
             class="c-tree__item__view-control"
+            :value="isOpen"
             :enabled="!activeSearch && hasComposition"
+            @input="navigationClick()"
         />
         <object-label
             ref="objectLabel"
@@ -84,7 +85,6 @@ export default {
         return {
             hasComposition: false,
             navigated: this.isNavigated(),
-            expanded: this.isOpen,
             contextClickActive: false
         };
     },
@@ -104,11 +104,6 @@ export default {
             return (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
         }
     },
-    watch: {
-        expanded() {
-            this.$emit('expanded');
-        }
-    },
     mounted() {
         this.domainObject = this.node.object;
 
@@ -124,6 +119,9 @@ export default {
         this.$emit('tree-item-destoyed', this.navigationPath);
     },
     methods: {
+        navigationClick() {
+            this.$emit('navigation-click', this.isOpen ? 'close' : 'open');
+        },
         handleClick(event) {
             // skip for navigation, let viewControl handle click
             if (this.$refs.navigate.$el === event.target) {
@@ -143,12 +141,6 @@ export default {
         highlightIfNavigated() {
             this.navigated = this.isNavigated();
         },
-        // listenForCompositionChanges() {
-        //     this.removeListener = this.openmct.objects.observe(this.domainObject, 'composition', (composition) => {
-        //         console.log('composition changes for', this.domainObject.name);
-        //         this.$emit('composition-change', composition);
-        //     });
-        // },
         setContextClickActive(active) {
             this.contextClickActive = active;
         }

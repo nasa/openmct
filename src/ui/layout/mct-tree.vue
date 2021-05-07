@@ -79,7 +79,7 @@
                     :item-height="itemHeight"
                     :is-open="openTreeItems.includes(treeItem.navigationPath)"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
-                    @expanded="treeItemAction(treeItem)"
+                    @navigation-click="treeItemAction(treeItem, $event)"
                 />
                 <!-- loading -->
                 <div
@@ -110,7 +110,6 @@ import search from '../components/search.vue';
 
 const ITEM_BUFFER = 5;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
-const TRACK_OPEN_STATE = true;
 const RETURN_ALL_DESCDNDANTS = true;
 
 export default {
@@ -184,8 +183,8 @@ export default {
             this.showCurrentPathInTree();
         },
         resetTreeNavigation() {
-            this.openTreeItems = [];
-            this.loadRoot();
+            console.log('reset', this.openTreeItems);
+            [...this.openTreeItems].reverse().map(this.closeTreeItem);
         },
         searchValue() {
             if (this.searchValue !== '' && !this.activeSearch) {
@@ -242,40 +241,42 @@ export default {
 
             this.treeItems = await this.loadAndBuildTreeItemsFor(root);
         },
-        treeItemAction(parentItem) {
-            const parentOpen = this.openTreeItems.includes(parentItem.navigationPath);
-
-            if (parentOpen) {
+        treeItemAction(parentItem, type) {
+            if (type === 'close') {
                 this.closeTreeItem(parentItem);
             } else {
-                this.openTreeItem(parentItem, TRACK_OPEN_STATE);
+                this.openTreeItem(parentItem);
             }
         },
-        async openTreeItem(parentItem, trackOpenState = false) {
-            this.navigationRequestTrack('start');
-
+        // eslint-disable-next-line object-property-newline
+        async openTreeItem(parentItem, synchronous = false) {
             let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
-
-            childrenItems.forEach((item) => {
-                if (this.isTreeItemOpen(item)) {
-                    this.openTreeItem(item);
-                }
-            });
-
             let parentPath = parentItem.navigationPath;
             let parentIndex = this.treeItems.indexOf(parentItem);
 
             this.treeItems.splice(parentIndex + 1, 0, ...childrenItems);
 
-            if (trackOpenState) {
+            if (!this.isTreeItemOpen(parentItem)) {
                 this.openTreeItems.push(parentPath);
             }
 
-            this.navigationRequestTrack('finish');
+            for (let item of childrenItems) {
+                if (this.isTreeItemOpen(item)) {
+                    if (!synchronous) {
+                        this.openTreeItem(item);
+                    } else {
+                        await this.openTreeItem(item, synchronous);
+                    }
+                }
+            }
 
             return;
         },
         closeTreeItem(item) {
+            if (typeof item === 'string') {
+                item = { navigationPath: item };
+            }
+
             let itemPath = item.navigationPath;
             let pathIndex = this.openTreeItems.indexOf(itemPath);
 
@@ -287,37 +288,13 @@ export default {
             this.treeItems = this.treeItems.filter(keepItem);
             this.openTreeItems.splice(pathIndex, 1);
         },
-        navigationRequestTrack(type) {
-            if (type === 'start') {
-                if (!this.treeOpenings) {
-                    this.treeOpenings = 0;
-                }
-
-                this.treeOpenings++;
-            } else if (type === 'finish') {
-                this.treeOpenings--;
-
-                if (this.treeOpenings === 0 && this.afterNavFunction) {
-                    this.$nextTick(() => {
-                        this.afterNavFunction();
-                        delete this.treeOpenings;
-                        delete this.afterNavFunction;
-                    });
-                }
-            }
-        },
         showCurrentPathInTree() {
-            let routerPath = [...this.openmct.router.path].reverse();
-            const currentPath = '/browse/' + routerPath
-                .map((object) => this.openmct.objects.makeKeyString(object.identifier))
-                .join('/');
+            const currentPath = this.buildNavigationPath(this.openmct.router.path);
 
             if (this.getTreeItemByPath(currentPath)) {
                 this.scrollTo(currentPath);
             } else {
-                this.openAndNavigateTo(currentPath, () => {
-                    this.scrollTo(currentPath);
-                });
+                this.openAndScrollTo(currentPath);
             }
         },
         async syncTreeOpenItems() {
@@ -329,20 +306,21 @@ export default {
                 }
             }
         },
-        async openAndNavigateTo(navigationPath, afterDone = () => {}) {
+        async openAndScrollTo(navigationPath) {
+            const SYNCHRONOUS = true;
             let pathArray = navigationPath.split('/');
             let path = '';
+
+            // skip root
             pathArray.splice(0, 2);
             pathArray[0] = '/browse/' + pathArray[0];
-
-            this.afterNavFunction = afterDone;
 
             for (let i = 0; i < pathArray.length; i++) {
                 path += pathArray[i];
                 let item = this.getTreeItemByPath(path);
 
-                if (item && !this.isTreeItemOpen(item)) {
-                    await this.openTreeItem(item, TRACK_OPEN_STATE);
+                if (item && !this.isTreeItemOpen(path)) {
+                    await this.openTreeItem(item, SYNCHRONOUS);
                 }
 
                 if (this.getTreeItemByPath(navigationPath)) {
@@ -351,6 +329,8 @@ export default {
 
                 path += '/';
             }
+
+            this.scrollTo(navigationPath);
         },
         scrollTo(navigationPath) {
             const indexOfScroll = this.treeItems.findIndex(item => item.navigationPath === navigationPath);
@@ -647,7 +627,6 @@ export default {
             this.openTreeItems = openItems ? JSON.parse(openItems) : [];
         },
         setSavedOpenItems() {
-            console.log('set open tree items to', this.openTreeItems);
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.openTreeItems));
         },
         handleWindowResize() {
