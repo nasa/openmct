@@ -104,7 +104,7 @@
                     autocorrect="off"
                     spellcheck="false"
                     :disabled="!isFixed"
-                    @change="validateAllBounds('endDate'); submitForm ()"
+                    @change="validateAllBounds('endDate'); submitForm()"
                 >
                 <date-picker
                     v-if="isFixed && isUTCBased"
