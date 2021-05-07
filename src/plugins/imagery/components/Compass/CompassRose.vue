@@ -21,8 +21,9 @@
  *****************************************************************************/
 
 <template>
-<div class="w-direction-rose"
-     :class="compassRoseSizing"
+<div
+    class="w-direction-rose"
+    :class="compassRoseSizingClasses"
 >
     <div
         class="c-direction-rose"
@@ -185,21 +186,17 @@ export default {
         }
     },
     computed: {
-        compassRoseSizing() {
-            let compassRoseSizing = '';
+        compassRoseSizingClasses() {
+            let compassRoseSizingClasses = '';
             if (this.sizedImageWidth < 300) {
-                compassRoseSizing = '--rose-small --rose-min';
+                compassRoseSizingClasses = '--rose-small --rose-min';
+            } else if (this.sizedImageWidth < 500) {
+                compassRoseSizingClasses = '--rose-small';
+            } else if (this.sizedImageWidth > 1000) {
+                compassRoseSizingClasses = '--rose-max';
             }
 
-            if (this.sizedImageWidth < 500) {
-                compassRoseSizing = '--rose-small';
-            }
-
-            if (this.sizedImageWidth > 1000) {
-                compassRoseSizing = '--rose-max';
-            }
-
-            return compassRoseSizing;
+            return compassRoseSizingClasses;
         },
         compassRoseStyle() {
             return { transform: `rotate(${ this.north }deg)` };
