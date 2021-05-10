@@ -181,8 +181,8 @@ export default {
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
             const range = this.yAxis.get('range');
             if (!range) {
-                this.rangeMin = 0;
-                this.rangeMax = 0;
+                this.rangeMin = '';
+                this.rangeMax = '';
             } else {
                 this.rangeMin = range.min;
                 this.rangeMax = range.max;
