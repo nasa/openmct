@@ -94,6 +94,7 @@ define([
         initialize() {
             if (this.domainObject.type === 'table') {
                 this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
+                this.filters = this.domainObject.configuration.filters;
                 this.loadComposition();
             } else {
                 this.addTelemetryObject(this.domainObject);
@@ -138,7 +139,18 @@ define([
             this.emit('object-added', telemetryObject);
         }
 
-        updateFilters() {
+        updateFilters(updatedFilters) {
+            let deepCopiedFilters = JSON.parse(JSON.stringify(updatedFilters));
+
+            if (this.filters && !_.isEqual(this.filters, deepCopiedFilters)) {
+                this.filters = deepCopiedFilters;
+                this.clearAndResubscribe();
+            } else {
+                this.filters = deepCopiedFilters;
+            }
+        }
+
+        clearAndResubscribe() {
             this.filteredRows.clear();
             this.boundedRows.clear();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);

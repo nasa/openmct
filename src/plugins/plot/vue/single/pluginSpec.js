@@ -26,6 +26,8 @@ import Vue from "vue";
 import StackedPlot from "../stackedPlot/StackedPlot.vue";
 import configStore from "@/plugins/plot/vue/single/configuration/configStore";
 import EventEmitter from "EventEmitter";
+import PlotOptions from "../inspector/PlotOptions.vue";
+import PlotConfigurationModel from "@/plugins/plot/vue/single/configuration/PlotConfigurationModel";
 
 describe("the plugin", function () {
     let element;
@@ -172,6 +174,35 @@ describe("the plugin", function () {
             const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
             let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-overlay");
             expect(plotView).toBeDefined();
+        });
+
+        it('provides an inspector view for overlay plots', () => {
+            let selection = [
+                [
+                    {
+                        context: {
+                            item: {
+                                id: "test-object",
+                                type: "telemetry.plot.overlay",
+                                telemetry: {
+                                    values: [{
+                                        key: "some-key"
+                                    }]
+                                }
+                            }
+                        }
+                    },
+                    {
+                        context: {
+                            item: {
+                                type: 'time-strip'
+                            }
+                        }
+                    }
+                ]
+            ];
+            const plotInspectorView = openmct.inspectorViews.get(selection);
+            expect(plotInspectorView.length).toEqual(1);
         });
 
         it("provides a stacked plot view for objects with telemetry", () => {
@@ -574,6 +605,220 @@ describe("the plugin", function () {
                     max: 20
                 });
                 done();
+            });
+        });
+    });
+
+    describe('the inspector view', () => {
+        let component;
+        let viewComponentObject;
+        let mockComposition;
+        let testTelemetryObject;
+        let selection;
+        let config;
+        beforeEach((done) => {
+            testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
+            selection = [
+                [
+                    {
+                        context: {
+                            item: {
+                                id: "test-object",
+                                identifier: {
+                                    key: "test-object",
+                                    namespace: ''
+                                },
+                                type: "telemetry.plot.overlay",
+                                configuration: {
+                                    series: [
+                                        {
+                                            identifier: {
+                                                key: "test-object",
+                                                namespace: ''
+                                            }
+                                        }
+                                    ]
+                                },
+                                composition: []
+                            }
+                        }
+                    },
+                    {
+                        context: {
+                            item: {
+                                type: 'time-strip',
+                                identifier: {
+                                    key: 'some-other-key',
+                                    namespace: ''
+                                }
+                            }
+                        }
+                    }
+                ]
+            ];
+
+            mockComposition = new EventEmitter();
+            mockComposition.load = () => {
+                mockComposition.emit('add', testTelemetryObject);
+
+                return [testTelemetryObject];
+            };
+
+            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
+            const configId = openmct.objects.makeKeyString(selection[0][0].context.item.identifier);
+            config = new PlotConfigurationModel({
+                id: configId,
+                domainObject: selection[0][0].context.item,
+                openmct: openmct
+            });
+            configStore.add(configId, config);
+
+            let viewContainer = document.createElement('div');
+            child.append(viewContainer);
+            component = new Vue({
+                el: viewContainer,
+                components: {
+                    PlotOptions
+                },
+                provide: {
+                    openmct: openmct,
+                    domainObject: selection[0][0].context.item,
+                    path: [selection[0][0].context.item, selection[0][1].context.item]
+                },
+                template: '<plot-options/>'
+            });
+
+            Vue.nextTick(() => {
+                viewComponentObject = component.$root.$children[0];
+                done();
+            });
+        });
+
+        describe('in view only mode', () => {
+            let browseOptionsEl;
+            let editOptionsEl;
+            beforeEach(() => {
+                browseOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-browse');
+                editOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-edit');
+            });
+
+            it('does not show the edit options', () => {
+                expect(editOptionsEl).toBeNull();
+            });
+
+            it('shows the name', () => {
+                const seriesEl = browseOptionsEl.querySelector('.c-object-label__name');
+                expect(seriesEl.innerHTML).toEqual(testTelemetryObject.name);
+            });
+
+            it('shows in collapsed mode', () => {
+                const seriesEl = browseOptionsEl.querySelectorAll('.c-disclosure-triangle--expanded');
+                expect(seriesEl.length).toEqual(0);
+            });
+
+            it('shows in expanded mode', () => {
+                let expandControl = browseOptionsEl.querySelector(".c-disclosure-triangle");
+                const clickEvent = createMouseEvent("click");
+                expandControl.dispatchEvent(clickEvent);
+
+                const plotOptionsProperties = browseOptionsEl.querySelectorAll('.js-plot-options-browse-properties .grid-row');
+                expect(plotOptionsProperties.length).toEqual(5);
+            });
+        });
+
+        describe('in edit mode', () => {
+            let editOptionsEl;
+            let browseOptionsEl;
+
+            beforeEach((done) => {
+                viewComponentObject.setEditState(true);
+                Vue.nextTick(() => {
+                    editOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-edit');
+                    browseOptionsEl = viewComponentObject.$el.querySelector('.js-plot-options-browse');
+                    done();
+                });
+            });
+
+            it('does not show the browse options', () => {
+                expect(browseOptionsEl).toBeNull();
+            });
+
+            it('shows the name', () => {
+                const seriesEl = editOptionsEl.querySelector('.c-object-label__name');
+                expect(seriesEl.innerHTML).toEqual(testTelemetryObject.name);
+            });
+
+            it('shows in collapsed mode', () => {
+                const seriesEl = editOptionsEl.querySelectorAll('.c-disclosure-triangle--expanded');
+                expect(seriesEl.length).toEqual(0);
+            });
+
+            it('shows in collapsed mode', () => {
+                const seriesEl = editOptionsEl.querySelectorAll('.c-disclosure-triangle--expanded');
+                expect(seriesEl.length).toEqual(0);
+            });
+
+            it('renders expanded', () => {
+                const expandControl = editOptionsEl.querySelector(".c-disclosure-triangle");
+                const clickEvent = createMouseEvent("click");
+                expandControl.dispatchEvent(clickEvent);
+
+                const plotOptionsProperties = editOptionsEl.querySelectorAll(".js-plot-options-edit-properties .grid-row");
+                expect(plotOptionsProperties.length).toEqual(6);
+            });
+
+            it('shows yKeyOptions', () => {
+                const expandControl = editOptionsEl.querySelector(".c-disclosure-triangle");
+                const clickEvent = createMouseEvent("click");
+                expandControl.dispatchEvent(clickEvent);
+
+                const plotOptionsProperties = editOptionsEl.querySelectorAll(".js-plot-options-edit-properties .grid-row");
+
+                const yKeySelection = plotOptionsProperties[0].querySelector('select');
+                const options = Array.from(yKeySelection.options).map((option) => {
+                    return option.value;
+                });
+                expect(options).toEqual([testTelemetryObject.telemetry.values[1].key, testTelemetryObject.telemetry.values[2].key]);
+            });
+
+            it('shows yAxis options', () => {
+                const expandControl = editOptionsEl.querySelector(".c-disclosure-triangle");
+                const clickEvent = createMouseEvent("click");
+                expandControl.dispatchEvent(clickEvent);
+
+                const yAxisProperties = editOptionsEl.querySelectorAll("div.grid-properties:first-of-type .l-inspector-part");
+                expect(yAxisProperties.length).toEqual(3);
             });
         });
     });
