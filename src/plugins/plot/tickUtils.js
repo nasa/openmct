@@ -105,10 +105,13 @@ export function getFormattedTicks(newTicks, format) {
         const suffix = tickText.reduce(commonSuffix);
         newTicks.forEach(function (t) {
             t.fullText = t.text;
-            if (suffix.length) {
-                t.text = t.text.slice(prefix.length, -suffix.length);
-            } else {
-                t.text = t.text.slice(prefix.length);
+
+            if (typeof t.text === 'string') {
+                if (suffix.length) {
+                    t.text = t.text.slice(prefix.length, -suffix.length);
+                } else {
+                    t.text = t.text.slice(prefix.length);
+                }
             }
         });
     }

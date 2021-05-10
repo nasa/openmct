@@ -166,7 +166,6 @@ export default class YAxisModel extends Model {
          * Update yAxis format, values, and label from known series.
          */
     updateFromSeries(series) {
-        this.unset('displayRange');
         const plotModel = this.plot.get('domainObject');
         const label = _.get(plotModel, 'configuration.yAxis.label');
         const sampleSeries = series.first();
