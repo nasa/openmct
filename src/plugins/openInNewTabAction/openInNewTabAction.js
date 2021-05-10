@@ -32,9 +32,6 @@
         this._openmct = openmct;
     }
     invoke(objectPath) {
-        // here's the logic 
-        //  objectPath[0] = domainobject
-        // $window = window
         let domainObject = objectPath[0];
         this._openmct.objects.getOriginalPath(domainObject.identifier)
         .then((originalPath) => {
@@ -47,16 +44,5 @@
                 .join('/');
                 window.open.apply(window, [url, '_blank']);
         });
-    }
-    appliesTo(objectPath) {
-        // this controlls where this component should show
-        // let parentKeystring = objectPath[1] && this._openmct.objects.makeKeyString(objectPath[1].identifier);
-
-        // if (!parentKeystring) {
-        //     return false;
-        // }
-
-        // return (parentKeystring !== objectPath[0].location);
-        return true;
     }
 }
