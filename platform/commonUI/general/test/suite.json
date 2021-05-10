@@ -23,7 +23,6 @@
     "filters/ReverseFilter",
     "services/Popup",
     "services/PopupService",
-    "services/UrlService",
     "StyleSheetLoader",
     "UnsupportedBrowserWarning"
 ]

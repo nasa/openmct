@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 define([
-    "./src/services/UrlService",
     "./src/services/PopupService",
     "./src/SplashScreenManager",
     "./src/StyleSheetLoader",
@@ -68,7 +67,6 @@ define([
     "./res/templates/controls/datetime-picker.html",
     "./res/templates/controls/datetime-field.html"
 ], function (
-    UrlService,
     PopupService,
     SplashScreenManager,
     StyleSheetLoader,
@@ -124,13 +122,6 @@ define([
             "resources": "res",
             "extensions": {
                 "services": [
-                    {
-                        "key": "urlService",
-                        "implementation": UrlService,
-                        "depends": [
-                            "$location"
-                        ]
-                    },
                     {
                         "key": "popupService",
                         "implementation": PopupService,

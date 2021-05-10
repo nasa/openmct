@@ -48,6 +48,7 @@ define([
     './plugins/remove/plugin',
     './plugins/move/plugin',
     './plugins/duplicate/plugin',
+    './plugins/newTabAction/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -77,6 +78,7 @@ define([
     RemoveActionPlugin,
     MoveActionPlugin,
     DuplicateActionPlugin,
+    NewTabActionPlugin,
     Vue
 ) {
     /**
@@ -284,6 +286,7 @@ define([
         this.install(this.plugins.ViewDatumAction());
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
+        this.install(NewTabActionPlugin.default());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
