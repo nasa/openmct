@@ -29,7 +29,7 @@ import EventEmitter from "EventEmitter";
 import PlotOptions from "../inspector/PlotOptions.vue";
 import PlotConfigurationModel from "@/plugins/plot/vue/single/configuration/PlotConfigurationModel";
 
-describe("the plugin", function () {
+fdescribe("the plugin", function () {
     let element;
     let child;
     let openmct;
@@ -321,21 +321,37 @@ describe("the plugin", function () {
             expect(playEl.length).toBe(0);
         });
 
-        it('shows the pause and play controls', (done) => {
-            openmct.time.clock('local', {
-                start: -1000,
-                end: 100
-            });
-            Vue.nextTick(() => {
-                let pausePlay = element.querySelectorAll(".c-button-set");
-                console.log(pausePlay);
-                let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
-                let playEl = element.querySelectorAll(".c-button-set .icon-arrow-right");
-                expect(pauseEl.length).toBe(1);
-                expect(playEl.length).toBe(1);
-                done();
+        describe('pause and play controls', () => {
+            beforeEach(() => {
+                openmct.time.clock('local', {
+                    start: -1000,
+                    end: 100
+                });
+
+                return Vue.nextTick();
             });
 
+            it('shows the pause controls', (done) => {
+                Vue.nextTick(() => {
+                    let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
+                    expect(pauseEl.length).toBe(1);
+                    done();
+                });
+
+            });
+
+            it('shows the play control if plot is paused', (done) => {
+                let pauseEl = element.querySelector(".c-button-set .icon-pause");
+                const clickEvent = createMouseEvent("click");
+
+                pauseEl.dispatchEvent(clickEvent);
+                Vue.nextTick(() => {
+                    let playEl = element.querySelectorAll(".c-button-set .is-paused");
+                    expect(playEl.length).toBe(1);
+                    done();
+                });
+
+            });
         });
     });
 
