@@ -22,129 +22,134 @@
 
 <template>
 <div
-    class="c-direction-rose"
-    @click="toggleLockCompass"
+    class="w-direction-rose"
+    :class="compassRoseSizingClasses"
 >
     <div
-        class="c-nsew"
-        :style="compassRoseStyle"
+        class="c-direction-rose"
+        @click="toggleLockCompass"
     >
-        <svg
-            class="c-nsew__minor-ticks"
-            viewBox="0 0 100 100"
+        <div
+            class="c-nsew"
+            :style="compassRoseStyle"
         >
-            <rect
-                class="c-nsew__tick c-tick-ne"
-                x="49"
-                y="0"
-                width="2"
-                height="5"
-            />
-            <rect
-                class="c-nsew__tick c-tick-se"
-                x="95"
-                y="49"
-                width="5"
-                height="2"
-            />
-            <rect
-                class="c-nsew__tick c-tick-sw"
-                x="49"
-                y="95"
-                width="2"
-                height="5"
-            />
-            <rect
-                class="c-nsew__tick c-tick-nw"
-                x="0"
-                y="49"
-                width="5"
-                height="2"
-            />
+            <svg
+                class="c-nsew__minor-ticks"
+                viewBox="0 0 100 100"
+            >
+                <rect
+                    class="c-nsew__tick c-tick-ne"
+                    x="49"
+                    y="0"
+                    width="2"
+                    height="5"
+                />
+                <rect
+                    class="c-nsew__tick c-tick-se"
+                    x="95"
+                    y="49"
+                    width="5"
+                    height="2"
+                />
+                <rect
+                    class="c-nsew__tick c-tick-sw"
+                    x="49"
+                    y="95"
+                    width="2"
+                    height="5"
+                />
+                <rect
+                    class="c-nsew__tick c-tick-nw"
+                    x="0"
+                    y="49"
+                    width="5"
+                    height="2"
+                />
 
-        </svg>
+            </svg>
 
-        <svg
-            class="c-nsew__ticks"
-            viewBox="0 0 100 100"
-        >
-            <polygon
-                class="c-nsew__tick c-tick-n"
-                points="50,0 57,5 43,5"
-            />
-            <rect
-                class="c-nsew__tick c-tick-e"
-                x="95"
-                y="49"
-                width="5"
-                height="2"
-            />
-            <rect
-                class="c-nsew__tick c-tick-w"
-                x="0"
-                y="49"
-                width="5"
-                height="2"
-            />
-            <rect
-                class="c-nsew__tick c-tick-s"
-                x="49"
-                y="95"
-                width="2"
-                height="5"
-            />
+            <svg
+                class="c-nsew__ticks"
+                viewBox="0 0 100 100"
+            >
+                <polygon
+                    class="c-nsew__tick c-tick-n"
+                    points="50,0 60,10 40,10"
+                />
+                <rect
+                    class="c-nsew__tick c-tick-e"
+                    x="95"
+                    y="49"
+                    width="5"
+                    height="2"
+                />
+                <rect
+                    class="c-nsew__tick c-tick-w"
+                    x="0"
+                    y="49"
+                    width="5"
+                    height="2"
+                />
+                <rect
+                    class="c-nsew__tick c-tick-s"
+                    x="49"
+                    y="95"
+                    width="2"
+                    height="5"
+                />
 
-            <text
-                class="c-nsew__label c-label-n"
-                text-anchor="middle"
-                :transform="northTextTransform"
-            >N</text>
-            <text
-                class="c-nsew__label c-label-e"
-                text-anchor="middle"
-                :transform="eastTextTransform"
-            >E</text>
-            <text
-                class="c-nsew__label c-label-w"
-                text-anchor="middle"
-                :transform="southTextTransform"
-            >W</text>
-            <text
-                class="c-nsew__label c-label-s"
-                text-anchor="middle"
-                :transform="westTextTransform"
-            >S</text>
-        </svg>
-    </div>
-
-    <div
-        v-if="hasHeading"
-        class="c-spacecraft-body"
-        :style="headingStyle"
-    >
-    </div>
-
-    <div
-        v-if="hasSunHeading"
-        class="c-sun"
-        :style="sunHeadingStyle"
-    ></div>
-
-    <div
-        class="c-cam-field"
-        :style="cameraPanStyle"
-    >
-        <div class="cam-field-half cam-field-half-l">
-            <div
-                class="cam-field-area"
-                :style="cameraFOVStyleLeftHalf"
-            ></div>
+                <text
+                    class="c-nsew__label c-label-n"
+                    text-anchor="middle"
+                    :transform="northTextTransform"
+                >N</text>
+                <text
+                    class="c-nsew__label c-label-e"
+                    text-anchor="middle"
+                    :transform="eastTextTransform"
+                >E</text>
+                <text
+                    class="c-nsew__label c-label-w"
+                    text-anchor="middle"
+                    :transform="southTextTransform"
+                >W</text>
+                <text
+                    class="c-nsew__label c-label-s"
+                    text-anchor="middle"
+                    :transform="westTextTransform"
+                >S</text>
+            </svg>
         </div>
-        <div class="cam-field-half cam-field-half-r">
-            <div
-                class="cam-field-area"
-                :style="cameraFOVStyleRightHalf"
-            ></div>
+
+        <div
+            v-if="hasHeading"
+            class="c-spacecraft-body"
+            :style="headingStyle"
+        >
+        </div>
+
+        <div
+            v-if="hasSunHeading"
+            class="c-sun"
+            :style="sunHeadingStyle"
+        ></div>
+
+        <div
+            class="c-cam-field"
+            :style="cameraPanStyle"
+        >
+            <div class="cam-field-half cam-field-half-l">
+                <div
+                    class="cam-field-area"
+                    :style="cameraFOVStyleLeftHalf"
+                ></div>
+            </div>
+            <div class="cam-field-half cam-field-half-r">
+                <div
+                    class="cam-field-area"
+                    :style="cameraFOVStyleRightHalf"
+                ></div>
+            </div>
         </div>
     </div>
 </div>
@@ -155,6 +160,10 @@ import { rotate } from './utils';
 
 export default {
     props: {
+        sizedImageWidth: {
+            type: Number,
+            required: true
+        },
         heading: {
             type: Number,
             required: true
@@ -177,11 +186,23 @@ export default {
         }
     },
     computed: {
-        north() {
-            return this.lockCompass ? rotate(-this.cameraPan) : 0;
+        compassRoseSizingClasses() {
+            let compassRoseSizingClasses = '';
+            if (this.sizedImageWidth < 300) {
+                compassRoseSizingClasses = '--rose-small --rose-min';
+            } else if (this.sizedImageWidth < 500) {
+                compassRoseSizingClasses = '--rose-small';
+            } else if (this.sizedImageWidth > 1000) {
+                compassRoseSizingClasses = '--rose-max';
+            }
+
+            return compassRoseSizingClasses;
         },
         compassRoseStyle() {
             return { transform: `rotate(${ this.north }deg)` };
+        },
+        north() {
+            return this.lockCompass ? rotate(-this.cameraPan) : 0;
         },
         northTextTransform() {
             return this.cardinalPointsTextTransform.north;
@@ -204,10 +225,10 @@ export default {
             const rotation = `rotate(${ -this.north })`;
 
             return {
-                north: `translate(50,15) ${ rotation }`,
-                east: `translate(87,50) ${ rotation }`,
-                south: `translate(13,50) ${ rotation }`,
-                west: `translate(50,87) ${ rotation }`
+                north: `translate(50,23) ${ rotation }`,
+                east: `translate(82,50) ${ rotation }`,
+                south: `translate(18,50) ${ rotation }`,
+                west: `translate(50,82) ${ rotation }`
             };
         },
         hasHeading() {
