@@ -45,8 +45,13 @@
 
             <div class="gl-plot-display-area has-local-controls has-cursor-guides">
                 <div class="l-state-indicators">
-                    <span class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+                    <span v-if="plotHistory.length"
+                          class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
                           title="This plot is not currently displaying the latest data. Reset pan/zoom to view latest data."
+                    ></span>
+                    <span v-else
+                          class="l-state-indicators__alert-no-lad t-object-alert t-alert-unsynced icon-alert-triangle"
+                          title="This plot is not currently displaying the latest data. Resume to view latest data."
                     ></span>
                 </div>
 
@@ -85,24 +90,8 @@
                         >
                         </button>
                     </div>
-                    <div v-if="isRealTime"
+                    <div v-if="plotHistory.length"
                          class="c-button-set c-button-set--strip-h"
-                    >
-                        <button class="c-button icon-pause"
-                                title="Pause"
-                                :disabled="isFrozen"
-                                @click="pause()"
-                        >
-                        </button>
-                        <button class="c-button icon-arrow-right"
-                                title="Play"
-                                :disabled="!isFrozen"
-                                @click="play()"
-                        >
-                        </button>
-                    </div>
-                    <div class="c-button-set c-button-set--strip-h"
-                         :disabled="!plotHistory.length"
                     >
                         <button class="c-button icon-arrow-left"
                                 title="Restore previous pan/zoom"
@@ -112,6 +101,22 @@
                         <button class="c-button icon-reset"
                                 title="Reset pan/zoom"
                                 @click="clear()"
+                        >
+                        </button>
+                    </div>
+                    <div v-if="isRealTime"
+                         class="c-button-set c-button-set--strip-h"
+                    >
+                        <button v-if="!isFrozen"
+                                class="c-button icon-pause"
+                                title="Pause incoming real-time data"
+                                @click="pause()"
+                        >
+                        </button>
+                        <button v-if="isFrozen"
+                                class="c-button icon-arrow-right pause-play is-paused"
+                                title="Resume displaying real-time data"
+                                @click="play()"
                         >
                         </button>
                     </div>
@@ -247,6 +252,7 @@ export default {
             'configuration.filters',
             this.updateFiltersAndResubscribe
         );
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
         this.followTimeConductor();
@@ -448,17 +454,26 @@ export default {
        * displays can update accordingly.
        */
         synchronized(value) {
+            const isLocalClock = this.openmct.time.clock();
+
             if (typeof value !== 'undefined') {
                 this._synchronized = value;
-                const isUnsynced = !value && this.openmct.time.clock();
-                const domainObject = this.openmct.legacyObject(this.domainObject);
-                if (domainObject.getCapability('status')) {
-                    domainObject.getCapability('status')
-                        .set('timeconductor-unsynced', isUnsynced);
-                }
+
+                const isUnsynced = isLocalClock && !value;
+                this.setStatus(isUnsynced);
             }
 
             return this._synchronized;
+        },
+
+        setStatus(isNotInSync) {
+            const outOfSync = isNotInSync === true
+                || this.isFrozen === true;
+            if (outOfSync === true) {
+                this.openmct.status.set(this.domainObject.identifier, 'timeconductor-unsynced');
+            } else {
+                this.openmct.status.set(this.domainObject.identifier, '');
+            }
         },
 
         initCanvas() {
@@ -753,7 +768,8 @@ export default {
             const ZOOM_AMT = 0.1;
             event.preventDefault();
 
-            if (!this.positionOverPlot) {
+            if (event.wheelDelta === undefined
+                || !this.positionOverPlot) {
                 return;
             }
 
@@ -871,11 +887,13 @@ export default {
         freeze() {
             this.config.yAxis.set('frozen', true);
             this.config.xAxis.set('frozen', true);
+            this.setStatus();
         },
 
         clear() {
             this.config.yAxis.set('frozen', false);
             this.config.xAxis.set('frozen', false);
+            this.setStatus();
             this.plotHistory = [];
             this.userViewportChangeEnd();
         },
@@ -926,9 +944,16 @@ export default {
                 this.filterObserver();
             }
 
+            if (this.removeStatusListener) {
+                this.removeStatusListener();
+            }
+
             this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
             this.openmct.objectViews.off('clearData', this.clearData);
+        },
+        updateStatus(status) {
+            this.$emit('statusUpdated', status);
         }
     }
 };
