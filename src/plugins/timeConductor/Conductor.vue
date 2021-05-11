@@ -83,9 +83,9 @@
                     @update="timePopUpdate"
                 />
                 <button
-                        @click="showTimePopupStart"
-                        class="c-button c-conductor__delta-button"
-                        ref="startOffset"
+                    @click="showTimePopupStart"
+                    class="c-button c-conductor__delta-button"
+                    ref="startOffset"
                 >
                     {{ offsets.start }}
                 </button>
@@ -489,9 +489,7 @@ export default {
             this.hideAllTimePopups();
             this.showTCInputEnd = !this.showTCInputEnd;
         },
-        timePopUpdate(opts) {
-            let { type, hours, minutes, seconds } = opts;
-
+        timePopUpdate({ type, hours, minutes, seconds }) {
             this.offsets[type] = [hours, minutes, seconds].join(':');
             this.setOffsetsFromView();
             this.hideAllTimePopups();
