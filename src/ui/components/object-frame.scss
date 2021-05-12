@@ -129,14 +129,7 @@
         }
     }
 
-    .c-click-icon,
-    .c-button,
-    .c-icon-button {
-        // Shrink buttons a bit when they appear in a frame
-        border-radius: $smallCr !important;
-        font-size: 0.9em;
-        padding: 5px;
-    }
+    @include smallerControlButtons;
 
     &.has-complex-content {
         > .c-so-view__view-large { display: block; }

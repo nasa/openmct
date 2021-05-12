@@ -147,11 +147,15 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
         this.result = evaluateResults(Object.values(this.telemetryDataCache), this.telemetry);
     }
 
-    requestLAD(telemetryObjects) {
-        const options = {
+    requestLAD(telemetryObjects, requestOptions) {
+        let options = {
             strategy: 'latest',
             size: 1
         };
+
+        if (requestOptions !== undefined) {
+            options = Object.assign(options, requestOptions);
+        }
 
         if (!this.isValid()) {
             return this.formatData({}, telemetryObjects);
