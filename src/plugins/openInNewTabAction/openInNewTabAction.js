@@ -33,6 +33,14 @@
     }
     invoke(objectPath) {
         let domainObject = objectPath[0];
+        let urlParams = this._openmct.router.getParams();
+        // Needs to include start/end bounds timeSystem and mode in new URL
+        // to keep time consistent
+        let timeParams = [];
+        for(let key in urlParams) {
+            let param = `${key}=${urlParams[key]}`;
+            if (param) timeParams.push(param);
+        }
         this._openmct.objects.getOriginalPath(domainObject.identifier)
         .then((originalPath) => {
             let url = '#/browse/' + originalPath
@@ -42,6 +50,8 @@
                 .reverse()
                 .slice(1)
                 .join('/');
+                timeParams = [];
+                if (timeParams.length) url += '?' + timeParams.join('&');
                 window.open.apply(window, [url, '_blank']);
         });
     }
