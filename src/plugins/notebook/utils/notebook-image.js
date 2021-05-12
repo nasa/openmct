@@ -5,7 +5,7 @@ export const DEFAULT_SIZE = {
     height: 30
 };
 
-export function createNotebookImageDomainObject(openmct, fullSizeImageURL, thumbnailImageURL) {
+export function createNotebookImageDomainObject(openmct, fullSizeImageURL) {
     const identifier = {
         key: uuid(),
         namespace: ''
@@ -17,8 +17,7 @@ export function createNotebookImageDomainObject(openmct, fullSizeImageURL, thumb
         type: viewType,
         identifier,
         configuration: {
-            fullSizeImageURL,
-            thumbnailImageURL
+            fullSizeImageURL
         }
     };
 
@@ -68,12 +67,11 @@ export function getThumbnailURLFromimageUrl(imageUrl, size = DEFAULT_SIZE) {
     });
 }
 
-export function updateNotebookImageDomainObject(openmct, identifier, fullSizeImage, thumbnailImageURL) {
+export function updateNotebookImageDomainObject(openmct, identifier, fullSizeImage) {
     openmct.objects.get(identifier)
         .then(domainObject => {
             const configuration = domainObject.configuration;
             configuration.fullSizeImageURL = fullSizeImage.src;
-            configuration.thumbnailImageURL = thumbnailImageURL;
 
             openmct.objects.mutate(domainObject, 'configuration', configuration);
         });

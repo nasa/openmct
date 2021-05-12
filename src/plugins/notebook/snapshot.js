@@ -35,7 +35,7 @@ export default class Snapshot {
      * @private
      */
     _saveSnapShot(notebookType, fullSizeImageURL, thumbnailImageURL, snapshotMeta) {
-        createNotebookImageDomainObject(this.openmct, fullSizeImageURL, thumbnailImageURL)
+        createNotebookImageDomainObject(this.openmct, fullSizeImageURL)
             .then(object => {
                 const thumbnailImage = { src: thumbnailImageURL || '' };
                 const snapshot = {

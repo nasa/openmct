@@ -258,7 +258,7 @@ export default {
         updateSnapshot(snapshotObject) {
             this.embed.snapshot.thumbnailImage = snapshotObject.thumbnailImage;
 
-            updateNotebookImageDomainObject(this.openmct, this.embed.snapshot.fullSizeImageObjectIdentifier, snapshotObject.fullSizeImage, snapshotObject.thumbnailImage);
+            updateNotebookImageDomainObject(this.openmct, this.embed.snapshot.fullSizeImageObjectIdentifier, snapshotObject.fullSizeImage);
             this.updateEmbed(this.embed);
         }
     }
