@@ -91,7 +91,7 @@ export default class CouchObjectProvider {
      * persist any queued objects
      * @private
      */
-    checkResponse(response, intermediateResponse) {
+    checkResponse(response, intermediateResponse, key) {
         let requestSuccess = false;
         const id = response ? response.id : undefined;
         let rev;
