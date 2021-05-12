@@ -84,8 +84,8 @@
                         >
                         </button>
                     </div>
-                    <div class="c-button-set c-button-set--strip-h"
-                         :disabled="!plotHistory.length"
+                    <div v-if="plotHistory.length"
+                         class="c-button-set c-button-set--strip-h"
                     >
                         <button class="c-button icon-arrow-left"
                                 title="Restore previous pan/zoom"
@@ -95,6 +95,31 @@
                         <button class="c-button icon-reset"
                                 title="Reset pan/zoom"
                                 @click="clear()"
+                        >
+                        </button>
+                    </div>
+                    <div v-if="isRealTime"
+                         class="c-button-set c-button-set--strip-h"
+                    >
+                        <button v-if="!isFrozen"
+                                class="c-button icon-pause"
+                                title="Pause incoming real-time data"
+                                @click="pause()"
+                        >
+                        </button>
+                        <button v-if="isFrozen"
+                                class="c-button icon-arrow-right pause-play is-paused"
+                                title="Resume displaying real-time data"
+                                @click="play()"
+                        >
+                        </button>
+                    </div>
+                    <div v-if="isTimeOutOfSync || isFrozen"
+                         class="c-button-set c-button-set--strip-h"
+                    >
+                        <button class="c-button icon-clock"
+                                title="Synchronize Time Conductor"
+                                @click="showSynchronizeDialog()"
                         >
                         </button>
                     </div>
@@ -185,10 +210,15 @@ export default {
             xKeyOptions: [],
             config: {},
             pending: 0,
-            loaded: false
+            isRealTime: this.openmct.time.clock() !== undefined,
+            loaded: false,
+            isTimeOutOfSync: false
         };
     },
     computed: {
+        isFrozen() {
+            return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+        },
         plotLegendPositionClass() {
             return `plot-legend-${this.config.legend.get('position')}`;
         },
@@ -243,6 +273,7 @@ export default {
     },
     methods: {
         followTimeConductor() {
+            this.openmct.time.on('clock', this.updateRealTime);
             this.openmct.time.on('bounds', this.updateDisplayBounds);
             this.synchronized(true);
         },
@@ -371,6 +402,9 @@ export default {
             const displayRange = series.getDisplayRange(xKey);
             this.config.xAxis.set('range', displayRange);
         },
+        updateRealTime(clock) {
+            this.isRealTime = clock !== undefined;
+        },
 
         /**
        * Track latest display bounds.  Forces update when not receiving ticks.
@@ -424,17 +458,28 @@ export default {
        * displays can update accordingly.
        */
         synchronized(value) {
+            const isLocalClock = this.openmct.time.clock();
+
             if (typeof value !== 'undefined') {
                 this._synchronized = value;
-                const isUnsynced = !value && this.openmct.time.clock();
-                if (isUnsynced) {
-                    this.openmct.status.set(this.domainObject.identifier, 'timeconductor-unsynced');
-                } else {
-                    this.openmct.status.set(this.domainObject.identifier, '');
-                }
+                this.isTimeOutOfSync = value !== true;
+
+                const isUnsynced = isLocalClock && !value;
+                this.setStatus(isUnsynced);
             }
 
             return this._synchronized;
+        },
+
+        setStatus(isNotInSync) {
+            const outOfSync = isNotInSync === true
+                || this.isTimeOutOfSync === true
+                || this.isFrozen === true;
+            if (outOfSync === true) {
+                this.openmct.status.set(this.domainObject.identifier, 'timeconductor-unsynced');
+            } else {
+                this.openmct.status.set(this.domainObject.identifier, '');
+            }
         },
 
         initCanvas() {
@@ -729,7 +774,8 @@ export default {
             const ZOOM_AMT = 0.1;
             event.preventDefault();
 
-            if (!this.positionOverPlot) {
+            if (event.wheelDelta === undefined
+                || !this.positionOverPlot) {
                 return;
             }
 
@@ -847,11 +893,13 @@ export default {
         freeze() {
             this.config.yAxis.set('frozen', true);
             this.config.xAxis.set('frozen', true);
+            this.setStatus();
         },
 
         clear() {
             this.config.yAxis.set('frozen', false);
             this.config.xAxis.set('frozen', false);
+            this.setStatus();
             this.plotHistory = [];
             this.userViewportChangeEnd();
         },
@@ -881,6 +929,59 @@ export default {
             this.config.series.models[0].emit('change:yKey', yKey);
         },
 
+        pause() {
+            this.freeze();
+        },
+
+        play() {
+            this.clear();
+        },
+
+        showSynchronizeDialog() {
+            const isLocalClock = this.openmct.time.clock();
+            if (isLocalClock !== undefined) {
+                const message = `
+                This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
+                Do you want to continue?
+            `;
+
+                let dialog = this.openmct.overlays.dialog({
+                    title: 'Synchronize Time Conductor',
+                    iconClass: 'alert',
+                    size: 'fit',
+                    message: message,
+                    buttons: [
+                        {
+                            label: 'OK',
+                            callback: () => {
+                                dialog.dismiss();
+                                this.synchronizeTimeConductor();
+                            }
+                        },
+                        {
+                            label: 'Cancel',
+                            callback: () => {
+                                dialog.dismiss();
+                            }
+                        }
+                    ]
+                });
+            } else {
+                this.openmct.notifications.alert('Time conductor bounds have changed.');
+                this.synchronizeTimeConductor();
+            }
+        },
+
+        synchronizeTimeConductor() {
+            this.openmct.time.stopClock();
+            const range = this.config.xAxis.get('displayRange');
+            this.openmct.time.bounds({
+                start: range.min,
+                end: range.max
+            });
+            this.isTimeOutOfSync = false;
+        },
+
         destroy() {
             configStore.deleteStore(this.config.id);
 
@@ -898,6 +999,7 @@ export default {
                 this.removeStatusListener();
             }
 
+            this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
             this.openmct.objectViews.off('clearData', this.clearData);
         },

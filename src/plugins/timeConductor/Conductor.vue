@@ -73,15 +73,22 @@
             >
                 <!-- RT start -->
                 <div class="c-direction-indicator icon-minus"></div>
-                <input
+                <time-popup
+                    v-if="showTCInputStart"
+                    class="pr-tc-input-menu--start"
+                    :type="'start'"
+                    :offset="offsets.start"
+                    @focus.native="$event.target.select()"
+                    @hide="hideAllTimePopups"
+                    @update="timePopUpdate"
+                />
+                <button
+                    @click="showTimePopupStart"
+                    class="c-button c-conductor__delta-button"
                     ref="startOffset"
-                    v-model="offsets.start"
-                    class="c-input--hrs-min-sec"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllOffsets(); submitForm()"
                 >
+                    {{ offsets.start }}
+                </button>
             </div>
 
             <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
@@ -114,15 +121,22 @@
             >
                 <!-- RT end -->
                 <div class="c-direction-indicator icon-plus"></div>
-                <input
+                <time-popup
+                    v-if="showTCInputEnd"
+                    class="pr-tc-input-menu--end"
+                    :type="'end'"
+                    :offset="offsets.end"
+                    @focus.native="$event.target.select()"
+                    @hide="hideAllTimePopups"
+                    @update="timePopUpdate"
+                />
+                <button
                     ref="endOffset"
-                    v-model="offsets.end"
-                    class="c-input--hrs-min-sec"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllOffsets(); submitForm()"
+                    class="c-button c-conductor__delta-button"
+                    @click="showTimePopupEnd"
                 >
+                    {{offsets.end}}
+                </button>
             </div>
 
             <conductor-axis
@@ -164,6 +178,7 @@ import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorHistory from './ConductorHistory.vue';
+import TimePopup from './timePopup.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
@@ -174,7 +189,8 @@ export default {
         DatePicker,
         ConductorAxis,
         ConductorModeIcon,
-        ConductorHistory
+        ConductorHistory,
+        TimePopup
     },
     inject: ['openmct', 'configuration'],
     data() {
@@ -209,7 +225,9 @@ export default {
             showDatePicker: false,
             altPressed: false,
             isPanning: false,
-            isZooming: false
+            isZooming: false,
+            showTCInputStart: false,
+            showTCInputEnd: false
         };
     },
     computed: {
@@ -458,6 +476,23 @@ export default {
             this.formattedBounds.end = this.timeFormatter.format(date);
             this.validateAllBounds('endDate');
             this.submitForm();
+        },
+        hideAllTimePopups() {
+            this.showTCInputStart = false;
+            this.showTCInputEnd = false;
+        },
+        showTimePopupStart() {
+            this.hideAllTimePopups();
+            this.showTCInputStart = !this.showTCInputStart;
+        },
+        showTimePopupEnd() {
+            this.hideAllTimePopups();
+            this.showTCInputEnd = !this.showTCInputEnd;
+        },
+        timePopUpdate({ type, hours, minutes, seconds }) {
+            this.offsets[type] = [hours, minutes, seconds].join(':');
+            this.setOffsetsFromView();
+            this.hideAllTimePopups();
         }
     }
 };

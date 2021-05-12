@@ -313,6 +313,46 @@ describe("the plugin", function () {
             expect(options[0].value).toBe("Some attribute");
             expect(options[1].value).toBe("Another attribute");
         });
+
+        it('hides the pause and play controls', () => {
+            let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
+            let playEl = element.querySelectorAll(".c-button-set .icon-arrow-right");
+            expect(pauseEl.length).toBe(0);
+            expect(playEl.length).toBe(0);
+        });
+
+        describe('pause and play controls', () => {
+            beforeEach(() => {
+                openmct.time.clock('local', {
+                    start: -1000,
+                    end: 100
+                });
+
+                return Vue.nextTick();
+            });
+
+            it('shows the pause controls', (done) => {
+                Vue.nextTick(() => {
+                    let pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
+                    expect(pauseEl.length).toBe(1);
+                    done();
+                });
+
+            });
+
+            it('shows the play control if plot is paused', (done) => {
+                let pauseEl = element.querySelector(".c-button-set .icon-pause");
+                const clickEvent = createMouseEvent("click");
+
+                pauseEl.dispatchEvent(clickEvent);
+                Vue.nextTick(() => {
+                    let playEl = element.querySelectorAll(".c-button-set .is-paused");
+                    expect(playEl.length).toBe(1);
+                    done();
+                });
+
+            });
+        });
     });
 
     describe("The stacked plot view", () => {
