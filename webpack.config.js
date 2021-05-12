@@ -27,6 +27,7 @@ const webpackConfig = {
         maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'
     },
     output: {
+        publicPath: '',
         filename: '[name].js',
         library: '[name]',
         libraryTarget: 'umd',
@@ -80,6 +81,10 @@ const webpackConfig = {
     module: {
         rules: [
             {
+                test: /\.vue$/,
+                use: 'vue-loader'
+            },
+            {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
                     MiniCssExtractPlugin.loader,
@@ -118,10 +123,7 @@ const webpackConfig = {
                     }
                 }
             },
-            {
-                test: /\.vue$/,
-                use: 'vue-loader'
-            }
+            
         ]
     },
     stats: {
