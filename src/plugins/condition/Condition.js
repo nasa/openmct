@@ -272,11 +272,11 @@ export default class Condition extends EventEmitter {
         }
     }
 
-    requestLADConditionResult() {
+    requestLADConditionResult(options) {
         let latestTimestamp;
         let criteriaResults = {};
         const criteriaRequests = this.criteria
-            .map(criterion => criterion.requestLAD(this.conditionManager.telemetryObjects));
+            .map(criterion => criterion.requestLAD(this.conditionManager.telemetryObjects, options));
 
         return Promise.all(criteriaRequests)
             .then(results => {
