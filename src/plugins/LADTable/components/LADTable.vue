@@ -33,10 +33,10 @@
         </thead>
         <tbody>
             <lad-row
-                v-for="item in items"
-                :key="item.key"
-                :domain-object="item.domainObject"
-                :object-path="objectPath"
+                v-for="ladRow in items"
+                :key="ladRow.key"
+                :domain-object="ladRow.domainObject"
+                :path-to-table="objectPath"
                 :has-units="hasUnits"
             />
         </tbody>
