@@ -90,6 +90,7 @@ export default {
 
             const onTickWidthChange = this.onTickWidthChange;
             const loadingUpdated = this.loadingUpdated;
+            const setStatus = this.setStatus;
 
             const openmct = this.openmct;
             const object = this.object;
@@ -111,17 +112,23 @@ export default {
                     return {
                         ...getProps(),
                         onTickWidthChange,
-                        loadingUpdated
+                        loadingUpdated,
+                        setStatus
                     };
                 },
-                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @loadingUpdated="loadingUpdated"/></div>'
+                template: '<div ref="plotWrapper" class="l-view-section u-style-receiver js-style-receiver" :data-status="status" :class="{\'s-status-timeconductor-unsynced\': status && status === \'timeconductor-unsynced\'}"><div v-show="!!loading" class="c-loading--overlay loading"></div><mct-plot :grid-lines="gridLines" :cursor-guide="cursorGuide" :plot-tick-width="plotTickWidth" :options="options" @plotTickWidth="onTickWidthChange" @statusUpdated="setStatus" @loadingUpdated="loadingUpdated"/></div>'
             });
         },
         onTickWidthChange() {
             this.$emit('plotTickWidth', ...arguments);
         },
+        setStatus(status) {
+            this.status = status;
+            this.updateComponentProp('status', status);
+        },
         loadingUpdated(loaded) {
             this.loading = loaded;
+            this.updateComponentProp('loading', loaded);
         },
         getProps() {
             return {
@@ -129,7 +136,8 @@ export default {
                 cursorGuide: this.cursorGuide,
                 plotTickWidth: this.plotTickWidth,
                 loading: this.loading,
-                options: this.options
+                options: this.options,
+                status: this.status
             };
         }
     }

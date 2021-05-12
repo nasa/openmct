@@ -638,6 +638,16 @@
     box-shadow: $shdw;
 }
 
+@mixin smallerControlButtons() {
+    .c-click-icon,
+    .c-button,
+    .c-icon-button {
+        // Shrink buttons a bit when they appear in containers
+        font-size: 0.9em;
+        padding: 4px;
+    }
+}
+
 @mixin wrappedInput() {
     // An input that is wrapped. Optionally includes a __label or icon element.
     // Based on .c-search.

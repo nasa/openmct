@@ -56,6 +56,7 @@
 
     <div ref="plotContainer"
          class="l-view-section u-style-receiver js-style-receiver"
+         :class="{'s-status-timeconductor-unsynced': status && status === 'timeconductor-unsynced'}"
     >
         <div v-show="!!loading"
              class="c-loading--overlay loading"
@@ -64,6 +65,7 @@
                   :cursor-guide="cursorGuide"
                   :options="options"
                   @loadingUpdated="loadingUpdated"
+                  @statusUpdated="setStatus"
         />
     </div>
 </div>
@@ -94,7 +96,8 @@ export default {
             // hideExportButtons: false
             cursorGuide: false,
             gridLines: !this.options.compact,
-            loading: false
+            loading: false,
+            status: ''
         };
     },
     mounted() {
@@ -131,6 +134,9 @@ export default {
 
         toggleGridLines() {
             this.gridLines = !this.gridLines;
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
 };
