@@ -56,7 +56,7 @@ export default {
             type: Object,
             required: true
         },
-        objectPath: {
+        pathToTable: {
             type: Array,
             required: true
         },
@@ -66,20 +66,19 @@ export default {
         }
     },
     data() {
-        let currentObjectPath = this.objectPath.slice();
-        currentObjectPath.unshift(this.domainObject);
-
         return {
             timestamp: undefined,
             value: '---',
             valueClass: '',
-            currentObjectPath,
             unit: ''
         };
     },
     computed: {
         formattedTimestamp() {
             return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
+        },
+        objectPath() {
+            return [this.domainObject, ...this.pathToTable];
         }
     },
     mounted() {
@@ -182,7 +181,7 @@ export default {
             };
         },
         showContextMenu(event) {
-            let actionCollection = this.openmct.actions.get(this.currentObjectPath, this.getView());
+            let actionCollection = this.openmct.actions.get(this.objectPath, this.getView());
             let allActions = actionCollection.getActionsObject();
             let applicableActions = CONTEXT_MENU_ACTIONS.map(key => allActions[key]);
 
