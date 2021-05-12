@@ -50,7 +50,6 @@
                 .reverse()
                 .slice(1)
                 .join('/');
-                timeParams = [];
                 if (timeParams.length) url += '?' + timeParams.join('&');
                 window.open.apply(window, [url, '_blank']);
         });
