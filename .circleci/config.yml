@@ -8,17 +8,13 @@ jobs:
     steps:
         - checkout
         - run:
-            name: clean dist
-            command: rm -rf dist
-        - run:
-            name: clean node modules
-            command: rm -rf node_modules
-        - run:
             name: Update npm
             command: 'sudo npm install -g npm@latest'
+        - restore_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
         - run:
             name: Installing dependencies (npm install)
-            command: npm install --force
+            command: npm install
         - save_cache:
             key: dependency-cache-{{ checksum "package.json" }}
             paths:
