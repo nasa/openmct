@@ -169,7 +169,7 @@ export default {
     computed: {
         filteredAndSortedEntries() {
             const filterTime = Date.now();
-            const pageEntries = getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage) || [];
+            const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
 
             const hours = parseInt(this.showTime, 10);
             const filteredPageEntriesByTime = hours
@@ -184,7 +184,7 @@ export default {
             return this.getPages() || [];
         },
         sections() {
-            return this.internalDomainObject.configuration.sections || [];
+            return this.domainObject.configuration.sections || [];
         },
         selectedPage() {
             const pages = this.getPages();
@@ -211,7 +211,6 @@ export default {
         this.getSearchResults = debounce(this.getSearchResults, 500);
     },
     mounted() {
-        this.unlisten = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
         this.formatSidebar();
 
         window.addEventListener('orientationchange', this.formatSidebar);
@@ -261,8 +260,8 @@ export default {
         },
         createNotebookStorageObject() {
             const notebookMeta = {
-                name: this.internalDomainObject.name,
-                identifier: this.internalDomainObject.identifier,
+                name: this.domainObject.name,
+                identifier: this.domainObject.identifier,
                 link: this.getLinktoNotebook()
             };
             const page = this.getSelectedPage();
@@ -276,7 +275,7 @@ export default {
         },
         deleteEntry(entryId) {
             const self = this;
-            const entryPos = getEntryPosById(entryId, this.internalDomainObject, this.selectedSection, this.selectedPage);
+            const entryPos = getEntryPosById(entryId, this.domainObject, this.selectedSection, this.selectedPage);
             if (entryPos === -1) {
                 this.openmct.notifications.alert('Warning: unable to delete entry');
                 console.error(`unable to delete entry ${entryId} from section ${this.selectedSection}, page ${this.selectedPage}`);
@@ -404,8 +403,8 @@ export default {
             }
 
             const output = [];
-            const sections = this.internalDomainObject.configuration.sections;
-            const entries = this.internalDomainObject.configuration.entries;
+            const sections = this.domainObject.configuration.sections;
+            const entries = this.domainObject.configuration.entries;
             const searchTextLower = this.search.toLowerCase();
             const originalSearchText = this.search;
             let sectionTrackPageHit;
@@ -545,7 +544,7 @@ export default {
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
-            const id = addNotebookEntry(this.openmct, this.internalDomainObject, notebookStorage, embed);
+            const id = addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
             this.focusEntryId = id;
         },
         orientationChange() {
@@ -586,10 +585,10 @@ export default {
         async updateDefaultNotebook(notebookStorage) {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
             if (!defaultNotebookObject) {
-                setDefaultNotebook(this.openmct, notebookStorage, this.internalDomainObject);
+                setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
             } else if (objectUtils.makeKeyString(defaultNotebookObject.identifier) !== objectUtils.makeKeyString(notebookStorage.notebookMeta.identifier)) {
                 this.removeDefaultClass(defaultNotebookObject);
-                setDefaultNotebook(this.openmct, notebookStorage, this.internalDomainObject);
+                setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
             }
 
             if (this.defaultSectionId && this.defaultSectionId.length === 0 || this.defaultSectionId !== notebookStorage.section.id) {
@@ -609,7 +608,7 @@ export default {
 
             const notebookStorage = getDefaultNotebook();
             if (!notebookStorage
-                    || notebookStorage.notebookMeta.identifier.key !== this.internalDomainObject.identifier.key) {
+                    || notebookStorage.notebookMeta.identifier.key !== this.domainObject.identifier.key) {
                 return;
             }
 
@@ -618,7 +617,7 @@ export default {
             if (!page && defaultNotebookPage.id === id) {
                 this.defaultSectionId = null;
                 this.defaultPageId = null;
-                this.removeDefaultClass(this.internalDomainObject);
+                this.removeDefaultClass(this.domainObject);
                 clearDefaultNotebook();
 
                 return;
@@ -637,7 +636,7 @@ export default {
 
             const notebookStorage = getDefaultNotebook();
             if (!notebookStorage
-                    || notebookStorage.notebookMeta.identifier.key !== this.internalDomainObject.identifier.key) {
+                    || notebookStorage.notebookMeta.identifier.key !== this.domainObject.identifier.key) {
                 return;
             }
 
@@ -646,7 +645,7 @@ export default {
             if (!section && defaultNotebookSection.id === id) {
                 this.defaultSectionId = null;
                 this.defaultPageId = null;
-                this.removeDefaultClass(this.internalDomainObject);
+                this.removeDefaultClass(this.domainObject);
                 clearDefaultNotebook();
 
                 return;
@@ -659,21 +658,18 @@ export default {
             setDefaultNotebookSection(section);
         },
         updateEntry(entry) {
-            const entries = getNotebookEntries(this.internalDomainObject, this.selectedSection, this.selectedPage);
-            const entryPos = getEntryPosById(entry.id, this.internalDomainObject, this.selectedSection, this.selectedPage);
+            const entries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage);
+            const entryPos = getEntryPosById(entry.id, this.domainObject, this.selectedSection, this.selectedPage);
             entries[entryPos] = entry;
 
             this.updateEntries(entries);
         },
         updateEntries(entries) {
-            const configuration = this.internalDomainObject.configuration;
+            const configuration = this.domainObject.configuration;
             const notebookEntries = configuration.entries || {};
             notebookEntries[this.selectedSection.id][this.selectedPage.id] = entries;
 
-            mutateObject(this.openmct, this.internalDomainObject, 'configuration.entries', notebookEntries);
-        },
-        updateInternalDomainObject(domainObject) {
-            this.internalDomainObject = domainObject;
+            mutateObject(this.openmct, this.domainObject, 'configuration.entries', notebookEntries);
         },
         updateParams(sections) {
             const selectedSection = sections.find(s => s.isSelected);
@@ -699,7 +695,7 @@ export default {
             });
         },
         sectionsChanged({ sections, id = null }) {
-            mutateObject(this.openmct, this.internalDomainObject, 'configuration.sections', sections);
+            mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
 
             this.updateParams(sections);
             this.updateDefaultNotebookSection(sections, id);
