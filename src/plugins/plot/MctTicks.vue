@@ -228,7 +228,7 @@ export default {
 
         doTickUpdate() {
             if (this.shouldCheckWidth) {
-                const tickElements = this.$refs.tickContainer.querySelectorAll('.gl-plot-tick > span');
+                const tickElements = this.$refs.tickContainer && this.$refs.tickContainer.querySelectorAll('.gl-plot-tick > span');
 
                 const tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
                     return Math.max(memo, first.offsetWidth);
