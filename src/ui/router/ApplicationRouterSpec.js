@@ -4,6 +4,9 @@ let openmct;
 let element;
 let child;
 let appHolder;
+let resolveFunction;
+
+let initialHash = '';
 
 describe('Application router utility functions', () => {
     beforeAll(done => {
@@ -12,6 +15,9 @@ describe('Application router utility functions', () => {
         appHolder.style.height = '480px';
 
         openmct = createOpenMct();
+        openmct.install(openmct.plugins.MyItems());
+        openmct.install(openmct.plugins.LocalTimeSystem());
+        openmct.install(openmct.plugins.UTCTimeSystem());
 
         element = document.createElement('div');
         child = document.createElement('div');
@@ -24,25 +30,43 @@ describe('Application router utility functions', () => {
     });
 
     afterAll(() => {
+        openmct.router.setHash(initialHash);
         appHolder.remove();
-        resetApplicationState(openmct);
+
+        return resetApplicationState(openmct);
     });
 
     it('has initial hash when loaded', (done) => {
-        openmct.router.setLocationFromUrl();
-        setTimeout(() => {
-            expect(window.location.hash).not.toBe(null);
+        let success;
+        resolveFunction = () => {
+            openmct.router.setLocationFromUrl();
+            success = window.location.hash !== null;
+            if (success) {
+                initialHash = window.location.hash;
+                expect(success).toBe(true);
 
-            done();
-        }, 1000);
+                openmct.router.removeListener('change:hash', resolveFunction);
+                done();
+            }
+        };
+
+        openmct.router.on('change:hash', resolveFunction);
     });
 
     it('The setSearchParam function sets an individual search parameter in the window location hash', (done) => {
+        let success;
         openmct.router.setSearchParam('testParam', 'testValue');
-        setTimeout(() => {
-            expect(window.location.hash.includes('testParam=testValue')).toBe(true);
-            done();
-        }, 800);
+        resolveFunction = () => {
+            success = window.location.hash.includes('testParam=testValue');
+            if (success) {
+                expect(success).toBe(true);
+
+                openmct.router.removeListener('change:hash', resolveFunction);
+                done();
+            }
+        };
+
+        openmct.router.on('change:hash', resolveFunction);
     });
 
     it('The getSearchParam function returns the value of an individual search paramater in the window location hash', () => {
@@ -50,36 +74,60 @@ describe('Application router utility functions', () => {
     });
 
     it('The deleteSearchParam function deletes an individual search paramater in the window location hash', (done) => {
+        let success;
         openmct.router.deleteSearchParam('testParam');
-        setTimeout(() => {
-            expect(window.location.hash.includes('testParam=testValue')).toBe(false);
-            done();
-        }, 800);
+        resolveFunction = () => {
+            success = window.location.hash.includes('testParam=testValue') === false;
+            if (success) {
+                expect(success).toBe(true);
+
+                openmct.router.removeListener('change:hash', resolveFunction);
+                done();
+            }
+        };
+
+        openmct.router.on('change:hash', resolveFunction);
     });
 
     it('The setSearchParam function sets an individual search parameters in the window location hash', (done) => {
+        let success;
         openmct.router.setSearchParam('testParam1', 'testValue1');
         openmct.router.setSearchParam('testParam2', 'testValue2');
 
-        setTimeout(() => {
-            expect(window.location.hash.includes('testParam1=testValue1')).toBe(true);
-            expect(window.location.hash.includes('testParam2=testValue2')).toBe(true);
-            done();
-        }, 1000);
+        resolveFunction = () => {
+            const hasTestParam1 = window.location.hash.includes('testParam1=testValue1');
+            const hasTestParam2 = window.location.hash.includes('testParam2=testValue2');
+            success = hasTestParam1 && hasTestParam2;
+            if (success) {
+                expect(success).toBe(true);
+
+                openmct.router.removeListener('change:hash', resolveFunction);
+                done();
+            }
+        };
+
+        openmct.router.on('change:hash', resolveFunction);
     });
 
     it('The setAllSearchParams function replaces all search paramaters in the window location hash', (done) => {
-        let searchParams = openmct.router.getAllSearchParams();
-        searchParams.set('testParam2', 'updatedtestValue2');
-        searchParams.set('newTestParam3', 'newTestValue3');
+        let success;
 
-        openmct.router.setAllSearchParams();
+        openmct.router.setSearchParam('testParam2', 'updatedtestValue2');
+        openmct.router.setSearchParam('newTestParam3', 'newTestValue3');
 
-        setTimeout(() => {
-            expect(window.location.hash.includes('testParam2=updatedtestValue2')).toBe(true);
-            expect(window.location.hash.includes('newTestParam3=newTestValue3')).toBe(true);
-            done();
-        }, 800);
+        resolveFunction = () => {
+            const hasupdatedValueForTestParam2 = window.location.hash.includes('testParam2=updatedtestValue2');
+            const hasNewTestParam3 = window.location.hash.includes('newTestParam3=newTestValue3');
+            success = hasupdatedValueForTestParam2 && hasNewTestParam3;
+            if (success) {
+                expect(success).toBe(true);
+
+                openmct.router.removeListener('change:hash', resolveFunction);
+                done();
+            }
+        };
+
+        openmct.router.on('change:hash', resolveFunction);
     });
 
     it('The getAllSearchParams function returns the values of all search paramaters in the window location hash', () => {
