@@ -19,8 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DeviceClassifier from "../src/DeviceClassifier";
-import DeviceMatchers from "../src/DeviceMatchers";
+import DeviceClassifier from "./DeviceClassifier";
+import DeviceMatchers from "./DeviceMatchers";
 
 const AGENT_SERVICE_METHODS = [
     "isMobile",
@@ -76,7 +76,7 @@ describe("DeviceClassifier", function () {
                 });
 
                 // eslint-disable-next-line no-new
-                new DeviceClassifier(mockAgentService, mockDocument);
+                DeviceClassifier(mockAgentService, mockDocument);
             });
 
             it("adds classes for matching, detected characteristics", function () {

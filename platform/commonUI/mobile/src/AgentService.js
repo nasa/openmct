@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- define(["../../../../src/plugins/DeviceClassifier/src/AgentService.js"], function (AgentService) {
+define(["../../../../src/plugins/DeviceClassifier/src/AgentService.js"], function (AgentService) {
     function AngularAgentServiceWrapper(window) {
         const AS = AgentService.default;
 

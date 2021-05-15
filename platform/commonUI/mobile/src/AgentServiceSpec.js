@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import AgentService from "../src/AgentService";
+import AgentService from "./AgentService";
 
 const TEST_USER_AGENTS = {
     DESKTOP:
