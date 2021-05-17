@@ -78,10 +78,11 @@
                     :item-index="index"
                     :item-height="itemHeight"
                     :is-open="openTreeItems.includes(treeItem.navigationPath)"
+                    :item-is-loading="treeItemLoading.includes(treeItem.navigationPath)"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @navigation-click="treeItemAction(treeItem, $event)"
                 />
-                <!-- loading -->
+                <!-- main loading -->
                 <div
                     v-if="isLoading"
                     class="c-tree__item c-tree-and-search__loading loading"
@@ -132,6 +133,7 @@ export default {
     data() {
         return {
             isLoading: false,
+            treeItemLoading: [],
             mainTreeHeight: undefined,
             searchLoading: false,
             searchValue: '',
@@ -250,11 +252,13 @@ export default {
         },
         // eslint-disable-next-line object-property-newline
         async openTreeItem(parentItem, synchronous = false) {
+            this.setItemLoadingState(parentItem.navigationPath, 'start');
             let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
             let parentPath = parentItem.navigationPath;
             let parentIndex = this.treeItems.indexOf(parentItem);
 
             this.treeItems.splice(parentIndex + 1, 0, ...childrenItems);
+            this.setItemLoadingState(parentItem.navigationPath, 'stop');
 
             if (!this.isTreeItemOpen(parentItem)) {
                 this.openTreeItems.push(parentPath);
@@ -287,6 +291,14 @@ export default {
 
             this.treeItems = this.treeItems.filter(keepItem);
             this.openTreeItems.splice(pathIndex, 1);
+        },
+        setItemLoadingState(path, type) {
+            if (type === 'start') {
+                this.treeItemLoading.push(path);
+            } else if (type === 'stop') {
+                let pathIndex = this.treeItemLoading.findIndex(loadingPath => loadingPath === path);
+                this.treeItemLoading.splice(pathIndex, 1);
+            }
         },
         showCurrentPathInTree() {
             const currentPath = this.buildNavigationPath(this.openmct.router.path);

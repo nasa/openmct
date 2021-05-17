@@ -31,6 +31,10 @@
             :navigate-to-path="navigationPath"
             @context-click-active="setContextClickActive"
         />
+        <span
+            v-if="itemIsLoading"
+            class="loading"
+        ></span>
     </div>
 </div>
 </template>
@@ -77,6 +81,10 @@ export default {
             type: Number,
             required: false,
             default: 0
+        },
+        itemIsLoading: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
