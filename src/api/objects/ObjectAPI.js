@@ -161,6 +161,7 @@ ObjectAPI.prototype.addProvider = function (namespace, provider) {
 
 ObjectAPI.prototype.get = function (identifier, abortSignal) {
     let keystring = this.makeKeyString(identifier);
+
     if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
     }
@@ -176,15 +177,16 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
         throw new Error('Provider does not support get!');
     }
 
-    let objectPromise = provider.get(identifier, abortSignal);
-    this.cache[keystring] = objectPromise;
-
-    return objectPromise.then(result => {
+    let objectPromise = provider.get(identifier, abortSignal).then(result => {
         delete this.cache[keystring];
         result = this.applyGetInterceptors(identifier, result);
 
         return result;
     });
+
+    this.cache[keystring] = objectPromise;
+
+    return objectPromise;
 };
 
 /**
