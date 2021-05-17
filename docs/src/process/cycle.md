@@ -73,11 +73,11 @@ acceptance testing (e.g. by resolving any blockers found); any
 resources not needed for this effort should be used to begin work
 for the subsequent sprint.
 
-| Week  | Mon                       | Tue    | Wed | Thu                          | Fri         |
-|:-----:|:-------------------------:|:------:|:---:|:----------------------------:|:-----------:|
-| __1__ | Sprint plan               | Tag-up |     |                              |             |
-| __2__ |                           | Tag-up |     |                              | Code freeze |
-| __3__ | Per-sprint testing        | Triage |     | _Per-sprint testing*_        | Ship        |
+| Week  | Mon                       | Tue    | Wed | Thu                          | Fri                                   |
+|:-----:|:-------------------------:|:------:|:---:|:----------------------------:|:-------------------------------------:|
+| __1__ | Sprint plan               | Tag-up |     |                              |                                       |
+| __2__ |                           | Tag-up |     |                              | Code freeze  and sprint branch        |
+| __3__ | Per-sprint testing        | Triage |     | _Per-sprint testing*_        | Ship and merge sprint branch to master|
 
 &ast; If necessary.
 
@@ -109,10 +109,15 @@ emphasis on testing.
   May amend plan for sprint as-needed.
 * __Code freeze.__ Any new work from this sprint
   (features, bug fixes, enhancements) must be integrated by the
-  end of the second week of the sprint. After code freeze
-  (and until the end of the sprint) the only changes that should be
-  merged into the master branch should directly address issues
-  needed to pass acceptance testing.
+  end of the second week of the sprint. After code freeze, a sprint
+  branch will be created (and until the end of the sprint) the only 
+  changes that should be merged into the sprint branch should 
+  directly address issues needed to pass acceptance testing.
+  During this time, any other feature development will continue to
+  be merged into the master branch for the next sprint.
+* __Sprint branch merge to master.__ After acceptance testing, the sprint branch
+  will be merged back to the master branch. Any code conflicts that 
+  arise will be resolved by the team.
 * [__Per-release Testing.__](testing/plan.md#per-release-testing)
   Structured testing with predefined
   success criteria. No release should ship without passing
@@ -126,8 +131,8 @@ emphasis on testing.
   * [__Testathon.__](testing/plan.md#user-testing)
     Multi-user testing, involving as many users as
     is feasible, plus development team. Open-ended; should verify
-    completed work from this sprint, test exploratorily for
-    regressions, et cetera.
+    completed work from this sprint using the sprint branch, test 
+    exploratorily for regressions, et cetera.
   * [__Long-Duration Test.__](testing/plan.md#long-duration-testing) A
     test to verify that the software remains
     stable after running for longer durations. May include some
