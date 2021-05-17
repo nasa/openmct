@@ -22,7 +22,7 @@
 
  export default class OpenInNewTab {
     constructor(openmct) {
-        this.name = 'Henry Open In New Tab';
+        this.name = 'Open In New Tab';
         this.key = 'newTab';
         this.description = 'Open in a new browser tab';
         this.group = "windowing";

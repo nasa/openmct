@@ -19,58 +19,55 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import {
+    createOpenMct,
+    resetApplicationState
+} from 'utils/testing';
 
- define(
-     // this path needs to be updated
-    ["../../src/windowing/NewTabAction"],
-    function (NewTabAction) {
+describe("the plugin", () => {
+    let openmct;
+    let openInNewTabAction;
+    let mockObjectPath;
 
-        describe("The new tab action", function () {
-            var actionSelected,
-                actionCurrent,
-                mockWindow,
-                mockContextCurrent,
-                mockContextSelected,
-                mockUrlService;
+    beforeEach((done) => {
+        openmct = createOpenMct();
 
-            beforeEach(function () {
-                mockWindow = jasmine.createSpyObj("$window", ["open", "location"]);
+        openmct.on('start', done);
+        openmct.startHeadless();
 
-                // Context if the current object is selected
-                // For example, when the top right new tab
-                // button is clicked, the user is using the
-                // current domainObject
-                mockContextCurrent = jasmine.createSpyObj("context", ["domainObject"]);
+        openInNewTabAction = openmct.actions._allActions.newTab;
+    });
 
-                // Context if the selected object is selected
-                // For example, when an object in the left
-                // tree is opened in a new tab using the
-                // context menu
-                mockContextSelected = jasmine.createSpyObj("context", ["selectedObject",
-                    "domainObject"]);
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
 
-                // Mocks the urlService used to make the new tab's url from a
-                // domainObject and mode
-                mockUrlService = jasmine.createSpyObj("urlService", ["urlForNewTab"]);
+    it('installs the open in new tab action', () => {
+        expect(openInNewTabAction).toBeDefined();
+    });
 
-                // Action done using the current context or mockContextCurrent
-                actionCurrent = new NewTabAction(mockUrlService, mockWindow,
-                    mockContextCurrent);
+    describe('when invoked', () => {
 
-                // Action done using the selected context or mockContextSelected
-                actionSelected = new NewTabAction(mockUrlService, mockWindow,
-                    mockContextSelected);
-
-            });
-
-            it("new tab with current url is opened", function () {
-                actionCurrent.perform();
-            });
-
-            it("new tab with a selected url is opened", function () {
-                actionSelected.perform();
-            });
-
+        beforeEach(async () => {
+            mockObjectPath = [{
+                name: 'mock folder',
+                type: 'folder',
+                identifier: {
+                    key: 'mock-folder',
+                    namespace: ''
+                }
+            }];
+            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({
+                identifier: {
+                    namespace: '',
+                    key: 'test'
+                }
+            }));
+            spyOn(window, 'open');
+            await openInNewTabAction.invoke(mockObjectPath);
         });
-    }
-);
+        it('it opens in a new tab', () => {
+            expect(window.open).toHaveBeenCalled();
+        });
+    });
+});
