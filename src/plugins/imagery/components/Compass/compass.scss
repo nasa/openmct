@@ -87,7 +87,7 @@ $elemBg: rgba(black, 0.7);
 /***************************** COMPASS DIRECTIONS */
 .c-nsew {
     $color: $interfaceKeyColor;
-    $inset: 7%;
+    $inset: 5%;
     $tickHeightPerc: 15%;
     text-shadow: black 0 0 10px;
     top: $inset;
@@ -109,19 +109,19 @@ $elemBg: rgba(black, 0.7);
 
     &__label {
         dominant-baseline: central;
-        font-size: 0.8em;
+        font-size: 1.25em;
         font-weight: bold;
     }
 
     .c-label-n {
-        font-size: 1.1em;
+        font-size: 2em;
     }
 }
 
 /***************************** CAMERA FIELD ANGLE */
 .c-cam-field {
     $color: white;
-    opacity: 0.2;
+    opacity: 0.3;
     top: 0;
     right: 0;
     bottom: 0;
@@ -173,6 +173,7 @@ $elemBg: rgba(black, 0.7);
     top: 50%;
     opacity: 0.4;
     transform-origin: center top;
+    transform: translateX(-50%); // center by default, overridden by CompassRose.vue / headingStyle()
 
     &:before {
         // Direction arrow
@@ -192,17 +193,54 @@ $elemBg: rgba(black, 0.7);
 }
 
 /***************************** DIRECTION ROSE */
+.w-direction-rose {
+    $s: 10%;
+    $m: 2%;
+    position: absolute;
+    bottom: $m;
+    left: $m;
+    width: $s;
+    padding-top: $s;
+
+    &.--rose-min {
+        $s: 30px;
+        width: $s;
+        padding-top: $s;
+    }
+
+    &.--rose-small {
+        .c-nsew__minor-ticks,
+        .c-tick-w,
+        .c-tick-s,
+        .c-tick-e,
+        .c-label-w,
+        .c-label-s,
+        .c-label-e {
+            display: none;
+        }
+
+        .c-label-n {
+            font-size: 2.5em;
+        }
+    }
+
+    &.--rose-max {
+        $s: 100px;
+        width: $s;
+        padding-top: $s;
+    }
+}
+
 .c-direction-rose {
-    $d: 100px;
     $c2: rgba(white, 0.1);
     background: $elemBg;
     background-image: radial-gradient(circle closest-side, transparent, transparent 80%, $c2);
-    width: $d;
-    height: $d;
     transform-origin: 0 0;
     position: absolute;
-    bottom: 10px;
-    left: 10px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
     clip-path: circle(50% at 50% 50%);
     border-radius: 100%;
     pointer-events: all;
