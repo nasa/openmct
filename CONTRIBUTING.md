@@ -335,3 +335,4 @@ checklist).
 3. Code style and in-line documentation are appropriate?
 4. Commit messages meet standards?
 5. Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
+6. Has associated issue been labelled `bug`? (only applicable if this PR is for a bug fix)
