@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ImageryPlugin from './plugin.js';
+
 import Vue from 'vue';
 import {
     createOpenMct,
@@ -89,11 +89,11 @@ describe("The Imagery View Layout", () => {
     const START = Date.now();
     const COUNT = 10;
 
+    let resolveFunction;
+
     let openmct;
-    let imageryPlugin;
     let parent;
     let child;
-    let timeFormat = 'utc';
     let bounds = {
         start: START - TEN_MINUTES,
         end: START
@@ -219,16 +219,7 @@ describe("The Imagery View Layout", () => {
         });
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-
-        imageryPlugin = new ImageryPlugin();
-        openmct.install(imageryPlugin);
-
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
-
-        openmct.time.timeSystem(timeFormat, {
-            start: 0,
-            end: 4
-        });
 
         openmct.on('start', done);
         openmct.start(appHolder);
@@ -264,21 +255,18 @@ describe("The Imagery View Layout", () => {
                 return telemetryRequestPromise;
             });
 
-            openmct.time.clock('local', {
-                start: bounds.start,
-                end: bounds.end + 100
-            });
-
             applicableViews = openmct.objectViews.get(imageryObject, []);
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject);
             imageryView.show(child);
 
             await telemetryRequestPromise;
-            await Vue.nextTick();
         });
 
         afterEach(() => {
+            openmct.time.stopClock();
+            openmct.router.removeListener('change:hash', resolveFunction);
+
             imageryView.destroy();
         });
 
@@ -288,7 +276,7 @@ describe("The Imagery View Layout", () => {
             expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
         });
 
-        xit("should show the clicked thumbnail as the main image", (done) => {
+        it("should show the clicked thumbnail as the main image", (done) => {
             const target = imageTelemetry[5].url;
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
             Vue.nextTick(() => {
@@ -297,6 +285,33 @@ describe("The Imagery View Layout", () => {
                 expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
                 done();
             });
+        });
+
+        it("test", (done) => {
+            let success;
+            openmct.time.clock('local', bounds);
+
+            resolveFunction = () => {
+                success = window.location.hash.includes('tc.mode=local');
+
+                if (success) {
+                    Vue.nextTick(() => {
+                        // used in code, need to wait to the 500ms here too
+                        setTimeout(() => {
+                            const imageInfo = getImageInfo(parent);
+                            console.log('----------------------------', imageInfo);
+                            // const imageIsNew = isNew(parent);
+                            expect(true).toBeTrue();
+
+                            done();
+                        }, REFRESH_CSS_MS);
+                    });
+
+                    openmct.router.removeListener('change:hash', resolveFunction);
+                }
+            };
+
+            openmct.router.on('change:hash', resolveFunction);
         });
 
         xit("should show that an image is new", (done) => {
