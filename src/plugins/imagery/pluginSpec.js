@@ -287,7 +287,7 @@ describe("The Imagery View Layout", () => {
             });
         });
 
-        it("test", (done) => {
+        xit("test", (done) => {
             let success;
             openmct.time.clock('local', bounds);
 
