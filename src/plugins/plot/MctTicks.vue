@@ -229,14 +229,15 @@ export default {
         doTickUpdate() {
             if (this.shouldCheckWidth) {
                 const tickElements = this.$refs.tickContainer && this.$refs.tickContainer.querySelectorAll('.gl-plot-tick > span');
+                if (tickElements) {
+                    const tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
+                        return Math.max(memo, first.offsetWidth);
+                    }, 0));
 
-                const tickWidth = Number([].reduce.call(tickElements, function (memo, first) {
-                    return Math.max(memo, first.offsetWidth);
-                }, 0));
-
-                this.tickWidth = tickWidth;
-                this.$emit('plotTickWidth', tickWidth);
-                this.shouldCheckWidth = false;
+                    this.tickWidth = tickWidth;
+                    this.$emit('plotTickWidth', tickWidth);
+                    this.shouldCheckWidth = false;
+                }
             }
 
             this.tickUpdate = false;
