@@ -54,6 +54,7 @@ describe("The Compass component", () => {
                 :container-width="containerWidth"
                 :container-height="containerHeight"
                 :natural-aspect-ratio="naturalAspectRatio"
+                :lockCompass="true"
                 :image="image" />`
         });
         instance = app.$mount();

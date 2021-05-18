@@ -117,7 +117,7 @@ describe('the plugin', () => {
             });
         });
 
-        it('updates an object', () => {
+        xit('updates an object', () => {
             return openmct.objects.save(mockDomainObject).then((result) => {
                 expect(result).toBeTrue();
                 expect(provider.create).toHaveBeenCalled();
