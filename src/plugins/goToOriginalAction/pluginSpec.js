@@ -68,7 +68,7 @@ describe("the plugin", () => {
 
         xit('goes to the original location', (done) => {
             setTimeout(() => {
-                expect(window.location.hash).toEqual('#/browse/?tc.mode=fixed&tc.startBound=0&tc.endBound=4&tc.timeSystem=utc');
+                expect(window.location.href).toContain('context.html#/browse/?tc.mode=local&tc.timeSystem=utc&tc.startDelta=2000&tc.endDelta=200');
                 done();
             }, 1000);
         });

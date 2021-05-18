@@ -140,7 +140,7 @@ describe('the plugin', function () {
             let view = planView.view(planDomainObject, mockObjectPath);
             view.show(child, true);
 
-            Vue.nextTick().then(() => {
+            return Vue.nextTick().then(() => {
                 done();
             });
         });

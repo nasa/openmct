@@ -28,7 +28,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
     let appHolder;
     let openmct;
     let resolveFunction;
-    let oldHash;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -55,7 +54,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
 
     it("initial clock is set to fixed is reflected in URL", (done) => {
         resolveFunction = () => {
-            oldHash = window.location.hash;
             expect(window.location.hash.includes('tc.mode=fixed')).toBe(true);
 
             openmct.router.removeListener('change:hash', resolveFunction);
@@ -116,21 +114,6 @@ describe("The URLTimeSettingsSynchronizer", () => {
             hash = hash.replace('tc.mode=fixed', 'tc.mode=local');
             window.location.hash = hash;
             success = window.location.hash.includes('tc.mode=local');
-            if (success) {
-                expect(success).toBe(true);
-                done();
-            }
-        };
-
-        openmct.router.on('change:hash', resolveFunction);
-    });
-
-    it("reset hash", (done) => {
-        let success;
-
-        window.location.hash = oldHash;
-        resolveFunction = () => {
-            success = window.location.hash === oldHash;
             if (success) {
                 expect(success).toBe(true);
                 done();
