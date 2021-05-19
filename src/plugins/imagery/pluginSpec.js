@@ -94,10 +94,6 @@ describe("The Imagery View Layout", () => {
     let openmct;
     let parent;
     let child;
-    let bounds = {
-        start: START - TEN_MINUTES,
-        end: START
-    };
     let imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
     let imageryObject = {
         identifier: {
@@ -290,33 +286,6 @@ describe("The Imagery View Layout", () => {
                 expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
                 done();
             });
-        });
-
-        xit("test", (done) => {
-            let success;
-            openmct.time.clock('local', bounds);
-
-            resolveFunction = () => {
-                success = window.location.hash.includes('tc.mode=local');
-
-                if (success) {
-                    Vue.nextTick(() => {
-                        // used in code, need to wait to the 500ms here too
-                        setTimeout(() => {
-                            const imageInfo = getImageInfo(parent);
-                            console.log('----------------------------', imageInfo);
-                            // const imageIsNew = isNew(parent);
-                            expect(true).toBeTrue();
-
-                            done();
-                        }, REFRESH_CSS_MS);
-                    });
-
-                    openmct.router.removeListener('change:hash', resolveFunction);
-                }
-            };
-
-            openmct.router.on('change:hash', resolveFunction);
         });
 
         xit("should show that an image is new", (done) => {
