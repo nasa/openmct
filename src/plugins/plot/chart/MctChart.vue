@@ -36,6 +36,7 @@ import MCTChartPointSet from './MCTChartPointSet';
 import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
 import configStore from "../configuration/configStore";
 import PlotConfigurationModel from "../configuration/PlotConfigurationModel";
+import MCTChartAlarmLineSet from "@/plugins/plot/chart/MCTChartAlarmLineSet";
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
@@ -71,10 +72,11 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
-
+        this.bounds = this.openmct.time.bounds();
         this.config = this.getConfig();
         this.isDestroyed = false;
         this.lines = [];
+        this.limitLines = [];
         this.pointSets = [];
         this.alarmSets = [];
         this.offset = {};
@@ -143,6 +145,18 @@ export default {
                 elements.lines.push(newLine);
                 this.lines.push(newLine);
             }
+
+            elements.limitLines.forEach(function (line) {
+                this.limitLines.splice(this.limitLines.indexOf(line), 1);
+                line.destroy();
+            }, this);
+            elements.limitLines = [];
+
+            const limitLine = this.limitLineForSeries(series);
+            if (limitLine) {
+                elements.limitLines.push(limitLine);
+                this.limitLines.push(limitLine);
+            }
         },
         changeAlarmMarkers(mode, o, series) {
             if (mode === o) {
@@ -187,6 +201,7 @@ export default {
             this.isDestroyed = true;
             this.stopListening();
             this.lines.forEach(line => line.destroy());
+            this.limitLines.forEach(line => line.destroy());
             DrawLoader.releaseDrawAPI(this.drawAPI);
         },
         clearOffset() {
@@ -197,6 +212,9 @@ export default {
             delete this.offset.xKey;
             delete this.offset.yKey;
             this.lines.forEach(function (line) {
+                line.reset();
+            });
+            this.limitLines.forEach(function (line) {
                 line.reset();
             });
             this.pointSets.forEach(function (pointSet) {
@@ -259,6 +277,10 @@ export default {
                 this.lines.splice(this.lines.indexOf(line), 1);
                 line.destroy();
             }, this);
+            elements.limitLines.forEach(function (line) {
+                this.limitLines.splice(this.limitLines.indexOf(line), 1);
+                line.destroy();
+            }, this);
             elements.pointSets.forEach(function (pointSet) {
                 this.pointSets.splice(this.pointSets.indexOf(pointSet), 1);
                 pointSet.destroy();
@@ -287,6 +309,14 @@ export default {
                 );
             }
         },
+        limitLineForSeries(series) {
+            return new MCTChartAlarmLineSet(
+                series,
+                this,
+                this.offset,
+                true
+            );
+        },
         pointSetForSeries(series) {
             if (series.get('markers')) {
                 return new MCTChartPointSet(
@@ -308,7 +338,8 @@ export default {
         makeChartElement(series) {
             const elements = {
                 lines: [],
-                pointSets: []
+                pointSets: [],
+                limitLines: []
             };
 
             const line = this.lineForSeries(series);
@@ -317,10 +348,10 @@ export default {
                 this.lines.push(line);
             }
 
-            const pointSet = this.pointSetForSeries(series);
-            if (pointSet) {
-                elements.pointSets.push(pointSet);
-                this.pointSets.push(pointSet);
+            const limitLine = this.limitLineForSeries(series);
+            if (limitLine) {
+                elements.limitLines.push(limitLine);
+                this.limitLines.push(limitLine);
             }
 
             elements.alarmSet = this.alarmPointSetForSeries(series);
@@ -384,6 +415,20 @@ export default {
             this.lines.forEach(this.drawLine, this);
             this.pointSets.forEach(this.drawPoints, this);
             this.alarmSets.forEach(this.drawAlarmPoints, this);
+            this.limitLines.forEach((chartElement) => {
+                let count = chartElement.count;
+                while (count > 0) {
+                    this.drawAPI.drawLine(
+                        chartElement.getBuffer(chartElement.count - count),
+                        count === chartElement.count ? [1, 0, 0, 1] : [0.62549019607843137, 0.6980392156862745, 0, 1],
+                        2,
+                        true
+                    );
+                    count = count - 2;
+                }
+
+                // this.drawLine(chartElement, true);
+            }, this);
         },
         drawAlarmPoints(alarmSet) {
             this.drawAPI.drawLimitPoints(
@@ -401,11 +446,12 @@ export default {
                 chartElement.series.get('markerShape')
             );
         },
-        drawLine(chartElement) {
+        drawLine(chartElement, disconnected) {
             this.drawAPI.drawLine(
                 chartElement.getBuffer(),
                 chartElement.color().asRGBAArray(),
-                chartElement.count
+                chartElement.count,
+                disconnected
             );
         },
         drawHighlights() {

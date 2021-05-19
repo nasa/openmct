@@ -93,5 +93,22 @@ define([
         };
     };
 
+    SinewaveLimitProvider.prototype.getLimits = function (domainObject) {
+        return {
+            limits: function () {
+                return {
+                    sin: {
+                        low: 0.5,
+                        high: 0.9
+                    },
+                    cos: {
+                        low: 0.5,
+                        high: 0.9
+                    }
+                };
+            }
+        };
+    };
+
     return SinewaveLimitProvider;
 });

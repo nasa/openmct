@@ -231,12 +231,12 @@ DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
  *        is in the range of 0.0-1.0
  * @param {number} points the number of points to draw
  */
-DrawWebGL.prototype.drawLine = function (buf, color, points) {
+DrawWebGL.prototype.drawLine = function (buf, color, points, disconnected) {
     if (this.isContextLost) {
         return;
     }
 
-    this.doDraw(this.gl.LINE_STRIP, buf, color, points);
+    this.doDraw(disconnected ? this.gl.LINES : this.gl.LINE_STRIP, buf, color, points);
 };
 
 /**
