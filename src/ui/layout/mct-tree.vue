@@ -77,7 +77,7 @@
                     :item-offset="itemOffset"
                     :item-index="index"
                     :item-height="itemHeight"
-                    :is-open="openTreeItems.includes(treeItem.navigationPath)"
+                    :is-open="openTreeItems.includes(treeItem.navigationPath) || Boolean(treeItemLoading[treeItem.navigationPath])"
                     :item-is-loading="Boolean(treeItemLoading[treeItem.navigationPath])"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @navigation-click="treeItemAction(treeItem, $event)"
@@ -223,8 +223,8 @@ export default {
         async initialize() {
             this.isLoading = true;
             this.openmct.$injector.get('searchService');
-            window.addEventListener('resize', this.handleWindowResize);
             this.getSavedOpenItems();
+            window.addEventListener('resize', this.handleWindowResize);
 
             await this.calculateHeights();
 
@@ -252,9 +252,10 @@ export default {
         async openTreeItem(parentItem, synchronous = false) {
             let parentPath = parentItem.navigationPath;
             let abortSignal = this.startItemLoad(parentPath);
-
             let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath, abortSignal);
             let parentIndex = this.treeItems.indexOf(parentItem);
+
+            this.endItemLoad(parentPath);
 
             this.treeItems.splice(parentIndex + 1, 0, ...childrenItems);
 
