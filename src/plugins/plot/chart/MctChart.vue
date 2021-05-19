@@ -415,19 +415,26 @@ export default {
             this.lines.forEach(this.drawLine, this);
             this.pointSets.forEach(this.drawPoints, this);
             this.alarmSets.forEach(this.drawAlarmPoints, this);
+            this.drawLimitLines();
+        },
+        drawLimitLines() {
             this.limitLines.forEach((chartElement) => {
                 let count = chartElement.count;
+                let limits = chartElement.limits;
                 while (count > 0) {
+                    let newBuffer = chartElement.getBuffer(chartElement.count - count);
                     this.drawAPI.drawLine(
-                        chartElement.getBuffer(chartElement.count - count),
-                        count === chartElement.count ? [1, 0, 0, 1] : [0.62549019607843137, 0.6980392156862745, 0, 1],
+                        newBuffer,
+                        count === chartElement.count ? [1, 0.2, 0.3, 1] : [0.62549019607843137, 0.6980392156862745, 0, 1],
                         2,
                         true
                     );
+                    this.drawAPI.drawText(count === chartElement.count ? 'Critical: ' + limits[0] : 'Warning: ' + limits[1], count === chartElement.count ? [1, 0.2, 0.3, 1] : [0.62549019607843137, 0.6980392156862745, 0, 1], {
+                        x: newBuffer[0],
+                        y: newBuffer[1]
+                    });
                     count = count - 2;
                 }
-
-                // this.drawLine(chartElement, true);
             }, this);
         },
         drawAlarmPoints(alarmSet) {

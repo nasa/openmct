@@ -85,6 +85,11 @@ Draw2D.prototype.setDimensions = function (newDimensions, newOrigin) {
     this.origin = newOrigin;
 };
 
+Draw2D.prototype.drawText = function (text, color, point) {
+    this.setColor(color);
+    this.c2d.fillText(text, point.x, point.y);
+};
+
 Draw2D.prototype.drawLine = function (buf, color, points) {
     let i;
 

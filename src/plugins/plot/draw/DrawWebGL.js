@@ -23,6 +23,7 @@
 import EventEmitter from 'EventEmitter';
 import eventHelpers from '../lib/eventHelpers';
 import { MARKER_SHAPES } from './MarkerShapes';
+import Draw2D from "@/plugins/plot/draw/Draw2D";
 
 // WebGL shader sources (for drawing plain colors)
 const FRAGMENT_SHADER = `
@@ -269,6 +270,17 @@ DrawWebGL.prototype.drawSquare = function (min, max, color) {
     this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
         min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
     ), color, 4);
+};
+
+DrawWebGL.prototype.drawText = function (text, color, point) {
+    const mappedColor = color.map(function (c, i) {
+        return i < 3 ? Math.floor(c * 255) : (c);
+    }).join(',');
+
+    this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
+    this.c2d.fillStyle = "rgba(" + mappedColor + ")";
+    this.c2d.font = "bold 12px sans-serif";
+    this.c2d.fillText(text, this.x(point.x), this.y(point.y) - 3);
 };
 
 DrawWebGL.prototype.drawLimitPoint = function (x, y, size) {

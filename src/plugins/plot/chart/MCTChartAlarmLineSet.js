@@ -29,6 +29,7 @@ export default class MCTChartAlarmLineSet {
         this.offset = offset;
         this.buffer = new Float32Array(20000);
         this.count = 0;
+        this.limits = [];
 
         eventHelpers.extend(this);
 
@@ -95,8 +96,6 @@ export default class MCTChartAlarmLineSet {
             this.chart.setOffset(point, undefined, series);
         }
 
-        console.log(point, this.offset.xVal(point, series));
-
         return {
             x: this.count % 2 > 0 ? 2000000 : this.offset.yVal(point, series),
             y: this.offset.yVal(point, series)
@@ -107,31 +106,31 @@ export default class MCTChartAlarmLineSet {
         const start = this.chart.bounds.start;
         const end = this.chart.bounds.end;
         let index = 0;
+        this.limits = [];
         Object.keys(limits).forEach((key) => {
-            if (key === 'sin') {
-                this.append({
-                    [key]: limits[key].high,
-                    'utc': start
-                }, index, series);
-                index++;
-                this.append({
-                    [key]: limits[key].high,
-                    'utc': end
-                }, index, series);
-                index++;
-                this.append({
-                    [key]: limits[key].low,
-                    'utc': start
-                }, index, series);
-                index++;
-                this.append({
-                    [key]: limits[key].low,
-                    'utc': end
-                }, index, series);
-                index++;
-            }
+            this.limits.push(limits[key].high);
+            this.append({
+                [key]: limits[key].high,
+                'utc': start
+            }, index, series);
+            index++;
+            this.append({
+                [key]: limits[key].high,
+                'utc': end
+            }, index, series);
+            index++;
+            this.limits.push(limits[key].low);
+            this.append({
+                [key]: limits[key].low,
+                'utc': start
+            }, index, series);
+            index++;
+            this.append({
+                [key]: limits[key].low,
+                'utc': end
+            }, index, series);
+            index++;
         }, this);
-        console.log(this.getBuffer(), this.count);
     }
 
     append(point, index, series) {
