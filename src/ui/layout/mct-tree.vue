@@ -280,17 +280,17 @@ export default {
 
             return;
         },
-        closeTreeItem(item) {
-            if (typeof item === 'string') {
-                item = { navigationPath: item };
+        closeTreeItem(itemPath) {
+            console.log('close tree item', itemPath, typeof itemPath);
+            if (typeof itemPath !== 'string') {
+                itemPath = itemPath.navigationPath;
             }
 
             // if actively loading, abort
-            if (this.isItemLoading(item)) {
-                this.abortItemLoad(item);
+            if (this.isItemLoading(itemPath)) {
+                this.abortItemLoad(itemPath);
             }
 
-            let itemPath = item.navigationPath;
             let pathIndex = this.openTreeItems.indexOf(itemPath);
 
             if (pathIndex === -1) {
