@@ -208,9 +208,9 @@ export default {
     async mounted() {
         await this.initialize();
         await this.loadRoot();
-        await this.syncTreeOpenItems();
-
         this.isLoading = false;
+
+        await this.syncTreeOpenItems();
     },
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
@@ -255,7 +255,7 @@ export default {
             let parentPath = parentItem.navigationPath;
             let abortSignal = this.startItemLoad(parentPath);
             let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath, abortSignal);
-
+            console.log('childItems', childrenItems);
             // if it's not loading, it was aborted
             if (!this.isItemLoading(parentPath)) {
                 return;
@@ -385,6 +385,7 @@ export default {
             });
         },
         async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
+            console.log('load and build', domainObject);
             let collection = this.openmct.composition.get(domainObject);
             let composition = await collection.load(abortSignal);
 
