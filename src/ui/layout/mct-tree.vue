@@ -243,6 +243,7 @@ export default {
             this.treeItems = await this.loadAndBuildTreeItemsFor(root, []);
         },
         treeItemAction(parentItem, type) {
+            console.log('tree item action', type, parentItem);
             if (type === 'close') {
                 this.closeTreeItem(parentItem);
             } else {
@@ -250,6 +251,7 @@ export default {
             }
         },
         async openTreeItem(parentItem, synchronous = false) {
+            console.log('open tree item', parentItem, synchronous);
             let parentPath = parentItem.navigationPath;
             let abortSignal = this.startItemLoad(parentPath);
             let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath, abortSignal);
