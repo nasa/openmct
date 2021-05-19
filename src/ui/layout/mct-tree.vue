@@ -253,8 +253,13 @@ export default {
             let parentPath = parentItem.navigationPath;
             let abortSignal = this.startItemLoad(parentPath);
             let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath, abortSignal);
-            let parentIndex = this.treeItems.indexOf(parentItem);
 
+            // if it's not loading, it was aborted
+            if (!this.isItemLoading(parentPath)) {
+                return;
+            }
+
+            let parentIndex = this.treeItems.indexOf(parentItem);
             this.endItemLoad(parentPath);
 
             this.treeItems.splice(parentIndex + 1, 0, ...childrenItems);
@@ -321,6 +326,7 @@ export default {
             }
         },
         isItemLoading(path) {
+            console.log('is item loading', path, this.treeItemLoading[path] instanceof AbortController);
             return this.treeItemLoading[path] instanceof AbortController;
         },
         showCurrentPathInTree() {
