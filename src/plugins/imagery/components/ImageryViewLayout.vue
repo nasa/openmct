@@ -568,6 +568,7 @@ export default {
             const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
                     || (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;
+            console.log('handle autoscroll', this.autoScroll);
         },
         paused(state, type) {
 
@@ -600,7 +601,7 @@ export default {
             }
         },
         scrollToRight() {
-            console.log('scroll right');
+            console.log('scroll right', this.autoScroll);
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
                 return;
             }
@@ -610,6 +611,7 @@ export default {
                 return;
             }
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
+
         },
         setFocusedImage(index, thumbnailClick = false) {
             if (this.isPaused && !thumbnailClick) {
