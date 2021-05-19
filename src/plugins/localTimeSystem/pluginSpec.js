@@ -55,7 +55,7 @@ describe("The local time", () => {
         beforeEach(() => {
             localTimeSystem = openmct.time.timeSystem(LOCAL_SYSTEM_KEY, {
                 start: 0,
-                end: 4
+                end: 1
             });
         });
 

@@ -50,7 +50,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
         openmct = undefined;
         resolveFunction = undefined;
 
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("initial clock is set to fixed is reflected in URL", (done) => {

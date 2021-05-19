@@ -226,6 +226,11 @@ describe("The Imagery View Layout", () => {
     });
 
     afterEach(() => {
+        openmct.time.timeSystem('utc', {
+            start: 0,
+            end: 1
+        });
+
         return resetApplicationState(openmct);
     });
 
@@ -340,7 +345,7 @@ describe("The Imagery View Layout", () => {
             });
         });
 
-        xit("should navigate via arrow keys", (done) => {
+        it("should navigate via arrow keys", (done) => {
             let keyOpts = {
                 element: parent.querySelector('.c-imagery'),
                 key: 'ArrowLeft',
@@ -358,7 +363,7 @@ describe("The Imagery View Layout", () => {
             });
         });
 
-        xit("should navigate via numerous arrow keys", (done) => {
+        it("should navigate via numerous arrow keys", (done) => {
             let element = parent.querySelector('.c-imagery');
             let type = 'keyup';
             let leftKeyOpts = {

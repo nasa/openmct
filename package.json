@@ -78,7 +78,8 @@
     "zepto": "^1.2.0"
   },
   "scripts": {
-    "clean": "rm -rf ./dist",
+    "clean": "rm -rf ./dist /node_modules; rm package-lock.json",
+    "check-all": "npm run clean; npm install ; npm run test; npm run lint",
     "start": "node app.js",
     "lint": "eslint platform example src --ext .js,.vue openmct.js",
     "lint:fix": "eslint platform example src --ext .js,.vue openmct.js --fix",
