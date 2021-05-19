@@ -78,7 +78,7 @@
                     :item-index="index"
                     :item-height="itemHeight"
                     :is-open="openTreeItems.includes(treeItem.navigationPath)"
-                    :item-is-loading="treeItemLoading.includes(treeItem.navigationPath)"
+                    :item-is-loading="Boolean(treeItemLoading[treeItem.navigationPath])"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @navigation-click="treeItemAction(treeItem, $event)"
                 />
@@ -133,7 +133,7 @@ export default {
     data() {
         return {
             isLoading: false,
-            treeItemLoading: [],
+            treeItemLoading: {},
             mainTreeHeight: undefined,
             searchLoading: false,
             searchValue: '',
@@ -185,7 +185,6 @@ export default {
             this.showCurrentPathInTree();
         },
         resetTreeNavigation() {
-            console.log('reset', this.openTreeItems);
             [...this.openTreeItems].reverse().map(this.closeTreeItem);
         },
         searchValue() {
@@ -241,7 +240,7 @@ export default {
 
             // will need to listen for root composition changes as well
 
-            this.treeItems = await this.loadAndBuildTreeItemsFor(root);
+            this.treeItems = await this.loadAndBuildTreeItemsFor(root, []);
         },
         treeItemAction(parentItem, type) {
             if (type === 'close') {
@@ -250,15 +249,14 @@ export default {
                 this.openTreeItem(parentItem);
             }
         },
-        // eslint-disable-next-line object-property-newline
         async openTreeItem(parentItem, synchronous = false) {
-            this.setItemLoadingState(parentItem.navigationPath, 'start');
-            let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
             let parentPath = parentItem.navigationPath;
+            let abortSignal = this.startItemLoad(parentPath);
+
+            let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath, abortSignal);
             let parentIndex = this.treeItems.indexOf(parentItem);
 
             this.treeItems.splice(parentIndex + 1, 0, ...childrenItems);
-            this.setItemLoadingState(parentItem.navigationPath, 'stop');
 
             if (!this.isTreeItemOpen(parentItem)) {
                 this.openTreeItems.push(parentPath);
@@ -281,8 +279,17 @@ export default {
                 item = { navigationPath: item };
             }
 
+            // if actively loading, abort
+            if (this.isItemLoading(item)) {
+                this.abortItemLoad(item);
+            }
+
             let itemPath = item.navigationPath;
             let pathIndex = this.openTreeItems.indexOf(itemPath);
+
+            if (pathIndex === -1) {
+                return;
+            }
 
             function keepItem(checkItem) {
                 return checkItem.navigationPath === itemPath
@@ -292,13 +299,28 @@ export default {
             this.treeItems = this.treeItems.filter(keepItem);
             this.openTreeItems.splice(pathIndex, 1);
         },
-        setItemLoadingState(path, type) {
-            if (type === 'start') {
-                this.treeItemLoading.push(path);
-            } else if (type === 'stop') {
-                let pathIndex = this.treeItemLoading.findIndex(loadingPath => loadingPath === path);
-                this.treeItemLoading.splice(pathIndex, 1);
+        // returns an AbortController signal to be passed on to requests
+        startItemLoad(path) {
+            if (this.isItemLoading(path)) {
+                this.abortItemLoad(path);
             }
+
+            this.treeItemLoading[path] = new AbortController();
+
+            return this.treeItemLoading[path].signal;
+        },
+        endItemLoad(path) {
+            this.treeItemLoading[path] = undefined;
+            delete this.treeItemLoading[path];
+        },
+        abortItemLoad(path) {
+            if (this.treeItemLoading[path]) {
+                this.treeItemLoading[path].abort();
+                this.endItemLoad(path);
+            }
+        },
+        isItemLoading(path) {
+            return this.treeItemLoading[path] instanceof AbortController;
         },
         showCurrentPathInTree() {
             const currentPath = this.buildNavigationPath(this.openmct.router.path);
@@ -353,9 +375,9 @@ export default {
                 behavior: 'smooth'
             });
         },
-        async loadAndBuildTreeItemsFor(domainObject, parentObjectPath = []) {
+        async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
             let collection = this.openmct.composition.get(domainObject);
-            let composition = await collection.load();
+            let composition = await collection.load(abortSignal);
 
             if (parentObjectPath.length) {
                 let navigationPath = this.buildNavigationPath(parentObjectPath);
