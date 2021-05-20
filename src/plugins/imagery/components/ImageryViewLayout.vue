@@ -572,7 +572,10 @@ export default {
             // pause when users scroll at live mode
             const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
             // console.log(scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight);
-            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
+            // const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
+            //         || (scrollHeight - scrollTop) > 2 * clientHeight;
+            console.log('length', scrollWidth, Math.ceil(scrollLeft + clientWidth))
+            const disableScroll = (scrollWidth > Math.ceil(scrollLeft + clientWidth))
                     || (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;  
             console.log('ascroll', this.autoScroll)
