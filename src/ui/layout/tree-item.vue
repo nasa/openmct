@@ -128,6 +128,7 @@ export default {
     },
     methods: {
         navigationClick() {
+            console.log('nav click', this.domainObject.name, this.isOpen || this.itemIsLoading ? 'close' : 'open', { open: this.isOpen, loading: this.itemIsLoading });
             this.$emit('navigation-click', this.isOpen || this.itemIsLoading ? 'close' : 'open');
         },
         handleClick(event) {
