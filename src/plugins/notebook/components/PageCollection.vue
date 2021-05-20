@@ -6,6 +6,7 @@
     >
         <Page ref="pageComponent"
               :default-page-id="defaultPageId"
+              :selected-page-id="selectedPageId"
               :page="page"
               :page-title="pageTitle"
               @deletePage="deletePage"
@@ -32,6 +33,10 @@ export default {
             default() {
                 return '';
             }
+        },
+        selectedPageId: {
+            type: String,
+            required: true
         },
         domainObject: {
             type: Object,
@@ -98,17 +103,7 @@ export default {
             });
         },
         selectPage(id) {
-            const pages = this.pages.map(page => {
-                const isSelected = page.id === id;
-                page.isSelected = isSelected;
-
-                return page;
-            });
-
-            this.$emit('updatePage', {
-                pages,
-                id
-            });
+            this.$emit('selectPage', id);
 
             // Add test here for whether or not to toggle the nav
             if (this.sidebarCoversEntries) {

@@ -123,10 +123,14 @@ export default function NotebookPlugin() {
                             },
                             provide: {
                                 openmct,
-                                domainObject,
                                 snapshotContainer
                             },
-                            template: '<Notebook></Notebook>'
+                            data() {
+                                return {
+                                    domainObject
+                                };
+                            },
+                            template: '<Notebook :domain-object="domainObject"></Notebook>'
                         });
                     },
                     destroy() {

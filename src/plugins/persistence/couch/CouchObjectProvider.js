@@ -43,16 +43,6 @@ export default class CouchObjectProvider {
         this.observeEnabled = options.disableObserve !== true;
         this.observers = {};
         this.batchIds = [];
-
-        if (this.observeEnabled) {
-            this.observeObjectChanges({
-                "selector": {
-                    "model": {
-                        "type": 'notebook'
-                    }
-                }
-            });
-        }
     }
 
     //backwards compatibility, options used to be a url. Now it's an object
@@ -314,49 +304,48 @@ export default class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
-        if (!this.observeEnabled) {
-            return;
-        }
-
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);
 
+        if (!this.isObservingObjectChanges()) {
+            this.observeObjectChanges();
+        }
+
         return () => {
             this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
+            if (this.observers[keyString].length === 0) {
+                delete this.observers[keyString];
+                if (Object.keys(this.observers).length === 0) {
+                    this.stopObservingObjects();
+                }
+            }
         };
     }
 
-    /**
-     * @private
-     */
-    abortGetChanges() {
-        if (this.controller) {
-            this.controller.abort();
-            this.controller = undefined;
-        }
-
-        return true;
+    isObservingObjectChanges() {
+        return this.stopObservingObjectChanges !== undefined;
     }
 
     /**
      * @private
      */
     async observeObjectChanges(filter) {
-        let intermediateResponse = this.getIntermediateResponse();
-
-        if (!this.observeEnabled) {
-            intermediateResponse.reject('Observe for changes is disabled');
-        }
+        console.log("Establishing observer connection");
 
         const controller = new AbortController();
         const signal = controller.signal;
+        let error = false;
 
-        if (this.controller) {
-            this.abortGetChanges();
+        if (typeof this.stopObservingObjectChanges === 'function') {
+            this.stopObservingObjectChanges();
         }
 
-        this.controller = controller;
+        this.stopObservingObjectChanges = () => {
+            controller.abort();
+            delete this.stopObservingObjectChanges;
+        };
+
         // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
         // style=main_only returns only the current winning revision of the document
         let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
@@ -376,14 +365,13 @@ export default class CouchObjectProvider {
             body
         });
         const reader = response.body.getReader();
-        let completed = false;
 
-        while (!completed) {
+        while (!error) {
             const {done, value} = await reader.read();
             //done is true when we lose connection with the provider
             if (done) {
-                console.error('closed observer connection');
-                completed = true;
+                console.error('Connection ended');
+                error = true;
             }
 
             if (value) {
@@ -416,11 +404,9 @@ export default class CouchObjectProvider {
 
         }
 
-        //We're done receiving from the provider. No more chunks.
-        intermediateResponse.resolve(true);
-
-        return intermediateResponse.promise;
-
+        if (error) {
+            this.observeObjectChanges();
+        }
     }
 
     /**

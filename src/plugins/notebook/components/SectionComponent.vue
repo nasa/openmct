@@ -1,6 +1,6 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="[{ 'is-selected': section.isSelected, 'is-notebook-default' : (defaultSectionId === section.id) }]"
+     :class="[{ 'is-selected': isSelected, 'is-notebook-default' : (defaultSectionId === section.id) }]"
      :data-id="section.id"
      @click="selectSection"
 >
@@ -12,9 +12,6 @@
     <PopupMenu :popup-menu-items="popupMenuItems" />
 </div>
 </template>
-
-<style lang="scss">
-</style>
 
 <script>
 import PopupMenu from './PopupMenu.vue';
@@ -32,6 +29,10 @@ export default {
                 return '';
             }
         },
+        selectedSectionId: {
+            type: String,
+            required: true
+        },
         section: {
             type: Object,
             required: true
@@ -48,6 +49,11 @@ export default {
             popupMenuItems: [],
             removeActionString: `Delete ${this.sectionTitle}`
         };
+    },
+    computed: {
+        isSelected() {
+            return this.selectedSectionId === this.section.id;
+        }
     },
     watch: {
         section(newSection) {

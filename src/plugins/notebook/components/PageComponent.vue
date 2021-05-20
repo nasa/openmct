@@ -1,6 +1,6 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="[{ 'is-selected': page.isSelected, 'is-notebook-default' : (defaultPageId === page.id) }]"
+     :class="[{ 'is-selected': isSelected, 'is-notebook-default' : (defaultPageId === page.id) }]"
      :data-id="page.id"
      @click="selectPage"
 >
@@ -29,6 +29,10 @@ export default {
                 return '';
             }
         },
+        selectedPageId: {
+            type: String,
+            required: true
+        },
         page: {
             type: Object,
             required: true
@@ -45,6 +49,11 @@ export default {
             popupMenuItems: [],
             removeActionString: `Delete ${this.pageTitle}`
         };
+    },
+    computed: {
+        isSelected() {
+            return this.selectedPageId === this.page.id;
+        }
     },
     watch: {
         page(newPage) {

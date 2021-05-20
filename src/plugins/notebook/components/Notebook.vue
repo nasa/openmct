@@ -20,6 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ To Do:
+ If no default page stored, default to first page of first section
+ Navigate to URL params on load
+
+ To Test:
+   Add a new section
+   Add a new page
+   Check that default section and page are still working.
+   Search
+   Different notebooks (to make sure default stuff works)
+
+ */
 <template>
 <div class="c-notebook">
     <div class="c-notebook__head">
@@ -31,7 +44,7 @@
     </div>
     <SearchResults v-if="search.length"
                    ref="searchResults"
-                   :domain-object="internalDomainObject"
+                   :domain-object="domainObject"
                    :results="searchResults"
                    @changeSectionPage="changeSelectedSection"
                    @updateEntries="updateEntries"
@@ -43,15 +56,18 @@
                  class="c-notebook__nav c-sidebar c-drawer c-drawer--align-left"
                  :class="[{'is-expanded': showNav}, {'c-drawer--push': !sidebarCoversEntries}, {'c-drawer--overlays': sidebarCoversEntries}]"
                  :default-page-id="defaultPageId"
+                 :selected-page-id="selectedPageId"
                  :default-section-id="defaultSectionId"
-                 :domain-object="internalDomainObject"
-                 :page-title="internalDomainObject.configuration.pageTitle"
-                 :section-title="internalDomainObject.configuration.sectionTitle"
+                 :selected-section-id="selectedSectionId"
+                 :domain-object="domainObject"
+                 :page-title="domainObject.configuration.pageTitle"
+                 :section-title="domainObject.configuration.sectionTitle"
                  :sections="sections"
-                 :selected-section="selectedSection"
                  :sidebar-covers-entries="sidebarCoversEntries"
                  @pagesChanged="pagesChanged"
+                 @selectPage="selectPage"
                  @sectionsChanged="sectionsChanged"
+                 @selectSection="selectSection"
                  @toggleNav="toggleNav"
         />
         <div class="c-notebook__page-view">
@@ -61,10 +77,10 @@
                 ></button>
                 <div class="c-notebook__page-view__path c-path">
                     <span class="c-notebook__path__section c-path__item">
-                        {{ getSelectedSection() ? getSelectedSection().name : '' }}
+                        {{ selectedSection ? selectedSection.name : '' }}
                     </span>
                     <span class="c-notebook__path__page c-path__item">
-                        {{ getSelectedPage() ? getSelectedPage().name : '' }}
+                        {{ selectedPage ? selectedPage.name : '' }}
                     </span>
                 </div>
                 <div class="c-notebook__page-view__controls">
@@ -115,9 +131,9 @@
                 <NotebookEntry v-for="entry in filteredAndSortedEntries"
                                :key="entry.id"
                                :entry="entry"
-                               :domain-object="internalDomainObject"
-                               :selected-page="getSelectedPage()"
-                               :selected-section="getSelectedSection()"
+                               :domain-object="domainObject"
+                               :selected-page="selectedPage"
+                               :selected-section="selectedSection"
                                :read-only="false"
                                @deleteEntry="deleteEntry"
                                @updateEntry="updateEntry"
@@ -151,14 +167,19 @@ export default {
         SearchResults,
         Sidebar
     },
-    inject: ['openmct', 'domainObject', 'snapshotContainer'],
+    inject: ['openmct', 'snapshotContainer'],
+    props: {
+        domainObject: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
-            defaultPageId: getDefaultNotebook() ? getDefaultNotebook().page.id : '',
-            defaultSectionId: getDefaultNotebook() ? getDefaultNotebook().section.id : '',
+            selectedPageId: this.getPageIdFromUrl() || this.getDefaultPageId(),
+            selectedSectionId: this.getSectionIdFromUrl() || this.getDefaultSectionId(),
             defaultSort: this.domainObject.configuration.defaultSort,
             focusEntryId: null,
-            internalDomainObject: this.domainObject,
             search: '',
             searchResults: [],
             showTime: 0,
@@ -167,6 +188,12 @@ export default {
         };
     },
     computed: {
+        defaultPageId() {
+            return this.getDefaultPageId();
+        },
+        defaultSectionId() {
+            return this.getDefaultSectionId();
+        },
         filteredAndSortedEntries() {
             const filterTime = Date.now();
             const pageEntries = getNotebookEntries(this.domainObject, this.selectedSection, this.selectedPage) || [];
@@ -188,18 +215,24 @@ export default {
         },
         selectedPage() {
             const pages = this.getPages();
-            if (!pages) {
-                return null;
+            const selectedPage = pages.find(page => page.id === this.selectedPageId);
+
+            if (selectedPage) {
+                return selectedPage;
             }
 
-            return pages.find(page => page.isSelected);
+            if (!selectedPage && !pages.length) {
+                return undefined;
+            }
+
+            return pages[0];
         },
         selectedSection() {
             if (!this.sections.length) {
                 return null;
             }
 
-            return this.sections.find(section => section.isSelected);
+            return this.sections.find(section => section.id === this.selectedSectionId);
         }
     },
     watch: {
@@ -212,11 +245,10 @@ export default {
     },
     mounted() {
         this.formatSidebar();
+        this.selectSection(this.selectedSectionId);
+        this.selectPage(this.selectedPageId);
 
         window.addEventListener('orientationchange', this.formatSidebar);
-        window.addEventListener("hashchange", this.navigateToSectionPage, false);
-
-        this.navigateToSectionPage();
     },
     beforeDestroy() {
         if (this.unlisten) {
@@ -224,7 +256,6 @@ export default {
         }
 
         window.removeEventListener('orientationchange', this.formatSidebar);
-        window.removeEventListener("hashchange", this.navigateToSectionPage);
     },
     updated: function () {
         this.$nextTick(() => {
@@ -264,8 +295,8 @@ export default {
                 identifier: this.domainObject.identifier,
                 link: this.getLinktoNotebook()
             };
-            const page = this.getSelectedPage();
-            const section = this.getSelectedSection();
+            const page = this.selectedPage;
+            const section = this.selectedSection;
 
             return {
                 notebookMeta,
@@ -368,6 +399,35 @@ export default {
             const isInLayout = Boolean(this.$el.closest('.c-so-view'));
             const sidebarCoversEntries = (isPhone || (isTablet && isPortrait) || isInLayout);
             this.sidebarCoversEntries = sidebarCoversEntries;
+        },
+        getDefaultPageId() {
+            let defaultPageId;
+
+            if (this.isDefaultNotebook()) {
+                defaultPageId = getDefaultNotebook().page.id;
+            } else {
+                defaultPageId = this.sections[0].pages[0].id;
+            }
+
+            return defaultPageId;
+        },
+        isDefaultNotebook() {
+            const defaultNotebook = getDefaultNotebook();
+            const defaultNotebookIdentifier = defaultNotebook && defaultNotebook.notebookMeta.identifier;
+
+            return defaultNotebookIdentifier !== null
+                && this.openmct.objects.areIdsEqual(defaultNotebookIdentifier, this.domainObject.identifier);
+        },
+        getDefaultSectionId() {
+            let defaultSectionId;
+
+            if (this.isDefaultNotebook()) {
+                defaultSectionId = getDefaultNotebook().section.id;
+            } else {
+                defaultSectionId = this.sections[0].id;
+            }
+
+            return defaultSectionId;
         },
         getDefaultNotebookObject() {
             const oldNotebookStorage = getDefaultNotebook();
@@ -483,62 +543,12 @@ export default {
             this.searchResults = output;
         },
         getPages() {
-            const selectedSection = this.getSelectedSection();
+            const selectedSection = this.selectedSection;
             if (!selectedSection || !selectedSection.pages.length) {
                 return [];
             }
 
             return selectedSection.pages;
-        },
-        getSelectedPage() {
-            const pages = this.getPages();
-            if (!pages) {
-                return null;
-            }
-
-            const selectedPage = pages.find(page => page.isSelected);
-            if (selectedPage) {
-                return selectedPage;
-            }
-
-            if (!selectedPage && !pages.length) {
-                return null;
-            }
-
-            pages[0].isSelected = true;
-
-            return pages[0];
-        },
-        getSelectedSection() {
-            if (!this.sections.length) {
-                return null;
-            }
-
-            return this.sections.find(section => section.isSelected);
-        },
-        navigateToSectionPage() {
-            const { pageId, sectionId } = this.openmct.router.getParams();
-            if (!pageId || !sectionId) {
-                return;
-            }
-
-            const sections = this.sections.map(s => {
-                s.isSelected = false;
-                if (s.id === sectionId) {
-                    s.isSelected = true;
-                    s.pages.forEach(p => p.isSelected = (p.id === pageId));
-                }
-
-                return s;
-            });
-
-            const selectedSectionId = this.selectedSection && this.selectedSection.id;
-            const selectedPageId = this.selectedPage && this.selectedPage.id;
-            if (selectedPageId === pageId && selectedSectionId === sectionId) {
-                return;
-            }
-
-            this.sectionsChanged({ sections });
         },
         newEntry(embed = null) {
             this.resetSearch();
@@ -551,7 +561,7 @@ export default {
             this.formatSidebar();
         },
         pagesChanged({ pages = [], id = null}) {
-            const selectedSection = this.getSelectedSection();
+            const selectedSection = this.selectedSection;
             if (!selectedSection) {
                 return;
             }
@@ -566,7 +576,7 @@ export default {
             });
 
             this.sectionsChanged({ sections });
-            this.updateDefaultNotebookPage(pages, id);
+            //this.updateDefaultNotebookPage(pages, id);
         },
         removeDefaultClass(domainObject) {
             if (!domainObject) {
@@ -671,34 +681,38 @@ export default {
 
             mutateObject(this.openmct, this.domainObject, 'configuration.entries', notebookEntries);
         },
-        updateParams(sections) {
-            const selectedSection = sections.find(s => s.isSelected);
-            if (!selectedSection) {
-                return;
-            }
-
-            const selectedPage = selectedSection.pages.find(p => p.isSelected);
-            if (!selectedPage) {
-                return;
-            }
-
-            const sectionId = selectedSection.id;
-            const pageId = selectedPage.id;
-
-            if (!sectionId || !pageId) {
-                return;
-            }
-
+        getPageIdFromUrl() {
+            return this.openmct.router.getParams().pageId;
+        },
+        getSectionIdFromUrl() {
+            return this.openmct.router.getParams().sectionId;
+        },
+        setPageIdInUrl(pageId) {
             this.openmct.router.updateParams({
-                sectionId,
                 pageId
+            });
+        },
+        setSectionIdInUrl(sectionId) {
+            this.openmct.router.updateParams({
+                sectionId
             });
         },
         sectionsChanged({ sections, id = null }) {
             mutateObject(this.openmct, this.domainObject, 'configuration.sections', sections);
-
-            this.updateParams(sections);
             this.updateDefaultNotebookSection(sections, id);
+        },
+        selectPage(pageId) {
+            this.selectedPageId = pageId;
+            this.setPageIdInUrl(pageId);
+        },
+        selectSection(sectionId) {
+            this.selectedSectionId = sectionId;
+            this.setSectionIdInUrl(sectionId);
+
+            const defaultPageId = this.selectedSection.pages[0].id;
+            this.selectPage(defaultPageId);
+            this.setPageIdInUrl(defaultPageId);
+
         }
     }
 };
