@@ -279,3 +279,10 @@
         @include cArrowButtonSizing($dimOuter: 32px);
     }
 }
+// added
+.c-thumb_auto-scroll-button {
+    color: white;
+    border: 1px solid white;
+    position: fixed;
+    right: 13%;
+}

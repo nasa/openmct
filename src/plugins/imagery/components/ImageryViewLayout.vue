@@ -145,6 +145,7 @@
             </a>
             <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
         </div>
+        <button v-if="!autoScroll && !isPaused" class="c-thumb_auto-scroll-button">auto</button>
     </div>
 </div>
 </template>
@@ -562,16 +563,16 @@ export default {
             if (!thumbsWrapper) {
                 return;
             }
-
+            // AutoScroll: if true will scroll to right end when state change
+            // don't pause when page loads
+            // pause when users scroll at live mode
             const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
-            console.log(scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight);
+            // console.log(scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight);
             const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
                     || (scrollHeight - scrollTop) > 2 * clientHeight;
-            this.autoScroll = !disableScroll;
-            console.log('handle autoscroll', this.autoScroll);
+            this.autoScroll = !disableScroll;  
         },
         paused(state, type) {
-
             this.isPaused = state;
 
             if (type === 'button') {
@@ -601,7 +602,6 @@ export default {
             }
         },
         scrollToRight() {
-            console.log('scroll right', this.autoScroll);
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
                 return;
             }
