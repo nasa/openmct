@@ -203,9 +203,6 @@ export default {
         },
         openTreeItems() {
             this.setSavedOpenItems();
-        },
-        treeItemLoading() {
-            console.log('watch tree item loading', this.treeItemLoading);
         }
     },
     async mounted() {
@@ -256,13 +253,13 @@ export default {
             let parentPath = parentItem.navigationPath;
             let abortSignal = this.startItemLoad(parentPath);
             let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath, abortSignal);
+            let parentIndex = this.treeItems.indexOf(parentItem);
 
             // if it's not loading, it was aborted
-            if (!this.isItemLoading(parentPath)) {
+            if (!this.isItemLoading(parentPath) || parentIndex === -1) {
                 return;
             }
 
-            let parentIndex = this.treeItems.indexOf(parentItem);
             this.endItemLoad(parentPath);
 
             this.treeItems.splice(parentIndex + 1, 0, ...childrenItems);
@@ -322,7 +319,6 @@ export default {
             delete this.treeItemLoading[path];
         },
         abortItemLoad(path) {
-            console.log('abort', path);
             if (this.treeItemLoading[path]) {
                 this.treeItemLoading[path].abort();
                 this.endItemLoad(path);

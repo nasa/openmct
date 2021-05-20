@@ -217,7 +217,7 @@ define([
      */
     CompositionCollection.prototype.load = function (abortSignal) {
         this.cleanUpMutables();
-        console.log('comp load', this.domainObject.name, abortSignal);
+
         return this.provider.load(this.domainObject)
             .then(function (children) {
                 return Promise.all(children.map((c) => this.publicAPI.objects.get(c, abortSignal)));

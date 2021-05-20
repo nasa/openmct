@@ -74,11 +74,10 @@ export default class CouchObjectProvider {
                 "Content-Type": "application/json"
             };
         }
-        console.log('couch req', fetchOptions);
+
         return fetch(this.url + '/' + subPath, fetchOptions)
             .then(response => response.json())
             .then(function (response) {
-                console.log('couch req respons', response);
                 return response;
             }, function () {
                 return undefined;
@@ -145,7 +144,6 @@ export default class CouchObjectProvider {
     }
 
     get(identifier, abortSignal) {
-        console.log('couch get', abortSignal);
         this.batchIds.push(identifier.key);
 
         if (this.bulkPromise === undefined) {
@@ -215,7 +213,6 @@ export default class CouchObjectProvider {
      * @private
      */
     bulkGet(ids, signal) {
-        console.log('couch bulk get', signal);
         ids = this.removeDuplicates(ids);
 
         const query = {
@@ -259,7 +256,6 @@ export default class CouchObjectProvider {
     }
 
     async getObjectsByFilter(filter, abortSignal) {
-        console.log('couch get objs by filter', filter, abortSignal);
         let objects = [];
 
         let url = `${this.url}/_find`;
