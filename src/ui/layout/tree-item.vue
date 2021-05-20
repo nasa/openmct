@@ -20,7 +20,7 @@
         <view-control
             ref="navigate"
             class="c-tree__item__view-control"
-            :value="isOpen"
+            :value="isOpen || itemIsLoading"
             :enabled="!activeSearch && hasComposition"
             @input="navigationClick()"
         />
@@ -128,7 +128,7 @@ export default {
     },
     methods: {
         navigationClick() {
-            this.$emit('navigation-click', this.isOpen ? 'close' : 'open');
+            this.$emit('navigation-click', this.isOpen || this.itemIsLoading ? 'close' : 'open');
         },
         handleClick(event) {
             // skip for navigation, let viewControl handle click

@@ -77,7 +77,7 @@
                     :item-offset="itemOffset"
                     :item-index="index"
                     :item-height="itemHeight"
-                    :is-open="openTreeItems.includes(treeItem.navigationPath) || Boolean(treeItemLoading[treeItem.navigationPath])"
+                    :is-open="openTreeItems.includes(treeItem.navigationPath)"
                     :item-is-loading="Boolean(treeItemLoading[treeItem.navigationPath])"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @navigation-click="treeItemAction(treeItem, $event)"
