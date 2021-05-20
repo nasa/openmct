@@ -78,6 +78,7 @@ export default class CouchObjectProvider {
         return fetch(this.url + '/' + subPath, fetchOptions)
             .then(response => response.json())
             .then(function (response) {
+                console.log('couch req respons', response);
                 return response;
             }, function () {
                 return undefined;
@@ -258,6 +259,7 @@ export default class CouchObjectProvider {
     }
 
     async getObjectsByFilter(filter, abortSignal) {
+        console.log('couch get objs by filter', filter, abortSignal);
         let objects = [];
 
         let url = `${this.url}/_find`;
