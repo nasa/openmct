@@ -145,7 +145,11 @@
             </a>
             <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
         </div>
-        <button v-if="!autoScroll && !isPaused" class="c-thumb_auto-scroll-button">auto</button>
+        <button v-if="!autoScroll && !isPaused"
+                class="c-thumb_auto-scroll-button"
+                @click="resetScroll"
+        >
+                auto</button>
     </div>
 </div>
 </template>
@@ -571,6 +575,7 @@ export default {
             const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
                     || (scrollHeight - scrollTop) > 2 * clientHeight;
             this.autoScroll = !disableScroll;  
+            console.log('ascroll', this.autoScroll)
         },
         paused(state, type) {
             this.isPaused = state;
@@ -601,8 +606,22 @@ export default {
                 });
             }
         },
+        resetScroll() {
+            // Button will only show when it's not paused & autoScroll = false
+            if (!this.$refs.thumbsWrapper) {
+                return;
+            }
+
+            const scrollWidth = this.$refs.thumbsWrapper.scrollWidth || 0;
+            if (!scrollWidth) {
+                return;
+            }
+            setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
+
+        },
         scrollToRight() {
             if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
+                console.log('here', this.autoScroll);
                 return;
             }
 
