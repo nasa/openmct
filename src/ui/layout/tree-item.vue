@@ -20,7 +20,7 @@
         <view-control
             ref="navigate"
             class="c-tree__item__view-control"
-            :value="isOpen || itemIsLoading"
+            :value="isOpen || isLoading"
             :enabled="!activeSearch && hasComposition"
             @input="navigationClick()"
         />
@@ -32,7 +32,7 @@
             @context-click-active="setContextClickActive"
         />
         <span
-            v-if="itemIsLoading"
+            v-if="isLoading"
             class="loading"
         ></span>
     </div>
@@ -55,10 +55,10 @@ export default {
             type: Object,
             required: true
         },
-        isOpen: {
-            type: Boolean,
-            default: false
-        },
+        // isOpen: {
+        //     type: Boolean,
+        //     default: false
+        // },
         activeSearch: {
             type: Boolean,
             default: false
@@ -82,10 +82,18 @@ export default {
             required: false,
             default: 0
         },
-        itemIsLoading: {
-            type: Boolean,
-            default: false
+        openItems: {
+            type: Array,
+            required: true
+        },
+        loadingItems: {
+            type: Object,
+            required: true
         }
+        // isLoading: {
+        //     type: Boolean,
+        //     default: false
+        // }
     },
     data() {
         this.navigationPath = this.node.navigationPath;
@@ -110,6 +118,12 @@ export default {
         },
         itemTop() {
             return (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
+        },
+        isOpen() {
+            return this.openItems.includes(this.navigationPath);
+        },
+        isLoading() {
+            return Boolean(this.loadingItems[this.navigationPath]);
         }
     },
     mounted() {
@@ -128,8 +142,8 @@ export default {
     },
     methods: {
         navigationClick() {
-            console.log('nav click', this.domainObject.name, this.isOpen || this.itemIsLoading ? 'close' : 'open', { open: this.isOpen, loading: this.itemIsLoading });
-            this.$emit('navigation-click', this.isOpen || this.itemIsLoading ? 'close' : 'open');
+            console.log('nav click', this.domainObject.name, this.isOpen || this.isLoading ? 'close' : 'open', { open: this.isOpen, loading: this.isLoading });
+            this.$emit('navigation-click', this.isOpen || this.isLoading ? 'close' : 'open');
         },
         handleClick(event) {
             // skip for navigation, let viewControl handle click
