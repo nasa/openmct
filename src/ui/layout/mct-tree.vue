@@ -162,7 +162,7 @@ export default {
             return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
         },
         showNoItems() {
-            return this.visibleItems.length === 0 && !this.activeSearch && !this.isLoading;
+            return this.visibleItems.length === 0 && !this.activeSearch && this.searchValue === '' && !this.isLoading;
         },
         showNoSearchResults() {
             return this.searchValue && this.searchResultItems.length === 0 && !this.searchLoading;
@@ -170,13 +170,13 @@ export default {
     },
     watch: {
         syncTreeNavigation() {
+            this.searchValue = '';
+
             // if there is an abort controller, then a search is in progress and will need to be canceled
             if (this.abortController) {
                 this.abortController.abort();
                 delete this.abortController;
             }
-
-            this.searchValue = '';
 
             if (!this.openmct.router.path) {
                 return;
@@ -369,6 +369,8 @@ export default {
 
                 path += '/';
             }
+
+            await this.$nextTick();
 
             this.scrollTo(navigationPath);
         },

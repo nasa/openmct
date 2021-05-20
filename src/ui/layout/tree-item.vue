@@ -55,10 +55,6 @@ export default {
             type: Object,
             required: true
         },
-        // isOpen: {
-        //     type: Boolean,
-        //     default: false
-        // },
         activeSearch: {
             type: Boolean,
             default: false
@@ -90,10 +86,6 @@ export default {
             type: Object,
             required: true
         }
-        // isLoading: {
-        //     type: Boolean,
-        //     default: false
-        // }
     },
     data() {
         this.navigationPath = this.node.navigationPath;
