@@ -147,7 +147,7 @@
         </div>
         <button v-if="!autoScroll && !isPaused"
                 class="c-thumb_auto-scroll-button"
-                @click="resetScroll"
+                @click="scrollToRight('reset')"
         >auto   
         </button>
     </div>
@@ -567,12 +567,9 @@ export default {
             if (!thumbsWrapper) {
                 return;
             }
-            // AutoScroll: if true will scroll to right end when state change
             const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
-            // console.log(scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight);
             const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;  
-            // console.log('ascroll', this.autoScroll)
         },
         paused(state, type) {
             this.isPaused = state;
@@ -603,9 +600,9 @@ export default {
                 });
             }
         },
-        resetScroll() {
-            // Button will only show when it's not paused & autoScroll = false
-            if (!this.$refs.thumbsWrapper) {
+        scrollToRight(type) {
+            // If type is 'reset' ignore the checks on paused and autoscroll
+            if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
 
@@ -613,20 +610,6 @@ export default {
             if (!scrollWidth) {
                 return;
             }
-            setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
-
-        },
-        scrollToRight() {
-            if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
-                console.log('here', this.autoScroll);
-                return;
-            }
-
-            const scrollWidth = this.$refs.thumbsWrapper.scrollWidth || 0;
-            if (!scrollWidth) {
-                return;
-            }
-            console.log('scroll to the right', this.isPaused, this.autoScroll);
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
 
         },
