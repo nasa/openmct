@@ -36,7 +36,8 @@ define([
     './views/installLegacyViews',
     './policies/LegacyCompositionPolicyAdapter',
     './actions/LegacyActionAdapter',
-    './services/LegacyPersistenceAdapter'
+    './services/LegacyPersistenceAdapter',
+    './services/ExportImageService'
 ], function (
     ActionDialogDecorator,
     AdapterCapability,
@@ -53,7 +54,8 @@ define([
     installLegacyViews,
     legacyCompositionPolicyAdapter,
     LegacyActionAdapter,
-    LegacyPersistenceAdapter
+    LegacyPersistenceAdapter,
+    ExportImageService
 ) {
     return {
         name: 'src/adapter',
@@ -81,6 +83,13 @@ define([
                             "capabilityService",
                             "identifierService",
                             "cacheService"
+                        ]
+                    },
+                    {
+                        "key": "exportImageService",
+                        "implementation": ExportImageService,
+                        "depends": [
+                            "dialogService"
                         ]
                     }
                 ],

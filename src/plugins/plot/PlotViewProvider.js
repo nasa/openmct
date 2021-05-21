@@ -19,50 +19,68 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LadTableSet from './components/LadTableSet.vue';
+
+import Plot from './Plot.vue';
 import Vue from 'vue';
 
-export default function LADTableSetViewProvider(openmct) {
+export default function PlotViewProvider(openmct) {
+    function hasTelemetry(domainObject) {
+        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+            return false;
+        }
+
+        let metadata = openmct.telemetry.getMetadata(domainObject);
+
+        return metadata.values().length > 0 && hasDomainAndRange(metadata);
+    }
+
+    function hasDomainAndRange(metadata) {
+        return (metadata.valuesForHints(['range']).length > 0
+            && metadata.valuesForHints(['domain']).length > 0);
+    }
+
+    function isCompactView(objectPath) {
+        return objectPath.find(object => object.type === 'time-strip');
+    }
+
     return {
-        key: 'LadTableSet',
-        name: 'LAD Table Set',
-        cssClass: 'icon-tabular-lad-set',
-        canView: function (domainObject) {
-            return domainObject.type === 'LadTableSet';
+        key: 'plot-simple',
+        name: 'Plot',
+        cssClass: 'icon-telemetry',
+        canView(domainObject, objectPath) {
+            return hasTelemetry(domainObject, openmct);
         },
-        canEdit: function (domainObject) {
-            return domainObject.type === 'LadTableSet';
-        },
+
         view: function (domainObject, objectPath) {
             let component;
 
             return {
                 show: function (element) {
+                    let isCompact = isCompactView(objectPath);
                     component = new Vue({
                         el: element,
                         components: {
-                            LadTableSet: LadTableSet
-                        },
-                        data() {
-                            return {
-                                domainObject
-                            };
+                            Plot
                         },
                         provide: {
                             openmct,
-                            objectPath
+                            domainObject
                         },
-                        template: '<lad-table-set :domain-object="domainObject"></lad-table-set>'
+                        data() {
+                            return {
+                                options: {
+                                    compact: isCompact
+                                }
+                            };
+                        },
+                        template: '<plot :options="options"></plot>'
                     });
                 },
-                destroy: function (element) {
+                destroy: function () {
                     component.$destroy();
                     component = undefined;
                 }
             };
-        },
-        priority: function () {
-            return 1;
         }
     };
 }

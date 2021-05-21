@@ -19,50 +19,59 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import LadTableSet from './components/LadTableSet.vue';
+
+import StackedPlot from './StackedPlot.vue';
 import Vue from 'vue';
 
-export default function LADTableSetViewProvider(openmct) {
+export default function StackedPlotViewProvider(openmct) {
+    function isCompactView(objectPath) {
+        return objectPath.find(object => object.type === 'time-strip');
+    }
+
     return {
-        key: 'LadTableSet',
-        name: 'LAD Table Set',
-        cssClass: 'icon-tabular-lad-set',
-        canView: function (domainObject) {
-            return domainObject.type === 'LadTableSet';
+        key: 'plot-stacked',
+        name: 'Stacked Plot',
+        cssClass: 'icon-telemetry',
+        canView(domainObject, objectPath) {
+            return domainObject.type === 'telemetry.plot.stacked';
         },
-        canEdit: function (domainObject) {
-            return domainObject.type === 'LadTableSet';
+
+        canEdit(domainObject, objectPath) {
+            return domainObject.type === 'telemetry.plot.stacked';
         },
+
         view: function (domainObject, objectPath) {
             let component;
 
             return {
                 show: function (element) {
+                    let isCompact = isCompactView(objectPath);
+
                     component = new Vue({
                         el: element,
                         components: {
-                            LadTableSet: LadTableSet
-                        },
-                        data() {
-                            return {
-                                domainObject
-                            };
+                            StackedPlot
                         },
                         provide: {
                             openmct,
-                            objectPath
+                            domainObject,
+                            composition: openmct.composition.get(domainObject)
                         },
-                        template: '<lad-table-set :domain-object="domainObject"></lad-table-set>'
+                        data() {
+                            return {
+                                options: {
+                                    compact: isCompact
+                                }
+                            };
+                        },
+                        template: '<stacked-plot :options="options"></stacked-plot>'
                     });
                 },
-                destroy: function (element) {
+                destroy: function () {
                     component.$destroy();
                     component = undefined;
                 }
             };
-        },
-        priority: function () {
-            return 1;
         }
     };
 }
