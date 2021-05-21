@@ -493,7 +493,7 @@ export default {
         },
         getLimitElement(limit) {
             let point = {
-                left: limit.point.x,
+                left: 0,
                 top: this.drawAPI.y(limit.point.y)
             };
             let LimitLineClass = Vue.extend(LimitLine);
@@ -509,7 +509,7 @@ export default {
         },
         getLimitLabel(limit) {
             let point = {
-                left: limit.point.x,
+                left: 0,
                 top: this.drawAPI.y(limit.point.y)
             };
             let LimitLabelClass = Vue.extend(LimitLabel);

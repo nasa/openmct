@@ -89,6 +89,7 @@
                                                :series-object="seriesObject"
                                                :highlights="highlights"
                                                :legend="legend"
+                                               @legendHoverChanged="legendHoverChanged"
                     />
                 </tbody>
             </table>
