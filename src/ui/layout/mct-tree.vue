@@ -112,6 +112,7 @@ import search from '../components/search.vue';
 const ITEM_BUFFER = 5;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 const RETURN_ALL_DESCDNDANTS = true;
+const TREE_ITEM_INDENT = 15; // px
 
 export default {
     name: 'MctTree',
@@ -416,7 +417,7 @@ export default {
             return {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
-                leftOffset: ((objectPath.length - 1) * 10) + 'px',
+                leftOffset: ((objectPath.length - 1) * TREE_ITEM_INDENT) + 'px',
                 objectPath,
                 navigationPath
             };
