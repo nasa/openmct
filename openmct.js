@@ -21,6 +21,11 @@
  *****************************************************************************/
 /*global module*/
 
+const LogRocket = require('logrocket');
+
+// Instrumented
+LogRocket.init('omjbg1/openmct-demo');
+
 const matcher = /\/openmct.js$/;
 if (document.currentScript) {
     let src = document.currentScript.src;

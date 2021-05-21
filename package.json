@@ -2,7 +2,9 @@
   "name": "openmct",
   "version": "1.7.1-SNAPSHOT",
   "description": "The Open MCT core platform",
-  "dependencies": {},
+  "dependencies": {
+    "logrocket": "^1.2.0"
+  },
   "devDependencies": {
     "angular": ">=1.8.0",
     "angular-route": "1.4.14",
