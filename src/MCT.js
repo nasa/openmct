@@ -460,6 +460,13 @@ define([
         this.router.destroy();
     };
 
+    /**
+     * Expose this project's Vue so plugins can make use of it.
+     *
+     * @memberof module:openmct.MCT#
+     */
+    MCT.prototype.Vue = Vue;
+
     MCT.prototype.plugins = plugins;
 
     return MCT;
