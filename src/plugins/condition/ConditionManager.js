@@ -282,7 +282,7 @@ export default class ConditionManager extends EventEmitter {
         return currentCondition;
     }
 
-    requestLADConditionSetOutput() {
+    requestLADConditionSetOutput(options) {
         if (!this.conditions.length) {
             return Promise.resolve([]);
         }
@@ -291,7 +291,7 @@ export default class ConditionManager extends EventEmitter {
             let latestTimestamp;
             let conditionResults = {};
             const conditionRequests = this.conditions
-                .map(condition => condition.requestLADConditionResult());
+                .map(condition => condition.requestLADConditionResult(options));
 
             return Promise.all(conditionRequests)
                 .then((results) => {
