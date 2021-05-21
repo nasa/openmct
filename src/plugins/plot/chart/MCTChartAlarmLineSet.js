@@ -71,6 +71,7 @@ export default class MCTChartAlarmLineSet {
             if (limitForLevel.high) {
                 const point = this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.high), series);
                 this.limits.push({
+                    seriesKey: series.keyString,
                     value: series.getYVal(limitForLevel.high),
                     color: this.color().asHexString(),
                     name: this.name(),
@@ -82,6 +83,7 @@ export default class MCTChartAlarmLineSet {
             if (limitForLevel.low) {
                 const point = this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.low), series);
                 this.limits.push({
+                    seriesKey: series.keyString,
                     value: series.getYVal(limitForLevel.low),
                     color: this.color().asHexString(),
                     name: this.name(),

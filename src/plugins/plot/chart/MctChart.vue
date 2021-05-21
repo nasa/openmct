@@ -59,6 +59,12 @@ export default {
             default() {
                 return [];
             }
+        },
+        showLimitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
         }
     },
     data() {
@@ -72,6 +78,9 @@ export default {
         },
         rectangles() {
             this.scheduleDraw();
+        },
+        showLimitLineLabels() {
+            this.drawLimitLines();
         }
     },
     mounted() {
@@ -464,16 +473,23 @@ export default {
 
                 this.limitLines.forEach((limitLine) => {
                     let limitContainerEl = this.$refs.limitArea;
-
                     limitLine.limits.forEach((limit) => {
-                        let limitLabelEl = this.getLimitLabel(limit);
+                        const showLabels = this.showLabels(limit.seriesKey);
+                        if (showLabels) {
+                            let limitLabelEl = this.getLimitLabel(limit);
+                            limitContainerEl.appendChild(limitLabelEl);
+                        }
+
                         let limitEl = this.getLimitElement(limit);
-                        limitContainerEl.appendChild(limitLabelEl);
                         limitContainerEl.appendChild(limitEl);
 
                     }, this);
                 });
             }
+        },
+        showLabels(seriesKey) {
+            return this.showLimitLineLabels.seriesKey
+                    && (this.showLimitLineLabels.seriesKey === seriesKey);
         },
         getLimitElement(limit) {
             let point = {
