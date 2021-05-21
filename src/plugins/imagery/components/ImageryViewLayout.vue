@@ -148,8 +148,8 @@
         <button v-if="!autoScroll && !isPaused"
                 class="c-thumb_auto-scroll-button"
                 @click="resetScroll"
-        >
-                auto</button>
+        >auto   
+        </button>
     </div>
 </div>
 </template>
@@ -568,17 +568,11 @@ export default {
                 return;
             }
             // AutoScroll: if true will scroll to right end when state change
-            // don't pause when page loads
-            // pause when users scroll at live mode
             const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
             // console.log(scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight);
-            // const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
-            //         || (scrollHeight - scrollTop) > 2 * clientHeight;
-            console.log('length', scrollWidth, Math.ceil(scrollLeft + clientWidth))
-            const disableScroll = (scrollWidth > Math.ceil(scrollLeft + clientWidth))
-                    || (scrollHeight - scrollTop) > 2 * clientHeight;
+            const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;  
-            console.log('ascroll', this.autoScroll)
+            // console.log('ascroll', this.autoScroll)
         },
         paused(state, type) {
             this.isPaused = state;
@@ -623,7 +617,7 @@ export default {
 
         },
         scrollToRight() {
-            if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
+            if (!this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
                 console.log('here', this.autoScroll);
                 return;
             }
@@ -632,6 +626,7 @@ export default {
             if (!scrollWidth) {
                 return;
             }
+            console.log('scroll to the right', this.isPaused, this.autoScroll);
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
 
         },
