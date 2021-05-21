@@ -97,7 +97,8 @@ export default class PlotSeries extends Model {
             markers: true,
             markerShape: 'point',
             markerSize: 2.0,
-            alarmMarkers: true
+            alarmMarkers: true,
+            limitLines: false
         };
     }
 

@@ -122,12 +122,14 @@ export default {
             this.changeInterpolate(mode, o, series);
             this.changeMarkers(mode, o, series);
             this.changeAlarmMarkers(mode, o, series);
+            this.changeLimitLines(mode, o, series);
         },
         onSeriesAdd(series) {
             this.listenTo(series, 'change:xKey', this.reDraw, this);
             this.listenTo(series, 'change:interpolate', this.changeInterpolate, this);
             this.listenTo(series, 'change:markers', this.changeMarkers, this);
             this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
+            this.listenTo(series, 'change:limitLines', this.changeLimitLines, this);
             this.listenTo(series, 'change', this.scheduleDraw);
             this.listenTo(series, 'add', this.scheduleDraw);
             this.makeChartElement(series);
@@ -184,6 +186,14 @@ export default {
                 elements.pointSets.push(pointSet);
                 this.pointSets.push(pointSet);
             }
+        },
+        changeLimitLines(mode, o, series) {
+            if (mode === o) {
+                return;
+            }
+
+            this.makeLimitLines(series);
+            this.updateLimitsAndDraw();
         },
         onSeriesRemove(series) {
             this.stopListening(series);
@@ -354,6 +364,10 @@ export default {
         },
         makeLimitLines(series) {
             this.clearLimitLines(series);
+
+            if (!series.get('limitLines')) {
+                return;
+            }
 
             const limitElements = {
                 limitLines: []
