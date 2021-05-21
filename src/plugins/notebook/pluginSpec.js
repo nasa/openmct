@@ -132,6 +132,32 @@ describe("Notebook plugin:", () => {
 
             expect(hasMajorElements).toBe(true);
         });
+
+        /*
+        describe("synchronization", () => {
+        
+            it("updates the notebook when a user adds a new entry", () => {
+    
+            });
+            it("updates the notebook when a user deletes an entry", () => {
+    
+            });
+            it("updates the notebook when a user modifies an entry", () => {
+    
+            });
+            it("updates the notebook when a user adds a section", () => {
+    
+            });
+            it("updates the notebook when a user removes a section", () => {
+    
+            });
+            it("updates the notebook when a user adds a section", () => {
+    
+            });
+            it("updates the notebook when a user removes a section", () => {
+    
+            });
+        });*/
     });
 
     describe("Notebook Snapshots view:", () => {
@@ -218,4 +244,6 @@ describe("Notebook plugin:", () => {
             expect(snapshotsText).toBe('Notebook Snapshots');
         });
     });
+
+
 });

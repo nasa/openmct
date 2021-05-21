@@ -22,6 +22,7 @@
 
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
+import NOTEBOOK_TYPE from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
 const ID = "_id";
@@ -127,7 +128,14 @@ export default class CouchObjectProvider {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
 
-            this.objectQueue[key].updateRevision(response[REV]);
+            if (object.type === NOTEBOOK_TYPE) {
+                //Temporary measure until object sync is supported for all object types
+                //Always update notebook revision number because we have realtime sync, so always assume it's the latest.
+                this.objectQueue[key].updateRevision(response[REV]);
+            } else if (!this.objectQueue[key].pending) {
+                //Sometimes CouchDB returns the old rev which fetching the object if there is a document update in progress
+                this.objectQueue[key].updateRevision(response[REV]);
+            }
 
             return object;
         } else {

@@ -40,9 +40,7 @@ export default {
         },
         domainObject: {
             type: Object,
-            default() {
-                return {};
-            }
+            required: true
         },
         pages: {
             type: Array,
@@ -71,7 +69,17 @@ export default {
             }
         }
     },
+    watch: {
+        pages() {
+            if (!this.containsPage(this.selectedPageId)) {
+                this.selectPage(this.pages[0].id);
+            }
+        }
+    },
     methods: {
+        containsPage(pageId) {
+            return this.pages.some(page => page.id === pageId);
+        },
         deletePage(id) {
             const selectedSection = this.sections.find(s => s.isSelected);
             const page = this.pages.find(p => p.id === id);
@@ -83,24 +91,26 @@ export default {
             const isPageSelected = selectedPage && selectedPage.id === id;
             const isPageDefault = defaultpage && defaultpage.id === id;
             const pages = this.pages.filter(s => s.id !== id);
+            let selectedPageId;
 
             if (isPageSelected && defaultpage) {
                 pages.forEach(s => {
                     s.isSelected = false;
                     if (defaultpage && defaultpage.id === s.id) {
-                        s.isSelected = true;
+                        selectedPageId = s.id;
                     }
                 });
             }
 
             if (pages.length && isPageSelected && (!defaultpage || isPageDefault)) {
-                pages[0].isSelected = true;
+                selectedPageId = pages[0].id;
             }
 
             this.$emit('updatePage', {
                 pages,
                 id
             });
+            this.$emit('selectPage', selectedPageId);
         },
         selectPage(id) {
             this.$emit('selectPage', id);

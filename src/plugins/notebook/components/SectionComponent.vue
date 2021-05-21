@@ -82,7 +82,7 @@ export default {
             this.$emit('deleteSection', this.section.id);
         },
         getRemoveDialog() {
-            const message = 'This action will delete this section and all of its pages and entries. Do you want to continue?';
+            const message = 'Other users may be editing entries in this section, and deleting it is permanent. Do you want to continue?';
             const options = {
                 name: this.removeActionString,
                 callback: this.deleteSection.bind(this),

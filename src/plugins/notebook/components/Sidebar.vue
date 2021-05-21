@@ -79,7 +79,9 @@ export default {
         },
         selectedPageId: {
             type: String,
-            required: true
+            default() {
+                return '';
+            }
         },
         defaultSectionId: {
             type: String,
@@ -89,7 +91,9 @@ export default {
         },
         selectedSectionId: {
             type: String,
-            required: true
+            default() {
+                return '';
+            }
         },
         domainObject: {
             type: Object,
@@ -156,6 +160,7 @@ export default {
                 pages,
                 id: newPage.id
             });
+            this.$emit('selectPage', newPage.id);
         },
         addSection() {
             const newSection = this.createNewSection();
@@ -165,6 +170,8 @@ export default {
                 sections,
                 id: newSection.id
             });
+
+            this.$emit('selectSection', newSection.id);
         },
         addNewPage(page) {
             const pages = this.pages.map(p => {

@@ -82,7 +82,7 @@ export default {
             this.$emit('deletePage', this.page.id);
         },
         getRemoveDialog() {
-            const message = 'This action will delete this page and all of its entries. Do you want to continue?';
+            const message = 'Other users may be editing entries in this page, and deleting it is permanent. Do you want to continue?';
             const options = {
                 name: this.removeActionString,
                 callback: this.deletePage.bind(this),

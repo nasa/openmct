@@ -58,7 +58,17 @@ export default {
             }
         }
     },
+    watch: {
+        sections() {
+            if (!this.containsSection(this.selectedSectionId)) {
+                this.selectSection(this.sections[0].id);
+            }
+        }
+    },
     methods: {
+        containsSection(sectionId) {
+            return this.sections.some(section => section.id === sectionId);
+        },
         deleteSection(id) {
             const section = this.sections.find(s => s.id === id);
             deleteNotebookEntries(this.openmct, this.domainObject, section);
