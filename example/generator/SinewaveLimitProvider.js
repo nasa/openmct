@@ -97,13 +97,27 @@ define([
         return {
             limits: function () {
                 return {
-                    sin: {
-                        low: 0.5,
-                        high: 0.9
+                    WARNING: {
+                        low: {
+                            cssClass: "is-limit--lwr is-limit--yellow",
+                            sin: -YELLOW.sin,
+                            cos: -YELLOW.cos
+                        },
+                        high: {
+                            cssClass: "is-limit--upr is-limit--yellow",
+                            ...YELLOW
+                        }
                     },
-                    cos: {
-                        low: 0.5,
-                        high: 0.9
+                    DISTRESS: {
+                        low: {
+                            cssClass: "is-limit--lwr is-limit--red",
+                            sin: -RED.sin,
+                            cos: -RED.cos
+                        },
+                        high: {
+                            cssClass: "is-limit--upr is-limit--red",
+                            ...RED
+                        }
                     }
                 };
             }

@@ -23,72 +23,33 @@
 import eventHelpers from '../lib/eventHelpers';
 
 export default class MCTChartAlarmLineSet {
-    constructor(series, chart, offset) {
+    constructor(series, chart, offset, bounds) {
         this.series = series;
         this.chart = chart;
         this.offset = offset;
-        this.buffer = new Float32Array(20000);
-        this.count = 0;
+        this.bounds = bounds;
         this.limits = [];
 
         eventHelpers.extend(this);
+        this.listenTo(series, 'limitBounds', this.updateBounds, this);
+        this.listenTo(series, 'change:xKey', this.getLimitPoints, this);
 
-        this.listenTo(series, 'limits', this.appendPoints, this);
-        this.listenTo(series, 'removeLimit', this.remove, this);
-        this.listenTo(series, 'resetLimit', this.reset, this);
-        this.listenTo(series, 'destroyLimit', this.destroy, this);
         if (series.limits) {
-            this.appendPoints(series.limits, series);
+            this.getLimitPoints(series);
         }
     }
 
-    getBuffer(offset) {
-        if (this.isTempBuffer) {
-            this.buffer = new Float32Array(this.buffer);
-            this.isTempBuffer = false;
-        }
-
-        return offset !== undefined ? this.buffer.slice(offset * 2) : this.buffer;
+    updateBounds(bounds) {
+        this.bounds = bounds;
+        this.getLimitPoints(this.series);
     }
 
     color() {
         return this.series.get('color');
     }
 
-    vertexCountForPointAtIndex(index) {
-        return 2;
-    }
-
-    startIndexForPointAtIndex(index) {
-        return 2 * index;
-    }
-
-    removeSegments(index, count) {
-        const target = index;
-        const start = index + count;
-        const end = this.count * 2;
-        this.buffer.copyWithin(target, start, end);
-        for (let zero = end - count; zero < end; zero++) {
-            this.buffer[zero] = 0;
-        }
-    }
-
-    removePoint(point, index, count) {
-        // by default, do nothing.
-    }
-
-    remove(point, index, series) {
-        const vertexCount = this.vertexCountForPointAtIndex(index);
-        const removalPoint = this.startIndexForPointAtIndex(index);
-
-        this.removeSegments(removalPoint, vertexCount);
-
-        this.removePoint(
-            this.makePoint(point, series),
-            removalPoint,
-            vertexCount
-        );
-        this.count -= (vertexCount / 2);
+    name() {
+        return this.series.get('name');
     }
 
     makePoint(point, series) {
@@ -97,90 +58,42 @@ export default class MCTChartAlarmLineSet {
         }
 
         return {
-            x: this.count % 2 > 0 ? 2000000 : this.offset.yVal(point, series),
+            x: this.offset.xVal(point, series),
             y: this.offset.yVal(point, series)
         };
     }
 
-    appendPoints(limits, series) {
-        const start = this.chart.bounds.start;
-        const end = this.chart.bounds.end;
-        let index = 0;
+    getLimitPoints(series) {
         this.limits = [];
-        Object.keys(limits).forEach((key) => {
-            this.limits.push(limits[key].high);
-            this.append({
-                [key]: limits[key].high,
-                'utc': start
-            }, index, series);
-            index++;
-            this.append({
-                [key]: limits[key].high,
-                'utc': end
-            }, index, series);
-            index++;
-            this.limits.push(limits[key].low);
-            this.append({
-                [key]: limits[key].low,
-                'utc': start
-            }, index, series);
-            index++;
-            this.append({
-                [key]: limits[key].low,
-                'utc': end
-            }, index, series);
-            index++;
+        let xKey = series.get('xKey');
+        Object.keys(series.limits).forEach((key) => {
+            const limitForLevel = series.limits[key];
+            if (limitForLevel.high) {
+                const point = this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.high), series);
+                this.limits.push({
+                    value: series.getYVal(limitForLevel.high),
+                    color: this.color().asHexString(),
+                    name: this.name(),
+                    point,
+                    cssClass: limitForLevel.high.cssClass
+                });
+            }
+
+            if (limitForLevel.low) {
+                const point = this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.low), series);
+                this.limits.push({
+                    value: series.getYVal(limitForLevel.low),
+                    color: this.color().asHexString(),
+                    name: this.name(),
+                    point,
+                    cssClass: limitForLevel.low.cssClass
+                });
+            }
         }, this);
     }
 
-    append(point, index, series) {
-        const pointsRequired = this.vertexCountForPointAtIndex(index);
-        const insertionPoint = this.startIndexForPointAtIndex(index);
-        this.growIfNeeded(pointsRequired);
-        this.makeInsertionPoint(insertionPoint, pointsRequired);
-        const newPoint = this.makePoint(point, series);
-        this.addPoint(
-            newPoint,
-            insertionPoint,
-            pointsRequired
-        );
-        this.count += (pointsRequired / 2);
-    }
-
-    addPoint(point, start, count) {
-        this.buffer[start] = point.x;
-        this.buffer[start + 1] = point.y;
-    }
-
-    makeInsertionPoint(insertionPoint, pointsRequired) {
-        if (this.count * 2 > insertionPoint) {
-            if (!this.isTempBuffer) {
-                this.buffer = Array.prototype.slice.apply(this.buffer);
-                this.isTempBuffer = true;
-            }
-
-            const target = insertionPoint + pointsRequired;
-            let start = insertionPoint;
-            for (; start < target; start++) {
-                this.buffer.splice(start, 0, 0);
-            }
-        }
-    }
-
     reset() {
-        this.buffer = new Float32Array(20000);
-        this.count = 0;
-    }
-
-    growIfNeeded(pointsRequired) {
-        const remainingPoints = this.buffer.length - this.count * 2;
-        let temp;
-
-        if (remainingPoints <= pointsRequired) {
-            temp = new Float32Array(this.buffer.length + 20000);
-            temp.set(this.buffer);
-            this.buffer = temp;
-        }
+        this.limits = [];
     }
 
     destroy() {

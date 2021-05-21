@@ -23,7 +23,6 @@
 import EventEmitter from 'EventEmitter';
 import eventHelpers from '../lib/eventHelpers';
 import { MARKER_SHAPES } from './MarkerShapes';
-import Draw2D from "@/plugins/plot/draw/Draw2D";
 
 // WebGL shader sources (for drawing plain colors)
 const FRAGMENT_SHADER = `
@@ -232,12 +231,12 @@ DrawWebGL.prototype.setDimensions = function (dimensions, origin) {
  *        is in the range of 0.0-1.0
  * @param {number} points the number of points to draw
  */
-DrawWebGL.prototype.drawLine = function (buf, color, points, disconnected) {
+DrawWebGL.prototype.drawLine = function (buf, color, points) {
     if (this.isContextLost) {
         return;
     }
 
-    this.doDraw(disconnected ? this.gl.LINES : this.gl.LINE_STRIP, buf, color, points);
+    this.doDraw(this.gl.LINE_STRIP, buf, color, points);
 };
 
 /**
@@ -270,17 +269,6 @@ DrawWebGL.prototype.drawSquare = function (min, max, color) {
     this.doDraw(this.gl.TRIANGLE_FAN, new Float32Array(
         min.concat([min[0], max[1]]).concat(max).concat([max[0], min[1]])
     ), color, 4);
-};
-
-DrawWebGL.prototype.drawText = function (text, color, point) {
-    const mappedColor = color.map(function (c, i) {
-        return i < 3 ? Math.floor(c * 255) : (c);
-    }).join(',');
-
-    this.c2d.strokeStyle = "rgba(" + mappedColor + ")";
-    this.c2d.fillStyle = "rgba(" + mappedColor + ")";
-    this.c2d.font = "bold 12px sans-serif";
-    this.c2d.fillText(text, this.x(point.x), this.y(point.y) - 3);
 };
 
 DrawWebGL.prototype.drawLimitPoint = function (x, y, size) {

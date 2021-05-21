@@ -117,8 +117,12 @@ export default class PlotSeries extends Model {
         this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
         this.limitDefinition = this.openmct.telemetry.limitDefinition(options.domainObject);
         this.limits = this.limitDefinition.limits();
-        this.emit('limits', this.limitDefinition.limits(), this);
+        this.openmct.time.on('bounds', this.updateLimits);
         this.on('destroy', this.onDestroy, this);
+    }
+
+    updateLimits(bounds) {
+        this.emit('limitBounds', bounds);
     }
 
     locateOldObject(oldStyleParent) {

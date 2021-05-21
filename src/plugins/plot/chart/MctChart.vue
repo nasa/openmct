@@ -23,6 +23,7 @@
 <div class="gl-plot-chart-area">
     <span v-html="canvasTemplate"></span>
     <span v-html="canvasTemplate"></span>
+    <div ref="limitArea"></div>
 </div>
 </template>
 
@@ -34,9 +35,12 @@ import MCTChartLineLinear from './MCTChartLineLinear';
 import MCTChartLineStepAfter from './MCTChartLineStepAfter';
 import MCTChartPointSet from './MCTChartPointSet';
 import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
+import MCTChartAlarmLineSet from "./MCTChartAlarmLineSet";
 import configStore from "../configuration/configStore";
 import PlotConfigurationModel from "../configuration/PlotConfigurationModel";
-import MCTChartAlarmLineSet from "@/plugins/plot/chart/MCTChartAlarmLineSet";
+import LimitLine from "./LimitLine.vue";
+import LimitLabel from "./LimitLabel.vue";
+import Vue from 'vue';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
@@ -72,7 +76,6 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
-        this.bounds = this.openmct.time.bounds();
         this.config = this.getConfig();
         this.isDestroyed = false;
         this.lines = [];
@@ -81,6 +84,7 @@ export default {
         this.alarmSets = [];
         this.offset = {};
         this.seriesElements = new WeakMap();
+        this.seriesLimits = new WeakMap();
 
         let canvasEls = this.$parent.$refs.chartContainer.querySelectorAll("canvas");
         const mainCanvas = canvasEls[1];
@@ -127,6 +131,7 @@ export default {
             this.listenTo(series, 'change', this.scheduleDraw);
             this.listenTo(series, 'add', this.scheduleDraw);
             this.makeChartElement(series);
+            this.makeLimitLines(series);
         },
         changeInterpolate(mode, o, series) {
             if (mode === o) {
@@ -144,18 +149,6 @@ export default {
             if (newLine) {
                 elements.lines.push(newLine);
                 this.lines.push(newLine);
-            }
-
-            elements.limitLines.forEach(function (line) {
-                this.limitLines.splice(this.limitLines.indexOf(line), 1);
-                line.destroy();
-            }, this);
-            elements.limitLines = [];
-
-            const limitLine = this.limitLineForSeries(series);
-            if (limitLine) {
-                elements.limitLines.push(limitLine);
-                this.limitLines.push(limitLine);
             }
         },
         changeAlarmMarkers(mode, o, series) {
@@ -277,10 +270,6 @@ export default {
                 this.lines.splice(this.lines.indexOf(line), 1);
                 line.destroy();
             }, this);
-            elements.limitLines.forEach(function (line) {
-                this.limitLines.splice(this.limitLines.indexOf(line), 1);
-                line.destroy();
-            }, this);
             elements.pointSets.forEach(function (pointSet) {
                 this.pointSets.splice(this.pointSets.indexOf(pointSet), 1);
                 pointSet.destroy();
@@ -291,6 +280,8 @@ export default {
             }
 
             this.seriesElements.delete(series);
+
+            this.clearLimitLines(series);
         },
         lineForSeries(series) {
             if (series.get('interpolate') === 'linear') {
@@ -314,7 +305,7 @@ export default {
                 series,
                 this,
                 this.offset,
-                true
+                this.openmct.time.bounds()
             );
         },
         pointSetForSeries(series) {
@@ -348,10 +339,10 @@ export default {
                 this.lines.push(line);
             }
 
-            const limitLine = this.limitLineForSeries(series);
-            if (limitLine) {
-                elements.limitLines.push(limitLine);
-                this.limitLines.push(limitLine);
+            const pointSet = this.pointSetForSeries(series);
+            if (pointSet) {
+                elements.pointSets.push(pointSet);
+                this.pointSets.push(pointSet);
             }
 
             elements.alarmSet = this.alarmPointSetForSeries(series);
@@ -361,12 +352,43 @@ export default {
 
             this.seriesElements.set(series, elements);
         },
+        makeLimitLines(series) {
+            this.clearLimitLines(series);
+
+            const limitElements = {
+                limitLines: []
+            };
+
+            const limitLine = this.limitLineForSeries(series);
+            if (limitLine) {
+                limitElements.limitLines.push(limitLine);
+                this.limitLines.push(limitLine);
+            }
+
+            this.seriesLimits.set(series, limitElements);
+        },
+        clearLimitLines(series) {
+            const seriesLimits = this.seriesLimits.get(series);
+
+            if (seriesLimits) {
+                seriesLimits.limitLines.forEach(function (line) {
+                    this.limitLines.splice(this.limitLines.indexOf(line), 1);
+                    line.destroy();
+                }, this);
+
+                this.seriesLimits.delete(series);
+            }
+        },
         canDraw() {
             if (!this.offset.x || !this.offset.y) {
                 return false;
             }
 
             return true;
+        },
+        updateLimitsAndDraw() {
+            this.drawLimitLines();
+            this.scheduleDraw();
         },
         scheduleDraw() {
             if (!this.drawScheduled) {
@@ -415,27 +437,61 @@ export default {
             this.lines.forEach(this.drawLine, this);
             this.pointSets.forEach(this.drawPoints, this);
             this.alarmSets.forEach(this.drawAlarmPoints, this);
-            this.drawLimitLines();
         },
         drawLimitLines() {
-            this.limitLines.forEach((chartElement) => {
-                let count = chartElement.count;
-                let limits = chartElement.limits;
-                while (count > 0) {
-                    let newBuffer = chartElement.getBuffer(chartElement.count - count);
-                    this.drawAPI.drawLine(
-                        newBuffer,
-                        count === chartElement.count ? [1, 0.2, 0.3, 1] : [0.62549019607843137, 0.6980392156862745, 0, 1],
-                        2,
-                        true
-                    );
-                    this.drawAPI.drawText(count === chartElement.count ? 'Critical: ' + limits[0] : 'Warning: ' + limits[1], count === chartElement.count ? [1, 0.2, 0.3, 1] : [0.62549019607843137, 0.6980392156862745, 0, 1], {
-                        x: newBuffer[0],
-                        y: newBuffer[1]
-                    });
-                    count = count - 2;
+            if (this.canDraw()) {
+                this.updateViewport();
+
+                if (!this.drawAPI.origin) {
+                    return;
                 }
-            }, this);
+
+                Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
+
+                this.limitLines.forEach((limitLine) => {
+                    let limitContainerEl = this.$refs.limitArea;
+
+                    limitLine.limits.forEach((limit) => {
+                        let limitLabelEl = this.getLimitLabel(limit);
+                        let limitEl = this.getLimitElement(limit);
+                        limitContainerEl.appendChild(limitLabelEl);
+                        limitContainerEl.appendChild(limitEl);
+
+                    }, this);
+                });
+            }
+        },
+        getLimitElement(limit) {
+            let point = {
+                left: limit.point.x,
+                top: this.drawAPI.y(limit.point.y)
+            };
+            let LimitLineClass = Vue.extend(LimitLine);
+            const component = new LimitLineClass({
+                propsData: {
+                    point,
+                    cssClass: limit.cssClass
+                }
+            });
+            component.$mount();
+
+            return component.$el;
+        },
+        getLimitLabel(limit) {
+            let point = {
+                left: limit.point.x,
+                top: this.drawAPI.y(limit.point.y)
+            };
+            let LimitLabelClass = Vue.extend(LimitLabel);
+            const component = new LimitLabelClass({
+                propsData: {
+                    limit,
+                    point
+                }
+            });
+            component.$mount();
+
+            return component.$el;
         },
         drawAlarmPoints(alarmSet) {
             this.drawAPI.drawLimitPoints(

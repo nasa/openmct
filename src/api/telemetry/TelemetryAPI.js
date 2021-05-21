@@ -564,7 +564,17 @@ define([
      * @param {module:openmct.DomainObject} domainObject the domain
      *        object for which to display limits
      * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
-     * @method limits
+     * @method limits returns a limits object of
+     * type {
+     *          level1: {
+     *              low: { key1: value1, key2: value2 },
+     *              high: { key1: value1, key2: value2 }
+     *          },
+     *          level2: {
+     *              low: { key1: value1, key2: value2 },
+     *              high: { key1: value1, key2: value2 }
+     *          }
+     *       }
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.getLimits = function (domainObject) {
