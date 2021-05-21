@@ -617,7 +617,7 @@ export default {
 
         },
         scrollToRight() {
-            if (!this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
+            if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
                 console.log('here', this.autoScroll);
                 return;
             }
