@@ -5,15 +5,13 @@ import SnapshotContainer from './snapshot-container';
 import {NOTEBOOK_TYPE} from './notebook-constants';
 import Vue from 'vue';
 
-let installed = false;
-
 export default function NotebookPlugin() {
     return function install(openmct) {
-        if (installed) {
+        if (openmct._NOTEBOOK_PLUGIN_INSTALLED) {
             return;
+        } else {
+            openmct._NOTEBOOK_PLUGIN_INSTALLED = true;
         }
-
-        installed = true;
 
         openmct.actions.register(new CopyToNotebookAction(openmct));
 

@@ -21,51 +21,51 @@
  *****************************************************************************/
 
 import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/testing';
-import NotebookPlugin from './plugin';
+import notebookPlugin from './plugin';
 import Vue from 'vue';
 
 let openmct;
 let notebookDefinition;
-let notebookPlugin;
 let element;
 let child;
 let appHolder;
+let observeCallback;
 
 const notebookDomainObject = {
     identifier: {
         key: 'notebook',
-        namespace: ''
+        namespace: 'test-namespace'
     },
     type: 'notebook'
 };
 
-describe("Notebook plugin:", () => {
-    beforeAll(done => {
+fdescribe("Notebook plugin:", () => {
+    beforeEach((done) => {
         appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
+        document.body.appendChild(appHolder);
 
         openmct = createOpenMct();
+        openmct.token = Date.now();
 
         element = document.createElement('div');
         child = document.createElement('div');
         element.appendChild(child);
 
-        notebookPlugin = new NotebookPlugin();
-        openmct.install(notebookPlugin);
+        openmct.install(notebookPlugin());
 
         notebookDefinition = openmct.types.get('notebook').definition;
         notebookDefinition.initialize(notebookDomainObject);
 
         openmct.on('start', done);
         openmct.start(appHolder);
-
-        document.body.append(appHolder);
     });
 
-    afterAll(() => {
+    afterEach(() => {
         appHolder.remove();
-        resetApplicationState(openmct);
+
+        return resetApplicationState(openmct);
     });
 
     it("has type as Notebook", () => {
@@ -79,39 +79,77 @@ describe("Notebook plugin:", () => {
     describe("Notebook view:", () => {
         let notebookViewProvider;
         let notebookView;
+        let notebookViewObject;
+        let mutableNotebookObject;
 
         beforeEach(() => {
-            const notebookViewObject = {
+            notebookViewObject = {
                 ...notebookDomainObject,
                 id: "test-object",
                 name: 'Notebook',
                 configuration: {
                     defaultSort: 'oldest',
-                    entries: {},
+                    entries: {
+                        "test-section-1": {
+                            "test-page-1": [{
+                                "id": "entry-0",
+                                "createdOn": 0,
+                                "text": "First Test Entry",
+                                "embeds": []
+                            }, {
+                                "id": "entry-1",
+                                "createdOn": 0,
+                                "text": "Second Test Entry",
+                                "embeds": []
+                            }]
+                        }
+                    },
                     pageTitle: 'Page',
-                    sections: [],
+                    sections: [{
+                        "id": "test-section-1",
+                        "isDefault": false,
+                        "isSelected": false,
+                        "name": "Test Section",
+                        "pages": [{
+                            "id": "test-page-1",
+                            "isDefault": false,
+                            "isSelected": false,
+                            "name": "Test Page 1",
+                            "pageTitle": "Page"
+                        }]
+                    }],
                     sectionTitle: 'Section',
                     type: 'General'
                 }
             };
+            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
+                'get',
+                'create',
+                'update',
+                'observe'
+            ]);
 
-            const notebookObject = {
-                name: 'Notebook View',
-                key: 'notebook-vue',
-                creatable: true
-            };
+            const applicableViews = openmct.objectViews.get(notebookViewObject, [notebookViewObject]);
+            notebookViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'notebook-vue');
 
-            const applicableViews = openmct.objectViews.get(notebookViewObject, []);
-            notebookViewProvider = applicableViews.find(viewProvider => viewProvider.key === notebookObject.key);
-            notebookView = notebookViewProvider.view(notebookViewObject);
+            testObjectProvider.get.and.returnValue(Promise.resolve(notebookViewObject));
+            openmct.objects.addProvider('test-namespace', testObjectProvider);
 
-            notebookView.show(child);
+            return openmct.objects.getMutable(notebookViewObject.identifier).then((mutableObject) => {
+                mutableNotebookObject = mutableObject;
+                observeCallback = testObjectProvider.observe.calls.mostRecent().args[1];
 
-            return Vue.nextTick();
+                notebookView = notebookViewProvider.view(mutableNotebookObject);
+                notebookView.show(child);
+
+                return Vue.nextTick();
+            });
+
         });
 
         afterEach(() => {
             notebookView.destroy();
+            openmct.objects.destroyMutable(mutableNotebookObject);
         });
 
         it("provides notebook view", () => {
@@ -133,31 +171,63 @@ describe("Notebook plugin:", () => {
             expect(hasMajorElements).toBe(true);
         });
 
-        /*
+        it("renders a row for each entry", () => {
+            const notebookEntryElements = element.querySelectorAll('.c-notebook__entry');
+            const firstEntryText = getEntryText(0);
+            expect(notebookEntryElements.length).toBe(2);
+            expect(firstEntryText.innerText).toBe('First Test Entry');
+        });
+
         describe("synchronization", () => {
-        
-            it("updates the notebook when a user adds a new entry", () => {
-    
+
+            it("updates an entry when another user modifies it", () => {
+                expect(getEntryText(0).innerText).toBe("First Test Entry");
+                notebookViewObject.configuration.entries["test-section-1"]["test-page-1"][0].text = "Modified entry text";
+                observeCallback(notebookViewObject);
+
+                return Vue.nextTick().then(() => {
+                    expect(getEntryText(0).innerText).toBe("Modified entry text");
+                });
             });
-            it("updates the notebook when a user deletes an entry", () => {
-    
+
+            it("shows new entry when another user adds one", () => {
+                expect(allNotebookEntryElements().length).toBe(2);
+                notebookViewObject.configuration.entries["test-section-1"]["test-page-1"].push({
+                    "id": "entry-3",
+                    "createdOn": 0,
+                    "text": "Third Test Entry",
+                    "embeds": []
+                });
+                observeCallback(notebookViewObject);
+
+                return Vue.nextTick().then(() => {
+                    expect(allNotebookEntryElements().length).toBe(3);
+                });
             });
-            it("updates the notebook when a user modifies an entry", () => {
-    
+            it("removes an entry when another user adds one", () => {
+                expect(allNotebookEntryElements().length).toBe(2);
+                let entries = notebookViewObject.configuration.entries["test-section-1"]["test-page-1"];
+                notebookViewObject.configuration.entries["test-section-1"]["test-page-1"] = entries.splice(0, 1);
+                observeCallback(notebookViewObject);
+
+                return Vue.nextTick().then(() => {
+                    expect(allNotebookEntryElements().length).toBe(1);
+                });
             });
+            /*
             it("updates the notebook when a user adds a section", () => {
     
             });
             it("updates the notebook when a user removes a section", () => {
     
             });
-            it("updates the notebook when a user adds a section", () => {
+            it("updates the notebook when a user adds a page", () => {
     
             });
-            it("updates the notebook when a user removes a section", () => {
+            it("updates the notebook when a user removes a page", () => {
     
-            });
-        });*/
+            });*/
+        });
     });
 
     describe("Notebook Snapshots view:", () => {
@@ -172,32 +242,28 @@ describe("Notebook plugin:", () => {
             button.dispatchEvent(clickEvent);
         }
 
-        beforeAll(() => {
+        beforeEach(() => {
             snapshotIndicator = openmct.indicators.indicatorObjects
                 .find(indicator => indicator.key === 'notebook-snapshot-indicator').element;
 
             element.append(snapshotIndicator);
 
-            return Vue.nextTick();
+            return Vue.nextTick().then(() => {
+                drawerElement = document.querySelector('.l-shell__drawer');
+            });
         });
 
-        afterAll(() => {
+        afterEach(() => {
+            if (drawerElement) {
+                drawerElement.classList.remove('is-expanded');
+            }
+
             snapshotIndicator.remove();
             snapshotIndicator = undefined;
 
             if (drawerElement) {
                 drawerElement.remove();
                 drawerElement = undefined;
-            }
-        });
-
-        beforeEach(() => {
-            drawerElement = document.querySelector('.l-shell__drawer');
-        });
-
-        afterEach(() => {
-            if (drawerElement) {
-                drawerElement.classList.remove('is-expanded');
             }
         });
 
@@ -244,6 +310,12 @@ describe("Notebook plugin:", () => {
             expect(snapshotsText).toBe('Notebook Snapshots');
         });
     });
-
-
 });
+
+function getEntryText(entryNumber) {
+    return element.querySelectorAll('.c-notebook__entry .c-ne__text')[entryNumber];
+}
+
+function allNotebookEntryElements() {
+    return element.querySelectorAll('.c-notebook__entry');
+}

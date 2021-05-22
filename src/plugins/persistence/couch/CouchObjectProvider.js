@@ -378,7 +378,6 @@ export default class CouchObjectProvider {
             const {done, value} = await reader.read();
             //done is true when we lose connection with the provider
             if (done) {
-                console.error('Connection ended');
                 error = true;
             }
 
