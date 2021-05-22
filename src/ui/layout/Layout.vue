@@ -56,8 +56,8 @@
         >
             <button
                 slot="controls"
-                class="c-icon-button l-shell__reset-tree-button icon-clear-data"
-                title="Close all tree items"
+                class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+                title="Collapse all tree items"
                 @click="handleTreeReset"
             >
             </button>
