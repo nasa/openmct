@@ -164,13 +164,20 @@ describe("The Object API", () => {
                 },
                 name: 'test object',
                 otherAttribute: 'other-attribute-value',
+                modified: 0,
+                persisted: 0,
                 objectAttribute: {
                     embeddedObject: {
                         embeddedKey: 'embedded-value'
                     }
                 }
             };
-            updatedTestObject = Object.assign({otherAttribute: 'changed-attribute-value'}, testObject);
+            updatedTestObject = Object.assign({
+                otherAttribute: 'changed-attribute-value'
+            }, testObject);
+            updatedTestObject.modified = 1;
+            updatedTestObject.persisted = 1;
+
             mockProvider = jasmine.createSpyObj("mock provider", [
                 "get",
                 "create",

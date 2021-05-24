@@ -406,6 +406,7 @@ ObjectAPI.prototype._toMutable = function (object) {
     if (provider !== undefined
         && provider.observe !== undefined) {
         let unobserve = provider.observe(identifier, (updatedModel) => {
+            console.error(`Persisted: ${updatedModel.persisted} modified: ${mutableObject.modified}`);
             if (updatedModel.persisted > mutableObject.modified) {
                 //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                 //in rapid succession and intermediate persistence states are returned by the observe function.

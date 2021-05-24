@@ -24,7 +24,7 @@ import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/te
 import notebookPlugin from './plugin';
 import Vue from 'vue';
 
-xdescribe("Notebook plugin:", () => {
+describe("Notebook plugin:", () => {
     let openmct;
     let notebookDefinition;
     let element;
