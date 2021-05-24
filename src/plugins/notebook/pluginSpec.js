@@ -24,23 +24,25 @@ import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/te
 import notebookPlugin from './plugin';
 import Vue from 'vue';
 
-let openmct;
-let notebookDefinition;
-let element;
-let child;
-let appHolder;
-let observeCallback;
+xdescribe("Notebook plugin:", () => {
+    let openmct;
+    let notebookDefinition;
+    let element;
+    let child;
+    let appHolder;
+    let objectProviderObserver;
 
-const notebookDomainObject = {
-    identifier: {
-        key: 'notebook',
-        namespace: 'test-namespace'
-    },
-    type: 'notebook'
-};
+    let notebookDomainObject;
 
-fdescribe("Notebook plugin:", () => {
     beforeEach((done) => {
+        notebookDomainObject = {
+            identifier: {
+                key: 'notebook',
+                namespace: 'test-namespace'
+            },
+            type: 'notebook'
+        };
+
         appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
@@ -116,6 +118,24 @@ fdescribe("Notebook plugin:", () => {
                             "isSelected": false,
                             "name": "Test Page 1",
                             "pageTitle": "Page"
+                        }, {
+                            "id": "test-page-2",
+                            "isDefault": false,
+                            "isSelected": false,
+                            "name": "Test Page 2",
+                            "pageTitle": "Page"
+                        }]
+                    }, {
+                        "id": "test-section-2",
+                        "isDefault": false,
+                        "isSelected": false,
+                        "name": "Test Section 2",
+                        "pages": [{
+                            "id": "test-page-3",
+                            "isDefault": false,
+                            "isSelected": false,
+                            "name": "Test Page 3",
+                            "pageTitle": "Page"
                         }]
                     }],
                     sectionTitle: 'Section',
@@ -137,7 +157,7 @@ fdescribe("Notebook plugin:", () => {
 
             return openmct.objects.getMutable(notebookViewObject.identifier).then((mutableObject) => {
                 mutableNotebookObject = mutableObject;
-                observeCallback = testObjectProvider.observe.calls.mostRecent().args[1];
+                objectProviderObserver = testObjectProvider.observe.calls.mostRecent().args[1];
 
                 notebookView = notebookViewProvider.view(mutableNotebookObject);
                 notebookView.show(child);
@@ -183,7 +203,7 @@ fdescribe("Notebook plugin:", () => {
             it("updates an entry when another user modifies it", () => {
                 expect(getEntryText(0).innerText).toBe("First Test Entry");
                 notebookViewObject.configuration.entries["test-section-1"]["test-page-1"][0].text = "Modified entry text";
-                observeCallback(notebookViewObject);
+                objectProviderObserver(notebookViewObject);
 
                 return Vue.nextTick().then(() => {
                     expect(getEntryText(0).innerText).toBe("Modified entry text");
@@ -198,35 +218,86 @@ fdescribe("Notebook plugin:", () => {
                     "text": "Third Test Entry",
                     "embeds": []
                 });
-                observeCallback(notebookViewObject);
+                objectProviderObserver(notebookViewObject);
 
                 return Vue.nextTick().then(() => {
                     expect(allNotebookEntryElements().length).toBe(3);
                 });
             });
-            it("removes an entry when another user adds one", () => {
+            it("removes an entry when another user removes one", () => {
                 expect(allNotebookEntryElements().length).toBe(2);
                 let entries = notebookViewObject.configuration.entries["test-section-1"]["test-page-1"];
                 notebookViewObject.configuration.entries["test-section-1"]["test-page-1"] = entries.splice(0, 1);
-                observeCallback(notebookViewObject);
+                objectProviderObserver(notebookViewObject);
 
                 return Vue.nextTick().then(() => {
                     expect(allNotebookEntryElements().length).toBe(1);
                 });
             });
-            /*
-            it("updates the notebook when a user adds a section", () => {
-    
-            });
-            it("updates the notebook when a user removes a section", () => {
-    
-            });
+
             it("updates the notebook when a user adds a page", () => {
-    
+                const newPage = {
+                    "id": "test-page-4",
+                    "isDefault": false,
+                    "isSelected": false,
+                    "name": "Test Page 4",
+                    "pageTitle": "Page"
+                };
+
+                expect(allNotebookPageElements().length).toBe(2);
+                notebookViewObject.configuration.sections[0].pages.push(newPage);
+                objectProviderObserver(notebookViewObject);
+
+                return Vue.nextTick().then(() => {
+                    expect(allNotebookPageElements().length).toBe(3);
+                });
+
             });
+
             it("updates the notebook when a user removes a page", () => {
-    
-            });*/
+                console.error(`pages: ${allNotebookPageElements().length}`);
+                expect(allNotebookPageElements().length).toBe(2);
+                notebookViewObject.configuration.sections[0].pages.splice(0, 1);
+                objectProviderObserver(notebookViewObject);
+
+                return Vue.nextTick().then(() => {
+                    expect(allNotebookPageElements().length).toBe(1);
+                });
+            });
+
+            it("updates the notebook when a user adds a section", () => {
+                const newSection = {
+                    "id": "test-section-3",
+                    "isDefault": false,
+                    "isSelected": false,
+                    "name": "Test Section 3",
+                    "pages": [{
+                        "id": "test-page-4",
+                        "isDefault": false,
+                        "isSelected": false,
+                        "name": "Test Page 4",
+                        "pageTitle": "Page"
+                    }]
+                };
+
+                expect(allNotebookSectionElements().length).toBe(2);
+                notebookViewObject.configuration.sections.push(newSection);
+                objectProviderObserver(notebookViewObject);
+
+                return Vue.nextTick().then(() => {
+                    expect(allNotebookSectionElements().length).toBe(3);
+                });
+            });
+
+            it("updates the notebook when a user removes a section", () => {
+                expect(allNotebookSectionElements().length).toBe(2);
+                notebookViewObject.configuration.sections.splice(0, 1);
+                objectProviderObserver(notebookViewObject);
+
+                return Vue.nextTick().then(() => {
+                    expect(allNotebookSectionElements().length).toBe(1);
+                });
+            });
         });
     });
 
@@ -310,12 +381,20 @@ fdescribe("Notebook plugin:", () => {
             expect(snapshotsText).toBe('Notebook Snapshots');
         });
     });
+
+    function getEntryText(entryNumber) {
+        return element.querySelectorAll('.c-notebook__entry .c-ne__text')[entryNumber];
+    }
+
+    function allNotebookEntryElements() {
+        return element.querySelectorAll('.c-notebook__entry');
+    }
+
+    function allNotebookSectionElements() {
+        return element.querySelectorAll('.js-sidebar-sections .js-list__item');
+    }
+
+    function allNotebookPageElements() {
+        return element.querySelectorAll('.js-sidebar-pages .js-list__item');
+    }
 });
-
-function getEntryText(entryNumber) {
-    return element.querySelectorAll('.c-notebook__entry .c-ne__text')[entryNumber];
-}
-
-function allNotebookEntryElements() {
-    return element.querySelectorAll('.c-notebook__entry');
-}

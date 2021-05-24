@@ -1,6 +1,6 @@
 <template>
 <div class="c-sidebar c-drawer c-drawer--align-left">
-    <div class="c-sidebar__pane">
+    <div class="c-sidebar__pane js-sidebar-sections">
         <div class="c-sidebar__header-w">
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ sectionTitle }}</span>
@@ -24,7 +24,7 @@
             />
         </div>
     </div>
-    <div class="c-sidebar__pane">
+    <div class="c-sidebar__pane js-sidebar-pages">
         <div class="c-sidebar__header-w">
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ pageTitle }}</span>
