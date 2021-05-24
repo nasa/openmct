@@ -1,20 +1,20 @@
 
-import PlanProperties from "./PlanProperties.vue";
+import PlanActivitiesView from "./PlanActivitiesView.vue";
 import Vue from 'vue';
 
-export default function TimelineInspectorViewProvider(openmct) {
+export default function PlanInspectorViewProvider(openmct) {
     return {
-        key: 'plans-inspector',
-        name: 'Plans Inspector View',
+        key: 'plan-inspector',
+        name: 'Plan Inspector View',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
             }
 
-            let object = selection[0][0].context.item;
+            let context = selection[0][0].context;
 
-            return object
-                && object.type === 'plan';
+            return context
+                && context.type === 'activity';
         },
         view: function (selection) {
             let component;
@@ -24,13 +24,13 @@ export default function TimelineInspectorViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            PlanProperties
+                            PlanActivitiesView: PlanActivitiesView
                         },
                         provide: {
                             openmct,
-                            domainObject: openmct.selection.get()[0][0].context.item
+                            selection: selection
                         },
-                        template: '<plan-properties></plan-properties>'
+                        template: '<plan-activities-view></plan-activities-view>'
                     });
                 },
                 destroy: function () {

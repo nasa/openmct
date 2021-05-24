@@ -281,7 +281,9 @@ export default {
                                 exceeds: {
                                     start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
                                     end: this.xScale(this.viewBounds.end) < this.xScale(activity.end)
-                                }
+                                },
+                                start: activity.start,
+                                end: activity.end
                             },
                             textLines: textLines,
                             textStart: textStart,
@@ -338,6 +340,9 @@ export default {
             let component = new Vue({
                 components: {
                     SwimLane
+                },
+                provide: {
+                    openmct: this.openmct
                 },
                 data() {
                     return {
@@ -399,6 +404,9 @@ export default {
                 element.setAttributeNS(null, key, attributes[key]);
             });
         },
+        getNSAttributesForElement(element, attribute) {
+            return element.getAttributeNS(null, attribute);
+        },
         // Experimental for now - unused
         addForeignElement(svgElement, label, x, y) {
             let foreign = document.createElementNS('http://www.w3.org/2000/svg', "foreignObject");
@@ -443,6 +451,11 @@ export default {
                 fill: activity.color
             });
 
+            //TODO: Remove event listener
+            rectElement.addEventListener('click', (event) => {
+                this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
+            });
+
             svgElement.appendChild(rectElement);
 
             item.textLines.forEach((line, index) => {
@@ -482,6 +495,22 @@ export default {
             const cBrightness = ((hR * 299) + (hG * 587) + (hB * 114)) / 1000;
 
             return cBrightness > cThreshold ? "#000000" : "#ffffff";
+        },
+        setSelectionForActivity(element, activity, multiSelect) {
+            this.openmct.selection.select([{
+                element: element,
+                context: {
+                    type: 'activity',
+                    activity: activity
+                }
+            }, {
+                element: this.openmct.layout.$refs.browseObject.$el,
+                context: {
+                    item: this.domainObject,
+                    supportsMultiSelect: true
+                }
+            }], multiSelect);
+            event.stopPropagation();
         }
     }
 };

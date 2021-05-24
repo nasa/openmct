@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import TimelineViewProvider from '../timeline/TimelineViewProvider';
-import TimelineInspectorViewProvider from "@/plugins/timeline/inspector/TimelineInspectorViewProvider";
 
 export default function () {
     return function install(openmct) {
@@ -36,8 +35,6 @@ export default function () {
             }
         });
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new TimelineInspectorViewProvider(openmct));
-
     };
 }
 
