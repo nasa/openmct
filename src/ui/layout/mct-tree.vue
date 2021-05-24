@@ -252,7 +252,8 @@ export default {
         },
         async openTreeItem(parentItem, synchronous = false) {
             let parentPath = parentItem.navigationPath;
-            let abortSignal = this.startItemLoad(parentPath);
+
+            this.startItemLoad(parentPath);
             // pass in abort signal when functional
             let childrenItems = await this.loadAndBuildTreeItemsFor(parentItem.object, parentItem.objectPath);
             let parentIndex = this.treeItems.indexOf(parentItem);
