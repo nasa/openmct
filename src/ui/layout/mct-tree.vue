@@ -488,15 +488,15 @@ export default {
             this.searchLoading = true;
 
             if (this.searchValue !== '') {
+                // clear any previous search results
+                this.searchResultItems = [];
+
                 this.getSearchResults();
             } else {
                 this.searchLoading = false;
             }
         },
         getSearchResults() {
-            // clear any previous search results
-            this.searchResultItems = [];
-
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
             this.abortController = new AbortController();
