@@ -105,6 +105,7 @@ emphasis on testing.
     that team may begin work for that sprint during the
     third week, since testing and blocker resolution is unlikely
     to require all available resources.
+  * Testing success criteria identified per issue (where necessary). This could be in the form of acceptance tests on the issue or detailing performance tests, for example.
 * __Tag-up.__ Check in and status update among development team.
   May amend plan for sprint as-needed.
 * __Code freeze.__ Any new work from this sprint
@@ -148,7 +149,7 @@ emphasis on testing.
   Subset of Pre-release Testing
   which should be performed before shipping at the end of any
   sprint. Time is allocated for a second round of
-  Pre-release Testing if the first round is not passed.
+  Pre-release Testing if the first round is not passed. Acceptance tests collected from issues/PRs
 * __Triage.__ Team reviews issues from acceptance testing and uses
   success criteria to determine whether or not they should block
   release, then formulates a plan to address these issues before
