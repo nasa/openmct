@@ -601,14 +601,10 @@ export default {
             }
         },
         scrollToRight(type) {
-            console.log('called', this.isPaused , !this.$refs.thumbsWrapper , !this.autoScroll)
             // If type is 'reset' ignore the checks on paused and autoscroll
-            // when to ignore: 1.not resetting. 2. if it's paused. 3. if not autoscroll
             if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
-                console.log('ignored');
                 return;
             }
-            console.log('scroll right');
             const scrollWidth = this.$refs.thumbsWrapper.scrollWidth || 0;
             if (!scrollWidth) {
                 return;
