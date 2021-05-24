@@ -327,7 +327,7 @@ export default class CouchObjectProvider {
             if (this.observers[keyString].length === 0) {
                 delete this.observers[keyString];
                 if (Object.keys(this.observers).length === 0) {
-                    this.stopObservingObjects();
+                    this.stopObservingObjectChanges();
                 }
             }
         };
@@ -341,8 +341,6 @@ export default class CouchObjectProvider {
      * @private
      */
     async observeObjectChanges(filter) {
-        console.log("Establishing observer connection");
-
         const controller = new AbortController();
         const signal = controller.signal;
         let error = false;
@@ -374,7 +372,14 @@ export default class CouchObjectProvider {
             },
             body
         });
-        const reader = response.body.getReader();
+
+        let reader;
+
+        if (response.body === undefined) {
+            error = true;
+        } else {
+            reader = response.body.getReader();
+        }
 
         while (!error) {
             const {done, value} = await reader.read();
@@ -413,7 +418,7 @@ export default class CouchObjectProvider {
 
         }
 
-        if (error) {
+        if (error && Object.keys(this.observers).length > 0) {
             this.observeObjectChanges();
         }
     }

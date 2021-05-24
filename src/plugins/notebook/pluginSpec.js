@@ -154,6 +154,7 @@ describe("Notebook plugin:", () => {
 
             testObjectProvider.get.and.returnValue(Promise.resolve(notebookViewObject));
             openmct.objects.addProvider('test-namespace', testObjectProvider);
+            testObjectProvider.observe.and.returnValue(() => {});
 
             return openmct.objects.getMutable(notebookViewObject.identifier).then((mutableObject) => {
                 mutableNotebookObject = mutableObject;
@@ -255,7 +256,6 @@ describe("Notebook plugin:", () => {
             });
 
             it("updates the notebook when a user removes a page", () => {
-                console.error(`pages: ${allNotebookPageElements().length}`);
                 expect(allNotebookPageElements().length).toBe(2);
                 notebookViewObject.configuration.sections[0].pages.splice(0, 1);
                 objectProviderObserver(notebookViewObject);

@@ -189,6 +189,8 @@ describe("The Object API", () => {
             mockProvider.observeObjectChanges.and.callFake(() => {
                 callbacks[0](updatedTestObject);
                 callbacks.splice(0, 1);
+
+                return () => {};
             });
             mockProvider.observe.and.callFake((id, callback) => {
                 if (callbacks.length === 0) {
@@ -196,6 +198,8 @@ describe("The Object API", () => {
                 } else {
                     callbacks[0] = callback;
                 }
+
+                return () => {};
             });
 
             objectAPI.addProvider(TEST_NAMESPACE, mockProvider);
