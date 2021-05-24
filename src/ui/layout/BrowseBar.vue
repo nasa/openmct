@@ -288,7 +288,7 @@ export default {
                 message: 'Any unsaved changes will be lost. Are you sure you want to continue?',
                 buttons: [
                     {
-                        label: 'Ok',
+                        label: 'OK',
                         emphasis: true,
                         callback: () => {
                             this.openmct.editor.cancel().then(() => {
