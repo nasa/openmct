@@ -21,7 +21,6 @@
     <div class="c-swimlane__lane-object"
          :style="{'min-height': minHeight}"
          :class="{'u-contents': showUcontents}"
-         data-selectable
     >
         <slot name="object"></slot>
     </div>

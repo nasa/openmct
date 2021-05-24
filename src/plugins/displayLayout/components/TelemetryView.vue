@@ -240,7 +240,7 @@ export default {
             this.mutablePromise.then(() => {
                 this.openmct.objects.destroyMutable(this.domainObject);
             });
-        } else {
+        } else if (this.domainObject.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
@@ -269,7 +269,12 @@ export default {
         },
         subscribeToObject() {
             this.subscription = this.openmct.telemetry.subscribe(this.domainObject, function (datum) {
-                if (this.openmct.time.clock() !== undefined) {
+                const key = this.openmct.time.timeSystem().key;
+                const datumTimeStamp = datum[key];
+                if (this.openmct.time.clock() !== undefined
+                    || (datumTimeStamp
+                        && (this.openmct.time.bounds().end >= datumTimeStamp))
+                ) {
                     this.updateView(datum);
                 }
             }.bind(this));
