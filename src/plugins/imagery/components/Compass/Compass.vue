@@ -32,7 +32,7 @@
         :camera-pan="cameraPan"
     />
     <CompassRose
-        v-if="hasCameraFieldOfView"
+        v-if="true"
         :heading="heading"
         :sized-image-width="sizedImageDimensions.width"
         :sun-heading="sunHeading"

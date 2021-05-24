@@ -235,7 +235,7 @@ define(['lodash'], function (_) {
                                 message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
                                 buttons: [
                                     {
-                                        label: 'Ok',
+                                        label: 'OK',
                                         emphasis: 'true',
                                         callback: function () {
                                             removeItem(getAllTypes(selection));
