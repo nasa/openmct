@@ -4,13 +4,13 @@ This document describes the process of contributing to Open MCT as well
 as the standards that will be applied when evaluating contributions.
 
 Please be aware that additional agreements will be necessary before we can
-accept changes from external contributors.
+accept changes from external contributors. 
 
 ## Summary
 
 The short version:
 
-1. Write your contribution.
+1. Write your contribution or describe your idea in the form of an [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions)
 2. Make sure your contribution meets code, test, and commit message
    standards as described below.
 3. Submit a pull request from a topic branch back to `master`. Include a check
@@ -18,6 +18,7 @@ The short version:
    for review.)
 4. Respond to any discussion. When the reviewer decides it's ready, they
    will merge back `master` and fill out their own check list.
+5. If you are a first-stime, external contributor, please see please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.   
 
 ## Contribution Process
 
@@ -115,7 +116,7 @@ the pull request containing the reviewer checklist (from below) and complete
 the merge back to the master branch.
 
 Additionally:
-* Every pull request must link to the issue that it addresses. Eg. “Addresses #1234” or “Closes #1234”. This is the responsibility of the pull request’s __author__. If no issue exists, create one.
+* Every pull request must link to the issue that it addresses. Eg. “Addresses #1234” or “Closes #1234”. This is the responsibility of the pull request’s __author__. If no issue exists, [create one](https://github.com/nasa/openmct/issues/new/choose).
 * Every __author__ must include testing instructions. These instructions should identify the areas of code affected, and some minimal test steps. If addressing a bug, reproduction steps should be included, if they were not included in the original issue. If reproduction steps were included on the original issue, and are sufficient, refer to them.
 * A pull request that closes an issue should say so in the description. Including the text “Closes #1234” will cause the linked issue to be automatically closed when the pull request is merged. This is the responsibility of the pull request’s __author__.
 * When a pull request is merged, and the corresponding issue closed, the __reviewer__ must add the tag “unverified” to the original issue. This will indicate that although the issue is closed, it has not been tested yet.
@@ -296,19 +297,10 @@ these standards.
 
 Issues are tracked at https://github.com/nasa/openmct/issues.
 
-Issues should include:
-
-* A short description of the issue encountered.
-* A longer-form description of the issue encountered. When possible, steps to
-  reproduce the issue.
-* When possible, a description of the impact of the issue. What use case does
-  it impede?
-* An assessment of the severity of the issue.
-
 Issue severity is categorized as follows (in ascending order):
 
 * _Trivial_: Minimal impact on the usefulness and functionality of the
-  software; a "nice-to-have."
+  software; a "nice-to-have." Visual impact without functional impact.
 * _(Unspecified)_: Major loss of functionality or impairment of use.
 * _Critical_: Large-scale loss of functionality or impairment of use,
   such that remaining utility becomes marginal.
@@ -322,11 +314,7 @@ checklist).
 
 ### Author Checklist
 
-1. Changes address original issue?
-2. Unit tests included and/or updated with changes?
-3. Command line build passes?
-4. Changes have been smoke-tested?
-5. Testing instructions included?
+[Within PR Template](.github/PULL_REQUEST_TEMPLATE.md)
 
 ### Reviewer Checklist
 
