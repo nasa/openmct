@@ -18,7 +18,7 @@ The short version:
    for review.)
 4. Respond to any discussion. When the reviewer decides it's ready, they
    will merge back `master` and fill out their own check list.
-5. If you are a first-time contributor, please see please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.   
+5. If you are a first-time contributor, please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.   
 
 ## Contribution Process
 
