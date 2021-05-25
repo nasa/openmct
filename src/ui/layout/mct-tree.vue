@@ -64,10 +64,10 @@
         <div
             ref="scrollable"
             class="c-tree__scrollable"
-            :style="scrollableStyles()"
+            :style="scrollableStyles"
             @scroll="updateVisibleItems()"
         >
-            <div :style="{ height: childrenHeight + 'px' }">
+            <div :style="childrenHeightStyles">
                 <tree-item
                     v-for="(treeItem, index) in visibleItems"
                     :key="treeItem.navigationPath"
@@ -109,10 +109,10 @@ import _ from 'lodash';
 import treeItem from './tree-item.vue';
 import search from '../components/search.vue';
 
-const ITEM_BUFFER = 5;
+const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 const RETURN_ALL_DESCDNDANTS = true;
-const TREE_ITEM_INDENT = 15; // px
+const TREE_ITEM_INDENT_PX = 15;
 
 export default {
     name: 'MctTree',
@@ -151,16 +151,26 @@ export default {
         };
     },
     computed: {
+        childrenHeight() {
+            let childrenCount = this.focusedItems.length || 1;
+
+            return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
+        },
+        childrenHeightStyles() {
+            let height = this.childrenHeight + 'px';
+
+            return { height };
+        },
         focusedItems() {
             return this.activeSearch ? this.searchResultItems : this.treeItems;
         },
         pageThreshold() {
             return Math.ceil(this.mainTreeHeight / this.itemHeight) + ITEM_BUFFER;
         },
-        childrenHeight() {
-            let childrenCount = this.focusedItems.length || 1;
+        scrollableStyles() {
+            let height = this.mainTreeHeight + 'px';
 
-            return (this.itemHeight * childrenCount) - this.mainTreeTopMargin; // 5px margin
+            return { height };
         },
         showNoItems() {
             return this.visibleItems.length === 0 && !this.activeSearch && this.searchValue === '' && !this.isLoading;
@@ -299,12 +309,10 @@ export default {
                 return;
             }
 
-            function keepItem(checkItem) {
+            this.treeItems = this.treeItems.filter((checkItem) => {
                 return checkItem.navigationPath === itemPath
                     || !checkItem.navigationPath.includes(itemPath);
-            }
-
-            this.treeItems = this.treeItems.filter(keepItem);
+            });
             this.openTreeItems.splice(pathIndex, 1);
         },
         // returns an AbortController signal to be passed on to requests
@@ -361,7 +369,7 @@ export default {
                 path += pathArray[i];
                 let item = this.getTreeItemByPath(path);
 
-                if (item && !this.isTreeItemOpen(path)) {
+                if (item && !this.isTreeItemOpen(item)) {
                     await this.openTreeItem(item, SYNCHRONOUS);
                 }
 
@@ -418,7 +426,7 @@ export default {
             return {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
-                leftOffset: ((objectPath.length - 1) * TREE_ITEM_INDENT) + 'px',
+                leftOffset: ((objectPath.length - 1) * TREE_ITEM_INDENT_PX) + 'px',
                 objectPath,
                 navigationPath
             };
@@ -474,8 +482,6 @@ export default {
             if (this.isTreeItemOpen(addItem)) {
                 this.openTreeItem(addItem);
             }
-
-            return;
         },
         searchTree(value) {
             // if an abort controller exists, regardless of the value passed in,
@@ -642,19 +648,7 @@ export default {
             });
         },
         isTreeItemOpen(item) {
-            if (typeof item === 'string') {
-                item = { navigationPath: item };
-            }
-
             return this.openTreeItems.includes(item.navigationPath);
-        },
-        childrenListStyles() {
-            return { position: 'relative' };
-        },
-        scrollableStyles() {
-            let height = this.mainTreeHeight + 'px';
-
-            return { height };
         },
         getElementStyleValue(el, style) {
             if (!el) {

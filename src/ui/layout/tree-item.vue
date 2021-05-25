@@ -1,10 +1,6 @@
 <template>
 <div
-    :style="{
-        'top': itemTop,
-        'position': 'absolute',
-        'padding-left': leftOffset
-    }"
+    :style="treeItemStyles"
     class="c-tree__item-h"
 >
     <div
@@ -108,14 +104,20 @@ export default {
 
             return parentKeyString !== this.node.object.location;
         },
-        itemTop() {
-            return (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
+        isLoading() {
+            return Boolean(this.loadingItems[this.navigationPath]);
         },
         isOpen() {
             return this.openItems.includes(this.navigationPath);
         },
-        isLoading() {
-            return Boolean(this.loadingItems[this.navigationPath]);
+        treeItemStyles() {
+            let itemTop = (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
+
+            return {
+                'top': itemTop,
+                'position': 'absolute',
+                'padding-left': this.leftOffset
+            };
         }
     },
     mounted() {
