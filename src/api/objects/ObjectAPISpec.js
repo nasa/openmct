@@ -163,6 +163,7 @@ describe("The Object API", () => {
                     key: 'test-key'
                 },
                 name: 'test object',
+                type: 'notebook',
                 otherAttribute: 'other-attribute-value',
                 modified: 0,
                 persisted: 0,

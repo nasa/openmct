@@ -49,7 +49,6 @@ describe("Notebook plugin:", () => {
         document.body.appendChild(appHolder);
 
         openmct = createOpenMct();
-        openmct.token = Date.now();
 
         element = document.createElement('div');
         child = document.createElement('div');

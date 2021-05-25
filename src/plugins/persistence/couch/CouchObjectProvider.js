@@ -30,11 +30,6 @@ const HEARTBEAT = 50000;
 const ALL_DOCS = "_all_docs?include_docs=true";
 
 export default class CouchObjectProvider {
-    // options {
-    //      url: couchdb url,
-    //      disableObserve: disable auto feed from couchdb to keep objects in sync,
-    //      filter: selector to find objects to sync in couchdb
-    //      }
     constructor(openmct, options, namespace) {
         options = this._normalize(options);
         this.openmct = openmct;
@@ -340,9 +335,26 @@ export default class CouchObjectProvider {
     /**
      * @private
      */
-    async observeObjectChanges(filter) {
+    async observeObjectChanges() {
         const controller = new AbortController();
         const signal = controller.signal;
+        let filter = {selector: {}};
+
+        if (this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.length > 1) {
+            filter.selector.$or = this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES
+                .map(type => {
+                    return {
+                        'model': {
+                            type
+                        }
+                    };
+                });
+        } else {
+            filter.selector.model = {
+                type: this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES[0]
+            };
+        }
+
         let error = false;
 
         if (typeof this.stopObservingObjectChanges === 'function') {

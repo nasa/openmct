@@ -596,7 +596,6 @@ export default {
             });
 
             this.sectionsChanged({ sections });
-            //this.updateDefaultNotebookPage(pages, id);
         },
         removeDefaultClass(domainObject) {
             if (!domainObject) {
