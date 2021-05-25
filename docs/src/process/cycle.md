@@ -149,7 +149,7 @@ emphasis on testing.
   Subset of Pre-release Testing
   which should be performed before shipping at the end of any
   sprint. Time is allocated for a second round of
-  Pre-release Testing if the first round is not passed. Acceptance tests collected from issues/PRs
+  Pre-release Testing if the first round is not passed. Smoke tests collected from issues/PRs
 * __Triage.__ Team reviews issues from acceptance testing and uses
   success criteria to determine whether or not they should block
   release, then formulates a plan to address these issues before

@@ -4,7 +4,7 @@ This document describes the process of contributing to Open MCT as well
 as the standards that will be applied when evaluating contributions.
 
 Please be aware that additional agreements will be necessary before we can
-accept changes from external contributors. 
+accept changes from external contributors.
 
 ## Summary
 
