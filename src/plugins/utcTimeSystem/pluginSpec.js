@@ -24,7 +24,7 @@ import LocalClock from './LocalClock.js';
 import UTCTimeSystem from './UTCTimeSystem';
 import {
     createOpenMct,
-    resetApplicationStatePromise
+    resetApplicationState
 } from 'utils/testing';
 
 describe("The UTC Time System", () => {
@@ -39,7 +39,7 @@ describe("The UTC Time System", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("plugin", function () {

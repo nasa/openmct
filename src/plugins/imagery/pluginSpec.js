@@ -23,7 +23,7 @@ import ImageryPlugin from './plugin.js';
 import Vue from 'vue';
 import {
     createOpenMct,
-    resetApplicationStatePromise,
+    resetApplicationState,
     simulateKeyEvent
 } from 'utils/testing';
 
@@ -227,7 +227,7 @@ describe("The Imagery View Layout", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should provide an imagery view only for imagery producing objects", () => {

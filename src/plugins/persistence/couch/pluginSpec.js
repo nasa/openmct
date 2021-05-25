@@ -22,7 +22,7 @@
 import CouchPlugin from './plugin.js';
 import {
     createOpenMct,
-    resetApplicationStatePromise, spyOnBuiltins
+    resetApplicationState, spyOnBuiltins
 } from 'utils/testing';
 
 describe('the plugin', () => {
@@ -84,7 +84,7 @@ describe('the plugin', () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe('the provider', () => {

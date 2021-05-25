@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationStatePromise } from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import TabsLayout from './plugin';
 import Vue from "vue";
 import EventEmitter from "EventEmitter";
@@ -98,7 +98,7 @@ describe('the plugin', function () {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it('defines a tabs object type with the correct key', () => {

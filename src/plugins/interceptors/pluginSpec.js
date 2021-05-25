@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationStatePromise } from "utils/testing";
+import { createOpenMct, resetApplicationState } from "utils/testing";
 import InterceptorPlugin from "./plugin";
 
 describe('the plugin', function () {
@@ -46,7 +46,7 @@ describe('the plugin', function () {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe('the missingObjectInterceptor', () => {

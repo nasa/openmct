@@ -24,7 +24,7 @@ import DuplicateAction from './DuplicateAction.js';
 import DuplicateTask from './DuplicateTask.js';
 import {
     createOpenMct,
-    resetApplicationStatePromise,
+    resetApplicationState,
     getMockObjects
 } from 'utils/testing';
 
@@ -112,7 +112,7 @@ describe("The Duplicate Action plugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should be defined", () => {

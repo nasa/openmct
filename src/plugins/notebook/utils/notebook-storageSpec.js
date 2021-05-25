@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import * as NotebookStorage from './notebook-storage';
-import { createOpenMct, resetApplicationStatePromise } from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 const domainObject = {
     name: 'notebook',
@@ -82,7 +82,7 @@ describe('Notebook Storage:', () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it('has empty local Storage', () => {

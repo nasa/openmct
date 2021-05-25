@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, createMouseEvent, resetApplicationStatePromise } from 'utils/testing';
+import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/testing';
 import NotebookPlugin from './plugin';
 import Vue from 'vue';
 
@@ -66,7 +66,7 @@ describe("Notebook plugin:", () => {
     afterAll(() => {
         appHolder.remove();
 
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("has type as Notebook", () => {

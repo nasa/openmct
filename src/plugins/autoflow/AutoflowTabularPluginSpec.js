@@ -25,7 +25,7 @@ import $ from 'zepto';
 import DOMObserver from './dom-observer';
 import {
     createOpenMct,
-    resetApplicationStatePromise,
+    resetApplicationState,
     spyOnBuiltins
 } from 'utils/testing';
 import Vue from 'vue';
@@ -53,7 +53,7 @@ xdescribe("AutoflowTabularPlugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(mockmct);
+        return resetApplicationState(mockmct);
     });
 
     it("installs a view provider", () => {

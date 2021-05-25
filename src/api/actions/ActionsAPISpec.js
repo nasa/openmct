@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ActionsAPI from './ActionsAPI';
-import { createOpenMct, resetApplicationStatePromise } from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
 import ActionCollection from './ActionCollection';
 
 describe('The Actions API', () => {
@@ -99,7 +99,7 @@ describe('The Actions API', () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("register method", () => {

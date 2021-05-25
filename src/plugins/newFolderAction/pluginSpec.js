@@ -21,7 +21,7 @@
  *****************************************************************************/
 import {
     createOpenMct,
-    resetApplicationStatePromise
+    resetApplicationState
 } from 'utils/testing';
 
 describe("the plugin", () => {
@@ -44,7 +44,7 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it('installs the new folder action', () => {

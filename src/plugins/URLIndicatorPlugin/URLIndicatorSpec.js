@@ -58,7 +58,7 @@ define(
                 $.ajax = defaultAjaxFunction;
                 jasmine.clock().uninstall();
 
-                return testingUtils.resetApplicationStatePromise(openmct);
+                return testingUtils.resetApplicationState(openmct);
             });
 
             describe("on initialization", function () {

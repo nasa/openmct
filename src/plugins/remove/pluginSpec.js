@@ -21,7 +21,7 @@
  *****************************************************************************/
 import {
     createOpenMct,
-    resetApplicationStatePromise,
+    resetApplicationState,
     getMockObjects
 } from 'utils/testing';
 
@@ -65,7 +65,7 @@ describe("The Remove Action plugin", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should be defined", () => {

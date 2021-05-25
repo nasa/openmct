@@ -22,7 +22,7 @@
 
 import MenuAPI from './MenuAPI';
 import Menu from './menu';
-import { createOpenMct, createMouseEvent, resetApplicationStatePromise } from '../../utils/testing';
+import { createOpenMct, createMouseEvent, resetApplicationState } from '../../utils/testing';
 
 describe ('The Menu API', () => {
     let openmct;
@@ -76,7 +76,7 @@ describe ('The Menu API', () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("showMenu method", () => {

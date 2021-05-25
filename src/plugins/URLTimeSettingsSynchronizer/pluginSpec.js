@@ -21,7 +21,7 @@
  *****************************************************************************/
 import {
     createOpenMct,
-    resetApplicationStatePromise
+    resetApplicationState
 } from 'utils/testing';
 
 describe("The URLTimeSettingsSynchronizer", () => {
@@ -42,7 +42,7 @@ describe("The URLTimeSettingsSynchronizer", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("realtime mode", () => {

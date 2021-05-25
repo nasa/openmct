@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import * as NotebookEntries from './notebook-entries';
-import { createOpenMct, resetApplicationStatePromise } from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 const notebookStorage = {
     notebookMeta: {
@@ -139,7 +139,7 @@ describe('Notebook Entries:', () => {
     afterEach(() => {
         notebookDomainObject.configuration.entries[selectedSection.id][selectedPage.id] = [];
 
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it('getNotebookEntries has no entries', () => {

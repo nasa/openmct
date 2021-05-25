@@ -26,7 +26,7 @@ import {
     getMockObjects,
     getMockTelemetry,
     getLatestTelemetry,
-    resetApplicationStatePromise
+    resetApplicationState
 } from 'utils/testing';
 
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
@@ -90,7 +90,7 @@ describe("The LAD Table", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should provide a table view only for lad table objects", () => {
@@ -282,7 +282,7 @@ describe("The LAD Table Set", () => {
     });
 
     afterEach(() => {
-        return resetApplicationStatePromise(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should provide a lad table set view only for lad table set objects", () => {
