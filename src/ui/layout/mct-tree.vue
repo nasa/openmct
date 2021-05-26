@@ -553,7 +553,7 @@ export default {
         aggregateSearchResults(results, abortSignal) {
             for (const result of results) {
                 if (!abortSignal.aborted) {
-                    this.openmct.objects.getOriginalPath(result.identifier).then((objectPath) => {
+                    return this.openmct.objects.getOriginalPath(result.identifier).then((objectPath) => {
                         // removing the item itself, as the path we pass to buildTreeItem is a parent path
                         objectPath.shift();
 
@@ -565,6 +565,8 @@ export default {
 
                         this.searchResultItems.push(this.buildTreeItem(result, objectPath));
                     });
+                } else {
+                    return Promise.resolve();
                 }
             }
         },
