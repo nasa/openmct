@@ -27,7 +27,6 @@ import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
 import ConditionManager from "@/plugins/condition/ConditionManager";
-import stylesManager from "@/ui/inspector/styles/StylesManager";
 
 describe('the plugin', function () {
     let conditionSetDefinition;
