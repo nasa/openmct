@@ -124,32 +124,40 @@
         </div>
     </div>
     <div
-        ref="thumbsWrapper"
         class="c-imagery__thumbs-wrapper"
-        :class="{'is-paused': isPaused}"
-        @scroll="handleScroll"
+        :class="[
+            { 'is-paused': isPaused },
+            { 'is-autoscroll-off': !autoScroll && !isPaused }
+        ]"
     >
-        <div v-for="(image, index) in imageHistory"
-             :key="image.url + image.time"
-             class="c-imagery__thumb c-thumb"
-             :class="{ selected: focusedImageIndex === index && isPaused }"
-             @click="setFocusedImage(index, thumbnailClick)"
+        <div
+                ref="thumbsWrapper"
+                class="c-imagery__thumbs-scroll-area"
+                @scroll="handleScroll"
         >
-            <a href=""
-               :download="image.imageDownloadName"
-               @click.prevent
+            <div v-for="(image, index) in imageHistory"
+                 :key="image.url + image.time"
+                 class="c-imagery__thumb c-thumb"
+                 :class="{ selected: focusedImageIndex === index && isPaused }"
+                 @click="setFocusedImage(index, thumbnailClick)"
             >
-                <img class="c-thumb__image"
-                     :src="image.url"
+                <a href=""
+                   :download="image.imageDownloadName"
+                   @click.prevent
                 >
-            </a>
-            <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
+                    <img class="c-thumb__image"
+                         :src="image.url"
+                    >
+                </a>
+                <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
+            </div>
         </div>
-        <button v-if="!autoScroll && !isPaused"
-                class="c-thumb_auto-scroll-button"
+
+        <button
+                class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
+                title="Resume automatic scrolling of image thumbnails"
                 @click="scrollToRight('reset')"
-        >auto   
-        </button>
+        ></button>
     </div>
 </div>
 </template>
