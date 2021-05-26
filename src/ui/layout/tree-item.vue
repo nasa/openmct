@@ -129,6 +129,7 @@ export default {
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
 
+        this.$emit('tree-item-mounted', this.navigationPath);
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);

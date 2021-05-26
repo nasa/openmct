@@ -79,6 +79,7 @@
                     :item-height="itemHeight"
                     :open-items="openTreeItems"
                     :loading-items="treeItemLoading"
+                    @tree-item-mounted="scrollToCheck($event)"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
                     @navigation-click="treeItemAction(treeItem, $event)"
                 />
@@ -184,19 +185,19 @@ export default {
             this.searchValue = '';
 
             // if there is an abort controller, then a search is in progress and will need to be canceled
-            if (this.abortController) {
-                this.abortController.abort();
-                delete this.abortController;
+            if (this.abortSearchController) {
+                this.abortSearchController.abort();
+                delete this.abortSearchController;
             }
 
             if (!this.openmct.router.path) {
                 return;
             }
 
-            this.showCurrentPathInTree();
+            this.$nextTick(this.showCurrentPathInTree);
         },
         resetTreeNavigation() {
-            [...this.openTreeItems].reverse().map(this.closeTreeItem);
+            [...this.openTreeItems].reverse().map(this.closeTreeItemByPath);
         },
         searchValue() {
             if (this.searchValue !== '' && !this.activeSearch) {
@@ -226,6 +227,7 @@ export default {
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
         this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
+        this.scrollEndEvent = _.debounce(this.scrollEndEvent, 100);
     },
     destroyed() {
         window.removeEventListener('resize', this.handleWindowResize);
@@ -260,7 +262,7 @@ export default {
                 this.openTreeItem(parentItem);
             }
         },
-        async openTreeItem(parentItem, synchronous = false) {
+        async openTreeItem(parentItem) {
             let parentPath = parentItem.navigationPath;
 
             this.startItemLoad(parentPath);
@@ -283,37 +285,32 @@ export default {
 
             for (let item of childrenItems) {
                 if (this.isTreeItemOpen(item)) {
-                    if (!synchronous) {
-                        this.openTreeItem(item);
-                    } else {
-                        await this.openTreeItem(item, synchronous);
-                    }
+                    this.openTreeItem(item);
                 }
             }
 
             return;
         },
-        closeTreeItem(itemPath) {
-            if (typeof itemPath !== 'string') {
-                itemPath = itemPath.navigationPath;
-            }
-
+        closeTreeItemByPath(path) {
             // if actively loading, abort
-            if (this.isItemLoading(itemPath)) {
-                this.abortItemLoad(itemPath);
+            if (this.isItemLoading(path)) {
+                this.abortItemLoad(path);
             }
 
-            let pathIndex = this.openTreeItems.indexOf(itemPath);
+            let pathIndex = this.openTreeItems.indexOf(path);
 
             if (pathIndex === -1) {
                 return;
             }
 
             this.treeItems = this.treeItems.filter((checkItem) => {
-                return checkItem.navigationPath === itemPath
-                    || !checkItem.navigationPath.includes(itemPath);
+                return checkItem.navigationPath === path
+                    || !checkItem.navigationPath.includes(path);
             });
             this.openTreeItems.splice(pathIndex, 1);
+        },
+        closeTreeItem(item) {
+            this.closeTreeItemByPath(item.navigationPath);
         },
         // returns an AbortController signal to be passed on to requests
         startItemLoad(path) {
@@ -356,35 +353,45 @@ export default {
                 }
             }
         },
-        async openAndScrollTo(navigationPath) {
-            const SYNCHRONOUS = true;
-            let pathArray = navigationPath.split('/');
-            let path = '';
+        openAndScrollTo(navigationPath) {
+            let idArray = navigationPath.split('/');
+            let fullPathArray = [];
+            let pathsToOpen;
+
+            this.scrollToPath = navigationPath;
 
             // skip root
-            pathArray.splice(0, 2);
-            pathArray[0] = '/browse/' + pathArray[0];
+            idArray.splice(0, 2);
+            idArray[0] = 'browse/' + idArray[0];
 
-            for (let i = 0; i < pathArray.length; i++) {
-                path += pathArray[i];
-                let item = this.getTreeItemByPath(path);
+            idArray.reduce((parentPath, childPath) => {
+                let fullPath = [parentPath, childPath].join('/');
 
-                if (item && !this.isTreeItemOpen(item)) {
-                    await this.openTreeItem(item, SYNCHRONOUS);
-                }
+                fullPathArray.push(fullPath);
 
-                if (this.getTreeItemByPath(navigationPath)) {
-                    break;
-                }
+                return fullPath;
+            }, '');
 
-                path += '/';
+            pathsToOpen = fullPathArray.filter(fullPath => !this.isTreeItemPathOpen(fullPath) && fullPath !== navigationPath);
+
+            pathsToOpen.reduce(async (parentLoaded, childPath) => {
+                await parentLoaded;
+
+                return this.openTreeItem(this.getTreeItemByPath(childPath));
+
+            }, Promise.resolve());
+        },
+        scrollToCheck(navigationPath) {
+            if (this.scrollToPath && this.scrollToPath === navigationPath) {
+                this.scrollTo(navigationPath);
             }
-
-            await this.$nextTick();
-
-            this.scrollTo(navigationPath);
         },
         scrollTo(navigationPath) {
+
+            if (this.isItemInView(navigationPath)) {
+                return;
+            }
+
             const indexOfScroll = this.treeItems.findIndex(item => item.navigationPath === navigationPath);
             const scrollTopAmount = indexOfScroll * this.itemHeight;
 
@@ -392,6 +399,29 @@ export default {
                 top: scrollTopAmount,
                 behavior: 'smooth'
             });
+        },
+        scrollEndEvent() {
+            console.log('scroll end');
+            this.$nextTick(() => {
+                if (this.scrollToPath) {
+                    if(!this.isItemInView(this.scrollToPath)) {
+                        this.scrollTo(this.scrollToPath);
+                    }
+
+                    this.scrollToPath = undefined;
+                    delete this.scrollToPath;
+                }
+            });
+        },
+        isItemInView(navigationPath) {
+            const indexOfScroll = this.treeItems.findIndex(item => item.navigationPath === navigationPath);
+            const scrollTopAmount = indexOfScroll * this.itemHeight;
+            const treeStart = this.$refs.scrollable.scrollTop;
+            const treeEnd = treeStart + this.mainTreeHeight;
+
+            console.log(scrollTopAmount, treeStart, treeEnd, scrollTopAmount >= treeStart && scrollTopAmount < treeEnd);
+
+            return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
         async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
             let collection = this.openmct.composition.get(domainObject);
@@ -486,9 +516,9 @@ export default {
         searchTree(value) {
             // if an abort controller exists, regardless of the value passed in,
             // there is an active search that should be cancled
-            if (this.abortController) {
-                this.abortController.abort();
-                delete this.abortController;
+            if (this.abortSearchController) {
+                this.abortSearchController.abort();
+                delete this.abortSearchController;
             }
 
             this.searchValue = value;
@@ -506,8 +536,8 @@ export default {
         getSearchResults() {
             // an abort controller will be passed in that will be used
             // to cancel an active searches if necessary
-            this.abortController = new AbortController();
-            const abortSignal = this.abortController.signal;
+            this.abortSearchController = new AbortController();
+            const abortSignal = this.abortSearchController.signal;
 
             const promises = this.openmct.objects.search(this.searchValue, abortSignal)
                 .map(promise => promise
@@ -518,8 +548,8 @@ export default {
             }).catch(reason => {
                 // search aborted
             }).finally(() => {
-                if (this.abortController) {
-                    delete this.abortController;
+                if (this.abortSearchController) {
+                    delete this.abortSearchController;
                 }
             });
         },
@@ -542,6 +572,8 @@ export default {
             }
         },
         updateVisibleItems() {
+            this.scrollEndEvent();
+
             if (this.updatingView) {
                 return;
             }
@@ -648,7 +680,10 @@ export default {
             });
         },
         isTreeItemOpen(item) {
-            return this.openTreeItems.includes(item.navigationPath);
+            return this.isTreeItemPathOpen(item.navigationPath);
+        },
+        isTreeItemPathOpen(path) {
+            return this.openTreeItems.includes(path);
         },
         getElementStyleValue(el, style) {
             if (!el) {
