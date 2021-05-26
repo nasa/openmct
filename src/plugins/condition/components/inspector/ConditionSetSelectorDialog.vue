@@ -27,7 +27,9 @@
     >
         <div class="c-overlay__dialog-title">Select Condition Set</div>
     </div>
-    <div class="c-overlay__contents-main c-selector c-tree-and-search">
+    <div class="c-overlay__contents-main c-selector c-tree-and-search"
+         :class="cssClass"
+    >
         <div class="c-tree-and-search__search">
             <search ref="shell-search"
                     class="c-search"
@@ -94,6 +96,13 @@ export default {
     },
     inject: ['openmct'],
     props: {
+        cssClass: {
+            type: String,
+            required: false,
+            default() {
+                return '';
+            }
+        },
         hideTitle: {
             type: Boolean,
             required: false,
