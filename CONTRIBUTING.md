@@ -318,9 +318,12 @@ checklist).
 
 ### Reviewer Checklist
 
-1. Changes appear to address issue?
-2. Appropriate unit tests included?
-3. Code style and in-line documentation are appropriate?
-4. Commit messages meet standards?
-5. Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
-6. Has associated issue been labelled `bug`? (only applicable if this PR is for a bug fix)
+* [ ] Changes appear to address issue?
+* [ ] Appropriate unit tests included?
+* [ ] Code style and in-line documentation are appropriate?
+* [ ] Commit messages meet standards?
+* [ ] Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
+* [ ] Has associated issue been labelled `bug`? (only applicable if this PR is for a bug fix)
+* [ ] List of Acceptance Tests Performed.
+Write out a small list of tests performed with just enough detail for another developer on the team 
+to execute i.e. When Clicking on Add button, new `object` appears in dropdown. 

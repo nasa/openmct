@@ -8,16 +8,5 @@
 * [ ] Changes address original issue?
 * [ ] Unit tests included and/or updated with changes?
 * [ ] Command line build passes?
-
-### Testing Notes
-#### Test Setup (Optional)
-<!--- Write out any test setup needed to verify this PR. i.e. couchDB config -->
-
-#### Smoke Tests
-<!--- Write out a small list of tests performed with just enough detail for -->
-<!--- another developer on the team to execute i.e. -->
-<!--- * When Clicking on Add button, new `object` appears in dropdown. -->
-<!--- * Can Delete object after it was created. -->
-*
-*
-*
+* [ ] Has this been smoke tested?
+* [ ] If this requires special test setup (i.e. CouchDB configuration), please detail it within the PR
