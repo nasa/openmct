@@ -401,10 +401,9 @@ export default {
             });
         },
         scrollEndEvent() {
-            console.log('scroll end');
             this.$nextTick(() => {
                 if (this.scrollToPath) {
-                    if(!this.isItemInView(this.scrollToPath)) {
+                    if (!this.isItemInView(this.scrollToPath)) {
                         this.scrollTo(this.scrollToPath);
                     }
 
@@ -418,8 +417,6 @@ export default {
             const scrollTopAmount = indexOfScroll * this.itemHeight;
             const treeStart = this.$refs.scrollable.scrollTop;
             const treeEnd = treeStart + this.mainTreeHeight;
-
-            console.log(scrollTopAmount, treeStart, treeEnd, scrollTopAmount >= treeStart && scrollTopAmount < treeEnd);
 
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
