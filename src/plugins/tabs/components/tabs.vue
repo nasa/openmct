@@ -181,7 +181,7 @@ export default {
                 message: `This action will remove this tab from the Tabs Layout. Do you want to continue?`,
                 buttons: [
                     {
-                        label: 'Ok',
+                        label: 'OK',
                         emphasis: 'true',
                         callback: () => {
                             this.composition.remove(childDomainObject);

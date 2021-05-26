@@ -66,6 +66,9 @@ export default {
     watch: {
         highlight() {
             this.highlightText();
+        },
+        text() {
+            this.highlightText();
         }
     },
     mounted() {
