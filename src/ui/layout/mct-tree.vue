@@ -405,10 +405,10 @@ export default {
                 if (this.scrollToPath) {
                     if (!this.isItemInView(this.scrollToPath)) {
                         this.scrollTo(this.scrollToPath);
+                    } else {
+                        this.scrollToPath = undefined;
+                        delete this.scrollToPath;
                     }
-
-                    this.scrollToPath = undefined;
-                    delete this.scrollToPath;
                 }
             });
         },
