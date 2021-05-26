@@ -2,6 +2,7 @@
     <ConditionSetSelectorDialog
         :hideTitle="true"
         :ignoreTypeCheck="true"
+        :cssClass="`form-locator`"
         @conditionSetSelected="handleItemSelection"
     />
 </template>
