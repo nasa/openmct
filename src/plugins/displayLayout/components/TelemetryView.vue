@@ -269,7 +269,12 @@ export default {
         },
         subscribeToObject() {
             this.subscription = this.openmct.telemetry.subscribe(this.domainObject, function (datum) {
-                if (this.openmct.time.clock() !== undefined) {
+                const key = this.openmct.time.timeSystem().key;
+                const datumTimeStamp = datum[key];
+                if (this.openmct.time.clock() !== undefined
+                    || (datumTimeStamp
+                        && (this.openmct.time.bounds().end >= datumTimeStamp))
+                ) {
                     this.updateView(datum);
                 }
             }.bind(this));
