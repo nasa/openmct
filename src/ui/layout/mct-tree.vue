@@ -540,11 +540,11 @@ export default {
                 .map(promise => promise
                     .then(results => this.aggregateSearchResults(results, abortSignal)));
 
-            Promise.all(promises).then(() => {
-                this.searchLoading = false;
-            }).catch(reason => {
+            Promise.all(promises).catch(reason => {
                 // search aborted
             }).finally(() => {
+                this.searchLoading = false;
+
                 if (this.abortSearchController) {
                     delete this.abortSearchController;
                 }
