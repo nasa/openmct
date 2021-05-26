@@ -20,17 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * A class for capturing user input data from an object creation
- * dialog, and populating a domain object with that data.
- *
- * @param {DomainObject} domainObject the newly created object to
- * populate with user input
- * @param {DomainObject} parent the domain object to serve as
- *        the initial parent for the created object, in the dialog
- * @memberof platform/commonUI/browse
- * @constructor
- */
 export default class CreateWizard {
     constructor(openmct, domainObject, parent) {
         this.openmct = openmct;
@@ -62,7 +51,12 @@ export default class CreateWizard {
         });
     }
 
-    addTitle(sections) {
+    addTitle(sections, includeLocation) {
+        let value = `${this.domainObject.name || this.type.definition.name}`;;
+        if (includeLocation) {
+            value = `Unnamed ${value}`;
+        }
+
         const row = {
             control: 'textfield',
             cssClass: 'l-input-lg',
@@ -70,7 +64,7 @@ export default class CreateWizard {
             name: 'Title',
             pattern: '\S+',
             required: true,
-            value: this.domainObject.name
+            value
         };
 
         sections.forEach(section => {
@@ -90,8 +84,6 @@ export default class CreateWizard {
      * will be included that will allow the user to select the location
      * of the newly created object, otherwise the .location property of
      * the model will be used.
-     * @return {FormModel} formModel the form model to
-     *         show in the create dialog
      */
     getFormStructure(includeLocation) {
         let sections = [];
@@ -109,7 +101,7 @@ export default class CreateWizard {
         });
 
         this.addNotes(sections);
-        this.addTitle(sections);
+        this.addTitle(sections, includeLocation);
 
         // Ensure there is always a 'save in' section
         if (includeLocation) {
