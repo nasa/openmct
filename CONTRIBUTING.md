@@ -299,12 +299,10 @@ Issues are tracked at https://github.com/nasa/openmct/issues.
 
 Issue severity is categorized as follows (in ascending order):
 
-* _Trivial_: Minimal impact on the usefulness and functionality of the
-  software; a "nice-to-have." Visual impact without functional impact.
-* _(Unspecified)_: Major loss of functionality or impairment of use.
-* _Critical_: Large-scale loss of functionality or impairment of use,
-  such that remaining utility becomes marginal.
-* _Blocker_: Harmful or otherwise unacceptable behavior. Must fix.
+* _Trivial_: Minimal impact on the usefulness and functionality of the software; a "nice-to-have." Visual impact without functional impact,
+* _Medium_: Some impairment of use, but simple workarounds exist
+* _Critical_: Significant loss of functionality or impairment of use. Display of telemetry data is not affected though.
+* _Blocker_: Major functionality is impaired or lost, threatening mission success. Display of telemetry data is impaired or blocked by the bug, which could lead to loss of situational awareness.
 
 ## Check Lists
 
@@ -325,5 +323,8 @@ checklist).
 * [ ] Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
 * [ ] Has associated issue been labelled `bug`? (only applicable if this PR is for a bug fix)
 * [ ] List of Acceptance Tests Performed.
+
 Write out a small list of tests performed with just enough detail for another developer on the team 
-to execute i.e. When Clicking on Add button, new `object` appears in dropdown. 
+to execute. 
+
+i.e. ```When Clicking on Add button, new `object` appears in dropdown.```
