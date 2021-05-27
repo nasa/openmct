@@ -5,7 +5,7 @@
         'is-alias': item.isAlias === true,
         'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1
     }, statusClass]"
-    :href="objectLink"
+    @click="navigate"
 >
     <div
         class="c-grid-item__type-icon"
@@ -49,10 +49,16 @@ import statusListener from './status-listener';
 
 export default {
     mixins: [contextMenuGesture, objectLink, statusListener],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,
             required: true
+        }
+    },
+    methods: {
+        navigate() {
+            this.openmct.router.navigate(this.objectLink);
         }
     }
 };

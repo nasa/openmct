@@ -76,7 +76,7 @@ describe ('The Menu API', () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("showMenu method", () => {

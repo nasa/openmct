@@ -180,16 +180,16 @@ export default {
         },
         hasParent() {
             return this.domainObject !== PLACEHOLDER_OBJECT
-                    && this.parentUrl !== '#/browse';
+                    && this.parentUrl !== '/browse';
         },
         parentUrl() {
-            let objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            let hash = window.location.hash;
+            const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const hash = this.openmct.router.getCurrentLocation().path;
 
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
         },
         type() {
-            let objectType = this.openmct.types.get(this.domainObject.type);
+            const objectType = this.openmct.types.get(this.domainObject.type);
             if (!objectType) {
                 return {};
             }
@@ -288,7 +288,7 @@ export default {
                 message: 'Any unsaved changes will be lost. Are you sure you want to continue?',
                 buttons: [
                     {
-                        label: 'Ok',
+                        label: 'OK',
                         emphasis: true,
                         callback: () => {
                             this.openmct.editor.cancel().then(() => {
@@ -336,7 +336,7 @@ export default {
             });
         },
         goToParent() {
-            window.location.hash = this.parentUrl;
+            this.openmct.router.navigate(this.parentUrl);
         },
         updateActionItems(actionItems) {
             this.statusBarItems = this.actionCollection.getStatusBarActions();
