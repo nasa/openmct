@@ -91,6 +91,7 @@ describe("The Imagery View Layout", () => {
 
     let openmct;
     let imageryPlugin;
+    let appHolder;
     let parent;
     let child;
     let timeFormat = 'utc';
@@ -199,7 +200,7 @@ describe("The Imagery View Layout", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
+        appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
 
@@ -209,6 +210,8 @@ describe("The Imagery View Layout", () => {
         child = document.createElement('div');
         parent.appendChild(child);
 
+        // document.querySelector('body').append(parent);
+        
         spyOn(window, 'ResizeObserver').and.returnValue({
             observe() {},
             disconnect() {}
@@ -285,7 +288,7 @@ describe("The Imagery View Layout", () => {
 
             expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
         });
-
+        
         it("should show the clicked thumbnail as the main image", async () => {
             const target = imageTelemetry[5].url;
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
@@ -294,7 +297,7 @@ describe("The Imagery View Layout", () => {
 
             expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
         });
-
+    
         it("should show that an image is new", async (done) => {
             await Vue.nextTick();
 
@@ -306,7 +309,7 @@ describe("The Imagery View Layout", () => {
                 done();
             }, REFRESH_CSS_MS);
         });
-
+    
         it("should show that an image is not new", async (done) => {
             const target = imageTelemetry[2].url;
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
@@ -321,7 +324,7 @@ describe("The Imagery View Layout", () => {
                 done();
             }, REFRESH_CSS_MS);
         });
-
+        
         it("should navigate via arrow keys", async () => {
             let keyOpts = {
                 element: parent.querySelector('.c-imagery'),
@@ -338,7 +341,7 @@ describe("The Imagery View Layout", () => {
 
             expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
         });
-
+        
         it("should navigate via numerous arrow keys", async () => {
             let element = parent.querySelector('.c-imagery');
             let type = 'keyup';
@@ -368,6 +371,21 @@ describe("The Imagery View Layout", () => {
 
             expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
         });
+        it ('shows an auto scroll button when scroll to left', async () => {
+            // to mock what a scroll would do
+            imageryView._getInstance().$refs.ImageryLayout.autoScroll = false;
+            await Vue.nextTick();
+            let autoScrollButton = parent.querySelector('.c-thumb_auto-scroll-button');
+            expect(autoScrollButton).toBeTruthy();
+        });
+        it ('scrollToRight is called when clicking on auto scroll button', async () => {
+            // use spyon to spy the scroll function
+            spyOn(imageryView._getInstance().$refs.ImageryLayout, 'scrollToRight');
+            imageryView._getInstance().$refs.ImageryLayout.autoScroll = false;
+            await Vue.nextTick();
+            parent.querySelector('.c-thumb_auto-scroll-button').click();
+            expect(imageryView._getInstance().$refs.ImageryLayout.scrollToRight).toHaveBeenCalledWith('reset');
 
+        });
     });
 });

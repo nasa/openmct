@@ -209,7 +209,7 @@ export default {
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
-            lockCompass: true
+            lockCompass: true,
         };
     },
     computed: {
@@ -347,6 +347,10 @@ export default {
         }
     },
     async mounted() {
+        document.body.addEventListener('henry', () => {
+            console.log('triggered');
+            this.scrollToRight('reset');
+        })
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
@@ -394,8 +398,8 @@ export default {
             this.unsubscribe();
             delete this.unsubscribe;
         }
-
-        this.imageContainerResizeObserver.disconnect();
+        if (this.imageContainerResizeObserver) this.imageContainerResizeObserver.disconnect();
+        
 
         if (this.relatedTelemetry.hasRelatedTelemetry) {
             this.relatedTelemetry.destroy();
@@ -567,6 +571,7 @@ export default {
             if (!thumbsWrapper) {
                 return;
             }
+            
             const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
             const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;  
@@ -609,6 +614,7 @@ export default {
             if (!scrollWidth) {
                 return;
             }
+            // console.log('scroll right');
             setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
 
         },
