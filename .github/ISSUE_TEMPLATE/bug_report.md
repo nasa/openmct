@@ -35,7 +35,7 @@ about: File a \U0001F41B !
 
 #### Environment
 * Open MCT Version: <!--- date of build, version, or SHA -->
-* Deployment Type: <!--- npm dev? Hulk? openmct-yams? -->
+* Deployment Type: <!--- npm dev? VIPER Dev? openmct-yams? -->
 * OS:
 * Browser:
 
