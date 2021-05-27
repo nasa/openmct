@@ -292,6 +292,11 @@ describe("The LAD Table Set", () => {
     });
 
     afterEach(() => {
+        openmct.time.timeSystem('utc', {
+            start: 0,
+            end: 1
+        });
+
         return resetApplicationState(openmct);
     });
 
