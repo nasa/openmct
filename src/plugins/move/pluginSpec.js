@@ -81,7 +81,7 @@ describe("The Move Action plugin", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should be defined", () => {
