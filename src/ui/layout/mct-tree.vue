@@ -551,9 +551,11 @@ export default {
             });
         },
         aggregateSearchResults(results, abortSignal) {
+            let resultPromises = [];
+
             for (const result of results) {
                 if (!abortSignal.aborted) {
-                    return this.openmct.objects.getOriginalPath(result.identifier).then((objectPath) => {
+                    resultPromises.push(this.openmct.objects.getOriginalPath(result.identifier).then((objectPath) => {
                         // removing the item itself, as the path we pass to buildTreeItem is a parent path
                         objectPath.shift();
 
@@ -564,11 +566,11 @@ export default {
                         }
 
                         this.searchResultItems.push(this.buildTreeItem(result, objectPath));
-                    });
-                } else {
-                    return Promise.resolve();
+                    }));
                 }
             }
+
+            return resultPromises;
         },
         updateVisibleItems() {
             this.scrollEndEvent();
