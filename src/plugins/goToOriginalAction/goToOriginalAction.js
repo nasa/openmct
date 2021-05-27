@@ -41,7 +41,7 @@ export default class GoToOriginalAction {
                     .slice(1)
                     .join('/');
 
-                window.location.href = url;
+                this._openmct.router.navigate(url);
             });
     }
     appliesTo(objectPath) {
