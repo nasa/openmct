@@ -65,7 +65,8 @@ describe("Notebook plugin:", () => {
 
     afterAll(() => {
         appHolder.remove();
-        resetApplicationState(openmct);
+
+        return resetApplicationState(openmct);
     });
 
     it("has type as Notebook", () => {

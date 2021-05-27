@@ -403,7 +403,9 @@ export default {
             delete this.unsubscribe;
         }
 
-        this.imageContainerResizeObserver.disconnect();
+        if (this.imageContainerResizeObserver) {
+            this.imageContainerResizeObserver.disconnect();
+        }
 
         if (this.relatedTelemetry.hasRelatedTelemetry) {
             this.relatedTelemetry.destroy();
@@ -712,7 +714,7 @@ export default {
             window.clearInterval(this.durationTracker);
         },
         updateDuration() {
-            let currentTime = this.openmct.time.clock().currentValue();
+            let currentTime = this.openmct.time.clock() && this.openmct.time.clock().currentValue();
             this.numericDuration = currentTime - this.parsedSelectedTime;
         },
         resetAgeCSS() {

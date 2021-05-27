@@ -486,6 +486,12 @@ ObjectAPI.prototype.getOriginalPath = function (identifier, path = []) {
     });
 };
 
+ObjectAPI.prototype.isObjectPathToALink = function (domainObject, objectPath) {
+    return objectPath !== undefined
+        && objectPath.length > 1
+        && domainObject.location !== this.makeKeyString(objectPath[1].identifier);
+};
+
 /**
  * Uniquely identifies a domain object.
  *

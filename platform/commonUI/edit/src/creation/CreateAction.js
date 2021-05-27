@@ -86,7 +86,7 @@ define(
                         })
                         .join('/');
 
-                window.location.href = url;
+                openmct.router.navigate(url);
 
                 if (isFirstViewEditable(object.useCapability('adapter'), objectPath)) {
                     openmct.editor.edit();

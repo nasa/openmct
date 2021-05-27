@@ -33,7 +33,6 @@
         slot="object"
         class="u-contents"
         :default-object="item.domainObject"
-        :object-view-key="item.viewKey"
         :object-path="item.objectPath"
     />
 </swim-lane>

@@ -75,18 +75,6 @@ const unknownObjectType = {
     }
 };
 
-function getViewKey(domainObject, objectPath, openmct) {
-    let viewKey = '';
-    const plotView = openmct.objectViews.get(domainObject, objectPath).find((view) => {
-        return view.key.startsWith('plot-') && view.key !== 'plot-single';
-    });
-    if (plotView) {
-        viewKey = plotView.key;
-    }
-
-    return viewKey;
-}
-
 export default {
     components: {
         TimelineObjectView,
@@ -124,7 +112,6 @@ export default {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let objectPath = [domainObject].concat(this.objectPath.slice());
-            let viewKey = getViewKey(domainObject, objectPath, this.openmct);
             let rowCount = 0;
             if (domainObject.type === 'plan') {
                 rowCount = Object.keys(getValidatedPlan(domainObject)).length;
@@ -136,7 +123,6 @@ export default {
                 objectPath,
                 type,
                 keyString,
-                viewKey,
                 rowCount,
                 height
             };
