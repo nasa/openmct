@@ -65,11 +65,6 @@
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
-import {
-    getSearchParam,
-    setSearchParam,
-    deleteSearchParam
-} from 'utils/openmctLocation';
 
 const unknownObjectType = {
     definition: {
@@ -115,7 +110,7 @@ export default {
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.onReorder);
             this.composition.load().then(() => {
-                let currentTabIndexFromURL = getSearchParam(this.searchTabKey);
+                let currentTabIndexFromURL = this.openmct.router.getSearchParam(this.searchTabKey);
                 let currentTabIndexFromDomainObject = this.internalDomainObject.currentTabIndex;
 
                 if (currentTabIndexFromURL !== null) {
@@ -128,6 +123,8 @@ export default {
         }
 
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
+
+        this.openmct.router.on('change:params', this.updateCurrentTab.bind(this));
 
         this.RemoveAction = new RemoveAction(this.openmct);
         document.addEventListener('dragstart', this.dragstart);
@@ -147,6 +144,8 @@ export default {
 
         this.unsubscribe();
         this.clearCurrentTabIndexFromURL();
+
+        this.openmct.router.off('change:params', this.updateCurrentTab.bind(this));
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
@@ -181,7 +180,7 @@ export default {
                 message: `This action will remove this tab from the Tabs Layout. Do you want to continue?`,
                 buttons: [
                     {
-                        label: 'Ok',
+                        label: 'OK',
                         emphasis: 'true',
                         callback: () => {
                             this.composition.remove(childDomainObject);
@@ -285,15 +284,15 @@ export default {
             this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
         },
         storeCurrentTabIndexInURL(index) {
-            let currentTabIndexInURL = getSearchParam(this.searchTabKey);
+            let currentTabIndexInURL = this.openmct.router.getSearchParam(this.searchTabKey);
 
             if (index !== currentTabIndexInURL) {
-                setSearchParam(this.searchTabKey, index);
+                this.openmct.router.setSearchParam(this.searchTabKey, index);
                 this.currentTabIndex = index;
             }
         },
         clearCurrentTabIndexFromURL() {
-            deleteSearchParam(this.searchTabKey);
+            this.openmct.router.deleteSearchParam(this.searchTabKey);
         },
         updateStatus(keyString, status) {
             let tabPos = this.tabsList.findIndex((tab) => {
@@ -309,6 +308,19 @@ export default {
             } else {
                 return this.loadedTabs[tab.keyString];
             }
+        },
+        updateCurrentTab(newParams, oldParams, changedParams) {
+            const tabIndex = changedParams[this.searchTabKey];
+            if (!tabIndex) {
+                return;
+            }
+
+            if (this.currentTabIndex === parseInt(tabIndex, 10)) {
+                return;
+            }
+
+            this.currentTabIndex = tabIndex;
+            this.currentTab = this.tabsList[tabIndex];
         }
     }
 };

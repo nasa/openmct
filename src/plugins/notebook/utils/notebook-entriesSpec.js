@@ -140,7 +140,8 @@ describe('Notebook Entries:', () => {
 
     afterEach(() => {
         notebookDomainObject.configuration.entries[selectedSection.id][selectedPage.id] = [];
-        resetApplicationState(openmct);
+
+        return resetApplicationState(openmct);
     });
 
     it('getNotebookEntries has no entries', () => {
