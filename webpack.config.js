@@ -64,21 +64,27 @@ const webpackConfig = {
             filename: '[name].css',
             chunkFilename: '[name].css'
         }),
-        new CopyWebpackPlugin([
-            {
-                from: 'src/images/favicons',
-                to: 'favicons'
-            },
-            {
-                from: './index.html',
-                transform: function (content) {
-                    return content.toString().replace(/dist\//g, '');
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'src/images/favicons',
+                    to: 'favicons'
+                },
+                {
+                    from: './index.html',
+                    transform: function (content) {
+                        return content.toString().replace(/dist\//g, '');
+                    }
                 }
-            }
-        ])
+            ]
+        })
     ],
     module: {
         rules: [
+            {
+                test: /\.vue$/,
+                use: 'vue-loader'
+            },
             {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
@@ -118,17 +124,14 @@ const webpackConfig = {
                     }
                 }
             },
-            {
-                test: /\.vue$/,
-                use: 'vue-loader'
-            }
+            
         ]
     },
+    ignoreWarnings: [/asset size limit/g],
     stats: {
         modules: false,
         timings: true,
-        colors: true,
-        warningsFilter: /asset size limit/g
+        colors: true
     }
 };
 

@@ -43,7 +43,6 @@ import {TRIGGER_CONJUNCTION, TRIGGER_LABEL} from "./utils/constants";
 * }
 */
 export default class Condition extends EventEmitter {
-
     /**
      * Manages criteria and emits the result of - true or false - based on criteria evaluated.
      * @constructor
@@ -272,11 +271,11 @@ export default class Condition extends EventEmitter {
         }
     }
 
-    requestLADConditionResult() {
+    requestLADConditionResult(options) {
         let latestTimestamp;
         let criteriaResults = {};
         const criteriaRequests = this.criteria
-            .map(criterion => criterion.requestLAD(this.conditionManager.telemetryObjects));
+            .map(criterion => criterion.requestLAD(this.conditionManager.telemetryObjects, options));
 
         return Promise.all(criteriaRequests)
             .then(results => {
