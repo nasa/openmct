@@ -1016,9 +1016,7 @@ export default {
         handleWindowResize() {
             if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
                 this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
-                this.config.series.models.forEach((series) => {
-                    this.loadSeriesData(series);
-                }, this);
+                this.config.series.models.forEach(this.loadSeriesData, this);
             }
         }
     }
