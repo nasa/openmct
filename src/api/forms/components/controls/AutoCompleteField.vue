@@ -24,22 +24,21 @@
     <input v-model="field"
            class="autocompleteInput"
            type="text"
-           @change="filterOptions(field)"
            @click="inputClicked()"
            @keydown="keyDown($event)"
     >
     <span class="icon-arrow-down"
           @click="arrowClicked()"
     ></span>
-    <div v-show="hideOptions"
+    <div
          class="autocompleteOptions"
          @blur="hideOptions = true"
     >
-        <ul>
+        <ul v-if="!hideOptions">
             <li v-for="opt in filteredOptions"
                 :key="opt.optionId"
                 :class="{'optionPreSelected': optionIndex === opt.optionId}"
-                @click="fillInput(opt.name)"
+                @click="fillInputWithString(opt.name)"
                 @mouseover="optionMouseover(opt.optionId)"
             >
                 <span class="optionText">{{ opt.name }}</span>
@@ -66,10 +65,23 @@ export default {
     data() {
         return {
             hideOptions: true,
-            filteredOptions: [],
             optionIndex: 0,
-            field: ''
+            field: this.model.value
         };
+    },
+    computed : {
+        filteredOptions() {
+            const options = this.optionNames || [];
+            return options
+                .filter(option => {
+                    return option.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
+                }).map((option, index) => {
+                    return {
+                        optionId: index,
+                        name: option
+                    };
+                });
+        }
     },
     mounted() {
         this.options = this.model.options;
@@ -85,38 +97,28 @@ export default {
         }
     },
     methods: {
-        fillInputWithIndexedOption() {
-            if (this.filteredOptions[this.optionIndex]) {
-                this.ngModel[this.field] = this.filteredOptions[this.optionIndex].name;
-            }
-        },
-
         decrementOptionIndex() {
             if (this.optionIndex === 0) {
                 this.optionIndex = this.filteredOptions.length;
             }
 
             this.optionIndex--;
-            this.fillInputWithIndexedOption();
+            this.scrollIntoView();
         },
-
         incrementOptionIndex() {
             if (this.optionIndex === this.filteredOptions.length - 1) {
                 this.optionIndex = -1;
             }
 
             this.optionIndex++;
-            this.fillInputWithIndexedOption();
+            this.scrollIntoView();
         },
-
         fillInputWithString(string) {
             this.hideOptions = true;
-            this.ngModel[this.field] = string;
+            this.field = string;
         },
-
         showOptions(string) {
             this.hideOptions = false;
-            this.filterOptions(string);
             this.optionIndex = 0;
         },
         keyDown($event) {
@@ -137,35 +139,36 @@ export default {
                 }
             }
         },
-
-        filterOptions() {
-            this.hideOptions = false;
-            this.filteredOptions = this.optionNames.filter((option) => {
-                return option.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
-            }).map((option, index) => {
-                return {
-                    optionId: index,
-                    name: option
-                };
-            });
-        },
-
         inputClicked() {
             this.autocompleteInputElement.select();
             this.showOptions(this.autocompleteInputElement.value);
         },
-
         arrowClicked() {
             this.autocompleteInputElement.select();
             this.showOptions('');
         },
-
-        fillInput(string) {
-            this.fillInputWithString(string);
-        },
-
         optionMouseover(optionId) {
             this.optionIndex = optionId;
+        },
+        scrollIntoView() {
+            setTimeout(() => {
+                const element = this.$el.querySelector('.optionPreSelected');
+
+                element && element.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'});
+            });
+        }
+    },
+    watch: {
+        field(newValue, oldValue) {
+            if (newValue !== oldValue) {
+
+                const data = {
+                    model: this.model,
+                    value: newValue
+                };
+
+                this.$emit('onChange', data);
+            }
         }
     }
 };
