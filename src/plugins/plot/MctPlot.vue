@@ -159,6 +159,7 @@ import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
+import _ from "lodash";
 
 export default {
     components: {
@@ -496,6 +497,10 @@ export default {
         },
 
         initialize() {
+            _.debounce(this.handleWindowResize, 400);
+            this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
+            this.plotContainerResizeObserver.observe(this.$parent.$refs.plotWrapper);
+
             // Setup canvas etc.
             this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
             this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
@@ -999,12 +1004,20 @@ export default {
                 this.removeStatusListener();
             }
 
+            this.plotContainerResizeObserver.disconnect();
+
             this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         updateStatus(status) {
             this.$emit('statusUpdated', status);
+        },
+        handleWindowResize() {
+            if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
+                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+                this.config.series.models.forEach(this.loadSeriesData, this);
+            }
         }
     }
 };
