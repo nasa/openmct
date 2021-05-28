@@ -862,7 +862,7 @@ describe("the plugin", function () {
                 expandControl.dispatchEvent(clickEvent);
 
                 const plotOptionsProperties = browseOptionsEl.querySelectorAll('.js-plot-options-browse-properties .grid-row');
-                expect(plotOptionsProperties.length).toEqual(5);
+                expect(plotOptionsProperties.length).toEqual(6);
             });
         });
 
