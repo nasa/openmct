@@ -68,7 +68,8 @@ export default {
     },
     data() {
         return {
-            valid: undefined
+            valid: undefined,
+            visited: false
         };
     },
     computed: {
@@ -98,7 +99,7 @@ export default {
                 cssClass = `${cssClass} l-controls-under`;
             }
 
-            if (this.valid !== undefined) {
+            if (this.visited && this.valid !== undefined) {
                     if (this.valid === true) {
                     cssClass = `${cssClass} valid`;
                 } else {
@@ -109,8 +110,20 @@ export default {
             return cssClass;
         }
     },
+    mounted() {
+        if (this.row.required) {
+            const data = {
+                model: this.row,
+                value: this.row.value
+            };
+
+            this.onChange(data, false);
+        }
+    },
     methods: {
-        onChange(data) {
+        onChange(data, visited = true) {
+            this.visited = visited;
+
             let valid = true;
             if (this.row.required) {
                 valid = data.value !== undefined && data.value !== null && data.value !== '';
