@@ -47,7 +47,6 @@ describe("the plugin", () => {
     });
 
     describe('when invoked', () => {
-
         beforeEach(() => {
             mockObjectPath = [{
                 name: 'mock folder',
@@ -63,11 +62,15 @@ describe("the plugin", () => {
                     key: 'test'
                 }
             }));
+
             goToFolderAction.invoke(mockObjectPath);
         });
 
-        it('goes to the original location', () => {
-            expect(window.location.href).toContain('context.html#/browse/?tc.mode=fixed&tc.startBound=0&tc.endBound=1&tc.timeSystem=utc');
+        it('goes to the original location', (done) => {
+            setTimeout(() => {
+                expect(window.location.href).toContain('context.html#/browse/?tc.mode=fixed&tc.startBound=0&tc.endBound=1&tc.timeSystem=utc');
+                done();
+            }, 2500);
         });
     });
 });

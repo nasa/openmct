@@ -59,7 +59,7 @@ describe("The UTC Time System", () => {
         it("can be set to be the main time system", () => {
             openmct.time.timeSystem(UTC_SYSTEM_AND_FORMAT_KEY, {
                 start: 0,
-                end: 4
+                end: 1
             });
 
             expect(openmct.time.timeSystem().key).toBe(UTC_SYSTEM_AND_FORMAT_KEY);
