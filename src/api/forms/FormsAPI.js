@@ -46,8 +46,6 @@ export default class FormsAPI {
         this.openmct = openmct;
         this.controls = {};
 
-        this.parentDomainObject = {};
-
         this.init();
     }
 
@@ -76,17 +74,16 @@ export default class FormsAPI {
     }
 
     showForm(formStructure, options) {
-        const self = this;
         const changes = {};
         let overlay;
 
-        this.parentDomainObject = options.parentDomainObject;
+        let parentDomainObject = options.parentDomainObject || {};
         const domainObject = options.domainObject;
         const onSave = () => {
             overlay.dismiss();
 
             if(options.onSave) {
-                options.onSave(domainObject, this.parentDomainObject)
+                options.onSave(domainObject, changes, parentDomainObject);
             }
         };
 
@@ -126,14 +123,13 @@ export default class FormsAPI {
                 options.onChange(data);
             }
 
-            const parentDomainObject = data.parentDomainObject;
-            if (parentDomainObject) {
-                self.parentDomainObject = parentDomainObject;
-            }
-
             if (data.model) {
                 const property = data.model.property;
                 let key = data.model.key;
+                if (key === 'location') {
+                    parentDomainObject = data.value;
+                }
+
                 if (property && property.length) {
                     key = property.join('.');
                 }

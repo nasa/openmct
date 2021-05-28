@@ -59,7 +59,7 @@ export default class MoveAction {
         compositionCollection.add(child);
     }
 
-    async onSave(object, parent) {
+    async onSave(object, changes, parent) {
         let inNavigationPath = this.inNavigationPath(object);
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
@@ -69,6 +69,10 @@ export default class MoveAction {
             this.openmct.notifications.error(`Error: new location cant not be same as old`);
 
             return;
+        }
+
+        if (changes.name && (changes.name !== object.name)) {
+            object.name = changes.name;
         }
 
         this.addToNewParent(object, parent);
@@ -112,7 +116,8 @@ export default class MoveAction {
                         {
                             name: "location",
                             control: "locator",
-                            validate: this.validate(domainObject, parentDomainObject),
+                            required: true,
+                            validate: this.validate(parentDomainObject),
                             key: 'location'
                         }
                     ]
@@ -129,7 +134,7 @@ export default class MoveAction {
 
     validate(currentParent) {
         return (object, data) => {
-            const parentCandidate = data.parentDomainObject;
+            const parentCandidate = data.value;
             console.log('move action : validateLocation', );
             // TODO: remove getModel, checkPolicy and useCapability
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
