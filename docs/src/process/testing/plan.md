@@ -19,7 +19,7 @@ Testing for Open MCT includes:
 
 Manual, non-rigorous testing of the software and/or specific features
 of interest. Verifies that the software runs and that basic functionality
-is present.
+is present. The outcome of Smoke Testing should be a simplified list of Acceptance Tests which could be executed by another team member with sufficient context.
 
 ### Unit Testing
 
@@ -49,7 +49,7 @@ User testing will focus on the following activities:
 * General "trying to break things."
 
 During user testing, users will
-[report issues](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
+[report issues](https://github.com/nasa/openmct/issues/new/choose)
 as they are encountered.
 
 Desired outcomes of user testing are:
@@ -71,7 +71,7 @@ usage. After twenty-four hours, the software is evaluated for:
   at the start of the test? Is it as responsive?
 
 Any defects or unexpected behavior identified during testing should be
-[reported as issues](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
+[reported as issues](https://github.com/nasa/openmct/issues/new/choose)
 and reviewed for severity.
 
 ## Test Performance
