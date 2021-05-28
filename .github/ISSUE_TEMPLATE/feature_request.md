@@ -1,9 +1,9 @@
-<!--- This is for filing enhancements or features. If you have a general -->
-<!--- question, please visit https://github.com/nasa/openmct/discussions -->
-
 ---
-name: "\U0001F680 Feature Request"
+name: Feature request
 about: Suggest an idea for this project
+title: ''
+labels: ''
+assignees: ''
 
 ---
 

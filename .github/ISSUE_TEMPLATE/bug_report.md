@@ -1,11 +1,12 @@
-<!--- This is for filing bugs. If you have a general question, please -->
-<!--- visit https://github.com/nasa/openmct/discussions -->
+---
+name: Bug report
+about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: ''
 
 ---
-name: "\U0001F41B Report"
-about: File a \U0001F41B !
 
----
 <!--- Focus on user impact in the title. Use the Summary Field to -->
 <!--- describe the problem technically. -->
 
