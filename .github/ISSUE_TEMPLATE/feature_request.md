@@ -2,7 +2,7 @@
 <!--- question, please visit https://github.com/nasa/openmct/discussions -->
 
 ---
-name: "\U0001F680 Feature Request"
+name: Feature Request
 about: Suggest an idea for this project
 
 ---
