@@ -2,8 +2,8 @@
 <!--- visit https://github.com/nasa/openmct/discussions -->
 
 ---
-name: "\U0001F41B Report"
-about: File a \U0001F41B !
+name: Bug Report
+about: File a Bug !
 
 ---
 <!--- Focus on user impact in the title. Use the Summary Field to -->

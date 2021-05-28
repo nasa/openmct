@@ -9,4 +9,4 @@
 * [ ] Unit tests included and/or updated with changes?
 * [ ] Command line build passes?
 * [ ] Has this been smoke tested?
-* [ ] If this requires special test setup (i.e. CouchDB configuration), please detail it within the PR
+* [ ] Testing instructions included in associated issue?
