@@ -116,6 +116,7 @@ export default class CreateAction extends PropertiesAction {
         const typeDefinition = this.openmct.types.get(type);
         const definition = typeDefinition.definition;
         const domainObject = {
+            name: `Unnamed ${this.type.definition.name}`,
             type,
             identifier: {
                 key: uuid(),
