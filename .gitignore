@@ -39,5 +39,3 @@ npm-debug.log
 
 # karma reports
 report.*.json
-
-package-lock.json
