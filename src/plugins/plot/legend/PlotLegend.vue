@@ -133,14 +133,28 @@ export default {
     },
     data() {
         return {
-            isLegendHidden: this.legend.get('hideLegendWhenSmall') !== true,
-            isLegendExpanded: this.legend.get('expanded') === true,
-            showTimestampWhenExpanded: this.legend.get('showTimestampWhenExpanded') === true,
-            showValueWhenExpanded: this.legend.get('showValueWhenExpanded') === true,
-            showUnitsWhenExpanded: this.legend.get('showUnitsWhenExpanded') === true,
-            showMinimumWhenExpanded: this.legend.get('showMinimumWhenExpanded') === true,
-            showMaximumWhenExpanded: this.legend.get('showMaximumWhenExpanded') === true
+            isLegendExpanded: this.legend.get('expanded') === true
         };
+    },
+    computed: {
+        showUnitsWhenExpanded() {
+            return this.legend.get('showUnitsWhenExpanded') === true;
+        },
+        showMinimumWhenExpanded() {
+            return this.legend.get('showMinimumWhenExpanded') === true;
+        },
+        showMaximumWhenExpanded() {
+            return this.legend.get('showMaximumWhenExpanded') === true;
+        },
+        showValueWhenExpanded() {
+            return this.legend.get('showValueWhenExpanded') === true;
+        },
+        showTimestampWhenExpanded() {
+            return this.legend.get('showTimestampWhenExpanded') === true;
+        },
+        isLegendHidden() {
+            return this.legend.get('hideLegendWhenSmall') === true;
+        }
     },
     methods: {
         expandLegend() {
