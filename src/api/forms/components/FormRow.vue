@@ -1,5 +1,5 @@
 <template>
-<div class="form-row c-form__row validates"
+<div class="form-row c-form__row"
      :class="rowClass"
      @onChange="onChange"
 >
@@ -67,7 +67,7 @@ export default {
     },
     data() {
         return {
-            valid: true
+            valid: undefined
         };
     },
     computed: {
@@ -97,27 +97,37 @@ export default {
                 cssClass = `${cssClass} l-controls-under`;
             }
 
-            if (this.valid === true) {
-                cssClass = `${cssClass} valid`;
-            } else {
-                cssClass = `${cssClass} invalid`;
+            if (this.valid !== undefined) {
+                    if (this.valid === true) {
+                    cssClass = `${cssClass} valid`;
+                } else {
+                    cssClass = `${cssClass} invalid`;
+                }
             }
 
             return cssClass;
         }
     },
     methods: {
-        isDefined(element) {
-            return typeof element !== 'undefined';
-        },
-        isNonEmpty(value) {
-            return Array.isArray(value) && value.some(this.isDefined);
-        },
         onChange(data) {
+            if (!data.model) {
+                return;
+            }
+
+            let valid = true;
+            if (this.row.required) {
+                valid = data.value !== undefined && data.value !== null && data.value !== '';
+            }
+
+            const validate = data.model.validate;
+            if (valid && validate) {
+                valid = validate(data);
+            }
+
+            this.valid = valid;
+            data.invalid = !valid;
             this.$emit('onChange', data);
         }
-    },
-    mounted() {
     }
 };
 </script>

@@ -78,11 +78,25 @@ export default class FormsAPI {
     showForm(formStructure, options) {
         const self = this;
         const changes = {};
+        let overlay;
 
         this.parentDomainObject = options.parentDomainObject;
         const domainObject = options.domainObject;
-        const onSave = options.onSave;
-        const onDismiss = options.onDismiss;
+        const onSave = () => {
+            overlay.dismiss();
+
+            if(options.onSave) {
+                options.onSave(domainObject, this.parentDomainObject)
+            }
+        };
+
+        const onDismiss = () => {
+            overlay.dismiss();
+
+            if (options.onDismiss) {
+                options.onDismiss();
+            };
+        };
 
         const vm = new Vue({
             components: { FormProperties },
@@ -92,37 +106,17 @@ export default class FormsAPI {
             data() {
                 return {
                     formStructure,
-                    onChange
+                    onChange,
+                    onDismiss,
+                    onSave
                 };
             },
-            template: '<FormProperties :model="formStructure" @onChange="onChange"></FormProperties>'
+            template: '<FormProperties :model="formStructure" @onChange="onChange" @onDismiss="onDismiss" @onSave="onSave"></FormProperties>'
         }).$mount();
 
-        let overlay = this.openmct.overlays.overlay({
+        overlay = this.openmct.overlays.overlay({
             element: vm.$el,
             size: 'small',
-            buttons: [
-                {
-                    label: 'OK',
-                    emphasis: 'true',
-                    callback: () => {
-                        overlay.dismiss();
-                        if (onSave) {
-                            onSave(domainObject, this.parentDomainObject);
-                        }
-                    }
-                },
-                {
-                    label: 'Cancel',
-                    callback: () => {
-                        overlay.dismiss();
-
-                        if (onDismiss) {
-                            onDismiss();
-                        }
-                    }
-                }
-            ],
             onDestroy: () => vm.$destroy()
         });
 
