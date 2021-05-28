@@ -9,7 +9,10 @@ export default {
     props: {
         point: {
             type: Object,
-            required: true
+            required: true,
+            default() {
+                return {};
+            }
         },
         cssClass: {
             type: String,

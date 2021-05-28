@@ -38,7 +38,7 @@ export default {
                 'position': 'absolute',
                 'top': top,
                 'left': left,
-                color: '#fff'
+                'color': '#fff'
             };
         }
     }
