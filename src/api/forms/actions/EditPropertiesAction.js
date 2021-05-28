@@ -47,22 +47,10 @@ export default class EditPropertiesAction extends PropertiesAction {
 
     // Private methods
 
-    _onChange(data) {
-        if (data.model) {
-            const property = data.model.property;
-            let key = data.model.key;
-            if (property && property.length) {
-                key = property.join('.');
-            }
-
-            this.formProperties[key] = data.value;
-        }
-    }
-
-    async _onSave(domainObject) {
-        Object.entries(this.formProperties).forEach(([key, value]) => {
+    async _onSave(domainObject, changes, parentDomainObject) {
+        Object.entries(changes).forEach(([key, value]) => {
             const properties = key.split('.');
-            let object = domainObject;
+            let object = this.domainObject;
             properties.forEach(property => {
                 if (typeof object[property] === 'object' && object[property] !== null) {
                     object = object[property];
@@ -74,7 +62,7 @@ export default class EditPropertiesAction extends PropertiesAction {
             object = value;
         });
 
-        domainObject.modified = Date.now();
+        this.domainObject.modified = Date.now();
 
         // Show saving progress dialog
         let dialog = this.openmct.overlays.progressDialog({
@@ -84,7 +72,7 @@ export default class EditPropertiesAction extends PropertiesAction {
             title: 'Saving'
         });
 
-        const success = await this.openmct.objects.save(domainObject);
+        const success = await this.openmct.objects.save(this.domainObject);
         if (success) {
             this.openmct.notifications.info('Save successful');
         } else {
@@ -95,28 +83,16 @@ export default class EditPropertiesAction extends PropertiesAction {
         dialog.dismiss();
     }
 
-    async _navigateAndEdit(domainObject) {
-        const objectPath = await this.openmct.objects.getOriginalPath(domainObject.identifier);
-
-        const url = '#/browse/' + objectPath
-                        .slice(1)
-                        .map(object => object && this.openmct.objects.makeKeyString(object.identifier.key))
-                        .reverse()
-                        .join('/');
-
-        window.location.href = url;
-        this.openmct.editor.edit();
-    }
-
     _showEditForm(objectPath) {
-        const createWizard = new CreateWizard(this.openmct, objectPath[0], objectPath[1]);
+        this.domainObject = objectPath[0];
+
+        const createWizard = new CreateWizard(this.openmct, this.domainObject, objectPath[1]);
         const formStructure = createWizard.getFormStructure(false);
-        formStructure.title = 'Edit ' + objectPath[0].name;
+        formStructure.title = 'Edit ' + this.domainObject.name;
 
         const options = {
-            domainObject: objectPath[0],
-            onSave: this._onSave.bind(this),
-            onChange: this._onChange.bind(this),
+            domainObject: this.domainObject,
+            onSave: this._onSave.bind(this)
         };
 
         this.openmct.forms.showForm(formStructure, options);

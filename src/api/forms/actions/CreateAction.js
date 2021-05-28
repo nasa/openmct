@@ -30,31 +30,18 @@ export default class CreateAction extends PropertiesAction {
 
         this.type = type;
         this.parentDomainObject = parentDomainObject;
-        this.formProperties = {};
     }
 
     invoke() {
-        this._showCreateForm(this.type, this.parentDomainObject);
+        this._showCreateForm(this.type);
     }
 
     // Private methods
 
-    _onChange(data) {
-        if (data.model) {
-            const property = data.model.property;
-            let key = data.model.key;
-            if (property && property.length) {
-                key = property.join('.');
-            }
-
-            this.formProperties[key] = data.value;
-        }
-    }
-
-    async _onSave(domainObject, parentDomainObject) {
-        Object.entries(this.formProperties).forEach(([key, value]) => {
+    async _onSave(domainObject, changes, parentDomainObject) {
+        Object.entries(changes).forEach(([key, value]) => {
             const properties = key.split('.');
-            let object = domainObject;
+            let object = this.domainObject;
             properties.forEach(property => {
                 if (typeof object[property] === 'object' && object[property] !== null) {
                     object = object[property];
@@ -66,9 +53,9 @@ export default class CreateAction extends PropertiesAction {
             object = value;
         });
 
-        domainObject.modified = Date.now();
-        domainObject.location = this.openmct.objects.makeKeyString(this.parentDomainObject.identifier);
-        domainObject.identifier.namespace = this.parentDomainObject.identifier.namespace;
+        this.domainObject.modified = Date.now();
+        this.domainObject.location = this.openmct.objects.makeKeyString(parentDomainObject.identifier);
+        this.domainObject.identifier.namespace = parentDomainObject.identifier.namespace;
 
         // Show saving progress dialog
         let dialog = this.openmct.overlays.progressDialog({
@@ -78,12 +65,12 @@ export default class CreateAction extends PropertiesAction {
             title: 'Saving'
         });
 
-        const success = await this.openmct.objects.save(domainObject);
+        const success = await this.openmct.objects.save(this.domainObject);
         if (success) {
-            const compositionCollection = await openmct.composition.get(this.parentDomainObject);
-            compositionCollection.add(domainObject);
+            const compositionCollection = await openmct.composition.get(parentDomainObject);
+            compositionCollection.add(this.domainObject);
 
-            this._navigateAndEdit(domainObject);
+            this._navigateAndEdit(this.domainObject);
 
             this.openmct.notifications.info('Save successful');
         } else {
@@ -110,17 +97,15 @@ export default class CreateAction extends PropertiesAction {
         }
     }
 
-    _showCreateForm(type, parentDomainObject) {
-        this.parentDomainObject = parentDomainObject;
-
+    _showCreateForm(type) {
         const typeDefinition = this.openmct.types.get(type);
         const definition = typeDefinition.definition;
         const domainObject = {
-            name: `Unnamed ${this.type.definition.name}`,
+            name: `Unnamed ${definition.name}`,
             type,
             identifier: {
                 key: uuid(),
-                namespace: parentDomainObject.identifier.namespace
+                namespace: this.parentDomainObject.identifier.namespace
             }
         };
 
@@ -130,14 +115,13 @@ export default class CreateAction extends PropertiesAction {
             definition.initialize(domainObject);
         }
 
-        const createWizard = new CreateWizard(this.openmct, domainObject, parentDomainObject);
+        const createWizard = new CreateWizard(this.openmct, domainObject, this.parentDomainObject);
         const formStructure = createWizard.getFormStructure(true);
         formStructure.title = 'Create a New ' + definition.name;
 
         const options = {
             domainObject,
-            onSave: this._onSave.bind(this),
-            onChange: this._onChange.bind(this),
+            onSave: this._onSave.bind(this)
         };
 
         this.openmct.forms.showForm(formStructure, options);
