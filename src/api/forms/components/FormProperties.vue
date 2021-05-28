@@ -15,7 +15,7 @@
             :class="section.cssClass"
         >
             <h2 class="c-form__header"
-                ng-if="section.name"
+                v-if="section.name"
             >
                 {{ section.name }}
             </h2>
