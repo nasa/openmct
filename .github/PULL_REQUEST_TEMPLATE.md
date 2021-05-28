@@ -1,6 +1,6 @@
 ### All Submissions:
 
-* [ ] Have you followed the guidelines in our [Contributing document](../CONTRIBUTING.md)?
+* [ ] Have you followed the guidelines in our [Contributing document](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md)?
 * [ ] Have you checked to ensure there aren't other open [Pull Requests](https://github.com/nasa/openmct/pulls) for the same update/change?
 
 ### Author Checklist
