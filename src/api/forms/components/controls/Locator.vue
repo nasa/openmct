@@ -39,7 +39,7 @@ export default {
     },
     methods: {
        handleItemSelection(parentDomainObject) {
-           const data = { parentDomainObject };
+           const data = { model: this.model, parentDomainObject };
            this.$emit('onChange', data);
        }
     }

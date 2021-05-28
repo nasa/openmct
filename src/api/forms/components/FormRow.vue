@@ -49,6 +49,7 @@ const CONTROL_TYPE_VIEW_MAP = {
 export default {
     name: 'FormRow',
     components: CONTROL_TYPE_VIEW_MAP,
+    inject: ['openmct', 'domainObject'],
     props: {
         cssClass: {
             type: String,
@@ -110,10 +111,6 @@ export default {
     },
     methods: {
         onChange(data) {
-            if (!data.model) {
-                return;
-            }
-
             let valid = true;
             if (this.row.required) {
                 valid = data.value !== undefined && data.value !== null && data.value !== '';
@@ -121,7 +118,7 @@ export default {
 
             const validate = data.model.validate;
             if (valid && validate) {
-                valid = validate(data);
+                valid = validate(this.domainObject, data);
             }
 
             this.valid = valid;
