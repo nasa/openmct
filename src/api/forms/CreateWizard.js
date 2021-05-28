@@ -51,12 +51,7 @@ export default class CreateWizard {
         });
     }
 
-    addTitle(sections, includeLocation) {
-        let value = `${this.domainObject.name || this.type.definition.name}`;;
-        if (includeLocation) {
-            value = `Unnamed ${value}`;
-        }
-
+    addTitle(sections) {
         const row = {
             control: 'textfield',
             cssClass: 'l-input-lg',
@@ -64,7 +59,7 @@ export default class CreateWizard {
             name: 'Title',
             pattern: '\S+',
             required: true,
-            value
+            value: this.domainObject.name
         };
 
         sections.forEach(section => {
@@ -101,7 +96,7 @@ export default class CreateWizard {
         });
 
         this.addNotes(sections);
-        this.addTitle(sections, includeLocation);
+        this.addTitle(sections);
 
         // Ensure there is always a 'save in' section
         if (includeLocation) {
