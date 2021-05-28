@@ -25,6 +25,8 @@
     :class="{
         'is-status--missing': isMissing
     }"
+    @mouseover="toggleHover(true)"
+    @mouseleave="toggleHover(false)"
 >
     <td class="plot-series-swatch-and-name">
         <span class="plot-series-color-swatch"
@@ -160,6 +162,12 @@ export default {
                 this.formattedMinY = '';
                 this.formattedMaxY = '';
             }
+        },
+        toggleHover(hover) {
+            this.hover = hover;
+            this.$emit('legendHoverChanged', {
+                seriesKey: this.hover ? this.seriesObject.keyString : ''
+            });
         }
     }
 };

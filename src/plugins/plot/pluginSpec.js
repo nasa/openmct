@@ -36,6 +36,7 @@ describe("the plugin", function () {
     let telemetryPromise;
     let cleanupFirst;
     let mockObjectPath;
+    let telemetrylimitProvider;
 
     beforeEach((done) => {
         mockObjectPath = [
@@ -87,6 +88,45 @@ describe("the plugin", function () {
 
             return telemetryPromise;
         });
+
+        telemetrylimitProvider = jasmine.createSpyObj('telemetrylimitProvider', [
+            'supportsLimits',
+            'getLimits',
+            'getLimitEvaluator'
+        ]);
+        telemetrylimitProvider.supportsLimits.and.returnValue(true);
+        telemetrylimitProvider.getLimits.and.returnValue({
+            limits: function () {
+                return {
+                    WARNING: {
+                        low: {
+                            cssClass: "is-limit--lwr is-limit--yellow",
+                            'some-key': -0.5
+                        },
+                        high: {
+                            cssClass: "is-limit--upr is-limit--yellow",
+                            'some-key': 0.5
+                        }
+                    },
+                    DISTRESS: {
+                        low: {
+                            cssClass: "is-limit--lwr is-limit--red",
+                            'some-key': -0.9
+                        },
+                        high: {
+                            cssClass: "is-limit--upr is-limit--red",
+                            'some-key': 0.9
+                        }
+                    }
+                };
+            }
+        });
+        telemetrylimitProvider.getLimitEvaluator.and.returnValue({
+            evaluate: function () {
+                return {};
+            }
+        });
+        openmct.telemetry.addProvider(telemetrylimitProvider);
 
         openmct.install(new PlotVuePlugin());
 
@@ -657,6 +697,25 @@ describe("the plugin", function () {
                 done();
             });
         });
+
+        describe('limits', () => {
+
+            it('lines are not displayed by default', () => {
+                let limitEl = element.querySelectorAll(".js-limit-area hr");
+                expect(limitEl.length).toBe(0);
+            });
+
+            it('lines are displayed when configuration is set to true', (done) => {
+                config.series.models[0].set('limitLines', true);
+
+                Vue.nextTick(() => {
+                    let limitEl = element.querySelectorAll(".js-limit-area hr");
+                    expect(limitEl.length).toBe(4);
+                    done();
+                });
+
+            });
+        });
     });
 
     describe('the inspector view', () => {
@@ -803,7 +862,7 @@ describe("the plugin", function () {
                 expandControl.dispatchEvent(clickEvent);
 
                 const plotOptionsProperties = browseOptionsEl.querySelectorAll('.js-plot-options-browse-properties .grid-row');
-                expect(plotOptionsProperties.length).toEqual(5);
+                expect(plotOptionsProperties.length).toEqual(6);
             });
         });
 
@@ -845,7 +904,7 @@ describe("the plugin", function () {
                 expandControl.dispatchEvent(clickEvent);
 
                 const plotOptionsProperties = editOptionsEl.querySelectorAll(".js-plot-options-edit-properties .grid-row");
-                expect(plotOptionsProperties.length).toEqual(6);
+                expect(plotOptionsProperties.length).toEqual(7);
             });
 
             it('shows yKeyOptions', () => {

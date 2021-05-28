@@ -48,7 +48,7 @@
                                         :highlights="highlights"
                                         :value-to-show-when-collapsed="legend.get('valueToShowWhenCollapsed')"
                                         :series-object="seriesObject"
-                                        :closest="seriesObject.closest"
+                                        @legendHoverChanged="legendHoverChanged"
             />
         </div>
         <!-- EXPANDED PLOT LEGEND -->
@@ -89,6 +89,7 @@
                                                :series-object="seriesObject"
                                                :highlights="highlights"
                                                :legend="legend"
+                                               @legendHoverChanged="legendHoverChanged"
                     />
                 </tbody>
             </table>
@@ -160,6 +161,9 @@ export default {
         expandLegend() {
             this.isLegendExpanded = !this.isLegendExpanded;
             this.legend.set('expanded', this.isLegendExpanded);
+        },
+        legendHoverChanged(data) {
+            this.$emit('legendHoverChanged', data);
         }
     }
 };

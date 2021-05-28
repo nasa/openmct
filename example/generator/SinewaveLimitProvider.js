@@ -93,5 +93,36 @@ define([
         };
     };
 
+    SinewaveLimitProvider.prototype.getLimits = function (domainObject) {
+        return {
+            limits: function () {
+                return {
+                    WARNING: {
+                        low: {
+                            cssClass: "is-limit--lwr is-limit--yellow",
+                            sin: -YELLOW.sin,
+                            cos: -YELLOW.cos
+                        },
+                        high: {
+                            cssClass: "is-limit--upr is-limit--yellow",
+                            ...YELLOW
+                        }
+                    },
+                    DISTRESS: {
+                        low: {
+                            cssClass: "is-limit--lwr is-limit--red",
+                            sin: -RED.sin,
+                            cos: -RED.cos
+                        },
+                        high: {
+                            cssClass: "is-limit--upr is-limit--red",
+                            ...RED
+                        }
+                    }
+                };
+            }
+        };
+    };
+
     return SinewaveLimitProvider;
 });

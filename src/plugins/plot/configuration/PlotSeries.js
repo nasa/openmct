@@ -97,7 +97,8 @@ export default class PlotSeries extends Model {
             markers: true,
             markerShape: 'point',
             markerSize: 2.0,
-            alarmMarkers: true
+            alarmMarkers: true,
+            limitLines: false
         };
     }
 
@@ -115,7 +116,14 @@ export default class PlotSeries extends Model {
         this.domainObject = options.domainObject;
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
+        this.limitDefinition = this.openmct.telemetry.limitDefinition(options.domainObject);
+        this.limits = this.limitDefinition.limits();
+        this.openmct.time.on('bounds', this.updateLimits);
         this.on('destroy', this.onDestroy, this);
+    }
+
+    updateLimits(bounds) {
+        this.emit('limitBounds', bounds);
     }
 
     locateOldObject(oldStyleParent) {
