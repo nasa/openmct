@@ -28,6 +28,7 @@
                  :series="config.series.models"
                  :highlights="highlights"
                  :legend="config.legend"
+                 @legendHoverChanged="legendHoverChanged"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <y-axis v-if="config.series.models.length > 0"
@@ -67,6 +68,7 @@
                 >
                     <mct-chart :rectangles="rectangles"
                                :highlights="highlights"
+                               :show-limit-line-labels="showLimitLineLabels"
                                @plotReinitializeCanvas="initCanvas"
                     />
                 </div>
@@ -213,7 +215,8 @@ export default {
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
-            isTimeOutOfSync: false
+            isTimeOutOfSync: false,
+            showLimitLineLabels: undefined
         };
     },
     computed: {
@@ -1018,6 +1021,9 @@ export default {
                 this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
+        },
+        legendHoverChanged(data) {
+            this.showLimitLineLabels = data;
         }
     }
 };
