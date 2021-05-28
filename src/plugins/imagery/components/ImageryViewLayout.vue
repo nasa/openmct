@@ -218,6 +218,7 @@ export default {
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
             lockCompass: true,
+            thumbWrapperWidth: undefined
         };
     },
     computed: {
@@ -355,10 +356,6 @@ export default {
         }
     },
     async mounted() {
-        document.body.addEventListener('henry', () => {
-            console.log('triggered');
-            this.scrollToRight('reset');
-        })
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
@@ -397,6 +394,9 @@ export default {
 
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
         this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
+
+        this.thumbWrapperResizeObserver = new ResizeObserver(this.resizeThumbWrapper);
+        this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
     },
     updated() {
         this.scrollToRight();
@@ -410,7 +410,9 @@ export default {
         if (this.imageContainerResizeObserver) {
             this.imageContainerResizeObserver.disconnect();
         }
-
+        if (this.thumbWrapperResizeObserver) {
+            this.thumbWrapperResizeObserver.disconnect();
+        }
         if (this.relatedTelemetry.hasRelatedTelemetry) {
             this.relatedTelemetry.destroy();
         }
@@ -830,6 +832,12 @@ export default {
 
             if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
                 this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
+            }
+        },
+        resizeThumbWrapper() {
+            if (this.$refs.thumbsWrapper.clientWidth !== this.thumbWrapperWidth) {
+                this.thumbWrapperWidth = this.$refs.thumbsWrapper.clientWidth;
+                this.scrollToRight('reset');
             }
         },
         toggleLockCompass() {
