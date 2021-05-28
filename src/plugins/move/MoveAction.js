@@ -127,8 +127,10 @@ export default class MoveAction {
         });
     }
 
-    validate(object, currentParent) {
-        return (parentCandidate) => {
+    validate(currentParent) {
+        return (object, data) => {
+            const parentCandidate = data.parentDomainObject;
+            console.log('move action : validateLocation', );
             // TODO: remove getModel, checkPolicy and useCapability
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
@@ -146,14 +148,12 @@ export default class MoveAction {
                 return false;
             }
 
-            if (parentCandidate.getModel().composition.indexOf(objectKeystring) !== -1) {
+            const parentCandidateComposition = parentCandidate.composition;
+            if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
                 return false;
             }
 
-            return this.openmct.composition.checkPolicy(
-                parentCandidate.useCapability('adapter'),
-                object
-            );
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, object);
         };
     }
 

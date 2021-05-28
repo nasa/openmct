@@ -101,7 +101,8 @@ export default class FormsAPI {
         const vm = new Vue({
             components: { FormProperties },
             provide: {
-                openmct: this.openmct
+                openmct: this.openmct,
+                domainObject
             },
             data() {
                 return {
