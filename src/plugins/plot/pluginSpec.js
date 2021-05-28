@@ -139,6 +139,11 @@ describe("the plugin", function () {
         element.appendChild(child);
         document.body.appendChild(element);
 
+        spyOn(window, 'ResizeObserver').and.returnValue({
+            observe() {},
+            disconnect() {}
+        });
+
         openmct.time.timeSystem("utc", {
             start: 0,
             end: 4
