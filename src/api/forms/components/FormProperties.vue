@@ -1,16 +1,16 @@
 <template>
 <form name="mctForm"
       novalidate
-      class="form c-form"
+      class="form c-form mct-form"
       autocomplete="off"
 >
-    <div class="c-overlay__top-bar">
-        <div class="c-overlay__dialog-title">{{model.title}}</div>
+    <div class="mct-form__title c-overlay__top-bar">
+        <div class="c-overlay__dialog-title">{{ model.title }}</div>
         <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
     </div>
     <span v-for="section in model.sections"
           :key="section.name"
-          class="l-form-section c-form__section"
+          class="mct-form__sections l-form-section c-form__section"
           :class="section.cssClass"
     >
         <h2 class="c-form__header"
@@ -28,6 +28,22 @@
             />
         </div>
     </span>
+
+    <div class="mct-form__controls c-overlay__button-bar">
+        <button tabindex="0"
+            :disabled="isInvalid"
+                class="c-button c-button--major"
+                @click="onSave"
+        >
+            OK
+        </button>
+        <button tabindex="0"
+                class="c-button c-button--major"
+                @click="onDismiss"
+        >
+            Cancel
+        </button>
+    </div>
 </form>
 </template>
 
@@ -50,9 +66,30 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            inValidProperties: {}
+        };
+    },
+    computed: {
+        isInvalid() {
+            return Object.entries(this.inValidProperties)
+                .some(([key, value]) => {
+                    return value;
+                });
+        }
+    },
     methods: {
         onChange(data) {
+            this.$set(this.inValidProperties, data.model.key, data.invalid);
+
             this.$emit('onChange', data);
+        },
+        onDismiss() {
+            this.$emit('onDismiss');
+        },
+        onSave() {
+            this.$emit('onSave');
         }
     }
 };
