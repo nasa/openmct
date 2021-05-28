@@ -25,6 +25,8 @@
     :class="{
         'is-status--missing': isMissing
     }"
+    @mouseover="toggleHover(true)"
+    @mouseleave="toggleHover(false)"
 >
     <td class="plot-series-swatch-and-name">
         <span class="plot-series-color-swatch"
@@ -94,11 +96,6 @@ export default {
     },
     data() {
         return {
-            showTimestampWhenExpanded: this.legend.get('showTimestampWhenExpanded'),
-            showValueWhenExpanded: this.legend.get('showValueWhenExpanded'),
-            showUnitsWhenExpanded: this.legend.get('showUnitsWhenExpanded'),
-            showMinimumWhenExpanded: this.legend.get('showMinimumWhenExpanded'),
-            showMaximumWhenExpanded: this.legend.get('showMaximumWhenExpanded'),
             isMissing: false,
             colorAsHexString: '',
             name: '',
@@ -109,6 +106,23 @@ export default {
             formattedMaxY: '',
             mctLimitStateClass: ''
         };
+    },
+    computed: {
+        showUnitsWhenExpanded() {
+            return this.legend.get('showUnitsWhenExpanded') === true;
+        },
+        showMinimumWhenExpanded() {
+            return this.legend.get('showMinimumWhenExpanded') === true;
+        },
+        showMaximumWhenExpanded() {
+            return this.legend.get('showMaximumWhenExpanded') === true;
+        },
+        showValueWhenExpanded() {
+            return this.legend.get('showValueWhenExpanded') === true;
+        },
+        showTimestampWhenExpanded() {
+            return this.legend.get('showTimestampWhenExpanded') === true;
+        }
     },
     watch: {
         highlights(newHighlights) {
@@ -148,6 +162,12 @@ export default {
                 this.formattedMinY = '';
                 this.formattedMaxY = '';
             }
+        },
+        toggleHover(hover) {
+            this.hover = hover;
+            this.$emit('legendHoverChanged', {
+                seriesKey: this.hover ? this.seriesObject.keyString : ''
+            });
         }
     }
 };
