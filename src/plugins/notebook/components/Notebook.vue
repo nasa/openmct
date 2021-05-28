@@ -135,6 +135,7 @@ import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
+import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
 import objectUtils from 'objectUtils';
 
 import { debounce } from 'lodash';
@@ -189,14 +190,14 @@ export default {
         selectedPage() {
             const pages = this.getPages();
             if (!pages) {
-                return null;
+                return {};
             }
 
             return pages.find(page => page.isSelected);
         },
         selectedSection() {
             if (!this.sections.length) {
-                return null;
+                return {};
             }
 
             return this.sections.find(section => section.isSelected);
@@ -216,6 +217,7 @@ export default {
 
         window.addEventListener('orientationchange', this.formatSidebar);
         window.addEventListener("hashchange", this.navigateToSectionPage, false);
+        this.openmct.router.on('change:params', this.changeSectionPage);
 
         this.navigateToSectionPage();
     },
@@ -226,6 +228,7 @@ export default {
 
         window.removeEventListener('orientationchange', this.formatSidebar);
         window.removeEventListener("hashchange", this.navigateToSectionPage);
+        this.openmct.router.off('change:params', this.changeSectionPage);
     },
     updated: function () {
         this.$nextTick(() => {
@@ -233,6 +236,28 @@ export default {
         });
     },
     methods: {
+        changeSectionPage(newParams, oldParams, changedParams) {
+            if (newParams.view !== NOTEBOOK_VIEW_TYPE) {
+                return;
+            }
+
+            let pageId = newParams.pageId;
+            let sectionId = newParams.sectionId;
+
+            if (!pageId && !sectionId) {
+                return;
+            }
+
+            this.sections.forEach(section => {
+                section.isSelected = Boolean(section.id === sectionId);
+
+                if (section.isSelected) {
+                    section.pages.forEach(page => {
+                        page.isSelected = Boolean(page.id === pageId);
+                    });
+                }
+            });
+        },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
                 s.isSelected = false;
@@ -518,9 +543,11 @@ export default {
             return this.sections.find(section => section.isSelected);
         },
         navigateToSectionPage() {
-            const { pageId, sectionId } = this.openmct.router.getParams();
+            let { pageId, sectionId } = this.openmct.router.getParams();
+
             if (!pageId || !sectionId) {
-                return;
+                sectionId = this.selectedSection.id;
+                pageId = this.selectedPage.id;
             }
 
             const sections = this.sections.map(s => {

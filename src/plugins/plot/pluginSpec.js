@@ -99,6 +99,11 @@ describe("the plugin", function () {
         element.appendChild(child);
         document.body.appendChild(element);
 
+        spyOn(window, 'ResizeObserver').and.returnValue({
+            observe() {},
+            disconnect() {}
+        });
+
         openmct.time.timeSystem("utc", {
             start: 0,
             end: 4
@@ -118,6 +123,11 @@ describe("the plugin", function () {
     });
 
     afterEach((done) => {
+        openmct.time.timeSystem('utc', {
+            start: 0,
+            end: 1
+        });
+
         // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
         // teardown, which causes problems
         // This is hacky, we should find a better approach here.
@@ -129,7 +139,7 @@ describe("the plugin", function () {
 
             configStore.deleteAll();
 
-            resetApplicationState(openmct).then(done);
+            resetApplicationState(openmct).then(done).catch(done);
         });
     });
 

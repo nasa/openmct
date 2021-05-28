@@ -82,6 +82,11 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
+        openmct.time.timeSystem('utc', {
+            start: 0,
+            end: 1
+        });
+
         return resetApplicationState(openmct);
     });
 

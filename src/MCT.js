@@ -252,7 +252,7 @@ define([
 
         this.status = new api.StatusAPI(this);
 
-        this.router = new ApplicationRouter();
+        this.router = new ApplicationRouter(this);
 
         this.branding = BrandingAPI.default;
 
