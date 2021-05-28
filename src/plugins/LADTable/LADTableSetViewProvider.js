@@ -45,10 +45,14 @@ export default function LADTableSetViewProvider(openmct) {
                         },
                         provide: {
                             openmct,
-                            domainObject,
                             objectPath
                         },
-                        template: '<lad-table-set></lad-table-set>'
+                        data() {
+                            return {
+                                domainObject
+                            };
+                        },
+                        template: '<lad-table-set :domain-object="domainObject"></lad-table-set>'
                     });
                 },
                 destroy: function (element) {

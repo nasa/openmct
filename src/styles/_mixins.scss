@@ -375,6 +375,10 @@
     &:focus {
         box-shadow: $shdwInputFoc;
     }
+
+    &::selection {
+        background: rgba($colorKeySelectedBg, 0.5);
+    }
 }
 
 @mixin inlineInput() {
@@ -636,6 +640,16 @@
     background: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10'%3e%3cpath fill='%23#{$svgArwClr}' d='M5 5l5-5H0z'/%3e%3c/svg%3e"), $bg;
     color: $fg;
     box-shadow: $shdw;
+}
+
+@mixin smallerControlButtons() {
+    .c-click-icon,
+    .c-button,
+    .c-icon-button {
+        // Shrink buttons a bit when they appear in containers
+        font-size: 0.9em;
+        padding: 4px;
+    }
 }
 
 @mixin wrappedInput() {

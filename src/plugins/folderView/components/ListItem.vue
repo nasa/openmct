@@ -11,7 +11,7 @@
             ref="objectLink"
             class="c-object-label"
             :class="[statusClass]"
-            :href="objectLink"
+            @click="navigate"
         >
             <div
                 class="c-object-label__type-icon c-list-item__name__type-icon"
@@ -45,6 +45,7 @@ import statusListener from './status-listener';
 
 export default {
     mixins: [contextMenuGesture, objectLink, statusListener],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,
@@ -56,7 +57,7 @@ export default {
             return moment(timestamp).format(format);
         },
         navigate() {
-            this.$refs.objectLink.click();
+            this.openmct.router.navigate(this.objectLink);
         }
     }
 };
