@@ -91,6 +91,17 @@
                 >
             </div>
         </li>
+        <li class="grid-row">
+            <div class="grid-cell label"
+                 title="Display limit lines"
+            >Limit lines</div>
+            <div class="grid-cell value">
+                <input v-model="limitLines"
+                       type="checkbox"
+                       @change="updateForm('limitLines')"
+                >
+            </div>
+        </li>
         <li v-show="markers || alarmMarkers"
             class="grid-row"
         >
@@ -137,17 +148,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </li>
-        <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Display limit lines"
-            >Limits</div>
-            <div class="grid-cell value">
-                <input v-model="limitLines"
-                       type="checkbox"
-                       @change="updateForm('limitLines')"
-                >
             </div>
         </li>
     </ul>
