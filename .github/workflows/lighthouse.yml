@@ -1,0 +1,17 @@
+name: lighthouse
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Which version do you want to test?'
+        required: false
+        default: 'master'
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - run: npm install && npm install -g @lhci/cli@0.7.x
+      - run: npm start
+      - run: lhci autorun
