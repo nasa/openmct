@@ -51,7 +51,7 @@ export class TelemetryCollection extends EventEmitter {
 
         this.options = options;
 
-        this.collectionState = undefined;
+        this.pageState = undefined;
 
         this.lastBounds = undefined;
     }
@@ -88,40 +88,6 @@ export class TelemetryCollection extends EventEmitter {
             && this.historicalProvider.supportsPaging()
             && this.historicalProvider.hasMorePages
             && this.historicalProvider.hasMorePages(this);
-    }
-
-    /**
-     * will trigger the next page for the provider if it supports it,
-     * _addPage will be passed in as a callback to receive the telemetry and updated state
-     */
-    nextPage() {
-        if (
-            !this.historicalProvider
-            || !this.historicalProvider.supportsPaging()
-            || !this.historicalProvider.nextPage
-        ) {
-            throw new Error('Provider does not support paging');
-        }
-
-        this.historicalProvider.nextPage(this._addPage, this.collectionState);
-    }
-
-    /**
-     * provides a way to update the options for the telemetry request and subscription
-     * doing so will trigger a lite reset (no re-reqeustiong data yet) and then a
-     * re-initialization of request and subscription
-     *
-     * @param  {Object} options - options to send into request/subscription providers
-     */
-    updateOptions(options) {
-        const SKIP_RESET_REQUEST = true;
-
-        this._reset(SKIP_RESET_REQUEST);
-        this.options = options;
-
-        // will update options and providers if necesarry
-        this._initiateHistoricalRequests();
-        this._initiateSubscriptionTelemetry();
     }
 
     /**
@@ -183,21 +149,6 @@ export class TelemetryCollection extends EventEmitter {
     }
 
     /**
-     * call back for telemetry provider to add more data as well as
-     * pass in the current state of the telemetry collection
-     * (which the telemetry collection will hold)
-     *
-     *
-     * @param  {Object[]} telemetryData - array of telemetry data objects
-     * @param  {*} [collectionState] - providers can pass a collectionState that
-     * will be used for tracking between collection and provider
-     */
-    _addPage(telemetryData, collectionState) {
-        this.collectionState = collectionState;
-        this._processNewTelemetry(telemetryData);
-    }
-
-    /**
      * Filter any new telemetry (add/page, historical, subscription) based on
      * time bounds
      *
@@ -245,8 +196,6 @@ export class TelemetryCollection extends EventEmitter {
         let endChanged = this.lastBounds.end !== bounds.end;
 
         this.lastBounds = bounds;
-
-        this.emit('bounds', ...arguments);
 
         if (isTick) {
             // need to check futureBuffer and need to check
@@ -304,7 +253,6 @@ export class TelemetryCollection extends EventEmitter {
             return valueFormatter.parse(datum);
         };
 
-        this.emit('timesystem', timeSystem);
         this._reset();
     }
 
