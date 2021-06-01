@@ -91,6 +91,17 @@
                 >
             </div>
         </li>
+        <li class="grid-row">
+            <div class="grid-cell label"
+                 title="Display limit lines"
+            >Limit lines</div>
+            <div class="grid-cell value">
+                <input v-model="limitLines"
+                       type="checkbox"
+                       @change="updateForm('limitLines')"
+                >
+            </div>
+        </li>
         <li v-show="markers || alarmMarkers"
             class="grid-row"
         >
@@ -168,6 +179,7 @@ export default {
             markers: this.series.get('markers'),
             markerShape: this.series.get('markerShape'),
             alarmMarkers: this.series.get('alarmMarkers'),
+            limitLines: this.series.get('limitLines'),
             markerSize: this.series.get('markerSize'),
             validation: {},
             swatchActive: false
@@ -240,6 +252,11 @@ export default {
                     modelProp: 'alarmMarkers',
                     coerce: Boolean,
                     objectPath: this.dynamicPathForKey('alarmMarkers')
+                },
+                {
+                    modelProp: 'limitLines',
+                    coerce: Boolean,
+                    objectPath: this.dynamicPathForKey('limitLines')
                 }
             ];
 
