@@ -837,7 +837,9 @@ export default {
         resizeThumbWrapper() {
             if (this.$refs.thumbsWrapper.clientWidth !== this.thumbWrapperWidth) {
                 this.thumbWrapperWidth = this.$refs.thumbsWrapper.clientWidth;
-                this.scrollToRight('reset');
+                if (!this.isPaused) {
+                 this.scrollToRight('reset');
+                }
             }
         },
         toggleLockCompass() {
