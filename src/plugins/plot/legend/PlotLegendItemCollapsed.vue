@@ -24,6 +24,8 @@
      :class="{
          'is-status--missing': isMissing
      }"
+     @mouseover="toggleHover(true)"
+     @mouseleave="toggleHover(false)"
 >
     <div class="plot-series-swatch-and-name">
         <span class="plot-series-color-swatch"
@@ -121,6 +123,12 @@ export default {
             } else {
                 this.formattedYValueFromStats = '';
             }
+        },
+        toggleHover(hover) {
+            this.hover = hover;
+            this.$emit('legendHoverChanged', {
+                seriesKey: this.hover ? this.seriesObject.keyString : ''
+            });
         }
     }
 };
