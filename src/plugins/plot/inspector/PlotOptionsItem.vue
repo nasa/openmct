@@ -62,6 +62,14 @@
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
+                     title="Display lines visually denoting alarm limits."
+                >Limit lines</div>
+                <div class="grid-cell value">
+                    {{ limitLines ? "Enabled" : "Disabled" }}
+                </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
                      title="The plot line and marker color for this series."
                 >Color</div>
                 <div class="grid-cell value">
@@ -134,6 +142,9 @@ export default {
         },
         alarmMarkers() {
             return this.series.get('alarmMarkers');
+        },
+        limitLines() {
+            return this.series.get('limitLines');
         },
         seriesHexColor() {
             return this.series.get('color').asHexString();
