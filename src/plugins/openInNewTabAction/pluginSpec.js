@@ -24,7 +24,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-describe("the plugin", () => {
+fdescribe("the plugin", () => {
     let openmct;
     let openInNewTabAction;
     let mockObjectPath;
@@ -65,6 +65,10 @@ describe("the plugin", () => {
             }));
             spyOn(window, 'open');
             await openInNewTabAction.invoke(mockObjectPath);
+        });
+
+        afterEach(() => {
+            return resetApplicationState(openmct);
         });
         it('it opens in a new tab', () => {
             expect(window.open).toHaveBeenCalled();

@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
- export default class OpenInNewTab {
+export default class OpenInNewTab {
     constructor(openmct) {
         this.name = 'Open In New Tab';
         this.key = 'newTab';
@@ -36,22 +36,28 @@
         let urlParams = this._openmct.router.getParams();
         // Needs to include start/end bounds timeSystem and mode in new URL
         // to keep time consistent
-        let timeParams = [];
-        for(let key in urlParams) {
-            let param = `${key}=${urlParams[key]}`;
-            if (param) timeParams.push(param);
+        let newTabParams = [];
+        for (let key in urlParams) {
+            if ({}.hasOwnProperty.call(urlParams, key)) {
+                let param = `${key}=${urlParams[key]}`;
+                newTabParams.push(param);
+            }
         }
+
         this._openmct.objects.getOriginalPath(domainObject.identifier)
-        .then((originalPath) => {
-            let url = '#/browse/' + originalPath
-                .map(function (o) {
-                    return o && this._openmct.objects.makeKeyString(o.identifier);
-                }.bind(this))
-                .reverse()
-                .slice(1)
-                .join('/');
-                if (timeParams.length) url += '?' + timeParams.join('&');
-                window.open.apply(window, [url, '_blank']);
-        });
+            .then((originalPath) => {
+                let url = '#/browse/' + originalPath
+                    .map(function (o) {
+                        return o && this._openmct.objects.makeKeyString(o.identifier);
+                    }.bind(this))
+                    .reverse()
+                    .slice(1)
+                    .join('/');
+                if (newTabParams.length) {
+                    url += '?' + newTabParams.join('&');
+                }
+
+                window.open(url);
+            });
     }
 }
