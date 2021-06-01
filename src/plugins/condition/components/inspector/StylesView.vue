@@ -66,7 +66,6 @@
         <div class="c-inspect-styles__content c-inspect-styles__condition-set">
             <a v-if="conditionSetDomainObject"
                class="c-object-label"
-               :href="navigateToPath"
                @click="navigateOrPreview"
             >
                 <span class="c-object-label__type-icon icon-conditional"></span>
@@ -309,6 +308,8 @@ export default {
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 this.previewAction.invoke(this.objectPath);
+            } else {
+                this.openmct.router.navigate(this.navigateToPath);
             }
         },
         isItemType(type, item) {

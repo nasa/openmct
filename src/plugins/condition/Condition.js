@@ -43,7 +43,6 @@ import {TRIGGER_CONJUNCTION, TRIGGER_LABEL} from "./utils/constants";
 * }
 */
 export default class Condition extends EventEmitter {
-
     /**
      * Manages criteria and emits the result of - true or false - based on criteria evaluated.
      * @constructor

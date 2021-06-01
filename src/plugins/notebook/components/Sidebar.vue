@@ -111,10 +111,6 @@ export default {
             }
         }
     },
-    data() {
-        return {
-        };
-    },
     computed: {
         pages() {
             const selectedSection = this.sections.find(section => section.isSelected);

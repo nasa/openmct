@@ -145,7 +145,7 @@ export default {
 
             const relativeHash = hash.slice(hash.indexOf('#'));
             const url = new URL(relativeHash, `${location.protocol}//${location.host}${location.pathname}`);
-            window.location.hash = url.hash;
+            this.openmct.router.navigate(url.hash);
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
