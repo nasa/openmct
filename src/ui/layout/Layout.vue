@@ -56,6 +56,13 @@
         >
             <button
                 slot="controls"
+                class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+                title="Collapse all tree items"
+                @click="handleTreeReset"
+            >
+            </button>
+            <button
+                slot="controls"
                 class="c-icon-button l-shell__sync-tree-button icon-target"
                 title="Show selected item in tree"
                 @click="handleSyncTreeNavigation"
@@ -63,6 +70,7 @@
             </button>
             <mct-tree
                 :sync-tree-navigation="triggerSync"
+                :reset-tree-navigation="triggerReset"
                 class="l-shell__tree"
             />
         </pane>
@@ -148,6 +156,7 @@ export default {
             hasToolbar: false,
             actionCollection: undefined,
             triggerSync: false,
+            triggerReset: false,
             headExpanded
         };
     },
@@ -228,6 +237,9 @@ export default {
         },
         handleSyncTreeNavigation() {
             this.triggerSync = !this.triggerSync;
+        },
+        handleTreeReset() {
+            this.triggerReset = !this.triggerReset;
         }
     }
 };
