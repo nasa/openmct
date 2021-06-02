@@ -394,12 +394,15 @@ export default {
             }
 
             const indexOfScroll = this.treeItems.findIndex(item => item.navigationPath === navigationPath);
-            const scrollTopAmount = indexOfScroll * this.itemHeight;
 
-            this.$refs.scrollable.scrollTo({
-                top: scrollTopAmount,
-                behavior: 'smooth'
-            });
+            if (indexOfScroll !== -1) {
+                const scrollTopAmount = indexOfScroll * this.itemHeight;
+
+                this.$refs.scrollable.scrollTo({
+                    top: scrollTopAmount,
+                    behavior: 'smooth'
+                });
+            }
         },
         scrollEndEvent() {
             this.$nextTick(() => {
