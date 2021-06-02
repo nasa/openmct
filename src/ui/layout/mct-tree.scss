@@ -30,7 +30,7 @@
             width: 100%;
         }
 
-        &__scrollable-children {
+        &__scrollable {
             overflow: auto;
         }
 
@@ -56,6 +56,7 @@
     @include userSelectNone();
     overflow-x: hidden;
     overflow-y: auto;
+    padding-right: $interiorMarginSm;
 
     .icon-arrow-nav-to-parent {
         visibility: hidden;
@@ -90,7 +91,7 @@
             color: $colorItemTreeIcon;
         }
 
-        &:hover {
+        @include hover {
             background: $colorItemTreeHoverBg;
             filter: $filterHov;
         }
@@ -124,14 +125,16 @@
     }
 
     &__item {
-        > * + * {
-            margin-left: $interiorMarginSm;
+        [class*="view-control"] {
+            padding: 2px 10px;
         }
 
-        @include desktop {
-            &:hover {
-                background: $colorItemTreeHoverBg;
-            }
+        > * + * {
+            margin-left: ceil($interiorMarginSm / 2);
+        }
+
+        @include hover {
+            background: $colorItemTreeHoverBg;
         }
 
         // Object labels in trees
