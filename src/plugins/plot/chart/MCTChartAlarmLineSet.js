@@ -32,6 +32,7 @@ export default class MCTChartAlarmLineSet {
 
         eventHelpers.extend(this);
         this.listenTo(series, 'limitBounds', this.updateBounds, this);
+        this.listenTo(series, 'limits', this.getLimitPoints, this);
         this.listenTo(series, 'change:xKey', this.getLimitPoints, this);
 
         if (series.limits) {

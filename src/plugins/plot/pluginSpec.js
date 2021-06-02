@@ -97,7 +97,7 @@ describe("the plugin", function () {
         telemetrylimitProvider.supportsLimits.and.returnValue(true);
         telemetrylimitProvider.getLimits.and.returnValue({
             limits: function () {
-                return {
+                return Promise.resolve({
                     WARNING: {
                         low: {
                             cssClass: "is-limit--lwr is-limit--yellow",
@@ -118,7 +118,7 @@ describe("the plugin", function () {
                             'some-key': 0.9
                         }
                     }
-                };
+                });
             }
         });
         telemetrylimitProvider.getLimitEvaluator.and.returnValue({

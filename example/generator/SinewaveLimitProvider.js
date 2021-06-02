@@ -94,9 +94,10 @@ define([
     };
 
     SinewaveLimitProvider.prototype.getLimits = function (domainObject) {
+
         return {
             limits: function () {
-                return {
+                return Promise.resolve({
                     WARNING: {
                         low: {
                             cssClass: "is-limit--lwr is-limit--yellow",
@@ -119,7 +120,7 @@ define([
                             ...RED
                         }
                     }
-                };
+                });
             }
         };
     };
