@@ -19,6 +19,10 @@
             margin: 0 $interiorMargin $interiorMargin 0;
         }
     }
+
+    body.mobile & {
+        flex: 1 0 auto;
+    }
 }
 
 /******************************* GRID ITEMS */
