@@ -308,6 +308,7 @@ export default {
                     || !checkItem.navigationPath.includes(path);
             });
             this.openTreeItems.splice(pathIndex, 1);
+            this.removeCompositionListenerFor(path);
         },
         closeTreeItem(item) {
             this.closeTreeItemByPath(item.navigationPath);
@@ -393,12 +394,18 @@ export default {
             }
 
             const indexOfScroll = this.treeItems.findIndex(item => item.navigationPath === navigationPath);
-            const scrollTopAmount = indexOfScroll * this.itemHeight;
 
-            this.$refs.scrollable.scrollTo({
-                top: scrollTopAmount,
-                behavior: 'smooth'
-            });
+            if (indexOfScroll !== -1) {
+                const scrollTopAmount = indexOfScroll * this.itemHeight;
+
+                this.$refs.scrollable.scrollTo({
+                    top: scrollTopAmount,
+                    behavior: 'smooth'
+                });
+            } else if (this.scrollToPath) {
+                this.scrollToPath = undefined;
+                delete this.scrollToPath;
+            }
         },
         scrollEndEvent() {
             this.$nextTick(() => {
