@@ -308,6 +308,7 @@ export default {
                     || !checkItem.navigationPath.includes(path);
             });
             this.openTreeItems.splice(pathIndex, 1);
+            this.removeCompositionListenerFor(path);
         },
         closeTreeItem(item) {
             this.closeTreeItemByPath(item.navigationPath);
