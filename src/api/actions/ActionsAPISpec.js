@@ -99,7 +99,7 @@ describe('The Actions API', () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("register method", () => {
