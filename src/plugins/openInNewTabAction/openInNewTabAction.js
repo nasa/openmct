@@ -32,7 +32,7 @@ export default class OpenInNewTab {
         this._openmct = openmct;
     }
     invoke(objectPath) {
-        let domainObject = objectPath[0];
+        let url;
         let urlParams = this._openmct.router.getParams();
         // Needs to include start/end bounds timeSystem and mode in new URL
         // to keep time consistent
@@ -44,20 +44,15 @@ export default class OpenInNewTab {
             }
         }
 
-        this._openmct.objects.getOriginalPath(domainObject.identifier)
-            .then((originalPath) => {
-                let url = '#/browse/' + originalPath
-                    .map(function (o) {
-                        return o && this._openmct.objects.makeKeyString(o.identifier);
-                    }.bind(this))
-                    .reverse()
-                    .slice(1)
-                    .join('/');
-                if (newTabParams.length) {
-                    url += '?' + newTabParams.join('&');
-                }
+        url = '#/browse/' + objectPath.map(function (o) {
+            return o && this._openmct.objects.makeKeyString(o.identifier);
+        }.bind(this))
+            .reverse()
+            .join('/');
+        if (newTabParams.length) {
+            url += '?' + newTabParams.join('&');
+        }
 
-                window.open(url);
-            });
+        window.open(url);
     }
 }
