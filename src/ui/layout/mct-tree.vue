@@ -402,6 +402,9 @@ export default {
                     top: scrollTopAmount,
                     behavior: 'smooth'
                 });
+            } else if (this.scrollToPath) {
+                this.scrollToPath = undefined;
+                delete this.scrollToPath;
             }
         },
         scrollEndEvent() {
