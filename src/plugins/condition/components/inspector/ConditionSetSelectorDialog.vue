@@ -62,6 +62,7 @@
                 :node="treeItem"
                 :selected-item="selectedItem"
                 :handle-item-selected="handleItemSelection"
+                :navigateToParent="navigateToParent"
             />
         </ul>
         <!-- end main tree -->
@@ -116,6 +117,13 @@ export default {
             default() {
                 return false;
             }
+        },
+        parent: {
+            type: Object,
+            required: false,
+            default() {
+                return undefined;
+            }
         }
     },
     data() {
@@ -125,7 +133,8 @@ export default {
             allTreeItems: [],
             filteredTreeItems: [],
             isLoading: false,
-            selectedItem: undefined
+            selectedItem: undefined,
+            navigateToParent: undefined
         };
     },
     computed: {
@@ -142,10 +151,24 @@ export default {
         this.getDebouncedFilteredChildren = debounce(this.getFilteredChildren, 400);
     },
     mounted() {
-        this.getAllChildren();
+
+        if (this.parent) {
+            (async () => {
+                const objectPath = await this.openmct.objects.getOriginalPath(this.parent.identifier);
+                this.navigateToParent = '/browse/'
+                        + objectPath
+                            .map(parent => this.openmct.objects.makeKeyString(parent.identifier))
+                            .reverse()
+                            .join('/');
+
+                this.getAllChildren(this.navigateToParent);
+            })();
+        } else {
+            this.getAllChildren();
+        }
     },
     methods: {
-        getAllChildren() {
+        getAllChildren(navigateToParent) {
             this.isLoading = true;
             this.openmct.objects.get('ROOT')
                 .then(root => {
@@ -158,7 +181,7 @@ export default {
                             id: this.openmct.objects.makeKeyString(c.identifier),
                             object: c,
                             objectPath: [c],
-                            navigateToParent: '/browse'
+                            navigateToParent: navigateToParent || '/browse'
                         };
                     });
                 });

@@ -3,6 +3,7 @@
         :hideTitle="true"
         :ignoreTypeCheck="true"
         :cssClass="`form-locator`"
+        :parent="model.parent"
         @conditionSetSelected="handleItemSelection"
     />
 </template>
@@ -32,8 +33,6 @@ export default {
 
     },
     mounted() {
-        console.warn('[TODO]: open tree and navigate to currently selected object', this.model.parent);
-
         // remove following after css fix
         setTimeout(() => {
             document.querySelector('.c-overlay__contents-main').style.height = '200px';
