@@ -232,7 +232,7 @@ export class TelemetryCollection extends EventEmitter {
 
         } else {
             // user bounds change, reset
-            this._reset();
+            this._clear();
         }
 
     }
@@ -253,27 +253,20 @@ export class TelemetryCollection extends EventEmitter {
             return valueFormatter.parse(datum);
         };
 
-        this._reset();
+        this._clear();
     }
 
     /**
      * Reset the telemetry data of the collection, and re-request
      * historical telemetry
      *
-     * @param  {boolean} skipRequest - skip requesting history, default false
-     *
      * @todo handle subscriptions more granually
      */
-    _reset(skipRequest = false) {
+    _clear() {
         this.boundedTelemetry = [];
         this.futureBuffer = [];
 
-        if (skipRequest) {
-            return;
-        }
-
         this._requestHistoricalTelemetry();
-        // possible unsubscribe/resubscribe...
     }
 
     /**
