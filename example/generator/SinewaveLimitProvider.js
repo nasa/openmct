@@ -119,6 +119,28 @@ define([
                             cssClass: "is-limit--upr is-limit--red",
                             ...RED
                         }
+                    },
+                    CRITICAL: {
+                        low: {
+                            cssClass: "is-limit--lwr is-limit--red",
+                            sin: -RED.sin,
+                            cos: -RED.cos
+                        },
+                        high: {
+                            cssClass: "is-limit--upr is-limit--red",
+                            ...RED
+                        }
+                    },
+                    SEVERE: {
+                        low: {
+                            cssClass: "is-limit--lwr is-limit--red",
+                            sin: -RED.sin,
+                            cos: -RED.cos
+                        },
+                        high: {
+                            cssClass: "is-limit--upr is-limit--red",
+                            ...RED
+                        }
                     }
                 });
             }
