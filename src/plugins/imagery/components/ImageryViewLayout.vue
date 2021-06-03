@@ -127,7 +127,7 @@
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused },
-            { 'is-autoscroll-off': !autoScroll && !isPaused }
+            { 'is-autoscroll-off': !resizing && !autoScroll && !isPaused }
         ]"
     >
         <div
@@ -154,7 +154,6 @@
         </div>
 
         <button
-            v-if="!resizing"
             class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
             title="Resume automatic scrolling of image thumbnails"
             @click="scrollToRight('reset')"
@@ -195,6 +194,7 @@ export default {
 
         return {
             autoScroll: true,
+            autoScrolling: false,
             durationFormatter: undefined,
             filters: {
                 brightness: 100,
@@ -397,13 +397,11 @@ export default {
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
         this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
 
-        _.debounce(this.resizeThumbWrapper, 700);
-        // this.thumbWrapperResizeObserver = new ResizeObserver(this.resizeThumbWrapper);
-        this.thumbWrapperResizeObserver = new ResizeObserver(this.resizeWindow);
+        this.handleScroll = _.debounce(this.handleScroll, 250);
+        this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, 250);
+        // this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeEnded);
+        this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
         this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
-    },
-    updated() {
-        this.scrollToRight();
     },
     beforeDestroy() {
         if (this.unsubscribe) {
@@ -585,13 +583,15 @@ export default {
             return this.timeFormatter.parse(datum);
         },
         handleScroll() {
+            console.log('handle scroll');
             const thumbsWrapper = this.$refs.thumbsWrapper;
-            if (!thumbsWrapper) {
+            if (!thumbsWrapper || this.resizing) {
                 return;
             }
 
             const { scrollLeft, scrollWidth, clientWidth } = thumbsWrapper;
             const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
+            console.log('autoscroll', !disableScroll);
             this.autoScroll = !disableScroll;
         },
         paused(state, type) {
@@ -624,11 +624,7 @@ export default {
             }
         },
         scrollToRight(type) {
-            console.log('srcoll right');
             // If type is 'reset' ignore the checks on paused and autoscroll
-            this.$nextTick(() => {
-                this.resizing = false;
-            });
             if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
@@ -637,10 +633,12 @@ export default {
             if (!scrollWidth) {
                 return;
             }
-
-            setTimeout(() => {
+            console.log('scroll right');
+            this.autoScrolling = true;
+            this.$nextTick(() => {
                 this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
-            }, 0);
+                this.autoScrolling = false;
+            });
 
         },
         setFocusedImage(index, thumbnailClick = false) {
@@ -712,6 +710,7 @@ export default {
 
             if (setFocused) {
                 this.setFocusedImage(this.imageHistory.length - 1);
+                this.scrollToRight();
             }
         },
         getFormatter(key) {
@@ -847,17 +846,24 @@ export default {
                 this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
             }
         },
-        resizeWindow() {
-            // console.log('dummy', this.$refs.thumbsWrapper.clientWidth);
+        handleThumbWindowResizeStart() {
+            if (!this.autoScroll) {
+                return;
+            }
+            console.log('resize START');
             this.resizing = true; // to hide button
-            this.resizeThumbWrapper();
+            this.handleThumbWindowResizeEnded();
         },
-        resizeThumbWrapper() {
-            console.log('resize', this.autoScroll);
+        handleThumbWindowResizeEnded() {
+            console.log('resize END');
             // this.thumbWrapperWidth = this.$refs.thumbsWrapper.clientWidth;
             if (!this.isPaused) {
                 this.scrollToRight('reset');
             }
+
+            this.$nextTick(() => {
+                this.resizing = false;
+            });
 
             // this.resizing = false;
         },
