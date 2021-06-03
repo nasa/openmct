@@ -1,9 +1,6 @@
 <template>
 <div
-    :style="{
-        'top': virtualScroll ? itemTop : 'auto',
-        'position': virtualScroll ? 'absolute' : 'relative'
-    }"
+    :style="treeItemStyles"
     class="c-tree__item-h"
 >
     <div
@@ -17,28 +14,23 @@
         @contextmenu.capture="handleContextMenu"
     >
         <view-control
-            ref="navUp"
-            v-model="expanded"
+            ref="navigate"
             class="c-tree__item__view-control"
-            :control-class="'icon-arrow-nav-to-parent'"
-            :enabled="showUp"
-            @input="resetTreeHere"
+            :value="isOpen || isLoading"
+            :enabled="!activeSearch && hasComposition"
+            @input="navigationClick()"
         />
         <object-label
             ref="objectLabel"
             :domain-object="node.object"
             :object-path="node.objectPath"
             :navigate-to-path="navigationPath"
-            :style="{ paddingLeft: leftOffset }"
             @context-click-active="setContextClickActive"
         />
-        <view-control
-            ref="navDown"
-            v-model="expanded"
-            class="c-tree__item__view-control"
-            :control-class="'c-nav__down'"
-            :enabled="hasComposition && showDown"
-        />
+        <span
+            v-if="isLoading"
+            class="loading"
+        ></span>
     </div>
 </div>
 </template>
@@ -59,17 +51,13 @@ export default {
             type: Object,
             required: true
         },
-        leftOffset: {
-            type: String,
-            default: '0px'
-        },
-        showUp: {
+        activeSearch: {
             type: Boolean,
             default: false
         },
-        showDown: {
-            type: Boolean,
-            default: true
+        leftOffset: {
+            type: String,
+            default: '0px'
         },
         itemIndex: {
             type: Number,
@@ -86,9 +74,13 @@ export default {
             required: false,
             default: 0
         },
-        virtualScroll: {
-            type: Boolean,
-            default: false
+        openItems: {
+            type: Array,
+            required: true
+        },
+        loadingItems: {
+            type: Object,
+            required: true
         }
     },
     data() {
@@ -97,7 +89,6 @@ export default {
         return {
             hasComposition: false,
             navigated: this.isNavigated(),
-            expanded: false,
             contextClickActive: false
         };
     },
@@ -113,37 +104,44 @@ export default {
 
             return parentKeyString !== this.node.object.location;
         },
-        itemTop() {
-            return (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
-        }
-    },
-    watch: {
-        expanded() {
-            this.$emit('expanded', this.domainObject);
+        isLoading() {
+            return Boolean(this.loadingItems[this.navigationPath]);
+        },
+        isOpen() {
+            return this.openItems.includes(this.navigationPath);
+        },
+        treeItemStyles() {
+            let itemTop = (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
+
+            return {
+                'top': itemTop,
+                'position': 'absolute',
+                'padding-left': this.leftOffset
+            };
         }
     },
     mounted() {
-        let objectComposition = this.openmct.composition.get(this.node.object);
-
         this.domainObject = this.node.object;
-        let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
-            this.domainObject = newObject;
-        });
 
-        this.$once('hook:destroyed', removeListener);
-        if (objectComposition) {
+        if (this.openmct.composition.get(this.domainObject)) {
             this.hasComposition = true;
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
+
+        this.$emit('tree-item-mounted', this.navigationPath);
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
+        this.$emit('tree-item-destoyed', this.navigationPath);
     },
     methods: {
+        navigationClick() {
+            this.$emit('navigation-click', this.isOpen || this.isLoading ? 'close' : 'open');
+        },
         handleClick(event) {
             // skip for navigation, let viewControl handle click
-            if ([this.$refs.navUp.$el, this.$refs.navDown.$el].includes(event.target)) {
+            if (this.$refs.navigate.$el === event.target) {
                 return;
             }
 
@@ -159,9 +157,6 @@ export default {
         },
         highlightIfNavigated() {
             this.navigated = this.isNavigated();
-        },
-        resetTreeHere() {
-            this.$emit('resetTree', this.node);
         },
         setContextClickActive(active) {
             this.contextClickActive = active;

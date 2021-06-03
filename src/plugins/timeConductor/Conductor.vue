@@ -83,9 +83,9 @@
                     @update="timePopUpdate"
                 />
                 <button
-                    @click="showTimePopupStart"
-                    class="c-button c-conductor__delta-button"
                     ref="startOffset"
+                    class="c-button c-conductor__delta-button"
+                    @click="showTimePopupStart"
                 >
                     {{ offsets.start }}
                 </button>
@@ -135,7 +135,7 @@
                     class="c-button c-conductor__delta-button"
                     @click="showTimePopupEnd"
                 >
-                    {{offsets.end}}
+                    {{ offsets.end }}
                 </button>
             </div>
 

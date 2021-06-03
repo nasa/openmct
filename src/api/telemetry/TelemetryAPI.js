@@ -505,6 +505,26 @@ define([
     };
 
     /**
+     * Get a limits for this domain object.
+     * Limits help you display limits and alarms of
+     * telemetry for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to get limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limits
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.limitDefinition = function (domainObject) {
+        return this.getLimits(domainObject);
+    };
+
+    /**
      * Get a limit evaluator for this domain object.
      * Limit Evaluators help you evaluate limit and alarm status of individual
      * telemetry datums for display purposes without having to interact directly
@@ -529,6 +549,43 @@ define([
         }
 
         return provider.getLimitEvaluator(domainObject);
+    };
+
+    /**
+     * Get a limit definitions for this domain object.
+     * Limit Definitions help you indicate limits and alarms of
+     * telemetry for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to display limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limits returns a limits object of
+     * type {
+     *          level1: {
+     *              low: { key1: value1, key2: value2 },
+     *              high: { key1: value1, key2: value2 }
+     *          },
+     *          level2: {
+     *              low: { key1: value1, key2: value2 },
+     *              high: { key1: value1, key2: value2 }
+     *          }
+     *       }
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.getLimits = function (domainObject) {
+        const provider = this.findLimitEvaluator(domainObject);
+        if (!provider) {
+            return {
+                limits: function () {}
+            };
+        }
+
+        return provider.getLimits(domainObject);
     };
 
     return TelemetryAPI;
