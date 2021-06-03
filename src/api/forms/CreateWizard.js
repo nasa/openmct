@@ -57,7 +57,7 @@ export default class CreateWizard {
             cssClass: 'l-input-lg',
             key: 'name',
             name: 'Title',
-            pattern: '\S+',
+            pattern: `\\S+`,
             required: true,
             value: this.domainObject.name
         };

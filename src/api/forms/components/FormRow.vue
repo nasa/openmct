@@ -126,9 +126,22 @@ export default {
         onChange(data, visited = true) {
             this.visited = visited;
 
+            const valid = this.validateRow(data);
+            this.valid = valid;
+            data.invalid = !valid;
+            
+            this.$emit('onChange', data);
+        },
+        validateRow(data) {
             let valid = true;
             if (this.row.required) {
                 valid = data.value !== undefined && data.value !== null && data.value !== '';
+            }
+
+            const pattern = data.model.pattern;
+            if (valid && pattern) {
+                const regex = new RegExp(pattern);
+                valid = regex.test(data.value);
             }
 
             const validate = data.model.validate;
@@ -136,9 +149,7 @@ export default {
                 valid = validate(this.domainObject, data);
             }
 
-            this.valid = valid;
-            data.invalid = !valid;
-            this.$emit('onChange', data);
+            return valid;
         }
     }
 };
