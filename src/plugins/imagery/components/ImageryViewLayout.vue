@@ -131,9 +131,9 @@
         ]"
     >
         <div
-                ref="thumbsWrapper"
-                class="c-imagery__thumbs-scroll-area"
-                @scroll="handleScroll"
+            ref="thumbsWrapper"
+            class="c-imagery__thumbs-scroll-area"
+            @scroll="handleScroll"
         >
             <div v-for="(image, index) in imageHistory"
                  :key="image.url + image.time"
@@ -154,9 +154,10 @@
         </div>
 
         <button
-                class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
-                title="Resume automatic scrolling of image thumbnails"
-                @click="scrollToRight('reset')"
+            v-if="!resizing"
+            class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
+            title="Resume automatic scrolling of image thumbnails"
+            @click="scrollToRight('reset')"
         ></button>
     </div>
 </div>
@@ -218,7 +219,8 @@ export default {
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
             lockCompass: true,
-            thumbWrapperWidth: undefined
+            thumbWrapperWidth: undefined,
+            resizing: false
         };
     },
     computed: {
@@ -395,7 +397,9 @@ export default {
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
         this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
 
-        this.thumbWrapperResizeObserver = new ResizeObserver(this.resizeThumbWrapper);
+        _.debounce(this.resizeThumbWrapper, 700);
+        // this.thumbWrapperResizeObserver = new ResizeObserver(this.resizeThumbWrapper);
+        this.thumbWrapperResizeObserver = new ResizeObserver(this.resizeWindow);
         this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
     },
     updated() {
@@ -410,9 +414,11 @@ export default {
         if (this.imageContainerResizeObserver) {
             this.imageContainerResizeObserver.disconnect();
         }
+
         if (this.thumbWrapperResizeObserver) {
             this.thumbWrapperResizeObserver.disconnect();
         }
+
         if (this.relatedTelemetry.hasRelatedTelemetry) {
             this.relatedTelemetry.destroy();
         }
@@ -583,10 +589,10 @@ export default {
             if (!thumbsWrapper) {
                 return;
             }
-            
-            const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
+
+            const { scrollLeft, scrollWidth, clientWidth } = thumbsWrapper;
             const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
-            this.autoScroll = !disableScroll;  
+            this.autoScroll = !disableScroll;
         },
         paused(state, type) {
             this.isPaused = state;
@@ -618,16 +624,23 @@ export default {
             }
         },
         scrollToRight(type) {
+            console.log('srcoll right');
             // If type is 'reset' ignore the checks on paused and autoscroll
+            this.$nextTick(() => {
+                this.resizing = false;
+            });
             if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
+
             const scrollWidth = this.$refs.thumbsWrapper.scrollWidth || 0;
             if (!scrollWidth) {
                 return;
             }
-            // console.log('scroll right');
-            setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
+
+            setTimeout(() => {
+                this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
+            }, 0);
 
         },
         setFocusedImage(index, thumbnailClick = false) {
@@ -834,13 +847,19 @@ export default {
                 this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
             }
         },
+        resizeWindow() {
+            // console.log('dummy', this.$refs.thumbsWrapper.clientWidth);
+            this.resizing = true; // to hide button
+            this.resizeThumbWrapper();
+        },
         resizeThumbWrapper() {
-            if (this.$refs.thumbsWrapper.clientWidth !== this.thumbWrapperWidth) {
-                this.thumbWrapperWidth = this.$refs.thumbsWrapper.clientWidth;
-                if (!this.isPaused) {
-                 this.scrollToRight('reset');
-                }
+            console.log('resize', this.autoScroll);
+            // this.thumbWrapperWidth = this.$refs.thumbsWrapper.clientWidth;
+            if (!this.isPaused) {
+                this.scrollToRight('reset');
             }
+
+            // this.resizing = false;
         },
         toggleLockCompass() {
             this.lockCompass = !this.lockCompass;
