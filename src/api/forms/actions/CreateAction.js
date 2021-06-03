@@ -42,8 +42,10 @@ export default class CreateAction extends PropertiesAction {
         Object.entries(changes).forEach(([key, value]) => {
             const properties = key.split('.');
             let object = this.domainObject;
-            properties.forEach(property => {
-                if (typeof object[property] === 'object' && object[property] !== null) {
+            const propertiesLength = properties.length;
+            properties.forEach((property, index) => {
+                const isComplexProperty = propertiesLength > 1 && index != propertiesLength - 1;
+                if (isComplexProperty && object[property] !== null) {
                     object = object[property];
                 } else {
                     object[property] = value;
