@@ -63,7 +63,7 @@ export default function ImageryViewProvider(openmct) {
                     component.$destroy();
                     component = undefined;
                 },
-                _getInstance: function() {
+                _getInstance: function () {
                     return component;
                 }
             };
