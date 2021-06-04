@@ -579,9 +579,11 @@ define([
      */
     TelemetryAPI.prototype.getLimits = function (domainObject) {
         const provider = this.findLimitEvaluator(domainObject);
-        if (!provider || !provider.getLimits) {
+        if (!provider) {
             return {
-                limits: function () {}
+                limits: function () {
+                    return Promise.resolve(undefined);
+                }
             };
         }
 
