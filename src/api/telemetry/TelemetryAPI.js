@@ -581,7 +581,9 @@ define([
         const provider = this.findLimitEvaluator(domainObject);
         if (!provider) {
             return {
-                limits: function () {}
+                limits: function () {
+                    return Promise.resolve(undefined);
+                }
             };
         }
 

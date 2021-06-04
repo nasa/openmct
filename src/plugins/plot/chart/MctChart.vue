@@ -502,7 +502,7 @@ export default {
             const component = new LimitLineClass({
                 propsData: {
                     point,
-                    cssClass: limit.cssClass
+                    limit
                 }
             });
             component.$mount();

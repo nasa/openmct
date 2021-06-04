@@ -1,7 +1,7 @@
 <template>
 <div class="plot-series-limit-label c-plot-limit-label"
      :style="styleObj"
-     :class="limit.cssClass"
+     :class="limitClass"
 >
     <div class="c-plot-limit-label__label"
     >
@@ -43,6 +43,20 @@ export default {
                 'left': left,
                 'color': '#fff'
             };
+        },
+        limitClass() {
+            let cssClass = '';
+            if (this.limit.color) {
+                cssClass = `${cssClass} c-plot-limit--${this.limit.color}`;
+            }
+
+            if (this.limit.isUpper) {
+                cssClass = `${cssClass} c-plot-limit--upper`;
+            } else {
+                cssClass = `${cssClass} c-plot-limit--lower`;
+            }
+
+            return cssClass;
         }
     }
 };
