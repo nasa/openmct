@@ -1,7 +1,6 @@
 // Constants TODO: move into _constants, or theme constant files
-$plotLimitDashSize: 2px;
 $plotLimitDashWidthOffset: 10px;
-
+$lineBlocker: rgba($colorPlotBg, 0.3);
 $plotLimitDashWidthSeverity: 50px;
 $plotLimitDashWidthCritical: $plotLimitDashWidthSeverity - $plotLimitDashWidthOffset;
 $plotLimitDashWidthDistress: $plotLimitDashWidthCritical - $plotLimitDashWidthOffset;
@@ -9,66 +8,88 @@ $plotLimitDashWidthWarning: $plotLimitDashWidthDistress - $plotLimitDashWidthOff
 $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset;
 
 @mixin plotLimitLine($c, $breakPerc) {
-    background: linear-gradient(
-                90deg,
-                $c $breakPerc,
-                transparent $breakPerc,
-                transparent 100%
-    ) repeat-x;
+    background: $lineBlocker
+                linear-gradient(
+                    90deg,
+                    $c $breakPerc,
+                    transparent $breakPerc,
+                    transparent 100%
+                ) repeat-x;
 }
 
 @mixin plotLimitDirectionGradient($deg, $c) {
-    &:before {
-        background: linear-gradient(
-                        $deg,
-                        $c,
-                        transparent
-        )
-    }
+    background: linear-gradient(
+                    $deg,
+                    $c,
+                    transparent
+    )
 }
 
 @mixin plotLimitUpper($c) {
     $breakPerc: 80%;
     @include plotLimitLine($c: $c, $breakPerc: $breakPerc);
-    background-position: 0 bottom;
-    @include plotLimitDirectionGradient($deg: 0deg, $c: $c);
 }
 
 @mixin plotLimitLower($c) {
     $breakPerc: 30%;
     @include plotLimitLine($c: $c, $breakPerc: $breakPerc);
-    background-position: 0 top;
-    @include plotLimitDirectionGradient($deg: 180deg, $c: $c);
 }
 
 // Markup like this: <div class="c-plot-limit c-plot-limit--color c-plot-limit--upper c-plot-limit--severe">
 
-.c-plot-limit {
-    height: 20px; // Todo: move to _constants
-    opacity: 0.7; // Todo: move to theme _constant?
-    &:before {
-        content: "";
-        display: block; // Change this to none, and add hover
-        height: 100%;
-        opacity: 0.5;
-    }
+.c-plot-limit-line {
+    box-shadow: $lineBlocker 0 0 0 2px;
+    height: 1px; // Todo: move to _constants
+    z-index: 1;
 
     // Colors and directions
-    &--purple.c-plot-limit--upper { @include plotLimitUpper($colorLimitPurpleIc); }
-    &--purple.c-plot-limit--lower { @include plotLimitLower($colorLimitPurpleIc); }
-    &--red.c-plot-limit--upper { @include plotLimitUpper($colorLimitRedIc); }
-    &--red.c-plot-limit--lower { @include plotLimitLower($colorLimitRedIc); }
-    &--orange.c-plot-limit--upper { @include plotLimitUpper($colorLimitOrangeIc); }
-    &--orange.c-plot-limit--lower { @include plotLimitLower($colorLimitOrangeIc); }
-    &--yellow.c-plot-limit--upper { @include plotLimitUpper($colorLimitYellowIc); }
-    &--yellow.c-plot-limit--lower { @include plotLimitLower($colorLimitYellowIc); }
-    &--cyan.c-plot-limit--upper { @include plotLimitUpper($colorLimitCyanIc); }
-    &--cyan.c-plot-limit--lower { @include plotLimitLower($colorLimitCyanIc); }
+    &--purple.c-plot-limit-line--upper { @include plotLimitUpper($colorLimitPurpleIc); }
+    &--purple.c-plot-limit-line--lower { @include plotLimitLower($colorLimitPurpleIc); }
+    &--red.c-plot-limit-line--upper { @include plotLimitUpper($colorLimitRedIc); }
+    &--red.c-plot-limit-line--lower { @include plotLimitLower($colorLimitRedIc); }
+    &--orange.c-plot-limit-line--upper { @include plotLimitUpper($colorLimitOrangeIc); }
+    &--orange.c-plot-limit-line--lower { @include plotLimitLower($colorLimitOrangeIc); }
+    &--yellow.c-plot-limit-line--upper { @include plotLimitUpper($colorLimitYellowIc); }
+    &--yellow.c-plot-limit-line--lower { @include plotLimitLower($colorLimitYellowIc); }
+    &--cyan.c-plot-limit-line--upper { @include plotLimitUpper($colorLimitCyanIc); }
+    &--cyan.c-plot-limit-line--lower { @include plotLimitLower($colorLimitCyanIc); }
 
     // Severities
-    &--severe { background-size: $plotLimitDashWidthSeverity $plotLimitDashSize !important; }
-    &--critical { background-size: $plotLimitDashWidthCritical $plotLimitDashSize !important; }
-    &--distress { background-size: $plotLimitDashWidthDistress $plotLimitDashSize !important; }
-    &--warning { background-size: $plotLimitDashWidthWarning $plotLimitDashSize !important; }
-    &--watch { background-size: $plotLimitDashWidthWatch $plotLimitDashSize !important; }
+    &--severe { background-size: $plotLimitDashWidthSeverity 100% !important; }
+    &--critical { background-size: $plotLimitDashWidthCritical 100% !important; }
+    &--distress { background-size: $plotLimitDashWidthDistress 100% !important; }
+    &--warning { background-size: $plotLimitDashWidthWarning 100% !important; }
+    &--watch { background-size: $plotLimitDashWidthWatch 100% !important; }
+}
+
+.c-plot-limit-label {
+    // Holds both label and directional gradient
+    display: flex;
+    width: 100%;
+    z-index: 0;
+
+    // Todo:
+    &:before {
+        // Direction gradient
+        // TODO: change direction and transform for lower limit
+        @include plotLimitDirectionGradient($deg: 0deg, $c: deeppink);
+        content: "";
+        display: block;
+        position: absolute;
+        left: 0; right: 0;
+        height: 100%;
+        opacity: 0.4;
+        transform: translateY(-100%);
+    }
+
+    &__label {
+        background: deeppink;
+        border-top-right-radius: $controlCr;
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        padding: 2px 6px;
+        transform: translateY(-100%);
+        > * + * { margin-left: 5px; }
+    }
 }
