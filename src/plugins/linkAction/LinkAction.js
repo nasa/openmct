@@ -32,30 +32,22 @@ export default class LinkAction {
         this.openmct = openmct;
     }
 
-    async invoke(objectPath) {
-        let objectToLink = objectPath[0];
-        let dialogService = this.openmct.$injector.get('dialogService');
-        let dialogForm = this.getDialogForm(objectToLink);
-        let userInput = await dialogService.getUserInput(dialogForm, {});
-        let newParent = userInput.location;
+    invoke(objectPath) {
+        this.showForm(objectPath[0], objectPath[1]);
+    }
 
-        // legacy check
-        if (this.isLegacyDomainObject(newParent)) {
-            newParent = await this.convertFromLegacy(newParent);
+    inNavigationPath(object) {
+        return this.openmct.router.path
+            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+    }
+
+    onSave(object, changes, parent) {
+        let inNavigationPath = this.inNavigationPath(object);
+        if (inNavigationPath && this.openmct.editor.isEditing()) {
+            this.openmct.editor.save();
         }
 
-        this.linkInNewParent(objectToLink, newParent);
-    }
-
-    isLegacyDomainObject(domainObject) {
-        return domainObject.getCapability !== undefined;
-    }
-
-    async convertFromLegacy(legacyDomainObject) {
-        let objectContext = legacyDomainObject.getCapability('context');
-        let domainObject = await this.openmct.objects.get(objectContext.domainObject.id);
-
-        return domainObject;
+        this.linkInNewParent(object, parent);
     }
 
     linkInNewParent(child, newParent) {
@@ -64,47 +56,59 @@ export default class LinkAction {
         compositionCollection.add(child);
     }
 
-    getDialogForm(objectToLink) {
-        let validate = this.validate(objectToLink);
+    showForm(domainObject, parentDomainObject) {
 
-        return {
-            name: `Link "${objectToLink.name}" to a New Location`,
+        const formStructure = {
+            title: `Link "${domainObject.name}" to a New Location`,
             sections: [
                 {
                     rows: [
                         {
-                            name: "Link To",
+                            name: "location",
                             control: "locator",
-                            validate,
+                            required: true,
+                            validate: this.validate(parentDomainObject),
                             key: 'location'
                         }
                     ]
                 }
             ]
         };
+
+        this.openmct.forms.showForm(formStructure, {
+            domainObject,
+            parentDomainObject,
+            onSave: this.onSave.bind(this)
+        });
     }
 
-    validate(objectToLink) {
-        return (parentObject) => {
-            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentObject.getId());
-            let objectToLinkKeystring = this.openmct.objects.makeKeyString(objectToLink.identifier);
-            let sameObjectOrChildAlready = parentCandidateKeystring === objectToLinkKeystring
-                || parentObject.getModel().composition.includes(objectToLinkKeystring);
+    validate(currentParent) {
+        return (object, data) => {
+            const parentCandidate = data.value;
+            // console.log('move action : validateLocation', );
+            // TODO: remove getModel, checkPolicy and useCapability
+            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
+            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
+            let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
 
-            // the same object or a child already, not valid
-            if (sameObjectOrChildAlready) {
+            if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
             }
 
-            if (parentObject.getModel().locked) {
+            if (parentCandidateKeystring === currentParentKeystring) {
                 return false;
             }
 
-            // can contain
-            return this.openmct.composition.checkPolicy(
-                parentObject.useCapability('adapter'),
-                objectToLink
-            );
+            if (parentCandidateKeystring === objectKeystring) {
+                return false;
+            }
+
+            const parentCandidateComposition = parentCandidate.composition;
+            if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
+                return false;
+            }
+
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, object);
         };
     }
 
@@ -114,4 +118,91 @@ export default class LinkAction {
 
         return type && type.definition.creatable;
     }
+
+    // appliesTo(objectPath) {
+    //     let parent = objectPath[1];
+    //     let parentType = parent && this.openmct.types.get(parent.type);
+    //     let child = objectPath[0];
+    //     let childType = child && this.openmct.types.get(child.type);
+
+    //     if (child.locked || (parent && parent.locked)) {
+    //         return false;
+    //     }
+
+    //     return parentType
+    //         && parentType.definition.creatable
+    //         && childType
+    //         && childType.definition.creatable
+    //         && Array.isArray(parent.composition);
+    // }
+
+    // async invoke(objectPath) {
+    //     let objectToLink = objectPath[0];
+    //     let dialogService = this.openmct.$injector.get('dialogService');
+    //     let dialogForm = this.getDialogForm(objectToLink);
+    //     let userInput = await dialogService.getUserInput(dialogForm, {});
+    //     let newParent = userInput.location;
+
+    //     // legacy check
+    //     if (this.isLegacyDomainObject(newParent)) {
+    //         newParent = await this.convertFromLegacy(newParent);
+    //     }
+
+    //     this.linkInNewParent(objectToLink, newParent);
+    // }
+
+    // isLegacyDomainObject(domainObject) {
+    //     return domainObject.getCapability !== undefined;
+    // }
+
+    // async convertFromLegacy(legacyDomainObject) {
+    //     let objectContext = legacyDomainObject.getCapability('context');
+    //     let domainObject = await this.openmct.objects.get(objectContext.domainObject.id);
+
+    //     return domainObject;
+    // }
+
+    // getDialogForm(objectToLink) {
+    //     let validate = this.validate(objectToLink);
+
+    //     return {
+    //         name: `Link "${objectToLink.name}" to a New Location`,
+    //         sections: [
+    //             {
+    //                 rows: [
+    //                     {
+    //                         name: "Link To",
+    //                         control: "locator",
+    //                         validate,
+    //                         key: 'location'
+    //                     }
+    //                 ]
+    //             }
+    //         ]
+    //     };
+    // }
+
+    // validate(objectToLink) {
+    //     return (parentObject) => {
+    //         let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentObject.getId());
+    //         let objectToLinkKeystring = this.openmct.objects.makeKeyString(objectToLink.identifier);
+    //         let sameObjectOrChildAlready = parentCandidateKeystring === objectToLinkKeystring
+    //             || parentObject.getModel().composition.includes(objectToLinkKeystring);
+
+    //         // the same object or a child already, not valid
+    //         if (sameObjectOrChildAlready) {
+    //             return false;
+    //         }
+
+    //         if (parentObject.getModel().locked) {
+    //             return false;
+    //         }
+
+    //         // can contain
+    //         return this.openmct.composition.checkPolicy(
+    //             parentObject.useCapability('adapter'),
+    //             objectToLink
+    //         );
+    //     };
+    // }
 }
