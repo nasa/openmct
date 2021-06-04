@@ -211,7 +211,7 @@ describe("The Imagery View Layout", () => {
         parent.appendChild(child);
 
         // document.querySelector('body').append(parent);
-        
+
         spyOn(window, 'ResizeObserver').and.returnValue({
             observe() {},
             disconnect() {}
