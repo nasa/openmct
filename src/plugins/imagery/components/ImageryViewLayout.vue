@@ -127,7 +127,7 @@
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused },
-            { 'is-autoscroll-off': !resizing && !autoScroll && !isPaused }
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
         ]"
     >
         <div
@@ -184,6 +184,8 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
+const SCROLL_LATENCY = 250;
+
 export default {
     components: {
         Compass
@@ -220,7 +222,7 @@ export default {
             imageContainerHeight: undefined,
             lockCompass: true,
             thumbWrapperWidth: undefined,
-            resizing: false
+            resizingWindow: false
         };
     },
     computed: {
@@ -397,9 +399,10 @@ export default {
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
         this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
 
-        this.handleScroll = _.debounce(this.handleScroll, 250);
-        this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, 250);
-        // this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeEnded);
+        // For adjusting scroll bar size and position when resizing thumbs wrapper
+        this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
+        this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
+
         this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
         this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
     },
@@ -583,15 +586,13 @@ export default {
             return this.timeFormatter.parse(datum);
         },
         handleScroll() {
-            console.log('handle scroll');
             const thumbsWrapper = this.$refs.thumbsWrapper;
-            if (!thumbsWrapper || this.resizing) {
+            if (!thumbsWrapper || this.resizingWindow) {
                 return;
             }
 
             const { scrollLeft, scrollWidth, clientWidth } = thumbsWrapper;
             const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
-            console.log('autoscroll', !disableScroll);
             this.autoScroll = !disableScroll;
         },
         paused(state, type) {
@@ -607,6 +608,7 @@ export default {
             }
 
             this.autoScroll = true;
+            this.scrollToRight();
         },
         scrollToFocused() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
@@ -624,7 +626,6 @@ export default {
             }
         },
         scrollToRight(type) {
-            // If type is 'reset' ignore the checks on paused and autoscroll
             if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
@@ -633,13 +634,10 @@ export default {
             if (!scrollWidth) {
                 return;
             }
-            console.log('scroll right');
-            this.autoScrolling = true;
+
             this.$nextTick(() => {
                 this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
-                this.autoScrolling = false;
             });
-
         },
         setFocusedImage(index, thumbnailClick = false) {
             if (this.isPaused && !thumbnailClick) {
@@ -707,7 +705,6 @@ export default {
             image.imageDownloadName = this.getImageDownloadName(datum);
 
             this.imageHistory.push(image);
-
             if (setFocused) {
                 this.setFocusedImage(this.imageHistory.length - 1);
                 this.scrollToRight();
@@ -850,22 +847,19 @@ export default {
             if (!this.autoScroll) {
                 return;
             }
-            console.log('resize START');
-            this.resizing = true; // to hide button
+
+            // To hide resume button while scrolling
+            this.resizingWindow = true;
             this.handleThumbWindowResizeEnded();
         },
         handleThumbWindowResizeEnded() {
-            console.log('resize END');
-            // this.thumbWrapperWidth = this.$refs.thumbsWrapper.clientWidth;
             if (!this.isPaused) {
                 this.scrollToRight('reset');
             }
 
             this.$nextTick(() => {
-                this.resizing = false;
+                this.resizingWindow = false;
             });
-
-            // this.resizing = false;
         },
         toggleLockCompass() {
             this.lockCompass = !this.lockCompass;
