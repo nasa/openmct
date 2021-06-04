@@ -1,7 +1,7 @@
 <template>
-<hr :style="styleObj"
-    :class="cssWithoutUprLwr"
->
+<div :style="styleObj"
+    class="c-plot-limit c-plot-limit--purple c-plot-limit--upper c-plot-limit--severe"
+></div>
 </template>
 
 <script>
