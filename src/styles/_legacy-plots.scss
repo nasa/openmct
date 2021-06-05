@@ -538,12 +538,9 @@ mct-plot {
     }
 
     .plot-series-color-swatch {
-        border-radius: 30%; //$smallCr;
-        border: 1px solid $colorBodyBg;
+        @include colorSwatch();
         display: inline-block;
         flex: 0 0 auto;
-        height: $plotSwatchD;
-        width: $plotSwatchD;
     }
     .plot-series-name {
         display: inline;

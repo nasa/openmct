@@ -1,6 +1,6 @@
 <template>
 <div :style="styleObj"
-     class="c-plot-limit"
+     class="c-plot-limit-line"
      :class="limitClass"
 ></div>
 </template>
@@ -25,29 +25,25 @@ export default {
     computed: {
         styleObj() {
             const top = `${this.point.top}px`;
-            const left = `${this.point.left}px`;
 
             return {
-                'position': 'absolute',
-                'width': '100%',
-                'top': top,
-                'left': left
+                'top': top
             };
         },
         limitClass() {
             let cssClass = '';
             if (this.limit.color) {
-                cssClass = `${cssClass} c-plot-limit--${this.limit.color}`;
+                cssClass = `${cssClass} c-plot-limit-line--${this.limit.color}`;
             }
 
             if (this.limit.isUpper) {
-                cssClass = `${cssClass} c-plot-limit--upper`;
+                cssClass = `${cssClass} c-plot-limit-line--upper`;
             } else {
-                cssClass = `${cssClass} c-plot-limit--lower`;
+                cssClass = `${cssClass} c-plot-limit-line--lower`;
             }
 
             if (this.limit.level) {
-                cssClass = `${cssClass} c-plot-limit--${this.limit.level}`;
+                cssClass = `${cssClass} c-plot-limit-line--${this.limit.level}`;
             }
 
             return cssClass;

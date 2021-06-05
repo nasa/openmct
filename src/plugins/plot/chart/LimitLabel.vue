@@ -1,15 +1,16 @@
 <template>
-<div class="plot-series-limit-label c-plot-limit-label"
+<div class="c-plot-limit"
      :style="styleObj"
      :class="limitClass"
 >
-    <div class="c-plot-limit-label__label"
-    >
-        <span class="plot-series-limit-value">{{ limit.value }}</span>
-        <span class="plot-series-color-swatch"
+    <div class="c-plot-limit__label">
+        <span class="c-plot-limit__direction-icon"></span>
+        <span class="c-plot-limit__severity-icon"></span>
+        <span class="c-plot-limit__limit-value">{{ limit.value }}</span>
+        <span class="c-plot-limit__series-color-swatch"
               :style="{ 'background-color': limit.color }"
         ></span>
-        <span class="plot-series-name">{{ limit.name }}</span>
+        <span class="c-plot-limit__series-name">{{ limit.name }}</span>
     </div>
 </div>
 </template>
@@ -35,13 +36,9 @@ export default {
     computed: {
         styleObj() {
             const top = `${this.point.top}px`;
-            const left = `${this.point.left}px`;
 
             return {
-                'position': 'absolute',
                 'top': top,
-                'left': left,
-                'color': '#fff'
             };
         },
         limitClass() {
@@ -54,6 +51,10 @@ export default {
                 cssClass = `${cssClass} c-plot-limit--upper`;
             } else {
                 cssClass = `${cssClass} c-plot-limit--lower`;
+            }
+
+            if (this.limit.level) {
+                cssClass = `${cssClass} c-plot-limit--${this.limit.level}`;
             }
 
             return cssClass;

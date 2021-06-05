@@ -222,6 +222,13 @@
     background-size: $bgSize;
 }
 
+@mixin colorSwatch() {
+    border-radius: 30%;
+    border: 1px solid $colorBodyBg;
+    height: $plotSwatchD;
+    width: $plotSwatchD;
+}
+
 @mixin noColor() {
     // A "no fill/stroke" selection option. Used in palettes.
     $c: red;
