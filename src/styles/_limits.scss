@@ -1,6 +1,6 @@
 $plotLimitLineSize: 1px;
 $plotLimitDashWidthOffset: 10px;
-$lineBlocker: rgba($colorPlotBg, 0.3);
+$lineBlocker: rgba($colorPlotBg, 0.2);
 $plotLimitDashWidthSeverity: 50px;
 $plotLimitDashWidthCritical: $plotLimitDashWidthSeverity - $plotLimitDashWidthOffset;
 $plotLimitDashWidthDistress: $plotLimitDashWidthCritical - $plotLimitDashWidthOffset;

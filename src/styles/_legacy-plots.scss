@@ -549,6 +549,7 @@ mct-plot {
 
     .plot-series-value {
         @include ellipsize();
+        @include isLimit();
     }
 }
 

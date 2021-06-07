@@ -21,6 +21,10 @@
         margin-left: $interiorMargin;
     }
 
+    &__value {
+        @include isLimit();
+    }
+
     .c-frame & {
         @include abs();
         border: 1px solid transparent;
