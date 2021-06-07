@@ -328,7 +328,7 @@ $colorLimitPurpleFg: #EDBEFF;
 $colorLimitPurpleIc: #c327ff;
 $colorLimitCyanBg: #4BA6B3;
 $colorLimitCyanFg: #D3FAFF;
-$colorLimitCyanIc: #6BEDFF;
+$colorLimitCyanIc: #1795c0;
 
 // Bubble colors
 $colorInfoBubbleBg: $colorMenuBg;
@@ -368,6 +368,7 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 $legendTableHeadBg: rgba($colorBodyFg, 0.15);
+$colorPlotLimitLineBg: rgba($colorBodyBg, 0.4);
 
 // Tree
 $colorTreeBg: transparent;

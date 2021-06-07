@@ -136,6 +136,7 @@ mct-plot {
         left: nth($plotDisplayArea, 4);
 
         .gl-plot-display-area {
+            overflow: hidden;
             position: absolute;
             top: 0;
             right: 0;

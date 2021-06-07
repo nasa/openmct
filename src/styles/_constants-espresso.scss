@@ -368,6 +368,7 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 $legendTableHeadBg: $colorTabHeaderBg;
+$colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 
 // Tree
 $colorTreeBg: transparent;
