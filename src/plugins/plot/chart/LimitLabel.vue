@@ -8,7 +8,7 @@
         <span class="c-plot-limit__severity-icon"></span>
         <span class="c-plot-limit__limit-value">{{ limit.value }}</span>
         <span class="c-plot-limit__series-color-swatch"
-              :style="{ 'background-color': limit.color }"
+              :style="{ 'background-color': limit.seriesColor }"
         ></span>
         <span class="c-plot-limit__series-name">{{ limit.name }}</span>
     </div>
@@ -38,7 +38,7 @@ export default {
             const top = `${this.point.top}px`;
 
             return {
-                'top': top,
+                'top': top
             };
         },
         limitClass() {

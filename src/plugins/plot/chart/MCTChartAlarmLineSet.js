@@ -69,25 +69,30 @@ export default class MCTChartAlarmLineSet {
         let xKey = series.get('xKey');
         Object.keys(series.limits).forEach((key) => {
             const limitForLevel = series.limits[key];
-            let limit = {
-                seriesKey: series.keyString,
-                level: key.toLowerCase(),
-                name: this.name(),
-                isUpper: false
-            };
             if (limitForLevel.high) {
-                limit.point = this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.high), series);
-                limit.value = series.getYVal(limitForLevel.high);
-                limit.color = limitForLevel.high.color;
-                limit.isUpper = true;
-                this.limits.push(limit);
+                this.limits.push({
+                    seriesKey: series.keyString,
+                    level: key.toLowerCase(),
+                    name: this.name(),
+                    seriesColor: series.get('color').asHexString(),
+                    point: this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.high), series),
+                    value: series.getYVal(limitForLevel.high),
+                    color: limitForLevel.high.color,
+                    isUpper: true
+                });
             }
 
             if (limitForLevel.low) {
-                limit.point = this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.low), series);
-                limit.value = series.getYVal(limitForLevel.low);
-                limit.color = limitForLevel.high.color;
-                this.limits.push(limit);
+                this.limits.push({
+                    seriesKey: series.keyString,
+                    level: key.toLowerCase(),
+                    name: this.name(),
+                    seriesColor: series.get('color').asHexString(),
+                    point: this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.low), series),
+                    value: series.getYVal(limitForLevel.low),
+                    color: limitForLevel.low.color,
+                    isUpper: false
+                });
             }
         }, this);
     }
