@@ -25,7 +25,7 @@ import TabsLayout from './plugin';
 import Vue from "vue";
 import EventEmitter from "EventEmitter";
 
-describe('the plugin', function () {
+fdescribe('the plugin', function () {
     let element;
     let child;
     let openmct;
@@ -174,6 +174,10 @@ describe('the plugin', function () {
         it ('renders a tab for each item', () => {
             let tabEls = element.querySelectorAll('.js-tab');
             expect(tabEls.length).toEqual(2);
+        });
+
+        it ('closes tabs', () => {
+            // click on close button and verify tabEls length
         });
     });
 });
