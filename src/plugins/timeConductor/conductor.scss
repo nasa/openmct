@@ -237,7 +237,6 @@
     }
 }
 
-// Prototype
 [class^='pr-tc-input-menu'] {
     // Uses ^= here to target both start and end menus
     background: $colorBodyBg;
@@ -247,8 +246,7 @@
     grid-column-gap: 3px;
     grid-row-gap: 4px;
     align-items: start;
-
-    filter: brightness(1.4);
+    filter: $filterMenu;
     box-shadow: $shdwMenu;
     padding: $interiorMargin;
     position: absolute;
