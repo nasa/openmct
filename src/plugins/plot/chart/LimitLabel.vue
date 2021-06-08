@@ -48,9 +48,9 @@ export default {
             }
 
             if (this.limit.isUpper) {
-                cssClass = `${cssClass} c-plot-limit--upper`;
+                cssClass = `${cssClass} c-plot-limit--upr`;
             } else {
-                cssClass = `${cssClass} c-plot-limit--lower`;
+                cssClass = `${cssClass} c-plot-limit--lwr`;
             }
 
             if (this.limit.level) {

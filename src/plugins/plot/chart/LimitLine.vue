@@ -37,9 +37,9 @@ export default {
             }
 
             if (this.limit.isUpper) {
-                cssClass = `${cssClass} c-plot-limit-line--upper`;
+                cssClass = `${cssClass} c-plot-limit-line--upr`;
             } else {
-                cssClass = `${cssClass} c-plot-limit-line--lower`;
+                cssClass = `${cssClass} c-plot-limit-line--lwr`;
             }
 
             if (this.limit.level) {

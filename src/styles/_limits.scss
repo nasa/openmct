@@ -42,43 +42,43 @@ $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset
     z-index: 1;
 
     // Colors and directions
-    &--purple.c-plot-limit-line--upper {
+    &--purple.c-plot-limit-line--upr {
         @include plotLimitLineUpper($colorLimitPurpleIc);
     }
 
-    &--purple.c-plot-limit-line--lower {
+    &--purple.c-plot-limit-line--lwr {
         @include plotLimitLineLower($colorLimitPurpleIc);
     }
 
-    &--red.c-plot-limit-line--upper {
+    &--red.c-plot-limit-line--upr {
         @include plotLimitLineUpper($colorLimitRedIc);
     }
 
-    &--red.c-plot-limit-line--lower {
+    &--red.c-plot-limit-line--lwr {
         @include plotLimitLineLower($colorLimitRedIc);
     }
 
-    &--orange.c-plot-limit-line--upper {
+    &--orange.c-plot-limit-line--upr {
         @include plotLimitLineUpper($colorLimitOrangeIc);
     }
 
-    &--orange.c-plot-limit-line--lower {
+    &--orange.c-plot-limit-line--lwr {
         @include plotLimitLineLower($colorLimitOrangeIc);
     }
 
-    &--yellow.c-plot-limit-line--upper {
+    &--yellow.c-plot-limit-line--upr {
         @include plotLimitLineUpper($colorLimitYellowIc);
     }
 
-    &--yellow.c-plot-limit-line--lower {
+    &--yellow.c-plot-limit-line--lwr {
         @include plotLimitLineLower($colorLimitYellowIc);
     }
 
-    &--cyan.c-plot-limit-line--upper {
+    &--cyan.c-plot-limit-line--upr {
         @include plotLimitLineUpper($colorLimitCyanIc);
     }
 
-    &--cyan.c-plot-limit-line--lower {
+    &--cyan.c-plot-limit-line--lwr {
         @include plotLimitLineLower($colorLimitCyanIc);
     }
 
@@ -150,11 +150,11 @@ $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset
         opacity: 0.2;
     }
 
-    &--upper:before {
+    &--upr:before {
         transform: translateY(-100%);
     }
 
-    &--lower:before {
+    &--lwr:before {
         transform: scaleY(-1); // This inverts the gradient direction
     }
 
@@ -231,11 +231,11 @@ $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset
 
 // Direction icons
 .c-plot-limit__label .c-plot-limit__direction-icon:before {
-    .c-plot-limit--upper & {
+    .c-plot-limit--upr & {
         content: $glyph-icon-arrow-up;
     }
 
-    .c-plot-limit--lower & {
+    .c-plot-limit--lwr & {
         content: $glyph-icon-arrow-down;
     }
 }
