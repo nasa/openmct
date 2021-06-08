@@ -36,7 +36,6 @@ export default class CouchObjectProvider {
         this.url = options.url;
         this.namespace = namespace;
         this.objectQueue = {};
-        this.observeEnabled = options.disableObserve !== true;
         this.observers = {};
         this.batchIds = [];
     }
