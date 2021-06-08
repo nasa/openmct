@@ -20,26 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- To Do:
-    If no default page stored, default to first page of first section*
-    Navigate to URL params on load*
-    Navigate to a different page if another user deletes navigated page.
-
- To Test:
-   Add a new section**
-   Add a new page**
-   Check that default section and page are still working.*
-   Search*
-   Different notebooks (to make sure default stuff works)*
-   Delete entry*
-   Another user deletes a section or page*
-   Page and section in URL*
-   Default notebook still works*
-   localstorage
-   copy entry?
-   Drop embedded object
- */
 <template>
 <div class="c-notebook">
     <div class="c-notebook__head">
@@ -158,6 +138,7 @@ import SearchResults from './SearchResults.vue';
 import Sidebar from './Sidebar.vue';
 import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaultNotebookSection, setDefaultNotebookPage } from '../utils/notebook-storage';
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
+import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
 import objectUtils from 'objectUtils';
 
 import { debounce } from 'lodash';
@@ -272,6 +253,28 @@ export default {
         });
     },
     methods: {
+        changeSectionPage(newParams, oldParams, changedParams) {
+            if (newParams.view !== NOTEBOOK_VIEW_TYPE) {
+                return;
+            }
+
+            let pageId = newParams.pageId;
+            let sectionId = newParams.sectionId;
+
+            if (!pageId && !sectionId) {
+                return;
+            }
+
+            this.sections.forEach(section => {
+                section.isSelected = Boolean(section.id === sectionId);
+
+                if (section.isSelected) {
+                    section.pages.forEach(page => {
+                        page.isSelected = Boolean(page.id === pageId);
+                    });
+                }
+            });
+        },
         changeSelectedSection({ sectionId, pageId }) {
             const sections = this.sections.map(s => {
                 s.isSelected = false;

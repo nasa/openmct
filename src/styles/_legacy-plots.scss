@@ -531,7 +531,7 @@ mct-plot {
 }
 
 /***************** GENERAL STYLES, ALL STATES */
-.plot-legend-item {
+.plot-legend-item, .plot-series-limit-label {
     // General styles for legend items, both expanded and collapsed legend states
     > * + * {
         margin-left: $interiorMarginSm;

@@ -111,7 +111,7 @@ describe('the plugin', () => {
             });
         });
 
-        it('updates an object', () => {
+        it('updates an object', (done) => {
             return openmct.objects.save(mockDomainObject).then((result) => {
                 expect(result).toBeTrue();
                 expect(provider.create).toHaveBeenCalled();
@@ -122,6 +122,7 @@ describe('the plugin', () => {
                 return openmct.objects.save(mockDomainObject).then((updatedResult) => {
                     expect(updatedResult).toBeTrue();
                     expect(provider.update).toHaveBeenCalled();
+                    done();
                 });
             });
         });

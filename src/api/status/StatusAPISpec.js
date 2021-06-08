@@ -22,7 +22,7 @@ describe("The Status API", () => {
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     describe("set function", () => {
