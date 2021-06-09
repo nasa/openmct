@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { getLimitClass } from "./limitUtil";
+
 export default {
     props: {
         point: {
@@ -31,22 +33,7 @@ export default {
             };
         },
         limitClass() {
-            let cssClass = '';
-            if (this.limit.color) {
-                cssClass = `${cssClass} c-plot-limit-line--${this.limit.color}`;
-            }
-
-            if (this.limit.isUpper) {
-                cssClass = `${cssClass} c-plot-limit-line--upr`;
-            } else {
-                cssClass = `${cssClass} c-plot-limit-line--lwr`;
-            }
-
-            if (this.limit.level) {
-                cssClass = `${cssClass} c-plot-limit-line--${this.limit.level}`;
-            }
-
-            return cssClass;
+            return getLimitClass(this.limit, 'c-plot-limit-line--');
         }
     }
 };

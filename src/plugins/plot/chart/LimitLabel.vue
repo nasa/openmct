@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { getLimitClass } from "./limitUtil";
+
 export default {
     props: {
         limit: {
@@ -42,22 +44,7 @@ export default {
             };
         },
         limitClass() {
-            let cssClass = '';
-            if (this.limit.color) {
-                cssClass = `${cssClass} c-plot-limit--${this.limit.color}`;
-            }
-
-            if (this.limit.isUpper) {
-                cssClass = `${cssClass} c-plot-limit--upr`;
-            } else {
-                cssClass = `${cssClass} c-plot-limit--lwr`;
-            }
-
-            if (this.limit.level) {
-                cssClass = `${cssClass} c-plot-limit--${this.limit.level}`;
-            }
-
-            return cssClass;
+            return getLimitClass(this.limit, 'c-plot-limit--');
         }
     }
 };
