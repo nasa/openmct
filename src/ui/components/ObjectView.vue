@@ -124,6 +124,10 @@ export default {
                 styleReceiver = this.$el.querySelector(':first-child');
             }
 
+            if (styleReceiver === null) {
+                styleReceiver = undefined;
+            }
+
             return styleReceiver;
         },
         invokeEditModeHandler(editMode) {
@@ -142,12 +146,13 @@ export default {
             this.updateView(true);
         },
         updateStyle(styleObj) {
-            if (!styleObj) {
+            let elemToStyle = this.getStyleReceiver();
+
+            if (!styleObj || elemToStyle === undefined) {
                 return;
             }
 
             let keys = Object.keys(styleObj);
-            let elemToStyle = this.getStyleReceiver();
 
             keys.forEach(key => {
                 if (elemToStyle) {
@@ -373,11 +378,17 @@ export default {
         },
         setFontSize(newSize) {
             let elemToStyle = this.getStyleReceiver();
-            elemToStyle.dataset.fontSize = newSize;
+
+            if (elemToStyle !== undefined) {
+                elemToStyle.dataset.fontSize = newSize;
+            }
         },
         setFont(newFont) {
             let elemToStyle = this.getStyleReceiver();
-            elemToStyle.dataset.font = newFont;
+
+            if (elemToStyle !== undefined) {
+                elemToStyle.dataset.font = newFont;
+            }
         }
     }
 };
