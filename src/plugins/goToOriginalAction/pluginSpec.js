@@ -47,7 +47,6 @@ describe("the plugin", () => {
     });
 
     describe('when invoked', () => {
-
         beforeEach(() => {
             mockObjectPath = [{
                 name: 'mock folder',

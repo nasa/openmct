@@ -92,8 +92,8 @@ should update (or delegate the task of updating) Open MCT version
 numbers by the following process:
 
 1. Update version number in `package.json`
-  1. Create a new branch off the `master` branch.
-  2. Remove `-SNAPSHOT` suffix from the version in `package.json`.
+  1. Checkout branch created for the last sprint that has been successfully tested.
+  2. Remove a `-SNAPSHOT` suffix from the version in `package.json`.
   3. Verify that resulting version number meets semantic versioning
      requirements relative to previous stable version. Increment the 
      version number if necessary.
@@ -131,7 +131,8 @@ numbers by the following process:
   3. In `package.json` change package to be public (private: false)
   4. Test the package before publishing by doing `npm publish --dry-run` 
      if necessary.
-  5. Publish the package to the npmjs registry (e.g. `npm publish --access public`)
+  5. Publish the package to the npmjs registry (e.g. `npm publish --access public`) 
+     NOTE: Use the `--tag unstable` flag to the npm publishj if this is a prerelease.
   6. Confirm the package has been published (e.g. `https://www.npmjs.com/package/openmct`)
 5. Update snapshot status in `package.json`
   1. Create a new branch off the `master` branch.

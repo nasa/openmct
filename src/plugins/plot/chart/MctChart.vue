@@ -23,6 +23,9 @@
 <div class="gl-plot-chart-area">
     <span v-html="canvasTemplate"></span>
     <span v-html="canvasTemplate"></span>
+    <div ref="limitArea"
+         class="js-limit-area"
+    ></div>
 </div>
 </template>
 
@@ -34,8 +37,12 @@ import MCTChartLineLinear from './MCTChartLineLinear';
 import MCTChartLineStepAfter from './MCTChartLineStepAfter';
 import MCTChartPointSet from './MCTChartPointSet';
 import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
+import MCTChartAlarmLineSet from "./MCTChartAlarmLineSet";
 import configStore from "../configuration/configStore";
 import PlotConfigurationModel from "../configuration/PlotConfigurationModel";
+import LimitLine from "./LimitLine.vue";
+import LimitLabel from "./LimitLabel.vue";
+import Vue from 'vue';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
@@ -54,6 +61,12 @@ export default {
             default() {
                 return [];
             }
+        },
+        showLimitLineLabels: {
+            type: Object,
+            default() {
+                return {};
+            }
         }
     },
     data() {
@@ -67,18 +80,22 @@ export default {
         },
         rectangles() {
             this.scheduleDraw();
+        },
+        showLimitLineLabels() {
+            this.drawLimitLines();
         }
     },
     mounted() {
         eventHelpers.extend(this);
-
         this.config = this.getConfig();
         this.isDestroyed = false;
         this.lines = [];
+        this.limitLines = [];
         this.pointSets = [];
         this.alarmSets = [];
         this.offset = {};
         this.seriesElements = new WeakMap();
+        this.seriesLimits = new WeakMap();
 
         let canvasEls = this.$parent.$refs.chartContainer.querySelectorAll("canvas");
         const mainCanvas = canvasEls[1];
@@ -90,8 +107,8 @@ export default {
         this.listenTo(this.config.series, 'add', this.onSeriesAdd, this);
         this.listenTo(this.config.series, 'remove', this.onSeriesRemove, this);
         this.listenTo(this.config.yAxis, 'change:key', this.clearOffset, this);
-        this.listenTo(this.config.yAxis, 'change', this.scheduleDraw);
-        this.listenTo(this.config.xAxis, 'change', this.scheduleDraw);
+        this.listenTo(this.config.yAxis, 'change', this.updateLimitsAndDraw);
+        this.listenTo(this.config.xAxis, 'change', this.updateLimitsAndDraw);
         this.config.series.forEach(this.onSeriesAdd, this);
     },
     beforeDestroy() {
@@ -116,15 +133,18 @@ export default {
             this.changeInterpolate(mode, o, series);
             this.changeMarkers(mode, o, series);
             this.changeAlarmMarkers(mode, o, series);
+            this.changeLimitLines(mode, o, series);
         },
         onSeriesAdd(series) {
             this.listenTo(series, 'change:xKey', this.reDraw, this);
             this.listenTo(series, 'change:interpolate', this.changeInterpolate, this);
             this.listenTo(series, 'change:markers', this.changeMarkers, this);
             this.listenTo(series, 'change:alarmMarkers', this.changeAlarmMarkers, this);
+            this.listenTo(series, 'change:limitLines', this.changeLimitLines, this);
             this.listenTo(series, 'change', this.scheduleDraw);
             this.listenTo(series, 'add', this.scheduleDraw);
             this.makeChartElement(series);
+            this.makeLimitLines(series);
         },
         changeInterpolate(mode, o, series) {
             if (mode === o) {
@@ -178,6 +198,14 @@ export default {
                 this.pointSets.push(pointSet);
             }
         },
+        changeLimitLines(mode, o, series) {
+            if (mode === o) {
+                return;
+            }
+
+            this.makeLimitLines(series);
+            this.updateLimitsAndDraw();
+        },
         onSeriesRemove(series) {
             this.stopListening(series);
             this.removeChartElement(series);
@@ -187,6 +215,7 @@ export default {
             this.isDestroyed = true;
             this.stopListening();
             this.lines.forEach(line => line.destroy());
+            this.limitLines.forEach(line => line.destroy());
             DrawLoader.releaseDrawAPI(this.drawAPI);
         },
         clearOffset() {
@@ -197,6 +226,9 @@ export default {
             delete this.offset.xKey;
             delete this.offset.yKey;
             this.lines.forEach(function (line) {
+                line.reset();
+            });
+            this.limitLines.forEach(function (line) {
                 line.reset();
             });
             this.pointSets.forEach(function (pointSet) {
@@ -269,6 +301,8 @@ export default {
             }
 
             this.seriesElements.delete(series);
+
+            this.clearLimitLines(series);
         },
         lineForSeries(series) {
             if (series.get('interpolate') === 'linear') {
@@ -286,6 +320,14 @@ export default {
                     this.offset
                 );
             }
+        },
+        limitLineForSeries(series) {
+            return new MCTChartAlarmLineSet(
+                series,
+                this,
+                this.offset,
+                this.openmct.time.bounds()
+            );
         },
         pointSetForSeries(series) {
             if (series.get('markers')) {
@@ -308,7 +350,8 @@ export default {
         makeChartElement(series) {
             const elements = {
                 lines: [],
-                pointSets: []
+                pointSets: [],
+                limitLines: []
             };
 
             const line = this.lineForSeries(series);
@@ -330,12 +373,47 @@ export default {
 
             this.seriesElements.set(series, elements);
         },
+        makeLimitLines(series) {
+            this.clearLimitLines(series);
+
+            if (!series.get('limitLines')) {
+                return;
+            }
+
+            const limitElements = {
+                limitLines: []
+            };
+
+            const limitLine = this.limitLineForSeries(series);
+            if (limitLine) {
+                limitElements.limitLines.push(limitLine);
+                this.limitLines.push(limitLine);
+            }
+
+            this.seriesLimits.set(series, limitElements);
+        },
+        clearLimitLines(series) {
+            const seriesLimits = this.seriesLimits.get(series);
+
+            if (seriesLimits) {
+                seriesLimits.limitLines.forEach(function (line) {
+                    this.limitLines.splice(this.limitLines.indexOf(line), 1);
+                    line.destroy();
+                }, this);
+
+                this.seriesLimits.delete(series);
+            }
+        },
         canDraw() {
             if (!this.offset.x || !this.offset.y) {
                 return false;
             }
 
             return true;
+        },
+        updateLimitsAndDraw() {
+            this.drawLimitLines();
+            this.scheduleDraw();
         },
         scheduleDraw() {
             if (!this.drawScheduled) {
@@ -385,6 +463,68 @@ export default {
             this.pointSets.forEach(this.drawPoints, this);
             this.alarmSets.forEach(this.drawAlarmPoints, this);
         },
+        drawLimitLines() {
+            if (this.canDraw()) {
+                this.updateViewport();
+
+                if (!this.drawAPI.origin) {
+                    return;
+                }
+
+                Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
+
+                this.limitLines.forEach((limitLine) => {
+                    let limitContainerEl = this.$refs.limitArea;
+                    limitLine.limits.forEach((limit) => {
+                        const showLabels = this.showLabels(limit.seriesKey);
+                        if (showLabels) {
+                            let limitLabelEl = this.getLimitLabel(limit);
+                            limitContainerEl.appendChild(limitLabelEl);
+                        }
+
+                        let limitEl = this.getLimitElement(limit);
+                        limitContainerEl.appendChild(limitEl);
+
+                    }, this);
+                });
+            }
+        },
+        showLabels(seriesKey) {
+            return this.showLimitLineLabels.seriesKey
+                    && (this.showLimitLineLabels.seriesKey === seriesKey);
+        },
+        getLimitElement(limit) {
+            let point = {
+                left: 0,
+                top: this.drawAPI.y(limit.point.y)
+            };
+            let LimitLineClass = Vue.extend(LimitLine);
+            const component = new LimitLineClass({
+                propsData: {
+                    point,
+                    cssClass: limit.cssClass
+                }
+            });
+            component.$mount();
+
+            return component.$el;
+        },
+        getLimitLabel(limit) {
+            let point = {
+                left: 0,
+                top: this.drawAPI.y(limit.point.y)
+            };
+            let LimitLabelClass = Vue.extend(LimitLabel);
+            const component = new LimitLabelClass({
+                propsData: {
+                    limit,
+                    point
+                }
+            });
+            component.$mount();
+
+            return component.$el;
+        },
         drawAlarmPoints(alarmSet) {
             this.drawAPI.drawLimitPoints(
                 alarmSet.points,
@@ -401,11 +541,12 @@ export default {
                 chartElement.series.get('markerShape')
             );
         },
-        drawLine(chartElement) {
+        drawLine(chartElement, disconnected) {
             this.drawAPI.drawLine(
                 chartElement.getBuffer(),
                 chartElement.color().asRGBAArray(),
-                chartElement.count
+                chartElement.count,
+                disconnected
             );
         },
         drawHighlights() {

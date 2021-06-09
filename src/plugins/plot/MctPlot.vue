@@ -28,6 +28,7 @@
                  :series="config.series.models"
                  :highlights="highlights"
                  :legend="config.legend"
+                 @legendHoverChanged="legendHoverChanged"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <y-axis v-if="config.series.models.length > 0"
@@ -67,6 +68,7 @@
                 >
                     <mct-chart :rectangles="rectangles"
                                :highlights="highlights"
+                               :show-limit-line-labels="showLimitLineLabels"
                                @plotReinitializeCanvas="initCanvas"
                     />
                 </div>
@@ -159,6 +161,7 @@ import MctTicks from "./MctTicks.vue";
 import MctChart from "./chart/MctChart.vue";
 import XAxis from "./axis/XAxis.vue";
 import YAxis from "./axis/YAxis.vue";
+import _ from "lodash";
 
 export default {
     components: {
@@ -212,7 +215,8 @@ export default {
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
-            isTimeOutOfSync: false
+            isTimeOutOfSync: false,
+            showLimitLineLabels: undefined
         };
     },
     computed: {
@@ -496,6 +500,10 @@ export default {
         },
 
         initialize() {
+            _.debounce(this.handleWindowResize, 400);
+            this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
+            this.plotContainerResizeObserver.observe(this.$parent.$refs.plotWrapper);
+
             // Setup canvas etc.
             this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
             this.yScale = new LinearScale(this.config.yAxis.get('displayRange'));
@@ -999,12 +1007,23 @@ export default {
                 this.removeStatusListener();
             }
 
+            this.plotContainerResizeObserver.disconnect();
+
             this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         updateStatus(status) {
             this.$emit('statusUpdated', status);
+        },
+        handleWindowResize() {
+            if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
+                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+                this.config.series.models.forEach(this.loadSeriesData, this);
+            }
+        },
+        legendHoverChanged(data) {
+            this.showLimitLineLabels = data;
         }
     }
 };

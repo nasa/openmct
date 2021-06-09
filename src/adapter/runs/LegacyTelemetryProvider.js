@@ -161,6 +161,22 @@ define([
             evaluate: function (datum, property) {
                 return limitEvaluator.evaluate(datum, property && property.key);
             }
+
+        };
+    };
+
+    LegacyTelemetryProvider.prototype.getLimits = function (domainObject) {
+        const oldObject = this.instantiate(
+            utils.toOldFormat(domainObject),
+            utils.makeKeyString(domainObject.identifier)
+        );
+        const limitEvaluator = oldObject.getCapability("limit");
+
+        return {
+            limits: function () {
+                return limitEvaluator.limits();
+            }
+
         };
     };
 
