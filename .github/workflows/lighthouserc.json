@@ -1,0 +1,9 @@
+{
+  "ci": {
+    "collect": {
+      "settings": {
+        "onlyCategories": ["performance", "best-practices"]
+      }
+    }
+  }
+}
