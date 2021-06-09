@@ -40,10 +40,7 @@ npm-debug.log
 # karma reports
 report.*.json
 
-<<<<<<< HEAD
 # Lighthouse reports
 .lighthouseci
 
-=======
 package-lock.json
->>>>>>> 6483fe24029375dd6c7c7180b11ad75264128394
