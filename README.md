@@ -4,6 +4,8 @@ Open MCT (Open Mission Control Technologies) is a next-generation mission contro
 
 Please visit our [Official Site](https://nasa.github.io/openmct/) and [Getting Started Guide](https://nasa.github.io/openmct/getting-started/)
 
+Once you've created something amazing with Open MCT, showcase your work in our GitHub Discussions [Show and Tell](https://github.com/nasa/openmct/discussions/categories/show-and-tell) section. We love seeing unique and wonderful implementations of Open MCT!
+
 ## See Open MCT in Action
 
 Try Open MCT now with our [live demo](https://openmct-demo.herokuapp.com/).
