@@ -1,8 +1,21 @@
 {
   "ci": {
     "collect": {
+      "urls": ["http://localhost/"],
+      "numberOfRuns": 3,
       "settings": {
         "onlyCategories": ["performance", "best-practices"]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    },
+    "assert": {
+      "preset": "lighthouse:no-pwa",
+      "assertions": {
+        "maskable-icon": "off",
+        "tap-targets": "off",
+        "apple-touch-icon": "off"
       }
     }
   }
