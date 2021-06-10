@@ -21,10 +21,11 @@
  *****************************************************************************/
 import {
     createOpenMct,
-    resetApplicationState
+    resetApplicationState,
+    spyOnBuiltins
 } from 'utils/testing';
 
-describe("the plugin", () => {
+fdescribe("the plugin", () => {
     let openmct;
     let openInNewTabAction;
     let mockObjectPath;
@@ -63,7 +64,7 @@ describe("the plugin", () => {
                     key: 'test'
                 }
             }));
-            spyOn(window, 'open');
+            spyOnBuiltins(['open']);
             await openInNewTabAction.invoke(mockObjectPath);
         });
 
