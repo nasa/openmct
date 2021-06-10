@@ -114,6 +114,7 @@ define([
                 key: this.openmct.time.timeSystem().key,
                 direction: 'asc'
             };
+
             this.filteredRows.sortBy(sortOptions);
         }
 
@@ -200,7 +201,8 @@ define([
             let columnMap = this.getColumnMapForObject(keyString);
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-            return (telemetry) => {
+            return (telemetry, index) => {
+                console.log(telemetry, index)
                 //Check that telemetry object has not been removed since telemetry was requested.
                 if (!this.telemetryObjects.includes(telemetryObject)) {
                     return;
@@ -239,6 +241,7 @@ define([
         }
 
         processTelemetryData(telemetryData, columnMap, keyString, limitEvaluator) {
+            console.log(telemetryData);
             let timeKey = this.openmct.time.timeSystem().key;
             let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator, timeKey));
             this.sortedRows.add(telemetryRows);

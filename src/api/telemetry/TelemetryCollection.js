@@ -77,20 +77,6 @@ export class TelemetryCollection extends EventEmitter {
     }
 
     /**
-     * returns if there is more telemetry within the time bounds
-     * if the provider supports it
-     *
-     * @returns {boolean}
-     */
-    hasMorePages() {
-        return this.historicalProvider
-            && this.historicalProvider.supportsPaging
-            && this.historicalProvider.supportsPaging()
-            && this.historicalProvider.hasMorePages
-            && this.historicalProvider.hasMorePages(this);
-    }
-
-    /**
      * can/should be called by the requester of the telemetry collection
      * to remove any listeners
      */
@@ -105,6 +91,7 @@ export class TelemetryCollection extends EventEmitter {
     /**
      * Sets up  the telemetry collection for historical requests,
      * this uses the "standardizeRequestOptions" from Telemetry API
+     * @private
      */
     _initiateHistoricalRequests() {
         this.openmct.telemetry.standardizeRequestOptions(this.options);
@@ -115,6 +102,7 @@ export class TelemetryCollection extends EventEmitter {
     }
     /**
      * If a historical provider exists, then historical requests will be made
+     * @private
      */
     async _requestHistoricalTelemetry() {
         if (!this.historicalProvider) {
@@ -135,6 +123,7 @@ export class TelemetryCollection extends EventEmitter {
     }
     /**
      * This uses the built in subscription function from Telemetry API
+     * @private
      */
     _initiateSubscriptionTelemetry() {
 
@@ -143,9 +132,11 @@ export class TelemetryCollection extends EventEmitter {
         }
 
         this.unsubscribe = this.openmct.telemetry
-            .subscribe(this.domainObject, (datum) => {
-                this._processNewTelemetry(datum);
-            }, this.options);
+            .subscribe(
+                this.domainObject,
+                datum => this._processNewTelemetry(datum),
+                this.options
+            );
     }
 
     /**
@@ -154,6 +145,7 @@ export class TelemetryCollection extends EventEmitter {
      *
      * @param  {(Object|Object[])} telemetryData - telemetry data object or
      * array of telemetry data objects
+     * @private
      */
     _processNewTelemetry(telemetryData) {
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
@@ -168,28 +160,78 @@ export class TelemetryCollection extends EventEmitter {
             afterEndOfBounds = parsedValue > this.lastBounds.end;
 
             if (!afterEndOfBounds && !beforeStartOfBounds) {
-                if (!this.boundedTelemetry.includes(datum)) {
-                    this.boundedTelemetry.push(datum);
-                    added.push(datum);
+                let isDuplicate = false;
+                let startIndex = this._sortedIndex(datum);
+                let endIndex = undefined;
+
+                // dupe check
+                if (startIndex !== this.boundedTelemetry.length) {
+                    endIndex = _.sortedLastIndexBy(
+                        this.boundedTelemetry,
+                        datum,
+                        boundedDatum => this.parseTime(boundedDatum)
+                    );
+
+                    if (endIndex > startIndex) {
+                        let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
+
+                        isDuplicate = potentialDupes.some(_.isEqual(undefined, datum));
+                    }
                 }
+
+                if (!isDuplicate) {
+                    let index = endIndex || startIndex;
+
+                    this.boundedTelemetry.splice(index, 0, datum);
+                    added.push({
+                        datum,
+                        index
+                    });
+                }
+
             } else if (afterEndOfBounds) {
                 this.futureBuffer.push(datum);
             }
         }
 
         if (added.length) {
-            this.emit('add', added);
+            added.forEach(datumInfo => this.emit('add', datumInfo.datum, datumInfo.index));
+        }
+    }
+
+    /**
+     * Finds the correct insertion point for the given telemetry datum.
+     * Leverages lodash's `sortedIndexBy` function which implements a binary search.
+     * @private
+     */
+    _sortedIndex(datum) {
+        if (this.boundedTelemetry.length === 0) {
+            return 0;
+        }
+
+        let parsedValue = this.parseTime(datum);
+        let lastValue = this.parseTime(this.boundedTelemetry[this.boundedTelemetry.length - 1]);
+
+        if (parsedValue > lastValue || parsedValue === lastValue) {
+            return this.boundedTelemetry.length;
+        } else {
+            return _.sortedIndexBy(
+                this.boundedTelemetry,
+                datum,
+                boundedDatum => this.parseTime(boundedDatum)
+            );
         }
     }
 
     /**
      * when the start time, end time, or both have been updated.
      * data could be added OR removed here we update the current
-     * bounded telemetry and emit the results
+     * bounded telemetry
      *
      * @param  {TimeConductorBounds} bounds The newly updated bounds
      * @param  {boolean} [tick] `true` if the bounds update was due to
      * a "tick" event (ie. was an automatic update), false otherwise.
+     * @private
      */
     _bounds(bounds, isTick) {
         let startChanged = this.lastBounds.start !== bounds.start;
@@ -210,14 +252,22 @@ export class TelemetryCollection extends EventEmitter {
             if (startChanged) {
                 testDatum[this.timeKey] = bounds.start;
                 // Calculate the new index of the first item within the bounds
-                startIndex = _.sortedIndexBy(this.boundedTelemetry, testDatum, datum => this.parseTime(datum));
+                startIndex = _.sortedIndexBy(
+                    this.boundedTelemetry,
+                    testDatum,
+                    datum => this.parseTime(datum)
+                );
                 discarded = this.boundedTelemetry.splice(0, startIndex);
             }
 
             if (endChanged) {
                 testDatum[this.timeKey] = bounds.end;
                 // Calculate the new index of the last item in bounds
-                endIndex = _.sortedLastIndexBy(this.futureBuffer, testDatum, datum => this.parseTime(datum));
+                endIndex = _.sortedLastIndexBy(
+                    this.futureBuffer,
+                    testDatum,
+                    datum => this.parseTime(datum)
+                );
                 added = this.futureBuffer.splice(0, endIndex);
                 this.boundedTelemetry = [...this.boundedTelemetry, ...added];
             }
@@ -243,6 +293,7 @@ export class TelemetryCollection extends EventEmitter {
      *
      * @param  {TimeSystem} timeSystem - the value of the currently applied
      * Time System
+     * @private
      */
     _timeSystem(timeSystem) {
         this.timeKey = timeSystem.key;
@@ -259,6 +310,7 @@ export class TelemetryCollection extends EventEmitter {
     /**
      * Reset the telemetry data of the collection, and re-request
      * historical telemetry
+     * @private
      *
      * @todo handle subscriptions more granually
      */
@@ -271,6 +323,7 @@ export class TelemetryCollection extends EventEmitter {
 
     /**
      * adds the _bounds callback to the 'bounds' timeAPI listener
+     * @private
      */
     _watchBounds() {
         this.openmct.time.on('bounds', this._bounds, this);
@@ -278,6 +331,7 @@ export class TelemetryCollection extends EventEmitter {
 
     /**
      * removes the _bounds callback from the 'bounds' timeAPI listener
+     * @private
      */
     _unwatchBounds() {
         this.openmct.time.off('bounds', this._bounds, this);
@@ -285,6 +339,7 @@ export class TelemetryCollection extends EventEmitter {
 
     /**
      * adds the _timeSystem callback to the 'timeSystem' timeAPI listener
+     * @private
      */
     _watchTimeSystem() {
         this.openmct.time.on('timeSystem', this._timeSystem, this);
@@ -292,6 +347,7 @@ export class TelemetryCollection extends EventEmitter {
 
     /**
      * removes the _timeSystem callback from the 'timeSystem' timeAPI listener
+     * @private
      */
     _unwatchTimeSystem() {
         this.openmct.time.off('timeSystem', this._timeSystem, this);
