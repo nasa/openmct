@@ -10,11 +10,13 @@ import Plotly from 'plotly.js-dist';
 import BoundedTableRowCollection from '../../telemetryTable/collections/BoundedTableRowCollection';
 import TelemetryTableRow from '../../telemetryTable/TelemetryTableRow';
 import TelemetryTableColumn from '../../telemetryTable/TelemetryTableColumn';
+import { throttle } from 'lodash';
 
 export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
         return {
+            data: [],
             bounds: this.openmct.time.bounds(),
             plotData: {},
             outstandingRequests: 0,
@@ -49,8 +51,9 @@ export default {
         this.subscriptions = {};
         this.boundedRowsUnlisteners = {};
         this.traceIndices = {};
-    },
 
+        this.purgeDataOutsideRange = throttle(this.purgeDataOutsideRange, 5000);
+    },
     destroyed() {
         Object.values(this.subscriptions)
             .forEach(subscription => subscription());
@@ -116,6 +119,7 @@ export default {
                     const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let columnMap = this.columnMaps[keyString];
                     let limitEvaluator = this.limitEvaluators[keyString];
+                    console.log('Plotly: total points', telemetryData.length);
                     const telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
                     this.boundedRows[keyString].add(telemetryRows);
                 });
@@ -189,7 +193,7 @@ export default {
             };
             Plotly.newPlot(
                 this.plotElement,
-                [],
+                this.data,
                 layout,
                 {
                     displayModeBar: true, // turns off hover-activated toolbar
@@ -197,6 +201,53 @@ export default {
                 }
             );
 
+        },
+        purgeDataOutsideRange() {
+            const bounds = this.openmct.time.bounds();
+            const pointsPerData = [];
+            this.data.forEach((data, index) => {
+                const startIndex = this.getStartIndex(data, bounds.start);
+                const endIndex = this.getEndIndex(data, bounds.end);
+                data.x = data.x.slice(startIndex, endIndex);
+                data.y = data.y.slice(startIndex, endIndex);
+                this.$set(this.data, index, data);
+            });
+
+            console.log('Plotly: this.data.length', this.data[0].x.length);
+        },
+        getEndIndex(data, time) {
+            let endIndex = data.x.length - 1;
+            let success = false;
+            let index = endIndex;
+            while(!success && index >= 0) {
+                if (index === 0) {
+                    success = true;
+                    endIndex = 0;
+                    break;
+                }
+
+                success = data.x[index] <= time;
+                if (success) {
+                    endIndex = index;
+                }
+
+                index--;
+            }
+
+            return endIndex;
+        },
+        getStartIndex(data, time) {
+            let startIndex = 0;
+            data.x.some((x, index) => {
+                const success = x >= time;
+                if (success) {
+                    startIndex = index;
+                }
+
+                return success;
+            });
+
+            return Math.max(0, startIndex - 3);
         },
         resetTraceForObject(telemetryObject) {
             this.removeTraceForObject(telemetryObject);
@@ -299,14 +350,17 @@ export default {
                         drawBuffer.x = [];
                         drawBuffer.y = [];
                     });
+
+                    this.purgeDataOutsideRange();
                     Plotly.extendTraces(
                         this.plotElement,
                         {
                             x: dataForXAxes,
                             y: dataForYAxes
                         },
-                        traceIndices
+                        traceIndices,
                     );
+
                     this.drawing = false;
                 });
             }

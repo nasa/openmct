@@ -169,6 +169,7 @@ define([
                 .telemetry
                 .request(this.domainObject, options)
                 .then(function (points) {
+                    console.log('PlotSeries: total points', points.length);
                     var newPoints = _(this.data)
                         .concat(points)
                         .sortBy(this.getXVal)
@@ -395,6 +396,7 @@ define([
                 }
             }
 
+            console.log('PlotSeries: this.data.length', this.data.length);
         },
         /**
          * Updates filters, clears the plot series, unsubscribes and resubscribes
