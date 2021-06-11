@@ -109,11 +109,12 @@
     <!--            </li>-->
     <!--        </ul>-->
     <!--    </template>-->
-</div>
 </template>
 
 <script>
 import PlanActivityView from "./PlanActivityView.vue";
+import { getPreciseDuration } from "utils/duration";
+
 const propertyLabels = {
     'start': 'Start DateTime',
     'end': 'End DateTime',
@@ -124,7 +125,6 @@ const propertyLabels = {
     'overlap': 'Overlap',
     'totalTime': 'Total Time'
 };
-const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
     components: {
@@ -154,9 +154,6 @@ export default {
             let timeSystem = this.openmct.time.timeSystem();
             this.timeFormatter = this.openmct.telemetry.getValueFormatter({
                 format: timeSystem.timeFormat
-            }).formatter;
-            this.durationFormatter = this.openmct.telemetry.getValueFormatter({
-                format: timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER
             }).formatter;
         },
         updateSelection(newSelection) {
@@ -278,7 +275,7 @@ export default {
             this.$set(this.activities, 0, activity);
         },
         formatDuration(duration) {
-            return this.durationFormatter.format(duration);
+            return getPreciseDuration(duration);
         },
         formatTime(time) {
             return this.timeFormatter.format(time);
