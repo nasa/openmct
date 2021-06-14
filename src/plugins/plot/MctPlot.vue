@@ -75,7 +75,7 @@
 
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
                     <div v-if="!options.compact"
-                         class="c-button-set c-button-set--strip-h"
+                         class="c-button-set c-button-set--strip-h js-zoom"
                     >
                         <button class="c-button icon-minus"
                                 title="Zoom out"
@@ -89,7 +89,7 @@
                         </button>
                     </div>
                     <div v-if="plotHistory.length && !options.compact"
-                         class="c-button-set c-button-set--strip-h"
+                         class="c-button-set c-button-set--strip-h js-pan"
                     >
                         <button class="c-button icon-arrow-left"
                                 title="Restore previous pan/zoom"
@@ -103,7 +103,7 @@
                         </button>
                     </div>
                     <div v-if="isRealTime"
-                         class="c-button-set c-button-set--strip-h"
+                         class="c-button-set c-button-set--strip-h js-pause"
                     >
                         <button v-if="!isFrozen"
                                 class="c-button icon-pause"
