@@ -104,13 +104,13 @@ export default class MoveAction {
                         {
                             key: "name",
                             control: "textfield",
-                            name: "Folder Name",
+                            name: "Name",
                             pattern: "\\S+",
                             required: true,
                             cssClass: "l-input-lg"
                         },
                         {
-                            name: "location",
+                            name: "Location",
                             control: "locator",
                             validate: this.validate(object, parent),
                             key: 'location'
