@@ -16,7 +16,7 @@ ci:
       ### Applicable assertions
       bootup-time:
       - warn
-      - minScore: 0.88
+      - minScore: 0.88 #Original value was calculated at 0.88
       dom-size: 
       - error
       - maxNumericValue: 200 #Original value was calculated at 188
@@ -30,7 +30,7 @@ ci:
       - warn
       - maxLength: 1
       - error
-      - maxNumericValue: 2000
+      - maxNumericValue: 2000 #Original value was calculated at 1855
       unused-css-rules: warn
       installable-manifest: warn
       service-worker: warn
