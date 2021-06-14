@@ -112,8 +112,7 @@ $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset
     z-index: 0;
 
     &__label {
-        // Todo: handle right-aligned labels
-        border-top-right-radius: $controlCr;
+        border-radius: 0 $controlCr 0 0;
         display: flex;
         flex: 0 0 auto;
         align-items: center;
@@ -122,6 +121,25 @@ $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset
 
         > * + * {
             margin-left: $interiorMarginSm;
+        }
+    }
+
+    &.--align-label-right {
+        justify-content: flex-end;
+        .c-plot-limit__label {
+            border-radius: $controlCr 0 0 0;
+        }
+    }
+
+    &.--align-label-below {
+        .c-plot-limit__label {
+            border-radius: 0 0 $controlCr 0;
+            transform: translateY(0);
+        }
+        &.--align-label-right {
+            .c-plot-limit__label {
+                border-radius: 0 0 0 $controlCr;
+            }
         }
     }
 
