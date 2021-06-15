@@ -28,8 +28,9 @@ export default class StyleRuleManager extends EventEmitter {
         this.openmct = openmct;
         this.callback = callback;
         this.refreshData = this.refreshData.bind(this);
+        this.toggleSubscription = this.toggleSubscription.bind(this);
         if (suppressSubscriptionOnEdit) {
-            this.openmct.editor.on('isEditing', this.toggleSubscription.bind(this));
+            this.openmct.editor.on('isEditing', this.toggleSubscription);
             this.isEditing = this.openmct.editor.editing;
         }
 
