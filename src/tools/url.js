@@ -19,21 +19,41 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import urlForNewTab from '/src/tools/url';
-export default class OpenInNewTab {
-    constructor(openmct) {
-        this.name = 'Open In New Tab';
-        this.key = 'newTab';
-        this.description = 'Open in a new browser tab';
-        this.group = "windowing";
-        this.priority = 10;
-        this.cssClass = "icon-new-window";
 
-        this._openmct = openmct;
+/**
+ * Module defining UrlService.
+ */
+
+export function urlParamsForNewTab(openmct) {
+    // parse urParams from an object to a string.
+    let urlParams = openmct.router.getParams();
+    let newTabParams = [];
+    for (let key in urlParams) {
+        if ({}.hasOwnProperty.call(urlParams, key)) {
+            let param = `${key}=${urlParams[key]}`;
+            newTabParams.push(param);
+        }
     }
-    invoke(objectPath) {
-        let url;
-        url = urlForNewTab(this._openmct, objectPath);
-        window.open(url);
+
+    return newTabParams.join('&');
+}
+
+export function urlIdentifierForNewTab(openmct, objectPath) {
+    let identifier = '#/browse/' + objectPath.map(function (o) {
+        return o && openmct.objects.makeKeyString(o.identifier);
+    })
+        .reverse()
+        .join('/');
+
+    return identifier;
+}
+
+export default function urlForNewTab(openmct, objectPath) {
+    let url = urlIdentifierForNewTab(openmct, objectPath);
+    let urlParams = urlParamsForNewTab(openmct);
+    if (urlParams.length) {
+        url += '?' + urlParams;
     }
+
+    return url;
 }
