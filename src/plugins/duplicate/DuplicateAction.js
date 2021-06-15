@@ -96,7 +96,7 @@ export default class DuplicateAction {
                             cssClass: "l-input-lg"
                         },
                         {
-                            name: "location",
+                            name: "Location",
                             cssClass: "grows",
                             control: "locator",
                             validate: this.validate(object, parent),
