@@ -24,9 +24,10 @@
  * Module defining UrlService.
  */
 
-export function urlParamsForNewTab(openmct) {
-    // parse urParams from an object to a string.
+export function paramsToArray(openmct) {
+    // parse urParams from an object to an array.
     let urlParams = openmct.router.getParams();
+    console.log(openmct.router);
     let newTabParams = [];
     for (let key in urlParams) {
         if ({}.hasOwnProperty.call(urlParams, key)) {
@@ -35,10 +36,11 @@ export function urlParamsForNewTab(openmct) {
         }
     }
 
-    return newTabParams.join('&');
+    return newTabParams;
 }
 
-export function urlIdentifierForNewTab(openmct, objectPath) {
+export function identifierToString(openmct, objectPath) {
+    console.log('obj', objectPath);
     let identifier = '#/browse/' + objectPath.map(function (o) {
         return o && openmct.objects.makeKeyString(o.identifier);
     })
@@ -48,11 +50,11 @@ export function urlIdentifierForNewTab(openmct, objectPath) {
     return identifier;
 }
 
-export default function urlForNewTab(openmct, objectPath) {
-    let url = urlIdentifierForNewTab(openmct, objectPath);
-    let urlParams = urlParamsForNewTab(openmct);
+export default function objectPathToUrl(openmct, objectPath) {
+    let url = identifierToString(openmct, objectPath);
+    let urlParams = paramsToArray(openmct);
     if (urlParams.length) {
-        url += '?' + urlParams;
+        url += '?' + urlParams.join('&');
     }
 
     return url;
