@@ -102,7 +102,14 @@ export default {
         };
     },
     mounted() {
-        this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
+        this.excludeObjectTypes = [
+            'folder',
+            'webPage',
+            'conditionSet',
+            'summary-widget',
+            'hyperlink',
+            'mmgis'
+        ];
         this.openmct.selection.on('change', this.updateInspectorViews);
     },
     destroyed() {
