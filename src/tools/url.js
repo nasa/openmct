@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 /**
- * Module defining UrlService.
+ * Module defining url handling.
  */
 
 export function paramsToArray(openmct) {
