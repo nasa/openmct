@@ -37,7 +37,14 @@ export default class MoveAction {
         let oldParent = objectPath[1];
         let dialogService = this.openmct.$injector.get('dialogService');
         let dialogForm = this.getDialogForm(object, oldParent);
-        let userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
+        let userInput;
+
+        try {
+            userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
+        } catch (err) {
+            // user canceled, most likely
+            return;
+        }
 
         // if we need to update name
         if (object.name !== userInput.name) {
