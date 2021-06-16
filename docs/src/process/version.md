@@ -131,7 +131,8 @@ numbers by the following process:
   3. In `package.json` change package to be public (private: false)
   4. Test the package before publishing by doing `npm publish --dry-run` 
      if necessary.
-  5. Publish the package to the npmjs registry (e.g. `npm publish --access public`)
+  5. Publish the package to the npmjs registry (e.g. `npm publish --access public`) 
+     NOTE: Use the `--tag unstable` flag to the npm publishj if this is a prerelease.
   6. Confirm the package has been published (e.g. `https://www.npmjs.com/package/openmct`)
 5. Update snapshot status in `package.json`
   1. Create a new branch off the `master` branch.
