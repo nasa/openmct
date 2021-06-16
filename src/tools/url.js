@@ -27,7 +27,6 @@
 export function paramsToArray(openmct) {
     // parse urParams from an object to an array.
     let urlParams = openmct.router.getParams();
-    console.log(openmct.router);
     let newTabParams = [];
     for (let key in urlParams) {
         if ({}.hasOwnProperty.call(urlParams, key)) {
@@ -40,7 +39,6 @@ export function paramsToArray(openmct) {
 }
 
 export function identifierToString(openmct, objectPath) {
-    console.log('obj', objectPath);
     let identifier = '#/browse/' + objectPath.map(function (o) {
         return o && openmct.objects.makeKeyString(o.identifier);
     })
