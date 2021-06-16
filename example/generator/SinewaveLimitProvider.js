@@ -27,8 +27,8 @@ define([
 ) {
 
     var PURPLE = {
-            sin: 1.5,
-            cos: 1.5
+            sin: 2.2,
+            cos: 2.2
         },
         RED = {
             sin: 0.9,

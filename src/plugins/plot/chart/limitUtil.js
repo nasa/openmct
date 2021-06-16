@@ -18,6 +18,14 @@ export function getLimitClass(limit, prefix) {
         if (limit.level) {
             cssClass = `${cssClass} ${prefix}${limit.level}`;
         }
+
+        if (limit.needsHorizontalAdjustment) {
+            cssClass = `${cssClass} --align-label-right`;
+        }
+
+        if (limit.needsVerticalAdjustment) {
+            cssClass = `${cssClass} --align-label-below`;
+        }
     }
 
     return cssClass;
