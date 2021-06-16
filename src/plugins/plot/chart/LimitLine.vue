@@ -1,6 +1,6 @@
 <template>
 <div :style="styleObj"
-     class="c-plot-limit-line"
+     class="c-plot-limit-line js-limit-line"
      :class="limitClass"
 ></div>
 </template>

@@ -709,7 +709,7 @@ describe("the plugin", function () {
                 config.series.models[0].set('limitLines', true);
 
                 Vue.nextTick(() => {
-                    let limitEl = element.querySelectorAll(".js-limit-area hr");
+                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
                     expect(limitEl.length).toBe(4);
                     done();
                 });
