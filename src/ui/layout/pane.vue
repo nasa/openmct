@@ -70,19 +70,41 @@ export default {
         this.type = this.$parent.type;
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
+    mounted() {
+        this.collapseAll();
+    },
     methods: {
         toggleCollapse: function () {
             this.collapsed = !this.collapsed;
             if (this.collapsed) {
                 // Pane is expanded and is being collapsed
-                this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
-                this.$el.style[this.styleProp] = '';
+                // this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
+                // this.$el.style[this.styleProp] = '';
+                this.handleCollapse();
             } else {
                 // Pane is collapsed and is being expanded
-                this.$el.style[this.styleProp] = this.currentSize;
-                delete this.currentSize;
-                delete this.dragCollapse;
+                // this.$el.style[this.styleProp] = this.currentSize;
+                // delete this.currentSize;
+                // delete this.dragCollapse;
+                this.handleExpand();
             }
+        },
+        collapseAll: function () {
+            // collapse tree and inspector
+            if (this.collapsable) {
+                this.collapsed = true;
+            }
+
+            this.handleCollapse();
+        },
+        handleCollapse: function () {
+            this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
+            this.$el.style[this.styleProp] = '';
+        },
+        handleExpand() {
+            this.$el.style[this.styleProp] = this.currentSize;
+            delete this.currentSize;
+            delete this.dragCollapse;
         },
         trackSize: function () {
             if (!this.dragCollapse === true) {
