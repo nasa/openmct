@@ -1,0 +1,18 @@
+name: lighthouse
+on:
+  workflow_dispatch:
+    inputs: 
+      version:
+        description: 'Which branch do you want to test?' # Limited to branch for now
+        required: false
+        default: 'master' 
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.version }}
+      - uses: actions/setup-node@v1
+      - run: npm install && npm install -g @lhci/cli #Don't want to include this in our deps
+      - run: lhci autorun
