@@ -106,13 +106,16 @@ $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset
 
 .c-plot-limit {
     // Holds both label and directional gradient
+    $labelCr: $basicCr;
     display: flex;
     position: absolute;
     width: 100%;
     z-index: 0;
 
     &__label {
-        border-radius: 0 $controlCr 0 0;
+        border-width: 1px 1px 0 0;
+        border-style: solid;
+        border-radius: 0 $labelCr 0 0;
         display: flex;
         flex: 0 0 auto;
         align-items: center;
@@ -127,18 +130,21 @@ $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset
     &.--align-label-right {
         justify-content: flex-end;
         .c-plot-limit__label {
-            border-radius: $controlCr 0 0 0;
+            border-radius: $labelCr 0 0 0;
+            border-width: 1px 0 0 1px;
         }
     }
 
     &.--align-label-below {
         .c-plot-limit__label {
-            border-radius: 0 0 $controlCr 0;
+            border-radius: 0 0 $labelCr 0;
+            border-width: 0 1px 1px 0;
             transform: translateY(0);
         }
         &.--align-label-right {
             .c-plot-limit__label {
-                border-radius: 0 0 0 $controlCr;
+                border-radius: 0 0 0 $labelCr;
+                border-width: 0 0 1px 1px;
             }
         }
     }
@@ -179,26 +185,31 @@ $plotLimitDashWidthWatch: $plotLimitDashWidthWarning - $plotLimitDashWidthOffset
     // Label styling
     &--purple [class*='label'] {
         background-color: $colorLimitPurpleBg;
+        border-color: $colorLimitPurpleIc;
         color: $colorLimitPurpleFg;
     }
 
     &--red [class*='label'] {
         background-color: $colorLimitRedBg;
+        border-color: $colorLimitRedIc;
         color: $colorLimitRedFg;
     }
 
     &--orange [class*='label'] {
         background-color: $colorLimitOrangeBg;
+        border-color: $colorLimitOrangeIc;
         color: $colorLimitOrangeFg;
     }
 
     &--yellow [class*='label'] {
         background-color: $colorLimitYellowBg;
+        border-color: $colorLimitYellowIc;
         color: $colorLimitYellowFg;
     }
 
     &--cyan [class*='label'] {
         background-color: $colorLimitCyanBg;
+        border-color: $colorLimitCyanIc;
         color: $colorLimitCyanFg;
     }
 
