@@ -197,7 +197,7 @@ export default {
     components: {
         Compass
     },
-    inject: ['openmct', 'domainObject', 'objectPath'],
+    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
@@ -471,11 +471,7 @@ export default {
     },
     methods: {
         expand() {
-            const view = {
-                parentElement: this.$el.parentElement
-            };
-
-            const actionCollection = this.openmct.actions.get(this.objectPath, view);
+            const actionCollection = this.openmct.actions.get(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
             const viewLargeAction = visibleActions
                 && visibleActions.find(action => action.key === 'large.view');
