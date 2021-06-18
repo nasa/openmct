@@ -8,12 +8,18 @@ jobs:
       tag: '13.14'
     steps:
       - checkout
-      - node/install-npm
       - run:
-          name: npm install
+          name: Update npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Installing dependencies (npm install)
           command: npm install
-      #- node/install-packages:
-      #    override-ci-command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_module
       - run:
           name: npm run tests
           command: npm run test:coverage
