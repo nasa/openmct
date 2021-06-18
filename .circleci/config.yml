@@ -8,6 +8,7 @@ jobs:
       tag: '13.14'
     steps:
       - checkout
+      - node/install-npm
       - node/install-packages:
           cache-path: node_modules
           override-ci-command: npm i
