@@ -23,7 +23,7 @@
 /*global module,process*/
 
 const devMode = process.env.NODE_ENV !== 'production';
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'FirefoxHeadless'];
+const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
 const reporters = ['progress', 'html'];
 
@@ -59,7 +59,8 @@ module.exports = (config) => {
         browsers: browsers,
         client: {
             jasmine: {
-                random: false
+                random: false,
+                timeoutInterval: 60000
             }
         },
         customLaunchers: {
@@ -67,6 +68,11 @@ module.exports = (config) => {
                 base: 'Chrome',
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
+            },
+            FirefoxESR: {
+                base: 'FirefoxHeadless',
+                name: 'FirefoxESR',
+                command: '/firefox.exe' //TODO
             }
         },
         colors: true,
@@ -78,12 +84,16 @@ module.exports = (config) => {
             preserveDescribeNesting: true,
             foldAll: false
         },
-        browserConsoleLogOptions: { level: "error",  format: "%b %T: %m",  terminal: true },
+        browserConsoleLogOptions: {
+            level: "error",
+            format: "%b %T: %m",
+            terminal: true
+        },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: process.env.CIRCLE_ARTIFACTS ?
-                process.env.CIRCLE_ARTIFACTS + '/coverage' :
-                "dist/reports/coverage",
+            dir: process.env.CIRCLE_ARTIFACTS
+                ? process.env.CIRCLE_ARTIFACTS + '/coverage'
+                : "dist/reports/coverage",
             reports: ['html', 'lcovonly', 'text-summary'],
             thresholds: {
                 global: {

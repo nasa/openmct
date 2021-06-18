@@ -1,36 +1,26 @@
-version: 2
+version: 2.1
+orbs:
+  node: circleci/node@4.5.1
 jobs:
-  build:
-    docker:
-        - image: circleci/node:13-browsers
-          environment:
-            CHROME_BIN: "/usr/bin/google-chrome"
+  node/test:
+    executor:
+      name: node/default
+      tag: '13.14'
     steps:
-        - checkout
-        - run:
-            name: Update npm
-            command: 'sudo npm install -g npm@latest'
-        - restore_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
-        - run:
-            name: Installing dependencies (npm install)
-            command: npm install
-        - save_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
-            paths:
-              - node_modules
-        - run:
-            name: npm run test:coverage
-            command: npm run test:coverage
-        - run:
-            name: npm run lint
-            command: npm run lint
-        - store_artifacts:
-            path: dist
-            prefix: dist
-
+      - checkout
+      - node/install-packages
+      - run:
+          name: npm run lint
+          command: npm run test:coverage
+      - run:
+          name: npm run lint
+          command: npm run lint    
 workflows:
-  version: 2
-  test:
+  matrix-tests:
     jobs:
-      - build
+      - node/test:
+          version: 13.11.0
+      - node/test:
+          version: 12.16.0
+      - node/test:
+          version: 10.19.0
