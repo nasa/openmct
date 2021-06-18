@@ -63,7 +63,8 @@ export default {
     data() {
         return {
             collapsed: false,
-            resizing: false
+            resizing: false,
+            paneToHide: undefined
         };
     },
     beforeMount() {
@@ -71,9 +72,18 @@ export default {
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     mounted() {
-        this.collapseAll();
+        // 1.check if current url has hide params
+        this.handleHideUrl();
+        this.collapsePane(this.paneToHide);
+        // 2.add hashchange listener and call collapse
+        window.addEventListener("hashchange", this.collapsePane(this.paneToHide), false);
+        // 3.remove the params
+    },
+    beforeDestroy() {
+        window.removeEventListener("hashchange", this.collapsePane(this.paneToHide));
     },
     methods: {
+
         toggleCollapse: function () {
             this.collapsed = !this.collapsed;
             if (this.collapsed) {
@@ -89,13 +99,44 @@ export default {
                 this.handleExpand();
             }
         },
-        collapseAll: function () {
-            // collapse tree and inspector
-            if (this.collapsable) {
-                this.collapsed = true;
+        handleHideUrl: function () {
+            let url = window.location.hash;
+            let hideTree = url.includes('hideTree=true');
+            let hideInspector = url.includes('hideInspector=true');
+            if (hideTree && hideInspector) {
+                this.paneToHide = 'treeAndInspector';
+            } else if (!hideTree && hideInspector) {
+                this.paneToHide = 'inspector';
+            } else if (hideTree && !hideInspector) {
+                this.paneToHide = 'tree';
             }
 
-            this.handleCollapse();
+        },
+        collapsePane: function (paneToHide) {
+            // collapse tree, inspector or both.
+            // will collapse both tree and inspector if no param is passed
+            let target = {};
+            if (paneToHide === 'treeAndInspector') {
+                target['l-shell__pane-tree'] = true;
+                target['l-shell__pane-inspector'] = true;
+            } else if (paneToHide === 'tree') {
+                target['l-shell__pane-tree'] = true;
+            } else if (paneToHide === 'inspector') {
+                target['l-shell__pane-inspector'] = true;
+            }
+
+            for (let key of this.$el.classList) {
+                // console.log(key, this.$el.classList[key]);
+                if (target[key]) {
+                    if (this.collapsable) {
+                        this.collapsed = true;
+                    }
+
+                    this.handleCollapse();
+
+                }
+            }
+            // console.log(typeof this.$el.classList);
         },
         handleCollapse: function () {
             this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
