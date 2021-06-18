@@ -8,7 +8,9 @@ jobs:
       tag: '13.14'
     steps:
       - checkout
-      - node/install-packages
+      - node/install-packages:
+          cache-path: node_modules
+          override-ci-command: npm i
       - run:
           name: npm run lint
           command: npm run test:coverage
