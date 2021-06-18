@@ -9,11 +9,13 @@ jobs:
     steps:
       - checkout
       - node/install-npm
-      - node/install-packages:
-          cache-path: node_modules
-          override-ci-command: npm i
       - run:
-          name: npm run lint
+          name: npm install
+          command: npm install
+      #- node/install-packages:
+      #    override-ci-command: npm install
+      - run:
+          name: npm run tests
           command: npm run test:coverage
       - run:
           name: npm run lint
