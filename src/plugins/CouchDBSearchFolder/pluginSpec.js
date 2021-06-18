@@ -73,7 +73,7 @@ describe('the plugin', function () {
     });
 
     it('provides a folder to hold plans', () => {
-        openmct.objects.get(identifier).then((object) => {
+        return openmct.objects.get(identifier).then((object) => {
             expect(object).toEqual({
                 identifier,
                 type: 'folder',
@@ -83,7 +83,7 @@ describe('the plugin', function () {
     });
 
     it('provides composition for couch search folders', () => {
-        composition.load().then((objects) => {
+        return composition.load().then((objects) => {
             expect(objects.length).toEqual(2);
         });
     });
