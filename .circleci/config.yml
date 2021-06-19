@@ -13,7 +13,7 @@ jobs:
     executor: linux
     steps:
       - checkout
-      - node/install:
+      - node/install-packages:
           node-version: << parameters.node-version >>
           override-ci-command: npm install
       - browser    
