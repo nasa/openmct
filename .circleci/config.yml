@@ -1,18 +1,36 @@
 version: 2.1
+
 orbs:
   node: circleci/node@4.5.1
   browser-tools: circleci/browser-tools@1.1.3
 jobs:
-  nodetest:
-    executor: node/default
+  test:
+    executor: linux
     steps:
       - checkout
+      - node/install:
+          node-version: << parameters.node-version >>
+          override-ci-command: npm install
+      - browser    
+      - run: npm run test:coverage --browsers=<< parameters.browser >>
 workflows:
   matrix-tests:
     jobs:
-      - nodetest:
-          version: 13.11.0
-      - nodetest:
-          version: 12.16.0
-      - nodetest:
-          version: 10.19.0
+      - test:
+          name: node10-chrome
+          node-version: 10
+          browser: ChromeHeadless
+      - test:
+          name: node12-firefox
+          node-version: 12
+          browser: FirefoxHeadless
+      - test:
+          name: node14-canary
+          node-version: 14
+          browser: ChromeCanaryHeadless
+      - test:
+          name: node16-chrome
+          node-version: 16
+          browser: ChromeHeadless
+
+

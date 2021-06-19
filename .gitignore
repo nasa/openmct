@@ -42,3 +42,5 @@ report.*.json
 
 # Lighthouse reports
 .lighthouseci
+
+package-lock.json
