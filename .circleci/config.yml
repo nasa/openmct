@@ -13,8 +13,9 @@ jobs:
     executor: linux
     steps:
       - checkout
-      - node/install-packages:
+      - node/install:
           node-version: << parameters.node-version >>
+      - node/install-packages:
           override-ci-command: npm install
       - browser    
       - run: npm run test:coverage --browsers=<< parameters.browser >>
