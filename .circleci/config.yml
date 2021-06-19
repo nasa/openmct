@@ -16,8 +16,7 @@ jobs:
       - node/install:
           node-version: << parameters.node-version >>
       - node/install-packages:
-          override-ci-command: npm install
-      - browser    
+          override-ci-command: npm install  
       - run: npm run test:coverage --browsers=<< parameters.browser >>
 workflows:
   matrix-tests:
