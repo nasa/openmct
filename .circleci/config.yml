@@ -7,7 +7,7 @@ jobs:
   test:
     parameters:
       node-version:
-        type: string
+        type: integer
       browser:
         type: string
     executor: linux
