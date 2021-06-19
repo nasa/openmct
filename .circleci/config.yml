@@ -26,19 +26,19 @@ workflows:
     jobs:
       - test:
           name: node10-chrome
-          node-version: 10.24.1
+          node-version: lts/dubnium
           browser: ChromeHeadless
       - test:
           name: node12-firefox
-          node-version: erbium
+          node-version: lts/erbium
           browser: FirefoxHeadless
       - test:
           name: node14-canary
-          node-version: fermium
+          node-version: lts/fermium
           browser: ChromeCanaryHeadless
       - test:
           name: node16-chrome
-          node-version: 16.0.0
+          node-version: '16'
           browser: ChromeHeadless
 
 
