@@ -7,7 +7,7 @@ jobs:
   test:
     parameters:
       node-version:
-        type: integer
+        type: string
       browser:
         type: string
     executor: linux
@@ -23,19 +23,19 @@ workflows:
     jobs:
       - test:
           name: node10-chrome
-          node-version: 10
+          node-version: 10.24.1
           browser: ChromeHeadless
       - test:
           name: node12-firefox
-          node-version: 12
+          node-version: erbium
           browser: FirefoxHeadless
       - test:
           name: node14-canary
-          node-version: 14
+          node-version: fermium
           browser: ChromeCanaryHeadless
       - test:
           name: node16-chrome
-          node-version: 16
+          node-version: 16.0.0
           browser: ChromeHeadless
 
 
