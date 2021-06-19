@@ -471,7 +471,7 @@ export default {
     },
     methods: {
         expand() {
-            const actionCollection = this.openmct.actions.get(this.objectPath, this.currentView);
+            const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
             const viewLargeAction = visibleActions
                 && visibleActions.find(action => action.key === 'large.view');
