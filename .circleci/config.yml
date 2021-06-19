@@ -5,6 +5,11 @@ orbs:
   browser-tools: circleci/browser-tools@1.1.3
 jobs:
   test:
+    parameters:
+      node-version:
+        type: string
+      browser:
+        type: string
     executor: linux
     steps:
       - checkout
