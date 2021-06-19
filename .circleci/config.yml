@@ -3,9 +3,7 @@ orbs:
   node: circleci/node@4.5.1
 jobs:
   node/test:
-    executor:
-      name: node/default
-      tag: '13.14'
+    executor: node/default
     steps:
       - checkout
       - run:
