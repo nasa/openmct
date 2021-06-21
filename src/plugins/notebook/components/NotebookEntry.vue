@@ -253,6 +253,7 @@ export default {
         },
         removeEmbed(id) {
             const embedPosition = this.findPositionInArray(this.entry.embeds, id);
+            // TODO: remove notebook snapshot object using object remove API
             this.entry.embeds.splice(embedPosition, 1);
 
             this.$emit('updateEntry', this.entry);
