@@ -28,7 +28,6 @@ import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedPlan } from "./util";
 import Vue from "vue";
 
-//TODO: UI direction needed for the following property values
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
 const INNER_TEXT_PADDING = 17;
@@ -381,7 +380,6 @@ export default {
                 activityRows.forEach((row) => {
                     const items = activitiesByRow[row];
                     items.forEach(item => {
-                    //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
                         this.plotActivity(item, parseInt(row, 10), groupSVG);
                     });
                 });
@@ -451,7 +449,6 @@ export default {
                 fill: activity.color
             });
 
-            //TODO: Remove event listener
             rectElement.addEventListener('click', (event) => {
                 this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
             });
@@ -469,6 +466,9 @@ export default {
 
                 const textNode = document.createTextNode(line);
                 textElement.appendChild(textNode);
+                textElement.addEventListener('click', (event) => {
+                    this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
+                });
                 svgElement.appendChild(textElement);
             });
             // this.addForeignElement(svgElement, activity.name, item.textStart, item.textY - LINE_HEIGHT);
