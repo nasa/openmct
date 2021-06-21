@@ -26,7 +26,7 @@ jobs:
           replace-existing: false
       - run: npm run test:coverage --browsers=<< parameters.browser >>
       - store_test_results:
-          path: dist/reports/tests/**/test-results.xml
+          path: dist/reports/tests/test-results.xml
       - store_artifacts:
           path: dist/reports/
 workflows:

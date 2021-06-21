@@ -87,7 +87,7 @@ module.exports = (config) => {
         junitReporter: {
             outputDir: "dist/reports/tests", // results will be saved as $outputDir/$browserName.xml
             outputFile: "test-results.xml", // if included, results will be saved as $outputDir/$browserName/$outputFile
-            useBrowserName: true, // add browser name to report and classes names
+            useBrowserName: false, // add browser name to report and classes names
         },
         browserConsoleLogOptions: {
             level: "error",
