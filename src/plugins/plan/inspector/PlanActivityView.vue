@@ -1,5 +1,4 @@
 <template>
-<!-- If only one Activity is selected -->
 <div v-if="timeProperties.length"
      class="u-contents"
 >
