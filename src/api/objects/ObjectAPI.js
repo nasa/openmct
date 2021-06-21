@@ -45,6 +45,8 @@ function ObjectAPI(typeRegistry, openmct) {
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
+
+    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
 }
 
 /**
@@ -404,11 +406,16 @@ ObjectAPI.prototype._toMutable = function (object) {
     let provider = this.getProvider(identifier);
 
     if (provider !== undefined
-        && provider.observe !== undefined) {
+        && provider.observe !== undefined
+        && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
         let unobserve = provider.observe(identifier, (updatedModel) => {
-            mutableObject.$refresh(updatedModel);
+            if (updatedModel.persisted > mutableObject.modified) {
+                //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
+                //in rapid succession and intermediate persistence states are returned by the observe function.
+                mutableObject.$refresh(updatedModel);
+            }
         });
-        mutableObject.$on('$destroy', () => {
+        mutableObject.$on('$_destroy', () => {
             unobserve();
         });
     }
