@@ -51,16 +51,9 @@ define(
          * @param {object} options Image options.
          * @returns {promise}
          */
-        ExportImageService.prototype.renderElement = function (element, options) {
+        ExportImageService.prototype.renderElement = function (element, {imageType, className, thumbnailSize}) {
             const self = this;
             const dialogService = this.dialogService;
-
-            const {
-                imageType,
-                className,
-                thumbnailSize
-            } = options;
-
             const dialog = dialogService.showBlockingMessage({
                 title: "Capturing...",
                 hint: "Capturing an image",

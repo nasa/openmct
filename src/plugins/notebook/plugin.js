@@ -2,6 +2,8 @@ import CopyToNotebookAction from './actions/CopyToNotebookAction';
 import Notebook from './components/Notebook.vue';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import SnapshotContainer from './snapshot-container';
+
+import { notebookImageMigration } from '../notebook/utils/notebook-migration';
 import { NOTEBOOK_TYPE } from './notebook-constants';
 
 import Vue from 'vue';
@@ -150,6 +152,17 @@ export default function NotebookPlugin() {
                         component.$destroy();
                     }
                 };
+            }
+        });
+
+        openmct.objects.addGetInterceptor({
+            appliesTo: (identifier, domainObject) => {
+                return domainObject && domainObject.type === 'notebook';
+            },
+            invoke: (identifier, domainObject) => {
+                notebookImageMigration(openmct, domainObject);
+
+                return domainObject;
             }
         });
     };
