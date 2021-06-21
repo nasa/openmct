@@ -22,7 +22,8 @@ jobs:
           override-ci-command: npm install
       - browser-tools/install-firefox:
           firefox-version: "78.11.0"
-      - browser-tools/install-chrome:  
+      - browser-tools/install-chrome:
+          replace-existing: false
       - run: npm run test:coverage --browsers=<< parameters.browser >>
       - store_test_results:
           path: ./dist/reports/tests/**/test-results.xml
