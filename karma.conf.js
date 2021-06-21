@@ -25,7 +25,7 @@
 const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['progress', 'html'];
+const reporters = ['progress', 'html', 'junit'];
 
 if (coverageEnabled) {
     reporters.push('coverage-istanbul');
@@ -83,6 +83,11 @@ module.exports = (config) => {
             outputDir: "dist/reports/tests",
             preserveDescribeNesting: true,
             foldAll: false
+        },
+        junitReporter: {
+            outputDir: "dist/reports/tests/", // results will be saved as $outputDir/$browserName.xml
+            outputFile: "test-results.xml", // if included, results will be saved as $outputDir/$browserName/$outputFile
+            useBrowserName: true, // add browser name to report and classes names
         },
         browserConsoleLogOptions: {
             level: "error",
