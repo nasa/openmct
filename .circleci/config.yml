@@ -19,7 +19,10 @@ jobs:
       - node/install:
           node-version: << parameters.node-version >>
       - node/install-packages:
-          override-ci-command: npm install  
+          override-ci-command: npm install
+      - browser-tools/install-browser-tools:
+            firefox-version: "78.0.1"
+            chrome-version: "85.0.4183.102"    
       - run: npm run test:coverage --browsers=<< parameters.browser >>
 workflows:
   matrix-tests:
