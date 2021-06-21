@@ -32,6 +32,7 @@ export default class MCTChartAlarmLineSet {
 
         eventHelpers.extend(this);
         this.listenTo(series, 'limitBounds', this.updateBounds, this);
+        this.listenTo(series, 'limits', this.getLimitPoints, this);
         this.listenTo(series, 'change:xKey', this.getLimitPoints, this);
 
         if (series.limits) {
@@ -69,26 +70,28 @@ export default class MCTChartAlarmLineSet {
         Object.keys(series.limits).forEach((key) => {
             const limitForLevel = series.limits[key];
             if (limitForLevel.high) {
-                const point = this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.high), series);
                 this.limits.push({
                     seriesKey: series.keyString,
-                    value: series.getYVal(limitForLevel.high),
-                    color: this.color().asHexString(),
+                    level: key.toLowerCase(),
                     name: this.name(),
-                    point,
-                    cssClass: limitForLevel.high.cssClass
+                    seriesColor: series.get('color').asHexString(),
+                    point: this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.high), series),
+                    value: series.getYVal(limitForLevel.high),
+                    color: limitForLevel.high.color,
+                    isUpper: true
                 });
             }
 
             if (limitForLevel.low) {
-                const point = this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.low), series);
                 this.limits.push({
                     seriesKey: series.keyString,
-                    value: series.getYVal(limitForLevel.low),
-                    color: this.color().asHexString(),
+                    level: key.toLowerCase(),
                     name: this.name(),
-                    point,
-                    cssClass: limitForLevel.low.cssClass
+                    seriesColor: series.get('color').asHexString(),
+                    point: this.makePoint(Object.assign({ [xKey]: this.bounds.start }, limitForLevel.low), series),
+                    value: series.getYVal(limitForLevel.low),
+                    color: limitForLevel.low.color,
+                    isUpper: false
                 });
             }
         }, this);
