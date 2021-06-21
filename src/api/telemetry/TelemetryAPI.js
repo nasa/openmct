@@ -567,14 +567,15 @@ define([
      * @method limits returns a limits object of
      * type {
      *          level1: {
-     *              low: { key1: value1, key2: value2 },
-     *              high: { key1: value1, key2: value2 }
+     *              low: { key1: value1, key2: value2, color: <supportedColor> },
+     *              high: { key1: value1, key2: value2, color: <supportedColor> }
      *          },
      *          level2: {
      *              low: { key1: value1, key2: value2 },
      *              high: { key1: value1, key2: value2 }
      *          }
      *       }
+     *  supported colors are purple, red, orange, yellow and cyan
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.getLimits = function (domainObject) {
