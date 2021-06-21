@@ -1,6 +1,6 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="[{ 'is-selected': page.isSelected, 'is-notebook-default' : (defaultPageId === page.id) }]"
+     :class="[{ 'is-selected': isSelected, 'is-notebook-default' : (defaultPageId === page.id) }]"
      :data-id="page.id"
      @click="selectPage"
 >
@@ -29,6 +29,10 @@ export default {
                 return '';
             }
         },
+        selectedPageId: {
+            type: String,
+            required: true
+        },
         page: {
             type: Object,
             required: true
@@ -45,6 +49,11 @@ export default {
             popupMenuItems: [],
             removeActionString: `Delete ${this.pageTitle}`
         };
+    },
+    computed: {
+        isSelected() {
+            return this.selectedPageId === this.page.id;
+        }
     },
     watch: {
         page(newPage) {
@@ -73,7 +82,7 @@ export default {
             this.$emit('deletePage', this.page.id);
         },
         getRemoveDialog() {
-            const message = 'This action will delete this page and all of its entries. Do you want to continue?';
+            const message = 'Other users may be editing entries in this page, and deleting it is permanent. Do you want to continue?';
             const options = {
                 name: this.removeActionString,
                 callback: this.deletePage.bind(this),
