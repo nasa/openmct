@@ -68,9 +68,6 @@ describe("the plugin", () => {
             await openInNewTabAction.invoke(mockObjectPath);
         });
 
-        afterEach(() => {
-            return resetApplicationState(openmct);
-        });
         it('it opens in a new tab', () => {
             expect(window.open).toHaveBeenCalled();
         });
