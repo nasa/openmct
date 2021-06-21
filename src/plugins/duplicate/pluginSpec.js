@@ -121,10 +121,9 @@ describe("The Duplicate Action plugin", () => {
 
     describe("when moving an object to a new parent", () => {
 
-        beforeEach(async (done) => {
+        beforeEach(async () => {
             duplicateTask = new DuplicateTask(openmct);
             await duplicateTask.duplicate(parentObject, anotherParentObject);
-            done();
         });
 
         it("the duplicate child object's name (when not changing) should be the same as the original object", async () => {
@@ -143,15 +142,15 @@ describe("The Duplicate Action plugin", () => {
     });
 
     describe("when a new name is provided for the duplicated object", () => {
-        const NEW_NAME = 'New Name';
+        it("the name is updated", () => {
+            const NEW_NAME = 'New Name';
+            let childName;
 
-        beforeEach(() => {
             duplicateTask = new DuplicateAction(openmct);
             duplicateTask.updateNameCheck(parentObject, NEW_NAME);
-        });
 
-        it("the name is updated", () => {
-            let childName = parentObject.name;
+            childName = parentObject.name;
+
             expect(childName).toEqual(NEW_NAME);
         });
     });
