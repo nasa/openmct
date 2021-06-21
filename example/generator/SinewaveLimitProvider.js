@@ -54,17 +54,13 @@ define([
                 name: "Red High"
             },
             rl: {
-                color: 'red',
-                isUpper: false,
-                level: 'critical',
+                cssClass: "is-limit--lwr is-limit--red",
                 high: -RED,
                 low: Number.NEGATIVE_INFINITY,
                 name: "Red Low"
             },
             yh: {
-                color: 'yellow',
-                isUpper: true,
-                level: 'warning',
+                cssClass: "is-limit--upr is-limit--yellow",
                 low: YELLOW,
                 high: RED,
                 name: "Yellow High"
