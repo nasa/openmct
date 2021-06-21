@@ -71,7 +71,8 @@ export default class DuplicateAction {
 
     updateNameCheck(object, name) {
         if (object.name !== name) {
-            this.openmct.objects.mutate(object, 'name', name);
+            object.name = name;
+            this.openmct.objects.save(object);
         }
     }
 
@@ -95,7 +96,7 @@ export default class DuplicateAction {
                             cssClass: "l-input-lg"
                         },
                         {
-                            name: "location",
+                            name: "Location",
                             cssClass: "grows",
                             control: "locator",
                             validate: this.validate(object, parent),
