@@ -19,73 +19,60 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import {
+    createOpenMct,
+    resetApplicationState,
+    spyOnBuiltins
+} from 'utils/testing';
 
-import {createOpenMct, resetApplicationState} from "utils/testing";
-import CouchDBSearchFolderPlugin from './plugin';
-
-describe('the plugin', function () {
-    let identifier = {
-        namespace: 'couch-search',
-        key: "couch-search"
-    };
-    let testPath = '/test/db';
+describe("the plugin", () => {
     let openmct;
-    let composition;
+    let openInNewTabAction;
+    let mockObjectPath;
 
     beforeEach((done) => {
-
         openmct = createOpenMct();
-
-        let couchPlugin = openmct.plugins.CouchDB(testPath);
-        openmct.install(couchPlugin);
-
-        openmct.install(new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
-            "selector": {
-                "model": {
-                    "type": "plan"
-                }
-            }
-        }));
 
         openmct.on('start', done);
         openmct.startHeadless();
 
-        composition = openmct.composition.get({identifier});
-
-        spyOn(couchPlugin.couchProvider, 'getObjectsByFilter').and.returnValue(Promise.resolve([
-            {
-                identifier: {
-                    key: "1",
-                    namespace: "mct"
-                }
-            },
-            {
-                identifier: {
-                    key: "2",
-                    namespace: "mct"
-                }
-            }
-        ]));
+        openInNewTabAction = openmct.actions._allActions.newTab;
     });
 
     afterEach(() => {
         return resetApplicationState(openmct);
     });
 
-    it('provides a folder to hold plans', () => {
-        return openmct.objects.get(identifier).then((object) => {
-            expect(object).toEqual({
-                identifier,
+    it('installs the open in new tab action', () => {
+        expect(openInNewTabAction).toBeDefined();
+    });
+
+    describe('when invoked', () => {
+
+        beforeEach(async () => {
+            mockObjectPath = [{
+                name: 'mock folder',
                 type: 'folder',
-                name: "CouchDB Documents"
-            });
+                identifier: {
+                    key: 'mock-folder',
+                    namespace: ''
+                }
+            }];
+            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({
+                identifier: {
+                    namespace: '',
+                    key: 'test'
+                }
+            }));
+            spyOnBuiltins(['open']);
+            await openInNewTabAction.invoke(mockObjectPath);
+        });
+
+        afterEach(() => {
+            return resetApplicationState(openmct);
+        });
+        it('it opens in a new tab', () => {
+            expect(window.open).toHaveBeenCalled();
         });
     });
-
-    it('provides composition for couch search folders', () => {
-        return composition.load().then((objects) => {
-            expect(objects.length).toEqual(2);
-        });
-    });
-
 });
