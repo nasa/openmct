@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2009-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,32 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
+/**
+ * Module defining url handling.
+ */
 
-    /**
-     * Indicator that displays the active timer, as well as its
-     * current state.
-     * @memberof platform/features/clock
-     */
-    return function installFollowIndicator(openmct, timerService) {
-        var indicator = openmct.indicators.simpleIndicator();
-        var timer = timerService.getTimer();
-        setIndicatorStatus(timer);
-
-        function setIndicatorStatus(newTimer) {
-            if (newTimer !== undefined) {
-                indicator.iconClass('icon-timer');
-                indicator.statusClass('s-status-on');
-                indicator.text('Following timer ' + newTimer.name);
-            } else {
-                indicator.iconClass('icon-timer');
-                indicator.statusClass('s-status-disabled');
-                indicator.text('No timer being followed');
-            }
+export function paramsToArray(openmct) {
+    // parse urParams from an object to an array.
+    let urlParams = openmct.router.getParams();
+    let newTabParams = [];
+    for (let key in urlParams) {
+        if ({}.hasOwnProperty.call(urlParams, key)) {
+            let param = `${key}=${urlParams[key]}`;
+            newTabParams.push(param);
         }
+    }
 
-        timerService.on('change', setIndicatorStatus);
+    return newTabParams;
+}
 
-        openmct.indicators.add(indicator);
-    };
-});
+export function identifierToString(openmct, objectPath) {
+    let identifier = '#/browse/' + objectPath.map(function (o) {
+        return o && openmct.objects.makeKeyString(o.identifier);
+    })
+        .reverse()
+        .join('/');
+
+    return identifier;
+}
+
+export default function objectPathToUrl(openmct, objectPath) {
+    let url = identifierToString(openmct, objectPath);
+    let urlParams = paramsToArray(openmct);
+    if (urlParams.length) {
+        url += '?' + urlParams.join('&');
+    }
+
+    return url;
+}

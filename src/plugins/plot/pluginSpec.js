@@ -34,6 +34,7 @@ describe("the plugin", function () {
     let child;
     let openmct;
     let telemetryPromise;
+    let telemetryPromiseResolve;
     let cleanupFirst;
     let mockObjectPath;
     let telemetrylimitProvider;
@@ -78,7 +79,6 @@ describe("the plugin", function () {
 
         openmct = createOpenMct();
 
-        let telemetryPromiseResolve;
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
         });

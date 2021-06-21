@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2009-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,38 +19,20 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import objectPathToUrl from '/src/tools/url';
+export default class OpenInNewTab {
+    constructor(openmct) {
+        this.name = 'Open In New Tab';
+        this.key = 'newTab';
+        this.description = 'Open in a new browser tab';
+        this.group = "windowing";
+        this.priority = 10;
+        this.cssClass = "icon-new-window";
 
-define(
-    [],
-    function () {
-
-        /**
-         * Designates a specific timer for following. Timelines, for example,
-         * use the actively followed timer to display a time-of-interest line
-         * and interpret time conductor bounds in the Timeline's relative
-         * time frame.
-         *
-         * @implements {Action}
-         * @memberof platform/features/clock
-         * @constructor
-         * @param {ActionContext} context the context for this action
-         */
-        function FollowTimerAction(timerService, context) {
-            var domainObject =
-                context.domainObject
-                && context.domainObject.useCapability('adapter');
-            this.perform =
-                timerService.setTimer.bind(timerService, domainObject);
-        }
-
-        FollowTimerAction.appliesTo = function (context) {
-            var model =
-                (context.domainObject && context.domainObject.getModel())
-                || {};
-
-            return model.type === 'timer';
-        };
-
-        return FollowTimerAction;
+        this._openmct = openmct;
     }
-);
+    invoke(objectPath) {
+        let url = objectPathToUrl(this._openmct, objectPath);
+        window.open(url);
+    }
+}

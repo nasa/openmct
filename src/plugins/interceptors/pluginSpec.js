@@ -30,10 +30,6 @@ describe('the plugin', function () {
     const TEST_NAMESPACE = 'test';
 
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
         openmct.install(new InterceptorPlugin(openmct));
 
@@ -46,7 +42,7 @@ describe('the plugin', function () {
         element.appendChild(child);
 
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
@@ -55,6 +51,7 @@ describe('the plugin', function () {
 
     describe('the missingObjectInterceptor', () => {
         let mockProvider;
+
         beforeEach(() => {
             mockProvider = jasmine.createSpyObj("mock provider", [
                 "get"
@@ -63,27 +60,28 @@ describe('the plugin', function () {
             openmct.objects.addProvider(TEST_NAMESPACE, mockProvider);
         });
 
-        it('returns missing objects', (done) => {
+        it('returns missing objects', () => {
             const identifier = {
                 namespace: TEST_NAMESPACE,
                 key: 'hello'
             };
-            openmct.objects.get(identifier).then((testObject) => {
+
+            return openmct.objects.get(identifier).then((testObject) => {
                 expect(testObject).toEqual({
                     identifier,
                     type: 'unknown',
                     name: 'Missing: test:hello'
                 });
-                done();
             });
         });
 
-        it('returns the My items object if not found', (done) => {
+        it('returns the My items object if not found', () => {
             const identifier = {
                 namespace: TEST_NAMESPACE,
                 key: 'mine'
             };
-            openmct.objects.get(identifier).then((testObject) => {
+
+            return openmct.objects.get(identifier).then((testObject) => {
                 expect(testObject).toEqual({
                     identifier,
                     "name": "My Items",
@@ -91,7 +89,6 @@ describe('the plugin', function () {
                     "composition": [],
                     "location": "ROOT"
                 });
-                done();
             });
         });
 
