@@ -21,7 +21,7 @@ jobs:
       - node/install-packages:
           override-ci-command: npm install
       - browser-tools/install-firefox:
-          version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/
+          version: "latest-esr" #https://archive.mozilla.org/pub/firefox/releases/
       - browser-tools/install-chrome:
           replace-existing: false
       - run: npm run test:coverage --browsers=<< parameters.browser >>
