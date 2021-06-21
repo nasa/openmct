@@ -19,7 +19,8 @@ export function notebookImageMigration(openmct, domainObject) {
         const sectionId = section.id;
         section.pages.forEach(page => {
             const pageId = page.id;
-            const pageEntries = notebookEntries[sectionId][pageId] || [];
+            const notebookSection = notebookEntries && notebookEntries[sectionId] || {};
+            const pageEntries = notebookSection && notebookSection[pageId] || [];
             pageEntries.forEach(entry => {
                 entry.embeds.forEach(async (embed) => {
                     const snapshot = embed.snapshot;
