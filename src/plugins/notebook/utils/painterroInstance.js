@@ -1,4 +1,5 @@
 import Painterro from 'painterro';
+import { getThumbnailURLFromimageUrl } from './notebook-image';
 
 const DEFAULT_CONFIG = {
     activeColor: '#ff0000',
@@ -25,11 +26,11 @@ const DEFAULT_CONFIG = {
 };
 
 export default class PainterroInstance {
-    constructor(element, saveCallback) {
+    constructor(element) {
         this.elementId = element.id;
         this.isSave = false;
-        this.painterroInstance = null;
-        this.saveCallback = saveCallback;
+        this.painterroInstance = undefined;
+        this.saveCallback = undefined;
     }
 
     dismiss() {
@@ -46,31 +47,41 @@ export default class PainterroInstance {
         this.painterro = Painterro(this.config);
     }
 
-    save() {
+    save(callback) {
+        this.saveCallback = callback;
         this.isSave = true;
         this.painterroInstance.save();
     }
 
     saveHandler(image, done) {
         if (this.isSave) {
-            const self = this;
             const url = image.asBlob();
+
             const reader = new window.FileReader();
             reader.readAsDataURL(url);
-            reader.onloadend = () => {
-                const snapshot = reader.result;
+            reader.onloadend = async () => {
+                const fullSizeImageURL = reader.result;
+                const thumbnailURL = await getThumbnailURLFromimageUrl(fullSizeImageURL);
                 const snapshotObject = {
-                    src: snapshot,
-                    type: url.type,
-                    size: url.size,
-                    modified: Date.now()
+                    fullSizeImage: {
+                        src: fullSizeImageURL,
+                        type: url.type,
+                        size: url.size,
+                        modified: Date.now()
+                    },
+                    thumbnailImage: {
+                        src: thumbnailURL,
+                        modified: Date.now()
+                    }
                 };
 
-                self.saveCallback(snapshotObject);
-            };
-        }
+                this.saveCallback(snapshotObject);
 
-        done(true);
+                done(true);
+            };
+        } else {
+            done(true);
+        }
     }
 
     show(src) {
