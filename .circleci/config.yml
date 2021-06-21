@@ -21,14 +21,14 @@ jobs:
       - node/install-packages:
           override-ci-command: npm install
       - browser-tools/install-firefox:
-          version: "78.11.0"
+          version: "78esr"
       - browser-tools/install-chrome:
           replace-existing: false
       - run: npm run test:coverage --browsers=<< parameters.browser >>
       - store_test_results:
-          path: ./dist/reports/tests/**/test-results.xml
+          path: dist/reports/tests/**/test-results.xml
       - store_artifacts:
-          path: ./dist/reports/
+          path: dist/reports/
 workflows:
   matrix-tests:
     jobs:
