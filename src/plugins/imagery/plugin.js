@@ -21,10 +21,13 @@
  *****************************************************************************/
 
 import ImageryViewProvider from './ImageryViewProvider';
+import ImageryConfigurationViewProvider from './ImageryConfigurationViewProvider';
 
 export default function () {
     return function install(openmct) {
         openmct.objectViews.addProvider(new ImageryViewProvider(openmct));
+        // for inspector view config
+        openmct.objectViews.addProvider(new ImageryConfigurationViewProvider(openmct));
     };
 }
 
