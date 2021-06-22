@@ -74,6 +74,8 @@
 </template>
 
 <script>
+import {getLimitClass} from "@/plugins/plot/chart/limitUtil";
+
 export default {
     props: {
         seriesObject: {
@@ -147,7 +149,7 @@ export default {
             if (closest) {
                 this.formattedYValue = seriesObject.formatY(closest);
                 this.formattedXValue = seriesObject.formatX(closest);
-                this.mctLimitStateClass = seriesObject.closest.mctLimitState ? seriesObject.closest.mctLimitState.cssClass : '';
+                this.mctLimitStateClass = seriesObject.closest.mctLimitState ? getLimitClass(seriesObject.closest.mctLimitState, 'c-plot-limit--') : '';
             } else {
                 this.formattedYValue = '';
                 this.formattedXValue = '';
