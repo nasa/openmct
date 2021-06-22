@@ -1,10 +1,13 @@
 <template>
-<hr :style="styleObj"
-    :class="cssWithoutUprLwr"
->
+<div :style="styleObj"
+     class="c-plot-limit-line js-limit-line"
+     :class="limitClass"
+></div>
 </template>
 
 <script>
+import { getLimitClass } from "./limitUtil";
+
 export default {
     props: {
         point: {
@@ -14,30 +17,23 @@ export default {
                 return {};
             }
         },
-        cssClass: {
-            type: String,
+        limit: {
+            type: Object,
             default() {
-                return '';
+                return {};
             }
         }
     },
     computed: {
         styleObj() {
             const top = `${this.point.top}px`;
-            const left = `${this.point.left}px`;
 
             return {
-                'position': 'absolute',
-                'width': '100%',
-                'top': top,
-                'left': left
+                'top': top
             };
         },
-        cssWithoutUprLwr() {
-            let cssClass = this.cssClass.replace(/is-limit--upr/gi, 'is-limit--line');
-            cssClass = cssClass.replace(/is-limit--lwr/gi, 'is-limit--line');
-
-            return cssClass;
+        limitClass() {
+            return getLimitClass(this.limit, 'c-plot-limit-line--');
         }
     }
 };
