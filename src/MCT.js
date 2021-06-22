@@ -36,8 +36,7 @@ define([
     './plugins/imagery/plugin',
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
-    './ui/router/ApplicationRouter',
-    './ui/router/Browse',
+    './api/router/Browse',
     '../platform/framework/src/Main',
     './ui/layout/Layout.vue',
     '../platform/core/src/objects/DomainObjectImpl',
@@ -65,7 +64,6 @@ define([
     ImageryPlugin,
     InspectorViewRegistry,
     ToolbarRegistry,
-    ApplicationRouter,
     Browse,
     Main,
     Layout,
@@ -252,7 +250,7 @@ define([
 
         this.status = new api.StatusAPI(this);
 
-        this.router = new ApplicationRouter(this);
+        this.router = new api.RouterAPI(this);
 
         this.branding = BrandingAPI.default;
 
