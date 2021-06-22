@@ -67,10 +67,6 @@ describe("The LAD Table", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         parent = document.createElement('div');
@@ -90,7 +86,7 @@ describe("The LAD Table", () => {
         });
 
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
@@ -113,7 +109,8 @@ describe("The LAD Table", () => {
 
         beforeEach(() => {
             ladTableCompositionCollection = openmct.composition.get(mockObj.ladTable);
-            ladTableCompositionCollection.load();
+
+            return ladTableCompositionCollection.load();
         });
 
         it("should accept telemetry producing objects", () => {
@@ -192,8 +189,6 @@ describe("The LAD Table", () => {
 
             await Promise.all([telemetryRequestPromise, telemetryObjectPromise, anotherTelemetryObjectPromise]);
             await Vue.nextTick();
-
-            return;
         });
 
         it("should show one row per object in the composition", () => {
@@ -242,13 +237,6 @@ describe("The LAD Table Set", () => {
     let ladPlugin;
     let parent;
     let child;
-    let telemetryCount = 3;
-    let timeFormat = 'utc';
-
-    let mockTelemetry = getMockTelemetry({
-        count: telemetryCount,
-        format: timeFormat
-    });
 
     let mockObj = getMockObjects({
         objectKeyStrings: ['ladTable', 'ladTableSet', 'telemetry']
@@ -264,23 +252,14 @@ describe("The LAD Table Set", () => {
     mockObj.ladTableSet.composition.push(mockObj.ladTable.identifier);
 
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         parent = document.createElement('div');
         child = document.createElement('div');
         parent.appendChild(child);
 
-        spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-
         ladPlugin = new LadPlugin();
         openmct.install(ladPlugin);
-
-        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
 
         openmct.time.bounds({
             start: bounds.start,
@@ -288,7 +267,7 @@ describe("The LAD Table Set", () => {
         });
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach(() => {
@@ -301,6 +280,8 @@ describe("The LAD Table Set", () => {
     });
 
     it("should provide a lad table set view only for lad table set objects", () => {
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+
         let applicableViews = openmct.objectViews.get(mockObj.ladTableSet, []);
 
         let ladTableSetView = applicableViews.find(
@@ -315,8 +296,11 @@ describe("The LAD Table Set", () => {
         let ladTableSetCompositionCollection;
 
         beforeEach(() => {
+            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+
             ladTableSetCompositionCollection = openmct.composition.get(mockObj.ladTableSet);
-            ladTableSetCompositionCollection.load();
+
+            return ladTableSetCompositionCollection.load();
         });
 
         it("should accept lad table objects", () => {
@@ -354,41 +338,17 @@ describe("The LAD Table Set", () => {
         otherObj.ladTable.composition.push(mockObj.telemetry.identifier);
         mockObj.ladTableSet.composition.push(otherObj.ladTable.identifier);
 
-        beforeEach(async () => {
-            let telemetryRequestResolve;
-            let ladObjectResolve;
-            let anotherLadObjectResolve;
+        beforeEach(() => {
+            spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
 
-            let telemetryRequestPromise = new Promise((resolve) => {
-                telemetryRequestResolve = resolve;
-            });
-
-            let ladObjectPromise = new Promise((resolve) => {
-                ladObjectResolve = resolve;
-            });
-
-            let anotherLadObjectPromise = new Promise((resolve) => {
-                anotherLadObjectResolve = resolve;
-            });
-
-            openmct.telemetry.request.and.callFake(() => {
-                telemetryRequestResolve(mockTelemetry);
-
-                return telemetryRequestPromise;
-            });
-
-            openmct.objects.get.and.callFake((obj) => {
+            spyOn(openmct.objects, 'get').and.callFake((obj) => {
                 if (obj.key === 'lad-object') {
-                    ladObjectResolve(mockObj.ladObject);
-
-                    return ladObjectPromise;
+                    return Promise.resolve(mockObj.ladTable);
                 } else if (obj.key === 'another-lad-object') {
-                    anotherLadObjectResolve(otherObj.ladObject);
-
-                    return anotherLadObjectPromise;
+                    return Promise.resolve(otherObj.ladTable);
+                } else if (obj.key === 'telemetry-object') {
+                    return Promise.resolve(mockObj.telemetry);
                 }
-
-                return Promise.resolve({});
             });
 
             openmct.time.bounds({
@@ -399,20 +359,19 @@ describe("The LAD Table Set", () => {
             applicableViews = openmct.objectViews.get(mockObj.ladTableSet, []);
             ladTableSetViewProvider = applicableViews.find((viewProvider) => viewProvider.key === ladTableSetKey);
             ladTableSetView = ladTableSetViewProvider.view(mockObj.ladTableSet, [mockObj.ladTableSet]);
-            ladTableSetView.show(child, true);
+            ladTableSetView.show(child);
 
-            await Promise.all([telemetryRequestPromise, ladObjectPromise, anotherLadObjectPromise]);
-            await Vue.nextTick();
-
-            return;
+            return Vue.nextTick();
         });
 
         it("should show one row per lad table object in the composition", () => {
-            const rowCount = parent.querySelectorAll(LAD_SET_TABLE_HEADERS).length;
+            const ladTableSetCompositionCollection = openmct.composition.get(mockObj.ladTableSet);
 
-            expect(rowCount).toBe(mockObj.ladTableSet.composition.length);
-            pending();
+            return ladTableSetCompositionCollection.load().then(() => {
+                const rowCount = parent.querySelectorAll(LAD_SET_TABLE_HEADERS).length;
+
+                expect(rowCount).toBe(mockObj.ladTableSet.composition.length);
+            });
         });
     });
 });
-

@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import MoveActionPlugin from './plugin.js';
-import MoveAction from './MoveAction.js';
 import {
     createOpenMct,
     resetApplicationState,
@@ -37,10 +35,6 @@ describe("The Move Action plugin", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         childObject = getMockObjects({
@@ -73,11 +67,10 @@ describe("The Move Action plugin", () => {
             }
         }).folder;
 
-        // already installed by default, but never hurts, just adds to context menu
-        openmct.install(MoveActionPlugin());
-
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
+
+        moveAction = openmct.actions._allActions.move;
     });
 
     afterEach(() => {
@@ -85,13 +78,12 @@ describe("The Move Action plugin", () => {
     });
 
     it("should be defined", () => {
-        expect(MoveActionPlugin).toBeDefined();
+        expect(moveAction).toBeDefined();
     });
 
     describe("when moving an object to a new parent and removing from the old parent", () => {
 
         beforeEach(() => {
-            moveAction = new MoveAction(openmct);
             moveAction.addToNewParent(childObject, anotherParentObject);
             moveAction.removeFromOldParent(parentObject, childObject);
         });
