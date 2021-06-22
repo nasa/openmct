@@ -97,7 +97,7 @@ describe("the plugin", function () {
         telemetrylimitProvider.supportsLimits.and.returnValue(true);
         telemetrylimitProvider.getLimits.and.returnValue({
             limits: function () {
-                return {
+                return Promise.resolve({
                     WARNING: {
                         low: {
                             cssClass: "is-limit--lwr is-limit--yellow",
@@ -118,7 +118,7 @@ describe("the plugin", function () {
                             'some-key': 0.9
                         }
                     }
-                };
+                });
             }
         });
         telemetrylimitProvider.getLimitEvaluator.and.returnValue({
@@ -709,7 +709,7 @@ describe("the plugin", function () {
                 config.series.models[0].set('limitLines', true);
 
                 Vue.nextTick(() => {
-                    let limitEl = element.querySelectorAll(".js-limit-area hr");
+                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
                     expect(limitEl.length).toBe(4);
                     done();
                 });
