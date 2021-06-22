@@ -595,9 +595,17 @@ section.
 
 #### Limit Evaluators **draft**
 
-Limit evaluators allow a telemetry integrator to define how limits should be 
-applied to telemetry from a given domain object.  For an example of a limit 
-evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
+Limit evaluators allow a telemetry integrator to define which limits exist for a 
+telemetry endpoint and how limits should be applied to telemetry from a given domain object.
+
+A limit evaluator can implement the `evalute` method which is used to define how limits
+should be applied to telemetry and the `getLimits` method which is used to specify 
+what the limit values are for different limit levels.
+
+Limit levels can be mapped to one of 5 colors for visualization: 
+`purple`, `red`, `orange`, `yellow` and `cyan`.
+
+For an example of a limit evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
 
 ### Telemetry Consumer APIs **draft**
 
