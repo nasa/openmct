@@ -1,17 +1,23 @@
 <template>
-<div class="plot-series-limit-label"
+<div class="c-plot-limit"
      :style="styleObj"
-     :class="limit.cssClass"
+     :class="limitClass"
 >
-    <span class="plot-series-limit-value">{{ limit.value }}</span>
-    <span class="plot-series-color-swatch"
-          :style="{ 'background-color': limit.color }"
-    ></span>
-    <span class="plot-series-name">{{ limit.name }}</span>
+    <div class="c-plot-limit__label">
+        <span class="c-plot-limit__direction-icon"></span>
+        <span class="c-plot-limit__severity-icon"></span>
+        <span class="c-plot-limit__limit-value">{{ limit.value }}</span>
+        <span class="c-plot-limit__series-color-swatch"
+              :style="{ 'background-color': limit.seriesColor }"
+        ></span>
+        <span class="c-plot-limit__series-name">{{ limit.name }}</span>
+    </div>
 </div>
 </template>
 
 <script>
+import { getLimitClass } from "./limitUtil";
+
 export default {
     props: {
         limit: {
@@ -31,15 +37,14 @@ export default {
     },
     computed: {
         styleObj() {
-            const top = `${this.point.top - 10}px`;
-            const left = `${this.point.left + 5}px`;
+            const top = `${this.point.top}px`;
 
             return {
-                'position': 'absolute',
-                'top': top,
-                'left': left,
-                'color': '#fff'
+                'top': top
             };
+        },
+        limitClass() {
+            return getLimitClass(this.limit, 'c-plot-limit--');
         }
     }
 };

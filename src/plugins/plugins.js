@@ -46,6 +46,7 @@ define([
     './filters/plugin',
     './objectMigration/plugin',
     './goToOriginalAction/plugin',
+    './openInNewTabAction/plugin',
     './clearData/plugin',
     './webPage/plugin',
     './condition/plugin',
@@ -91,6 +92,7 @@ define([
     Filters,
     ObjectMigration,
     GoToOriginalAction,
+    OpenInNewTabAction,
     ClearData,
     WebPagePlugin,
     ConditionPlugin,
@@ -190,6 +192,7 @@ define([
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.OpenInNewTabAction = OpenInNewTabAction.default;
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
     plugins.Espresso = Espresso.default;
