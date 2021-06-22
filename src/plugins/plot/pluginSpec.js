@@ -34,6 +34,7 @@ describe("the plugin", function () {
     let child;
     let openmct;
     let telemetryPromise;
+    let telemetryPromiseResolve;
     let cleanupFirst;
     let mockObjectPath;
     let telemetrylimitProvider;
@@ -78,7 +79,6 @@ describe("the plugin", function () {
 
         openmct = createOpenMct();
 
-        let telemetryPromiseResolve;
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
         });
@@ -97,7 +97,7 @@ describe("the plugin", function () {
         telemetrylimitProvider.supportsLimits.and.returnValue(true);
         telemetrylimitProvider.getLimits.and.returnValue({
             limits: function () {
-                return {
+                return Promise.resolve({
                     WARNING: {
                         low: {
                             cssClass: "is-limit--lwr is-limit--yellow",
@@ -118,7 +118,7 @@ describe("the plugin", function () {
                             'some-key': 0.9
                         }
                     }
-                };
+                });
             }
         });
         telemetrylimitProvider.getLimitEvaluator.and.returnValue({
@@ -402,6 +402,25 @@ describe("the plugin", function () {
                 });
 
             });
+        });
+
+        describe('controls in time strip view', () => {
+
+            it('zoom controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-zoom");
+                expect(pauseEl.length).toBe(0);
+            });
+
+            it('pan controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-pan");
+                expect(pauseEl.length).toBe(0);
+            });
+
+            it('pause/play controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-pause");
+                expect(pauseEl.length).toBe(0);
+            });
+
         });
     });
 
@@ -709,7 +728,7 @@ describe("the plugin", function () {
                 config.series.models[0].set('limitLines', true);
 
                 Vue.nextTick(() => {
-                    let limitEl = element.querySelectorAll(".js-limit-area hr");
+                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
                     expect(limitEl.length).toBe(4);
                     done();
                 });
