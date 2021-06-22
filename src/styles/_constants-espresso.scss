@@ -314,12 +314,21 @@ $colorTelemStale: pushBack($colorBodyFg, 20%);
 $styleTelemStale: italic;
 
 // Limits
-$colorLimitYellowBg: #ac7300;
-$colorLimitYellowFg: #ffe64d;
-$colorLimitYellowIc: #ffb607;
+$colorLimitYellowBg: #B18B05;
+$colorLimitYellowFg: #FEEEB5;
+$colorLimitYellowIc: #FDC707;
+$colorLimitOrangeBg: #B36B00;
+$colorLimitOrangeFg: #FFE0B2;
+$colorLimitOrangeIc: #ff9900;
 $colorLimitRedBg: #940000;
 $colorLimitRedFg: #ffa489;
 $colorLimitRedIc: #ff4222;
+$colorLimitPurpleBg: #891BB3;
+$colorLimitPurpleFg: #EDBEFF;
+$colorLimitPurpleIc: #c327ff;
+$colorLimitCyanBg: #4BA6B3;
+$colorLimitCyanFg: #D3FAFF;
+$colorLimitCyanIc: #6BEDFF;
 
 // Bubble colors
 $colorInfoBubbleBg: #dddddd;
@@ -359,6 +368,7 @@ $colorPlotAreaBorder: $colorInteriorBorder;
 $colorPlotLabelFg: pushBack($colorPlotFg, 20%);
 $legendHoverValueBg: rgba($colorBodyFg, 0.2);
 $legendTableHeadBg: $colorTabHeaderBg;
+$colorPlotLimitLineBg: rgba($colorBodyBg, 0.2);
 
 // Tree
 $colorTreeBg: transparent;

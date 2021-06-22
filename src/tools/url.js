@@ -20,43 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export const COLOR_PALETTE = [
-    [0x00, 0x37, 0xFF],
-    [0xF0, 0x60, 0x00],
-    [0x00, 0x70, 0x40],
-    [0xFB, 0x49, 0x49],
-    [0xC8, 0x00, 0xCF],
-    [0x55, 0x77, 0xF2],
-    [0xFF, 0xA6, 0x3D],
-    [0x05, 0xA3, 0x00],
-    [0xF0, 0x00, 0x6C],
-    [0x77, 0x17, 0x7A],
-    [0x23, 0xA9, 0xDB],
-    [0xFA, 0xF0, 0x6F],
-    [0x4E, 0xF0, 0x48],
-    [0xAD, 0x50, 0x72],
-    [0x94, 0x25, 0xEA],
-    [0x21, 0x87, 0x82],
-    [0x8F, 0x6E, 0x47],
-    [0xf0, 0x59, 0xcb],
-    [0x34, 0xB6, 0x7D],
-    [0x6A, 0x36, 0xFF],
-    [0x56, 0xF0, 0xE8],
-    [0xA1, 0x8C, 0x1C],
-    [0xCB, 0xE1, 0x44],
-    [0xFF, 0x84, 0x9E],
-    [0xB7, 0x79, 0xE7],
-    [0x8C, 0xC9, 0xFD],
-    [0xDB, 0xAA, 0x6E],
-    [0xB8, 0xDF, 0x97],
-    [0xFF, 0xBC, 0xDA],
-    [0xD3, 0xB6, 0xDE]
-];
+/**
+ * Module defining url handling.
+ */
 
-export function isDefaultColor(color) {
-    const a = color.asIntegerArray();
+export function paramsToArray(openmct) {
+    // parse urParams from an object to an array.
+    let urlParams = openmct.router.getParams();
+    let newTabParams = [];
+    for (let key in urlParams) {
+        if ({}.hasOwnProperty.call(urlParams, key)) {
+            let param = `${key}=${urlParams[key]}`;
+            newTabParams.push(param);
+        }
+    }
 
-    return COLOR_PALETTE.some(function (b) {
-        return a[0] === b[0] && a[1] === b[1] && a[2] === b[2];
-    });
+    return newTabParams;
+}
+
+export function identifierToString(openmct, objectPath) {
+    let identifier = '#/browse/' + objectPath.map(function (o) {
+        return o && openmct.objects.makeKeyString(o.identifier);
+    })
+        .reverse()
+        .join('/');
+
+    return identifier;
+}
+
+export default function objectPathToUrl(openmct, objectPath) {
+    let url = identifierToString(openmct, objectPath);
+    let urlParams = paramsToArray(openmct);
+    if (urlParams.length) {
+        url += '?' + urlParams.join('&');
+    }
+
+    return url;
 }

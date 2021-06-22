@@ -22,7 +22,7 @@
 
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
-import NOTEBOOK_TYPE from '../../notebook/notebook-constants.js';
+import { NOTEBOOK_TYPE } from '../../notebook/notebook-constants.js';
 
 const REV = "_rev";
 const ID = "_id";
