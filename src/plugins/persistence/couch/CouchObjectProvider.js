@@ -389,7 +389,7 @@ export default class CouchObjectProvider {
 
         let reader;
 
-        if (response.body === undefined) {
+        if (!response || (response && response.body === undefined)) {
             error = true;
         } else {
             reader = response.body.getReader();
