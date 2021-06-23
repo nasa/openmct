@@ -3,8 +3,9 @@ executors:
   linux:
     docker:
       - image: cimg/base:2020.01
-  macos:
-      xcode: 11.3.0
+  macos: &macos-executor
+    macos:
+      xcode: "11.4"
 orbs:
   node: circleci/node@4.5.1
   browser-tools: circleci/browser-tools@1.1.3
@@ -15,7 +16,7 @@ jobs:
         type: string
       browser:
         type: string
-    executor: <<parameters.os>>
+    executor: <<parameters.platform>>
     steps:
       - checkout
       - restore_cache:
@@ -49,17 +50,17 @@ workflows:
           name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
-          os: linux
+          platform: linux
       - test:
           name: node12-firefoxESR
           node-version: lts/erbium
           browser: FirefoxHeadless
-          os: linux
+          platform: linux
       - test:
           name: node14-chrome
           node-version: lts/fermium
           browser: ChromeHeadless
-          os: macos
+          platform: macos
       #- test:
       #    name: node16-canary
       #    node-version: '16'
