@@ -43,7 +43,7 @@ jobs:
             - ~/node_modules
             - ~/bin/google-chrome #not working
             - ~/bin/firefox #not working
-      - run:
+      - run: |
           ls -latR
           cp ~/bin/firefox ~/node_modules
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
