@@ -16,6 +16,11 @@ jobs:
     executor: linux
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v2-deps-{{ .Branch }}-{{ << parameters.node-version >> }}-{{ << parameters.browser >> }}
+            - v2-deps-
       - node/install:
           node-version: << parameters.node-version >>
       - node/install-packages:
@@ -24,7 +29,12 @@ jobs:
           version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/
       - browser-tools/install-chrome:
           replace-existing: false
-      - run: npm run test:coverage --browsers=<< parameters.browser >>
+      - save_cache:
+          key: v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+      - run: npm run test:coverage -- --browsers=<< parameters.browser >>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
@@ -41,12 +51,12 @@ workflows:
           node-version: lts/erbium
           browser: FirefoxHeadless
       - test:
-          name: node14-canary
+          name: node14-chrome
           node-version: lts/fermium
-          browser: ChromeCanaryHeadless
-      - test:
-          name: node16-chrome
-          node-version: '16'
           browser: ChromeHeadless
+      #- test:
+      #    name: node16-canary
+      #    node-version: '16'
+      #    browser: ChromeCanaryHeadless
 
 
