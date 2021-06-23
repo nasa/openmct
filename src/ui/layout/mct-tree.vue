@@ -293,6 +293,7 @@ export default {
         },
         closeTreeItemByPath(path) {
             // if actively loading, abort
+            console.log('close tree item', path, 'is loading', this.isItemLoading(path));
             if (this.isItemLoading(path)) {
                 this.abortItemLoad(path);
             }
