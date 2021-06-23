@@ -229,7 +229,7 @@ export default class CouchObjectProvider {
             } else {
                 return {};
             }
-        });
+        }).catch(console.warn);
     }
 
     /**
