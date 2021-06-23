@@ -17,10 +17,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys:
-            - v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
-            - v2-deps-{{ .Branch }}-{{ <<parameters.node-version>> }}-{{ <<parameters.browser>> }}
-            - v2-deps-
+          key: deps-{{ .Branch }}-{{ checksum "package.json" }}
       - node/install:
           node-version: << parameters.node-version >>
       - node/install-packages:
@@ -30,7 +27,7 @@ jobs:
       - browser-tools/install-chrome:
           replace-existing: false
       - save_cache:
-          key: v2-deps-{{ .Branch }}-{{ <<parameters.node-version>> }}-{{ <<parameters.browser>> }}
+          key: deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
@@ -51,7 +48,7 @@ workflows:
           node-version: lts/dubnium
           browser: ChromeHeadless
       - test:
-          name: node12-firefox
+          name: node12-firefoxESR
           node-version: lts/erbium
           browser: FirefoxHeadless
       - test:
