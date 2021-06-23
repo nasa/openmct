@@ -19,7 +19,7 @@ jobs:
       - restore_cache:
           keys:
             - v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
-            - v2-deps-{{ .Branch }}-{{ << parameters.node-version >> }}-{{ << parameters.browser >> }}
+            - v2-deps-{{ .Branch }}-{{ <<parameters.node-version>> }}-{{ <<parameters.browser>> }}
             - v2-deps-
       - node/install:
           node-version: << parameters.node-version >>
@@ -30,11 +30,15 @@ jobs:
       - browser-tools/install-chrome:
           replace-existing: false
       - save_cache:
-          key: v2-deps-{{ .Branch }}-{{ checksum "package.json" }}
+          key: v2-deps-{{ .Branch }}-{{ <<parameters.node-version>> }}-{{ <<parameters.browser>> }}
           paths:
             - ~/.npm
             - ~/.cache
-      - run: npm run test:coverage -- --browsers=<< parameters.browser >>
+            - ~/bin/google-chrome
+            - ~/bin/firefox
+      - run:
+          ls -latR
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
