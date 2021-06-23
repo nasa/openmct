@@ -22,13 +22,14 @@ jobs:
           node-version: << parameters.node-version >>
       - node/install-packages:
           override-ci-command: npm install
-      - when:
+      - when: # Just to save time until caching saves the browser bin
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
                 version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/
-      - when:
+                
+      - when: # Just to save time until caching saves the browser bin
           condition:
             equal: [ "ChromeHeadless", <<parameters.browser>> ]
           steps:
@@ -40,10 +41,11 @@ jobs:
             - ~/.npm
             - ~/.cache
             - ~/node_modules
-            - ~/bin/google-chrome
-            - ~/bin/firefox
+            - ~/bin/google-chrome #not working
+            - ~/bin/firefox #not working
       - run:
           ls -latR
+          cp ~/bin/firefox ~/node_modules
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
