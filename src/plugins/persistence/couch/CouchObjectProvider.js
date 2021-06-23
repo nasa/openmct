@@ -170,13 +170,12 @@ export default class CouchObjectProvider {
                 console.log('one req', objectKey);
                 //If there's only one request, just do a regular get
                 return this.request(objectKey, "GET", undefined, abortSignal)
-                    .then(this.returnAsMap(objectKey))
-                    .catch(console.warn);
+                    .then(this.returnAsMap(objectKey));
             } else {
                 console.log('bulk get', batchIds);
                 return this.bulkGet(batchIds);
             }
-        });
+        }).catch(console.warn);
     }
 
     /**
