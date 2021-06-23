@@ -217,7 +217,7 @@ export default class CouchObjectProvider {
             'keys': ids
         };
 
-        return this.request(ALL_DOCS, 'POST', query, signal).then((response) => {
+        return this.request(ALL_DOCS, 'POST', query).then((response) => {
             if (response && response.rows !== undefined) {
                 return response.rows.reduce((map, row) => {
                     if (row.doc !== undefined) {
