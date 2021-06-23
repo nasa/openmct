@@ -64,8 +64,7 @@ export default {
     data() {
         return {
             collapsed: false,
-            resizing: false,
-            paneToHide: undefined
+            resizing: false
         };
     },
     beforeMount() {
@@ -89,43 +88,24 @@ export default {
         handleHideUrl: function () {
             let hideTree = this.openmct.router.getSearchParam('hideTree');
             let hideInspector = this.openmct.router.getSearchParam('hideInspector');
-            if (hideTree && hideInspector) {
-                this.paneToHide = 'treeAndInspector';
-                this.openmct.router.deleteSearchParam('hideTree');
-                this.openmct.router.deleteSearchParam('hideInspector');
-            } else if (!hideTree && hideInspector) {
-                this.paneToHide = 'inspector';
-                this.openmct.router.deleteSearchParam('hideInspector');
-            } else if (hideTree && !hideInspector) {
-                this.paneToHide = 'tree';
-                this.openmct.router.deleteSearchParam('hideTree');
+            if (hideTree) {
+                this.collapsePane('l-shell__pane-tree');
             }
 
-            if (this.paneToHide) {
-                this.collapsePane(this.paneToHide);
+            if (hideInspector) {
+                this.collapsePane('l-shell__pane-inspector');
             }
         },
         collapsePane: function (paneToHide) {
-            let target = {};
-            if (paneToHide === 'treeAndInspector') {
-                target['l-shell__pane-tree'] = true;
-                target['l-shell__pane-inspector'] = true;
-            } else if (paneToHide === 'tree') {
-                target['l-shell__pane-tree'] = true;
-            } else if (paneToHide === 'inspector') {
-                console.log('hide inspector?');
-                target['l-shell__pane-inspector'] = true;
-            }
-
             for (let key of this.$el.classList) {
-                if (target[key]) {
-                    console.log();
-                    if (this.collapsable) {
-                        this.collapsed = true;
-                    }
-
+                if (key === paneToHide && this.collapsable) {
+                    this.collapsed = true;
                     this.handleCollapse();
-
+                    if (paneToHide === 'l-shell__pane-tree') {
+                        this.openmct.router.deleteSearchParam('hideTree');
+                    } else if (paneToHide === 'l-shell__pane-inspector') {
+                        this.openmct.router.deleteSearchParam('hideInspector');
+                    }
                 }
             }
         },
