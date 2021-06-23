@@ -73,6 +73,7 @@ export default {
     },
     async mounted() {
         await this.$nextTick();
+        // Hide tree and/or inspector pane if specified in URL
         this.handleHideUrl();
     },
     methods: {
@@ -89,23 +90,19 @@ export default {
             let hideTree = this.openmct.router.getSearchParam('hideTree');
             let hideInspector = this.openmct.router.getSearchParam('hideInspector');
             if (hideTree) {
-                this.collapsePane('l-shell__pane-tree');
+                this.collapsePane('l-shell__pane-tree', 'hideTree');
             }
 
             if (hideInspector) {
-                this.collapsePane('l-shell__pane-inspector');
+                this.collapsePane('l-shell__pane-inspector', 'hideInspector');
             }
         },
-        collapsePane: function (paneToHide) {
+        collapsePane: function (PaneClass, param) {
             for (let key of this.$el.classList) {
-                if (key === paneToHide && this.collapsable) {
+                if (key === PaneClass && this.collapsable) {
                     this.collapsed = true;
                     this.handleCollapse();
-                    if (paneToHide === 'l-shell__pane-tree') {
-                        this.openmct.router.deleteSearchParam('hideTree');
-                    } else if (paneToHide === 'l-shell__pane-inspector') {
-                        this.openmct.router.deleteSearchParam('hideInspector');
-                    }
+                    this.openmct.router.deleteSearchParam(param);
                 }
             }
         },
