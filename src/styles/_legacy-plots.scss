@@ -136,6 +136,7 @@ mct-plot {
         left: nth($plotDisplayArea, 4);
 
         .gl-plot-display-area {
+            overflow: hidden;
             position: absolute;
             top: 0;
             right: 0;
@@ -538,12 +539,9 @@ mct-plot {
     }
 
     .plot-series-color-swatch {
-        border-radius: 30%; //$smallCr;
-        border: 1px solid $colorBodyBg;
+        @include colorSwatch();
         display: inline-block;
         flex: 0 0 auto;
-        height: $plotSwatchD;
-        width: $plotSwatchD;
     }
     .plot-series-name {
         display: inline;
@@ -552,6 +550,7 @@ mct-plot {
 
     .plot-series-value {
         @include ellipsize();
+        @include isLimit();
     }
 }
 
