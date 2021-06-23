@@ -167,12 +167,13 @@ export default class CouchObjectProvider {
 
             if (batchIds.length === 1) {
                 let objectKey = batchIds[0];
-
+                console.log('one req', objectKey);
                 //If there's only one request, just do a regular get
                 return this.request(objectKey, "GET", undefined, abortSignal)
                     .then(this.returnAsMap(objectKey));
             } else {
-                return this.bulkGet(batchIds, abortSignal);
+                console.log('bulk get', batchIds);
+                return this.bulkGet(batchIds);
             }
         });
     }
@@ -209,7 +210,7 @@ export default class CouchObjectProvider {
     /**
      * @private
      */
-    bulkGet(ids, signal) {
+    bulkGet(ids) {
         ids = this.removeDuplicates(ids);
 
         const query = {
