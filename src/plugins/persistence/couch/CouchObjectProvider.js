@@ -140,6 +140,7 @@ export default class CouchObjectProvider {
     }
 
     get(identifier, abortSignal) {
+        console.log('couch get', identifier, abortSignal);
         this.batchIds.push(identifier.key);
 
         if (this.bulkPromise === undefined) {
