@@ -3,7 +3,7 @@ executors:
   linux:
     docker:
       - image: cimg/base:2020.01
-  macos: &macos-executor
+  macos:
     macos:
       xcode: "11.4"
 orbs:
@@ -16,6 +16,8 @@ jobs:
         type: string
       browser:
         type: string
+      platform:
+        type: string  
     executor: <<parameters.platform>>
     steps:
       - checkout
