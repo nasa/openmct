@@ -328,6 +328,7 @@ export default {
             delete this.treeItemLoading[path];
         },
         abortItemLoad(path) {
+            console.log('abort', path);
             if (this.treeItemLoading[path]) {
                 this.treeItemLoading[path].abort();
                 this.endItemLoad(path);
