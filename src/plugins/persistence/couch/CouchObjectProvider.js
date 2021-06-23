@@ -310,6 +310,7 @@ export default class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
+        console.log('observe', identifier);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);
@@ -384,7 +385,7 @@ export default class CouchObjectProvider {
                 "Content-Type": 'application/json'
             },
             body
-        });
+        }).catch(console.warn);
 
         let reader;
 
