@@ -24,7 +24,7 @@ jobs:
           override-ci-command: npm install
       - when:
           condition:
-            equal: [ "FirefoxEsrHeadless", <<parameters.browser>> ]
+            equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
                 version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/
@@ -59,7 +59,7 @@ workflows:
       - test:
           name: node12-firefoxESR
           node-version: lts/erbium
-          browser: FirefoxEsrHeadless
+          browser: FirefoxESR
       - test:
           name: node14-chrome
           node-version: lts/fermium
