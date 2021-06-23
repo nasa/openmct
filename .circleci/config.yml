@@ -22,15 +22,24 @@ jobs:
           node-version: << parameters.node-version >>
       - node/install-packages:
           override-ci-command: npm install
-      - browser-tools/install-firefox:
-          version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/
-      - browser-tools/install-chrome:
-          replace-existing: false
+      - when:
+          condition:
+            equal: [ "FirefoxEsrHeadless", <<parameters.browser>> ]
+          steps:
+            - browser-tools/install-firefox:
+                version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/
+      - when:
+          condition:
+            equal: [ "ChromeHeadless", <<parameters.browser>> ]
+          steps:
+            - browser-tools/install-chrome:
+                replace-existing: false         
       - save_cache:
           key: deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
+            - ~/node_modules
             - ~/bin/google-chrome
             - ~/bin/firefox
       - run:
@@ -50,7 +59,7 @@ workflows:
       - test:
           name: node12-firefoxESR
           node-version: lts/erbium
-          browser: FirefoxHeadless
+          browser: FirefoxEsrHeadless
       - test:
           name: node14-chrome
           node-version: lts/fermium
