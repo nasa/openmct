@@ -73,38 +73,22 @@ export default {
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     async mounted() {
-        // console.log('domain object', this.domainObject);
-        // console.log('router', this.openmct.router.getCurrentLocation());
-        // 1.check if current url has hide params
         await this.$nextTick();
         this.handleHideUrl();
-        // this.collapsePane(this.paneToHide);
-        // 2.add hashchange listener and call collapse
-        // 3.remove the params
-        // console.log(this.openmct.router);
-        // this.openmct.router.deleteSearchParam('hideTree');
     },
     methods: {
 
         toggleCollapse: function () {
             this.collapsed = !this.collapsed;
             if (this.collapsed) {
-                // Pane is expanded and is being collapsed
-                // this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
-                // this.$el.style[this.styleProp] = '';
                 this.handleCollapse();
             } else {
-                // Pane is collapsed and is being expanded
-                // this.$el.style[this.styleProp] = this.currentSize;
-                // delete this.currentSize;
-                // delete this.dragCollapse;
                 this.handleExpand();
             }
         },
         handleHideUrl: function () {
             let hideTree = this.openmct.router.getSearchParam('hideTree');
             let hideInspector = this.openmct.router.getSearchParam('hideInspector');
-            console.log(hideTree, hideInspector);
             if (hideTree && hideInspector) {
                 this.paneToHide = 'treeAndInspector';
                 this.openmct.router.deleteSearchParam('hideTree');
@@ -117,15 +101,11 @@ export default {
                 this.openmct.router.deleteSearchParam('hideTree');
             }
 
-            // console.log('pane hide', this.paneToHide);
             if (this.paneToHide) {
                 this.collapsePane(this.paneToHide);
             }
         },
         collapsePane: function (paneToHide) {
-            // collapse tree, inspector or both.
-            // will collapse both tree and inspector if no param is passed
-            console.log('pane', paneToHide);
             let target = {};
             if (paneToHide === 'treeAndInspector') {
                 target['l-shell__pane-tree'] = true;
@@ -138,7 +118,6 @@ export default {
             }
 
             for (let key of this.$el.classList) {
-                // console.log(key, this.$el.classList[key]);
                 if (target[key]) {
                     console.log();
                     if (this.collapsable) {
@@ -149,7 +128,6 @@ export default {
 
                 }
             }
-            // console.log(typeof this.$el.classList);
         },
         handleCollapse: function () {
             this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
