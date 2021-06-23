@@ -310,7 +310,7 @@ export default class CouchObjectProvider {
     }
 
     observe(identifier, callback) {
-        console.log('observe', identifier);
+        console.log('observe', identifier, 'observers', this.observers);
         const keyString = this.openmct.objects.makeKeyString(identifier);
         this.observers[keyString] = this.observers[keyString] || [];
         this.observers[keyString].push(callback);
@@ -320,6 +320,7 @@ export default class CouchObjectProvider {
         }
 
         return () => {
+            console.log('stop observing', this, this.observers, this.observers[keyString]);
             this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
             if (this.observers[keyString].length === 0) {
                 delete this.observers[keyString];
