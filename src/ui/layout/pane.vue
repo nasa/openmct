@@ -87,14 +87,18 @@ export default {
             }
         },
         handleHideUrl: function () {
-            let hideTree = this.openmct.router.getSearchParam('hideTree');
-            let hideInspector = this.openmct.router.getSearchParam('hideInspector');
+            const HIDE_TREE_PARAM = 'hideTree';
+            const HIDE_INSPECTOR_PARAM = 'hideInspector';
+            const TREE_PANE_CLASS_NAME = 'l-shell__pane-tree';
+            const INSPECTOR_PANE_CLASS_NAME = 'l-shell__pane-inspector';
+            let hideTree = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
+            let hideInspector = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
             if (hideTree) {
-                this.collapsePane('l-shell__pane-tree', 'hideTree');
+                this.collapsePane(TREE_PANE_CLASS_NAME, HIDE_TREE_PARAM);
             }
 
             if (hideInspector) {
-                this.collapsePane('l-shell__pane-inspector', 'hideInspector');
+                this.collapsePane(INSPECTOR_PANE_CLASS_NAME, HIDE_INSPECTOR_PARAM);
             }
         },
         collapsePane: function (PaneClass, param) {
@@ -103,6 +107,7 @@ export default {
                     this.collapsed = true;
                     this.handleCollapse();
                     this.openmct.router.deleteSearchParam(param);
+                    break;
                 }
             }
         },
