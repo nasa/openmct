@@ -115,6 +115,7 @@ class MutableDomainObject {
         return () => this._instanceEventEmitter.off(event, callback);
     }
     $destroy() {
+        console.log('mutable destroy');
         while (this._observers.length > 0) {
             const observer = this._observers.pop();
             observer();

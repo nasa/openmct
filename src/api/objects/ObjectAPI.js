@@ -416,6 +416,7 @@ ObjectAPI.prototype._toMutable = function (object) {
             }
         });
         mutableObject.$on('$_destroy', () => {
+            console.log('unobserve', object);
             unobserve();
         });
     }
