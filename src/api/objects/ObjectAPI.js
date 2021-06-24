@@ -399,26 +399,26 @@ ObjectAPI.prototype._toMutable = function (object) {
         mutableObject = object;
     } else {
         mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
-    }
 
-    // Check if provider supports realtime updates
-    let identifier = utils.parseKeyString(mutableObject.identifier);
-    let provider = this.getProvider(identifier);
+        // Check if provider supports realtime updates
+        let identifier = utils.parseKeyString(mutableObject.identifier);
+        let provider = this.getProvider(identifier);
 
-    if (provider !== undefined
-        && provider.observe !== undefined
-        && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
-        let unobserve = provider.observe(identifier, (updatedModel) => {
-            if (updatedModel.persisted > mutableObject.modified) {
-                //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
-                //in rapid succession and intermediate persistence states are returned by the observe function.
-                mutableObject.$refresh(updatedModel);
-            }
-        });
-        mutableObject.$on('$_destroy', () => {
-            console.log('unobserve', object);
-            unobserve();
-        });
+        if (provider !== undefined
+            && provider.observe !== undefined
+            && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
+            let unobserve = provider.observe(identifier, (updatedModel) => {
+                if (updatedModel.persisted > mutableObject.modified) {
+                    //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
+                    //in rapid succession and intermediate persistence states are returned by the observe function.
+                    mutableObject.$refresh(updatedModel);
+                }
+            });
+            mutableObject.$on('$_destroy', () => {
+                console.log('unobserve', object);
+                unobserve();
+            });
+        }
     }
 
     return mutableObject;
