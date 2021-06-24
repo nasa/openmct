@@ -40,25 +40,25 @@ define([
         }
 
         function viewObject(object, viewProvider) {
-            console.log('browse: view object')
-            if (mutable) {
-                openmct.objects.destroyMutable(mutable);
-                mutable = undefined;
-            }
+            console.log('browse: view object');
+            // if (mutable) {
+            //     openmct.objects.destroyMutable(mutable);
+            //     mutable = undefined;
+            // }
 
-            if (openmct.objects.supportsMutation(object.identifier)) {
-                mutable = openmct.objects._toMutable(object);
-            }
+            // if (openmct.objects.supportsMutation(object.identifier)) {
+            //     mutable = openmct.objects._toMutable(object);
+            // }
 
             currentObjectPath = openmct.router.path;
 
-            if (mutable !== undefined) {
-                openmct.layout.$refs.browseObject.show(mutable, viewProvider.key, true, currentObjectPath);
-                openmct.layout.$refs.browseBar.domainObject = mutable;
-            } else {
+            // if (mutable !== undefined) {
+            //     openmct.layout.$refs.browseObject.show(mutable, viewProvider.key, true, currentObjectPath);
+            //     openmct.layout.$refs.browseBar.domainObject = mutable;
+            // } else {
                 openmct.layout.$refs.browseObject.show(object, viewProvider.key, true, currentObjectPath);
                 openmct.layout.$refs.browseBar.domainObject = object;
-            }
+            // }
 
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }
