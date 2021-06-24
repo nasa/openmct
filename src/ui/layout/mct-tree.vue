@@ -545,9 +545,11 @@ export default {
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
 
-            const promises = this.openmct.objects.search(this.searchValue, abortSignal)
+            // removed abortSignal until future updates support it
+            const promises = this.openmct.objects.search(this.searchValue)
                 .map(promise => promise
-                    .then(results => this.aggregateSearchResults(results, abortSignal)));
+                    // removed abortSignal until future updates support it
+                    .then(results => this.aggregateSearchResults(results)));
 
             Promise.all(promises).catch(reason => {
                 // search aborted
@@ -563,7 +565,7 @@ export default {
             let resultPromises = [];
 
             for (const result of results) {
-                if (!abortSignal.aborted) {
+                if (!abortSignal || !abortSignal.aborted) {
                     resultPromises.push(this.openmct.objects.getOriginalPath(result.identifier).then((objectPath) => {
                         // removing the item itself, as the path we pass to buildTreeItem is a parent path
                         objectPath.shift();
