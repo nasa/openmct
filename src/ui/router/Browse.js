@@ -5,6 +5,7 @@ define([
 ) {
 
     return function install(openmct) {
+        console.log('brwose install');
         let navigateCall = 0;
         let browseObject;
         let unobserve = undefined;
@@ -28,6 +29,8 @@ define([
                 return;
             }
 
+            console.log('browse: on params changed function')
+
             if (changed.view && browseObject) {
                 let provider = openmct
                     .objectViews
@@ -37,6 +40,7 @@ define([
         }
 
         function viewObject(object, viewProvider) {
+            console.log('browse: view object')
             if (mutable) {
                 openmct.objects.destroyMutable(mutable);
                 mutable = undefined;
@@ -150,6 +154,7 @@ define([
         }
 
         function clearMutationListeners() {
+            console.log('celarMutationListeners');
             if (openmct.router.path !== undefined) {
                 openmct.router.path.forEach((pathObject) => {
                     if (pathObject.isMutable) {
