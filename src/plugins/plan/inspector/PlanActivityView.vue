@@ -27,8 +27,8 @@
     <div class="c-inspect-properties__header">
         {{ heading }}
     </div>
-    <ul v-for="(timeProperty, index) in timeProperties"
-        :key="index"
+    <ul v-for="timeProperty in timeProperties"
+        :key="timeProperty.id"
         class="c-inspect-properties__section"
     >
         <activity-property :label="timeProperty.label"
@@ -40,6 +40,7 @@
 
 <script>
 import ActivityProperty from './ActivityProperty.vue';
+import uuid from 'uuid';
 
 export default {
     components: {
@@ -70,6 +71,7 @@ export default {
                 const value = String(this.activity[key].value);
 
                 this.$set(this.timeProperties, index, {
+                    id: uuid(),
                     label,
                     value
                 });

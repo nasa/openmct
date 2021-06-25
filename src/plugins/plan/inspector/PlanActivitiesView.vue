@@ -21,8 +21,8 @@
 -->
 <template>
 <div class="c-inspector__properties c-inspect-properties">
-    <plan-activity-view v-for="(activity, index) in activities"
-                        :key="index"
+    <plan-activity-view v-for="activity in activities"
+                        :key="activity.id"
                         :activity="activity"
                         :heading="heading"
     />
@@ -32,6 +32,7 @@
 <script>
 import PlanActivityView from "./PlanActivityView.vue";
 import { getPreciseDuration } from "utils/duration";
+import uuid from 'uuid';
 
 const propertyLabels = {
     'start': 'Start DateTime',
@@ -102,6 +103,7 @@ export default {
             this.activities.splice(0);
             this.selectedActivities.forEach((selectedActivity, index) => {
                 const activity = {
+                    id: uuid(),
                     start: {
                         label: propertyLabels.start,
                         value: this.formatTime(selectedActivity.start)
