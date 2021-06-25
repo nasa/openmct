@@ -37,7 +37,14 @@ export default class MoveAction {
         let oldParent = objectPath[1];
         let dialogService = this.openmct.$injector.get('dialogService');
         let dialogForm = this.getDialogForm(object, oldParent);
-        let userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
+        let userInput;
+
+        try {
+            userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
+        } catch (err) {
+            // user canceled, most likely
+            return;
+        }
 
         // if we need to update name
         if (object.name !== userInput.name) {
@@ -104,13 +111,13 @@ export default class MoveAction {
                         {
                             key: "name",
                             control: "textfield",
-                            name: "Folder Name",
+                            name: "Name",
                             pattern: "\\S+",
                             required: true,
                             cssClass: "l-input-lg"
                         },
                         {
-                            name: "location",
+                            name: "Location",
                             control: "locator",
                             validate: this.validate(object, parent),
                             key: 'location'

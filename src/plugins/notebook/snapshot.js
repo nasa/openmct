@@ -1,6 +1,8 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
 import { getDefaultNotebook, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
+import { createNotebookImageDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
+
 import SnapshotContainer from './snapshot-container';
 
 export default class Snapshot {
@@ -14,12 +16,17 @@ export default class Snapshot {
 
     capture(snapshotMeta, notebookType, domElement) {
         const exportImageService = this.openmct.$injector.get('exportImageService');
-        exportImageService.exportPNGtoSRC(domElement, 's-status-taking-snapshot')
-            .then(function (blob) {
+
+        const options = {
+            className: 's-status-taking-snapshot',
+            thumbnailSize: DEFAULT_SIZE
+        };
+        exportImageService.exportPNGtoSRC(domElement, options)
+            .then(function ({blob, thumbnail}) {
                 const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
                 reader.onloadend = function () {
-                    this._saveSnapShot(notebookType, reader.result, snapshotMeta);
+                    this._saveSnapShot(notebookType, reader.result, thumbnail, snapshotMeta);
                 }.bind(this);
             }.bind(this));
     }
@@ -27,16 +34,23 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveSnapShot(notebookType, imageUrl, snapshotMeta) {
-        const snapshot = imageUrl ? { src: imageUrl } : '';
-        const embed = createNewEmbed(snapshotMeta, snapshot);
-        if (notebookType === NOTEBOOK_DEFAULT) {
-            this._saveToDefaultNoteBook(embed);
+    _saveSnapShot(notebookType, fullSizeImageURL, thumbnailImageURL, snapshotMeta) {
+        createNotebookImageDomainObject(this.openmct, fullSizeImageURL)
+            .then(object => {
+                const thumbnailImage = { src: thumbnailImageURL || '' };
+                const snapshot = {
+                    fullSizeImageObjectIdentifier: object.identifier,
+                    thumbnailImage
+                };
+                const embed = createNewEmbed(snapshotMeta, snapshot);
+                if (notebookType === NOTEBOOK_DEFAULT) {
+                    this._saveToDefaultNoteBook(embed);
 
-            return;
-        }
+                    return;
+                }
 
-        this._saveToNotebookSnapshots(embed);
+                this._saveToNotebookSnapshots(embed);
+            });
     }
 
     /**
