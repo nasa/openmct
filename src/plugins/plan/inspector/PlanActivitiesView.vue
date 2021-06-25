@@ -165,6 +165,7 @@ export default {
             let totalTime = latestEnd - earliestStart;
 
             const activity = {
+                id: uuid(),
                 'earliestStart': {
                     label: propertyLabels.earliestStart,
                     value: this.formatTime(earliestStart)

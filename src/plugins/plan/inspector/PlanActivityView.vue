@@ -66,15 +66,17 @@ export default {
     },
     methods: {
         setProperties() {
-            Object.keys(this.activity).forEach((key, index) => {
-                const label = this.activity[key].label;
-                const value = String(this.activity[key].value);
+            Object.keys(this.activity).forEach((key) => {
+                if (this.activity[key].label) {
+                    const label = this.activity[key].label;
+                    const value = String(this.activity[key].value);
 
-                this.$set(this.timeProperties, index, {
-                    id: uuid(),
-                    label,
-                    value
-                });
+                    this.$set(this.timeProperties, this.timeProperties.length, {
+                        id: uuid(),
+                        label,
+                        value
+                    });
+                }
             });
         }
     }
