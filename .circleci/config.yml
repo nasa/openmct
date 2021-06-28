@@ -2,7 +2,7 @@ version: 2.1
 executors:
   linux:
     docker:
-      - image: cimg/base:2020.01
+      - image: cimg/base:stable
 orbs:
   node: circleci/node@4.5.1
   browser-tools: circleci/browser-tools@1.1.3
@@ -27,8 +27,7 @@ jobs:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
-                version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/
-                
+                version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
       - when: # Just to save time until caching saves the browser bin
           condition:
             equal: [ "ChromeHeadless", <<parameters.browser>> ]
@@ -43,9 +42,6 @@ jobs:
             - ~/node_modules
             - ~/bin/google-chrome #not working
             - ~/bin/firefox #not working
-      - run: |
-          ls -latR
-          cp ~/bin/firefox ~/node_modules
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
