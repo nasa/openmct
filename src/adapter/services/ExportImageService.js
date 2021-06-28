@@ -48,12 +48,12 @@ define(
          * Converts an HTML element into a PNG or JPG Blob.
          * @private
          * @param {node} element that will be converted to an image
-         * @param {string} type of image to convert the element to.
+         * @param {object} options Image options.
          * @returns {promise}
          */
-        ExportImageService.prototype.renderElement = function (element, imageType, className) {
+        ExportImageService.prototype.renderElement = function (element, {imageType, className, thumbnailSize}) {
+            const self = this;
             const dialogService = this.dialogService;
-
             const dialog = dialogService.showBlockingMessage({
                 title: "Capturing...",
                 hint: "Capturing an image",
@@ -90,7 +90,16 @@ define(
                 dialog.dismiss();
 
                 return new Promise(function (resolve, reject) {
-                    return canvas.toBlob(resolve, mimeType);
+                    if (thumbnailSize) {
+                        const thumbnail = self.getThumbnail(canvas, mimeType, thumbnailSize);
+
+                        return canvas.toBlob(blob => resolve({
+                            blob,
+                            thumbnail
+                        }), mimeType);
+                    }
+
+                    return canvas.toBlob(blob => resolve({ blob }), mimeType);
                 });
             }, function (error) {
                 console.log('error capturing image', error);
@@ -109,6 +118,17 @@ define(
             });
         };
 
+        ExportImageService.prototype.getThumbnail = function (canvas, mimeType, size) {
+            const thumbnailCanvas = document.createElement('canvas');
+            thumbnailCanvas.setAttribute('width', size.width);
+            thumbnailCanvas.setAttribute('height', size.height);
+            const ctx = thumbnailCanvas.getContext('2d');
+            ctx.globalCompositeOperation = "copy";
+            ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, size.width, size.height);
+
+            return thumbnailCanvas.toDataURL(mimeType);
+        };
+
         /**
          * Takes a screenshot of a DOM node and exports to JPG.
          * @param {node} element to be exported
@@ -119,9 +139,13 @@ define(
         ExportImageService.prototype.exportJPG = function (element, filename, className) {
             const processedFilename = replaceDotsWithUnderscores(filename);
 
-            return this.renderElement(element, "jpg", className).then(function (img) {
-                saveAs(img, processedFilename);
-            });
+            return this.renderElement(element, {
+                imageType: 'jpg',
+                className
+            })
+                .then(function (img) {
+                    saveAs(img.blob, processedFilename);
+                });
         };
 
         /**
@@ -134,9 +158,13 @@ define(
         ExportImageService.prototype.exportPNG = function (element, filename, className) {
             const processedFilename = replaceDotsWithUnderscores(filename);
 
-            return this.renderElement(element, "png", className).then(function (img) {
-                saveAs(img, processedFilename);
-            });
+            return this.renderElement(element, {
+                imageType: 'png',
+                className
+            })
+                .then(function (img) {
+                    saveAs(img.blob, processedFilename);
+                });
         };
 
         /**
@@ -146,8 +174,12 @@ define(
          * @returns {promise}
          */
 
-        ExportImageService.prototype.exportPNGtoSRC = function (element, className) {
-            return this.renderElement(element, "png", className);
+        ExportImageService.prototype.exportPNGtoSRC = function (element, options) {
+
+            return this.renderElement(element, {
+                imageType: 'png',
+                ...options
+            });
         };
 
         function replaceDotsWithUnderscores(filename) {

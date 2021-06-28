@@ -1,3 +1,25 @@
+<!--
+ Open MCT, Copyright (c) 2014-2020, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+
 <template>
 <div ref="plan"
      class="c-plan c-timeline-holder"
@@ -28,7 +50,6 @@ import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedPlan } from "./util";
 import Vue from "vue";
 
-//TODO: UI direction needed for the following property values
 const PADDING = 1;
 const OUTER_TEXT_PADDING = 12;
 const INNER_TEXT_PADDING = 17;
@@ -281,7 +302,9 @@ export default {
                                 exceeds: {
                                     start: this.xScale(this.viewBounds.start) > this.xScale(activity.start),
                                     end: this.xScale(this.viewBounds.end) < this.xScale(activity.end)
-                                }
+                                },
+                                start: activity.start,
+                                end: activity.end
                             },
                             textLines: textLines,
                             textStart: textStart,
@@ -339,6 +362,9 @@ export default {
                 components: {
                     SwimLane
                 },
+                provide: {
+                    openmct: this.openmct
+                },
                 data() {
                     return {
                         heading,
@@ -376,7 +402,6 @@ export default {
                 activityRows.forEach((row) => {
                     const items = activitiesByRow[row];
                     items.forEach(item => {
-                    //TODO: Don't draw the left-border of the rectangle if the activity started before viewBounds.start
                         this.plotActivity(item, parseInt(row, 10), groupSVG);
                     });
                 });
@@ -398,6 +423,9 @@ export default {
             Object.keys(attributes).forEach((key) => {
                 element.setAttributeNS(null, key, attributes[key]);
             });
+        },
+        getNSAttributesForElement(element, attribute) {
+            return element.getAttributeNS(null, attribute);
         },
         // Experimental for now - unused
         addForeignElement(svgElement, label, x, y) {
@@ -443,6 +471,10 @@ export default {
                 fill: activity.color
             });
 
+            rectElement.addEventListener('click', (event) => {
+                this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
+            });
+
             svgElement.appendChild(rectElement);
 
             item.textLines.forEach((line, index) => {
@@ -456,6 +488,9 @@ export default {
 
                 const textNode = document.createTextNode(line);
                 textElement.appendChild(textNode);
+                textElement.addEventListener('click', (event) => {
+                    this.setSelectionForActivity(event.currentTarget, activity, event.metaKey);
+                });
                 svgElement.appendChild(textElement);
             });
             // this.addForeignElement(svgElement, activity.name, item.textStart, item.textY - LINE_HEIGHT);
@@ -482,6 +517,22 @@ export default {
             const cBrightness = ((hR * 299) + (hG * 587) + (hB * 114)) / 1000;
 
             return cBrightness > cThreshold ? "#000000" : "#ffffff";
+        },
+        setSelectionForActivity(element, activity, multiSelect) {
+            this.openmct.selection.select([{
+                element: element,
+                context: {
+                    type: 'activity',
+                    activity: activity
+                }
+            }, {
+                element: this.openmct.layout.$refs.browseObject.$el,
+                context: {
+                    item: this.domainObject,
+                    supportsMultiSelect: true
+                }
+            }], multiSelect);
+            event.stopPropagation();
         }
     }
 };

@@ -61,7 +61,7 @@
     "moment-timezone": "0.5.28",
     "node-bourbon": "^4.2.3",
     "node-sass": "^4.14.1",
-    "painterro": "^1.0.35",
+    "painterro": "^1.2.56",
     "printj": "^1.2.1",
     "raw-loader": "^0.5.1",
     "request": "^2.69.0",

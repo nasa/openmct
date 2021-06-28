@@ -26,6 +26,7 @@
     background-repeat: no-repeat;
     background-size: cover;
     background-image: url('../ui/layout/assets/images/bg-splash.jpg');
+    margin-top: 30px; // Don't overlap with close "X" button
 
     &:before,
     &:after {
@@ -95,10 +96,6 @@
     &--licenses {
         padding: 0 10%;
         .c-license {
-            &__text {
-                color: pushBack($overlayColorFg, 20%);
-            }
-
             + .c-license {
                 border-top: 1px solid $colorInteriorBorder;
                 margin-top: 2em;
@@ -111,7 +108,7 @@
     }
 
     em {
-        color: pushBack($overlayColorFg, 20%);
+        color: pushBack($colorBodyFg, 20%);
     }
 
     h1, h2, h3 {

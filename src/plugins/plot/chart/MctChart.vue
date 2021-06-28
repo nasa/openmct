@@ -46,6 +46,7 @@ import Vue from 'vue';
 
 const MARKER_SIZE = 6.0;
 const HIGHLIGHT_SIZE = MARKER_SIZE * 2.0;
+const CLEARANCE = 15;
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -472,13 +473,15 @@ export default {
                 }
 
                 Array.from(this.$refs.limitArea.children).forEach((el) => el.remove());
-
+                let limitPointOverlap = [];
                 this.limitLines.forEach((limitLine) => {
                     let limitContainerEl = this.$refs.limitArea;
                     limitLine.limits.forEach((limit) => {
                         const showLabels = this.showLabels(limit.seriesKey);
                         if (showLabels) {
-                            let limitLabelEl = this.getLimitLabel(limit);
+                            const overlap = this.getLimitOverlap(limit, limitPointOverlap);
+                            limitPointOverlap.push(overlap);
+                            let limitLabelEl = this.getLimitLabel(limit, overlap);
                             limitContainerEl.appendChild(limitLabelEl);
                         }
 
@@ -502,14 +505,41 @@ export default {
             const component = new LimitLineClass({
                 propsData: {
                     point,
-                    cssClass: limit.cssClass
+                    limit
                 }
             });
             component.$mount();
 
             return component.$el;
         },
-        getLimitLabel(limit) {
+        getLimitOverlap(limit, overlapMap) {
+            //calculate if limit lines are too close to each other
+            let limitTop = this.drawAPI.y(limit.point.y);
+            const needsVerticalAdjustment = limitTop - CLEARANCE <= 0;
+            let needsHorizontalAdjustment = false;
+            overlapMap.forEach(value => {
+                let diffTop;
+                if (limitTop > value.overlapTop) {
+                    diffTop = limitTop - value.overlapTop;
+                } else {
+                    diffTop = value.overlapTop - limitTop;
+                }
+
+                //need to compare +ves to +ves and -ves to -ves
+                if (!needsHorizontalAdjustment
+                    && Math.abs(diffTop) <= CLEARANCE
+                    && value.needsHorizontalAdjustment !== true) {
+                    needsHorizontalAdjustment = true;
+                }
+            });
+
+            return {
+                needsHorizontalAdjustment,
+                needsVerticalAdjustment,
+                overlapTop: limitTop
+            };
+        },
+        getLimitLabel(limit, overlap) {
             let point = {
                 left: 0,
                 top: this.drawAPI.y(limit.point.y)
@@ -517,7 +547,7 @@ export default {
             let LimitLabelClass = Vue.extend(LimitLabel);
             const component = new LimitLabelClass({
                 propsData: {
-                    limit,
+                    limit: Object.assign({}, overlap, limit),
                     point
                 }
             });

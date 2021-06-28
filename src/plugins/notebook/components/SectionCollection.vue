@@ -4,13 +4,14 @@
         :key="section.id"
         class="c-list__item-h"
     >
-        <sectionComponent ref="sectionComponent"
-                          :default-section-id="defaultSectionId"
-                          :section="section"
-                          :section-title="sectionTitle"
-                          @deleteSection="deleteSection"
-                          @renameSection="updateSection"
-                          @selectSection="selectSection"
+        <NotebookSection ref="sectionComponent"
+                         :default-section-id="defaultSectionId"
+                         :selected-section-id="selectedSectionId"
+                         :section="section"
+                         :section-title="sectionTitle"
+                         @deleteSection="deleteSection"
+                         @renameSection="updateSection"
+                         @selectSection="selectSection"
         />
     </li>
 </ul>
@@ -19,11 +20,11 @@
 <script>
 import { deleteNotebookEntries } from '../utils/notebook-entries';
 import { getDefaultNotebook } from '../utils/notebook-storage';
-import sectionComponent from './SectionComponent.vue';
+import SectionComponent from './SectionComponent.vue';
 
 export default {
     components: {
-        sectionComponent
+        NotebookSection: SectionComponent
     },
     inject: ['openmct'],
     props: {
@@ -32,6 +33,10 @@ export default {
             default() {
                 return '';
             }
+        },
+        selectedSectionId: {
+            type: String,
+            required: true
         },
         domainObject: {
             type: Object,
@@ -53,12 +58,22 @@ export default {
             }
         }
     },
+    watch: {
+        sections() {
+            if (!this.containsSection(this.selectedSectionId)) {
+                this.selectSection(this.sections[0].id);
+            }
+        }
+    },
     methods: {
+        containsSection(sectionId) {
+            return this.sections.some(section => section.id === sectionId);
+        },
         deleteSection(id) {
             const section = this.sections.find(s => s.id === id);
             deleteNotebookEntries(this.openmct, this.domainObject, section);
 
-            const selectedSection = this.sections.find(s => s.isSelected);
+            const selectedSection = this.sections.find(s => s.id === this.selectedSectionId);
             const defaultNotebook = getDefaultNotebook();
             const defaultSection = defaultNotebook && defaultNotebook.section;
             const isSectionSelected = selectedSection && selectedSection.id === id;
@@ -83,18 +98,8 @@ export default {
                 id
             });
         },
-        selectSection(id, newSections) {
-            const currentSections = newSections || this.sections;
-            const sections = currentSections.map(section => {
-                const isSelected = section.id === id;
-                section.isSelected = isSelected;
-
-                return section;
-            });
-            this.$emit('updateSection', {
-                sections,
-                id
-            });
+        selectSection(id) {
+            this.$emit('selectSection', id);
         },
         updateSection(newSection) {
             const id = newSection.id;
