@@ -19,40 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import OpenInNewTabAction from './openInNewTabAction';
 
-/**
- * Module defining NewTabAction (Originally NewWindowAction). Created by vwoeltje on 11/18/14.
- */
-define(
-    [],
-    function () {
-        /**
-         * The new tab action allows a domain object to be opened
-         * into a new browser tab.
-         * @memberof platform/commonUI/browse
-         * @constructor
-         * @implements {Action}
-         */
-        function NewTabAction(urlService, $window, context) {
-            context = context || {};
-
-            this.urlService = urlService;
-            this.open = function () {
-                arguments[0] += "&hideTree=true&hideInspector=true";
-                $window.open.apply($window, arguments);
-            };
-
-            // Choose the object to be opened into a new tab
-            this.domainObject = context.selectedObject || context.domainObject;
-        }
-
-        NewTabAction.prototype.perform = function () {
-            this.open(
-                this.urlService.urlForNewTab("browse", this.domainObject),
-                "_blank"
-            );
-        };
-
-        return NewTabAction;
-    }
-);
+export default function () {
+    return function (openmct) {
+        openmct.actions.register(new OpenInNewTabAction(openmct));
+    };
+}

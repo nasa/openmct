@@ -27,15 +27,17 @@ export default class StyleRuleManager extends EventEmitter {
         super();
         this.openmct = openmct;
         this.callback = callback;
+        this.refreshData = this.refreshData.bind(this);
+        this.toggleSubscription = this.toggleSubscription.bind(this);
         if (suppressSubscriptionOnEdit) {
-            this.openmct.editor.on('isEditing', this.toggleSubscription.bind(this));
+            this.openmct.editor.on('isEditing', this.toggleSubscription);
             this.isEditing = this.openmct.editor.editing;
         }
 
         if (styleConfiguration) {
             this.initialize(styleConfiguration);
             if (styleConfiguration.conditionSetIdentifier) {
-                this.openmct.time.on("bounds", this.refreshData.bind(this));
+                this.openmct.time.on("bounds", this.refreshData);
                 this.subscribeToConditionSet();
             } else {
                 this.applyStaticStyle();

@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
+
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
 
