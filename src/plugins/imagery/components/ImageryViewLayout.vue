@@ -124,27 +124,40 @@
         </div>
     </div>
     <div
-        ref="thumbsWrapper"
         class="c-imagery__thumbs-wrapper"
-        :class="{'is-paused': isPaused}"
-        @scroll="handleScroll"
+        :class="[
+            { 'is-paused': isPaused },
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+        ]"
     >
-        <div v-for="(image, index) in imageHistory"
-             :key="image.url + image.time"
-             class="c-imagery__thumb c-thumb"
-             :class="{ selected: focusedImageIndex === index && isPaused }"
-             @click="setFocusedImage(index, thumbnailClick)"
+        <div
+            ref="thumbsWrapper"
+            class="c-imagery__thumbs-scroll-area"
+            @scroll="handleScroll"
         >
-            <a href=""
-               :download="image.imageDownloadName"
-               @click.prevent
+            <div v-for="(image, index) in imageHistory"
+                 :key="image.url + image.time"
+                 class="c-imagery__thumb c-thumb"
+                 :class="{ selected: focusedImageIndex === index && isPaused }"
+                 @click="setFocusedImage(index, thumbnailClick)"
             >
-                <img class="c-thumb__image"
-                     :src="image.url"
+                <a href=""
+                   :download="image.imageDownloadName"
+                   @click.prevent
                 >
-            </a>
-            <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
+                    <img class="c-thumb__image"
+                         :src="image.url"
+                    >
+                </a>
+                <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
+            </div>
         </div>
+
+        <button
+            class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
+            title="Resume automatic scrolling of image thumbnails"
+            @click="scrollToRight('reset')"
+        ></button>
     </div>
 </div>
 </template>
@@ -170,6 +183,8 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
+
+const SCROLL_LATENCY = 250;
 
 export default {
     components: {
@@ -204,7 +219,8 @@ export default {
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
-            lockCompass: true
+            lockCompass: true,
+            resizingWindow: false
         };
     },
     computed: {
@@ -380,9 +396,13 @@ export default {
 
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
         this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
-    },
-    updated() {
-        this.scrollToRight();
+
+        // For adjusting scroll bar size and position when resizing thumbs wrapper
+        this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
+        this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
+
+        this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
+        this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
     },
     beforeDestroy() {
         if (this.unsubscribe) {
@@ -392,6 +412,10 @@ export default {
 
         if (this.imageContainerResizeObserver) {
             this.imageContainerResizeObserver.disconnect();
+        }
+
+        if (this.thumbWrapperResizeObserver) {
+            this.thumbWrapperResizeObserver.disconnect();
         }
 
         if (this.relatedTelemetry.hasRelatedTelemetry) {
@@ -561,17 +585,15 @@ export default {
         },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
-            if (!thumbsWrapper) {
+            if (!thumbsWrapper || this.resizingWindow) {
                 return;
             }
 
-            const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
-            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
-                    || (scrollHeight - scrollTop) > 2 * clientHeight;
+            const { scrollLeft, scrollWidth, clientWidth } = thumbsWrapper;
+            const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;
         },
         paused(state, type) {
-
             this.isPaused = state;
 
             if (type === 'button') {
@@ -584,6 +606,7 @@ export default {
             }
 
             this.autoScroll = true;
+            this.scrollToRight();
         },
         scrollToFocused() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
@@ -600,8 +623,8 @@ export default {
                 });
             }
         },
-        scrollToRight() {
-            if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
+        scrollToRight(type) {
+            if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
 
@@ -610,7 +633,9 @@ export default {
                 return;
             }
 
-            setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
+            this.$nextTick(() => {
+                this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
+            });
         },
         setFocusedImage(index, thumbnailClick = false) {
             if (this.isPaused && !thumbnailClick) {
@@ -678,9 +703,9 @@ export default {
             image.imageDownloadName = this.getImageDownloadName(datum);
 
             this.imageHistory.push(image);
-
             if (setFocused) {
                 this.setFocusedImage(this.imageHistory.length - 1);
+                this.scrollToRight();
             }
         },
         getFormatter(key) {
@@ -815,6 +840,24 @@ export default {
             if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
                 this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
             }
+        },
+        handleThumbWindowResizeStart() {
+            if (!this.autoScroll) {
+                return;
+            }
+
+            // To hide resume button while scrolling
+            this.resizingWindow = true;
+            this.handleThumbWindowResizeEnded();
+        },
+        handleThumbWindowResizeEnded() {
+            if (!this.isPaused) {
+                this.scrollToRight('reset');
+            }
+
+            this.$nextTick(() => {
+                this.resizingWindow = false;
+            });
         },
         toggleLockCompass() {
             this.lockCompass = !this.lockCompass;
