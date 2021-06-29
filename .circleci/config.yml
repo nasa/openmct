@@ -40,7 +40,7 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || [-z "<<parameters.browser>>" == "node10-chrome"]
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || [-z "<<parameters.name>>" == "node10-chrome"]
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
