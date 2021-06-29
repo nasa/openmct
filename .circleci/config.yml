@@ -39,10 +39,8 @@ jobs:
           paths:
             - ~/.npm
             - ~/.cache
-            - ~/node_modules
-            - ~/bin/google-chrome #not working
-            - ~/bin/firefox #not working
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
+            - node_modules
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || [-z "<<parameters.browser>>" == "node10-chrome"]
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:

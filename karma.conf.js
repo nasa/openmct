@@ -60,7 +60,7 @@ module.exports = (config) => {
         client: {
             jasmine: {
                 random: false,
-                timeoutInterval: 60000
+                timeoutInterval: 30000
             }
         },
         customLaunchers: {
@@ -71,8 +71,7 @@ module.exports = (config) => {
             },
             FirefoxESR: {
                 base: 'FirefoxHeadless',
-                name: 'FirefoxESR',
-                command: '/firefox.exe' //TODO
+                name: 'FirefoxESR'
             }
         },
         colors: true,
@@ -85,9 +84,9 @@ module.exports = (config) => {
             foldAll: false
         },
         junitReporter: {
-            outputDir: "dist/reports/tests", // results will be saved as $outputDir/$browserName.xml
-            outputFile: "test-results.xml", // if included, results will be saved as $outputDir/$browserName/$outputFile
-            useBrowserName: false, // add browser name to report and classes names
+            outputDir: "dist/reports/tests",
+            outputFile: "test-results.xml",
+            useBrowserName: false
         },
         browserConsoleLogOptions: {
             level: "error",
