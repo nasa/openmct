@@ -37,7 +37,15 @@ export default class DuplicateAction {
         let duplicationTask = new DuplicateTask(this.openmct);
         let originalObject = objectPath[0];
         let parent = objectPath[1];
-        let userInput = await this.getUserInput(originalObject, parent);
+        let userInput;
+
+        try {
+            userInput = await this.getUserInput(originalObject, parent);
+        } catch (error) {
+            // user most likely canceled
+            return;
+        }
+
         let newParent = userInput.location;
         let inNavigationPath = this.inNavigationPath(originalObject);
 
