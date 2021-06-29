@@ -29,144 +29,39 @@
         isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
 >
-    <form
-        ref="conductorForm"
-        class="u-contents"
-        @submit.prevent="updateTimeFromConductor"
-    >
-        <div class="c-conductor__time-bounds">
-            <button
-                ref="submitButton"
-                class="c-input--submit"
-                type="submit"
-            ></button>
-            <ConductorModeIcon class="c-conductor__mode-icon" />
+    <div class="c-conductor__time-bounds">
+        <conductor-delta-input-fixed v-if="isFixed"
+                                     :time-options="timeOptions"
+        />
+        <conductor-delta-input-realtime v-else
+                                        :time-options="timeOptions"
+        />
+        <ConductorModeIcon class="c-conductor__mode-icon"
+                           @toggled="toggleSyncTimeConductor"
+        />
+        <conductor-axis
+            class="c-conductor__ticks"
+            :view-bounds="viewBounds"
+            :is-fixed="isFixed"
+            :alt-pressed="altPressed"
+            @endPan="endPan"
+            @endZoom="endZoom"
+            @panAxis="pan"
+            @zoomAxis="zoom"
+        />
 
-            <div
-                v-if="isFixed"
-                class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
-            >
-                <!-- Fixed start -->
-                <div class="c-conductor__start-fixed__label">
-                    Start
-                </div>
-                <input
-                    ref="startDate"
-                    v-model="formattedBounds.start"
-                    class="c-input--datetime"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllBounds('startDate'); submitForm()"
-                >
-                <date-picker
-                    v-if="isFixed && isUTCBased"
-                    :default-date-time="formattedBounds.start"
-                    :formatter="timeFormatter"
-                    @date-selected="startDateSelected"
-                />
-            </div>
-
-            <div
-                v-if="!isFixed"
-                class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"
-            >
-                <!-- RT start -->
-                <div class="c-direction-indicator icon-minus"></div>
-                <time-popup
-                    v-if="showTCInputStart"
-                    class="pr-tc-input-menu--start"
-                    :type="'start'"
-                    :offset="offsets.start"
-                    @focus.native="$event.target.select()"
-                    @hide="hideAllTimePopups"
-                    @update="timePopUpdate"
-                />
-                <button
-                    ref="startOffset"
-                    class="c-button c-conductor__delta-button"
-                    @click="showTimePopupStart"
-                >
-                    {{ offsets.start }}
-                </button>
-            </div>
-
-            <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
-                <!-- Fixed end and RT 'last update' display -->
-                <div class="c-conductor__end-fixed__label">
-                    {{ isFixed ? 'End' : 'Updated' }}
-                </div>
-                <input
-                    ref="endDate"
-                    v-model="formattedBounds.end"
-                    class="c-input--datetime"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    :disabled="!isFixed"
-                    @change="validateAllBounds('endDate'); submitForm()"
-                >
-                <date-picker
-                    v-if="isFixed && isUTCBased"
-                    class="c-ctrl-wrapper--menus-left"
-                    :default-date-time="formattedBounds.end"
-                    :formatter="timeFormatter"
-                    @date-selected="endDateSelected"
-                />
-            </div>
-
-            <div
-                v-if="!isFixed"
-                class="c-ctrl-wrapper c-conductor-input c-conductor__end-delta"
-            >
-                <!-- RT end -->
-                <div class="c-direction-indicator icon-plus"></div>
-                <time-popup
-                    v-if="showTCInputEnd"
-                    class="pr-tc-input-menu--end"
-                    :type="'end'"
-                    :offset="offsets.end"
-                    @focus.native="$event.target.select()"
-                    @hide="hideAllTimePopups"
-                    @update="timePopUpdate"
-                />
-                <button
-                    ref="endOffset"
-                    class="c-button c-conductor__delta-button"
-                    @click="showTimePopupEnd"
-                >
-                    {{ offsets.end }}
-                </button>
-            </div>
-
-            <conductor-axis
-                class="c-conductor__ticks"
-                :view-bounds="viewBounds"
-                :is-fixed="isFixed"
-                :alt-pressed="altPressed"
-                @endPan="endPan"
-                @endZoom="endZoom"
-                @panAxis="pan"
-                @zoomAxis="zoom"
-            />
-
-        </div>
-        <div class="c-conductor__controls">
-            <ConductorMode class="c-conductor__mode-select" />
-            <ConductorTimeSystem class="c-conductor__time-system-select" />
-            <ConductorHistory
-                class="c-conductor__history-select"
-                :offsets="openmct.time.clockOffsets()"
-                :bounds="bounds"
-                :time-system="timeSystem"
-                :mode="timeMode"
-            />
-        </div>
-        <input
-            type="submit"
-            class="invisible"
-        >
-    </form>
+    </div>
+    <div class="c-conductor__controls">
+        <ConductorMode class="c-conductor__mode-select" />
+        <ConductorTimeSystem class="c-conductor__time-system-select" />
+        <ConductorHistory
+            class="c-conductor__history-select"
+            :offsets="openmct.time.clockOffsets()"
+            :bounds="bounds"
+            :time-system="timeSystem"
+            :mode="timeMode"
+        />
+    </div>
 </div>
 </template>
 
@@ -174,23 +69,25 @@
 import _ from 'lodash';
 import ConductorMode from './ConductorMode.vue';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
-import DatePicker from './DatePicker.vue';
+// import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorHistory from './ConductorHistory.vue';
-import TimePopup from './timePopup.vue';
+// import TimePopup from './timePopup.vue';
+import ConductorDeltaInputFixed from "@/plugins/timeConductor/ConductorDeltaInputFixed.vue";
+import ConductorDeltaInputRealtime from "@/plugins/timeConductor/ConductorDeltaInputRealtime.vue";
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
     components: {
+        ConductorDeltaInputRealtime,
+        ConductorDeltaInputFixed,
         ConductorMode,
         ConductorTimeSystem,
-        DatePicker,
         ConductorAxis,
         ConductorModeIcon,
-        ConductorHistory,
-        TimePopup
+        ConductorHistory
     },
     inject: ['openmct', 'configuration'],
     data() {
@@ -227,7 +124,8 @@ export default {
             isPanning: false,
             isZooming: false,
             showTCInputStart: false,
-            showTCInputEnd: false
+            showTCInputEnd: false,
+            timeOptions: undefined
         };
     },
     computed: {
@@ -332,7 +230,7 @@ export default {
             }
         },
         setViewFromClock(clock) {
-            this.clearAllValidation();
+            // this.clearAllValidation();
             this.isFixed = clock === undefined;
         },
         setViewFromBounds(bounds) {
@@ -361,65 +259,65 @@ export default {
 
             return limit;
         },
-        clearAllValidation() {
-            if (this.isFixed) {
-                [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
-            } else {
-                [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
-            }
-        },
-        clearValidationForInput(input) {
-            input.setCustomValidity('');
-            input.title = '';
-        },
-        validateAllBounds(ref) {
-            if (!this.areBoundsFormatsValid()) {
-                return false;
-            }
-
-            let validationResult = true;
-            const currentInput = this.$refs[ref];
-
-            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-                let boundsValues = {
-                    start: this.timeFormatter.parse(this.formattedBounds.start),
-                    end: this.timeFormatter.parse(this.formattedBounds.end)
-                };
-                const limit = this.getBoundsLimit();
-
-                if (
-                    this.timeSystem.isUTCBased
-                    && limit
-                    && boundsValues.end - boundsValues.start > limit
-                ) {
-                    if (input === currentInput) {
-                        validationResult = "Start and end difference exceeds allowable limit";
-                    }
-                } else {
-                    if (input === currentInput) {
-                        validationResult = this.openmct.time.validateBounds(boundsValues);
-                    }
-                }
-
-                return this.handleValidationResults(input, validationResult);
-            });
-        },
-        areBoundsFormatsValid() {
-            let validationResult = true;
-
-            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-                const formattedDate = input === this.$refs.startDate
-                    ? this.formattedBounds.start
-                    : this.formattedBounds.end
-                ;
-
-                if (!this.timeFormatter.validate(formattedDate)) {
-                    validationResult = 'Invalid date';
-                }
-
-                return this.handleValidationResults(input, validationResult);
-            });
-        },
+        // clearAllValidation() {
+        //     if (this.isFixed) {
+        //         [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
+        //     } else {
+        //         [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
+        //     }
+        // },
+        // clearValidationForInput(input) {
+        //     input.setCustomValidity('');
+        //     input.title = '';
+        // },
+        // validateAllBounds(ref) {
+        //     if (!this.areBoundsFormatsValid()) {
+        //         return false;
+        //     }
+        //
+        //     let validationResult = true;
+        //     const currentInput = this.$refs[ref];
+        //
+        //     return [this.$refs.startDate, this.$refs.endDate].every((input) => {
+        //         let boundsValues = {
+        //             start: this.timeFormatter.parse(this.formattedBounds.start),
+        //             end: this.timeFormatter.parse(this.formattedBounds.end)
+        //         };
+        //         const limit = this.getBoundsLimit();
+        //
+        //         if (
+        //             this.timeSystem.isUTCBased
+        //             && limit
+        //             && boundsValues.end - boundsValues.start > limit
+        //         ) {
+        //             if (input === currentInput) {
+        //                 validationResult = "Start and end difference exceeds allowable limit";
+        //             }
+        //         } else {
+        //             if (input === currentInput) {
+        //                 validationResult = this.openmct.time.validateBounds(boundsValues);
+        //             }
+        //         }
+        //
+        //         return this.handleValidationResults(input, validationResult);
+        //     });
+        // },
+        // areBoundsFormatsValid() {
+        //     let validationResult = true;
+        //
+        //     return [this.$refs.startDate, this.$refs.endDate].every((input) => {
+        //         const formattedDate = input === this.$refs.startDate
+        //             ? this.formattedBounds.start
+        //             : this.formattedBounds.end
+        //         ;
+        //
+        //         if (!this.timeFormatter.validate(formattedDate)) {
+        //             validationResult = 'Invalid date';
+        //         }
+        //
+        //         return this.handleValidationResults(input, validationResult);
+        //     });
+        // },
         validateAllOffsets(event) {
             return [this.$refs.startOffset, this.$refs.endOffset].every((input) => {
                 let validationResult = true;
@@ -467,33 +365,48 @@ export default {
                 format: key
             }).formatter;
         },
-        startDateSelected(date) {
-            this.formattedBounds.start = this.timeFormatter.format(date);
-            this.validateAllBounds('startDate');
-            this.submitForm();
-        },
-        endDateSelected(date) {
-            this.formattedBounds.end = this.timeFormatter.format(date);
-            this.validateAllBounds('endDate');
-            this.submitForm();
-        },
-        hideAllTimePopups() {
-            this.showTCInputStart = false;
-            this.showTCInputEnd = false;
-        },
-        showTimePopupStart() {
-            this.hideAllTimePopups();
-            this.showTCInputStart = !this.showTCInputStart;
-        },
-        showTimePopupEnd() {
-            this.hideAllTimePopups();
-            this.showTCInputEnd = !this.showTCInputEnd;
-        },
-        timePopUpdate({ type, hours, minutes, seconds }) {
-            this.offsets[type] = [hours, minutes, seconds].join(':');
-            this.setOffsetsFromView();
-            this.hideAllTimePopups();
+        toggleSyncTimeConductor() {
+            this.outofSync = !this.outofSync;
+            if (this.outofSync === true) {
+                this.timeOptions = {
+                    key: 1,
+                    timeSystem: this.openmct.time.timeSystem(),
+                    clockOffsets: this.openmct.time.clockOffsets(),
+                    fixedOffsets: this.openmct.time.bounds()
+                };
+            } else {
+                this.timeOptions = undefined;
+            }
+
+            console.log(this.outofSync, this.timeOptions);
         }
+        // startDateSelected(date) {
+        //     this.formattedBounds.start = this.timeFormatter.format(date);
+        //     this.validateAllBounds('startDate');
+        //     this.submitForm();
+        // },
+        // endDateSelected(date) {
+        //     this.formattedBounds.end = this.timeFormatter.format(date);
+        //     this.validateAllBounds('endDate');
+        //     this.submitForm();
+        // },
+        // hideAllTimePopups() {
+        //     this.showTCInputStart = false;
+        //     this.showTCInputEnd = false;
+        // },
+        // showTimePopupStart() {
+        //     this.hideAllTimePopups();
+        //     this.showTCInputStart = !this.showTCInputStart;
+        // },
+        // showTimePopupEnd() {
+        //     this.hideAllTimePopups();
+        //     this.showTCInputEnd = !this.showTCInputEnd;
+        // },
+        // timePopUpdate({ type, hours, minutes, seconds }) {
+        //     this.offsets[type] = [hours, minutes, seconds].join(':');
+        //     this.setOffsetsFromView();
+        //     this.hideAllTimePopups();
+        // }
     }
 };
 </script>

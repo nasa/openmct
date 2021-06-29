@@ -20,7 +20,9 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-<div class="c-clock-symbol">
+<div class="c-clock-symbol"
+     @click="$emit('toggled')"
+>
     <div class="hand-little"></div>
     <div class="hand-big"></div>
 </div>

@@ -72,6 +72,14 @@ export default {
         DatePicker
     },
     inject: ['openmct'],
+    props: {
+        timeOptions: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        }
+    },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
         let durationFormatter = this.getFormatter(timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
@@ -94,6 +102,11 @@ export default {
             isUTCBased: timeSystem.isUTCBased
         };
     },
+    watch: {
+        timeOptions(options) {
+            this.handleTimeSync(options);
+        }
+    },
     mounted() {
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
@@ -106,9 +119,40 @@ export default {
         this.openmct.time.off('clock', this.clearAllValidation);
     },
     methods: {
+        handleTimeSync(options) {
+            if (options) {
+                this.initializeIndependentTime(options);
+            } else {
+                if (this.unregisterIndependentTime) {
+                    this.unregisterIndependentTime();
+                }
+
+                this.syncTime();
+            }
+        },
+        initializeIndependentTime(options) {
+            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(options.key, options);
+
+            if (options.timeSystem) {
+                this.setTimeSystem(options.timeSystem);
+            }
+
+            if (options.fixedOffsets) {
+                this.setBounds(options.fixedOffsets);
+                this.setViewFromBounds(options.fixedOffsets);
+            }
+
+            this.updateTimeFromConductor();
+        },
+        syncTime() {
+            this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
+            this.handleNewBounds(this.openmct.time.bounds());
+        },
         handleNewBounds(bounds) {
-            this.setBounds(bounds);
-            this.setViewFromBounds(bounds);
+            if (!this.timeOptions) {
+                this.setBounds(bounds);
+                this.setViewFromBounds(bounds);
+            }
         },
         clearAllValidation() {
             [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
@@ -141,10 +185,20 @@ export default {
                 let start = this.timeFormatter.parse(this.formattedBounds.start);
                 let end = this.timeFormatter.parse(this.formattedBounds.end);
 
-                this.openmct.time.bounds({
-                    start: start,
-                    end: end
-                });
+                if (!this.timeOptions) {
+                    this.openmct.time.bounds({
+                        start: start,
+                        end: end
+                    });
+                } else {
+                    this.independentTime = {
+                        timeSystem: this.timeSystem,
+                        fixedOffsets: {
+                            start: start,
+                            end: end
+                        }
+                    };
+                }
             }
 
             if ($event) {
@@ -192,6 +246,15 @@ export default {
 
                 return this.handleValidationResults(input, validationResult);
             });
+        },
+        getBoundsLimit() {
+            const configuration = this.configuration.menuOptions
+                .filter(option => option.timeSystem === this.timeSystem.key)
+                .find(option => option.limit);
+
+            const limit = configuration ? configuration.limit : undefined;
+
+            return limit;
         },
         handleValidationResults(input, validationResult) {
             if (validationResult !== true) {

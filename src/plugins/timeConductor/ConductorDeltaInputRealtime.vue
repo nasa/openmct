@@ -80,26 +80,7 @@ export default {
         timeOptions: {
             type: Object,
             default() {
-                return {
-                    bounds: {
-                        type: Object,
-                        default() {
-                            return undefined;
-                        }
-                    },
-                    timeSystem: {
-                        type: Object,
-                        default() {
-                            return undefined;
-                        }
-                    },
-                    clockOffsets: {
-                        type: Object,
-                        default() {
-                            return undefined;
-                        }
-                    }
-                };
+                return undefined;
             }
         }
     },
@@ -132,9 +113,42 @@ export default {
     },
     watch: {
         timeOptions(options) {
-            if (options.bounds) {
-                this.handleNewBounds(options.bounds);
+            if (options) {
+                this.initializeIndependentTime(options);
+            } else {
+                this.destroyIndependentTime();
+                this.syncTime();
             }
+        }
+    },
+    mounted() {
+        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
+        this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
+        this.openmct.time.on('tick', _.throttle(this.updateBounds, 300));
+        this.openmct.time.on('timeSystem', this.setTimeSystem);
+        this.openmct.time.on('clock', this.clearAllValidation);
+        this.openmct.time.on('clockOffsets', this.setOffsets);
+    },
+    beforeDestroy() {
+        this.destroyIndependentTime();
+        this.openmct.time.off('bounds', _.throttle(this.handleNewBounds, 300));
+        this.openmct.time.off('tick', _.throttle(this.updateBounds, 300));
+        this.openmct.time.off('timeSystem', this.setTimeSystem);
+        this.openmct.time.off('clock', this.clearAllValidation);
+        this.openmct.time.off('clockOffsets', this.setOffsets);
+    },
+    methods: {
+        destroyIndependentTime() {
+            if (this.unregisterIndependentTime) {
+                this.unObserve();
+                this.unregisterIndependentTime.delete(1);
+            }
+        },
+        initializeIndependentTime(options) {
+            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(options.key, options);
+            this.unObserve = this.unregisterIndependentTime.observe(options.key, (event, bounds, isTick) => {
+                console.log(event, bounds, isTick);
+            });
 
             if (options.timeSystem) {
                 this.setTimeSystem(options.timeSystem);
@@ -143,25 +157,24 @@ export default {
             if (options.clockOffsets) {
                 this.setViewFromOffsets(options.clockOffsets);
             }
-        }
-    },
-    mounted() {
-        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
-        this.openmct.time.on('timeSystem', this.setTimeSystem);
-        this.openmct.time.on('clock', this.clearAllValidation);
-        this.openmct.time.on('clockOffsets', this.setViewFromOffsets);
-    },
-    beforeDestroy() {
-        this.openmct.time.off('bounds', _.throttle(this.handleNewBounds, 300));
-        this.openmct.time.off('timeSystem', this.setTimeSystem);
-        this.openmct.time.off('clock', this.clearAllValidation);
-        this.openmct.time.off('clockOffsets', this.setViewFromOffsets);
-    },
-    methods: {
+        },
+        syncTime() {
+            this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
+            this.setViewFromOffsets(this.openmct.time.clockOffsets());
+            this.handleNewBounds(this.openmct.time.bounds());
+        },
         handleNewBounds(bounds) {
-            this.setBounds(bounds);
-            this.setViewFromBounds(bounds);
+            if (!this.timeOptions) {
+                this.setBounds(bounds);
+                this.setViewFromBounds(bounds);
+            }
+        },
+        updateBounds(timestamp) {
+            //add the timestamp and independent offsets to get new bounds
+            this.setBounds({
+                start: timestamp + this.offsets.start,
+                end: timestamp + this.offsets.end
+            });
         },
         clearAllValidation() {
             [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
@@ -170,8 +183,12 @@ export default {
             input.setCustomValidity('');
             input.title = '';
         },
+        setOffsets(offsets) {
+            if (!this.timeOptions) {
+                this.setViewFromOffsets(offsets);
+            }
+        },
         setViewFromOffsets(offsets) {
-            console.log(offsets);
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
             this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
         },
