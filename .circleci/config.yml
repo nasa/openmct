@@ -40,7 +40,7 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || true
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.always-pass>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
@@ -52,14 +52,17 @@ workflows:
           name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
+          always-pass: false
       - test:
           name: node12-firefoxESR
           node-version: lts/erbium
           browser: FirefoxESR
+          always-pass: true
       - test:
           name: node14-chrome
           node-version: lts/fermium
           browser: ChromeHeadless
+          always-pass: true
       #- test:
       #    name: node16-canary
       #    node-version: '16'
