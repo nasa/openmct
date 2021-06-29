@@ -39,9 +39,8 @@ const DEFAULT_DURATION_FORMATTER = 'duration';
 const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
-const ONE_MINUTE = 60 * 1000;
-const ONE_HOUR = ONE_MINUTE * 60;
-const ONE_DAY = ONE_HOUR * 24;
+
+import { getDuration } from "utils/duration";
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -143,7 +142,7 @@ export default {
                 let description = `${startTime} - ${this.formatTime(timespan.end)}`;
 
                 if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
-                    name = `${startTime} ${this.getDuration(timespan.end - timespan.start)}`;
+                    name = `${startTime} ${getDuration(timespan.end - timespan.start)}`;
                 } else {
                     name = description;
                 }
@@ -175,41 +174,6 @@ export default {
                     callBack: () => this.selectPresetBounds(preset.bounds)
                 };
             });
-        },
-        getDuration(numericDuration) {
-            let result;
-            let age;
-
-            if (numericDuration > ONE_DAY - 1) {
-                age = this.normalizeAge((numericDuration / ONE_DAY).toFixed(2));
-                result = `+ ${age} day`;
-
-                if (age !== 1) {
-                    result += 's';
-                }
-            } else if (numericDuration > ONE_HOUR - 1) {
-                age = this.normalizeAge((numericDuration / ONE_HOUR).toFixed(2));
-                result = `+ ${age} hour`;
-
-                if (age !== 1) {
-                    result += 's';
-                }
-            } else {
-                age = this.normalizeAge((numericDuration / ONE_MINUTE).toFixed(2));
-                result = `+ ${age} min`;
-
-                if (age !== 1) {
-                    result += 's';
-                }
-            }
-
-            return result;
-        },
-        normalizeAge(num) {
-            const hundredtized = num * 100;
-            const isWhole = hundredtized % 100 === 0;
-
-            return isWhole ? hundredtized / 100 : num;
         },
         getHistoryFromLocalStorage() {
             const localStorageHistory = localStorage.getItem(this.storageKey);

@@ -93,23 +93,42 @@
     }
 
     &__thumbs-wrapper {
-        flex: 0 0 auto;
+        display: flex; // Uses row layout
+
+        &.is-autoscroll-off {
+            background: $colorInteriorBorder;
+            [class*='__auto-scroll-resume-button'] {
+                display: block;
+            }
+        }
+
+        &.is-paused {
+            background: rgba($colorPausedBg, 0.4);
+        }
+    }
+
+    &__thumbs-scroll-area {
+        flex: 0 1 auto;
         display: flex;
         flex-direction: row;
         height: 135px;
         overflow-x: auto;
         overflow-y: hidden;
+        margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
-
-        &.is-paused {
-            background: rgba($colorPausedBg, 0.4);
-        }
 
         .c-thumb:last-child {
             // Hilite the lastest thumb
             background: $colorBodyFg;
             color: $colorBodyBg;
         }
+    }
+
+    &__auto-scroll-resume-button {
+        display: none; // Set to block when __thumbs-wrapper has .is-autoscroll-off
+        flex: 0 0 auto;
+        font-size: 0.8em;
+        margin: $interiorMarginSm;
     }
 }
 
@@ -142,7 +161,7 @@
 
 .l-layout,
 .c-fl {
-    .c-imagery__thumbs-wrapper {
+    .c-imagery__thumbs-scroll-area {
         //  When Imagery is in a layout, hide the thumbs area
         display: none;
     }

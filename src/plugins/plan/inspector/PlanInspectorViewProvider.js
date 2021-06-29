@@ -20,29 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ImageryViewLayout from './components/ImageryViewLayout.vue';
+import PlanActivitiesView from "./PlanActivitiesView.vue";
 import Vue from 'vue';
 
-export default function ImageryViewProvider(openmct) {
-    const type = 'example.imagery';
-
-    function hasImageTelemetry(domainObject) {
-        const metadata = openmct.telemetry.getMetadata(domainObject);
-        if (!metadata) {
-            return false;
-        }
-
-        return metadata.valuesForHints(['image']).length > 0;
-    }
-
+export default function PlanInspectorViewProvider(openmct) {
     return {
-        key: type,
-        name: 'Imagery Layout',
-        cssClass: 'icon-image',
-        canView: function (domainObject) {
-            return hasImageTelemetry(domainObject);
+        key: 'plan-inspector',
+        name: 'Plan Inspector View',
+        canView: function (selection) {
+            if (selection.length === 0 || selection[0].length === 0) {
+                return false;
+            }
+
+            let context = selection[0][0].context;
+
+            return context
+                && context.type === 'activity';
         },
-        view: function (domainObject) {
+        view: function (selection) {
             let component;
 
             return {
@@ -50,23 +45,25 @@ export default function ImageryViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            ImageryViewLayout
+                            PlanActivitiesView: PlanActivitiesView
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            selection: selection
                         },
-                        template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
+                        template: '<plan-activities-view></plan-activities-view>'
                     });
                 },
                 destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                },
-                _getInstance: function () {
-                    return component;
+                    if (component) {
+                        component.$destroy();
+                        component = undefined;
+                    }
                 }
             };
+        },
+        priority: function () {
+            return 1;
         }
     };
 }
