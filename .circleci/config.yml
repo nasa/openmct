@@ -13,6 +13,8 @@ jobs:
         type: string
       browser:
         type: string
+      always-pass:
+        type: boolean  
     executor: linux
     steps:
       - checkout
