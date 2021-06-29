@@ -74,7 +74,9 @@
                 </div>
 
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
-                    <div class="c-button-set c-button-set--strip-h">
+                    <div v-if="!options.compact"
+                         class="c-button-set c-button-set--strip-h js-zoom"
+                    >
                         <button class="c-button icon-minus"
                                 title="Zoom out"
                                 @click="zoom('out', 0.2)"
@@ -86,8 +88,8 @@
                         >
                         </button>
                     </div>
-                    <div v-if="plotHistory.length"
-                         class="c-button-set c-button-set--strip-h"
+                    <div v-if="plotHistory.length && !options.compact"
+                         class="c-button-set c-button-set--strip-h js-pan"
                     >
                         <button class="c-button icon-arrow-left"
                                 title="Restore previous pan/zoom"
@@ -101,7 +103,7 @@
                         </button>
                     </div>
                     <div v-if="isRealTime"
-                         class="c-button-set c-button-set--strip-h"
+                         class="c-button-set c-button-set--strip-h js-pause"
                     >
                         <button v-if="!isFrozen"
                                 class="c-button icon-pause"
@@ -493,10 +495,12 @@ export default {
 
             this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
 
-            this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
-            this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
-            this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
-            this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            if (!this.options.compact) {
+                this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
+                this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
+                this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
+                this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            }
         },
 
         initialize() {
@@ -514,12 +518,7 @@ export default {
             this.chartElementBounds = undefined;
             this.tickUpdate = false;
 
-            this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
-
-            this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
-            this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
-            this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
-            this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            this.initCanvas();
 
             this.config.yAxisLabel = this.config.yAxis.get('label');
 

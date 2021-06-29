@@ -65,15 +65,6 @@
     }
 }
 
-@mixin andUprLwr {
-    &.is-limit--upr:before { content: $glyph-icon-arrow-up !important; }
-    &.is-limit--lwr:before { content: $glyph-icon-arrow-down !important; }
-}
-
-@mixin andLine {
-    &.is-limit--line:before { content: '' !important; }
-}
-
 @mixin uIndicator($bg, $fg, $glyph) {
     background: $bg;
     color: $fg;
@@ -95,26 +86,9 @@
         display: inline-block;
         padding: 2px $interiorMargin;
     }
-
 }
 
 /*************************************************** STYLES */
-*:not(tr) {
-    &.is-limit--yellow {
-        @include statusStyle($colorLimitYellowBg, $colorLimitYellowFg, true);
-        @include statusIcon($colorLimitYellowIc, $glyph-icon-alert-rect);
-        @include andUprLwr();
-        @include andLine();
-    }
-
-    &.is-limit--red {
-        @include statusStyle($colorLimitRedBg, $colorLimitRedFg, true);
-        @include statusIcon($colorLimitRedIc, $glyph-icon-alert-triangle);
-        @include andUprLwr();
-        @include andLine();
-    }
-}
-
 tr {
     &.is-limit--yellow {
         @include statusStyle($colorLimitYellowBg, $colorLimitYellowFg);

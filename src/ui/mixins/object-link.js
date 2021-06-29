@@ -1,3 +1,5 @@
+import objectPathToUrl from '/src/tools/url';
+
 export default {
     inject: ['openmct'],
     props: {
@@ -18,10 +20,9 @@ export default {
                 return '#' + this.navigateToPath;
             }
 
-            return '#/browse/' + this.objectPath
-                .map(o => o && this.openmct.objects.makeKeyString(o.identifier))
-                .reverse()
-                .join('/');
+            let url = objectPathToUrl(this.openmct, this.objectPath);
+
+            return url;
         }
     }
 };
