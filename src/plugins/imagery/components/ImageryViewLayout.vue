@@ -196,7 +196,6 @@ export default {
 
         return {
             autoScroll: true,
-            autoScrolling: false,
             durationFormatter: undefined,
             filters: {
                 brightness: 100,
@@ -221,7 +220,6 @@ export default {
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
             lockCompass: true,
-            thumbWrapperWidth: undefined,
             resizingWindow: false
         };
     },
