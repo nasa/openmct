@@ -83,7 +83,7 @@ export default {
                 return undefined;
             }
         },
-        timeOptions: {
+        realtimeOffsets: {
             type: Object,
             default() {
                 return undefined;
@@ -118,16 +118,16 @@ export default {
         };
     },
     watch: {
-        timeOptions(options) {
-            this.handleTimeSync(options);
+        realtimeOffsets(newOffsets) {
+            this.handleTimeSync(newOffsets);
         }
     },
     mounted() {
-        this.handleTimeSync(this.timeOptions);
-        this.followTime();
+        this.handleTimeSync(this.realtimeOffsets);
+        // this.followTime();
     },
     beforeDestroy() {
-        this.destroyIndependentTime();
+        this.destroy();
         this.stopFollowingTime();
     },
     methods: {
@@ -148,23 +148,17 @@ export default {
                 this.stopFollowingTime();
                 this.initializeIndependentTime(options);
             } else {
-                this.destroyIndependentTime();
+                this.destroy();
                 this.syncTime();
                 this.followTime();
             }
         },
-        destroyIndependentTime() {
-            if (this.unregisterIndependentTime) {
-                this.unregisterIndependentTime.delete(this.keyString);
-            }
-
+        destroy() {
             if (this.unObserve) {
                 this.unObserve();
             }
         },
         initializeIndependentTime(options) {
-            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(this.keyString, options);
-
             if (options.timeSystem) {
                 this.setTimeSystem(options.timeSystem);
             }
@@ -246,20 +240,10 @@ export default {
                 let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
                 let endOffset = this.durationFormatter.parse(this.offsets.end);
 
-                if (!this.timeOptions) {
-                    this.openmct.time.clockOffsets({
-                        start: startOffset,
-                        end: endOffset
-                    });
-                } else {
-                    const newOptions = Object.assign({}, this.timeOptions, {
-                        clockOffsets: {
-                            start: startOffset,
-                            end: endOffset
-                        }
-                    });
-                    this.$emit('updated', newOptions);
-                }
+                this.$emit('updated', {
+                    start: startOffset,
+                    end: endOffset
+                });
             }
 
             if ($event) {

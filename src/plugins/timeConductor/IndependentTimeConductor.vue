@@ -26,16 +26,18 @@
         isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
     ]"
 >
-    <div class="c-conductor__time-bounds">
+    <div v-if="timeOptions"
+         class="c-conductor__time-bounds"
+    >
         <conductor-delta-input-fixed v-if="isFixed"
                                      :key-string="domainObject.identifier.key"
-                                     :time-options="timeOptions"
-                                     @updated="saveTimeOptions"
+                                     :offsets="timeOptions.fixedOffsets"
+                                     @updated="saveFixedOffets"
         />
         <conductor-delta-input-realtime v-else
                                         :key-string="domainObject.identifier.key"
-                                        :time-options="timeOptions"
-                                        @updated="saveTimeOptions"
+                                        :offsets="timeOptions.clockOffsets"
+                                        @updated="saveClockOffsets"
         />
 
     </div>
@@ -55,17 +57,22 @@ export default {
     data() {
         return {
             isFixed: this.openmct.time.clock() === undefined,
-            timeOptions: undefined
+            timeOptions: {
+                timeSystem: this.openmct.time.timeSystem(),
+                clockOffsets: this.openmct.time.clockOffsets(),
+                fixedOffsets: this.openmct.time.bounds()
+            }
         };
     },
     mounted() {
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setTimeOptions);
-        this.setTimeOptions();
+        this.registerIndependentTimeOffsets();
     },
     beforeDestroy() {
         this.openmct.time.off('clock', this.setViewFromClock);
         this.openmct.time.off('clockOffsets', this.setTimeOptions);
+        this.destroyIndependentTime();
     },
     methods: {
         setViewFromClock(clock) {
@@ -80,10 +87,42 @@ export default {
                     fixedOffsets: this.openmct.time.bounds()
                 };
             }
+
+            this.registerIndependentTimeOffsets();
         },
-        saveTimeOptions(options) {
+        saveFixedOffets(offsets) {
+            const newOptions = Object.assign({}, this.timeOptions, {
+                fixedOffsets: offsets
+            });
+            this.updateTimeOptions(newOptions);
+        },
+        saveClockOffsets(offsets) {
+            const newOptions = Object.assign({}, this.timeOptions, {
+                clockOffsets: offsets
+            });
+            this.updateTimeOptions(newOptions);
+        },
+        updateTimeOptions(options) {
             this.timeOptions = options;
+            this.registerIndependentTimeOffsets();
             this.$emit('updated', options);
+        },
+        registerIndependentTimeOffsets() {
+            let offsets;
+
+            if (this.isFixed) {
+                offsets = this.timeOptions.fixedOffsets;
+            } else {
+                offsets = this.timeOptions.clockOffsets;
+            }
+
+            this.destroyIndependentTime();
+            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(this.domainObject.identifier.key, offsets);
+        },
+        destroyIndependentTime() {
+            if (this.unregisterIndependentTime) {
+                this.unregisterIndependentTime.delete(this.domainObject.identifier.key);
+            }
         }
     }
 };

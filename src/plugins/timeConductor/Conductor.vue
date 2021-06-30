@@ -30,8 +30,12 @@
     ]"
 >
     <div class="c-conductor__time-bounds">
-        <conductor-delta-input-fixed v-if="isFixed" />
-        <conductor-delta-input-realtime v-else />
+        <conductor-delta-input-fixed v-if="isFixed"
+                                     @updated="saveFixedOffsets"
+        />
+        <conductor-delta-input-realtime v-else
+                                        @updated="saveClockOffsets"
+        />
         <ConductorModeIcon class="c-conductor__mode-icon" />
         <conductor-axis
             class="c-conductor__ticks"
@@ -199,6 +203,12 @@ export default {
             return this.openmct.telemetry.getValueFormatter({
                 format: key
             }).formatter;
+        },
+        saveClockOffsets(offsets) {
+            this.openmct.time.clockOffsets(offsets);
+        },
+        saveFixedOffsets(bounds) {
+            this.openmct.time.bounds(bounds);
         }
     }
 };

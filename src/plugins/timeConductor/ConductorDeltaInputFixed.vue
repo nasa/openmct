@@ -79,7 +79,7 @@ export default {
                 return undefined;
             }
         },
-        timeOptions: {
+        offsets: {
             type: Object,
             default() {
                 return undefined;
@@ -109,57 +109,46 @@ export default {
         };
     },
     watch: {
-        timeOptions(options) {
-            this.handleTimeSync(options);
+        offsets(newOffsets) {
+            this.handleTimeSync(newOffsets);
         }
     },
     mounted() {
-        this.handleTimeSync(this.timeOptions);
+        this.handleTimeSync(this.offsets);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.clearAllValidation);
     },
     beforeDestroy() {
-        this.destroyIndependentTime();
         this.openmct.time.off('bounds', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.off('timeSystem', this.setTimeSystem);
         this.openmct.time.off('clock', this.clearAllValidation);
     },
     methods: {
-        handleTimeSync(options) {
-            if (options) {
-                this.initializeIndependentTime(options);
+        handleTimeSync(offsets) {
+            if (offsets) {
+                this.initializeIndependentTime(offsets);
             } else {
-                this.destroyIndependentTime();
                 this.syncTime();
             }
         },
-        destroyIndependentTime() {
-            if (this.unregisterIndependentTime) {
-                this.unregisterIndependentTime.delete(this.keyString);
-            }
-        },
-        initializeIndependentTime(options) {
-            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(this.keyString, options);
-
-            if (options.timeSystem) {
-                this.setTimeSystem(options.timeSystem);
+        initializeIndependentTime(offsets) {
+            if (offsets.timeSystem) {
+                this.setTimeSystem(offsets.timeSystem);
             }
 
-            if (options.fixedOffsets) {
-                this.setBounds(options.fixedOffsets);
-                this.setViewFromBounds(options.fixedOffsets);
+            if (offsets.fixedOffsets) {
+                this.setBounds(offsets.fixedOffsets);
+                this.setViewFromBounds(offsets.fixedOffsets);
             }
-
-            // this.updateTimeFromConductor();
         },
         syncTime() {
             this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
             this.handleNewBounds(this.openmct.time.bounds());
         },
         handleNewBounds(bounds) {
-            if (!this.timeOptions) {
+            if (!this.offsets) {
                 this.setBounds(bounds);
                 this.setViewFromBounds(bounds);
             }
@@ -195,20 +184,10 @@ export default {
                 let start = this.timeFormatter.parse(this.formattedBounds.start);
                 let end = this.timeFormatter.parse(this.formattedBounds.end);
 
-                if (!this.timeOptions) {
-                    this.openmct.time.bounds({
-                        start: start,
-                        end: end
-                    });
-                } else {
-                    const newOptions = Object.assign({}, this.timeOptions, {
-                        fixedOffsets: {
-                            start,
-                            end
-                        }
-                    });
-                    this.$emit('updated', newOptions);
-                }
+                this.$emit('updated', {
+                    start: start,
+                    end: end
+                });
             }
 
             if ($event) {
