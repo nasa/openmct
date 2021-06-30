@@ -36,10 +36,12 @@ class IndependentTimeAPI extends EventEmitter {
         return this.offsets[keyString];
     }
 
-    set(keyString, value) {
+    set(keyString, value, clock) {
         this.offsets[keyString] = value;
         // this.emit(keyString, value);
-        this.bounds(keyString);
+        if (!clock) {
+            this.bounds(keyString);
+        }
     }
 
     delete(keyString) {
@@ -50,7 +52,7 @@ class IndependentTimeAPI extends EventEmitter {
 
     tick(timestamp) {
         Object.keys(this.offsets).forEach(keyString => {
-            const clockOffsets = this.offsets[keyString].clockOffsets;
+            const clockOffsets = this.offsets[keyString];
             if (clockOffsets) {
                 let bounds = {
                     start: timestamp + clockOffsets.start,
@@ -62,7 +64,7 @@ class IndependentTimeAPI extends EventEmitter {
     }
 
     bounds(keyString) {
-        const fixedOffsets = this.offsets[keyString].fixedOffsets;
+        const fixedOffsets = this.offsets[keyString];
         if (fixedOffsets) {
             this.emit(keyString, 'bounds', fixedOffsets, false);
         }

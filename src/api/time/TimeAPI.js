@@ -245,7 +245,7 @@ define(['EventEmitter', './independentTimeAPI'], function (EventEmitter, Indepen
      * @method registerIndependentTime
      */
     TimeAPI.prototype.registerIndependentTime = function (key, value) {
-        this.independentTimes.set(key, value);
+        this.independentTimes.set(key, value, this.activeClock);
 
         return this.independentTimes;
     };
