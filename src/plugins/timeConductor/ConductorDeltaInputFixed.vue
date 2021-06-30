@@ -73,6 +73,12 @@ export default {
     },
     inject: ['openmct'],
     props: {
+        keyString: {
+            type: String,
+            default() {
+                return undefined;
+            }
+        },
         timeOptions: {
             type: Object,
             default() {
@@ -108,12 +114,14 @@ export default {
         }
     },
     mounted() {
+        this.handleTimeSync(this.timeOptions);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.clearAllValidation);
     },
     beforeDestroy() {
+        this.destroyIndependentTime();
         this.openmct.time.off('bounds', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.off('timeSystem', this.setTimeSystem);
         this.openmct.time.off('clock', this.clearAllValidation);
@@ -123,15 +131,17 @@ export default {
             if (options) {
                 this.initializeIndependentTime(options);
             } else {
-                if (this.unregisterIndependentTime) {
-                    this.unregisterIndependentTime();
-                }
-
+                this.destroyIndependentTime();
                 this.syncTime();
             }
         },
+        destroyIndependentTime() {
+            if (this.unregisterIndependentTime) {
+                this.unregisterIndependentTime.delete(this.keyString);
+            }
+        },
         initializeIndependentTime(options) {
-            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(options.key, options);
+            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(this.keyString, options);
 
             if (options.timeSystem) {
                 this.setTimeSystem(options.timeSystem);
@@ -142,7 +152,7 @@ export default {
                 this.setViewFromBounds(options.fixedOffsets);
             }
 
-            this.updateTimeFromConductor();
+            // this.updateTimeFromConductor();
         },
         syncTime() {
             this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
@@ -191,13 +201,13 @@ export default {
                         end: end
                     });
                 } else {
-                    this.independentTime = {
-                        timeSystem: this.timeSystem,
+                    const newOptions = Object.assign({}, this.timeOptions, {
                         fixedOffsets: {
-                            start: start,
-                            end: end
+                            start,
+                            end
                         }
-                    };
+                    });
+                    this.$emit('updated', newOptions);
                 }
             }
 
@@ -228,7 +238,9 @@ export default {
                     start: this.timeFormatter.parse(this.formattedBounds.start),
                     end: this.timeFormatter.parse(this.formattedBounds.end)
                 };
-                const limit = this.getBoundsLimit();
+                //TODO: Do we need limits here? We have conductor limits disabled right now
+                // const limit = this.getBoundsLimit();
+                const limit = false;
 
                 if (
                     this.timeSystem.isUTCBased
@@ -242,6 +254,22 @@ export default {
                     if (input === currentInput) {
                         validationResult = this.openmct.time.validateBounds(boundsValues);
                     }
+                }
+
+                return this.handleValidationResults(input, validationResult);
+            });
+        },
+        areBoundsFormatsValid() {
+            let validationResult = true;
+
+            return [this.$refs.startDate, this.$refs.endDate].every((input) => {
+                const formattedDate = input === this.$refs.startDate
+                    ? this.formattedBounds.start
+                    : this.formattedBounds.end
+          ;
+
+                if (!this.timeFormatter.validate(formattedDate)) {
+                    validationResult = 'Invalid date';
                 }
 
                 return this.handleValidationResults(input, validationResult);

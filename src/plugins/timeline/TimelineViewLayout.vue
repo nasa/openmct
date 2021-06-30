@@ -59,6 +59,13 @@
             </div>
         </div>
     </div>
+    <div v-if="useIndependentTime"
+         class="c-conductor l-shell__time-conductor"
+    >
+        <div class="c-conductor__time-bounds">
+            <independent-time-conductor />
+        </div>
+    </div>
 </div>
 </template>
 
@@ -67,6 +74,7 @@ import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedPlan } from "../plan/util";
+import IndependentTimeConductor from "@/plugins/timeConductor/IndependentTimeConductor.vue";
 
 const unknownObjectType = {
     definition: {
@@ -77,6 +85,7 @@ const unknownObjectType = {
 
 export default {
     components: {
+        IndependentTimeConductor,
         TimelineObjectView,
         TimelineAxis,
         SwimLane
@@ -86,7 +95,10 @@ export default {
         return {
             items: [],
             timeSystems: [],
-            height: 0
+            height: 0,
+            useIndependentTime: false,
+            isFixed: this.openmct.time.clock() === undefined,
+            timeOptions: undefined
         };
     },
     beforeDestroy() {
@@ -94,7 +106,9 @@ export default {
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
         this.openmct.time.off("bounds", this.updateViewBounds);
-
+        if (this.unObserve) {
+            this.unObserve();
+        }
     },
     mounted() {
         if (this.composition) {
@@ -105,7 +119,7 @@ export default {
         }
 
         this.getTimeSystems();
-        this.openmct.time.on("bounds", this.updateViewBounds);
+        this.toggleSyncTimeConductor();
     },
     methods: {
         addItem(domainObject) {
@@ -164,6 +178,36 @@ export default {
             if (currentTimeSystem) {
                 currentTimeSystem.bounds = bounds;
             }
+        },
+        observeIndependentTime(event, bounds, isTick) {
+            this.updateViewBounds(bounds);
+        },
+        handleTimeSync() {
+            this.openmct.time.off('bounds', this.updateViewBounds);
+
+            if (this.useIndependentTime) {
+                if (this.unObserve) {
+                    this.unObserve();
+                }
+
+                this.unObserve = this.openmct.time.observeIndependentTime(this.domainObject.identifier.key, this.observeIndependentTime);
+            } else {
+                this.openmct.time.on('bounds', this.updateViewBounds);
+            }
+        },
+        toggleSyncTimeConductor() {
+            this.useIndependentTime = !this.useIndependentTime;
+            this.handleTimeSync();
+            //TODO: retrieve persisted timeOptions
+            // if (this.useIndependentTime === true) {
+            //     this.timeOptions = {
+            //         timeSystem: this.openmct.time.timeSystem(),
+            //         clockOffsets: this.openmct.time.clockOffsets(),
+            //         fixedOffsets: this.openmct.time.bounds()
+            //     };
+            // } else {
+            //     this.timeOptions = undefined;
+            // }
         }
     }
 };

@@ -250,6 +250,14 @@ define(['EventEmitter', './independentTimeAPI'], function (EventEmitter, Indepen
         return this.independentTimes;
     };
 
+    TimeAPI.prototype.getIndependentTime = function (key) {
+        return this.independentTimes.get(key);
+    };
+
+    TimeAPI.prototype.observeIndependentTime = function (key, callback) {
+        return this.independentTimes.observe(key, callback);
+    };
+
     /**
      * Get or set the time system of the TimeAPI.
      * @param {TimeSystem | string} timeSystem

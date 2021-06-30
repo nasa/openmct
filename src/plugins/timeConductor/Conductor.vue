@@ -30,15 +30,9 @@
     ]"
 >
     <div class="c-conductor__time-bounds">
-        <conductor-delta-input-fixed v-if="isFixed"
-                                     :time-options="timeOptions"
-        />
-        <conductor-delta-input-realtime v-else
-                                        :time-options="timeOptions"
-        />
-        <ConductorModeIcon class="c-conductor__mode-icon"
-                           @toggled="toggleSyncTimeConductor"
-        />
+        <conductor-delta-input-fixed v-if="isFixed" />
+        <conductor-delta-input-realtime v-else />
+        <ConductorModeIcon class="c-conductor__mode-icon" />
         <conductor-axis
             class="c-conductor__ticks"
             :view-bounds="viewBounds"
@@ -69,11 +63,9 @@
 import _ from 'lodash';
 import ConductorMode from './ConductorMode.vue';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
-// import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorHistory from './ConductorHistory.vue';
-// import TimePopup from './timePopup.vue';
 import ConductorDeltaInputFixed from "@/plugins/timeConductor/ConductorDeltaInputFixed.vue";
 import ConductorDeltaInputRealtime from "@/plugins/timeConductor/ConductorDeltaInputRealtime.vue";
 
@@ -124,8 +116,7 @@ export default {
             isPanning: false,
             isZooming: false,
             showTCInputStart: false,
-            showTCInputEnd: false,
-            timeOptions: undefined
+            showTCInputEnd: false
         };
     },
     computed: {
@@ -140,7 +131,6 @@ export default {
         this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
-        this.openmct.time.on('clockOffsets', this.setViewFromOffsets);
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleKeyDown);
@@ -195,40 +185,6 @@ export default {
                 timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
             this.isUTCBased = timeSystem.isUTCBased;
         },
-        setOffsetsFromView($event) {
-            if (this.$refs.conductorForm.checkValidity()) {
-                let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
-                let endOffset = this.durationFormatter.parse(this.offsets.end);
-
-                this.openmct.time.clockOffsets({
-                    start: startOffset,
-                    end: endOffset
-                });
-            }
-
-            if ($event) {
-                $event.preventDefault();
-
-                return false;
-            }
-        },
-        setBoundsFromView($event) {
-            if (this.$refs.conductorForm.checkValidity()) {
-                let start = this.timeFormatter.parse(this.formattedBounds.start);
-                let end = this.timeFormatter.parse(this.formattedBounds.end);
-
-                this.openmct.time.bounds({
-                    start: start,
-                    end: end
-                });
-            }
-
-            if ($event) {
-                $event.preventDefault();
-
-                return false;
-            }
-        },
         setViewFromClock(clock) {
             // this.clearAllValidation();
             this.isFixed = clock === undefined;
@@ -239,174 +195,11 @@ export default {
             this.viewBounds.start = bounds.start;
             this.viewBounds.end = bounds.end;
         },
-        setViewFromOffsets(offsets) {
-            this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
-            this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
-        },
-        updateTimeFromConductor() {
-            if (this.isFixed) {
-                this.setBoundsFromView();
-            } else {
-                this.setOffsetsFromView();
-            }
-        },
-        getBoundsLimit() {
-            const configuration = this.configuration.menuOptions
-                .filter(option => option.timeSystem === this.timeSystem.key)
-                .find(option => option.limit);
-
-            const limit = configuration ? configuration.limit : undefined;
-
-            return limit;
-        },
-        // clearAllValidation() {
-        //     if (this.isFixed) {
-        //         [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
-        //     } else {
-        //         [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
-        //     }
-        // },
-        // clearValidationForInput(input) {
-        //     input.setCustomValidity('');
-        //     input.title = '';
-        // },
-        // validateAllBounds(ref) {
-        //     if (!this.areBoundsFormatsValid()) {
-        //         return false;
-        //     }
-        //
-        //     let validationResult = true;
-        //     const currentInput = this.$refs[ref];
-        //
-        //     return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        //         let boundsValues = {
-        //             start: this.timeFormatter.parse(this.formattedBounds.start),
-        //             end: this.timeFormatter.parse(this.formattedBounds.end)
-        //         };
-        //         const limit = this.getBoundsLimit();
-        //
-        //         if (
-        //             this.timeSystem.isUTCBased
-        //             && limit
-        //             && boundsValues.end - boundsValues.start > limit
-        //         ) {
-        //             if (input === currentInput) {
-        //                 validationResult = "Start and end difference exceeds allowable limit";
-        //             }
-        //         } else {
-        //             if (input === currentInput) {
-        //                 validationResult = this.openmct.time.validateBounds(boundsValues);
-        //             }
-        //         }
-        //
-        //         return this.handleValidationResults(input, validationResult);
-        //     });
-        // },
-        // areBoundsFormatsValid() {
-        //     let validationResult = true;
-        //
-        //     return [this.$refs.startDate, this.$refs.endDate].every((input) => {
-        //         const formattedDate = input === this.$refs.startDate
-        //             ? this.formattedBounds.start
-        //             : this.formattedBounds.end
-        //         ;
-        //
-        //         if (!this.timeFormatter.validate(formattedDate)) {
-        //             validationResult = 'Invalid date';
-        //         }
-        //
-        //         return this.handleValidationResults(input, validationResult);
-        //     });
-        // },
-        validateAllOffsets(event) {
-            return [this.$refs.startOffset, this.$refs.endOffset].every((input) => {
-                let validationResult = true;
-                let formattedOffset;
-
-                if (input === this.$refs.startOffset) {
-                    formattedOffset = this.offsets.start;
-                } else {
-                    formattedOffset = this.offsets.end;
-                }
-
-                if (!this.durationFormatter.validate(formattedOffset)) {
-                    validationResult = 'Offsets must be in the format hh:mm:ss and less than 24 hours in duration';
-                } else {
-                    let offsetValues = {
-                        start: 0 - this.durationFormatter.parse(this.offsets.start),
-                        end: this.durationFormatter.parse(this.offsets.end)
-                    };
-                    validationResult = this.openmct.time.validateOffsets(offsetValues);
-                }
-
-                return this.handleValidationResults(input, validationResult);
-            });
-        },
-        handleValidationResults(input, validationResult) {
-            if (validationResult !== true) {
-                input.setCustomValidity(validationResult);
-                input.title = validationResult;
-
-                return false;
-            } else {
-                input.setCustomValidity('');
-                input.title = '';
-
-                return true;
-            }
-        },
-        submitForm() {
-            // Allow Vue model to catch up to user input.
-            // Submitting form will cause validation messages to display (but only if triggered by button click)
-            this.$nextTick(() => this.$refs.submitButton.click());
-        },
         getFormatter(key) {
             return this.openmct.telemetry.getValueFormatter({
                 format: key
             }).formatter;
-        },
-        toggleSyncTimeConductor() {
-            this.outofSync = !this.outofSync;
-            if (this.outofSync === true) {
-                this.timeOptions = {
-                    key: 1,
-                    timeSystem: this.openmct.time.timeSystem(),
-                    clockOffsets: this.openmct.time.clockOffsets(),
-                    fixedOffsets: this.openmct.time.bounds()
-                };
-            } else {
-                this.timeOptions = undefined;
-            }
-
-            console.log(this.outofSync, this.timeOptions);
         }
-        // startDateSelected(date) {
-        //     this.formattedBounds.start = this.timeFormatter.format(date);
-        //     this.validateAllBounds('startDate');
-        //     this.submitForm();
-        // },
-        // endDateSelected(date) {
-        //     this.formattedBounds.end = this.timeFormatter.format(date);
-        //     this.validateAllBounds('endDate');
-        //     this.submitForm();
-        // },
-        // hideAllTimePopups() {
-        //     this.showTCInputStart = false;
-        //     this.showTCInputEnd = false;
-        // },
-        // showTimePopupStart() {
-        //     this.hideAllTimePopups();
-        //     this.showTCInputStart = !this.showTCInputStart;
-        // },
-        // showTimePopupEnd() {
-        //     this.hideAllTimePopups();
-        //     this.showTCInputEnd = !this.showTCInputEnd;
-        // },
-        // timePopUpdate({ type, hours, minutes, seconds }) {
-        //     this.offsets[type] = [hours, minutes, seconds].join(':');
-        //     this.setOffsetsFromView();
-        //     this.hideAllTimePopups();
-        // }
     }
 };
 </script>

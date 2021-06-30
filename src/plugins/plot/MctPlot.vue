@@ -171,7 +171,7 @@ export default {
         MctTicks,
         MctChart
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         options: {
             type: Object,
@@ -263,7 +263,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
-        this.followTimeConductor();
+        this.setTimeContext();
 
         this.loaded = true;
 
@@ -276,9 +276,33 @@ export default {
         this.destroy();
     },
     methods: {
-        followTimeConductor() {
+        setTimeContext() {
+            this.openmct.time.off('clock', this.updateRealTime);
+            this.openmct.time.off('bounds', this.updateDisplayBounds);
+            this.path.forEach(item => {
+                const key = this.openmct.objects.makeKeyString(item.identifier);
+
+                if (this.openmct.time.getIndependentTime(key)) {
+                    if (this.unObserve) {
+                        this.unObserve();
+                    }
+
+                    this.unObserve = this.openmct.time.observeIndependentTime(key, this.observeIndependentTime);
+                }
+            });
+            this.followTimeConductor(this.unObserve);
+
+        },
+        observeIndependentTime(event, bounds, isTick) {
+            this.updateDisplayBounds(bounds, isTick);
+        },
+        followTimeConductor(skipBounds) {
+            console.log(skipBounds);
             this.openmct.time.on('clock', this.updateRealTime);
-            this.openmct.time.on('bounds', this.updateDisplayBounds);
+            if (skipBounds === undefined) {
+                this.openmct.time.on('bounds', this.updateDisplayBounds);
+            }
+
             this.synchronized(true);
         },
         getConfig() {
@@ -994,6 +1018,10 @@ export default {
             configStore.deleteStore(this.config.id);
 
             this.stopListening();
+            if (this.unObserve) {
+                this.unObserve();
+            }
+
             if (this.checkForSize) {
                 clearInterval(this.checkForSize);
                 delete this.checkForSize;

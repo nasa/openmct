@@ -27,7 +27,7 @@
     <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
         <!-- RT 'last update' display -->
         <div class="c-conductor__end-fixed__label">
-            Updated
+            Current
         </div>
         <input
             ref="endDate"
@@ -77,6 +77,12 @@ export default {
     },
     inject: ['openmct'],
     props: {
+        keyString: {
+            type: String,
+            default() {
+                return undefined;
+            }
+        },
         timeOptions: {
             type: Object,
             default() {
@@ -113,42 +119,51 @@ export default {
     },
     watch: {
         timeOptions(options) {
+            this.handleTimeSync(options);
+        }
+    },
+    mounted() {
+        this.handleTimeSync(this.timeOptions);
+        this.followTime();
+    },
+    beforeDestroy() {
+        this.destroyIndependentTime();
+        this.stopFollowingTime();
+    },
+    methods: {
+        followTime() {
+            this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
+            this.openmct.time.on('timeSystem', this.setTimeSystem);
+            this.openmct.time.on('clock', this.clearAllValidation);
+            this.openmct.time.on('clockOffsets', this.setViewFromOffsets);
+        },
+        stopFollowingTime() {
+            this.openmct.time.off('bounds', _.throttle(this.handleNewBounds, 300));
+            this.openmct.time.off('timeSystem', this.setTimeSystem);
+            this.openmct.time.off('clock', this.clearAllValidation);
+            this.openmct.time.off('clockOffsets', this.setViewFromOffsets);
+        },
+        handleTimeSync(options) {
             if (options) {
+                this.stopFollowingTime();
                 this.initializeIndependentTime(options);
             } else {
                 this.destroyIndependentTime();
                 this.syncTime();
+                this.followTime();
             }
-        }
-    },
-    mounted() {
-        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
-        this.openmct.time.on('tick', _.throttle(this.updateBounds, 300));
-        this.openmct.time.on('timeSystem', this.setTimeSystem);
-        this.openmct.time.on('clock', this.clearAllValidation);
-        this.openmct.time.on('clockOffsets', this.setOffsets);
-    },
-    beforeDestroy() {
-        this.destroyIndependentTime();
-        this.openmct.time.off('bounds', _.throttle(this.handleNewBounds, 300));
-        this.openmct.time.off('tick', _.throttle(this.updateBounds, 300));
-        this.openmct.time.off('timeSystem', this.setTimeSystem);
-        this.openmct.time.off('clock', this.clearAllValidation);
-        this.openmct.time.off('clockOffsets', this.setOffsets);
-    },
-    methods: {
+        },
         destroyIndependentTime() {
             if (this.unregisterIndependentTime) {
+                this.unregisterIndependentTime.delete(this.keyString);
+            }
+
+            if (this.unObserve) {
                 this.unObserve();
-                this.unregisterIndependentTime.delete(1);
             }
         },
         initializeIndependentTime(options) {
-            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(options.key, options);
-            this.unObserve = this.unregisterIndependentTime.observe(options.key, (event, bounds, isTick) => {
-                console.log(event, bounds, isTick);
-            });
+            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(this.keyString, options);
 
             if (options.timeSystem) {
                 this.setTimeSystem(options.timeSystem);
@@ -157,6 +172,18 @@ export default {
             if (options.clockOffsets) {
                 this.setViewFromOffsets(options.clockOffsets);
             }
+
+            if (this.unObserve) {
+                this.unObserve();
+            }
+
+            this.unObserve = this.openmct.time.observeIndependentTime(this.keyString, this.observeIndependentTime);
+
+        },
+        observeIndependentTime(event, bounds, isTick) {
+            _.throttle(() => {
+                this.handleNewBounds(bounds, isTick);
+            }, 300);
         },
         syncTime() {
             this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
@@ -164,17 +191,8 @@ export default {
             this.handleNewBounds(this.openmct.time.bounds());
         },
         handleNewBounds(bounds) {
-            if (!this.timeOptions) {
-                this.setBounds(bounds);
-                this.setViewFromBounds(bounds);
-            }
-        },
-        updateBounds(timestamp) {
-            //add the timestamp and independent offsets to get new bounds
-            this.setBounds({
-                start: timestamp + this.offsets.start,
-                end: timestamp + this.offsets.end
-            });
+            this.setBounds(bounds);
+            this.setViewFromBounds(bounds);
         },
         clearAllValidation() {
             [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
@@ -182,11 +200,6 @@ export default {
         clearValidationForInput(input) {
             input.setCustomValidity('');
             input.title = '';
-        },
-        setOffsets(offsets) {
-            if (!this.timeOptions) {
-                this.setViewFromOffsets(offsets);
-            }
         },
         setViewFromOffsets(offsets) {
             this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
@@ -233,10 +246,20 @@ export default {
                 let startOffset = 0 - this.durationFormatter.parse(this.offsets.start);
                 let endOffset = this.durationFormatter.parse(this.offsets.end);
 
-                this.openmct.time.clockOffsets({
-                    start: startOffset,
-                    end: endOffset
-                });
+                if (!this.timeOptions) {
+                    this.openmct.time.clockOffsets({
+                        start: startOffset,
+                        end: endOffset
+                    });
+                } else {
+                    const newOptions = Object.assign({}, this.timeOptions, {
+                        clockOffsets: {
+                            start: startOffset,
+                            end: endOffset
+                        }
+                    });
+                    this.$emit('updated', newOptions);
+                }
             }
 
             if ($event) {
