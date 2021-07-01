@@ -422,6 +422,7 @@ define(['EventEmitter'], function (EventEmitter) {
      * @returns {ClockOffsets}
      */
     TimeAPI.prototype.clockOffsets = function (offsets) {
+        console.log('clock offset', offsets);
         if (arguments.length > 0) {
 
             const validationResult = this.validateOffsets(offsets);
@@ -432,7 +433,8 @@ define(['EventEmitter'], function (EventEmitter) {
             this.offsets = offsets;
 
             const currentValue = this.activeClock.currentValue();
-            // maybe current value is missing for lmst
+            // maybe current value is missing for lmst - henry
+            console.log('curr value', currentValue);
             const newBounds = {
                 start: currentValue + offsets.start,
                 end: currentValue + offsets.end
