@@ -21,26 +21,42 @@
 -->
 <template>
 <div>
-    <div v-if="canEdit">
-        <plot-options-edit />
-    </div>
-    <div v-else>
-        <plot-options-browse />
-    </div>
+    <ul v-if="canEdit"
+        class="grid-properties"
+    >
+        <li class="grid-row">
+            <div class="grid-cell label"
+                 title="Use Independent time"
+            >Use Independent Time</div>
+            <div class="grid-cell value">
+                <input v-model="useIndependentTime"
+                       type="checkbox"
+                       @change="updateTimeOption"
+                >
+            </div>
+        </li>
+    </ul>
+    <ul v-else
+        class="grid-properties"
+    >
+        <li class="grid-row">
+            <div class="grid-cell label"
+                 title="Use Independent Time."
+            >Use Independent Time</div>
+            <div class="grid-cell value">
+                {{ useIndependentTime ? "Enabled" : "Disabled" }}
+            </div>
+        </li>
+    </ul>
 </div>
 </template>
 
 <script>
-import PlotOptionsBrowse from "./PlotOptionsBrowse.vue";
-import PlotOptionsEdit from "./PlotOptionsEdit.vue";
 export default {
-    components: {
-        PlotOptionsBrowse,
-        PlotOptionsEdit
-    },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
+            useIndependentTime: this.domainObject.configuration && this.domainObject.configuration.useIndependentTime,
             isEditing: this.openmct.editor.isEditing()
         };
     },
@@ -58,6 +74,9 @@ export default {
     methods: {
         setEditState(isEditing) {
             this.isEditing = isEditing;
+        },
+        updateTimeOption() {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', this.useIndependentTime);
         }
     }
 };

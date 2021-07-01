@@ -1,11 +1,11 @@
 
-import PlotOptions from "./PlotOptions.vue";
+import TimelineOptions from "./TimelineOptions.vue";
 import Vue from 'vue';
 
-export default function PlotsInspectorViewProvider(openmct) {
+export default function TimelineInspectorViewProvider(openmct) {
     return {
-        key: 'plots-inspector',
-        name: 'Plots Inspector View',
+        key: 'timestrip-inspector',
+        name: 'Time Strip Inspector View',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
@@ -14,31 +14,23 @@ export default function PlotsInspectorViewProvider(openmct) {
             let object = selection[0][0].context.item;
 
             return object
-                && object.type === 'telemetry.plot.overlay';
+                && object.type === 'time-strip';
         },
         view: function (selection) {
             let component;
-            let objectPath;
-
-            if (selection.length) {
-                objectPath = selection[0].map((selectionItem) => {
-                    return selectionItem.context.item;
-                });
-            }
 
             return {
                 show: function (element) {
                     component = new Vue({
                         el: element,
                         components: {
-                            PlotOptions: PlotOptions
+                            TimelineOptions
                         },
                         provide: {
                             openmct,
-                            domainObject: selection[0][0].context.item,
-                            path: objectPath
+                            domainObject: selection[0][0].context.item
                         },
-                        template: '<plot-options></plot-options>'
+                        template: '<timeline-options></timeline-options>'
                     });
                 },
                 destroy: function () {
