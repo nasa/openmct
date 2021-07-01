@@ -33,14 +33,34 @@
             class="c-nsew"
             :style="compassRoseStyle"
         >
-            <svg
-                class="c-nsew__minor-ticks"
-                viewBox="0 0 100 100"
+        </div>
+
+        <div
+            v-if="hasHeading"
+            class="c-spacecraft-body"
+            :style="headingStyle"
+        >
+        </div>
+
+        <div
+            v-if="hasSunHeading"
+            class="c-sun"
+            :style="sunHeadingStyle"
+        ></div>
+
+        <div
+            class="c-cam-field"
+            :style="cameraPanStyle"
+        >
+            <svg viewBox="0 0 100 100"
+                 width="65.8"
+                 height="65.8"
             >
                 <rect
                     class="c-nsew__tick c-tick-ne"
                     x="49"
                     y="0"
+                    fill="red"
                     width="2"
                     height="5"
                 />
@@ -65,91 +85,14 @@
                     width="5"
                     height="2"
                 />
-
+                <!-- <path fill="gray"
+                      d="M50, 50
+                        L30,8
+                        A40 40 0 0 1 70,8
+                        Z
+                        "
+                /> -->
             </svg>
-
-            <svg
-                class="c-nsew__ticks"
-                viewBox="0 0 100 100"
-            >
-                <polygon
-                    class="c-nsew__tick c-tick-n"
-                    points="50,0 60,10 40,10"
-                />
-                <rect
-                    class="c-nsew__tick c-tick-e"
-                    x="95"
-                    y="49"
-                    width="5"
-                    height="2"
-                />
-                <rect
-                    class="c-nsew__tick c-tick-w"
-                    x="0"
-                    y="49"
-                    width="5"
-                    height="2"
-                />
-                <rect
-                    class="c-nsew__tick c-tick-s"
-                    x="49"
-                    y="95"
-                    width="2"
-                    height="5"
-                />
-
-                <text
-                    class="c-nsew__label c-label-n"
-                    text-anchor="middle"
-                    :transform="northTextTransform"
-                >N</text>
-                <text
-                    class="c-nsew__label c-label-e"
-                    text-anchor="middle"
-                    :transform="eastTextTransform"
-                >E</text>
-                <text
-                    class="c-nsew__label c-label-w"
-                    text-anchor="middle"
-                    :transform="southTextTransform"
-                >W</text>
-                <text
-                    class="c-nsew__label c-label-s"
-                    text-anchor="middle"
-                    :transform="westTextTransform"
-                >S</text>
-            </svg>
-        </div>
-
-        <div
-            v-if="hasHeading"
-            class="c-spacecraft-body"
-            :style="headingStyle"
-        >
-        </div>
-
-        <div
-            v-if="hasSunHeading"
-            class="c-sun"
-            :style="sunHeadingStyle"
-        ></div>
-
-        <div
-            class="c-cam-field"
-            :style="cameraPanStyle"
-        >
-            <div class="cam-field-half cam-field-half-l">
-                <div
-                    class="cam-field-area"
-                    :style="cameraFOVStyleLeftHalf"
-                ></div>
-            </div>
-            <div class="cam-field-half cam-field-half-r">
-                <div
-                    class="cam-field-area"
-                    :style="cameraFOVStyleRightHalf"
-                ></div>
-            </div>
         </div>
     </div>
 </div>
