@@ -10,6 +10,7 @@
         <time-popup
             v-if="showTCInputStart"
             class="pr-tc-input-menu--start"
+            :bottom="realtimeOffsets !== undefined"
             :type="'start'"
             :offset="offsets.start"
             @focus.native="$event.target.select()"
@@ -47,6 +48,7 @@
         <time-popup
             v-if="showTCInputEnd"
             class="pr-tc-input-menu--end"
+            :bottom="realtimeOffsets !== undefined"
             :type="'end'"
             :offset="offsets.end"
             @focus.native="$event.target.select()"
@@ -118,8 +120,11 @@ export default {
         };
     },
     watch: {
-        realtimeOffsets(newOffsets) {
-            this.handleTimeSync(newOffsets);
+        realtimeOffsets: {
+            handler(newOffsets) {
+                this.handleTimeSync(newOffsets);
+            },
+            deep: true
         }
     },
     mounted() {
@@ -143,10 +148,10 @@ export default {
             this.openmct.time.off('clock', this.clearAllValidation);
             this.openmct.time.off('clockOffsets', this.setViewFromOffsets);
         },
-        handleTimeSync(options) {
-            if (options) {
+        handleTimeSync(offsets) {
+            if (offsets) {
                 this.stopFollowingTime();
-                this.initializeIndependentTime(options);
+                this.initializeIndependentTime(offsets);
             } else {
                 this.destroy();
                 this.syncTime();
@@ -158,13 +163,9 @@ export default {
                 this.unObserve();
             }
         },
-        initializeIndependentTime(options) {
-            if (options.timeSystem) {
-                this.setTimeSystem(options.timeSystem);
-            }
-
-            if (options.clockOffsets) {
-                this.setViewFromOffsets(options.clockOffsets);
+        initializeIndependentTime(offsets) {
+            if (offsets) {
+                this.setViewFromOffsets(offsets);
             }
 
             if (this.unObserve) {

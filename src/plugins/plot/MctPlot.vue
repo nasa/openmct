@@ -264,6 +264,7 @@ export default {
 
         this.openmct.objectViews.on('clearData', this.clearData);
         this.setTimeContext();
+        this.openmct.time.on('independentTime', this.setTimeContext);
 
         this.loaded = true;
 
@@ -282,7 +283,9 @@ export default {
             this.path.forEach(item => {
                 const key = this.openmct.objects.makeKeyString(item.identifier);
 
-                if (this.openmct.time.getIndependentTime(key)) {
+                const bounds = this.openmct.time.getIndependentTime(key);
+                if (bounds) {
+                    this.updateDisplayBounds(bounds);
                     if (this.unObserve) {
                         this.unObserve();
                     }
@@ -297,9 +300,9 @@ export default {
             this.updateDisplayBounds(bounds, isTick);
         },
         followTimeConductor(skipBounds) {
-            console.log(skipBounds);
             this.openmct.time.on('clock', this.updateRealTime);
             if (skipBounds === undefined) {
+                this.updateDisplayBounds(this.openmct.time.bounds());
                 this.openmct.time.on('bounds', this.updateDisplayBounds);
             }
 
@@ -1039,6 +1042,7 @@ export default {
 
             this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
+            this.openmct.time.off('independentTime', this.setTimeContext);
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         updateStatus(status) {

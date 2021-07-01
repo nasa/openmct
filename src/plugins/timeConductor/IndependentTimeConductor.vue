@@ -29,6 +29,7 @@
     <div v-if="timeOptions"
          class="c-conductor__time-bounds"
     >
+        <ConductorModeIcon />
         <conductor-delta-input-fixed v-if="isFixed"
                                      :key-string="domainObject.identifier.key"
                                      :offsets="timeOptions.fixedOffsets"
@@ -36,7 +37,7 @@
         />
         <conductor-delta-input-realtime v-else
                                         :key-string="domainObject.identifier.key"
-                                        :offsets="timeOptions.clockOffsets"
+                                        :realtime-offsets="timeOptions.clockOffsets"
                                         @updated="saveClockOffsets"
         />
 
@@ -47,22 +48,44 @@
 <script>
 import ConductorDeltaInputFixed from "@/plugins/timeConductor/ConductorDeltaInputFixed.vue";
 import ConductorDeltaInputRealtime from "@/plugins/timeConductor/ConductorDeltaInputRealtime.vue";
+import ConductorModeIcon from "@/plugins/timeConductor/ConductorModeIcon.vue";
 
 export default {
     components: {
+        ConductorModeIcon,
         ConductorDeltaInputRealtime,
         ConductorDeltaInputFixed
     },
     inject: ['openmct', 'domainObject'],
+    props: {
+        options: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        }
+    },
     data() {
         return {
             isFixed: this.openmct.time.clock() === undefined,
-            timeOptions: {
-                timeSystem: this.openmct.time.timeSystem(),
+            timeOptions: this.options || {
                 clockOffsets: this.openmct.time.clockOffsets(),
                 fixedOffsets: this.openmct.time.bounds()
             }
         };
+    },
+    watch: {
+        options: {
+            handler(newOptions) {
+                if (this.timeOptions.start !== newOptions.start
+                    || this.timeOptions.end !== newOptions.end) {
+                    this.timeOptions = newOptions;
+                    this.registerIndependentTimeOffsets();
+                }
+            },
+            deep: true
+
+        }
     },
     mounted() {
         this.openmct.time.on('clock', this.setViewFromClock);
@@ -82,7 +105,6 @@ export default {
         setTimeOptions() {
             if (!this.timeOptions || !this.timeOptions.clockOffsets) {
                 this.timeOptions = {
-                    timeSystem: this.openmct.time.timeSystem(),
                     clockOffsets: this.openmct.time.clockOffsets(),
                     fixedOffsets: this.openmct.time.bounds()
                 };

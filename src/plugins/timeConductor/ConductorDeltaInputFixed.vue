@@ -26,6 +26,7 @@
         >
         <date-picker
             v-if="isUTCBased"
+            :bottom="offsets !== undefined"
             :default-date-time="formattedBounds.start"
             :formatter="timeFormatter"
             @date-selected="startDateSelected"
@@ -48,6 +49,7 @@
         <date-picker
             v-if="isUTCBased"
             class="c-ctrl-wrapper--menus-left"
+            :bottom="offsets !== undefined"
             :default-date-time="formattedBounds.end"
             :formatter="timeFormatter"
             @date-selected="endDateSelected"
@@ -109,8 +111,11 @@ export default {
         };
     },
     watch: {
-        offsets(newOffsets) {
-            this.handleTimeSync(newOffsets);
+        offsets: {
+            handler(newOffsets) {
+                this.handleTimeSync(newOffsets);
+            },
+            deep: true
         }
     },
     mounted() {
@@ -134,13 +139,9 @@ export default {
             }
         },
         initializeIndependentTime(offsets) {
-            if (offsets.timeSystem) {
-                this.setTimeSystem(offsets.timeSystem);
-            }
-
-            if (offsets.fixedOffsets) {
-                this.setBounds(offsets.fixedOffsets);
-                this.setViewFromBounds(offsets.fixedOffsets);
+            if (offsets) {
+                this.setBounds(offsets);
+                this.setViewFromBounds(offsets);
             }
         },
         syncTime() {
