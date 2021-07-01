@@ -98,11 +98,15 @@ export default {
 
     },
     methods: {
-        setTimeContext() {
+        setTimeContext(updatedKey) {
             this.openmct.time.off("timeSystem", this.setScaleAndPlotActivities);
             this.openmct.time.off("bounds", this.updateViewBounds);
             this.path.forEach(item => {
                 const key = this.openmct.objects.makeKeyString(item.identifier);
+                if (updatedKey !== undefined && (key !== updatedKey)) {
+                    return;
+                }
+
                 const bounds = this.openmct.time.getIndependentTime(key);
                 if (bounds) {
                     this.updateViewBounds(bounds);
@@ -156,7 +160,7 @@ export default {
         },
         updateViewBounds(bounds) {
             if (bounds) {
-                this.viewBounds = bounds;
+                this.viewBounds = Object.assign({}, bounds);
             }
 
             //Add a 50% padding to the end bounds to look ahead

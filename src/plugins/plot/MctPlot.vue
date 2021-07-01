@@ -277,11 +277,14 @@ export default {
         this.destroy();
     },
     methods: {
-        setTimeContext() {
+        setTimeContext(updatedKey) {
             this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
             this.path.forEach(item => {
                 const key = this.openmct.objects.makeKeyString(item.identifier);
+                if (updatedKey !== undefined && (key !== updatedKey)) {
+                    return;
+                }
 
                 const bounds = this.openmct.time.getIndependentTime(key);
                 if (bounds) {

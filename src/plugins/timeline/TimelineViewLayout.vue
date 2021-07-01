@@ -125,6 +125,7 @@ export default {
         }
 
         this.getTimeSystems();
+        this.handleTimeSync(this.useIndependentTime);
         this.unObserveTime = this.openmct.objects.observe(this.domainObject, 'configuration.useIndependentTime', this.handleTimeSync);
     },
     methods: {
@@ -193,11 +194,13 @@ export default {
             this.openmct.time.off('bounds', this.updateViewBounds);
 
             if (useIndependentTime) {
+                const key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+                this.updateViewBounds(this.openmct.time.getIndependentTime(key));
                 if (this.unObserve) {
                     this.unObserve();
                 }
 
-                this.unObserve = this.openmct.time.observeIndependentTime(this.domainObject.identifier.key, this.observeIndependentTime);
+                this.unObserve = this.openmct.time.observeIndependentTime(key, this.observeIndependentTime);
             } else {
                 this.openmct.time.on('bounds', this.updateViewBounds);
             }
