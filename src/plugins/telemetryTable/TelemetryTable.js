@@ -23,8 +23,7 @@
 define([
     'EventEmitter',
     'lodash',
-    './collections/SortedTableRowCollection',
-    './collections/FilteredTableRowCollection',
+    './collections/TargetedTableRowCollection',
     './TelemetryTableNameColumn',
     './TelemetryTableRow',
     './TelemetryTableColumn',
@@ -33,8 +32,7 @@ define([
 ], function (
     EventEmitter,
     _,
-    SortedTableRowCollection,
-    FilteredTableRowCollection,
+    TargetedTableRowCollection,
     TelemetryTableNameColumn,
     TelemetryTableRow,
     TelemetryTableColumn,
@@ -63,6 +61,7 @@ define([
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
             this.refreshData = this.refreshData.bind(this);
             this.requestTelemetryCollectionFor = this.requestTelemetryCollectionFor.bind(this);
+            this.removeTelemetryCollection = this.removeTelemetryCollection.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
@@ -103,8 +102,7 @@ define([
         }
 
         createTableRowCollections() {
-            this.sortedRows = new SortedTableRowCollection(this.openmct);
-            this.filteredRows = new FilteredTableRowCollection(this.sortedRows);
+            this.targetedRows = new TargetedTableRowCollection();
 
             //Fetch any persisted default sort
             let sortOptions = this.configuration.getConfiguration().sortOptions;
@@ -115,7 +113,7 @@ define([
                 direction: 'asc'
             };
 
-            this.filteredRows.sortBy(sortOptions);
+            this.targetedRows.sortBy(sortOptions);
         }
 
         loadComposition() {
@@ -153,8 +151,7 @@ define([
         }
 
         clearAndResubscribe() {
-            this.filteredRows.clear();
-            this.sortedRows.clear();
+            this.targetedRows.clear();
 
             this.telemetryObjects.forEach(this.requestTelemetryCollectionFor.bind(this));
         }
@@ -162,7 +159,7 @@ define([
         removeTelemetryObject(objectIdentifier) {
             this.configuration.removeColumnsForObject(objectIdentifier, true);
             let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
-            this.sortedRows.removeAllRowsForObject(keyString);
+            this.targetedRows.removeAllRowsForObject(keyString);
             this.removeTelemetryCollection(keyString);
             this.telemetryObjects = this.telemetryObjects.filter((object) => !_.eq(objectIdentifier, object.identifier));
 
@@ -201,8 +198,7 @@ define([
             let columnMap = this.getColumnMapForObject(keyString);
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-            return (telemetry, index) => {
-                console.log(telemetry, index)
+            return (telemetry) => {
                 //Check that telemetry object has not been removed since telemetry was requested.
                 if (!this.telemetryObjects.includes(telemetryObject)) {
                     return;
@@ -228,23 +224,16 @@ define([
             return (telemetry) => {
                 // only cache realtime
                 if (this.paused) {
-                    let cacheData = {
-                        telemetry,
-                        keyString
-                    };
-
-                    this.removeDatumCache.push(cacheData);
+                    this.removeDatumCache = this.removeDatumCache.concat(telemetry);
                 } else {
-                    this.sortedRows.removeRowsFor(telemetry, keyString);
+                    this.targetedRows.removeTheseRowIds(telemetry.map(JSON.stringify));
                 }
             };
         }
 
         processTelemetryData(telemetryData, columnMap, keyString, limitEvaluator) {
-            console.log(telemetryData);
-            let timeKey = this.openmct.time.timeSystem().key;
-            let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator, timeKey));
-            this.sortedRows.add(telemetryRows);
+            let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+            this.targetedRows.add(telemetryRows);
         }
 
         processDatumCache() {
@@ -252,10 +241,8 @@ define([
                 this.processTelemetryData(cachedDatum.telemetry, cachedDatum.columnMap, cachedDatum.keyString, cachedDatum.limitEvaluator);
             });
             this.datumCache = [];
-
-            this.removeDatumCache.forEach(cachedDatum => {
-                this.sortedRows.removeRowsFor(cachedDatum.telemetry, cachedDatum.keyString);
-            });
+            console.log('removed datum cache', this.removeDatumCache);
+            this.targetedRows.removeTheseRowIds(this.removeDatumCache.map(JSON.stringify));
             this.removeDatumCache = [];
         }
 
@@ -283,16 +270,17 @@ define([
 
         refreshData(bounds, isTick) {
             if (!isTick && this.outstandingRequests === 0) {
-                this.filteredRows.clear();
-                this.sortedRows.clear();
-                this.sortedRows.sortByTimeSystem(this.openmct.time.timeSystem());
+                this.targetedRows.clear();
+                this.targetedRows.sortBy({
+                    key: this.openmct.time.timeSystem().key,
+                    direction: 'asc'
+                });
                 this.telemetryObjects.forEach(this.requestTelemetryCollectionFor);
             }
         }
 
         clearData() {
-            this.filteredRows.clear();
-            this.sortedRows.clear();
+            this.targetedRows.clear();
             this.emit('refresh');
         }
 
@@ -351,7 +339,7 @@ define([
         }
 
         sortBy(sortOptions) {
-            this.filteredRows.sortBy(sortOptions);
+            this.targetedRows.sortBy(sortOptions);
 
             if (this.openmct.editor.isEditing()) {
                 let configuration = this.configuration.getConfiguration();
@@ -373,7 +361,6 @@ define([
             let keystrings = Object.keys(this.telemetryCollections);
             keystrings.forEach(this.removeTelemetryCollection);
 
-            this.filteredRows.destroy();
             this.openmct.time.off('bounds', this.refreshData);
             this.openmct.time.off('timeSystem', this.refreshData);
 

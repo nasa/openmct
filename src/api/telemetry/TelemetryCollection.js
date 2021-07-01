@@ -39,24 +39,18 @@ export class TelemetryCollection extends EventEmitter {
         this.loaded = false;
         this.openmct = openmct;
         this.domainObject = domainObject;
-
         this.boundedTelemetry = [];
         this.futureBuffer = [];
-
         this.parseTime = undefined;
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-
         this.unsubscribe = undefined;
         this.historicalProvider = undefined;
-
         this.options = options;
-
         this.pageState = undefined;
-
         this.lastBounds = undefined;
     }
     /**
-     * This will load start the requests for historical and realtime data,
+     * This will start the requests for historical and realtime data,
      * as well as setting up initial values and watchers
      */
     load() {
@@ -141,7 +135,7 @@ export class TelemetryCollection extends EventEmitter {
 
     /**
      * Filter any new telemetry (add/page, historical, subscription) based on
-     * time bounds
+     * time bounds and dupes
      *
      * @param  {(Object|Object[])} telemetryData - telemetry data object or
      * array of telemetry data objects
@@ -183,10 +177,7 @@ export class TelemetryCollection extends EventEmitter {
                     let index = endIndex || startIndex;
 
                     this.boundedTelemetry.splice(index, 0, datum);
-                    added.push({
-                        datum,
-                        index
-                    });
+                    added.push(datum);
                 }
 
             } else if (afterEndOfBounds) {
@@ -195,7 +186,7 @@ export class TelemetryCollection extends EventEmitter {
         }
 
         if (added.length) {
-            added.forEach(datumInfo => this.emit('add', datumInfo.datum, datumInfo.index));
+            this.emit('add', added);
         }
     }
 
