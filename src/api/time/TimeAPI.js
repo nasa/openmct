@@ -328,6 +328,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * using current offsets.
      */
     TimeAPI.prototype.tick = function (timestamp) {
+        // this updates bounds at real time - henry
+        console.log('timestamp', timestamp);
         const newBounds = {
             start: timestamp + this.offsets.start,
             end: timestamp + this.offsets.end
@@ -430,6 +432,7 @@ define(['EventEmitter'], function (EventEmitter) {
             this.offsets = offsets;
 
             const currentValue = this.activeClock.currentValue();
+            // maybe current value is missing for lmst
             const newBounds = {
                 start: currentValue + offsets.start,
                 end: currentValue + offsets.end
