@@ -25,14 +25,13 @@
  */
 define(
     [
-        "html2canvas",
+        "html-to-image",
         "saveAs"
     ],
     function (
-        html2canvas,
+        htmlToImage,
         { saveAs }
     ) {
-
         /**
          * The export image service will export any HTML node to
          * JPG, or PNG.
@@ -76,46 +75,38 @@ define(
                 element.id = exportId;
             }
 
-            return html2canvas(element, {
-                onclone: function (document) {
-                    if (className) {
-                        const clonedElement = document.getElementById(exportId);
-                        clonedElement.classList.add(className);
-                    }
+            return htmlToImage.toCanvas(element)
+                .then(function (canvas) {
+                    dialog.dismiss();
 
-                    element.id = oldId;
-                },
-                removeContainer: true // Set to false to debug what html2canvas renders
-            }).then(function (canvas) {
-                dialog.dismiss();
+                    return new Promise(function (resolve, reject) {
+                        if (thumbnailSize) {
+                            const thumbnail = self.getThumbnail(canvas, mimeType, thumbnailSize);
 
-                return new Promise(function (resolve, reject) {
-                    if (thumbnailSize) {
-                        const thumbnail = self.getThumbnail(canvas, mimeType, thumbnailSize);
-
-                        return canvas.toBlob(blob => resolve({
-                            blob,
-                            thumbnail
-                        }), mimeType);
-                    }
-
-                    return canvas.toBlob(blob => resolve({ blob }), mimeType);
-                });
-            }, function (error) {
-                console.log('error capturing image', error);
-                dialog.dismiss();
-                const errorDialog = dialogService.showBlockingMessage({
-                    title: "Error capturing image",
-                    severity: "error",
-                    hint: "Image was not captured successfully!",
-                    options: [{
-                        label: "OK",
-                        callback: function () {
-                            errorDialog.dismiss();
+                            return canvas.toBlob(blob => resolve({
+                                blob,
+                                thumbnail
+                            }), mimeType);
                         }
-                    }]
+
+                        return canvas.toBlob(blob => resolve({ blob }), mimeType);
+                    });
+                })
+                .catch(function (error) {
+                    console.log('error capturing image', error);
+                    dialog.dismiss();
+                    const errorDialog = dialogService.showBlockingMessage({
+                        title: "Error capturing image",
+                        severity: "error",
+                        hint: "Image was not captured successfully!",
+                        options: [{
+                            label: "OK",
+                            callback: function () {
+                                errorDialog.dismiss();
+                            }
+                        }]
+                    });
                 });
-            });
         };
 
         ExportImageService.prototype.getThumbnail = function (canvas, mimeType, size) {
