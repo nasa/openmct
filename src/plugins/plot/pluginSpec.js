@@ -403,6 +403,25 @@ describe("the plugin", function () {
 
             });
         });
+
+        describe('controls in time strip view', () => {
+
+            it('zoom controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-zoom");
+                expect(pauseEl.length).toBe(0);
+            });
+
+            it('pan controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-pan");
+                expect(pauseEl.length).toBe(0);
+            });
+
+            it('pause/play controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-pause");
+                expect(pauseEl.length).toBe(0);
+            });
+
+        });
     });
 
     describe("The stacked plot view", () => {
