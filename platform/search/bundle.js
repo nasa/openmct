@@ -29,7 +29,8 @@ define([
     "./res/templates/search.html",
     "./res/templates/search-menu.html",
     "raw-loader!./src/services/GenericSearchWorker.js",
-    "raw-loader!./src/services/BareBonesSearchWorker.js"
+    "raw-loader!./src/services/BareBonesSearchWorker.js",
+    "raw-loader!../../src/plugins/persistence/couch/CouchChangesFeed.js"
 ], function (
     SearchController,
     SearchMenuController,
@@ -39,7 +40,8 @@ define([
     searchTemplate,
     searchMenuTemplate,
     searchWorkerText,
-    BareBonesSearchWorkerText
+    BareBonesSearchWorkerText,
+    couchChangesFeedText
 ) {
 
     return {
@@ -130,6 +132,11 @@ define([
                     {
                         "key": "genericSearchWorker",
                         "scriptText": searchWorkerText
+                    },
+                    {
+                        "key": "couchChangesFeed",
+                        "scriptText": couchChangesFeedText,
+                        shared: true
                     }
                 ]
             }

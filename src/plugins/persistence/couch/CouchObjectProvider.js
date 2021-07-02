@@ -23,6 +23,7 @@
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
 import { NOTEBOOK_TYPE } from '../../notebook/notebook-constants.js';
+import ObjectAPI from "@/api/objects/ObjectAPI";
 
 const REV = "_rev";
 const ID = "_id";
@@ -38,6 +39,38 @@ export default class CouchObjectProvider {
         this.objectQueue = {};
         this.observers = {};
         this.batchIds = [];
+        this.injectWorkerService = function () {
+            this.workerService = this.openmct.$injector.get("workerService");
+        };
+    }
+
+    /**
+     * @private
+     */
+    getWorkerService() {
+        // Lazily acquire identifier service
+        if (!this.workerService) {
+            this.injectWorkerService();
+        }
+
+        return this.workerService;
+    }
+
+    /**
+     * @private
+     */
+    startSharedWorker() {
+        let provider = this;
+        let sharedWorker;
+
+        sharedWorker = this.getWorkerService().run('couchChangesFeed');
+        sharedWorker.port.onmessage = provider.onSharedWorkerMessage;
+
+        return sharedWorker.port;
+    }
+
+    onSharedWorkerMessage(event) {
+        console.log('Shared worker message received', event.data);
     }
 
     //backwards compatibility, options used to be a url. Now it's an object
@@ -335,6 +368,11 @@ export default class CouchObjectProvider {
      * @private
      */
     async observeObjectChanges() {
+        if (!this.changesFeedSharedWorker) {
+            this.changesFeedSharedWorker = this.startSharedWorker();
+            this.changesFeedSharedWorker.postMessage('Hello');
+        }
+
         const controller = new AbortController();
         const signal = controller.signal;
         let filter = {selector: {}};
