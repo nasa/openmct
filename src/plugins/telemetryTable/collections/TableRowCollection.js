@@ -39,10 +39,12 @@ define(
          * @constructor
          */
         class TableRowCollection extends EventEmitter {
-            constructor(openmct) {
+            constructor(openmct, domainObject, configuration) {
                 super();
 
                 this.openmct = openmct;
+                this.domainObject = domainObject;
+                this.configuration = configuration;
 
                 this.rows = [];
                 this.telemetryObjects = {};
@@ -58,8 +60,10 @@ define(
                 this.clear = this.clear.bind(this);
             }
 
-            addObject(telemetryObject, configuration) {
-                let { keyString, requestOptions, columnMap } = configuration;
+            addObject(telemetryObject) {
+                const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+                let columnMap = this.getColumnMapForObject(keyString);
                 let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
                 this.incrementOutstandingRequests();
@@ -321,6 +325,29 @@ define(
                 this.emit('filter');
             }
 
+            getColumnMapForObject(objectKeyString) {
+                let columns = this.configuration.getColumns();
+
+                if (columns[objectKeyString]) {
+                    return columns[objectKeyString].reduce((map, column) => {
+                        map[column.getKey()] = column;
+
+                        return map;
+                    }, {});
+                }
+
+                return {};
+            }
+
+            buildOptionsFromConfiguration(telemetryObject) {
+                let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+                let filters = this.domainObject.configuration
+                    && this.domainObject.configuration.filters
+                    && this.domainObject.configuration.filters[keyString];
+
+                return {filters} || {};
+            }
+
             updateRowsToAllBoundedRows() {
                 let objectKeys = Object.keys(this.telemetryCollections);
                 let allBoundedRows = objectKeys.reduce((boundedRows, keyString) => {
@@ -422,7 +449,6 @@ define(
             }
 
             resubscribe() {
-                console.log('resubscribe');
                 let objectKeys = Object.keys(this.telemetryObjects);
                 objectKeys.forEach((keyString) => {
                     this.addObject(this.telemetryObjects[keyString].telemetryObject, this.telemetryObjects[keyString]);

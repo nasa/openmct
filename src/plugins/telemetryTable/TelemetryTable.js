@@ -56,7 +56,6 @@ define([
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
             this.refreshData = this.refreshData.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
-            this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
             this.filterObserver = undefined;
 
@@ -95,7 +94,7 @@ define([
         }
 
         createTableRowCollections() {
-            this.tableRows = new TableRowCollection(this.openmct);
+            this.tableRows = new TableRowCollection(this.openmct, this.domainObject, this.configuration);
 
             //Fetch any persisted default sort
             let sortOptions = this.configuration.getConfiguration().sortOptions;
@@ -126,16 +125,7 @@ define([
 
         addTelemetryObject(telemetryObject) {
             this.addColumnsForObject(telemetryObject, true);
-
-            const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
-            let columnMap = this.getColumnMapForObject(keyString);
-
-            this.tableRows.addObject(telemetryObject, {
-                keyString,
-                requestOptions,
-                columnMap
-            });
+            this.tableRows.addObject(telemetryObject);
 
             this.emit('object-added', telemetryObject);
         }
@@ -159,9 +149,7 @@ define([
         }
 
         refreshData(bounds, isTick) {
-            if (!isTick) console.log('outstanding', this.tableRows.outstandingRequests);
             if (!isTick && this.tableRows.outstandingRequests === 0) {
-                console.log('refresh', this.tableRows.outstandingRequests);
                 this.tableRows.clear();
                 this.tableRows.sortBy({
                     key: this.openmct.time.timeSystem().key,
@@ -174,20 +162,6 @@ define([
         clearData() {
             this.tableRows.clear();
             this.emit('refresh');
-        }
-
-        getColumnMapForObject(objectKeyString) {
-            let columns = this.configuration.getColumns();
-
-            if (columns[objectKeyString]) {
-                return columns[objectKeyString].reduce((map, column) => {
-                    map[column.getKey()] = column;
-
-                    return map;
-                }, {});
-            }
-
-            return {};
         }
 
         addColumnsForObject(telemetryObject) {
@@ -219,15 +193,6 @@ define([
 
         isTelemetryObject(domainObject) {
             return Object.prototype.hasOwnProperty.call(domainObject, 'telemetry');
-        }
-
-        buildOptionsFromConfiguration(telemetryObject) {
-            let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            let filters = this.domainObject.configuration
-                && this.domainObject.configuration.filters
-                && this.domainObject.configuration.filters[keyString];
-
-            return {filters} || {};
         }
 
         sortBy(sortOptions) {
