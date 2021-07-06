@@ -206,7 +206,7 @@ describe("the plugin", function () {
             };
 
             const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-simple");
+            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
             expect(plotView).toBeDefined();
         });
 
@@ -319,7 +319,7 @@ describe("the plugin", function () {
             };
 
             applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-simple");
+            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
             plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             plotView.show(child, true);
 
