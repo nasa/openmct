@@ -20,10 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const { thresholdSturges } = require("d3-array");
+
 define([
     'EventEmitter',
     'lodash',
-    './collections/TargetedTableRowCollection',
+    './collections/TableRowCollection',
     './TelemetryTableNameColumn',
     './TelemetryTableRow',
     './TelemetryTableColumn',
@@ -32,7 +34,7 @@ define([
 ], function (
     EventEmitter,
     _,
-    TargetedTableRowCollection,
+    TableRowCollection,
     TelemetryTableNameColumn,
     TelemetryTableRow,
     TelemetryTableColumn,
@@ -47,10 +49,10 @@ define([
             this.openmct = openmct;
             this.rowCount = 100;
             this.tableComposition = undefined;
-            this.telemetryObjects = [];
+            // this.telemetryObjects = [];
             this.datumCache = [];
             this.removeDatumCache = [];
-            this.outstandingRequests = 0;
+            // this.outstandingRequests = 0;
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -60,8 +62,8 @@ define([
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
             this.refreshData = this.refreshData.bind(this);
-            this.requestTelemetryCollectionFor = this.requestTelemetryCollectionFor.bind(this);
-            this.removeTelemetryCollection = this.removeTelemetryCollection.bind(this);
+            // this.requestTelemetryCollectionFor = this.requestTelemetryCollectionFor.bind(this);
+            // this.removeTelemetryCollection = this.removeTelemetryCollection.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
@@ -102,7 +104,7 @@ define([
         }
 
         createTableRowCollections() {
-            this.targetedRows = new TargetedTableRowCollection();
+            this.tableRows = new TableRowCollection(this.openmct);
 
             //Fetch any persisted default sort
             let sortOptions = this.configuration.getConfiguration().sortOptions;
@@ -113,7 +115,7 @@ define([
                 direction: 'asc'
             };
 
-            this.targetedRows.sortBy(sortOptions);
+            this.tableRows.sortBy(sortOptions);
         }
 
         loadComposition() {
@@ -133,8 +135,19 @@ define([
 
         addTelemetryObject(telemetryObject) {
             this.addColumnsForObject(telemetryObject, true);
-            this.requestTelemetryCollectionFor(telemetryObject);
-            this.telemetryObjects.push(telemetryObject);
+
+            const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+            let columnMap = this.getColumnMapForObject(keyString);
+
+            this.tableRows.addObject(telemetryObject, {
+                keyString,
+                requestOptions,
+                columnMap
+            });
+
+            // this.requestTelemetryCollectionFor(telemetryObject);
+            // this.telemetryObjects.push(telemetryObject);
 
             this.emit('object-added', telemetryObject);
         }
@@ -151,136 +164,137 @@ define([
         }
 
         clearAndResubscribe() {
-            this.targetedRows.clear();
-
-            this.telemetryObjects.forEach(this.requestTelemetryCollectionFor.bind(this));
+            this.tableRows.clearAndResubscribe();
+            // this.telemetryObjects.forEach(this.requestTelemetryCollectionFor.bind(this));
         }
 
         removeTelemetryObject(objectIdentifier) {
             this.configuration.removeColumnsForObject(objectIdentifier, true);
-            let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
-            this.targetedRows.removeAllRowsForObject(keyString);
-            this.removeTelemetryCollection(keyString);
-            this.telemetryObjects = this.telemetryObjects.filter((object) => !_.eq(objectIdentifier, object.identifier));
+
+            this.tableRows.removeObject(objectIdentifier);
+
+            // this.tableRows.removeAllRowsForObject(keyString);
+            // this.removeTelemetryCollection(keyString);
+            // this.telemetryObjects = this.telemetryObjects.filter((object) => !_.eq(objectIdentifier, object.identifier));
 
             this.emit('object-removed', objectIdentifier);
         }
 
-        requestTelemetryCollectionFor(telemetryObject) {
-            this.incrementOutstandingRequests();
+        // requestTelemetryCollectionFor(telemetryObject) {
+        //     this.incrementOutstandingRequests();
 
-            let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
-            const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            const telemetryProcessor = this.getTelemetryProcessor(telemetryObject, keyString);
-            const telemetryRemover = this.getTelemetryRemover(keyString);
+        //     let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+        //     const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        //     const telemetryProcessor = this.getTelemetryProcessor(telemetryObject, keyString);
+        //     const telemetryRemover = this.getTelemetryRemover(keyString);
 
-            this.removeTelemetryCollection(keyString);
+        //     this.removeTelemetryCollection(keyString);
 
-            this.telemetryCollections[keyString] = this.openmct.telemetry
-                .requestTelemetryCollection(telemetryObject, requestOptions);
+        //     this.telemetryCollections[keyString] = this.openmct.telemetry
+        //         .requestTelemetryCollection(telemetryObject, requestOptions);
 
-            this.telemetryCollections[keyString].on('remove', telemetryRemover);
-            this.telemetryCollections[keyString].on('add', telemetryProcessor);
-            this.telemetryCollections[keyString].load();
+        //     this.telemetryCollections[keyString].on('remove', telemetryRemover);
+        //     this.telemetryCollections[keyString].on('add', telemetryProcessor);
+        //     this.telemetryCollections[keyString].load();
 
-            this.decrementOutstandingRequests();
-        }
+        //     this.decrementOutstandingRequests();
+        // }
 
-        removeTelemetryCollection(keyString) {
-            if (this.telemetryCollections[keyString]) {
-                this.telemetryCollections[keyString].destroy();
-                this.telemetryCollections[keyString] = undefined;
-                delete this.telemetryCollections[keyString];
-            }
-        }
+        // removeTelemetryCollection(keyString) {
+        //     if (this.telemetryCollections[keyString]) {
+        //         this.telemetryCollections[keyString].destroy();
+        //         this.telemetryCollections[keyString] = undefined;
+        //         delete this.telemetryCollections[keyString];
+        //     }
+        // }
 
-        getTelemetryProcessor(telemetryObject, keyString) {
-            let columnMap = this.getColumnMapForObject(keyString);
-            let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
+        // getTelemetryProcessor(telemetryObject, keyString) {
+        //     let columnMap = this.getColumnMapForObject(keyString);
+        //     let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-            return (telemetry) => {
-                //Check that telemetry object has not been removed since telemetry was requested.
-                if (!this.telemetryObjects.includes(telemetryObject)) {
-                    return;
-                }
+        //     return (telemetry) => {
+        //         //Check that telemetry object has not been removed since telemetry was requested.
+        //         if (!this.telemetryObjects.includes(telemetryObject)) {
+        //             return;
+        //         }
 
-                // only cache realtime
-                if (this.paused) {
-                    let cacheData = {
-                        telemetry,
-                        columnMap,
-                        keyString,
-                        limitEvaluator
-                    };
+        //         // only cache realtime
+        //         if (this.paused) {
+        //             let cacheData = {
+        //                 telemetry,
+        //                 columnMap,
+        //                 keyString,
+        //                 limitEvaluator
+        //             };
 
-                    this.datumCache.push(cacheData);
-                } else {
-                    this.processTelemetryData(telemetry, columnMap, keyString, limitEvaluator);
-                }
-            };
-        }
+        //             this.datumCache.push(cacheData);
+        //         } else {
+        //             this.processTelemetryData(telemetry, columnMap, keyString, limitEvaluator);
+        //         }
+        //     };
+        // }
 
-        getTelemetryRemover(keyString) {
-            return (telemetry) => {
-                // only cache realtime
-                if (this.paused) {
-                    this.removeDatumCache = this.removeDatumCache.concat(telemetry);
-                } else {
-                    this.targetedRows.removeTheseRowIds(telemetry.map(JSON.stringify));
-                }
-            };
-        }
+        // getTelemetryRemover(keyString) {
+        //     return (telemetry) => {
+        //         // only cache realtime
+        //         if (this.paused) {
+        //             this.removeDatumCache = this.removeDatumCache.concat(telemetry);
+        //         } else {
+        //             this.tableRows.removeTheseRowIds(telemetry.map(JSON.stringify));
+        //         }
+        //     };
+        // }
 
-        processTelemetryData(telemetryData, columnMap, keyString, limitEvaluator) {
-            let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
-            this.targetedRows.add(telemetryRows);
-        }
+        // processTelemetryData(telemetryData, columnMap, keyString, limitEvaluator) {
+        //     let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
+        //     this.tableRows.add(telemetryRows);
+        // }
 
-        processDatumCache() {
-            this.datumCache.forEach(cachedDatum => {
-                this.processTelemetryData(cachedDatum.telemetry, cachedDatum.columnMap, cachedDatum.keyString, cachedDatum.limitEvaluator);
-            });
-            this.datumCache = [];
-            console.log('removed datum cache', this.removeDatumCache);
-            this.targetedRows.removeTheseRowIds(this.removeDatumCache.map(JSON.stringify));
-            this.removeDatumCache = [];
-        }
+        // processDatumCache() {
+        //     this.datumCache.forEach(cachedDatum => {
+        //         this.processTelemetryData(cachedDatum.telemetry, cachedDatum.columnMap, cachedDatum.keyString, cachedDatum.limitEvaluator);
+        //     });
+        //     this.datumCache = [];
+        //     this.tableRows.removeTheseRowIds(this.removeDatumCache.map(JSON.stringify));
+        //     this.removeDatumCache = [];
+        // }
 
-        /**
-         * @private
-         */
-        incrementOutstandingRequests() {
-            if (this.outstandingRequests === 0) {
-                this.emit('outstanding-requests', true);
-            }
+        // /**
+        //  * @private
+        //  */
+        // incrementOutstandingRequests() {
+        //     if (this.outstandingRequests === 0) {
+        //         this.emit('outstanding-requests', true);
+        //     }
 
-            this.outstandingRequests++;
-        }
+        //     this.outstandingRequests++;
+        // }
 
-        /**
-         * @private
-         */
-        decrementOutstandingRequests() {
-            this.outstandingRequests--;
+        // /**
+        //  * @private
+        //  */
+        // decrementOutstandingRequests() {
+        //     this.outstandingRequests--;
 
-            if (this.outstandingRequests === 0) {
-                this.emit('outstanding-requests', false);
-            }
-        }
+        //     if (this.outstandingRequests === 0) {
+        //         this.emit('outstanding-requests', false);
+        //     }
+        // }
 
         refreshData(bounds, isTick) {
-            if (!isTick && this.outstandingRequests === 0) {
-                this.targetedRows.clear();
-                this.targetedRows.sortBy({
+            if (!isTick && this.tableRows.outstandingRequests === 0) {
+                this.tableRows.clear();
+                this.tableRows.sortBy({
                     key: this.openmct.time.timeSystem().key,
                     direction: 'asc'
                 });
-                this.telemetryObjects.forEach(this.requestTelemetryCollectionFor);
+                this.tableRows.resubscribe();
+                // this.telemetryObjects.forEach(this.requestTelemetryCollectionFor);
             }
         }
 
         clearData() {
-            this.targetedRows.clear();
+            this.tableRows.clear();
             this.emit('refresh');
         }
 
@@ -339,7 +353,7 @@ define([
         }
 
         sortBy(sortOptions) {
-            this.targetedRows.sortBy(sortOptions);
+            this.tableRows.sortBy(sortOptions);
 
             if (this.openmct.editor.isEditing()) {
                 let configuration = this.configuration.getConfiguration();
@@ -350,16 +364,20 @@ define([
 
         pause() {
             this.paused = true;
+            this.tableRows.pause();
         }
 
         unpause() {
             this.paused = false;
-            this.processDatumCache();
+            this.tableRows.unpause();
+            // this.processDatumCache();
         }
 
         destroy() {
-            let keystrings = Object.keys(this.telemetryCollections);
-            keystrings.forEach(this.removeTelemetryCollection);
+            // let keystrings = Object.keys(this.telemetryCollections);
+            // keystrings.forEach(this.removeTelemetryCollection);
+
+            this.tableRows.destroy();
 
             this.openmct.time.off('bounds', this.refreshData);
             this.openmct.time.off('timeSystem', this.refreshData);

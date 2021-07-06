@@ -80,7 +80,7 @@
         ].forEach(
             openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
         );
-
+        openmct.install(openmct.plugins.PerformanceIndicator())
         openmct.install(openmct.plugins.LocalStorage());
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
