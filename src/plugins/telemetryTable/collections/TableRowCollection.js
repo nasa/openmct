@@ -439,7 +439,7 @@ define(
             }
 
             unpause() {
-                this.paused = true;
+                this.paused = false;
                 this.processCachedFunctions();
             }
 
