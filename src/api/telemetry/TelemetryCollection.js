@@ -80,6 +80,8 @@ export class TelemetryCollection extends EventEmitter {
         if (this.unsubscribe) {
             this.unsubscribe();
         }
+
+        this.removeAllListeners();
     }
 
     /**
@@ -273,7 +275,7 @@ export class TelemetryCollection extends EventEmitter {
 
         } else {
             // user bounds change, reset
-            this._clear();
+            this._reset();
         }
 
     }
@@ -295,7 +297,7 @@ export class TelemetryCollection extends EventEmitter {
             return valueFormatter.parse(datum);
         };
 
-        this._clear();
+        this._reset();
     }
 
     /**
@@ -305,7 +307,7 @@ export class TelemetryCollection extends EventEmitter {
      *
      * @todo handle subscriptions more granually
      */
-    _clear() {
+    _reset() {
         this.boundedTelemetry = [];
         this.futureBuffer = [];
 
