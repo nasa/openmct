@@ -1,5 +1,6 @@
 (function () {
     const connections = [];
+    let connected = false;
 
     self.onconnect = function (e) {
         let port = e.ports[0];
@@ -18,9 +19,11 @@
             }
 
             if (event.data.request === 'changes') {
-                if (connections.length > 1) {
+                if (connected === true) {
                     return;
                 }
+
+                connected = true;
 
                 let url = event.data.url;
                 let body = event.data.body;
@@ -61,12 +64,9 @@
                                     if (doc) {
                                         const objectChanges = JSON.parse(doc);
                                         connections.forEach(function (connection) {
-                                            // if (connection !== port) {
                                             connection.postMessage({
-                                                objectChanges,
-                                                error
+                                                objectChanges
                                             });
-                                            // }
                                         });
                                     }
                                 } catch (decodeError) {

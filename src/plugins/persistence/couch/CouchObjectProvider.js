@@ -71,8 +71,14 @@ export default class CouchObjectProvider {
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else {
-            let objectChanges = event.data.objectChanges;
             const error = event.data.error;
+            if (error && Object.keys(this.observers).length > 0) {
+                this.observeObjectChanges();
+
+                return;
+            }
+
+            let objectChanges = event.data.objectChanges;
             objectChanges.identifier = {
                 namespace: this.namespace,
                 key: objectChanges.id
@@ -86,10 +92,6 @@ export default class CouchObjectProvider {
                     const updatedObject = await this.get(objectChanges.identifier);
                     observer(updatedObject);
                 });
-            }
-
-            if (error && Object.keys(this.observers).length > 0) {
-                this.observeObjectChanges();
             }
         }
     }
