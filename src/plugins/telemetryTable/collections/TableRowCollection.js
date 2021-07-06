@@ -317,7 +317,7 @@ define(
 
                 this.columnFilters[columnKey] = new RegExp(filter);
 
-                this.rows = this.rows.filter(this.matchesFilters, this);
+                this.updateRowsToAllBoundedRows();
                 this.emit('filter');
             }
 

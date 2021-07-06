@@ -49,6 +49,7 @@ describe("the plugin", () => {
     let element;
     let child;
     let historicalProvider;
+    let originalRouterPath;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -82,6 +83,8 @@ describe("the plugin", () => {
         window.requestAnimationFrame.and.callFake((callBack) => {
             callBack();
         });
+
+        originalRouterPath = openmct.router.path;
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -195,6 +198,10 @@ describe("the plugin", () => {
             tableInstance = tableView._getTable();
 
             return telemetryPromise.then(() => Vue.nextTick());
+        });
+
+        afterEach(() => {
+            openmct.router.path = originalRouterPath;
         });
 
         it("Renders a row for every telemetry datum returned", () => {
