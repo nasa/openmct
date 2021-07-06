@@ -295,10 +295,7 @@ define(
 
             setColumnFilter(columnKey, filter) {
                 filter = filter.trim().toLowerCase();
-
-                if (!this.isSubsetOfCurrentFilter(columnKey, filter)) {
-                    this.updateRowsToAllBoundedRows();
-                }
+                let isSubset = this.isSubsetOfCurrentFilter(columnKey, filter);
 
                 if (filter.length === 0) {
                     delete this.columnFilters[columnKey];
@@ -306,7 +303,12 @@ define(
                     this.columnFilters[columnKey] = filter;
                 }
 
-                this.rows = this.rows.filter(this.matchesFilters, this);
+                if (isSubset) {
+                    this.rows = this.rows.filter(this.matchesFilters, this);
+                } else {
+                    this.updateRowsToAllBoundedRows();
+                }
+
                 this.emit('filter');
             }
 
