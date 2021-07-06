@@ -467,7 +467,6 @@ export default {
 
         this.table.on('object-added', this.addObject);
         this.table.on('object-removed', this.removeObject);
-        // this.table.on('outstanding-requests', this.outstandingRequests);
         this.table.on('refresh', this.clearRowsAndRerender);
         this.table.on('historical-rows-processed', this.checkForMarkedRows);
 
@@ -494,7 +493,6 @@ export default {
     destroyed() {
         this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
-        // this.table.off('outstanding-requests', this.outstandingRequests);
         this.table.off('refresh', this.clearRowsAndRerender);
 
         this.table.tableRows.off('add', this.rowsAdded);
