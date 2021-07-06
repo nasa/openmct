@@ -159,7 +159,9 @@ define([
         }
 
         refreshData(bounds, isTick) {
+            if (!isTick) console.log('outstanding', this.tableRows.outstandingRequests);
             if (!isTick && this.tableRows.outstandingRequests === 0) {
+                console.log('refresh', this.tableRows.outstandingRequests);
                 this.tableRows.clear();
                 this.tableRows.sortBy({
                     key: this.openmct.time.timeSystem().key,

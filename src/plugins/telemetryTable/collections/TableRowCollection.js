@@ -331,7 +331,7 @@ define(
                     ));
                 }, []);
 
-                // sorts them
+                // sorts/filters them
                 this.rows = [];
                 this.addRows(allBoundedRows, true);
             }
@@ -422,6 +422,7 @@ define(
             }
 
             resubscribe() {
+                console.log('resubscribe');
                 let objectKeys = Object.keys(this.telemetryObjects);
                 objectKeys.forEach((keyString) => {
                     this.addObject(this.telemetryObjects[keyString].telemetryObject, this.telemetryObjects[keyString]);
