@@ -75,6 +75,8 @@ define(
                 element.id = exportId;
             }
 
+            window.htmlToImage = htmlToImage;
+
             return htmlToImage.toCanvas(element)
                 .then(function (canvas) {
                     dialog.dismiss();

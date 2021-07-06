@@ -26,13 +26,11 @@
     :style="`width: ${ sizedImageDimensions.width }px; height: ${ sizedImageDimensions.height }px`"
 >
     <CompassHUD
-        v-if="hasCameraFieldOfView"
         :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
     />
     <CompassRose
-        v-if="hasCameraFieldOfView"
         :heading="heading"
         :sized-image-width="sizedImageDimensions.width"
         :sun-heading="sunHeading"
