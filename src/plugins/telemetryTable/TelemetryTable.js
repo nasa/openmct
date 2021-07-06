@@ -46,7 +46,6 @@ define([
             this.rowCount = 100;
             this.tableComposition = undefined;
             this.datumCache = [];
-            this.removeDatumCache = [];
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
             this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
