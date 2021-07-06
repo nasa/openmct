@@ -32,6 +32,7 @@ define(['EventEmitter'], function (EventEmitter) {
     function ViewRegistry() {
         EventEmitter.apply(this);
         this.providers = {};
+        this.policies = [];
     }
 
     ViewRegistry.prototype = Object.create(EventEmitter.prototype);
@@ -59,7 +60,9 @@ define(['EventEmitter'], function (EventEmitter) {
         return this.getAllProviders()
             .filter(function (provider) {
                 return provider.canView(item, objectPath);
-            }).sort(byPriority);
+            })
+            .filter(view => this.checkPolicy(view, item))
+            .sort(byPriority);
     };
 
     /**
@@ -105,6 +108,14 @@ define(['EventEmitter'], function (EventEmitter) {
         return this.providers.filter(function (p) {
             return p.vpid === vpid;
         })[0];
+    };
+
+    ViewRegistry.prototype.addPolicy = function (policy) {
+        this.policies.push(policy);
+    };
+
+    ViewRegistry.prototype.checkPolicy = function (view, domainObject) {
+        return this.policies.every(policy => policy(view, domainObject));
     };
 
     /**
