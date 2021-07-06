@@ -23,6 +23,11 @@
     body.mobile & {
         flex: 1 0 auto;
     }
+
+    [class*='l-overlay'] & {
+        // When this view is in an overlay, prevent navigation
+        pointer-events: none;
+    }
 }
 
 /******************************* GRID ITEMS */

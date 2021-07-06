@@ -92,6 +92,7 @@ describe("The Imagery View Layout", () => {
     let resolveFunction;
 
     let openmct;
+    let appHolder;
     let parent;
     let child;
     let imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
@@ -195,7 +196,7 @@ describe("The Imagery View Layout", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
+        appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
 
@@ -208,6 +209,8 @@ describe("The Imagery View Layout", () => {
         parent = document.createElement('div');
         child = document.createElement('div');
         parent.appendChild(child);
+
+        // document.querySelector('body').append(parent);
 
         spyOn(window, 'ResizeObserver').and.returnValue({
             observe() {},
@@ -361,6 +364,22 @@ describe("The Imagery View Layout", () => {
                 expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
                 done();
             });
+        });
+        it ('shows an auto scroll button when scroll to left', async () => {
+            // to mock what a scroll would do
+            imageryView._getInstance().$refs.ImageryLayout.autoScroll = false;
+            await Vue.nextTick();
+            let autoScrollButton = parent.querySelector('.c-imagery__auto-scroll-resume-button');
+            expect(autoScrollButton).toBeTruthy();
+        });
+        it ('scrollToRight is called when clicking on auto scroll button', async () => {
+            // use spyon to spy the scroll function
+            spyOn(imageryView._getInstance().$refs.ImageryLayout, 'scrollToRight');
+            imageryView._getInstance().$refs.ImageryLayout.autoScroll = false;
+            await Vue.nextTick();
+            parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
+            expect(imageryView._getInstance().$refs.ImageryLayout.scrollToRight).toHaveBeenCalledWith('reset');
+
         });
     });
 });

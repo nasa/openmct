@@ -102,7 +102,7 @@
                         >
                         </button>
                     </div>
-                    <div v-if="isRealTime"
+                    <div v-if="isRealTime && !options.compact"
                          class="c-button-set c-button-set--strip-h js-pause"
                     >
                         <button v-if="!isFrozen"
