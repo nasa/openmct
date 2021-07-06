@@ -47,10 +47,7 @@ define(
                 this.rows = [];
                 this.telemetryObjects = {};
                 this.telemetryCollections = {};
-
-                // remove
                 this.processFunctions = [];
-
                 this.columnFilters = {};
                 this.paused = false;
                 this.outstandingRequests = 0;
@@ -67,8 +64,8 @@ define(
 
                 this.incrementOutstandingRequests();
 
-                const telemetryProcessor = this.getTelemetryProcessor(telemetryObject, keyString, columnMap, limitEvaluator);
-                const telemetryRemover = this.getTelemetryRemover(keyString);
+                const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
+                const telemetryRemover = this.getTelemetryRemover();
 
                 this.removeTelemetryCollection(keyString);
 
@@ -117,7 +114,7 @@ define(
                 }
             }
 
-            getTelemetryProcessor(telemetryObject, keyString, columnMap, limitEvaluator) {
+            getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
                 return (telemetry) => {
                     //Check that telemetry object has not been removed since telemetry was requested.
                     if (!this.telemetryObjects[keyString]) {
@@ -133,7 +130,7 @@ define(
                 };
             }
 
-            getTelemetryRemover(keyString) {
+            getTelemetryRemover() {
                 return (telemetry) => {
                     // only cache realtime
                     if (this.paused) {
