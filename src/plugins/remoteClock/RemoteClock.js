@@ -60,10 +60,11 @@ export default class RemoteClock extends DefaultClock {
     }
 
     async start() {
-        await this.loadRemoteTelemetryObject(this.identifer);
+        await this.telemetryObjectedLoaded;
 
         this.unsubscribe = this.openmct.telemetry.subscribe(this.remoteTelemetryObject, (datum) => {
             console.log('subscribe', datum);
+            this.tick()
         });
     }
 
@@ -71,52 +72,9 @@ export default class RemoteClock extends DefaultClock {
         this.unsubscribe();
     }
 
-    // tick() {
-    //     const now = Date.now();
-    //     this.emit("tick", now);
-    //     this.lastTick = now;
-    //     this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
-    // }
-
-    // /**
-    //  * Register a listener for the remote clock. When it ticks, the remote
-    //  * clock will provide the time from the configured endpoint
-    //  *
-    //  * @param listener
-    //  * @returns {function} a function for deregistering the provided listener
-    //  */
-    // on(event) {
-    //     const result = EventEmitter.prototype.on.apply(this, arguments);
-
-    //     if (this.listeners(event).length === 1) {
-    //         this.start();
-    //     }
-
-    //     return result;
-    // }
-
-    // /**
-    //  * Register a listener for the local clock. When it ticks, the local
-    //  * clock will provide the current local system time
-    //  *
-    //  * @param listener
-    //  * @returns {function} a function for deregistering the provided listener
-    //  */
-    // off(event) {
-    //     const result = EventEmitter.prototype.off.apply(this, arguments);
-
-    //     if (this.listeners(event).length === 0) {
-    //         this.stop();
-    //     }
-
-    //     return result;
-    // }
-
-    // /**
-    //  * @returns {number} The last value provided for a clock tick
-    //  */
-    // currentValue() {
-    //     return this.lastTick;
-    // }
-
+    tick(tickValue) {
+        const now = Date.now();
+        this.emit("tick", tickValue);
+        this.lastTick = now;
+    }
 }
