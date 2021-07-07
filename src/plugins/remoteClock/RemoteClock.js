@@ -73,7 +73,8 @@ export default class RemoteClock extends DefaultClock {
     _subscribe() {
         this._unsubscribe = this.openmct.telemetry.subscribe(this.remoteTelemetryObject, (datum) => {
             let time = this.parseTime(datum);
-            if (time > this.lastTick) {
+            let timeCheck = this.lastTick + this.period;
+            if (time > this.lastTick && time > timeCheck) {
                 this.tick(time);
             }
         });
