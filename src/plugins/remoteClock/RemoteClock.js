@@ -45,6 +45,9 @@ export default class RemoteClock extends DefaultClock {
         this.parseTime = undefined;
         this.metadata = undefined;
 
+        this.start = this.start.bind(this);
+        this.stop = this.stop.bind(this);
+
         // // for now
         // this.period = period;
         // this.timeoutHandle = undefined;
