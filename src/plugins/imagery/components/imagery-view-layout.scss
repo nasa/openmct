@@ -22,6 +22,9 @@
         &__bg {
             background-color: $colorPlotBg;
             border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex: 1 1 auto;
             height: 0;
 
@@ -33,7 +36,6 @@
         &__image {
             height: 100%;
             width: 100%;
-            object-fit: contain;
         }
     }
 
