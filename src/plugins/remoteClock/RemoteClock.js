@@ -35,12 +35,11 @@ export default class RemoteClock extends DefaultClock {
 
         this.key = 'remote-clock';
 
-        // this.openmct = openmct;
-        // this.identifier = identifier;
+        this.openmct = openmct;
+        this.identifier = identifier;
 
-        // this.cssClass = 'icon-clock';
-        // this.name = 'Remote Clock';
-        // this.description = "Provides telemetry based timestamps from a configurable source.";
+        this.name = 'Remote Clock';
+        this.description = "Provides telemetry based timestamps from a configurable source.";
 
         // // for now
         // this.period = period;
