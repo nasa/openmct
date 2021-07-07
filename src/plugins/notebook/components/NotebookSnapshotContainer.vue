@@ -9,8 +9,8 @@
                         Notebook Snapshots
                     </div>
                     <div v-if="snapshots.length"
-                          class="l-browse-bar__object-details"
-                        >{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
+                         class="l-browse-bar__object-details"
+                    >{{ snapshots.length }} of {{ getNotebookSnapshotMaxCount() }}
                     </div>
                 </div>
                 <PopupMenu v-if="snapshots.length > 0"
