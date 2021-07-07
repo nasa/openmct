@@ -45,9 +45,6 @@ export default class RemoteClock extends DefaultClock {
         this.parseTime = undefined;
         this.metadata = undefined;
 
-        this.start = this.start.bind(this);
-        this.stop = this.stop.bind(this);
-
         // // for now
         // this.period = period;
         // this.timeoutHandle = undefined;
@@ -57,6 +54,7 @@ export default class RemoteClock extends DefaultClock {
     }
 
     start() {
+        console.log('start', this);
         this._timeSystemChange();
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
@@ -69,6 +67,7 @@ export default class RemoteClock extends DefaultClock {
     }
 
     stop() {
+        console.log('stop', this);
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this._unsubscribe();
 
@@ -76,11 +75,13 @@ export default class RemoteClock extends DefaultClock {
     }
 
     tick(tickValue) {
+        console.log('tick', this);
         this.emit("tick", tickValue);
         this.lastTick = tickValue;
     }
 
     _subscribe() {
+        console.log('subscribe', this);
         this._unsubscribe = this.openmct.telemetry.subscribe(this.remoteTelemetryObject, (datum) => {
             let time = this.parseTime(datum);
             if (time > this.lastTick) {
@@ -90,6 +91,7 @@ export default class RemoteClock extends DefaultClock {
     }
 
     _timeSystemChange() {
+        console.log('timesystemchange', this);
         let timeSystem = this.openmct.time.timeSystem();
         let timeKey = timeSystem.key;
         let metadataValue = this.metadata.value(timeKey);
