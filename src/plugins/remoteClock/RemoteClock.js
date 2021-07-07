@@ -36,6 +36,7 @@ export default class RemoteClock extends DefaultClock {
         this.key = 'remote-clock';
 
         this.openmct = openmct;
+        console.log('openmct', this.openmct, openmct);
         this.identifier = identifier;
 
         this.name = 'Remote Clock';
@@ -43,7 +44,9 @@ export default class RemoteClock extends DefaultClock {
 
         this.remoteTelemetryObject = undefined;
         this.telemetryObjectedLoaded = new Promise((resolve, reject) => {
+            console.log('promise', this);
             this.openmct.objects.get(identifier).then((domainObject) => {
+                console.log('objects.get', this);
                 this.remoteTelemetryObject = domainObject;
                 resolve();
             }).catch((error) => {
