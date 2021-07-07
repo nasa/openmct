@@ -28,7 +28,7 @@ import DefaultClock from "../../utils/clock/default-clock";
  * @param {number} period The periodicity with which the clock should tick
  * @constructor
  */
- 
+
 export default class LocalClock extends DefaultClock {
     constructor(period) {
         super(period);
