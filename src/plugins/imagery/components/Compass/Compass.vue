@@ -23,7 +23,7 @@
 <template>
 <div
     class="c-compass"
-    :style="`width: ${ sizedImageDimensions.width }px; height: ${ sizedImageDimensions.height }px`"
+    :style="`width: 100%; height: 100%`"
 >
     <CompassHUD
         :sun-heading="sunHeading"
@@ -31,13 +31,12 @@
         :camera-pan="cameraPan"
     />
     <CompassRose
-        :heading="heading"
-        :sized-image-width="sizedImageDimensions.width"
-        :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
-        :lock-compass="lockCompass"
-        @toggle-lock-compass="toggleLockCompass"
+        :compass-rose-sizing-classes="compassRoseSizingClasses"
+        :heading="heading"
+        :sized-image-dimensions="sizedImageDimensions"
+        :sun-heading="sunHeading"
     />
 </div>
 </template>
@@ -54,42 +53,20 @@ export default {
         CompassRose
     },
     props: {
-        containerWidth: {
-            type: Number,
-            required: true
-        },
-        containerHeight: {
-            type: Number,
-            required: true
-        },
-        naturalAspectRatio: {
-            type: Number,
+        compassRoseSizingClasses: {
+            type: String,
             required: true
         },
         image: {
             type: Object,
             required: true
         },
-        lockCompass: {
-            type: Boolean,
+        sizedImageDimensions: {
+            type: Object,
             required: true
         }
     },
     computed: {
-        sizedImageDimensions() {
-            let sizedImageDimensions = {};
-            if ((this.containerWidth / this.containerHeight) > this.naturalAspectRatio) {
-                // container is wider than image
-                sizedImageDimensions.width = this.containerHeight * this.naturalAspectRatio;
-                sizedImageDimensions.height = this.containerHeight;
-            } else {
-                // container is taller than image
-                sizedImageDimensions.width = this.containerWidth;
-                sizedImageDimensions.height = this.containerWidth * this.naturalAspectRatio;
-            }
-
-            return sizedImageDimensions;
-        },
         hasCameraFieldOfView() {
             return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
         },
@@ -107,11 +84,6 @@ export default {
         },
         cameraAngleOfView() {
             return CAMERA_ANGLE_OF_VIEW;
-        }
-    },
-    methods: {
-        toggleLockCompass() {
-            this.$emit('toggle-lock-compass');
         }
     }
 };

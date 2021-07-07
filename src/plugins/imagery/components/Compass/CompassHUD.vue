@@ -104,7 +104,10 @@ export default {
         },
         cameraPan: {
             type: Number,
-            required: true
+            required: true,
+            default() {
+                return 0;
+            }
         }
     },
     computed: {

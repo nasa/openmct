@@ -25,9 +25,9 @@
     class="w-direction-rose"
     :class="compassRoseSizingClasses"
 >
-    <div
-        class="c-direction-rose"
-        @click="toggleLockCompass"
+    <div ref="directionRose"
+         class="c-direction-rose"
+         @click="toggleLockCompass"
     >
         <div
             class="c-nsew"
@@ -48,13 +48,12 @@
             :style="sunHeadingStyle"
         ></div>
 
-        <div
-            class="c-cam-field"
-            :style="cameraPanStyle"
+        <div ref="camField"
+             class="c-cam-field"
+             :style="cameraPanStyle"
         >
-            <svg viewBox="0 0 100 100"
-                 width="65.8"
-                 height="65.8"
+            <svg ref="camFieldSVG"
+                 viewBox="0 0 100 100"
             >
                 <rect
                     class="c-nsew__tick c-tick-ne"
@@ -85,13 +84,13 @@
                     width="5"
                     height="2"
                 />
-                <!-- <path fill="gray"
+                <path fill="gray"
                       d="M50, 50
                         L30,8
                         A40 40 0 0 1 70,8
                         Z
                         "
-                /> -->
+                />
             </svg>
         </div>
     </div>
@@ -100,16 +99,20 @@
 
 <script>
 import { rotate } from './utils';
+import { throttle } from 'lodash';
 
 export default {
     props: {
-        sizedImageWidth: {
-            type: Number,
+        compassRoseSizingClasses: {
+            type: String,
             required: true
         },
         heading: {
             type: Number,
-            required: true
+            required: true,
+            default() {
+                return 0;
+            }
         },
         sunHeading: {
             type: Number,
@@ -121,26 +124,22 @@ export default {
         },
         cameraPan: {
             type: Number,
-            required: true
+            required: true,
+            default() {
+                return 0;
+            }
         },
-        lockCompass: {
-            type: Boolean,
+        sizedImageDimensions: {
+            type: Object,
             required: true
         }
     },
+    data() {
+        return {
+            lockCompass: true
+        };
+    },
     computed: {
-        compassRoseSizingClasses() {
-            let compassRoseSizingClasses = '';
-            if (this.sizedImageWidth < 300) {
-                compassRoseSizingClasses = '--rose-small --rose-min';
-            } else if (this.sizedImageWidth < 500) {
-                compassRoseSizingClasses = '--rose-small';
-            } else if (this.sizedImageWidth > 1000) {
-                compassRoseSizingClasses = '--rose-max';
-            }
-
-            return compassRoseSizingClasses;
-        },
         compassRoseStyle() {
             return { transform: `rotate(${ this.north }deg)` };
         },
@@ -216,9 +215,29 @@ export default {
             };
         }
     },
+    watch: {
+        sizedImageDimensions() {
+            this.debounceResizeSvg();
+        }
+    },
+    mounted() {
+        this.debounceResizeSvg = throttle(this.resizeSvg, 500);
+
+        this.$nextTick(() => {
+            this.debounceResizeSvg();
+        });
+    },
     methods: {
+        resizeSvg() {
+            const svg = this.$refs.camFieldSVG;
+            svg.setAttribute('width', this.$refs.camField.clientWidth);
+            svg.setAttribute('height', this.$refs.camField.clientHeight);
+        },
+        rotateSVG() {
+            this.$refs.camField.style.transform = "rotate(45deg)";
+        },
         toggleLockCompass() {
-            this.$emit('toggle-lock-compass');
+            this.lockCompass = !this.lockCompass;
         }
     }
 };
