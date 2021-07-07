@@ -131,7 +131,7 @@ define([
 
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
-    plugins.RemoteClock = RemoteClock;
+    plugins.RemoteClock = RemoteClock.default;
 
     plugins.ImportExport = ImportExport;
 
