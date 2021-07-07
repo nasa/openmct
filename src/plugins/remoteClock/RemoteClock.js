@@ -31,7 +31,7 @@ import DefaultClock from '../../utils/clock/default-clock';
 
 export default class RemoteClock extends DefaultClock {
     constructor(openmct, identifier) {
-        super(openmct);
+        super();
 
         this.key = 'remote-clock';
 
@@ -41,6 +41,16 @@ export default class RemoteClock extends DefaultClock {
         this.name = 'Remote Clock';
         this.description = "Provides telemetry based timestamps from a configurable source.";
 
+        this.remoteTelemetryObject = undefined;
+        this.telemetryObjectedLoaded = new Promise((resolve, reject) => {
+            this.openmct.objects.get(identifier).then((domainObject) => {
+                this.remoteTelemetryObject = domainObject;
+                resolve();
+            }).catch((error) => {
+                throw new Error(error);
+            });
+        });
+
         // // for now
         // this.period = period;
         // this.timeoutHandle = undefined;
@@ -49,16 +59,17 @@ export default class RemoteClock extends DefaultClock {
         console.log('remote clock installed for identifier', identifier);
     }
 
-    // start() {
-    //     this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
-    // }
+    async start() {
+        await this.loadRemoteTelemetryObject(this.identifer);
 
-    // stop() {
-    //     if (this.timeoutHandle) {
-    //         clearTimeout(this.timeoutHandle);
-    //         this.timeoutHandle = undefined;
-    //     }
-    // }
+        this.unsubscribe = this.openmct.telemetry.subscribe(this.remoteTelemetryObject, (datum) => {
+            console.log('subscribe', datum);
+        });
+    }
+
+    stop() {
+        this.unsubscribe();
+    }
 
     // tick() {
     //     const now = Date.now();
