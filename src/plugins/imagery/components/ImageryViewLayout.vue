@@ -55,13 +55,14 @@
                 ></a>
             </span>
         </div>
-        <div class="c-imagery__main-image__bg"
+        <div ref="imageBG"
+             class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
         >
-            <div class="image-wraper"
+            <div class="image-wrapper"
                  :style="{
-                     'width': sizedImageDimensions.width,
-                     'height': sizedImageDimensions.height
+                     'width': `${sizedImageDimensions.width}px`,
+                     'height': `${sizedImageDimensions.height}px`
                  }"
             >
                 <img ref="focusedImage"
@@ -366,14 +367,14 @@ export default {
         },
         sizedImageDimensions() {
             let sizedImageDimensions = {};
-            if ((this.imageContainerWidth / this.imageContainerHeight) > this.naturalAspectRatio) {
+            if ((this.imageContainerWidth / this.imageContainerHeight) > this.focusedImageNaturalAspectRatio) {
                 // container is wider than image
-                sizedImageDimensions.width = this.imageContainerHeight * this.naturalAspectRatio;
+                sizedImageDimensions.width = this.imageContainerHeight * this.focusedImageNaturalAspectRatio;
                 sizedImageDimensions.height = this.imageContainerHeight;
             } else {
                 // container is taller than image
                 sizedImageDimensions.width = this.imageContainerWidth;
-                sizedImageDimensions.height = this.imageContainerWidth * this.naturalAspectRatio;
+                sizedImageDimensions.height = this.imageContainerWidth * this.focusedImageNaturalAspectRatio;
             }
 
             return sizedImageDimensions;
@@ -425,7 +426,7 @@ export default {
         _.debounce(this.resizeImageContainer, 400);
 
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
-        this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
+        this.imageContainerResizeObserver.observe(this.$refs.imageBG);
 
         // For adjusting scroll bar size and position when resizing thumbs wrapper
         this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
@@ -863,12 +864,12 @@ export default {
             }, { once: true });
         },
         resizeImageContainer() {
-            if (this.$refs.focusedImage.clientWidth !== this.imageContainerWidth) {
-                this.imageContainerWidth = this.$refs.focusedImage.clientWidth;
+            if (this.$refs.imageBG.clientWidth !== this.imageContainerWidth) {
+                this.imageContainerWidth = this.$refs.imageBG.clientWidth;
             }
 
-            if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
-                this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
+            if (this.$refs.imageBG.clientHeight !== this.imageContainerHeight) {
+                this.imageContainerHeight = this.$refs.imageBG.clientHeight;
             }
         },
         handleThumbWindowResizeStart() {

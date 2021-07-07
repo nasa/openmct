@@ -221,7 +221,7 @@ export default {
         }
     },
     mounted() {
-        this.debounceResizeSvg = throttle(this.resizeSvg, 500);
+        this.debounceResizeSvg = throttle(this.resizeSvg, 100);
 
         this.$nextTick(() => {
             this.debounceResizeSvg();
