@@ -42,6 +42,7 @@ export default class RemoteClock extends DefaultClock {
         this.description = "Provides telemetry based timestamps from a configurable source.";
 
         this.remoteTelemetryObject = undefined;
+        this.parseTime = undefined;
 
         // // for now
         // this.period = period;
@@ -52,6 +53,8 @@ export default class RemoteClock extends DefaultClock {
     }
 
     start() {
+        this._timeSystemChange();
+        this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
             this.remoteTelemetryObject = domainObject;
             this._subscribe();
@@ -61,19 +64,33 @@ export default class RemoteClock extends DefaultClock {
     }
 
     stop() {
+        this.openmct.time.on('timeSystem', this._timeSystemChange);
         this._unsubscribe();
+
+        this.removeAllListeners();
     }
 
     tick(tickValue) {
-        const now = Date.now();
         this.emit("tick", tickValue);
-        this.lastTick = now;
+        this.lastTick = tickValue;
     }
 
     _subscribe() {
         this._unsubscribe = this.openmct.telemetry.subscribe(this.remoteTelemetryObject, (datum) => {
-            console.log('subscribe', datum);
-            this.tick(Date.now());
+            let time = this.parseTime(datum);
+            if (time > this.lastTick) {
+                this.tick(time);
+            }
         });
+    }
+
+    _timeSystemChange() {
+        let timeSystem = this.openmct.time.timeSystem();
+        let timeKey = timeSystem.key;
+        let metadataValue = this.metadata.value(timeKey);
+        let timeFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+        this.parseTime = (datum) => {
+            return timeFormatter.parse(datum);
+        };
     }
 }
