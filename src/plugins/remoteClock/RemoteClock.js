@@ -43,6 +43,7 @@ export default class RemoteClock extends DefaultClock {
 
         this.remoteTelemetryObject = undefined;
         this.parseTime = undefined;
+        this.metadata = undefined;
 
         // // for now
         // this.period = period;
@@ -57,6 +58,7 @@ export default class RemoteClock extends DefaultClock {
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
             this.remoteTelemetryObject = domainObject;
+            this.metadata = this.openmct.telemetry.getMetadata(domainObject);
             this._subscribe();
         }).catch((error) => {
             throw new Error(error);
