@@ -29,7 +29,7 @@ import DefaultClock from "../../utils/clock/DefaultClock";
  * @constructor
  */
 
-export default class LocalClock extends DefaultClock { // add more setTimeout stuff here
+export default class LocalClock extends DefaultClock {
     constructor(period = 100) {
         super();
 
