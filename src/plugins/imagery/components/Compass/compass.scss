@@ -83,6 +83,56 @@ $elemBg: rgba(black, 0.7);
 
 }
 
+/***************************** COMPASS SVG */
+.c-compass-rose-svg {
+    $color: $interfaceKeyColor;
+    position: absolute;
+    top: 0; left: 0;
+    transform-origin: center;
+
+    g, path, rect {
+        transform-origin: center;
+    }
+
+    .c-cr {
+        &__bg {
+            fill: #000;
+            opacity: 0.7;
+        }
+
+        &__edge {
+            opacity: 0.1;
+        }
+
+        &__sun {
+            opacity: 0.7;
+        }
+
+        &__cam-fov-l,
+        &__cam-fov-r {
+            // Cam FOV indication
+            opacity: 0.3;
+            fill: deeppink;
+        }
+
+        &__nsew-text,
+        &__spacecraft-body,
+        &__ticks-major,
+        &__ticks-minor {
+            fill: $color;
+        }
+
+        &__ticks-minor {
+            opacity: 0.5;
+            transform: rotate(45deg);
+        }
+
+        &__spacecraft-body {
+            opacity: 0.5;
+        }
+    }
+}
+
 /***************************** COMPASS DIRECTIONS */
 .c-nsew {
     $color: $interfaceKeyColor;
