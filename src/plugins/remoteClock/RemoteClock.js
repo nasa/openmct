@@ -79,7 +79,10 @@ export default class RemoteClock extends DefaultClock {
         this.openmct.telemetry.request(this.remoteTelemetryObject, {
             size: 1,
             strategy: 'latest'
-        }).then(data => this._processDatum(data[data.length - 1]));
+        }).then(data => {
+            console.log('data', data);
+            this._processDatum(data[data.length - 1]);
+        });
     }
 
     _processDatum(datum) {
