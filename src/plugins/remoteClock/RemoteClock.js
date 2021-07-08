@@ -46,6 +46,8 @@ export default class RemoteClock extends DefaultClock {
         this.metadata = undefined;
 
         this.lastTick = 0;
+
+        this._processDatum = this._processDatum.bind(this);
     }
 
     start() {
@@ -90,7 +92,6 @@ export default class RemoteClock extends DefaultClock {
     }
 
     _processDatum(datum) {
-        console.log('process datum', this);
         let time = this.parseTime(datum);
 
         if (time > this.lastTick) {
