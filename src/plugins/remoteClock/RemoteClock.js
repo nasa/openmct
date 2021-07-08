@@ -90,7 +90,7 @@ export default class RemoteClock extends DefaultClock {
     }
 
     _processDatum(datum) {
-        console.log('process datum', datum);
+        console.log('process datum', this);
         let time = this.parseTime(datum);
 
         if (time > this.lastTick) {
