@@ -1,5 +1,5 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
-import { getDefaultNotebook, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
+import { getDefaultNotebook, getNotebookSectionAndPage, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
 import { createNotebookImageDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
 
@@ -71,7 +71,8 @@ export default class Snapshot {
                     setDefaultNotebook(this.openmct, notebookStorage);
                 }
 
-                const defaultPath = `${domainObject.name} - ${notebookStorage.section.name} - ${notebookStorage.page.name}`;
+                const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.section.id, notebookStorage.page.id);
+                const defaultPath = `${domainObject.name} - ${section.name} - ${page.name}`;
                 const msg = `Saved to Notebook ${defaultPath}`;
                 this._showNotification(msg, link);
             });

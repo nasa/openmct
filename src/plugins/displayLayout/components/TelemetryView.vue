@@ -72,7 +72,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
-import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
+import { getDefaultNotebook, getNotebookSectionAndPage } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
@@ -347,7 +347,8 @@ export default {
             let copyToNotebookAction = actionsObject.copyToNotebook;
 
             if (defaultNotebook) {
-                const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+                const { section, page } = getNotebookSectionAndPage(domainObject, defaultNotebook.section.id, defaultNotebook.page.id);
+                const defaultPath = domainObject && `${domainObject.name} - ${section.name} - ${page.name}`;
                 copyToNotebookAction.name = `Copy to Notebook ${defaultPath}`;
             } else {
                 actionsObject.copyToNotebook = undefined;

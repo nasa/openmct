@@ -48,6 +48,16 @@ export function getDefaultNotebook() {
     return JSON.parse(notebookStorage);
 }
 
+export function getNotebookSectionAndPage(domainObject, sectionId, pageId) {
+    const section = domainObject.configuration.sections.find(s => s.id === sectionId);
+    const page = section.pages.find(p => p.id === pageId);
+
+    return {
+        section,
+        page
+    };
+}
+
 export async function getDefaultNotebookLink(openmct, domainObject = null) {
     if (!domainObject) {
         return null;

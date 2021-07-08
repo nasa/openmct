@@ -17,7 +17,7 @@
 
 <script>
 import Snapshot from '../snapshot';
-import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
+import { getDefaultNotebook, getNotebookSectionAndPage, validateNotebookStorageObject } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
 
 export default {
@@ -70,11 +70,11 @@ export default {
 
             const defaultNotebookObject = await this.getDefaultNotebookObject();
             if (defaultNotebookObject) {
-                const name = defaultNotebookObject.name;
-
                 const defaultNotebook = getDefaultNotebook();
-                const sectionName = defaultNotebook.section.name;
-                const pageName = defaultNotebook.page.name;
+                const { section, page } = getNotebookSectionAndPage(defaultNotebookObject, defaultNotebook.section.id, defaultNotebook.page.id);
+                const name = defaultNotebookObject.name;
+                const sectionName = section.name;
+                const pageName = page.name;
                 const defaultPath = `${name} - ${sectionName} - ${pageName}`;
 
                 notebookTypes.push({
