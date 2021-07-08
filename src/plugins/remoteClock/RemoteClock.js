@@ -32,7 +32,7 @@ import DefaultClock from '../../utils/clock/DefaultClock';
 export default class RemoteClock extends DefaultClock {
     constructor(openmct, identifier) {
         super();
-        console.log('remote clock');
+
         this.key = 'remote-clock';
 
         this.openmct = openmct;
@@ -51,7 +51,6 @@ export default class RemoteClock extends DefaultClock {
     }
 
     start() {
-        console.log('start');
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
             this.remoteTelemetryObject = domainObject;
@@ -81,12 +80,10 @@ export default class RemoteClock extends DefaultClock {
     }
 
     _requestLatest() {
-        console.log('request latest');
         this.openmct.telemetry.request(this.remoteTelemetryObject, {
             size: 1,
             strategy: 'latest'
         }).then(data => {
-            console.log('data', data);
             this._processDatum(data[data.length - 1]);
         });
     }
