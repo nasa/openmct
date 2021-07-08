@@ -44,6 +44,8 @@ export default class RemoteClock extends DefaultClock {
         this.remoteTelemetryObject = undefined;
         this.parseTime = undefined;
         this.metadata = undefined;
+
+        this.lastTick = 0;
     }
 
     start() {
