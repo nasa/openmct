@@ -237,9 +237,10 @@ $shdwSelect: none;
 $controlDisabledOpacity: 0.3;
 
 // Menus
-$colorMenuBg: pushBack($colorBodyBg, 10%);
-$colorMenuFg: pullForward($colorMenuBg, 70%);
+$colorMenuBg: $colorBodyBg;
+$colorMenuFg: $colorBodyFg;
 $colorMenuIc: $colorKey;
+$filterMenu: brightness(0.95);
 $colorMenuHovBg: $colorMenuIc;
 $colorMenuHovFg: $colorMenuBg;
 $colorMenuHovIc: $colorMenuBg;
