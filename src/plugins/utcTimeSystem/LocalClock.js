@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import DefaultClock from "../../utils/clock/default-clock";
+import DefaultClock from "../../utils/clock/DefaultClock";
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
  * application based on UTC time values provided by a ticking local clock,
@@ -29,13 +29,34 @@ import DefaultClock from "../../utils/clock/default-clock";
  * @constructor
  */
 
-export default class LocalClock extends DefaultClock {
-    constructor(period) {
-        super(period);
+export default class LocalClock extends DefaultClock { // add more setTimeout stuff here
+    constructor(period = 100) {
+        super();
 
         this.key = 'local';
         this.name = 'Local Clock';
         this.description = "Provides UTC timestamps every second from the local system clock.";
+
+        this.period = period;
+        this.timeoutHandle = undefined;
+        this.lastTick = Date.now();
+    }
+
+    start() {
+        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
+    }
+
+    stop() {
+        if (this.timeoutHandle) {
+            clearTimeout(this.timeoutHandle);
+            this.timeoutHandle = undefined;
+        }
+    }
+
+    tick() {
+        const now = Date.now();
+        super.tick(now);
+        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
     }
 
 }

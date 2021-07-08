@@ -23,14 +23,16 @@
 define(["./RemoteClock"], function (RemoteClock) {
     describe("The LocalClock class", function () {
         let clock;
-        let mockTimeout;
-        const timeoutHandle = {};
+        // let telemetryObject = {
+        //     name: 'Telemetry Object',
+        //     identifier: {
+        //         namespace: 'telemetry',
+        //         key: 'object'
+        //     }
+        // };
 
         beforeEach(function () {
-            mockTimeout = jasmine.createSpy("timeout");
-            mockTimeout.and.returnValue(timeoutHandle);
-
-            clock = new RemoteClock(0);
+            clock = new RemoteClock();
             clock.start();
         });
 

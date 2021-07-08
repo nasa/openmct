@@ -30,7 +30,7 @@ import EventEmitter from 'EventEmitter';
  */
 
 export default class DefaultClock extends EventEmitter {
-    constructor(period = 100) {
+    constructor() {
         super();
 
         this.key = 'clock';
@@ -38,28 +38,11 @@ export default class DefaultClock extends EventEmitter {
         this.cssClass = 'icon-clock';
         this.name = 'Clock';
         this.description = "A default clock for openmct.";
-
-        this.period = period;
-        this.timeoutHandle = undefined;
-        this.lastTick = Date.now();
     }
 
-    start() {
-        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
-    }
-
-    stop() {
-        if (this.timeoutHandle) {
-            clearTimeout(this.timeoutHandle);
-            this.timeoutHandle = undefined;
-        }
-    }
-
-    tick() {
-        const now = Date.now();
-        this.emit("tick", now);
-        this.lastTick = now;
-        this.timeoutHandle = setTimeout(this.tick.bind(this), this.period);
+    tick(tickValue) {
+        this.emit("tick", tickValue);
+        this.lastTick = tickValue;
     }
 
     /**

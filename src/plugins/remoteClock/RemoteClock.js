@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DefaultClock from '../../utils/clock/default-clock';
+import DefaultClock from '../../utils/clock/DefaultClock';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
@@ -52,6 +52,7 @@ export default class RemoteClock extends DefaultClock {
             this.remoteTelemetryObject = domainObject;
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
             this._timeSystemChange();
+            this._requestLatest();
             this._subscribe();
         }).catch((error) => {
             throw new Error(error);
@@ -60,24 +61,33 @@ export default class RemoteClock extends DefaultClock {
 
     stop() {
         this.openmct.time.on('timeSystem', this._timeSystemChange);
-        this._unsubscribe();
+        if (this._unsubscribe) {
+            this._unsubscribe();
+        }
 
         this.removeAllListeners();
     }
 
-    tick(tickValue) {
-        this.emit("tick", tickValue);
-        this.lastTick = tickValue;
+    _subscribe() {
+        this._unsubscribe = this.openmct.telemetry.subscribe(
+            this.remoteTelemetryObject,
+            this._processDatum
+        );
     }
 
-    _subscribe() {
-        this._unsubscribe = this.openmct.telemetry.subscribe(this.remoteTelemetryObject, (datum) => {
-            let time = this.parseTime(datum);
-            let timeCheck = this.lastTick + this.period;
-            if (time > this.lastTick && time > timeCheck) {
-                this.tick(time);
-            }
-        });
+    _requestLatest() {
+        this.openmct.telemetry.request(this.remoteTelemetryObject, {
+            size: 1,
+            strategy: 'latest'
+        }).then(data => this._processDatum(data[data.length - 1]));
+    }
+
+    _processDatum(datum) {
+        let time = this.parseTime(datum);
+
+        if (time > this.lastTick) {
+            this.tick(time);
+        }
     }
 
     _timeSystemChange() {
