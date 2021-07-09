@@ -48,7 +48,6 @@ import CompassHUD from './CompassHUD.vue';
 import CompassRose from './CompassRose.vue';
 
 const CAMERA_ANGLE_OF_VIEW = 70;
-const TEST_HEADING = 50, TEST_SUNHEADING = 190, TEST_CAMERAPAN = 20;
 
 export default {
     components: {
@@ -67,29 +66,36 @@ export default {
         sizedImageDimensions: {
             type: Object,
             required: true
+        },
+        testMode: {
+            type: Boolean,
+            required: false,
+            default() {
+                return false
+            }
         }
     },
     computed: {
-        testMode() {
-            return false;
-        },
         hasCameraFieldOfView() {
             return this.cameraPan !== undefined && this.cameraAngleOfView > 0;
         },
         // horizontal rotation from north in degrees
         heading() {
-            return this.testMode? TEST_HEADING : this.image.heading;
+            return this.testMode? this.getRandomAngle : this.image.heading;
         },
         // horizontal rotation from north in degrees
         sunHeading() {
-            return this.testMode? TEST_SUNHEADING : this.image.sunOrientation;
+            return this.testMode? this.getRandomAngle : this.image.sunOrientation;
         },
         // horizontal rotation from north in degrees
         cameraPan() {
-            return this.testMode? TEST_CAMERAPAN : this.image.cameraPan;
+            return this.testMode? this.getRandomAngle : this.image.cameraPan;
         },
         cameraAngleOfView() {
             return CAMERA_ANGLE_OF_VIEW;
+        },
+        getRandomAngle() {
+            return Math.floor(Math.random()*360);
         }
     }
 };
