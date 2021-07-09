@@ -194,6 +194,10 @@
                 margin-right: $interiorMarginSm;
             }
         }
+
+        .s-status-taking-snapshot & {
+            display: none;
+        }
     }
 
     &__lc {
@@ -274,6 +278,10 @@
         &:before {
             content: $glyph-icon-play;
         }
+    }
+
+    .s-status-taking-snapshot & {
+        display: none;
     }
 }
 
