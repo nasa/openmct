@@ -149,22 +149,14 @@ $elemBg: rgba(black, 0.7);
         $s: 30px;
         width: $s;
         padding-top: $s;
+        .--hide-min {
+            display: none;
+        }
     }
 
     &.--rose-small {
-        .c-nsew__minor-ticks,
-        .c-tick-w,
-        .c-tick-s,
-        .c-tick-e,
-        .c-label-w,
-        .c-label-s,
-        .c-label-e {
+        .--hide-small {
             display: none;
-        }
-
-        .c-label-n {
-            // Rename or remove
-            font-size: 2.5em;
         }
     }
 
