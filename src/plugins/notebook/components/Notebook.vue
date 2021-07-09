@@ -624,12 +624,10 @@ export default {
             }
 
             if (this.defaultSectionId && this.defaultSectionId.length === 0 || this.defaultSectionId !== notebookStorage.section.id) {
-                this.defaultSectionId = notebookStorage.section.id;
                 setDefaultNotebookSection(notebookStorage.section);
             }
 
             if (this.defaultPageId && this.defaultPageId.length === 0 || this.defaultPageId !== notebookStorage.page.id) {
-                this.defaultPageId = notebookStorage.page.id;
                 setDefaultNotebookPage(notebookStorage.page);
             }
         },
@@ -647,8 +645,6 @@ export default {
             const defaultNotebookPage = notebookStorage.page;
             const page = pages.find(p => p.id === id);
             if (!page && defaultNotebookPage.id === id) {
-                this.defaultSectionId = null;
-                this.defaultPageId = null;
                 this.removeDefaultClass(this.domainObject);
                 clearDefaultNotebook();
 
@@ -675,8 +671,6 @@ export default {
             const defaultNotebookSection = notebookStorage.section;
             const section = sections.find(s => s.id === id);
             if (!section && defaultNotebookSection.id === id) {
-                this.defaultSectionId = null;
-                this.defaultPageId = null;
                 this.removeDefaultClass(this.domainObject);
                 clearDefaultNotebook();
 
