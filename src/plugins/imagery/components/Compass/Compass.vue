@@ -66,13 +66,6 @@ export default {
         sizedImageDimensions: {
             type: Object,
             required: true
-        },
-        testMode: {
-            type: Boolean,
-            required: false,
-            default() {
-                return false
-            }
         }
     },
     computed: {
@@ -81,21 +74,23 @@ export default {
         },
         // horizontal rotation from north in degrees
         heading() {
-            return this.testMode? this.getRandomAngle : this.image.heading;
+            return this.image.heading;
         },
         // horizontal rotation from north in degrees
         sunHeading() {
-            return this.testMode? this.getRandomAngle : this.image.sunOrientation;
+            return this.image.sunOrientation;
         },
         // horizontal rotation from north in degrees
         cameraPan() {
-            return this.testMode? this.getRandomAngle : this.image.cameraPan;
+            return this.image.cameraPan;
         },
         cameraAngleOfView() {
             return CAMERA_ANGLE_OF_VIEW;
-        },
-        getRandomAngle() {
-            return Math.floor(Math.random()*360);
+        }
+    },
+    methods: {
+        toggleLockCompass() {
+            this.$emit('toggle-lock-compass');
         }
     }
 };

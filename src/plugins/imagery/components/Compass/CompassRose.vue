@@ -235,7 +235,6 @@ export default {
             svg.setAttribute('height', this.$refs.compassRoseWrapper.clientHeight);
         },
         toggleLockCompass() {
-            console.log(this);
             this.lockCompass = !this.lockCompass;
         }
     }
