@@ -297,6 +297,10 @@
     .c-nav {
         pointer-events: all;
     }
+
+    .s-status-taking-snapshot & {
+        display: none;
+    }
 }
 
 .c-nav {
