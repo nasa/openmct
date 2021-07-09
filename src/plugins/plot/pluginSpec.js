@@ -279,6 +279,10 @@ describe("the plugin", function () {
         let plotView;
 
         beforeEach(() => {
+            openmct.time.timeSystem("utc", {
+                start: 0,
+                end: 4
+            });
             const getFunc = openmct.$injector.get;
             spyOn(openmct.$injector, "get")
                 .withArgs("exportImageService").and.returnValue({
