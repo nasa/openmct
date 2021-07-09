@@ -30,7 +30,7 @@ export default function plugin() {
         openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
 
         openmct.types.addType('LadTable', {
-            name: "LAD Table",
+            name: "Latest Data Table",
             creatable: true,
             description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
             cssClass: 'icon-tabular-lad',
