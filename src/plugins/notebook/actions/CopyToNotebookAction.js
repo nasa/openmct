@@ -20,6 +20,10 @@ export default class CopyToNotebookAction {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, null, entryText);
 
                 const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.section.id, notebookStorage.page.id);
+                if (!section || !page) {
+                    return;
+                }
+
                 const defaultPath = `${domainObject.name} - ${section.name} - ${page.name}`;
                 const msg = `Saved to Notebook ${defaultPath}`;
                 this.openmct.notifications.info(msg);

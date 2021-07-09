@@ -72,18 +72,20 @@ export default {
             if (defaultNotebookObject) {
                 const defaultNotebook = getDefaultNotebook();
                 const { section, page } = getNotebookSectionAndPage(defaultNotebookObject, defaultNotebook.section.id, defaultNotebook.page.id);
-                const name = defaultNotebookObject.name;
-                const sectionName = section.name;
-                const pageName = page.name;
-                const defaultPath = `${name} - ${sectionName} - ${pageName}`;
+                if (section && page) {
+                    const name = defaultNotebookObject.name;
+                    const sectionName = section.name;
+                    const pageName = page.name;
+                    const defaultPath = `${name} - ${sectionName} - ${pageName}`;
 
-                notebookTypes.push({
-                    cssClass: 'icon-notebook',
-                    name: `Save to Notebook ${defaultPath}`,
-                    callBack: () => {
-                        return this.snapshot(NOTEBOOK_DEFAULT);
-                    }
-                });
+                    notebookTypes.push({
+                        cssClass: 'icon-notebook',
+                        name: `Save to Notebook ${defaultPath}`,
+                        callBack: () => {
+                            return this.snapshot(NOTEBOOK_DEFAULT);
+                        }
+                    });
+                }
             }
 
             notebookTypes.push({

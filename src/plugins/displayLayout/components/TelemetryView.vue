@@ -344,12 +344,12 @@ export default {
             const actionCollection = this.openmct.actions.get(this.currentObjectPath, this.getView());
             const actionsObject = actionCollection.getActionsObject();
 
-            let copyToNotebookAction = actionsObject.copyToNotebook;
-
             if (defaultNotebook) {
                 const { section, page } = getNotebookSectionAndPage(domainObject, defaultNotebook.section.id, defaultNotebook.page.id);
-                const defaultPath = domainObject && `${domainObject.name} - ${section.name} - ${page.name}`;
-                copyToNotebookAction.name = `Copy to Notebook ${defaultPath}`;
+                if (section && page) {
+                    const defaultPath = domainObject && `${domainObject.name} - ${section.name} - ${page.name}`;
+                    actionsObject.copyToNotebook.name = `Copy to Notebook ${defaultPath}`;
+                }
             } else {
                 actionsObject.copyToNotebook = undefined;
                 delete actionsObject.copyToNotebook;
