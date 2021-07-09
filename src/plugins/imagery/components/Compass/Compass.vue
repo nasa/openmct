@@ -26,19 +26,19 @@
     :style="`width: 100%; height: 100%`"
 >
     <CompassHUD
-            v-if="hasCameraFieldOfView"
-            :sun-heading="sunHeading"
-            :camera-angle-of-view="cameraAngleOfView"
-            :camera-pan="cameraPan"
+        v-if="hasCameraFieldOfView"
+        :sun-heading="sunHeading"
+        :camera-angle-of-view="cameraAngleOfView"
+        :camera-pan="cameraPan"
     />
     <CompassRose
-            v-if="hasCameraFieldOfView"
-            :camera-angle-of-view="cameraAngleOfView"
-            :camera-pan="cameraPan"
-            :compass-rose-sizing-classes="compassRoseSizingClasses"
-            :heading="heading"
-            :sized-image-dimensions="sizedImageDimensions"
-            :sun-heading="sunHeading"
+        v-if="hasCameraFieldOfView"
+        :camera-angle-of-view="cameraAngleOfView"
+        :camera-pan="cameraPan"
+        :compass-rose-sizing-classes="compassRoseSizingClasses"
+        :heading="heading"
+        :sized-image-dimensions="sizedImageDimensions"
+        :sun-heading="sunHeading"
     />
 </div>
 </template>
