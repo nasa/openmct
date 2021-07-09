@@ -25,12 +25,16 @@ function observeDefaultNotebookObject(openmct, notebookMeta, domainObject) {
         return;
     }
 
+    removeListener();
+
+    unlisten = openmct.objects.observe(domainObject, '*', defaultNotebookObjectChanged);
+}
+
+function removeListener() {
     if (unlisten) {
         unlisten();
         unlisten = null;
     }
-
-    unlisten = openmct.objects.observe(domainObject, '*', defaultNotebookObjectChanged);
 }
 
 function saveDefaultNotebook(notebookStorage) {
@@ -39,6 +43,8 @@ function saveDefaultNotebook(notebookStorage) {
 
 export function clearDefaultNotebook() {
     currentNotebookObjectIdentifier = null;
+    removeListener();
+
     window.localStorage.setItem(NOTEBOOK_LOCAL_STORAGE, null);
 }
 
