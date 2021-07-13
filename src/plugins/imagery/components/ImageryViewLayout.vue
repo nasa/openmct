@@ -55,28 +55,33 @@
                 ></a>
             </span>
         </div>
-        <div class="c-imagery__main-image__bg"
+        <div ref="imageBG"
+             class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
         >
-            <img
-                ref="focusedImage"
-                class="c-imagery__main-image__image js-imageryView-image"
-                :src="imageUrl"
-                :style="{
-                    'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                }"
-                :data-openmct-image-timestamp="time"
-                :data-openmct-object-keystring="keyString"
+            <div class="image-wrapper"
+                 :style="{
+                     'width': `${sizedImageDimensions.width}px`,
+                     'height': `${sizedImageDimensions.height}px`
+                 }"
             >
-            <Compass
-                v-if="shouldDisplayCompass"
-                :container-width="imageContainerWidth"
-                :container-height="imageContainerHeight"
-                :natural-aspect-ratio="focusedImageNaturalAspectRatio"
-                :image="focusedImage"
-                :lock-compass="lockCompass"
-                @toggle-lock-compass="toggleLockCompass"
-            />
+                <img ref="focusedImage"
+                     class="c-imagery__main-image__image js-imageryView-image"
+                     :src="imageUrl"
+                     :style="{
+                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                     }"
+                     :data-openmct-image-timestamp="time"
+                     :data-openmct-object-keystring="keyString"
+                >
+                <Compass
+                    v-if="shouldDisplayCompass"
+                    :compass-rose-sizing-classes="compassRoseSizingClasses"
+                    :image="focusedImage"
+                    :natural-aspect-ratio="focusedImageNaturalAspectRatio"
+                    :sized-image-dimensions="sizedImageDimensions"
+                />
+            </div>
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
             <button class="c-nav c-nav--prev"
@@ -224,6 +229,18 @@ export default {
         };
     },
     computed: {
+        compassRoseSizingClasses() {
+            let compassRoseSizingClasses = '';
+            if (this.sizedImageDimensions.width < 300) {
+                compassRoseSizingClasses = '--rose-small --rose-min';
+            } else if (this.sizedImageDimensions.width < 500) {
+                compassRoseSizingClasses = '--rose-small';
+            } else if (this.sizedImageDimensions.width > 1000) {
+                compassRoseSizingClasses = '--rose-max';
+            }
+
+            return compassRoseSizingClasses;
+        },
         time() {
             return this.formatTime(this.focusedImage);
         },
@@ -347,6 +364,20 @@ export default {
             }
 
             return isFresh;
+        },
+        sizedImageDimensions() {
+            let sizedImageDimensions = {};
+            if ((this.imageContainerWidth / this.imageContainerHeight) > this.focusedImageNaturalAspectRatio) {
+                // container is wider than image
+                sizedImageDimensions.width = this.imageContainerHeight * this.focusedImageNaturalAspectRatio;
+                sizedImageDimensions.height = this.imageContainerHeight;
+            } else {
+                // container is taller than image
+                sizedImageDimensions.width = this.imageContainerWidth;
+                sizedImageDimensions.height = this.imageContainerWidth * this.focusedImageNaturalAspectRatio;
+            }
+
+            return sizedImageDimensions;
         }
     },
     watch: {
@@ -395,7 +426,7 @@ export default {
         _.debounce(this.resizeImageContainer, 400);
 
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
-        this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
+        this.imageContainerResizeObserver.observe(this.$refs.imageBG);
 
         // For adjusting scroll bar size and position when resizing thumbs wrapper
         this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
@@ -833,12 +864,12 @@ export default {
             }, { once: true });
         },
         resizeImageContainer() {
-            if (this.$refs.focusedImage.clientWidth !== this.imageContainerWidth) {
-                this.imageContainerWidth = this.$refs.focusedImage.clientWidth;
+            if (this.$refs.imageBG.clientWidth !== this.imageContainerWidth) {
+                this.imageContainerWidth = this.$refs.imageBG.clientWidth;
             }
 
-            if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
-                this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
+            if (this.$refs.imageBG.clientHeight !== this.imageContainerHeight) {
+                this.imageContainerHeight = this.$refs.imageBG.clientHeight;
             }
         },
         handleThumbWindowResizeStart() {
@@ -858,9 +889,6 @@ export default {
             this.$nextTick(() => {
                 this.resizingWindow = false;
             });
-        },
-        toggleLockCompass() {
-            this.lockCompass = !this.lockCompass;
         }
     }
 };
