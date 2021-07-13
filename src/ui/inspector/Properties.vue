@@ -6,100 +6,131 @@
         Details
     </div>
     <ul
-        v-if="!multiSelect && !singleSelectNonObject"
+        v-if="hasDetails"
         class="c-inspect-properties__section"
     >
-        <li class="c-inspect-properties__row">
-            <div class="c-inspect-properties__label">
-                Title
-            </div>
-            <div class="c-inspect-properties__value">
-                {{ item.name }}
-            </div>
-        </li>
-        <li class="c-inspect-properties__row">
-            <div class="c-inspect-properties__label">
-                Type
-            </div>
-            <div class="c-inspect-properties__value">
-                {{ typeName }}
-            </div>
-        </li>
-        <li
-            v-if="item.created"
-            class="c-inspect-properties__row"
-        >
-            <div class="c-inspect-properties__label">
-                Created
-            </div>
-            <div class="c-inspect-properties__value">
-                {{ formatTime(item.created) }}
-            </div>
-        </li>
-        <li
-            v-if="item.modified"
-            class="c-inspect-properties__row"
-        >
-            <div class="c-inspect-properties__label">
-                Modified
-            </div>
-            <div class="c-inspect-properties__value">
-                {{ formatTime(item.modified) }}
-            </div>
-        </li>
-        <li
-            v-for="prop in typeProperties"
-            :key="prop.name"
-            class="c-inspect-properties__row"
-        >
-            <div class="c-inspect-properties__label">
-                {{ prop.name }}
-            </div>
-            <div class="c-inspect-properties__value">
-                {{ prop.value }}
-            </div>
-        </li>
+        <Component
+            :is="getComponent(detail)"
+            v-for="detail in details"
+            :key="detail.name"
+            :detail="detail"
+        />
+
     </ul>
     <div
-        v-if="multiSelect"
+        v-else
         class="c-inspect-properties__row--span-all"
     >
-        No properties to display for multiple items
-    </div>
-    <div
-        v-if="singleSelectNonObject"
-        class="c-inspect-properties__row--span-all"
-    >
-        No properties to display for this item
+        {{ noDetailsMessage }}
     </div>
 </div>
 </template>
 
 <script>
-import Moment from "moment";
+import DetailText from './DetailText.vue';
+import DetailTime from './DetailTime.vue';
 
 export default {
+    components: {
+        DetailText,
+        DetailTime
+    },
     inject: ['openmct'],
     data() {
         return {
-            domainObject: {},
-            activity: undefined,
-            multiSelect: false
+            selection: undefined
         };
     },
     computed: {
-        item() {
-            return this.domainObject || {};
+        details() {
+            return this.customDetails ? this.customDetails : this.domainObjectDetails;
         },
-        type() {
-            return this.openmct.types.get(this.item.type);
-        },
-        typeName() {
-            if (!this.type) {
-                return `Unknown: ${this.item.type}`;
+        customDetails() {
+            if (this.context === undefined) {
+                return;
             }
 
-            return this.type.definition.name;
+            return this.context.details;
+        },
+        domainObject() {
+            if (this.context === undefined) {
+                return;
+            }
+
+            return this.context.item;
+        },
+        type() {
+            if (this.domainObject === undefined) {
+                return;
+            }
+
+            return this.openmct.types.get(this.domainObject.type);
+        },
+        domainObjectDetails() {
+            if (this.domainObject === undefined) {
+                return;
+            }
+
+            const title = this.domainObject.name;
+            const typeName = this.type ? this.type.definition.name : `Unknown: ${this.domainObject.type}`;
+            const timestampLabel = this.domainObject.modified ? 'Modified' : 'Created';
+            const timestamp = this.domainObject.modified ? this.domainObject.modified : this.domainObject.created;
+
+            const details = [
+                {
+                    name: 'Title',
+                    value: title
+                },
+                {
+                    name: 'Type',
+                    value: typeName
+                }
+            ];
+
+            if (timestamp !== undefined) {
+                details.push(
+                    {
+                        name: timestampLabel,
+                        value: timestamp,
+                        component: 'time'
+                    }
+                );
+            }
+
+            return [...details, ...this.typeProperties];
+        },
+        context() {
+            if (
+                !this.selection
+                || !this.selection.length
+                || !this.selection[0].length
+            ) {
+                return;
+            }
+
+            return this.selection[0][0].context;
+        },
+        hasDetails() {
+            return Boolean(
+                this.details
+                && this.details.length
+                && !this.multiSelection
+            );
+        },
+        multiSelection() {
+            return this.selection && this.selection.length > 1;
+        },
+        noDetailsMessage() {
+            return this.multiSelection
+                ? 'No properties to display for multiple items'
+                : 'No properties to display for this item';
+        },
+        activity() {
+            if (this.context === undefined) {
+                return;
+            }
+
+            return this.context.activity;
         },
         typeProperties() {
             if (!this.type) {
@@ -129,12 +160,9 @@ export default {
                         name: field.name,
                         value: field.path.reduce((object, key) => {
                             return object[key];
-                        }, this.item)
+                        }, this.domainObject)
                     };
                 });
-        },
-        singleSelectNonObject() {
-            return !this.item.identifier && !this.multiSelect;
         }
     },
     mounted() {
@@ -145,26 +173,13 @@ export default {
         this.openmct.selection.off('change', this.updateSelection);
     },
     methods: {
-        updateSelection(selection) {
-            if (selection.length === 0 || selection[0].length === 0) {
-                this.domainObject = {};
+        getComponent(detail) {
+            const component = detail.component ? detail.component : 'text';
 
-                return;
-            }
-
-            if (selection.length > 1) {
-                this.multiSelect = true;
-                this.domainObject = {};
-
-                return;
-            } else {
-                this.multiSelect = false;
-                this.domainObject = selection[0][0].context.item;
-                this.activity = selection[0][0].context.activity;
-            }
+            return `detail-${component}`;
         },
-        formatTime(unixTime) {
-            return Moment.utc(unixTime).format('YYYY-MM-DD[\n]HH:mm:ss') + ' UTC';
+        updateSelection(selection) {
+            this.selection = selection;
         }
     }
 };
