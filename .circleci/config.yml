@@ -65,9 +65,5 @@ workflows:
           node-version: lts/fermium
           browser: ChromeHeadless
           always-pass: true
-      #- test:
-      #    name: node16-canary
-      #    node-version: '16'
-      #    browser: ChromeCanaryHeadless
 
 
