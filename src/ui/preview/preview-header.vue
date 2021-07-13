@@ -103,8 +103,14 @@ export default {
     },
     mounted() {
         if (this.actionCollection) {
+            this.actionCollection.hide(HIDDEN_ACTIONS);
             this.actionCollection.on('update', this.updateActionItems);
             this.updateActionItems(this.actionCollection.getActionsObject());
+        }
+    },
+    destroyed() {
+        if (this.actionCollection) {
+            this.actionCollection.off('update', this.updateActionItems);
         }
     },
     methods: {
@@ -116,7 +122,6 @@ export default {
             delete this.actionCollection;
         },
         updateActionItems() {
-            this.actionCollection.hide(HIDDEN_ACTIONS);
             this.statusBarItems = this.actionCollection.getStatusBarActions();
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
