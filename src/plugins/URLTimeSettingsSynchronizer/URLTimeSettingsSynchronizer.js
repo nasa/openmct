@@ -45,6 +45,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     initialize() {
+        this.updateTimeSettings();
         this.openmct.router.on('change:params', this.updateTimeSettings);
 
         TIME_EVENTS.forEach(event => {
