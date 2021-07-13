@@ -23,7 +23,7 @@
 <template>
 <div
     class="c-compass"
-    :style="compassDimensionsStyle"
+    :style="`width: 100%; height: 100%`"
 >
     <CompassHUD
         v-if="hasCameraFieldOfView"
@@ -33,12 +33,12 @@
     />
     <CompassRose
         v-if="hasCameraFieldOfView"
-        :heading="heading"
-        :sun-heading="sunHeading"
         :camera-angle-of-view="cameraAngleOfView"
         :camera-pan="cameraPan"
-        :lock-compass="lockCompass"
-        @toggle-lock-compass="toggleLockCompass"
+        :compass-rose-sizing-classes="compassRoseSizingClasses"
+        :heading="heading"
+        :sized-image-dimensions="sizedImageDimensions"
+        :sun-heading="sunHeading"
     />
 </div>
 </template>
@@ -55,24 +55,16 @@ export default {
         CompassRose
     },
     props: {
-        containerWidth: {
-            type: Number,
-            required: true
-        },
-        containerHeight: {
-            type: Number,
-            required: true
-        },
-        naturalAspectRatio: {
-            type: Number,
+        compassRoseSizingClasses: {
+            type: String,
             required: true
         },
         image: {
             type: Object,
             required: true
         },
-        lockCompass: {
-            type: Boolean,
+        sizedImageDimensions: {
+            type: Object,
             required: true
         }
     },
@@ -94,25 +86,6 @@ export default {
         },
         cameraAngleOfView() {
             return CAMERA_ANGLE_OF_VIEW;
-        },
-        compassDimensionsStyle() {
-            const containerAspectRatio = this.containerWidth / this.containerHeight;
-
-            let width;
-            let height;
-
-            if (containerAspectRatio < this.naturalAspectRatio) {
-                width = '100%';
-                height = `${ this.containerWidth / this.naturalAspectRatio }px`;
-            } else {
-                width = `${ this.containerHeight * this.naturalAspectRatio }px`;
-                height = '100%';
-            }
-
-            return {
-                width: width,
-                height: height
-            };
         }
     },
     methods: {

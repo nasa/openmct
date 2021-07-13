@@ -49,12 +49,24 @@ define([
         ];
         const IMAGE_DELAY = 20000;
 
+        function getCompassValues(min, max) {
+            return min + Math.random() * (max - min);
+        }
+
         function pointForTimestamp(timestamp, name) {
+            const url = IMAGE_SAMPLES[Math.floor(timestamp / IMAGE_DELAY) % IMAGE_SAMPLES.length];
+            const urlItems = url.split('/');
+            const imageDownloadName = `example.imagery.${urlItems[urlItems.length - 1]}`;
+
             return {
-                name: name,
+                name,
                 utc: Math.floor(timestamp / IMAGE_DELAY) * IMAGE_DELAY,
                 local: Math.floor(timestamp / IMAGE_DELAY) * IMAGE_DELAY,
-                url: IMAGE_SAMPLES[Math.floor(timestamp / IMAGE_DELAY) % IMAGE_SAMPLES.length]
+                url,
+                sunOrientation: getCompassValues(0, 360),
+                cameraPan: getCompassValues(0, 360),
+                heading: getCompassValues(0, 360),
+                imageDownloadName
             };
         }
 
@@ -138,6 +150,14 @@ define([
                                 format: 'image',
                                 hints: {
                                     image: 1
+                                }
+                            },
+                            {
+                                name: 'Image Download Name',
+                                key: 'imageDownloadName',
+                                format: 'imageDownloadName',
+                                hints: {
+                                    imageDownloadName: 1
                                 }
                             }
                         ]

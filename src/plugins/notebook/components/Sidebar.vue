@@ -1,6 +1,6 @@
 <template>
 <div class="c-sidebar c-drawer c-drawer--align-left">
-    <div class="c-sidebar__pane">
+    <div class="c-sidebar__pane js-sidebar-sections">
         <div class="c-sidebar__header-w">
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ sectionTitle }}</span>
@@ -15,14 +15,16 @@
             </button>
             <SectionCollection class="c-sidebar__contents"
                                :default-section-id="defaultSectionId"
+                               :selected-section-id="selectedSectionId"
                                :domain-object="domainObject"
                                :sections="sections"
                                :section-title="sectionTitle"
                                @updateSection="sectionsChanged"
+                               @selectSection="selectSection"
             />
         </div>
     </div>
-    <div class="c-sidebar__pane">
+    <div class="c-sidebar__pane js-sidebar-pages">
         <div class="c-sidebar__header-w">
             <div class="c-sidebar__header">
                 <span class="c-sidebar__header-label">{{ pageTitle }}</span>
@@ -42,6 +44,7 @@
             <PageCollection ref="pageCollection"
                             class="c-sidebar__contents"
                             :default-page-id="defaultPageId"
+                            :selected-page-id="selectedPageId"
                             :domain-object="domainObject"
                             :pages="pages"
                             :sections="sections"
@@ -49,6 +52,7 @@
                             :page-title="pageTitle"
                             @toggleNav="toggleNav"
                             @updatePage="pagesChanged"
+                            @selectPage="selectPage"
             />
         </div>
     </div>
@@ -73,7 +77,19 @@ export default {
                 return '';
             }
         },
+        selectedPageId: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
         defaultSectionId: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
+        selectedSectionId: {
             type: String,
             default() {
                 return '';
@@ -111,13 +127,9 @@ export default {
             }
         }
     },
-    data() {
-        return {
-        };
-    },
     computed: {
         pages() {
-            const selectedSection = this.sections.find(section => section.isSelected);
+            const selectedSection = this.sections.find(section => section.id === this.selectedSectionId);
 
             return selectedSection && selectedSection.pages || [];
         }
@@ -148,6 +160,7 @@ export default {
                 pages,
                 id: newPage.id
             });
+            this.$emit('selectPage', newPage.id);
         },
         addSection() {
             const newSection = this.createNewSection();
@@ -157,6 +170,8 @@ export default {
                 sections,
                 id: newSection.id
             });
+
+            this.$emit('selectSection', newSection.id);
         },
         addNewPage(page) {
             const pages = this.pages.map(p => {
@@ -211,6 +226,12 @@ export default {
                 pages,
                 id
             });
+        },
+        selectPage(pageId) {
+            this.$emit('selectPage', pageId);
+        },
+        selectSection(sectionId) {
+            this.$emit('selectSection', sectionId);
         },
         sectionsChanged({ sections, id }) {
             this.$emit('sectionsChanged', {

@@ -35,7 +35,6 @@ define([
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
-    './plot/vue/single/plugin',
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
@@ -47,6 +46,7 @@ define([
     './filters/plugin',
     './objectMigration/plugin',
     './goToOriginalAction/plugin',
+    './openInNewTabAction/plugin',
     './clearData/plugin',
     './webPage/plugin',
     './condition/plugin',
@@ -81,7 +81,6 @@ define([
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
-    PlotVuePlugin,
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
@@ -93,6 +92,7 @@ define([
     Filters,
     ObjectMigration,
     GoToOriginalAction,
+    OpenInNewTabAction,
     ClearData,
     WebPagePlugin,
     ConditionPlugin,
@@ -177,8 +177,7 @@ define([
 
     plugins.ExampleImagery = ExampleImagery;
     plugins.ImageryPlugin = ImageryPlugin;
-    plugins.Plot = PlotPlugin;
-    plugins.PlotVue = PlotVuePlugin.default;
+    plugins.Plot = PlotPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
@@ -193,6 +192,7 @@ define([
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.OpenInNewTabAction = OpenInNewTabAction.default;
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
     plugins.Espresso = Espresso.default;

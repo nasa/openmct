@@ -97,7 +97,7 @@ function ToolbarProvider(openmct) {
                             message: `This action will remove this frame from this Flexible Layout. Do you want to continue?`,
                             buttons: [
                                 {
-                                    label: 'Ok',
+                                    label: 'OK',
                                     emphasis: 'true',
                                     callback: function () {
                                         deleteFrameAction(primary.context.frameId);
@@ -162,7 +162,7 @@ function ToolbarProvider(openmct) {
                             message: 'This action will permanently delete this container from this Flexible Layout',
                             buttons: [
                                 {
-                                    label: 'Ok',
+                                    label: 'OK',
                                     emphasis: 'true',
                                     callback: function () {
                                         removeContainer(containerId);

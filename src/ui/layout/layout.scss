@@ -100,8 +100,14 @@
         &__pane-tree {
             background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
 
-            [class*="expand-button"],
-            [class*="sync-tree-button"] {
+            .l-pane__header {
+                // Hide all buttons except the collapse button
+                > :not(.l-pane__collapse-button) {
+                    display: none;
+                }
+            }
+
+            [class*="expand-button"] {
                 display: none;
             }
 

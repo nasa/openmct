@@ -163,14 +163,22 @@ describe("The Object API", () => {
                     key: 'test-key'
                 },
                 name: 'test object',
+                type: 'notebook',
                 otherAttribute: 'other-attribute-value',
+                modified: 0,
+                persisted: 0,
                 objectAttribute: {
                     embeddedObject: {
                         embeddedKey: 'embedded-value'
                     }
                 }
             };
-            updatedTestObject = Object.assign({otherAttribute: 'changed-attribute-value'}, testObject);
+            updatedTestObject = Object.assign({
+                otherAttribute: 'changed-attribute-value'
+            }, testObject);
+            updatedTestObject.modified = 1;
+            updatedTestObject.persisted = 1;
+
             mockProvider = jasmine.createSpyObj("mock provider", [
                 "get",
                 "create",
@@ -182,6 +190,8 @@ describe("The Object API", () => {
             mockProvider.observeObjectChanges.and.callFake(() => {
                 callbacks[0](updatedTestObject);
                 callbacks.splice(0, 1);
+
+                return () => {};
             });
             mockProvider.observe.and.callFake((id, callback) => {
                 if (callbacks.length === 0) {
@@ -189,6 +199,8 @@ describe("The Object API", () => {
                 } else {
                     callbacks[0] = callback;
                 }
+
+                return () => {};
             });
 
             objectAPI.addProvider(TEST_NAMESPACE, mockProvider);

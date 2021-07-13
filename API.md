@@ -423,13 +423,14 @@ attribute      | type   | flags    | notes
 
 ###### Value Hints
 
-Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y-axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
+Each telemetry value description has an object defining hints.  Keys in this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y-axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.
 
 Known hints:
 
 * `domain`: Values with a `domain` hint will be used for the x-axis of a plot, and tables will render columns for these values first.
 * `range`: Values with a `range` hint will be used as the y-axis on a plot, and tables will render columns for these values after the `domain` values.
 * `image`: Indicates that the value may be interpreted as the URL to an image file, in which case appropriate views will be made available.
+* `imageDownloadName`: Indicates that the value may be interpreted as the name of the image file.
 
 ##### The Time Conductor and Telemetry 
 
@@ -594,9 +595,17 @@ section.
 
 #### Limit Evaluators **draft**
 
-Limit evaluators allow a telemetry integrator to define how limits should be 
-applied to telemetry from a given domain object.  For an example of a limit 
-evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
+Limit evaluators allow a telemetry integrator to define which limits exist for a 
+telemetry endpoint and how limits should be applied to telemetry from a given domain object.
+
+A limit evaluator can implement the `evalute` method which is used to define how limits
+should be applied to telemetry and the `getLimits` method which is used to specify 
+what the limit values are for different limit levels.
+
+Limit levels can be mapped to one of 5 colors for visualization: 
+`purple`, `red`, `orange`, `yellow` and `cyan`.
+
+For an example of a limit evaluator, take a look at `examples/generator/SinewaveLimitProvider.js`.
 
 ### Telemetry Consumer APIs **draft**
 

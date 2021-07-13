@@ -20,7 +20,12 @@
             <span class="c-object-label__type-icon"
                   :class="typeCssClass"
             ></span>
-            <span class="c-object-label__name">Layout Object</span>
+            <span v-if="!activity"
+                  class="c-object-label__name"
+            >Layout Object</span>
+            <span v-else
+                  class="c-object-label__name"
+            >{{ activity.name }}</span>
         </div>
     </div>
     <div v-if="multiSelect"
@@ -37,6 +42,7 @@ export default {
     data() {
         return {
             domainObject: {},
+            activity: undefined,
             keyString: undefined,
             multiSelect: false,
             itemsSelected: 0,
@@ -51,6 +57,10 @@ export default {
             return this.openmct.types.get(this.item.type);
         },
         typeCssClass() {
+            if (this.activity) {
+                return 'icon-activity';
+            }
+
             if (this.type.definition.cssClass === undefined) {
                 return 'icon-object';
             }
@@ -97,7 +107,7 @@ export default {
             } else {
                 this.multiSelect = false;
                 this.domainObject = selection[0][0].context.item;
-
+                this.activity = selection[0][0].context.activity;
                 if (this.domainObject) {
                     this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
                     this.status = this.openmct.status.get(this.keyString);
