@@ -19,7 +19,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}-{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           node-version: << parameters.node-version >>
       - node/install-packages:
@@ -35,9 +35,9 @@ jobs:
             equal: [ "ChromeHeadless", <<parameters.browser>> ]
           steps:
             - browser-tools/install-chrome:
-                replace-existing: false         
+                replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}-{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
