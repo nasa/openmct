@@ -32,6 +32,7 @@
 
         &__scrollable {
             overflow: auto;
+            padding-right: $interiorMargin;
         }
 
         &__item--empty {
