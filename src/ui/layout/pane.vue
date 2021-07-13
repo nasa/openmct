@@ -126,12 +126,14 @@ export default {
             document.body.addEventListener('mousemove', this.updatePosition);
             document.body.addEventListener('mouseup', this.end);
             this.resizing = true;
+            this.$emit('openmct-start-drag');
             this.trackSize();
         },
         end: function (event) {
             document.body.removeEventListener('mousemove', this.updatePosition);
             document.body.removeEventListener('mouseup', this.end);
             this.resizing = false;
+            this.$emit('openmct-end-drag');
             this.trackSize();
         }
     }

@@ -287,6 +287,12 @@
         justify-content: space-between;
         padding: $p;
     }
+
+    &__resizing {
+        iframe {
+            pointer-events: none;
+        }
+    }
 }
 
 .is-editing {

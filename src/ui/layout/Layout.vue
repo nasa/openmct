@@ -45,7 +45,7 @@
     <div class="l-shell__drawer c-drawer c-drawer--push c-drawer--align-top"></div>
 
     <multipane
-        class="l-shell__main"
+        :class="['l-shell__main', isResizing ? 'l-shell__resizing' : '']"
         type="horizontal"
     >
         <pane
@@ -53,6 +53,8 @@
             handle="after"
             label="Browse"
             collapsable
+            @openmct-start-drag="onStartResizing"
+            @openmct-end-drag="onEndResizing"
         >
             <button
                 slot="controls"
@@ -94,6 +96,8 @@
             handle="before"
             label="Inspect"
             collapsable
+            @openmct-start-drag="onStartResizing"
+            @openmct-end-drag="onEndResizing"
         >
             <Inspector
                 ref="inspector"
@@ -148,7 +152,8 @@ export default {
             hasToolbar: false,
             actionCollection: undefined,
             triggerSync: false,
-            headExpanded
+            headExpanded,
+            isResizing: false
         };
     },
     computed: {
@@ -228,6 +233,12 @@ export default {
         },
         handleSyncTreeNavigation() {
             this.triggerSync = !this.triggerSync;
+        },
+        onStartResizing() {
+            this.isResizing = true;
+        },
+        onEndResizing() {
+            this.isResizing = false;
         }
     }
 };
