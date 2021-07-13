@@ -54,14 +54,13 @@ const domainObject = {
 };
 
 const notebookStorage = {
-    notebookMeta: {
-        name: 'notebook',
-        identifier: {
-            namespace: '',
-            key: 'test-notebook'
-        }
+    name: 'notebook',
+    identifier: {
+        namespace: '',
+        key: 'test-notebook'
     },
-    section: notebookSection
+    defaultSectionId: 'temp-section',
+    defaultPageId: 'temp-page'
 };
 
 let openmct;
@@ -112,7 +111,7 @@ describe('Notebook Storage:', () => {
         expect(JSON.stringify(defaultNotebook)).toBe(JSON.stringify(notebookStorage));
     });
 
-    it('has correct section on setDefaultNotebookSection', () => {
+    it('has correct section on setDefaultNotebookSectionId', () => {
         const section = {
             id: 'new-temp-section',
             isDefault: true,
@@ -123,14 +122,14 @@ describe('Notebook Storage:', () => {
         };
 
         NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
-        NotebookStorage.setDefaultNotebookSection(section);
+        NotebookStorage.setDefaultNotebookSectionId(section.id);
 
         const defaultNotebook = NotebookStorage.getDefaultNotebook();
-        const newSection = defaultNotebook.section;
-        expect(JSON.stringify(section)).toBe(JSON.stringify(newSection));
+        const defaultSectionId = defaultNotebook.defaultSectionId;
+        expect(section.id).toBe(defaultSectionId);
     });
 
-    it('has correct page on setDefaultNotebookPage', () => {
+    it('has correct page on setDefaultNotebookPageId', () => {
         const page = {
             id: 'new-temp-page',
             isDefault: true,
@@ -140,11 +139,11 @@ describe('Notebook Storage:', () => {
         };
 
         NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
-        NotebookStorage.setDefaultNotebookPage(page);
+        NotebookStorage.setDefaultNotebookPageId(page.id);
 
         const defaultNotebook = NotebookStorage.getDefaultNotebook();
-        const newPage = defaultNotebook.page;
-        expect(JSON.stringify(page)).toBe(JSON.stringify(newPage));
+        const newPageId = defaultNotebook.defaultPageId;
+        expect(page.id).toBe(newPageId);
     });
 
     describe('is getNotebookSectionAndPage function searches and returns correct,', () => {

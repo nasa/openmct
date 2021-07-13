@@ -58,20 +58,20 @@ export default class Snapshot {
      */
     _saveToDefaultNoteBook(embed) {
         const notebookStorage = getDefaultNotebook();
-        this.openmct.objects.get(notebookStorage.notebookMeta.identifier)
+        this.openmct.objects.get(notebookStorage.identifier)
             .then(async (domainObject) => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
 
-                let link = notebookStorage.notebookMeta.link;
+                let link = notebookStorage.link;
 
                 // Backwards compatibility fix (old notebook model without link)
                 if (!link) {
                     link = await getDefaultNotebookLink(this.openmct, domainObject);
-                    notebookStorage.notebookMeta.link = link;
+                    notebookStorage.link = link;
                     setDefaultNotebook(this.openmct, notebookStorage);
                 }
 
-                const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.section.id, notebookStorage.page.id);
+                const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.defaultSectionId, notebookStorage.defaultPageId);
                 if (!section || !page) {
                     return;
                 }

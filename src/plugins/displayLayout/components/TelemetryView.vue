@@ -340,12 +340,12 @@ export default {
         },
         async getContextMenuActions() {
             const defaultNotebook = getDefaultNotebook();
-            const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+            const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.identifier);
             const actionCollection = this.openmct.actions.get(this.currentObjectPath, this.getView());
             const actionsObject = actionCollection.getActionsObject();
 
             if (defaultNotebook) {
-                const { section, page } = getNotebookSectionAndPage(domainObject, defaultNotebook.section.id, defaultNotebook.page.id);
+                const { section, page } = getNotebookSectionAndPage(domainObject, defaultNotebook.defaultSectionId, defaultNotebook.defaultPageId);
                 if (section && page) {
                     const defaultPath = domainObject && `${domainObject.name} - ${section.name} - ${page.name}`;
                     actionsObject.copyToNotebook.name = `Copy to Notebook ${defaultPath}`;

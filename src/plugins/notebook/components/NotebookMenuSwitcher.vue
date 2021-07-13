@@ -58,7 +58,7 @@ export default {
     methods: {
         async getDefaultNotebookObject() {
             const defaultNotebook = getDefaultNotebook();
-            const defaultNotebookObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+            const defaultNotebookObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.identifier);
 
             return defaultNotebookObject;
         },
@@ -71,7 +71,7 @@ export default {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
             if (defaultNotebookObject) {
                 const defaultNotebook = getDefaultNotebook();
-                const { section, page } = getNotebookSectionAndPage(defaultNotebookObject, defaultNotebook.section.id, defaultNotebook.page.id);
+                const { section, page } = getNotebookSectionAndPage(defaultNotebookObject, defaultNotebook.defaultSectionId, defaultNotebook.defaultPageId);
                 if (section && page) {
                     const name = defaultNotebookObject.name;
                     const sectionName = section.name;
@@ -122,8 +122,8 @@ export default {
         setDefaultNotebookStatus() {
             let defaultNotebookObject = getDefaultNotebook();
 
-            if (defaultNotebookObject && defaultNotebookObject.notebookMeta) {
-                let notebookIdentifier = defaultNotebookObject.notebookMeta.identifier;
+            if (defaultNotebookObject && defaultNotebookObject) {
+                let notebookIdentifier = defaultNotebookObject.identifier;
 
                 this.openmct.status.set(notebookIdentifier, 'notebook-default');
             }

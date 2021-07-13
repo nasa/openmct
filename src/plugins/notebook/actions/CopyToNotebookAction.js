@@ -15,11 +15,11 @@ export default class CopyToNotebookAction {
 
     copyToNotebook(entryText) {
         const notebookStorage = getDefaultNotebook();
-        this.openmct.objects.get(notebookStorage.notebookMeta.identifier)
+        this.openmct.objects.get(notebookStorage.identifier)
             .then(domainObject => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, null, entryText);
 
-                const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.section.id, notebookStorage.page.id);
+                const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.defaultSectionId, notebookStorage.defaultPageId);
                 if (!section || !page) {
                     return;
                 }
