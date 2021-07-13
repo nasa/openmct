@@ -49,6 +49,10 @@ define([
         ];
         const IMAGE_DELAY = 20000;
 
+        function getCompassValues(min, max) {
+            return min + Math.random() * (max - min);
+        }
+
         function pointForTimestamp(timestamp, name) {
             const url = IMAGE_SAMPLES[Math.floor(timestamp / IMAGE_DELAY) % IMAGE_SAMPLES.length];
             const urlItems = url.split('/');
@@ -59,6 +63,9 @@ define([
                 utc: Math.floor(timestamp / IMAGE_DELAY) * IMAGE_DELAY,
                 local: Math.floor(timestamp / IMAGE_DELAY) * IMAGE_DELAY,
                 url,
+                sunOrientation: getCompassValues(0, 360),
+                cameraPan: getCompassValues(0, 360),
+                heading: getCompassValues(0, 360),
                 imageDownloadName
             };
         }
