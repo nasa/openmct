@@ -17,15 +17,7 @@
         <div v-if="singleSelectNonObject"
              class="c-inspector__selected c-inspector__selected--non-domain-object  c-object-label"
         >
-            <span class="c-object-label__type-icon"
-                  :class="typeCssClass"
-            ></span>
-            <span v-if="!activity"
-                  class="c-object-label__name"
-            >Layout Object</span>
-            <span v-else
-                  class="c-object-label__name"
-            >{{ activity.name }}</span>
+            <span class="c-object-label__name">Layout Object</span>
         </div>
     </div>
     <div v-if="multiSelect"
