@@ -490,7 +490,6 @@ export default {
             this.showTCInputEnd = !this.showTCInputEnd;
         },
         timePopUpdate({ type, hours, minutes, seconds }) {
-            console.log('timePopUpdate');
             this.offsets[type] = [hours, minutes, seconds].join(':');
             this.setOffsetsFromView();
             this.hideAllTimePopups();
