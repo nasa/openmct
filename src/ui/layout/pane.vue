@@ -24,12 +24,12 @@
         <button
             v-if="collapsable"
             class="l-pane__collapse-button c-icon-button"
-            @click="toggleCollapse"
+            @click="toggleCollapse($event)"
         ></button>
     </div>
     <button
         class="l-pane__expand-button"
-        @click="toggleCollapse"
+        @click="toggleCollapse($event)"
     >
         <span class="l-pane__expand-button__label">{{ label }}</span>
     </button>
@@ -41,6 +41,8 @@
 
 <script>
 const COLLAPSE_THRESHOLD_PX = 40;
+const HIDE_TREE_PARAM = 'hideTree';
+const HIDE_INSPECTOR_PARAM = 'hideInspector';
 
 export default {
     inject: ['openmct'],
@@ -77,45 +79,43 @@ export default {
         this.handleHideUrl();
     },
     methods: {
-
-        toggleCollapse: function () {
+        toggleCollapse: function (e) {
+            let target = '';
+            target = this.label === 'Browse' ? HIDE_TREE_PARAM : HIDE_INSPECTOR_PARAM;
             this.collapsed = !this.collapsed;
             if (this.collapsed) {
                 this.handleCollapse();
+                this.addHideParam(target);
             } else {
                 this.handleExpand();
+                this.removeHideParam(target);
             }
         },
         handleHideUrl: function () {
-            const HIDE_TREE_PARAM = 'hideTree';
-            const HIDE_INSPECTOR_PARAM = 'hideInspector';
-            const TREE_PANE_CLASS_NAME = 'l-shell__pane-tree';
-            const INSPECTOR_PANE_CLASS_NAME = 'l-shell__pane-inspector';
             let hideTree = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
             let hideInspector = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
-            if (hideTree) {
-                this.collapsePane(TREE_PANE_CLASS_NAME, HIDE_TREE_PARAM);
-            }
-
-            if (hideInspector) {
-                this.collapsePane(INSPECTOR_PANE_CLASS_NAME, HIDE_INSPECTOR_PARAM);
+            if (hideTree && this.label === 'Browse'
+            || hideInspector && this.label === 'Inspect') {
+                this.collapsePane();
             }
         },
-        collapsePane: function (PaneClass, param) {
-            for (let key of this.$el.classList) {
-                if (key === PaneClass && this.collapsable) {
-                    this.collapsed = true;
-                    this.handleCollapse();
-                    this.openmct.router.deleteSearchParam(param);
-                    break;
-                }
-            }
+        collapsePane: function () {
+            this.collapsed = true;
+            this.handleCollapse();
+        },
+        addHideParam: function (target) {
+            this.openmct.router.setSearchParam(target, 'true');
+        },
+        removeHideParam: function (target) {
+            this.openmct.router.deleteSearchParam(target);
         },
         handleCollapse: function () {
+            // add pane param
             this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
             this.$el.style[this.styleProp] = '';
         },
-        handleExpand() {
+        handleExpand: function () {
+            // remove hide pane param
             this.$el.style[this.styleProp] = this.currentSize;
             delete this.currentSize;
             delete this.dragCollapse;
