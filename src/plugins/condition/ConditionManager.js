@@ -41,7 +41,7 @@ export default class ConditionManager extends EventEmitter {
         this.subscriptions = {};
         this.telemetryObjects = {};
         this.testData = {
-            conditionTestData: [],
+            conditionTestInputs: this.conditionSetDomainObject.configuration.conditionTestData,
             applied: false
         };
         this.initialize();
@@ -154,8 +154,10 @@ export default class ConditionManager extends EventEmitter {
 
     updateConditionDescription(condition) {
         const found = this.conditionSetDomainObject.configuration.conditionCollection.find(conditionConfiguration => (conditionConfiguration.id === condition.id));
-        found.summary = condition.description;
-        this.persistConditions();
+        if (found.summary !== condition.description) {
+            found.summary = condition.description;
+            this.persistConditions();
+        }
     }
 
     initCondition(conditionConfiguration, index) {
@@ -414,8 +416,10 @@ export default class ConditionManager extends EventEmitter {
     }
 
     updateTestData(testData) {
-        this.testData = testData;
-        this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionTestData', this.testData.conditionTestInputs);
+        if (!_.isEqual(testData, this.testData)) {
+            this.testData = testData;
+            this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionTestData', this.testData.conditionTestInputs);
+        }
     }
 
     persistConditions() {

@@ -49,10 +49,6 @@ describe('the plugin', function () {
         child.style.height = '480px';
         element.appendChild(child);
 
-        openmct.time.timeSystem('utc', {
-            start: 1597160002854,
-            end: 1597181232854
-        });
         openmct.on('start', done);
         openmct.start(appHolder);
     });
@@ -105,6 +101,11 @@ describe('the plugin', function () {
         let planView;
 
         beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: 1597160002854,
+                end: 1597181232854
+            });
+
             planDomainObject = {
                 identifier: {
                     key: 'test-object',

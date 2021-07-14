@@ -113,7 +113,7 @@ import search from '../components/search.vue';
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 const RETURN_ALL_DESCDNDANTS = true;
-const TREE_ITEM_INDENT_PX = 15;
+const TREE_ITEM_INDENT_PX = 18;
 
 export default {
     name: 'MctTree',

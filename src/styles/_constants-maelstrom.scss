@@ -241,11 +241,12 @@ $shdwSelect: rgba(black, 0.5) 0 0.5px 3px;
 $controlDisabledOpacity: 0.2;
 
 // Menus
-$colorMenuBg: pullForward($colorBodyBg, 15%);
-$colorMenuFg: pullForward($colorBodyFg, 30%);
-$colorMenuIc: pullForward($colorKey, 15%);
-$colorMenuHovBg: $colorMenuIc;
-$colorMenuHovFg: pullForward($colorMenuFg, 10%);
+$colorMenuBg: $colorBodyBg;
+$colorMenuFg: $colorBodyFg;
+$colorMenuIc: $colorKey;
+$filterMenu:  brightness(1.4);
+$colorMenuHovBg: rgba($colorKey, 0.5);
+$colorMenuHovFg: $colorBodyFgEm;
 $colorMenuHovIc: $colorMenuHovFg;
 $colorMenuElementHilite: pullForward($colorMenuBg, 10%);
 $shdwMenu: rgba(black, 0.5) 0 1px 5px;
