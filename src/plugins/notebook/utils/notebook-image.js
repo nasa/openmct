@@ -58,9 +58,9 @@ export function saveNotebookImageDomainObject(openmct, object) {
             .then(result => {
                 if (result) {
                     resolve(object);
+                } else {
+                    reject();
                 }
-
-                reject();
             })
             .catch(e => {
                 console.error(e);

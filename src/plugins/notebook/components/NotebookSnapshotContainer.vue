@@ -36,7 +36,6 @@
                            :embed="snapshot.embedObject"
                            :is-snapshot-container="true"
                            :remove-action-string="'Delete Snapshot'"
-                           @updateEmbed="updateSnapshot"
                            @removeEmbed="removeSnapshot"
             />
         </span>
@@ -122,9 +121,6 @@ export default {
         startEmbedDrag(snapshot, event) {
             event.dataTransfer.setData('text/plain', snapshot.embedObject.id);
             event.dataTransfer.setData('openmct/snapshot/id', snapshot.embedObject.id);
-        },
-        updateSnapshot(snapshot) {
-            this.snapshotContainer.updateSnapshot(snapshot);
         }
     }
 };
