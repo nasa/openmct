@@ -45,7 +45,7 @@
     <div class="l-shell__drawer c-drawer c-drawer--push c-drawer--align-top"></div>
 
     <multipane
-        :class="['l-shell__main', isResizing ? 'l-shell__resizing' : '']"
+        :class="['l-shell__main', resizingClass]"
         type="horizontal"
     >
         <pane
@@ -53,8 +53,8 @@
             handle="after"
             label="Browse"
             collapsable
-            @openmct-start-drag="onStartResizing"
-            @openmct-end-drag="onEndResizing"
+            @start-resizing="onStartResizing"
+            @end-resizing="onEndResizing"
         >
             <button
                 slot="controls"
@@ -104,8 +104,8 @@
             handle="before"
             label="Inspect"
             collapsable
-            @openmct-start-drag="onStartResizing"
-            @openmct-end-drag="onEndResizing"
+            @start-resizing="onStartResizing"
+            @end-resizing="onEndResizing"
         >
             <Inspector
                 ref="inspector"
@@ -168,6 +168,9 @@ export default {
     computed: {
         toolbar() {
             return this.hasToolbar && this.isEditing;
+        },
+        resizingClass() {
+            return this.isResizing ? 'l-shell__resizing' : '';
         }
     },
     mounted() {
