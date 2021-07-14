@@ -8,7 +8,7 @@ let resolveFunction;
 
 let initialHash = '';
 
-describe('Application router utility functions', () => {
+xdescribe('Application router utility functions', () => {
     beforeAll(done => {
         appHolder = document.createElement('div');
         appHolder.style.width = '640px';
