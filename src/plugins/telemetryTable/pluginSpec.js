@@ -130,6 +130,11 @@ describe("the plugin", () => {
         let tableInstance;
 
         beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: 0,
+                end: 4
+            });
+
             testTelemetryObject = {
                 identifier: {
                     namespace: "",
