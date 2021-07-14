@@ -21,9 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div v-if="!activity"
-     class="c-inspector__properties c-inspect-properties"
->
+<div class="c-inspector__properties c-inspect-properties">
     <div class="c-inspect-properties__header">
         Details
     </div>
@@ -146,13 +144,6 @@ export default {
             return this.multiSelection
                 ? 'No properties to display for multiple items'
                 : 'No properties to display for this item';
-        },
-        activity() {
-            if (this.context === undefined) {
-                return;
-            }
-
-            return this.context.activity;
         },
         typeProperties() {
             if (!this.type) {

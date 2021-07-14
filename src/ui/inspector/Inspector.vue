@@ -41,7 +41,9 @@
                    type="vertical"
         >
             <pane class="c-inspector__properties">
-                <properties />
+                <Properties
+                    v-if="!activity"
+                />
                 <location />
                 <inspector-views />
             </pane>
@@ -120,7 +122,8 @@ export default {
                 key: '__styles',
                 name: 'Styles'
             }],
-            currentTabbedView: {}
+            currentTabbedView: {},
+            activity: undefined
         };
     },
     mounted() {
@@ -133,9 +136,12 @@ export default {
     methods: {
         updateInspectorViews(selection) {
             this.refreshComposition(selection);
+
             if (this.openmct.types.get('conditionSet')) {
                 this.refreshTabs(selection);
             }
+
+            this.setActivity(selection);
         },
         refreshComposition(selection) {
             if (selection.length > 0 && selection[0].length > 0) {
@@ -172,6 +178,12 @@ export default {
         },
         isCurrent(view) {
             return _.isEqual(this.currentTabbedView, view);
+        },
+        setActivity(selection) {
+            this.activity = selection
+                && selection.length
+                && selection[0].length
+                && selection[0][0].activity;
         }
     }
 };
