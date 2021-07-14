@@ -110,12 +110,10 @@ export default {
             this.openmct.router.deleteSearchParam(target);
         },
         handleCollapse: function () {
-            // add pane param
             this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
             this.$el.style[this.styleProp] = '';
         },
         handleExpand: function () {
-            // remove hide pane param
             this.$el.style[this.styleProp] = this.currentSize;
             delete this.currentSize;
             delete this.dragCollapse;
