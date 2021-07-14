@@ -24,12 +24,12 @@
         <button
             v-if="collapsable"
             class="l-pane__collapse-button c-icon-button"
-            @click="toggleCollapse($event)"
+            @click="toggleCollapse"
         ></button>
     </div>
     <button
         class="l-pane__expand-button"
-        @click="toggleCollapse($event)"
+        @click="toggleCollapse"
     >
         <span class="l-pane__expand-button__label">{{ label }}</span>
     </button>
