@@ -23,9 +23,11 @@ import DefaultClock from '../../utils/clock/DefaultClock';
 
 /**
  * A {@link openmct.TimeAPI.Clock} that updates the temporal bounds of the
- * application based on UTC time values provided by a ticking local clock,
- * with the periodicity specified.
- * @param {number} period The periodicity with which the clock should tick
+ * application based on a time providing telemetry domainObject.
+ *
+ * @param {openmct} Object Instance of OpenMCT
+ * @param {module:openmct.ObjectAPI~Identifier} identifier An object identifier for
+ * the time providing telemetry domainObject
  * @constructor
  */
 
@@ -41,7 +43,7 @@ export default class RemoteClock extends DefaultClock {
         this.name = 'Remote Clock';
         this.description = "Provides telemetry based timestamps from a configurable source.";
 
-        this.remoteTelemetryObject = undefined;
+        this.timeTelemetryObject = undefined;
         this.parseTime = undefined;
         this.metadata = undefined;
 
@@ -53,7 +55,7 @@ export default class RemoteClock extends DefaultClock {
     start() {
         this.openmct.time.on('timeSystem', this._timeSystemChange);
         this.openmct.objects.get(this.identifier).then((domainObject) => {
-            this.remoteTelemetryObject = domainObject;
+            this.timeTelemetryObject = domainObject;
             this.metadata = this.openmct.telemetry.getMetadata(domainObject);
             this._timeSystemChange();
             this._requestLatest();
@@ -64,7 +66,7 @@ export default class RemoteClock extends DefaultClock {
     }
 
     stop() {
-        this.openmct.time.on('timeSystem', this._timeSystemChange);
+        this.openmct.time.off('timeSystem', this._timeSystemChange);
         if (this._unsubscribe) {
             this._unsubscribe();
         }
@@ -72,15 +74,26 @@ export default class RemoteClock extends DefaultClock {
         this.removeAllListeners();
     }
 
+    /**
+     * Will start a subscription to the timeTelemetryObject as well
+     * handle the unsubscribe callback
+     *
+     * @private
+     */
     _subscribe() {
         this._unsubscribe = this.openmct.telemetry.subscribe(
-            this.remoteTelemetryObject,
+            this.timeTelemetryObject,
             this._processDatum
         );
     }
 
+    /**
+     * Will request the latest data for the timeTelemetryObject
+     *
+     * @private
+     */
     _requestLatest() {
-        this.openmct.telemetry.request(this.remoteTelemetryObject, {
+        this.openmct.telemetry.request(this.timeTelemetryObject, {
             size: 1,
             strategy: 'latest'
         }).then(data => {
@@ -88,6 +101,12 @@ export default class RemoteClock extends DefaultClock {
         });
     }
 
+    /**
+     * Function to parse the datum from the timeTelemetryObject as well
+     * as check if it's valid, calls "tick"
+     *
+     * @private
+     */
     _processDatum(datum) {
         let time = this.parseTime(datum);
 
@@ -96,6 +115,11 @@ export default class RemoteClock extends DefaultClock {
         }
     }
 
+    /**
+     * Callback function for timeSystem change events
+     *
+     * @private
+     */
     _timeSystemChange() {
         let timeSystem = this.openmct.time.timeSystem();
         let timeKey = timeSystem.key;
