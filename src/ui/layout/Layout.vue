@@ -160,8 +160,8 @@ export default {
             hasToolbar: false,
             actionCollection: undefined,
             triggerSync: false,
-            headExpanded,
             triggerReset: false,
+            headExpanded,
             isResizing: false
         };
     },
