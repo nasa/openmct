@@ -20,18 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// ***********************************************************
-//
-// This is a great place to put global configuration and
-// behavior that modifies Cypress.
-//
-// You can change the location of this file or turn off
-// automatically serving support files with the
-// 'supportFile' configuration option.
-//
-// You can read more here:
-// https://on.cypress.io/configuration
-// ***********************************************************
+//TODO Documentation
+const VISUAL_WAIT = 1000;
 
-import './commands';
-import '@percy/cypress';
+describe('Smoke test suite', () => {
+    it('about modal is visible', function () {
+        cy.visit('/');
+        cy.get('.l-shell__app-logo').click();
+        cy.get('.c-about__image').should('be.visible');
+        cy.wait(VISUAL_WAIT);
+        cy.percySnapshot();
+    });
+    it('can create example imagery object', function () {
+        cy.visit('/');
+        cy.get('.c-create-button').click();
+        cy.get('.c-menu').should('be.visible');
+        cy.get('.icon-image').click();
+        cy.get('.c-overlay__button-bar > .c-button--major').click();
+        cy.get('.c-imagery__main-image__image').should('be.visible');
+        cy.wait(VISUAL_WAIT);
+        cy.percySnapshot();
+    });
+});

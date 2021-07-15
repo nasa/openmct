@@ -27,6 +27,7 @@ describe('Smoke test suite', () => {
         cy.visit('/');
         cy.get('.l-shell__app-logo').click();
         cy.get('.c-about__image').should('be.visible');
+        cy.screenshot();
     });
     it('can create example imagery object', function () {
         cy.visit('/');

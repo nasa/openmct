@@ -1,8 +1,9 @@
 {
   "baseUrl": "http://localhost:8080",
   "chromeWebSecurity": false,
+  "defaultCommandTimeout": 10000,
   "experimentalFetchPolyfill": true,
-  "integrationFolder": "integration",
+  "integrationFolder": "e2e",
   "fixturesFolder": "fixtures",
   "pluginsFile": "plugins/index.js",
   "projectId": "jq2om7",
