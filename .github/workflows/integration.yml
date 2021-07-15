@@ -1,0 +1,24 @@
+name: integration
+on:
+  workflow_dispatch:
+    inputs: 
+      version:
+        description: 'Which branch do you want to test?' # Limited to branch for now
+        required: false
+        default: 'master' 
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.version }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - run: npm start
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          config: --project integration
