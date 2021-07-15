@@ -40,12 +40,14 @@ const DEFAULT_IMAGE_SAMPLES = [
     "https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg",
     "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
 ];
+const DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS = 20000;
+const MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS = 5000;
 
-const DEFAULT_IMAGE_DELAY = 20000;
+let openmctInstance;
 
 export default function () {
     return function install(openmct) {
-        console.log('isntall');
+        openmctInstance = openmct;
         openmct.types.addType('example.imagery', {
             key: 'example.imagery',
             name: 'Example Imagery',
@@ -56,7 +58,7 @@ export default function () {
             initialize: (object) => {
                 object.configuration = {
                     imageLocation: '',
-                    imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_DELAY,
+                    imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS,
                     imageSamples: []
                 };
 
@@ -114,8 +116,9 @@ export default function () {
                 },
                 {
                     key: 'imageLoadDelayInMilliSeconds',
-                    name: 'Image load delay (milliSeconds)',
+                    name: 'Image load delay (milliseconds)',
                     control: 'numberfield',
+                    required: true,
                     cssClass: 'l-inline',
                     property: [
                         "configuration",
@@ -129,6 +132,10 @@ export default function () {
         openmct.telemetry.addProvider(getHistoricalProvider());
         openmct.telemetry.addProvider(getLadProvider());
     };
+}
+
+function getCompassValues(min, max) {
+    return min + Math.random() * (max - min);
 }
 
 function getImageSamples(configuration) {
@@ -145,15 +152,28 @@ function getImageUrlListFromConfig(configuration) {
     return configuration.imageLocation.split(',');
 }
 
-function getCompassValues(min, max) {
-    return min + Math.random() * (max - min);
+function getImageLoadDelay(domainObject) {
+    const imageLoadDelay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+    if (!imageLoadDelay) {
+        openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS);
+
+        return DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS;
+    }
+
+    if (imageLoadDelay < MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS) {
+        openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS);
+
+        return MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS;
+    }
+
+    return imageLoadDelay;
 }
 
 function getRealtimeProvider() {
     return {
         supportsSubscribe: domainObject => domainObject.type === 'example.imagery',
         subscribe: (domainObject, callback) => {
-            const delay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+            const delay = getImageLoadDelay(domainObject);
             const interval = setInterval(() => {
                 callback(pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay));
             }, delay);
@@ -172,7 +192,7 @@ function getHistoricalProvider() {
                 && options.strategy !== 'latest';
         },
         request: (domainObject, options) => {
-            const delay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+            const delay = getImageLoadDelay(domainObject);
             let start = options.start;
             const end = Math.min(options.end, Date.now());
             const data = [];
@@ -193,7 +213,7 @@ function getLadProvider() {
                 && options.strategy === 'latest';
         },
         request: (domainObject, options) => {
-            const delay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+            const delay = getImageLoadDelay(domainObject);
 
             return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name, delay)]);
         }
