@@ -85,7 +85,7 @@
                 <button
                     ref="startOffset"
                     class="c-button c-conductor__delta-button"
-                    @click.prevent="showTimePopupStart"
+                    @click="showTimePopupStart"
                 >
                     {{ offsets.start }}
                 </button>
@@ -133,7 +133,7 @@
                 <button
                     ref="endOffset"
                     class="c-button c-conductor__delta-button"
-                    @click.prevent="showTimePopupEnd"
+                    @click="showTimePopupEnd"
                 >
                     {{ offsets.end }}
                 </button>
