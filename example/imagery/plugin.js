@@ -42,8 +42,6 @@ const DEFAULT_IMAGE_SAMPLES = [
 ];
 
 const DEFAULT_IMAGE_DELAY = 20000;
-const configuration = {};
-let imageSamples = DEFAULT_IMAGE_SAMPLES;
 
 export default function () {
     return function install(openmct) {
@@ -58,7 +56,8 @@ export default function () {
             initialize: (object) => {
                 object.configuration = {
                     imageLocation: '',
-                    imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_DELAY
+                    imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_DELAY,
+                    imageSamples: []
                 };
 
                 object.telemetry = {
@@ -132,26 +131,17 @@ export default function () {
     };
 }
 
-function compareConfig(newConfig) {
-    return JSON.stringify(configuration) === JSON.stringify(newConfig);
-}
+function getImageSamples(configuration) {
+    let imageSamples = DEFAULT_IMAGE_SAMPLES;
 
-function saveConfig(newConfig) {
-    configuration.imageLoadDelayInMilliSeconds = newConfig.imageLoadDelayInMilliSeconds;
-    configuration.imageLocation = newConfig.imageLocation;
-}
-
-function updateImageSamples() {
-    imageSamples = [];
-
-    if (configuration.imageLocation.length) {
-        imageSamples = getImageUrlListFromConfig();
-    } else {
-        imageSamples = DEFAULT_IMAGE_SAMPLES;
+    if (configuration.imageLocation && configuration.imageLocation.length) {
+        imageSamples = getImageUrlListFromConfig(configuration);
     }
+
+    return imageSamples;
 }
 
-function getImageUrlListFromConfig() {
+function getImageUrlListFromConfig(configuration) {
     return configuration.imageLocation.split(',');
 }
 
@@ -165,7 +155,7 @@ function getRealtimeProvider() {
         subscribe: (domainObject, callback) => {
             const delay = domainObject.configuration.imageLoadDelayInMilliSeconds;
             const interval = setInterval(() => {
-                callback(pointForTimestamp(Date.now(), domainObject.name, delay));
+                callback(pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay));
             }, delay);
 
             return () => {
@@ -182,18 +172,12 @@ function getHistoricalProvider() {
                 && options.strategy !== 'latest';
         },
         request: (domainObject, options) => {
-            const isConfigSame = compareConfig(domainObject.configuration);
-            if (!isConfigSame) {
-                saveConfig(domainObject.configuration);
-                updateImageSamples();
-            }
-
             const delay = domainObject.configuration.imageLoadDelayInMilliSeconds;
             let start = options.start;
             const end = Math.min(options.end, Date.now());
             const data = [];
             while (start <= end && data.length < delay) {
-                data.push(pointForTimestamp(start, domainObject.name, delay));
+                data.push(pointForTimestamp(start, domainObject.name, getImageSamples(domainObject.configuration), delay));
                 start += delay;
             }
 
@@ -216,7 +200,7 @@ function getLadProvider() {
     };
 }
 
-function pointForTimestamp(timestamp, name, delay) {
+function pointForTimestamp(timestamp, name, imageSamples, delay) {
     const url = imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
     const urlItems = url.split('/');
     const imageDownloadName = `example.imagery.${urlItems[urlItems.length - 1]}`;
