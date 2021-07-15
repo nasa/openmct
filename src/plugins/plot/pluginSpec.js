@@ -279,6 +279,10 @@ describe("the plugin", function () {
         let plotView;
 
         beforeEach(() => {
+            openmct.time.timeSystem("utc", {
+                start: 0,
+                end: 4
+            });
             const getFunc = openmct.$injector.get;
             spyOn(openmct.$injector, "get")
                 .withArgs("exportImageService").and.returnValue({
@@ -567,7 +571,7 @@ describe("the plugin", function () {
             expect(legend.length).toBe(6);
         });
 
-        it("Renders X-axis ticks for the telemetry object", () => {
+        xit("Renders X-axis ticks for the telemetry object", () => {
             let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
             expect(xAxisElement.length).toBe(1);
 
