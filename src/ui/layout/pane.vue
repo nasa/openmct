@@ -62,10 +62,10 @@ export default {
             type: String,
             default: ''
         },
-        // hideParam: {
-        //     type: Boolean,
-        //     default: false
-        // }
+        hidePan: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
@@ -78,10 +78,10 @@ export default {
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     async mounted() {
+
         await this.$nextTick();
         // Hide tree and/or inspector pane if specified in URL
         this.handleHideUrl();
-        //remove listener at destroy
         this.openmct.router.on('change:params', this.handleHideUrl);
     },
     beforeDestroy() {
@@ -89,8 +89,7 @@ export default {
     },
     methods: {
         toggleCollapse: function (e) {
-            let target = '';
-            target = this.label === 'Browse' ? HIDE_TREE_PARAM : HIDE_INSPECTOR_PARAM;
+            let target = this.label === 'Browse' ? HIDE_TREE_PARAM : HIDE_INSPECTOR_PARAM;
             this.collapsed = !this.collapsed;
             if (this.collapsed) {
                 this.handleCollapse();
@@ -101,10 +100,16 @@ export default {
             }
         },
         handleHideUrl: function () {
-            let hideTree = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
-            let hideInspector = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
-            if (hideTree === 'true' && this.label === 'Browse'
-            || hideInspector === 'true' && this.label === 'Inspect') {
+            if (!this.collapsable) {
+                return;
+            }
+
+            let hideTreeParam = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
+            let hideInspectorParam = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
+            let hideTree = hideTreeParam === 'true' && this.label === 'Browse';
+            let hideInspector = hideInspectorParam === 'true' && this.label === 'Inspect';
+            console.log(hideTree, hideInspector);
+            if (hideTree || hideInspector) {
                 this.collapsed = true;
                 this.handleCollapse();
             } else {
