@@ -53,7 +53,6 @@
             class="l-shell__pane-tree"
             handle="after"
             label="Browse"
-            
             collapsable
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
@@ -105,7 +104,6 @@
             class="l-shell__pane-inspector l-pane--holds-multipane"
             handle="before"
             label="Inspect"
-            
             collapsable
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
@@ -184,13 +182,6 @@ export default {
         this.openmct.selection.on('change', this.toggleHasToolbar);
     },
     methods: {
-        getHideParam(paramName) {
-            if (this.openmct.router.getSearchParam(paramName) === 'true') {
-                return true;
-            }
-
-            return false;
-        },
         enterFullScreen() {
             let docElm = document.documentElement;
 

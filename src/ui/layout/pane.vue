@@ -43,6 +43,9 @@
 const COLLAPSE_THRESHOLD_PX = 40;
 const HIDE_TREE_PARAM = 'hideTree';
 const HIDE_INSPECTOR_PARAM = 'hideInspector';
+const PANE_INSPECTOR = 'Inspect';
+const PANE_TREE = 'Browse';
+
 
 export default {
     inject: ['openmct'],
@@ -61,10 +64,6 @@ export default {
         label: {
             type: String,
             default: ''
-        },
-        hidePan: {
-            type: Boolean,
-            default: false
         }
     },
     data() {
@@ -78,7 +77,6 @@ export default {
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     async mounted() {
-
         await this.$nextTick();
         // Hide tree and/or inspector pane if specified in URL
         this.handleHideUrl();
@@ -89,7 +87,7 @@ export default {
     },
     methods: {
         toggleCollapse: function (e) {
-            let target = this.label === 'Browse' ? HIDE_TREE_PARAM : HIDE_INSPECTOR_PARAM;
+            let target = this.label === PANE_TREE ? HIDE_TREE_PARAM : HIDE_INSPECTOR_PARAM;
             this.collapsed = !this.collapsed;
             if (this.collapsed) {
                 this.handleCollapse();
@@ -106,9 +104,8 @@ export default {
 
             let hideTreeParam = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
             let hideInspectorParam = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
-            let hideTree = hideTreeParam === 'true' && this.label === 'Browse';
-            let hideInspector = hideInspectorParam === 'true' && this.label === 'Inspect';
-            console.log(hideTree, hideInspector);
+            let hideTree = hideTreeParam === 'true' && this.label === PANE_TREE;
+            let hideInspector = hideInspectorParam === 'true' && this.label === PANE_INSPECTOR;
             if (hideTree || hideInspector) {
                 this.collapsed = true;
                 this.handleCollapse();
