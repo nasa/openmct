@@ -107,7 +107,7 @@ module.exports = (config) => {
             suppressPassed: false,
             suppressSkipped: true,
             showSpecTiming: true,
-            failFast: true
+            failFast: false
         },
         preprocessors: {
             'indexTest.js': ['webpack', 'sourcemap']
