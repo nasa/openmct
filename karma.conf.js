@@ -60,7 +60,7 @@ module.exports = (config) => {
         client: {
             jasmine: {
                 random: false,
-                timeoutInterval: 30000
+                timeoutInterval: 5000
             }
         },
         customLaunchers: {
