@@ -18,18 +18,18 @@
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
- *****************************************************************************/import {
+ *****************************************************************************/
+
+import {
     createOpenMct,
-    resetApplicationState,
-    spyOnBuiltins
+    resetApplicationState
 } from 'utils/testing';
 
-fdescribe("the pane", () => {
+describe("the pane", () => {
     let openmct;
     let appHolder;
     let element;
     let child;
-    // let mockObjectPath;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -57,20 +57,10 @@ fdescribe("the pane", () => {
     afterEach(() => {
         return resetApplicationState(openmct);
     });
-
-    it('Adding hideTree=true and hideInspector=true in URL makes the tree or inspector pane collapse', async () => {
-        // add params to url
-        // check width of pane
-        // $('.l-shell__pane-tree').width()
-        // $('.l-shell__pane-inspector').width()
-        openmct.router.setSearchParam('hideTree', 'true');
-        openmct.router.setSearchParam('hideInspector', 'true');
-        spyOnBuiltins(['reload']);
-        await window.location.reload();
-        location.reload();
-        // console.log(document.body);
-        let collapsedTreeElement = document.querySelector('.l-shell__pane-tree .l-pane--collapsed');
-        let collapsedInspectorElement = document.querySelector('.l-shell__pane-inspector .l-pane--collapsed');
-        expect(collapsedTreeElement && collapsedInspectorElement).toBeTruthy();
+    it('toggling tree and inspector will toggle hideTree=true and hideInspector=true URL params', () => {
+        document.querySelector('.l-shell__pane-inspector .l-pane__collapse-button ').click();
+        document.querySelector('.l-shell__pane-tree .l-pane__collapse-button ').click();
+        expect(openmct.router.getSearchParam('hideTree')
+        && openmct.router.getSearchParam('hideInspector')).toBeTruthy();
     });
 });
