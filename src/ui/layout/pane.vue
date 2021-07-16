@@ -61,7 +61,11 @@ export default {
         label: {
             type: String,
             default: ''
-        }
+        },
+        // hideParam: {
+        //     type: Boolean,
+        //     default: false
+        // }
     },
     data() {
         return {
@@ -77,6 +81,11 @@ export default {
         await this.$nextTick();
         // Hide tree and/or inspector pane if specified in URL
         this.handleHideUrl();
+        //remove listener at destroy
+        this.openmct.router.on('change:params', this.handleHideUrl);
+    },
+    beforeDestroy() {
+        this.openmct.router.off('change:params', this.handleHideUrl);
     },
     methods: {
         toggleCollapse: function (e) {
@@ -94,14 +103,14 @@ export default {
         handleHideUrl: function () {
             let hideTree = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
             let hideInspector = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
-            if (hideTree && this.label === 'Browse'
-            || hideInspector && this.label === 'Inspect') {
-                this.collapsePane();
+            if (hideTree === 'true' && this.label === 'Browse'
+            || hideInspector === 'true' && this.label === 'Inspect') {
+                this.collapsed = true;
+                this.handleCollapse();
+            } else {
+                this.collapsed = false;
+                this.handleExpand();
             }
-        },
-        collapsePane: function () {
-            this.collapsed = true;
-            this.handleCollapse();
         },
         addHideParam: function (target) {
             this.openmct.router.setSearchParam(target, 'true');

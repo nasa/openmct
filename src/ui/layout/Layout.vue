@@ -172,7 +172,14 @@ export default {
         },
         resizingClass() {
             return this.isResizing ? 'l-shell__resizing' : '';
-        }
+        },
+        // getHideParam(paramName) {
+        //     if (this.openmct.router.getSearchParam(paramName) === 'true') {
+        //         return true;
+        //     }
+
+        //     return false;
+        // }
     },
     mounted() {
         this.openmct.editor.on('isEditing', (isEditing) => {
