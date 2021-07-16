@@ -227,7 +227,7 @@ export default class ConditionManager extends EventEmitter {
     removeCondition(id) {
         let index = this.conditions.findIndex(item => item.id === id);
         if (index > -1) {
-            this.conditions[index].destroy();
+            this.conditions[index].destroy(true);
             this.conditions.splice(index, 1);
         }
 
@@ -437,7 +437,7 @@ export default class ConditionManager extends EventEmitter {
         }
 
         this.conditions.forEach((condition) => {
-            condition.destroy();
+            condition.destroy(false);
         });
     }
 }

@@ -138,7 +138,7 @@ export default class Condition extends EventEmitter {
     }
 
     updateCriteria(criterionConfigurations) {
-        this.destroyCriteria();
+        this.destroyCriteria(true);
         this.createCriteria(criterionConfigurations);
     }
 
@@ -204,7 +204,7 @@ export default class Condition extends EventEmitter {
         }
     }
 
-    destroyCriterion(id) {
+    destroyCriterion(id, isRemoved) {
         let found = this.findCriterion(id);
         if (found) {
             let criterion = found.item;
@@ -216,7 +216,9 @@ export default class Condition extends EventEmitter {
             });
             criterion.destroy();
             this.criteria.splice(found.index, 1);
-            this.updateDescription();
+            if (isRemoved) {
+                this.updateDescription();
+            }
 
             return true;
         }
@@ -309,17 +311,17 @@ export default class Condition extends EventEmitter {
         return this.criteria;
     }
 
-    destroyCriteria() {
+    destroyCriteria(isRemoved) {
         let success = true;
         //looping through the array backwards since destroyCriterion modifies the criteria array
         for (let i = this.criteria.length - 1; i >= 0; i--) {
-            success = success && this.destroyCriterion(this.criteria[i].id);
+            success = success && this.destroyCriterion(this.criteria[i].id, isRemoved);
         }
 
         return success;
     }
 
-    destroy() {
-        this.destroyCriteria();
+    destroy(isRemoved) {
+        this.destroyCriteria(isRemoved);
     }
 }
