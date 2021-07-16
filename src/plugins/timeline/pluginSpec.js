@@ -51,7 +51,15 @@ describe('the plugin', function () {
             }
         ];
 
-        openmct = createOpenMct();
+        const timeSystem = {
+            timeSystemKey: 'utc',
+            bounds: {
+                start: 1597160002854,
+                end: 1597181232854
+            }
+        };
+
+        openmct = createOpenMct(timeSystem);
         openmct.install(new TimelinePlugin());
 
         objectDef = openmct.types.get('time-strip').definition;
@@ -63,11 +71,6 @@ describe('the plugin', function () {
         child.style.width = '640px';
         child.style.height = '480px';
         element.appendChild(child);
-
-        openmct.time.timeSystem('utc', {
-            start: 1597160002854,
-            end: 1597181232854
-        });
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -88,7 +91,6 @@ describe('the plugin', function () {
     });
 
     describe('the time-strip object', () => {
-
         it('is creatable', () => {
             expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
