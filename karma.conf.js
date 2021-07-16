@@ -25,7 +25,7 @@
 const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['progress', 'html', 'junit'];
+const reporters = ['spec', 'html', 'junit'];
 
 if (coverageEnabled) {
     reporters.push('coverage-istanbul');
@@ -88,11 +88,6 @@ module.exports = (config) => {
             outputFile: "test-results.xml",
             useBrowserName: false
         },
-        browserConsoleLogOptions: {
-            level: "error",
-            format: "%b %T: %m",
-            terminal: true
-        },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
             dir: process.env.CIRCLE_ARTIFACTS
@@ -104,6 +99,15 @@ module.exports = (config) => {
                     lines: 66
                 }
             }
+        },
+        specReporter: {
+            maxLogLines: 5,
+            suppressErrorSummary: true,
+            suppressFailed: false,
+            suppressPassed: false,
+            suppressSkipped: true,
+            showSpecTiming: true,
+            failFast: true
         },
         preprocessors: {
             'indexTest.js': ['webpack', 'sourcemap']

@@ -83,6 +83,9 @@ export function setDefaultNotebookPage(page) {
 
 export function validateNotebookStorageObject() {
     const notebookStorage = getDefaultNotebook();
+    if (!notebookStorage) {
+        return true;
+    }
 
     let valid = false;
     if (notebookStorage) {

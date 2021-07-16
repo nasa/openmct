@@ -218,7 +218,7 @@ describe("The Imagery View Layout", () => {
         });
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
 
         openmct.on('start', done);
         openmct.start(appHolder);
