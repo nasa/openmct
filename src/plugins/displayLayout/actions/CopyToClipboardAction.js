@@ -14,7 +14,7 @@ export default class CopyToClipboardAction {
 
     invoke(objectPath, view = {}) {
         const viewContext = view.getViewContext && view.getViewContext();
-        const formattedValue = viewContext.row.rowformattedValueForCopy();
+        const formattedValue = viewContext.row.formattedValueForCopy();
 
         clipboard.updateClipboard(formattedValue)
             .then(() => {
@@ -29,7 +29,7 @@ export default class CopyToClipboardAction {
         const viewContext = view.getViewContext && view.getViewContext();
         const row = viewContext && viewContext.row;
         if (!row) {
-            return;
+            return false;
         }
 
         return row.formattedValueForCopy

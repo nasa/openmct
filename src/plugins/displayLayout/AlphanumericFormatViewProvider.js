@@ -35,8 +35,9 @@ class AlphanumericFormatView {
     show(element) {
         this.component = new Vue({
             el: element,
+            name: 'AlphanumericFormat',
             components: {
-                AlphanumericFormat: AlphanumericFormat.default
+                AlphanumericFormat
             },
             provide: {
                 openmct: this.openmct,

@@ -52,6 +52,7 @@
 
 <script>
 export default {
+    name: 'AlphanumericFormat',
     inject: ['openmct', 'objectPath'],
     data() {
         return {
