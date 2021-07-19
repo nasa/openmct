@@ -434,6 +434,8 @@ define([
                     Browse(this);
                 }
 
+                window.addEventListener('beforeunload', this.destroy.bind(this));
+
                 this.router.start();
                 this.emit('start');
             }.bind(this));

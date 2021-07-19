@@ -23,6 +23,7 @@
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
 import { NOTEBOOK_TYPE } from '../../notebook/notebook-constants.js';
+import CouchChangesFeed from 'raw-loader!./CouchChangesFeed';
 
 const REV = "_rev";
 const ID = "_id";
@@ -47,7 +48,7 @@ export default class CouchObjectProvider {
         let provider = this;
         let sharedWorker;
 
-        sharedWorker = new SharedWorker('dist/CouchChangesFeed.js');
+        sharedWorker = new SharedWorker('data:application/javascript;base64,' + btoa(CouchChangesFeed));
         sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
         sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
         sharedWorker.port.start();
@@ -391,54 +392,145 @@ export default class CouchObjectProvider {
      * @private
      */
     observeObjectChanges() {
+
+        let filter = {selector: {}};
+
+        if (this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.length > 1) {
+            filter.selector.$or = this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES
+                .map(type => {
+                    return {
+                        'model': {
+                            type
+                        }
+                    };
+                });
+        } else {
+            filter.selector.model = {
+                type: this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES[0]
+            };
+        }
+
+        // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
+        // style=main_only returns only the current winning revision of the document
+        let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
+
+        let body = {};
+        if (filter) {
+            url = `${url}&filter=_selector`;
+            body = JSON.stringify(filter);
+        }
+
+        if (SharedWorker === undefined) {
+            this.fetchChanges(url, body);
+        } else {
+            this.initiateSharedWorkerFetchChanges(url, body);
+        }
+
+    }
+
+    /**
+     * @private
+     */
+    initiateSharedWorkerFetchChanges(url, body) {
         if (!this.changesFeedSharedWorker) {
             this.changesFeedSharedWorker = this.startSharedWorker();
-            let filter = {selector: {}};
-
-            if (this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.length > 1) {
-                filter.selector.$or = this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES
-                    .map(type => {
-                        return {
-                            'model': {
-                                type
-                            }
-                        };
-                    });
-            } else {
-                filter.selector.model = {
-                    type: this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES[0]
-                };
-            }
-
-            const controller = new AbortController();
-            //TODO: handle aborting fetch requests
-            // const signal = controller.signal;
 
             if (typeof this.stopObservingObjectChanges === 'function') {
                 this.stopObservingObjectChanges();
             }
 
             this.stopObservingObjectChanges = () => {
-                controller.abort();
                 delete this.stopObservingObjectChanges;
             };
 
-            // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
-            // style=main_only returns only the current winning revision of the document
-            let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
-
-            let body = {};
-            if (filter) {
-                url = `${url}&filter=_selector`;
-                body = JSON.stringify(filter);
-            }
-
-            //TODO: How do we abort the request here? SharedWorkers don't allow cloning signals
             this.changesFeedSharedWorker.port.postMessage({
                 request: 'changes',
                 body,
                 url
             });
+        }
+    }
+
+    async fetchChanges(url, body) {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        if (typeof this.stopObservingObjectChanges === 'function') {
+            this.stopObservingObjectChanges();
+        }
+
+        this.stopObservingObjectChanges = () => {
+            controller.abort();
+            delete this.stopObservingObjectChanges;
+        };
+
+        let error = false;
+
+        if (typeof this.stopObservingObjectChanges === 'function') {
+            this.stopObservingObjectChanges();
+        }
+
+        this.stopObservingObjectChanges = () => {
+            controller.abort();
+            delete this.stopObservingObjectChanges;
+        };
+
+        const response = await fetch(url, {
+            method: 'POST',
+            signal,
+            headers: {
+                "Content-Type": 'application/json'
+            },
+            body
+        });
+
+        let reader;
+
+        if (response.body === undefined) {
+            error = true;
+        } else {
+            reader = response.body.getReader();
+        }
+
+        while (!error) {
+            const {done, value} = await reader.read();
+            //done is true when we lose connection with the provider
+            if (done) {
+                error = true;
+            }
+
+            if (value) {
+                let chunk = new Uint8Array(value.length);
+                chunk.set(value, 0);
+                const decodedChunk = new TextDecoder("utf-8").decode(chunk).split('\n');
+                if (decodedChunk.length && decodedChunk[decodedChunk.length - 1] === '') {
+                    decodedChunk.forEach((doc, index) => {
+                        try {
+                            const object = JSON.parse(doc);
+                            object.identifier = {
+                                namespace: this.namespace,
+                                key: object.id
+                            };
+                            let keyString = this.openmct.objects.makeKeyString(object.identifier);
+                            let observersForObject = this.observers[keyString];
+
+                            if (observersForObject) {
+                                observersForObject.forEach(async (observer) => {
+                                    const updatedObject = await this.get(object.identifier);
+                                    observer(updatedObject);
+                                });
+                            }
+                        } catch (e) {
+                            //do nothing;
+                        }
+                    });
+                }
+            }
+
+        }
+
+        if (error && Object.keys(this.observers).length > 0) {
+            this.observeObjectChanges();
         }
     }
 

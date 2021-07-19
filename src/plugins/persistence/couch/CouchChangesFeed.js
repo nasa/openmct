@@ -1,6 +1,8 @@
 (function () {
     const connections = [];
     let connected = false;
+    const controller = new AbortController();
+    const signal = controller.signal;
 
     self.onconnect = function (e) {
         let port = e.ports[0];
@@ -14,6 +16,10 @@
         port.onmessage = async function (event) {
             if (event.data.request === 'close') {
                 connections.splice(event.data.connectionId - 1, 1);
+                if (connections.length <= 0) {
+                    // abort any outstanding requests if there's nobody listening to it.
+                    controller.abort();
+                }
 
                 return;
             }
@@ -36,6 +42,7 @@
                     headers: {
                         "Content-Type": 'application/json'
                     },
+                    signal,
                     body
                 });
 
