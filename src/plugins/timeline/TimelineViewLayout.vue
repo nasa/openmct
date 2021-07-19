@@ -25,13 +25,11 @@
      class="c-timeline-holder"
 >
     <div v-if="useIndependentTime"
-         class="c-conductor l-shell__time-conductor"
+         class="c-conductor-holder--compact"
     >
-        <div class="c-conductor__time-bounds">
-            <independent-time-conductor :options="timeOptions"
-                                        @updated="saveTimeOptions"
-            />
-        </div>
+        <independent-time-conductor :options="timeOptions"
+                                    @updated="saveTimeOptions"
+        />
     </div>
     <div class="c-timeline">
         <div v-for="timeSystemItem in timeSystems"

@@ -50,13 +50,6 @@
         }
     }
 
-    [class*='-delta'] {
-        &:before {
-            content: $glyph-icon-clock;
-            font-family: symbolsfont;
-        }
-    }
-
     &.is-fixed-mode {
         .c-conductor-axis {
             &__zoom-indicator {
@@ -181,6 +174,18 @@
     }
 }
 
+.c-conductor-holder--compact {
+    .c-conductor {
+        &__time-bounds {
+            display: flex;
+        }
+    }
+
+    .is-realtime-mode .c-conductor__end-fixed {
+        display: none !important;
+    }
+}
+
 .c-conductor-input {
     color: $colorInputFg;
     display: flex;
@@ -237,7 +242,6 @@
     }
 }
 
-// Prototype
 [class^='pr-tc-input-menu'] {
     // Uses ^= here to target both start and end menus
     background: $colorBodyBg;
@@ -252,22 +256,21 @@
     box-shadow: $shdwMenu;
     padding: $interiorMargin;
     position: absolute;
+    left: 8px;
     bottom: 24px;
     z-index: 99;
-
-    &[class*='--start'] {
-        left: -25px;
-    }
-
-    &[class*='--end'] {
-        right: 0;
-    }
 
     &[class*='--bottom'] {
         bottom: auto;
         top: 24px;
     }
 }
+
+.l-shell__time-conductor .pr-tc-input-menu--end {
+    left: auto;
+    right: 0;
+}
+
 
 [class^='pr-time'] {
     &[class*='label'] {

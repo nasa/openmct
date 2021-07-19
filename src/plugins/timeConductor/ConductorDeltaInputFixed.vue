@@ -26,6 +26,7 @@
         >
         <date-picker
             v-if="isUTCBased"
+            class="c-ctrl-wrapper--menus-left"
             :bottom="offsets !== undefined"
             :default-date-time="formattedBounds.start"
             :formatter="timeFormatter"
