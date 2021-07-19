@@ -101,7 +101,6 @@ export default {
                 buttons: [
                     {
                         label: 'Cancel',
-                        emphasis: true,
                         callback: () => {
                             painterroInstance.dismiss();
                             annotateOverlay.dismiss();
@@ -109,6 +108,7 @@ export default {
                     },
                     {
                         label: 'Save',
+                        emphasis: true,
                         callback: () => {
                             painterroInstance.save((snapshotObject) => {
                                 annotateOverlay.dismiss();

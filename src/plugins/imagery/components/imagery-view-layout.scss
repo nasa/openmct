@@ -22,6 +22,9 @@
         &__bg {
             background-color: $colorPlotBg;
             border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex: 1 1 auto;
             height: 0;
 
@@ -33,7 +36,6 @@
         &__image {
             height: 100%;
             width: 100%;
-            object-fit: contain;
         }
     }
 
@@ -192,6 +194,10 @@
                 margin-right: $interiorMarginSm;
             }
         }
+
+        .s-status-taking-snapshot & {
+            display: none;
+        }
     }
 
     &__lc {
@@ -273,6 +279,10 @@
             content: $glyph-icon-play;
         }
     }
+
+    .s-status-taking-snapshot & {
+        display: none;
+    }
 }
 
 .c-imagery__prev-next-buttons {
@@ -286,6 +296,10 @@
 
     .c-nav {
         pointer-events: all;
+    }
+
+    .s-status-taking-snapshot & {
+        display: none;
     }
 }
 
