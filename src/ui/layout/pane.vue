@@ -46,7 +46,6 @@ const HIDE_INSPECTOR_PARAM = 'hideInspector';
 const PANE_INSPECTOR = 'Inspect';
 const PANE_TREE = 'Browse';
 
-
 export default {
     inject: ['openmct'],
     props: {

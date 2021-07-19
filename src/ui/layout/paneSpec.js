@@ -30,6 +30,7 @@ describe("the pane", () => {
     let appHolder;
     let element;
     let child;
+    let resolveFunction;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -57,10 +58,33 @@ describe("the pane", () => {
     afterEach(() => {
         return resetApplicationState(openmct);
     });
-    it('toggling tree and inspector will toggle hideTree=true and hideInspector=true URL params', () => {
-        document.querySelector('.l-shell__pane-inspector .l-pane__collapse-button ').click();
-        document.querySelector('.l-shell__pane-tree .l-pane__collapse-button ').click();
-        expect(openmct.router.getSearchParam('hideTree')
-        && openmct.router.getSearchParam('hideInspector')).toBeTruthy();
+    it('toggling tree will toggle tree hide params', (done) => {
+        document.querySelector('.l-shell__pane-tree .l-pane__collapse-button').click();
+        expect(openmct.router.getSearchParam('hideTree')).toBe('true');
+        done();
     });
+
+    it('tree pane collapses when adding hide tree param in URL', () => {
+        openmct.router.setSearchParam('hideTree', 'true');
+        expect(document.querySelector('.l-shell__pane-tree.l-pane--collapsed')).toBeDefined();
+    });
+
+    it('inspector pane collapses when adding hide inspector param in URL', () => {
+        openmct.router.setSearchParam('hideInspector', 'true');
+        expect(document.querySelector('.l-shell__pane-inspector.l-pane--collapsed')).toBeDefined();
+    });
+
+    it('toggle inspector pane will toggle inspector hide param', (done) => {
+        // There's a short delay on addubg the param.
+        resolveFunction = () => {
+            setTimeout(() => {
+                expect(openmct.router.getSearchParam('hideInspector')).toBe('true');
+                done();
+            }, 500);
+        };
+
+        openmct.router.on('change:params', resolveFunction);
+        document.querySelector('.l-shell__pane-inspector .l-pane__collapse-button').click();
+    });
+
 });
