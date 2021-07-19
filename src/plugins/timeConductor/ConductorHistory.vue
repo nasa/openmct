@@ -151,7 +151,7 @@ export default {
                     cssClass: 'icon-history',
                     name,
                     description,
-                    callBack: () => this.selectTimespan(timespan)
+                    onItemClicked: () => this.selectTimespan(timespan)
                 };
             });
 
@@ -160,7 +160,7 @@ export default {
                 description: 'Past timeframes, ordered by latest first',
                 isDisabled: true,
                 name: 'Past timeframes, ordered by latest first',
-                callBack: () => {}
+                onItemClicked: () => {}
             });
 
             return history;
@@ -171,7 +171,7 @@ export default {
                     cssClass: 'icon-clock',
                     name: preset.label,
                     description: preset.label,
-                    callBack: () => this.selectPresetBounds(preset.bounds)
+                    onItemClicked: () => this.selectPresetBounds(preset.bounds)
                 };
             });
         },
