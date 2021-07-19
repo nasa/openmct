@@ -74,7 +74,8 @@ class MenuAPI {
 
     actionsToMenuItems(actions, objectPath, view) {
         return actions.map(action => {
-            if (Array.isArray(action)) {
+            const isActionGroup = Array.isArray(action);
+            if (isActionGroup) {
                 action = this.actionsToMenuItems(action, objectPath, view);
             } else {
                 action.onItemClicked = () => {

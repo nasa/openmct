@@ -19,43 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-import ImageryViewLayout from './components/ImageryViewLayout.vue';
-import Vue from 'vue';
-
-class ImageryView {
-    constructor(openmct, domainObject, objectPath) {
-        this.openmct = openmct;
-        this.domainObject = domainObject;
-        this.objectPath = objectPath;
-        this.component = undefined;
-    }
-
-    show(element) {
-        this.component = new Vue({
-            el: element,
-            components: {
-                ImageryViewLayout
-            },
-            provide: {
-                openmct: this.openmct,
-                domainObject: this.domainObject,
-                objectPath: this.objectPath,
-                currentView: this
-            },
-            template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
-        });
-    }
-
-    destroy() {
-        this.component.$destroy();
-        this.component = undefined;
-    }
-
-    _getInstance() {
-        return this.component;
-    }
-}
+import ImageryView from './ImageryView';
 
 export default function ImageryViewProvider(openmct) {
     const type = 'example.imagery';

@@ -19,75 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import TableComponent from './components/table.vue';
-import TelemetryTable from './TelemetryTable';
-import Vue from 'vue';
 
-class TelemetryTableView {
-    constructor(openmct, domainObject, objectPath) {
-        this.openmct = openmct;
-        this.domainObject = domainObject;
-        this.objectPath = objectPath;
-        this.component = undefined;
-
-        this.table = new TelemetryTable(domainObject, openmct);
-    }
-
-    getViewContext() {
-        if (this.component) {
-            return this.component.$refs.tableComponent.getViewContext();
-        } else {
-            return {
-                type: 'telemetry-table'
-            };
-        }
-    }
-
-    onEditModeChange(editMode) {
-        this.component.isEditing = editMode;
-    }
-
-    onClearData() {
-        this.table.clearData();
-    }
-
-    getTable() {
-        return this.table;
-    }
-
-    destroy(element) {
-        this.component.$destroy();
-        this.component = undefined;
-    }
-
-    show(element, editMode) {
-        this.component = new Vue({
-            el: element,
-            components: {
-                TableComponent
-            },
-            provide: {
-                openmct: this.openmct,
-                objectPath: this.objectPath,
-                table: this.table,
-                currentView: this
-            },
-            data() {
-                return {
-                    isEditing: editMode,
-                    marking: {
-                        disableMultiSelect: false,
-                        enable: true,
-                        rowName: '',
-                        rowNamePlural: '',
-                        useAlternateControlBar: false
-                    }
-                };
-            },
-            template: '<table-component ref="tableComponent" :is-editing="isEditing" :marking="marking"></table-component>'
-        });
-    }
-}
+import TelemetryTableView from './TelemetryTableView';
 
 export default function TelemetryTableViewProvider(openmct) {
     function hasTelemetry(domainObject) {

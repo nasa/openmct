@@ -25,8 +25,8 @@ const exportCSV = {
     key: 'export-csv-all',
     description: "Export this view's data",
     cssClass: 'icon-download labeled',
-    invoke: (objectPath, viewProvider) => {
-        viewProvider.getViewContext().exportAllDataAsCSV();
+    invoke: (objectPath, view) => {
+        view.getViewContext().exportAllDataAsCSV();
     },
     group: 'view'
 };
@@ -36,8 +36,8 @@ const exportMarkedDataAsCSV = {
     key: 'export-csv-marked',
     description: "Export marked rows as CSV",
     cssClass: 'icon-download labeled',
-    invoke: (objectPath, viewProvider) => {
-        viewProvider.getViewContext().exportMarkedDataAsCSV();
+    invoke: (objectPath, view) => {
+        view.getViewContext().exportMarkedDataAsCSV();
     },
     group: 'view'
 };
@@ -47,8 +47,8 @@ const unmarkAllRows = {
     key: 'unmark-all-rows',
     description: 'Unmark all rows',
     cssClass: 'icon-x labeled',
-    invoke: (objectPath, viewProvider) => {
-        viewProvider.getViewContext().unmarkAllRows();
+    invoke: (objectPath, view) => {
+        view.getViewContext().unmarkAllRows();
     },
     showInStatusBar: true,
     group: 'view'
