@@ -31,7 +31,7 @@ export default class MoveAction {
         this.openmct = openmct;
     }
 
-    async invoke(objectPath) {
+    invoke(objectPath) {
         let object = objectPath[0];
         this.oldParent = objectPath[1];
 
@@ -99,7 +99,7 @@ export default class MoveAction {
     }
 
     showForm(domainObject, parentDomainObject) {
-        const formStructure =  {
+        const formStructure = {
             title: "Move Item",
             sections: [
                 {
@@ -135,7 +135,6 @@ export default class MoveAction {
     validate(currentParent) {
         return (object, data) => {
             const parentCandidate = data.value;
-            console.log('move action : validateLocation', );
             // TODO: remove getModel, checkPolicy and useCapability
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
