@@ -115,6 +115,19 @@ export default {
         }
     },
     methods: {
+        filterHiddenItems(menuItems) {
+            const items = [];
+            menuItems.forEach(menuItem => {
+                const isGroup = Array.isArray(menuItem);
+                if (isGroup) {
+                    items.push(this.filterHiddenItems(menuItem));
+                } else if (!HIDDEN_ACTIONS.includes(menuItem.key)) {
+                    items.push(menuItem);
+                }
+            });
+
+            return items;
+        },
         setView(view) {
             this.$emit('setView', view);
         },
@@ -123,15 +136,16 @@ export default {
             delete this.actionCollection;
         },
         updateActionItems() {
-            this.actionCollection.hide(HIDDEN_ACTIONS);
             const statusBarItems = this.actionCollection.getStatusBarActions();
-            this.statusBarItems = this.openmct.menus.actionsToMenuItems(statusBarItems, this.actionCollection.objectPath, this.actionCollection.view);
+            const menuItems = this.openmct.menus.actionsToMenuItems(statusBarItems, this.actionCollection.objectPath, this.actionCollection.view);
+            this.statusBarItems = this.filterHiddenItems(menuItems);
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
         showMenuItems(event) {
             let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
             const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, this.actionCollection.objectPath, this.actionCollection.view);
-            this.openmct.menus.showMenu(event.x, event.y, menuItems);
+            const visibleMenuItems = this.filterHiddenItems(menuItems);
+            this.openmct.menus.showMenu(event.x, event.y, visibleMenuItems);
         }
     }
 };

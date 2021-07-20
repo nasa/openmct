@@ -476,7 +476,7 @@ export default {
             const viewLargeAction = visibleActions
                 && visibleActions.find(action => action.key === 'large.view');
 
-            if (viewLargeAction) {
+            if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
                 viewLargeAction.onItemClicked();
             }
         },
