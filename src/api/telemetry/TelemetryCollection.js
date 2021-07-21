@@ -48,6 +48,7 @@ export class TelemetryCollection extends EventEmitter {
         this.options = options;
         this.pageState = undefined;
         this.lastBounds = undefined;
+        this.requestAbort = undefined;
     }
     /**
      * This will start the requests for historical and realtime data,
@@ -75,6 +76,10 @@ export class TelemetryCollection extends EventEmitter {
      * to remove any listeners
      */
     destroy() {
+        if (this.requestAbort) {
+            this.requestAbort.abort();
+        }
+
         this._unwatchBounds();
         this._unwatchTimeSystem();
         if (this.unsubscribe) {
@@ -108,9 +113,13 @@ export class TelemetryCollection extends EventEmitter {
         let historicalData;
 
         try {
+            this.requestAbort = new AbortController();
+            this.options.abortSignal = this.requestAbort.signal;
             historicalData = await this.historicalProvider.request(this.domainObject, this.options);
+            this.requestAbort = undefined;
         } catch (error) {
             console.error('Error requesting telemetry data...');
+            this.requestAbort = undefined;
             throw new Error(error);
         }
 
