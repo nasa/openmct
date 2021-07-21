@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import PlotViewProvider from './PlotViewProvider';
+import SpectralPlotViewProvider from './SpectralPlotViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
@@ -60,6 +61,20 @@ export default function () {
             priority: 890
         });
 
+        openmct.types.addType('telemetry.plot.spectral', {
+            key: "telemetry.plot.spectral",
+            name: "Spectral Plot",
+            cssClass: "icon-plot-stacked",
+            description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
+            creatable: true,
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {};
+            },
+            priority: 890
+        });
+
+        openmct.objectViews.addProvider(new SpectralPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new StackedPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));

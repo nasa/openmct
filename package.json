@@ -63,6 +63,7 @@
     "node-sass": "^4.14.1",
     "painterro": "^1.2.56",
     "printj": "^1.2.1",
+    "plotly.js": "^1.33.0",
     "raw-loader": "^0.5.1",
     "request": "^2.69.0",
     "split": "^1.0.0",
