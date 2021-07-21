@@ -78,11 +78,15 @@ export default {
     async mounted() {
         await this.$nextTick();
         // Hide tree and/or inspector pane if specified in URL
-        this.handleHideUrl();
-        this.openmct.router.on('change:params', this.handleHideUrl);
+        if (this.collapsable) {
+            this.handleHideUrl();
+            this.openmct.router.on('change:params', this.handleHideUrl);
+        }
     },
     beforeDestroy() {
-        this.openmct.router.off('change:params', this.handleHideUrl);
+        if (this.collapsable) {
+            this.openmct.router.off('change:params', this.handleHideUrl);
+        }
     },
     methods: {
         toggleCollapse: function (e) {
@@ -97,10 +101,6 @@ export default {
             }
         },
         handleHideUrl: function () {
-            if (!this.collapsable) {
-                return;
-            }
-
             let hideTreeParam = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
             let hideInspectorParam = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
             let hideTree = hideTreeParam === 'true' && this.label === PANE_TREE;
