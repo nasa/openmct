@@ -65,6 +65,8 @@ define([
             this.updateFilters = this.updateFilters.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
+            this.abortControllers = [];
+
             this.filterObserver = undefined;
 
             this.createTableRowCollections();
@@ -172,13 +174,22 @@ define([
         requestDataFor(telemetryObject) {
             this.incrementOutstandingRequests();
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+            let abortController = new AbortController();
+
+            requestOptions.abortSignal = abortController.signal;
+
+            this.abortControllers.push(abortController);
 
             return this.openmct.telemetry.request(telemetryObject, requestOptions)
                 .then(telemetryData => {
                     //Check that telemetry object has not been removed since telemetry was requested.
                     if (!this.telemetryObjects.includes(telemetryObject)) {
+                        abortController.abort();
+
                         return;
                     }
+
+                    this.abortControllers = this.abortControllers.filter(controller => controller !== abortController);
 
                     let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                     let columnMap = this.getColumnMapForObject(keyString);
@@ -352,6 +363,7 @@ define([
         destroy() {
             this.boundedRows.destroy();
             this.filteredRows.destroy();
+            this.abortControllers.forEach(controller => controller.abort());
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
             this.openmct.time.off('timeSystem', this.refreshData);
