@@ -44,7 +44,7 @@ export default class CreateAction extends PropertiesAction {
             let object = this.domainObject;
             const propertiesLength = properties.length;
             properties.forEach((property, index) => {
-                const isComplexProperty = propertiesLength > 1 && index != propertiesLength - 1;
+                const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
                 if (isComplexProperty && object[property] !== null) {
                     object = object[property];
                 } else {
@@ -69,7 +69,7 @@ export default class CreateAction extends PropertiesAction {
 
         const success = await this.openmct.objects.save(this.domainObject);
         if (success) {
-            const compositionCollection = await openmct.composition.get(parentDomainObject);
+            const compositionCollection = await this.openmct.composition.get(parentDomainObject);
             compositionCollection.add(this.domainObject);
 
             this._navigateAndEdit(this.domainObject);
@@ -77,8 +77,8 @@ export default class CreateAction extends PropertiesAction {
             this.openmct.notifications.info('Save successful');
         } else {
             this.openmct.notifications.error('Error saving objects');
-            console.error(error);
         }
+
         dialog.dismiss();
     }
 
@@ -92,10 +92,10 @@ export default class CreateAction extends PropertiesAction {
 
         window.location.href = url;
 
-        const objectView = openmct.objectViews.get(domainObject, objectPath)[0];
+        const objectView = this.openmct.objectViews.get(domainObject, objectPath)[0];
         const canEdit = objectView && objectView.canEdit && objectView.canEdit(domainObject, objectPath);
         if (canEdit) {
-            openmct.editor.edit();
+            this.openmct.editor.edit();
         }
     }
 
