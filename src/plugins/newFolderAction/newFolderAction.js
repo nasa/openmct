@@ -19,71 +19,30 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-import uuid from 'uuid';
+import CreateAction from '@/api/forms/actions/CreateAction';
 
 export default class NewFolderAction {
     constructor(openmct) {
+        this.type = 'folder';
+        this.key = 'folder';
         this.name = 'Add New Folder';
-        this.key = 'newFolder';
-        this.description = 'Create a new folder';
         this.cssClass = 'icon-folder-new';
-        this.group = "action";
-        this.priority = 9;
+        this.features = 'creation';
+        this.description = 'Create folders to organize other objects or links to objects.';
+        this.priority = 1000;
 
         this._openmct = openmct;
-        this._dialogForm = {
-            name: "Add New Folder",
-            sections: [
-                {
-                    rows: [
-                        {
-                            key: "name",
-                            control: "textfield",
-                            name: "Folder Name",
-                            pattern: "\\S+",
-                            required: true,
-                            cssClass: "l-input-lg"
-                        }
-                    ]
-                }
-            ]
-        };
     }
+
     invoke(objectPath) {
-        let domainObject = objectPath[0];
-        let parentKeystring = this._openmct.objects.makeKeyString(domainObject.identifier);
-        let composition = this._openmct.composition.get(domainObject);
-        let dialogService = this._openmct.$injector.get('dialogService');
-        let folderType = this._openmct.types.get('folder');
-
-        dialogService.getUserInput(this._dialogForm, {name: 'Unnamed Folder'}).then((userInput) => {
-            let name = userInput.name;
-
-            let identifier = {
-                key: uuid(),
-                namespace: domainObject.identifier.namespace
-            };
-
-            let objectModel = {
-                identifier,
-                type: 'folder',
-                location: parentKeystring
-            };
-
-            folderType.definition.initialize(objectModel);
-            objectModel.name = name || 'New Folder';
-            objectModel.modified = Date.now();
-
-            this._openmct.objects.save(objectModel).then(() => {
-                composition.add(objectModel);
-            });
-
-        });
+        const parentDomainObject = objectPath[0];
+        const createAction = new CreateAction(this._openmct, this.type, parentDomainObject);
+        createAction.invoke();
     }
+
     appliesTo(objectPath) {
         let domainObject = objectPath[0];
 
-        return domainObject.type === 'folder';
+        return domainObject.type === this.type;
     }
 }
