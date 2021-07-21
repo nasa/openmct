@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SpectralPlot from './chart/spectral-plot.vue';
+import SpectralView from './chart/spectral-view.vue';
 import Vue from 'vue';
 
 export default function SpectralPlotViewProvider(openmct) {
@@ -49,7 +49,7 @@ export default function SpectralPlotViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            SpectralPlot
+                            SpectralView
                         },
                         provide: {
                             openmct,
@@ -62,7 +62,7 @@ export default function SpectralPlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<spectral-plot :options="options"></spectral-plot>'
+                        template: '<spectral-view :options="options"></spectral-view>'
                     });
                 },
                 destroy: function () {
