@@ -176,7 +176,7 @@ define([
             let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
             let abortController = new AbortController();
 
-            requestOptions.abortSignal = abortController.signal;
+            requestOptions.signal = abortController.signal;
 
             this.abortControllers.push(abortController);
 
