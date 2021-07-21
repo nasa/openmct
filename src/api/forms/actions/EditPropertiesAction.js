@@ -32,7 +32,7 @@ export default class EditPropertiesAction extends PropertiesAction {
         this.hideInDefaultMenu = true;
         this.group = 'action';
         this.priority = 10;
-        this.formProperties = {}
+        this.formProperties = {};
     }
 
     appliesTo(objectPath) {
