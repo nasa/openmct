@@ -363,6 +363,7 @@ define([
         destroy() {
             this.boundedRows.destroy();
             this.filteredRows.destroy();
+            console.log('telemetry table js destroy', this.abortControllers);
             this.abortControllers.forEach(controller => controller.abort());
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
             this.openmct.time.off('bounds', this.refreshData);
