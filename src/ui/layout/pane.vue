@@ -128,6 +128,34 @@ export default {
             delete this.currentSize;
             delete this.dragCollapse;
         },
+        handleHideUrl: function () {
+            let hideTreeParam = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
+            let hideInspectorParam = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
+            let hideTree = hideTreeParam === 'true' && this.label === PANE_TREE;
+            let hideInspector = hideInspectorParam === 'true' && this.label === PANE_INSPECTOR;
+            if (hideTree || hideInspector) {
+                this.collapsed = true;
+                this.handleCollapse();
+            } else {
+                this.collapsed = false;
+                this.handleExpand();
+            }
+        },
+        addHideParam: function (target) {
+            this.openmct.router.setSearchParam(target, 'true');
+        },
+        removeHideParam: function (target) {
+            this.openmct.router.deleteSearchParam(target);
+        },
+        handleCollapse: function () {
+            this.currentSize = (this.dragCollapse === true) ? this.initial : this.$el.style[this.styleProp];
+            this.$el.style[this.styleProp] = '';
+        },
+        handleExpand: function () {
+            this.$el.style[this.styleProp] = this.currentSize;
+            delete this.currentSize;
+            delete this.dragCollapse;
+        },
         trackSize: function () {
             if (!this.dragCollapse === true) {
                 if (this.type === 'vertical') {
