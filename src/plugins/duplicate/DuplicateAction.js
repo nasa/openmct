@@ -33,7 +33,7 @@ export default class DuplicateAction {
         this.openmct = openmct;
     }
 
-    async invoke(objectPath) {
+    invoke(objectPath) {
         let object = objectPath[0];
         this.parent = objectPath[1];
 
@@ -45,25 +45,22 @@ export default class DuplicateAction {
             .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
     }
 
-    async onSave(object, changes, parent) {
-        console.log('onSave');
+    onSave(object, changes, parent) {
         let inNavigationPath = this.inNavigationPath(object);
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
+        let duplicationTask = new DuplicateTask(this.openmct);
         if (changes.name && (changes.name !== object.name)) {
-            object.name = changes.name;
+            duplicationTask.changeName(changes.name);
         }
 
-
-        // duplicate
-        let duplicationTask = new DuplicateTask(this.openmct);
         duplicationTask.duplicate(object, parent);
     }
 
     showForm(domainObject, parentDomainObject) {
-        const formStructure =  {
+        const formStructure = {
             title: "Duplicate Item",
             sections: [
                 {

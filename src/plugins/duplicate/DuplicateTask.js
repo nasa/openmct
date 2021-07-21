@@ -42,8 +42,13 @@ export default class DuplicateTask {
         this.persisted = 0;
         this.clones = [];
         this.idMap = {};
+        this.name = undefined;
 
         this.openmct = openmct;
+    }
+
+    changeName(name) {
+        this.name = name;
     }
 
     /**
@@ -78,9 +83,12 @@ export default class DuplicateTask {
      */
     async buildDuplicationPlan() {
         let domainObjectClone = await this.duplicateObject(this.domainObject);
-
         if (domainObjectClone !== this.domainObject) {
             domainObjectClone.location = this.getKeyString(this.parent);
+        }
+
+        if (this.name) {
+            domainObjectClone.name = this.name;
         }
 
         this.firstClone = domainObjectClone;
