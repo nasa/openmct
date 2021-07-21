@@ -56,7 +56,8 @@ export default {
             spectralTypes: {},
             subscriptions: [],
             telemetryObjects: {},
-            trace: []
+            trace: [],
+            legendExpanded: false
         };
     },
     computed: {
