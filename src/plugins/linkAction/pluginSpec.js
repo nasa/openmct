@@ -28,7 +28,6 @@ import {
 } from 'utils/testing';
 
 describe("The Link Action plugin", () => {
-
     let openmct;
     let linkAction;
     let childObject;
@@ -36,6 +35,7 @@ describe("The Link Action plugin", () => {
     let anotherParentObject;
     const ORIGINAL_PARENT_ID = 'original-parent-object';
     const LINK_ACITON_KEY = 'link';
+    const LINK_ACITON_NAME = 'Create Link';
 
     beforeEach((done) => {
         const appHolder = document.createElement('div');
@@ -57,6 +57,7 @@ describe("The Link Action plugin", () => {
                 }
             }
         }).folder;
+
         parentObject = getMockObjects({
             objectKeyStrings: ['folder'],
             overwrite: {
@@ -70,6 +71,7 @@ describe("The Link Action plugin", () => {
                 }
             }
         }).folder;
+
         anotherParentObject = getMockObjects({
             objectKeyStrings: ['folder'],
             overwrite: {
@@ -96,14 +98,14 @@ describe("The Link Action plugin", () => {
     });
 
     it("should make the link action available for an appropriate domainObject", () => {
-        let actions = openmct.actions.get([childObject]);
-        let action = actions.filter(a => a.key === LINK_ACITON_KEY);
+        const actionCollection = openmct.actions.get([childObject]);
+        const visibleActions = actionCollection.getVisibleActions();
+        linkAction = visibleActions.find(a => a.key === LINK_ACITON_KEY);
 
-        expect(action.length).toEqual(1);
+        expect(linkAction.name).toEqual(LINK_ACITON_NAME);
     });
 
     describe("when linking an object in a new parent", () => {
-
         beforeEach(() => {
             linkAction = new LinkAction(openmct);
             linkAction.linkInNewParent(childObject, anotherParentObject);

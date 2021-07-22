@@ -26,7 +26,6 @@ import {
 } from 'utils/testing';
 
 describe("The Move Action plugin", () => {
-
     let openmct;
     let moveAction;
     let childObject;
@@ -49,20 +48,30 @@ describe("The Move Action plugin", () => {
                 }
             }
         }).folder;
+
         parentObject = getMockObjects({
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
                     name: "Parent Folder",
-                    composition: [childObject.identifier]
+                    composition: [childObject.identifier],
+                    identifier: {
+                        namespace: "",
+                        key: "parent-folder-object"
+                    }
                 }
             }
         }).folder;
+
         anotherParentObject = getMockObjects({
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Another Parent Folder"
+                    name: "Another Parent Folder",
+                    identifier: {
+                        namespace: "",
+                        key: "another-parent-folder-object"
+                    }
                 }
             }
         }).folder;
@@ -82,10 +91,11 @@ describe("The Move Action plugin", () => {
     });
 
     describe("when moving an object to a new parent and removing from the old parent", () => {
-
         beforeEach(() => {
-            moveAction.addToNewParent(childObject, anotherParentObject);
-            moveAction.removeFromOldParent(parentObject, childObject);
+            openmct.router.path = [];
+            moveAction.oldParent = parentObject;
+
+            moveAction.onSave(childObject, {}, anotherParentObject);
         });
 
         it("the child object's identifier should be in the new parent's composition", () => {
