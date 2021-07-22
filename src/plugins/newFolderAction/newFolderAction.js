@@ -24,12 +24,12 @@ import CreateAction from '@/api/forms/actions/CreateAction';
 export default class NewFolderAction {
     constructor(openmct) {
         this.type = 'folder';
-        this.key = 'folder';
         this.name = 'Add New Folder';
+        this.key = 'newFolder';
+        this.description = 'Create a new folder';
         this.cssClass = 'icon-folder-new';
-        this.features = 'creation';
-        this.description = 'Create folders to organize other objects or links to objects.';
-        this.priority = 1000;
+        this.group = "action";
+        this.priority = 9;
 
         this._openmct = openmct;
     }
