@@ -28,7 +28,7 @@
                type="text"
                :size="model.size"
                @blur="blur()"
-        />
+        >
     </span>
 </span>
 </template>
@@ -49,7 +49,7 @@ export default {
     methods: {
         blur() {
             const data = {
-                model :this.model,
+                model: this.model,
                 value: this.field
             };
 

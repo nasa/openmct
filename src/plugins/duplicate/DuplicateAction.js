@@ -56,7 +56,7 @@ export default class DuplicateAction {
             duplicationTask.changeName(changes.name);
         }
 
-        duplicationTask.duplicate(object, parent);
+        return duplicationTask.duplicate(object, parent);
     }
 
     showForm(domainObject, parentDomainObject) {

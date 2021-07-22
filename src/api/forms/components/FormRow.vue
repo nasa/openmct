@@ -30,7 +30,7 @@
 <script>
 import AutoCompleteField from "@/api/forms/components/controls/AutoCompleteField.vue";
 import Composite from "@/api/forms/components/controls/Composite.vue";
-import FileInput from "@/api/forms/components/controls/FileInput.vue"
+import FileInput from "@/api/forms/components/controls/FileInput.vue";
 import Locator from "@/api/forms/components/controls/Locator.vue";
 import NumberField from "@/api/forms/components/controls/NumberField.vue";
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
@@ -45,7 +45,7 @@ const CONTROL_TYPE_VIEW_MAP = {
     'numberfield': NumberField,
     'select': SelectField,
     'textarea': TextArea,
-    'textfield': TextField,
+    'textfield': TextField
 };
 
 export default {
@@ -102,7 +102,7 @@ export default {
             }
 
             if (this.visited && this.valid !== undefined) {
-                    if (this.valid === true) {
+                if (this.valid === true) {
                     cssClass = `${cssClass} valid`;
                 } else {
                     cssClass = `${cssClass} invalid`;
@@ -129,7 +129,7 @@ export default {
             const valid = this.validateRow(data);
             this.valid = valid;
             data.invalid = !valid;
-            
+
             this.$emit('onChange', data);
         },
         validateRow(data) {

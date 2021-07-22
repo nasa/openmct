@@ -58,7 +58,7 @@
             :node="child"
             :selected-item="selectedItem"
             :handle-item-selected="handleItemSelected"
-            :navigateToParent="navigateToParent"
+            :navigate-to-parent="navigateToParent"
         />
     </ul>
 </li>
@@ -95,7 +95,7 @@ export default {
             default() {
                 return undefined;
             }
-        },
+        }
     },
     data() {
         return {
@@ -160,7 +160,7 @@ export default {
         }
 
         if (this.navigateToParent && this.navigateToParent.endsWith(this.openmct.objects.makeKeyString(this.domainObject.identifier))) {
-            this.handleItemSelected(this.node.object, this.node)
+            this.handleItemSelected(this.node.object, this.node);
             this.$el.scrollIntoView();
         }
 

@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import DuplicateActionPlugin from './plugin.js';
-import DuplicateAction from './DuplicateAction.js';
 import DuplicateTask from './DuplicateTask.js';
 import {
     createOpenMct,

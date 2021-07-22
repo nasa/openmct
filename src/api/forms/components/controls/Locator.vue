@@ -1,11 +1,10 @@
 <template>
-    <ConditionSetSelectorDialog
-        :hideTitle="true"
-        :ignoreTypeCheck="true"
-        :cssClass="`form-locator`"
-        :parent="model.parent"
-        @conditionSetSelected="handleItemSelection"
-    />
+<ConditionSetSelectorDialog :hide-title="true"
+                            :ignore-type-check="true"
+                            :css-class="`form-locator`"
+                            :parent="model.parent"
+                            @conditionSetSelected="handleItemSelection"
+/>
 </template>
 
 <script>
@@ -41,10 +40,13 @@ export default {
     destroyed() {
     },
     methods: {
-       handleItemSelection(parentDomainObject) {
-           const data = { model: this.model, value: parentDomainObject };
-           this.$emit('onChange', data);
-       }
+        handleItemSelection(parentDomainObject) {
+            const data = {
+                model: this.model,
+                value: parentDomainObject
+            };
+            this.$emit('onChange', data);
+        }
     }
 };
 </script>

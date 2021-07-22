@@ -52,9 +52,9 @@ export default class FormsAPI {
     addControl(name, actions) {
         const control = this.controls[name];
         if (control) {
-           this.openmct.notifications.error(`Error: provided form control '${name}', already exists`);
+            this.openmct.notifications.error(`Error: provided form control '${name}', already exists`);
 
-           return;
+            return;
         }
 
         this.controls[name] = actions;
@@ -79,21 +79,22 @@ export default class FormsAPI {
 
         let parentDomainObject = options.parentDomainObject || {};
         const domainObject = options.domainObject;
-        const onSave = () => {
+
+        function onSave() {
             overlay.dismiss();
 
-            if(options.onSave) {
+            if (options.onSave) {
                 options.onSave(domainObject, changes, parentDomainObject);
             }
-        };
+        }
 
-        const onDismiss = () => {
+        function onDismiss() {
             overlay.dismiss();
 
             if (options.onDismiss) {
                 options.onDismiss();
-            };
-        };
+            }
+        }
 
         const vm = new Vue({
             components: { FormProperties },

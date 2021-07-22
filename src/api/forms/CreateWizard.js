@@ -88,11 +88,11 @@ export default class CreateWizard {
         sections.push({
             name: 'Properties',
             rows: this.properties.map(property => {
-                    const row = JSON.parse(JSON.stringify(property));
-                    row.value = this.getValue(row);
+                const row = JSON.parse(JSON.stringify(property));
+                row.value = this.getValue(row);
 
-                    return row;
-                }).filter(row => row && row.control)
+                return row;
+            }).filter(row => row && row.control)
         });
 
         this.addNotes(sections);

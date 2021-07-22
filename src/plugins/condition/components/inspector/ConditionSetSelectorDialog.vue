@@ -62,7 +62,7 @@
                 :node="treeItem"
                 :selected-item="selectedItem"
                 :handle-item-selected="handleItemSelection"
-                :navigateToParent="navigateToParent"
+                :navigate-to-parent="navigateToParent"
             />
         </ul>
         <!-- end main tree -->

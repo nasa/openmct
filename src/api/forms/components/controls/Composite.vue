@@ -22,11 +22,11 @@
 <template>
 <span>
     <CompositeItem v-for="(item, index) in model.items"
-                    :key="item.name"
-                    :first="index < 1"
-                    :value="JSON.stringify(model.value[index])"
-                    :item="item"
-                    @onChange="onChange"
+                   :key="item.name"
+                   :first="index < 1"
+                   :value="JSON.stringify(model.value[index])"
+                   :item="item"
+                   @onChange="onChange"
     />
 </span>
 </template>
@@ -44,13 +44,13 @@ export default {
             required: true
         }
     },
+    mounted() {
+        this.model.items.forEach((item, index) => item.key = `${this.model.key}.${index}`);
+    },
     methods: {
         onChange(data) {
             this.$emit('onChange', data);
         }
-    },
-    mounted() {
-        this.model.items.forEach((item, index) => item.key = `${this.model.key}.${index}`);
     }
 };
 </script>

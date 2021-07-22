@@ -30,8 +30,7 @@
     <span class="icon-arrow-down"
           @click="arrowClicked()"
     ></span>
-    <div
-         class="autocompleteOptions"
+    <div class="autocompleteOptions"
          @blur="hideOptions = true"
     >
         <ul v-if="!hideOptions">
@@ -69,9 +68,10 @@ export default {
             field: this.model.value
         };
     },
-    computed : {
+    computed: {
         filteredOptions() {
             const options = this.optionNames || [];
+
             return options
                 .filter(option => {
                     return option.toLowerCase().indexOf(this.field.toLowerCase()) >= 0;
@@ -81,6 +81,19 @@ export default {
                         name: option
                     };
                 });
+        }
+    },
+    watch: {
+        field(newValue, oldValue) {
+            if (newValue !== oldValue) {
+
+                const data = {
+                    model: this.model,
+                    value: newValue
+                };
+
+                this.$emit('onChange', data);
+            }
         }
     },
     mounted() {
@@ -153,22 +166,14 @@ export default {
         scrollIntoView() {
             setTimeout(() => {
                 const element = this.$el.querySelector('.optionPreSelected');
-
-                element && element.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'});
+                if (element) {
+                    element.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'nearest'
+                    });
+                }
             });
-        }
-    },
-    watch: {
-        field(newValue, oldValue) {
-            if (newValue !== oldValue) {
-
-                const data = {
-                    model: this.model,
-                    value: newValue
-                };
-
-                this.$emit('onChange', data);
-            }
         }
     }
 };

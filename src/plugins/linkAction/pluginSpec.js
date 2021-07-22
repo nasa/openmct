@@ -114,7 +114,7 @@ describe("The Link Action plugin", () => {
         it("the child object's identifier should be in the new parent's composition and location set to original parent", () => {
             let newParentChild = anotherParentObject.composition[0];
             expect(newParentChild).toEqual(childObject.identifier);
-            expect(childObject.location).toEqual(ORIGINAL_PARENT_ID)
+            expect(childObject.location).toEqual(ORIGINAL_PARENT_ID);
         });
 
         it("the child object's identifier should remain in the original parent's composition", () => {
@@ -122,5 +122,4 @@ describe("The Link Action plugin", () => {
             expect(oldParentCompositionChild).toEqual(childObject.identifier);
         });
     });
-
 });

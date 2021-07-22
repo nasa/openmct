@@ -3,11 +3,18 @@
     <span class="field control"
           :class="model.cssClass"
     >
-        <input ref="fileInput" id="fileElem" type="file" accept=".json" style="display:none">
+        <input id="fileElem"
+               ref="fileInput"
+               type="file"
+               accept=".json"
+               style="display:none"
+        >
         <button id="fileSelect"
-            class="c-button"
-            @click="selectFile"
-        >{{ name }}</button>
+                class="c-button"
+                @click="selectFile"
+        >
+            {{ name }}
+        </button>
     </span>
 </span>
 </template>
@@ -64,7 +71,7 @@ export default {
             fileReader.readAsText(file);
         },
         selectFile() {
-           this.$refs.fileInput.click();
+            this.$refs.fileInput.click();
         }
     }
 };

@@ -53,7 +53,7 @@ export default class EditPropertiesAction extends PropertiesAction {
             let object = this.domainObject;
             const propertiesLength = properties.length;
             properties.forEach((property, index) => {
-                const isComplexProperty = propertiesLength > 1 && index != propertiesLength - 1;
+                const isComplexProperty = propertiesLength > 1 && index !== propertiesLength - 1;
                 if (isComplexProperty && object[property] !== null) {
                     object = object[property];
                 } else {
@@ -79,7 +79,6 @@ export default class EditPropertiesAction extends PropertiesAction {
             this.openmct.notifications.info('Save successful');
         } else {
             this.openmct.notifications.error('Error saving objects');
-            console.error(error);
         }
 
         dialog.dismiss();

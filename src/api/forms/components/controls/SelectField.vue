@@ -1,18 +1,18 @@
 <template>
-    <div class='form-control SelectField'>
-        <select required="model.required"
-                name="mctControl"
-                @change="onChange($event)"
-                v-model="selected"
-        >
-            <option v-for="option in model.options"
+<div class="form-control SelectField">
+    <select v-model="selected"
+            required="model.required"
+            name="mctControl"
+            @change="onChange($event)"
+    >
+        <option v-for="option in model.options"
                 :key="option.name"
                 :value="option.value"
-            >
-                {{ option.name }}
-            </option>
-        </select>
-    </div>
+        >
+            {{ option.name }}
+        </option>
+    </select>
+</div>
 </template>
 
 <script>

@@ -27,7 +27,7 @@ export default class PropertiesAction {
     /**
      * @private
      */
-     _getTypeDefinition(type) {
+    _getTypeDefinition(type) {
         const TypeDefinition = this.openmct.types.get(type);
 
         return TypeDefinition.definition;
