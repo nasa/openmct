@@ -43,4 +43,7 @@ report.*.json
 # Lighthouse reports
 .lighthouseci
 
+# e2e test artifacts
+test-results
+
 package-lock.json
