@@ -1,18 +1,18 @@
 <template>
-<ConditionSetSelectorDialog :hide-title="true"
-                            :ignore-type-check="true"
-                            :css-class="`form-locator`"
-                            :parent="model.parent"
-                            @conditionSetSelected="handleItemSelection"
+<SelectorDialogTree :hide-title="true"
+                    :ignore-type-check="true"
+                    :css-class="`form-locator`"
+                    :parent="model.parent"
+                    @conditionSetSelected="handleItemSelection"
 />
 </template>
 
 <script>
-import ConditionSetSelectorDialog from '@/plugins/condition/components/inspector/ConditionSetSelectorDialog.vue';
+import SelectorDialogTree from '@/ui/components/SelectorDialogTree.vue';
 
 export default {
     components: {
-        ConditionSetSelectorDialog
+        SelectorDialogTree
     },
     inject: ['openmct'],
     props: {
@@ -24,12 +24,6 @@ export default {
     data() {
         return {
         };
-    },
-    computed: {
-
-    },
-    watch: {
-
     },
     mounted() {
         // remove following after css fix

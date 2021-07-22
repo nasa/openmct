@@ -52,7 +52,7 @@
                 <span class="c-tree__item__label">Loading...</span>
             </div>
         </li>
-        <condition-set-dialog-tree-item
+        <SelectorDialogTreeItem
             v-for="child in children"
             :key="child.id"
             :node="child"
@@ -68,7 +68,7 @@
 import viewControl from '@/ui/components/viewControl.vue';
 
 export default {
-    name: 'ConditionSetDialogTreeItem',
+    name: 'SelectorDialogTreeItem',
     components: {
         viewControl
     },

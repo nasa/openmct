@@ -31,7 +31,7 @@
          :class="cssClass"
     >
         <div class="c-tree-and-search__search">
-            <search ref="shell-search"
+            <Search ref="shell-search"
                     class="c-search"
                     :value="searchValue"
                     @input="searchTree"
@@ -39,11 +39,9 @@
             />
         </div>
 
-        <!-- loading -->
         <div v-if="isLoading"
              class="c-tree-and-search__loading loading"
         ></div>
-        <!-- end loading -->
 
         <div v-if="shouldDisplayNoResultsText"
              class="c-tree-and-search__no-results"
@@ -51,12 +49,11 @@
             No results found
         </div>
 
-        <!-- main tree -->
         <ul v-if="!isLoading"
             v-show="!searchValue"
             class="c-tree-and-search__tree c-tree"
         >
-            <condition-set-dialog-tree-item
+            <SelectorDialogTreeItem
                 v-for="treeItem in allTreeItems"
                 :key="treeItem.id"
                 :node="treeItem"
@@ -65,13 +62,11 @@
                 :navigate-to-parent="navigateToParent"
             />
         </ul>
-        <!-- end main tree -->
 
-        <!-- search tree -->
         <ul v-if="searchValue && !isLoading"
             class="c-tree-and-search__tree c-tree"
         >
-            <condition-set-dialog-tree-item
+            <SelectorDialogTreeItem
                 v-for="treeItem in filteredTreeItems"
                 :key="treeItem.id"
                 :node="treeItem"
@@ -79,21 +74,20 @@
                 :handle-item-selected="handleItemSelection"
             />
         </ul>
-        <!-- end search tree -->
     </div>
 </div>
 </template>
 
 <script>
 import debounce from 'lodash/debounce';
-import search from '@/ui/components/search.vue';
-import ConditionSetDialogTreeItem from './ConditionSetDialogTreeItem.vue';
+import Search from '@/ui/components/search.vue';
+import SelectorDialogTreeItem from './SelectorDialogTreeItem.vue';
 
 export default {
-    name: 'ConditionSetSelectorDialog',
+    name: 'SelectorDialogTree',
     components: {
-        search,
-        ConditionSetDialogTreeItem
+        Search,
+        SelectorDialogTreeItem
     },
     inject: ['openmct'],
     props: {
@@ -128,13 +122,13 @@ export default {
     },
     data() {
         return {
-            expanded: false,
-            searchValue: '',
             allTreeItems: [],
+            expanded: false,
             filteredTreeItems: [],
             isLoading: false,
-            selectedItem: undefined,
-            navigateToParent: undefined
+            navigateToParent: undefined,
+            searchValue: '',
+            selectedItem: undefined
         };
     },
     computed: {
@@ -151,7 +145,6 @@ export default {
         this.getDebouncedFilteredChildren = debounce(this.getFilteredChildren, 400);
     },
     mounted() {
-
         if (this.parent) {
             (async () => {
                 const objectPath = await this.openmct.objects.getOriginalPath(this.parent.identifier);
@@ -168,6 +161,25 @@ export default {
         }
     },
     methods: {
+        async aggregateFilteredChildren(results) {
+            for (const object of results) {
+                const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
+
+                const navigateToParent = '/browse/'
+                    + objectPath.slice(1)
+                        .map(parent => this.openmct.objects.makeKeyString(parent.identifier))
+                        .join('/');
+
+                const filteredChild = {
+                    id: this.openmct.objects.makeKeyString(object.identifier),
+                    object,
+                    objectPath,
+                    navigateToParent
+                };
+
+                this.filteredTreeItems.push(filteredChild);
+            }
+        },
         getAllChildren(navigateToParent) {
             this.isLoading = true;
             this.openmct.objects.get('ROOT')
@@ -198,23 +210,15 @@ export default {
                 this.isLoading = false;
             });
         },
-        async aggregateFilteredChildren(results) {
-            for (const object of results) {
-                const objectPath = await this.openmct.objects.getOriginalPath(object.identifier);
-
-                const navigateToParent = '/browse/'
-                    + objectPath.slice(1)
-                        .map(parent => this.openmct.objects.makeKeyString(parent.identifier))
-                        .join('/');
-
-                const filteredChild = {
-                    id: this.openmct.objects.makeKeyString(object.identifier),
-                    object,
-                    objectPath,
-                    navigateToParent
+        handleItemSelection(item, node) {
+            if (item && (this.ignoreTypeCheck || item.type === 'conditionSet')) {
+                const parentId = (node.objectPath && node.objectPath.length > 1) ? node.objectPath[1].identifier : undefined;
+                this.selectedItem = {
+                    itemId: item.identifier,
+                    parentId
                 };
 
-                this.filteredTreeItems.push(filteredChild);
+                this.$emit('conditionSetSelected', item);
             }
         },
         searchTree(value) {
@@ -225,16 +229,6 @@ export default {
                 this.getDebouncedFilteredChildren();
             } else {
                 this.isLoading = false;
-            }
-        },
-        handleItemSelection(item, node) {
-            if (item && (this.ignoreTypeCheck || item.type === 'conditionSet')) {
-                const parentId = (node.objectPath && node.objectPath.length > 1) ? node.objectPath[1].identifier : undefined;
-                this.selectedItem = {
-                    itemId: item.identifier,
-                    parentId
-                };
-                this.$emit('conditionSetSelected', item);
             }
         }
     }
