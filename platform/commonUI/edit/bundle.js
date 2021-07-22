@@ -28,7 +28,6 @@ define([
     "./src/actions/EditAction",
     "./src/actions/SaveAction",
     "./src/actions/SaveAndStopEditingAction",
-    "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
     "./src/policies/EditPersistableObjectsPolicy",
     "./src/representers/EditRepresenter",
@@ -56,7 +55,6 @@ define([
     EditAction,
     SaveAction,
     SaveAndStopEditingAction,
-    SaveAsAction,
     CancelAction,
     EditPersistableObjectsPolicy,
     EditRepresenter,
@@ -164,22 +162,6 @@ define([
                             "dialogService",
                             "notificationService"
                         ]
-                    },
-                    {
-                        "key": "save-as",
-                        "category": "save",
-                        "implementation": SaveAsAction,
-                        "name": "Save As...",
-                        "cssClass": "icon-save labeled",
-                        "description": "Save changes made to these objects.",
-                        "depends": [
-                            "$injector",
-                            "dialogService",
-                            "copyService",
-                            "notificationService",
-                            "openmct"
-                        ],
-                        "priority": "mandatory"
                     },
                     {
                         "key": "cancel",
