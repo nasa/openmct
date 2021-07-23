@@ -107,6 +107,12 @@
     }
 }
 
+.c-form-control {
+    &--locator > .c-tree {
+        height: 100%;
+    }
+}
+
 .l-input-lg {
     input[type=text],
     input[type=search],

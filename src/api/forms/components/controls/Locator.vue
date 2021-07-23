@@ -25,12 +25,6 @@ export default {
         return {
         };
     },
-    mounted() {
-        // remove following after css fix
-        setTimeout(() => {
-            document.querySelector('.c-overlay__contents-main').style.height = '200px';
-        });
-    },
     destroyed() {
     },
     methods: {

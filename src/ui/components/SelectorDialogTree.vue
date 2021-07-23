@@ -27,7 +27,7 @@
     >
         <div class="c-overlay__dialog-title">Select Condition Set</div>
     </div>
-    <div class="c-overlay__contents-main c-selector c-tree-and-search"
+    <div class="c-selector c-tree-and-search"
          :class="cssClass"
     >
         <div class="c-tree-and-search__search">
