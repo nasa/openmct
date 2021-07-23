@@ -1,7 +1,7 @@
 <template>
 <SelectorDialogTree :hide-title="true"
                     :ignore-type-check="true"
-                    :css-class="`form-locator`"
+                    :css-class="`form-locator c-form-control--locator`"
                     :parent="model.parent"
                     @conditionSetSelected="handleItemSelection"
 />

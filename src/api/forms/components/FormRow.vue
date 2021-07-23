@@ -1,28 +1,30 @@
 <template>
 <div class="form-row c-form__row"
-     :class="rowClass"
+     :class="[{ 'first': first }]"
      @onChange="onChange"
 >
     <div v-if="row.name"
-         class="c-form__row__label label flex-elem"
+         class="c-form-row__label"
          :title="row.description"
     >
         {{ row.name }}
     </div>
-    <div class="c-form__row__controls controls flex-elem">
-        <div v-if="row.control"
-             class="c-form__controls-wrapper wrapper"
-        >
-            <component
-                :is="getComponent"
-                :key="row.key"
-                :ref="`form-control-${row.key}`"
-                :model="row"
-                :value="row.value"
-                :required="isRequired"
-                @onChange="onChange"
-            />
-        </div>
+    <div class="c-form-row__state-indicator"
+         :class="rowClass"
+    >
+    </div>
+    <div v-if="row.control"
+         class="c-form-row__controls"
+    >
+        <component
+            :is="getComponent"
+            :key="row.key"
+            :ref="`form-control-${row.key}`"
+            :model="row"
+            :value="row.value"
+            :required="isRequired"
+            @onChange="onChange"
+        />
     </div>
 </div>
 </template>
@@ -85,20 +87,8 @@ export default {
         rowClass() {
             let cssClass = this.cssClass;
 
-            if (this.first === true) {
-                cssClass = `${cssClass} first`;
-            }
-
             if (this.row.required) {
                 cssClass = `${cssClass} req`;
-            }
-
-            if (this.row.layout === 'controls-first') {
-                cssClass = `${cssClass} l-controls-first`;
-            }
-
-            if (this.row.layout === 'controls-under') {
-                cssClass = `${cssClass} l-controls-under`;
             }
 
             if (this.visited && this.valid !== undefined) {

@@ -19,9 +19,35 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+@mixin validationState($sym, $c) {
+    @include glyphAfter($sym);
+    &:after {
+        color: $c;
+        margin-left: $interiorMargin;
+    }
+}
+
 .c-form {
+    color: $colorFormText;
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
+    overflow: hidden;
+
+    > * + * {
+        margin-top: $interiorMarginLg !important;
+    }
+
+    &__top-bar,
+    &__bottom-bar {
+        flex: 0 0 auto;
+    }
+
+    &__contents {
+        flex: 1 1 auto;
+        overflow: auto;
+        padding-right: $interiorMargin;
+    }
 
     &__section {
         display: inherit;
@@ -30,9 +56,11 @@
 
     &__row {
         display: flex;
+        padding: $formTBPad 0;
+        &:not(.first) { border-top: 1px solid $colorFormLines; }
     }
 
-    &__header {
+    &__section-header {
         border-radius: $basicCr;
         background: $colorFormSectionHeaderBg;
         color: $colorFormSectionHeaderFg;
@@ -41,6 +69,58 @@
         margin: $interiorMargin 0;
         padding: $formTBPad $formLRPad;
         text-transform: uppercase;
+    }
+}
+
+.c-form-row {
+    align-items: start;
+
+    &__label,
+    &__state-indicator {
+        flex: 0 0 auto;
+        padding: 2px 0;
+    }
+
+    &__label {
+        width: 30%;
+        min-width: 100px;
+        order: 1;
+    }
+
+    &__state-indicator {
+        order: 2;
+        width: 30px;
+        text-align: center;
+
+        &.invalid,
+        &.invalid.req { @include validationState($glyph-icon-x, $colorFormInvalid); }
+
+        &.valid,
+        &.valid.req { @include validationState($glyph-icon-check, $colorFormValid); }
+
+        &.req { @include validationState($glyph-icon-asterisk, $colorFormRequired); }
+    }
+
+    &__controls {
+        flex: 1 1 auto;
+        order: 3;
+    }
+}
+
+.l-input-lg {
+    input[type=text],
+    input[type=search],
+    input[type=number],
+    textarea[type=text] {
+        width: 100%;
+    }
+}
+
+.l-input-sm {
+    input[type=text],
+    input[type=search],
+    input[type=number] {
+        width: 50px;
     }
 }
 
@@ -109,7 +189,7 @@
         }
 
         .controls {
-            order: 2;
+            order: 9;
             position: relative;
             flex: 1 1 auto;
 
@@ -335,33 +415,33 @@
     }
 }
 
-@mixin labelValidate($sym, $c) {
-    > .label {
-        @include glyphAfter($sym);
-        &:after {
-            color: $c;
-            margin-left: $interiorMargin;
-        }
-    }
-}
+//@mixin labelValidate($sym, $c) {
+//    > .label {
+//        @include glyphAfter($sym);
+//        &:after {
+//            color: $c;
+//            margin-left: $interiorMargin;
+//        }
+//    }
+//}
 
-.mct-form {
-    .form-row {
-        > .label {
-            padding-right: 1em; // Keep room for validation element
-            &:after {
-                font-size: .8em;
-            }
-        }
-        &.invalid,
-        &.invalid.req { @include labelValidate($glyph-icon-x, $colorFormInvalid); }
-
-        &.valid,
-        &.valid.req { @include labelValidate($glyph-icon-check, $colorFormValid); }
-
-        &.req { @include labelValidate($glyph-icon-asterisk, $colorFormRequired); }
-    }
-}
+//.mct-form {
+//    .form-row {
+//        > .label {
+//            padding-right: 1em; // Keep room for validation element
+//            &:after {
+//                font-size: .8em;
+//            }
+//        }
+//        &.invalid,
+//        &.invalid.req { @include labelValidate($glyph-icon-x, $colorFormInvalid); }
+//
+//        &.valid,
+//        &.valid.req { @include labelValidate($glyph-icon-check, $colorFormValid); }
+//
+//        &.req { @include labelValidate($glyph-icon-asterisk, $colorFormRequired); }
+//    }
+//}
 
 body.desktop .form-row > .label {
     &:after {

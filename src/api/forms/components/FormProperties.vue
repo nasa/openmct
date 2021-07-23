@@ -1,26 +1,27 @@
 <template>
-<div>
+<div class="c-form">
+    <div class="c-overlay__top-bar c-form__top-bar">
+        <div class="c-overlay__dialog-title">{{ model.title }}</div>
+        <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
+    </div>
     <form name="mctForm"
-          class="form c-form mct-form"
+          class="c-form__contents"
           autocomplete="off"
           @submit.prevent
     >
-        <div class="mct-form__title c-overlay__top-bar">
-            <div class="c-overlay__dialog-title">{{ model.title }}</div>
-            <div class="c-overlay__dialog-hint hint">All fields marked <span class="req icon-asterisk"></span> are required.</div>
-        </div>
-        <span v-for="section in model.sections"
-              :key="section.name"
-              class="mct-form__sections l-form-section c-form__section"
-              :class="section.cssClass"
+        <div v-for="section in model.sections"
+             :key="section.name"
+             class="c-form__section"
+             :class="section.cssClass"
         >
             <h2 v-if="section.name"
-                class="c-form__header"
+                class="c-form__section-header"
             >
                 {{ section.name }}
             </h2>
             <div v-for="(row, index) in section.rows"
                  :key="row.name"
+                 class="u-contents"
             >
                 <FormRow :css-class="section.cssClass"
                          :first="index < 1"
@@ -28,10 +29,10 @@
                          @onChange="onChange"
                 />
             </div>
-        </span>
+        </div>
     </form>
 
-    <div class="mct-form__controls c-overlay__button-bar">
+    <div class="mct-form__controls c-overlay__button-bar c-form__bottom-bar">
         <button tabindex="0"
                 :disabled="isInvalid"
                 class="c-button c-button--major"
