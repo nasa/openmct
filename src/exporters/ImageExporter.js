@@ -57,10 +57,13 @@ function polyfillToBlob() {
 polyfillToBlob();
 
 import {saveAs} from 'file-saver/FileSaver';
-import {html2canvas} from 'html2canvas';
-import {uuid} from 'uuid';
+import html2canvas from 'html2canvas';
+import uuid from 'uuid';
 
 class ImageExporter {
+    constructor(openmct) {
+        this.openmct = openmct;
+    }
     /**
         * Converts an HTML element into a PNG or JPG Blob.
         * @private
@@ -70,13 +73,18 @@ class ImageExporter {
         */
     renderElement(element, { imageType, className, thumbnailSize }) {
         const self = this;
-        const dialogService = this.dialogService;
-        const dialog = dialogService.showBlockingMessage({
-            title: "Capturing...",
-            hint: "Capturing an image",
-            unknownProgress: true,
-            severity: "info",
-            delay: true
+        const dialog = this.openmct.overlays.dialog({
+            iconClass: 'info',
+            message: "Caputuring an image",
+            buttons: [
+                {
+                    label: "Cancel",
+                    emphasis: true,
+                    callback: function () {
+                        dialog.dismiss();
+                    }
+                }
+            ]
         });
 
         let mimeType = "image/png";
@@ -87,7 +95,8 @@ class ImageExporter {
         let exportId = undefined;
         let oldId = undefined;
         if (className) {
-            exportId = 'export-element-' + uuid();
+            const newUUID = uuid();
+            exportId = `$export-element-${newUUID}`;
             oldId = element.id;
             element.id = exportId;
         }

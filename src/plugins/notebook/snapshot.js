@@ -4,13 +4,13 @@ import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
 import { createNotebookImageDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
 
 import SnapshotContainer from './snapshot-container';
-import ImageExporter from '../../exporters/ImageExporter.js';
+import ImageExporter from '../../exporters/ImageExporter';
 
 export default class Snapshot {
     constructor(openmct) {
         this.openmct = openmct;
         this.snapshotContainer = new SnapshotContainer(openmct);
-        this.imageExporter = new ImageExporter();
+        this.imageExporter = new ImageExporter(openmct);
 
         this.capture = this.capture.bind(this);
         this._saveSnapShot = this._saveSnapShot.bind(this);

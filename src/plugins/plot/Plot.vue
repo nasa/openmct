@@ -103,7 +103,7 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
-        this.imageExporter = new ImageExporter();
+        this.imageExporter = new ImageExporter(this.openmct);
     },
     beforeDestroy() {
         this.destroy();

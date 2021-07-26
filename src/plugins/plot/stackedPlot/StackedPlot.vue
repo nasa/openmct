@@ -67,8 +67,9 @@
 </template>
 
 <script>
-import eventHelpers from "../lib/eventHelpers";
-import StackedPlotItem from "./StackedPlotItem.vue";
+import eventHelpers from '../lib/eventHelpers';
+import StackedPlotItem from './StackedPlotItem.vue';
+import ImageExporter from '../../../exporters/ImageExporter';
 
 export default {
     components: {
@@ -103,7 +104,7 @@ export default {
     mounted() {
         eventHelpers.extend(this);
 
-        this.imageExporter = new ImageExporter();
+        this.imageExporter = new ImageExporter(this.openmct);
 
         this.tickWidthMap = {};
 

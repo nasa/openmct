@@ -31,6 +31,7 @@ import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
 
 import { updateNotebookImageDomainObject } from '../utils/notebook-image';
+import ImageExporter from '../../../exporters/ImageExporter';
 
 import PopupMenu from './PopupMenu.vue';
 import Vue from 'vue';
@@ -71,7 +72,7 @@ export default {
     },
     mounted() {
         this.addPopupMenuItems();
-        this.imageExporter = new ImageExporter();
+        this.imageExporter = new ImageExporter(this.openmct);
     },
     methods: {
         addPopupMenuItems() {
