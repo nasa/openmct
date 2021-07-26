@@ -565,7 +565,7 @@ export default {
                         handleItemSelection
                     };
                 },
-                template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
+                template: '<SelectorDialogTree @conditionSetSelected="handleItemSelection"></SelectorDialogTree>'
             }).$mount();
 
             let overlay = this.openmct.overlays.overlay({
