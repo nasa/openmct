@@ -72,7 +72,8 @@
 </template>
 
 <script>
-import eventHelpers from "./lib/eventHelpers";
+import eventHelpers from './lib/eventHelpers';
+import ImageExporter from '../../exporters/ImageExporter';
 import MctPlot from './MctPlot.vue';
 
 export default {
