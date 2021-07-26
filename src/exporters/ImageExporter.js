@@ -58,6 +58,7 @@ polyfillToBlob();
 
 import {saveAs} from 'file-saver/FileSaver';
 import {html2canvas} from 'html2canvas';
+import {uuid} from 'uuid';
 
 class ImageExporter {
     /**
@@ -86,8 +87,7 @@ class ImageExporter {
         let exportId = undefined;
         let oldId = undefined;
         if (className) {
-            exportId = 'export-element-' + this.exportCount;
-            this.exportCount++;
+            exportId = 'export-element-' + uuid();
             oldId = element.id;
             element.id = exportId;
         }
