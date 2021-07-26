@@ -103,7 +103,7 @@ export default {
     mounted() {
         eventHelpers.extend(this);
 
-        this.exportImageService = this.openmct.$injector.get('exportImageService');
+        this.imageExporter = new ImageExporter();
 
         this.tickWidthMap = {};
 
@@ -161,7 +161,7 @@ export default {
             this.hideExportButtons = true;
             const plotElement = this.$refs.plotContainer;
 
-            this.exportImageService.exportJPG(plotElement, 'stacked-plot.jpg', 'export-plot')
+            this.imageExporter.exportJPG(plotElement, 'stacked-plot.jpg', 'export-plot')
                 .finally(function () {
                     this.hideExportButtons = false;
                 }.bind(this));
@@ -172,7 +172,7 @@ export default {
 
             const plotElement = this.$refs.plotContainer;
 
-            this.exportImageService.exportPNG(plotElement, 'stacked-plot.png', 'export-plot')
+            this.imageExporter.exportPNG(plotElement, 'stacked-plot.png', 'export-plot')
                 .finally(function () {
                     this.hideExportButtons = false;
                 }.bind(this));

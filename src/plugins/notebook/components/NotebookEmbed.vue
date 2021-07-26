@@ -71,7 +71,7 @@ export default {
     },
     mounted() {
         this.addPopupMenuItems();
-        this.exportImageService = this.openmct.$injector.get('exportImageService');
+        this.imageExporter = new ImageExporter();
     },
     methods: {
         addPopupMenuItems() {
@@ -234,9 +234,9 @@ export default {
             let element = this.snapshot.$refs['snapshot-image'];
 
             if (type === 'png') {
-                this.exportImageService.exportPNG(element, this.embed.name);
+                this.imageExporter.exportPNG(element, this.embed.name);
             } else {
-                this.exportImageService.exportJPG(element, this.embed.name);
+                this.imageExporter.exportJPG(element, this.embed.name);
             }
         },
         previewEmbed() {

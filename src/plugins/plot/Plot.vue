@@ -102,8 +102,7 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
-
-        this.exportImageService = this.openmct.$injector.get('exportImageService');
+        this.imageExporter = new ImageExporter();
     },
     beforeDestroy() {
         this.destroy();
@@ -118,14 +117,12 @@ export default {
 
         exportJPG() {
             const plotElement = this.$refs.plotContainer;
-
-            this.exportImageService.exportJPG(plotElement, 'plot.jpg', 'export-plot');
+            this.imageExporter.exportJPG(plotElement, 'plot.jpg', 'export-plot');
         },
 
         exportPNG() {
             const plotElement = this.$refs.plotContainer;
-
-            this.exportImageService.exportPNG(plotElement, 'plot.png', 'export-plot');
+            this.imageExporter.exportPNG(plotElement, 'plot.png', 'export-plot');
         },
 
         toggleCursorGuide() {
