@@ -38,7 +38,7 @@ function replaceDotsWithUnderscores(filename) {
  */
 function polyfillToBlob() {
     if (!HTMLCanvasElement.prototype.toBlob) {
-        Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
+        Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
             value: function (callback, mimeType, quality) {
                 const binStr = atob(this.toDataURL(mimeType, quality).split(',')[1]);
                 const len = binStr.length;
@@ -48,7 +48,7 @@ function polyfillToBlob() {
                     arr[i] = binStr.charCodeAt(i);
                 }
 
-                callback(new Blob([arr], { type: mimeType || "image/png" }));
+                callback(new Blob([arr], { type: mimeType || 'image/png' }));
             }
         });
     }
@@ -73,12 +73,13 @@ class ImageExporter {
         */
     renderElement(element, { imageType, className, thumbnailSize }) {
         const self = this;
-        const dialog = this.openmct.overlays.dialog({
+        const overlays = this.openmct.overlays;
+        const dialog = overlays.dialog({
             iconClass: 'info',
-            message: "Caputuring an image",
+            message: 'Caputuring an image',
             buttons: [
                 {
-                    label: "Cancel",
+                    label: 'Cancel',
                     emphasis: true,
                     callback: function () {
                         dialog.dismiss();
@@ -87,9 +88,9 @@ class ImageExporter {
             ]
         });
 
-        let mimeType = "image/png";
-        if (imageType === "jpg") {
-            mimeType = "image/jpeg";
+        let mimeType = 'image/png';
+        if (imageType === 'jpg') {
+            mimeType = 'image/jpeg';
         }
 
         let exportId = undefined;
@@ -129,16 +130,18 @@ class ImageExporter {
         }, function (error) {
             console.log('error capturing image', error);
             dialog.dismiss();
-            const errorDialog = dialogService.showBlockingMessage({
-                title: "Error capturing image",
-                severity: "error",
-                hint: "Image was not captured successfully!",
-                options: [{
-                    label: "OK",
-                    callback: function () {
-                        errorDialog.dismiss();
+            const errorDialog = overlays.dialog({
+                iconClass: 'error',
+                message: 'Image was not captured successfully!',
+                buttons: [
+                    {
+                        label: "OK",
+                        emphasis: true,
+                        callback: function () {
+                            errorDialog.dismiss();
+                        }
                     }
-                }]
+                ]
             });
         });
     }
