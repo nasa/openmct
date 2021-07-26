@@ -4,7 +4,7 @@ import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
 import { createNotebookImageDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
 
 import SnapshotContainer from './snapshot-container';
-import ImageExporter from './exporters/ImageExporter.js';
+import ImageExporter from '../../exporters/ImageExporter.js';
 
 export default class Snapshot {
     constructor(openmct) {

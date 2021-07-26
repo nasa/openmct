@@ -27,6 +27,7 @@
 
 function replaceDotsWithUnderscores(filename) {
     const regex = /\./gi;
+
     return filename.replace(regex, '_');
 }
 
@@ -52,6 +53,11 @@ function polyfillToBlob() {
         });
     }
 }
+
+polyfillToBlob();
+
+import {saveAs} from 'file-saver/FileSaver';
+import {html2canvas} from 'html2canvas';
 
 class ImageExporter {
     /**
@@ -126,7 +132,7 @@ class ImageExporter {
                 }]
             });
         });
-    };
+    }
 
     getThumbnail(canvas, mimeType, size) {
         const thumbnailCanvas = document.createElement('canvas');
@@ -137,7 +143,7 @@ class ImageExporter {
         ctx.drawImage(canvas, 0, 0, canvas.width, canvas.height, 0, 0, size.width, size.height);
 
         return thumbnailCanvas.toDataURL(mimeType);
-    };
+    }
 
     /**
      * Takes a screenshot of a DOM node and exports to JPG.
@@ -154,7 +160,7 @@ class ImageExporter {
             className
         });
         saveAs(img.blob, processedFilename);
-    };
+    }
 
     /**
      * Takes a screenshot of a DOM node and exports to PNG.
@@ -171,7 +177,7 @@ class ImageExporter {
             className
         });
         saveAs(img.blob, processedFilename);
-    };
+    }
 
     /**
      * Takes a screenshot of a DOM node in PNG format.
@@ -185,8 +191,8 @@ class ImageExporter {
             imageType: 'png',
             ...options
         });
-    };
-
-    polyfillToBlob();
+    }
 }
+
+export default ImageExporter;
 
