@@ -161,7 +161,6 @@ export default {
 
         if (this.navigateToParent && this.navigateToParent.endsWith(this.openmct.objects.makeKeyString(this.domainObject.identifier))) {
             this.handleItemSelected(this.node.object, this.node);
-            this.$el.scrollIntoView();
         }
 
         let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
