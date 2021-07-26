@@ -36,7 +36,7 @@ define([
                 "types": [
                     {
                         "key": "hyperlink",
-                        "name": "Hyperlink",
+                        "name": "Hyperlink OG",
                         "cssClass": "icon-chain-links",
                         "description": "A hyperlink to redirect to a different link",
                         "features": ["creation"],
