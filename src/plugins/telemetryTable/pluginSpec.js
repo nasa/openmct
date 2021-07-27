@@ -48,6 +48,7 @@ describe("the plugin", () => {
     let tablePlugin;
     let element;
     let child;
+    let unlistenConfigMutation;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -86,6 +87,10 @@ describe("the plugin", () => {
             start: 0,
             end: 1
         });
+
+        if (unlistenConfigMutation) {
+            unlistenConfigMutation();
+        }
 
         return resetApplicationState(openmct);
     });
@@ -276,6 +281,14 @@ describe("the plugin", () => {
                     expect(allRowElements.length).toEqual(3);
                 });
             });
+        });
+
+        it("properly triggers the change event when the configuration is mutated", (done) => {
+            tableInstance.configuration.on('change', (configuration) => {
+                expect(configuration).toEqual({});
+                done();
+            });
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', {});
         });
     });
 });
