@@ -269,11 +269,14 @@
 }
 
 .c-selector {
-    .c-tree-and-search__tree.c-tree {
-        border: 1px solid $colorInteriorBorder;
+    &.c-tree-and-search {
+        border: 1px solid $colorFormLines;
         border-radius: $controlCr;
         padding: $interiorMargin;
-        overflow: auto;
+
+        > .c-tree {
+            overflow: auto;
+        }
     }
 }
 
