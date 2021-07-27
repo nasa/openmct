@@ -160,7 +160,7 @@ export default {
 
         exportJPG() {
             this.hideExportButtons = true;
-            const plotElement = this.$refs.plotContainer;
+            const plotElement = this.$el;
 
             this.imageExporter.exportJPG(plotElement, 'stacked-plot.jpg', 'export-plot')
                 .finally(function () {
@@ -171,7 +171,7 @@ export default {
         exportPNG() {
             this.hideExportButtons = true;
 
-            const plotElement = this.$refs.plotContainer;
+            const plotElement = this.$el;
 
             this.imageExporter.exportPNG(plotElement, 'stacked-plot.png', 'export-plot')
                 .finally(function () {
