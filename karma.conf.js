@@ -23,7 +23,7 @@
 /*global module,process*/
 
 const devMode = process.env.NODE_ENV !== 'production';
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
+const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeMemory'];
 const coverageEnabled = process.env.COVERAGE === 'true';
 const reporters = ['progress', 'html', 'junit'];
 
@@ -64,7 +64,11 @@ module.exports = (config) => {
             }
         },
         customLaunchers: {
-            ChromeDebugging: {
+            ChromeMemory: {
+                base: 'ChromeHeadless',
+                flags: ['--enable-precise-memory-info', '--js-flags="--expose-gc"']
+            }
+/*            ChromeDebugging: {
                 base: 'Chrome',
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
@@ -72,7 +76,7 @@ module.exports = (config) => {
             FirefoxESR: {
                 base: 'FirefoxHeadless',
                 name: 'FirefoxESR'
-            }
+            }*/
         },
         colors: true,
         logLevel: config.LOG_INFO,

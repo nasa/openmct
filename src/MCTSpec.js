@@ -56,7 +56,7 @@ define([
             return testUtils.resetApplicationState(openmct);
         });
 
-        it("exposes plugins", function () {
+        fit("exposes plugins", function () {
             expect(openmct.plugins).toEqual(plugins);
         });
 
