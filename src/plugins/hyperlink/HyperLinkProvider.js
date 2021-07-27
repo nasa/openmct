@@ -37,7 +37,7 @@ export default function HyperLinkProvider(openmct) {
             return domainObject.type === 'hyper-link';
         },
 
-        view: function (domainObject, objectPath) {
+        view: function (domainObject) {
             let component;
 
             return {
@@ -49,9 +49,7 @@ export default function HyperLinkProvider(openmct) {
                         },
                         provide: {
                             openmct,
-                            domainObject,
-                            composition: openmct.composition.get(domainObject),
-                            objectPath
+                            domainObject
                         },
                         template: '<hyper-link-layout></hyper-link-layout>'
                     });

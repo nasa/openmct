@@ -38,27 +38,14 @@
 <script>
 
 export default {
-    inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
-    data() {
-        return {
-
-        };
-    },
+    inject: ['openmct', 'domainObject'],
     computed: {
         targetUrl() {
             return this.domainObject.url;
         },
         displayText() {
             return this.domainObject.displayText;
-        }
-    },
-    beforeDestroy() {
-
-    },
-    mounted() {
-        console.log('new hyperlink', this.domainObject);
-    },
-    methods: {
+        },
         openNewTab() {
             if (this.domainObject.openNewTab === "thisTab") {
                 return false;

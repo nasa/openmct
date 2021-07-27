@@ -29,9 +29,8 @@ export default function () {
             key: 'hyper-link',
             description: 'A hyperlink to redirect to a different link',
             creatable: true,
-            cssClass: 'icon-timeline',
+            cssClass: 'icon-chain-links',
             initialize: function (domainObject) {
-                domainObject.composition = [];
                 domainObject.displayFormat = "link";
                 domainObject.openNewTab = "thisTab";
             },
