@@ -13,7 +13,8 @@ const config = {
         ignoreHTTPSErrors: true,
         trace: 'on',
         video: 'on'
-    }
+    },
+    reporter: [['junit', { outputFile: 'e2e/results.xml' }]]
 };
 
 module.exports = config;
