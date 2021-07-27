@@ -52,22 +52,24 @@
         >
         </button>
     </div>
-    <stacked-plot-item v-for="object in compositionObjects"
-                       :key="object.id"
-                       class="c-plot--stacked-container"
-                       :object="object"
-                       :options="options"
-                       :grid-lines="gridLines"
-                       :cursor-guide="cursorGuide"
-                       :plot-tick-width="maxTickWidth"
-                       @plotTickWidth="onTickWidthChange"
-                       @loadingUpdated="loadingUpdated"
-    />
+    <div class="l-view-section">
+        <stacked-plot-item v-for="object in compositionObjects"
+                           :key="object.id"
+                           class="c-plot--stacked-container"
+                           :object="object"
+                           :options="options"
+                           :grid-lines="gridLines"
+                           :cursor-guide="cursorGuide"
+                           :plot-tick-width="maxTickWidth"
+                           @plotTickWidth="onTickWidthChange"
+                           @loadingUpdated="loadingUpdated"
+        />
+    </div>
 </div>
 </template>
 
 <script>
-import eventHelpers from '../lib/eventHelpers';
+
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
 
@@ -90,7 +92,8 @@ export default {
             cursorGuide: false,
             gridLines: true,
             loading: false,
-            compositionObjects: []
+            compositionObjects: [],
+            tickWidthMap: {}
         };
     },
     computed: {
@@ -102,11 +105,7 @@ export default {
         this.destroy();
     },
     mounted() {
-        eventHelpers.extend(this);
-
         this.imageExporter = new ImageExporter(this.openmct);
-
-        this.tickWidthMap = {};
 
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
@@ -118,7 +117,6 @@ export default {
             this.loading = loaded;
         },
         destroy() {
-            this.stopListening();
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.composition.off('reorder', this.compositionReorder);
@@ -127,13 +125,15 @@ export default {
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
 
-            this.tickWidthMap[id] = 0;
+            this.$set(this.tickWidthMap, id, 0);
             this.compositionObjects.push(child);
         },
 
         removeChild(childIdentifier) {
             const id = this.openmct.objects.makeKeyString(childIdentifier);
-            delete this.tickWidthMap[id];
+
+            this.$delete(this.tickWidthMap, id);
+
             const childObj = this.compositionObjects.filter((c) => {
                 const identifier = this.openmct.objects.makeKeyString(c.identifier);
 
@@ -191,14 +191,7 @@ export default {
                 return;
             }
 
-            //update the tickWidth for this plotId, the computed max tick width of the stacked plot will be cascaded down
-            //TODO: Might need to do this using $set
-            this.tickWidthMap[plotId] = Math.max(width, this.tickWidthMap[plotId]);
-            // const newTickWidth = Math.max(...Object.values(this.tickWidthMap));
-            // if (newTickWidth !== tickWidth || width !== tickWidth) {
-            //     tickWidth = newTickWidth;
-            //     $scope.$broadcast('plot:tickWidth', tickWidth);
-            // }
+            this.$set(this.tickWidthMap, plotId, width);
         }
     }
 };

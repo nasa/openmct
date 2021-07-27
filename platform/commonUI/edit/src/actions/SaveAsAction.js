@@ -96,8 +96,7 @@ function (
     SaveAsAction.prototype.save = function () {
         var self = this,
             domainObject = this.domainObject,
-            dialog = new SaveInProgressDialog(this.dialogService),
-            toUndirty = [];
+            dialog = new SaveInProgressDialog(this.dialogService);
 
         function doWizardSave(parent) {
             var wizard = self.createWizard(parent);
@@ -132,11 +131,14 @@ function (
             return fetchObject(object.getModel().location);
         }
 
-        function saveObject(parent) {
-            return self.openmct.editor.save().then(() => {
-                // Force mutation for search indexing
-                return parent;
-            });
+        function saveObject(object) {
+            //persist the object, which adds it to the transaction and then call editor.save
+            return object.getCapability("persistence").persist()
+                .then(() => {
+                    return self.openmct.editor.save().then(() => {
+                        return object;
+                    });
+                });
         }
 
         function addSavedObjectToParent(parent) {
@@ -147,17 +149,6 @@ function (
                         .then(function () {
                             return addedObject;
                         });
-                });
-        }
-
-        function undirty(object) {
-            return object.getCapability('persistence').refresh();
-        }
-
-        function undirtyOriginals(object) {
-            return Promise.all(toUndirty.map(undirty))
-                .then(() => {
-                    return object;
                 });
         }
 
@@ -187,10 +178,9 @@ function (
         return getParent(domainObject)
             .then(doWizardSave)
             .then(showBlockingDialog)
-            .then(getParent)
             .then(saveObject)
+            .then(getParent)
             .then(addSavedObjectToParent)
-            .then(undirtyOriginals)
             .then((addedObject) => {
                 return fetchObject(addedObject.getId());
             })

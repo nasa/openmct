@@ -1,9 +1,9 @@
 /*****************************************************************************
- * Open openmct, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
- * Open openmct is licensed under the Apache License, Version 2.0 (the
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -14,33 +14,40 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  *
- * Open openmct includes source code licensed under additional open source
+ * Open MCT includes source code licensed under additional open source
  * licenses. See the Open Source Licenses file (LICENSES.md) included with
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
+import { BAR_GRAPH_KEY } from './BarGraphConstants';
 
-], function (
+export default function BarGraphCompositionPolicy(openmct) {
+    function hasRange(metadata) {
+        const rangeValues = metadata.valuesForHints(['range']);
 
-) {
+        return rangeValues.length > 0;
+    }
 
-    function checkForDeprecatedFunctionality(typeDef) {
-        if (Object.prototype.hasOwnProperty.call(typeDef, 'telemetry')) {
-            console.warn(
-                'DEPRECATION WARNING: Telemetry data on type '
-                + 'registrations will be deprecated in a future version, '
-                + 'please convert to a custom telemetry metadata provider '
-                + 'for type: ' + typeDef.key
-            );
+    function hasBarGraphTelemetry(domainObject) {
+        if (!openmct.telemetry.isTelemetryObject(domainObject)) {
+            return false;
         }
+
+        let metadata = openmct.telemetry.getMetadata(domainObject);
+
+        return metadata.values().length > 0 && hasRange(metadata);
     }
 
-    function TypeDeprecationChecker(types) {
-        types.forEach(checkForDeprecatedFunctionality);
-    }
+    return {
+        allow: function (parent, child) {
+            if ((parent.type === BAR_GRAPH_KEY)
+                && (hasBarGraphTelemetry(child) === false)
+            ) {
+                return false;
+            }
 
-    return TypeDeprecationChecker;
-
-});
+            return true;
+        }
+    };
+}

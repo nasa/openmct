@@ -48,16 +48,16 @@ define([
                             components: {
                                 TabsComponent: TabsComponent.default
                             },
-                            data() {
-                                return {
-                                    isEditing: editMode
-                                };
-                            },
                             provide: {
                                 openmct,
                                 domainObject,
                                 objectPath,
                                 composition: openmct.composition.get(domainObject)
+                            },
+                            data() {
+                                return {
+                                    isEditing: editMode
+                                };
                             },
                             template: '<tabs-component :isEditing="isEditing"></tabs-component>'
                         });

@@ -47,7 +47,9 @@ define([
                 });
 
                 let indicator = {
-                    element: component.$mount().$el
+                    element: component.$mount().$el,
+                    key: 'clear-data-indicator',
+                    priority: openmct.priority.DEFAULT
                 };
 
                 openmct.indicators.add(indicator);

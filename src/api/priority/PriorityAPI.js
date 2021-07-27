@@ -19,31 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(['./Transaction'], function (Transaction) {
-    /**
-     * A nested transaction is a transaction which takes place in the context
-     * of a larger parent transaction. It becomes part of the parent
-     * transaction when (and only when) committed.
-     * @param parent
-     * @constructor
-     * @extends {platform/commonUI/edit/services.Transaction}
-     * @memberof platform/commonUI/edit/services
-     */
-    function NestedTransaction(parent) {
-        this.parent = parent;
-        Transaction.call(this, parent.$log);
-    }
 
-    NestedTransaction.prototype = Object.create(Transaction.prototype);
-
-    NestedTransaction.prototype.commit = function () {
-        this.parent.add(
-            Transaction.prototype.commit.bind(this),
-            Transaction.prototype.cancel.bind(this)
-        );
-
-        return Promise.resolve(true);
-    };
-
-    return NestedTransaction;
+const PRIORITIES = Object.freeze({
+    HIGH: 1000,
+    DEFAULT: 0,
+    LOW: -1000
 });
+export default PRIORITIES;

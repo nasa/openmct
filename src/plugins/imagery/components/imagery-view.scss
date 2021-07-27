@@ -285,17 +285,17 @@
     }
 }
 
-.c-imagery__prev-next-buttons {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    pointer-events: none;
+.c-imagery__prev-next-button {
+    pointer-events: all;
     position: absolute;
     top: 50%;
-    transform: translateY(-75%);
+    transform: translateY(-75%); // 75% due to transform: rotation approach to the button
 
-    .c-nav {
-        pointer-events: all;
+    &.c-nav {
+        position: absolute;
+
+        &--prev { left: 0; }
+        &--next { right: 0; }
     }
 
     .s-status-taking-snapshot & {
@@ -315,13 +315,31 @@
 
 /*************************************** IMAGERY IN TIMESTRIP VIEWS */
 .c-imagery-tsv {
-    g.c-imagery-tsv__image-wrapper {
+    div.c-imagery-tsv__image-wrapper {
         cursor: pointer;
+        position: absolute;
+        top: 0;
+        display: flex;
+        z-index: 1;
+        margin-top: 5px;
 
-        &.is-hovered {
+        img {
+            align-self: flex-end;
+        }
+        &:hover {
+            z-index: 2;
+
             filter: brightness(1) contrast(1) !important;
             [class*='__image-handle'] {
-                fill: $colorBodyFg;
+                background-color: $colorBodyFg;
+            }
+
+            //[class*='__image-placeholder'] {
+            //    display: none;
+            //}
+
+            img {
+                display: block !important;
             }
         }
     }
@@ -331,14 +349,16 @@
     }
 
     &__image-handle {
-        fill: rgba($colorBodyFg, 0.5);
+        background-color: rgba($colorBodyFg, 0.5);
     }
 
     &__image-placeholder {
-        fill: pushBack($colorBodyBg, 0.3);
+        background-color: pushBack($colorBodyBg, 0.3);
+        display: block;
+        align-self: flex-end;
     }
 
-    &:hover g.c-imagery-tsv__image-wrapper {
+    &:hover div.c-imagery-tsv__image-wrapper {
         // TODO CH: convert to theme constants
         filter: brightness(0.5) contrast(0.7);
     }

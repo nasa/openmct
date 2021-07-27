@@ -27,6 +27,7 @@ define(['zepto', './res/indicator-template.html'],
         function SimpleIndicator(openmct) {
             this.openmct = openmct;
             this.element = $(indicatorTemplate)[0];
+            this.priority = openmct.priority.DEFAULT;
 
             this.textElement = this.element.querySelector('.js-indicator-text');
 

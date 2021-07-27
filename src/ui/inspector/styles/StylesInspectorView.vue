@@ -54,14 +54,14 @@ export default {
                 let viewContainer = document.createElement('div');
                 this.$el.append(viewContainer);
                 this.component = new Vue({
+                    el: viewContainer,
+                    components: {
+                        StylesView
+                    },
                     provide: {
                         openmct: this.openmct,
                         selection: selection,
                         stylesManager: this.stylesManager
-                    },
-                    el: viewContainer,
-                    components: {
-                        StylesView
                     },
                     template: '<styles-view/>'
                 });

@@ -29,7 +29,7 @@ const ID = "_id";
 const HEARTBEAT = 50000;
 const ALL_DOCS = "_all_docs?include_docs=true";
 
-export default class CouchObjectProvider {
+class CouchObjectProvider {
     constructor(openmct, options, namespace) {
         options = this._normalize(options);
         this.openmct = openmct;
@@ -74,13 +74,6 @@ export default class CouchObjectProvider {
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else {
-            const error = event.data.error;
-            if (error && Object.keys(this.observers).length > 0) {
-                this.observeObjectChanges();
-
-                return;
-            }
-
             let objectChanges = event.data.objectChanges;
             objectChanges.identifier = {
                 namespace: this.namespace,
@@ -126,11 +119,12 @@ export default class CouchObjectProvider {
         }
 
         return fetch(this.url + '/' + subPath, fetchOptions)
-            .then(response => response.json())
-            .then(function (response) {
-                return response;
-            }, function () {
-                return undefined;
+            .then((response) => {
+                if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
+                    throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+                }
+
+                return response.json();
             });
     }
 
@@ -561,12 +555,18 @@ export default class CouchObjectProvider {
         let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
         this.enqueueObject(key, model, intermediateResponse);
-        this.objectQueue[key].pending = true;
-        const queued = this.objectQueue[key].dequeue();
-        let document = new CouchDocument(key, queued.model);
-        this.request(key, "PUT", document).then((response) => {
-            this.checkResponse(response, queued.intermediateResponse, key);
-        });
+        if (!this.objectQueue[key].pending) {
+            this.objectQueue[key].pending = true;
+            const queued = this.objectQueue[key].dequeue();
+            let document = new CouchDocument(key, queued.model);
+            this.request(key, "PUT", document).then((response) => {
+                console.log('create check response', key);
+                this.checkResponse(response, queued.intermediateResponse, key);
+            }).catch(error => {
+                queued.intermediateResponse.reject(error);
+                this.objectQueue[key].pending = false;
+            });
+        }
 
         return intermediateResponse.promise;
     }
@@ -581,6 +581,9 @@ export default class CouchObjectProvider {
             let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
             this.request(key, "PUT", document).then((response) => {
                 this.checkResponse(response, queued.intermediateResponse, key);
+            }).catch((error) => {
+                queued.intermediateResponse.reject(error);
+                this.objectQueue[key].pending = false;
             });
         }
     }
@@ -594,3 +597,7 @@ export default class CouchObjectProvider {
         return intermediateResponse.promise;
     }
 }
+
+CouchObjectProvider.HTTP_CONFLICT = 409;
+
+export default CouchObjectProvider;
