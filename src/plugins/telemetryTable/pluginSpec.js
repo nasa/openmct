@@ -314,15 +314,15 @@ describe("the plugin", () => {
             unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
 
             await Vue.nextTick();
-            let tableRow = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
-            expect(tableRow.length).toEqual(3);
+            let tableRowCells = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
+            expect(tableRowCells.length).toEqual(3);
 
             tableInstanceConfiguration.hiddenColumns['some-key'] = false;
             unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
 
             await Vue.nextTick();
-            tableRow = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
-            expect(tableRow.length).toEqual(4);
+            tableRowCells = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
+            expect(tableRowCells.length).toEqual(4);
         });
     });
 });
