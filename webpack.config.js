@@ -22,6 +22,7 @@ const webpackConfig = {
     mode: devMode ? 'development' : 'production',
     entry: {
         openmct: './openmct.js',
+        couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
         espressoTheme: './src/plugins/themes/espresso-theme.scss',
         snowTheme: './src/plugins/themes/snow-theme.scss',
         maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'

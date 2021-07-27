@@ -23,7 +23,6 @@
 import CouchDocument from "./CouchDocument";
 import CouchObjectQueue from "./CouchObjectQueue";
 import { NOTEBOOK_TYPE } from '../../notebook/notebook-constants.js';
-import CouchChangesFeed from 'raw-loader!./CouchChangesFeed';
 
 const REV = "_rev";
 const ID = "_id";
@@ -48,7 +47,9 @@ export default class CouchObjectProvider {
         let provider = this;
         let sharedWorker;
 
-        sharedWorker = new SharedWorker('data:application/javascript;base64,' + btoa(CouchChangesFeed));
+        const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
+
+        sharedWorker = new SharedWorker(sharedWorkerURL);
         sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
         sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
         sharedWorker.port.start();
@@ -420,7 +421,7 @@ export default class CouchObjectProvider {
             body = JSON.stringify(filter);
         }
 
-        if (SharedWorker === undefined) {
+        if (typeof SharedWorker === 'undefined') {
             this.fetchChanges(url, body);
         } else {
             this.initiateSharedWorkerFetchChanges(url, body);
@@ -454,15 +455,6 @@ export default class CouchObjectProvider {
     async fetchChanges(url, body) {
         const controller = new AbortController();
         const signal = controller.signal;
-
-        if (typeof this.stopObservingObjectChanges === 'function') {
-            this.stopObservingObjectChanges();
-        }
-
-        this.stopObservingObjectChanges = () => {
-            controller.abort();
-            delete this.stopObservingObjectChanges;
-        };
 
         let error = false;
 
