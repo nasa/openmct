@@ -26,7 +26,7 @@ import Vue from 'vue';
 export default function HyperLinkProvider(openmct) {
 
     return {
-        key: 'hyperlink',
+        key: 'hyper-link.view',
         name: 'HyperLink H',
         cssClass: 'icon-chain-links',
         canView(domainObject) {

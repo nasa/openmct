@@ -32,7 +32,58 @@ export default function () {
             cssClass: 'icon-timeline',
             initialize: function (domainObject) {
                 domainObject.composition = [];
-            }
+                domainObject.displayFormat = "link";
+                domainObject.openNewTab = "thisTab";
+            },
+            form: [
+                {
+                    "key": "url",
+                    "name": "URL",
+                    "control": "textfield",
+                    "required": true,
+                    "cssClass": "l-input-lg"
+                },
+                {
+                    "key": "displayText",
+                    "name": "Text to Display",
+                    "control": "textfield",
+                    "required": true,
+                    "cssClass": "l-input-lg"
+                },
+                {
+                    "key": "displayFormat",
+                    "name": "Display Format",
+                    "control": "select",
+                    "options": [
+                        {
+                            "name": "Link",
+                            "value": "link"
+                        },
+                        {
+                            "value": "button",
+                            "name": "Button"
+                        }
+                    ],
+                    "cssClass": "l-inline"
+                },
+                {
+                    "key": "openNewTab",
+                    "name": "Tab to Open Hyperlink",
+                    "control": "select",
+                    "options": [
+                        {
+                            "name": "Open in this tab",
+                            "value": "thisTab"
+                        },
+                        {
+                            "value": "newTab",
+                            "name": "Open in a new tab"
+                        }
+                    ],
+                    "cssClass": "l-inline"
+
+                }
+            ]
         });
         openmct.objectViews.addProvider(new HyperLinkProvider(openmct));
     };

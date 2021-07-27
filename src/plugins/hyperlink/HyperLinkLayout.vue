@@ -21,14 +21,15 @@
 *****************************************************************************/
 
 <template>
-<a class="c-hyperlink u-links"
+<a class="c-hyperlink u-links ng-scope"
    ng-controller="HyperlinkController as hyperlink"
    :href="targetUrl"
    :ng-attr-target="openNewTab ? '_blank' : undefined"
-   :ng-class="{
-       'c-hyperlink--button u-fills-container' : isButton,
+   :class="{
+       'u-fills-container c-hyperlink--button' : isButton,
        'c-hyperlink--link' : !isButton }"
 >
+
     <span class="c-hyperlink__label">{{ displayText }}</span>
 </a>
 
@@ -45,27 +46,28 @@ export default {
     },
     computed: {
         targetUrl() {
-            return this.domainObject.getModel().url;
+            return this.domainObject.url;
         },
         displayText() {
-            return this.domainObject.getModel().displayText;
+            return this.domainObject.displayText;
         }
     },
     beforeDestroy() {
 
     },
     mounted() {
+        console.log('new hyperlink', this.domainObject);
     },
     methods: {
         openNewTab() {
-            if (this.domainObject.getModel().openNewTab === "thisTab") {
+            if (this.domainObject.openNewTab === "thisTab") {
                 return false;
             } else {
                 return true;
             }
         },
         isButton() {
-            if (this.domainObject.getModel().displayFormat === "link") {
+            if (this.domainObject.displayFormat === "link") {
                 return false;
             }
 
