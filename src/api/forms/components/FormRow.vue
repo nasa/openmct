@@ -21,8 +21,6 @@
             :key="row.key"
             :ref="`form-control-${row.key}`"
             :model="row"
-            :value="row.value"
-            :required="isRequired"
             @onChange="onChange"
         />
     </div>
@@ -31,30 +29,40 @@
 
 <script>
 import AutoCompleteField from "@/api/forms/components/controls/AutoCompleteField.vue";
-import Composite from "@/api/forms/components/controls/Composite.vue";
+import ClockDisplayFormatField from "@/api/forms/components/controls/ClockDisplayFormatField.vue";
 import Datetime from "@/api/forms/components/controls/Datetime.vue";
 import FileInput from "@/api/forms/components/controls/FileInput.vue";
 import Locator from "@/api/forms/components/controls/Locator.vue";
 import NumberField from "@/api/forms/components/controls/NumberField.vue";
 import SelectField from '@/api/forms/components/controls/SelectField.vue';
-import TextArea from "@/api/forms/components/controls/TextArea.vue";
+import TextAreaField from "@/api/forms/components/controls/TextAreaField.vue";
 import TextField from "@/api/forms/components/controls/TextField.vue";
 
 const CONTROL_TYPE_VIEW_MAP = {
     'autocomplete': AutoCompleteField,
-    'composite': Composite,
+    'composite': ClockDisplayFormatField,
     'datetime': Datetime,
     'file-input': FileInput,
     'locator': Locator,
     'numberfield': NumberField,
     'select': SelectField,
-    'textarea': TextArea,
+    'textarea': TextAreaField,
     'textfield': TextField
 };
 
 export default {
     name: 'FormRow',
-    components: CONTROL_TYPE_VIEW_MAP,
+    components: {
+        AutoCompleteField,
+        ClockDisplayFormatField,
+        Datetime,
+        FileInput,
+        Locator,
+        NumberField,
+        SelectField,
+        TextAreaField,
+        TextField
+    },
     inject: ['openmct', 'domainObject'],
     props: {
         cssClass: {
@@ -81,10 +89,6 @@ export default {
     computed: {
         getComponent() {
             return CONTROL_TYPE_VIEW_MAP[this.row.control];
-        },
-        isRequired() {
-            //TODO: Check if field is required
-            return false;
         },
         rowClass() {
             let cssClass = this.cssClass;
