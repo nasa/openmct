@@ -111,6 +111,19 @@
     &--locator > .c-tree {
         height: 100%;
     }
+
+    &--datetime {
+        $size: min-content;
+        display: grid;
+        grid-template-columns: repeat(5, min-content);
+        grid-template-rows: auto;
+        grid-row-gap: 3px;
+        grid-column-gap: $interiorMargin;
+
+        .hint {
+            opacity: 0.7;
+        }
+    }
 }
 
 .l-input-lg {

@@ -20,67 +20,62 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="form-control complex datetime">
-    <div class="field-hints">
-        <span class="hint date">Date</span>
-        <span class="hint time sm">Hour</span>
-        <span class="hint time sm">Min</span>
-        <span class="hint time sm">Sec</span>
-        <span class="hint timezone">Timezone</span>
-    </div>
-    <div>
-        <form ref="dateTimeForm"
-              prevent
-        >
-            <div class="fields">
-                <span class="field control date">
-                    <input v-model="date"
-                           :pattern="/\d{4}-\d{2}-\d{2}/"
-                           :placeholder="format"
-                           type="date"
-                           name="date"
-                           @change="onChange"
-                    >
-                </span>
-                <span class="field control hour sm">
-                    <input v-model="hour"
-                           :pattern="/\d+/"
-                           type="number"
-                           name="hour"
-                           maxlength="10"
-                           min="0"
-                           max="23"
-                           @change="onChange"
-                    >
-                </span>
-                <span class="field control min sm">
-                    <input v-model="min"
-                           :pattern="/\d+/"
-                           type="number"
-                           name="min"
-                           maxlength="2"
-                           min="0"
-                           max="59"
-                           @change="onChange"
-                    >
-                </span>
-                <span class="field control sec sm">
-                    <input v-model="sec"
-                           :pattern="/\d+/"
-                           type="number"
-                           name="sec"
-                           maxlength="2"
-                           min="0"
-                           max="59"
-                           @change="onChange"
-                    >
-                </span>
-                <span class="field control timezone">
-                    UTC
-                </span>
-            </div>
-        </form>
-    </div>
+<div class="c-form-control--datetime">
+    <div class="hint date">Date</div>
+    <div class="hint time sm">Hour</div>
+    <div class="hint time sm">Min</div>
+    <div class="hint time sm">Sec</div>
+    <div class="hint timezone">Timezone</div>
+    <form ref="dateTimeForm"
+          prevent
+          class="u-contents"
+    >
+        <div class="field control date">
+            <input v-model="date"
+                   :pattern="/\d{4}-\d{2}-\d{2}/"
+                   :placeholder="format"
+                   type="date"
+                   name="date"
+                   @change="onChange"
+            >
+        </div>
+        <div class="field control hour sm">
+            <input v-model="hour"
+                   :pattern="/\d+/"
+                   type="number"
+                   name="hour"
+                   maxlength="10"
+                   min="0"
+                   max="23"
+                   @change="onChange"
+            >
+        </div>
+        <div class="field control min sm">
+            <input v-model="min"
+                   :pattern="/\d+/"
+                   type="number"
+                   name="min"
+                   maxlength="2"
+                   min="0"
+                   max="59"
+                   @change="onChange"
+            >
+        </div>
+        <div class="field control sec sm">
+            <input v-model="sec"
+                   :pattern="/\d+/"
+                   type="number"
+                   name="sec"
+                   maxlength="2"
+                   min="0"
+                   max="59"
+                   @change="onChange"
+            >
+        </div>
+        <div class="field control timezone">
+            UTC
+        </div>
+    </form>
 </div>
 </template>
 
