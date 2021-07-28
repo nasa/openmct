@@ -21,10 +21,9 @@
 *****************************************************************************/
 
 <template>
-<a class="c-hyperlink u-links ng-scope"
-   ng-controller="HyperlinkController as hyperlink"
+<a class="c-hyperlink u-links"
    :href="targetUrl"
-   :ng-attr-target="openNewTab ? '_blank' : undefined"
+   :target="openNewTab ? '_blank' : ''"
    :class="{
        'u-fills-container c-hyperlink--button' : isButton,
        'c-hyperlink--link' : !isButton }"
