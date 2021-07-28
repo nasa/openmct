@@ -36,7 +36,7 @@ assignees: ''
 
 #### Environment
 * Open MCT Version: <!--- date of build, version, or SHA -->
-* Deployment Type: <!--- npm dev? VIPER Dev? openmct-yams? -->
+* Deployment Type: <!--- npm dev? VIPER Dev? openmct-yamcs? -->
 * OS:
 * Browser:
 
