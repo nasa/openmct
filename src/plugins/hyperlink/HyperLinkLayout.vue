@@ -21,14 +21,14 @@
 *****************************************************************************/
 
 <template>
-<a class="c-hyperlink u-links"
+
+<a class="c-hyperlink"
    :href="targetUrl"
    :target="openNewTab ? '_blank' : '' "
    :class="{
-       'u-fills-container c-hyperlink--button' : isButton
+       'c-hyperlink--button' : isButton
    }"
 >
-
     <span class="c-hyperlink__label">{{ displayText }}</span>
 </a>
 
