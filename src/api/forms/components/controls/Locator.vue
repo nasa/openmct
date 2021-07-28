@@ -3,7 +3,7 @@
                     :ignore-type-check="true"
                     :css-class="`form-locator c-form-control--locator`"
                     :parent="model.parent"
-                    @conditionSetSelected="handleItemSelection"
+                    @treeItemSelected="handleItemSelection"
 />
 </template>
 
@@ -28,11 +28,13 @@ export default {
     destroyed() {
     },
     methods: {
-        handleItemSelection(parentDomainObject) {
+        handleItemSelection({ item, parentObjectPath }) {
             const data = {
                 model: this.model,
-                value: parentDomainObject
+                value: item,
+                parentObjectPath
             };
+
             this.$emit('onChange', data);
         }
     }

@@ -43,7 +43,7 @@ export default class MoveAction {
             .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
     }
 
-    navigateTo(objectPath) {
+    navigateTo(objectPath, parentDomainObjectpath) {
         let urlPath = objectPath.reverse()
             .map(object => this.openmct.objects.makeKeyString(object.identifier))
             .join("/");
@@ -59,7 +59,7 @@ export default class MoveAction {
         compositionCollection.add(child);
     }
 
-    async onSave(object, changes, parent) {
+    async onSave(object, changes, parent, parentDomainObjectpath) {
         let inNavigationPath = this.inNavigationPath(object);
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
@@ -78,8 +78,15 @@ export default class MoveAction {
         this.addToNewParent(object, parent);
         this.removeFromOldParent(object);
 
-        if (inNavigationPath) {
-            let newObjectPath = await this.openmct.objects.getOriginalPath(object.identifier);
+        if (!inNavigationPath) {
+            return;
+        }
+
+        let newObjectPath;
+        if (parentDomainObjectpath) {
+            newObjectPath = parentDomainObjectpath && [object].concat(parentDomainObjectpath);
+        } else {
+            newObjectPath = await this.openmct.objects.getOriginalPath(object.identifier);
             let root = await this.openmct.objects.getRoot();
             let rootChildCount = root.composition.length;
 
@@ -87,9 +94,9 @@ export default class MoveAction {
             if (rootChildCount < 2) {
                 newObjectPath.pop(); // remove ROOT
             }
-
-            this.navigateTo(newObjectPath);
         }
+
+        this.navigateTo(newObjectPath);
     }
 
     removeFromOldParent(child) {

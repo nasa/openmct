@@ -78,13 +78,14 @@ export default class FormsAPI {
         let overlay;
 
         let parentDomainObject = options.parentDomainObject || {};
+        let parentDomainObjectPath;
         const domainObject = options.domainObject;
 
         function onSave() {
             overlay.dismiss();
 
             if (options.onSave) {
-                options.onSave(domainObject, changes, parentDomainObject);
+                options.onSave(domainObject, changes, parentDomainObject, parentDomainObjectPath);
             }
         }
 
@@ -129,6 +130,7 @@ export default class FormsAPI {
                 let key = data.model.key;
                 if (key === 'location') {
                     parentDomainObject = data.value;
+                    parentDomainObjectPath = data.parentObjectPath;
                 }
 
                 if (property && property.length) {

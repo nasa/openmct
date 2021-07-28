@@ -218,7 +218,11 @@ export default {
                     parentId
                 };
 
-                this.$emit('conditionSetSelected', item);
+                this.$emit('treeItemSelected',
+                    {
+                        item,
+                        parentObjectPath: node.objectPath
+                    });
             }
         },
         searchTree(value) {

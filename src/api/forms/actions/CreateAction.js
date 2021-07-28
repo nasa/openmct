@@ -38,7 +38,7 @@ export default class CreateAction extends PropertiesAction {
 
     // Private methods
 
-    async _onSave(domainObject, changes, parentDomainObject) {
+    async _onSave(domainObject, changes, parentDomainObject, parentDomainObjectpath) {
         Object.entries(changes).forEach(([key, value]) => {
             const properties = key.split('.');
             let object = this.domainObject;
@@ -72,7 +72,7 @@ export default class CreateAction extends PropertiesAction {
             const compositionCollection = await this.openmct.composition.get(parentDomainObject);
             compositionCollection.add(this.domainObject);
 
-            this._navigateAndEdit(this.domainObject);
+            this._navigateAndEdit(this.domainObject, parentDomainObjectpath);
 
             this.openmct.notifications.info('Save successful');
         } else {
@@ -82,8 +82,13 @@ export default class CreateAction extends PropertiesAction {
         dialog.dismiss();
     }
 
-    async _navigateAndEdit(domainObject) {
-        const objectPath = await this.openmct.objects.getOriginalPath(domainObject.identifier);
+    async _navigateAndEdit(domainObject, parentDomainObjectpath) {
+        let objectPath;
+        if (parentDomainObjectpath) {
+            objectPath = parentDomainObjectpath && [domainObject].concat(parentDomainObjectpath);
+        } else {
+            objectPath = await this.openmct.objects.getOriginalPath(domainObject.identifier);
+        }
 
         const url = '#/browse/' + objectPath
             .map(object => object && this.openmct.objects.makeKeyString(object.identifier.key))
