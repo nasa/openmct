@@ -23,7 +23,7 @@
 <template>
 <a class="c-hyperlink u-links"
    :href="targetUrl"
-   :target="openNewTab ? '_blank' : ''"
+   :target="openNewTab ? '_blank' : '' "
    :class="{
        'u-fills-container c-hyperlink--button' : isButton,
        'c-hyperlink--link' : !isButton }"
@@ -59,6 +59,9 @@ export default {
 
             return true;
         }
+    },
+    mounted() {
+        console.log(JSON.stringify(this.domainObject));
     }
 };
 </script>
