@@ -445,9 +445,8 @@ select {
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
 .c-hyperlink {
-    &--link {
-        color: $colorKey;
-    }
+    display: inline-block;
+    color: $colorKey;
 
     &--button {
         @include cButton();

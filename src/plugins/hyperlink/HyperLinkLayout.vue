@@ -26,8 +26,8 @@
    :href="targetUrl"
    :ng-attr-target="openNewTab ? '_blank' : undefined"
    :class="{
-       'u-fills-container c-hyperlink--button' : isButton,
-       'c-hyperlink--link' : !isButton }"
+       'u-fills-container c-hyperlink--button' : isButton
+   }"
 >
 
     <span class="c-hyperlink__label">{{ displayText }}</span>
