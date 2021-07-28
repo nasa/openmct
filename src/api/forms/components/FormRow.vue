@@ -32,6 +32,7 @@
 <script>
 import AutoCompleteField from "@/api/forms/components/controls/AutoCompleteField.vue";
 import Composite from "@/api/forms/components/controls/Composite.vue";
+import Datetime from "@/api/forms/components/controls/Datetime.vue";
 import FileInput from "@/api/forms/components/controls/FileInput.vue";
 import Locator from "@/api/forms/components/controls/Locator.vue";
 import NumberField from "@/api/forms/components/controls/NumberField.vue";
@@ -42,6 +43,7 @@ import TextField from "@/api/forms/components/controls/TextField.vue";
 const CONTROL_TYPE_VIEW_MAP = {
     'autocomplete': AutoCompleteField,
     'composite': Composite,
+    'datetime': Datetime,
     'file-input': FileInput,
     'locator': Locator,
     'numberfield': NumberField,
@@ -139,7 +141,7 @@ export default {
                 valid = validate(this.domainObject, data);
             }
 
-            return valid;
+            return Boolean(valid);
         }
     }
 };
