@@ -21,15 +21,14 @@
 *****************************************************************************/
 
 <template>
-<a class="c-hyperlink u-links ng-scope"
+<a class="c-hyperlink"
    ng-controller="HyperlinkController as hyperlink"
    :href="targetUrl"
    :ng-attr-target="openNewTab ? '_blank' : undefined"
    :class="{
-       'u-fills-container c-hyperlink--button' : isButton
+       'c-hyperlink--button' : isButton
    }"
 >
-
     <span class="c-hyperlink__label">{{ displayText }}</span>
 </a>
 
