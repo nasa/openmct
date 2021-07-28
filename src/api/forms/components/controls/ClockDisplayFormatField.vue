@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="form-control clock-display-format-field">
+<div class="c-form-control--clock-display-format-fields">
     <SelectField v-for="item in items"
                  :key="item.key"
                  :model="item"

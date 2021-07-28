@@ -112,6 +112,17 @@
         height: 100%;
     }
 
+    &--clock-display-format-fields {
+        display: flex;
+
+        > * {
+            flex: 0 0 auto;
+            + * {
+                margin-left: $interiorMargin;
+            }
+        }
+    }
+
     &--datetime {
         $size: min-content;
         display: grid;
