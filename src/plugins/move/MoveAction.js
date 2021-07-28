@@ -48,7 +48,7 @@ export default class MoveAction {
             .map(object => this.openmct.objects.makeKeyString(object.identifier))
             .join("/");
 
-        window.location.href = '#/browse/' + urlPath;
+        this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
     addToNewParent(child, newParent) {

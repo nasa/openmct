@@ -90,7 +90,7 @@ export default class CreateAction extends PropertiesAction {
             .reverse()
             .join('/');
 
-        window.location.href = url;
+        this.openmct.router.navigate(url);
 
         const objectView = this.openmct.objectViews.get(domainObject, objectPath)[0];
         const canEdit = objectView && objectView.canEdit && objectView.canEdit(domainObject, objectPath);
