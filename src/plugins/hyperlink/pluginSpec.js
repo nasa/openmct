@@ -21,18 +21,16 @@
  *****************************************************************************/
 
 import { createOpenMct, resetApplicationState } from "utils/testing";
-import HyperLinkPlugin from "./plugin";
+import HyperlinkPlugin from "./plugin";
 
 function getView(openmct, domainObj, objectPath) {
     const applicableViews = openmct.objectViews.get(domainObj, objectPath);
-    const hyperLinkView = applicableViews.find((viewProvider) => viewProvider.key === 'hyper-link.view');
+    const hyperLinkView = applicableViews.find((viewProvider) => viewProvider.key === 'hyperlink.view');
 
     return hyperLinkView.view(domainObj);
 }
 
 function destroyView(view) {
-    console.log(view);
-
     return view.destroy();
 }
 
@@ -56,7 +54,7 @@ describe("The controller for hyperlinks", function () {
             },
             {
                 name: 'mock parent folder',
-                type: 'hyper-link',
+                type: 'hyperlink',
                 identifier: {
                     key: 'mock-parent-folder',
                     namespace: ''
@@ -67,8 +65,8 @@ describe("The controller for hyperlinks", function () {
         mockDomainObject = {
             displayFormat: "",
             openNewTab: "",
-            name: "Unnamed HyperLink Henry",
-            type: "hyper-link",
+            name: "Unnamed HyperLink",
+            type: "hyperlink",
             location: "f69c21ac-24ef-450c-8e2f-3d527087d285",
             modified: 1627483839783,
             url: "123",
@@ -82,7 +80,7 @@ describe("The controller for hyperlinks", function () {
         };
 
         openmct = createOpenMct();
-        openmct.install(new HyperLinkPlugin());
+        openmct.install(new HyperlinkPlugin());
 
         element = document.createElement('div');
         element.style.width = '640px';

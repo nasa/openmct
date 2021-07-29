@@ -20,13 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import HyperLinkProvider from './HyperLinkProvider';
+import HyperlinkProvider from './HyperlinkProvider';
 
 export default function () {
     return function install(openmct) {
-        openmct.types.addType('hyper-link', {
-            name: 'HyperLink',
-            key: 'hyper-link',
+        openmct.types.addType('hyperlink', {
+            name: 'Hyperlink',
+            key: 'hyperlink',
             description: 'A hyperlink to redirect to a different link',
             creatable: true,
             cssClass: 'icon-chain-links',
@@ -84,6 +84,6 @@ export default function () {
                 }
             ]
         });
-        openmct.objectViews.addProvider(new HyperLinkProvider(openmct));
+        openmct.objectViews.addProvider(new HyperlinkProvider(openmct));
     };
 }

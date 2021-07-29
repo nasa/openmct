@@ -20,21 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import HyperLinkLayout from './HyperLinkLayout.vue';
+import HyperlinkLayout from './HyperlinkLayout.vue';
 import Vue from 'vue';
 
 export default function HyperLinkProvider(openmct) {
 
     return {
-        key: 'hyper-link.view',
-        name: 'HyperLink',
+        key: 'hyperlink.view',
+        name: 'Hyperlink',
         cssClass: 'icon-chain-links',
         canView(domainObject) {
-            return domainObject.type === 'hyper-link';
+            return domainObject.type === 'hyperlink';
         },
 
         canEdit(domainObject) {
-            return domainObject.type === 'hyper-link';
+            return domainObject.type === 'hyperlink';
         },
 
         view: function (domainObject) {
@@ -45,13 +45,13 @@ export default function HyperLinkProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            HyperLinkLayout
+                            HyperlinkLayout
                         },
                         provide: {
                             openmct,
                             domainObject
                         },
-                        template: '<hyper-link-layout></hyper-link-layout>'
+                        template: '<hyperlink-layout></hyperlink-layout>'
                     });
                 },
                 destroy: function () {
