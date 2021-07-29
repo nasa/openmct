@@ -41,5 +41,18 @@ describe('The Image Exporter', () => {
 
             expect(imageExporter).not.toEqual(null);
         });
+        it("can render an element to a blob", async () => {
+            const mockHeadElement = document.createElement("h1");
+            const mockTextNode = document.createTextNode('foo bar');
+            mockHeadElement.appendChild(mockTextNode);
+            document.body.appendChild(mockHeadElement);
+            imageExporter = new ImageExporter(openmct);
+            const returnedBlob = await imageExporter.renderElement(document.body, {
+                imageType: 'png'
+            });
+            expect(returnedBlob).not.toEqual(null);
+            expect(returnedBlob.blob).not.toEqual(null);
+            expect(returnedBlob.blob).toBeInstanceOf(Blob);
+        });
     });
 });
