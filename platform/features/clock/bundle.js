@@ -52,7 +52,7 @@ define([
     return {
         name: "platform/features/clock",
         definition: {
-            "name": "Clocks/Timers",
+            "name": "Clocks/Timers Original",
             "descriptions": "Domain objects for displaying current & relative times.",
             "configuration": {
                 "paths": {
@@ -187,7 +187,7 @@ define([
                 ],
                 "types": [
                     {
-                        "key": "clock",
+                        "key": "clock-original",
                         "name": "Clock Original",
                         "cssClass": "icon-clock",
                         "description": "A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.",
