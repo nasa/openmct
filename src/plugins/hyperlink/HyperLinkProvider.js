@@ -23,7 +23,7 @@
 import HyperlinkLayout from './HyperlinkLayout.vue';
 import Vue from 'vue';
 
-export default function HyperLinkProvider(openmct) {
+export default function HyperlinkProvider(openmct) {
 
     return {
         key: 'hyperlink.view',

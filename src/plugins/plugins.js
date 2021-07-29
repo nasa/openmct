@@ -117,7 +117,7 @@ define([
     PerformanceIndicator,
     CouchDBSearchFolder,
     Timeline,
-    HyperLink
+    Hyperlink
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -220,7 +220,7 @@ define([
     plugins.PerformanceIndicator = PerformanceIndicator.default;
     plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
     plugins.Timeline = Timeline.default;
-    plugins.HyperLink = HyperLink.default;
+    plugins.Hyperlink = Hyperlink.default;
 
     return plugins;
 });
