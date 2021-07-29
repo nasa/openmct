@@ -188,7 +188,7 @@ define([
                 "types": [
                     {
                         "key": "clock",
-                        "name": "Clock",
+                        "name": "Clock Original",
                         "cssClass": "icon-clock",
                         "description": "A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.",
                         "priority": 101,
