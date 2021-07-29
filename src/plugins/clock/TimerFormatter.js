@@ -20,8 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import moment from 'moment';
+import momentDurationFormatSetup from 'moment-duration-format';
+momentDurationFormatSetup(moment);
 
-class TimeFormatter {
+class TimerFormatter {
     constructor() {
         this.SHORT_FORMAT = "HH:mm:ss";
         this.LONG_FORMAT = "d[D] HH:mm:ss";
@@ -42,4 +44,4 @@ class TimeFormatter {
     }
 }
 
-return TimeFormatter;
+return TimerFormatter;
