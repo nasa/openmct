@@ -19,46 +19,27 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import moment from 'moment';
 
-import Clock from './Clock.vue';
-import Vue from 'vue';
+class TimeFormatter {
+    constructor() {
+        this.SHORT_FORMAT = "HH:mm:ss";
+        this.LONG_FORMAT = "d[D] HH:mm:ss";
+    }
 
-export default function ClockViewProvider(openmct) {
-    return {
-        key: 'clock.view',
-        name: 'Clock',
-        cssClass: 'icon-clock',
-        canView(domainObject) {
-            return domainObject.type === 'Clock';
-        },
+    toWholeSeconds(duration) {
+        return Math.abs(Math.floor(duration / 1000) * 1000);
+    }
 
-        canEdit(domainObject) {
-            return domainObject.type === 'Clock';
-        },
+    getShortValue(duration) {
+        return moment.duration(this.toWholeSeconds(duration), 'ms')
+            .format(this.SHORT_FORMAT, { trim: false });
+    }
 
-        view: function (domainObject, objectPath) {
-            let component;
-
-            return {
-                show: function (element) {
-                    component = new Vue({
-                        el: element,
-                        components: {
-                            Clock
-                        },
-                        provide: {
-                            openmct,
-                            domainObject,
-                            objectPath
-                        },
-                        template: '<clock></clock>'
-                    });
-                },
-                destroy: function () {
-                    component.$destroy();
-                    component = undefined;
-                }
-            };
-        }
-    };
+    getLongValue(duration) {
+        return moment.duration(this.toWholeSeconds(duration), 'ms')
+            .format(this.LONG_FORMAT, { trim: false });
+    }
 }
+
+return TimeFormatter;
