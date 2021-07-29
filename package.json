@@ -2,7 +2,9 @@
   "name": "openmct",
   "version": "1.7.6-SNAPSHOT",
   "description": "The Open MCT core platform",
-  "dependencies": {},
+  "dependencies": {
+    "openmct-mmgis": "git+ssh://git@trunk.arc.nasa.gov:7999/vipergds/openmct-mmgis.git#api-mmgis-inspector"
+  },
   "devDependencies": {
     "angular": ">=1.8.0",
     "angular-route": "1.4.14",
