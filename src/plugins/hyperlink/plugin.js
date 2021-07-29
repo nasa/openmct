@@ -32,7 +32,7 @@ export default function () {
             cssClass: 'icon-chain-links',
             initialize: function (domainObject) {
                 domainObject.displayFormat = "link";
-                domainObject.openNewTab = "thisTab";
+                domainObject.linkTarget = "";
             },
             form: [
                 {
@@ -59,24 +59,24 @@ export default function () {
                             "value": "link"
                         },
                         {
-                            "value": "button",
-                            "name": "Button"
+                            "name": "Button",
+                            "value": "button"
                         }
                     ],
                     "cssClass": "l-inline"
                 },
                 {
-                    "key": "openNewTab",
+                    "key": "linkTarget",
                     "name": "Tab to Open Hyperlink",
                     "control": "select",
                     "options": [
                         {
                             "name": "Open in this tab",
-                            "value": "thisTab"
+                            "value": ""
                         },
                         {
-                            "value": "newTab",
-                            "name": "Open in a new tab"
+                            "name": "Open in a new tab",
+                            "value": "_blank"
                         }
                     ],
                     "cssClass": "l-inline"

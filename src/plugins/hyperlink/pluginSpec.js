@@ -64,7 +64,7 @@ describe("The controller for hyperlinks", function () {
 
         mockDomainObject = {
             displayFormat: "",
-            openNewTab: "",
+            linkTarget: "",
             name: "Unnamed HyperLink",
             type: "hyperlink",
             location: "f69c21ac-24ef-450c-8e2f-3d527087d285",
@@ -102,7 +102,7 @@ describe("The controller for hyperlinks", function () {
     });
     it("knows when it should open a new tab", () => {
         mockDomainObject.displayFormat = "link";
-        mockDomainObject.openNewTab = "newTab";
+        mockDomainObject.linkTarget = "_blank";
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);
@@ -111,7 +111,6 @@ describe("The controller for hyperlinks", function () {
     });
     it("knows when it should open in the same tab", function () {
         mockDomainObject.displayFormat = "button";
-        mockDomainObject.openNewTab = "thisTab";
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);
@@ -121,7 +120,6 @@ describe("The controller for hyperlinks", function () {
 
     it("knows when it is a button", function () {
         mockDomainObject.displayFormat = "button";
-        mockDomainObject.openNewTab = "newTab";
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);
@@ -130,7 +128,6 @@ describe("The controller for hyperlinks", function () {
     });
     it("knows when it is a link", function () {
         mockDomainObject.displayFormat = "link";
-        mockDomainObject.openNewTab = "thisTab";
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);

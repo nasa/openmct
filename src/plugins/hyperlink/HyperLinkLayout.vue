@@ -26,7 +26,7 @@
    :class="{
        'c-hyperlink--button' : isButton
    }"
-   :target="openNewTab ? '_blank' : '' "
+   :target="linkTarget"
    :href="targetUrl"
 >
     <span class="c-hyperlink__label">{{ displayText }}</span>
@@ -45,12 +45,8 @@ export default {
         displayText() {
             return this.domainObject.displayText;
         },
-        openNewTab() {
-            if (this.domainObject.openNewTab === "thisTab") {
-                return false;
-            } else {
-                return true;
-            }
+        linkTarget() {
+            return this.domainObject.linkTarget;
         },
         isButton() {
             if (this.domainObject.displayFormat === "link") {
