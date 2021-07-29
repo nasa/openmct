@@ -21,7 +21,7 @@
             ref="startOffset"
             class="c-button c-conductor__delta-button"
             title="Set the time offset after now"
-            @click="showTimePopupStart"
+            @click.prevent="showTimePopupStart"
         >
             {{ offsets.start }}
         </button>
@@ -60,7 +60,7 @@
             ref="endOffset"
             class="c-button c-conductor__delta-button"
             title="Set the time offset preceding now"
-            @click="showTimePopupEnd"
+            @click.prevent="showTimePopupEnd"
         >
             {{ offsets.end }}
         </button>
