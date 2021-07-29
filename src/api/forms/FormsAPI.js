@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 import EditPropertiesAction from './actions/EditPropertiesAction';
 import FormProperties from './components/FormProperties.vue';
 
@@ -73,6 +74,40 @@ export default class FormsAPI {
         return control;
     }
 
+    /**
+     * Section definition for formStructure
+     * @typedef Section
+        * @property {object} name Name of the section to display on Form
+        * @property {string} cssClass class name for styling section
+        * @property {array<Row>} rows collection of rows inside a section
+    */
+
+    /**
+     * Row definition for Section
+     * @typedef Row
+        * @property {string} control represents type of row to render
+        *     eg:autocomplete,composite,datetime,file-input,locator,numberfield,select,textarea,textfield
+        * @property {string} cssClass class name for styling this row
+        * @property {module:openmct.DomainObject} domainObject object to be used by row
+        * @property {string} key id for this row
+        * @property {string} name Name of the row to display on Form
+        * @property {module:openmct.DomainObject} parent parent object to be used by row
+        * @property {boolean} required is this row mandatory
+        * @property {function} validate a function to validate this row on any changes
+    */
+
+    /**
+     * Show form inside an Overlay dialog with given form structure
+     *
+     * @private
+     * @param {Array<Section>} formStructure a form structure, array of section
+     * @param {Object} options
+     *      @property {module:openmct.DomainObject} domainObject object to be used by form
+     *      @property {module:openmct.DomainObject} parentDomainObject parent object to be used by form
+     *      @property {function} onChange a callback function when any changes detected
+     *      @property {function} onSave a callback function when form is submitted
+     *      @property {function} onDismiss a callback function when form is dismissed
+     */
     showForm(formStructure, options) {
         const changes = {};
         let overlay;
@@ -80,22 +115,6 @@ export default class FormsAPI {
         let parentDomainObject = options.parentDomainObject || {};
         let parentDomainObjectPath;
         const domainObject = options.domainObject;
-
-        function onSave() {
-            overlay.dismiss();
-
-            if (options.onSave) {
-                options.onSave(domainObject, changes, parentDomainObject, parentDomainObjectPath);
-            }
-        }
-
-        function onDismiss() {
-            overlay.dismiss();
-
-            if (options.onDismiss) {
-                options.onDismiss();
-            }
-        }
 
         const vm = new Vue({
             components: { FormProperties },
@@ -140,9 +159,23 @@ export default class FormsAPI {
                 changes[key] = data.value;
             }
         }
-    }
 
-    // Private methods
+        function onDismiss() {
+            overlay.dismiss();
+
+            if (options.onDismiss) {
+                options.onDismiss();
+            }
+        }
+
+        function onSave() {
+            overlay.dismiss();
+
+            if (options.onSave) {
+                options.onSave(domainObject, changes, parentDomainObject, parentDomainObjectPath);
+            }
+        }
+    }
 
     /**
      * @private
@@ -153,7 +186,6 @@ export default class FormsAPI {
         });
     }
 
-    // Init
     init() {
         this.openmct.actions.register(new EditPropertiesAction(this.openmct));
 
