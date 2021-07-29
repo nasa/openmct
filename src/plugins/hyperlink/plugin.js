@@ -25,7 +25,7 @@ import HyperLinkProvider from './HyperLinkProvider';
 export default function () {
     return function install(openmct) {
         openmct.types.addType('hyper-link', {
-            name: 'HyperLink Henry',
+            name: 'HyperLink',
             key: 'hyper-link',
             description: 'A hyperlink to redirect to a different link',
             creatable: true,

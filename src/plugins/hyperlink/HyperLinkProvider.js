@@ -27,7 +27,7 @@ export default function HyperLinkProvider(openmct) {
 
     return {
         key: 'hyper-link.view',
-        name: 'HyperLink H',
+        name: 'HyperLink',
         cssClass: 'icon-chain-links',
         canView(domainObject) {
             return domainObject.type === 'hyper-link';
