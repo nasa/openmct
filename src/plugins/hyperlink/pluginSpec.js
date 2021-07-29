@@ -23,13 +23,26 @@
 import { createOpenMct, resetApplicationState } from "utils/testing";
 import HyperLinkPlugin from "./plugin";
 
-fdescribe("The controller for hyperlinks", function () {
+function getView(openmct, domainObj, objectPath) {
+    const applicableViews = openmct.objectViews.get(domainObj, objectPath);
+    const hyperLinkView = applicableViews.find((viewProvider) => viewProvider.key === 'hyper-link.view');
+
+    return hyperLinkView.view(domainObj);
+}
+
+function destroyView(view) {
+    console.log(view);
+
+    return view.destroy();
+}
+
+describe("The controller for hyperlinks", function () {
     let mockDomainObject;
     let mockObjectPath;
     let openmct;
     let element;
     let child;
-    let hyperLinkView;
+    let view;
 
     beforeEach((done) => {
         mockObjectPath = [
@@ -85,53 +98,45 @@ fdescribe("The controller for hyperlinks", function () {
     });
 
     afterEach(() => {
+        destroyView(view);
+
         return resetApplicationState(openmct);
     });
-
-    it("knows when it should open a new tab", function () {
-        // create hyperlink instance with mock domain obj
+    it("knows when it should open a new tab", () => {
         mockDomainObject.displayFormat = "link";
         mockDomainObject.openNewTab = "newTab";
 
-        const applicableViews = openmct.objectViews.get(mockDomainObject, mockObjectPath);
-        hyperLinkView = applicableViews.find((viewProvider) => viewProvider.key === 'hyper-link.view');
-        let view = hyperLinkView.view(mockDomainObject, element);
-        // view.show(child, true);
-        console.log(view.options);
-        // expect(controller.openNewTab())
-        //     .toBe(true);
+        view = getView(openmct, mockDomainObject, mockObjectPath);
+        view.show(child, true);
+
+        expect(element.querySelector('.c-hyperlink').target).toBe('_blank');
     });
-    xit("knows when it is a button", function () {
-        scope.domainObject.getModel.and.returnValue({
-            "displayFormat": "button",
-            "openNewTab": "thisTab",
-            "showTitle": false
-        }
-        );
-        controller = new HyperlinkController(scope);
-        expect(controller.isButton())
-            .toEqual(true);
+    it("knows when it should open in the same tab", function () {
+        mockDomainObject.displayFormat = "button";
+        mockDomainObject.openNewTab = "thisTab";
+
+        view = getView(openmct, mockDomainObject, mockObjectPath);
+        view.show(child, true);
+
+        expect(element.querySelector('.c-hyperlink').target).toBe('');
     });
-    xit("knows when it should open in the same tab", function () {
-        scope.domainObject.getModel.and.returnValue({
-            "displayFormat": "link",
-            "openNewTab": "thisTab",
-            "showTitle": false
-        }
-        );
-        controller = new HyperlinkController(scope);
-        expect(controller.openNewTab())
-            .toBe(false);
+
+    it("knows when it is a button", function () {
+        mockDomainObject.displayFormat = "button";
+        mockDomainObject.openNewTab = "newTab";
+
+        view = getView(openmct, mockDomainObject, mockObjectPath);
+        view.show(child, true);
+
+        expect(element.querySelector('.c-hyperlink--button')).toBeDefined();
     });
-    xit("knows when it is a link", function () {
-        scope.domainObject.getModel.and.returnValue({
-            "displayFormat": "link",
-            "openNewTab": "thisTab",
-            "showTitle": false
-        }
-        );
-        controller = new HyperlinkController(scope);
-        expect(controller.openNewTab())
-            .toBe(false);
+    it("knows when it is a link", function () {
+        mockDomainObject.displayFormat = "link";
+        mockDomainObject.openNewTab = "thisTab";
+
+        view = getView(openmct, mockDomainObject, mockObjectPath);
+        view.show(child, true);
+
+        expect(element.querySelector('.c-hyperlink')).not.toHaveClass('c-hyperlink--button');
     });
 });

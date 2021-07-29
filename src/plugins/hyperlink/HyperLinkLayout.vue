@@ -23,11 +23,11 @@
 <template>
 
 <a class="c-hyperlink"
-   :href="targetUrl"
-   :target="openNewTab ? '_blank' : '' "
    :class="{
        'c-hyperlink--button' : isButton
    }"
+   :target="openNewTab ? '_blank' : '' "
+   :href="targetUrl"
 >
     <span class="c-hyperlink__label">{{ displayText }}</span>
 </a>
@@ -59,9 +59,6 @@ export default {
 
             return true;
         }
-    },
-    mounted() {
-        console.log(JSON.stringify(this.domainObject));
     }
 };
 </script>
