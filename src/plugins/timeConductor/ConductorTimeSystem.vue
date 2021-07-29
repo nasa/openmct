@@ -70,7 +70,7 @@ export default {
                 .filter(menuOption => menuOption.clock === (clock && clock.key))
                 .map(menuOption => {
                     const timeSystem = JSON.parse(JSON.stringify(this.openmct.time.timeSystems.get(menuOption.timeSystem)));
-                    timeSystem.callBack = () => this.setTimeSystemFromView(timeSystem);
+                    timeSystem.onItemClicked = () => this.setTimeSystemFromView(timeSystem);
 
                     return timeSystem;
                 });
