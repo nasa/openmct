@@ -45,18 +45,10 @@ describe("The controller for hyperlinks", function () {
     beforeEach((done) => {
         mockObjectPath = [
             {
-                name: 'mock folder',
-                type: 'fake-folder',
-                identifier: {
-                    key: 'mock-folder',
-                    namespace: ''
-                }
-            },
-            {
-                name: 'mock parent folder',
+                name: 'mock hyperlink',
                 type: 'hyperlink',
                 identifier: {
-                    key: 'mock-parent-folder',
+                    key: 'mock-hyperlink',
                     namespace: ''
                 }
             }
