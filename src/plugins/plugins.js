@@ -63,6 +63,7 @@ define([
     './defaultRootName/plugin',
     './plan/plugin',
     './viewDatumAction/plugin',
+    './viewLargeAction/plugin',
     './interceptors/plugin',
     './performanceIndicator/plugin',
     './CouchDBSearchFolder/plugin',
@@ -110,6 +111,7 @@ define([
     DefaultRootName,
     PlanLayout,
     ViewDatumAction,
+    ViewLargeAction,
     ObjectInterceptors,
     PerformanceIndicator,
     CouchDBSearchFolder,
@@ -211,6 +213,7 @@ define([
     plugins.DefaultRootName = DefaultRootName.default;
     plugins.PlanLayout = PlanLayout.default;
     plugins.ViewDatumAction = ViewDatumAction.default;
+    plugins.ViewLargeAction = ViewLargeAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
     plugins.PerformanceIndicator = PerformanceIndicator.default;
     plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
