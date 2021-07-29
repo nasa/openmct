@@ -98,7 +98,7 @@ describe("The Link Action plugin", () => {
     });
 
     it("should make the link action available for an appropriate domainObject", () => {
-        const actionCollection = openmct.actions.get([childObject]);
+        const actionCollection = openmct.actions.getActionsCollection([childObject]);
         const visibleActions = actionCollection.getVisibleActions();
         linkAction = visibleActions.find(a => a.key === LINK_ACITON_KEY);
 
