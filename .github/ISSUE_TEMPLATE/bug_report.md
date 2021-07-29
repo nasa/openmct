@@ -1,11 +1,12 @@
-<!--- This is for filing bugs. If you have a general question, please -->
-<!--- visit https://github.com/nasa/openmct/discussions -->
-
 ---
-name: Bug Report
+name: Bug report
 about: File a Bug !
+title: ''
+labels: type:bug
+assignees: ''
 
 ---
+
 <!--- Focus on user impact in the title. Use the Summary Field to -->
 <!--- describe the problem technically. -->
 
@@ -35,7 +36,7 @@ about: File a Bug !
 
 #### Environment
 * Open MCT Version: <!--- date of build, version, or SHA -->
-* Deployment Type: <!--- npm dev? VIPER Dev? openmct-yams? -->
+* Deployment Type: <!--- npm dev? VIPER Dev? openmct-yamcs? -->
 * OS:
 * Browser:
 

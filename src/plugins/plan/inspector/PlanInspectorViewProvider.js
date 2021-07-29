@@ -20,72 +20,50 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Plot from './Plot.vue';
+import PlanActivitiesView from "./PlanActivitiesView.vue";
 import Vue from 'vue';
 
-export default function PlotViewProvider(openmct) {
-    function hasNumericTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-            return false;
-        }
-
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasDomainAndNumericRange(metadata);
-    }
-
-    function hasDomainAndNumericRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']);
-        const domains = metadata.valuesForHints(['domain']);
-
-        return domains.length > 0
-            && rangeValues.length > 0
-            && !rangeValues.every(value => value.format === 'string');
-    }
-
-    function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
-    }
-
+export default function PlanInspectorViewProvider(openmct) {
     return {
-        key: 'plot-single',
-        name: 'Plot',
-        cssClass: 'icon-telemetry',
-        canView(domainObject, objectPath) {
-            return hasNumericTelemetry(domainObject);
-        },
+        key: 'plan-inspector',
+        name: 'Plan Inspector View',
+        canView: function (selection) {
+            if (selection.length === 0 || selection[0].length === 0) {
+                return false;
+            }
 
-        view: function (domainObject, objectPath) {
+            let context = selection[0][0].context;
+
+            return context
+                && context.type === 'activity';
+        },
+        view: function (selection) {
             let component;
 
             return {
                 show: function (element) {
-                    let isCompact = isCompactView(objectPath);
                     component = new Vue({
                         el: element,
                         components: {
-                            Plot
+                            PlanActivitiesView: PlanActivitiesView
                         },
                         provide: {
                             openmct,
-                            domainObject,
-                            path: objectPath
+                            selection: selection
                         },
-                        data() {
-                            return {
-                                options: {
-                                    compact: isCompact
-                                }
-                            };
-                        },
-                        template: '<plot :options="options"></plot>'
+                        template: '<plan-activities-view></plan-activities-view>'
                     });
                 },
                 destroy: function () {
-                    component.$destroy();
-                    component = undefined;
+                    if (component) {
+                        component.$destroy();
+                        component = undefined;
+                    }
                 }
             };
+        },
+        priority: function () {
+            return 1;
         }
     };
 }

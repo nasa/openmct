@@ -47,7 +47,6 @@
             @panAxis="pan"
             @zoomAxis="zoom"
         />
-
     </div>
     <div class="c-conductor__controls">
         <ConductorMode class="c-conductor__mode-select" />
