@@ -32,6 +32,15 @@ export default function () {
             creatable: true,
             cssClass: 'icon-clock',
             "priority": 101,
+            initialize: function (domainObject) {
+                domainObject.model = {
+                    "clockFormat": [
+                        "YYYY/MM/DD hh:mm:ss",
+                        "clock12"
+                    ],
+                    "timezone": "UTC"
+                };
+            },
             "features": [
                 "creation"
             ],
