@@ -81,7 +81,7 @@ export default {
                     notebookTypes.push({
                         cssClass: 'icon-notebook',
                         name: `Save to Notebook ${defaultPath}`,
-                        callBack: () => {
+                        onItemClicked: () => {
                             return this.snapshot(NOTEBOOK_DEFAULT);
                         }
                     });
@@ -91,7 +91,7 @@ export default {
             notebookTypes.push({
                 cssClass: 'icon-camera',
                 name: 'Save to Notebook Snapshots',
-                callBack: () => {
+                onItemClicked: () => {
                     return this.snapshot(NOTEBOOK_SNAPSHOT);
                 }
             });

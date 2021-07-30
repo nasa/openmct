@@ -102,7 +102,7 @@ export default {
         LayoutFrame
     },
     mixins: [conditionalStylesMixin],
-    inject: ['openmct', 'objectPath'],
+    inject: ['openmct', 'objectPath', 'currentView'],
     props: {
         item: {
             type: Object,
@@ -294,16 +294,6 @@ export default {
                 this.requestHistoricalData(this.domainObject);
             }
         },
-        getView() {
-            return {
-                getViewContext: () => {
-                    return {
-                        viewHistoricalData: true,
-                        formattedValueForCopy: this.formattedValueForCopy
-                    };
-                }
-            };
-        },
         setObject(domainObject) {
             this.domainObject = domainObject;
             this.mutablePromise = undefined;
@@ -338,31 +328,41 @@ export default {
 
             this.$emit('formatChanged', this.item, format);
         },
+        updateViewContext() {
+            this.$emit('contextClick', {
+                viewHistoricalData: true,
+                formattedValueForCopy: this.formattedValueForCopy
+            });
+        },
         async getContextMenuActions() {
             const defaultNotebook = getDefaultNotebook();
-            const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.identifier);
-            const actionCollection = this.openmct.actions.get(this.currentObjectPath, this.getView());
-            const actionsObject = actionCollection.getActionsObject();
 
+            let defaultNotebookName;
             if (defaultNotebook) {
+                const domainObject = await this.openmct.objects.get(defaultNotebook.identifier);
                 const { section, page } = getNotebookSectionAndPage(domainObject, defaultNotebook.defaultSectionId, defaultNotebook.defaultPageId);
                 if (section && page) {
                     const defaultPath = domainObject && `${domainObject.name} - ${section.name} - ${page.name}`;
-                    actionsObject.copyToNotebook.name = `Copy to Notebook ${defaultPath}`;
+                    defaultNotebookName = `Copy to Notebook ${defaultPath}`;
                 }
-            } else {
-                actionsObject.copyToNotebook = undefined;
-                delete actionsObject.copyToNotebook;
             }
 
-            return CONTEXT_MENU_ACTIONS.map(actionKey => {
-                return actionsObject[actionKey];
-            }).filter(action => action !== undefined);
+            return CONTEXT_MENU_ACTIONS
+                .map(actionKey => {
+                    const action = this.openmct.actions.getAction(actionKey);
+                    if (action.key === 'copyToNotebook') {
+                        action.name = defaultNotebookName;
+                    }
+
+                    return action;
+                })
+                .filter(action => action.name !== undefined);
         },
         async showContextMenu(event) {
+            this.updateViewContext();
             const contextMenuActions = await this.getContextMenuActions();
-
-            this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
+            const menuItems = this.openmct.menus.actionsToMenuItems(contextMenuActions, this.currentObjectPath, this.currentView);
+            this.openmct.menus.showMenu(event.x, event.y, menuItems);
         },
         setStatus(status) {
             this.status = status;
