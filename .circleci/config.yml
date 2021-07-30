@@ -47,6 +47,8 @@ jobs:
           path: dist/reports/tests/
       - store_artifacts:
           path: dist/reports/
+      - store_artifacts:
+          path: ~/.npm/_logs/    
 workflows:
   matrix-tests:
     jobs:
