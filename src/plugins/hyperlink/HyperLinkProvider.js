@@ -48,7 +48,6 @@ export default function HyperlinkProvider(openmct) {
                             HyperlinkLayout
                         },
                         provide: {
-                            openmct,
                             domainObject
                         },
                         template: '<hyperlink-layout></hyperlink-layout>'

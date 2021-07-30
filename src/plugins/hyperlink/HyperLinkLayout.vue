@@ -26,10 +26,10 @@
    :class="{
        'c-hyperlink--button' : isButton
    }"
-   :target="linkTarget"
-   :href="targetUrl"
+   :target="domainObject.linkTarget"
+   :href="domainObject.url"
 >
-    <span class="c-hyperlink__label">{{ displayText }}</span>
+    <span class="c-hyperlink__label">{{ domainObject.displayText }}</span>
 </a>
 
 </template>
@@ -37,17 +37,8 @@
 <script>
 
 export default {
-    inject: ['openmct', 'domainObject'],
+    inject: ['domainObject'],
     computed: {
-        targetUrl() {
-            return this.domainObject.url;
-        },
-        displayText() {
-            return this.domainObject.displayText;
-        },
-        linkTarget() {
-            return this.domainObject.linkTarget;
-        },
         isButton() {
             if (this.domainObject.displayFormat === "link") {
                 return false;
