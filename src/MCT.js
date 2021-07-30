@@ -122,6 +122,7 @@ define([
             }
         };
 
+        this.destroy = this.destroy.bind(this);
         /**
          * Tracks current selection state of the application.
          * @private
@@ -435,7 +436,7 @@ define([
                     Browse(this);
                 }
 
-                window.addEventListener('beforeunload', this.destroy.bind(this));
+                window.addEventListener('beforeunload', this.destroy);
 
                 this.router.start();
                 this.emit('start');
@@ -460,7 +461,7 @@ define([
     };
 
     MCT.prototype.destroy = function () {
-        window.removeEventListener('beforeunload', this.destroy.bind(this));
+        window.removeEventListener('beforeunload', this.destroy);
         this.emit('destroy');
         this.router.destroy();
     };
