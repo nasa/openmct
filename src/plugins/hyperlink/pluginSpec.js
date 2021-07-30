@@ -103,11 +103,12 @@ describe("The controller for hyperlinks", function () {
     });
     it("knows when it should open in the same tab", function () {
         mockDomainObject.displayFormat = "button";
+        mockDomainObject.linkTarget = "_self";
 
         view = getView(openmct, mockDomainObject, mockObjectPath);
         view.show(child, true);
 
-        expect(element.querySelector('.c-hyperlink').target).toBe('');
+        expect(element.querySelector('.c-hyperlink').target).toBe('_self');
     });
 
     it("knows when it is a button", function () {

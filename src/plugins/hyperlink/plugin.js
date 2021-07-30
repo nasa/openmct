@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import HyperlinkProvider from '../hyperlink/HyperlinkProvider';
+import HyperlinkProvider from './HyperlinkProvider';
 
 export default function () {
     return function install(openmct) {
@@ -32,7 +32,7 @@ export default function () {
             cssClass: 'icon-chain-links',
             initialize: function (domainObject) {
                 domainObject.displayFormat = "link";
-                domainObject.linkTarget = "";
+                domainObject.linkTarget = "_self";
             },
             form: [
                 {
@@ -72,7 +72,7 @@ export default function () {
                     "options": [
                         {
                             "name": "Open in this tab",
-                            "value": ""
+                            "value": "_self"
                         },
                         {
                             "name": "Open in a new tab",
