@@ -35,14 +35,6 @@ define([
     "./src/capabilities/TransactionCapabilityDecorator",
     "./src/services/TransactionManager",
     "./src/services/TransactionService",
-    "./src/creation/CreateMenuController",
-    "./src/creation/LocatorController",
-    "./src/creation/CreationPolicy",
-    "./src/creation/CreateActionProvider",
-    "./src/creation/CreationService",
-    "./res/templates/create/locator.html",
-    "./res/templates/create/create-button.html",
-    "./res/templates/create/create-menu.html",
     "./res/templates/library.html",
     "./res/templates/edit-object.html",
     "./res/templates/edit-action-buttons.html",
@@ -62,14 +54,6 @@ define([
     TransactionCapabilityDecorator,
     TransactionManager,
     TransactionService,
-    CreateMenuController,
-    LocatorController,
-    CreationPolicy,
-    CreateActionProvider,
-    CreationService,
-    locatorTemplate,
-    createButtonTemplate,
-    createMenuTemplate,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -101,22 +85,6 @@ define([
                             "$scope",
                             "$location",
                             "navigationService"
-                        ]
-                    },
-                    {
-                        "key": "CreateMenuController",
-                        "implementation": CreateMenuController,
-                        "depends": [
-                            "$scope"
-                        ]
-                    },
-                    {
-                        "key": "LocatorController",
-                        "implementation": LocatorController,
-                        "depends": [
-                            "$scope",
-                            "$timeout",
-                            "objectService"
                         ]
                     }
                 ],
@@ -180,10 +148,6 @@ define([
                         "category": "action",
                         "implementation": EditPersistableObjectsPolicy,
                         "depends": ["openmct"]
-                    },
-                    {
-                        "implementation": CreationPolicy,
-                        "category": "creation"
                     }
                 ],
                 "templates": [
@@ -213,17 +177,6 @@ define([
                     {
                         "key": "topbar-edit",
                         "template": topbarEditTemplate
-                    },
-                    {
-                        "key": "create-button",
-                        "template": createButtonTemplate
-                    },
-                    {
-                        "key": "create-menu",
-                        "template": createMenuTemplate,
-                        "uses": [
-                            "action"
-                        ]
                     }
                 ],
                 "components": [
@@ -246,28 +199,7 @@ define([
                             "$log",
                             "cacheService"
                         ]
-                    },
-                    {
-                        "key": "CreateActionProvider",
-                        "provides": "actionService",
-                        "type": "provider",
-                        "implementation": CreateActionProvider,
-                        "depends": [
-                            "typeService",
-                            "policyService"
-                        ]
-                    },
-                    {
-                        "key": "CreationService",
-                        "provides": "creationService",
-                        "type": "provider",
-                        "implementation": CreationService,
-                        "depends": [
-                            "$q",
-                            "$log"
-                        ]
                     }
-
                 ],
                 "representers": [
                     {
@@ -287,12 +219,6 @@ define([
                             "transactionService",
                             "openmct"
                         ]
-                    }
-                ],
-                "controls": [
-                    {
-                        "key": "locator",
-                        "template": locatorTemplate
                     }
                 ],
                 "services": [
