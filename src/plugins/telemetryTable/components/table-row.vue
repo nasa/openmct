@@ -49,7 +49,7 @@ export default {
     components: {
         TableCell
     },
-    inject: ['openmct'],
+    inject: ['openmct', 'currentView'],
     props: {
         headers: {
             type: Object,
@@ -93,25 +93,11 @@ export default {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
             rowClass: this.row.getRowClass(),
             cellLimitClasses: this.row.getCellLimitClasses(),
-            componentList: Object.keys(this.headers).reduce((components, header) => {
-                components[header] = this.row.getCellComponentName(header) || 'table-cell';
-
-                return components;
-            }, {}),
             selectableColumns: Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
                 selectable[columnKeys] = this.row.columns[columnKeys].selectable;
 
                 return selectable;
-            }, {}),
-            actionsViewContext: {
-                getViewContext: () => {
-                    return {
-                        viewHistoricalData: true,
-                        viewDatumAction: true,
-                        getDatum: this.getDatum
-                    };
-                }
-            }
+            }, {})
         };
     },
     computed: {
@@ -125,6 +111,13 @@ export default {
             }
 
             return listenersObject;
+        },
+        componentList() {
+            return Object.keys(this.headers).reduce((components, header) => {
+                components[header] = this.row.getCellComponentName(header) || 'table-cell';
+
+                return components;
+            }, {});
         }
     },
     // TODO: use computed properties
@@ -185,19 +178,20 @@ export default {
         showContextMenu: function (event) {
             event.preventDefault();
 
+            this.updateViewContext();
             this.markRow(event);
 
-            this.row.getContextualDomainObject(this.openmct, this.row.objectKeyString).then(domainObject => {
-                let contextualObjectPath = this.objectPath.slice();
-                contextualObjectPath.unshift(domainObject);
-
-                let actionsCollection = this.openmct.actions.get(contextualObjectPath, this.actionsViewContext);
-                let allActions = actionsCollection.getActionsObject();
-                let applicableActions = this.row.getContextMenuActions().map(key => allActions[key]);
-
-                if (applicableActions.length) {
-                    this.openmct.menus.showMenu(event.x, event.y, applicableActions);
-                }
+            const actions = this.row.getContextMenuActions().map(key => this.openmct.actions.getAction(key));
+            const menuItems = this.openmct.menus.actionsToMenuItems(actions, this.objectPath, this.currentView);
+            if (menuItems.length) {
+                this.openmct.menus.showMenu(event.x, event.y, menuItems);
+            }
+        },
+        updateViewContext() {
+            this.$emit('rowContextClick', {
+                viewHistoricalData: true,
+                viewDatumAction: true,
+                getDatum: this.getDatum
             });
         }
     }
