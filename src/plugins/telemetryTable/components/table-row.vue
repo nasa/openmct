@@ -93,11 +93,6 @@ export default {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
             rowClass: this.row.getRowClass(),
             cellLimitClasses: this.row.getCellLimitClasses(),
-            componentList: Object.keys(this.headers).reduce((components, header) => {
-                components[header] = this.row.getCellComponentName(header) || 'table-cell';
-
-                return components;
-            }, {}),
             selectableColumns: Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
                 selectable[columnKeys] = this.row.columns[columnKeys].selectable;
 
@@ -125,6 +120,13 @@ export default {
             }
 
             return listenersObject;
+        },
+        componentList() {
+            return Object.keys(this.headers).reduce((components, header) => {
+                components[header] = this.row.getCellComponentName(header) || 'table-cell';
+
+                return components;
+            }, {});
         }
     },
     // TODO: use computed properties

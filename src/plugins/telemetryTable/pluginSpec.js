@@ -50,6 +50,8 @@ describe("the plugin", () => {
     let child;
     let historicalProvider;
     let originalRouterPath;
+    let unlistenConfigMutation;
+
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -95,6 +97,10 @@ describe("the plugin", () => {
             start: 0,
             end: 1
         });
+
+        if (unlistenConfigMutation) {
+            unlistenConfigMutation();
+        }
 
         return resetApplicationState(openmct);
     });
@@ -163,6 +169,14 @@ describe("the plugin", () => {
                             range: 2
                         }
                     }]
+                },
+                configuration: {
+                    hiddenColumns: {
+                        name: false,
+                        utc: false,
+                        'some-key': false,
+                        'some-other-key': false
+                    }
                 }
             };
             const testTelemetry = [
@@ -290,6 +304,40 @@ describe("the plugin", () => {
                     expect(allRowElements.length).toEqual(3);
                 });
             });
+        });
+
+        it("displays the correct number of column headers when the configuration is mutated", async () => {
+            const tableInstanceConfiguration = tableInstance.domainObject.configuration;
+            tableInstanceConfiguration.hiddenColumns['some-key'] = true;
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
+
+            await Vue.nextTick();
+            let tableHeaderElements = element.querySelectorAll('.c-telemetry-table__headers__label');
+            expect(tableHeaderElements.length).toEqual(3);
+
+            tableInstanceConfiguration.hiddenColumns['some-key'] = false;
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
+
+            await Vue.nextTick();
+            tableHeaderElements = element.querySelectorAll('.c-telemetry-table__headers__label');
+            expect(tableHeaderElements.length).toEqual(4);
+        });
+
+        it("displays the correct number of table cells in a row when the configuration is mutated", async () => {
+            const tableInstanceConfiguration = tableInstance.domainObject.configuration;
+            tableInstanceConfiguration.hiddenColumns['some-key'] = true;
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
+
+            await Vue.nextTick();
+            let tableRowCells = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
+            expect(tableRowCells.length).toEqual(3);
+
+            tableInstanceConfiguration.hiddenColumns['some-key'] = false;
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
+
+            await Vue.nextTick();
+            tableRowCells = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
+            expect(tableRowCells.length).toEqual(4);
         });
     });
 });
