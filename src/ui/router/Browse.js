@@ -127,7 +127,9 @@ define([
                     composition.load()
                         .then(children => {
                             let lastChild = children[children.length - 1];
-                            if (lastChild) {
+                            if (!lastChild) {
+                                console.debug('Unable to navigate to anything. No root objects found.');
+                            } else {
                                 let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
                                 openmct.router.setPath(`#/browse/${lastChildId}`);
                             }
