@@ -8,13 +8,14 @@ const config = {
             username: process.env.USERNAME,
             password: process.env.PASSWORD
         },*/
+        browserName: "chromium",
         baseURL: 'http://localhost:8080',
         headless: false,
         ignoreHTTPSErrors: true,
         trace: 'on',
         video: 'on'
     },
-    reporter: [['junit', { outputFile: 'e2e/results.xml' }]]
+    reporter: [['junit', { outputFile: 'test-results/results.xml' }]]
 };
 
 module.exports = config;
