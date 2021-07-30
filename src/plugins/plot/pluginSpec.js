@@ -325,14 +325,6 @@ describe("the plugin", function () {
                 start: 0,
                 end: 4
             });
-            const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, "get")
-                .withArgs("exportImageService").and.returnValue({
-                    exportPNG: () => {},
-                    exportJPG: () => {}
-                })
-                .and.callFake(getFunc);
-
             testTelemetryObject = {
                 identifier: {
                     namespace: "",
