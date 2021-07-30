@@ -67,8 +67,9 @@
 </template>
 
 <script>
-import eventHelpers from "../lib/eventHelpers";
-import StackedPlotItem from "./StackedPlotItem.vue";
+import eventHelpers from '../lib/eventHelpers';
+import StackedPlotItem from './StackedPlotItem.vue';
+import ImageExporter from '../../../exporters/ImageExporter';
 
 export default {
     components: {
@@ -103,7 +104,7 @@ export default {
     mounted() {
         eventHelpers.extend(this);
 
-        this.exportImageService = this.openmct.$injector.get('exportImageService');
+        this.imageExporter = new ImageExporter(this.openmct);
 
         this.tickWidthMap = {};
 
@@ -159,9 +160,9 @@ export default {
 
         exportJPG() {
             this.hideExportButtons = true;
-            const plotElement = this.$refs.plotContainer;
+            const plotElement = this.$el;
 
-            this.exportImageService.exportJPG(plotElement, 'stacked-plot.jpg', 'export-plot')
+            this.imageExporter.exportJPG(plotElement, 'stacked-plot.jpg', 'export-plot')
                 .finally(function () {
                     this.hideExportButtons = false;
                 }.bind(this));
@@ -170,9 +171,9 @@ export default {
         exportPNG() {
             this.hideExportButtons = true;
 
-            const plotElement = this.$refs.plotContainer;
+            const plotElement = this.$el;
 
-            this.exportImageService.exportPNG(plotElement, 'stacked-plot.png', 'export-plot')
+            this.imageExporter.exportPNG(plotElement, 'stacked-plot.png', 'export-plot')
                 .finally(function () {
                     this.hideExportButtons = false;
                 }.bind(this));
