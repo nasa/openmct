@@ -18,8 +18,8 @@ jobs:
     executor: linux
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+      #- restore_cache:
+      #    key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           node-version: << parameters.node-version >>
       - node/install-packages:
