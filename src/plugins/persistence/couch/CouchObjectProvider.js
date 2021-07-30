@@ -40,6 +40,64 @@ export default class CouchObjectProvider {
         this.batchIds = [];
     }
 
+    /**
+     * @private
+     */
+    startSharedWorker() {
+        let provider = this;
+        let sharedWorker;
+
+        const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
+
+        sharedWorker = new SharedWorker(sharedWorkerURL);
+        sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
+        sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
+        sharedWorker.port.start();
+
+        this.openmct.on('destroy', () => {
+            this.changesFeedSharedWorker.port.postMessage({
+                request: 'close',
+                connectionId: this.changesFeedSharedWorkerConnectionId
+            });
+            this.changesFeedSharedWorker.port.close();
+        });
+
+        return sharedWorker;
+    }
+
+    onSharedWorkerMessageError(event) {
+        console.log('Error', event);
+    }
+
+    onSharedWorkerMessage(event) {
+        if (event.data.type === 'connection') {
+            this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
+        } else {
+            const error = event.data.error;
+            if (error && Object.keys(this.observers).length > 0) {
+                this.observeObjectChanges();
+
+                return;
+            }
+
+            let objectChanges = event.data.objectChanges;
+            objectChanges.identifier = {
+                namespace: this.namespace,
+                key: objectChanges.id
+            };
+            let keyString = this.openmct.objects.makeKeyString(objectChanges.identifier);
+            //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
+            let observersForObject = this.observers[keyString];
+
+            if (observersForObject) {
+                observersForObject.forEach(async (observer) => {
+                    const updatedObject = await this.get(objectChanges.identifier);
+                    observer(updatedObject);
+                });
+            }
+        }
+    }
+
     //backwards compatibility, options used to be a url. Now it's an object
     _normalize(options) {
         if (typeof options === 'string') {
@@ -334,9 +392,8 @@ export default class CouchObjectProvider {
     /**
      * @private
      */
-    async observeObjectChanges() {
-        const controller = new AbortController();
-        const signal = controller.signal;
+    observeObjectChanges() {
+
         let filter = {selector: {}};
 
         if (this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.length > 1) {
@@ -354,6 +411,51 @@ export default class CouchObjectProvider {
             };
         }
 
+        // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
+        // style=main_only returns only the current winning revision of the document
+        let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
+
+        let body = {};
+        if (filter) {
+            url = `${url}&filter=_selector`;
+            body = JSON.stringify(filter);
+        }
+
+        if (typeof SharedWorker === 'undefined') {
+            this.fetchChanges(url, body);
+        } else {
+            this.initiateSharedWorkerFetchChanges(url, body);
+        }
+
+    }
+
+    /**
+     * @private
+     */
+    initiateSharedWorkerFetchChanges(url, body) {
+        if (!this.changesFeedSharedWorker) {
+            this.changesFeedSharedWorker = this.startSharedWorker();
+
+            if (typeof this.stopObservingObjectChanges === 'function') {
+                this.stopObservingObjectChanges();
+            }
+
+            this.stopObservingObjectChanges = () => {
+                delete this.stopObservingObjectChanges;
+            };
+
+            this.changesFeedSharedWorker.port.postMessage({
+                request: 'changes',
+                body,
+                url
+            });
+        }
+    }
+
+    async fetchChanges(url, body) {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         let error = false;
 
         if (typeof this.stopObservingObjectChanges === 'function') {
@@ -364,16 +466,6 @@ export default class CouchObjectProvider {
             controller.abort();
             delete this.stopObservingObjectChanges;
         };
-
-        // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
-        // style=main_only returns only the current winning revision of the document
-        let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
-
-        let body = {};
-        if (filter) {
-            url = `${url}&filter=_selector`;
-            body = JSON.stringify(filter);
-        }
 
         const response = await fetch(url, {
             method: 'POST',
