@@ -234,7 +234,7 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
-        display: flex;
+        //display: flex; NEEDS REGRESSION TESTING!!!
         flex: 1 1 auto !important;
         height: 100%; // Chrome 73 overflow bug fix
         overflow: auto;

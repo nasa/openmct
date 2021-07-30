@@ -67,7 +67,8 @@ define([
     './interceptors/plugin',
     './performanceIndicator/plugin',
     './CouchDBSearchFolder/plugin',
-    './timeline/plugin'
+    './timeline/plugin',
+    './hyperlink/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -115,7 +116,8 @@ define([
     ObjectInterceptors,
     PerformanceIndicator,
     CouchDBSearchFolder,
-    Timeline
+    Timeline,
+    Hyperlink
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -218,6 +220,7 @@ define([
     plugins.PerformanceIndicator = PerformanceIndicator.default;
     plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
     plugins.Timeline = Timeline.default;
+    plugins.Hyperlink = Hyperlink.default;
 
     return plugins;
 });
