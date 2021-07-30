@@ -41,27 +41,21 @@ export default {
     mixins: [toggleMixin],
     inject: ['openmct'],
     props: {
-        keyString: {
+        mode: {
             type: String,
             default() {
-                return undefined;
-            }
-        },
-        offsets: {
-            type: Object,
-            default() {
-                return undefined;
-            }
-        },
-        realtimeOffsets: {
-            type: Object,
-            default() {
-                return undefined;
+                return 'fixed';
             }
         }
     },
     data: function () {
-        let activeClock = this.openmct.time.clock();
+        let activeClock;
+        if (this.mode && this.mode === 'fixed') {
+            activeClock = undefined;
+        } else {
+            activeClock = this.openmct.time.clock();
+        }
+
         if (activeClock !== undefined) {
             //Create copy of active clock so the time API does not get reactified.
             activeClock = Object.create(activeClock);
@@ -69,13 +63,13 @@ export default {
 
         return {
             selectedMode: this.getModeOptionForClock(activeClock),
-            selectedTimeSystem: JSON.parse(JSON.stringify(this.openmct.time.timeSystem())),
-            modes: [],
-            hoveredMode: {}
+            modes: []
         };
     },
     mounted: function () {
-        this.loadClocks();
+        if (this.mode) {
+            this.setViewFromClock(this.mode === 'fixed' ? undefined : this.mode);
+        }
 
         this.openmct.time.on('clock', this.setViewFromClock);
     },
@@ -165,18 +159,19 @@ export default {
         },
 
         setOption(clockKey) {
+            let key = clockKey;
             if (clockKey === 'fixed') {
-                clockKey = undefined;
+                key = undefined;
             }
 
             let configuration = this.getMatchingConfig({
-                clock: clockKey,
+                clock: key,
                 timeSystem: this.openmct.time.timeSystem().key
             });
 
             if (configuration === undefined) {
                 configuration = this.getMatchingConfig({
-                    clock: clockKey
+                    clock: key
                 });
             }
 
@@ -206,10 +201,14 @@ export default {
         setViewFromClock(clock) {
             this.loadClocks();
             //retain last selected mode
-            const found = this.modes.find(mode => mode.key === this.selectedMode.key);
+            if (this.selectedMode) {
+                const found = this.modes.find(mode => mode.key === this.selectedMode.key);
 
-            if (!found) {
-                this.selectedMode = this.getModeOptionForClock(clock);
+                if (!found) {
+                    this.setOption(this.getModeOptionForClock(clock).key);
+                }
+            } else {
+                this.setOption(this.getModeOptionForClock(clock).key);
             }
         }
     }

@@ -32,8 +32,7 @@
         <ConductorModeIcon />
         <Mode class="c-conductor__mode-select"
               :key-string="domainObject.identifier.key"
-              :offsets="timeOptions.fixedOffsets"
-              :realtime-offsets="timeOptions.clockOffsets"
+              :mode="timeOptions.mode"
               @modeChanged="saveMode"
         />
         <conductor-delta-input-fixed v-if="isFixed"
@@ -96,6 +95,13 @@ export default {
         }
     },
     mounted() {
+        if (this.timeOptions.mode) {
+            this.mode = this.timeOptions.mode;
+        } else {
+            this.mode = this.openmct.time.clock() === undefined ? 'fixed' : this.openmct.time.clock();
+        }
+
+        this.isFixed = this.mode === 'fixed';
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setTimeOptions);
         this.registerIndependentTimeOffsets();
@@ -107,9 +113,7 @@ export default {
     },
     methods: {
         setViewFromClock(clock) {
-            //this.clock is undefined when mode is fixed - handle this
-            if (!this.clock) {
-                this.isFixed = clock === undefined;
+            if (!this.mode) {
                 this.setTimeOptions(clock);
             }
         },
@@ -135,10 +139,13 @@ export default {
             });
             this.updateTimeOptions(newOptions);
         },
-        saveMode(clock) {
-            this.isFixed = clock === undefined;
-            this.clock = clock;
-            this.setTimeOptions(clock);
+        saveMode(mode) {
+            this.mode = mode;
+            this.isFixed = this.mode === 'fixed';
+            const newOptions = Object.assign({}, this.timeOptions, {
+                mode: this.mode
+            });
+            this.updateTimeOptions(newOptions);
         },
         updateTimeOptions(options) {
             this.timeOptions = options;
@@ -155,7 +162,7 @@ export default {
             }
 
             this.destroyIndependentTime();
-            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(this.domainObject.identifier.key, offsets, this.clock);
+            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(this.domainObject.identifier.key, offsets, this.mode === 'fixed' ? undefined : this.mode);
         },
         destroyIndependentTime() {
             if (this.unregisterIndependentTime) {
