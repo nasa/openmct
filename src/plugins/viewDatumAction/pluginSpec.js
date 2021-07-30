@@ -66,8 +66,6 @@ describe("the plugin", () => {
                 };
             }
         };
-
-        done();
     });
 
     afterEach(() => {
