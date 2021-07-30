@@ -21,18 +21,15 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
-import uuid from 'uuid';
-
-const allocationTracker = new Map();
-const FR = new FinalizationRegistry(({instanceId}) => {
-    console.error("TIME TO TAKE OUT THE TRASH!");
-    allocationTracker.delete(instanceId);
-});
 
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
 
-export {allocationTracker};
+const activeInstance = {
+    activeSpec: undefined,
+    specToInstanceMap: new WeakMap()
+};
+export {activeInstance};
 
 export function createOpenMct() {
     const openmct = new MCT();
@@ -42,9 +39,7 @@ export function createOpenMct() {
         start: 0,
         end: 1
     });
-    const instanceId = uuid();
-    FR.register(openmct, {instanceId});
-    allocationTracker.set(instanceId, new Error().stack);
+    activeInstance.specToInstanceMap.set(activeInstance.activeSpec, openmct);
 
     return openmct;
 }
@@ -84,6 +79,7 @@ export function resetApplicationState(openmct) {
 
     if (openmct !== undefined) {
         openmct.destroy();
+        activeInstance.openmct = undefined;
     }
 
     if (window.location.hash !== '#' && window.location.hash !== '') {

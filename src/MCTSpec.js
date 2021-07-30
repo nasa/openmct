@@ -25,7 +25,7 @@ define([
     'legacyRegistry',
     'utils/testing'
 ], function (plugins, legacyRegistry, testUtils) {
-    describe("MCT", function () {
+    fdescribe("MCT", function () {
         let openmct;
         let mockPlugin;
         let mockPlugin2;
@@ -56,7 +56,7 @@ define([
             return testUtils.resetApplicationState(openmct);
         });
 
-        fit("exposes plugins", function () {
+        it("exposes plugins", function () {
             expect(openmct.plugins).toEqual(plugins);
         });
 
