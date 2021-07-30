@@ -38,6 +38,7 @@ class IndependentTimeAPI extends EventEmitter {
 
     set(keyString, value, clock) {
         this.offsets[keyString] = value;
+        this.clock = clock;
         // this.emit(keyString, value);
         if (!clock) {
             this.bounds(keyString);
@@ -51,6 +52,10 @@ class IndependentTimeAPI extends EventEmitter {
     }
 
     tick(timestamp) {
+        if (!this.clock) {
+            return;
+        }
+
         Object.keys(this.offsets).forEach(keyString => {
             const clockOffsets = this.offsets[keyString];
             if (clockOffsets) {

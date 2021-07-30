@@ -244,8 +244,8 @@ define(['EventEmitter', './independentTimeAPI'], function (EventEmitter, Indepen
      * @memberof module:openmct.TimeAPI#
      * @method registerIndependentTime
      */
-    TimeAPI.prototype.registerIndependentTime = function (key, value) {
-        this.independentTimes.set(key, value, this.activeClock);
+    TimeAPI.prototype.registerIndependentTime = function (key, value, clock) {
+        this.independentTimes.set(key, value, clock);
         this.emit('independentTime', key);
 
         return this.independentTimes;

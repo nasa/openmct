@@ -74,7 +74,7 @@ import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedPlan } from "../plan/util";
-import IndependentTimeConductor from "@/plugins/timeConductor/IndependentTimeConductor.vue";
+import IndependentTimeConductor from "@/plugins/timeConductor/independent/IndependentTimeConductor.vue";
 
 const unknownObjectType = {
     definition: {
