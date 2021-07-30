@@ -49,7 +49,7 @@ define(
                 this.rows = [];
                 this.telemetryObjects = {};
                 this.telemetryCollections = {};
-                this.processFunctions = [];
+                this.delayedActions = [];
                 this.columnFilters = {};
                 this.paused = false;
                 this.outstandingRequests = 0;
@@ -127,7 +127,7 @@ define(
 
                     // only cache realtime
                     if (this.paused) {
-                        this.processFunctions.push(this.processTelemetryData.bind(this, telemetry, columnMap, keyString, limitEvaluator));
+                        this.delayedActions.push(this.processTelemetryData.bind(this, telemetry, columnMap, keyString, limitEvaluator));
                     } else {
                         this.processTelemetryData(telemetry, columnMap, keyString, limitEvaluator);
                     }
@@ -138,7 +138,7 @@ define(
                 return (telemetry) => {
                     // only cache realtime
                     if (this.paused) {
-                        this.processFunctions.push(this.removeRowsByRowIds.bind(this, telemetry.map(JSON.stringify)));
+                        this.delayedActions.push(this.removeRowsByRowIds.bind(this, telemetry.map(JSON.stringify)));
                     } else {
                         this.removeRowsByRowIds(telemetry.map(JSON.stringify));
                     }
@@ -170,9 +170,9 @@ define(
                 }
             }
 
-            processCachedFunctions() {
-                this.processFunctions.forEach(processFunction => processFunction());
-                this.processFunctions = [];
+            runDelayedActions() {
+                this.delayedActions.forEach(action => action());
+                this.delayedActions = [];
             }
 
             sortedLastIndex(rows, testRow, type) {
@@ -466,7 +466,7 @@ define(
 
             unpause() {
                 this.paused = false;
-                this.processCachedFunctions();
+                this.runDelayedActions();
             }
 
             destroy() {
