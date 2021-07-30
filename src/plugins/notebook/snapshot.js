@@ -4,24 +4,24 @@ import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
 import { createNotebookImageDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
 
 import SnapshotContainer from './snapshot-container';
+import ImageExporter from '../../exporters/ImageExporter';
 
 export default class Snapshot {
     constructor(openmct) {
         this.openmct = openmct;
         this.snapshotContainer = new SnapshotContainer(openmct);
+        this.imageExporter = new ImageExporter(openmct);
 
         this.capture = this.capture.bind(this);
         this._saveSnapShot = this._saveSnapShot.bind(this);
     }
 
     capture(snapshotMeta, notebookType, domElement) {
-        const exportImageService = this.openmct.$injector.get('exportImageService');
-
         const options = {
             className: 's-status-taking-snapshot',
             thumbnailSize: DEFAULT_SIZE
         };
-        exportImageService.exportPNGtoSRC(domElement, options)
+        this.imageExporter.exportPNGtoSRC(domElement, options)
             .then(function ({blob, thumbnail}) {
                 const reader = new window.FileReader();
                 reader.readAsDataURL(blob);
