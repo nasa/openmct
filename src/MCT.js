@@ -459,6 +459,7 @@ define([
     };
 
     MCT.prototype.destroy = function () {
+        window.removeEventListener('beforeunload', this.destroy.bind(this));
         this.emit('destroy');
         this.router.destroy();
     };
