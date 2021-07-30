@@ -31,6 +31,7 @@ import PainterroInstance from '../utils/painterroInstance';
 import SnapshotTemplate from './snapshot-template.html';
 
 import { updateNotebookImageDomainObject } from '../utils/notebook-image';
+import ImageExporter from '../../../exporters/ImageExporter';
 
 import PopupMenu from './PopupMenu.vue';
 import Vue from 'vue';
@@ -71,7 +72,7 @@ export default {
     },
     mounted() {
         this.addPopupMenuItems();
-        this.exportImageService = this.openmct.$injector.get('exportImageService');
+        this.imageExporter = new ImageExporter(this.openmct);
     },
     methods: {
         addPopupMenuItems() {
@@ -234,9 +235,9 @@ export default {
             let element = this.snapshot.$refs['snapshot-image'];
 
             if (type === 'png') {
-                this.exportImageService.exportPNG(element, this.embed.name);
+                this.imageExporter.exportPNG(element, this.embed.name);
             } else {
-                this.exportImageService.exportJPG(element, this.embed.name);
+                this.imageExporter.exportJPG(element, this.embed.name);
             }
         },
         previewEmbed() {
