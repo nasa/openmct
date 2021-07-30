@@ -57,15 +57,15 @@ describe("the plugin", () => {
         mockView = {
             getViewContext: () => {
                 return {
-                    viewDatumAction: true,
-                    getDatum: () => {
-                        return mockDatum;
+                    row: {
+                        viewDatumAction: true,
+                        getDatum: () => {
+                            return mockDatum;
+                        }
                     }
                 };
             }
         };
-
-        done();
     });
 
     afterEach(() => {
