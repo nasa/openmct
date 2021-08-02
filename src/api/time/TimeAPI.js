@@ -238,8 +238,7 @@ define(['EventEmitter', './independentTimeAPI'], function (EventEmitter, Indepen
      * Get or set an independent time observer which follows the TimeAPI timeSystem,
      * but with different offsets for a given domain object
      * @param {key | string} key The identifier key of the domain object these offsets are set for
-     * @param {fixedTimeOffsets: ClockOffsets, realtimeOffsets: ClockOffsets} value This maintains a sliding time window of a fixed
-     * width that automatically updates for both realtime and fixed timespans
+     * @param {ClockOffsets} value This maintains a sliding time window of a fixed width that automatically updates
      * @param {key | string} clockKey the real time clock key currently in use
      * @memberof module:openmct.TimeAPI#
      * @method registerIndependentTime

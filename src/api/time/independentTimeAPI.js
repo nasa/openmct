@@ -35,7 +35,7 @@ class IndependentTimeAPI extends EventEmitter {
     /**
      * Get the real time and fixed time span offsets for a given domain object key.
      * @param {key | string} keyString The identifier key of the domain object these bounds are set for
-     * @returns {fixedTimeOffsets: ClockOffsets, realtimeOffsets: ClockOffsets} value This maintains a sliding time window of a fixed
+     * @returns {ClockOffsets} value This maintains a sliding time window of a fixed
      * width that automatically updates for both realtime and fixed timespans
      */
     get(keyString) {
@@ -44,8 +44,8 @@ class IndependentTimeAPI extends EventEmitter {
     /**
      * Get or set the real time and fixed time span offsets for a given domain object key.
      * @param {key | string} keyString The identifier key of the domain object these bounds are set for
-     * @param {fixedTimeOffsets: ClockOffsets, realtimeOffsets: ClockOffsets} value This maintains a sliding time window of a fixed
-     * width that automatically updates for both realtime and fixed timespans
+     * @param {ClockOffsets} value This maintains a sliding time window of a fixed
+     * width that automatically updates
      * @param {key | string} clock the real time clock key currently in use
      */
     set(keyString, value, clock) {
