@@ -53,7 +53,7 @@ define(
                 let removed = [];
 
                 this.rows = this.rows.filter((row) => {
-                    if (row.objectKeyString !== keyString) {
+                    if (row.objectKeyString === keyString) {
                         removed.push(row);
 
                         return false;

@@ -47,7 +47,6 @@ define([
             this.openmct = openmct;
             this.rowCount = 100;
             this.tableComposition = undefined;
-            this.tableRows = undefined;
             this.datumCache = [];
             this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
             this.paused = false;
@@ -73,8 +72,6 @@ define([
 
             openmct.time.on('bounds', this.refreshData);
             openmct.time.on('timeSystem', this.refreshData);
-
-            this.tableRows.on('resetRowsFromAllData', this.resetRowsFromAllData);
         }
 
         /**
@@ -118,6 +115,7 @@ define([
             };
 
             this.tableRows.sortBy(sortOptions);
+            this.tableRows.on('resetRowsFromAllData', this.resetRowsFromAllData);
         }
 
         loadComposition() {
@@ -259,6 +257,7 @@ define([
 
         removeTelemetryObject(objectIdentifier) {
             const keyString = this.openmct.objects.makeKeyString(objectIdentifier);
+            console.log('remove tt', this.tableRows);
 
             this.configuration.removeColumnsForObject(objectIdentifier, true);
             this.tableRows.removeRowsByObject(keyString);
