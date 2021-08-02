@@ -45,7 +45,6 @@ define(
                 this.addRows = this.addRows.bind(this);
                 this.removeRowsByObject = this.removeRowsByObject.bind(this);
                 this.removeRowsByData = this.removeRowsByData.bind(this);
-                // this.resetRowsFromAllData = this.resetRowsFromAllData.bind(this);
 
                 this.clear = this.clear.bind(this);
             }
