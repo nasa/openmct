@@ -468,12 +468,12 @@ export default {
         this.table.on('object-removed', this.removeObject);
         this.table.on('refresh', this.clearRowsAndRerender);
         this.table.on('historical-rows-processed', this.checkForMarkedRows);
+        this.table.on('outstanding-requests', this.outstandingRequests);
 
         this.table.tableRows.on('add', this.rowsAdded);
         this.table.tableRows.on('remove', this.rowsRemoved);
         this.table.tableRows.on('sort', this.updateVisibleRows);
         this.table.tableRows.on('filter', this.updateVisibleRows);
-        this.table.tableRows.on('outstanding-requests', this.outstandingRequests);
 
         //Default sort
         this.sortOptions = this.table.tableRows.sortBy();
@@ -492,13 +492,14 @@ export default {
     destroyed() {
         this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
+        this.table.off('historical-rows-processed', this.checkForMarkedRows);
         this.table.off('refresh', this.clearRowsAndRerender);
+        this.table.off('outstanding-requests', this.outstandingRequests);
 
         this.table.tableRows.off('add', this.rowsAdded);
         this.table.tableRows.off('remove', this.rowsRemoved);
         this.table.tableRows.off('sort', this.updateVisibleRows);
         this.table.tableRows.off('filter', this.updateVisibleRows);
-        this.table.tableRows.off('outstanding-requests', this.outstandingRequests);
 
         this.table.configuration.off('change', this.updateConfiguration);
 
@@ -926,7 +927,7 @@ export default {
         },
         showRows(rows) {
             this.table.tableRows.rows = rows;
-            this.table.tableRows.emit('filter');
+            this.table.emit('filter');
         },
         toggleMarkedRows(flag) {
             if (flag) {

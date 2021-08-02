@@ -23,13 +23,11 @@
 define(
     [
         'lodash',
-        'EventEmitter',
-        '../TelemetryTableRow'
+        'EventEmitter'
     ],
     function (
         _,
-        EventEmitter,
-        TelemetryTableRow
+        EventEmitter
     ) {
         const LESS_THAN = -1;
         const EQUAL = 0;
@@ -39,60 +37,20 @@ define(
          * @constructor
          */
         class TableRowCollection extends EventEmitter {
-            constructor(openmct, domainObject, configuration) {
+            constructor() {
                 super();
 
-                this.openmct = openmct;
-                this.domainObject = domainObject;
-                this.configuration = configuration;
-
                 this.rows = [];
-                this.telemetryObjects = {};
-                this.telemetryCollections = {};
-                this.delayedActions = [];
                 this.columnFilters = {};
-                this.paused = false;
-                this.outstandingRequests = 0;
+                this.addRows = this.addRows.bind(this);
+                this.removeRowsByObject = this.removeRowsByObject.bind(this);
+                this.removeRowsByData = this.removeRowsByData.bind(this);
+                // this.resetRowsFromAllData = this.resetRowsFromAllData.bind(this);
 
-                this.addObject = this.addObject.bind(this);
-                this.removeObject = this.removeObject.bind(this);
-                this.removeTelemetryCollection = this.removeTelemetryCollection.bind(this);
                 this.clear = this.clear.bind(this);
             }
 
-            addObject(telemetryObject) {
-                const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
-                let columnMap = this.getColumnMapForObject(keyString);
-                let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-
-                this.incrementOutstandingRequests();
-
-                const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
-                const telemetryRemover = this.getTelemetryRemover();
-
-                this.removeTelemetryCollection(keyString);
-
-                this.telemetryCollections[keyString] = this.openmct.telemetry
-                    .requestTelemetryCollection(telemetryObject, requestOptions);
-
-                this.telemetryCollections[keyString].on('remove', telemetryRemover);
-                this.telemetryCollections[keyString].on('add', telemetryProcessor);
-                this.telemetryCollections[keyString].load();
-
-                this.decrementOutstandingRequests();
-
-                this.telemetryObjects[keyString] = {
-                    telemetryObject,
-                    keyString,
-                    requestOptions,
-                    columnMap,
-                    limitEvaluator
-                };
-            }
-
-            removeObject(objectIdentifier) {
-                const keyString = this.openmct.objects.makeKeyString(objectIdentifier);
+            removeRowsByObject(keyString) {
                 let removed = [];
 
                 this.rows = this.rows.filter((row) => {
@@ -106,77 +64,28 @@ define(
                 });
 
                 this.emit('remove', removed);
-                this.removeTelemetryCollection(keyString);
-                delete this.telemetryObjects[keyString];
             }
 
-            removeTelemetryCollection(keyString) {
-                if (this.telemetryCollections[keyString]) {
-                    this.telemetryCollections[keyString].destroy();
-                    this.telemetryCollections[keyString] = undefined;
-                    delete this.telemetryCollections[keyString];
-                }
-            }
-
-            getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
-                return (telemetry) => {
-                    //Check that telemetry object has not been removed since telemetry was requested.
-                    if (!this.telemetryObjects[keyString]) {
-                        return;
-                    }
-
-                    // only cache realtime
-                    if (this.paused) {
-                        this.delayedActions.push(this.processTelemetryData.bind(this, telemetry, columnMap, keyString, limitEvaluator));
-                    } else {
-                        this.processTelemetryData(telemetry, columnMap, keyString, limitEvaluator);
-                    }
-                };
-            }
-
-            getTelemetryRemover() {
-                return (telemetry) => {
-                    // only cache realtime
-                    if (this.paused) {
-                        this.delayedActions.push(this.removeRowsByRowIds.bind(this, telemetry.map(JSON.stringify)));
-                    } else {
-                        this.removeRowsByRowIds(telemetry.map(JSON.stringify));
-                    }
-                };
-            }
-
-            processTelemetryData(telemetryData, columnMap, keyString, limitEvaluator) {
+            addRows(rows, type = 'add') {
                 if (this.sortOptions === undefined) {
                     throw 'Please specify sort options';
                 }
 
-                // anything coming from telemetry collection is in bounds and will be added (unless filtered)
-                let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
-
-                this.addRows(telemetryRows);
-            }
-
-            addRows(rows, skipEmit = false) {
                 let isFiltered = Object.keys(this.columnFilters).length > 0;
                 let rowsToAdd = !isFiltered ? rows : rows.filter(this.matchesFilters, this);
 
                 for (let row of rowsToAdd) {
-                    let index = this.sortedIndex(this.rows, row, 'sorted');
+                    let index = this.sortedIndex(this.rows, row);
                     this.rows.splice(index, 0, row);
                 }
 
-                if (!skipEmit && rowsToAdd.length > 0) {
-                    this.emit('add', rowsToAdd);
+                if (rowsToAdd.length > 0) {
+                    this.emit(type, rowsToAdd);
                 }
             }
 
-            runDelayedActions() {
-                this.delayedActions.forEach(action => action());
-                this.delayedActions = [];
-            }
-
-            sortedLastIndex(rows, testRow, type) {
-                return this.sortedIndex(rows, testRow, type, _.sortedLastIndex);
+            sortedLastIndex(rows, testRow) {
+                return this.sortedIndex(rows, testRow, _.sortedLastIndex);
             }
 
             /**
@@ -184,7 +93,7 @@ define(
              * Leverages lodash's `sortedIndex` function which implements a binary search.
              * @private
              */
-            sortedIndex(rows, testRow, type, lodashFunction = _.sortedIndexBy) {
+            sortedIndex(rows, testRow, lodashFunction = _.sortedIndexBy) {
                 if (this.rows.length === 0) {
                     return 0;
                 }
@@ -230,11 +139,11 @@ define(
                 }
             }
 
-            removeRowsByRowIds(rowIds) {
+            removeRowsByData(data) {
                 let removed = [];
 
                 this.rows = this.rows.filter((row) => {
-                    if (rowIds.includes(row.rowId)) {
+                    if (data.includes(row.fullDatum)) {
                         removed.push(row);
 
                         return false;
@@ -299,6 +208,7 @@ define(
 
             setColumnFilter(columnKey, filter) {
                 filter = filter.trim().toLowerCase();
+                let wasBlank = this.columnFilters[columnKey] === undefined;
                 let isSubset = this.isSubsetOfCurrentFilter(columnKey, filter);
 
                 if (filter.length === 0) {
@@ -307,13 +217,13 @@ define(
                     this.columnFilters[columnKey] = filter;
                 }
 
-                if (isSubset) {
+                if (isSubset || wasBlank) {
                     this.rows = this.rows.filter(this.matchesFilters, this);
+                    this.emit('filter');
                 } else {
-                    this.updateRowsToAllBoundedRows();
+                    this.emit('resetRowsFromAllData');
                 }
 
-                this.emit('filter');
             }
 
             setColumnRegexFilter(columnKey, filter) {
@@ -321,8 +231,7 @@ define(
 
                 this.columnFilters[columnKey] = new RegExp(filter);
 
-                this.updateRowsToAllBoundedRows();
-                this.emit('filter');
+                this.emit('resetRowsFromAllData');
             }
 
             getColumnMapForObject(objectKeyString) {
@@ -339,33 +248,9 @@ define(
                 return {};
             }
 
-            buildOptionsFromConfiguration(telemetryObject) {
-                let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                let filters = this.domainObject.configuration
-                    && this.domainObject.configuration.filters
-                    && this.domainObject.configuration.filters[keyString];
-
-                return {filters} || {};
-            }
-
-            updateRowsToAllBoundedRows() {
-                let objectKeys = Object.keys(this.telemetryCollections);
-                let allBoundedRows = objectKeys.reduce((boundedRows, keyString) => {
-                    let { columnMap, limitEvaluator } = this.telemetryObjects[keyString];
-
-                    return boundedRows.concat(this.telemetryCollections[keyString].boundedTelemetry.map(
-                        datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator)
-                    ));
-                }, []);
-
-                // sorts/filters them
-                this.rows = [];
-                this.addRows(allBoundedRows, true);
-            }
-
-            /**
-             * @private
-             */
+            // /**
+            //  * @private
+            //  */
             isSubsetOfCurrentFilter(columnKey, filter) {
                 if (this.columnFilters[columnKey] instanceof RegExp) {
                     return false;
@@ -419,28 +304,6 @@ define(
                 return row.getParsedValue(this.sortOptions.key);
             }
 
-            /**
-             * @private
-             */
-            incrementOutstandingRequests() {
-                if (this.outstandingRequests === 0) {
-                    this.emit('outstanding-requests', true);
-                }
-
-                this.outstandingRequests++;
-            }
-
-            /**
-             * @private
-             */
-            decrementOutstandingRequests() {
-                this.outstandingRequests--;
-
-                if (this.outstandingRequests === 0) {
-                    this.emit('outstanding-requests', false);
-                }
-            }
-
             clear() {
                 let removedRows = this.rows;
                 this.rows = [];
@@ -448,32 +311,7 @@ define(
                 this.emit('remove', removedRows);
             }
 
-            resubscribe() {
-                let objectKeys = Object.keys(this.telemetryObjects);
-                objectKeys.forEach((keyString) => {
-                    this.addObject(this.telemetryObjects[keyString].telemetryObject, this.telemetryObjects[keyString]);
-                });
-            }
-
-            clearAndResubscribe() {
-                this.clear();
-                this.resubscribe();
-            }
-
-            pause() {
-                this.paused = true;
-            }
-
-            unpause() {
-                this.paused = false;
-                this.runDelayedActions();
-            }
-
             destroy() {
-                let keystrings = Object.keys(this.telemetryCollections);
-                keystrings.forEach(this.removeTelemetryCollection);
-
-                // all EventEmitter listeners
                 this.removeAllListeners();
             }
         }
