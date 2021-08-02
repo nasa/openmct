@@ -29,7 +29,7 @@ const FIVE_MINUTES = ONE_MINUTE * 5;
 const FIFTEEN_MINUTES = FIVE_MINUTES * 3;
 const THIRTY_MINUTES = FIFTEEN_MINUTES * 2;
 
-describe('time conductor', () => {
+xdescribe('time conductor', () => {
     let element;
     let child;
     let openmct;

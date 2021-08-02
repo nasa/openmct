@@ -570,7 +570,8 @@ describe("the plugin", function () {
                 provide: {
                     openmct: openmct,
                     domainObject: stackedPlotObject,
-                    composition: openmct.composition.get(stackedPlotObject)
+                    composition: openmct.composition.get(stackedPlotObject),
+                    path: [stackedPlotObject]
                 },
                 template: "<stacked-plot></stacked-plot>"
             });
