@@ -52,7 +52,8 @@
 
 <script>
 export default {
-    inject: ['openmct'],
+    name: 'AlphanumericFormat',
+    inject: ['openmct', 'objectPath'],
     data() {
         return {
             isEditing: this.openmct.editor.isEditing(),

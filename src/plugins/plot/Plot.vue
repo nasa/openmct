@@ -72,7 +72,8 @@
 </template>
 
 <script>
-import eventHelpers from "./lib/eventHelpers";
+import eventHelpers from './lib/eventHelpers';
+import ImageExporter from '../../exporters/ImageExporter';
 import MctPlot from './MctPlot.vue';
 
 export default {
@@ -102,8 +103,7 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
-
-        this.exportImageService = this.openmct.$injector.get('exportImageService');
+        this.imageExporter = new ImageExporter(this.openmct);
     },
     beforeDestroy() {
         this.destroy();
@@ -118,14 +118,12 @@ export default {
 
         exportJPG() {
             const plotElement = this.$refs.plotContainer;
-
-            this.exportImageService.exportJPG(plotElement, 'plot.jpg', 'export-plot');
+            this.imageExporter.exportJPG(plotElement, 'plot.jpg', 'export-plot');
         },
 
         exportPNG() {
             const plotElement = this.$refs.plotContainer;
-
-            this.exportImageService.exportPNG(plotElement, 'plot.png', 'export-plot');
+            this.imageExporter.exportPNG(plotElement, 'plot.png', 'export-plot');
         },
 
         toggleCursorGuide() {
