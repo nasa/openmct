@@ -257,7 +257,6 @@ define([
 
         removeTelemetryObject(objectIdentifier) {
             const keyString = this.openmct.objects.makeKeyString(objectIdentifier);
-            console.log('remove tt', this.tableRows);
 
             this.configuration.removeColumnsForObject(objectIdentifier, true);
             this.tableRows.removeRowsByObject(keyString);
