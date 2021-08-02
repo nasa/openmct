@@ -235,12 +235,12 @@ define(['EventEmitter', './independentTimeAPI'], function (EventEmitter, Indepen
     };
 
     /**
-     * Get or set the an independent time observer which follows the TimeAPI timeSystem,
-     * but with different offsets.
-     * @param {key | string} key to uniquely identify this
-     * @param {ClockOffsets} offsets on each tick these will be used to calculate
-     * the start and end bounds. This maintains a sliding time window of a fixed
-     * width that automatically updates.
+     * Get or set an independent time observer which follows the TimeAPI timeSystem,
+     * but with different offsets for a given domain object
+     * @param {key | string} key The identifier key of the domain object these offsets are set for
+     * @param {fixedTimeOffsets: ClockOffsets, realtimeOffsets: ClockOffsets} value This maintains a sliding time window of a fixed
+     * width that automatically updates for both realtime and fixed timespans
+     * @param {key | string} clockKey the real time clock key currently in use
      * @memberof module:openmct.TimeAPI#
      * @method registerIndependentTime
      */
@@ -251,10 +251,24 @@ define(['EventEmitter', './independentTimeAPI'], function (EventEmitter, Indepen
         return this.independentTimes;
     };
 
+    /**
+     * Get the independent time observer which follows the TimeAPI timeSystem,
+     * but with different offsets.
+     * @param {key | string} key The identifier key of the domain object these offsets
+     * @memberof module:openmct.TimeAPI#
+     * @method getIndependentTime
+     */
     TimeAPI.prototype.getIndependentTime = function (key) {
         return this.independentTimes.get(key);
     };
 
+    /**
+     * Follow changes to fixed and real time bounds changes for a given domain object identifier key
+     * @param {key | string} key The identifier key of the domain object these offsets
+     * @param callback The function to invoke when time offsets change
+     * @memberof module:openmct.TimeAPI#
+     * @method observeIndependentTime
+     */
     TimeAPI.prototype.observeIndependentTime = function (key, callback) {
         return this.independentTimes.observe(key, callback);
     };

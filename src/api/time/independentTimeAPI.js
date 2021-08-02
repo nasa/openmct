@@ -32,14 +32,25 @@ class IndependentTimeAPI extends EventEmitter {
         this.observe = this.observe.bind(this);
     }
 
+    /**
+     * Get the real time and fixed time span offsets for a given domain object key.
+     * @param {key | string} keyString The identifier key of the domain object these bounds are set for
+     * @returns {fixedTimeOffsets: ClockOffsets, realtimeOffsets: ClockOffsets} value This maintains a sliding time window of a fixed
+     * width that automatically updates for both realtime and fixed timespans
+     */
     get(keyString) {
         return this.offsets[keyString];
     }
-
+    /**
+     * Get or set the real time and fixed time span offsets for a given domain object key.
+     * @param {key | string} keyString The identifier key of the domain object these bounds are set for
+     * @param {fixedTimeOffsets: ClockOffsets, realtimeOffsets: ClockOffsets} value This maintains a sliding time window of a fixed
+     * width that automatically updates for both realtime and fixed timespans
+     * @param {key | string} clock the real time clock key currently in use
+     */
     set(keyString, value, clock) {
         this.offsets[keyString] = value;
         this.clock = clock;
-        // this.emit(keyString, value);
         if (!clock) {
             this.bounds(keyString);
         }
@@ -47,10 +58,15 @@ class IndependentTimeAPI extends EventEmitter {
 
     delete(keyString) {
         this.offsets[keyString] = undefined;
-        // this.emit(keyString, undefined);
         delete this.offsets[keyString];
     }
 
+    /**
+     * Notify listeners of start and end time changes based on provided time and current offsets - only happens when in real time mode
+     * @private
+     * @param {number} timestamp A time from which boudns will be calculated
+     * using current offsets.
+     */
     tick(timestamp) {
         if (!this.clock) {
             return;
@@ -68,6 +84,11 @@ class IndependentTimeAPI extends EventEmitter {
         });
     }
 
+    /**
+     * Notify listeners of start and end time changes for a fixed timespan
+     * @private
+     * @param {key | string} keyString The identifier key of the domain object these bounds are set for
+     */
     bounds(keyString) {
         const fixedOffsets = this.offsets[keyString];
         if (fixedOffsets) {
@@ -75,6 +96,12 @@ class IndependentTimeAPI extends EventEmitter {
         }
     }
 
+    /**
+     * Follow changes to fixed and real time bounds changes for a given domain object identifier key
+     * @param {key | string} key The identifier key of the domain object these offsets
+     * @param callback The function to invoke when time offsets change
+     * @returns function function to call to stop observing changes to the time offsets
+     */
     observe(key, callback) {
         this.on(key, callback);
 
