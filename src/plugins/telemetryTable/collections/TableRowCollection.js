@@ -70,6 +70,12 @@ define(
                     throw 'Please specify sort options';
                 }
 
+                // if type is filter, then it's a reset of all rows,
+                // need to wipe current rows
+                if (type === 'filter') {
+                    this.rows = [];
+                }
+
                 let isFiltered = Object.keys(this.columnFilters).length > 0;
                 let rowsToAdd = !isFiltered ? rows : rows.filter(this.matchesFilters, this);
 

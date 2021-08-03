@@ -226,7 +226,7 @@ define([
             Object.keys(this.telemetryCollections).forEach(keyString => {
                 let { columnMap, limitEvaluator } = this.telemetryObjects[keyString];
 
-                this.telemetryCollections[keyString].boundedTelemetry.forEach(datum => {
+                this.telemetryCollections[keyString].getAll().forEach(datum => {
                     allRows.push(new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
                 });
             });

@@ -50,6 +50,7 @@ export class TelemetryCollection extends EventEmitter {
         this.lastBounds = undefined;
         this.requestAbort = undefined;
     }
+
     /**
      * This will start the requests for historical and realtime data,
      * as well as setting up initial values and watchers
@@ -87,6 +88,14 @@ export class TelemetryCollection extends EventEmitter {
         }
 
         this.removeAllListeners();
+    }
+
+    /**
+     * This will start the requests for historical and realtime data,
+     * as well as setting up initial values and watchers
+     */
+    getAll() {
+        return this.boundedTelemetry;
     }
 
     /**
