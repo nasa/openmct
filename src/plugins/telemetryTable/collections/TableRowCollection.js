@@ -84,7 +84,8 @@ define(
                     this.rows.splice(index, 0, row);
                 }
 
-                if (rowsToAdd.length > 0) {
+                // we emit filter no matter what
+                if (rowsToAdd.length > 0 || type === 'filter') {
                     this.emit(type, rowsToAdd);
                 }
             }
@@ -233,7 +234,6 @@ define(
 
             setColumnRegexFilter(columnKey, filter) {
                 filter = filter.trim();
-
                 this.columnFilters[columnKey] = new RegExp(filter);
 
                 this.emit('resetRowsFromAllData');
