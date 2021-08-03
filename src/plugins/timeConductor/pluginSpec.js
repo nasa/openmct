@@ -20,18 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from "utils/testing";
+import {createMouseEvent, createOpenMct, resetApplicationState} from "utils/testing";
 import ConductorPlugin from "./plugin";
+import Vue from 'vue';
 
 const THIRTY_SECONDS = 30 * 1000;
 const ONE_MINUTE = THIRTY_SECONDS * 2;
 const FIVE_MINUTES = ONE_MINUTE * 5;
 const FIFTEEN_MINUTES = FIVE_MINUTES * 3;
 const THIRTY_MINUTES = FIFTEEN_MINUTES * 2;
+const date = new Date('Jan 20 1978').getTime();
 
-xdescribe('time conductor', () => {
+describe('time conductor', () => {
     let element;
     let child;
+    let appHolder;
     let openmct;
     let config = {
         menuOptions: [
@@ -39,8 +42,8 @@ xdescribe('time conductor', () => {
                 name: "FixedTimeRange",
                 timeSystem: 'utc',
                 bounds: {
-                    start: Date.now() - THIRTY_MINUTES,
-                    end: Date.now()
+                    start: date - THIRTY_MINUTES,
+                    end: date
                 },
                 presets: [],
                 records: 2
@@ -70,21 +73,56 @@ xdescribe('time conductor', () => {
         child.style.height = '480px';
         element.appendChild(child);
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+        openmct.on('start', () => {
+            openmct.time.bounds({
+                start: config.menuOptions[0].bounds.start,
+                end: config.menuOptions[0].bounds.end
+            });
+            Vue.nextTick(() => {
+                done();
+            });
+        });
+        appHolder = document.createElement("div");
+        openmct.start(appHolder);
     });
 
     afterEach(() => {
+        appHolder = undefined;
+        openmct = undefined;
+
         return resetApplicationState(openmct);
     });
 
-    describe('it shows delta inputs', () => {
-        it('in fixed mode', () => {
+    it('shows delta inputs in fixed mode', () => {
+        const fixedModeEl = appHolder.querySelector('.is-fixed-mode');
+        const dateTimeInputs = fixedModeEl.querySelectorAll('.c-input--datetime');
+        expect(dateTimeInputs[0].value).toEqual('1978-01-20 07:30:00.000Z');
+        expect(dateTimeInputs[1].value).toEqual('1978-01-20 08:00:00.000Z');
+        expect(fixedModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Fixed Timespan');
+    });
 
+    describe('shows delta inputs in realtime mode', () => {
+        beforeEach((done) => {
+            const switcher = appHolder.querySelector('.c-mode-button');
+            const clickEvent = createMouseEvent("click");
+
+            switcher.dispatchEvent(clickEvent);
+            Vue.nextTick(() => {
+                const clockItem = document.querySelectorAll('.c-conductor__mode-menu li')[1];
+                clockItem.dispatchEvent(clickEvent);
+                Vue.nextTick(() => {
+                    done();
+                });
+            });
         });
 
-        it('in realtime mode', () => {
-
+        it('shows clock options', () => {
+            const realtimeModeEl = appHolder.querySelector('.is-realtime-mode');
+            const dateTimeInputs = realtimeModeEl.querySelectorAll('.c-conductor__delta-button');
+            expect(dateTimeInputs[0].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:30:00');
+            expect(dateTimeInputs[1].innerHTML.replace(/[^(\d|:)]/g, '')).toEqual('00:00:30');
+            expect(realtimeModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Local Clock');
         });
     });
+
 });
