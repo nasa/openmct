@@ -24,7 +24,7 @@ import { createOpenMct, resetApplicationState } from "utils/testing";
 import TimelinePlugin from "./plugin";
 import Vue from 'vue';
 
-describe('the plugin', function () {
+fdescribe('the plugin', function () {
     let objectDef;
     let element;
     let child;
@@ -96,11 +96,30 @@ describe('the plugin', function () {
 
     describe('the view', () => {
         let timelineView;
+        let testViewObject;
 
         beforeEach(() => {
-            const testViewObject = {
+            testViewObject = {
                 id: "test-object",
-                type: "time-strip"
+                identifier: {
+                    key: "test-object",
+                    namespace: ''
+                },
+                type: "time-strip",
+                configuration: {
+                    useIndependentTime: true,
+                    timeOptions: {
+                        mode: 'local',
+                        fixedOffsets: {
+                            start: 10,
+                            end: 11
+                        },
+                        clockOffsets: {
+                            start: -(30 * 60 * 1000),
+                            end: (30 * 60 * 1000)
+                        }
+                    }
+                }
             };
 
             const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
@@ -118,6 +137,91 @@ describe('the plugin', function () {
         it('displays a time axis', () => {
             const el = element.querySelector('.c-timesystem-axis');
             expect(el).toBeDefined();
+        });
+    });
+
+    describe('the independent time conductor', () => {
+        let timelineView;
+        let testViewObject = {
+            id: "test-object",
+            identifier: {
+                key: "test-object",
+                namespace: ''
+            },
+            type: "time-strip",
+            configuration: {
+                useIndependentTime: true,
+                timeOptions: {
+                    mode: 'local',
+                    fixedOffsets: {
+                        start: 10,
+                        end: 11
+                    },
+                    clockOffsets: {
+                        start: -(30 * 60 * 1000),
+                        end: (30 * 60 * 1000)
+                    }
+                }
+            }
+        };
+
+        beforeEach(done => {
+            const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
+            timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
+            let view = timelineView.view(testViewObject, element);
+            view.show(child, true);
+
+            Vue.nextTick(done);
+        });
+
+        it('displays an independent time conductor with saved options - local clock', () => {
+
+            return Vue.nextTick(() => {
+                const independentTime = openmct.time.getIndependentTime(testViewObject.identifier.key);
+                expect(independentTime).toEqual(testViewObject.configuration.timeOptions.clockOffsets);
+            });
+        });
+    });
+
+    describe('the independent time conductor', () => {
+        let timelineView;
+        let testViewObject2 = {
+            id: "test-object2",
+            identifier: {
+                key: "test-object2",
+                namespace: ''
+            },
+            type: "time-strip",
+            configuration: {
+                useIndependentTime: true,
+                timeOptions: {
+                    mode: 'fixed',
+                    fixedOffsets: {
+                        start: 10,
+                        end: 11
+                    },
+                    clockOffsets: {
+                        start: -(30 * 60 * 1000),
+                        end: (30 * 60 * 1000)
+                    }
+                }
+            }
+        };
+
+        beforeEach((done) => {
+            const applicableViews = openmct.objectViews.get(testViewObject2, mockObjectPath);
+            timelineView = applicableViews.find((viewProvider) => viewProvider.key === 'time-strip.view');
+            let view = timelineView.view(testViewObject2, element);
+            view.show(child, true);
+
+            Vue.nextTick(done);
+        });
+
+        it('displays an independent time conductor with saved options - fixed timespan', () => {
+            return Vue.nextTick(() => {
+                const independentTime = openmct.time.getIndependentTime(testViewObject2.identifier.key);
+                expect(independentTime).toEqual(testViewObject2.configuration.timeOptions.fixedOffsets);
+            });
         });
     });
 
