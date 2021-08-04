@@ -33,65 +33,65 @@ export default function () {
             cssClass: 'icon-clock',
             "priority": 101,
             initialize: function (domainObject) {
-                domainObject.model = {
-                    "clockFormat": [
-                        "YYYY/MM/DD hh:mm:ss",
-                        "clock12"
-                    ],
-                    "timezone": "UTC"
+                domainObject.clockFormat = [
+                    'YYYY/MM/DD hh:mm:ss',
+                    'clock12'
+                ];
+                domainObject.timezone = 'UTC';
+                domainObject.configuration = {
+                    baseFormat: 'YYYY/MM/DD hh:mm:ss',
+                    use24: 'clock12'
                 };
             },
-            "features": [
-                "creation"
-            ],
-            "properties": [
+            "form": [
                 {
-                    "key": "clockFormat",
-                    "name": "Display Format",
-                    "control": "composite",
-                    "items": [
+                    key: 'clockFormat',
+                    name: 'Display Format',
+                    control: 'composite',
+                    items: [
                         {
-                            "control": "select",
-                            "options": [
+                            control: 'select',
+                            options: [
                                 {
-                                    "value": "YYYY/MM/DD hh:mm:ss",
-                                    "name": "YYYY/MM/DD hh:mm:ss"
+                                    value: 'YYYY/MM/DD hh:mm:ss',
+                                    name: 'YYYY/MM/DD hh:mm:ss'
                                 },
                                 {
-                                    "value": "YYYY/DDD hh:mm:ss",
-                                    "name": "YYYY/DDD hh:mm:ss"
+                                    value: 'YYYY/DDD hh:mm:ss',
+                                    name: 'YYYY/DDD hh:mm:ss'
                                 },
                                 {
-                                    "value": "hh:mm:ss",
-                                    "name": "hh:mm:ss"
+                                    value: 'hh:mm:ss',
+                                    name: 'hh:mm:ss'
                                 }
                             ],
-                            "cssClass": "l-inline"
+                            cssClass: 'l-inline',
+                            property: [
+                                'configuration',
+                                'baseFormat'
+                            ]
                         },
                         {
-                            "control": "select",
-                            "options": [
+                            control: 'select',
+                            options: [
                                 {
-                                    "value": "clock12",
-                                    "name": "12hr"
+                                    value: 'clock12',
+                                    name: '12hr'
                                 },
                                 {
-                                    "value": "clock24",
-                                    "name": "24hr"
+                                    value: 'clock24',
+                                    name: '24hr'
                                 }
                             ],
-                            "cssClass": "l-inline"
+                            cssClass: 'l-inline',
+                            property: [
+                                'configuration',
+                                'use24'
+                            ]
                         }
                     ]
                 }
-            ],
-            "model": {
-                "clockFormat": [
-                    "YYYY/MM/DD hh:mm:ss",
-                    "clock12"
-                ],
-                "timezone": "UTC"
-            }
+            ]
         });
         openmct.objectViews.addProvider(new ClockViewProvider(openmct));
     };

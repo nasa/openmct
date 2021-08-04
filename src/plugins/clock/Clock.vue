@@ -37,6 +37,7 @@
 <script>
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
+import TickerService from './services/TickerService';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -62,23 +63,33 @@ export default {
         timeAmPm() {
             return this.use24 ? '' : this.timeAmPmValue;
         },
-        model() {
-            return this.domainObject.model;
+        clockFormat() {
+            return this.domainObject.clockFormat;
+        },
+        timezone() {
+            return this.domainObject.timezone;
+        },
+        configuration() {
+            return this.domainObject.configuration;
         }
     },
     watch: {
-        model(newVal) {
-            this.updateModel(newVal);
+        clockFormat() {
+            this.updateModel();
+        },
+        timezone() {
+            this.updateModel();
+        },
+        configuration() {
+            this.updateModel();
         }
     },
     mounted() {
-        this.updateModel(this.model);
-        console.log(this.domainObject);
-        // this.unlisten = tickerService.listen(this.tick);
-        this.unlisten = () => {};
+        this.updateModel();
+        this.unlisten = new TickerService(this.timeout, this.getDate).listen(this.tick);
     },
     beforeDestroy() {
-        // this.unlisten();
+        this.unlisten();
     },
     methods: {
         update() {
@@ -88,23 +99,35 @@ export default {
             this.timeTextValue = this.timeFormat && m.format(this.timeFormat);
             this.timeAmPmValue = m.format("A"); // Just the AM or PM part
         },
-        updateModel(model) {
+        updateModel() {
             let baseFormat;
-            if (model !== undefined) {
-                baseFormat = model.clockFormat[0];
+            if (!this.domainObject) {
+                return;
+            }
 
-                this.use24 = model.clockFormat[1] === 'clock24';
+            if (this.clockFormat
+                && this.clockFormat.length > 0
+                && this.timezone) {
+                baseFormat = this.configuration[0] || this.clockFormat[0];
+
+                this.use24 = (this.configuration[1] || this.clockFormat[1]) === 'clock24';
                 this.timeFormat = this.use24
                     ? baseFormat.replace('hh', "HH") : baseFormat;
                 // If wrong timezone is provided, the UTC will be used
-                this.zoneName = momentTimezone.tz.names().includes(model.timezone)
-                    ? model.timezone : "UTC";
+                this.zoneName = momentTimezone.tz.names().includes(this.timezone)
+                    ? this.timezone : "UTC";
                 this.update();
             }
         },
         tick(timestamp) {
             this.lastTimestamp = timestamp;
             this.update();
+        },
+        timeout(fn, delay) {
+            setTimeout(fn, delay);
+        },
+        getDate() {
+            return Date.now();
         }
     }
 };
