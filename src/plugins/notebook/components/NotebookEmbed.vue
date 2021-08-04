@@ -141,6 +141,12 @@ export default {
                 });
         },
         changeLocation() {
+            if (this.openmct.editor.editing) {
+                this.openmct.notifications.error('Error navigating while in edit mode');
+
+                return;
+            }
+
             const hash = this.embed.historicLink;
 
             const bounds = this.openmct.time.bounds();
