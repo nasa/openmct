@@ -92,7 +92,7 @@ export default class ViewLargeAction {
             },
             provide: {
                 openmct: this.openmct,
-                objectPath: this.objectPath
+                objectPath
             },
             data() {
                 return {

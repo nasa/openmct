@@ -24,13 +24,19 @@ import { getMenuItems } from '../utils/notebook-snapshot-menu';
 export default {
     inject: ['openmct'],
     props: {
+        currentView: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         domainObject: {
             type: Object,
             default() {
                 return {};
             }
         },
-        ignoreLink: {
+        isPreview: {
             type: Boolean,
             default() {
                 return false;
@@ -56,6 +62,27 @@ export default {
         this.setDefaultNotebookStatus();
     },
     methods: {
+        getPreviewObjectLink() {
+            let path = '#/browse/';
+            path += this.objectPath
+                .map(p => this.openmct.objects.makeKeyString(p.identifier))
+                .reverse()
+                .join('/')
+            ;
+            path += `?view=${this.currentView.key}`;
+
+            const urlParams = this.openmct.router.getParams();
+            Object.entries(urlParams)
+                .forEach(([key, value]) => {
+                    if (key === 'view') {
+                        return;
+                    }
+
+                    path += `&${key}=${value}`;
+                });
+
+            return path;
+        },
         async showMenu(event) {
             const menuItemOptions = {
                 default: {
@@ -81,15 +108,12 @@ export default {
                 const wrapper = target && target.closest('.js-notebook-snapshot-item-wrapper')
                     || document;
                 const element = wrapper.querySelector('.js-notebook-snapshot-item');
-
-                const bounds = this.openmct.time.bounds();
-                const link = !this.ignoreLink
-                    ? window.location.hash
-                    : null;
-
                 const objectPath = this.objectPath || this.openmct.router.path;
+                const link = this.isPreview
+                    ? this.getPreviewObjectLink()
+                    : window.location.hash;
                 const snapshotMeta = {
-                    bounds,
+                    bounds: this.openmct.time.bounds(),
                     link,
                     objectPath,
                     openmct: this.openmct
