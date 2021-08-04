@@ -105,21 +105,7 @@ describe('the plugin', function () {
                     key: "test-object",
                     namespace: ''
                 },
-                type: "time-strip",
-                configuration: {
-                    useIndependentTime: true,
-                    timeOptions: {
-                        mode: 'local',
-                        fixedOffsets: {
-                            start: 10,
-                            end: 11
-                        },
-                        clockOffsets: {
-                            start: -(30 * 60 * 1000),
-                            end: (30 * 60 * 1000)
-                        }
-                    }
-                }
+                type: "time-strip"
             };
 
             const applicableViews = openmct.objectViews.get(testViewObject, mockObjectPath);
@@ -137,6 +123,11 @@ describe('the plugin', function () {
         it('displays a time axis', () => {
             const el = element.querySelector('.c-timesystem-axis');
             expect(el).toBeDefined();
+        });
+
+        it('does not show the independent time conductor based on configuration', () => {
+            const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
+            expect(independentTimeConductorEl).toBeUndefined();
         });
     });
 
@@ -177,6 +168,9 @@ describe('the plugin', function () {
         it('displays an independent time conductor with saved options - local clock', () => {
 
             return Vue.nextTick(() => {
+                const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
+                expect(independentTimeConductorEl).toBeDefined();
+
                 const independentTime = openmct.time.getIndependentTime(testViewObject.identifier.key);
                 expect(independentTime).toEqual(testViewObject.configuration.timeOptions.clockOffsets);
             });
@@ -219,6 +213,9 @@ describe('the plugin', function () {
 
         it('displays an independent time conductor with saved options - fixed timespan', () => {
             return Vue.nextTick(() => {
+                const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
+                expect(independentTimeConductorEl).toBeDefined();
+
                 const independentTime = openmct.time.getIndependentTime(testViewObject2.identifier.key);
                 expect(independentTime).toEqual(testViewObject2.configuration.timeOptions.fixedOffsets);
             });
