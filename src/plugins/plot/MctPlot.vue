@@ -239,12 +239,6 @@ export default {
     watch: {
         plotTickWidth(newTickWidth) {
             this.onTickWidthChange(newTickWidth, true);
-        },
-        gridLines(newGridLines) {
-            this.setGridLinesVisibility(newGridLines);
-        },
-        cursorGuide(newCursorGuide) {
-            this.setCursorGuideVisibility(newCursorGuide);
         }
     },
     mounted() {
@@ -925,14 +919,6 @@ export default {
             this.config.xAxis.set('displayRange', previousAxisRanges.x);
             this.config.yAxis.set('displayRange', previousAxisRanges.y);
             this.userViewportChangeEnd();
-        },
-
-        setCursorGuideVisibility(cursorGuide) {
-            this.cursorGuide = cursorGuide === true;
-        },
-
-        setGridLinesVisibility(gridLines) {
-            this.gridLines = gridLines === true;
         },
 
         setYAxisKey(yKey) {

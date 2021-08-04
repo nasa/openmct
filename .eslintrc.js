@@ -245,8 +245,7 @@ module.exports = {
             }
         }],
         "vue/multiline-html-element-content-newline": "off",
-        "vue/singleline-html-element-content-newline": "off",
-        "vue/no-mutating-props": "off"
+        "vue/singleline-html-element-content-newline": "off"
 
     },
     "overrides": [
