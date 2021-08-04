@@ -70,22 +70,24 @@ define(
                     throw 'Please specify sort options';
                 }
 
+                let isFilterTriggeredReset = type === 'filter';
+                let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
+                let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
+
                 // if type is filter, then it's a reset of all rows,
                 // need to wipe current rows
-                if (type === 'filter') {
+                if (isFilterTriggeredReset) {
                     this.rows = [];
                 }
-
-                let isFiltered = Object.keys(this.columnFilters).length > 0;
-                let rowsToAdd = !isFiltered ? rows : rows.filter(this.matchesFilters, this);
 
                 for (let row of rowsToAdd) {
                     let index = this.sortedIndex(this.rows, row);
                     this.rows.splice(index, 0, row);
                 }
 
-                // we emit filter no matter what
-                if (rowsToAdd.length > 0 || type === 'filter') {
+                // we emit filter no matter what to trigger
+                // an update of visible rows
+                if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
                     this.emit(type, rowsToAdd);
                 }
             }
