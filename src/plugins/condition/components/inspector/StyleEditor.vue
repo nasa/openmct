@@ -229,10 +229,12 @@ export default {
                 value = '1px solid ' + value;
             }
 
+            let styleItem = Object.assign({}, this.styleItem);
+
             if (value && (value.url !== undefined)) {
-                this.styleItem.style[item.property] = value.url;
+                styleItem.style[item.property] = value.url;
             } else {
-                this.styleItem.style[item.property] = value;
+                styleItem.style[item.property] = value;
             }
 
             this.$emit('persist', this.styleItem, item.property);
