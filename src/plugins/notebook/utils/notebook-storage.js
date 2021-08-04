@@ -54,6 +54,12 @@ export function getDefaultNotebook() {
     return JSON.parse(notebookStorage);
 }
 
+export function getDefaultNotebookObject(openmct) {
+    const defaultNotebook = getDefaultNotebook();
+
+    return defaultNotebook && openmct.objects.get(defaultNotebook.identifier);
+}
+
 export function getNotebookSectionAndPage(domainObject, sectionId, pageId) {
     const configuration = domainObject.configuration;
     const section = configuration && configuration.sections.find(s => s.id === sectionId);
