@@ -104,7 +104,6 @@ export default {
     },
     mounted() {
         if (this.actionCollection) {
-            this.actionCollection.hide(HIDDEN_ACTIONS);
             this.actionCollection.on('update', this.updateActionItems);
             this.updateActionItems(this.actionCollection.getActionsObject());
         }
