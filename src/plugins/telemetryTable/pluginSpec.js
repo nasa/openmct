@@ -52,7 +52,6 @@ describe("the plugin", () => {
     let originalRouterPath;
     let unlistenConfigMutation;
 
-
     beforeEach((done) => {
         openmct = createOpenMct();
 
