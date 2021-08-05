@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -32,7 +32,7 @@ define(
         var CONNECTED = {
                 text: "Connected",
                 glyphClass: "ok",
-                statusClass: "s-status-ok",
+                statusClass: "s-status-on",
                 description: "Connected to the domain object database."
             },
             DISCONNECTED = {
@@ -86,12 +86,15 @@ define(
         ElasticIndicator.prototype.getCssClass = function () {
             return "c-indicator--clickable icon-suitcase";
         };
+
         ElasticIndicator.prototype.getGlyphClass = function () {
             return this.state.glyphClass;
         };
+
         ElasticIndicator.prototype.getText = function () {
             return this.state.text;
         };
+
         ElasticIndicator.prototype.getDescription = function () {
             return this.state.description;
         };

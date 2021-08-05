@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,13 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global setTimeout*/
 
 /**
  * Module defining GenericSearchProvider. Created by shale on 07/16/2015.
  */
 define([
-    '../../../../src/api/objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
     objectUtils,
@@ -39,16 +38,16 @@ define([
      * @constructor
      * @param $q Angular's $q, for promise consolidation.
      * @param $log Anglar's $log, for logging.
-     * @param {ModelService} modelService the model service.
+     * @param {ObjectService} objectService the object service.
      * @param {WorkerService} workerService the workerService.
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($q, $log, modelService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
+    function GenericSearchProvider($q, $log, objectService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
         var provider = this;
         this.$q = $q;
         this.$log = $log;
-        this.modelService = modelService;
+        this.objectService = objectService;
         this.openmct = openmct;
 
         this.indexedIds = {};
@@ -66,7 +65,6 @@ define([
         ROOTS.forEach(function indexRoot(rootId) {
             provider.scheduleForIndexing(rootId);
         });
-
 
     }
 
@@ -127,13 +125,12 @@ define([
      * @param topic the topicService.
      */
     GenericSearchProvider.prototype.indexOnMutation = function (topic) {
-        var mutationTopic = topic('mutation'),
-            provider = this;
+        let mutationTopic = topic('mutation');
 
-        mutationTopic.listen(function (mutatedObject) {
-            var editor = mutatedObject.getCapability('editor');
+        mutationTopic.listen(mutatedObject => {
+            let editor = mutatedObject.getCapability('editor');
             if (!editor || !editor.inEditContext()) {
-                provider.index(
+                this.index(
                     mutatedObject.getId(),
                     mutatedObject.getModel()
                 );
@@ -149,11 +146,17 @@ define([
      * @param {String} id to be indexed.
      */
     GenericSearchProvider.prototype.scheduleForIndexing = function (id) {
-        if (!this.indexedIds[id] && !this.pendingIndex[id]) {
-            this.indexedIds[id] = true;
-            this.pendingIndex[id] = true;
-            this.idsToIndex.push(id);
+        const identifier = objectUtils.parseKeyString(id);
+        const objectProvider = this.openmct.objects.getProvider(identifier);
+
+        if (objectProvider === undefined || objectProvider.search === undefined) {
+            if (!this.indexedIds[id] && !this.pendingIndex[id]) {
+                this.indexedIds[id] = true;
+                this.pendingIndex[id] = true;
+                this.idsToIndex.push(id);
+            }
         }
+
         this.keepIndexing();
     };
 
@@ -164,8 +167,8 @@ define([
      * @private
      */
     GenericSearchProvider.prototype.keepIndexing = function () {
-        while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS &&
-            this.idsToIndex.length
+        while (this.pendingRequests < this.MAX_CONCURRENT_REQUESTS
+            && this.idsToIndex.length
         ) {
             this.beginIndexRequest();
         }
@@ -191,7 +194,7 @@ define([
         }
 
         var domainObject = objectUtils.toNewFormat(model, id);
-        var composition = _.find(this.openmct.composition.registry, function (p) {
+        var composition = this.openmct.composition.registry.find(p => {
             return p.appliesTo(domainObject);
         });
 
@@ -219,12 +222,12 @@ define([
             provider = this;
 
         this.pendingRequests += 1;
-        this.modelService
-            .getModels([idToIndex])
-            .then(function (models) {
+        this.objectService
+            .getObjects([idToIndex])
+            .then(function (objects) {
                 delete provider.pendingIndex[idToIndex];
-                if (models[idToIndex]) {
-                    provider.index(idToIndex, models[idToIndex]);
+                if (objects[idToIndex]) {
+                    provider.index(idToIndex, objects[idToIndex].model);
                 }
             }, function () {
                 provider
@@ -263,6 +266,7 @@ define([
                 return {
                     id: hit.item.id,
                     model: hit.item.model,
+                    type: hit.item.type,
                     score: hit.matchCount
                 };
             });
@@ -292,6 +296,7 @@ define([
         while (this.pendingQueries[queryId]) {
             queryId = Math.ceil(Math.random() * 100000);
         }
+
         return queryId;
     };
 
@@ -316,7 +321,6 @@ define([
 
         return queryId;
     };
-
 
     return GenericSearchProvider;
 });

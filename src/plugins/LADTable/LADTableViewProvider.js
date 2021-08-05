@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,52 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/LADTable.vue',
-    'vue'
-], function (
-    LadTableComponent,
-    Vue
-) {
-    function LADTableViewProvider(openmct) {
-        return {
-            key: 'LadTable',
-            name: 'LAD Table',
-            cssClass: 'icon-tabular-lad',
-            canView: function (domainObject) {
-                return domainObject.type === 'LadTable';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'LadTable';
-            },
-            view: function (domainObject, objectPath) {
-                let component;
+import LADTableView from './LADTableView';
 
-                return {
-                    show: function (element) {
-                        component =  new Vue({
-                            el: element,
-                            components: {
-                                LadTableComponent: LadTableComponent.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject,
-                                objectPath
-                            },
-                            template: '<lad-table-component></lad-table-component>'
-                        });
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
-            }
-        };
+export default class LADTableViewProvider {
+    constructor(openmct) {
+        this.openmct = openmct;
+        this.name = 'LAD Table';
+        this.key = 'LadTable';
+        this.cssClass = 'icon-tabular-lad';
     }
-    return LADTableViewProvider;
-});
+
+    canView(domainObject) {
+        return domainObject.type === 'LadTable';
+    }
+
+    canEdit(domainObject) {
+        return domainObject.type === 'LadTable';
+    }
+
+    view(domainObject, objectPath) {
+        return new LADTableView(this.openmct, domainObject, objectPath);
+    }
+
+    priority(domainObject) {
+        return 1;
+    }
+}

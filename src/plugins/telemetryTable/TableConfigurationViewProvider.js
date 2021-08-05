@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 define([
-    '../../api/objects/object-utils',
+    'objectUtils',
     './components/table-configuration.vue',
     './TelemetryTableConfiguration',
     'vue'
@@ -40,23 +40,26 @@ define([
                 if (selection.length !== 1 || selection[0].length === 0) {
                     return false;
                 }
+
                 let object = selection[0][0].context.item;
+
                 return object && object.type === 'table';
             },
             view: function (selection) {
                 let component;
                 let domainObject = selection[0][0].context.item;
                 let tableConfiguration = new TelemetryTableConfiguration(domainObject, openmct);
+
                 return {
                     show: function (element) {
                         component = new Vue({
-                            provide: {
-                                openmct,
-                                tableConfiguration
-                            },
                             el: element,
                             components: {
                                 TableConfiguration: TableConfigurationComponent.default
+                            },
+                            provide: {
+                                openmct,
+                                tableConfiguration
                             },
                             template: '<table-configuration></table-configuration>'
                         });
@@ -69,12 +72,13 @@ define([
 
                         tableConfiguration = undefined;
                     }
-                }
+                };
             },
             priority: function () {
                 return 1;
             }
-        }
+        };
     }
+
     return TableConfigurationViewProvider;
 });

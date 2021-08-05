@@ -15,18 +15,22 @@
     &__elements {
         flex: 1 1 auto;
         overflow: auto;
-        &.is-dragging {
-            li { opacity: 0.2; }
-        }
     }
 
-    &__grippy {
+    .c-grippy {
         $d: 8px;
-        @include grippy($c: $colorItemTreeVC, $dir: 'y');
         flex: 0 0 auto;
         margin-right: $interiorMarginSm;
         transform: translateY(-2px);
         width: $d; height: $d;
+    }
+
+    &.is-context-clicked {
+        box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
+    }
+
+    .hover {
+        background-color: $colorItemTreeSelectedBg;
     }
 }
 

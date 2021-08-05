@@ -10,7 +10,7 @@ accept changes from external contributors.
 
 The short version:
 
-1. Write your contribution.
+1. Write your contribution or describe your idea in the form of an [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions)
 2. Make sure your contribution meets code, test, and commit message
    standards as described below.
 3. Submit a pull request from a topic branch back to `master`. Include a check
@@ -18,6 +18,7 @@ The short version:
    for review.)
 4. Respond to any discussion. When the reviewer decides it's ready, they
    will merge back `master` and fill out their own check list.
+5. If you are a first-time contributor, please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.   
 
 ## Contribution Process
 
@@ -103,7 +104,7 @@ the name chosen could not be mistaken for a topic or master branch.
 ### Merging
 
 When development is complete on an issue, the first step toward merging it
-back into the master branch is to file a Pull Request. The contributions
+back into the master branch is to file a Pull Request (PR). The contributions
 should meet code, test, and commit message standards as described below,
 and the pull request should include a completed author checklist, also
 as described below. Pull requests may be assigned to specific team
@@ -114,6 +115,15 @@ request. When the reviewer is satisfied, they should add a comment to
 the pull request containing the reviewer checklist (from below) and complete
 the merge back to the master branch.
 
+Additionally:
+* Every pull request must link to the issue that it addresses. Eg. “Addresses #1234” or “Closes #1234”. This is the responsibility of the pull request’s __author__. If no issue exists, [create one](https://github.com/nasa/openmct/issues/new/choose).
+* Every __author__ must include testing instructions. These instructions should identify the areas of code affected, and some minimal test steps. If addressing a bug, reproduction steps should be included, if they were not included in the original issue. If reproduction steps were included on the original issue, and are sufficient, refer to them.
+* A pull request that closes an issue should say so in the description. Including the text “Closes #1234” will cause the linked issue to be automatically closed when the pull request is merged. This is the responsibility of the pull request’s __author__.
+* When a pull request is merged, and the corresponding issue closed, the __reviewer__ must add the tag “unverified” to the original issue. This will indicate that although the issue is closed, it has not been tested yet.
+* Every PR must have two reviewers assigned, though only one approval is necessary for merge.
+* Changes to API require approval by a senior developer.
+* When creating a PR, it is the author's responsibility to apply any priority label from the issue to the PR as well. This helps with prioritization.
+
 ## Standards
 
 Contributions to Open MCT are expected to meet the following standards.
@@ -122,97 +132,104 @@ changes.
 
 ### Code Standards
 
-JavaScript sources in Open MCT must satisfy JSLint under its default
-settings. This is verified by the command line build.
+JavaScript sources in Open MCT must satisfy the ESLint rules defined in 
+this repository. This is verified by the command line build.
 
 #### Code Guidelines
 
-JavaScript sources in Open MCT should:
+The following guidelines are provided for anyone contributing source code to the Open MCT project:
 
-* Use four spaces for indentation. Tabs should not be used.
-* Include JSDoc for any exposed API (e.g. public methods, constructors).
-* Include non-JSDoc comments as-needed for explaining private variables,
-  methods, or algorithms when they are non-obvious.
-* Define one public class per script, expressed as a constructor function
-  returned from an AMD-style module.
-* Follow “Java-like” naming conventions. These includes:
-  * Classes should use camel case, first letter capitalized
-    (e.g. SomeClassName).
-  * Methods, variables, fields, and function names should use camel case,
-    first letter lower-case (e.g. someVariableName).
-  * Constants (variables or fields which are meant to be declared and 
-    initialized statically, and never changed) should use only capital 
-    letters, with underscores between words (e.g. SOME_CONSTANT).
-  * File names should be the name of the exported class, plus a .js extension
-    (e.g. SomeClassName.js).
-* Avoid anonymous functions, except when functions are short (a few lines)
-  and/or their inclusion makes sense within the flow of the code
-  (e.g. as arguments to a forEach call).
-* Avoid deep nesting (especially of functions), except where necessary
-  (e.g. due to closure scope).
-* End with a single new-line character.
-* Expose public methods by declaring them on the class's prototype.
-* Within a given function's scope, do not mix declarations and imperative
-  code, and  present these in the following order:
-  * First, variable declarations and initialization.
-  * Second, function declarations.
-  * Third, imperative statements.
-  * Finally, the returned value.
-
+1. Write clean code. Here’s a good summary - https://github.com/ryanmcdermott/clean-code-javascript.
+1. Include JSDoc for any exposed API (e.g. public methods, classes).
+1. Include non-JSDoc comments as-needed for explaining private variables,
+   methods, or algorithms when they are non-obvious. Otherwise code 
+   should be self-documenting.
+1. Classes and Vue components should use camel case, first letter capitalized
+   (e.g. SomeClassName).
+1. Methods, variables, fields, events, and function names should use camelCase,
+   first letter lower-case (e.g. someVariableName).
+1. Source files that export functions should use camelCase, first letter lower-case (eg. testTools.js)
+1. Constants (variables or fields which are meant to be declared and 
+   initialized statically, and never changed) should use only capital 
+   letters, with underscores between words (e.g. SOME_CONSTANT). They should always be declared as `const`s
+1. File names should be the name of the exported class, plus a .js extension
+   (e.g. SomeClassName.js).
+1. Avoid anonymous functions, except when functions are short (one or two lines)
+   and their inclusion makes sense within the flow of the code
+   (e.g. as arguments to a forEach call). Anonymous functions should always be arrow functions.
+1. Named functions are preferred over functions assigned to variables.
+   eg.
+   ```JavaScript
+   function renameObject(object, newName) {
+       Object.name = newName;
+   }
+   ```
+   is preferable to
+   ```JavaScript
+   const rename = (object, newName) => {
+       Object.name = newName;
+   }
+   ```
+1. Avoid deep nesting (especially of functions), except where necessary
+   (e.g. due to closure scope).
+1. End with a single new-line character.
+1. Always use ES6 `Class`es and inheritence rather than the pre-ES6 prototypal 
+   pattern.
+1. Within a given function's scope, do not mix declarations and imperative
+   code, and  present these in the following order:
+   * First, variable declarations and initialization.
+   * Secondly, imperative statements.
+   * Finally, the returned value. A single return statement at the end of the function should be used, except where an early return would improve code clarity.
+1. Avoid the use of "magic" values.
+   eg.
+   ```JavaScript
+   const UNAUTHORIZED = 401;
+   if (responseCode === UNAUTHORIZED)
+   ```
+   is preferable to
+   ```JavaScript
+   if (responseCode === 401)
+   ```
+1. Use the ternary operator only for simple cases such as variable assignment. Nested ternaries should be avoided in all cases.
+1. Test specs should reside alongside the source code they test, not in a separate directory.
+1. Organize code by feature, not by type.
+   eg.
+   ```
+   - telemetryTable
+       - row
+           TableRow.js
+           TableRowCollection.js
+           TableRow.vue
+       - column
+           TableColumn.js
+           TableColumn.vue
+       plugin.js
+       pluginSpec.js
+   ```
+   is preferable to
+   ```
+   - telemetryTable
+       - components
+           TableRow.vue
+           TableColumn.vue
+       - collections
+           TableRowCollection.js
+       TableColumn.js
+       TableRow.js
+       plugin.js
+       pluginSpec.js
+   ```
 Deviations from Open MCT code style guidelines require two-party agreement,
 typically from the author of the change and its reviewer.
-
-#### Code Example
-
-```js
-/*global define*/
-
-/**
- * Bundles should declare themselves as namespaces in whichever source
- * file is most like the "main point of entry" to the bundle.
- * @namespace some/bundle
- */
-define(
-    ['./OtherClass'],
-    function (OtherClass) {
-        "use strict";
-
-        /**
-         * A summary of how to use this class goes here.
-         *
-         * @constructor
-         * @memberof some/bundle
-         */
-        function ExampleClass() {
-        }
-
-        // Methods which are not intended for external use should
-        // not have JSDoc (or should be marked @private)
-        ExampleClass.prototype.privateMethod = function () {
-        };
-
-        /**
-         * A summary of this method goes here.
-         * @param {number} n a parameter
-         * @returns {number} a return value
-         */
-        ExampleClass.prototype.publicMethod = function (n) {
-            return n * 2;
-        }
-
-        return ExampleClass;
-    }
-);
-```
 
 ### Test Standards
 
 Automated testing shall occur whenever changes are merged into the main
 development branch and must be confirmed alongside any pull request.
 
-Automated tests are typically unit tests which exercise individual software
-components. Tests are subject to code review along with the actual
-implementation, to ensure that tests are applicable and useful.
+Automated tests are tests which exercise plugins, API, and utility classes. 
+Tests are subject to code review along with the actual implementation, to 
+ensure that tests are applicable and useful.
 
 Examples of useful tests:
 * Tests which replicate bugs (or their root causes) to verify their
@@ -222,8 +239,26 @@ Examples of useful tests:
 * Tests which verify expected interactions with other components in the
   system.
 
-During automated testing, code coverage metrics will be reported. Line
-coverage must remain at or above 80%.
+#### Guidelines
+* 100% statement coverage is achievable and desirable.
+* Do blackbox testing. Test external behaviors, not internal details. Write tests that describe what your plugin is supposed to do. How it does this doesn't matter, so don't test it.
+* Unit test specs for plugins should be defined at the plugin level. Start with one test spec per plugin named pluginSpec.js, and as this test spec grows too big, break it up into multiple test specs that logically group related tests.
+* Unit tests for API or for utility functions and classes may be defined at a per-source file level.
+* Wherever possible only use and mock public API, builtin functions, and UI in your test specs. Do not directly invoke any private functions. ie. only call or mock functions and objects exposed by openmct.* (eg. openmct.telemetry, openmct.objectView, etc.), and builtin browser functions (fetch, requestAnimationFrame, setTimeout, etc.).
+* Where builtin functions have been mocked, be sure to clear them between tests.
+* Test at an appropriate level of isolation. Eg. 
+    * If you’re testing a view, you do not need to test the whole application UI, you can just fetch the view provider using the public API and render the view into an element that you have created. 
+    * You do not need to test that the view switcher works, there should be separate tests for that. 
+    * You do not need to test that telemetry providers work, you can mock openmct.telemetry.request() to feed test data to the view.
+    * Use your best judgement when deciding on appropriate scope.
+* Automated tests for plugins should start by actually installing the plugin being tested, and then test that installing the plugin adds the desired features and behavior to Open MCT, observing the above rules.
+* All variables used in a test spec, including any instances of the Open MCT API should be declared inside of an appropriate block scope (not at the root level of the source file), and should be initialized in the relevant beforeEach block. `beforeEach` is preferable to `beforeAll` to avoid leaking of state between tests.
+* A `afterEach` or `afterAll` should be used to do any clean up necessary to prevent leakage of state between test specs. This can happen when functions on `window` are wrapped, or when the URL is changed. [A convenience function](https://github.com/nasa/openmct/blob/master/src/utils/testing.js#L59) is provided for resetting the URL and clearing builtin spies between tests.
+* If writing unit tests for legacy Angular code be sure to follow [best practices in order to avoid memory leaks](https://www.thecodecampus.de/blog/avoid-memory-leaks-angularjs-unit-tests/).
+
+#### Examples
+* [Example of an automated test spec for an object view plugin](https://github.com/nasa/openmct/blob/master/src/plugins/telemetryTable/pluginSpec.js)
+* [Example of an automated test spec for API](https://github.com/nasa/openmct/blob/master/src/api/time/TimeAPISpec.js)
 
 ### Commit Message Standards
 
@@ -262,23 +297,12 @@ these standards.
 
 Issues are tracked at https://github.com/nasa/openmct/issues.
 
-Issues should include:
-
-* A short description of the issue encountered.
-* A longer-form description of the issue encountered. When possible, steps to
-  reproduce the issue.
-* When possible, a description of the impact of the issue. What use case does
-  it impede?
-* An assessment of the severity of the issue.
-
 Issue severity is categorized as follows (in ascending order):
 
-* _Trivial_: Minimal impact on the usefulness and functionality of the
-  software; a "nice-to-have."
-* _(Unspecified)_: Major loss of functionality or impairment of use.
-* _Critical_: Large-scale loss of functionality or impairment of use,
-  such that remaining utility becomes marginal.
-* _Blocker_: Harmful or otherwise unacceptable behavior. Must fix.
+* _Trivial_: Minimal impact on the usefulness and functionality of the software; a "nice-to-have." Visual impact without functional impact,
+* _Medium_: Some impairment of use, but simple workarounds exist
+* _Critical_: Significant loss of functionality or impairment of use. Display of telemetry data is not affected though.
+* _Blocker_: Major functionality is impaired or lost, threatening mission success. Display of telemetry data is impaired or blocked by the bug, which could lead to loss of situational awareness.
 
 ## Check Lists
 
@@ -288,14 +312,19 @@ checklist).
 
 ### Author Checklist
 
-1. Changes address original issue?
-2. Unit tests included and/or updated with changes?
-3. Command line build passes?
-4. Changes have been smoke-tested?
+[Within PR Template](.github/PULL_REQUEST_TEMPLATE.md)
 
 ### Reviewer Checklist
 
-1. Changes appear to address issue?
-2. Appropriate unit tests included?
-3. Code style and in-line documentation are appropriate?
-4. Commit messages meet standards?
+* [ ] Changes appear to address issue?
+* [ ] Appropriate unit tests included?
+* [ ] Code style and in-line documentation are appropriate?
+* [ ] Commit messages meet standards?
+* [ ] Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
+* [ ] Has associated issue been labelled `bug`? (only applicable if this PR is for a bug fix)
+* [ ] List of Acceptance Tests Performed.
+
+Write out a small list of tests performed with just enough detail for another developer on the team 
+to execute. 
+
+i.e. ```When Clicking on Add button, new `object` appears in dropdown.```

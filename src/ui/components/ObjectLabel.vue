@@ -1,16 +1,22 @@
 <template>
 <a
     class="c-tree__item__label c-object-label"
+    :class="[statusClass]"
     draggable="true"
-    :href="objectLink"
     @dragstart="dragStart"
     @click="navigateOrPreview"
 >
     <div
         class="c-tree__item__type-icon c-object-label__type-icon"
         :class="typeClass"
-    ></div>
-    <div class="c-tree__item__name c-object-label__name">{{ observedObject.name }}</div>
+    >
+        <span class="is-status__indicator"
+              :title="`This item is ${status}`"
+        ></span>
+    </div>
+    <div class="c-tree__item__name c-object-label__name">
+        {{ domainObject.name }}
+    </div>
 </a>
 </template>
 
@@ -39,32 +45,37 @@ export default {
     },
     data() {
         return {
-            observedObject: this.domainObject
+            status: ''
         };
     },
     computed: {
         typeClass() {
-            let type = this.openmct.types.get(this.observedObject.type);
+            let type = this.openmct.types.get(this.domainObject.type);
             if (!type) {
                 return 'icon-object-unknown';
             }
+
             return type.definition.cssClass;
+        },
+        statusClass() {
+            return (this.status) ? `is-status--${this.status}` : '';
         }
     },
     mounted() {
-        if (this.observedObject) {
-            let removeListener = this.openmct.objects.observe(this.observedObject, '*', (newObject) => {
-                this.observedObject = newObject;
-            });
-            this.$once('hook:destroyed', removeListener);
-        }
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+        this.status = this.openmct.status.get(this.domainObject.identifier);
         this.previewAction = new PreviewAction(this.openmct);
+    },
+    destroyed() {
+        this.removeStatusListener();
     },
     methods: {
         navigateOrPreview(event) {
             if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 this.preview();
+            } else {
+                this.openmct.router.navigate(this.objectLink);
             }
         },
         preview() {
@@ -82,14 +93,18 @@ export default {
              * that point. If dragged object can be composed by navigated object, then indicate with presence of
              * 'composable-domain-object' in data transfer
              */
-            if (this.openmct.composition.checkPolicy(navigatedObject, this.observedObject)) {
+            if (this.openmct.composition.checkPolicy(navigatedObject, this.domainObject)) {
                 event.dataTransfer.setData("openmct/composable-domain-object", JSON.stringify(this.domainObject));
             }
+
             // serialize domain object anyway, because some views can drag-and-drop objects without composition
             // (eg. notabook.)
             event.dataTransfer.setData("openmct/domain-object-path", serializedPath);
             event.dataTransfer.setData(`openmct/domain-object/${keyString}`, this.domainObject);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
-}
+};
 </script>

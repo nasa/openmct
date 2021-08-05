@@ -1,5 +1,5 @@
 define([
-    '../../api/objects/object-utils'
+    'objectUtils'
 ], function (
     objectUtils
 ) {
@@ -10,11 +10,11 @@ define([
      * exist in the same namespace as the rootIdentifier.
      */
     function rewriteObjectIdentifiers(importData, rootIdentifier) {
-        var rootId = importData.rootId;
-        var objectString = JSON.stringify(importData.openmct);
+        const rootId = importData.rootId;
+        let objectString = JSON.stringify(importData.openmct);
 
         Object.keys(importData.openmct).forEach(function (originalId, i) {
-            var newId;
+            let newId;
             if (originalId === rootId) {
                 newId = objectUtils.makeKeyString(rootIdentifier);
             } else {
@@ -23,6 +23,7 @@ define([
                     key: i
                 });
             }
+
             while (objectString.indexOf(originalId) !== -1) {
                 objectString = objectString.replace(
                     '"' + originalId + '"',
@@ -42,6 +43,7 @@ define([
         return Object.keys(oldObjectMap)
             .reduce(function (newObjectMap, key) {
                 newObjectMap[key] = objectUtils.toNewFormat(oldObjectMap[key], key);
+
                 return newObjectMap;
             }, {});
     }
@@ -49,6 +51,7 @@ define([
     /* Set the root location correctly for a top-level object */
     function setRootLocation(objectMap, rootIdentifier) {
         objectMap[objectUtils.makeKeyString(rootIdentifier)].location = 'ROOT';
+
         return objectMap;
     }
 
@@ -57,8 +60,8 @@ define([
      * an object provider to fetch those objects.
      */
     function StaticModelProvider(importData, rootIdentifier) {
-        var oldFormatObjectMap = rewriteObjectIdentifiers(importData, rootIdentifier);
-        var newFormatObjectMap = convertToNewObjects(oldFormatObjectMap);
+        const oldFormatObjectMap = rewriteObjectIdentifiers(importData, rootIdentifier);
+        const newFormatObjectMap = convertToNewObjects(oldFormatObjectMap);
         this.objectMap = setRootLocation(newFormatObjectMap, rootIdentifier);
     }
 
@@ -66,10 +69,11 @@ define([
      * Standard "Get".
      */
     StaticModelProvider.prototype.get = function (identifier) {
-        var keyString = objectUtils.makeKeyString(identifier);
+        const keyString = objectUtils.makeKeyString(identifier);
         if (this.objectMap[keyString]) {
             return this.objectMap[keyString];
         }
+
         throw new Error(keyString + ' not found in import models.');
     };
 

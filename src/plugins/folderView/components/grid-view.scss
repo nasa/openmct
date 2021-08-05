@@ -11,11 +11,22 @@
 
     body.desktop & {
         flex-flow: row wrap;
+        align-content: flex-start;
+
         &__item {
             height: $gridItemDesk;
             width: $gridItemDesk;
             margin: 0 $interiorMargin $interiorMargin 0;
         }
+    }
+
+    body.mobile & {
+        flex: 1 0 auto;
+    }
+
+    [class*='l-overlay'] & {
+        // When this view is in an overlay, prevent navigation
+        pointer-events: none;
     }
 }
 
@@ -38,7 +49,26 @@
         // Object is an alias to an original.
         [class*='__type-icon'] {
             @include isAlias();
-            color: $colorIconAliasForKeyFilter;
+        }
+    }
+
+    &.is-status--notebook-default {
+        .is-status__indicator {
+            display: block;
+
+            &:before {
+                color: $colorFilter;
+                content: $glyph-icon-notebook-page;
+                font-family: symbolsfont;
+            }
+        }
+    }
+
+    &[class*='is-status--missing'],
+    &[class*='is-status--suspect']{
+        [class*='__type-icon'],
+        [class*='__details'] {
+            opacity: $opacityMissing;
         }
     }
 
@@ -85,15 +115,14 @@
     body.desktop & {
         $transOutMs: 300ms;
         flex-flow: column nowrap;
-        transition: background $transOutMs ease-in-out;
+        transition: $transOutMs ease-in-out;
 
         &:hover {
-            background: $colorItemBgHov;
+            filter: $filterItemHoverFg;
             transition: $transIn;
 
             .c-grid-item__type-icon {
-                filter: $colorKeyFilterHov;
-                transform: scale(1);
+                transform: scale(1.1);
                 transition: $transInBounce;
             }
         }
@@ -103,7 +132,7 @@
         }
 
         &__controls {
-            align-items: start;
+            align-items: baseline;
             flex: 0 0 auto;
             order: 1;
             .c-info-button,
@@ -115,7 +144,6 @@
             font-size: floor($gridItemDesk / 3);
             margin: $interiorMargin 22.5% $interiorMargin * 3 22.5%;
             order: 2;
-            transform: scale(0.9);
             transform-origin: center;
             transition: all $transOutMs ease-in-out;
         }

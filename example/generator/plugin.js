@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global define*/
 
 define([
     "./GeneratorProvider",
@@ -56,7 +55,7 @@ define([
             initialize: function (object) {
                 object.telemetry = {
                     duration: 5
-                }
+                };
             }
         });
 
@@ -122,6 +121,17 @@ define([
                         "telemetry",
                         "phase"
                     ]
+                },
+                {
+                    name: "Randomness",
+                    control: "numberfield",
+                    cssClass: "l-input-sm l-numeric",
+                    key: "randomness",
+                    required: true,
+                    property: [
+                        "telemetry",
+                        "randomness"
+                    ]
                 }
             ],
             initialize: function (object) {
@@ -130,7 +140,8 @@ define([
                     amplitude: 1,
                     offset: 0,
                     dataRateInHz: 1,
-                    phase: 0
+                    phase: 0,
+                    randomness: 0
                 };
             }
         });

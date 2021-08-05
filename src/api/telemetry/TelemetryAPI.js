@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,14 +19,16 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global console*/
+
 define([
+    '../../plugins/displayLayout/CustomStringFormatter',
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
     './DefaultMetadataProvider',
-    '../objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
+    CustomStringFormatter,
     TelemetryMetadataManager,
     TelemetryValueFormatter,
     DefaultMetadataProvider,
@@ -123,7 +125,6 @@ define([
      * @memberof module:openmct.TelemetryAPI~
      */
 
-
     /**
      * An interface for retrieving telemetry data associated with a domain
      * object.
@@ -144,6 +145,17 @@ define([
     }
 
     /**
+     * Return Custom String Formatter
+     *
+     * @param {Object} valueMetadata valueMetadata for given telemetry object
+     * @param {string} format custom formatter string (eg: %.4f, &lts etc.)
+     * @returns {CustomStringFormatter}
+     */
+    TelemetryAPI.prototype.customStringFormatter = function (valueMetadata, format) {
+        return new CustomStringFormatter.default(this.openmct, valueMetadata, format);
+    };
+
+    /**
      * Return true if the given domainObject is a telemetry object.  A telemetry
      * object is any object which has telemetry metadata-- regardless of whether
      * the telemetry object has an available telemetry provider.
@@ -152,7 +164,7 @@ define([
      * @returns {boolean} true if the object is a telemetry object.
      */
     TelemetryAPI.prototype.isTelemetryObject = function (domainObject) {
-        return !!this.findMetadataProvider(domainObject);
+        return Boolean(this.findMetadataProvider(domainObject));
     };
 
     /**
@@ -167,12 +179,13 @@ define([
      */
     TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
         console.warn(
-            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry ' +
-            'will not be supported in future versions of Open MCT.  Please ' +
-            'use openmct.telemetry.isTelemetryObject instead.'
+            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry '
+            + 'will not be supported in future versions of Open MCT.  Please '
+            + 'use openmct.telemetry.isTelemetryObject instead.'
         );
-        return !!this.findSubscriptionProvider(domainObject) ||
-               !!this.findRequestProvider(domainObject);
+
+        return Boolean(this.findSubscriptionProvider(domainObject))
+               || Boolean(this.findRequestProvider(domainObject));
     };
 
     /**
@@ -187,12 +200,15 @@ define([
         if (provider.supportsRequest) {
             this.requestProviders.unshift(provider);
         }
+
         if (provider.supportsSubscribe) {
             this.subscriptionProviders.unshift(provider);
         }
+
         if (provider.supportsMetadata) {
             this.metadataProviders.unshift(provider);
         }
+
         if (provider.supportsLimits) {
             this.limitProviders.unshift(provider);
         }
@@ -202,7 +218,7 @@ define([
      * @private
      */
     TelemetryAPI.prototype.findSubscriptionProvider = function () {
-        var args = Array.prototype.slice.apply(arguments);
+        const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsSubscribe.apply(provider, args);
         }
@@ -214,7 +230,7 @@ define([
      * @private
      */
     TelemetryAPI.prototype.findRequestProvider = function (domainObject) {
-        var args = Array.prototype.slice.apply(arguments);
+        const args = Array.prototype.slice.apply(arguments);
         function supportsDomainObject(provider) {
             return provider.supportsRequest.apply(provider, args);
         }
@@ -244,13 +260,15 @@ define([
      * @private
      */
     TelemetryAPI.prototype.standardizeRequestOptions = function (options) {
-        if (!options.hasOwnProperty('start')) {
+        if (!Object.prototype.hasOwnProperty.call(options, 'start')) {
             options.start = this.openmct.time.bounds().start;
         }
-        if (!options.hasOwnProperty('end')) {
+
+        if (!Object.prototype.hasOwnProperty.call(options, 'end')) {
             options.end = this.openmct.time.bounds().end;
         }
-        if (!options.hasOwnProperty('domain')) {
+
+        if (!Object.prototype.hasOwnProperty.call(options, 'domain')) {
             options.domain = this.openmct.time.timeSystem().key;
         }
     };
@@ -275,14 +293,17 @@ define([
             arguments.length = 2;
             arguments[1] = {};
         }
+
         this.standardizeRequestOptions(arguments[1]);
-        var provider = this.findRequestProvider.apply(this, arguments);
+        const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
             return Promise.reject('No provider found');
         }
+
         return provider.request.apply(provider, arguments).catch((rejected) => {
             this.openmct.notifications.error('Error requesting telemetry data, see console for details');
             console.error(rejected);
+
             return Promise.reject(rejected);
         });
     };
@@ -302,13 +323,14 @@ define([
      *          the subscription
      */
     TelemetryAPI.prototype.subscribe = function (domainObject, callback, options) {
-        var provider = this.findSubscriptionProvider(domainObject);
+        const provider = this.findSubscriptionProvider(domainObject);
 
         if (!this.subscribeCache) {
             this.subscribeCache = {};
         }
-        var keyString = objectUtils.makeKeyString(domainObject.identifier);
-        var subscriber = this.subscribeCache[keyString];
+
+        const keyString = objectUtils.makeKeyString(domainObject.identifier);
+        let subscriber = this.subscribeCache[keyString];
 
         if (!subscriber) {
             subscriber = this.subscribeCache[keyString] = {
@@ -334,8 +356,8 @@ define([
             });
             if (subscriber.callbacks.length === 0) {
                 subscriber.unsubscribe();
+                delete this.subscribeCache[keyString];
             }
-            delete this.subscribeCache[keyString];
         }.bind(this);
     };
 
@@ -348,17 +370,19 @@ define([
      */
     TelemetryAPI.prototype.getMetadata = function (domainObject) {
         if (!this.metadataCache.has(domainObject)) {
-            var metadataProvider = this.findMetadataProvider(domainObject);
+            const metadataProvider = this.findMetadataProvider(domainObject);
             if (!metadataProvider) {
                 return;
             }
-            var metadata = metadataProvider.getMetadata(domainObject);
+
+            const metadata = metadataProvider.getMetadata(domainObject);
 
             this.metadataCache.set(
                 domainObject,
                 new TelemetryMetadataManager(metadata)
             );
         }
+
         return this.metadataCache.get(domainObject);
     };
 
@@ -368,22 +392,36 @@ define([
      *
      */
     TelemetryAPI.prototype.commonValuesForHints = function (metadatas, hints) {
-        var options = metadatas.map(function (metadata) {
-            var values = metadata.valuesForHints(hints);
-            return _.indexBy(values, 'key');
+        const options = metadatas.map(function (metadata) {
+            const values = metadata.valuesForHints(hints);
+
+            return _.keyBy(values, 'key');
         }).reduce(function (a, b) {
-            var results = {};
+            const results = {};
             Object.keys(a).forEach(function (key) {
-                if (b.hasOwnProperty(key)) {
+                if (Object.prototype.hasOwnProperty.call(b, key)) {
                     results[key] = a[key];
                 }
             });
+
             return results;
         });
-        var sortKeys = hints.map(function (h) {
+        const sortKeys = hints.map(function (h) {
             return 'hints.' + h;
         });
-        return _.sortByAll(options, sortKeys);
+
+        return _.sortBy(options, sortKeys);
+    };
+
+    /**
+     * @private
+     */
+    TelemetryAPI.prototype.getFormatService = function () {
+        if (!this.formatService) {
+            this.formatService = this.openmct.$injector.get('formatService');
+        }
+
+        return this.formatService;
     };
 
     /**
@@ -393,15 +431,25 @@ define([
      */
     TelemetryAPI.prototype.getValueFormatter = function (valueMetadata) {
         if (!this.valueFormatterCache.has(valueMetadata)) {
-            if (!this.formatService) {
-                this.formatService = this.openmct.$injector.get('formatService');
-            }
             this.valueFormatterCache.set(
                 valueMetadata,
-                new TelemetryValueFormatter(valueMetadata, this.formatService)
+                new TelemetryValueFormatter(valueMetadata, this.getFormatService())
             );
         }
+
         return this.valueFormatterCache.get(valueMetadata);
+    };
+
+    /**
+     * Get a value formatter for a given key.
+     * @param {string} key
+     *
+     * @returns {Format}
+     */
+    TelemetryAPI.prototype.getFormatter = function (key) {
+        const formatMap = this.getFormatService().formatMap;
+
+        return formatMap[key];
     };
 
     /**
@@ -412,12 +460,14 @@ define([
      */
     TelemetryAPI.prototype.getFormatMap = function (metadata) {
         if (!this.formatMapCache.has(metadata)) {
-            var formatMap = metadata.values().reduce(function (map, valueMetadata) {
+            const formatMap = metadata.values().reduce(function (map, valueMetadata) {
                 map[valueMetadata.key] = this.getValueFormatter(valueMetadata);
+
                 return map;
             }.bind(this), {});
             this.formatMapCache.set(metadata, formatMap);
         }
+
         return this.formatMapCache.get(metadata);
     };
 
@@ -455,6 +505,26 @@ define([
     };
 
     /**
+     * Get a limits for this domain object.
+     * Limits help you display limits and alarms of
+     * telemetry for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to get limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limits
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.limitDefinition = function (domainObject) {
+        return this.getLimits(domainObject);
+    };
+
+    /**
      * Get a limit evaluator for this domain object.
      * Limit Evaluators help you evaluate limit and alarm status of individual
      * telemetry datums for display purposes without having to interact directly
@@ -471,13 +541,54 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.getLimitEvaluator = function (domainObject) {
-        var provider = this.findLimitEvaluator(domainObject);
+        const provider = this.findLimitEvaluator(domainObject);
         if (!provider) {
             return {
                 evaluate: function () {}
             };
         }
+
         return provider.getLimitEvaluator(domainObject);
+    };
+
+    /**
+     * Get a limit definitions for this domain object.
+     * Limit Definitions help you indicate limits and alarms of
+     * telemetry for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to display limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limits returns a limits object of
+     * type {
+     *          level1: {
+     *              low: { key1: value1, key2: value2, color: <supportedColor> },
+     *              high: { key1: value1, key2: value2, color: <supportedColor> }
+     *          },
+     *          level2: {
+     *              low: { key1: value1, key2: value2 },
+     *              high: { key1: value1, key2: value2 }
+     *          }
+     *       }
+     *  supported colors are purple, red, orange, yellow and cyan
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.getLimits = function (domainObject) {
+        const provider = this.findLimitEvaluator(domainObject);
+        if (!provider || !provider.getLimits) {
+            return {
+                limits: function () {
+                    return Promise.resolve(undefined);
+                }
+            };
+        }
+
+        return provider.getLimits(domainObject);
     };
 
     return TelemetryAPI;

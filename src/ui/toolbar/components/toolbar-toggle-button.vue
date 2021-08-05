@@ -24,6 +24,7 @@ export default {
             if (nextIndex >= this.options.options.length) {
                 nextIndex = 0;
             }
+
             return this.options.options[nextIndex];
         },
         nonSpecific() {
@@ -32,7 +33,9 @@ export default {
     },
     methods: {
         cycle() {
-            this.$emit('change', this.nextValue.value, this.options);
+            if (this.options.isEditing === undefined || this.options.isEditing) {
+                this.$emit('change', this.nextValue.value, this.options);
+            }
         }
     }
 };

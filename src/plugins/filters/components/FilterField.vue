@@ -1,17 +1,17 @@
 <template>
-<div class="c-properties__section c-filter-settings">
+<div class="c-inspect-properties__section c-filter-settings">
     <li
         v-for="(filter, index) in filterField.filters"
         :key="index"
-        class="c-properties__row c-filter-settings__setting"
+        class="c-inspect-properties__row c-filter-settings__setting"
     >
         <div
-            class="c-properties__label label"
+            class="c-inspect-properties__label label"
             :disabled="useGlobal"
         >
             {{ filterField.name }} =
         </div>
-        <div class="c-properties__value value">
+        <div class="c-inspect-properties__value value">
             <!-- EDITING -->
             <!-- String input, editing -->
             <template v-if="!filter.possibleValues && isEditing">
@@ -77,14 +77,14 @@ export default {
         persistedFilters: {
             type: Object,
             default: () => {
-                return {}
+                return {};
             }
         }
     },
     data() {
         return {
             isEditing: this.openmct.editor.isEditing()
-        }
+        };
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.toggleIsEditing);
@@ -127,5 +127,5 @@ export default {
             }, []).join(', ');
         }
     }
-}
+};
 </script>

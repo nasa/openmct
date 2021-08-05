@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-/*global window*/
 
 define([
     './Constants',
@@ -87,12 +85,18 @@ define([
                 bootstrapper
             );
 
+        // Override of angular1.6 ! hashPrefix
+        app.config(['$locationProvider', function ($locationProvider) {
+            $locationProvider.hashPrefix('');
+        }]);
+
         // Apply logging levels; this must be done now, before the
         // first log statement.
         new LogLevel(logLevel).configure(app, $log);
 
         // Initialize the application
         $log.info("Initializing application.");
+
         return initializer.runApplication();
     };
 

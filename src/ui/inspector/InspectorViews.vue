@@ -11,7 +11,7 @@ export default {
     data() {
         return {
             selection: []
-        }
+        };
     },
     mounted() {
         this.openmct.selection.on('change', this.updateSelection);
@@ -34,10 +34,10 @@ export default {
             this.selectedViews = this.openmct.inspectorViews.get(selection);
             this.selectedViews.forEach(selectedView => {
                 let viewContainer = document.createElement('div');
-                this.$el.append(viewContainer)
+                this.$el.append(viewContainer);
                 selectedView.show(viewContainer);
             });
         }
     }
-}
+};
 </script>

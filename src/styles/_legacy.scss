@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,55 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/******************************************************************* VIEWS */
-// From _views.scss
-// Legacy overlay and stacked plots depend on this for now
-// Styles for sub-dividing views generically
-.l-control-bar {
-    // Element that can be placed above l-view-section, holds controls, buttons, etc.
-    height: $controlBarH;
-}
-
-.c-control-bar {
-    display: flex;
-    align-items: center;
-
-    &__label {
-        display: inline-block;
-        white-space: nowrap;
-    }
-}
-
-.l-view-section {
-    @include abs();
-    overflow: auto;
-}
-
-.has-control-bar {
-    .l-view-section {
-        top: $controlBarH + $interiorMargin;
-    }
-}
-
-.child-frame {
-    .has-control-bar {
-        .l-control-bar,
-        .c-control-bar {
-            // Hides buttons per plot element in a stacked plot
-            display: none;
-        }
-        .l-view-section {
-            top: 0;
-        }
-    }
-}
-
 /*********************************************************************** CLOCKS AND TIMERS */
 .c-clock,
 .c-timer {
     display: flex;
     align-items: center;
     font-size: 1.25em;
+    overflow: hidden;
 
     > * {
         flex: 0 0 auto;
@@ -77,6 +35,12 @@
 
     &__value {
         color: $colorBodyFgEm;
+    }
+
+    .c-frame & {
+        // When in a Display or Flexible Layout
+        @include abs();
+        padding: $interiorMargin;
     }
 }
 
@@ -88,6 +52,7 @@
     $ctrlW: 22px;
 
     &__controls {
+        font-size: 1rem !important;
         margin-right: 0;
         min-width: 0;
         overflow: hidden;
@@ -98,7 +63,7 @@
     }
 
     &__direction {
-        font-size: 0.9em;
+        font-size: 0.9rem !important;
         margin-right: $interiorMargin;
     }
 
@@ -929,7 +894,7 @@ body.desktop {
 .grid-row {
     .grid-cell {
         padding: 3px $interiorMarginLg 3px 0;
-        &[title] {
+        &[title]:not([title=""]) {
             // When a cell has a title, assume it's helpful text
             cursor: help;
         }

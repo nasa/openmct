@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,16 +27,23 @@ export default class PreviewAction {
         /**
          * Metadata
          */
-        this.name = 'Preview';
+        this.name = 'View';
         this.key = 'preview';
-        this.description = 'Preview in large dialog';
-        this.cssClass = 'icon-eye-open';
+        this.description = 'View in large dialog';
+        this.cssClass = 'icon-items-expand';
+        this.group = 'windowing';
+        this.priority = 1;
 
         /**
          * Dependencies
          */
         this._openmct = openmct;
+
+        if (PreviewAction.isVisible === undefined) {
+            PreviewAction.isVisible = false;
+        }
     }
+
     invoke(objectPath) {
         let preview = new Vue({
             components: {
@@ -59,16 +66,34 @@ export default class PreviewAction {
                     callback: () => overlay.dismiss()
                 }
             ],
-            onDestroy: () => preview.$destroy()
+            onDestroy: () => {
+                PreviewAction.isVisible = false;
+                preview.$destroy();
+            }
         });
+
+        PreviewAction.isVisible = true;
     }
-    appliesTo(objectPath) {
-        return !this._isNavigatedObject(objectPath)
+
+    appliesTo(objectPath, view = {}) {
+        const parentElement = view.parentElement;
+        const isObjectView = parentElement && parentElement.classList.contains('js-object-view');
+
+        return !PreviewAction.isVisible
+            && !this._isNavigatedObject(objectPath)
+            && !isObjectView;
     }
+
     _isNavigatedObject(objectPath) {
         let targetObject = objectPath[0];
         let navigatedObject = this._openmct.router.path[0];
-        return targetObject.identifier.namespace === navigatedObject.identifier.namespace &&
-            targetObject.identifier.key === navigatedObject.identifier.key;
+
+        return this._openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
+    }
+
+    _preventPreview(objectPath) {
+        const noPreviewTypes = ['folder'];
+
+        return noPreviewTypes.includes(objectPath[0].type);
     }
 }

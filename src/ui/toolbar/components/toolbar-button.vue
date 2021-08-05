@@ -36,15 +36,16 @@ export default {
     },
     methods: {
         onClick(event) {
-            if (this.options.dialog) {
+            if ((this.options.isEditing === undefined || this.options.isEditing) && this.options.dialog) {
                 this.openmct.$injector.get('dialogService')
                     .getUserInput(this.options.dialog, this.options.value)
                     .then(value => {
                         this.$emit('change', {...value}, this.options);
                     });
             }
+
             this.$emit('click', this.options);
         }
     }
-}
+};
 </script>

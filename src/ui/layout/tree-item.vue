@@ -1,193 +1,166 @@
 <template>
-<li class="c-tree__item-h">
+<div
+    :style="treeItemStyles"
+    class="c-tree__item-h"
+>
     <div
         class="c-tree__item"
-        :class="{ 'is-alias': isAlias, 'is-navigated-object': navigated }"
+        :class="{
+            'is-alias': isAlias,
+            'is-navigated-object': navigated,
+            'is-context-clicked': contextClickActive
+        }"
+        @click.capture="handleClick"
+        @contextmenu.capture="handleContextMenu"
     >
         <view-control
-            v-model="expanded"
+            ref="navigate"
             class="c-tree__item__view-control"
-            :enabled="hasChildren"
+            :value="isOpen || isLoading"
+            :enabled="!activeSearch && hasComposition"
+            @input="navigationClick()"
         />
         <object-label
+            ref="objectLabel"
             :domain-object="node.object"
             :object-path="node.objectPath"
-            :navigate-to-path="navigateToPath"
+            :navigate-to-path="navigationPath"
+            @context-click-active="setContextClickActive"
         />
+        <span
+            v-if="isLoading"
+            class="loading"
+        ></span>
     </div>
-    <ul
-        v-if="expanded"
-        class="c-tree"
-    >
-        <li
-            v-if="isLoading && !loaded"
-            class="c-tree__item-h"
-        >
-            <div class="c-tree__item loading">
-                <span class="c-tree__item__label">Loading...</span>
-            </div>
-        </li>
-        <tree-item
-            v-for="child in children"
-            :key="child.id"
-            :node="child"
-        />
-    </ul>
-</li>
+</div>
 </template>
 
 <script>
 import viewControl from '../components/viewControl.vue';
 import ObjectLabel from '../components/ObjectLabel.vue';
 
-const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
-
 export default {
     name: 'TreeItem',
-    inject: ['openmct'],
     components: {
         viewControl,
         ObjectLabel
     },
+    inject: ['openmct'],
     props: {
         node: {
+            type: Object,
+            required: true
+        },
+        activeSearch: {
+            type: Boolean,
+            default: false
+        },
+        leftOffset: {
+            type: String,
+            default: '0px'
+        },
+        itemIndex: {
+            type: Number,
+            required: false,
+            default: undefined
+        },
+        itemOffset: {
+            type: Number,
+            required: false,
+            default: undefined
+        },
+        itemHeight: {
+            type: Number,
+            required: false,
+            default: 0
+        },
+        openItems: {
+            type: Array,
+            required: true
+        },
+        loadingItems: {
             type: Object,
             required: true
         }
     },
     data() {
-        this.navigateToPath = this.buildPathString(this.node.navigateToParent);
+        this.navigationPath = this.node.navigationPath;
+
         return {
-            hasChildren: false,
-            isLoading: false,
-            loaded: false,
-            navigated: this.navigateToPath === this.openmct.router.currentLocation.path,
-            children: [],
-            expanded: false
-        }
+            hasComposition: false,
+            navigated: this.isNavigated(),
+            contextClickActive: false
+        };
     },
     computed: {
         isAlias() {
             let parent = this.node.objectPath[1];
+
             if (!parent) {
                 return false;
             }
+
             let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+
             return parentKeyString !== this.node.object.location;
-        }
-    },
-    watch: {
-        expanded() {
-            if (!this.hasChildren) {
-                return;
-            }
-            if (!this.loaded && !this.isLoading) {
-                this.composition = this.openmct.composition.get(this.domainObject);
-                this.composition.on('add', this.addChild);
-                this.composition.on('remove', this.removeChild);
-                this.composition.load().then(this.finishLoading);
-                this.isLoading = true;
-            }
-            this.setLocalStorageExpanded(this.navigateToPath);
+        },
+        isLoading() {
+            return Boolean(this.loadingItems[this.navigationPath]);
+        },
+        isOpen() {
+            return this.openItems.includes(this.navigationPath);
+        },
+        treeItemStyles() {
+            let itemTop = (this.itemOffset + this.itemIndex) * this.itemHeight + 'px';
+
+            return {
+                'top': itemTop,
+                'position': 'absolute',
+                'padding-left': this.leftOffset
+            };
         }
     },
     mounted() {
-        // TODO: should update on mutation.
-        // TODO: click navigation should not fubar hash quite so much.
-        // TODO: should highlight if navigated to.
-        // TODO: should have context menu.
-        // TODO: should support drag/drop composition
-        // TODO: set isAlias per tree-item
-
         this.domainObject = this.node.object;
-        let removeListener = this.openmct.objects.observe(this.domainObject, '*', (newObject) => {
-            this.domainObject = newObject;
-        });
 
-        this.$once('hook:destroyed', removeListener);
-        if (this.openmct.composition.get(this.node.object)) {
-            this.hasChildren = true;
+        if (this.openmct.composition.get(this.domainObject)) {
+            this.hasComposition = true;
         }
 
         this.openmct.router.on('change:path', this.highlightIfNavigated);
 
-        this.getLocalStorageExpanded();
-    },
-    beforeDestroy() {
-        /****
-            * calling this.setLocalStorageExpanded explicitly here because for whatever reason,
-            * the watcher on this.expanded is not triggering this.setLocalStorageExpanded(),
-            * even though Vue documentation states, "At this stage the instance is still fully functional."
-        *****/
-        this.expanded = false;
-        this.setLocalStorageExpanded();
+        this.$emit('tree-item-mounted', this.navigationPath);
     },
     destroyed() {
         this.openmct.router.off('change:path', this.highlightIfNavigated);
-        if (this.composition) {
-            this.composition.off('add', this.addChild);
-            this.composition.off('remove', this.removeChild);
-            delete this.composition;
-        }
+        this.$emit('tree-item-destoyed', this.navigationPath);
     },
     methods: {
-        addChild(child) {
-            this.children.push({
-                id: this.openmct.objects.makeKeyString(child.identifier),
-                object: child,
-                objectPath: [child].concat(this.node.objectPath),
-                navigateToParent: this.navigateToPath
-            });
+        navigationClick() {
+            this.$emit('navigation-click', this.isOpen || this.isLoading ? 'close' : 'open');
         },
-        removeChild(identifier) {
-            let removeId = this.openmct.objects.makeKeyString(identifier);
-            this.children = this.children
-                .filter(c => c.id !== removeId);
-        },
-        finishLoading() {
-            this.isLoading = false;
-            this.loaded = true;
-        },
-        buildPathString(parentPath) {
-            return [parentPath, this.openmct.objects.makeKeyString(this.node.object.identifier)].join('/');
-        },
-        highlightIfNavigated(newPath, oldPath) {
-            if (newPath === this.navigateToPath) {
-                this.navigated = true;
-            } else if (oldPath === this.navigateToPath) {
-                this.navigated = false;
-            }
-        },
-        getLocalStorageExpanded() {
-            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
-
-            if (expandedPaths) {
-                expandedPaths = JSON.parse(expandedPaths);
-                this.expanded = expandedPaths.includes(this.navigateToPath);
-            }
-        },
-        // expanded nodes/paths are stored in local storage as an array
-        setLocalStorageExpanded() {
-            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
-            expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
-
-            if (this.expanded) {
-                if (!expandedPaths.includes(this.navigateToPath)) {
-                    expandedPaths.push(this.navigateToPath);
-                }
-            } else {
-                // remove this node path and all children paths from stored expanded paths
-                expandedPaths = expandedPaths.filter(path => !path.startsWith(this.navigateToPath));
+        handleClick(event) {
+            // skip for navigation, let viewControl handle click
+            if (this.$refs.navigate.$el === event.target) {
+                return;
             }
 
-            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
+            event.stopPropagation();
+            this.$refs.objectLabel.navigateOrPreview(event);
         },
-        removeLocalStorageExpanded() {
-            let expandedPaths = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
-            expandedPaths = expandedPaths ? JSON.parse(expandedPaths) : [];
-            expandedPaths = expandedPaths.filter(path => !path.startsWith(this.navigateToPath));
-            localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(expandedPaths));
+        handleContextMenu(event) {
+            event.stopPropagation();
+            this.$refs.objectLabel.showContextMenu(event);
+        },
+        isNavigated() {
+            return this.navigationPath === this.openmct.router.currentLocation.path;
+        },
+        highlightIfNavigated() {
+            this.navigated = this.isNavigated();
+        },
+        setContextClickActive(active) {
+            this.contextClickActive = active;
         }
     }
-}
+};
 </script>

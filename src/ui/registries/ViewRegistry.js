@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-/*global console */
 
 define(['EventEmitter'], function (EventEmitter) {
     const DEFAULT_VIEW_PRIORITY = 100;
@@ -37,14 +36,19 @@ define(['EventEmitter'], function (EventEmitter) {
 
     ViewRegistry.prototype = Object.create(EventEmitter.prototype);
 
-
     /**
      * @private for platform-internal use
      * @param {*} item the object to be viewed
+     * @param {array} objectPath - The current contextual object path of the view object
+     *                             eg current domainObject is located under MyItems which is under Root
      * @returns {module:openmct.ViewProvider[]} any providers
      *          which can provide views of this object
      */
-    ViewRegistry.prototype.get = function (item) {
+    ViewRegistry.prototype.get = function (item, objectPath) {
+        if (objectPath === undefined) {
+            throw "objectPath must be provided to get applicable views for an object";
+        }
+
         function byPriority(providerA, providerB) {
             let priorityA = providerA.priority ? providerA.priority(item) : DEFAULT_VIEW_PRIORITY;
             let priorityB = providerB.priority ? providerB.priority(item) : DEFAULT_VIEW_PRIORITY;
@@ -54,7 +58,7 @@ define(['EventEmitter'], function (EventEmitter) {
 
         return this.getAllProviders()
             .filter(function (provider) {
-                return provider.canView(item);
+                return provider.canView(item, objectPath);
             }).sort(byPriority);
     };
 
@@ -73,13 +77,26 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.ViewRegistry#
      */
     ViewRegistry.prototype.addProvider = function (provider) {
-        var key = provider.key;
+        const key = provider.key;
         if (key === undefined) {
             throw "View providers must have a unique 'key' property defined";
         }
+
         if (this.providers[key] !== undefined) {
             console.warn("Provider already defined for key '%s'. Provider keys must be unique.", key);
         }
+
+        const wrappedView = provider.view.bind(provider);
+        provider.view = (domainObject, objectPath) => {
+            const viewObject = wrappedView(domainObject, objectPath);
+            const wrappedShow = viewObject.show.bind(viewObject);
+            viewObject.show = (element, isEditing) => {
+                viewObject.parentElement = element.parentElement;
+                wrappedShow(element, isEditing);
+            };
+
+            return viewObject;
+        };
 
         this.providers[key] = provider;
     };
@@ -182,6 +199,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.ViewProvider#
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        to be viewed
+     * @param {array} objectPath - The current contextual object path of the view object
+     *                             eg current domainObject is located under MyItems which is under Root
      * @returns {boolean} 'true' if the view applies to the provided object,
      *          otherwise 'false'.
      */
@@ -202,6 +221,8 @@ define(['EventEmitter'], function (EventEmitter) {
      * @memberof module:openmct.ViewProvider#
      * @param {module:openmct.DomainObject} domainObject the domain object
      *        to be edited
+     * @param {array} objectPath - The current contextual object path of the view object
+     *                             eg current domainObject is located under MyItems which is under Root
      * @returns {boolean} 'true' if the view can be used to edit the provided object,
      *          otherwise 'false'.
      */

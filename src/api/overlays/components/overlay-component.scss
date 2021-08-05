@@ -21,21 +21,18 @@
 
     &__outer {
         @include abs();
-        background: $overlayColorBg;
-        color: $overlayColorFg;
+        background: $colorBodyBg;
         display: flex;
         flex-direction: column;
         padding: $overlayInnerMargin;
     }
 
     &__close-button {
-        $p: $interiorMargin;
-        border-radius: 100% !important;
-        color: $overlayColorFg;
-        display: inline-block;
-        font-size: 1.25em;
+        $p: $interiorMargin + 2px;
+        font-size: 1.5em;
         position: absolute;
         top: $p; right: $p;
+        z-index: 99;
     }
 
     &__contents {
@@ -43,7 +40,7 @@
         display: flex;
         flex-direction: column;
         outline: none;
-        overflow: hidden;
+        overflow: auto;
     }
 
     &__top-bar {
@@ -83,9 +80,8 @@
         }
     }
 
-    .c-button,
-    .c-click-icon {
-        filter: $overlayBrightnessAdjust;
+    .c-object-label__name {
+        filter: $objectLabelNameFilter;
     }
 }
 
@@ -118,8 +114,24 @@ body.desktop {
 
     .l-overlay-large {
         // Default
-        .c-overlay__outer {
-            @include overlaySizing($overlayOuterMarginLg);
+        $pad: $interiorMarginLg;
+        $tbPad: floor($pad * 0.8);
+        $lrPad: $pad;
+        .c-overlay {
+            &__outer {
+                @include overlaySizing($overlayOuterMarginLarge);
+                padding: $tbPad $lrPad;
+            }
+
+            &__close-button {
+                //top: $interiorMargin;
+                //right: $interiorMargin;
+            }
+        }
+
+        .l-browse-bar {
+            margin-right: 50px; // Don't cover close button
+            margin-bottom: $interiorMargin;
         }
     }
 

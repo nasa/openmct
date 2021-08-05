@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,9 @@
 define([
     'lodash',
     './utcTimeSystem/plugin',
+    './remoteClock/plugin',
     './localTimeSystem/plugin',
+    './ISOTimeFormat/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -45,15 +47,34 @@ define([
     './filters/plugin',
     './objectMigration/plugin',
     './goToOriginalAction/plugin',
+    './openInNewTabAction/plugin',
     './clearData/plugin',
     './webPage/plugin',
+    './condition/plugin',
+    './conditionWidget/plugin',
     './themes/espresso',
     './themes/maelstrom',
-    './themes/snow'
+    './themes/snow',
+    './URLTimeSettingsSynchronizer/plugin',
+    './notificationIndicator/plugin',
+    './newFolderAction/plugin',
+    './nonEditableFolder/plugin',
+    './persistence/couch/plugin',
+    './defaultRootName/plugin',
+    './plan/plugin',
+    './viewDatumAction/plugin',
+    './viewLargeAction/plugin',
+    './interceptors/plugin',
+    './performanceIndicator/plugin',
+    './CouchDBSearchFolder/plugin',
+    './timeline/plugin',
+    './hyperlink/plugin'
 ], function (
     _,
     UTCTimeSystem,
+    RemoteClock,
     LocalTimeSystem,
+    ISOTimeFormat,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -75,19 +96,36 @@ define([
     Filters,
     ObjectMigration,
     GoToOriginalAction,
+    OpenInNewTabAction,
     ClearData,
     WebPagePlugin,
+    ConditionPlugin,
+    ConditionWidgetPlugin,
     Espresso,
     Maelstrom,
-    Snow
+    Snow,
+    URLTimeSettingsSynchronizer,
+    NotificationIndicator,
+    NewFolderAction,
+    NonEditableFolder,
+    CouchDBPlugin,
+    DefaultRootName,
+    PlanLayout,
+    ViewDatumAction,
+    ViewLargeAction,
+    ObjectInterceptors,
+    PerformanceIndicator,
+    CouchDBSearchFolder,
+    Timeline,
+    Hyperlink
 ) {
-    var bundleMap = {
+    const bundleMap = {
         LocalStorage: 'platform/persistence/local',
         MyItems: 'platform/features/my-items',
-        CouchDB: 'platform/persistence/couch'
+        Elasticsearch: 'platform/persistence/elastic'
     };
 
-    var plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
+    const plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
         return function pluginConstructor() {
             return function (openmct) {
                 openmct.legacyRegistry.enable(bundleName);
@@ -97,6 +135,7 @@ define([
 
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
+    plugins.RemoteClock = RemoteClock.default;
 
     plugins.ImportExport = ImportExport;
 
@@ -115,32 +154,12 @@ define([
 
     plugins.Conductor = TimeConductorPlugin.default;
 
-    plugins.CouchDB = function (url) {
-        return function (openmct) {
-            if (url) {
-                var bundleName = "config/couch";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "COUCHDB_PATH",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
-
-            openmct.legacyRegistry.enable(bundleMap.CouchDB);
-        };
-    };
+    plugins.CouchDB = CouchDBPlugin.default;
 
     plugins.Elasticsearch = function (url) {
         return function (openmct) {
             if (url) {
-                var bundleName = "config/elastic";
+                const bundleName = "config/elastic";
                 openmct.legacyRegistry.register(bundleName, {
                     "extensions": {
                         "constants": [
@@ -165,26 +184,43 @@ define([
 
     plugins.ExampleImagery = ExampleImagery;
     plugins.ImageryPlugin = ImageryPlugin;
-    plugins.Plot = PlotPlugin;
+    plugins.Plot = PlotPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
     plugins.TelemetryMean = TelemetryMean;
     plugins.URLIndicator = URLIndicatorPlugin;
-    plugins.Notebook = Notebook;
+    plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
-    plugins.LADTable = LADTable;
+    plugins.LADTable = LADTable.default;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.OpenInNewTabAction = OpenInNewTabAction.default;
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
     plugins.Espresso = Espresso.default;
     plugins.Maelstrom = Maelstrom.default;
     plugins.Snow = Snow.default;
+    plugins.Condition = ConditionPlugin.default;
+    plugins.ConditionWidget = ConditionWidgetPlugin.default;
+    plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
+    plugins.NotificationIndicator = NotificationIndicator.default;
+    plugins.NewFolderAction = NewFolderAction.default;
+    plugins.NonEditableFolder = NonEditableFolder.default;
+    plugins.ISOTimeFormat = ISOTimeFormat.default;
+    plugins.DefaultRootName = DefaultRootName.default;
+    plugins.PlanLayout = PlanLayout.default;
+    plugins.ViewDatumAction = ViewDatumAction.default;
+    plugins.ViewLargeAction = ViewLargeAction.default;
+    plugins.ObjectInterceptors = ObjectInterceptors.default;
+    plugins.PerformanceIndicator = PerformanceIndicator.default;
+    plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
+    plugins.Timeline = Timeline.default;
+    plugins.Hyperlink = Hyperlink.default;
 
     return plugins;
 });

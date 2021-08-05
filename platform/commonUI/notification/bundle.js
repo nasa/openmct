@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,44 +21,15 @@
  *****************************************************************************/
 
 define([
-    "./src/NotificationIndicatorController",
-    "./src/NotificationIndicator",
-    "./src/NotificationService",
-    "./res/notification-indicator.html"
+    "./src/NotificationService"
 ], function (
-    NotificationIndicatorController,
-    NotificationIndicator,
-    NotificationService,
-    notificationIndicatorTemplate
+    NotificationService
 ) {
 
     return {
-        name:"platform/commonUI/notification",
+        name: "platform/commonUI/notification",
         definition: {
             "extensions": {
-                "templates": [
-                    {
-                        "key": "notificationIndicatorTemplate",
-                        "template": notificationIndicatorTemplate
-                    }
-                ],
-                "controllers": [
-                    {
-                        "key": "NotificationIndicatorController",
-                        "implementation": NotificationIndicatorController,
-                        "depends": [
-                            "$scope",
-                            "openmct",
-                            "dialogService"
-                        ]
-                    }
-                ],
-                "indicators": [
-                    {
-                        "implementation": NotificationIndicator,
-                        "priority": "fallback"
-                    }
-                ],
                 "services": [
                     {
                         "key": "notificationService",

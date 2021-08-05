@@ -1,0 +1,154 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+/********************************************* INSPECTOR STYLES TAB */
+.c-inspect-styles {
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__content,
+    &__conditions,
+    &__condition {
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__condition-set {
+        align-items: baseline;
+        border-bottom: 1px solid $colorInteriorBorder;
+        display: flex;
+        flex-direction: row;
+        padding-bottom: $interiorMargin;
+
+        .c-object-label {
+            flex: 1 1 auto;
+        }
+
+        .c-button {
+            flex: 0 0 auto;
+        }
+    }
+
+    &__style {
+        padding-bottom: $interiorMargin;
+    }
+
+    &__condition {
+        padding: $interiorMargin;
+    }
+
+    &__condition {
+        @include discreteItem();
+        border: 1px solid transparent;
+        pointer-events: none; // Prevent selecting when the object isn't being edited
+
+        &.is-current {
+            $c: $colorBodyFg;
+            border-color: rgba($c, 0.2);
+            background: rgba($c, 0.2);
+        }
+
+        .is-editing & {
+            cursor: pointer;
+            pointer-events: initial;
+            transition: $transOut;
+
+            &:hover {
+                background: rgba($colorBodyFg, 0.1);
+                transition: $transIn;
+            }
+
+            &.is-current {
+                $c: $editUIColorBg;
+                border-color: $c;
+                background: rgba($c, 0.1);
+            }
+        }
+    }
+
+    .c-style {
+        padding: 2px; // Allow a bit of room for thumb box-shadow
+
+        &__condition-desc {
+            @include ellipsize();
+        }
+    }
+}
+
+.c-inspect-styles__style {
+    .is-editing & {
+        border-bottom: 1px solid $colorInteriorBorder;
+    }
+}
+
+.l-shell:not(.is-editing) .c-inspect-styles {
+    .c-toolbar {
+        // Disabled-look toolbar when not editing
+        pointer-events: none;
+        cursor: inherit;
+
+        // Hide control buttons, like image URL
+        [class*='--image-url'] {
+            display: none;
+        }
+
+        // Make buttons look disabled by knocking back icon, not swatch element
+        .c-icon-button {
+            &:before {
+                opacity: $controlDisabledOpacity;
+            }
+        }
+    }
+}
+
+.c-toggle-styling-button {
+    display: none;
+
+    .is-editing & {
+        display: block;
+        align-self: flex-end;
+    }
+}
+
+.is-style-invisible {
+    display: none !important;
+
+    .is-editing & {
+        display: block !important;
+        opacity: 0.2;
+    }
+
+    &.c-style-thumb {
+        display: block !important;
+        background-color: transparent !important;
+        border-color: transparent !important;
+        @include bgCheckerboard($size: 10px, $imp: true);
+        opacity: 1;
+    }
+}

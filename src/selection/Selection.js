@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,7 +29,6 @@ define(
         EventEmitter,
         _
     ) {
-
         /**
          * Manages selection state for Open MCT
          * @private
@@ -63,19 +62,16 @@ define(
                 selectable = [selectable];
             }
 
-            let multiSelect = isMultiSelectEvent &&
-                this.parentSupportsMultiSelect(selectable) &&
-                this.isPeer(selectable) &&
-                !this.selectionContainsParent(selectable);
+            let multiSelect = isMultiSelectEvent
+                && this.parentSupportsMultiSelect(selectable)
+                && this.isPeer(selectable)
+                && !this.selectionContainsParent(selectable);
 
             if (multiSelect) {
                 this.handleMultiSelect(selectable);
             } else {
-                this.setSelectionStyles(selectable);
-                this.selected = [selectable];
+                this.handleSingleSelect(selectable);
             }
-
-            this.emit('change', this.selected);
         };
 
         /**
@@ -87,6 +83,20 @@ define(
             } else {
                 this.addSelectionAttributes(selectable);
                 this.selected.push(selectable);
+            }
+
+            this.emit('change', this.selected);
+        };
+
+        /**
+         * @private
+         */
+        Selection.prototype.handleSingleSelect = function (selectable) {
+            if (!_.isEqual([selectable], this.selected)) {
+                this.setSelectionStyles(selectable);
+                this.selected = [selectable];
+
+                this.emit('change', this.selected);
             }
         };
 
@@ -115,9 +125,7 @@ define(
          * @private
          */
         Selection.prototype.setSelectionStyles = function (selectable) {
-            this.selected.map(selectionPath => {
-                this.removeSelectionAttributes(selectionPath);
-            });
+            this.selected.forEach(selectionPath => this.removeSelectionAttributes(selectionPath));
             this.addSelectionAttributes(selectable);
         };
 
@@ -174,7 +182,7 @@ define(
                 return false;
             }
 
-            return !!element.closest('[data-selectable]');
+            return Boolean(element.closest('[data-selectable]'));
         };
 
         /**
@@ -227,30 +235,34 @@ define(
                 element: element
             };
 
-            var capture = this.capture.bind(this, selectable);
-            var selectCapture = this.selectCapture.bind(this, selectable);
+            const capture = this.capture.bind(this, selectable);
+            const selectCapture = this.selectCapture.bind(this, selectable);
+            let removeMutable = false;
 
             element.addEventListener('click', capture, true);
             element.addEventListener('click', selectCapture);
 
-            if (context.item) {
-                var unlisten = this.openmct.objects.observe(context.item, "*", function (newItem) {
-                    context.item = newItem;
-                });
+            if (context.item && context.item.isMutable !== true) {
+                removeMutable = true;
+                context.item = this.openmct.objects._toMutable(context.item);
             }
 
             if (select) {
-                element.click();
+                if (typeof select === 'object') {
+                    element.dispatchEvent(select);
+                } else if (typeof select === 'boolean') {
+                    element.click();
+                }
             }
 
-            return function () {
+            return (function () {
                 element.removeEventListener('click', capture, true);
                 element.removeEventListener('click', selectCapture);
 
-                if (unlisten) {
-                    unlisten();
+                if (context.item !== undefined && context.item.isMutable && removeMutable === true) {
+                    this.openmct.objects.destroyMutable(context.item);
                 }
-            };
+            }).bind(this);
         };
 
         return Selection;

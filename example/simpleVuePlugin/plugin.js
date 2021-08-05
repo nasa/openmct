@@ -1,4 +1,4 @@
-import Vue from 'Vue';
+import Vue from 'vue';
 import HelloWorld from './HelloWorld.vue';
 
 function SimpleVuePlugin() {
@@ -17,6 +17,7 @@ function SimpleVuePlugin() {
             },
             view: function (domainObject) {
                 var vm;
+
                 return {
                     show: function (container) {
                         vm = new Vue(HelloWorld);
@@ -29,7 +30,7 @@ function SimpleVuePlugin() {
             }
         });
 
-    }
+    };
 }
 
-export default SimpleVuePlugin
+export default SimpleVuePlugin;

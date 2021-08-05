@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, objectUtils) {
+define(['zepto', 'objectUtils'], function ($, objectUtils) {
 
     /**
      * The ImportAsJSONAction is available from context menus and allows a user
@@ -110,6 +110,7 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
                 if (!tree[keystring] || seen.includes(keystring)) {
                     return;
                 }
+
                 let newModel = tree[keystring];
                 delete newModel.persisted;
 
@@ -133,6 +134,7 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
 
             tree = this.rewriteId(oldId, newId, tree);
         }, this);
+
         return tree;
     };
 
@@ -152,11 +154,13 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
         tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
 
         return JSON.parse(tree, (key, value) => {
-            if (Object.prototype.hasOwnProperty.call(value, 'key') &&
-                Object.prototype.hasOwnProperty.call(value, 'namespace') &&
-                value.key === oldId.key &&
-                value.namespace === oldId.namespace) {
-                return newId
+            if (value !== undefined
+                && value !== null
+                && Object.prototype.hasOwnProperty.call(value, 'key')
+                && Object.prototype.hasOwnProperty.call(value, 'namespace')
+                && value.key === oldId.key
+                && value.namespace === oldId.namespace) {
+                return newId;
             } else {
                 return value;
             }
@@ -175,7 +179,7 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
                             key: 'selectFile',
                             control: 'file-input',
                             required: true,
-                            text: 'Select File'
+                            text: 'Select File...'
                         }
                     ]
                 }
@@ -190,9 +194,11 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
         } catch (e) {
             return false;
         }
+
         if (!json.openmct || !json.rootId) {
             return false;
         }
+
         return true;
     };
 
@@ -200,8 +206,8 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
         var dialog,
             model = {
                 title: "Invalid File",
-                actionText:  "The selected file was either invalid JSON or was " +
-                "not formatted properly for import into Open MCT.",
+                actionText: "The selected file was either invalid JSON or was "
+                + "not formatted properly for import into Open MCT.",
                 severity: "error",
                 options: [
                     {
@@ -216,8 +222,14 @@ define(['zepto', '../../../../src/api/objects/object-utils.js'], function ($, ob
     };
 
     ImportAsJSONAction.appliesTo = function (context) {
-        return context.domainObject !== undefined &&
-            context.domainObject.hasCapability("composition");
+        let domainObject = context.domainObject;
+
+        if (domainObject && domainObject.model.locked) {
+            return false;
+        }
+
+        return domainObject !== undefined
+            && domainObject.hasCapability("composition");
     };
 
     return ImportAsJSONAction;

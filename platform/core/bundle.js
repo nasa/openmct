@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -83,7 +83,7 @@ define([
 ) {
 
     return {
-        name:"platform/core",
+        name: "platform/core",
         definition: {
             "name": "Open MCT Core",
             "description": "Defines core concepts of Open MCT.",
@@ -297,7 +297,8 @@ define([
                             "persistenceService",
                             "identifierService",
                             "notificationService",
-                            "$q"
+                            "$q",
+                            "openmct"
                         ]
                     },
                     {

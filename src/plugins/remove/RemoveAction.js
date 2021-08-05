@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,13 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 export default class RemoveAction {
     constructor(openmct) {
         this.name = 'Remove';
         this.key = 'remove';
         this.description = 'Remove this object from its containing object.';
         this.cssClass = "icon-trash";
+        this.group = "action";
+        this.priority = 1;
 
         this.openmct = openmct;
     }
@@ -38,7 +39,7 @@ export default class RemoveAction {
             if (this.inNavigationPath(object)) {
                 this.navigateTo(objectPath.slice(1));
             }
-        }).catch(() =>{});
+        }).catch(() => {});
     }
 
     showConfirmDialog(object) {
@@ -63,8 +64,8 @@ export default class RemoveAction {
                         }
                     }
                 ]
-            })
-        })
+            });
+        });
     }
 
     inNavigationPath(object) {
@@ -77,7 +78,7 @@ export default class RemoveAction {
             .map(object => this.openmct.objects.makeKeyString(object.identifier))
             .join("/");
 
-        window.location.href = '#/browse/' + urlPath;
+        this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
     removeFromComposition(parent, child) {
@@ -90,14 +91,37 @@ export default class RemoveAction {
         if (this.inNavigationPath(child) && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
+
+        const parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+        const isAlias = parentKeyString !== child.location;
+
+        if (!isAlias) {
+            this.openmct.objects.mutate(child, 'location', null);
+        }
     }
 
     appliesTo(objectPath) {
         let parent = objectPath[1];
         let parentType = parent && this.openmct.types.get(parent.type);
+        let child = objectPath[0];
+        let locked = child.locked ? child.locked : parent && parent.locked;
+        let isEditing = this.openmct.editor.isEditing();
 
-        return parentType &&
-            parentType.definition.creatable &&
-            Array.isArray(parent.composition);
+        if (isEditing) {
+            let currentItemInView = this.openmct.router.path[0];
+            let domainObject = objectPath[0];
+
+            if (this.openmct.objects.areIdsEqual(currentItemInView.identifier, domainObject.identifier)) {
+                return false;
+            }
+        }
+
+        if (locked) {
+            return false;
+        }
+
+        return parentType
+            && parentType.definition.creatable
+            && Array.isArray(parent.composition);
     }
 }

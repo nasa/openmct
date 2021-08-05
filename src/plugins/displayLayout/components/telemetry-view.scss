@@ -7,7 +7,6 @@
         flex: 1 1 auto;
         display: flex;
         flex-direction: row;
-       // justify-content: center;
         align-items: center;
         overflow: hidden;
         padding: $interiorMargin;
@@ -22,8 +21,22 @@
         margin-left: $interiorMargin;
     }
 
+    &__value {
+        @include isLimit();
+    }
+
     .c-frame & {
         @include abs();
         border: 1px solid transparent;
+    }
+
+    .is-status__indicator {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    &[class*='is-status'] {
+        border: $borderMissing;
     }
 }

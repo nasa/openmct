@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -75,40 +75,64 @@ export default class NotificationAPI extends EventEmitter {
      * Info notifications are low priority informational messages for the user. They will be auto-destroy after a brief
      * period of time.
      * @param {string} message The message to display to the user
+     * @param {Object} [options] object with following properties
+     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
+     *      link: {Object} Add a link to notifications for navigation
+     *              onClick: callback function
+     *              cssClass: css class name to add style on link
+     *              text: text to display for link
      * @returns {InfoNotification}
      */
-    info(message) {
+    info(message, options = {}) {
         let notificationModel = {
             message: message,
             autoDismiss: true,
-            severity: "info"
-        }
+            severity: "info",
+            options
+        };
+
         return this._notify(notificationModel);
     }
 
     /**
      * Present an alert to the user.
      * @param {string} message The message to display to the user.
+     * @param {Object} [options] object with following properties
+     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
+     *      link: {Object} Add a link to notifications for navigation
+     *              onClick: callback function
+     *              cssClass: css class name to add style on link
+     *              text: text to display for link
      * @returns {Notification}
      */
-    alert(message) {
+    alert(message, options = {}) {
         let notificationModel = {
             message: message,
-            severity: "alert"
-        }
+            severity: "alert",
+            options
+        };
+
         return this._notify(notificationModel);
     }
 
     /**
      * Present an error message to the user
      * @param {string} message
+     * @param {Object} [options] object with following properties
+     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
+     *      link: {Object} Add a link to notifications for navigation
+     *              onClick: callback function
+     *              cssClass: css class name to add style on link
+     *              text: text to display for link
      * @returns {Notification}
      */
-    error(message) {
+    error(message, options = {}) {
         let notificationModel = {
             message: message,
-            severity: "error"
-        }
+            severity: "error",
+            options
+        };
+
         return this._notify(notificationModel);
     }
 
@@ -124,8 +148,14 @@ export default class NotificationAPI extends EventEmitter {
             progressPerc: progressPerc,
             progressText: progressText,
             severity: "info"
-        }
+        };
+
         return this._notify(notificationModel);
+    }
+
+    dismissAllNotifications() {
+        this.notifications = [];
+        this.emit('dismiss-all');
     }
 
     /**
@@ -195,6 +225,7 @@ export default class NotificationAPI extends EventEmitter {
         if (index >= 0) {
             this.notifications.splice(index, 1);
         }
+
         this._setActiveNotification(this._selectNextNotification());
         this._setHighestSeverity();
         notification.emit('destroy');
@@ -289,12 +320,12 @@ export default class NotificationAPI extends EventEmitter {
             this._dismiss(notification);
         };
 
-        if (notificationModel.hasOwnProperty('progressPerc')) {
+        if (Object.prototype.hasOwnProperty.call(notificationModel, 'progressPerc')) {
             notification.progress = (progressPerc, progressText) => {
                 notification.model.progressPerc = progressPerc;
                 notification.model.progressText = progressText;
                 notification.emit('progress', progressPerc, progressText);
-            }
+            };
         }
 
         return notification;
@@ -308,14 +339,18 @@ export default class NotificationAPI extends EventEmitter {
 
         if (!notification) {
             delete this.activeTimeout;
+
             return;
         }
+
         this.emit('notification', notification);
 
         if (notification.model.autoDismiss || this._selectNextNotification()) {
+            const autoDismissTimeout = notification.model.options.autoDismissTimeout
+                || DEFAULT_AUTO_DISMISS_TIMEOUT;
             this.activeTimeout = setTimeout(() => {
                 this._dismissOrMinimize(notification);
-            }, DEFAULT_AUTO_DISMISS_TIMEOUT);
+            }, autoDismissTimeout);
         } else {
             delete this.activeTimeout;
         }
@@ -337,8 +372,8 @@ export default class NotificationAPI extends EventEmitter {
         for (; i < this.notifications.length; i++) {
             notification = this.notifications[i];
 
-            if (!notification.model.minimized &&
-                notification !== this.activeNotification) {
+            if (!notification.model.minimized
+                && notification !== this.activeNotification) {
                 return notification;
             }
         }

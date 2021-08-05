@@ -26,17 +26,17 @@
     </div>
 
     <div v-if="expanded">
-        <ul class="c-properties">
+        <ul class="c-inspect-properties">
             <div
                 v-if="!isEditing && persistedFilters.useGlobal"
-                class="c-properties__label span-all"
+                class="c-inspect-properties__label span-all"
             >
                 Uses global filter
             </div>
 
             <div
                 v-if="isEditing"
-                class="c-properties__label span-all"
+                class="c-inspect-properties__label span-all"
             >
                 <toggle-switch
                     :id="keyString"
@@ -62,13 +62,14 @@
 <script>
 import FilterField from './FilterField.vue';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
+import isEmpty from 'lodash/isEmpty';
 
 export default {
-    inject: ['openmct'],
     components: {
         FilterField,
         ToggleSwitch
     },
+    inject: ['openmct'],
     props: {
         filterObject: {
             type: Object,
@@ -87,22 +88,22 @@ export default {
             objectCssClass: undefined,
             updatedFilters: JSON.parse(JSON.stringify(this.persistedFilters)),
             isEditing: this.openmct.editor.isEditing()
-        }
+        };
     },
     computed: {
         // do not show filter fields if using global filter
         // if editing however, show all filter fields
         activeFilters() {
             if (!this.isEditing && this.persistedFilters.useGlobal) {
-                return []
+                return [];
             }
 
-            return this.filterObject.metadataWithFilters
+            return this.filterObject.metadataWithFilters;
         },
         hasActiveFilters() {
             // Should be true when the user has entered any filter values.
             return Object.values(this.persistedFilters).some(comparator => {
-                return (typeof(comparator) === 'object' && !_.isEmpty(comparator));
+                return (typeof (comparator) === 'object' && !isEmpty(comparator));
             });
         }
     },
@@ -163,5 +164,5 @@ export default {
             this.isEditing = isEditing;
         }
     }
-}
+};
 </script>

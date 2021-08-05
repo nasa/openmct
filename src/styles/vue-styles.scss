@@ -1,6 +1,9 @@
 @import "../api/overlays/components/dialog-component.scss";
 @import "../api/overlays/components/overlay-component.scss";
-@import "../plugins/displayLayout/components/box-view.scss";
+@import "../plugins/condition/components/conditionals.scss";
+@import "../plugins/conditionWidget/components/condition-widget.scss";
+@import "../plugins/condition/components/inspector/conditional-styles.scss";
+@import "../plugins/displayLayout/components/box-and-line-views";
 @import "../plugins/displayLayout/components/display-layout.scss";
 @import "../plugins/displayLayout/components/edit-marquee.scss";
 @import "../plugins/displayLayout/components/image-view.scss";
@@ -10,13 +13,13 @@
 @import "../plugins/filters/components/filters-view.scss";
 @import "../plugins/filters/components/global-filters.scss";
 @import "../plugins/flexibleLayout/components/flexible-layout.scss";
-@import "../plugins/folderView/components/grid-item.scss";
 @import "../plugins/folderView/components/grid-view.scss";
 @import "../plugins/folderView/components/list-item.scss";
 @import "../plugins/folderView/components/list-view.scss";
 @import "../plugins/imagery/components/imagery-view-layout.scss";
+@import "../plugins/imagery/components/Compass/compass.scss";
 @import "../plugins/telemetryTable/components/table-row.scss";
-@import "../plugins/telemetryTable/components/telemetry-filter-indicator.scss";
+@import "../plugins/telemetryTable/components/table-footer-indicator.scss";
 @import "../plugins/tabs/components/tabs.scss";
 @import "../plugins/telemetryTable/components/table.scss";
 @import "../plugins/timeConductor/conductor.scss";
@@ -24,11 +27,16 @@
 @import "../plugins/timeConductor/conductor-mode.scss";
 @import "../plugins/timeConductor/conductor-mode-icon.scss";
 @import "../plugins/timeConductor/date-picker.scss";
+@import "../plugins/timeline/timeline.scss";
+@import "../plugins/plan/plan";
+@import "../plugins/viewDatumAction/components/metadata-list.scss";
 @import "../ui/components/object-frame.scss";
 @import "../ui/components/object-label.scss";
 @import "../ui/components/progress-bar.scss";
 @import "../ui/components/search.scss";
+@import "../ui/components/swim-lane/swimlane.scss";
 @import "../ui/components/toggle-switch.scss";
+@import "../ui/components/timesystem-axis.scss";
 @import "../ui/inspector/elements.scss";
 @import "../ui/inspector/inspector.scss";
 @import "../ui/inspector/location.scss";
@@ -43,3 +51,8 @@
 @import "../ui/preview/preview.scss";
 @import "../ui/toolbar/components/toolbar-checkbox.scss";
 @import "./notebook.scss";
+@import "../plugins/notebook/components/sidebar.scss";
+
+#splash-screen {
+     display: none;
+}

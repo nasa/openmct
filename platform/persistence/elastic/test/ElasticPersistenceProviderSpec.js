@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 
 define(
     ["../src/ElasticPersistenceProvider"],
@@ -85,7 +84,11 @@ define(
             it("allows object creation", function () {
                 var model = { someKey: "some value" };
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "_id": "abc", "_version": 1 }
+                    data: {
+                        "_id": "abc",
+                        "_seq_no": 1,
+                        "_primary_term": 1
+                    }
                 }));
                 provider.createObject("testSpace", "abc", model).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -100,7 +103,12 @@ define(
             it("allows object models to be read back", function () {
                 var model = { someKey: "some value" };
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "_id": "abc", "_version": 1, "_source": model }
+                    data: {
+                        "_id": "abc",
+                        "_seq_no": 1,
+                        "_primary_term": 1,
+                        "_source": model
+                    }
                 }));
                 provider.readObject("testSpace", "abc").then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -117,19 +125,26 @@ define(
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "_id": "abc", "_version": 42, "_source": {} }
+                    data: {
+                        "_id": "abc",
+                        "_source": {}
+                    }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "_id": "abc", "_version": 43, "_source": {} }
+                    data: {
+                        "_id": "abc",
+                        "_seq_no": 1,
+                        "_source": {}
+                    }
                 }));
                 provider.updateObject("testSpace", "abc", model).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
                     url: "/test/db/abc",
                     method: "PUT",
-                    params: { version: 42 },
+                    params: undefined,
                     data: model
                 });
                 expect(capture.calls.mostRecent().args[0]).toBeTruthy();
@@ -138,13 +153,19 @@ define(
             it("allows object deletion", function () {
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "_id": "abc", "_version": 42, "_source": {} }
+                    data: {
+                        "_id": "abc",
+                        "_source": {}
+                    }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "_id": "abc", "_version": 42, "_source": {} }
+                    data: {
+                        "_id": "abc",
+                        "_source": {}
+                    }
                 }));
                 provider.deleteObject("testSpace", "abc", {}).then(capture);
                 expect(mockHttp).toHaveBeenCalledWith({
@@ -167,19 +188,26 @@ define(
                 expect(capture).toHaveBeenCalledWith(undefined);
             });
 
-            it("handles rejection due to version", function () {
+            it("handles rejection due to _seq_no", function () {
                 var model = { someKey: "some value" },
                     mockErrorCallback = jasmine.createSpy('error');
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "_id": "abc", "_version": 42, "_source": {} }
+                    data: {
+                        "_id": "abc",
+                        "_seq_no": 1,
+                        "_source": {}
+                    }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "status": 409, "error": "Revision error..." }
+                    data: {
+                        "status": 409,
+                        "error": "Revision error..."
+                    }
                 }));
                 provider.updateObject("testSpace", "abc", model).then(
                     capture,
@@ -196,13 +224,20 @@ define(
 
                 // First do a read to populate rev tags...
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "_id": "abc", "_version": 42, "_source": {} }
+                    data: {
+                        "_id": "abc",
+                        "_seq_no": 1,
+                        "_source": {}
+                    }
                 }));
                 provider.readObject("testSpace", "abc");
 
                 // Now perform an update
                 mockHttp.and.returnValue(mockPromise({
-                    data: { "status": 410, "error": "Revision error..." }
+                    data: {
+                        "status": 410,
+                        "error": "Revision error..."
+                    }
                 }));
                 provider.updateObject("testSpace", "abc", model).then(
                     capture,
@@ -212,7 +247,6 @@ define(
                 expect(capture).not.toHaveBeenCalled();
                 expect(mockErrorCallback).toHaveBeenCalled();
             });
-
 
         });
     }

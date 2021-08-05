@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
-/*global self*/
 
 /**
  * Module defining GenericSearchWorker. Created by shale on 07/21/2015.
@@ -43,7 +41,8 @@
         indexedItems.push({
             id: id,
             vector: vector,
-            model: model
+            model: model,
+            type: model.type
         });
     }
 
@@ -56,6 +55,7 @@
         query.inputLowerCase = query.inputClean.toLocaleLowerCase();
         query.terms = query.inputLowerCase.split(TERM_SPLITTER);
         query.exactTerms = query.inputClean.split(TERM_SPLITTER);
+
         return query;
     }
 
@@ -103,6 +103,7 @@
                             item: matchedItem
                         };
                     }
+
                     matches[matchedItem.id].matchCount += 1;
                 });
         });
@@ -116,10 +117,11 @@
             .map(function prioritizeExactMatches(match) {
                 if (match.item.vector.name === query.exactInput) {
                     match.matchCount += 100;
-                } else if (match.item.vector.lowerCaseName ===
-                           query.inputLowerCase) {
+                } else if (match.item.vector.lowerCaseName
+                           === query.inputLowerCase) {
                     match.matchCount += 50;
                 }
+
                 return match;
             })
             .map(function prioritizeCompleteTermMatches(match) {
@@ -128,15 +130,18 @@
                         match.matchCount += 0.5;
                     }
                 });
+
                 return match;
             })
             .sort(function compare(a, b) {
                 if (a.matchCount > b.matchCount) {
                     return -1;
                 }
+
                 if (a.matchCount < b.matchCount) {
                     return 1;
                 }
+
                 return 0;
             });
 

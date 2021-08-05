@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,35 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="l-preview-window">
-    <div class="l-browse-bar">
-        <div class="l-browse-bar__start">
-            <div
-                class="l-browse-bar__object-name--w"
-                :class="type.cssClass"
-            >
-                <span class="l-browse-bar__object-name">
-                    {{ domainObject.name }}
-                </span>
-                <context-menu-drop-down :object-path="objectPath" />
-            </div>
-        </div>
-        <div class="l-browse-bar__end">
-            <div class="l-browse-bar__actions">
-                <view-switcher
-                    :views="views"
-                    :current-view="currentView"
-                    @setView="setView"
-                />
-                <button
-                    v-if="notebookEnabled"
-                    class="l-browse-bar__actions__edit c-button icon-notebook"
-                    title="New Notebook entry"
-                    @click="snapshot"
-                ></button>
-            </div>
-        </div>
-    </div>
+<div class="l-preview-window js-preview-window">
+    <PreviewHeader
+        :current-view="currentView"
+        :action-collection="actionCollection"
+        :domain-object="domainObject"
+        :views="views"
+    />
     <div class="l-preview-window__object-view">
         <div ref="objectView"></div>
     </div>
@@ -56,14 +34,13 @@
 </template>
 
 <script>
-import ContextMenuDropDown from '../../ui/components/contextMenuDropDown.vue';
-import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
-import NotebookSnapshot from '../utils/notebook-snapshot';
+import PreviewHeader from './preview-header.vue';
+import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
+import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 
 export default {
     components: {
-        ContextMenuDropDown,
-        ViewSwitcher
+        PreviewHeader
     },
     inject: [
         'openmct',
@@ -71,62 +48,118 @@ export default {
     ],
     data() {
         let domainObject = this.objectPath[0];
-        let type = this.openmct.types.get(domainObject.type);
 
         return {
             domainObject: domainObject,
-            type: type,
-            notebookEnabled: false,
-            viewKey: undefined
+            viewKey: undefined,
+            views: [],
+            currentView: {},
+            actionCollection: undefined
         };
     },
-    computed: {
-        views() {
-            return this
-                .openmct
-                .objectViews
-                .get(this.domainObject);
-        },
-        currentView() {
-            return this.views.filter(v => v.key === this.viewKey)[0] || {};
-        }
-    },
     mounted() {
-        let view = this.openmct.objectViews.get(this.domainObject)[0];
-        this.setView(view);
+        this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view) => {
+            view.callBack = () => {
+                return this.setView(view);
+            };
 
-        if (this.openmct.types.get('notebook')) {
-            this.notebookSnapshot = new NotebookSnapshot(this.openmct);
-            this.notebookEnabled = true;
+            return view;
+        });
+        this.setView(this.views[0]);
+    },
+    beforeDestroy() {
+        if (this.stopListeningStyles) {
+            this.stopListeningStyles();
+        }
+
+        if (this.styleRuleManager) {
+            this.styleRuleManager.destroy();
+            delete this.styleRuleManager;
+        }
+
+        if (this.actionCollection) {
+            this.actionCollection.destroy();
         }
     },
     destroyed() {
         this.view.destroy();
     },
     methods: {
-        snapshot() {
-            let element = document.getElementsByClassName("l-preview-window__object-view")[0];
-            this.notebookSnapshot.capture(this.domainObject, element);
-        },
         clear() {
             if (this.view) {
                 this.view.destroy();
                 this.$refs.objectView.innerHTML = '';
             }
+
             delete this.view;
             delete this.viewContainer;
         },
         setView(view) {
+            if (this.viewKey === view.key) {
+                return;
+            }
+
             this.clear();
-
             this.viewKey = view.key;
+            this.currentView = view;
             this.viewContainer = document.createElement('div');
-            this.viewContainer.classList.add('c-object-view','u-contents');
+            this.viewContainer.classList.add('l-angular-ov-wrapper');
             this.$refs.objectView.append(this.viewContainer);
-
             this.view = this.currentView.view(this.domainObject, this.objectPath);
+
+            this.getActionsCollection();
             this.view.show(this.viewContainer, false);
+            this.initObjectStyles();
+        },
+        getActionsCollection() {
+            if (this.actionCollection) {
+                this.actionCollection.destroy();
+            }
+
+            this.actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.view);
+        },
+        initObjectStyles() {
+            if (!this.styleRuleManager) {
+                this.styleRuleManager = new StyleRuleManager((this.domainObject.configuration && this.domainObject.configuration.objectStyles), this.openmct, this.updateStyle.bind(this));
+            } else {
+                this.styleRuleManager.updateObjectStyleConfig(this.domainObject.configuration && this.domainObject.configuration.objectStyles);
+            }
+
+            if (this.stopListeningStyles) {
+                this.stopListeningStyles();
+            }
+
+            this.stopListeningStyles = this.openmct.objects.observe(this.domainObject, 'configuration.objectStyles', (newObjectStyle) => {
+                //Updating styles in the inspector view will trigger this so that the changes are reflected immediately
+                this.styleRuleManager.updateObjectStyleConfig(newObjectStyle);
+            });
+        },
+        updateStyle(styleObj) {
+            if (!styleObj) {
+                return;
+            }
+
+            let keys = Object.keys(styleObj);
+            let firstChild = this.$refs.objectView.querySelector(':first-child');
+
+            keys.forEach(key => {
+                if (firstChild) {
+                    if ((typeof styleObj[key] === 'string') && (styleObj[key].indexOf('__no_value') > -1)) {
+                        if (firstChild.style[key]) {
+                            firstChild.style[key] = '';
+                        }
+                    } else {
+                        if (!styleObj.isStyleInvisible && firstChild.classList.contains(STYLE_CONSTANTS.isStyleInvisible)) {
+                            firstChild.classList.remove(STYLE_CONSTANTS.isStyleInvisible);
+                        } else if (styleObj.isStyleInvisible && !firstChild.classList.contains(styleObj.isStyleInvisible)) {
+                            firstChild.classList.add(styleObj.isStyleInvisible);
+                        }
+
+                        firstChild.style[key] = styleObj[key];
+                    }
+                }
+            });
         }
     }
-}
+};
 </script>

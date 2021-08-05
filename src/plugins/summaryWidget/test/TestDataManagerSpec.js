@@ -1,15 +1,14 @@
 define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
     describe('A Summary Widget Rule', function () {
-        var mockDomainObject,
-            mockOpenMCT,
-            mockConditionManager,
-            mockEvaluator,
-            mockContainer,
-            mockTelemetryMetadata,
-            testDataManager,
-            mockCompObject1,
-            mockCompObject2;
-
+        let mockDomainObject;
+        let mockOpenMCT;
+        let mockConditionManager;
+        let mockEvaluator;
+        let mockContainer;
+        let mockTelemetryMetadata;
+        let testDataManager;
+        let mockCompObject1;
+        let mockCompObject2;
 
         beforeEach(function () {
             mockDomainObject = {
@@ -18,11 +17,11 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
                         object: '',
                         key: '',
                         value: ''
-                    },{
+                    }, {
                         object: 'object1',
                         key: 'property1',
                         value: 66
-                    },{
+                    }, {
                         object: 'object2',
                         key: 'property4',
                         value: 'Text It Is'
@@ -49,7 +48,7 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
                         key: 'property2'
                     }
                 },
-                object2 : {
+                object2: {
                     property3: {
                         key: 'property3'
                     },
@@ -132,8 +131,8 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
             });
         });
 
-        it('updates its configuration on a item change and provides an updated' +
-           'cache to the evaluator', function () {
+        it('updates its configuration on a item change and provides an updated'
+           + 'cache to the evaluator', function () {
             testDataManager.onItemChange({
                 value: 26,
                 property: 'value',
@@ -158,15 +157,15 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
                 object: '',
                 key: '',
                 value: ''
-            },{
+            }, {
                 object: 'object1',
                 key: 'property1',
                 value: 66
-            },{
+            }, {
                 object: 'object2',
                 key: 'property4',
                 value: 'Text It Is'
-            },{
+            }, {
                 object: '',
                 key: '',
                 value: ''
@@ -186,15 +185,15 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
                 object: '',
                 key: '',
                 value: ''
-            },{
+            }, {
                 object: 'object2',
                 key: 'property3',
                 value: 1
-            },{
+            }, {
                 object: 'object1',
                 key: 'property1',
                 value: 66
-            },{
+            }, {
                 object: 'object2',
                 key: 'property4',
                 value: 'Text It Is'
@@ -217,7 +216,7 @@ define(['../src/TestDataManager', 'zepto'], function (TestDataManager, $) {
                 object: 'object1',
                 key: 'property1',
                 value: 66
-            },{
+            }, {
                 object: 'object2',
                 key: 'property4',
                 value: 'Text It Is'

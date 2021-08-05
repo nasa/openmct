@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,52 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/LadTableSet.vue',
-    'vue'
-], function (
-    LadTableSet,
-    Vue
-) {
-    function LADTableSetViewProvider(openmct) {
-        return {
-            key: 'LadTableSet',
-            name: 'LAD Table Set',
-            cssClass: 'icon-tabular-lad-set',
-            canView: function (domainObject) {
-                return domainObject.type === 'LadTableSet';
-            },
-            canEdit: function (domainObject) {
-                return domainObject.type === 'LadTableSet';
-            },
-            view: function (domainObject, objectPath) {
-                let component;
+import LadTableSetView from './LadTableSetView';
 
-                return {
-                    show: function (element) {
-                        component =  new Vue({
-                            el: element,
-                            components: {
-                                LadTableSet: LadTableSet.default
-                            },
-                            provide: {
-                                openmct,
-                                domainObject,
-                                objectPath
-                            },
-                            template: '<lad-table-set></lad-table-set>'
-                        });
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
-            },
-            priority: function () {
-                return 1;
-            }
-        };
-    }
-    return LADTableSetViewProvider;
-});
+export default function LADTableSetViewProvider(openmct) {
+    return {
+        key: 'LadTableSet',
+        name: 'LAD Table Set',
+        cssClass: 'icon-tabular-lad-set',
+        canView: function (domainObject) {
+            return domainObject.type === 'LadTableSet';
+        },
+        canEdit: function (domainObject) {
+            return domainObject.type === 'LadTableSet';
+        },
+        view: function (domainObject, objectPath) {
+            return new LadTableSetView(openmct, domainObject, objectPath);
+        },
+        priority: function () {
+            return 1;
+        }
+    };
+}

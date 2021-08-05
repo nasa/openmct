@@ -1,7 +1,7 @@
 define([
     '../SummaryWidget',
     './SummaryWidgetView',
-    '../../../../api/objects/object-utils'
+    'objectUtils'
 ], function (
     SummaryWidgetEditView,
     SummaryWidgetView,

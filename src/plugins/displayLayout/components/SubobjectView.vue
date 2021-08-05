@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,6 +24,7 @@
     :item="item"
     :grid-size="gridSize"
     :title="domainObject && domainObject.name"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
@@ -34,18 +35,20 @@
         :object-path="currentObjectPath"
         :has-frame="item.hasFrame"
         :show-edit-view="false"
+        :layout-font-size="item.fontSize"
+        :layout-font="item.font"
     />
 </layout-frame>
 </template>
 
 <script>
-import ObjectFrame from '../../../ui/components/ObjectFrame.vue'
-import LayoutFrame from './LayoutFrame.vue'
+import ObjectFrame from '../../../ui/components/ObjectFrame.vue';
+import LayoutFrame from './LayoutFrame.vue';
 
-const MINIMUM_FRAME_SIZE = [320, 180],
-    DEFAULT_DIMENSIONS = [10, 10],
-    DEFAULT_POSITION = [1, 1],
-    DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget'];
+const MINIMUM_FRAME_SIZE = [320, 180];
+const DEFAULT_DIMENSIONS = [10, 10];
+const DEFAULT_POSITION = [1, 1];
+const DEFAULT_HIDDEN_FRAME_TYPES = ['hyperlink', 'summary-widget', 'conditionWidget'];
 
 function getDefaultDimensions(gridSize) {
     return MINIMUM_FRAME_SIZE.map((min, index) => {
@@ -61,7 +64,7 @@ function hasFrameByDefault(type) {
 }
 
 export default {
-    makeDefinition(openmct, gridSize, domainObject, position) {
+    makeDefinition(openmct, gridSize, domainObject, position, viewKey) {
         let defaultDimensions = getDefaultDimensions(gridSize);
         position = position || DEFAULT_POSITION;
 
@@ -71,14 +74,17 @@ export default {
             x: position[0],
             y: position[1],
             identifier: domainObject.identifier,
-            hasFrame: hasFrameByDefault(domainObject.type)
+            hasFrame: hasFrameByDefault(domainObject.type),
+            fontSize: 'default',
+            font: 'default',
+            viewKey
         };
     },
-    inject: ['openmct', 'objectPath'],
     components: {
         ObjectFrame,
         LayoutFrame
     },
+    inject: ['openmct', 'objectPath'],
     props: {
         item: {
             type: Object,
@@ -94,13 +100,18 @@ export default {
         index: {
             type: Number,
             required: true
+        },
+        isEditing: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
         return {
             domainObject: undefined,
-            currentObjectPath: []
-        }
+            currentObjectPath: [],
+            mutablePromise: undefined
+        };
     },
     watch: {
         index(newIndex) {
@@ -109,31 +120,57 @@ export default {
             }
 
             this.context.index = newIndex;
+        },
+        item(newItem) {
+            if (!this.context) {
+                return;
+            }
+
+            this.context.layoutItem = newItem;
         }
     },
     mounted() {
-        this.openmct.objects.get(this.item.identifier)
-            .then(this.setObject);
+        if (this.openmct.objects.supportsMutation(this.item.identifier)) {
+            this.mutablePromise = this.openmct.objects.getMutable(this.item.identifier)
+                .then(this.setObject);
+        } else {
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
+        }
     },
-    destroyed() {
+    beforeDestroy() {
         if (this.removeSelectable) {
             this.removeSelectable();
+        }
+
+        if (this.mutablePromise) {
+            this.mutablePromise.then(() => {
+                this.openmct.objects.destroyMutable(this.domainObject);
+            });
+        } else if (this.domainObject.isMutable) {
+            this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
     methods: {
         setObject(domainObject) {
             this.domainObject = domainObject;
+            this.mutablePromise = undefined;
             this.currentObjectPath = [this.domainObject].concat(this.objectPath.slice());
-            this.$nextTick(function () {
-                let childContext = this.$refs.objectFrame.getSelectionContext();
-                childContext.item = domainObject;
-                childContext.layoutItem = this.item;
-                childContext.index = this.index;
-                this.context = childContext;
-                this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, this.context, this.initSelect);
+            this.$nextTick(() => {
+                let reference = this.$refs.objectFrame;
+
+                if (reference) {
+                    let childContext = this.$refs.objectFrame.getSelectionContext();
+                    childContext.item = domainObject;
+                    childContext.layoutItem = this.item;
+                    childContext.index = this.index;
+                    this.context = childContext;
+                    this.removeSelectable = this.openmct.selection.selectable(
+                        this.$el, this.context, this.immediatelySelect || this.initSelect);
+                    delete this.immediatelySelect;
+                }
             });
         }
     }
-}
+};
 </script>

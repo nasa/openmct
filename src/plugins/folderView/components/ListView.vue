@@ -64,15 +64,16 @@
 <script>
 import compositionLoader from './composition-loader';
 import ListItem from './ListItem.vue';
+import _ from 'lodash';
 
 export default {
     components: {ListItem},
     mixins: [compositionLoader],
     inject: ['domainObject', 'openmct'],
     data() {
-        let sortBy = 'model.name',
-            ascending = true,
-            persistedSortOrder = window.localStorage.getItem('openmct-listview-sort-order');
+        let sortBy = 'model.name';
+        let ascending = true;
+        let persistedSortOrder = window.localStorage.getItem('openmct-listview-sort-order');
 
         if (persistedSortOrder) {
             let parsed = JSON.parse(persistedSortOrder);
@@ -92,6 +93,7 @@ export default {
             if (!this.ascending) {
                 sortedItems = sortedItems.reverse();
             }
+
             return sortedItems;
         }
     },
@@ -116,5 +118,5 @@ export default {
                 );
         }
     }
-}
+};
 </script>

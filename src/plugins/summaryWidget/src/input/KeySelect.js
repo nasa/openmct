@@ -18,10 +18,10 @@ define([
      * @param {function} changeCallback A change event callback to register with this
      *                                  select on initialization
      */
-    var NULLVALUE = '- Select Field -';
+    const NULLVALUE = '- Select Field -';
 
     function KeySelect(config, objectSelect, manager, changeCallback) {
-        var self = this;
+        const self = this;
 
         this.config = config;
         this.objectSelect = objectSelect;
@@ -42,7 +42,7 @@ define([
          * @private
          */
         function onObjectChange(key) {
-            var selected = self.manager.metadataLoadCompleted() ? self.select.getSelected() : self.config.key;
+            const selected = self.manager.metadataLoadCompleted() ? self.select.getSelected() : self.config.key;
             self.telemetryMetadata = self.manager.getTelemetryMetadata(key) || {};
             self.generateOptions();
             self.select.setSelected(selected);
@@ -59,6 +59,7 @@ define([
                 self.telemetryMetadata = self.manager.getTelemetryMetadata(self.config.object);
                 self.generateOptions();
             }
+
             self.select.setSelected(self.config.key);
         }
 
@@ -76,10 +77,10 @@ define([
      * Populate this select with options based on its current composition
      */
     KeySelect.prototype.generateOptions = function () {
-        var items = Object.entries(this.telemetryMetadata).map(function (metaDatum) {
+        const items = Object.entries(this.telemetryMetadata).map(function (metaDatum) {
             return [metaDatum[0], metaDatum[1].name];
         });
-        items.splice(0, 0, ['',NULLVALUE]);
+        items.splice(0, 0, ['', NULLVALUE]);
         this.select.setOptions(items);
 
         if (this.select.options.length < 2) {

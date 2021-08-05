@@ -1,0 +1,119 @@
+.c-sidebar {
+    @include userSelectNone();
+    background: $sideBarBg;
+    display: flex;
+    justify-content: stretch;
+    max-width: 300px;
+
+    &.c-drawer--push.is-expanded {
+        margin-right: $interiorMargin;
+        width: 50%;
+    }
+
+    &.c-drawer--overlays.is-expanded {
+        width: 95%;
+    }
+
+    > * {
+        // Hardcoded for two columns
+        background: $sideBarBg;
+        display: flex;
+        flex: 1 1 50%;
+        flex-direction: column;
+
+        + * {
+            margin-left: $interiorMarginSm;
+        }
+
+        > * + * {
+            // Add margin-top to first and second level children
+            margin-top: $interiorMargin;
+        }
+    }
+
+    &__pane {
+        > * + * { margin-top: $interiorMargin; }
+    }
+
+    &__header-w {
+        // Wraps header, used for page pane with collapse button
+        display: flex;
+        flex: 0 0 auto;
+        background: $sideBarHeaderBg;
+        align-items: center;
+
+        .c-icon-button {
+            font-size: 0.8em;
+            color: $colorBodyFg;
+        }
+    }
+
+    &__header {
+        color: $sideBarHeaderFg;
+        display: flex;
+        flex: 1 1 auto;
+        padding: $interiorMargin;
+        text-transform: uppercase;
+
+        > * {
+            @include ellipsize();
+        }
+    }
+
+    &__contents-and-controls {
+        // Encloses pane buttons and contents elements
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+
+        > * {
+            margin: auto $interiorMargin $interiorMargin $interiorMargin;
+
+            &:first-child {
+                border-bottom: 1px solid $colorInteriorBorder;
+                flex: 0 0 auto;
+            }
+
+            + * {
+                margin-top: $interiorMargin;
+            }
+        }
+    }
+
+    &__contents {
+        flex: 1 1 auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: auto $interiorMargin;
+    }
+
+    .c-list-button {
+        .c-button {
+            font-size: 0.8em;
+        }
+    }
+
+    .c-list__item {
+        @include hover() {
+            [class*="__menu-indicator"] {
+                opacity: 0.7;
+                transition: $transIn;
+            }
+        }
+
+        > * + * {
+            margin-left: $interiorMargin;
+        }
+
+        &__name {
+            flex: 0 1 auto;
+        }
+
+        &__menu-indicator {
+            flex: 0 0 auto;
+            font-size: 0.8em;
+            opacity: 0;
+            transition: $transOut;
+        }
+    }
+}

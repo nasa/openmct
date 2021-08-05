@@ -1,20 +1,20 @@
 <template>
-<div class="c-properties c-properties--location">
+<div class="c-inspect-properties c-inspect-properties--location">
     <div
-        class="c-properties__header"
+        class="c-inspect-properties__header"
         title="The location of this linked object."
     >
         Original Location
     </div>
     <ul
         v-if="!multiSelect"
-        class="c-properties__section"
+        class="c-inspect-properties__section"
     >
         <li
             v-if="originalPath.length"
-            class="c-properties__row"
+            class="c-inspect-properties__row"
         >
-            <ul class="c-properties__value c-location">
+            <ul class="c-inspect-properties__value c-location">
                 <li
                     v-for="pathObject in orderedOriginalPath"
                     :key="pathObject.key"
@@ -30,7 +30,7 @@
     </ul>
     <div
         v-if="multiSelect"
-        class="c-properties__row--span-all"
+        class="c-inspect-properties__row--span-all"
     >
         No location to display for multiple items
     </div>
@@ -41,17 +41,17 @@
 import ObjectLabel from '../components/ObjectLabel.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         ObjectLabel
     },
+    inject: ['openmct'],
     data() {
         return {
             domainObject: {},
             multiSelect: false,
             originalPath: [],
             keyString: ''
-        }
+        };
     },
     computed: {
         orderedOriginalPath() {
@@ -70,16 +70,17 @@ export default {
             let originalPath = path;
 
             if (!skipSlice) {
-                originalPath = path.slice(1,-1);
+                originalPath = path.slice(1, -1);
             }
 
             this.originalPath = originalPath.map((domainObject, index, pathArray) => {
                 let key = this.openmct.objects.makeKeyString(domainObject.identifier);
+
                 return {
                     domainObject,
                     key,
                     objectPath: pathArray.slice(index)
-                }
+                };
             });
         },
         clearData() {
@@ -90,11 +91,13 @@ export default {
         updateSelection(selection) {
             if (!selection.length || !selection[0].length) {
                 this.clearData();
+
                 return;
             }
 
             if (selection.length > 1) {
                 this.multiSelect = true;
+
                 return;
             } else {
                 this.multiSelect = false;
@@ -106,6 +109,7 @@ export default {
             if (!this.domainObject && parentObject && parentObject.context.item) {
                 this.setOriginalPath([parentObject.context.item], true);
                 this.keyString = '';
+
                 return;
             }
 
@@ -120,5 +124,5 @@ export default {
             }
         }
     }
-}
+};
 </script>

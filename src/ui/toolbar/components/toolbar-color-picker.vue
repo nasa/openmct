@@ -4,7 +4,7 @@
         class="c-icon-button c-icon-button--swatched"
         :class="[options.icon, {'c-icon-button--mixed': nonSpecific}]"
         :title="options.title"
-        @click="toggle"
+        @click="handleClick"
     >
         <div
             class="c-swatch"
@@ -146,7 +146,12 @@ export default {
             if (color.value !== this.options.value) {
                 this.$emit('change', color.value, this.options);
             }
+        },
+        handleClick(event) {
+            if ((this.options.isEditing === undefined) || this.options.isEditing) {
+                this.toggle(event);
+            }
         }
     }
-}
+};
 </script>

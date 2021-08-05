@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2019, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,29 +22,31 @@
 
 define(
     [
+        "utils/testing",
         "./URLIndicator",
         "./URLIndicatorPlugin",
         "../../MCT",
         "zepto"
     ],
     function (
+        testingUtils,
         URLIndicator,
         URLIndicatorPlugin,
         MCT,
         $
     ) {
-        var defaultAjaxFunction = $.ajax;
+        const defaultAjaxFunction = $.ajax;
 
-        xdescribe("The URLIndicator", function () {
-            var openmct;
-            var indicatorElement;
-            var pluginOptions;
-            var ajaxOptions;
-            var urlIndicator; // eslint-disable-line
+        describe("The URLIndicator", function () {
+            let openmct;
+            let indicatorElement;
+            let pluginOptions;
+            let ajaxOptions;
+            let urlIndicator; // eslint-disable-line
 
             beforeEach(function () {
                 jasmine.clock().install();
-                openmct = new MCT();
+                openmct = new testingUtils.createOpenMct();
                 spyOn(openmct.indicators, 'add');
                 spyOn($, 'ajax');
                 $.ajax.and.callFake(function (options) {
@@ -55,6 +57,8 @@ define(
             afterEach(function () {
                 $.ajax = defaultAjaxFunction;
                 jasmine.clock().uninstall();
+
+                return testingUtils.resetApplicationState(openmct);
             });
 
             describe("on initialization", function () {
@@ -122,7 +126,7 @@ define(
                 it("indicates success if connection is nominal", function () {
                     jasmine.clock().tick(pluginOptions.interval + 1);
                     ajaxOptions.success();
-                    expect(indicatorElement.classList.contains('s-status-ok')).toBe(true);
+                    expect(indicatorElement.classList.contains('s-status-on')).toBe(true);
                 });
 
                 it("indicates an error when the server cannot be reached", function () {

@@ -2,6 +2,7 @@
 .l-multipane {
     display: flex;
     flex: 1 1 auto;
+    overflow: hidden;
 
     &--horizontal,
     > .l-pane {
@@ -15,6 +16,9 @@
 
     &--vertical {
         height: 100%;
+        > .l-pane .l-pane__contents {
+            padding-right: $interiorMarginSm; // Fend off scrollbar
+        }
     }
 }
 
@@ -35,7 +39,11 @@
     &__header {
         display: flex;
         align-items: center;
-        margin-bottom: $interiorMargin;
+        @include desktop() { margin-bottom: $interiorMargin; }
+
+        [class*="button"] {
+            color: $colorBtnMajorBg;
+        }
     }
 
     &--reacts {
@@ -90,9 +98,6 @@
             // Don't pad all nested __contents
             padding: 0;
         }
-
-        > [class*="__"] + [class*="__"] {
-        }
     }
 
     /************************************************ DESKTOP STYLES */
@@ -127,10 +132,21 @@
             @include userSelectNone();
             color: $splitterBtnLabelColorFg;
             display: block;
-            pointer-events: none;
             text-transform: uppercase;
-            transform-origin: top left;
             flex: 1 1 auto;
+        }
+
+        [class*="expand-button"] {
+            display: none; // Hidden by default
+            background: $splitterCollapsedBtnColorBg;
+            color: $splitterCollapsedBtnColorFg;
+            font-size: 0.9em;
+
+            &:hover {
+                background: $splitterCollapsedBtnColorBgHov;
+                color: inherit;
+                transition: $transIn;
+            }
         }
 
         &--resizing {
@@ -159,23 +175,12 @@
                 display: none;
             }
 
-            .l-pane__header {
-                &:hover {
-                    color: $splitterCollapsedBtnColorFgHov;
-                    .l-pane__label {
-                        color: inherit;
-                    }
-                    .l-pane__collapse-button {
-                        background: $splitterCollapsedBtnColorBgHov;
-                        color: inherit;
-                        transition: $transIn;
-                    }
-                }
+            [class*="collapse-button"] {
+                display: none;
             }
 
-            .l-pane__collapse-button {
-                background: $splitterCollapsedBtnColorBg;
-                color: $splitterCollapsedBtnColorFg;
+            [class*="expand-button"] {
+                display: block;
             }
         }
 
@@ -197,72 +202,68 @@
 
             .l-pane__collapse-button {
                 &:before {
-                    content: $glyph-icon-arrow-right-equilateral;
+                    content: $glyph-icon-line-horz;
                 }
             }
 
             &[class*="--collapsed"] {
                 /************************ COLLAPSED HORIZONTAL SPLITTER, EITHER DIRECTION */
                 [class*="__header"] {
-                    @include abs();
-                    margin: 0;
+                    display: none;
                 }
 
-                [class*="label"] {
-                    position: absolute;
-                    transform: translate($interiorMarginLg + 1, 18px) rotate(90deg);
-                    left: 3px;
-                    top: 0;
-                    z-index: 1;
-                }
-
-                .l-pane__collapse-button {
-                    border-top-left-radius: 0;
-                    border-bottom-left-radius: 0; // Only have to do this once, because of scaleX(-1) below.
+                [class*="expand-button"] {
                     position: absolute;
                     top: 0; right: 0; bottom: 0; left: 0;
                     height: auto; width: 100%;
-                    padding: 0;
+                    padding: $interiorMargin 2px;
 
-                    &:before {
-                        position: absolute;
-                        top: 5px;
+                    [class*="label"] {
+                        text-orientation: mixed;
+                        text-transform: uppercase;
+                        writing-mode: vertical-lr;
                     }
                 }
             }
 
             /************************** Horizontal Splitter Before */
-            // Inspector pane
+            // Example: Inspector pane
             &[class*="-before"] {
+                margin-left: nth($shellPanePad, 2);
+                padding-left: nth($shellPanePad, 2);
+
                 > .l-pane__handle {
                     left: 0;
                     transform: translateX(floor($splitterHandleD / -2)); // Center over the pane edge
                 }
 
-                &[class*="--collapsed"] {
-                    .l-pane__collapse-button {
-                        transform: scaleX(-1);
-                    }
+                [class*="expand-button"] {
+                    border-top-left-radius: $controlCr;
+                    border-bottom-left-radius: $controlCr;
                 }
             }
 
             /************************** Horizontal Splitter After */
-            // Tree pane
+            // Example: Tree pane
             &[class*="-after"] {
+                margin-right: nth($shellPanePad, 2);
+                padding-right: nth($shellPanePad, 2);
+
                 > .l-pane__handle {
                     right: 0;
                     transform: translateX(floor($splitterHandleD / 2));
                 }
 
-                &:not([class*="--collapsed"]) {
-                    .l-pane__collapse-button {
-                        transform: scaleX(-1);
-                    }
+                [class*="expand-button"] {
+                    border-top-right-radius: $controlCr;
+                    border-bottom-right-radius: $controlCr;
                 }
             }
         }
 
         &[class*="--vertical"] {
+            // l-pane--vertical
+
             > .l-pane__handle {
                 cursor: row-resize;
                 left: 0;

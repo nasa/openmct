@@ -19,7 +19,7 @@ Testing for Open MCT includes:
 
 Manual, non-rigorous testing of the software and/or specific features
 of interest. Verifies that the software runs and that basic functionality
-is present.
+is present. The outcome of Smoke Testing should be a simplified list of Acceptance Tests which could be executed by another team member with sufficient context.
 
 ### Unit Testing
 
@@ -49,7 +49,7 @@ User testing will focus on the following activities:
 * General "trying to break things."
 
 During user testing, users will
-[report issues](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
+[report issues](https://github.com/nasa/openmct/issues/new/choose)
 as they are encountered.
 
 Desired outcomes of user testing are:
@@ -71,7 +71,7 @@ usage. After twenty-four hours, the software is evaluated for:
   at the start of the test? Is it as responsive?
 
 Any defects or unexpected behavior identified during testing should be
-[reported as issues](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
+[reported as issues](https://github.com/nasa/openmct/issues/new/choose)
 and reviewed for severity.
 
 ## Test Performance
@@ -125,3 +125,22 @@ A release is not closed until both categories have been performed on
 the latest snapshot of the software, _and_ no issues labelled as
 ["blocker" or "critical"](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#issue-reporting)
 remain open.
+
+### Testathons
+Testathons can be used as a means of performing per-sprint and per-release testing. 
+
+#### Timing
+For per-sprint testing, a testathon is typically performed at the beginning of the third week of a sprint, and again later that week to verify any fixes. For per-release testing, a testathon is typically performed prior to any formal testing processes that are applicable to that release.
+
+#### Process
+
+1. Prior to the scheduled testathon, a list will be compiled of all issues that are closed and unverified.
+2. For each issue, testers should review the associated PR for testing instructions. See the contributing guide for instructions on [pull requests](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md#merging).
+3. As each issue is verified via testing, any team members testing it should leave a comment on that issue indicating that it has been verified fixed.
+4. If a bug is found that relates to an issue being tested, notes should be included on the associated issue, and the issue should be reopened. Bug notes should include reproduction steps.
+5. For any bugs that are not obviously related to any of the issues under test, a new issue should be created with details about the bug, including reproduction steps. If unsure about whether a bug relates to an issue being tested, just create a new issue.
+6. At the end of the testathon, triage will take place, where all tested issues will be reviewed.
+7. If verified fixed, an issue will remain closed, and will have the “unverified” label removed.
+8. For any bugs found, a severity will be assigned.
+9. A second testathon will be scheduled for later in the week that will aim to address all issues identified as blockers, as well as any other issues scoped by the team during triage.
+10. Any issues that were not tested will remain "unverified" and will be picked up in the next testathon.

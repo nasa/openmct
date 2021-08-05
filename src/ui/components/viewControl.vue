@@ -1,18 +1,18 @@
 <template>
 <span
-    class="c-disclosure-triangle"
-    :class="{
-        'c-disclosure-triangle--expanded' : value,
-        'is-enabled' : enabled
-    }"
-    @click="$emit('input', !value)"
+    :class="[
+        controlClass,
+        { 'c-disclosure-triangle--expanded' : value },
+        {'is-enabled' : enabled }
+    ]"
+    @click="handleClick"
 ></span>
 </template>
 
 <script>
 export default {
     props: {
-        value:  {
+        value: {
             type: Boolean,
             default: false
         },
@@ -21,7 +21,17 @@ export default {
             // Used as such in the tree - when a node doesn't have children, set disabled to true.
             type: Boolean,
             default: false
+        },
+        controlClass: {
+            type: String,
+            default: 'c-disclosure-triangle'
+        }
+    },
+    methods: {
+        handleClick(event) {
+            event.stopPropagation();
+            this.$emit('input', !this.value);
         }
     }
-}
+};
 </script>

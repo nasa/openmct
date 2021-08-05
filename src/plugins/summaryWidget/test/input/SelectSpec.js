@@ -1,6 +1,9 @@
 define(['../../src/input/Select'], function (Select) {
     describe('A select wrapper', function () {
-        var select, testOptions, callbackSpy1, callbackSpy2;
+        let select;
+        let testOptions;
+        let callbackSpy1;
+        let callbackSpy2;
         beforeEach(function () {
             select = new Select();
             testOptions = [['item1', 'Item 1'], ['item2', 'Item 2'], ['item3', 'Item 3']];

@@ -1,72 +1,74 @@
 <template>
-<div class="c-properties c-properties--properties">
-    <div class="c-properties__header">
-        Properties
+<div v-if="!activity"
+     class="c-inspector__properties c-inspect-properties"
+>
+    <div class="c-inspect-properties__header">
+        Details
     </div>
     <ul
         v-if="!multiSelect && !singleSelectNonObject"
-        class="c-properties__section"
+        class="c-inspect-properties__section"
     >
-        <li class="c-properties__row">
-            <div class="c-properties__label">
+        <li class="c-inspect-properties__row">
+            <div class="c-inspect-properties__label">
                 Title
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ item.name }}
             </div>
         </li>
-        <li class="c-properties__row">
-            <div class="c-properties__label">
+        <li class="c-inspect-properties__row">
+            <div class="c-inspect-properties__label">
                 Type
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ typeName }}
             </div>
         </li>
         <li
             v-if="item.created"
-            class="c-properties__row"
+            class="c-inspect-properties__row"
         >
-            <div class="c-properties__label">
+            <div class="c-inspect-properties__label">
                 Created
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ formatTime(item.created) }}
             </div>
         </li>
         <li
             v-if="item.modified"
-            class="c-properties__row"
+            class="c-inspect-properties__row"
         >
-            <div class="c-properties__label">
+            <div class="c-inspect-properties__label">
                 Modified
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ formatTime(item.modified) }}
             </div>
         </li>
         <li
             v-for="prop in typeProperties"
             :key="prop.name"
-            class="c-properties__row"
+            class="c-inspect-properties__row"
         >
-            <div class="c-properties__label">
+            <div class="c-inspect-properties__label">
                 {{ prop.name }}
             </div>
-            <div class="c-properties__value">
+            <div class="c-inspect-properties__value">
                 {{ prop.value }}
             </div>
         </li>
     </ul>
     <div
         v-if="multiSelect"
-        class="c-properties__row--span-all"
+        class="c-inspect-properties__row--span-all"
     >
         No properties to display for multiple items
     </div>
     <div
         v-if="singleSelectNonObject"
-        class="c-properties__row--span-all"
+        class="c-inspect-properties__row--span-all"
     >
         No properties to display for this item
     </div>
@@ -81,8 +83,9 @@ export default {
     data() {
         return {
             domainObject: {},
+            activity: undefined,
             multiSelect: false
-        }
+        };
     },
     computed: {
         item() {
@@ -95,22 +98,26 @@ export default {
             if (!this.type) {
                 return `Unknown: ${this.item.type}`;
             }
+
             return this.type.definition.name;
         },
         typeProperties() {
             if (!this.type) {
                 return [];
             }
+
             let definition = this.type.definition;
             if (!definition.form || definition.form.length === 0) {
                 return [];
             }
+
             return definition.form
                 .map((field) => {
-                    let path = field.property
+                    let path = field.property;
                     if (typeof path === 'string') {
                         path = [path];
                     }
+
                     return {
                         name: field.name,
                         path
@@ -141,21 +148,24 @@ export default {
         updateSelection(selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 this.domainObject = {};
+
                 return;
             }
 
             if (selection.length > 1) {
                 this.multiSelect = true;
                 this.domainObject = {};
+
                 return;
             } else {
                 this.multiSelect = false;
                 this.domainObject = selection[0][0].context.item;
+                this.activity = selection[0][0].context.activity;
             }
         },
         formatTime(unixTime) {
             return Moment.utc(unixTime).format('YYYY-MM-DD[\n]HH:mm:ss') + ' UTC';
         }
     }
-}
+};
 </script>

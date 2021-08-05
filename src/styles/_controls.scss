@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -54,13 +54,16 @@ button {
         background: $splitterBtnColorBg;
         color: $splitterBtnColorFg;
         border-radius: $smallCr;
-        font-size: 6px;
         line-height: 90%;
         padding: 3px 10px;
 
-        @include hover() {
-            background: $colorBtnBgHov;
-            color: $colorBtnFgHov;
+        @include desktop() {
+            font-size: 6px;
+        }
+
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-size: 1.1em;
         }
     }
 
@@ -78,9 +81,24 @@ button {
 /********* Icon Buttons and Links */
 .c-click-icon {
     @include cClickIcon();
+
+    &--section-collapse {
+        color: inherit;
+        display: block;
+        transition: transform $transOutTime;
+        &:before {
+            content: $glyph-icon-arrow-down;
+            font-family: symbolsfont;
+        }
+
+        &.is-collapsed {
+            transform: rotate(180deg);
+        }
+    }
 }
 
-.c-click-link {
+.c-click-link,
+.c-icon-link {
     // A clickable element, typically inline, with an icon and label
     @include cControl();
     cursor: pointer;
@@ -95,18 +113,24 @@ button {
     }
 }
 
+.c-icon-button--disabled {
+    @include cClickIconButtonLayout();
+}
+
+.c-icon-link {
+    &:before {
+        // Icon
+        //color: $colorBtnMajorBg;
+    }
+}
+
 .c-icon-button {
-    .c-icon-button__label {
-        margin-left: $interiorMargin;
+    [class*='label'] {
+        opacity: 0.8;
     }
 
-    $c1: nth($mixedSettingBg, 1);
-    $c2: nth($mixedSettingBg, 2);
-    $mixedBgD: $mixedSettingBgSize $mixedSettingBgSize;
-
     &--mixed {
-        // E.g. click-icons in toolbar that apply to multiple selected items with different settings
-        @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
+        @include mixedBg();
     }
 
     &--swatched {
@@ -129,13 +153,26 @@ button {
             flex: 1 1 auto;
             font-size: 1.1em;
         }
+    }
+}
 
-        &--mixed {
-            // Styling for swatched buttons when settings are mixed
-            > [class*='swatch'] {
-                @include bgStripes2Color($c1, $c2, $bgSize: $mixedBgD);
-            }
-        }
+.c-list-button {
+    @include cControl();
+    color: $colorBodyFg;
+    cursor: pointer;
+    justify-content: start;
+    padding: $interiorMargin;
+
+    > * + * {
+        margin-left: $interiorMargin;
+    }
+
+    @include hover() {
+        background: $colorItemTreeHoverBg;
+    }
+
+    .c-button {
+        flex: 0 0 auto;
     }
 }
 
@@ -189,6 +226,41 @@ button {
     }
 }
 
+/******************************************************** DRAG AFFORDANCES */
+.c-grippy {
+    $d: 10px;
+    @include grippy($c: $colorItemTreeVC, $dir: 'y');
+    width: $d; height: $d;
+
+    &--vertical-drag {
+        cursor: ns-resize;
+    }
+}
+
+/******************************************************** SECTION */
+section {
+    flex: 0 1 auto;
+    overflow: hidden;
+    + section {
+        margin-top: $interiorMargin;
+    }
+
+    .c-section__header {
+        @include propertiesHeader();
+        display: flex;
+        flex: 0 0 auto;
+        align-items: center;
+        margin-bottom: $interiorMargin;
+
+        > * + * { margin-left: $interiorMarginSm; }
+    }
+
+    > [class*='__label'] {
+        flex: 1 1 auto;
+        text-transform: uppercase;
+    }
+}
+
 /******************************************************** FORM ELEMENTS */
 input, textarea {
     font-family: inherit;
@@ -232,19 +304,7 @@ input[type=number]::-webkit-outer-spin-button {
     &-inline,
     &--inline {
         // A text input or contenteditable element that indicates edit affordance on hover and looks like an input on focus
-        @include reactive-input($bg: transparent);
-        box-shadow: none;
-        display: block !important;
-        min-width: 0;
-        padding-left: 0;
-        padding-right: 0;
-        overflow: hidden;
-        transition: all 250ms ease;
-        white-space: nowrap;
-
-        &:not(:focus) {
-            text-overflow: ellipsis;
-        }
+        @include inlineInput;
 
         &:hover,
         &:focus {
@@ -301,7 +361,7 @@ select {
     background-position: right .4em top 80%, 0 0;
     border: none;
     border-radius: $controlCr;
-    padding: 1px 20px 1px $interiorMargin;
+    padding: 2px 20px 2px $interiorMargin;
 
     *,
     option {
@@ -346,7 +406,17 @@ select {
 
 .c-tab {
     // Used in Tab View, generic tabs
-    background: $colorBtnBg;
+    $notchSize: 7px;
+    $clipPath:
+        polygon(
+            0% 0%,
+            calc(100% - #{$notchSize}) 0%,
+            100% #{$notchSize},
+            100% calc(100% - #{$notchSize}),
+            100% 100%,
+            0% 100%
+        );
+    background: rgba($colorBtnBg, 0.7);
     color: $colorBtnFg;
     cursor: pointer;
     display: flex;
@@ -355,21 +425,15 @@ select {
     margin: 1px 1px 0 0;
     padding: $interiorMargin $interiorMarginLg;
     white-space: nowrap;
+    clip-path: $clipPath;
+    -webkit-clip-path: $clipPath; // Safari
 
-    --notchSize: 7px;
-
-    clip-path:
-        polygon(
-            0% 0%,
-            calc(100% - var(--notchSize)) 0%,
-            100% var(--notchSize),
-            100% calc(100% - var(--notchSize)),
-            100% 100%,
-            0% 100%
-        );
+    > * + * {
+        margin-left: $interiorMargin;
+    }
 
     @include hover() {
-        background: $colorBtnBgHov;
+        filter: $filterHov;
     }
 
     &.is-current {
@@ -381,25 +445,38 @@ select {
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
 .c-hyperlink {
-    &--link {
-        color: $colorKey;
-    }
+    display: inline-block;
+    color: $colorKey;
 
     &--button {
         @include cButton();
     }
 }
 
+.c-so-view--no-frame > .c-so-view__object-view > .c-hyperlink--button {
+    @include abs();
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
 /******************************************************** MENUS */
 @mixin menuOuter() {
     border-radius: $basicCr;
     background: $colorMenuBg;
+    filter: $filterMenu;
     text-shadow: $shdwMenuText;
     padding: $interiorMarginSm;
     box-shadow: $shdwMenu;
-    display: block;
+    display: flex;
+    flex-direction: column;
     position: absolute;
     z-index: 100;
+
+    > * {
+        flex: 0 0 auto;
+    }
 }
 
 @mixin menuInner() {
@@ -413,7 +490,7 @@ select {
         transition: $transIn;
         white-space: nowrap;
 
-        &:hover {
+        @include hover {
             background: $colorMenuHovBg;
             color: $colorMenuHovFg;
             &:before {
@@ -428,8 +505,12 @@ select {
             min-width: 1em;
         }
 
-        &:not([class]):before {
-             content: ''; // Add this element so that menu items without an icon still indent properly
+        &:not([class*='icon']):before {
+             content: ''; // Enable :before so that menu items without an icon still indent properly
+        }
+
+        .menus-no-icon & {
+            &:before { display: none; }
         }
     }
 }
@@ -437,6 +518,23 @@ select {
 .c-menu {
     @include menuOuter();
     @include menuInner();
+
+    &__section-hint {
+        $m: $interiorMargin;
+        margin: 0 0 $m 0;
+        padding: $m nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
+
+        opacity: 0.6;
+        font-size: 0.9em;
+        font-style: italic;
+    }
+
+    &__section-separator {
+        $m: $interiorMargin;
+        border-top: 1px solid $colorInteriorBorder;
+        margin: $m 0;
+        padding: 0 nth($menuItemPad, 2) 0 nth($menuItemPad, 2);
+    }
 }
 
 .c-super-menu {
@@ -500,6 +598,20 @@ select {
         }
     }
 }
+/******************************************************** CONTROL BARS */
+.c-control-bar {
+    display: flex;
+    align-items: center;
+
+    > * + * {
+        margin-left: $interiorMarginSm;
+    }
+
+    &__label {
+        display: inline-block;
+        white-space: nowrap;
+    }
+}
 
 /******************************************************** PALETTES */
 .c-palette {
@@ -540,6 +652,7 @@ select {
     }
 
     &__item-none {
+        @include userSelectNone();
         flex: 0 0 auto;
         display: flex;
         align-items: center;
@@ -622,9 +735,22 @@ select {
     height: 100%;
 }
 
+.c-row-separator {
+    border-top: 1px solid $colorInteriorBorder;
+    height: 1px;
+}
+
 .c-toolbar {
-    > * + * {
-        margin-left: 2px;
+    display: flex;
+    align-items: center;
+
+    > * {
+        // First level items
+        display: flex;
+
+        > * + * {
+            margin-left: 2px;
+        }
     }
 
     &__separator {
@@ -642,9 +768,15 @@ select {
         $pTB: 2px;
         padding: $pTB $pLR;
 
-        &:hover {
+        @include hover() {
             background: $editUIBaseColorHov !important;
             color: $editUIBaseColorFg !important;
+        }
+
+        &--menu {
+            $p: 4px;
+            padding-top: $p;
+            padding-bottom: $p;
         }
 
         &--swatched {
@@ -657,7 +789,7 @@ select {
                 color: $colorBtnCautionBg;
             }
 
-            &:hover {
+            @include hover() {
                 background: rgba($colorBtnCautionBgHov, 0.2);
                 :before {
                     color: $colorBtnCautionBgHov;
@@ -723,7 +855,64 @@ select {
     }
 }
 
-/***************************************************** SLIDERS */
+/******************************************************** STYLE EDITING */
+.c-style {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: space-between;
+
+    &__controls {
+        // Holds thumb, icon buttons
+        display: flex;
+        flex: 1 0 auto;
+
+        > * + * { margin-left: $interiorMargin; }
+    }
+
+    &__button-save,
+    &__button-delete {
+        // Holds save and delete buttons accordingly
+        flex: 0 0 auto;
+    }
+
+    &--saved {
+        border-radius: $controlCr;
+        padding: $interiorMargin !important;
+        cursor: pointer;
+
+        @include hover {
+            background: rgba($editUIBaseColorHov, 0.3);
+        }
+
+        .c-style__controls {
+            [class*='button'] {
+                pointer-events: none;
+
+                &:before {
+                    opacity: $controlDisabledOpacity;
+                }
+            }
+        }
+    }
+}
+
+.c-style-thumb {
+    background-size: cover;
+    border: 1px solid transparent;
+    border-radius: $basicCr;
+    box-shadow: rgba($colorBodyFg, 0.4) 0 0 3px;
+    flex: 0 0 auto;
+    padding: $interiorMargin;
+    text-align: center;
+    width: 50px;
+
+    &--mixed {
+        @include mixedBg();
+    }
+}
+
+/******************************************************** SLIDERS */
 .c-slider {
     @include cControl();
     > * + * { margin-left: $interiorMargin; }
@@ -731,20 +920,33 @@ select {
 
 
 /******************************************************** SLIDERS AND RANGE */
-@mixin sliderKnobRound() {
-    $h: 12px;
+@mixin sliderKnobRound($h: 12px) {
     @include themedButton();
     cursor: pointer;
     width: $h;
     height: $h;
     border-radius: 50% !important;
-    transform: translateY(-42%);
+}
+
+@mixin sliderTrack($bg: $scrollbarTrackColorBg, $knobH: 12px, $trackH: 3px) {
+    border-radius: 2px;
+    $breakPointPx: floor(($knobH - $trackH) / 2);
+    $bp1: $breakPointPx;
+    $bp2: $breakPointPx + $trackH;
+    box-sizing: border-box;
+    // For cross-browser compatibility, the track needs to be the same height as the knob.
+    height: $knobH;
+    // Gradient visually adds a horizontal line smaller than the knob
+    background: linear-gradient(0deg, rgba($bg,0) $bp1, $bg $bp1, $bg $bp2, rgba($bg,0) $bp2);
 }
 
 input[type="range"] {
     // HTML5 range inputs
+    $knobH: 11px;
+    $trackH: 3px;
     -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
     background: transparent; /* Otherwise white in Chrome */
+
     &:focus {
         outline: none; /* Removes the blue border. */
     }
@@ -752,28 +954,26 @@ input[type="range"] {
     // Thumb
     &::-webkit-slider-thumb {
         -webkit-appearance: none;
-        @include sliderKnobRound();
+        @include sliderKnobRound($knobH);
     }
     &::-moz-range-thumb {
         border: none;
-        @include sliderKnobRound();
+        @include sliderKnobRound($knobH);
     }
     &::-ms-thumb {
         border: none;
-        @include sliderKnobRound();
+        @include sliderKnobRound($knobH);
     }
 
     // Track
     &::-webkit-slider-runnable-track {
         width: 100%;
-        height: 3px;
-        @include sliderTrack();
+        @include sliderTrack($knobH: $knobH, $trackH: $trackH);
     }
 
     &::-moz-range-track {
         width: 100%;
-        height: 3px;
-        @include sliderTrack();
+        @include sliderTrack($knobH: $knobH, $trackH: $trackH);
     }
 }
 
@@ -784,14 +984,6 @@ input[type="range"] {
         // Horizontal layout be
         display: inline-flex;
         align-items: center;
-    }
-
-    &--overlay-content {
-        > .c-button {
-            background: $colorLocalControlOvrBg;
-            border-radius: $controlCr;
-            box-shadow: $colorLocalControlOvrBg 0 0 0 2px;
-        }
     }
 }
 

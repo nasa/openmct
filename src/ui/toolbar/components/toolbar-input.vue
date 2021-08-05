@@ -31,6 +31,7 @@ export default {
     },
     data() {
         inputUniqueId++;
+
         return {
             uid: `mct-input-id-${inputUniqueId}`
         };
@@ -57,5 +58,5 @@ export default {
             this.$emit('change', event.target.valueAsNumber, this.options);
         }
     }
-}
+};
 </script>

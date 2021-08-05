@@ -13,7 +13,7 @@
         text-rendering: geometricPrecision;
         width: 100%;
         height: 100%;
-        > g {
+        > g.axis {
             // Overall Tick holder
             transform: translateY($tickYPos);
             path {
@@ -44,7 +44,6 @@
     }
 
     body.desktop .is-fixed-mode & {
-        @include cursorGrab();
         background-size: 3px 30%;
         background-color: $colorBodyBgSubtle;
         box-shadow: inset rgba(black, 0.4) 0 1px 1px;
@@ -54,17 +53,6 @@
             fill: $colorBodyFg;
             stroke: $colorBodyBgSubtle;
             transition: $transOut;
-        }
-
-        &:hover,
-        &:active {
-            $c: $colorKeySubtle;
-            background-color: $c;
-            transition: $transIn;
-            svg text {
-                stroke: $c;
-                transition: $transIn;
-            }
         }
     }
 

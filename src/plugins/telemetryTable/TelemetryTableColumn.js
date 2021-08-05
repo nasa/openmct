@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -41,7 +41,7 @@ define(function () {
         }
 
         hasValueForDatum(telemetryDatum) {
-            return telemetryDatum.hasOwnProperty(this.metadatum.source);
+            return Object.prototype.hasOwnProperty.call(telemetryDatum, this.metadatum.source);
         }
 
         getRawValue(telemetryDatum) {
@@ -55,6 +55,10 @@ define(function () {
             } else {
                 return formattedValue;
             }
+        }
+
+        getParsedValue(telemetryDatum) {
+            return this.formatter.parse(telemetryDatum);
         }
     }
 

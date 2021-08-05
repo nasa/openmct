@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,10 +46,10 @@
 import TableCell from './table-cell.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         TableCell
     },
+    inject: ['openmct', 'currentView'],
     props: {
         headers: {
             type: Object,
@@ -93,27 +93,31 @@ export default {
             rowTop: (this.rowOffset + this.rowIndex) * this.rowHeight + 'px',
             rowClass: this.row.getRowClass(),
             cellLimitClasses: this.row.getCellLimitClasses(),
-            componentList: Object.keys(this.headers).reduce((components, header) => {
-                components[header] = this.row.getCellComponentName(header) || 'table-cell';
-                return components
-            }, {}),
-            selectableColumns : Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
+            selectableColumns: Object.keys(this.row.columns).reduce((selectable, columnKeys) => {
                 selectable[columnKeys] = this.row.columns[columnKeys].selectable;
+
                 return selectable;
             }, {})
-        }
+        };
     },
     computed: {
         listeners() {
             let listenersObject = {
                 click: this.markRow
-            }
+            };
 
             if (this.row.getContextMenuActions().length) {
                 listenersObject.contextmenu = this.showContextMenu;
             }
 
             return listenersObject;
+        },
+        componentList() {
+            return Object.keys(this.headers).reduce((components, header) => {
+                components[header] = this.row.getCellComponentName(header) || 'table-cell';
+
+                return components;
+            }, {});
         }
     },
     // TODO: use computed properties
@@ -159,7 +163,7 @@ export default {
                         row: this.row.objectKeyString,
                         column: columnKey
                     }
-                },{
+                }, {
                     element: this.openmct.layout.$refs.browseObject.$el,
                     context: {
                         item: this.openmct.router.path[0]
@@ -168,16 +172,28 @@ export default {
                 event.stopPropagation();
             }
         },
+        getDatum() {
+            return this.row.fullDatum;
+        },
         showContextMenu: function (event) {
             event.preventDefault();
 
-            this.openmct.objects.get(this.row.objectKeyString).then((domainObject) => {
-                let contextualObjectPath = this.objectPath.slice();
-                contextualObjectPath.unshift(domainObject);
+            this.updateViewContext();
+            this.markRow(event);
 
-                this.openmct.contextMenu._showContextMenuForObjectPath(contextualObjectPath, event.x, event.y, this.row.getContextMenuActions());
+            const actions = this.row.getContextMenuActions().map(key => this.openmct.actions.getAction(key));
+            const menuItems = this.openmct.menus.actionsToMenuItems(actions, this.objectPath, this.currentView);
+            if (menuItems.length) {
+                this.openmct.menus.showMenu(event.x, event.y, menuItems);
+            }
+        },
+        updateViewContext() {
+            this.$emit('rowContextClick', {
+                viewHistoricalData: true,
+                viewDatumAction: true,
+                getDatum: this.getDatum
             });
         }
     }
-}
+};
 </script>

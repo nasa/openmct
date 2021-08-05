@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+define(["objectUtils"],
+    function (objectUtils) {
 
         /**
          * Defines the `persistence` capability, used to trigger the
@@ -47,6 +47,7 @@ define(
             identifierService,
             notificationService,
             $q,
+            openmct,
             domainObject
         ) {
             // Cache modified timestamp
@@ -58,6 +59,7 @@ define(
             this.persistenceService = persistenceService;
             this.notificationService = notificationService;
             this.$q = $q;
+            this.openmct = openmct;
         }
 
         /**
@@ -66,7 +68,7 @@ define(
          */
         function rejectIfFalsey(value, $q) {
             if (!value) {
-                return $q.reject("Error persisting object");
+                return Promise.reject("Error persisting object");
             } else {
                 return value;
             }
@@ -98,7 +100,7 @@ define(
                 dismissable: true
             });
 
-            return $q.reject(error);
+            return Promise.reject(error);
         }
 
         /**
@@ -110,34 +112,22 @@ define(
          */
         PersistenceCapability.prototype.persist = function () {
             var self = this,
-                domainObject = this.domainObject,
-                model = domainObject.getModel(),
-                modified = model.modified,
-                persisted = model.persisted,
-                persistenceService = this.persistenceService,
-                persistenceFn = persisted !== undefined ?
-                    this.persistenceService.updateObject :
-                    this.persistenceService.createObject;
+                domainObject = this.domainObject;
 
-            if (persisted !== undefined && persisted === modified) {
-                return this.$q.when(true);
-            }
+            const identifier = {
+                namespace: this.getSpace(),
+                key: this.getKey()
+            };
 
-            // Update persistence timestamp...
-            domainObject.useCapability("mutation", function (m) {
-                m.persisted = modified;
-            }, modified);
+            let newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), identifier);
 
-            // ...and persist
-            return persistenceFn.apply(persistenceService, [
-                this.getSpace(),
-                this.getKey(),
-                domainObject.getModel()
-            ]).then(function (result) {
-                return rejectIfFalsey(result, self.$q);
-            }).catch(function (error) {
-                return notifyOnError(error, domainObject, self.notificationService, self.$q);
-            });
+            return this.openmct.objects
+                .save(newStyleObject)
+                .then(function (result) {
+                    return rejectIfFalsey(result, self.$q);
+                }).catch(function (error) {
+                    return notifyOnError(error, domainObject, self.notificationService, self.$q);
+                });
         };
 
         /**
@@ -157,9 +147,11 @@ define(
                     return $q.reject('Got empty object model');
                 } else {
                     var modified = model.modified;
+
                     return domainObject.useCapability("mutation", function () {
                         return model;
                     }, modified);
+
                 }
             }
 
@@ -185,9 +177,9 @@ define(
          */
         PersistenceCapability.prototype.getSpace = function () {
             var id = this.domainObject.getId();
+
             return this.identifierService.parse(id).getSpace();
         };
-
 
         /**
          * Check if this domain object has been persisted at some
@@ -205,6 +197,7 @@ define(
          */
         PersistenceCapability.prototype.getKey = function () {
             var id = this.domainObject.getId();
+
             return this.identifierService.parse(id).getKey();
         };
 

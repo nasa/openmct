@@ -1,0 +1,29 @@
+.c-table-indicator {
+    display: flex;
+    align-items: center;
+    font-size: 0.9em;
+    overflow: hidden;
+
+    &__elem {
+        @include ellipsize();
+        flex: 0 1 auto;
+        padding: 2px;
+        text-transform: uppercase;
+
+        > * {
+            //display: contents;
+        }
+    }
+
+    &__counts {
+        //background: rgba(deeppink, 0.1);
+        display: flex;
+        flex: 1 1 auto;
+        justify-content: flex-end;
+        overflow: hidden;
+
+        > * {
+            margin-left: $interiorMargin;
+        }
+    }
+}
