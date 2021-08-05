@@ -42,11 +42,11 @@ app.use('/proxyUrl', function proxyRequest(req, res, next) {
 
 const webpack = require('webpack');
 const webpackConfig = require('./webpack.config.js');
-webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-webpackConfig.plugins.push(function() { this.plugin('watch-run', function(watching, callback) { console.log('Begin compile at ' + new Date()); callback(); }) });
+//webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+//webpackConfig.plugins.push(function() { this.plugin('watch-run', function(watching, callback) { console.log('Begin compile at ' + new Date()); callback(); }) });
 
 webpackConfig.entry.openmct = [
-    'webpack-hot-middleware/client?reload=true',
+//    'webpack-hot-middleware/client?reload=true',
     webpackConfig.entry.openmct
 ];
 
@@ -60,12 +60,12 @@ app.use(require('webpack-dev-middleware')(
     }
 ));
 
-app.use(require('webpack-hot-middleware')(
+/*app.use(require('webpack-hot-middleware')(
     compiler,
     {
 
     }
-));
+));*/
 
 // Expose index.html for development users.
 app.get('/', function (req, res) {

@@ -75,27 +75,28 @@
         const TWO_HOURS = ONE_HOUR * 2;
         const ONE_DAY = ONE_HOUR * 24;
 
+        let app = new openmct();
+
         [
             'example/eventGenerator'
         ].forEach(
-            openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
+            app.legacyRegistry.enable.bind(app.legacyRegistry)
         );
 
-        openmct.install(openmct.plugins.LocalStorage());
-        openmct.install(openmct.plugins.Espresso());
-        openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.Generator());
-        openmct.install(openmct.plugins.ExampleImagery());
-        openmct.install(openmct.plugins.PlanLayout());
-        openmct.install(openmct.plugins.Timeline());
-        openmct.install(openmct.plugins.UTCTimeSystem());
-        openmct.install(openmct.plugins.AutoflowView({
+        app.install(app.plugins.LocalStorage());
+        app.install(app.plugins.Espresso());
+        app.install(app.plugins.MyItems());
+        app.install(app.plugins.ExampleImagery());
+        app.install(app.plugins.PlanLayout());
+        app.install(app.plugins.Timeline());
+        app.install(app.plugins.UTCTimeSystem());
+        app.install(app.plugins.AutoflowView({
             type: "telemetry.panel"
         }));
-        openmct.install(openmct.plugins.DisplayLayout({
+        app.install(app.plugins.DisplayLayout({
             showAsView: ['summary-widget', 'example.imagery']
         }));
-        openmct.install(openmct.plugins.Conductor({
+        app.install(app.plugins.Conductor({
             menuOptions: [
                 {
                     name: "Fixed",
@@ -185,15 +186,15 @@
                 }
             ]
         }));
-        openmct.install(openmct.plugins.SummaryWidget());
-        openmct.install(openmct.plugins.Notebook());
-        openmct.install(openmct.plugins.LADTable());
-        openmct.install(openmct.plugins.Filters(['table', 'telemetry.plot.overlay']));
-        openmct.install(openmct.plugins.ObjectMigration());
-        openmct.install(openmct.plugins.ClearData(
+        app.install(app.plugins.SummaryWidget());
+        app.install(app.plugins.Notebook());
+        app.install(app.plugins.LADTable());
+        app.install(app.plugins.Filters(['table', 'telemetry.plot.overlay']));
+        app.install(app.plugins.ObjectMigration());
+        app.install(app.plugins.ClearData(
             ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
             {indicator: true}
         ));
-        openmct.start();
+        app.start();
     </script>
 </html>

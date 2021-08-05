@@ -40,8 +40,8 @@ define(
             this.checks = [];
             this.$window = $window;
 
-            this.oldUnload = $window.onbeforeunload;
-            $window.onbeforeunload = this.onBeforeUnload.bind(this);
+/*            this.oldUnload = $window.onbeforeunload;
+            $window.onbeforeunload = this.onBeforeUnload.bind(this);*/
         }
 
         /**

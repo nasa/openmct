@@ -28,8 +28,7 @@
 define(
     [
         './FrameworkLayer',
-        'angular',
-        'angular-route'
+        'angular'
     ],
     function (
         FrameworkLayer,

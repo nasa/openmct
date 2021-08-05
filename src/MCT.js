@@ -31,7 +31,6 @@ define([
     'objectUtils',
     './plugins/plugins',
     './adapter/indicators/legacy-indicators-plugin',
-    './plugins/buildInfo/plugin',
     './ui/registries/ViewRegistry',
     './plugins/imagery/plugin',
     './ui/registries/InspectorViewRegistry',
@@ -40,6 +39,7 @@ define([
     './ui/router/Browse',
     '../platform/framework/src/Main',
     './ui/layout/Layout.vue',
+    './ui/inspector/styles/StylesManager',
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
     './ui/preview/plugin',
@@ -60,7 +60,6 @@ define([
     objectUtils,
     plugins,
     LegacyIndicatorsPlugin,
-    buildInfoPlugin,
     ViewRegistry,
     ImageryPlugin,
     InspectorViewRegistry,
@@ -69,6 +68,7 @@ define([
     Browse,
     Main,
     Layout,
+    stylesManager,
     DomainObjectImpl,
     ContextualDomainObject,
     PreviewPlugin,
@@ -286,6 +286,8 @@ define([
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
+
+        this._isVue = true;
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -374,6 +376,7 @@ define([
      *        MCT; if undefined, MCT will be run in the body of the document
      */
     MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
+
         if (this.types.get('layout') === undefined) {
             this.install(this.plugins.DisplayLayout({
                 showAsView: ['summary-widget']
@@ -432,6 +435,9 @@ define([
                     domElement.appendChild(appLayout.$mount().$el);
 
                     this.layout = appLayout.$refs.layout;
+                    this.once('destroy', () => {
+                        this.layout.$destroy();
+                    });
                     Browse(this);
                 }
 
@@ -458,8 +464,45 @@ define([
     };
 
     MCT.prototype.destroy = function () {
+        //console.error("IT'S SMASHIN' TIME !!!");
+        this.$injector.get('$rootScope').$destroy();
+        this.$angular.element(this.element).off().removeData();
+        this.$angular.element(this.element).empty();
+        this.overlays.destroy();
+        if (this.layout) {
+            this.layout.$refs.browseObject.$destroy();
+            this.layout.$destroy();
+        }
+
+        this.element.remove();
         this.emit('destroy');
         this.router.destroy();
+        this.removeAllListeners();
+        stylesManager.default.removeAllListeners();
+
+        this.$angular = null;
+        this.$injector = null;
+        this.layout = null;
+        window.angular = null;
+        window.openmct = null;
+        window.Zepto = null;
+        window.$ = null;
+
+        Object.keys(require.cache).forEach(key => delete require.cache[key]);
+
+        for (let script of document.scripts) {
+            if (script.src.indexOf('openmct.js') !== -1) {
+                script.src = null;
+                script.parentElement.removeChild(script);
+                Object.keys(script).forEach(key => {
+                    delete script[key];
+                });
+                //console.log("Found Open MCT UMD in scripts, removing it");
+                //script.remove();
+            }
+        }
+
+        //console.log("Done cleaning up");
     };
 
     MCT.prototype.plugins = plugins;

@@ -17,11 +17,7 @@ class OverlayAPI {
 
         this.dismissLastOverlay = this.dismissLastOverlay.bind(this);
 
-        document.addEventListener('keyup', (event) => {
-            if (event.key === 'Escape') {
-                this.dismissLastOverlay();
-            }
-        });
+        document.addEventListener('keyup', this.dismissLastOverlay);
 
     }
 
@@ -49,10 +45,12 @@ class OverlayAPI {
     /**
      * private
      */
-    dismissLastOverlay() {
-        let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
-        if (lastOverlay && lastOverlay.dismissable) {
-            lastOverlay.dismiss();
+    dismissLastOverlay(event) {
+        if (event.key === 'Escape') {
+            let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
+            if (lastOverlay && lastOverlay.dismissable) {
+                lastOverlay.dismiss();
+            }
         }
     }
 
@@ -127,6 +125,10 @@ class OverlayAPI {
         this.showOverlay(progressDialog);
 
         return progressDialog;
+    }
+
+    destroy() {
+        document.removeEventListener('keyup', this.dismissLastOverlay);
     }
 
 }

@@ -21,6 +21,7 @@ const memoryLeaks = new Set();
 
 const FR = new FinalizationRegistry((specName) => {
     memoryLeaks.delete(specName);
+    console.error(`Spec cleaned up after itself: ${specName}. Good spec.`);
 });
 
 export default class MemoryLeaksReporter {

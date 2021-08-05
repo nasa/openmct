@@ -50,8 +50,6 @@ define([
         name: "platform/commonUI/browse",
         definition: {
             "extensions": {
-                "routes": [
-                ],
                 "constants": [
                     {
                         "key": "DEFAULT_PATH",

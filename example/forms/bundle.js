@@ -41,11 +41,6 @@ define([
                             "$scope"
                         ]
                     }
-                ],
-                "routes": [
-                    {
-                        "templateUrl": "templates/exampleForm.html"
-                    }
                 ]
             }
         }

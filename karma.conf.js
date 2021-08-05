@@ -66,7 +66,7 @@ module.exports = (config) => {
         customLaunchers: {
             ChromeMemory: {
                 base: 'ChromeHeadless',
-                flags: ['--enable-precise-memory-info', '--js-flags="--expose-gc"']
+                flags: ['--enable-precise-memory-info', '--js-flags="--expose-gc --nocrankshaft --noopt"']
             }
 /*            ChromeDebugging: {
                 base: 'Chrome',

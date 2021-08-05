@@ -89,7 +89,8 @@ define([
                         "implementation": TickerService,
                         "depends": [
                             "$timeout",
-                            "now"
+                            "now",
+                            "$rootScope"
                         ]
                     },
                     {

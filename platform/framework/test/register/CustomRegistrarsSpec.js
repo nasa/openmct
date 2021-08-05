@@ -57,7 +57,6 @@ define(
                 expect(customRegistrars.directives).toBeTruthy();
                 expect(customRegistrars.controllers).toBeTruthy();
                 expect(customRegistrars.services).toBeTruthy();
-                expect(customRegistrars.routes).toBeTruthy();
                 expect(customRegistrars.constants).toBeTruthy();
                 expect(customRegistrars.runs).toBeTruthy();
             });
@@ -137,47 +136,6 @@ define(
                 // None of this should have warned, this is all
                 // nominal behavior
                 expect(mockLog.warn.calls.count()).toEqual(0);
-            });
-
-            it("allows routes to be registered", function () {
-                var mockRouteProvider = jasmine.createSpyObj(
-                        "$routeProvider",
-                        ["when", "otherwise"]
-                    ),
-                    bundle = {
-                        path: "test/bundle",
-                        resources: "res"
-                    },
-                    routes = [
-                        {
-                            when: "foo",
-                            templateUrl: "templates/test.html",
-                            bundle: bundle
-                        },
-                        {
-                            templateUrl: "templates/default.html",
-                            bundle: bundle
-                        }
-                    ];
-
-                customRegistrars.routes(routes);
-
-                // Give it the route provider based on its config call
-                mockApp.config.calls.all().forEach(function (call) {
-                    // Invoke the provided callback
-                    call.args[0][1](mockRouteProvider);
-                });
-
-                // The "when" clause should have been mapped to the when method...
-                expect(mockRouteProvider.when).toHaveBeenCalled();
-                expect(mockRouteProvider.when.calls.mostRecent().args[0]).toEqual("foo");
-                expect(mockRouteProvider.when.calls.mostRecent().args[1].templateUrl)
-                    .toEqual("test/bundle/res/templates/test.html");
-
-                // ...while the other should have been treated as a default route
-                expect(mockRouteProvider.otherwise).toHaveBeenCalled();
-                expect(mockRouteProvider.otherwise.calls.mostRecent().args[0].templateUrl)
-                    .toEqual("test/bundle/res/templates/default.html");
             });
 
             it("accepts components for service compositing", function () {

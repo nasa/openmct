@@ -253,7 +253,7 @@ export default {
         }
 
         document.removeEventListener('click', this.closeViewAndSaveMenu);
-        window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
+        window.removeEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
     },
     methods: {
         toggleSaveMenu() {

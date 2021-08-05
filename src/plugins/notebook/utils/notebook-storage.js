@@ -97,7 +97,7 @@ export function validateNotebookStorageObject() {
         return notebookStorage;
     }
 
-    console.warn('Invalid Notebook object, clearing default notebook storage');
+    //console.warn('Invalid Notebook object, clearing default notebook storage');
 
     clearDefaultNotebook();
 }

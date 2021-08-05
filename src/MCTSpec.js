@@ -42,7 +42,7 @@ define([
 
             openmct.install(mockPlugin);
             openmct.install(mockPlugin2);
-            openmct.on('start', mockListener);
+            openmct.once('start', mockListener);
         });
 
         // Clean up the dirty singleton.
@@ -68,11 +68,16 @@ define([
             let appHolder;
             beforeEach(function (done) {
                 appHolder = document.createElement("div");
-                openmct.on('start', done);
-                openmct.start(appHolder);
+                openmct.once('start', done);
+                openmct.startHeadless();
             });
 
-            it("calls plugins for configuration", function () {
+            afterEach(() => {
+                appHolder.remove();
+                appHolder = null;
+            });
+
+            fit("calls plugins for configuration", function () {
                 expect(mockPlugin).toHaveBeenCalledWith(openmct);
                 expect(mockPlugin2).toHaveBeenCalledWith(openmct);
             });
