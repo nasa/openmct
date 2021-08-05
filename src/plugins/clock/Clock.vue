@@ -31,6 +31,8 @@
     <div class="c-clock__ampm">
         {{ timeAmPm }}
     </div>
+    {{ domainObject.configuration.use24 }}
+    test
 </div>
 </template>
 
@@ -50,7 +52,8 @@ export default {
             timeZoneAbbr: null,
             timeTextValue: null,
             timeAmPmValue: null,
-            unlisten: null
+            unlisten: null,
+            currentDomainObject: this.domainObject
         };
     },
     computed: {
@@ -63,30 +66,26 @@ export default {
         timeAmPm() {
             return this.use24 ? '' : this.timeAmPmValue;
         },
-        clockFormat() {
-            return this.domainObject.clockFormat;
-        },
-        timezone() {
-            return this.domainObject.timezone;
-        },
         configuration() {
-            return this.domainObject.configuration;
+            return this.currentDomainObject.configuration;
         }
     },
     watch: {
-        clockFormat() {
+        configuration(val, oldVal) {
+            console.log('configuration changed');
+            console.log(val);
+            console.log(oldVal);
             this.updateModel();
         },
-        timezone() {
-            this.updateModel();
-        },
-        configuration() {
-            this.updateModel();
+        domainObject() {
+            console.log('domainObject changed');
         }
     },
     mounted() {
+        console.log('clock mounted');
         this.updateModel();
         this.unlisten = new TickerService(this.timeout, this.getDate).listen(this.tick);
+        // this.openmct.objects.observe(this.domainObject, 'configuration', mutationCallback);
     },
     beforeDestroy() {
         this.unlisten();
@@ -101,16 +100,16 @@ export default {
         },
         updateModel() {
             let baseFormat;
-            if (!this.domainObject) {
+            if (!this.currentDomainObject) {
                 return;
             }
 
             if (this.clockFormat
                 && this.clockFormat.length > 0
                 && this.timezone) {
-                baseFormat = this.configuration[0] || this.clockFormat[0];
+                baseFormat = this.configuration[0];
 
-                this.use24 = (this.configuration[1] || this.clockFormat[1]) === 'clock24';
+                this.use24 = this.configuration[1] === 'clock24';
                 this.timeFormat = this.use24
                     ? baseFormat.replace('hh', "HH") : baseFormat;
                 // If wrong timezone is provided, the UTC will be used
