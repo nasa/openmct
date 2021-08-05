@@ -22,25 +22,25 @@
  *****************************************************************************/
 
 import ClockViewProvider from './ClockViewProvider';
+import ClockIndicator from './components/ClockIndicator.vue';
 
-export default function () {
+import momentTimezone from 'moment-timezone';
+import Vue from 'vue';
+
+export default function ClockPlugin() {
     return function install(openmct) {
-        openmct.types.addType('Clock', {
-            key: 'clock',
-            name: 'Clock',
+        console.log('installed new clock');
+        const CLOCK_INDICATOR_FORMAT = 'YYYY/MM/DD HH:mm:ss';
+        openmct.types.addType('new-clock', {
+            name: 'New Clock',
             description: 'A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.',
             creatable: true,
             cssClass: 'icon-clock',
-            "priority": 101,
             initialize: function (domainObject) {
-                domainObject.clockFormat = [
-                    'YYYY/MM/DD hh:mm:ss',
-                    'clock12'
-                ];
-                domainObject.timezone = 'UTC';
                 domainObject.configuration = {
                     baseFormat: 'YYYY/MM/DD hh:mm:ss',
-                    use24: 'clock12'
+                    use24: 'clock12',
+                    timezone: 'UTC'
                 };
             },
             "form": [
@@ -90,9 +90,40 @@ export default function () {
                             ]
                         }
                     ]
+                },
+                {
+                    "key": "timezone",
+                    "name": "Timezone",
+                    "control": "autocomplete",
+                    "options": momentTimezone.tz.names(),
+                    property: [
+                        'configuration',
+                        'timezone'
+                    ]
                 }
             ]
         });
         openmct.objectViews.addProvider(new ClockViewProvider(openmct));
+
+        const clockIndicator = new Vue ({
+            components: {
+                ClockIndicator
+            },
+            provide: {
+                openmct
+            },
+            data() {
+                return {
+                    CLOCK_INDICATOR_FORMAT
+                };
+            },
+            template: '<ClockIndicator :indicator-format="CLOCK_INDICATOR_FORMAT"></ClockIndicator>'
+        });
+        const indicator = {
+            element: clockIndicator.$mount().$el,
+            key: 'clock-indicator'
+        };
+
+        openmct.indicators.add(indicator);
     };
 }
