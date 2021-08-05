@@ -28,8 +28,8 @@ class OverlayAPI {
     /**
      * private
      */
-    showOverlay(overlay) {
-        if (this.activeOverlays.length) {
+    showOverlay(overlay, skipHidePreviousOverlay = false) {
+        if (!skipHidePreviousOverlay && this.activeOverlays.length) {
             this.activeOverlays[this.activeOverlays.length - 1].container.classList.add('invisible');
         }
 
@@ -38,7 +38,7 @@ class OverlayAPI {
         overlay.once('destroy', () => {
             this.activeOverlays.splice(this.activeOverlays.indexOf(overlay), 1);
 
-            if (this.activeOverlays.length) {
+            if (!skipHidePreviousOverlay && this.activeOverlays.length) {
                 this.activeOverlays[this.activeOverlays.length - 1].container.classList.remove('invisible');
             }
         });
@@ -97,7 +97,7 @@ class OverlayAPI {
     dialog(options) {
         let dialog = new Dialog(options);
 
-        this.showOverlay(dialog);
+        this.showOverlay(dialog, options.skipHidePreviousOverlay);
 
         return dialog;
     }
