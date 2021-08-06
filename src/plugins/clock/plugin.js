@@ -27,12 +27,11 @@ import ClockIndicator from './components/ClockIndicator.vue';
 import momentTimezone from 'moment-timezone';
 import Vue from 'vue';
 
-export default function ClockPlugin() {
+export default function ClockPlugin(options) {
     return function install(openmct) {
-        console.log('installed new clock');
         const CLOCK_INDICATOR_FORMAT = 'YYYY/MM/DD HH:mm:ss';
-        openmct.types.addType('new-clock', {
-            name: 'New Clock',
+        openmct.types.addType('clock', {
+            name: 'Clock',
             description: 'A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.',
             creatable: true,
             cssClass: 'icon-clock',
@@ -45,50 +44,45 @@ export default function ClockPlugin() {
             },
             "form": [
                 {
-                    key: 'clockFormat',
-                    name: 'Display Format',
-                    control: 'composite',
-                    items: [
+                    "key": "displayFormat",
+                    "name": "Display Format",
+                    control: 'select',
+                    options: [
                         {
-                            control: 'select',
-                            options: [
-                                {
-                                    value: 'YYYY/MM/DD hh:mm:ss',
-                                    name: 'YYYY/MM/DD hh:mm:ss'
-                                },
-                                {
-                                    value: 'YYYY/DDD hh:mm:ss',
-                                    name: 'YYYY/DDD hh:mm:ss'
-                                },
-                                {
-                                    value: 'hh:mm:ss',
-                                    name: 'hh:mm:ss'
-                                }
-                            ],
-                            cssClass: 'l-inline',
-                            property: [
-                                'configuration',
-                                'baseFormat'
-                            ]
+                            value: 'YYYY/MM/DD hh:mm:ss',
+                            name: 'YYYY/MM/DD hh:mm:ss'
                         },
                         {
-                            control: 'select',
-                            options: [
-                                {
-                                    value: 'clock12',
-                                    name: '12hr'
-                                },
-                                {
-                                    value: 'clock24',
-                                    name: '24hr'
-                                }
-                            ],
-                            cssClass: 'l-inline',
-                            property: [
-                                'configuration',
-                                'use24'
-                            ]
+                            value: 'YYYY/DDD hh:mm:ss',
+                            name: 'YYYY/DDD hh:mm:ss'
+                        },
+                        {
+                            value: 'hh:mm:ss',
+                            name: 'hh:mm:ss'
                         }
+                    ],
+                    cssClass: 'l-inline',
+                    property: [
+                        'configuration',
+                        'baseFormat'
+                    ]
+                },
+                {
+                    control: 'select',
+                    options: [
+                        {
+                            value: 'clock12',
+                            name: '12hr'
+                        },
+                        {
+                            value: 'clock24',
+                            name: '24hr'
+                        }
+                    ],
+                    cssClass: 'l-inline',
+                    property: [
+                        'configuration',
+                        'use24'
                     ]
                 },
                 {
@@ -105,25 +99,49 @@ export default function ClockPlugin() {
         });
         openmct.objectViews.addProvider(new ClockViewProvider(openmct));
 
-        const clockIndicator = new Vue ({
-            components: {
-                ClockIndicator
-            },
-            provide: {
-                openmct
-            },
-            data() {
-                return {
-                    CLOCK_INDICATOR_FORMAT
-                };
-            },
-            template: '<ClockIndicator :indicator-format="CLOCK_INDICATOR_FORMAT"></ClockIndicator>'
-        });
-        const indicator = {
-            element: clockIndicator.$mount().$el,
-            key: 'clock-indicator'
-        };
+        if (options && options.enableClockIndicator) {
+            const clockIndicator = new Vue ({
+                components: {
+                    ClockIndicator
+                },
+                provide: {
+                    openmct
+                },
+                data() {
+                    return {
+                        CLOCK_INDICATOR_FORMAT
+                    };
+                },
+                template: '<ClockIndicator :indicator-format="CLOCK_INDICATOR_FORMAT"></ClockIndicator>'
+            });
+            const indicator = {
+                element: clockIndicator.$mount().$el,
+                key: 'clock-indicator'
+            };
 
-        openmct.indicators.add(indicator);
+            openmct.indicators.add(indicator);
+        }
+
+        openmct.objects.addGetInterceptor({
+            appliesTo: (identifier, domainObject) => {
+                return domainObject && domainObject.type === 'clock';
+            },
+            invoke: (identifier, domainObject) => {
+                if (domainObject && domainObject.clockFormat && domainObject.timezone) {
+                    const baseFormat = domainObject.clockFormat[0];
+                    const use24 = domainObject.clockFormat[1];
+                    const timezone = domainObject.timezone;
+
+                    domainObject.configuration = {
+                        baseFormat,
+                        use24,
+                        timezone
+                    };
+                }
+
+                return domainObject;
+            }
+        });
+
     };
 }

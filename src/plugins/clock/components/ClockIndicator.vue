@@ -30,7 +30,6 @@
 
 <script>
 import moment from 'moment';
-import TickerService from '../services/TickerService';
 
 export default {
     inject: ['openmct'],
@@ -47,22 +46,19 @@ export default {
         };
     },
     mounted() {
-        console.log('mounted');
-        console.log(this.indicatorFormat);
-        this.unlisten = new TickerService(this.timeout, this.getDate).listen(this.tick);
+        this.openmct.on('start', () => {
+            const TickerService = this.openmct.$injector.get('tickerService');
+            this.unlisten = TickerService.listen(this.tick);
+        });
     },
     beforeDestroy() {
-        this.unlisten();
+        if (this.unlisten) {
+            this.unlisten();
+        }
     },
     methods: {
         tick(timestamp) {
             this.timeTextValue = `${moment.utc(timestamp).format(this.indicatorFormat)} UTC`;
-        },
-        timeout(fn, delay) {
-            setTimeout(fn, delay);
-        },
-        getDate() {
-            return Date.now();
         }
     }
 };

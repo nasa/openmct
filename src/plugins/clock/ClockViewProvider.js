@@ -29,12 +29,11 @@ export default function ClockViewProvider(openmct) {
         name: 'Clock',
         cssClass: 'icon-clock',
         canView(domainObject) {
-            return domainObject.type === 'new-clock';
+            return domainObject.type === 'clock';
         },
 
         view: function (domainObject, objectPath) {
             let component;
-            console.log('viewing new clock');
 
             return {
                 show: function (element) {
