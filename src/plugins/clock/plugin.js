@@ -127,7 +127,10 @@ export default function ClockPlugin(options) {
                 return domainObject && domainObject.type === 'clock';
             },
             invoke: (identifier, domainObject) => {
-                if (domainObject && domainObject.clockFormat && domainObject.timezone) {
+                if (domainObject
+                    && !domainObject.configuration
+                    && domainObject.clockFormat
+                    && domainObject.timezone) {
                     const baseFormat = domainObject.clockFormat[0];
                     const use24 = domainObject.clockFormat[1];
                     const timezone = domainObject.timezone;
@@ -137,6 +140,8 @@ export default function ClockPlugin(options) {
                         use24,
                         timezone
                     };
+
+                    openmct.objects.mutate(domainObject, 'configuration', configuration);
                 }
 
                 return domainObject;
