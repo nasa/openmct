@@ -44,7 +44,7 @@ define([
     return {
         name: "platform/features/clock",
         definition: {
-            "name": "Clocks/Timers Original",
+            "name": "Clocks/Timers",
             "descriptions": "Domain objects for displaying current & relative times.",
             "configuration": {
                 "paths": {
