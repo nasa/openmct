@@ -24,17 +24,17 @@
      class="gl-plot"
      :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <plot-legend :cursor-locked="!!lockHighlightPoint"
-                 :series="config.series.models"
-                 :highlights="highlights"
-                 :legend="config.legend"
-                 @legendHoverChanged="legendHoverChanged"
-    />
+    <!--    <plot-legend :cursor-locked="!!lockHighlightPoint"-->
+    <!--                 :series="seriesModels"-->
+    <!--                 :highlights="highlights"-->
+    <!--                 :legend="legend"-->
+    <!--                 @legendHoverChanged="legendHoverChanged"-->
+    <!--    />-->
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis v-if="config.series.models.length > 0"
+        <y-axis v-if="seriesModels.length > 0"
                 :tick-width="tickWidth"
-                :single-series="config.series.models.length === 1"
-                :series-model="config.series.models[0]"
+                :single-series="seriesModels.length === 1"
+                :series-model="seriesModels[0]"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
         />
@@ -141,8 +141,8 @@
                 >
                 </div>
             </div>
-            <x-axis v-if="config.series.models.length > 0 && !options.compact"
-                    :series-model="config.series.models[0]"
+            <x-axis v-if="seriesModels.length > 0 && !options.compact"
+                    :series-model="seriesModels[0]"
             />
 
         </div>
@@ -213,7 +213,8 @@ export default {
             plotHistory: [],
             selectedXKeyOption: {},
             xKeyOptions: [],
-            config: {},
+            seriesModels: {},
+            legend: {},
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
@@ -223,17 +224,20 @@ export default {
     },
     computed: {
         isFrozen() {
-            return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+            // return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+            return false;
         },
         plotLegendPositionClass() {
-            return `plot-legend-${this.config.legend.get('position')}`;
+            // return `plot-legend-${this.config.legend.get('position')}`;
+            return `plot-legend-top`;
         },
         plotLegendExpandedStateClass() {
-            if (this.config.legend.get('expanded')) {
-                return 'plot-legend-expanded';
-            } else {
-                return 'plot-legend-collapsed';
-            }
+            return 'plot-legend-collapsed';
+            // if (this.config.legend.get('expanded')) {
+            //     return 'plot-legend-expanded';
+            // } else {
+            //     return 'plot-legend-collapsed';
+            // }
         }
     },
     watch: {
@@ -245,6 +249,7 @@ export default {
         eventHelpers.extend(this);
 
         this.config = this.getConfig();
+        // this.legend = this.config.legend;
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -284,14 +289,18 @@ export default {
                 config = new PlotConfigurationModel({
                     id: configId,
                     domainObject: this.domainObject,
-                    openmct: this.openmct
+                    openmct: this.openmct,
+                    callback: (data) => {
+                        this.data = data;
+                    }
                 });
                 configStore.add(configId, config);
             }
 
             return config;
         },
-        addSeries(series) {
+        addSeries(series, index) {
+            this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
             }, this);
@@ -617,7 +626,7 @@ export default {
                 this.config.series.models.forEach(series => delete series.closest);
             } else {
                 this.highlights = this.config.series.models
-                    .filter(series => series.data.length > 0)
+                    .filter(series => this.config.getSeriesData(series.keyString).length > 0)
                     .map(series => {
                         series.closest = series.nearestPoint(point);
 

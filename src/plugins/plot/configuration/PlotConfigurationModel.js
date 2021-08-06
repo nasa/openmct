@@ -40,6 +40,8 @@ export default class PlotConfigurationModel extends Model {
     initialize(options) {
         this.openmct = options.openmct;
 
+        this.seriesData = {};
+
         this.xAxis = new XAxisModel({
             model: options.model.xAxis,
             plot: this,
@@ -106,6 +108,18 @@ export default class PlotConfigurationModel extends Model {
      */
     updateDomainObject(domainObject) {
         this.set('domainObject', domainObject);
+    }
+    /**
+     * Update the series data with the given value.
+     */
+    updateSeriesData(seriesKey, data) {
+    }
+
+    /**
+     * Update the series data with the given value.
+     */
+    getSeriesData(seriesKey) {
+        return [];
     }
     /**
      * Clean up all objects and remove all listeners.

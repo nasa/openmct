@@ -106,8 +106,8 @@ export default {
         },
         toggleXKeyOption() {
             const selectedXKey = this.selectedXKeyOptionKey;
-            const dataForSelectedXKey = this.seriesModel.data
-                ? this.seriesModel.data[0][selectedXKey]
+            const dataForSelectedXKey = this.config.getSeriesData(this.seriesModel.keyString)
+                ? this.config.getSeriesData(this.seriesModel.keyString)[0][selectedXKey]
                 : undefined;
 
             if (dataForSelectedXKey !== undefined) {
