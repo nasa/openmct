@@ -221,11 +221,12 @@ export default {
             this.status = this.openmct.status.get(this.domainObject.identifier, this.setStatus);
             this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         },
-        actionCollection() {
+        actionCollection(actionCollection) {
             if (this.actionCollection) {
                 this.unlistenToActionCollection();
             }
 
+            this.actionCollection = actionCollection;
             this.actionCollection.on('update', this.updateActionItems);
             this.updateActionItems(this.actionCollection.getActionsObject());
         }
