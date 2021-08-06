@@ -101,7 +101,7 @@ define(
                     name: "Pause"
                 });
                 mockStop.getMetadata.and.returnValue({
-                    cssClass: "icon-box",
+                    cssClass: "icon-box-round-corners",
                     name: "Stop"
                 });
                 mockScope.domainObject = mockDomainObject;

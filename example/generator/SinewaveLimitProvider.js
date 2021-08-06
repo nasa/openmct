@@ -26,13 +26,25 @@ define([
 
 ) {
 
-    var RED = {
+    var PURPLE = {
+            sin: 2.2,
+            cos: 2.2
+        },
+        RED = {
             sin: 0.9,
             cos: 0.9
+        },
+        ORANGE = {
+            sin: 0.7,
+            cos: 0.7
         },
         YELLOW = {
             sin: 0.5,
             cos: 0.5
+        },
+        CYAN = {
+            sin: 0.45,
+            cos: 0.45
         },
         LIMITS = {
             rh: {
@@ -89,6 +101,71 @@ define([
                 if (datum[range] < -YELLOW[range]) {
                     return LIMITS.yl;
                 }
+            }
+        };
+    };
+
+    SinewaveLimitProvider.prototype.getLimits = function (domainObject) {
+
+        return {
+            limits: function () {
+                return Promise.resolve({
+                    WATCH: {
+                        low: {
+                            color: "cyan",
+                            sin: -CYAN.sin,
+                            cos: -CYAN.cos
+                        },
+                        high: {
+                            color: "cyan",
+                            ...CYAN
+                        }
+                    },
+                    WARNING: {
+                        low: {
+                            color: "yellow",
+                            sin: -YELLOW.sin,
+                            cos: -YELLOW.cos
+                        },
+                        high: {
+                            color: "yellow",
+                            ...YELLOW
+                        }
+                    },
+                    DISTRESS: {
+                        low: {
+                            color: "orange",
+                            sin: -ORANGE.sin,
+                            cos: -ORANGE.cos
+                        },
+                        high: {
+                            color: "orange",
+                            ...ORANGE
+                        }
+                    },
+                    CRITICAL: {
+                        low: {
+                            color: "red",
+                            sin: -RED.sin,
+                            cos: -RED.cos
+                        },
+                        high: {
+                            color: "red",
+                            ...RED
+                        }
+                    },
+                    SEVERE: {
+                        low: {
+                            color: "purple",
+                            sin: -PURPLE.sin,
+                            cos: -PURPLE.cos
+                        },
+                        high: {
+                            color: "purple",
+                            ...PURPLE
+                        }
+                    }
+                });
             }
         };
     };

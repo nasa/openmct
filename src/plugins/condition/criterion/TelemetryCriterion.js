@@ -137,11 +137,15 @@ export default class TelemetryCriterion extends EventEmitter {
         }
     }
 
-    requestLAD() {
-        const options = {
+    requestLAD(telemetryObjects, requestOptions) {
+        let options = {
             strategy: 'latest',
             size: 1
         };
+
+        if (requestOptions !== undefined) {
+            options = Object.assign(options, requestOptions);
+        }
 
         if (!this.isValid()) {
             return {

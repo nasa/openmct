@@ -23,23 +23,7 @@
 
 const LocationBar = require('location-bar');
 const EventEmitter = require('EventEmitter');
-
-function paramsToObject(searchParams) {
-    let params = {};
-    for (let [key, value] of searchParams.entries()) {
-        if (params[key]) {
-            if (!Array.isArray(params[key])) {
-                params[key] = [params[key]];
-            }
-
-            params[key].push(value);
-        } else {
-            params[key] = value;
-        }
-    }
-
-    return params;
-}
+const _ = require('lodash');
 
 class ApplicationRouter extends EventEmitter {
     /**
@@ -57,11 +41,158 @@ class ApplicationRouter extends EventEmitter {
      * route(path, handler);
      * start(); Start routing.
      */
-    constructor() {
+    constructor(openmct) {
         super();
+
+        this.locationBar = new LocationBar();
+        this.openmct = openmct;
         this.routes = [];
         this.started = false;
-        this.locationBar = new LocationBar();
+
+        this.setHash = _.debounce(this.setHash.bind(this), 300);
+    }
+
+    // Public Methods
+
+    destroy() {
+        this.locationBar.stop();
+    }
+
+    /**
+     * Delete a given query parameter from current url
+     *
+     * @param {string} paramName name of searchParam to delete from current url searchParams
+     */
+    deleteSearchParam(paramName) {
+        let url = this.getHashRelativeURL();
+
+        url.searchParams.delete(paramName);
+        this.setLocationFromUrl();
+    }
+
+    /**
+     * object for accessing all current search parameters
+     *
+     * @returns {URLSearchParams} A {@link https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/entries|URLSearchParams}
+     */
+    getAllSearchParams() {
+        return this.getHashRelativeURL().searchParams;
+    }
+
+    /**
+     * Uniquely identifies a domain object.
+     *
+     * @typedef CurrentLocation
+     * @property {URL} url current url location
+     * @property {string} path current url location pathname
+     * @property {string} getQueryString a function which returns url search query
+     * @property {object} params object representing url searchParams
+     */
+
+    /**
+     * object for accessing current url location and search params
+     *
+     * @returns {CurrentLocation} A {@link CurrentLocation}
+     */
+    getCurrentLocation() {
+        return this.currentLocation;
+    }
+
+    /**
+     * Get current location URL Object
+     *
+     * @returns {URL} current url location
+     */
+    getHashRelativeURL() {
+        return this.getCurrentLocation().url;
+    }
+
+    /**
+     * Get current location URL Object searchParams
+     *
+     * @returns {object} object representing current url searchParams
+     */
+    getParams() {
+        return this.currentLocation.params;
+    }
+
+    /**
+     * Get a value of given param from current url searchParams
+     *
+     * @returns {string} value of paramName from current url searchParams
+     */
+    getSearchParam(paramName) {
+        return this.getAllSearchParams().get(paramName);
+    }
+
+    /**
+     * Navgate to given hash and update current location object and notify listeners about location change
+     *
+     * @param {string} paramName name of searchParam to get from current url searchParams
+     *
+     * @returns {string} value of paramName from current url searchParams
+     */
+    navigate(hash) {
+        this.handleLocationChange(hash.substring(1));
+    }
+
+    /**
+     * Add routes listeners
+     *
+     * @param {string} matcher Regex to match value in url
+     * @param {@function} callback function called when found match in url
+     */
+    route(matcher, callback) {
+        this.routes.push({
+            matcher,
+            callback
+        });
+    }
+
+    /**
+     * Set url hash using path and queryString
+     *
+     * @param {string} path path for url
+     * @param {string} queryString queryString for url
+     */
+    set(path, queryString) {
+        this.setHash(`${path}?${queryString}`);
+    }
+
+    /**
+     * Will replace all current search parameters with the ones defined in urlSearchParams
+     */
+    setAllSearchParams() {
+        this.setLocationFromUrl();
+    }
+
+    /**
+     * To force update url based on value in currentLocation object
+     */
+    setLocationFromUrl() {
+        this.updateTimeSettings();
+    }
+
+    /**
+     * Set url hash using path
+     *
+     * @param {string} path path for url
+     */
+    setPath(path) {
+        this.handleLocationChange(path.substring(1));
+    }
+
+    /**
+     * Update param value from current url searchParams
+     *
+     * @param {string} paramName param name from current url searchParams
+     * @param {string} paramValue param value from current url searchParams
+     */
+    setSearchParam(paramName, paramValue) {
+        let url = this.getHashRelativeURL();
+
+        url.searchParams.set(paramName, paramValue);
+        this.setLocationFromUrl();
     }
 
     /**
@@ -74,105 +205,18 @@ class ApplicationRouter extends EventEmitter {
 
         this.started = true;
 
-        this.locationBar.onChange(p => this.handleLocationChange(p));
+        this.locationBar.onChange(p => this.hashChaged(p));
         this.locationBar.start({
             root: location.pathname
         });
     }
 
-    destroy() {
-        this.locationBar.stop();
-        this.removeAllListeners();
-    }
-
-    handleLocationChange(pathString) {
-        if (pathString[0] !== '/') {
-            pathString = '/' + pathString;
-        }
-
-        let url = new URL(
-            pathString,
-            `${location.protocol}//${location.host}${location.pathname}`
-        );
-
-        let oldLocation = this.currentLocation;
-
-        let newLocation = {
-            url: url,
-            path: url.pathname,
-            queryString: url.search.replace(/^\?/, ''),
-            params: paramsToObject(url.searchParams)
-        };
-
-        this.currentLocation = newLocation;
-
-        if (!oldLocation) {
-            this.doPathChange(newLocation.path, null, newLocation);
-            this.doParamsChange(newLocation.params, {}, newLocation);
-
-            return;
-        }
-
-        if (oldLocation.path !== newLocation.path) {
-            this.doPathChange(
-                newLocation.path,
-                oldLocation.path,
-                this
-            );
-        }
-
-        if (!_.isEqual(oldLocation.params, newLocation.params)) {
-            this.doParamsChange(
-                newLocation.params,
-                oldLocation.params,
-                newLocation
-            );
-        }
-    }
-
-    doPathChange(newPath, oldPath, newLocation) {
-        let route = this.routes.filter(r => r.matcher.test(newPath))[0];
-        if (route) {
-            route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
-        }
-
-        this.emit('change:path', newPath, oldPath);
-    }
-
-    doParamsChange(newParams, oldParams, newLocation) {
-        let changedParams = {};
-        Object.entries(newParams).forEach(([key, value]) => {
-            if (value !== oldParams[key]) {
-                changedParams[key] = value;
-            }
-        });
-        Object.keys(oldParams).forEach(key => {
-            if (!Object.prototype.hasOwnProperty.call(newParams, key)) {
-                changedParams[key] = undefined;
-            }
-        });
-        this.emit('change:params', newParams, oldParams, changedParams);
-    }
-
     /**
-     * Update route params.  Takes an object of updates.  New parameters
+     * Set url hash using path and searchParams object
+     *
+     * @param {string} path path for url
+     * @param {string} params oject representing searchParams key/value
      */
-    updateParams(updateParams) {
-        let searchParams = this.currentLocation.url.searchParams;
-        Object.entries(updateParams).forEach(([key, value]) => {
-            if (typeof value === 'undefined') {
-                searchParams.delete(key);
-            } else {
-                searchParams.set(key, value);
-            }
-        });
-        this.setQueryString(searchParams.toString());
-    }
-
-    getParams() {
-        return this.currentLocation.params;
-    }
-
     update(path, params) {
         let searchParams = this.currentLocation.url.searchParams;
         for (let [key, value] of Object.entries(params)) {
@@ -186,24 +230,190 @@ class ApplicationRouter extends EventEmitter {
         this.set(path, searchParams.toString());
     }
 
-    set(path, queryString) {
-        location.hash = `${path}?${queryString}`;
-    }
-
-    setQueryString(queryString) {
-        this.set(this.currentLocation.path, queryString);
-    }
-
-    setPath(path) {
-        this.set(path, this.currentLocation.queryString);
-    }
-
-    route(matcher, callback) {
-        this.routes.push({
-            matcher,
-            callback
+    /**
+     * Update route params. Takes an object of updates.  New parameters
+     */
+    updateParams(updateParams) {
+        let searchParams = this.currentLocation.url.searchParams;
+        Object.entries(updateParams).forEach(([key, value]) => {
+            if (typeof value === 'undefined') {
+                searchParams.delete(key);
+            } else {
+                searchParams.set(key, value);
+            }
         });
+
+        this.setQueryString(searchParams.toString());
     }
+
+    /**
+     * To force update url based on value in currentLocation object
+     */
+    updateTimeSettings() {
+        const hash = `${this.currentLocation.path}?${this.currentLocation.getQueryString()}`;
+
+        this.setHash(hash);
+    }
+
+    // Private Methods
+
+    /**
+     * @private
+     * Create currentLocation object
+     *
+     * @param {string} pathString USVString representing relative URL.
+     *
+     * @returns {CurrentLocation} A {@link CurrentLocation}
+     */
+    createLocation(pathString) {
+        if (pathString[0] !== '/') {
+            pathString = '/' + pathString;
+        }
+
+        let url = new URL(
+            pathString,
+            `${location.protocol}//${location.host}${location.pathname}`
+        );
+
+        return {
+            url: url,
+            path: url.pathname,
+            getQueryString: () => url.search.replace(/^\?/, ''),
+            params: paramsToObject(url.searchParams)
+        };
+    }
+
+    /**
+     * @private
+     * Compare new and old path and on change emit event 'change:path'
+     *
+     * @param {string} newPath new path of url
+     * @param {string} oldPath old path of url
+     */
+    doPathChange(newPath, oldPath) {
+        if (newPath === oldPath) {
+            return;
+        }
+
+        let route = this.routes.filter(r => r.matcher.test(newPath))[0];
+        if (route) {
+            route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
+        }
+
+        this.emit('change:path', newPath, oldPath);
+    }
+
+    /**
+     * @private
+     * Compare new and old params and on change emit event 'change:params'
+     *
+     * @param {object} newParams new params of url
+     * @param {object} oldParams old params of url
+     */
+    doParamsChange(newParams, oldParams) {
+        if (_.isEqual(newParams, oldParams)) {
+            return;
+        }
+
+        let changedParams = {};
+        Object.entries(newParams).forEach(([key, value]) => {
+            if (value !== oldParams[key]) {
+                changedParams[key] = value;
+            }
+        });
+        Object.keys(oldParams).forEach(key => {
+            if (!Object.prototype.hasOwnProperty.call(newParams, key)) {
+                changedParams[key] = undefined;
+            }
+        });
+
+        this.emit('change:params', newParams, oldParams, changedParams);
+    }
+
+    /**
+     * @private
+     * On location change, update currentLocation object and emit appropriate events
+     *
+     * @param {string} pathString USVString representing relative URL.
+     */
+    handleLocationChange(pathString) {
+        let oldLocation = this.currentLocation;
+        let newLocation = this.createLocation(pathString);
+
+        this.currentLocation = newLocation;
+
+        if (!oldLocation) {
+            this.doPathChange(newLocation.path, null);
+            this.doParamsChange(newLocation.params, {});
+
+            return;
+        }
+
+        this.doPathChange(
+            newLocation.path,
+            oldLocation.path
+        );
+
+        this.doParamsChange(
+            newLocation.params,
+            oldLocation.params
+        );
+    }
+
+    /**
+     * @private
+     * On hash changed, update currentLocation object and emit appropriate events
+     *
+     * @param {string} hash new hash for url
+     */
+    hashChaged(hash) {
+        this.emit('change:hash', hash);
+        this.handleLocationChange(hash);
+    }
+
+    /**
+     * @private
+     * Set new hash for url
+     *
+     * @param {string} hash new hash for url
+     */
+    setHash(hash) {
+        location.hash = '#' + hash.replace(/#/g, '');
+    }
+
+    /**
+     * @private
+     * Set queryString part of current url
+     *
+     * @param {string} queryString queryString part of url
+     */
+    setQueryString(queryString) {
+        this.handleLocationChange(`${this.currentLocation.path}?${queryString}`);
+    }
+}
+
+/**
+ * Convert searchParams into Object
+ *
+ * @param {URLSearchParams} searchParams queryString part of url
+ *
+ * @returns {Object}
+ */
+function paramsToObject(searchParams) {
+    let params = {};
+    for (let [key, value] of searchParams.entries()) {
+        if (params[key]) {
+            if (!Array.isArray(params[key])) {
+                params[key] = [params[key]];
+            }
+
+            params[key].push(value);
+        } else {
+            params[key] = value;
+        }
+    }
+
+    return params;
 }
 
 module.exports = ApplicationRouter;
