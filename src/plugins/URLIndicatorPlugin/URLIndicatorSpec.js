@@ -22,12 +22,14 @@
 
 define(
     [
+        "utils/testing",
         "./URLIndicator",
         "./URLIndicatorPlugin",
         "../../MCT",
         "zepto"
     ],
     function (
+        testingUtils,
         URLIndicator,
         URLIndicatorPlugin,
         MCT,
@@ -44,7 +46,7 @@ define(
 
             beforeEach(function () {
                 jasmine.clock().install();
-                openmct = new MCT();
+                openmct = new testingUtils.createOpenMct();
                 spyOn(openmct.indicators, 'add');
                 spyOn($, 'ajax');
                 $.ajax.and.callFake(function (options) {
@@ -55,6 +57,8 @@ define(
             afterEach(function () {
                 $.ajax = defaultAjaxFunction;
                 jasmine.clock().uninstall();
+
+                return testingUtils.resetApplicationState(openmct);
             });
 
             describe("on initialization", function () {

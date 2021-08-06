@@ -34,6 +34,7 @@ describe("the plugin", function () {
     let child;
     let openmct;
     let telemetryPromise;
+    let telemetryPromiseResolve;
     let cleanupFirst;
     let mockObjectPath;
     let telemetrylimitProvider;
@@ -78,7 +79,6 @@ describe("the plugin", function () {
 
         openmct = createOpenMct();
 
-        let telemetryPromiseResolve;
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
         });
@@ -97,7 +97,7 @@ describe("the plugin", function () {
         telemetrylimitProvider.supportsLimits.and.returnValue(true);
         telemetrylimitProvider.getLimits.and.returnValue({
             limits: function () {
-                return {
+                return Promise.resolve({
                     WARNING: {
                         low: {
                             cssClass: "is-limit--lwr is-limit--yellow",
@@ -118,7 +118,7 @@ describe("the plugin", function () {
                             'some-key': 0.9
                         }
                     }
-                };
+                });
             }
         });
         telemetrylimitProvider.getLimitEvaluator.and.returnValue({
@@ -201,13 +201,55 @@ describe("the plugin", function () {
                         hints: {
                             range: 1
                         }
+                    },
+                    {
+                        key: "yet-another-key",
+                        format: "string",
+                        hints: {
+                            range: 2
+                        }
                     }]
                 }
             };
 
             const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-simple");
+            const plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
+
             expect(plotView).toBeDefined();
+        });
+
+        it("does not provide a plot view if the telemetry is entirely non numeric", () => {
+            const testTelemetryObject = {
+                id: "test-object",
+                type: "test-object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        hints: {
+                            domain: 1
+                        }
+                    },
+                    {
+                        key: "other-key",
+                        format: "string",
+                        hints: {
+                            range: 1
+                        }
+                    },
+                    {
+                        key: "yet-another-key",
+                        format: "string",
+                        hints: {
+                            range: 1
+                        }
+                    }]
+                }
+            };
+
+            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
+            const plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
+
+            expect(plotView).toBeUndefined();
         });
 
         it("provides an overlay plot view for objects with telemetry", () => {
@@ -279,14 +321,10 @@ describe("the plugin", function () {
         let plotView;
 
         beforeEach(() => {
-            const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, "get")
-                .withArgs("exportImageService").and.returnValue({
-                    exportPNG: () => {},
-                    exportJPG: () => {}
-                })
-                .and.callFake(getFunc);
-
+            openmct.time.timeSystem("utc", {
+                start: 0,
+                end: 4
+            });
             testTelemetryObject = {
                 identifier: {
                     namespace: "",
@@ -319,7 +357,7 @@ describe("the plugin", function () {
             };
 
             applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-simple");
+            plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
             plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             plotView.show(child, true);
 
@@ -402,6 +440,25 @@ describe("the plugin", function () {
                 });
 
             });
+        });
+
+        describe('controls in time strip view', () => {
+
+            it('zoom controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-zoom");
+                expect(pauseEl.length).toBe(0);
+            });
+
+            it('pan controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-pan");
+                expect(pauseEl.length).toBe(0);
+            });
+
+            it('pause/play controls are hidden', () => {
+                let pauseEl = element.querySelectorAll(".c-button-set .js-pause");
+                expect(pauseEl.length).toBe(0);
+            });
+
         });
     });
 
@@ -548,7 +605,7 @@ describe("the plugin", function () {
             expect(legend.length).toBe(6);
         });
 
-        it("Renders X-axis ticks for the telemetry object", () => {
+        xit("Renders X-axis ticks for the telemetry object", () => {
             let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
             expect(xAxisElement.length).toBe(1);
 
@@ -709,7 +766,7 @@ describe("the plugin", function () {
                 config.series.models[0].set('limitLines', true);
 
                 Vue.nextTick(() => {
-                    let limitEl = element.querySelectorAll(".js-limit-area hr");
+                    let limitEl = element.querySelectorAll(".js-limit-area .js-limit-line");
                     expect(limitEl.length).toBe(4);
                     done();
                 });

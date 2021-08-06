@@ -35,7 +35,7 @@ define([
         return function (openmct) {
             const timeSystem = new UTCTimeSystem();
             openmct.time.addTimeSystem(timeSystem);
-            openmct.time.addClock(new LocalClock(100));
+            openmct.time.addClock(new LocalClock.default(100));
         };
     };
 });

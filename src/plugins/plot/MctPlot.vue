@@ -74,7 +74,9 @@
                 </div>
 
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
-                    <div class="c-button-set c-button-set--strip-h">
+                    <div v-if="!options.compact"
+                         class="c-button-set c-button-set--strip-h js-zoom"
+                    >
                         <button class="c-button icon-minus"
                                 title="Zoom out"
                                 @click="zoom('out', 0.2)"
@@ -86,8 +88,8 @@
                         >
                         </button>
                     </div>
-                    <div v-if="plotHistory.length"
-                         class="c-button-set c-button-set--strip-h"
+                    <div v-if="plotHistory.length && !options.compact"
+                         class="c-button-set c-button-set--strip-h js-pan"
                     >
                         <button class="c-button icon-arrow-left"
                                 title="Restore previous pan/zoom"
@@ -100,8 +102,8 @@
                         >
                         </button>
                     </div>
-                    <div v-if="isRealTime"
-                         class="c-button-set c-button-set--strip-h"
+                    <div v-if="isRealTime && !options.compact"
+                         class="c-button-set c-button-set--strip-h js-pause"
                     >
                         <button v-if="!isFrozen"
                                 class="c-button icon-pause"
@@ -425,9 +427,12 @@ export default {
                 this.skipReloadOnInteraction = false;
                 this.loadMoreData(newRange, true);
             } else {
+                // If we're not panning or zooming (time conductor and plot x-axis times are not out of sync)
                 // Drop any data that is more than 1x (max-min) before min.
                 // Limit these purges to once a second.
-                if (!this.nextPurge || this.nextPurge < Date.now()) {
+                const isPanningOrZooming = this.isTimeOutOfSync;
+                const purgeRecords = !isPanningOrZooming && (!this.nextPurge || (this.nextPurge < Date.now()));
+                if (purgeRecords) {
                     const keepRange = {
                         min: newRange.min - (newRange.max - newRange.min),
                         max: newRange.max
@@ -493,10 +498,12 @@ export default {
 
             this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
 
-            this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
-            this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
-            this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
-            this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            if (!this.options.compact) {
+                this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
+                this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
+                this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
+                this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            }
         },
 
         initialize() {
@@ -514,12 +521,7 @@ export default {
             this.chartElementBounds = undefined;
             this.tickUpdate = false;
 
-            this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
-
-            this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
-            this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
-            this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
-            this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            this.initCanvas();
 
             this.config.yAxisLabel = this.config.yAxis.get('label');
 

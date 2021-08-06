@@ -215,12 +215,12 @@ define([
      * @memberof {module:openmct.CompositionCollection#}
      * @name load
      */
-    CompositionCollection.prototype.load = function () {
+    CompositionCollection.prototype.load = function (abortSignal) {
         this.cleanUpMutables();
 
         return this.provider.load(this.domainObject)
             .then(function (children) {
-                return Promise.all(children.map((c) => this.publicAPI.objects.get(c)));
+                return Promise.all(children.map((c) => this.publicAPI.objects.get(c, abortSignal)));
             }.bind(this))
             .then(function (childObjects) {
                 childObjects.forEach(c => this.add(c, true));

@@ -1,36 +1,69 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+executors:
+  linux:
     docker:
-        - image: circleci/node:13-browsers
-          environment:
-            CHROME_BIN: "/usr/bin/google-chrome"
-    steps:
-        - checkout
-        - run:
-            name: Update npm
-            command: 'sudo npm install -g npm@latest'
-        - restore_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
-        - run:
-            name: Installing dependencies (npm install)
-            command: npm install
-        - save_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
-            paths:
-              - node_modules
-        - run:
-            name: npm run test:coverage
-            command: npm run test:coverage
-        - run:
-            name: npm run lint
-            command: npm run lint
-        - store_artifacts:
-            path: dist
-            prefix: dist
-
-workflows:
-  version: 2
+      - image: cimg/base:stable
+orbs:
+  node: circleci/node@4.5.1
+  browser-tools: circleci/browser-tools@1.1.3
+jobs:
   test:
+    parameters:
+      node-version:
+        type: string
+      browser:
+        type: string
+      always-pass:
+        type: boolean  
+    executor: linux
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+      - node/install:
+          node-version: << parameters.node-version >>
+      - node/install-packages:
+          override-ci-command: npm install
+      - when: # Just to save time until caching saves the browser bin
+          condition:
+            equal: [ "FirefoxESR", <<parameters.browser>> ]
+          steps:
+            - browser-tools/install-firefox:
+                version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
+      - when: # Just to save time until caching saves the browser bin
+          condition:
+            equal: [ "ChromeHeadless", <<parameters.browser>> ]
+          steps:
+            - browser-tools/install-chrome:
+                replace-existing: false
+      - save_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+            - node_modules
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.always-pass>>
+      - store_test_results:
+          path: dist/reports/tests/
+      - store_artifacts:
+          path: dist/reports/
+workflows:
+  matrix-tests:
     jobs:
-      - build
+      - test:
+          name: node10-chrome
+          node-version: lts/dubnium
+          browser: ChromeHeadless
+          always-pass: false
+      - test:
+          name: node12-firefoxESR
+          node-version: lts/erbium
+          browser: FirefoxESR
+          always-pass: true
+      - test:
+          name: node14-chrome
+          node-version: lts/fermium
+          browser: ChromeHeadless
+          always-pass: true
+
+

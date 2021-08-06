@@ -55,28 +55,34 @@
                 ></a>
             </span>
         </div>
-        <div class="c-imagery__main-image__bg"
+        <div ref="imageBG"
+             class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
+             @click="expand"
         >
-            <img
-                ref="focusedImage"
-                class="c-imagery__main-image__image js-imageryView-image"
-                :src="imageUrl"
-                :style="{
-                    'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
-                }"
-                :data-openmct-image-timestamp="time"
-                :data-openmct-object-keystring="keyString"
+            <div class="image-wrapper"
+                 :style="{
+                     'width': `${sizedImageDimensions.width}px`,
+                     'height': `${sizedImageDimensions.height}px`
+                 }"
             >
-            <Compass
-                v-if="shouldDisplayCompass"
-                :container-width="imageContainerWidth"
-                :container-height="imageContainerHeight"
-                :natural-aspect-ratio="focusedImageNaturalAspectRatio"
-                :image="focusedImage"
-                :lock-compass="lockCompass"
-                @toggle-lock-compass="toggleLockCompass"
-            />
+                <img ref="focusedImage"
+                     class="c-imagery__main-image__image js-imageryView-image"
+                     :src="imageUrl"
+                     :style="{
+                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                     }"
+                     :data-openmct-image-timestamp="time"
+                     :data-openmct-object-keystring="keyString"
+                >
+                <Compass
+                    v-if="shouldDisplayCompass"
+                    :compass-rose-sizing-classes="compassRoseSizingClasses"
+                    :image="focusedImage"
+                    :natural-aspect-ratio="focusedImageNaturalAspectRatio"
+                    :sized-image-dimensions="sizedImageDimensions"
+                />
+            </div>
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
             <button class="c-nav c-nav--prev"
@@ -124,27 +130,40 @@
         </div>
     </div>
     <div
-        ref="thumbsWrapper"
         class="c-imagery__thumbs-wrapper"
-        :class="{'is-paused': isPaused}"
-        @scroll="handleScroll"
+        :class="[
+            { 'is-paused': isPaused },
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+        ]"
     >
-        <div v-for="(image, index) in imageHistory"
-             :key="image.url + image.time"
-             class="c-imagery__thumb c-thumb"
-             :class="{ selected: focusedImageIndex === index && isPaused }"
-             @click="setFocusedImage(index, thumbnailClick)"
+        <div
+            ref="thumbsWrapper"
+            class="c-imagery__thumbs-scroll-area"
+            @scroll="handleScroll"
         >
-            <a href=""
-               :download="image.imageDownloadName"
-               @click.prevent
+            <div v-for="(image, index) in imageHistory"
+                 :key="image.url + image.time"
+                 class="c-imagery__thumb c-thumb"
+                 :class="{ selected: focusedImageIndex === index && isPaused }"
+                 @click="setFocusedImage(index, thumbnailClick)"
             >
-                <img class="c-thumb__image"
-                     :src="image.url"
+                <a href=""
+                   :download="image.imageDownloadName"
+                   @click.prevent
                 >
-            </a>
-            <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
+                    <img class="c-thumb__image"
+                         :src="image.url"
+                    >
+                </a>
+                <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
+            </div>
         </div>
+
+        <button
+            class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
+            title="Resume automatic scrolling of image thumbnails"
+            @click="scrollToRight('reset')"
+        ></button>
     </div>
 </div>
 </template>
@@ -152,8 +171,9 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
-import Compass from './Compass/Compass.vue';
+
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
+import Compass from './Compass/Compass.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -171,11 +191,13 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
+const SCROLL_LATENCY = 250;
+
 export default {
     components: {
         Compass
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
@@ -204,10 +226,23 @@ export default {
             focusedImageNaturalAspectRatio: undefined,
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
-            lockCompass: true
+            lockCompass: true,
+            resizingWindow: false
         };
     },
     computed: {
+        compassRoseSizingClasses() {
+            let compassRoseSizingClasses = '';
+            if (this.sizedImageDimensions.width < 300) {
+                compassRoseSizingClasses = '--rose-small --rose-min';
+            } else if (this.sizedImageDimensions.width < 500) {
+                compassRoseSizingClasses = '--rose-small';
+            } else if (this.sizedImageDimensions.width > 1000) {
+                compassRoseSizingClasses = '--rose-max';
+            }
+
+            return compassRoseSizingClasses;
+        },
         time() {
             return this.formatTime(this.focusedImage);
         },
@@ -331,6 +366,20 @@ export default {
             }
 
             return isFresh;
+        },
+        sizedImageDimensions() {
+            let sizedImageDimensions = {};
+            if ((this.imageContainerWidth / this.imageContainerHeight) > this.focusedImageNaturalAspectRatio) {
+                // container is wider than image
+                sizedImageDimensions.width = this.imageContainerHeight * this.focusedImageNaturalAspectRatio;
+                sizedImageDimensions.height = this.imageContainerHeight;
+            } else {
+                // container is taller than image
+                sizedImageDimensions.width = this.imageContainerWidth;
+                sizedImageDimensions.height = this.imageContainerWidth * this.focusedImageNaturalAspectRatio;
+            }
+
+            return sizedImageDimensions;
         }
     },
     watch: {
@@ -379,10 +428,14 @@ export default {
         _.debounce(this.resizeImageContainer, 400);
 
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
-        this.imageContainerResizeObserver.observe(this.$refs.focusedImage);
-    },
-    updated() {
-        this.scrollToRight();
+        this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+
+        // For adjusting scroll bar size and position when resizing thumbs wrapper
+        this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
+        this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
+
+        this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
+        this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
     },
     beforeDestroy() {
         if (this.unsubscribe) {
@@ -392,6 +445,10 @@ export default {
 
         if (this.imageContainerResizeObserver) {
             this.imageContainerResizeObserver.disconnect();
+        }
+
+        if (this.thumbWrapperResizeObserver) {
+            this.thumbWrapperResizeObserver.disconnect();
         }
 
         if (this.relatedTelemetry.hasRelatedTelemetry) {
@@ -413,6 +470,16 @@ export default {
         }
     },
     methods: {
+        expand() {
+            const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
+            const visibleActions = actionCollection.getVisibleActions();
+            const viewLargeAction = visibleActions
+                && visibleActions.find(action => action.key === 'large.view');
+
+            if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
+                viewLargeAction.onItemClicked();
+            }
+        },
         async initializeRelatedTelemetry() {
             this.relatedTelemetry = new RelatedTelemetry(
                 this.openmct,
@@ -561,17 +628,15 @@ export default {
         },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
-            if (!thumbsWrapper) {
+            if (!thumbsWrapper || this.resizingWindow) {
                 return;
             }
 
-            const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
-            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
-                    || (scrollHeight - scrollTop) > 2 * clientHeight;
+            const { scrollLeft, scrollWidth, clientWidth } = thumbsWrapper;
+            const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;
         },
         paused(state, type) {
-
             this.isPaused = state;
 
             if (type === 'button') {
@@ -584,6 +649,7 @@ export default {
             }
 
             this.autoScroll = true;
+            this.scrollToRight();
         },
         scrollToFocused() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
@@ -600,8 +666,8 @@ export default {
                 });
             }
         },
-        scrollToRight() {
-            if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
+        scrollToRight(type) {
+            if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
 
@@ -610,7 +676,9 @@ export default {
                 return;
             }
 
-            setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
+            this.$nextTick(() => {
+                this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
+            });
         },
         setFocusedImage(index, thumbnailClick = false) {
             if (this.isPaused && !thumbnailClick) {
@@ -678,9 +746,9 @@ export default {
             image.imageDownloadName = this.getImageDownloadName(datum);
 
             this.imageHistory.push(image);
-
             if (setFocused) {
                 this.setFocusedImage(this.imageHistory.length - 1);
+                this.scrollToRight();
             }
         },
         getFormatter(key) {
@@ -808,16 +876,31 @@ export default {
             }, { once: true });
         },
         resizeImageContainer() {
-            if (this.$refs.focusedImage.clientWidth !== this.imageContainerWidth) {
-                this.imageContainerWidth = this.$refs.focusedImage.clientWidth;
+            if (this.$refs.imageBG.clientWidth !== this.imageContainerWidth) {
+                this.imageContainerWidth = this.$refs.imageBG.clientWidth;
             }
 
-            if (this.$refs.focusedImage.clientHeight !== this.imageContainerHeight) {
-                this.imageContainerHeight = this.$refs.focusedImage.clientHeight;
+            if (this.$refs.imageBG.clientHeight !== this.imageContainerHeight) {
+                this.imageContainerHeight = this.$refs.imageBG.clientHeight;
             }
         },
-        toggleLockCompass() {
-            this.lockCompass = !this.lockCompass;
+        handleThumbWindowResizeStart() {
+            if (!this.autoScroll) {
+                return;
+            }
+
+            // To hide resume button while scrolling
+            this.resizingWindow = true;
+            this.handleThumbWindowResizeEnded();
+        },
+        handleThumbWindowResizeEnded() {
+            if (!this.isPaused) {
+                this.scrollToRight('reset');
+            }
+
+            this.$nextTick(() => {
+                this.resizingWindow = false;
+            });
         }
     }
 };

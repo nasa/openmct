@@ -60,7 +60,7 @@ let openmct;
 let mockIdentifierService;
 
 describe('Notebook Storage:', () => {
-    beforeEach((done) => {
+    beforeEach(() => {
         openmct = createOpenMct();
         openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
         mockIdentifierService = jasmine.createSpyObj(
@@ -79,7 +79,6 @@ describe('Notebook Storage:', () => {
             'create',
             'update'
         ]));
-        done();
     });
 
     afterEach(() => {

@@ -37,7 +37,15 @@ export default class DuplicateAction {
         let duplicationTask = new DuplicateTask(this.openmct);
         let originalObject = objectPath[0];
         let parent = objectPath[1];
-        let userInput = await this.getUserInput(originalObject, parent);
+        let userInput;
+
+        try {
+            userInput = await this.getUserInput(originalObject, parent);
+        } catch (error) {
+            // user most likely canceled
+            return;
+        }
+
         let newParent = userInput.location;
         let inNavigationPath = this.inNavigationPath(originalObject);
 
@@ -71,7 +79,8 @@ export default class DuplicateAction {
 
     updateNameCheck(object, name) {
         if (object.name !== name) {
-            this.openmct.objects.mutate(object, 'name', name);
+            object.name = name;
+            this.openmct.objects.save(object);
         }
     }
 
@@ -95,7 +104,7 @@ export default class DuplicateAction {
                             cssClass: "l-input-lg"
                         },
                         {
-                            name: "location",
+                            name: "Location",
                             cssClass: "grows",
                             control: "locator",
                             validate: this.validate(object, parent),
