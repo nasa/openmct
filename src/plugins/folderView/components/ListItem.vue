@@ -1,25 +1,27 @@
 <template>
 <tr
     class="c-list-item"
-    :class="{ 'is-alias': item.isAlias === true }"
+    :class="{
+        'is-alias': item.isAlias === true
+    }"
     @click="navigate"
 >
     <td class="c-list-item__name">
         <a
             ref="objectLink"
             class="c-object-label"
-            :class="{ 'is-missing': item.model.status === 'missing' }"
-            :href="objectLink"
+            :class="[statusClass]"
+            @click="navigate"
         >
             <div
-                class="c-object-label__type-icon c-list-item__type-icon"
+                class="c-object-label__type-icon c-list-item__name__type-icon"
                 :class="item.type.cssClass"
             >
-                <span class="is-missing__indicator"
-                      title="This item is missing"
+                <span class="is-status__indicator"
+                      :title="`This item is ${status}`"
                 ></span>
             </div>
-            <div class="c-object-label__name c-list-item__name">{{ item.model.name }}</div>
+            <div class="c-object-label__name c-list-item__name__name">{{ item.model.name }}</div>
         </a>
     </td>
     <td class="c-list-item__type">
@@ -39,9 +41,11 @@
 import moment from 'moment';
 import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
 import objectLink from '../../../ui/mixins/object-link';
+import statusListener from './status-listener';
 
 export default {
-    mixins: [contextMenuGesture, objectLink],
+    mixins: [contextMenuGesture, objectLink, statusListener],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,
@@ -53,7 +57,7 @@ export default {
             return moment(timestamp).format(format);
         },
         navigate() {
-            this.$refs.objectLink.click();
+            this.openmct.router.navigate(this.objectLink);
         }
     }
 };

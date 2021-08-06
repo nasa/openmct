@@ -1,6 +1,6 @@
 
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,7 @@
     class="js-lad-table__body__row"
     @contextmenu.prevent="showContextMenu"
 >
-    <td class="js-first-data">{{ name }}</td>
+    <td class="js-first-data">{{ domainObject.name }}</td>
     <td class="js-second-data">{{ formattedTimestamp }}</td>
     <td
         class="js-third-data"
@@ -44,15 +44,20 @@
 <script>
 
 const CONTEXT_MENU_ACTIONS = [
+    'viewDatumAction',
     'viewHistoricalData',
     'remove'
 ];
 
 export default {
-    inject: ['openmct', 'objectPath'],
+    inject: ['openmct', 'currentView'],
     props: {
         domainObject: {
             type: Object,
+            required: true
+        },
+        pathToTable: {
+            type: Array,
             required: true
         },
         hasUnits: {
@@ -61,21 +66,19 @@ export default {
         }
     },
     data() {
-        let currentObjectPath = this.objectPath.slice();
-        currentObjectPath.unshift(this.domainObject);
-
         return {
-            name: this.domainObject.name,
             timestamp: undefined,
             value: '---',
             valueClass: '',
-            currentObjectPath,
             unit: ''
         };
     },
     computed: {
         formattedTimestamp() {
             return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
+        },
+        objectPath() {
+            return [this.domainObject, ...this.pathToTable];
         }
     },
     mounted() {
@@ -87,14 +90,6 @@ export default {
         this.limitEvaluator = this.openmct
             .telemetry
             .limitEvaluator(this.domainObject);
-
-        this.stopWatchingMutation = this.openmct
-            .objects
-            .observe(
-                this.domainObject,
-                '*',
-                this.updateName
-            );
 
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
         this.openmct.time.on('bounds', this.updateBounds);
@@ -118,7 +113,6 @@ export default {
         }
     },
     destroyed() {
-        this.stopWatchingMutation();
         this.unsubscribe();
         this.openmct.time.off('timeSystem', this.updateTimeSystem);
         this.openmct.time.off('bounds', this.updateBounds);
@@ -129,6 +123,7 @@ export default {
             let limit;
 
             if (this.shouldUpdate(newTimestamp)) {
+                this.datum = datum;
                 this.timestamp = newTimestamp;
                 this.value = this.formats[this.valueKey].format(datum);
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
@@ -158,9 +153,6 @@ export default {
                 })
                 .then((array) => this.updateValues(array[array.length - 1]));
         },
-        updateName(name) {
-            this.name = name;
-        },
         updateBounds(bounds, isTick) {
             this.bounds = bounds;
             if (!isTick) {
@@ -175,8 +167,23 @@ export default {
             this.resetValues();
             this.timestampKey = timeSystem.key;
         },
+        updateViewContext() {
+            this.$emit('rowContextClick', {
+                viewHistoricalData: true,
+                viewDatumAction: true,
+                getDatum: () => {
+                    return this.datum;
+                }
+            });
+        },
         showContextMenu(event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
+            this.updateViewContext();
+
+            const actions = CONTEXT_MENU_ACTIONS.map(key => this.openmct.actions.getAction(key));
+            const menuItems = this.openmct.menus.actionsToMenuItems(actions, this.objectPath, this.currentView);
+            if (menuItems.length) {
+                this.openmct.menus.showMenu(event.x, event.y, menuItems);
+            }
         },
         resetValues() {
             this.value = '---';

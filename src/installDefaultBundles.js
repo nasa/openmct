@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -38,8 +38,6 @@ const DEFAULTS = [
     'platform/exporters',
     'platform/telemetry',
     'platform/features/clock',
-    'platform/features/hyperlink',
-    'platform/features/timeline',
     'platform/forms',
     'platform/identity',
     'platform/persistence/aggregator',
@@ -82,15 +80,12 @@ define([
     '../platform/exporters/bundle',
     '../platform/features/clock/bundle',
     '../platform/features/my-items/bundle',
-    '../platform/features/hyperlink/bundle',
     '../platform/features/static-markup/bundle',
-    '../platform/features/timeline/bundle',
     '../platform/forms/bundle',
     '../platform/framework/bundle',
     '../platform/framework/src/load/Bundle',
     '../platform/identity/bundle',
     '../platform/persistence/aggregator/bundle',
-    '../platform/persistence/couch/bundle',
     '../platform/persistence/elastic/bundle',
     '../platform/persistence/local/bundle',
     '../platform/persistence/queue/bundle',

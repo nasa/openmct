@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,12 +21,14 @@
  *****************************************************************************/
 
 define([
+    '../../plugins/displayLayout/CustomStringFormatter',
     './TelemetryMetadataManager',
     './TelemetryValueFormatter',
     './DefaultMetadataProvider',
     'objectUtils',
     'lodash'
 ], function (
+    CustomStringFormatter,
     TelemetryMetadataManager,
     TelemetryValueFormatter,
     DefaultMetadataProvider,
@@ -141,6 +143,17 @@ define([
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
     }
+
+    /**
+     * Return Custom String Formatter
+     *
+     * @param {Object} valueMetadata valueMetadata for given telemetry object
+     * @param {string} format custom formatter string (eg: %.4f, &lts etc.)
+     * @returns {CustomStringFormatter}
+     */
+    TelemetryAPI.prototype.customStringFormatter = function (valueMetadata, format) {
+        return new CustomStringFormatter.default(this.openmct, valueMetadata, format);
+    };
 
     /**
      * Return true if the given domainObject is a telemetry object.  A telemetry
@@ -401,23 +414,42 @@ define([
     };
 
     /**
+     * @private
+     */
+    TelemetryAPI.prototype.getFormatService = function () {
+        if (!this.formatService) {
+            this.formatService = this.openmct.$injector.get('formatService');
+        }
+
+        return this.formatService;
+    };
+
+    /**
      * Get a value formatter for a given valueMetadata.
      *
      * @returns {TelemetryValueFormatter}
      */
     TelemetryAPI.prototype.getValueFormatter = function (valueMetadata) {
         if (!this.valueFormatterCache.has(valueMetadata)) {
-            if (!this.formatService) {
-                this.formatService = this.openmct.$injector.get('formatService');
-            }
-
             this.valueFormatterCache.set(
                 valueMetadata,
-                new TelemetryValueFormatter(valueMetadata, this.formatService)
+                new TelemetryValueFormatter(valueMetadata, this.getFormatService())
             );
         }
 
         return this.valueFormatterCache.get(valueMetadata);
+    };
+
+    /**
+     * Get a value formatter for a given key.
+     * @param {string} key
+     *
+     * @returns {Format}
+     */
+    TelemetryAPI.prototype.getFormatter = function (key) {
+        const formatMap = this.getFormatService().formatMap;
+
+        return formatMap[key];
     };
 
     /**
@@ -473,6 +505,26 @@ define([
     };
 
     /**
+     * Get a limits for this domain object.
+     * Limits help you display limits and alarms of
+     * telemetry for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to get limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limits
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.limitDefinition = function (domainObject) {
+        return this.getLimits(domainObject);
+    };
+
+    /**
      * Get a limit evaluator for this domain object.
      * Limit Evaluators help you evaluate limit and alarm status of individual
      * telemetry datums for display purposes without having to interact directly
@@ -497,6 +549,46 @@ define([
         }
 
         return provider.getLimitEvaluator(domainObject);
+    };
+
+    /**
+     * Get a limit definitions for this domain object.
+     * Limit Definitions help you indicate limits and alarms of
+     * telemetry for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to display limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limits returns a limits object of
+     * type {
+     *          level1: {
+     *              low: { key1: value1, key2: value2, color: <supportedColor> },
+     *              high: { key1: value1, key2: value2, color: <supportedColor> }
+     *          },
+     *          level2: {
+     *              low: { key1: value1, key2: value2 },
+     *              high: { key1: value1, key2: value2 }
+     *          }
+     *       }
+     *  supported colors are purple, red, orange, yellow and cyan
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.getLimits = function (domainObject) {
+        const provider = this.findLimitEvaluator(domainObject);
+        if (!provider || !provider.getLimits) {
+            return {
+                limits: function () {
+                    return Promise.resolve(undefined);
+                }
+            };
+        }
+
+        return provider.getLimits(domainObject);
     };
 
     return TelemetryAPI;

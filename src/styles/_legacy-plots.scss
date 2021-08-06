@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,7 +27,7 @@ mct-plot {
 /*********************** STACKED PLOT LAYOUT */
 .is-editing {
     .gl-plot.child-frame {
-        &:hover {
+        @include hover {
             background: rgba($editUIColorBg, 0.1);
             box-shadow: inset rgba($editUIColorBg, 0.3) 0 0 0 1px;
         }
@@ -47,25 +47,21 @@ mct-plot {
 .c-plot,
 .gl-plot {
     overflow: hidden;
+    min-height: 100px;
 
         .s-status-taking-snapshot & {
         .c-control-bar {
             display: none;
         }
+        .gl-plot-x-label__select,
         .gl-plot-y-label__select {
             display: none;
         }
     }
 
     /*********************** MISSING ITEM INDICATORS */
-    .is-missing__indicator {
-        display: none;
-    }
-    .is-missing {
-        @include isMissing();
-        .is-missing__indicator {
-            font-size: 0.8em;
-        }
+    .is-status__indicator {
+        font-size: 0.8em;
     }
 }
 
@@ -80,11 +76,12 @@ mct-plot {
         margin-bottom: $interiorMargin;
     }
 
-    .l-view-section {
+    .l-view-section, .c-plot--stacked-container {
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
-        overflow: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
     }
 
     &--stacked {
@@ -139,10 +136,19 @@ mct-plot {
         left: nth($plotDisplayArea, 4);
 
         .gl-plot-display-area {
+            overflow: hidden;
             position: absolute;
             top: 0;
             right: 0;
             bottom: nth($plotDisplayArea, 3);
+            left: 0;
+        }
+
+        .gl-plot-chart-area, .gl-plot-chart-wrapper {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
             left: 0;
         }
 
@@ -172,6 +178,14 @@ mct-plot {
                 }
             }
         }
+
+        &.gl-plot-x {
+            @include hover {
+                .gl-plot-x-label__select {
+                    display: block;
+                }
+            }
+        }
     }
 
     .gl-plot-coords {
@@ -189,6 +203,10 @@ mct-plot {
         &:empty {
             display: none;
         }
+    }
+
+    .gl-plot-ticks, .gl-plot-tick-wrapper {
+        height: 100%;
     }
 
     .gl-plot-label,
@@ -217,11 +235,19 @@ mct-plot {
         }
     }
 
+    .gl-plot-x-label__select {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        z-index: 10;
+    }
+
     .gl-plot-y-label__select {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        left: 20px;
+        left: 0;
         z-index: 10;
     }
 
@@ -506,19 +532,16 @@ mct-plot {
 }
 
 /***************** GENERAL STYLES, ALL STATES */
-.plot-legend-item {
+.plot-legend-item, .plot-series-limit-label {
     // General styles for legend items, both expanded and collapsed legend states
     > * + * {
         margin-left: $interiorMarginSm;
     }
 
     .plot-series-color-swatch {
-        border-radius: 30%; //$smallCr;
-        border: 1px solid $colorBodyBg;
+        @include colorSwatch();
         display: inline-block;
         flex: 0 0 auto;
-        height: $plotSwatchD;
-        width: $plotSwatchD;
     }
     .plot-series-name {
         display: inline;
@@ -527,6 +550,7 @@ mct-plot {
 
     .plot-series-value {
         @include ellipsize();
+        @include isLimit();
     }
 }
 

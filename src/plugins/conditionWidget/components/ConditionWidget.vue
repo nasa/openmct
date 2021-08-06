@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2020, United States Government
+* Open MCT, Copyright (c) 2014-2021, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -22,7 +22,7 @@
 
 <template>
 <component :is="urlDefined ? 'a' : 'span'"
-           class="c-condition-widget"
+           class="c-condition-widget u-style-receiver js-style-receiver"
            :href="urlDefined ? internalDomainObject.url : null"
 >
     <div class="c-condition-widget__label">

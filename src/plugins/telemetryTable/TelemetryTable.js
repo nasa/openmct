@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,6 +25,7 @@ define([
     'lodash',
     './collections/BoundedTableRowCollection',
     './collections/FilteredTableRowCollection',
+    './TelemetryTableNameColumn',
     './TelemetryTableRow',
     './TelemetryTableColumn',
     './TelemetryTableUnitColumn',
@@ -34,6 +35,7 @@ define([
     _,
     BoundedTableRowCollection,
     FilteredTableRowCollection,
+    TelemetryTableNameColumn,
     TelemetryTableRow,
     TelemetryTableColumn,
     TelemetryTableUnitColumn,
@@ -71,9 +73,28 @@ define([
             openmct.time.on('timeSystem', this.refreshData);
         }
 
+        /**
+         * @private
+         */
+        addNameColumn(telemetryObject, metadataValues) {
+            let metadatum = metadataValues.find(m => m.key === 'name');
+            if (!metadatum) {
+                metadatum = {
+                    format: 'string',
+                    key: 'name',
+                    name: 'Name'
+                };
+            }
+
+            const column = new TelemetryTableNameColumn(this.openmct, telemetryObject, metadatum);
+
+            this.configuration.addSingleColumnForObject(telemetryObject, column);
+        }
+
         initialize() {
             if (this.domainObject.type === 'table') {
                 this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
+                this.filters = this.domainObject.configuration.filters;
                 this.loadComposition();
             } else {
                 this.addTelemetryObject(this.domainObject);
@@ -118,7 +139,18 @@ define([
             this.emit('object-added', telemetryObject);
         }
 
-        updateFilters() {
+        updateFilters(updatedFilters) {
+            let deepCopiedFilters = JSON.parse(JSON.stringify(updatedFilters));
+
+            if (this.filters && !_.isEqual(this.filters, deepCopiedFilters)) {
+                this.filters = deepCopiedFilters;
+                this.clearAndResubscribe();
+            } else {
+                this.filters = deepCopiedFilters;
+            }
+        }
+
+        clearAndResubscribe() {
             this.filteredRows.clear();
             this.boundedRows.clear();
             Object.keys(this.subscriptions).forEach(this.unsubscribe, this);
@@ -160,7 +192,6 @@ define([
         processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
             let telemetryRows = telemetryData.map(datum => new TelemetryTableRow(datum, columnMap, keyString, limitEvaluator));
             this.boundedRows.add(telemetryRows);
-            this.emit('historical-rows-processed');
         }
 
         /**
@@ -203,16 +234,26 @@ define([
         getColumnMapForObject(objectKeyString) {
             let columns = this.configuration.getColumns();
 
-            return columns[objectKeyString].reduce((map, column) => {
-                map[column.getKey()] = column;
+            if (columns[objectKeyString]) {
+                return columns[objectKeyString].reduce((map, column) => {
+                    map[column.getKey()] = column;
 
-                return map;
-            }, {});
+                    return map;
+                }, {});
+            }
+
+            return {};
         }
 
         addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+
+            this.addNameColumn(telemetryObject, metadataValues);
             metadataValues.forEach(metadatum => {
+                if (metadatum.key === 'name') {
+                    return;
+                }
+
                 let column = this.createColumn(metadatum);
                 this.configuration.addSingleColumnForObject(telemetryObject, column);
                 // add units column if available

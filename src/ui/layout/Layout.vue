@@ -5,6 +5,11 @@
         'is-editing': isEditing
     }"
 >
+
+    <div
+        id="splash-screen"
+    ></div>
+
     <div
         class="l-shell__head"
         :class="{
@@ -41,6 +46,7 @@
 
     <multipane
         class="l-shell__main"
+        :class="[resizingClass]"
         type="horizontal"
     >
         <pane
@@ -48,7 +54,16 @@
             handle="after"
             label="Browse"
             collapsable
+            @start-resizing="onStartResizing"
+            @end-resizing="onEndResizing"
         >
+            <button
+                slot="controls"
+                class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+                title="Collapse all tree items"
+                @click="handleTreeReset"
+            >
+            </button>
             <button
                 slot="controls"
                 class="c-icon-button l-shell__sync-tree-button icon-target"
@@ -58,6 +73,7 @@
             </button>
             <mct-tree
                 :sync-tree-navigation="triggerSync"
+                :reset-tree-navigation="triggerReset"
                 class="l-shell__tree"
             />
         </pane>
@@ -65,6 +81,7 @@
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
+                :action-collection="actionCollection"
                 @sync-tree-navigation="handleSyncTreeNavigation"
             />
             <toolbar
@@ -73,9 +90,10 @@
             />
             <object-view
                 ref="browseObject"
-                class="l-shell__main-container"
-                :show-edit-view="true"
+                class="l-shell__main-container js-main-container"
                 data-selectable
+                :show-edit-view="true"
+                @change-action-collection="setActionCollection"
             />
             <component
                 :is="conductorComponent"
@@ -87,6 +105,8 @@
             handle="before"
             label="Inspect"
             collapsable
+            @start-resizing="onStartResizing"
+            @end-resizing="onEndResizing"
         >
             <Inspector
                 ref="inspector"
@@ -112,7 +132,6 @@ import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         Inspector,
         MctTree,
@@ -127,6 +146,7 @@ export default {
         Indicators,
         NotificationBanner
     },
+    inject: ['openmct'],
     data: function () {
         let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
         let headExpanded = true;
@@ -139,13 +159,19 @@ export default {
             conductorComponent: undefined,
             isEditing: false,
             hasToolbar: false,
+            actionCollection: undefined,
+            triggerSync: false,
+            triggerReset: false,
             headExpanded,
-            triggerSync: false
+            isResizing: false
         };
     },
     computed: {
         toolbar() {
             return this.hasToolbar && this.isEditing;
+        },
+        resizingClass() {
+            return this.isResizing ? 'l-shell__resizing' : '';
         }
     },
     mounted() {
@@ -215,8 +241,20 @@ export default {
 
             this.hasToolbar = structure.length > 0;
         },
+        setActionCollection(actionCollection) {
+            this.actionCollection = actionCollection;
+        },
         handleSyncTreeNavigation() {
             this.triggerSync = !this.triggerSync;
+        },
+        handleTreeReset() {
+            this.triggerReset = !this.triggerReset;
+        },
+        onStartResizing() {
+            this.isResizing = true;
+        },
+        onEndResizing() {
+            this.isResizing = false;
         }
     }
 };

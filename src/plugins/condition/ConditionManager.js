@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,11 +34,14 @@ export default class ConditionManager extends EventEmitter {
         this.composition = this.openmct.composition.get(conditionSetDomainObject);
         this.composition.on('add', this.subscribeToTelemetry, this);
         this.composition.on('remove', this.unsubscribeFromTelemetry, this);
+
+        this.shouldEvaluateNewTelemetry = this.shouldEvaluateNewTelemetry.bind(this);
+
         this.compositionLoad = this.composition.load();
         this.subscriptions = {};
         this.telemetryObjects = {};
         this.testData = {
-            conditionTestData: [],
+            conditionTestInputs: this.conditionSetDomainObject.configuration.conditionTestData,
             applied: false
         };
         this.initialize();
@@ -79,6 +82,17 @@ export default class ConditionManager extends EventEmitter {
         delete this.subscriptions[id];
         delete this.telemetryObjects[id];
         this.removeConditionTelemetryObjects();
+
+        //force re-computation of condition set result as we might be in a state where
+        // there is no telemetry datum coming in for a while or at all.
+        let latestTimestamp = getLatestTimestamp(
+            {},
+            {},
+            this.timeSystems,
+            this.openmct.time.timeSystem()
+        );
+        this.updateConditionResults({id: id});
+        this.updateCurrentCondition(latestTimestamp);
     }
 
     initialize() {
@@ -140,8 +154,10 @@ export default class ConditionManager extends EventEmitter {
 
     updateConditionDescription(condition) {
         const found = this.conditionSetDomainObject.configuration.conditionCollection.find(conditionConfiguration => (conditionConfiguration.id === condition.id));
-        found.summary = condition.description;
-        this.persistConditions();
+        if (found.summary !== condition.description) {
+            found.summary = condition.description;
+            this.persistConditions();
+        }
     }
 
     initCondition(conditionConfiguration, index) {
@@ -268,7 +284,7 @@ export default class ConditionManager extends EventEmitter {
         return currentCondition;
     }
 
-    requestLADConditionSetOutput() {
+    requestLADConditionSetOutput(options) {
         if (!this.conditions.length) {
             return Promise.resolve([]);
         }
@@ -277,7 +293,7 @@ export default class ConditionManager extends EventEmitter {
             let latestTimestamp;
             let conditionResults = {};
             const conditionRequests = this.conditions
-                .map(condition => condition.requestLADConditionResult());
+                .map(condition => condition.requestLADConditionResult(options));
 
             return Promise.all(conditionRequests)
                 .then((results) => {
@@ -326,6 +342,10 @@ export default class ConditionManager extends EventEmitter {
         return false;
     }
 
+    shouldEvaluateNewTelemetry(currentTimestamp) {
+        return this.openmct.time.bounds().end >= currentTimestamp;
+    }
+
     telemetryReceived(endpoint, datum) {
         if (!this.isTelemetryUsed(endpoint)) {
             return;
@@ -334,16 +354,21 @@ export default class ConditionManager extends EventEmitter {
         const normalizedDatum = this.createNormalizedDatum(datum, endpoint);
         const timeSystemKey = this.openmct.time.timeSystem().key;
         let timestamp = {};
-        timestamp[timeSystemKey] = normalizedDatum[timeSystemKey];
+        const currentTimestamp = normalizedDatum[timeSystemKey];
+        timestamp[timeSystemKey] = currentTimestamp;
+        if (this.shouldEvaluateNewTelemetry(currentTimestamp)) {
+            this.updateConditionResults(normalizedDatum);
+            this.updateCurrentCondition(timestamp);
+        }
+    }
 
+    updateConditionResults(normalizedDatum) {
         //We want to stop when the first condition evaluates to true.
         this.conditions.some((condition) => {
             condition.updateResult(normalizedDatum);
 
             return condition.result === true;
         });
-
-        this.updateCurrentCondition(timestamp);
     }
 
     updateCurrentCondition(timestamp) {
@@ -391,8 +416,10 @@ export default class ConditionManager extends EventEmitter {
     }
 
     updateTestData(testData) {
-        this.testData = testData;
-        this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionTestData', this.testData.conditionTestInputs);
+        if (!_.isEqual(testData, this.testData)) {
+            this.testData = testData;
+            this.openmct.objects.mutate(this.conditionSetDomainObject, 'configuration.conditionTestData', this.testData.conditionTestInputs);
+        }
     }
 
     persistConditions() {

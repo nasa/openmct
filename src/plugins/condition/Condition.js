@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -75,13 +75,16 @@ export default class Condition extends EventEmitter {
             return;
         }
 
-        if (this.isTelemetryUsed(datum.id)) {
+        // if all the criteria in this condition have no telemetry, we want to force the condition result to evaluate
+        if (this.hasNoTelemetry() || this.isTelemetryUsed(datum.id)) {
 
             this.criteria.forEach(criterion => {
                 if (this.isAnyOrAllTelemetry(criterion)) {
                     criterion.updateResult(datum, this.conditionManager.telemetryObjects);
                 } else {
-                    criterion.updateResult(datum);
+                    if (criterion.usesTelemetry(datum.id)) {
+                        criterion.updateResult(datum);
+                    }
                 }
             });
 
@@ -93,9 +96,15 @@ export default class Condition extends EventEmitter {
         return (criterion.telemetry && (criterion.telemetry === 'all' || criterion.telemetry === 'any'));
     }
 
+    hasNoTelemetry() {
+        return this.criteria.every((criterion) => {
+            return !this.isAnyOrAllTelemetry(criterion) && criterion.telemetry === '';
+        });
+    }
+
     isTelemetryUsed(id) {
         return this.criteria.some(criterion => {
-            return this.isAnyOrAllTelemetry(criterion) || criterion.telemetryObjectIdAsString === id;
+            return this.isAnyOrAllTelemetry(criterion) || criterion.usesTelemetry(id);
         });
     }
 
@@ -250,17 +259,24 @@ export default class Condition extends EventEmitter {
     }
 
     getTriggerDescription() {
-        return {
-            conjunction: TRIGGER_CONJUNCTION[this.trigger],
-            prefix: `${TRIGGER_LABEL[this.trigger]}: `
-        };
+        if (this.trigger) {
+            return {
+                conjunction: TRIGGER_CONJUNCTION[this.trigger],
+                prefix: `${TRIGGER_LABEL[this.trigger]}: `
+            };
+        } else {
+            return {
+                conjunction: '',
+                prefix: ''
+            };
+        }
     }
 
-    requestLADConditionResult() {
+    requestLADConditionResult(options) {
         let latestTimestamp;
         let criteriaResults = {};
         const criteriaRequests = this.criteria
-            .map(criterion => criterion.requestLAD(this.conditionManager.telemetryObjects));
+            .map(criterion => criterion.requestLAD(this.conditionManager.telemetryObjects, options));
 
         return Promise.all(criteriaRequests)
             .then(results => {

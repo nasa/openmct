@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from "utils/testing";
 import ConditionPlugin from "./plugin";
+import stylesManager from '@/ui/inspector/styles/StylesManager';
 import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
@@ -135,7 +136,7 @@ describe('the plugin', function () {
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testViewObject);
+            const applicableViews = openmct.objectViews.get(testViewObject, []);
             let conditionSetView = applicableViews.find((viewProvider) => viewProvider.key === 'conditionSet.view');
             expect(conditionSetView).toBeDefined();
         });
@@ -146,6 +147,8 @@ describe('the plugin', function () {
         let displayLayoutItem;
         let lineLayoutItem;
         let boxLayoutItem;
+        let notCreatableObjectItem;
+        let notCreatableObject;
         let selection;
         let component;
         let styleViewComponentObject;
@@ -264,6 +267,19 @@ describe('the plugin', function () {
                             "stroke": "#717171",
                             "type": "line-view",
                             "id": "57d49a28-7863-43bd-9593-6570758916f0"
+                        },
+                        {
+                            "width": 32,
+                            "height": 18,
+                            "x": 36,
+                            "y": 8,
+                            "identifier": {
+                                "key": "~TEST~image",
+                                "namespace": "test-space"
+                            },
+                            "hasFrame": true,
+                            "type": "subobject-view",
+                            "id": "6d9fe81b-a3ce-4e59-b404-a4a0be1a5d85"
                         }
                     ],
                     "layoutGrid": [
@@ -297,6 +313,52 @@ describe('the plugin', function () {
                 "type": "box-view",
                 "id": "89b88746-d325-487b-aec4-11b79afff9e8"
             };
+            notCreatableObjectItem = {
+                "width": 32,
+                "height": 18,
+                "x": 36,
+                "y": 8,
+                "identifier": {
+                    "key": "~TEST~image",
+                    "namespace": "test-space"
+                },
+                "hasFrame": true,
+                "type": "subobject-view",
+                "id": "6d9fe81b-a3ce-4e59-b404-a4a0be1a5d85"
+            };
+            notCreatableObject = {
+                "identifier": {
+                    "key": "~TEST~image",
+                    "namespace": "test-space"
+                },
+                "name": "test~image",
+                "location": "test-space:~TEST",
+                "type": "test.image",
+                "telemetry": {
+                    "values": [
+                        {
+                            "key": "value",
+                            "name": "Value",
+                            "hints": {
+                                "image": 1,
+                                "priority": 0
+                            },
+                            "format": "image",
+                            "source": "value"
+                        },
+                        {
+                            "key": "utc",
+                            "source": "timestamp",
+                            "name": "Timestamp",
+                            "format": "iso",
+                            "hints": {
+                                "domain": 1,
+                                "priority": 1
+                            }
+                        }
+                    ]
+                }
+            };
             selection = [
                 [{
                     context: {
@@ -321,18 +383,32 @@ describe('the plugin', function () {
                         item: displayLayoutItem,
                         "supportsMultiSelect": true
                     }
+                }],
+                [{
+                    context: {
+                        "item": notCreatableObject,
+                        "layoutItem": notCreatableObjectItem,
+                        "index": 2
+                    }
+                },
+                {
+                    context: {
+                        item: displayLayoutItem,
+                        "supportsMultiSelect": true
+                    }
                 }]
             ];
             let viewContainer = document.createElement('div');
             child.append(viewContainer);
             component = new Vue({
-                provide: {
-                    openmct: openmct,
-                    selection: selection
-                },
                 el: viewContainer,
                 components: {
                     StylesView
+                },
+                provide: {
+                    openmct: openmct,
+                    selection: selection,
+                    stylesManager
                 },
                 template: '<styles-view/>'
             });
@@ -344,7 +420,7 @@ describe('the plugin', function () {
         });
 
         it('initializes the items in the view', () => {
-            expect(styleViewComponentObject.items.length).toBe(2);
+            expect(styleViewComponentObject.items.length).toBe(3);
         });
 
         it('initializes conditional styles', () => {
@@ -363,7 +439,7 @@ describe('the plugin', function () {
 
             return Vue.nextTick().then(() => {
                 expect(styleViewComponentObject.domainObject.configuration.objectStyles).toBeDefined();
-                [boxLayoutItem, lineLayoutItem].forEach((item) => {
+                [boxLayoutItem, lineLayoutItem, notCreatableObjectItem].forEach((item) => {
                     const itemStyles = styleViewComponentObject.domainObject.configuration.objectStyles[item.id].styles;
                     expect(itemStyles.length).toBe(2);
                     const foundStyle = itemStyles.find((style) => {
@@ -385,7 +461,7 @@ describe('the plugin', function () {
 
             return Vue.nextTick().then(() => {
                 expect(styleViewComponentObject.domainObject.configuration.objectStyles).toBeDefined();
-                [boxLayoutItem, lineLayoutItem].forEach((item) => {
+                [boxLayoutItem, lineLayoutItem, notCreatableObjectItem].forEach((item) => {
                     const itemStyle = styleViewComponentObject.domainObject.configuration.objectStyles[item.id].staticStyle;
                     expect(itemStyle).toBeDefined();
                     const applicableStyles = getApplicableStylesForItem(styleViewComponentObject.domainObject, item);
@@ -467,7 +543,6 @@ describe('the plugin', function () {
         });
 
         it('should evaluate as stale when telemetry is not received in the allotted time', (done) => {
-
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
             conditionMgr.on('conditionSetResultUpdated', mockListener);
             conditionMgr.telemetryObjects = {
@@ -489,7 +564,7 @@ describe('the plugin', function () {
         });
 
         it('should not evaluate as stale when telemetry is received in the allotted time', (done) => {
-            const date = Date.now();
+            const date = 1;
             conditionSetDomainObject.configuration.conditionCollection[0].configuration.criteria[0].input = ["0.4"];
             let conditionMgr = new ConditionManager(conditionSetDomainObject, openmct);
             conditionMgr.on('conditionSetResultUpdated', mockListener);

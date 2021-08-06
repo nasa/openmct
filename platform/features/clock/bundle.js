@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,13 +23,11 @@
 define([
     "moment-timezone",
     "./src/indicators/ClockIndicator",
-    "./src/indicators/FollowIndicator",
     "./src/services/TickerService",
     "./src/services/TimerService",
     "./src/controllers/ClockController",
     "./src/controllers/TimerController",
     "./src/controllers/RefreshingController",
-    "./src/actions/FollowTimerAction",
     "./src/actions/StartTimerAction",
     "./src/actions/RestartTimerAction",
     "./src/actions/StopTimerAction",
@@ -39,13 +37,11 @@ define([
 ], function (
     MomentTimezone,
     ClockIndicator,
-    FollowIndicator,
     TickerService,
     TimerService,
     ClockController,
     TimerController,
     RefreshingController,
-    FollowTimerAction,
     StartTimerAction,
     RestartTimerAction,
     StopTimerAction,
@@ -145,15 +141,6 @@ define([
                 ],
                 "actions": [
                     {
-                        "key": "timer.follow",
-                        "implementation": FollowTimerAction,
-                        "depends": ["timerService"],
-                        "category": "contextual",
-                        "name": "Follow Timer",
-                        "cssClass": "icon-clock",
-                        "priority": "optional"
-                    },
-                    {
                         "key": "timer.start",
                         "implementation": StartTimerAction,
                         "depends": [
@@ -194,7 +181,7 @@ define([
                         ],
                         "category": "contextual",
                         "name": "Stop",
-                        "cssClass": "icon-box",
+                        "cssClass": "icon-box-round-corners",
                         "priority": "preferred"
                     }
                 ],
@@ -299,10 +286,7 @@ define([
                         }
                     }
                 ],
-                "runs": [{
-                    "implementation": FollowIndicator,
-                    "depends": ["openmct", "timerService"]
-                }],
+                "runs": [],
                 "licenses": [
                     {
                         "name": "moment-duration-format",

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,9 +23,9 @@
 /*global module,process*/
 
 const devMode = process.env.NODE_ENV !== 'production';
-const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'FirefoxHeadless'];
+const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['progress', 'html'];
+const reporters = ['progress', 'html', 'junit'];
 
 if (coverageEnabled) {
     reporters.push('coverage-istanbul');
@@ -59,7 +59,8 @@ module.exports = (config) => {
         browsers: browsers,
         client: {
             jasmine: {
-                random: false
+                random: false,
+                timeoutInterval: 30000
             }
         },
         customLaunchers: {
@@ -67,6 +68,10 @@ module.exports = (config) => {
                 base: 'Chrome',
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
+            },
+            FirefoxESR: {
+                base: 'FirefoxHeadless',
+                name: 'FirefoxESR'
             }
         },
         colors: true,
@@ -78,15 +83,25 @@ module.exports = (config) => {
             preserveDescribeNesting: true,
             foldAll: false
         },
+        junitReporter: {
+            outputDir: "dist/reports/tests",
+            outputFile: "test-results.xml",
+            useBrowserName: false
+        },
+        browserConsoleLogOptions: {
+            level: "error",
+            format: "%b %T: %m",
+            terminal: true
+        },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: process.env.CIRCLE_ARTIFACTS ?
-                process.env.CIRCLE_ARTIFACTS + '/coverage' :
-                "dist/reports/coverage",
+            dir: process.env.CIRCLE_ARTIFACTS
+                ? process.env.CIRCLE_ARTIFACTS + '/coverage'
+                : "dist/reports/coverage",
             reports: ['html', 'lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    lines: 64
+                    lines: 66
                 }
             }
         },

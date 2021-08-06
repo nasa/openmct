@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -27,14 +27,17 @@ export default class StyleRuleManager extends EventEmitter {
         super();
         this.openmct = openmct;
         this.callback = callback;
+        this.refreshData = this.refreshData.bind(this);
+        this.toggleSubscription = this.toggleSubscription.bind(this);
         if (suppressSubscriptionOnEdit) {
-            this.openmct.editor.on('isEditing', this.toggleSubscription.bind(this));
+            this.openmct.editor.on('isEditing', this.toggleSubscription);
             this.isEditing = this.openmct.editor.editing;
         }
 
         if (styleConfiguration) {
             this.initialize(styleConfiguration);
             if (styleConfiguration.conditionSetIdentifier) {
+                this.openmct.time.on("bounds", this.refreshData);
                 this.subscribeToConditionSet();
             } else {
                 this.applyStaticStyle();
@@ -83,9 +86,29 @@ export default class StyleRuleManager extends EventEmitter {
         });
     }
 
+    refreshData(bounds, isTick) {
+        if (!isTick) {
+            let options = {
+                start: bounds.start,
+                end: bounds.end,
+                size: 1,
+                strategy: 'latest'
+            };
+            this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
+                this.openmct.telemetry.request(conditionSetDomainObject, options)
+                    .then(output => {
+                        if (output && output.length) {
+                            this.handleConditionSetResultUpdated(output[0]);
+                        }
+                    });
+            });
+        }
+    }
+
     updateObjectStyleConfig(styleConfiguration) {
         if (!styleConfiguration || !styleConfiguration.conditionSetIdentifier) {
             this.initialize(styleConfiguration || {});
+            this.applyStaticStyle();
             this.destroy();
         } else {
             let isNewConditionSet = !this.conditionSetIdentifier
@@ -158,11 +181,14 @@ export default class StyleRuleManager extends EventEmitter {
     }
 
     destroy() {
-        this.applyStaticStyle();
         if (this.stopProvidingTelemetry) {
+
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
         }
+
+        this.openmct.time.off("bounds", this.refreshData);
+        this.openmct.editor.off('isEditing', this.toggleSubscription);
 
         this.conditionSetIdentifier = undefined;
     }

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,6 +26,7 @@ define([], function () {
             this.columns = columns;
 
             this.datum = createNormalizedDatum(datum, columns);
+            this.fullDatum = datum;
             this.limitEvaluator = limitEvaluator;
             this.objectKeyString = objectKeyString;
         }
@@ -87,7 +88,7 @@ define([], function () {
         }
 
         getContextMenuActions() {
-            return [];
+            return ['viewDatumAction'];
         }
     }
 
@@ -99,11 +100,13 @@ define([], function () {
      * @param {*} metadataValues
      */
     function createNormalizedDatum(datum, columns) {
-        return Object.values(columns).reduce((normalizedDatum, column) => {
-            normalizedDatum[column.getKey()] = column.getRawValue(datum);
+        const normalizedDatum = JSON.parse(JSON.stringify(datum));
 
-            return normalizedDatum;
-        }, {});
+        Object.values(columns).forEach(column => {
+            normalizedDatum[column.getKey()] = column.getRawValue(datum);
+        });
+
+        return normalizedDatum;
     }
 
     return TelemetryTableRow;

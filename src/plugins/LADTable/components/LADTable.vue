@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 <template>
-<div class="c-lad-table-wrapper">
+<div class="c-lad-table-wrapper u-style-receiver js-style-receiver">
     <table class="c-table c-lad-table">
         <thead>
             <tr>
@@ -33,10 +33,12 @@
         </thead>
         <tbody>
             <lad-row
-                v-for="item in items"
-                :key="item.key"
-                :domain-object="item.domainObject"
+                v-for="ladRow in items"
+                :key="ladRow.key"
+                :domain-object="ladRow.domainObject"
+                :path-to-table="objectPath"
                 :has-units="hasUnits"
+                @rowContextClick="updateViewContext"
             />
         </tbody>
     </table>
@@ -47,13 +49,24 @@
 import LadRow from './LADRow.vue';
 
 export default {
-    inject: ['openmct', 'domainObject', 'objectPath'],
     components: {
         LadRow
     },
+    inject: ['openmct', 'currentView'],
+    props: {
+        domainObject: {
+            type: Object,
+            required: true
+        },
+        objectPath: {
+            type: Array,
+            required: true
+        }
+    },
     data() {
         return {
-            items: []
+            items: [],
+            viewContext: {}
         };
     },
     computed: {
@@ -103,6 +116,12 @@ export default {
             let metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
 
             return metadataWithUnits.length > 0;
+        },
+        updateViewContext(rowContext) {
+            this.viewContext.row = rowContext;
+        },
+        getViewContext() {
+            return this.viewContext;
         }
     }
 };

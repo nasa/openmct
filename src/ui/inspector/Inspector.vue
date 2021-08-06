@@ -15,7 +15,7 @@
 
     </div>
     <div class="c-inspector__content">
-        <multipane v-if="currentTabbedView.key === '__properties'"
+        <multipane v-show="currentTabbedView.key === '__properties'"
                    type="vertical"
         >
             <pane class="c-inspector__properties">
@@ -29,12 +29,25 @@
                 handle="before"
                 label="Elements"
             >
-                <elements />
+                <elements-pool />
             </pane>
         </multipane>
-        <template v-else>
-            <styles-inspector-view />
-        </template>
+        <multipane
+            v-show="currentTabbedView.key === '__styles'"
+            type="vertical"
+        >
+            <pane class="c-inspector__styles">
+                <StylesInspectorView />
+            </pane>
+            <pane
+                v-if="isEditing"
+                class="c-inspector__saved-styles"
+                handle="before"
+                label="Saved Styles"
+            >
+                <SavedStylesInspectorView :is-editing="isEditing" />
+            </pane>
+        </multipane>
     </div>
 </div>
 </template>
@@ -42,28 +55,37 @@
 <script>
 import multipane from '../layout/multipane.vue';
 import pane from '../layout/pane.vue';
-import Elements from './Elements.vue';
+import ElementsPool from './ElementsPool.vue';
 import Location from './Location.vue';
 import Properties from './Properties.vue';
 import ObjectName from './ObjectName.vue';
 import InspectorViews from './InspectorViews.vue';
 import _ from "lodash";
-import StylesInspectorView from "./StylesInspectorView.vue";
+import stylesManager from '@/ui/inspector/styles/StylesManager';
+import StylesInspectorView from '@/ui/inspector/styles/StylesInspectorView.vue';
+import SavedStylesInspectorView from '@/ui/inspector/styles/SavedStylesInspectorView.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         StylesInspectorView,
+        SavedStylesInspectorView,
         multipane,
         pane,
-        Elements,
+        ElementsPool,
         Properties,
         ObjectName,
         Location,
         InspectorViews
     },
+    provide: {
+        stylesManager: stylesManager
+    },
+    inject: ['openmct'],
     props: {
-        'isEditing': Boolean
+        isEditing: {
+            type: Boolean,
+            required: true
+        }
     },
     data() {
         return {

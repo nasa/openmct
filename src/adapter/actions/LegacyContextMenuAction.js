@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,6 +31,8 @@ export default class LegacyContextMenuAction {
         this.description = LegacyAction.definition.description;
         this.cssClass = LegacyAction.definition.cssClass;
         this.LegacyAction = LegacyAction;
+        this.group = LegacyAction.definition.group;
+        this.priority = LegacyAction.definition.priority;
     }
 
     invoke(objectPath) {

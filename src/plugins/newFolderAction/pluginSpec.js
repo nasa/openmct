@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -40,9 +40,7 @@ describe("the plugin", () => {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        newFolderAction = openmct.contextMenu._allActions.filter(action => {
-            return action.key === 'newFolder';
-        })[0];
+        newFolderAction = openmct.actions._allActions.newFolder;
     });
 
     afterEach(() => {
@@ -79,9 +77,9 @@ describe("the plugin", () => {
 
             spyOn(openmct.$injector, 'get').and.returnValue(mockDialogService);
             spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
-            spyOn(openmct.objects, 'mutate');
+            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 
-            newFolderAction.invoke(mockObjectPath);
+            return newFolderAction.invoke(mockObjectPath);
         });
 
         it('gets user input for folder name', () => {
@@ -89,7 +87,7 @@ describe("the plugin", () => {
         });
 
         it('creates a new folder object', () => {
-            expect(openmct.objects.mutate).toHaveBeenCalled();
+            expect(openmct.objects.save).toHaveBeenCalled();
         });
 
         it('adds new folder object to parent composition', () => {

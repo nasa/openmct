@@ -8,6 +8,11 @@ export default {
             }
         }
     },
+    data() {
+        return {
+            contextClickActive: false
+        };
+    },
     mounted() {
         //TODO: touch support
         this.$el.addEventListener('contextmenu', this.showContextMenu);
@@ -30,7 +35,23 @@ export default {
         showContextMenu(event) {
             event.preventDefault();
             event.stopPropagation();
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.objectPath, event.clientX, event.clientY);
+
+            let actionsCollection = this.openmct.actions.getActionsCollection(this.objectPath);
+            let actions = actionsCollection.getVisibleActions();
+            let sortedActions = this.openmct.actions._groupAndSortActions(actions);
+
+            const menuOptions = {
+                onDestroy: this.onContextMenuDestroyed
+            };
+
+            const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, actionsCollection.objectPath, actionsCollection.view);
+            this.openmct.menus.showMenu(event.clientX, event.clientY, menuItems, menuOptions);
+            this.contextClickActive = true;
+            this.$emit('context-click-active', true);
+        },
+        onContextMenuDestroyed() {
+            this.contextClickActive = false;
+            this.$emit('context-click-active', false);
         }
     }
 };

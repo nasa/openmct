@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,7 +29,7 @@
     @endMove="() => $emit('endMove')"
 >
     <div
-        class="c-box-view"
+        class="c-box-view u-style-receiver js-style-receiver"
         :class="[styleClass]"
         :style="style"
     ></div>
@@ -51,11 +51,11 @@ export default {
             height: 5
         };
     },
-    inject: ['openmct'],
     components: {
         LayoutFrame
     },
     mixins: [conditionalStylesMixin],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,

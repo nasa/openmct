@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -160,6 +160,23 @@ define([
         return {
             evaluate: function (datum, property) {
                 return limitEvaluator.evaluate(datum, property && property.key);
+            }
+
+        };
+    };
+
+    LegacyTelemetryProvider.prototype.getLimits = function (domainObject) {
+        const oldObject = this.instantiate(
+            utils.toOldFormat(domainObject),
+            utils.makeKeyString(domainObject.identifier)
+        );
+        const limitEvaluator = oldObject.getCapability("limit");
+
+        return {
+            limits: () => {
+                return limitEvaluator.limits.then !== undefined
+                    ? limitEvaluator.limits()
+                    : Promise.resolve(limitEvaluator.limits());
             }
         };
     };

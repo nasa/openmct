@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -81,7 +81,7 @@
                 flex: 0 0 auto;
 
                 + * {
-                    margin-top: $interiorMarginLg;
+                    margin-top: $interiorMargin;
                 }
             }
         }
@@ -100,8 +100,14 @@
         &__pane-tree {
             background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
 
-            [class*="expand-button"],
-            [class*="sync-tree-button"] {
+            .l-pane__header {
+                // Hide all buttons except the collapse button
+                > :not(.l-pane__collapse-button) {
+                    display: none;
+                }
+            }
+
+            [class*="expand-button"] {
                 display: none;
             }
 
@@ -148,6 +154,7 @@
     /******************************* HEAD */
     &__main-view-browse-bar {
         flex: 0 0 auto;
+        margin-bottom: $interiorMargin; // Needs some additional visual separation
     }
 
     body.mobile & .l-shell__main-view-browse-bar {
@@ -227,8 +234,9 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
+        //display: flex; NEEDS REGRESSION TESTING!!!
         flex: 1 1 auto !important;
-        height: 0; // Chrome 73 overflow bug fix
+        height: 100%; // Chrome 73 overflow bug fix
         overflow: auto;
     }
 
@@ -277,11 +285,19 @@
     }
 
     &__toolbar {
+        // Toolbar in the main shell, used by Display Layouts
         $p: $interiorMargin;
         background: $editUIBaseColor;
         border-radius: $basicCr;
         height: $p + 24px; // Need to standardize the height
+        justify-content: space-between;
         padding: $p;
+    }
+
+    &__resizing {
+        iframe {
+            pointer-events: none;
+        }
     }
 }
 
@@ -331,13 +347,12 @@
         }
 
         > * + * {
-            margin-left: $interiorMargin;
+            margin-left: $interiorMarginSm;
         }
     }
 
     &__start {
         flex: 1 1 auto;
-        //margin-right: $interiorMargin;
         min-width: 0; // Forces interior to compress when pushed on
 
         [class*='button'] {
@@ -356,11 +371,6 @@
 
     &__nav-to-parent-button {
         // This is an icon-button
-        //$p: $interiorMargin;
-        //margin-right: $interiorMargin;
-        //padding-left: $p;
-        //padding-right: $p;
-
         .is-editing & {
             display: none;
         }
@@ -375,12 +385,16 @@
         filter: $objectLabelNameFilter;
     }
 
+    .c-object-label__type-icon {
+        opacity: $objectLabelTypeIconOpacity;
+    }
+
     &__object-name--w {
         @include headerFont(1.5em);
         margin-left: $interiorMarginLg;
         min-width: 0;
 
-        .is-missing__indicator {
+        .is-status__indicator {
             right: -5px !important;
             top: -4px !important;
         }

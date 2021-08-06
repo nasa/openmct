@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
+
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
 
@@ -88,6 +89,28 @@ export function resetApplicationState(openmct) {
     }
 
     return promise;
+}
+
+// required: key
+// optional: element, keyCode, type
+export function simulateKeyEvent(opts) {
+
+    if (!opts.key) {
+        console.warn('simulateKeyEvent needs a key');
+
+        return;
+    }
+
+    const el = opts.element || document;
+    const key = opts.key;
+    const keyCode = opts.keyCode || key;
+    const type = opts.type || 'keydown';
+    const event = new Event(type);
+
+    event.keyCode = keyCode;
+    event.key = key;
+
+    el.dispatchEvent(event);
 }
 
 function clearBuiltinSpy(funcDefinition) {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -114,7 +114,12 @@ define(["objectUtils"],
             var self = this,
                 domainObject = this.domainObject;
 
-            let newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), domainObject.getId());
+            const identifier = {
+                namespace: this.getSpace(),
+                key: this.getKey()
+            };
+
+            let newStyleObject = objectUtils.toNewFormat(domainObject.getModel(), identifier);
 
             return this.openmct.objects
                 .save(newStyleObject)
@@ -146,6 +151,7 @@ define(["objectUtils"],
                     return domainObject.useCapability("mutation", function () {
                         return model;
                     }, modified);
+
                 }
             }
 

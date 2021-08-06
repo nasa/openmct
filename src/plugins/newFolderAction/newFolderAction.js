@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,8 @@ export default class NewFolderAction {
         this.key = 'newFolder';
         this.description = 'Create a new folder';
         this.cssClass = 'icon-folder-new';
+        this.group = "action";
+        this.priority = 9;
 
         this._openmct = openmct;
         this._dialogForm = {
@@ -71,9 +73,12 @@ export default class NewFolderAction {
 
             folderType.definition.initialize(objectModel);
             objectModel.name = name || 'New Folder';
+            objectModel.modified = Date.now();
 
-            this._openmct.objects.mutate(objectModel, 'created', Date.now());
-            composition.add(objectModel);
+            this._openmct.objects.save(objectModel).then(() => {
+                composition.add(objectModel);
+            });
+
         });
     }
     appliesTo(objectPath) {

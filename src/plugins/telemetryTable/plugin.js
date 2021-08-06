@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,28 +19,26 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import TelemetryTableViewProvider from './TelemetryTableViewProvider';
+import TableConfigurationViewProvider from './TableConfigurationViewProvider';
+import TelemetryTableType from './TelemetryTableType';
+import TelemetryTableViewActions from './ViewActions';
 
-define([
-    './TelemetryTableViewProvider',
-    './TableConfigurationViewProvider',
-    './TelemetryTableType'
-], function (
-    TelemetryTableViewProvider,
-    TableConfigurationViewProvider,
-    TelemetryTableType
-) {
-    return function plugin() {
-        return function install(openmct) {
-            openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
-            openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
-            openmct.types.addType('table', TelemetryTableType);
-            openmct.composition.addPolicy((parent, child) => {
-                if (parent.type === 'table') {
-                    return Object.prototype.hasOwnProperty.call(child, 'telemetry');
-                } else {
-                    return true;
-                }
-            });
-        };
+export default function plugin() {
+    return function install(openmct) {
+        openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
+        openmct.types.addType('table', TelemetryTableType);
+        openmct.composition.addPolicy((parent, child) => {
+            if (parent.type === 'table') {
+                return Object.prototype.hasOwnProperty.call(child, 'telemetry');
+            } else {
+                return true;
+            }
+        });
+
+        TelemetryTableViewActions.forEach(action => {
+            openmct.actions.register(action);
+        });
     };
-});
+}

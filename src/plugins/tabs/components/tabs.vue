@@ -20,15 +20,26 @@
             Drag objects here to add them to this view.
         </div>
         <div
-            v-for="(tab,index) in tabsList"
-            :key="index"
-            class="c-tab c-tabs-view__tab"
+            v-for="(tab, index) in tabsList"
+            :key="tab.keyString"
+            class="c-tab c-tabs-view__tab js-tab"
             :class="{
                 'is-current': isCurrent(tab)
             }"
             @click="showTab(tab, index)"
         >
-            <span class="c-button__label c-tabs-view__tab__label">{{ tab.domainObject.name }}</span>
+            <div class="c-tabs-view__tab__label c-object-label"
+                 :class="[tab.status ? `is-status--${tab.status}` : '']"
+            >
+                <div class="c-object-label__type-icon"
+                     :class="tab.type.definition.cssClass"
+                >
+                    <span class="is-status__indicator"
+                          :title="`This item is ${tab.status}`"
+                    ></span>
+                </div>
+                <span class="c-button__label c-object-label__name">{{ tab.domainObject.name }}</span>
+            </div>
             <button v-if="isEditing"
                     class="icon-x c-click-icon c-tabs-view__tab__close-btn"
                     @click="showRemoveDialog(index)"
@@ -36,15 +47,16 @@
         </div>
     </div>
     <div
-        v-for="(tab, index) in tabsList"
-        :key="index"
+        v-for="tab in tabsList"
+        :key="tab.keyString"
         class="c-tabs-view__object-holder"
         :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
     >
         <object-view
-            v-if="internalDomainObject.keep_alive ? currentTab : isCurrent(tab)"
+            v-if="isTabLoaded(tab)"
             class="c-tabs-view__object"
-            :object="tab.domainObject"
+            :default-object="tab.domainObject"
+            :object-path="tab.objectPath"
         />
     </div>
 </div>
@@ -53,11 +65,6 @@
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
-import {
-    getSearchParam,
-    setSearchParam,
-    deleteSearchParam
-} from 'utils/openmctLocation';
 
 const unknownObjectType = {
     definition: {
@@ -67,10 +74,10 @@ const unknownObjectType = {
 };
 
 export default {
-    inject: ['openmct', 'domainObject', 'composition'],
     components: {
         ObjectView
     },
+    inject: ['openmct', 'domainObject', 'composition', 'objectPath'],
     props: {
         isEditing: {
             type: Boolean,
@@ -88,7 +95,8 @@ export default {
             setCurrentTab: true,
             isDragging: false,
             allowDrop: false,
-            searchTabKey: `tabs.pos.${keyString}`
+            searchTabKey: `tabs.pos.${keyString}`,
+            loadedTabs: {}
         };
     },
     computed: {
@@ -102,7 +110,7 @@ export default {
             this.composition.on('remove', this.removeItem);
             this.composition.on('reorder', this.onReorder);
             this.composition.load().then(() => {
-                let currentTabIndexFromURL = getSearchParam(this.searchTabKey);
+                let currentTabIndexFromURL = this.openmct.router.getSearchParam(this.searchTabKey);
                 let currentTabIndexFromDomainObject = this.internalDomainObject.currentTabIndex;
 
                 if (currentTabIndexFromURL !== null) {
@@ -116,6 +124,8 @@ export default {
 
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
+        this.openmct.router.on('change:params', this.updateCurrentTab.bind(this));
+
         this.RemoveAction = new RemoveAction(this.openmct);
         document.addEventListener('dragstart', this.dragstart);
         document.addEventListener('dragend', this.dragend);
@@ -128,16 +138,25 @@ export default {
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.onReorder);
 
+        this.tabsList.forEach(tab => {
+            tab.statusUnsubscribe();
+        });
+
         this.unsubscribe();
         this.clearCurrentTabIndexFromURL();
+
+        this.openmct.router.off('change:params', this.updateCurrentTab.bind(this));
 
         document.removeEventListener('dragstart', this.dragstart);
         document.removeEventListener('dragend', this.dragend);
     },
     methods: {
+        addTabToLoaded(tab) {
+            this.loadedTabs[tab.keyString] = true;
+        },
         setCurrentTabByIndex(index) {
             if (this.tabsList[index]) {
-                this.currentTab = this.tabsList[index];
+                this.showTab(this.tabsList[index]);
             }
         },
         showTab(tab, index) {
@@ -146,6 +165,7 @@ export default {
             }
 
             this.currentTab = tab;
+            this.addTabToLoaded(tab);
         },
         showRemoveDialog(index) {
             if (!this.tabsList[index]) {
@@ -160,10 +180,10 @@ export default {
                 message: `This action will remove this tab from the Tabs Layout. Do you want to continue?`,
                 buttons: [
                     {
-                        label: 'Ok',
+                        label: 'OK',
                         emphasis: 'true',
                         callback: () => {
-                            this.removeFromComposition(childDomainObject);
+                            this.composition.remove(childDomainObject);
                             prompt.dismiss();
                         }
                     },
@@ -176,21 +196,27 @@ export default {
                 ]
             });
         },
-        removeFromComposition(childDomainObject) {
-            this.composition.remove(childDomainObject);
-        },
         addItem(domainObject) {
             let type = this.openmct.types.get(domainObject.type) || unknownObjectType;
+            let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+            let status = this.openmct.status.get(domainObject.identifier);
+            let statusUnsubscribe = this.openmct.status.observe(keyString, (updatedStatus) => {
+                this.updateStatus(keyString, updatedStatus);
+            });
+            let objectPath = [domainObject].concat(this.objectPath.slice());
             let tabItem = {
                 domainObject,
-                type: type,
-                key: this.openmct.objects.makeKeyString(domainObject.identifier)
+                status,
+                statusUnsubscribe,
+                objectPath,
+                type,
+                keyString
             };
 
             this.tabsList.push(tabItem);
 
             if (this.setCurrentTab) {
-                this.currentTab = tabItem;
+                this.showTab(tabItem);
                 this.setCurrentTab = false;
             }
         },
@@ -199,12 +225,20 @@ export default {
             this.setCurrentTab = true;
         },
         removeItem(identifier) {
-            let pos = this.tabsList.findIndex(tab =>
-                tab.domainObject.identifier.namespace === identifier.namespace && tab.domainObject.identifier.key === identifier.key
-            );
+            let keyStringToBeRemoved = this.openmct.objects.makeKeyString(identifier);
+
+            let pos = this.tabsList.findIndex(tab => {
+                return tab.keyString === keyStringToBeRemoved;
+            });
+
             let tabToBeRemoved = this.tabsList[pos];
 
+            tabToBeRemoved.statusUnsubscribe();
+
             this.tabsList.splice(pos, 1);
+
+            this.loadedTabs[keyStringToBeRemoved] = undefined;
+            delete this.loadedTabs[keyStringToBeRemoved];
 
             if (this.isCurrent(tabToBeRemoved)) {
                 this.showTab(this.tabsList[this.tabsList.length - 1], this.tabsList.length - 1);
@@ -241,7 +275,7 @@ export default {
             this.allowDrop = false;
         },
         isCurrent(tab) {
-            return this.currentTab.key === tab.key;
+            return this.currentTab.keyString === tab.keyString;
         },
         updateInternalDomainObject(domainObject) {
             this.internalDomainObject = domainObject;
@@ -250,15 +284,43 @@ export default {
             this.openmct.objects.mutate(this.internalDomainObject, 'currentTabIndex', index);
         },
         storeCurrentTabIndexInURL(index) {
-            let currentTabIndexInURL = getSearchParam(this.searchTabKey);
+            let currentTabIndexInURL = this.openmct.router.getSearchParam(this.searchTabKey);
 
             if (index !== currentTabIndexInURL) {
-                setSearchParam(this.searchTabKey, index);
+                this.openmct.router.setSearchParam(this.searchTabKey, index);
                 this.currentTabIndex = index;
             }
         },
         clearCurrentTabIndexFromURL() {
-            deleteSearchParam(this.searchTabKey);
+            this.openmct.router.deleteSearchParam(this.searchTabKey);
+        },
+        updateStatus(keyString, status) {
+            let tabPos = this.tabsList.findIndex((tab) => {
+                return tab.keyString === keyString;
+            });
+            let tab = this.tabsList[tabPos];
+
+            this.$set(tab, 'status', status);
+        },
+        isTabLoaded(tab) {
+            if (this.internalDomainObject.keep_alive) {
+                return true;
+            } else {
+                return this.loadedTabs[tab.keyString];
+            }
+        },
+        updateCurrentTab(newParams, oldParams, changedParams) {
+            const tabIndex = changedParams[this.searchTabKey];
+            if (!tabIndex) {
+                return;
+            }
+
+            if (this.currentTabIndex === parseInt(tabIndex, 10)) {
+                return;
+            }
+
+            this.currentTabIndex = tabIndex;
+            this.currentTab = this.tabsList[tabIndex];
         }
     }
 };

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -38,7 +38,7 @@ define([
             canEdit: function (domainObject) {
                 return domainObject.type === 'tabs';
             },
-            view: function (domainObject) {
+            view: function (domainObject, objectPath) {
                 let component;
 
                 return {
@@ -56,6 +56,7 @@ define([
                             provide: {
                                 openmct,
                                 domainObject,
+                                objectPath,
                                 composition: openmct.composition.get(domainObject)
                             },
                             template: '<tabs-component :isEditing="isEditing"></tabs-component>'

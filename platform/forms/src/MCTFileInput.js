@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -40,7 +40,7 @@ define(
                 }
 
                 function handleClick() {
-                    fileInputService.getInput().then(function (result) {
+                    fileInputService.getInput(scope.structure.type).then(function (result) {
                         setText(result.name);
                         scope.ngModel[scope.field] = result;
                         control.$setValidity("file-input", true);

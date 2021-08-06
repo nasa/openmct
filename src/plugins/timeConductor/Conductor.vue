@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2018, United States Government
+ * Open MCT Web, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -73,15 +73,22 @@
             >
                 <!-- RT start -->
                 <div class="c-direction-indicator icon-minus"></div>
-                <input
+                <time-popup
+                    v-if="showTCInputStart"
+                    class="pr-tc-input-menu--start"
+                    :type="'start'"
+                    :offset="offsets.start"
+                    @focus.native="$event.target.select()"
+                    @hide="hideAllTimePopups"
+                    @update="timePopUpdate"
+                />
+                <button
                     ref="startOffset"
-                    v-model="offsets.start"
-                    class="c-input--hrs-min-sec"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllOffsets(); submitForm()"
+                    class="c-button c-conductor__delta-button"
+                    @click.prevent="showTimePopupStart"
                 >
+                    {{ offsets.start }}
+                </button>
             </div>
 
             <div class="c-ctrl-wrapper c-conductor-input c-conductor__end-fixed">
@@ -114,15 +121,22 @@
             >
                 <!-- RT end -->
                 <div class="c-direction-indicator icon-plus"></div>
-                <input
+                <time-popup
+                    v-if="showTCInputEnd"
+                    class="pr-tc-input-menu--end"
+                    :type="'end'"
+                    :offset="offsets.end"
+                    @focus.native="$event.target.select()"
+                    @hide="hideAllTimePopups"
+                    @update="timePopUpdate"
+                />
+                <button
                     ref="endOffset"
-                    v-model="offsets.end"
-                    class="c-input--hrs-min-sec"
-                    type="text"
-                    autocorrect="off"
-                    spellcheck="false"
-                    @change="validateAllOffsets(); submitForm()"
+                    class="c-button c-conductor__delta-button"
+                    @click.prevent="showTimePopupEnd"
                 >
+                    {{ offsets.end }}
+                </button>
             </div>
 
             <conductor-axis
@@ -141,10 +155,11 @@
             <ConductorMode class="c-conductor__mode-select" />
             <ConductorTimeSystem class="c-conductor__time-system-select" />
             <ConductorHistory
-                v-if="isFixed"
                 class="c-conductor__history-select"
+                :offsets="openmct.time.clockOffsets()"
                 :bounds="bounds"
                 :time-system="timeSystem"
+                :mode="timeMode"
             />
         </div>
         <input
@@ -156,25 +171,28 @@
 </template>
 
 <script>
+import _ from 'lodash';
 import ConductorMode from './ConductorMode.vue';
 import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import DatePicker from './DatePicker.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorHistory from './ConductorHistory.vue';
+import TimePopup from './timePopup.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
-    inject: ['openmct', 'configuration'],
     components: {
         ConductorMode,
         ConductorTimeSystem,
         DatePicker,
         ConductorAxis,
         ConductorModeIcon,
-        ConductorHistory
+        ConductorHistory,
+        TimePopup
     },
+    inject: ['openmct', 'configuration'],
     data() {
         let bounds = this.openmct.time.bounds();
         let offsets = this.openmct.time.clockOffsets();
@@ -207,14 +225,21 @@ export default {
             showDatePicker: false,
             altPressed: false,
             isPanning: false,
-            isZooming: false
+            isZooming: false,
+            showTCInputStart: false,
+            showTCInputEnd: false
         };
+    },
+    computed: {
+        timeMode() {
+            return this.isFixed ? 'fixed' : 'realtime';
+        }
     },
     mounted() {
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', this.handleNewBounds);
+        this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.openmct.time.on('clock', this.setViewFromClock);
         this.openmct.time.on('clockOffsets', this.setViewFromOffsets);
@@ -260,7 +285,7 @@ export default {
             this.isZooming = false;
 
             if (bounds) {
-                this.handleNewBounds(bounds);
+                this.openmct.time.bounds(bounds);
             } else {
                 this.setViewFromBounds(this.bounds);
             }
@@ -451,6 +476,23 @@ export default {
             this.formattedBounds.end = this.timeFormatter.format(date);
             this.validateAllBounds('endDate');
             this.submitForm();
+        },
+        hideAllTimePopups() {
+            this.showTCInputStart = false;
+            this.showTCInputEnd = false;
+        },
+        showTimePopupStart() {
+            this.hideAllTimePopups();
+            this.showTCInputStart = !this.showTCInputStart;
+        },
+        showTimePopupEnd() {
+            this.hideAllTimePopups();
+            this.showTCInputEnd = !this.showTCInputEnd;
+        },
+        timePopUpdate({ type, hours, minutes, seconds }) {
+            this.offsets[type] = [hours, minutes, seconds].join(':');
+            this.setOffsetsFromView();
+            this.hideAllTimePopups();
         }
     }
 };

@@ -1,0 +1,96 @@
+---
+ci:
+  collect:
+    urls:
+    - http://localhost/
+    numberOfRuns: 5
+    settings:
+      onlyCategories:
+      - performance
+      - best-practices
+  upload:
+    target: temporary-public-storage
+  assert:
+    preset: lighthouse:recommended
+    assertions:
+      ### Applicable assertions
+      bootup-time:
+      - warn
+      - minScore: 0.88 #Original value was calculated at 0.88
+      dom-size: 
+      - error
+      - maxNumericValue: 200 #Original value was calculated at 188
+      first-contentful-paint:
+      - error
+      - minScore: 0.07 #Original value was calculated at 0.08
+      mainthread-work-breakdown:
+      - warn
+      - minScore: 0.8 #Original value was calculated at 0.8
+      unused-javascript:
+      - warn
+      - maxLength: 1
+      - error
+      - maxNumericValue: 2000 #Original value was calculated at 1855
+      unused-css-rules: warn
+      installable-manifest: warn
+      service-worker: warn
+      ### Disabled seo, accessibility, and pwa assertions, below
+      categories:seo: 'off'
+      categories:accessibility: 'off'
+      categories:pwa: 'off'
+      accesskeys: 'off'
+      apple-touch-icon: 'off'
+      aria-allowed-attr: 'off'
+      aria-command-name: 'off'
+      aria-hidden-body: 'off'
+      aria-hidden-focus: 'off'
+      aria-input-field-name: 'off'
+      aria-meter-name: 'off'
+      aria-progressbar-name: 'off'
+      aria-required-attr: 'off'
+      aria-required-children: 'off'
+      aria-required-parent: 'off'
+      aria-roles: 'off'
+      aria-toggle-field-name: 'off'
+      aria-tooltip-name: 'off'
+      aria-treeitem-name: 'off'
+      aria-valid-attr: 'off'
+      aria-valid-attr-value: 'off'
+      button-name: 'off'
+      bypass: 'off'
+      canonical: 'off'
+      color-contrast: 'off'
+      content-width: 'off'
+      crawlable-anchors: 'off'
+      csp-xss: 'off'
+      font-display: 'off'
+      font-size: 'off'
+      maskable-icon: 'off'
+      heading-order: 'off'
+      hreflang: 'off'
+      html-has-lang: 'off'
+      html-lang-valid: 'off'
+      http-status-code: 'off'
+      image-alt: 'off'
+      input-image-alt: 'off'
+      is-crawlable: 'off'
+      label: 'off'
+      link-name: 'off'
+      link-text: 'off'
+      list: 'off'
+      listitem: 'off'
+      meta-description: 'off'
+      meta-refresh: 'off'
+      meta-viewport: 'off'
+      object-alt: 'off'
+      plugins: 'off'
+      robots-txt: 'off'
+      splash-screen: 'off'
+      tabindex: 'off'
+      tap-targets: 'off'
+      td-headers-attr: 'off'
+      th-has-data-cells: 'off'
+      themed-omnibox: 'off'
+      valid-lang: 'off'
+      video-caption: 'off'
+      viewport: 'off'

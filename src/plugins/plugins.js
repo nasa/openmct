@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,6 +23,7 @@
 define([
     'lodash',
     './utcTimeSystem/plugin',
+    './remoteClock/plugin',
     './localTimeSystem/plugin',
     './ISOTimeFormat/plugin',
     '../../example/generator/plugin',
@@ -46,6 +47,7 @@ define([
     './filters/plugin',
     './objectMigration/plugin',
     './goToOriginalAction/plugin',
+    './openInNewTabAction/plugin',
     './clearData/plugin',
     './webPage/plugin',
     './condition/plugin',
@@ -56,11 +58,21 @@ define([
     './URLTimeSettingsSynchronizer/plugin',
     './notificationIndicator/plugin',
     './newFolderAction/plugin',
+    './nonEditableFolder/plugin',
     './persistence/couch/plugin',
-    './defaultRootName/plugin'
+    './defaultRootName/plugin',
+    './plan/plugin',
+    './viewDatumAction/plugin',
+    './viewLargeAction/plugin',
+    './interceptors/plugin',
+    './performanceIndicator/plugin',
+    './CouchDBSearchFolder/plugin',
+    './timeline/plugin',
+    './hyperlink/plugin'
 ], function (
     _,
     UTCTimeSystem,
+    RemoteClock,
     LocalTimeSystem,
     ISOTimeFormat,
     GeneratorPlugin,
@@ -84,6 +96,7 @@ define([
     Filters,
     ObjectMigration,
     GoToOriginalAction,
+    OpenInNewTabAction,
     ClearData,
     WebPagePlugin,
     ConditionPlugin,
@@ -94,8 +107,17 @@ define([
     URLTimeSettingsSynchronizer,
     NotificationIndicator,
     NewFolderAction,
+    NonEditableFolder,
     CouchDBPlugin,
-    DefaultRootName
+    DefaultRootName,
+    PlanLayout,
+    ViewDatumAction,
+    ViewLargeAction,
+    ObjectInterceptors,
+    PerformanceIndicator,
+    CouchDBSearchFolder,
+    Timeline,
+    Hyperlink
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -113,6 +135,7 @@ define([
 
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
+    plugins.RemoteClock = RemoteClock.default;
 
     plugins.ImportExport = ImportExport;
 
@@ -161,7 +184,7 @@ define([
 
     plugins.ExampleImagery = ExampleImagery;
     plugins.ImageryPlugin = ImageryPlugin;
-    plugins.Plot = PlotPlugin;
+    plugins.Plot = PlotPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;
@@ -176,6 +199,7 @@ define([
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
+    plugins.OpenInNewTabAction = OpenInNewTabAction.default;
     plugins.ClearData = ClearData;
     plugins.WebPage = WebPagePlugin.default;
     plugins.Espresso = Espresso.default;
@@ -186,8 +210,17 @@ define([
     plugins.URLTimeSettingsSynchronizer = URLTimeSettingsSynchronizer.default;
     plugins.NotificationIndicator = NotificationIndicator.default;
     plugins.NewFolderAction = NewFolderAction.default;
+    plugins.NonEditableFolder = NonEditableFolder.default;
     plugins.ISOTimeFormat = ISOTimeFormat.default;
     plugins.DefaultRootName = DefaultRootName.default;
+    plugins.PlanLayout = PlanLayout.default;
+    plugins.ViewDatumAction = ViewDatumAction.default;
+    plugins.ViewLargeAction = ViewLargeAction.default;
+    plugins.ObjectInterceptors = ObjectInterceptors.default;
+    plugins.PerformanceIndicator = PerformanceIndicator.default;
+    plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
+    plugins.Timeline = Timeline.default;
+    plugins.Hyperlink = Hyperlink.default;
 
     return plugins;
 });

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import objectUtils from 'objectUtils';
+import utils from 'objectUtils';
 
 export default class LegacyPersistenceAdapter {
     constructor(openmct) {
@@ -35,13 +35,43 @@ export default class LegacyPersistenceAdapter {
         return Promise.resolve(Object.keys(this.openmct.objects.providers));
     }
 
-    updateObject(legacyDomainObject) {
-        return this.openmct.objects.save(legacyDomainObject.useCapability('adapter'));
+    createObject(space, key, legacyDomainObject) {
+        let object = utils.toNewFormat(legacyDomainObject, {
+            namespace: space,
+            key: key
+        });
+
+        return this.openmct.objects.save(object);
     }
 
-    readObject(keystring) {
-        let identifier = objectUtils.parseKeyString(keystring);
+    deleteObject(space, key) {
+        const identifier = {
+            namespace: space,
+            key: key
+        };
 
-        return this.openmct.legacyObject(this.openmct.objects.get(identifier));
+        return this.openmct.objects.delete(identifier);
+    }
+
+    updateObject(space, key, legacyDomainObject) {
+        let object = utils.toNewFormat(legacyDomainObject, {
+            namespace: space,
+            key: key
+        });
+
+        return this.openmct.objects.save(object);
+    }
+
+    readObject(space, key) {
+        const identifier = {
+            namespace: space,
+            key: key
+        };
+
+        return this.openmct.objects.get(identifier).then(domainObject => {
+            let object = this.openmct.legacyObject(domainObject);
+
+            return object.model;
+        });
     }
 }
