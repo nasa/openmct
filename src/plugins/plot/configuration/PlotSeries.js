@@ -115,7 +115,7 @@ export default class PlotSeries extends Model {
         this.openmct = options.openmct;
         this.domainObject = options.domainObject;
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.dataStoreId = `data-${options.id}-${this.keyString}`;
+        this.dataStoreId = `data-${options.collection.plot.id}-${this.keyString}`;
         this.updateSeriesData([]);
         this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
         this.limitDefinition = this.openmct.telemetry.limitDefinition(options.domainObject);
