@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import Clock from './Clock.vue';
+import Clock from './components/Clock.vue';
 import Vue from 'vue';
 
 export default function ClockViewProvider(openmct) {
@@ -32,7 +32,7 @@ export default function ClockViewProvider(openmct) {
             return domainObject.type === 'clock';
         },
 
-        view: function (domainObject, objectPath) {
+        view: function (domainObject) {
             let component;
 
             return {
