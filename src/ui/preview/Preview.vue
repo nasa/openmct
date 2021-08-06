@@ -27,7 +27,7 @@
         :domain-object="domainObject"
         :views="views"
     />
-    <div class="l-preview-window__object-view">
+    <div class="l-preview-window__object-view js-notebook-snapshot-item">
         <div ref="objectView"></div>
     </div>
 </div>
