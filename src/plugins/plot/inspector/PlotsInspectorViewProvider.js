@@ -38,7 +38,7 @@ export default function PlotsInspectorViewProvider(openmct) {
                             domainObject: selection[0][0].context.item,
                             path: objectPath
                         },
-                        template: '<plot-options></plot-options>'
+                        template: '<div></div>'
                     });
                 },
                 destroy: function () {
