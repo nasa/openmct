@@ -22,6 +22,7 @@
 import _ from 'lodash';
 import Model from "./Model";
 import { MARKER_SHAPES } from '../draw/MarkerShapes';
+import configStore from "../configuration/configStore";
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry
@@ -114,7 +115,8 @@ export default class PlotSeries extends Model {
         this.openmct = options.openmct;
         this.domainObject = options.domainObject;
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.collection.plot.updateSeriesData(this.keyString, []);
+        this.dataStoreId = `data-${options.id}-${this.keyString}`;
+        this.updateSeriesData([]);
         this.limitEvaluator = this.openmct.telemetry.limitEvaluator(options.domainObject);
         this.limitDefinition = this.openmct.telemetry.limitDefinition(options.domainObject);
         this.limits = [];
@@ -182,7 +184,7 @@ export default class PlotSeries extends Model {
             .telemetry
             .request(this.domainObject, options)
             .then(function (points) {
-                const data = this.collection.plot.getSeriesData(this.keyString);
+                const data = this.getSeriesData();
                 const newPoints = _(data)
                     .concat(points)
                     .sortBy(this.getXVal)
@@ -237,7 +239,7 @@ export default class PlotSeries extends Model {
      */
     resetStats() {
         this.unset('stats');
-        this.collection.plot.getSeriesData(this.keyString).forEach(this.updateStats, this);
+        this.getSeriesData().forEach(this.updateStats, this);
     }
 
     /**
@@ -245,7 +247,7 @@ export default class PlotSeries extends Model {
      * data to series after reset.
      */
     reset(newData) {
-        this.collection.plot.updateSeriesData(this.keyString, []);
+        this.updateSeriesData([]);
         this.resetStats();
         this.emit('reset');
         if (newData) {
@@ -259,7 +261,7 @@ export default class PlotSeries extends Model {
      */
     nearestPoint(xValue) {
         const insertIndex = this.sortedIndex(xValue);
-        const data = this.collection.plot.getSeriesData(this.keyString);
+        const data = this.getSeriesData();
         const lowPoint = data[insertIndex - 1];
         const highPoint = data[insertIndex];
         const indexVal = this.getXVal(xValue);
@@ -294,7 +296,7 @@ export default class PlotSeries extends Model {
      * @private
      */
     sortedIndex(point) {
-        return _.sortedIndexBy(this.collection.plot.getSeriesData(this.keyString), point, this.getXVal);
+        return _.sortedIndexBy(this.getSeriesData(), point, this.getXVal);
     }
     /**
      * Update min/max stats for the series.
@@ -348,7 +350,7 @@ export default class PlotSeries extends Model {
      *                  a point to the end without dupe checking.
      */
     add(point, appendOnly) {
-        let data = this.collection.plot.getSeriesData(this.keyString);
+        let data = this.getSeriesData();
         let insertIndex = data.length;
         const currentYVal = this.getYVal(point);
         const lastYVal = this.getYVal(data[insertIndex - 1]);
@@ -373,7 +375,7 @@ export default class PlotSeries extends Model {
         this.updateStats(point);
         point.mctLimitState = this.evaluate(point);
         data.splice(insertIndex, 0, point);
-        this.collection.plot.updateSeriesData(this.keyString, data);
+        this.updateSeriesData(data);
         this.emit('add', point, insertIndex, this);
     }
 
@@ -390,10 +392,10 @@ export default class PlotSeries extends Model {
      * @private
      */
     remove(point) {
-        let data = this.collection.plot.getSeriesData(this.keyString);
+        let data = this.getSeriesData();
         const index = data.indexOf(point);
         data.splice(index, 1);
-        this.collection.plot.updateSeriesData(this.keyString, data);
+        this.updateSeriesData(data);
         this.emit('remove', point, index, this);
     }
     /**
@@ -409,16 +411,16 @@ export default class PlotSeries extends Model {
     purgeRecordsOutsideRange(range) {
         const startIndex = this.sortedIndex(range.min);
         const endIndex = this.sortedIndex(range.max) + 1;
-        let data = this.collection.plot.getSeriesData(this.keyString);
+        let data = this.getSeriesData();
         const pointsToRemove = startIndex + (data.length - endIndex + 1);
         if (pointsToRemove > 0) {
             if (pointsToRemove < 1000) {
                 data.slice(0, startIndex).forEach(this.remove, this);
                 data.slice(endIndex, data.length).forEach(this.remove, this);
-                this.collection.plot.updateSeriesData(this.keyString, data);
+                this.updateSeriesData(data);
                 this.resetStats();
             } else {
-                const newData = this.collection.plot.getSeriesData(this.keyString).slice(startIndex, endIndex);
+                const newData = this.getSeriesData().slice(startIndex, endIndex);
                 this.reset(newData);
             }
         }
@@ -449,11 +451,11 @@ export default class PlotSeries extends Model {
         }
     }
     getDisplayRange(xKey) {
-        const unsortedData = this.collection.plot.getSeriesData(this.keyString);
-        this.collection.plot.updateSeriesData(this.keyString, []);
+        const unsortedData = this.getSeriesData();
+        this.updateSeriesData([]);
         unsortedData.forEach(point => this.add(point, false));
 
-        let data = this.collection.plot.getSeriesData(this.keyString);
+        let data = this.getSeriesData();
         const minValue = this.getXVal(data[0]);
         const maxValue = this.getXVal(data[data.length - 1]);
 
@@ -478,5 +480,19 @@ export default class PlotSeries extends Model {
         let unit = this.get('unit');
 
         return this.get('name') + (unit ? ' ' + unit : '');
+    }
+
+    /**
+     * Update the series data with the given value.
+     */
+    updateSeriesData(data) {
+        configStore.add(this.dataStoreId, data);
+    }
+
+    /**
+     * Update the series data with the given value.
+     */
+    getSeriesData() {
+        return configStore.get(this.dataStoreId) || [];
     }
 }

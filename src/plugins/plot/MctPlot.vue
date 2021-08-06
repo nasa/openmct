@@ -24,12 +24,12 @@
      class="gl-plot"
      :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <!--    <plot-legend :cursor-locked="!!lockHighlightPoint"-->
-    <!--                 :series="seriesModels"-->
-    <!--                 :highlights="highlights"-->
-    <!--                 :legend="legend"-->
-    <!--                 @legendHoverChanged="legendHoverChanged"-->
-    <!--    />-->
+    <plot-legend :cursor-locked="!!lockHighlightPoint"
+                 :series="seriesModels"
+                 :highlights="highlights"
+                 :legend="legend"
+                 @legendHoverChanged="legendHoverChanged"
+    />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
         <y-axis v-if="seriesModels.length > 0"
                 :tick-width="tickWidth"
@@ -213,7 +213,7 @@ export default {
             plotHistory: [],
             selectedXKeyOption: {},
             xKeyOptions: [],
-            seriesModels: {},
+            seriesModels: [],
             legend: {},
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
@@ -249,7 +249,7 @@ export default {
         eventHelpers.extend(this);
 
         this.config = this.getConfig();
-        // this.legend = this.config.legend;
+        this.legend = this.config.legend;
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -626,7 +626,7 @@ export default {
                 this.config.series.models.forEach(series => delete series.closest);
             } else {
                 this.highlights = this.config.series.models
-                    .filter(series => this.config.getSeriesData(series.keyString).length > 0)
+                    .filter(series => series.getSeriesData().length > 0)
                     .map(series => {
                         series.closest = series.nearestPoint(point);
 
