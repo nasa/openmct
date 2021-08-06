@@ -224,20 +224,17 @@ export default {
     },
     computed: {
         isFrozen() {
-            // return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
-            return false;
+            return this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
         },
         plotLegendPositionClass() {
-            // return `plot-legend-${this.config.legend.get('position')}`;
-            return `plot-legend-top`;
+            return `plot-legend-${this.config.legend.get('position')}`;
         },
         plotLegendExpandedStateClass() {
-            return 'plot-legend-collapsed';
-            // if (this.config.legend.get('expanded')) {
-            //     return 'plot-legend-expanded';
-            // } else {
-            //     return 'plot-legend-collapsed';
-            // }
+            if (this.config.legend.get('expanded')) {
+                return 'plot-legend-expanded';
+            } else {
+                return 'plot-legend-collapsed';
+            }
         }
     },
     watch: {
