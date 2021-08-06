@@ -22,7 +22,7 @@
 import DeviceClassifier from "./DeviceClassifier";
 import DeviceMatchers from "./DeviceMatchers";
 
-const AGENT_SERVICE_METHODS = [
+const AGENT_METHODS = [
     "isMobile",
     "isPhone",
     "isTablet",
@@ -40,14 +40,14 @@ const TEST_PERMUTATIONS = [
 ];
 
 describe("DeviceClassifier", function () {
-    let mockAgentService;
+    let mockAgent;
     let mockDocument;
     let mockClassList;
 
     beforeEach(function () {
-        mockAgentService = jasmine.createSpyObj(
-            "agentService",
-            AGENT_SERVICE_METHODS
+        mockAgent = jasmine.createSpyObj(
+            "agent",
+            AGENT_METHODS
         );
 
         mockClassList = jasmine.createSpyObj("classList", ["add"]);
@@ -58,8 +58,8 @@ describe("DeviceClassifier", function () {
             { body: { classList: mockClassList } }
         );
 
-        AGENT_SERVICE_METHODS.forEach(function (m) {
-            mockAgentService[m].and.returnValue(false);
+        AGENT_METHODS.forEach(function (m) {
+            mockAgent[m].and.returnValue(false);
         });
     });
 
@@ -72,17 +72,17 @@ describe("DeviceClassifier", function () {
         describe("when " + summary, function () {
             beforeEach(function () {
                 trueMethods.forEach(function (m) {
-                    mockAgentService[m].and.returnValue(true);
+                    mockAgent[m].and.returnValue(true);
                 });
 
                 // eslint-disable-next-line no-new
-                DeviceClassifier(mockAgentService, mockDocument);
+                DeviceClassifier(mockAgent, mockDocument);
             });
 
             it("adds classes for matching, detected characteristics", function () {
                 Object.keys(DeviceMatchers)
                     .filter(function (m) {
-                        return DeviceMatchers[m](mockAgentService);
+                        return DeviceMatchers[m](mockAgent);
                     })
                     .forEach(function (key) {
                         expect(mockDocument.body.classList.add).toHaveBeenCalledWith(key);
@@ -92,7 +92,7 @@ describe("DeviceClassifier", function () {
             it("does not add classes for non-matching characteristics", function () {
                 Object.keys(DeviceMatchers)
                     .filter(function (m) {
-                        return !DeviceMatchers[m](mockAgentService);
+                        return !DeviceMatchers[m](mockAgent);
                     })
                     .forEach(function (key) {
                         expect(mockDocument.body.classList.add).not.toHaveBeenCalledWith(

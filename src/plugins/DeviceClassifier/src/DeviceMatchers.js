@@ -23,7 +23,7 @@
 /**
  * An object containing key-value pairs, where keys are symbolic of
  * device attributes, and values are functions that take the
- * `agentService` as inputs and return boolean values indicating
+ * `agent` as inputs and return boolean values indicating
  * whether or not the current device has these attributes.
  *
  * For internal use by the mobile support bundle.
@@ -33,25 +33,25 @@
  */
 
 export default {
-    mobile: function (agentService) {
-        return agentService.isMobile();
+    mobile: function (agent) {
+        return agent.isMobile();
     },
-    phone: function (agentService) {
-        return agentService.isPhone();
+    phone: function (agent) {
+        return agent.isPhone();
     },
-    tablet: function (agentService) {
-        return agentService.isTablet();
+    tablet: function (agent) {
+        return agent.isTablet();
     },
-    desktop: function (agentService) {
-        return !agentService.isMobile();
+    desktop: function (agent) {
+        return !agent.isMobile();
     },
-    portrait: function (agentService) {
-        return agentService.isPortrait();
+    portrait: function (agent) {
+        return agent.isPortrait();
     },
-    landscape: function (agentService) {
-        return agentService.isLandscape();
+    landscape: function (agent) {
+        return agent.isLandscape();
     },
-    touch: function (agentService) {
-        return agentService.isTouch();
+    touch: function (agent) {
+        return agent.isTouch();
     }
 };

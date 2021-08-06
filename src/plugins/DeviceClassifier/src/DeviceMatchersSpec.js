@@ -22,10 +22,10 @@
 import DeviceMatchers from "./DeviceMatchers";
 
 describe("DeviceMatchers", function () {
-    let mockAgentService;
+    let mockAgent;
 
     beforeEach(function () {
-        mockAgentService = jasmine.createSpyObj("agentService", [
+        mockAgent = jasmine.createSpyObj("agent", [
             "isMobile",
             "isPhone",
             "isTablet",
@@ -36,10 +36,10 @@ describe("DeviceMatchers", function () {
     });
 
     it("detects when a device is a desktop device", function () {
-        mockAgentService.isMobile.and.returnValue(false);
-        expect(DeviceMatchers.desktop(mockAgentService)).toBe(true);
-        mockAgentService.isMobile.and.returnValue(true);
-        expect(DeviceMatchers.desktop(mockAgentService)).toBe(false);
+        mockAgent.isMobile.and.returnValue(false);
+        expect(DeviceMatchers.desktop(mockAgent)).toBe(true);
+        mockAgent.isMobile.and.returnValue(true);
+        expect(DeviceMatchers.desktop(mockAgent)).toBe(false);
     });
 
     function method(deviceType) {
@@ -56,10 +56,10 @@ describe("DeviceMatchers", function () {
         "touch"
     ].forEach(function (deviceType) {
         it("detects when a device is a " + deviceType + " device", function () {
-            mockAgentService[method(deviceType)].and.returnValue(true);
-            expect(DeviceMatchers[deviceType](mockAgentService)).toBe(true);
-            mockAgentService[method(deviceType)].and.returnValue(false);
-            expect(DeviceMatchers[deviceType](mockAgentService)).toBe(false);
+            mockAgent[method(deviceType)].and.returnValue(true);
+            expect(DeviceMatchers[deviceType](mockAgent)).toBe(true);
+            mockAgent[method(deviceType)].and.returnValue(false);
+            expect(DeviceMatchers[deviceType](mockAgent)).toBe(false);
         });
     });
 });

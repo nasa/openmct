@@ -33,23 +33,23 @@
  * * `landscape`: Devices in a landscape-style orientation.
  * * `touch`: Device supports touch events.
  *
- * @param {src/plugins/DeviceClassifier/src/AgentService} agentService
+ * @param {utils/agent/Agent} agent
  *        the service used to examine the user agent
  * @param document the HTML DOM document object
  * @constructor
  */
 import DeviceMatchers from "./DeviceMatchers";
 
-export default (agentService, document) => {
+export default (agent, document) => {
     const body = document.body;
 
     Object.keys(DeviceMatchers).forEach((key, index, array) => {
-        if (DeviceMatchers[key](agentService)) {
+        if (DeviceMatchers[key](agent)) {
             body.classList.add(key);
         }
     });
 
-    if (agentService.isMobile()) {
+    if (agent.isMobile()) {
         const mediaQuery = window.matchMedia("(orientation: landscape)");
         function eventHandler(event) {
             console.log("changed");

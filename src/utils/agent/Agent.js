@@ -25,9 +25,9 @@
 * device names
 * @constructor
 * @param window the broser object model
-* @memberof /src/plugins/DeviceClassifier
+* @memberof /utils/agent
 */
-export default class AgentService {
+export default class Agent {
     constructor(window) {
         const userAgent = window.navigator.userAgent;
         const matches = userAgent.match(/iPad|iPhone|Android/i) || [];

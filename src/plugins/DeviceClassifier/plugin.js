@@ -19,14 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import AgentService from "./src/AgentService";
+import Agent from "../../utils/agent/Agent";
 import DeviceClassifier from "./src/DeviceClassifier";
 
 export default () => {
     return (openmct) => {
         openmct.on("start", () => {
-            const agentService = new AgentService(window);
-            DeviceClassifier(agentService, window.document);
+            const agent = new Agent(window);
+            DeviceClassifier(agent, window.document);
         });
     };
 };
