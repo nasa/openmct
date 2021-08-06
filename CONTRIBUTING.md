@@ -10,7 +10,7 @@ accept changes from external contributors.
 
 The short version:
 
-1. Write your contribution.
+1. Write your contribution or describe your idea in the form of an [GitHub issue](https://github.com/nasa/openmct/issues/new/choose) or [Starting a GitHub Discussion](https://github.com/nasa/openmct/discussions)
 2. Make sure your contribution meets code, test, and commit message
    standards as described below.
 3. Submit a pull request from a topic branch back to `master`. Include a check
@@ -18,6 +18,7 @@ The short version:
    for review.)
 4. Respond to any discussion. When the reviewer decides it's ready, they
    will merge back `master` and fill out their own check list.
+5. If you are a first-time contributor, please see [this discussion](https://github.com/nasa/openmct/discussions/3821) for further information.   
 
 ## Contribution Process
 
@@ -115,7 +116,7 @@ the pull request containing the reviewer checklist (from below) and complete
 the merge back to the master branch.
 
 Additionally:
-* Every pull request must link to the issue that it addresses. Eg. “Addresses #1234” or “Closes #1234”. This is the responsibility of the pull request’s __author__. If no issue exists, create one.
+* Every pull request must link to the issue that it addresses. Eg. “Addresses #1234” or “Closes #1234”. This is the responsibility of the pull request’s __author__. If no issue exists, [create one](https://github.com/nasa/openmct/issues/new/choose).
 * Every __author__ must include testing instructions. These instructions should identify the areas of code affected, and some minimal test steps. If addressing a bug, reproduction steps should be included, if they were not included in the original issue. If reproduction steps were included on the original issue, and are sufficient, refer to them.
 * A pull request that closes an issue should say so in the description. Including the text “Closes #1234” will cause the linked issue to be automatically closed when the pull request is merged. This is the responsibility of the pull request’s __author__.
 * When a pull request is merged, and the corresponding issue closed, the __reviewer__ must add the tag “unverified” to the original issue. This will indicate that although the issue is closed, it has not been tested yet.
@@ -296,23 +297,12 @@ these standards.
 
 Issues are tracked at https://github.com/nasa/openmct/issues.
 
-Issues should include:
-
-* A short description of the issue encountered.
-* A longer-form description of the issue encountered. When possible, steps to
-  reproduce the issue.
-* When possible, a description of the impact of the issue. What use case does
-  it impede?
-* An assessment of the severity of the issue.
-
 Issue severity is categorized as follows (in ascending order):
 
-* _Trivial_: Minimal impact on the usefulness and functionality of the
-  software; a "nice-to-have."
-* _(Unspecified)_: Major loss of functionality or impairment of use.
-* _Critical_: Large-scale loss of functionality or impairment of use,
-  such that remaining utility becomes marginal.
-* _Blocker_: Harmful or otherwise unacceptable behavior. Must fix.
+* _Trivial_: Minimal impact on the usefulness and functionality of the software; a "nice-to-have." Visual impact without functional impact,
+* _Medium_: Some impairment of use, but simple workarounds exist
+* _Critical_: Significant loss of functionality or impairment of use. Display of telemetry data is not affected though.
+* _Blocker_: Major functionality is impaired or lost, threatening mission success. Display of telemetry data is impaired or blocked by the bug, which could lead to loss of situational awareness.
 
 ## Check Lists
 
@@ -322,16 +312,19 @@ checklist).
 
 ### Author Checklist
 
-1. Changes address original issue?
-2. Unit tests included and/or updated with changes?
-3. Command line build passes?
-4. Changes have been smoke-tested?
-5. Testing instructions included?
+[Within PR Template](.github/PULL_REQUEST_TEMPLATE.md)
 
 ### Reviewer Checklist
 
-1. Changes appear to address issue?
-2. Appropriate unit tests included?
-3. Code style and in-line documentation are appropriate?
-4. Commit messages meet standards?
-5. Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
+* [ ] Changes appear to address issue?
+* [ ] Appropriate unit tests included?
+* [ ] Code style and in-line documentation are appropriate?
+* [ ] Commit messages meet standards?
+* [ ] Has associated issue been labelled `unverified`? (only applicable if this PR closes the issue)
+* [ ] Has associated issue been labelled `bug`? (only applicable if this PR is for a bug fix)
+* [ ] List of Acceptance Tests Performed.
+
+Write out a small list of tests performed with just enough detail for another developer on the team 
+to execute. 
+
+i.e. ```When Clicking on Add button, new `object` appears in dropdown.```

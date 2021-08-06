@@ -100,8 +100,14 @@
         &__pane-tree {
             background: linear-gradient(90deg, transparent 70%, rgba(black, 0.2) 99%, rgba(black, 0.3));
 
-            [class*="expand-button"],
-            [class*="sync-tree-button"] {
+            .l-pane__header {
+                // Hide all buttons except the collapse button
+                > :not(.l-pane__collapse-button) {
+                    display: none;
+                }
+            }
+
+            [class*="expand-button"] {
                 display: none;
             }
 
@@ -228,7 +234,7 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
-        display: flex;
+        //display: flex; NEEDS REGRESSION TESTING!!!
         flex: 1 1 auto !important;
         height: 100%; // Chrome 73 overflow bug fix
         overflow: auto;
@@ -286,6 +292,12 @@
         height: $p + 24px; // Need to standardize the height
         justify-content: space-between;
         padding: $p;
+    }
+
+    &__resizing {
+        iframe {
+            pointer-events: none;
+        }
     }
 }
 

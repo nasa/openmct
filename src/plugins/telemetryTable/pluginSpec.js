@@ -48,6 +48,7 @@ describe("the plugin", () => {
     let tablePlugin;
     let element;
     let child;
+    let unlistenConfigMutation;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -82,6 +83,15 @@ describe("the plugin", () => {
     });
 
     afterEach(() => {
+        openmct.time.timeSystem('utc', {
+            start: 0,
+            end: 1
+        });
+
+        if (unlistenConfigMutation) {
+            unlistenConfigMutation();
+        }
+
         return resetApplicationState(openmct);
     });
 
@@ -113,8 +123,14 @@ describe("the plugin", () => {
         let applicableViews;
         let tableViewProvider;
         let tableView;
+        let tableInstance;
 
         beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: 0,
+                end: 4
+            });
+
             testTelemetryObject = {
                 identifier: {
                     namespace: "",
@@ -143,6 +159,14 @@ describe("the plugin", () => {
                             range: 2
                         }
                     }]
+                },
+                configuration: {
+                    hiddenColumns: {
+                        name: false,
+                        utc: false,
+                        'some-key': false,
+                        'some-other-key': false
+                    }
                 }
             };
             const testTelemetry = [
@@ -178,6 +202,8 @@ describe("the plugin", () => {
             tableViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'table');
             tableView = tableViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             tableView.show(child, true);
+
+            tableInstance = tableView.getTable();
 
             return telemetryPromise.then(() => Vue.nextTick());
         });
@@ -227,6 +253,76 @@ describe("the plugin", () => {
                 expect(toColumnText).not.toEqual(secondColumnText);
                 expect(toColumnText).toEqual(firstColumnText);
             });
+        });
+
+        it("Supports filtering telemetry by regular text search", () => {
+            tableInstance.filteredRows.setColumnFilter("some-key", "1");
+
+            return Vue.nextTick().then(() => {
+                let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+
+                expect(filteredRowElements.length).toEqual(1);
+
+                tableInstance.filteredRows.setColumnFilter("some-key", "");
+
+                return Vue.nextTick().then(() => {
+                    let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+
+                    expect(allRowElements.length).toEqual(3);
+                });
+            });
+        });
+
+        it("Supports filtering using Regex", () => {
+            tableInstance.filteredRows.setColumnRegexFilter("some-key", "^some-value$");
+
+            return Vue.nextTick().then(() => {
+                let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+
+                expect(filteredRowElements.length).toEqual(0);
+
+                tableInstance.filteredRows.setColumnRegexFilter("some-key", "^some-value");
+
+                return Vue.nextTick().then(() => {
+                    let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+
+                    expect(allRowElements.length).toEqual(3);
+                });
+            });
+        });
+
+        it("displays the correct number of column headers when the configuration is mutated", async () => {
+            const tableInstanceConfiguration = tableInstance.domainObject.configuration;
+            tableInstanceConfiguration.hiddenColumns['some-key'] = true;
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
+
+            await Vue.nextTick();
+            let tableHeaderElements = element.querySelectorAll('.c-telemetry-table__headers__label');
+            expect(tableHeaderElements.length).toEqual(3);
+
+            tableInstanceConfiguration.hiddenColumns['some-key'] = false;
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
+
+            await Vue.nextTick();
+            tableHeaderElements = element.querySelectorAll('.c-telemetry-table__headers__label');
+            expect(tableHeaderElements.length).toEqual(4);
+        });
+
+        it("displays the correct number of table cells in a row when the configuration is mutated", async () => {
+            const tableInstanceConfiguration = tableInstance.domainObject.configuration;
+            tableInstanceConfiguration.hiddenColumns['some-key'] = true;
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
+
+            await Vue.nextTick();
+            let tableRowCells = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
+            expect(tableRowCells.length).toEqual(3);
+
+            tableInstanceConfiguration.hiddenColumns['some-key'] = false;
+            unlistenConfigMutation = tableInstance.openmct.objects.mutate(tableInstance.domainObject, 'configuration', tableInstanceConfiguration);
+
+            await Vue.nextTick();
+            tableRowCells = element.querySelectorAll('table.c-telemetry-table__body > tbody > tr:first-child td');
+            expect(tableRowCells.length).toEqual(4);
         });
     });
 });

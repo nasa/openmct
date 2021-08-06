@@ -188,7 +188,17 @@
                                 class="c-table__search"
                                 @input="filterChanged(key)"
                                 @clear="clearFilter(key)"
-                            />
+                            >
+
+                                <button
+                                    class="c-search__use-regex"
+                                    :class="{ 'is-active': enableRegexSearch[key] }"
+                                    title="Click to enable regex: enter a string with slashes, like this: /regex_exp/"
+                                    @click="toggleRegex(key)"
+                                >
+                                    /R/
+                                </button>
+                            </search>
                         </table-column-header>
                     </tr>
                 </thead>
@@ -223,6 +233,7 @@
                         @mark="markRow"
                         @unmark="unmarkRow"
                         @markMultipleConcurrent="markMultipleConcurrentRows"
+                        @rowContextClick="updateViewContext"
                     />
                 </tbody>
             </table>
@@ -253,6 +264,7 @@
                 :column-widths="configuredColumnWidths"
                 :row="sizingRowData"
                 :object-path="objectPath"
+                @rowContextClick="updateViewContext"
             />
         </table>
         <table-footer-indicator
@@ -288,11 +300,24 @@ export default {
         ToggleSwitch,
         SizingRow
     },
-    inject: ['table', 'openmct', 'objectPath'],
+    inject: ['openmct', 'objectPath', 'table', 'currentView'],
     props: {
         isEditing: {
             type: Boolean,
             default: false
+        },
+        marking: {
+            type: Object,
+            required: true,
+            default() {
+                return {
+                    enable: false,
+                    disableMultiSelect: false,
+                    useAlternateControlBar: false,
+                    rowName: '',
+                    rowNamePlural: ''
+                };
+            }
         },
         allowExport: {
             type: Boolean,
@@ -306,28 +331,9 @@ export default {
             type: Boolean,
             default: true
         },
-        marking: {
-            type: Object,
-            default() {
-                return {
-                    enable: false,
-                    disableMultiSelect: false,
-                    useAlternateControlBar: false,
-                    rowName: '',
-                    rowNamePlural: ""
-                };
-            }
-        },
         enableLegacyToolbar: {
             type: Boolean,
             default: false
-        },
-        view: {
-            type: Object,
-            required: false,
-            default() {
-                return {};
-            }
         }
     },
     data() {
@@ -361,8 +367,10 @@ export default {
             paused: false,
             markedRows: [],
             isShowingMarkedRowsOnly: false,
+            enableRegexSearch: {},
             hideHeaders: configuration.hideHeaders,
-            totalNumberOfRows: 0
+            totalNumberOfRows: 0,
+            rowContext: {}
         };
     },
     computed: {
@@ -450,8 +458,10 @@ export default {
         this.scroll = _.throttle(this.scroll, 100);
 
         if (!this.marking.useAlternateControlBar && !this.enableLegacyToolbar) {
-            this.viewActionsCollection = this.openmct.actions.get(this.objectPath, this.view);
-            this.initializeViewActions();
+            this.$nextTick(() => {
+                this.viewActionsCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
+                this.initializeViewActions();
+            });
         }
 
         this.table.on('object-added', this.addObject);
@@ -618,7 +628,16 @@ export default {
             this.headersHolderEl.scrollLeft = this.scrollable.scrollLeft;
         },
         filterChanged(columnKey) {
-            this.table.filteredRows.setColumnFilter(columnKey, this.filters[columnKey]);
+            if (this.enableRegexSearch[columnKey]) {
+                if (this.isCompleteRegex(this.filters[columnKey])) {
+                    this.table.filteredRows.setColumnRegexFilter(columnKey, this.filters[columnKey].slice(1, -1));
+                } else {
+                    return;
+                }
+            } else {
+                this.table.filteredRows.setColumnFilter(columnKey, this.filters[columnKey]);
+            }
+
             this.setHeight();
         },
         clearFilter(columnKey) {
@@ -956,6 +975,18 @@ export default {
 
             this.$nextTick().then(this.calculateColumnWidths);
         },
+        toggleRegex(key) {
+            this.$set(this.filters, key, '');
+
+            if (this.enableRegexSearch[key] === undefined) {
+                this.$set(this.enableRegexSearch, key, true);
+            } else {
+                this.$set(this.enableRegexSearch, key, !this.enableRegexSearch[key]);
+            }
+        },
+        isCompleteRegex(string) {
+            return (string.length > 2 && string[0] === '/' && string[string.length - 1] === '/');
+        },
         getViewContext() {
             return {
                 type: 'telemetry-table',
@@ -964,7 +995,8 @@ export default {
                 unmarkAllRows: this.unmarkAllRows,
                 togglePauseByButton: this.togglePauseByButton,
                 expandColumns: this.recalculateColumnWidths,
-                autosizeColumns: this.autosizeColumns
+                autosizeColumns: this.autosizeColumns,
+                row: this.rowContext
             };
         },
         initializeViewActions() {
@@ -995,6 +1027,9 @@ export default {
             this.setHeight();
             this.calculateTableSize();
             this.clearRowsAndRerender();
+        },
+        updateViewContext(rowContext) {
+            this.rowContext = rowContext;
         }
     }
 };

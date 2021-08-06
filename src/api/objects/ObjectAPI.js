@@ -45,6 +45,8 @@ function ObjectAPI(typeRegistry, openmct) {
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
+
+    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
 }
 
 /**
@@ -161,6 +163,7 @@ ObjectAPI.prototype.addProvider = function (namespace, provider) {
 
 ObjectAPI.prototype.get = function (identifier, abortSignal) {
     let keystring = this.makeKeyString(identifier);
+
     if (this.cache[keystring] !== undefined) {
         return this.cache[keystring];
     }
@@ -176,15 +179,16 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
         throw new Error('Provider does not support get!');
     }
 
-    let objectPromise = provider.get(identifier, abortSignal);
-    this.cache[keystring] = objectPromise;
-
-    return objectPromise.then(result => {
+    let objectPromise = provider.get(identifier, abortSignal).then(result => {
         delete this.cache[keystring];
         result = this.applyGetInterceptors(identifier, result);
 
         return result;
     });
+
+    this.cache[keystring] = objectPromise;
+
+    return objectPromise;
 };
 
 /**
@@ -395,20 +399,25 @@ ObjectAPI.prototype._toMutable = function (object) {
         mutableObject = object;
     } else {
         mutableObject = MutableDomainObject.createMutable(object, this.eventEmitter);
-    }
 
-    // Check if provider supports realtime updates
-    let identifier = utils.parseKeyString(mutableObject.identifier);
-    let provider = this.getProvider(identifier);
+        // Check if provider supports realtime updates
+        let identifier = utils.parseKeyString(mutableObject.identifier);
+        let provider = this.getProvider(identifier);
 
-    if (provider !== undefined
-        && provider.observe !== undefined) {
-        let unobserve = provider.observe(identifier, (updatedModel) => {
-            mutableObject.$refresh(updatedModel);
-        });
-        mutableObject.$on('$destroy', () => {
-            unobserve();
-        });
+        if (provider !== undefined
+            && provider.observe !== undefined
+            && this.SYNCHRONIZED_OBJECT_TYPES.includes(object.type)) {
+            let unobserve = provider.observe(identifier, (updatedModel) => {
+                if (updatedModel.persisted > mutableObject.modified) {
+                    //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
+                    //in rapid succession and intermediate persistence states are returned by the observe function.
+                    mutableObject.$refresh(updatedModel);
+                }
+            });
+            mutableObject.$on('$_destroy', () => {
+                unobserve();
+            });
+        }
     }
 
     return mutableObject;
@@ -482,6 +491,12 @@ ObjectAPI.prototype.getOriginalPath = function (identifier, path = []) {
             return path;
         }
     });
+};
+
+ObjectAPI.prototype.isObjectPathToALink = function (domainObject, objectPath) {
+    return objectPath !== undefined
+        && objectPath.length > 1
+        && domainObject.location !== this.makeKeyString(objectPath[1].identifier);
 };
 
 /**

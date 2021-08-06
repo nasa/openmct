@@ -119,7 +119,8 @@ describe('The ActionCollection', () => {
 
     afterEach(() => {
         actionCollection.destroy();
-        resetApplicationState(openmct);
+
+        return resetApplicationState(openmct);
     });
 
     describe("disable method invoked with action keys", () => {

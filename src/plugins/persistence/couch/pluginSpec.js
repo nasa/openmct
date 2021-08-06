@@ -27,8 +27,6 @@ import {
 
 describe('the plugin', () => {
     let openmct;
-    let element;
-    let child;
     let provider;
     let testPath = '/test/db';
     let options;
@@ -36,6 +34,8 @@ describe('the plugin', () => {
     let mockDomainObject;
 
     beforeEach((done) => {
+        spyOnBuiltins(['fetch'], window);
+
         mockDomainObject = {
             identifier: {
                 namespace: '',
@@ -50,8 +50,6 @@ describe('the plugin', () => {
             disableObserve: true
         };
         openmct = createOpenMct(false);
-
-        spyOnBuiltins(['fetch'], window);
 
         openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
         mockIdentifierService = jasmine.createSpyObj(
@@ -69,10 +67,6 @@ describe('the plugin', () => {
         openmct.install(new CouchPlugin(options));
 
         openmct.types.addType('mock-type', {creatable: true});
-
-        element = document.createElement('div');
-        child = document.createElement('div');
-        element.appendChild(child);
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -117,7 +111,7 @@ describe('the plugin', () => {
             });
         });
 
-        it('updates an object', () => {
+        it('updates an object', (done) => {
             return openmct.objects.save(mockDomainObject).then((result) => {
                 expect(result).toBeTrue();
                 expect(provider.create).toHaveBeenCalled();
@@ -128,6 +122,7 @@ describe('the plugin', () => {
                 return openmct.objects.save(mockDomainObject).then((updatedResult) => {
                     expect(updatedResult).toBeTrue();
                     expect(provider.update).toHaveBeenCalled();
+                    done();
                 });
             });
         });
