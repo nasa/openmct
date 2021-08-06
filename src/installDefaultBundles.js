@@ -38,7 +38,6 @@ const DEFAULTS = [
     'platform/exporters',
     'platform/telemetry',
     'platform/features/clock',
-    'platform/features/hyperlink',
     'platform/identity',
     'platform/persistence/aggregator',
     'platform/persistence/queue',
