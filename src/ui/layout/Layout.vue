@@ -53,7 +53,7 @@
             class="l-shell__pane-tree"
             handle="after"
             label="Browse"
-            collapsable
+            collapsible
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
