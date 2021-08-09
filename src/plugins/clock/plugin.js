@@ -109,10 +109,10 @@ export default function ClockPlugin(options) {
                 },
                 data() {
                     return {
-                        CLOCK_INDICATOR_FORMAT
+                        indicatorFormat: CLOCK_INDICATOR_FORMAT
                     };
                 },
-                template: '<ClockIndicator :indicator-format="CLOCK_INDICATOR_FORMAT"></ClockIndicator>'
+                template: '<ClockIndicator :indicator-format="indicatorFormat"></ClockIndicator>'
             });
             const indicator = {
                 element: clockIndicator.$mount().$el,
@@ -127,9 +127,11 @@ export default function ClockPlugin(options) {
                 return domainObject && domainObject.type === 'clock';
             },
             invoke: (identifier, domainObject) => {
-                if (domainObject
-                    && !domainObject.configuration
-                    && domainObject.clockFormat
+                if (domainObject.configuration) {
+                    return;
+                }
+
+                if (domainObject.clockFormat
                     && domainObject.timezone) {
                     const baseFormat = domainObject.clockFormat[0];
                     const use24 = domainObject.clockFormat[1];
@@ -141,7 +143,7 @@ export default function ClockPlugin(options) {
                         timezone
                     };
 
-                    openmct.objects.mutate(domainObject, 'configuration', configuration);
+                    openmct.objects.mutate(domainObject, 'configuration', domainObject.configuration);
                 }
 
                 return domainObject;

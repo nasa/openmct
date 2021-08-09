@@ -41,8 +41,7 @@ export default {
     },
     data() {
         return {
-            timeTextValue: null,
-            unlisten: null
+            timeTextValue: null
         };
     },
     mounted() {
