@@ -128,7 +128,7 @@ export default function ClockPlugin(options) {
             },
             invoke: (identifier, domainObject) => {
                 if (domainObject.configuration) {
-                    return;
+                    return domainObject;
                 }
 
                 if (domainObject.clockFormat
