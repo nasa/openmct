@@ -377,11 +377,8 @@ export default {
         },
 
         stopLoading() {
-        //TODO: Is Vue.$nextTick ok to replace $scope.$evalAsync?
-            this.$nextTick().then(() => {
-                this.pending -= 1;
-                this.updateLoading();
-            });
+            this.pending -= 1;
+            this.updateLoading();
         },
 
         updateLoading() {
@@ -1011,7 +1008,6 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
-            console.log('parent', this.$parent.$refs);
             if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
                 this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
