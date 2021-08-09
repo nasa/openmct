@@ -507,7 +507,7 @@ export default {
         },
 
         initialize() {
-            _.debounce(this.handleWindowResize, 400);
+            this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
             this.plotContainerResizeObserver.observe(this.$parent.$refs.plotWrapper);
 
@@ -1011,6 +1011,7 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
+            console.log('parent', this.$parent.$refs);
             if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
                 this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
