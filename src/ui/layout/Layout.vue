@@ -55,7 +55,6 @@
             class="l-shell__pane-tree"
             handle="after"
             label="Browse"
-            collapsable
             :collapse="collapseTree"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
@@ -109,7 +108,6 @@
             class="l-shell__pane-inspector l-pane--holds-multipane"
             handle="before"
             label="Inspect"
-            collapsable
             :collapse="collapseInspector"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
@@ -286,7 +284,6 @@ export default {
 
             this.collapseTree = this.openmct.router.getSearchParam(HIDE_TREE_PARAM) === 'true';
             this.collapseInspector = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM) === 'true';
-            // console.log(this.collapseTree, this.collapseInspector);
         }
     }
 };

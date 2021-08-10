@@ -6,7 +6,7 @@
         'l-pane--horizontal-handle-after': type === 'horizontal' && handle === 'after',
         'l-pane--vertical-handle-before': type === 'vertical' && handle === 'before',
         'l-pane--vertical-handle-after': type === 'vertical' && handle === 'after',
-        'l-pane--collapsed': collapsed,
+        'l-pane--collapsed': collapse,
         'l-pane--reacts': !handle,
         'l-pane--resizing': resizing === true
     }"
@@ -22,7 +22,7 @@
         >{{ label }}</span>
         <slot name="controls"></slot>
         <button
-            v-if="collapsable"
+            v-if="typeof collapse === 'boolean'"
             class="l-pane__collapse-button c-icon-button"
             @click="toggleCollapse"
         ></button>
@@ -43,8 +43,8 @@
 const COLLAPSE_THRESHOLD_PX = 40;
 const HIDE_TREE_PARAM = 'hideTree';
 const HIDE_INSPECTOR_PARAM = 'hideInspector';
-const PANE_INSPECTOR = 'Inspect';
 const PANE_TREE = 'Browse';
+const PANE_INSPECTOR = 'Inspect';
 
 export default {
     inject: ['openmct'],
@@ -55,10 +55,6 @@ export default {
             validator: function (value) {
                 return ['', 'before', 'after'].indexOf(value) !== -1;
             }
-        },
-        collapsable: {
-            type: Boolean,
-            default: false
         },
         collapse: {
             type: Boolean,
@@ -80,48 +76,27 @@ export default {
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
     mounted() {
-        // await this.$nextTick();
-        if (this.label) {
-            console.log('collapse', this.label, this.collapse);
+        if (this.collapse) {
+            this.handleCollapse();
+        } else {
+            this.handleExpand();
         }
-        // Hide tree and/or inspector pane if specified in URL
-        // if (this.collapsable) {
-        //     this.handleHideUrl();
-        //     this.openmct.router.on('change:params', this.handleHideUrl);
-        // }
     },
     beforeDestroy() {
-        // if (this.collapsable) {
-        //     this.openmct.router.off('change:params', this.handleHideUrl);
-        // }
     },
     methods: {
         toggleCollapse: function (e) {
-            let target = this.label === PANE_TREE ? HIDE_TREE_PARAM : HIDE_INSPECTOR_PARAM;
-            this.collapsed = !this.collapsed;
-            if (this.collapsed) {
-                this.handleCollapse();
-                this.addHideParam(target);
-            } else {
-                this.handleExpand();
-                this.removeHideParam(target);
-            }
-        },
-        handleHideUrl: function () {
-            if (!this.collapsable) {
-                return;
+            let target;
+            if (this.label === PANE_TREE) {
+                target = HIDE_TREE_PARAM;
+            } else if (this.label === PANE_INSPECTOR) {
+                target = HIDE_INSPECTOR_PARAM;
             }
 
-            let hideTreeParam = this.openmct.router.getSearchParam(HIDE_TREE_PARAM);
-            let hideInspectorParam = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM);
-            let hideTree = hideTreeParam === 'true' && this.label === PANE_TREE;
-            let hideInspector = hideInspectorParam === 'true' && this.label === PANE_INSPECTOR;
-            if (hideTree || hideInspector) {
-                this.collapsed = true;
-                this.handleCollapse();
+            if (this.collapse) {
+                this.removeHideParam(target);
             } else {
-                this.collapsed = false;
-                this.handleExpand();
+                this.addHideParam(target);
             }
         },
         addHideParam: function (target) {
@@ -166,8 +141,7 @@ export default {
         updatePosition: function (event) {
             let size = this.getNewSize(event);
             let intSize = parseInt(size.substr(0, size.length - 2), 10);
-            // if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
-            if (intSize < COLLAPSE_THRESHOLD_PX && this.collapse !== undefined) {
+            if (intSize < COLLAPSE_THRESHOLD_PX && typeof this.collapse === 'boolean') {
                 this.dragCollapse = true;
                 this.end();
                 this.toggleCollapse();
