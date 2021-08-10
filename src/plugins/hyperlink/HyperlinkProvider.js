@@ -33,10 +33,6 @@ export default function HyperlinkProvider(openmct) {
             return domainObject.type === 'hyperlink';
         },
 
-        canEdit(domainObject) {
-            return domainObject.type === 'hyperlink';
-        },
-
         view: function (domainObject) {
             let component;
 
