@@ -28,8 +28,6 @@ import myItemsIdentifier from './myItemsIdentifier';
 import myItemsInterceptor from './myItemsInterceptor';
 
 /*
-The plugin installs the my items folder to the root
-The plugin adds an interceptor for missing my items objects
 The interceptor will return a my items model if the object is undefined
 */
 
@@ -38,6 +36,8 @@ fdescribe("the plugin", () => {
 
     beforeEach((done) => {
         openmct = createOpenMct();
+
+        spyOn(myItemsInterceptor, 'invoke');
 
         openmct.install(openmct.plugins.MyItems());
 
@@ -57,6 +57,12 @@ fdescribe("the plugin", () => {
         })[0];
 
         expect(myItems).toBeDefined();
+    });
+
+    it('adds an interceptor to handle missing "My Items" objects', async () => {
+        await openmct.objects.get(myItemsIdentifier);
+
+        expect(myItemsInterceptor.invoke).toHaveBeenCalled();
     });
 
     // describe('when invoked', () => {
