@@ -127,7 +127,7 @@ describe('the plugin', function () {
 
         it('does not show the independent time conductor based on configuration', () => {
             const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
-            expect(independentTimeConductorEl).toBeUndefined();
+            expect(independentTimeConductorEl).toBeNull();
         });
     });
 
