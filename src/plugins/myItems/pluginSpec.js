@@ -45,8 +45,7 @@ describe("the plugin", () => {
     it('when installed, adds "My Items" to the root', async () => {
         const root = await openmct.objects.get('ROOT');
         let myItems = root.composition.filter((identifier) => {
-            return identifier.key === myItemsIdentifier.key
-                && identifier.namespace === myItemsIdentifier.namespace;
+            return openmct.objects.areIdsEqual(identifier, myItemsIdentifier);
         })[0];
 
         expect(myItems).toBeDefined();
@@ -67,11 +66,10 @@ describe("the plugin", () => {
         });
 
         it('that returns a "My Items" model for missiong objects', () => {
-            let keysMatch = myItems.identifier.key === myItemsIdentifier.key
-                && myItems.identifier.namespace === myItemsIdentifier.namespace;
+            let idsMatch = openmct.objects.areIdsEqual(myItems.identifier, myItemsIdentifier);
 
             expect(myItems).toBeDefined();
-            expect(keysMatch).toBeTrue();
+            expect(idsMatch).toBeTrue();
         });
     });
 
