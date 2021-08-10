@@ -189,7 +189,6 @@ define(
          */
         NavigationService.prototype.onBeforeUnload = function () {
             var shouldWarnBeforeNavigate = this.shouldWarnBeforeNavigate();
-            console.log('navigation before unload', shouldWarnBeforeNavigate);
             if (shouldWarnBeforeNavigate) {
                 return shouldWarnBeforeNavigate;
             }
