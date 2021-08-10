@@ -25,13 +25,12 @@ import clockPlugin from './plugin';
 
 import Vue from 'vue';
 
-fdescribe("Clock plugin:", () => {
+describe("Clock plugin:", () => {
     let openmct;
     let clockDefinition;
     let element;
     let child;
     let appHolder;
-    let objectProviderObserver;
 
     let clockDomainObject;
 
@@ -95,24 +94,15 @@ fdescribe("Clock plugin:", () => {
                     timezone: 'UTC'
                 }
             };
-            const testObjectProvider = jasmine.createSpyObj('testObjectProvider', [
-                'get',
-                'create',
-                'update',
-                'observe'
-            ]);
+
+            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(clockViewObject));
+            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 
             const applicableViews = openmct.objectViews.get(clockViewObject, [clockViewObject]);
-            clockViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'notebook-vue');
-
-            testObjectProvider.get.and.returnValue(Promise.resolve(clockViewObject));
-            openmct.objects.addProvider('test-namespace', testObjectProvider);
-            testObjectProvider.observe.and.returnValue(() => {});
+            clockViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'clock.view');
 
             return openmct.objects.getMutable(clockViewObject.identifier).then((mutableObject) => {
                 mutableClockObject = mutableObject;
-                objectProviderObserver = testObjectProvider.observe.calls.mostRecent().args[1];
-
                 clockView = clockViewProvider.view(mutableClockObject);
                 clockView.show(child);
 
@@ -143,6 +133,46 @@ fdescribe("Clock plugin:", () => {
             const hasMajorElements = Boolean(timezone && time && amPm);
 
             expect(hasMajorElements).toBe(true);
+        });
+
+        it("renders time in UTC", () => {
+            const clockElement = element.querySelector('.c-clock');
+            const timezone = clockElement.querySelector('.c-clock__timezone').textContent.trim();
+
+            expect(timezone).toBe('UTC');
+        });
+
+        it("updates the 24 hour option in the configuration", (done) => {
+            const new24Option = 'clock24';
+
+            openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
+                expect(changedDomainObject.use24).toBe(new24Option);
+                done();
+            });
+
+            openmct.objects.mutate(clockViewObject, 'configuration.use24', new24Option);
+        });
+
+        it("updates the timezone option in the configuration", (done) => {
+            const newZone = 'CST6CDT';
+
+            openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
+                expect(changedDomainObject.timezone).toBe(newZone);
+                done();
+            });
+
+            openmct.objects.mutate(clockViewObject, 'configuration.timezone', newZone);
+        });
+
+        it("updates the time format option in the configuration", (done) => {
+            const newFormat = 'hh:mm:ss';
+
+            openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
+                expect(changedDomainObject.baseFormat).toBe(newFormat);
+                done();
+            });
+
+            openmct.objects.mutate(clockViewObject, 'configuration.baseFormat', newFormat);
         });
     });
 });
