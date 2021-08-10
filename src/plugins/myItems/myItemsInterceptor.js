@@ -20,24 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default function MyItemsInterceptor(openmct) {
+import myItemsIdentifier from './myItemsIdentifier';
 
-    openmct.objects.addGetInterceptor({
-        appliesTo: (identifier, domainObject) => {
-            return identifier.key === 'mine';
-        },
-        invoke: (identifier, object) => {
-            if (object === undefined) {
-                return {
-                    identifier,
-                    "name": "My Items",
-                    "type": "folder",
-                    "composition": [],
-                    "location": "ROOT"
-                };
-            }
-
-            return object;
+const myItemsModel = {
+    identifier: myItemsIdentifier,
+    "name": "My Items",
+    "type": "folder",
+    "composition": [],
+    "location": "ROOT"
+};
+const myItemsInterceptor = {
+    appliesTo: (identifier) => {
+        return identifier.key === 'mine';
+    },
+    invoke: (identifier, object) => {
+        if (object === undefined) {
+            return myItemsModel;
         }
-    });
-}
+
+        return object;
+    }
+};
+
+export default myItemsInterceptor;
