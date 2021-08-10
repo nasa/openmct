@@ -181,13 +181,6 @@ export default {
         }
     },
     async mounted() {
-        // hide param:
-        /*
-            1. add listener at mounted and remove before destroy
-            2. move handle url which returns a boolean that indicates expand/collapse
-            3. passing it down as a prop for tree and inspector
-            4. add v-if on those panes
-        */
 
         await this.$nextTick();
         this.setCollapse();
