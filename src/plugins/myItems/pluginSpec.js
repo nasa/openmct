@@ -39,7 +39,7 @@ fdescribe("the plugin", () => {
     beforeEach((done) => {
         openmct = createOpenMct();
 
-        openmct.plugins.install(openmct.plugins.MyItems());
+        openmct.install(openmct.plugins.MyItems());
 
         openmct.on('start', done);
         openmct.startHeadless();

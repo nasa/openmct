@@ -246,7 +246,6 @@ export default {
         async loadRoot() {
             this.treeItems = [];
             const root = await this.openmct.objects.get('ROOT');
-            console.log(root);
 
             if (!root.identifier) {
                 return false;
