@@ -936,7 +936,7 @@ export default {
         },
 
         setYAxisKey(yKey) {
-            this.config.series.models[0].emit('change:yKey', yKey);
+            this.config.series.models[0].set('yKey', yKey);
         },
 
         pause() {
