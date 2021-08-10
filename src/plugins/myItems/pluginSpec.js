@@ -26,7 +26,7 @@ import {
 } from 'utils/testing';
 import myItemsIdentifier from './myItemsIdentifier';
 
-fdescribe("the plugin", () => {
+describe("the plugin", () => {
     let openmct;
 
     beforeEach((done) => {
@@ -67,7 +67,11 @@ fdescribe("the plugin", () => {
         });
 
         it('that returns a "My Items" model for missiong objects', () => {
+            let keysMatch = myItems.identifier.key === myItemsIdentifier.key
+                && myItems.identifier.namespace === myItemsIdentifier.namespace;
+
             expect(myItems).toBeDefined();
+            expect(keysMatch).toBeTrue();
         });
     });
 
