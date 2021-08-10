@@ -2,30 +2,57 @@
     // <a> tag and draggable element that holds type icon and name.
     // Used mostly in trees and lists
     display: flex;
-    align-items: center;
+    align-items: baseline; // Provides better vertical alignment than center
     flex: 0 1 auto;
     overflow: hidden;
     white-space: nowrap;
+
+    > * + * { margin-left: $interiorMargin; }
 
     &__name {
         @include ellipsize();
         display: inline;
     }
 
-    &__type-icon,
-    &:before {
+    &__type-icon {
         // Type icon. Must be an HTML entity to allow inclusion of alias indicator.
         display: block;
         flex: 0 0 auto;
         font-size: 1.1em;
-        opacity: 0.6;
-        margin-right: $interiorMargin;
+        opacity: $objectLabelTypeIconOpacity;
+    }
+
+    .is-status__indicator {
+        position: absolute;
+        right: -3px;
+        top: -3px;
+        transform: scale(0.5);
+    }
+
+    &.is-status--missing,
+    &.is-status--suspect {
+        [class*='__type-icon'] {
+            &:before,
+            &:after {
+                opacity: $opacityMissing;
+            }
+        }
+    }
+
+    &.is-status--notebook-default {
+        &:after {
+            content: $glyph-icon-notebook-page;
+            display: block;
+            margin-left: $interiorMargin;
+        }
     }
 }
 
 .c-tree .c-object-label {
     border-radius: $controlCr;
     padding: $interiorMarginSm 1px;
+
+    > * + * { margin-left: $interiorMarginSm; }
 
     &__name {
         display: inline;

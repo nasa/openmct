@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,8 +36,8 @@ define(['lodash'], function (_) {
                 let selectedParent = selectionPath[1];
 
                 // Apply the layout toolbar if the selected object is inside a layout, or the main layout is selected.
-                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout') ||
-                    (selectedObject.context.item && selectedObject.context.item.type === 'layout');
+                return (selectedParent && selectedParent.context.item && selectedParent.context.item.type === 'layout')
+                    || (selectedObject.context.item && selectedObject.context.item.type === 'layout');
             },
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
@@ -73,6 +73,58 @@ define(['lodash'], function (_) {
                         ]
                     }
                 };
+                const VIEW_TYPES = {
+                    'telemetry-view': {
+                        value: 'telemetry-view',
+                        name: 'Alphanumeric',
+                        class: 'icon-alphanumeric'
+                    },
+                    'telemetry.plot.overlay': {
+                        value: 'telemetry.plot.overlay',
+                        name: 'Overlay Plot',
+                        class: "icon-plot-overlay"
+                    },
+                    'telemetry.plot.stacked': {
+                        value: "telemetry.plot.stacked",
+                        name: "Stacked Plot",
+                        class: "icon-plot-stacked"
+                    },
+                    'table': {
+                        value: 'table',
+                        name: 'Table',
+                        class: 'icon-tabular-realtime'
+                    }
+                };
+                const APPLICABLE_VIEWS = {
+                    'telemetry-view': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table
+                    ],
+                    'telemetry.plot.overlay': [
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table,
+                        VIEW_TYPES['telemetry-view']
+                    ],
+                    'telemetry.plot.stacked': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES.table,
+                        VIEW_TYPES['telemetry-view']
+                    ],
+                    'table': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES['telemetry-view']
+                    ],
+                    'telemetry-view-multi': [
+                        VIEW_TYPES['telemetry.plot.overlay'],
+                        VIEW_TYPES['telemetry.plot.stacked'],
+                        VIEW_TYPES.table
+                    ],
+                    'telemetry.plot.overlay-multi': [
+                        VIEW_TYPES['telemetry.plot.stacked']
+                    ]
+                };
 
                 function getUserInput(form) {
                     return openmct.$injector.get('dialogService').getUserInput(form, {});
@@ -82,21 +134,31 @@ define(['lodash'], function (_) {
                     return `configuration.items[${selectionPath[0].context.index}]`;
                 }
 
+                function getAllOfType(selection, specificType) {
+                    return selection.filter(selectionPath => {
+                        let type = selectionPath[0].context.layoutItem.type;
+
+                        return type === specificType;
+                    });
+                }
+
                 function getAllTypes(selection) {
                     return selection.filter(selectionPath => {
                         let type = selectionPath[0].context.layoutItem.type;
-                        return type === 'text-view' ||
-                            type === 'telemetry-view' ||
-                            type === 'box-view' ||
-                            type === 'image-view' ||
-                            type === 'line-view' ||
-                            type === 'subobject-view';
+
+                        return type === 'text-view'
+                            || type === 'telemetry-view'
+                            || type === 'box-view'
+                            || type === 'image-view'
+                            || type === 'line-view'
+                            || type === 'subobject-view';
                     });
                 }
 
                 function getAddButton(selection, selectionPath) {
                     if (selection.length === 1) {
                         selectionPath = selectionPath || selection[0];
+
                         return {
                             control: "menu",
                             domainObject: selectionPath[0].context.item,
@@ -173,7 +235,7 @@ define(['lodash'], function (_) {
                                 message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
                                 buttons: [
                                     {
-                                        label: 'Ok',
+                                        label: 'OK',
                                         emphasis: 'true',
                                         callback: function () {
                                             removeItem(getAllTypes(selection));
@@ -326,27 +388,6 @@ define(['lodash'], function (_) {
                     }
                 }
 
-                function getTextSizeMenu(selectedParent, selection) {
-                    const TEXT_SIZE = [8, 9, 10, 11, 12, 13, 14, 15, 16, 20, 24, 30, 36, 48, 72, 96, 128];
-                    return {
-                        control: "select-menu",
-                        domainObject: selectedParent,
-                        applicableSelectedItems: selection.filter(selectionPath => {
-                            let type = selectionPath[0].context.layoutItem.type;
-                            return type === 'text-view' || type === 'telemetry-view';
-                        }),
-                        property: function (selectionPath) {
-                            return getPath(selectionPath) + ".size";
-                        },
-                        title: "Set text size",
-                        options: TEXT_SIZE.map(size => {
-                            return {
-                                value: size + "px"
-                            };
-                        })
-                    };
-                }
-
                 function getTextButton(selectedParent, selection) {
                     return {
                         control: "button",
@@ -357,7 +398,7 @@ define(['lodash'], function (_) {
                         property: function (selectionPath) {
                             return getPath(selectionPath);
                         },
-                        icon: "icon-font",
+                        icon: "icon-pencil",
                         title: "Edit text properties",
                         dialog: DIALOG_FORM.text
                     };
@@ -379,7 +420,7 @@ define(['lodash'], function (_) {
                                 return {
                                     name: value.name,
                                     value: value.key
-                                }
+                                };
                             })
                         };
                     }
@@ -415,6 +456,175 @@ define(['lodash'], function (_) {
                     }
                 }
 
+                function getDuplicateButton(selectedParent, selectionPath, selection) {
+                    return {
+                        control: "button",
+                        domainObject: selectedParent,
+                        icon: "icon-duplicate",
+                        title: "Duplicate the selected object",
+                        method: function () {
+                            let duplicateItem = selectionPath[1].context.duplicateItem;
+
+                            duplicateItem(selection);
+                        }
+                    };
+                }
+
+                function getPropertyFromPath(object, path) {
+                    let splitPath = path.split('.');
+                    let property = Object.assign({}, object);
+
+                    while (splitPath.length && property) {
+                        property = property[splitPath.shift()];
+                    }
+
+                    return property;
+                }
+
+                function areAllViews(type, path, selection) {
+                    let allTelemetry = true;
+
+                    selection.forEach(selectedItem => {
+                        let selectedItemContext = selectedItem[0].context;
+
+                        if (getPropertyFromPath(selectedItemContext, path) !== type) {
+                            allTelemetry = false;
+                        }
+                    });
+
+                    return allTelemetry;
+                }
+
+                function getToggleUnitsButton(selectedParent, selection) {
+                    let applicableItems = getAllOfType(selection, 'telemetry-view');
+                    applicableItems = unitsOnly(applicableItems);
+                    if (!applicableItems.length) {
+                        return;
+                    }
+
+                    return {
+                        control: "toggle-button",
+                        domainObject: selectedParent,
+                        applicableSelectedItems: applicableItems,
+                        property: function (selectionPath) {
+                            return getPath(selectionPath) + '.showUnits';
+                        },
+                        options: [
+                            {
+                                value: true,
+                                icon: 'icon-eye-open',
+                                title: "Show units"
+                            },
+                            {
+                                value: false,
+                                icon: 'icon-eye-disabled',
+                                title: "Hide units"
+                            }
+                        ]
+                    };
+                }
+
+                function unitsOnly(items) {
+                    let results = items.filter((item) => {
+                        let currentItem = item[0];
+                        let metadata = openmct.telemetry.getMetadata(currentItem.context.item);
+                        if (!metadata) {
+                            return false;
+                        }
+
+                        let hasUnits = metadata
+                            .valueMetadatas
+                            .filter((metadatum) => metadatum.unit)
+                            .length;
+
+                        return hasUnits > 0;
+                    });
+
+                    return results;
+                }
+
+                function getViewSwitcherMenu(selectedParent, selectionPath, selection) {
+                    if (selection.length === 1) {
+                        let displayLayoutContext = selectionPath[1].context;
+                        let selectedItemContext = selectionPath[0].context;
+                        let selectedItemType = selectedItemContext.item.type;
+
+                        if (selectedItemContext.layoutItem.type === 'telemetry-view') {
+                            selectedItemType = 'telemetry-view';
+                        }
+
+                        let viewOptions = APPLICABLE_VIEWS[selectedItemType];
+
+                        if (viewOptions) {
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-object",
+                                title: "Switch the way this telemetry is displayed",
+                                options: viewOptions,
+                                method: function (option) {
+                                    displayLayoutContext.switchViewType(selectedItemContext, option.value, selection);
+                                }
+                            };
+                        }
+                    } else if (selection.length > 1) {
+                        if (areAllViews('telemetry-view', 'layoutItem.type', selection)) {
+                            let displayLayoutContext = selectionPath[1].context;
+
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-object",
+                                title: "Merge into a telemetry table or plot",
+                                options: APPLICABLE_VIEWS['telemetry-view-multi'],
+                                method: function (option) {
+                                    displayLayoutContext.mergeMultipleTelemetryViews(selection, option.value);
+                                }
+                            };
+                        } else if (areAllViews('telemetry.plot.overlay', 'item.type', selection)) {
+                            let displayLayoutContext = selectionPath[1].context;
+
+                            return {
+                                control: "menu",
+                                domainObject: selectedParent,
+                                icon: "icon-object",
+                                title: "Merge into a stacked plot",
+                                options: APPLICABLE_VIEWS['telemetry.plot.overlay-multi'],
+                                method: function (option) {
+                                    displayLayoutContext.mergeMultipleOverlayPlots(selection, option.value);
+                                }
+                            };
+                        }
+                    }
+                }
+
+                function getToggleGridButton(selection, selectionPath) {
+                    const ICON_GRID_SHOW = 'icon-grid-on';
+                    const ICON_GRID_HIDE = 'icon-grid-off';
+
+                    let displayLayoutContext;
+
+                    if (selection.length === 1 && selectionPath === undefined) {
+                        displayLayoutContext = selection[0][0].context;
+                    } else {
+                        displayLayoutContext = selectionPath[1].context;
+                    }
+
+                    return {
+                        control: "button",
+                        domainObject: displayLayoutContext.item,
+                        icon: ICON_GRID_SHOW,
+                        method: function () {
+                            displayLayoutContext.toggleGrid();
+
+                            this.icon = this.icon === ICON_GRID_SHOW
+                                ? ICON_GRID_HIDE
+                                : ICON_GRID_SHOW;
+                        },
+                        secondary: true
+                    };
+                }
+
                 function getSeparator() {
                     return {
                         control: "separator"
@@ -423,32 +633,38 @@ define(['lodash'], function (_) {
 
                 function isMainLayoutSelected(selectionPath) {
                     let selectedObject = selectionPath[0].context.item;
-                    return selectedObject && selectedObject.type === 'layout' &&
-                        !selectionPath[0].context.layoutItem;
+
+                    return selectedObject && selectedObject.type === 'layout'
+                        && !selectionPath[0].context.layoutItem;
                 }
 
                 if (isMainLayoutSelected(selectedObjects[0])) {
-                    return [getAddButton(selectedObjects)];
+                    return [
+                        getToggleGridButton(selectedObjects),
+                        getAddButton(selectedObjects)];
                 }
 
                 let toolbar = {
                     'add-menu': [],
                     'text': [],
                     'url': [],
+                    'viewSwitcher': [],
                     'toggle-frame': [],
                     'display-mode': [],
                     'telemetry-value': [],
                     'style': [],
-                    'text-style': [],
                     'position': [],
-                    'remove': []
+                    'duplicate': [],
+                    'unit-toggle': [],
+                    'remove': [],
+                    'toggle-grid': []
                 };
 
                 selectedObjects.forEach(selectionPath => {
                     let selectedParent = selectionPath[1].context.item;
                     let layoutItem = selectionPath[0].context.layoutItem;
 
-                    if (!layoutItem) {
+                    if (!layoutItem || selectedParent.locked) {
                         return;
                     }
 
@@ -456,9 +672,11 @@ define(['lodash'], function (_) {
                         if (toolbar['add-menu'].length === 0 && selectionPath[0].context.item.type === 'layout') {
                             toolbar['add-menu'] = [getAddButton(selectedObjects, selectionPath)];
                         }
+
                         if (toolbar['toggle-frame'].length === 0) {
                             toolbar['toggle-frame'] = [getToggleFrameButton(selectedParent, selectedObjects)];
                         }
+
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -468,21 +686,23 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
+                        }
+
+                        if (toolbar.viewSwitcher.length === 0) {
+                            toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
                     } else if (layoutItem.type === 'telemetry-view') {
                         if (toolbar['display-mode'].length === 0) {
                             toolbar['display-mode'] = [getDisplayModeMenu(selectedParent, selectedObjects)];
                         }
+
                         if (toolbar['telemetry-value'].length === 0) {
                             toolbar['telemetry-value'] = [getTelemetryValueMenu(selectionPath, selectedObjects)];
                         }
-                        if (toolbar['text-style'].length === 0) {
-                            toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
-                            ];
-                        }
+
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -492,15 +712,22 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
-                    } else if (layoutItem.type === 'text-view') {
-                        if (toolbar['text-style'].length === 0) {
-                            toolbar['text-style'] = [
-                                getTextSizeMenu(selectedParent, selectedObjects)
-                            ];
+
+                        if (toolbar.viewSwitcher.length === 0) {
+                            toolbar.viewSwitcher = [getViewSwitcherMenu(selectedParent, selectionPath, selectedObjects)];
                         }
+
+                        if (toolbar['unit-toggle'].length === 0) {
+                            let toggleUnitsButton = getToggleUnitsButton(selectedParent, selectedObjects);
+                            if (toggleUnitsButton) {
+                                toolbar['unit-toggle'] = [toggleUnitsButton];
+                            }
+                        }
+                    } else if (layoutItem.type === 'text-view') {
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
@@ -510,9 +737,11 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.text.length === 0) {
                             toolbar.text = [getTextButton(selectedParent, selectedObjects)];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -526,6 +755,7 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -539,6 +769,7 @@ define(['lodash'], function (_) {
                                 getWidthInput(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
@@ -552,13 +783,23 @@ define(['lodash'], function (_) {
                                 getY2Input(selectedParent, selectedObjects)
                             ];
                         }
+
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
                     }
+
+                    if (toolbar.duplicate.length === 0) {
+                        toolbar.duplicate = [getDuplicateButton(selectedParent, selectionPath, selectedObjects)];
+                    }
+
+                    if (toolbar['toggle-grid'].length === 0) {
+                        toolbar['toggle-grid'] = [getToggleGridButton(selectedObjects, selectionPath)];
+                    }
                 });
 
                 let toolbarArray = Object.values(toolbar);
+
                 return _.flatten(toolbarArray.reduce((accumulator, group, index) => {
                     group = group.filter(control => control !== undefined);
 
@@ -573,7 +814,7 @@ define(['lodash'], function (_) {
                     return accumulator;
                 }, []));
             }
-        }
+        };
     }
 
     return DisplayLayoutToolbar;

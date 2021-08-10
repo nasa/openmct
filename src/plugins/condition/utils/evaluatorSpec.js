@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -130,7 +130,7 @@ describe('evaluate results', () => {
         it('should evaluate to expected result', () => {
             tests.forEach(test => {
                 const result = evaluateResults(test.values, TRIGGER.ANY);
-                expect(result).toEqual(test[TRIGGER.ANY])
+                expect(result).toEqual(test[TRIGGER.ANY]);
             });
         });
     });
@@ -139,7 +139,7 @@ describe('evaluate results', () => {
         it('should evaluate to expected result', () => {
             tests.forEach(test => {
                 const result = evaluateResults(test.values, TRIGGER.ALL);
-                expect(result).toEqual(test[TRIGGER.ALL])
+                expect(result).toEqual(test[TRIGGER.ALL]);
             });
         });
     });
@@ -148,7 +148,7 @@ describe('evaluate results', () => {
         it('should evaluate to expected result', () => {
             tests.forEach(test => {
                 const result = evaluateResults(test.values, TRIGGER.NOT);
-                expect(result).toEqual(test[TRIGGER.NOT])
+                expect(result).toEqual(test[TRIGGER.NOT]);
             });
         });
     });
@@ -157,7 +157,7 @@ describe('evaluate results', () => {
         it('should evaluate to expected result', () => {
             tests.forEach(test => {
                 const result = evaluateResults(test.values, TRIGGER.XOR);
-                expect(result).toEqual(test[TRIGGER.XOR])
+                expect(result).toEqual(test[TRIGGER.XOR]);
             });
         });
     });

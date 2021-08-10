@@ -1,10 +1,10 @@
 <template>
 <span
-    class="c-disclosure-triangle"
-    :class="{
-        'c-disclosure-triangle--expanded' : value,
-        'is-enabled' : enabled
-    }"
+    :class="[
+        controlClass,
+        { 'c-disclosure-triangle--expanded' : value },
+        {'is-enabled' : enabled }
+    ]"
     @click="handleClick"
 ></span>
 </template>
@@ -12,7 +12,7 @@
 <script>
 export default {
     props: {
-        value:  {
+        value: {
             type: Boolean,
             default: false
         },
@@ -22,18 +22,16 @@ export default {
             type: Boolean,
             default: false
         },
-        propagate: {
-            type: Boolean,
-            default: true
+        controlClass: {
+            type: String,
+            default: 'c-disclosure-triangle'
         }
     },
     methods: {
         handleClick(event) {
+            event.stopPropagation();
             this.$emit('input', !this.value);
-            if (!this.propagate) {
-                event.stopPropagation();
-            }
         }
     }
-}
+};
 </script>

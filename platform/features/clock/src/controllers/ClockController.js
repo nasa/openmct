@@ -46,8 +46,8 @@ function (
             self = this;
 
         function update() {
-            var m = zoneName ?
-                moment.utc(lastTimestamp).tz(zoneName) : moment.utc(lastTimestamp);
+            var m = zoneName
+                ? moment.utc(lastTimestamp).tz(zoneName) : moment.utc(lastTimestamp);
             self.zoneAbbr = m.zoneAbbr();
             self.textValue = timeFormat && m.format(timeFormat);
             self.ampmValue = m.format("A"); // Just the AM or PM part
@@ -64,11 +64,11 @@ function (
                 baseFormat = model.clockFormat[0];
 
                 self.use24 = model.clockFormat[1] === 'clock24';
-                timeFormat = self.use24 ?
-                    baseFormat.replace('hh', "HH") : baseFormat;
+                timeFormat = self.use24
+                    ? baseFormat.replace('hh', "HH") : baseFormat;
                 // If wrong timezone is provided, the UTC will be used
-                zoneName = momentTimezone.tz.names().includes(model.timezone) ?
-                    model.timezone : "UTC";
+                zoneName = momentTimezone.tz.names().includes(model.timezone)
+                    ? model.timezone : "UTC";
                 update();
             }
         }

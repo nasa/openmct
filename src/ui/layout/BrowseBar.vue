@@ -3,16 +3,25 @@
     <div class="l-browse-bar__start">
         <button
             v-if="hasParent"
-            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-pointer-left"
+            class="l-browse-bar__nav-to-parent-button c-icon-button c-icon-button--major icon-arrow-nav-to-parent"
+            title="Navigate up to parent"
             @click="goToParent"
         ></button>
         <div
             class="l-browse-bar__object-name--w c-object-label"
-            :class="[ type.cssClass, classList ]"
+            :class="[statusClass]"
         >
+            <div class="c-object-label__type-icon"
+                 :class="type.cssClass"
+            >
+                <span class="is-status__indicator"
+                      :title="`This item is ${status}`"
+                ></span>
+            </div>
             <span
-                class="l-browse-bar__object-name c-object-label__name c-input-inline"
-                contenteditable
+                class="l-browse-bar__object-name c-object-label__name"
+                :class="{ 'c-input-inline' : type.creatable}"
+                :contenteditable="type.creatable"
                 @blur="updateName"
                 @keydown.enter.prevent
                 @keyup.enter.prevent="updateNameOnEnterKeyPress"
@@ -20,18 +29,13 @@
                 {{ domainObject.name }}
             </span>
         </div>
-        <div
-            class="l-browse-bar__context-actions c-disclosure-button"
-            @click.prevent.stop="showContextMenu"
-        ></div>
     </div>
 
     <div class="l-browse-bar__end">
-        <view-switcher
+        <ViewSwitcher
             v-if="!isEditing"
             :current-view="currentView"
             :views="views"
-            @setView="setView"
         />
         <!-- Action buttons -->
         <NotebookMenuSwitcher v-if="notebookEnabled"
@@ -41,7 +45,26 @@
         />
         <div class="l-browse-bar__actions">
             <button
+                v-for="(item, index) in statusBarItems"
+                :key="index"
+                class="c-button"
+                :class="item.cssClass"
+                @click="item.onItemClicked"
+            >
+            </button>
+
+            <button
                 v-if="isViewEditable & !isEditing"
+                :title="lockedOrUnlockedTitle"
+                :class="{
+                    'c-button icon-lock': domainObject.locked,
+                    'c-icon-button icon-unlocked': !domainObject.locked
+                }"
+                @click="toggleLock(!domainObject.locked)"
+            ></button>
+
+            <button
+                v-if="isViewEditable && !isEditing && !domainObject.locked"
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
                 title="Edit"
                 @click="edit()"
@@ -85,6 +108,11 @@
                 title="Cancel Editing"
                 @click="promptUserandCancelEditing()"
             ></button>
+            <button
+                class="l-browse-bar__actions c-icon-button icon-3-dots"
+                title="More options"
+                @click.prevent.stop="showMenuItems($event)"
+            ></button>
         </div>
     </div>
 </div>
@@ -92,15 +120,23 @@
 
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
-import NotebookMenuSwitcher from '@/plugins/notebook/components/notebook-menu-switcher.vue';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
 const PLACEHOLDER_OBJECT = {};
 
 export default {
-    inject: ['openmct'],
     components: {
         NotebookMenuSwitcher,
         ViewSwitcher
+    },
+    inject: ['openmct'],
+    props: {
+        actionCollection: {
+            type: Object,
+            default: () => {
+                return {};
+            }
+        }
     },
     data: function () {
         return {
@@ -110,67 +146,89 @@ export default {
             domainObject: PLACEHOLDER_OBJECT,
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            notebookEnabled: this.openmct.types.get('notebook')
-        }
+            notebookEnabled: this.openmct.types.get('notebook'),
+            statusBarItems: [],
+            status: ''
+        };
     },
     computed: {
-        classList() {
-            const classList = this.domainObject.classList;
-            if (!classList || !classList.length) {
-                return '';
-            }
-
-            return classList.join(' ');
+        statusClass() {
+            return (this.status) ? `is-status--${this.status}` : '';
         },
         currentView() {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
         },
         views() {
+            if (this.domainObject && (this.openmct.router.started !== true)) {
+                return [];
+            }
+
             return this
                 .openmct
                 .objectViews
-                .get(this.domainObject)
+                .get(this.domainObject, this.openmct.router.path)
                 .map((p) => {
                     return {
                         key: p.key,
                         cssClass: p.cssClass,
-                        name: p.name
+                        name: p.name,
+                        onItemClicked: () => this.setView({key: p.key})
                     };
                 });
         },
         hasParent() {
-            return this.domainObject !== PLACEHOLDER_OBJECT &&
-                    this.parentUrl !== '#/browse'
+            return this.domainObject !== PLACEHOLDER_OBJECT
+                    && this.parentUrl !== '/browse';
         },
         parentUrl() {
-            let objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            let hash = window.location.hash;
+            const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const hash = this.openmct.router.getCurrentLocation().path;
+
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
         },
         type() {
-            let objectType = this.openmct.types.get(this.domainObject.type);
+            const objectType = this.openmct.types.get(this.domainObject.type);
             if (!objectType) {
-                return {}
+                return {};
             }
+
             return objectType.definition;
         },
         isViewEditable() {
             let currentViewKey = this.currentView.key;
             if (currentViewKey !== undefined) {
                 let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
-                return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
+
+                return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject, this.openmct.router.path);
             }
+
             return false;
+        },
+        lockedOrUnlockedTitle() {
+            if (this.domainObject.locked) {
+                return 'Locked for editing - click to unlock.';
+            } else {
+                return 'Unlocked for editing - click to lock.';
+            }
         }
     },
     watch: {
         domainObject() {
-            if (this.mutationObserver) {
-                this.mutationObserver();
+            if (this.removeStatusListener) {
+                this.removeStatusListener();
             }
-            this.mutationObserver = this.openmct.objects.observe(this.domainObject, '*', (domainObject) => {
-                this.domainObject = domainObject;
-            });
+
+            this.status = this.openmct.status.get(this.domainObject.identifier, this.setStatus);
+            this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+        },
+        actionCollection(actionCollection) {
+            if (this.actionCollection) {
+                this.unlistenToActionCollection();
+            }
+
+            this.actionCollection = actionCollection;
+            this.actionCollection.on('update', this.updateActionItems);
+            this.updateActionItems(this.actionCollection.getActionsObject());
         }
     },
     mounted: function () {
@@ -185,6 +243,15 @@ export default {
         if (this.mutationObserver) {
             this.mutationObserver();
         }
+
+        if (this.actionCollection) {
+            this.unlistenToActionCollection();
+        }
+
+        if (this.removeStatusListener) {
+            this.removeStatusListener();
+        }
+
         document.removeEventListener('click', this.closeViewAndSaveMenu);
         window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
     },
@@ -219,7 +286,7 @@ export default {
                 message: 'Any unsaved changes will be lost. Are you sure you want to continue?',
                 buttons: [
                     {
-                        label: 'Ok',
+                        label: 'OK',
                         emphasis: true,
                         callback: () => {
                             this.openmct.editor.cancel().then(() => {
@@ -239,7 +306,7 @@ export default {
             });
         },
         promptUserbeforeNavigatingAway(event) {
-            if(this.openmct.editor.isEditing()) {
+            if (this.openmct.editor.isEditing()) {
                 event.preventDefault();
                 event.returnValue = '';
             }
@@ -252,7 +319,7 @@ export default {
                 title: 'Saving'
             });
 
-            return this.openmct.editor.save().then(()=> {
+            return this.openmct.editor.save().then(() => {
                 dialog.dismiss();
                 this.openmct.notifications.info('Save successful');
             }).catch((error) => {
@@ -266,12 +333,29 @@ export default {
                 this.openmct.editor.edit();
             });
         },
-        showContextMenu(event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.openmct.router.path, event.clientX, event.clientY);
-        },
         goToParent() {
-            window.location.hash = this.parentUrl;
+            this.openmct.router.navigate(this.parentUrl);
+        },
+        updateActionItems(actionItems) {
+            const statusBarItems = this.actionCollection.getStatusBarActions();
+            this.statusBarItems = this.openmct.menus.actionsToMenuItems(statusBarItems, this.actionCollection.objectPath, this.actionCollection.view);
+            this.menuActionItems = this.actionCollection.getVisibleActions();
+        },
+        showMenuItems(event) {
+            const sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
+            const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, this.actionCollection.objectPath, this.actionCollection.view);
+            this.openmct.menus.showMenu(event.x, event.y, menuItems);
+        },
+        unlistenToActionCollection() {
+            this.actionCollection.off('update', this.updateActionItems);
+            delete this.actionCollection;
+        },
+        toggleLock(flag) {
+            this.openmct.objects.mutate(this.domainObject, 'locked', flag);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
-}
+};
 </script>

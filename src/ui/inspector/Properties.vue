@@ -1,5 +1,7 @@
 <template>
-<div class="c-inspector__properties c-inspect-properties">
+<div v-if="!activity"
+     class="c-inspector__properties c-inspect-properties"
+>
     <div class="c-inspect-properties__header">
         Details
     </div>
@@ -81,8 +83,9 @@ export default {
     data() {
         return {
             domainObject: {},
+            activity: undefined,
             multiSelect: false
-        }
+        };
     },
     computed: {
         item() {
@@ -95,22 +98,26 @@ export default {
             if (!this.type) {
                 return `Unknown: ${this.item.type}`;
             }
+
             return this.type.definition.name;
         },
         typeProperties() {
             if (!this.type) {
                 return [];
             }
+
             let definition = this.type.definition;
             if (!definition.form || definition.form.length === 0) {
                 return [];
             }
+
             return definition.form
                 .map((field) => {
-                    let path = field.property
+                    let path = field.property;
                     if (typeof path === 'string') {
                         path = [path];
                     }
+
                     return {
                         name: field.name,
                         path
@@ -141,21 +148,24 @@ export default {
         updateSelection(selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 this.domainObject = {};
+
                 return;
             }
 
             if (selection.length > 1) {
                 this.multiSelect = true;
                 this.domainObject = {};
+
                 return;
             } else {
                 this.multiSelect = false;
                 this.domainObject = selection[0][0].context.item;
+                this.activity = selection[0][0].context.activity;
             }
         },
         formatTime(unixTime) {
             return Moment.utc(unixTime).format('YYYY-MM-DD[\n]HH:mm:ss') + ' UTC';
         }
     }
-}
+};
 </script>

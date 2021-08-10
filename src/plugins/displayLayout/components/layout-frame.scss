@@ -7,9 +7,13 @@
     > *:first-child {
         flex: 1 1 auto;
     }
+
+    &.is-in-small-container {
+        //background: rgba(blue, 0.1);
+    }
 }
 
-.c-frame-edit__move {
+.c-frame__move-bar {
     display: none;
 }
 
@@ -29,7 +33,7 @@
             border: $editFrameSelectedBorder;
             box-shadow: $editFrameSelectedShdw;
 
-            .c-frame-edit__move {
+            .c-frame__move-bar {
                 cursor: move;
             }
         }
@@ -37,7 +41,7 @@
 
     /******************* DEFAULT STYLES FOR -EDIT__MOVE */
     // All object types
-    .c-frame-edit__move {
+    .c-frame__move-bar {
         @include abs();
         display: block;
     }
@@ -52,7 +56,7 @@
             transition-delay: $moveBarOutDelay;
         }
 
-        + .c-frame-edit__move {
+        + .c-frame__move-bar {
             display: none;
         }
 
@@ -61,14 +65,14 @@
     .l-layout {
         /******************* 0 - 1 ITEM SELECTED */
         &:not(.is-multi-selected) {
-            > .l-layout__frame[s-selected] {
+            > .l-layout__frame {
                 > .c-so-view.has-complex-content {
                     > .c-so-view__local-controls {
                         transition: transform $transOutTime ease-in-out;
                         transition-delay: $moveBarOutDelay;
                     }
 
-                    + .c-frame-edit__move {
+                    + .c-frame__move-bar {
                         transition: $transOut;
                         transition-delay: $moveBarOutDelay;
                         @include userSelectNone();
@@ -89,7 +93,7 @@
                             $lrOffset: 25%;
                             @include grippy($editFrameMovebarColorFg);
                             content: '';
-                            display: block;
+                            display: none;
                             position: absolute;
                             top: $tbOffset;
                             right: $lrOffset;
@@ -111,11 +115,18 @@
                             transition-delay: 0s;
                         }
 
-                        + .c-frame-edit__move {
+                        + .c-frame__move-bar {
                             transition: $transIn;
                             transition-delay: 0s;
                             height: $editFrameMovebarH;
                         }
+                    }
+                }
+            }
+            > .l-layout__frame[s-selected] {
+                > .c-so-view.has-complex-content {
+                    + .c-frame__move-bar:before {
+                        display: block;
                     }
                 }
             }
@@ -124,7 +135,7 @@
         /******************* > 1 ITEMS SELECTED */
         &.is-multi-selected {
             .l-layout__frame[s-selected] {
-                > .c-so-view.has-complex-content + .c-frame-edit__move {
+                > .c-so-view.has-complex-content + .c-frame__move-bar {
                     display: block;
                 }
             }

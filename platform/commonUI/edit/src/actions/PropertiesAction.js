@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -81,9 +81,14 @@ define(
          * context.
          */
         PropertiesAction.appliesTo = function (context) {
+
             var domainObject = (context || {}).domainObject,
                 type = domainObject && domainObject.getCapability('type'),
                 creatable = type && type.hasFeature('creation');
+
+            if (domainObject && domainObject.model && domainObject.model.locked) {
+                return false;
+            }
 
             // Only allow creatable types to be edited
             return domainObject && creatable;
@@ -93,5 +98,4 @@ define(
     }
 
 );
-
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ConditionSetCompositionPolicy  from './ConditionSetCompositionPolicy';
+import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy';
 
 describe('ConditionSetCompositionPolicy', () => {
 
@@ -31,7 +31,10 @@ describe('ConditionSetCompositionPolicy', () => {
 
     beforeAll(function () {
         testTelemetryObject = {
-            identifier:{ namespace: "", key: "test-object"},
+            identifier: {
+                namespace: "",
+                key: "test-object"
+            },
             type: "test-object",
             name: "Test Object",
             telemetry: {

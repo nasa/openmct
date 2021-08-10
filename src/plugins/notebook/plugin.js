@@ -1,17 +1,22 @@
-import Notebook from './components/notebook.vue';
-import NotebookSnapshotIndicator from './components/notebook-snapshot-indicator.vue';
+import CopyToNotebookAction from './actions/CopyToNotebookAction';
+import Notebook from './components/Notebook.vue';
+import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import SnapshotContainer from './snapshot-container';
-import Vue from 'vue';
 
-let installed  = false;
+import { notebookImageMigration } from '../notebook/utils/notebook-migration';
+import { NOTEBOOK_TYPE } from './notebook-constants';
+
+import Vue from 'vue';
 
 export default function NotebookPlugin() {
     return function install(openmct) {
-        if (installed) {
+        if (openmct._NOTEBOOK_PLUGIN_INSTALLED) {
             return;
+        } else {
+            openmct._NOTEBOOK_PLUGIN_INSTALLED = true;
         }
 
-        installed = true;
+        openmct.actions.register(new CopyToNotebookAction(openmct));
 
         const notebookType = {
             name: 'Notebook',
@@ -81,21 +86,35 @@ export default function NotebookPlugin() {
                 }
             ]
         };
-        openmct.types.addType('notebook', notebookType);
+        openmct.types.addType(NOTEBOOK_TYPE, notebookType);
+
+        const notebookSnapshotImageType = {
+            name: 'Notebook Snapshot Image Storage',
+            description: 'Notebook Snapshot Image Storage object',
+            creatable: false,
+            initialize: domainObject => {
+                domainObject.configuration = {
+                    fullSizeImageURL: undefined,
+                    thumbnailImageURL: undefined
+                };
+            }
+        };
+        openmct.types.addType('notebookSnapshotImage', notebookSnapshotImageType);
 
         const snapshotContainer = new SnapshotContainer(openmct);
         const notebookSnapshotIndicator = new Vue ({
+            components: {
+                NotebookSnapshotIndicator
+            },
             provide: {
                 openmct,
                 snapshotContainer
             },
-            components: {
-                NotebookSnapshotIndicator
-            },
             template: '<NotebookSnapshotIndicator></NotebookSnapshotIndicator>'
         });
         const indicator = {
-            element: notebookSnapshotIndicator.$mount().$el
+            element: notebookSnapshotIndicator.$mount().$el,
+            key: 'notebook-snapshot-indicator'
         };
 
         openmct.indicators.add(indicator);
@@ -109,6 +128,7 @@ export default function NotebookPlugin() {
             },
             view: function (domainObject) {
                 let component;
+
                 return {
                     show(container) {
                         component = new Vue({
@@ -118,16 +138,31 @@ export default function NotebookPlugin() {
                             },
                             provide: {
                                 openmct,
-                                domainObject,
                                 snapshotContainer
                             },
-                            template: '<Notebook></Notebook>'
+                            data() {
+                                return {
+                                    domainObject
+                                };
+                            },
+                            template: '<Notebook :domain-object="domainObject"></Notebook>'
                         });
                     },
                     destroy() {
                         component.$destroy();
                     }
                 };
+            }
+        });
+
+        openmct.objects.addGetInterceptor({
+            appliesTo: (identifier, domainObject) => {
+                return domainObject && domainObject.type === 'notebook';
+            },
+            invoke: (identifier, domainObject) => {
+                notebookImageMigration(openmct, domainObject);
+
+                return domainObject;
             }
         });
     };

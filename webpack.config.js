@@ -16,16 +16,21 @@ const gitRevision = require('child_process')
 const gitBranch = require('child_process')
     .execSync('git rev-parse --abbrev-ref HEAD')
     .toString().trim();
+const vueFile = devMode
+    ? path.join(__dirname, "node_modules/vue/dist/vue.js")
+    : path.join(__dirname, "node_modules/vue/dist/vue.min.js");
 
 const webpackConfig = {
     mode: devMode ? 'development' : 'production',
     entry: {
         openmct: './openmct.js',
+        couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
         espressoTheme: './src/plugins/themes/espresso-theme.scss',
         snowTheme: './src/plugins/themes/snow-theme.scss',
         maelstromTheme: './src/plugins/themes/maelstrom-theme.scss'
     },
     output: {
+        globalObject: "this",
         filename: '[name].js',
         library: '[name]',
         libraryTarget: 'umd',
@@ -39,12 +44,14 @@ const webpackConfig = {
             "csv": "comma-separated-values",
             "EventEmitter": "eventemitter3",
             "bourbon": "bourbon.scss",
-            "vue": path.join(__dirname, "node_modules/vue/dist/vue.js"),
+            "vue": vueFile,
             "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js"),
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
             "styles": path.join(__dirname, "src/styles"),
             "MCT": path.join(__dirname, "src/MCT"),
-            "testTools": path.join(__dirname, "src/testTools.js")
+            "testUtils": path.join(__dirname, "src/utils/testUtils.js"),
+            "objectUtils": path.join(__dirname, "src/api/objects/object-utils.js"),
+            "utils": path.join(__dirname, "src/utils")
         }
     },
     devtool: devMode ? 'eval-source-map' : 'source-map',
@@ -102,13 +109,15 @@ const webpackConfig = {
                     name: '[name].[ext]',
                     outputPath(url, resourcePath, context) {
                         if (/\.(jpg|jpeg|png|svg)$/.test(url)) {
-                            return `images/${url}`
+                            return `images/${url}`;
                         }
+
                         if (/\.ico$/.test(url)) {
-                            return `icons/${url}`
+                            return `icons/${url}`;
                         }
+
                         if (/\.(woff2?|eot|ttf)$/.test(url)) {
-                            return `fonts/${url}`
+                            return `fonts/${url}`;
                         } else {
                             return `${url}`;
                         }

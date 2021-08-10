@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2018, United States Government
+ Open MCT, Copyright (c) 2014-2021, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
  Open MCT is licensed under the Apache License, Version 2.0 (the
@@ -29,6 +29,11 @@
     @click="maximize()"
 >
     <span class="c-message-banner__message">{{ activeModel.message }}</span>
+    <span v-if="haslink"
+          class="c-message-banner__message"
+          :class="[haslink ? getLinkProps.cssClass : '']"
+    >{{ getLinkProps.text }}</span>
+
     <progress-bar
         v-if="activeModel.progressPerc !== undefined"
         class="c-message-banner__progress-bar"
@@ -43,12 +48,13 @@
 
 <script>
 import ProgressBar from '../../components/ProgressBar.vue';
+
 let activeNotification = undefined;
 let maximizedDialog = undefined;
 let minimizeButton = {
     label: 'Dismiss',
     callback: dismissMaximizedDialog
-}
+};
 
 function dismissMaximizedDialog() {
     if (maximizedDialog) {
@@ -68,21 +74,30 @@ function updateMaxProgressBar(progressPerc, progressText) {
 }
 
 export default {
-    inject: ['openmct'],
     components: {
         ProgressBar: ProgressBar
     },
+    inject: ['openmct'],
     data() {
         return {
             activeModel: {
                 message: undefined,
                 progressPerc: undefined,
                 progressText: undefined,
-                minimized: undefined
+                minimized: undefined,
+                options: undefined
             }
-        }
+        };
     },
     computed: {
+        haslink() {
+            const options = this.activeModel.options;
+
+            return options && options.link;
+        },
+        getLinkProps() {
+            return this.activeModel.options.link;
+        },
         progressWidth() {
             return {
                 width: this.activeModel.progress + '%'
@@ -91,6 +106,7 @@ export default {
     },
     mounted() {
         this.openmct.notifications.on('notification', this.showNotification);
+        this.openmct.notifications.on('dismiss-all', this.clearModel);
     },
     methods: {
         showNotification(notification) {
@@ -99,6 +115,7 @@ export default {
                 activeNotification.off('minimized', this.minimized);
                 activeNotification.off('destroy', this.destroyActiveNotification);
             }
+
             activeNotification = notification;
             this.clearModel();
             this.applyModel(notification.model);
@@ -108,8 +125,8 @@ export default {
             activeNotification.on('minimized', this.minimized);
         },
         isEqual(modelA, modelB) {
-            return modelA.message === modelB.message &&
-                    modelA.timestamp === modelB.timestamp;
+            return modelA.message === modelB.message
+                    && modelA.timestamp === modelB.timestamp;
         },
         applyModel(model) {
             Object.keys(model).forEach((key) => this.activeModel[key] = model[key]);
@@ -143,6 +160,15 @@ export default {
             activeNotification.off('destroy', dismissMaximizedDialog);
         },
         maximize() {
+            if (this.haslink) {
+                const linkProps = this.getLinkProps;
+                linkProps.onClick();
+
+                activeNotification.dismiss();
+
+                return;
+            }
+
             if (this.activeModel.progressPerc !== undefined) {
                 maximizedDialog = this.openmct.overlays.progressDialog({
                     buttons: [minimizeButton],
@@ -158,10 +184,9 @@ export default {
                     iconClass: this.activeModel.severity,
                     buttons: [minimizeButton],
                     ...this.activeModel
-                })
+                });
             }
         }
     }
-
-}
+};
 </script>

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -24,16 +24,22 @@
 <layout-frame
     :item="item"
     :grid-size="gridSize"
+    :is-editing="isEditing"
     @move="(gridDelta) => $emit('move', gridDelta)"
     @endMove="() => $emit('endMove')"
 >
     <div
         v-if="domainObject"
-        class="c-telemetry-view"
-        :class="styleClass"
+        class="c-telemetry-view u-style-receiver"
+        :class="[statusClass]"
         :style="styleObject"
+        :data-font-size="item.fontSize"
+        :data-font="item.font"
         @contextmenu.prevent="showContextMenu"
     >
+        <div class="is-status__indicator"
+             :title="`This item is ${status}`"
+        ></div>
         <div
             v-if="showLabel"
             class="c-telemetry-view__label"
@@ -51,6 +57,12 @@
         >
             <div class="c-telemetry-view__value-text">
                 {{ telemetryValue }}
+                <span
+                    v-if="unit && item.showUnits"
+                    class="c-telemetry-view__value-text__unit"
+                >
+                    {{ unit }}
+                </span>
             </div>
         </div>
     </div>
@@ -58,13 +70,13 @@
 </template>
 
 <script>
-import LayoutFrame from './LayoutFrame.vue'
-import printj from 'printj'
+import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
+import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
 
-const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5],
-    DEFAULT_POSITION = [1, 1],
-    CONTEXT_MENU_ACTIONS = ['viewHistoricalData'];
+const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
+const DEFAULT_POSITION = [1, 1];
+const CONTEXT_MENU_ACTIONS = ['copyToClipboard', 'copyToNotebook', 'viewHistoricalData'];
 
 export default {
     makeDefinition(openmct, gridSize, domainObject, position) {
@@ -82,14 +94,15 @@ export default {
             stroke: "",
             fill: "",
             color: "",
-            size: "13px"
+            fontSize: 'default',
+            font: 'default'
         };
     },
-    inject: ['openmct', 'objectPath'],
     components: {
         LayoutFrame
     },
     mixins: [conditionalStylesMixin],
+    inject: ['openmct', 'objectPath', 'currentView'],
     props: {
         item: {
             type: Object,
@@ -105,30 +118,53 @@ export default {
         index: {
             type: Number,
             required: true
+        },
+        isEditing: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
         return {
+            currentObjectPath: undefined,
             datum: undefined,
-            formats: undefined,
             domainObject: undefined,
-            currentObjectPath: undefined
-        }
+            formats: undefined,
+            viewKey: `alphanumeric-format-${Math.random()}`,
+            status: '',
+            mutablePromise: undefined
+        };
     },
     computed: {
+        statusClass() {
+            return (this.status) ? `is-status--${this.status}` : '';
+        },
         showLabel() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'label';
         },
         showValue() {
             let displayMode = this.item.displayMode;
+
             return displayMode === 'all' || displayMode === 'value';
         },
-        styleObject() {
-            return Object.assign({}, {
-                fontSize: this.item.size
-            }, this.itemStyle);
+        unit() {
+            let value = this.item.value;
+            let unit = this.metadata.value(value).unit;
 
+            return unit;
+        },
+        styleObject() {
+            let size;
+            //for legacy size support
+            if (!this.item.fontSize) {
+                size = this.item.size;
+            }
+
+            return Object.assign({}, {
+                size
+            }, this.itemStyle);
         },
         fieldName() {
             return this.valueMetadata && this.valueMetadata.name;
@@ -136,7 +172,11 @@ export default {
         valueMetadata() {
             return this.datum && this.metadata.value(this.item.value);
         },
-        valueFormatter() {
+        formatter() {
+            if (this.item.format) {
+                return this.customStringformatter;
+            }
+
             return this.formats[this.item.value];
         },
         telemetryValue() {
@@ -144,11 +184,7 @@ export default {
                 return;
             }
 
-            if (this.item.format) {
-                return printj.sprintf(this.item.format, this.datum[this.valueMetadata.key]);
-            }
-
-            return this.valueFormatter && this.valueFormatter.format(this.datum);
+            return this.formatter && this.formatter.format(this.datum);
         },
         telemetryClass() {
             if (!this.datum) {
@@ -156,6 +192,7 @@ export default {
             }
 
             let alarm = this.limitEvaluator && this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+
             return alarm && alarm.cssClass;
         }
     },
@@ -168,24 +205,53 @@ export default {
             this.context.index = newIndex;
         },
         item(newItem) {
+            if (!this.context) {
+                return;
+            }
+
             this.context.layoutItem = newItem;
         }
     },
     mounted() {
-        this.openmct.objects.get(this.item.identifier)
-            .then(this.setObject);
+        if (this.openmct.objects.supportsMutation(this.item.identifier)) {
+            this.mutablePromise = this.openmct.objects.getMutable(this.item.identifier)
+                .then(this.setObject);
+        } else {
+            this.openmct.objects.get(this.item.identifier)
+                .then(this.setObject);
+        }
+
         this.openmct.time.on("bounds", this.refreshData);
+
+        this.status = this.openmct.status.get(this.item.identifier);
+        this.removeStatusListener = this.openmct.status.observe(this.item.identifier, this.setStatus);
     },
-    destroyed() {
+    beforeDestroy() {
         this.removeSubscription();
+        this.removeStatusListener();
 
         if (this.removeSelectable) {
             this.removeSelectable();
         }
 
         this.openmct.time.off("bounds", this.refreshData);
+
+        if (this.mutablePromise) {
+            this.mutablePromise.then(() => {
+                this.openmct.objects.destroyMutable(this.domainObject);
+            });
+        } else if (this.domainObject.isMutable) {
+            this.openmct.objects.destroyMutable(this.domainObject);
+        }
     },
     methods: {
+        formattedValueForCopy() {
+            const timeFormatterKey = this.openmct.time.timeSystem().key;
+            const timeFormatter = this.formats[timeFormatterKey];
+            const unit = this.unit ? ` ${this.unit}` : '';
+
+            return `At ${timeFormatter.format(this.datum)} ${this.domainObject.name} had a value of ${this.telemetryValue}${unit}`;
+        },
         requestHistoricalData() {
             let bounds = this.openmct.time.bounds();
             let options = {
@@ -203,7 +269,12 @@ export default {
         },
         subscribeToObject() {
             this.subscription = this.openmct.telemetry.subscribe(this.domainObject, function (datum) {
-                if (this.openmct.time.clock() !== undefined) {
+                const key = this.openmct.time.timeSystem().key;
+                const datumTimeStamp = datum[key];
+                if (this.openmct.time.clock() !== undefined
+                    || (datumTimeStamp
+                        && (this.openmct.time.bounds().end >= datumTimeStamp))
+                ) {
                     this.updateView(datum);
                 }
             }.bind(this));
@@ -225,10 +296,15 @@ export default {
         },
         setObject(domainObject) {
             this.domainObject = domainObject;
+            this.mutablePromise = undefined;
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
             this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+
+            const valueMetadata = this.metadata.value(this.item.value);
+            this.customStringformatter = this.openmct.telemetry.customStringFormatter(valueMetadata, this.item.format);
+
             this.requestHistoricalData();
             this.subscribeToObject();
 
@@ -239,18 +315,56 @@ export default {
                 item: domainObject,
                 layoutItem: this.item,
                 index: this.index,
-                updateTelemetryFormat: this.updateTelemetryFormat
+                updateTelemetryFormat: this.updateTelemetryFormat,
+                toggleUnits: this.toggleUnits,
+                showUnits: this.showUnits
             };
             this.removeSelectable = this.openmct.selection.selectable(
-                this.$el, this.context, this.initSelect);
+                this.$el, this.context, this.immediatelySelect || this.initSelect);
+            delete this.immediatelySelect;
         },
         updateTelemetryFormat(format) {
+            this.customStringformatter.setFormat(format);
+
             this.$emit('formatChanged', this.item, format);
         },
-        showContextMenu(event) {
-            this.openmct.contextMenu._showContextMenuForObjectPath(this.currentObjectPath, event.x, event.y, CONTEXT_MENU_ACTIONS);
+        updateViewContext() {
+            this.$emit('contextClick', {
+                viewHistoricalData: true,
+                formattedValueForCopy: this.formattedValueForCopy
+            });
+        },
+        async getContextMenuActions() {
+            const defaultNotebook = getDefaultNotebook();
+            const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+
+            let defaultNotebookName;
+            if (defaultNotebook) {
+                const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
+                defaultNotebookName = `Copy to Notebook ${defaultPath}`;
+            }
+
+            return CONTEXT_MENU_ACTIONS
+                .map(actionKey => {
+                    const action = this.openmct.actions.getAction(actionKey);
+                    if (action.key === 'copyToNotebook') {
+                        action.name = defaultNotebookName;
+                    }
+
+                    return action;
+                })
+                .filter(action => action.name !== undefined);
+        },
+        async showContextMenu(event) {
+            this.updateViewContext();
+            const contextMenuActions = await this.getContextMenuActions();
+            const menuItems = this.openmct.menus.actionsToMenuItems(contextMenuActions, this.currentObjectPath, this.currentView);
+            this.openmct.menus.showMenu(event.x, event.y, menuItems);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
-}
+};
 
 </script>

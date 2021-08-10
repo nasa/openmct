@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/*global self*/
-
 /**
  * Module defining BareBonesSearchWorker. Created by deeptailor on 10/03/2019.
  */
@@ -34,7 +32,8 @@
     function indexItem(id, model) {
         indexedItems.push({
             id: id,
-            name: model.name.toLowerCase()
+            name: model.name.toLowerCase(),
+            type: model.type
         });
     }
 

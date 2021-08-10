@@ -1,45 +1,19 @@
 <template>
-<div class="c-create-button--w">
+<div ref="createButton"
+     class="c-create-button--w"
+>
     <button
         class="c-create-button c-button--menu c-button--major icon-plus"
-        @click="open"
+        @click.prevent.stop="showCreateMenu"
     >
         <span class="c-button__label">Create</span>
     </button>
-    <div
-        v-if="opened"
-        class="c-create-menu c-super-menu"
-    >
-        <div class="c-super-menu__menu">
-            <ul>
-                <li
-                    v-for="(item, index) in sortedItems"
-                    :key="index"
-                    :class="item.class"
-                    :title="item.title"
-                    @mouseover="showItemDescription(item)"
-                    @click="create(item)"
-                >
-                    {{ item.name }}
-                </li>
-            </ul>
-        </div>
-        <div class="c-super-menu__item-description">
-            <div :class="['l-item-description__icon', 'bg-' + selectedMenuItem.class]"></div>
-            <div class="l-item-description__name">
-                {{ selectedMenuItem.name }}
-            </div>
-            <div class="l-item-description__description">
-                {{ selectedMenuItem.title }}
-            </div>
-        </div>
-    </div>
 </div>
 </template>
 
 <script>
 import CreateAction from '../../../platform/commonUI/edit/src/creation/CreateAction';
-import objectUtils from '../../api/objects/object-utils';
+import objectUtils from 'objectUtils';
 
 export default {
     inject: ['openmct'],
@@ -51,10 +25,10 @@ export default {
 
             if (menuItem.creatable) {
                 let menuItemTemplate = {
-                    key: key,
+                    cssClass: menuItem.cssClass,
                     name: menuItem.name,
-                    class: menuItem.cssClass,
-                    title: menuItem.description
+                    description: menuItem.description,
+                    onItemClicked: () => this.create(key)
                 };
 
                 items.push(menuItemTemplate);
@@ -65,11 +39,11 @@ export default {
             items: items,
             selectedMenuItem: {},
             opened: false
-        }
+        };
     },
     computed: {
         sortedItems() {
-            return this.items.slice().sort((a,b) => {
+            return this.items.slice().sort((a, b) => {
                 if (a.name < b.name) {
                     return -1;
                 } else if (a.name > b.name) {
@@ -80,28 +54,19 @@ export default {
             });
         }
     },
-    destroyed() {
-        document.removeEventListener('click', this.close);
-    },
     methods: {
-        open: function () {
-            if (this.opened) {
-                return;
-            }
-            this.opened = true;
-            setTimeout(() => document.addEventListener('click', this.close));
+        showCreateMenu() {
+            const elementBoundingClientRect = this.$refs.createButton.getBoundingClientRect();
+            const x = elementBoundingClientRect.x;
+            const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
+
+            const menuOptions = {
+                menuClass: 'c-create-menu'
+            };
+
+            this.openmct.menus.showSuperMenu(x, y, this.sortedItems, menuOptions);
         },
-        close: function () {
-            if (!this.opened) {
-                return;
-            }
-            this.opened = false;
-            document.removeEventListener('click', this.close);
-        },
-        showItemDescription: function (menuItem) {
-            this.selectedMenuItem = menuItem;
-        },
-        create: function (item) {
+        create(key) {
             // Hack for support.  TODO: rewrite create action.
             // 1. Get contextual object from navigation
             // 2. Get legacy type from legacy api
@@ -110,7 +75,7 @@ export default {
             return this.openmct.objects.get(this.openmct.router.path[0].identifier)
                 .then((currentObject) => {
                     let legacyContextualParent = this.convertToLegacy(currentObject);
-                    let legacyType = this.openmct.$injector.get('typeService').getType(item.key);
+                    let legacyType = this.openmct.$injector.get('typeService').getType(key);
                     let context = {
                         key: "create",
                         domainObject: legacyContextualParent // should be same as parent object.
@@ -121,14 +86,16 @@ export default {
                         context,
                         this.openmct
                     );
+
                     return action.perform();
                 });
         },
         convertToLegacy(domainObject) {
             let keyString = objectUtils.makeKeyString(domainObject.identifier);
             let oldModel = objectUtils.toOldFormat(domainObject);
+
             return this.openmct.$injector.get('instantiate')(oldModel, keyString);
         }
     }
-}
+};
 </script>

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2020, United States Government
+* Open MCT, Copyright (c) 2014-2021, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -31,7 +31,6 @@
             v-model="expanded"
             class="c-tree__item__view-control"
             :enabled="hasChildren"
-            :propagate="false"
         />
         <div class="c-tree__item__label c-object-label">
             <div
@@ -42,7 +41,7 @@
         </div>
     </div>
     <ul
-        v-if="expanded"
+        v-if="expanded && !isLoading"
         class="c-tree"
     >
         <li
@@ -69,10 +68,10 @@ import viewControl from '@/ui/components/viewControl.vue';
 
 export default {
     name: 'ConditionSetDialogTreeItem',
-    inject: ['openmct'],
     components: {
         viewControl
     },
+    inject: ['openmct'],
     props: {
         node: {
             type: Object,
@@ -98,7 +97,7 @@ export default {
             loaded: false,
             children: [],
             expanded: false
-        }
+        };
     },
     computed: {
         navigated() {
@@ -106,8 +105,10 @@ export default {
             const isSelectedObject = itemId && this.openmct.objects.areIdsEqual(this.node.object.identifier, itemId);
             if (isSelectedObject && this.node.objectPath && this.node.objectPath.length > 1) {
                 const isParent = this.openmct.objects.areIdsEqual(this.node.objectPath[1].identifier, this.selectedItem.parentId);
+
                 return isSelectedObject && isParent;
             }
+
             return isSelectedObject;
         },
         isAlias() {
@@ -115,7 +116,9 @@ export default {
             if (!parent) {
                 return false;
             }
+
             let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
+
             return parentKeyString !== this.node.object.location;
         },
         typeClass() {
@@ -123,6 +126,7 @@ export default {
             if (!type) {
                 return 'icon-object-unknown';
             }
+
             return type.definition.cssClass;
         }
     },
@@ -131,6 +135,7 @@ export default {
             if (!this.hasChildren) {
                 return;
             }
+
             if (!this.loaded && !this.isLoading) {
                 this.composition = this.openmct.composition.get(this.domainObject);
                 this.composition.on('add', this.addChild);
@@ -181,5 +186,5 @@ export default {
             this.loaded = true;
         }
     }
-}
+};
 </script>

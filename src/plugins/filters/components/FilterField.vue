@@ -77,14 +77,14 @@ export default {
         persistedFilters: {
             type: Object,
             default: () => {
-                return {}
+                return {};
             }
         }
     },
     data() {
         return {
             isEditing: this.openmct.editor.isEditing()
-        }
+        };
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.toggleIsEditing);
@@ -127,5 +127,5 @@ export default {
             }, []).join(', ');
         }
     }
-}
+};
 </script>

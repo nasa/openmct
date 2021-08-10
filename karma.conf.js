@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2017, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,7 +25,7 @@
 const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['progress', 'html'];
+const reporters = ['progress', 'html', 'junit'];
 
 if (coverageEnabled) {
     reporters.push('coverage-istanbul');
@@ -52,17 +52,26 @@ module.exports = (config) => {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'platform/**/*Spec.js',
-            'src/**/*Spec.js'
+            'indexTest.js'
         ],
         port: 9876,
         reporters: reporters,
         browsers: browsers,
+        client: {
+            jasmine: {
+                random: false,
+                timeoutInterval: 30000
+            }
+        },
         customLaunchers: {
             ChromeDebugging: {
                 base: 'Chrome',
                 flags: ['--remote-debugging-port=9222'],
                 debug: true
+            },
+            FirefoxESR: {
+                base: 'FirefoxHeadless',
+                name: 'FirefoxESR'
             }
         },
         colors: true,
@@ -74,27 +83,38 @@ module.exports = (config) => {
             preserveDescribeNesting: true,
             foldAll: false
         },
+        junitReporter: {
+            outputDir: "dist/reports/tests",
+            outputFile: "test-results.xml",
+            useBrowserName: false
+        },
+        browserConsoleLogOptions: {
+            level: "error",
+            format: "%b %T: %m",
+            terminal: true
+        },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
-            dir: process.env.CIRCLE_ARTIFACTS ?
-                process.env.CIRCLE_ARTIFACTS + '/coverage' :
-                "dist/reports/coverage",
+            dir: process.env.CIRCLE_ARTIFACTS
+                ? process.env.CIRCLE_ARTIFACTS + '/coverage'
+                : "dist/reports/coverage",
             reports: ['html', 'lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    lines: 62
+                    lines: 66
                 }
             }
         },
         preprocessors: {
-            'platform/**/*Spec.js': ['webpack', 'sourcemap'],
-            'src/**/*Spec.js': ['webpack', 'sourcemap']
+            'indexTest.js': ['webpack', 'sourcemap']
         },
         webpack: webpackConfig,
         webpackMiddleware: {
             stats: 'errors-only',
             logLevel: 'warn'
         },
-        singleRun: true
+        concurrency: 1,
+        singleRun: true,
+        browserNoActivityTimeout: 400000
     });
-}
+};

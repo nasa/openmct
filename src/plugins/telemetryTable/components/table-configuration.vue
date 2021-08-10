@@ -2,7 +2,7 @@
 <div class="c-inspect-properties">
     <template v-if="isEditing">
         <div class="c-inspect-properties__header">
-            Table Column Size
+            Table Layout
         </div>
         <ul class="c-inspect-properties__section">
             <li class="c-inspect-properties__row">
@@ -18,6 +18,22 @@
                         type="checkbox"
                         :checked="configuration.autosize !== false"
                         @change="toggleAutosize()"
+                    >
+                </div>
+            </li>
+            <li class="c-inspect-properties__row">
+                <div
+                    class="c-inspect-properties__label"
+                    title="Show or hide headers"
+                >
+                    <label for="header-visibility">Hide Header</label>
+                </div>
+                <div class="c-inspect-properties__value">
+                    <input
+                        id="header-visibility"
+                        type="checkbox"
+                        :checked="configuration.hideHeaders === true"
+                        @change="toggleHeaderVisibility"
                     >
                 </div>
             </li>
@@ -53,6 +69,7 @@
 
 <script>
 import TelemetryTableColumn from '../TelemetryTableColumn';
+import TelemetryTableUnitColumn from '../TelemetryTableUnitColumn';
 
 export default {
     inject: ['tableConfiguration', 'openmct'],
@@ -61,7 +78,7 @@ export default {
             headers: {},
             isEditing: this.openmct.editor.isEditing(),
             configuration: this.tableConfiguration.getConfiguration()
-        }
+        };
     },
     mounted() {
         this.unlisteners = [];
@@ -115,12 +132,22 @@ export default {
         },
         addColumnsForObject(telemetryObject) {
             let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
-
             metadataValues.forEach(metadatum => {
                 let column = new TelemetryTableColumn(this.openmct, metadatum);
                 this.tableConfiguration.addSingleColumnForObject(telemetryObject, column);
+                // if units are available, need to add columns to be hidden
+                if (metadatum.unit !== undefined) {
+                    let unitColumn = new TelemetryTableUnitColumn(this.openmct, metadatum);
+                    this.tableConfiguration.addSingleColumnForObject(telemetryObject, unitColumn);
+                }
             });
+        },
+        toggleHeaderVisibility() {
+            let hideHeaders = this.configuration.hideHeaders;
+
+            this.configuration.hideHeaders = !hideHeaders;
+            this.tableConfiguration.updateConfiguration(this.configuration);
         }
     }
-}
+};
 </script>

@@ -5,6 +5,11 @@
         'is-editing': isEditing
     }"
 >
+
+    <div
+        id="splash-screen"
+    ></div>
+
     <div
         class="l-shell__head"
         :class="{
@@ -15,7 +20,9 @@
         <CreateButton class="l-shell__create-button" />
         <indicators class="l-shell__head-section l-shell__indicators" />
         <button
-            class="l-shell__head__collapse-button c-button"
+            class="l-shell__head__collapse-button c-icon-button"
+            :class="headExpanded ? 'l-shell__head__collapse-button--collapse' : 'l-shell__head__collapse-button--expand'"
+            :title="`Click to ${headExpanded ? 'collapse' : 'expand'} items`"
             @click="toggleShellHead"
         ></button>
         <notification-banner />
@@ -39,6 +46,7 @@
 
     <multipane
         class="l-shell__main"
+        :class="[resizingClass]"
         type="horizontal"
     >
         <pane
@@ -46,13 +54,35 @@
             handle="after"
             label="Browse"
             collapsable
+            @start-resizing="onStartResizing"
+            @end-resizing="onEndResizing"
         >
-            <mct-tree class="l-shell__tree" />
+            <button
+                slot="controls"
+                class="c-icon-button l-shell__reset-tree-button icon-folders-collapse"
+                title="Collapse all tree items"
+                @click="handleTreeReset"
+            >
+            </button>
+            <button
+                slot="controls"
+                class="c-icon-button l-shell__sync-tree-button icon-target"
+                title="Show selected item in tree"
+                @click="handleSyncTreeNavigation"
+            >
+            </button>
+            <mct-tree
+                :sync-tree-navigation="triggerSync"
+                :reset-tree-navigation="triggerReset"
+                class="l-shell__tree"
+            />
         </pane>
         <pane class="l-shell__pane-main">
             <browse-bar
                 ref="browseBar"
                 class="l-shell__main-view-browse-bar"
+                :action-collection="actionCollection"
+                @sync-tree-navigation="handleSyncTreeNavigation"
             />
             <toolbar
                 v-if="toolbar"
@@ -60,9 +90,10 @@
             />
             <object-view
                 ref="browseObject"
-                class="l-shell__main-container"
-                :show-edit-view="true"
+                class="l-shell__main-container js-main-container"
                 data-selectable
+                :show-edit-view="true"
+                @change-action-collection="setActionCollection"
             />
             <component
                 :is="conductorComponent"
@@ -74,6 +105,8 @@
             handle="before"
             label="Inspect"
             collapsable
+            @start-resizing="onStartResizing"
+            @end-resizing="onEndResizing"
         >
             <Inspector
                 ref="inspector"
@@ -98,36 +131,7 @@ import AppLogo from './AppLogo.vue';
 import Indicators from './status-bar/Indicators.vue';
 import NotificationBanner from './status-bar/NotificationBanner.vue';
 
-var enterFullScreen = () => {
-    var docElm = document.documentElement;
-
-    if (docElm.requestFullscreen) {
-        docElm.requestFullscreen();
-    } else if (docElm.mozRequestFullScreen) { /* Firefox */
-        docElm.mozRequestFullScreen();
-    } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-        docElm.webkitRequestFullscreen();
-    } else if (docElm.msRequestFullscreen) { /* IE/Edge */
-        docElm.msRequestFullscreen();
-    }
-};
-var exitFullScreen = () => {
-    if (document.exitFullscreen) {
-        document.exitFullscreen();
-    }
-    else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-    }
-    else if (document.webkitCancelFullScreen) {
-        document.webkitCancelFullScreen();
-    }
-    else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-    }
-}
-
 export default {
-    inject: ['openmct'],
     components: {
         Inspector,
         MctTree,
@@ -142,6 +146,7 @@ export default {
         Indicators,
         NotificationBanner
     },
+    inject: ['openmct'],
     data: function () {
         let storedHeadProps = window.localStorage.getItem('openmct-shell-head');
         let headExpanded = true;
@@ -154,22 +159,53 @@ export default {
             conductorComponent: undefined,
             isEditing: false,
             hasToolbar: false,
-            headExpanded
-        }
+            actionCollection: undefined,
+            triggerSync: false,
+            triggerReset: false,
+            headExpanded,
+            isResizing: false
+        };
     },
     computed: {
         toolbar() {
             return this.hasToolbar && this.isEditing;
+        },
+        resizingClass() {
+            return this.isResizing ? 'l-shell__resizing' : '';
         }
     },
     mounted() {
-        this.openmct.editor.on('isEditing', (isEditing)=>{
+        this.openmct.editor.on('isEditing', (isEditing) => {
             this.isEditing = isEditing;
         });
 
         this.openmct.selection.on('change', this.toggleHasToolbar);
     },
     methods: {
+        enterFullScreen() {
+            let docElm = document.documentElement;
+
+            if (docElm.requestFullscreen) {
+                docElm.requestFullscreen();
+            } else if (docElm.mozRequestFullScreen) { /* Firefox */
+                docElm.mozRequestFullScreen();
+            } else if (docElm.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+                docElm.webkitRequestFullscreen();
+            } else if (docElm.msRequestFullscreen) { /* IE/Edge */
+                docElm.msRequestFullscreen();
+            }
+        },
+        exitFullScreen() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        },
         toggleShellHead() {
             this.headExpanded = !this.headExpanded;
 
@@ -185,10 +221,10 @@ export default {
         fullScreenToggle() {
             if (this.fullScreen) {
                 this.fullScreen = false;
-                exitFullScreen();
+                this.exitFullScreen();
             } else {
                 this.fullScreen = true;
-                enterFullScreen();
+                this.enterFullScreen();
             }
         },
         openInNewTab(event) {
@@ -204,7 +240,22 @@ export default {
             }
 
             this.hasToolbar = structure.length > 0;
+        },
+        setActionCollection(actionCollection) {
+            this.actionCollection = actionCollection;
+        },
+        handleSyncTreeNavigation() {
+            this.triggerSync = !this.triggerSync;
+        },
+        handleTreeReset() {
+            this.triggerReset = !this.triggerReset;
+        },
+        onStartResizing() {
+            this.isResizing = true;
+        },
+        onEndResizing() {
+            this.isResizing = false;
         }
     }
-}
+};
 </script>

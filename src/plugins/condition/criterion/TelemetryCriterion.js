@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
-import { OPERATIONS } from '../utils/operations';
+import { OPERATIONS, getOperatorText } from '../utils/operations';
+import { subscribeForStaleness } from "../utils/time";
 
 export default class TelemetryCriterion extends EventEmitter {
 
@@ -43,22 +44,54 @@ export default class TelemetryCriterion extends EventEmitter {
         this.input = telemetryDomainObjectDefinition.input;
         this.metadata = telemetryDomainObjectDefinition.metadata;
         this.result = undefined;
+        this.stalenessSubscription = undefined;
 
         this.initialize();
         this.emitEvent('criterionUpdated', this);
     }
 
     initialize() {
-        this.telemetryObject = this.telemetryDomainObjectDefinition.telemetryObject;
         this.telemetryObjectIdAsString = this.openmct.objects.makeKeyString(this.telemetryDomainObjectDefinition.telemetry);
+        this.updateTelemetryObjects(this.telemetryDomainObjectDefinition.telemetryObjects);
+        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
+            this.subscribeForStaleData();
+        }
+    }
+
+    usesTelemetry(id) {
+        return this.telemetryObjectIdAsString && (this.telemetryObjectIdAsString === id);
+    }
+
+    subscribeForStaleData() {
+        if (this.stalenessSubscription) {
+            this.stalenessSubscription.clear();
+        }
+
+        this.stalenessSubscription = subscribeForStaleness(this.handleStaleTelemetry.bind(this), this.input[0] * 1000);
+    }
+
+    handleStaleTelemetry(data) {
+        this.result = true;
+        this.emitEvent('telemetryIsStale', data);
     }
 
     isValid() {
         return this.telemetryObject && this.metadata && this.operation;
     }
 
-    updateTelemetry(telemetryObjects) {
+    isStalenessCheck() {
+        return this.metadata && this.metadata === 'dataReceived';
+    }
+
+    isValidInput() {
+        return this.input instanceof Array && this.input.length;
+    }
+
+    updateTelemetryObjects(telemetryObjects) {
         this.telemetryObject = telemetryObjects[this.telemetryObjectIdAsString];
+        if (this.isValid() && this.isStalenessCheck() && this.isValidInput()) {
+            this.subscribeForStaleData();
+        }
     }
 
     createNormalizedDatum(telemetryDatum, endpoint) {
@@ -68,6 +101,7 @@ export default class TelemetryCriterion extends EventEmitter {
         const normalizedDatum = Object.values(metadata).reduce((datum, metadatum) => {
             const formatter = this.openmct.telemetry.getValueFormatter(metadatum);
             datum[metadatum.key] = formatter.parse(telemetryDatum[metadatum.source]);
+
             return datum;
         }, {});
 
@@ -83,22 +117,35 @@ export default class TelemetryCriterion extends EventEmitter {
 
         if (data) {
             this.openmct.time.getAllTimeSystems().forEach(timeSystem => {
-                datum[timeSystem.key] = data[timeSystem.key]
+                datum[timeSystem.key] = data[timeSystem.key];
             });
         }
+
         return datum;
     }
 
-    getResult(data) {
+    updateResult(data) {
         const validatedData = this.isValid() ? data : {};
-        this.result = this.computeResult(validatedData);
+        if (this.isStalenessCheck()) {
+            if (this.stalenessSubscription) {
+                this.stalenessSubscription.update(validatedData);
+            }
+
+            this.result = false;
+        } else {
+            this.result = this.computeResult(validatedData);
+        }
     }
 
-    requestLAD() {
-        const options = {
+    requestLAD(telemetryObjects, requestOptions) {
+        let options = {
             strategy: 'latest',
             size: 1
         };
+
+        if (requestOptions !== undefined) {
+            options = Object.assign(options, requestOptions);
+        }
 
         if (!this.isValid()) {
             return {
@@ -107,12 +154,14 @@ export default class TelemetryCriterion extends EventEmitter {
             };
         }
 
+        let telemetryObject = this.telemetryObject;
+
         return this.openmct.telemetry.request(
             this.telemetryObject,
             options
         ).then(results => {
             const latestDatum = results.length ? results[results.length - 1] : {};
-            const normalizedDatum = this.createNormalizedDatum(latestDatum, this.telemetryObject);
+            const normalizedDatum = this.createNormalizedDatum(latestDatum, telemetryObject);
 
             return {
                 id: this.id,
@@ -122,11 +171,12 @@ export default class TelemetryCriterion extends EventEmitter {
     }
 
     findOperation(operation) {
-        for (let i=0, ii=OPERATIONS.length; i < ii; i++) {
+        for (let i = 0, ii = OPERATIONS.length; i < ii; i++) {
             if (operation === OPERATIONS[i].name) {
                 return OPERATIONS[i].operation;
             }
         }
+
         return null;
     }
 
@@ -136,13 +186,15 @@ export default class TelemetryCriterion extends EventEmitter {
             let comparator = this.findOperation(this.operation);
             let params = [];
             params.push(data[this.metadata]);
-            if (this.input instanceof Array && this.input.length) {
+            if (this.isValidInput()) {
                 this.input.forEach(input => params.push(input));
             }
+
             if (typeof comparator === 'function') {
-                result = !!comparator(params);
+                result = Boolean(comparator(params));
             }
         }
+
         return result;
     }
 
@@ -153,9 +205,62 @@ export default class TelemetryCriterion extends EventEmitter {
         });
     }
 
+    getMetaDataObject(telemetryObject, metadata) {
+        let metadataObject;
+        if (metadata) {
+            const telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            if (telemetryMetadata) {
+                metadataObject = telemetryMetadata.valueMetadatas.find((valueMetadata) => valueMetadata.key === metadata);
+            }
+        }
+
+        return metadataObject;
+    }
+
+    getInputValueFromMetaData(metadataObject, input) {
+        let inputValue;
+        if (metadataObject) {
+            if (metadataObject.enumerations && input.length) {
+                const enumeration = metadataObject.enumerations.find((item) => item.value.toString() === input[0].toString());
+                if (enumeration !== undefined && enumeration.string) {
+                    inputValue = [enumeration.string];
+                }
+            }
+        }
+
+        return inputValue;
+    }
+
+    getMetadataValueFromMetaData(metadataObject) {
+        let metadataValue;
+        if (metadataObject) {
+            if (metadataObject.name) {
+                metadataValue = metadataObject.name;
+            }
+        }
+
+        return metadataValue;
+    }
+
+    getDescription(criterion, index) {
+        let description;
+        if (!this.telemetry || !this.telemetryObject || (this.telemetryObject.type === 'unknown')) {
+            description = `Unknown ${this.metadata} ${getOperatorText(this.operation, this.input)}`;
+        } else {
+            const metadataObject = this.getMetaDataObject(this.telemetryObject, this.metadata);
+            const metadataValue = this.getMetadataValueFromMetaData(metadataObject) || (this.metadata === 'dataReceived' ? '' : this.metadata);
+            const inputValue = this.getInputValueFromMetaData(metadataObject, this.input) || this.input;
+            description = `${this.telemetryObject.name} ${metadataValue} ${getOperatorText(this.operation, inputValue)}`;
+        }
+
+        return description;
+    }
 
     destroy() {
         delete this.telemetryObject;
         delete this.telemetryObjectIdAsString;
+        if (this.stalenessSubscription) {
+            delete this.stalenessSubscription;
+        }
     }
 }

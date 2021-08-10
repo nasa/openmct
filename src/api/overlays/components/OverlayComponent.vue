@@ -7,7 +7,7 @@
     <div class="c-overlay__outer">
         <button
             v-if="dismissable"
-            class="c-click-icon c-overlay__close-button icon-x-in-circle"
+            class="c-click-icon c-overlay__close-button icon-x"
             @click="destroy"
         ></button>
         <div
@@ -38,12 +38,12 @@
 
 <script>
 export default {
+    inject: ['dismiss', 'element', 'buttons', 'dismissable'],
     data: function () {
         return {
             focusIndex: -1
         };
     },
-    inject: ['dismiss', 'element', 'buttons', 'dismissable'],
     mounted() {
         const element = this.$refs.element;
         element.appendChild(this.element);
@@ -72,6 +72,7 @@ export default {
                 if (this.buttons[index].emphasis) {
                     this.focusIndex = index;
                 }
+
                 return this.buttons[index].emphasis;
             });
 
@@ -82,5 +83,5 @@ export default {
             return focusButton[0];
         }
     }
-}
+};
 </script>

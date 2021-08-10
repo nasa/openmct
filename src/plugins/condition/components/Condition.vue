@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2020, United States Government
+* Open MCT, Copyright (c) 2014-2021, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -30,6 +30,7 @@
 >
     <div class="c-condition-h__drop-target"></div>
     <div v-if="isEditing"
+         :class="{'is-current': condition.id === currentConditionId}"
          class="c-condition c-condition--edit"
     >
         <!-- Edit view -->
@@ -49,7 +50,7 @@
 
             <span class="c-condition__name">{{ condition.configuration.name }}</span>
             <span class="c-condition__summary">
-                <template v-if="!canEvaluateCriteria">
+                <template v-if="!condition.isDefault && !canEvaluateCriteria">
                     Define criteria
                 </template>
                 <span v-else>
@@ -167,6 +168,7 @@
     </div>
     <div v-else
          class="c-condition c-condition--browse"
+         :class="{'is-current': condition.id === currentConditionId}"
     >
         <!-- Browse view -->
         <div class="c-condition__header">
@@ -193,12 +195,16 @@ import { TRIGGER, TRIGGER_LABEL } from "@/plugins/condition/utils/constants";
 import uuid from 'uuid';
 
 export default {
-    inject: ['openmct'],
     components: {
         Criterion,
         ConditionDescription
     },
+    inject: ['openmct'],
     props: {
+        currentConditionId: {
+            type: String,
+            default: ''
+        },
         condition: {
             type: Object,
             required: true
@@ -209,7 +215,8 @@ export default {
         },
         isEditing: {
             type: Boolean,
-            required: true
+            required: true,
+            default: false
         },
         telemetry: {
             type: Array,
@@ -244,23 +251,25 @@ export default {
             keys.forEach((trigger) => {
                 triggerOptions.push({
                     value: TRIGGER[trigger],
-                    label: TRIGGER_LABEL[TRIGGER[trigger]]
+                    label: `when ${TRIGGER_LABEL[TRIGGER[trigger]]}`
                 });
             });
+
             return triggerOptions;
         },
         canEvaluateCriteria: function () {
             let criteria = this.condition.configuration.criteria;
             if (criteria.length) {
                 let lastCriterion = criteria[criteria.length - 1];
-                if (lastCriterion.telemetry &&
-                    lastCriterion.operation &&
-                    (lastCriterion.input.length ||
-                        lastCriterion.operation === 'isDefined' ||
-                        lastCriterion.operation === 'isUndefined')) {
+                if (lastCriterion.telemetry
+                    && lastCriterion.operation
+                    && (lastCriterion.input.length
+                        || lastCriterion.operation === 'isDefined'
+                        || lastCriterion.operation === 'isUndefined')) {
                     return true;
                 }
             }
+
             return false;
         }
     },
@@ -287,6 +296,7 @@ export default {
             } else {
                 this.condition.configuration.output = this.selectedOutputSelection;
             }
+
             this.persist();
         },
         addCriteria() {
@@ -299,20 +309,26 @@ export default {
             };
             this.condition.configuration.criteria.push(criteriaObject);
         },
-        dragStart(e) {
-            e.dataTransfer.setData('dragging', e.target); // required for FF to initiate drag
-            e.dataTransfer.effectAllowed = "copyMove";
-            e.dataTransfer.setDragImage(e.target.closest('.c-condition-h'), 0, 0);
+        dragStart(event) {
+            event.dataTransfer.clearData();
+            event.dataTransfer.setData('dragging', event.target); // required for FF to initiate drag
+            event.dataTransfer.effectAllowed = "copyMove";
+            event.dataTransfer.setDragImage(event.target.closest('.c-condition-h'), 0, 0);
             this.$emit('setMoveIndex', this.conditionIndex);
         },
-        dragEnd(event) {
+        dragEnd() {
             this.dragStarted = false;
-            event.dataTransfer.clearData();
             this.$emit('dragComplete');
         },
         dropCondition(event, targetIndex) {
-            if (!this.isDragging) { return }
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            if (!this.isDragging) {
+                return;
+            }
+
+            if (targetIndex > this.moveIndex) {
+                targetIndex--;
+            } // for 'downward' move
+
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = undefined;
                 this.draggingOver = false;
@@ -320,8 +336,14 @@ export default {
             }
         },
         dragEnter(event, targetIndex) {
-            if (!this.isDragging) { return }
-            if (targetIndex > this.moveIndex) { targetIndex-- } // for 'downward' move
+            if (!this.isDragging) {
+                return;
+            }
+
+            if (targetIndex > this.moveIndex) {
+                targetIndex--;
+            } // for 'downward' move
+
             if (this.isValidTarget(targetIndex)) {
                 this.dragElement = event.target.parentElement;
                 this.draggingOver = true;
@@ -338,10 +360,10 @@ export default {
         },
         destroy() {
         },
-        removeCondition(ev) {
-            this.$emit('removeCondition', this.conditionIndex);
+        removeCondition() {
+            this.$emit('removeCondition', this.condition.id);
         },
-        cloneCondition(ev) {
+        cloneCondition() {
             this.$emit('cloneCondition', {
                 condition: this.condition,
                 index: this.conditionIndex
@@ -359,13 +381,12 @@ export default {
         },
         persist() {
             this.$emit('updateCondition', {
-                condition: this.condition,
-                index: this.conditionIndex
+                condition: this.condition
             });
         },
         initCap(str) {
-            return str.charAt(0).toUpperCase() + str.slice(1)
+            return str.charAt(0).toUpperCase() + str.slice(1);
         }
     }
-}
+};
 </script>

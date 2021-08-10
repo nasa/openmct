@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-
 define(
     ['../../../core/src/capabilities/ContextualDomainObject'],
     function (ContextualDomainObject) {
@@ -38,7 +37,7 @@ define(
             this.$q = $q;
         }
 
-        LocatingObjectDecorator.prototype.getObjects = function (ids) {
+        LocatingObjectDecorator.prototype.getObjects = function (ids, abortSignal) {
             var $q = this.$q,
                 $log = this.$log,
                 objectService = this.objectService,
@@ -65,6 +64,7 @@ define(
                             "no context will be added and unexpected behavior",
                             "may follow."
                         ].join(" "));
+
                         return domainObject;
                     }
 
@@ -79,7 +79,7 @@ define(
                         });
                 }
 
-                return objectService.getObjects([id]).then(attachContext);
+                return objectService.getObjects([id], abortSignal).then(attachContext);
             }
 
             ids.forEach(function (id) {

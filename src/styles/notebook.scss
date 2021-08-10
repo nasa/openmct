@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,10 +21,17 @@
  *****************************************************************************/
 
 /*********************************************** NOTEBOOK */
+@mixin searchHighlight {
+    background: rgba($colorBtnSelectedBg, 0.4);
+    color: $colorBtnSelectedFg;
+    font-weight: bold;
+}
+
 .c-notebook {
     $headerFontSize: 1.3em;
     display: flex;
     flex-direction: column;
+    flex: 1 1 auto;
     overflow: hidden;
     height: 100%;
 
@@ -188,6 +195,7 @@
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
+        overflow-y: auto;
 
         > * + * {
             margin-top: 5px;
@@ -212,17 +220,16 @@
     }
 }
 
-.is-notebook-default {
+.is-notebook-default,
+.is-status--notebook-default {
     &:after {
         color: $colorFilter;
-        content: $glyph-icon-notebook-page;
-        display: block;
         font-family: symbolsfont;
         font-size: 0.9em;
-        margin-left: $interiorMargin;
     }
 
     &.c-list__item:after {
+        content: $glyph-icon-notebook-page;
         flex: 1 0 auto;
         text-align: right;
     }
@@ -274,23 +281,33 @@
 
     &__text {
         min-height: 22px; // Needed in Firefox when field is blank
-        white-space: pre-wrap;
 
-        &.is-blank-notebook-entry {
-            &:not(:focus):before {
-                content: 'Blank entry';
-                font-style: italic;
-                opacity: 0.5;
-            }
+        &:not(.highlight) {
+            white-space: pre-wrap;
+        }
+
+        .search-highlight {
+            @include searchHighlight();
         }
     }
 
-    &__embeds {
-        //flex-wrap: wrap;
+    &__input {
+        // Appended to __text element when Notebook is not in readOnly mode
+        @include inlineInput;
+        padding-left: $inputTextPLeftRight;
+        padding-right: $inputTextPLeftRight;
 
-        > [class*="__embed"] {
-            //margin: 0 $interiorMarginSm $interiorMarginSm 0;
+        @include hover {
+            &:not(:focus) {
+                background: rgba($colorBodyFg, 0.1);
+            }
         }
+
+        &:focus {
+            background: $colorInputBg;
+        }
+
+        white-space: pre-wrap;
     }
 
     &__section-and-page {
@@ -301,6 +318,10 @@
         align-items: center;
         align-self: flex-start;
         padding: $interiorMargin;
+
+        .search-highlight {
+            @include searchHighlight();
+        }
 
         > * + * {
             margin-left: $interiorMargin;
@@ -469,7 +490,7 @@
 }
 
 #snap-annotation {
-    $m: $interiorMargin;
+    $m: 0; //$interiorMargin;
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -493,21 +514,32 @@
     // Holds tool buttons, color selectors, etc.
     $h: 22px;
     $fs: 0.8rem;
+    $m: $interiorMarginSm;
 
+    display: flex;
+    align-items: center;
+    height: $h + ($m * 2) !important;
+    margin-bottom: $interiorMarginLg;
     order: 1;
     flex: 0 0 auto;
-    height: auto;
     background-color: transparent !important;
-    margin-bottom: $interiorMargin;
+    padding: $interiorMarginSm;
 
-    > div > span {
-        display: flex;
-        align-items: center;
-        font-size: $fs;
+    > div {
+        display: contents;
+
+        > * + * { margin-left: $interiorMargin !important; }
     }
 
-    > div,
-    > div > span,
+    .ptro-tool-controls {
+        display: flex;
+        margin-left: $interiorMarginLg !important;
+
+        > * + * {
+            margin-left: $interiorMargin !important;
+        }
+    }
+
     .ptro-icon-btn,
     .ptro-named-btn,
     .ptro-color-btn,
@@ -517,27 +549,18 @@
     .tool-controls,
     .ptro-input {
         // Lot of resets for crappy CSS in Painterro
-        &:first-child {
-            margin-left: 0 !important;
-        }
-        display: inline-block;
         font-family: inherit;
         font-size: $fs !important;
         height: $h !important;
-        margin: 0 0 0 5px;
+        margin: 0;
         position: relative;
-        width: auto !important;
         line-height: $h !important;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        left: auto;
-        vertical-align: top;
     }
 
     .ptro-tool-ctl-name {
         border-radius: 0;
         background: none;
+        color: $colorBodyFg;
         top: auto;
         font-family: inherit;
         padding: 0;
@@ -547,13 +570,15 @@
         width: $h !important;
     }
 
+    .ptro-check,
     .ptro-color-control,
     .ptro-icon-btn,
     .ptro-named-btn {
-        // Buttons in toolbar. Why the f* they're named like this is a mystery
-        background-color: $colorBtnBg;
-        color: $colorBtnFg;
-        padding: 0 $interiorMargin;
+        // Buttons in toolbar
+        border-radius: $smallCr;
+        box-shadow: rgba($colorBtnFg, 0.3) 0 0 0 1px;
+        color: $colorBtnFg !important;
+        padding: 1px $interiorMargin;
 
         &:hover {
             background: $colorBtnBgHov;
@@ -565,6 +590,13 @@
             font-size: $fs * 1.2;
             line-height: inherit;
         }
+    }
+
+    .ptro-color-control,
+    .ptro-icon-btn,
+    .ptro-named-btn {
+        // Buttons in toolbar
+        background-color: $colorBtnBg;
     }
 
     .ptro-color-active-control {

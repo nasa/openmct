@@ -43,8 +43,9 @@ export default {
                         this.$emit('change', {...value}, this.options);
                     });
             }
+
             this.$emit('click', this.options);
         }
     }
-}
+};
 </script>

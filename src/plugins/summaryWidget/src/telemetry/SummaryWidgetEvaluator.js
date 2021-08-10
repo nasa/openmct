@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,7 +23,7 @@
 define([
     './SummaryWidgetRule',
     '../eventHelpers',
-    '../../../../api/objects/object-utils',
+    'objectUtils',
     'lodash'
 ], function (
     SummaryWidgetRule,
@@ -48,7 +48,7 @@ define([
             this.updateRules.bind(this)
         );
 
-        var composition = openmct.composition.get(domainObject);
+        const composition = openmct.composition.get(domainObject);
 
         this.listenTo(composition, 'add', this.addChild, this);
         this.listenTo(composition, 'remove', this.removeChild, this);
@@ -62,16 +62,17 @@ define([
      * Subscribes to realtime telemetry for the given summary widget.
      */
     SummaryWidgetEvaluator.prototype.subscribe = function (callback) {
-        var active = true;
-        var unsubscribes = [];
+        let active = true;
+        let unsubscribes = [];
 
         this.getBaseStateClone()
             .then(function (realtimeStates) {
                 if (!active) {
                     return;
                 }
-                var updateCallback = function () {
-                    var datum = this.evaluateState(
+
+                const updateCallback = function () {
+                    const datum = this.evaluateState(
                         realtimeStates,
                         this.openmct.time.timeSystem().key
                     );
@@ -80,10 +81,12 @@ define([
                     }
                 }.bind(this);
 
+                /* eslint-disable you-dont-need-lodash-underscore/map */
                 unsubscribes = _.map(
                     realtimeStates,
                     this.subscribeToObjectState.bind(this, updateCallback)
                 );
+                /* eslint-enable you-dont-need-lodash-underscore/map */
             }.bind(this));
 
         return function () {
@@ -101,7 +104,7 @@ define([
     SummaryWidgetEvaluator.prototype.requestLatest = function (options) {
         return this.getBaseStateClone()
             .then(function (ladState) {
-                var promises = Object.values(ladState)
+                const promises = Object.values(ladState)
                     .map(this.updateObjectStateFromLAD.bind(this, options));
 
                 return Promise.all(promises)
@@ -121,9 +124,9 @@ define([
     };
 
     SummaryWidgetEvaluator.prototype.addChild = function (childObject) {
-        var childId = objectUtils.makeKeyString(childObject.identifier);
-        var metadata = this.openmct.telemetry.getMetadata(childObject);
-        var formats = this.openmct.telemetry.getFormatMap(metadata);
+        const childId = objectUtils.makeKeyString(childObject.identifier);
+        const metadata = this.openmct.telemetry.getMetadata(childObject);
+        const formats = this.openmct.telemetry.getFormatMap(metadata);
 
         this.baseState[childId] = {
             id: childId,
@@ -134,7 +137,7 @@ define([
     };
 
     SummaryWidgetEvaluator.prototype.removeChild = function (childObject) {
-        var childId = objectUtils.makeKeyString(childObject.identifier);
+        const childId = objectUtils.makeKeyString(childObject.identifier);
         delete this.baseState[childId];
     };
 
@@ -151,11 +154,13 @@ define([
     SummaryWidgetEvaluator.prototype.getBaseStateClone = function () {
         return this.load()
             .then(function () {
+                /* eslint-disable you-dont-need-lodash-underscore/values */
                 return _(this.baseState)
                     .values()
                     .map(_.clone)
-                    .indexBy('id')
+                    .keyBy('id')
                     .value();
+                /* eslint-enable you-dont-need-lodash-underscore/values */
             }.bind(this));
     };
 
@@ -182,10 +187,11 @@ define([
      * @private.
      */
     SummaryWidgetEvaluator.prototype.updateObjectStateFromLAD = function (options, objectState) {
-        options = _.extend({}, options, {
+        options = Object.assign({}, options, {
             strategy: 'latest',
             size: 1
         });
+
         return this.openmct
             .telemetry
             .request(
@@ -206,11 +212,12 @@ define([
      * @private.
      */
     SummaryWidgetEvaluator.prototype.getTimestamps = function (childId, datum) {
-        var timestampedDatum = {};
+        const timestampedDatum = {};
         this.openmct.time.getAllTimeSystems().forEach(function (timeSystem) {
             timestampedDatum[timeSystem.key] =
                 this.baseState[childId].formats[timeSystem.key].parse(datum);
         }, this);
+
         return timestampedDatum;
     };
 
@@ -220,7 +227,7 @@ define([
      * @private
      */
     SummaryWidgetEvaluator.prototype.makeDatumFromRule = function (ruleIndex, baseDatum) {
-        var rule = this.rules[ruleIndex];
+        const rule = this.rules[ruleIndex];
 
         baseDatum.ruleLabel = rule.label;
         baseDatum.ruleName = rule.name;
@@ -242,29 +249,33 @@ define([
      * @private.
      */
     SummaryWidgetEvaluator.prototype.evaluateState = function (state, timestampKey) {
-        var hasRequiredData = Object.keys(state).reduce(function (itDoes, k) {
+        const hasRequiredData = Object.keys(state).reduce(function (itDoes, k) {
             return itDoes && state[k].lastDatum;
         }, true);
         if (!hasRequiredData) {
             return;
         }
 
-        for (var i = this.rules.length - 1; i > 0; i--) {
+        let i;
+        for (i = this.rules.length - 1; i > 0; i--) {
             if (this.rules[i].evaluate(state, false)) {
                 break;
             }
         }
 
-        var latestTimestamp = _(state)
+        /* eslint-disable you-dont-need-lodash-underscore/map */
+        let latestTimestamp = _(state)
             .map('timestamps')
             .sortBy(timestampKey)
             .last();
+        /* eslint-enable you-dont-need-lodash-underscore/map */
 
         if (!latestTimestamp) {
             latestTimestamp = {};
         }
 
-        var baseDatum = _.clone(latestTimestamp);
+        const baseDatum = _.clone(latestTimestamp);
+
         return this.makeDatumFromRule(i, baseDatum);
     };
 

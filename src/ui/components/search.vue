@@ -15,6 +15,7 @@
         class="c-search__clear-input icon-x-in-circle"
         @click="clearInput"
     ></a>
+    <slot></slot>
 </div>
 </template>
 
@@ -31,11 +32,12 @@ export default {
     data: function () {
         return {
             active: false
-        }
+        };
     },
     computed: {
         inputListeners: function () {
             let vm = this;
+
             return Object.assign({},
                 this.$listeners,
                 {
@@ -44,7 +46,7 @@ export default {
                         vm.active = (event.target.value.length > 0);
                     }
                 }
-            )
+            );
         }
     },
     watch: {
@@ -57,9 +59,9 @@ export default {
     methods: {
         clearInput() {
             // Clear the user's input and set 'active' to false
-            this.$emit('clear','');
+            this.$emit('clear', '');
             this.active = false;
         }
     }
-}
+};
 </script>

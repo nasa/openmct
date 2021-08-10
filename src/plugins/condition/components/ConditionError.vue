@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2020, United States Government
+* Open MCT, Copyright (c) 2014-2021, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -52,7 +52,7 @@ export default {
     data() {
         return {
             conditionErrors: []
-        }
+        };
     },
     mounted() {
         this.getConditionErrors();
@@ -66,24 +66,15 @@ export default {
             }
         },
         getCriterionErrors(criterion, index) {
-            if (!criterion.telemetry) {
+            //It is sufficient to check for absence of telemetry here since the condition manager ensures that telemetry for a criterion is set if it exists
+            const isInvalidTelemetry = !criterion.telemetry && (criterion.telemetry !== 'all' && criterion.telemetry !== 'any');
+            if (isInvalidTelemetry) {
                 this.conditionErrors.push({
                     message: ERROR.TELEMETRY_NOT_FOUND,
                     additionalInfo: ''
                 });
-            } else {
-                if (criterion.telemetry !== 'all' && criterion.telemetry !== 'any') {
-                    this.openmct.objects.get(criterion.telemetry).then((telemetryObject) => {
-                        if (telemetryObject.type === 'unknown') {
-                            this.conditionErrors.push({
-                                message: ERROR.TELEMETRY_NOT_FOUND,
-                                additionalInfo: criterion.telemetry ? `Key: ${this.openmct.objects.makeKeyString(criterion.telemetry)}` : ''
-                            });
-                        }
-                    });
-                }
             }
         }
     }
-}
+};
 </script>

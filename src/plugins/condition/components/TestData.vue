@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -136,7 +136,7 @@ export default {
                 return {
                     applied: false,
                     conditionTestInputs: []
-                }
+                };
             }
         }
     },
@@ -183,6 +183,7 @@ export default {
             if (this.testData && this.testData.conditionTestInputs) {
                 this.testInputs = this.testData.conditionTestInputs;
             }
+
             if (!this.testInputs.length) {
                 this.addTestInput();
             }
@@ -209,14 +210,16 @@ export default {
             if (identifier) {
                 return this.openmct.objects.makeKeyString(identifier);
             }
+
             return [];
         },
         updateMetadata(testInput) {
             if (testInput.telemetry) {
                 const id = this.openmct.objects.makeKeyString(testInput.telemetry);
-                if(this.telemetryMetadataOptions[id]) {
+                if (this.telemetryMetadataOptions[id]) {
                     return;
                 }
+
                 let telemetryMetadata = this.openmct.telemetry.getMetadata(testInput);
                 this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
             }
@@ -232,5 +235,5 @@ export default {
             });
         }
     }
-}
+};
 </script>

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,14 +29,14 @@ define([
     './capabilities/APICapabilityDecorator',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
-    './runs/TimeSettingsURLHandler',
     './runs/TypeDeprecationChecker',
     './runs/LegacyTelemetryProvider',
     './runs/RegisterLegacyTypes',
     './services/LegacyObjectAPIInterceptor',
     './views/installLegacyViews',
     './policies/LegacyCompositionPolicyAdapter',
-    './actions/LegacyActionAdapter'
+    './actions/LegacyActionAdapter',
+    './services/LegacyPersistenceAdapter'
 ], function (
     ActionDialogDecorator,
     AdapterCapability,
@@ -46,14 +46,14 @@ define([
     APICapabilityDecorator,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
-    TimeSettingsURLHandler,
     TypeDeprecationChecker,
     LegacyTelemetryProvider,
     RegisterLegacyTypes,
     LegacyObjectAPIInterceptor,
     installLegacyViews,
     legacyCompositionPolicyAdapter,
-    LegacyActionAdapter
+    LegacyActionAdapter,
+    LegacyPersistenceAdapter
 ) {
     return {
         name: 'src/adapter',
@@ -116,6 +116,15 @@ define([
                             "instantiate",
                             "topic"
                         ]
+                    },
+                    {
+                        provides: "persistenceService",
+                        type: "provider",
+                        priority: "fallback",
+                        implementation: function legacyPersistenceProvider(openmct) {
+                            return new LegacyPersistenceAdapter.default(openmct);
+                        },
+                        depends: ["openmct"]
                     }
                 ],
                 policies: [
@@ -133,16 +142,6 @@ define([
                     {
                         implementation: AlternateCompositionInitializer,
                         depends: ["openmct"]
-                    },
-                    {
-                        implementation: function (openmct, $location, $rootScope) {
-                            return new TimeSettingsURLHandler(
-                                openmct.time,
-                                $location,
-                                $rootScope
-                            );
-                        },
-                        depends: ["openmct", "$location", "$rootScope"]
                     },
                     {
                         implementation: LegacyTelemetryProvider,
@@ -214,5 +213,5 @@ define([
                 ]
             }
         }
-    }
+    };
 });

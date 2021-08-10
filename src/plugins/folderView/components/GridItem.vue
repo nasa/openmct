@@ -1,13 +1,17 @@
 <template>
 <a
     class="l-grid-view__item c-grid-item"
-    :class="{ 'is-alias': item.isAlias === true }"
-    :href="objectLink"
+    :class="[{
+        'is-alias': item.isAlias === true,
+        'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1
+    }, statusClass]"
+    @click="navigate"
 >
     <div
         class="c-grid-item__type-icon"
         :class="(item.type.cssClass != undefined) ? 'bg-' + item.type.cssClass : 'bg-icon-object-unknown'"
-    ></div>
+    >
+    </div>
     <div class="c-grid-item__details">
         <!-- Name and metadata -->
         <div
@@ -22,6 +26,9 @@
         </div>
     </div>
     <div class="c-grid-item__controls">
+        <div class="is-status__indicator"
+             :title="`This item is ${status}`"
+        ></div>
         <div
             class="icon-people"
             title="Shared"
@@ -38,14 +45,21 @@
 <script>
 import contextMenuGesture from '../../../ui/mixins/context-menu-gesture';
 import objectLink from '../../../ui/mixins/object-link';
+import statusListener from './status-listener';
 
 export default {
-    mixins: [contextMenuGesture, objectLink],
+    mixins: [contextMenuGesture, objectLink, statusListener],
+    inject: ['openmct'],
     props: {
         item: {
             type: Object,
             required: true
         }
+    },
+    methods: {
+        navigate() {
+            this.openmct.router.navigate(this.objectLink);
+        }
     }
-}
+};
 </script>

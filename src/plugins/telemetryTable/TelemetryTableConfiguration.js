@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -35,10 +35,8 @@ define([
 
             this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
             this.objectMutated = this.objectMutated.bind(this);
-            //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
-            this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
 
-            this.unlistenFromMutation = openmct.objects.observe(domainObject, '*', this.objectMutated);
+            this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
         }
 
         getConfiguration() {
@@ -60,14 +58,9 @@ define([
          * @private
          * @param {*} object
          */
-        objectMutated(object) {
-            //Synchronize domain object reference. Duplicate object otherwise change detection becomes impossible.
-            this.domainObject = object;
-            //Was it the configuration that changed?
-            if (object.configuration !== undefined && !_.eq(object.configuration, this.oldConfiguration)) {
-                //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
-                this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
-                this.emit('change', object.configuration);
+        objectMutated(configuration) {
+            if (configuration !== undefined) {
+                this.emit('change', configuration);
             }
         }
 
@@ -100,7 +93,7 @@ define([
 
         hasColumnWithKey(columnKey) {
             return _.flatten(Object.values(this.columns))
-                .findIndex(column => column.getKey() === columnKey) !== -1;
+                .some(column => column.getKey() === columnKey);
         }
 
         getColumns() {
@@ -109,11 +102,13 @@ define([
 
         getAllHeaders() {
             let flattenedColumns = _.flatten(Object.values(this.columns));
+            /* eslint-disable you-dont-need-lodash-underscore/uniq */
             let headers = _.uniq(flattenedColumns, false, column => column.getKey())
                 .reduce(fromColumnsToHeadersMap, {});
-
+            /* eslint-enable you-dont-need-lodash-underscore/uniq */
             function fromColumnsToHeadersMap(headersMap, column) {
                 headersMap[column.getKey()] = column.getTitle();
+
                 return headersMap;
             }
 
@@ -133,12 +128,14 @@ define([
                 })
                 .reduce((headers, headerKey) => {
                     headers[headerKey] = allHeaders[headerKey];
+
                     return headers;
                 }, {});
         }
 
         getColumnWidths() {
             let configuration = this.getConfiguration();
+
             return configuration.columnWidths;
         }
 
@@ -150,6 +147,7 @@ define([
 
         getColumnOrder() {
             let configuration = this.getConfiguration();
+
             return configuration.columnOrder;
         }
 

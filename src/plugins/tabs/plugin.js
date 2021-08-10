@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2018, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -36,7 +36,27 @@ define([
                 cssClass: 'icon-tabs-view',
                 initialize(domainObject) {
                     domainObject.composition = [];
-                }
+                    domainObject.keep_alive = true;
+                },
+                form: [
+                    {
+                        "key": "keep_alive",
+                        "name": "Eager Load Tabs",
+                        "control": "select",
+                        "options": [
+                            {
+                                'name': 'True',
+                                'value': true
+                            },
+                            {
+                                'name': 'False',
+                                'value': false
+                            }
+                        ],
+                        "required": true,
+                        "cssClass": "l-input"
+                    }
+                ]
             });
         };
     };
