@@ -54,7 +54,7 @@ describe("Clock plugin:", () => {
         child = document.createElement('div');
         element.appendChild(child);
 
-        openmct.install(clockPlugin());
+        openmct.install(clockPlugin({ enableClockIndicator: true }));
 
         clockDefinition = openmct.types.get('clock').definition;
         clockDefinition.initialize(clockDomainObject);
@@ -173,6 +173,48 @@ describe("Clock plugin:", () => {
             });
 
             openmct.objects.mutate(clockViewObject, 'configuration.baseFormat', newFormat);
+        });
+    });
+
+    describe("Clock Indicator view:", () => {
+        let clockIndicator;
+        let drawerElement;
+
+        beforeEach(() => {
+            clockIndicator = openmct.indicators.indicatorObjects
+                .find(indicator => indicator.key === 'clock-indicator').element;
+
+            element.append(clockIndicator);
+
+            return Vue.nextTick().then(() => {
+                drawerElement = document.querySelector('.l-shell__drawer');
+            });
+        });
+
+        afterEach(() => {
+            if (drawerElement) {
+                drawerElement.classList.remove('is-expanded');
+            }
+
+            clockIndicator.remove();
+            clockIndicator = undefined;
+
+            if (drawerElement) {
+                drawerElement.remove();
+                drawerElement = undefined;
+            }
+        });
+
+        it("exists", () => {
+            const hasClockIndicator = clockIndicator !== null && clockIndicator !== undefined;
+            expect(hasClockIndicator).toBe(true);
+        });
+
+        it("contains text", () => {
+            const clockIndicatorText = clockIndicator.textContent.trim();
+            const textIncludesUTC = clockIndicatorText.includes('UTC');
+
+            expect(textIncludesUTC).toBe(true);
         });
     });
 });
