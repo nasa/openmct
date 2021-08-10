@@ -25,19 +25,12 @@ import {
     resetApplicationState
 } from 'utils/testing';
 import myItemsIdentifier from './myItemsIdentifier';
-import myItemsInterceptor from './myItemsInterceptor';
-
-/*
-The interceptor will return a my items model if the object is undefined
-*/
 
 fdescribe("the plugin", () => {
     let openmct;
 
     beforeEach((done) => {
         openmct = createOpenMct();
-
-        spyOn(myItemsInterceptor, 'invoke');
 
         openmct.install(openmct.plugins.MyItems());
 
@@ -59,53 +52,23 @@ fdescribe("the plugin", () => {
         expect(myItems).toBeDefined();
     });
 
-    it('adds an interceptor to handle missing "My Items" objects', async () => {
-        await openmct.objects.get(myItemsIdentifier);
+    describe('adds an interceptor', () => {
+        let myItems;
+        let mockUndefinedProvider;
 
-        expect(myItemsInterceptor.invoke).toHaveBeenCalled();
+        beforeEach(async () => {
+            mockUndefinedProvider = {
+                get: () => Promise.resolve(undefined)
+            };
+
+            spyOn(openmct.objects, 'getProvider').and.returnValue(mockUndefinedProvider);
+
+            myItems = await openmct.objects.get(myItemsIdentifier);
+        });
+
+        it('that returns a "My Items" model for missiong objects', () => {
+            expect(myItems).toBeDefined();
+        });
     });
 
-    // describe('when invoked', () => {
-
-    //     beforeEach((done) => {
-    //         compositionAPI = openmct.composition;
-    //         mockObjectPath = [{
-    //             name: 'mock folder',
-    //             type: 'folder',
-    //             identifier: {
-    //                 key: 'mock-folder',
-    //                 namespace: ''
-    //             }
-    //         }];
-    //         mockPromise = {
-    //             then: (callback) => {
-    //                 callback({name: newFolderName});
-    //                 done();
-    //             }
-    //         };
-
-    //         mockDialogService = jasmine.createSpyObj('dialogService', ['getUserInput']);
-    //         mockComposition = jasmine.createSpyObj('composition', ['add']);
-
-    //         mockDialogService.getUserInput.and.returnValue(mockPromise);
-
-    //         spyOn(openmct.$injector, 'get').and.returnValue(mockDialogService);
-    //         spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
-    //         spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
-
-    //         return newFolderAction.invoke(mockObjectPath);
-    //     });
-
-    //     it('gets user input for folder name', () => {
-    //         expect(mockDialogService.getUserInput).toHaveBeenCalled();
-    //     });
-
-    //     it('creates a new folder object', () => {
-    //         expect(openmct.objects.save).toHaveBeenCalled();
-    //     });
-
-    //     it('adds new folder object to parent composition', () => {
-    //         expect(mockComposition.add).toHaveBeenCalled();
-    //     });
-    // });
 });
