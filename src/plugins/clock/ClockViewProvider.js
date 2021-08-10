@@ -46,7 +46,7 @@ export default function ClockViewProvider(openmct) {
                             openmct,
                             domainObject
                         },
-                        template: '<clock></clock>'
+                        template: '<clock />'
                     });
                 },
                 destroy: function () {
