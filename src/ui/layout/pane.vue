@@ -60,6 +60,10 @@ export default {
             type: Boolean,
             default: false
         },
+        collapse: {
+            type: Boolean,
+            default: undefined
+        },
         label: {
             type: String,
             default: ''
@@ -75,18 +79,21 @@ export default {
         this.type = this.$parent.type;
         this.styleProp = (this.type === 'horizontal') ? 'width' : 'height';
     },
-    async mounted() {
-        await this.$nextTick();
-        // Hide tree and/or inspector pane if specified in URL
-        if (this.collapsable) {
-            this.handleHideUrl();
-            this.openmct.router.on('change:params', this.handleHideUrl);
+    mounted() {
+        // await this.$nextTick();
+        if (this.label) {
+            console.log('collapse', this.label, this.collapse);
         }
+        // Hide tree and/or inspector pane if specified in URL
+        // if (this.collapsable) {
+        //     this.handleHideUrl();
+        //     this.openmct.router.on('change:params', this.handleHideUrl);
+        // }
     },
     beforeDestroy() {
-        if (this.collapsable) {
-            this.openmct.router.off('change:params', this.handleHideUrl);
-        }
+        // if (this.collapsable) {
+        //     this.openmct.router.off('change:params', this.handleHideUrl);
+        // }
     },
     methods: {
         toggleCollapse: function (e) {
@@ -159,7 +166,8 @@ export default {
         updatePosition: function (event) {
             let size = this.getNewSize(event);
             let intSize = parseInt(size.substr(0, size.length - 2), 10);
-            if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
+            // if (intSize < COLLAPSE_THRESHOLD_PX && this.collapsable === true) {
+            if (intSize < COLLAPSE_THRESHOLD_PX && this.collapse !== undefined) {
                 this.dragCollapse = true;
                 this.end();
                 this.toggleCollapse();
