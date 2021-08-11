@@ -28,9 +28,12 @@ class OverlayAPI {
     /**
      * private
      */
-    showOverlay(overlay, skipHidePreviousOverlay = false) {
-        if (!skipHidePreviousOverlay && this.activeOverlays.length) {
-            this.activeOverlays[this.activeOverlays.length - 1].container.classList.add('invisible');
+    showOverlay(overlay) {
+        if (this.activeOverlays.length) {
+            const previousOverlay = this.activeOverlays[this.activeOverlays.length - 1];
+            if (!previousOverlay.disableAutoHide) {
+                previousOverlay.container.classList.add('invisible');
+            }
         }
 
         this.activeOverlays.push(overlay);
@@ -38,7 +41,7 @@ class OverlayAPI {
         overlay.once('destroy', () => {
             this.activeOverlays.splice(this.activeOverlays.indexOf(overlay), 1);
 
-            if (!skipHidePreviousOverlay && this.activeOverlays.length) {
+            if (this.activeOverlays.length) {
                 this.activeOverlays[this.activeOverlays.length - 1].container.classList.remove('invisible');
             }
         });

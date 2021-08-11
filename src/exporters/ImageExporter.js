@@ -60,8 +60,7 @@ class ImageExporter {
                         dialog.dismiss();
                     }
                 }
-            ],
-            skipHidePreviousOverlay: true
+            ]
         });
 
         let mimeType = 'image/png';
@@ -109,7 +108,7 @@ class ImageExporter {
         }).catch(error => {
             dialog.dismiss();
 
-            console.log('error capturing image', error);
+            console.error('error capturing image', error);
             const errorDialog = overlays.dialog({
                 iconClass: 'error',
                 message: 'Image was not captured successfully!',

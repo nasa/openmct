@@ -13,19 +13,26 @@ class Overlay extends EventEmitter {
     constructor(options) {
         super();
 
-        this.dismissable = options.dismissable !== false;
+        const {
+            disableAutoHide,
+            dismissable = true,
+            size
+        } = options;
+
+        this.disableAutoHide = disableAutoHide;
         this.container = document.createElement('div');
-        this.container.classList.add('l-overlay-wrapper', cssClasses[options.size]);
+        this.container.classList.add('l-overlay-wrapper', cssClasses[size]);
+        this.dismissable = dismissable !== false;
 
         this.component = new Vue({
+            components: {
+                OverlayComponent: OverlayComponent
+            },
             provide: {
                 dismiss: this.dismiss.bind(this),
                 element: options.element,
                 buttons: options.buttons,
                 dismissable: this.dismissable
-            },
-            components: {
-                OverlayComponent: OverlayComponent
             },
             template: '<overlay-component></overlay-component>'
         });
