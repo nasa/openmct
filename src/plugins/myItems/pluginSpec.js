@@ -26,8 +26,16 @@ import {
 } from 'utils/testing';
 import myItemsIdentifier from './myItemsIdentifier';
 
-describe("the plugin", () => {
+fdescribe("the plugin", () => {
     let openmct;
+    let missingObj = {
+        identifier: {
+            key: 'mine',
+            namespace: ''
+        },
+        type: 'unknown',
+        name: 'Missing: mine'
+    };
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -51,25 +59,42 @@ describe("the plugin", () => {
         expect(myItems).toBeDefined();
     });
 
-    describe('adds an interceptor', () => {
-        let myItems;
+    describe('adds an interceptor that returns a "My Items" model for', () => {
+        let myItemsMissing;
+        let myItemsUndefined;
         let mockUndefinedProvider;
+        let mockMissingProvider;
+        let activeProvider;
 
         beforeEach(async () => {
             mockUndefinedProvider = {
                 get: () => Promise.resolve(undefined)
             };
 
-            spyOn(openmct.objects, 'getProvider').and.returnValue(mockUndefinedProvider);
+            mockMissingProvider = {
+                get: () => Promise.resolve(missingObj)
+            };
 
-            myItems = await openmct.objects.get(myItemsIdentifier);
+            activeProvider = mockMissingProvider;
+            spyOn(openmct.objects, 'getProvider').and.returnValue(activeProvider);
+            myItemsMissing = await openmct.objects.get(myItemsIdentifier);
+
+            activeProvider = mockUndefinedProvider;
+            myItemsUndefined = await openmct.objects.get(myItemsIdentifier);
         });
 
-        it('that returns a "My Items" model for missiong objects', () => {
-            let idsMatch = openmct.objects.areIdsEqual(myItems.identifier, myItemsIdentifier);
+        it('missing objects', () => {
+            let idsMatchMissing = openmct.objects.areIdsEqual(myItemsMissing.identifier, myItemsIdentifier);
 
-            expect(myItems).toBeDefined();
-            expect(idsMatch).toBeTrue();
+            expect(myItemsMissing).toBeDefined();
+            expect(idsMatchMissing).toBeTrue();
+        });
+
+        it('undefined objects', () => {
+            let idsMatchUndefined = openmct.objects.areIdsEqual(myItemsUndefined.identifier, myItemsIdentifier);
+
+            expect(myItemsUndefined).toBeDefined();
+            expect(idsMatchUndefined).toBeTrue();
         });
     });
 
