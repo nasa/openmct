@@ -379,7 +379,7 @@ export default class CouchObjectProvider {
             this.observers[keyString] = this.observers[keyString].filter(observer => observer !== callback);
             if (this.observers[keyString].length === 0) {
                 delete this.observers[keyString];
-                if (Object.keys(this.observers).length === 0) {
+                if (Object.keys(this.observers).length === 0 && this.isObservingObjectChanges()) {
                     this.stopObservingObjectChanges();
                 }
             }
@@ -437,7 +437,7 @@ export default class CouchObjectProvider {
         if (!this.changesFeedSharedWorker) {
             this.changesFeedSharedWorker = this.startSharedWorker();
 
-            if (typeof this.stopObservingObjectChanges === 'function') {
+            if (this.isObservingObjectChanges()) {
                 this.stopObservingObjectChanges();
             }
 
@@ -459,7 +459,7 @@ export default class CouchObjectProvider {
 
         let error = false;
 
-        if (typeof this.stopObservingObjectChanges === 'function') {
+        if (this.isObservingObjectChanges()) {
             this.stopObservingObjectChanges();
         }
 
