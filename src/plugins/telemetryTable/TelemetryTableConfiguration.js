@@ -35,8 +35,8 @@ define([
 
             this.removeColumnsForObject = this.removeColumnsForObject.bind(this);
             this.objectMutated = this.objectMutated.bind(this);
-            //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
-            this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
+
+            this.unlistenFromMutation = openmct.objects.observe(domainObject, 'configuration', this.objectMutated);
         }
 
         getConfiguration() {
@@ -58,14 +58,9 @@ define([
          * @private
          * @param {*} object
          */
-        objectMutated(object) {
-            //Synchronize domain object reference. Duplicate object otherwise change detection becomes impossible.
-            this.domainObject = object;
-            //Was it the configuration that changed?
-            if (object.configuration !== undefined && !_.eq(object.configuration, this.oldConfiguration)) {
-                //Make copy of configuration, otherwise change detection is impossible if shared instance is being modified.
-                this.oldConfiguration = JSON.parse(JSON.stringify(this.getConfiguration()));
-                this.emit('change', object.configuration);
+        objectMutated(configuration) {
+            if (configuration !== undefined) {
+                this.emit('change', configuration);
             }
         }
 
@@ -162,7 +157,9 @@ define([
             this.updateConfiguration(configuration);
         }
 
-        destroy() {}
+        destroy() {
+            this.unlistenFromMutation();
+        }
     }
 
     return TelemetryTableConfiguration;

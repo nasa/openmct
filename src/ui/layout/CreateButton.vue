@@ -28,7 +28,7 @@ export default {
                     cssClass: menuItem.cssClass,
                     name: menuItem.name,
                     description: menuItem.description,
-                    callBack: () => this.create(key)
+                    onItemClicked: () => this.create(key)
                 };
 
                 items.push(menuItemTemplate);

@@ -23,6 +23,7 @@
 define([
     'lodash',
     './utcTimeSystem/plugin',
+    './remoteClock/plugin',
     './localTimeSystem/plugin',
     './ISOTimeFormat/plugin',
     '../../example/generator/plugin',
@@ -62,13 +63,16 @@ define([
     './defaultRootName/plugin',
     './plan/plugin',
     './viewDatumAction/plugin',
+    './viewLargeAction/plugin',
     './interceptors/plugin',
     './performanceIndicator/plugin',
     './CouchDBSearchFolder/plugin',
-    './timeline/plugin'
+    './timeline/plugin',
+    './hyperlink/plugin'
 ], function (
     _,
     UTCTimeSystem,
+    RemoteClock,
     LocalTimeSystem,
     ISOTimeFormat,
     GeneratorPlugin,
@@ -108,10 +112,12 @@ define([
     DefaultRootName,
     PlanLayout,
     ViewDatumAction,
+    ViewLargeAction,
     ObjectInterceptors,
     PerformanceIndicator,
     CouchDBSearchFolder,
-    Timeline
+    Timeline,
+    Hyperlink
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -129,6 +135,7 @@ define([
 
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
+    plugins.RemoteClock = RemoteClock.default;
 
     plugins.ImportExport = ImportExport;
 
@@ -208,10 +215,12 @@ define([
     plugins.DefaultRootName = DefaultRootName.default;
     plugins.PlanLayout = PlanLayout.default;
     plugins.ViewDatumAction = ViewDatumAction.default;
+    plugins.ViewLargeAction = ViewLargeAction.default;
     plugins.ObjectInterceptors = ObjectInterceptors.default;
     plugins.PerformanceIndicator = PerformanceIndicator.default;
     plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
     plugins.Timeline = Timeline.default;
+    plugins.Hyperlink = Hyperlink.default;
 
     return plugins;
 });
