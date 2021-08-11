@@ -280,7 +280,7 @@ describe("The Imagery View Layout", () => {
             expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
         });
 
-        it("should show the clicked thumbnail as the main image", (done) => {
+        xit("should show the clicked thumbnail as the main image", (done) => {
             const target = imageTelemetry[5].url;
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
             Vue.nextTick(() => {
@@ -317,7 +317,7 @@ describe("The Imagery View Layout", () => {
             });
         });
 
-        it("should navigate via arrow keys", (done) => {
+        xit("should navigate via arrow keys", (done) => {
             let keyOpts = {
                 element: parent.querySelector('.c-imagery'),
                 key: 'ArrowLeft',

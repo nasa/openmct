@@ -181,7 +181,7 @@ define([
                         ],
                         "category": "contextual",
                         "name": "Stop",
-                        "cssClass": "icon-box",
+                        "cssClass": "icon-box-round-corners",
                         "priority": "preferred"
                     }
                 ],

@@ -490,7 +490,7 @@
 }
 
 #snap-annotation {
-    $m: $interiorMargin;
+    $m: 0; //$interiorMargin;
     display: flex;
     flex-direction: column;
     position: absolute;
@@ -514,21 +514,32 @@
     // Holds tool buttons, color selectors, etc.
     $h: 22px;
     $fs: 0.8rem;
+    $m: $interiorMarginSm;
 
+    display: flex;
+    align-items: center;
+    height: $h + ($m * 2) !important;
+    margin-bottom: $interiorMarginLg;
     order: 1;
     flex: 0 0 auto;
-    height: auto;
     background-color: transparent !important;
-    margin-bottom: $interiorMargin;
+    padding: $interiorMarginSm;
 
-    > div > span {
-        display: flex;
-        align-items: center;
-        font-size: $fs;
+    > div {
+        display: contents;
+
+        > * + * { margin-left: $interiorMargin !important; }
     }
 
-    > div,
-    > div > span,
+    .ptro-tool-controls {
+        display: flex;
+        margin-left: $interiorMarginLg !important;
+
+        > * + * {
+            margin-left: $interiorMargin !important;
+        }
+    }
+
     .ptro-icon-btn,
     .ptro-named-btn,
     .ptro-color-btn,
@@ -538,27 +549,18 @@
     .tool-controls,
     .ptro-input {
         // Lot of resets for crappy CSS in Painterro
-        &:first-child {
-            margin-left: 0 !important;
-        }
-        display: inline-block;
         font-family: inherit;
         font-size: $fs !important;
         height: $h !important;
-        margin: 0 0 0 5px;
+        margin: 0;
         position: relative;
-        width: auto !important;
         line-height: $h !important;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        left: auto;
-        vertical-align: top;
     }
 
     .ptro-tool-ctl-name {
         border-radius: 0;
         background: none;
+        color: $colorBodyFg;
         top: auto;
         font-family: inherit;
         padding: 0;
@@ -568,13 +570,15 @@
         width: $h !important;
     }
 
+    .ptro-check,
     .ptro-color-control,
     .ptro-icon-btn,
     .ptro-named-btn {
-        // Buttons in toolbar. Why the f* they're named like this is a mystery
-        background-color: $colorBtnBg;
-        color: $colorBtnFg;
-        padding: 0 $interiorMargin;
+        // Buttons in toolbar
+        border-radius: $smallCr;
+        box-shadow: rgba($colorBtnFg, 0.3) 0 0 0 1px;
+        color: $colorBtnFg !important;
+        padding: 1px $interiorMargin;
 
         &:hover {
             background: $colorBtnBgHov;
@@ -586,6 +590,13 @@
             font-size: $fs * 1.2;
             line-height: inherit;
         }
+    }
+
+    .ptro-color-control,
+    .ptro-icon-btn,
+    .ptro-named-btn {
+        // Buttons in toolbar
+        background-color: $colorBtnBg;
     }
 
     .ptro-color-active-control {

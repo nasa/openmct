@@ -173,10 +173,11 @@ define([
         const limitEvaluator = oldObject.getCapability("limit");
 
         return {
-            limits: function () {
-                return limitEvaluator.limits();
+            limits: () => {
+                return limitEvaluator.limits.then !== undefined
+                    ? limitEvaluator.limits()
+                    : Promise.resolve(limitEvaluator.limits());
             }
-
         };
     };
 
