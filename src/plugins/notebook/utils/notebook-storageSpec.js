@@ -187,38 +187,4 @@ describe('Notebook Storage:', () => {
             expect(page.pageTitle).toEqual('Page');
         });
     });
-
-    describe('is getNotebookSectionAndPage function clears default notebook when,', () => {
-        let oldDefaultNotebook;
-
-        beforeEach(() => {
-            NotebookStorage.setDefaultNotebook(openmct, notebookStorage, domainObject);
-
-            oldDefaultNotebook = NotebookStorage.getDefaultNotebook();
-        });
-
-        it('section is not found', () => {
-            expect(oldDefaultNotebook).not.toBe(null);
-
-            const pageId = 'temp-page';
-            const { section, page } = NotebookStorage.getNotebookSectionAndPage(domainObject, null, pageId);
-            expect(section).toBe(undefined);
-            expect(page).toBe(undefined);
-
-            const defaultNotebook = NotebookStorage.getDefaultNotebook();
-            expect(defaultNotebook).toBe(null);
-        });
-
-        it('page not found', () => {
-            expect(oldDefaultNotebook).not.toBe(null);
-
-            const sectionId = 'temp-section';
-            const { section, page } = NotebookStorage.getNotebookSectionAndPage(domainObject, sectionId, null);
-            expect(section).not.toBe(undefined);
-            expect(page).toBe(undefined);
-
-            const defaultNotebook = NotebookStorage.getDefaultNotebook();
-            expect(defaultNotebook).toBe(null);
-        });
-    });
 });
