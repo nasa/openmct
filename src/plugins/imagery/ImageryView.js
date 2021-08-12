@@ -1,5 +1,4 @@
 import ImageryViewLayout from './components/ImageryViewLayout.vue';
-import ImageryTimeView from "./components/ImageryTimeView.vue";
 
 import Vue from 'vue';
 
@@ -13,17 +12,11 @@ export default class ImageryView {
 
     show(element) {
         let isCompact = this.objectPath.find(object => object.type === 'time-strip');
-        let template = '<imagery-view-layout ref="ImageryLayout" :options="options"></imagery-view-layout>';
-
-        if (isCompact) {
-            template = '<imagery-time-view ref="ImageryLayout" :options="options"></imagery-time-view>';
-        }
 
         this.component = new Vue({
             el: element,
             components: {
-                ImageryViewLayout,
-                ImageryTimeView
+                ImageryViewLayout
             },
             provide: {
                 openmct: this.openmct,
@@ -38,7 +31,8 @@ export default class ImageryView {
                     }
                 };
             },
-            template
+            template: '<imagery-view-layout ref="ImageryLayout" :options="options"></imagery-view-layout>'
+
         });
     }
 

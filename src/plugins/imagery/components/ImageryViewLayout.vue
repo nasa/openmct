@@ -28,7 +28,9 @@
     @keydown="arrowDownHandler"
     @mouseover="focusElement"
 >
-    <div class="c-imagery__main-image-wrapper has-local-controls">
+    <div v-if="!options.compact || viewingLarge"
+         class="c-imagery__main-image-wrapper has-local-controls"
+    >
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
             <span class="c-image-controls__sliders"
                   draggable="true"
@@ -129,7 +131,13 @@
             </div>
         </div>
     </div>
+    <imagery-time-view v-if="options.compact && !viewingLarge"
+                       class="u-contents"
+                       :image-history="imageHistory"
+                       @expand="expandTimeViewImage"
+    />
     <div
+        v-if="!options.compact || viewingLarge"
         class="c-imagery__thumbs-wrapper"
         :class="[
             { 'is-paused': isPaused },
@@ -174,6 +182,7 @@ import moment from 'moment';
 
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
+import ImageryTimeView from './ImageryTimeView.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -195,9 +204,20 @@ const SCROLL_LATENCY = 250;
 
 export default {
     components: {
-        Compass
+        Compass,
+        ImageryTimeView
     },
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    props: {
+        options: {
+            type: Object,
+            default() {
+                return {
+                    compact: false
+                };
+            }
+        }
+    },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
@@ -227,7 +247,8 @@ export default {
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
             lockCompass: true,
-            resizingWindow: false
+            resizingWindow: false,
+            viewingLarge: false
         };
     },
     computed: {
@@ -470,7 +491,12 @@ export default {
         }
     },
     methods: {
+        expandTimeViewImage(imageObject, index) {
+            this.setFocusedImage(index, this.thumbnailClick);
+            this.expand();
+        },
         expand() {
+            this.viewingLarge = true;
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
             const viewLargeAction = visibleActions
@@ -478,6 +504,9 @@ export default {
 
             if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
                 viewLargeAction.onItemClicked();
+                viewLargeAction.on('destroy', () => {
+                    this.viewingLarge = false;
+                });
             }
         },
         async initializeRelatedTelemetry() {

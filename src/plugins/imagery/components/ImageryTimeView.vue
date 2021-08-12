@@ -34,40 +34,44 @@
 <script>
 import * as d3Scale from 'd3-scale';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-import ImageryOverlay from "./ImageryOverlay.vue";
+// import ImageryOverlay from "./ImageryOverlay.vue";
 import Vue from "vue";
 
 const PADDING = 1;
-const ROW_PADDING = 12;
 const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 100;
-const MAX_TEXT_WIDTH = 300;
 const DEFAULT_COLOR = '#cc9922';
 
 export default {
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    props: {
+        imageHistory: {
+            type: Array,
+            required: true,
+            default() {
+                return [];
+            }
+        }
+    },
     data() {
         return {
             viewBounds: undefined,
             timeSystem: undefined,
-            height: 0,
-            //TODO: Can this be decoupled from data somehow?
-            imageHistory: [],
-            imageUrl: undefined
+            height: 0
         };
     },
+    watch: {
+        imageHistory() {
+            this.updatePlotImagery();
+        }
+    },
     mounted() {
-        this.requestCount = 0;
         this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
         this.canvas.height = 0;
         this.canvasContext = this.canvas.getContext('2d');
         this.setDimensions();
 
-        this.initialize(this.domainObject);
         this.updateViewBounds();
-
-        // kickoff
-        this.subscribe();
 
         this.openmct.time.on("timeSystem", this.setScaleAndPlotImagery);
         this.openmct.time.on("bounds", this.updateViewBounds);
@@ -88,25 +92,10 @@ export default {
         }
     },
     methods: {
-        expand(imageObject) {
-            let vm = new Vue({
-                components: { ImageryOverlay },
-                data() {
-                    return {
-                        imageObject
-                    };
-                },
-                template: '<imagery-overlay :image-object="imageObject"></imagery-overlay>'
-            }).$mount();
-
-            this.openmct.overlays.overlay({
-                element: vm.$el,
-                size: 'fit',
-                onDestroy: () => vm.$destroy()
-            });
+        expand(imageObject, index) {
+            this.$emit('expand', imageObject, index);
         },
         observeForChanges(mutatedObject) {
-            this.initialize(mutatedObject);
             this.updateViewBounds();
         },
         resize() {
@@ -129,115 +118,6 @@ export default {
 
             return clientWidth;
         },
-        initialize(domainObject) {
-            this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-            this.metadata = this.openmct.telemetry.getMetadata(domainObject);
-            this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
-            this.imageDownloadNameHints = { ...this.metadata.valuesForHints(['imageDownloadName'])[0]};
-            this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
-
-            this.timeSystem = this.openmct.time.timeSystem();
-            this.timeFormatter = this.getFormatter(this.timeSystem.key);
-        },
-        getFormatter(key) {
-            let metadataValue = this.metadata.value(key) || { format: key };
-            let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
-
-            return valueFormatter;
-        },
-        subscribe() {
-            this.unsubscribe = this.openmct.telemetry
-                .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.parseTime(datum);
-
-                    if (parsedTimestamp >= this.viewBounds.start && parsedTimestamp <= this.viewBounds.end) {
-                        this.updateHistory(datum);
-                        this.updatePlotImagery();
-                    }
-                });
-        },
-        requestHistory() {
-            this.requestCount++;
-            const requestId = this.requestCount;
-            this.imageHistory = [];
-
-            this.openmct.telemetry
-                .request(this.domainObject, this.viewBounds).then((data) => {
-                    if (data) {
-                        if (this.requestCount === requestId) {
-                            data.forEach((datum, index) => {
-                                this.updateHistory(datum, index === data.length - 1);
-                            });
-                            this.updatePlotImagery();
-                        }
-                    } else {
-                        this.updatePlotImagery();
-                    }
-                });
-        },
-        updateHistory(datum) {
-            if (this.datumIsNotValid(datum)) {
-                return;
-            }
-
-            let image = { ...datum };
-            image.formattedTime = this.formatTime(datum);
-            image.url = this.formatImageUrl(datum);
-            image.time = datum[this.timeSystem.key];
-            image.imageDownloadName = this.getImageDownloadName(datum);
-
-            this.imageHistory.push(image);
-        },
-        datumIsNotValid(datum) {
-            if (this.imageHistory.length === 0) {
-                return false;
-            }
-
-            const datumURL = this.formatImageUrl(datum);
-            const lastHistoryURL = this.formatImageUrl(this.imageHistory.slice(-1)[0]);
-
-            // datum is not valid if it matches the last datum in history,
-            // or it is before the last datum in the history
-            const datumTimeCheck = this.parseTime(datum);
-            const historyTimeCheck = this.parseTime(this.imageHistory.slice(-1)[0]);
-            const matchesLast = (datumTimeCheck === historyTimeCheck) && (datumURL === lastHistoryURL);
-            const isStale = datumTimeCheck < historyTimeCheck;
-
-            return matchesLast || isStale;
-        },
-        formatImageUrl(datum) {
-            if (!datum) {
-                return;
-            }
-
-            return this.imageFormatter.format(datum);
-        },
-        getImageDownloadName(datum) {
-            let imageDownloadName = '';
-            if (datum) {
-                const key = this.imageDownloadNameHints.key;
-                imageDownloadName = datum[key];
-            }
-
-            return imageDownloadName;
-        },
-        formatTime(datum) {
-            if (!datum) {
-                return;
-            }
-
-            let dateTimeStr = this.timeFormatter.format(datum);
-
-            // Replace ISO "T" with a space to allow wrapping
-            return dateTimeStr.replace("T", " ");
-        },
-        parseTime(datum) {
-            if (!datum) {
-                return;
-            }
-
-            return this.timeFormatter.parse(datum);
-        },
         updateViewBounds(bounds, isTick) {
             this.viewBounds = this.openmct.time.bounds();
             //Add a 50% padding to the end bounds to look ahead
@@ -249,12 +129,7 @@ export default {
                 this.timeSystem = this.openmct.time.timeSystem();
             }
 
-            if (!isTick) {
-                this.setScale(this.timeSystem);
-                this.requestHistory();
-            } else {
-                this.setScaleAndPlotImagery();
-            }
+            this.setScaleAndPlotImagery();
 
         },
         setScaleAndPlotImagery(timeSystem) {
@@ -356,9 +231,9 @@ export default {
             let groupSVG = groupElements.groupSVG;
 
             if (this.imageHistory.length) {
-                this.imageHistory.forEach((imageObject) => {
+                this.imageHistory.forEach((imageObject, index) => {
                     if (this.isImageryInBounds(imageObject)) {
-                        this.plotImagery(imageObject, showPlaceholders, groupSVG);
+                        this.plotImagery(imageObject, showPlaceholders, groupSVG, index);
                     }
                 });
             } else {
@@ -388,7 +263,7 @@ export default {
         getNSAttributesForElement(element, attribute) {
             return element.getAttributeNS(null, attribute);
         },
-        plotImagery(item, showPlaceholders, svgElement) {
+        plotImagery(item, showPlaceholders, svgElement, index) {
             //TODO: Placeholder image
             let url = showPlaceholders ? '' : item.url;
             let handleElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -417,7 +292,7 @@ export default {
                 url: url
             });
             imageElement.addEventListener('click', (event) => {
-                this.expand(item);
+                this.expand(item, index);
             });
             svgElement.appendChild(imageElement);
         }
