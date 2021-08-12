@@ -22,6 +22,7 @@
 
 import myItemsIdentifier from './myItemsIdentifier';
 
+const MISSING_NAME = 'Missing: mine';
 const myItemsModel = {
     identifier: myItemsIdentifier,
     "name": "My Items",
@@ -34,7 +35,7 @@ const myItemsInterceptor = {
         return identifier.key === 'mine';
     },
     invoke: (identifier, object) => {
-        if (object === undefined) {
+        if (object === undefined || object && object.name === MISSING_NAME) {
             return myItemsModel;
         }
 
