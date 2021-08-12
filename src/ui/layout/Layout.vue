@@ -50,10 +50,12 @@
         type="horizontal"
     >
         <pane
+            v-if="typeof collapseTree === 'boolean'"
+            :key="collapseTree"
             class="l-shell__pane-tree"
             handle="after"
             label="Browse"
-            collapsable
+            :collapse="collapseTree"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
@@ -101,10 +103,12 @@
             />
         </pane>
         <pane
+            v-if="typeof collapseInspector === 'boolean'"
+            :key="collapseInspector"
             class="l-shell__pane-inspector l-pane--holds-multipane"
             handle="before"
             label="Inspect"
-            collapsable
+            :collapse="collapseInspector"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
@@ -163,7 +167,9 @@ export default {
             triggerSync: false,
             triggerReset: false,
             headExpanded,
-            isResizing: false
+            isResizing: false,
+            collapseTree: undefined,
+            collapseInspector: undefined
         };
     },
     computed: {
@@ -174,12 +180,21 @@ export default {
             return this.isResizing ? 'l-shell__resizing' : '';
         }
     },
-    mounted() {
+    async mounted() {
+
+        await this.$nextTick();
+        this.setCollapse();
+
+        this.openmct.router.on('change:params', this.setCollapse);
+
         this.openmct.editor.on('isEditing', (isEditing) => {
             this.isEditing = isEditing;
         });
 
         this.openmct.selection.on('change', this.toggleHasToolbar);
+    },
+    beforeDestroy() {
+        this.openmct.router.off('change:params', this.setCollapse);
     },
     methods: {
         enterFullScreen() {
@@ -255,6 +270,13 @@ export default {
         },
         onEndResizing() {
             this.isResizing = false;
+        },
+        setCollapse() {
+            const HIDE_TREE_PARAM = 'hideTree';
+            const HIDE_INSPECTOR_PARAM = 'hideInspector';
+
+            this.collapseTree = this.openmct.router.getSearchParam(HIDE_TREE_PARAM) === 'true';
+            this.collapseInspector = this.openmct.router.getSearchParam(HIDE_INSPECTOR_PARAM) === 'true';
         }
     }
 };
