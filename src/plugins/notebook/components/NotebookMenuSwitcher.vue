@@ -56,11 +56,10 @@ export default {
         this.setDefaultNotebookStatus();
     },
     methods: {
-        async getDefaultNotebookObject() {
+        getDefaultNotebookObject() {
             const defaultNotebook = getDefaultNotebook();
-            const defaultNotebookObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.identifier);
 
-            return defaultNotebookObject;
+            return defaultNotebook && this.openmct.objects.get(defaultNotebook.identifier);
         },
         async showMenu(event) {
             const notebookTypes = [];
@@ -121,8 +120,7 @@ export default {
         },
         setDefaultNotebookStatus() {
             let defaultNotebookObject = getDefaultNotebook();
-
-            if (defaultNotebookObject && defaultNotebookObject) {
+            if (defaultNotebookObject) {
                 let notebookIdentifier = defaultNotebookObject.identifier;
 
                 this.openmct.status.set(notebookIdentifier, 'notebook-default');

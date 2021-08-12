@@ -55,16 +55,9 @@ export function getDefaultNotebook() {
 }
 
 export function getNotebookSectionAndPage(domainObject, sectionId, pageId) {
-    const section = domainObject.configuration.sections.find(s => s.id === sectionId);
+    const configuration = domainObject.configuration;
+    const section = configuration && configuration.sections.find(s => s.id === sectionId);
     const page = section && section.pages.find(p => p.id === pageId);
-
-    if (!section || !page) {
-        console.warn('Clearing default notebook due to missing Section or Page from default Notebook');
-        console.warn('Section:', section);
-        console.warn('Page:', page);
-
-        clearDefaultNotebook();
-    }
 
     return {
         section,

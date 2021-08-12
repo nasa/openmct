@@ -633,10 +633,13 @@ export default {
         },
         async updateDefaultNotebook(notebookStorage) {
             const defaultNotebookObject = await this.getDefaultNotebookObject();
-            if (!defaultNotebookObject) {
-                setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
-            } else if (objectUtils.makeKeyString(defaultNotebookObject.identifier) !== objectUtils.makeKeyString(notebookStorage.identifier)) {
+            const isSameNotebook = defaultNotebookObject
+                && objectUtils.makeKeyString(defaultNotebookObject.identifier) === objectUtils.makeKeyString(notebookStorage.identifier);
+            if (!isSameNotebook) {
                 this.removeDefaultClass(defaultNotebookObject);
+            }
+
+            if (!defaultNotebookObject || !isSameNotebook) {
                 setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
             }
 
@@ -662,12 +665,14 @@ export default {
             }
 
             const defaultNotebookSectionId = notebookStorage.defaultSectionId;
-            const section = sections.find(s => s.id === id);
-            if (!section && defaultNotebookSectionId === id) {
-                this.removeDefaultClass(this.domainObject);
-                clearDefaultNotebook();
+            if (defaultNotebookSectionId === id) {
+                const section = sections.find(s => s.id === id);
+                if (!section) {
+                    this.removeDefaultClass(this.domainObject);
+                    clearDefaultNotebook();
 
-                return;
+                    return;
+                }
             }
 
             if (id !== defaultNotebookSectionId) {
