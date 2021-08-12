@@ -424,8 +424,8 @@ export default {
         this.trackLatestRelatedTelemetry();
 
         // for scrolling through images quickly and resizing the object view
-        _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
-        _.debounce(this.resizeImageContainer, 400);
+        this.updateRelatedTelemetryForFocusedImage = _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
+        this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400);
 
         this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
         this.imageContainerResizeObserver.observe(this.$refs.imageBG);
