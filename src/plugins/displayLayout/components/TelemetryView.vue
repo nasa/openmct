@@ -72,7 +72,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
-import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
+import { getDefaultNotebook, getNotebookSectionAndPage } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
@@ -336,12 +336,15 @@ export default {
         },
         async getContextMenuActions() {
             const defaultNotebook = getDefaultNotebook();
-            const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
 
             let defaultNotebookName;
             if (defaultNotebook) {
-                const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
-                defaultNotebookName = `Copy to Notebook ${defaultPath}`;
+                const domainObject = await this.openmct.objects.get(defaultNotebook.identifier);
+                const { section, page } = getNotebookSectionAndPage(domainObject, defaultNotebook.defaultSectionId, defaultNotebook.defaultPageId);
+                if (section && page) {
+                    const defaultPath = domainObject && `${domainObject.name} - ${section.name} - ${page.name}`;
+                    defaultNotebookName = `Copy to Notebook ${defaultPath}`;
+                }
             }
 
             return CONTEXT_MENU_ACTIONS
