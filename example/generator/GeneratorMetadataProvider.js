@@ -109,6 +109,41 @@ define([
                     }
                 }
             ]
+        },
+        'example.spectral-generator': {
+            values: [
+                {
+                    key: "name",
+                    name: "Name",
+                    format: "string"
+                },
+                {
+                    key: "utc",
+                    name: "Time",
+                    format: "utc",
+                    hints: {
+                        domain: 1
+                    }
+                },
+                {
+                    key: "wavelength",
+                    name: "Wavelength",
+                    unit: "Hz",
+                    formatString: '%0.2f',
+                    hints: {
+                        domain: 2
+                    }
+                },
+                {
+                    key: "cos",
+                    name: "Cosine",
+                    unit: "deg",
+                    formatString: '%0.2f',
+                    hints: {
+                        range: 2
+                    }
+                }
+            ]
         }
     };
 
