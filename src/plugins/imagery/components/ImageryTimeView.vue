@@ -309,13 +309,27 @@ export default {
               || (`#${this.getNSAttributesForElement(event.currentTarget, 'id')}` !== this.getNSAttributesForElement(useEls[0], 'href'))) {
                 this.removeFromForeground();
 
+                let borderEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+                // Border for the highlighted element
+                this.setNSAttributesForElement(borderEl, {
+                    x: this.xScale(item.time),
+                    y: 0,
+                    rx: 0,
+                    width: String(ROW_HEIGHT + 2),
+                    height: String(ROW_HEIGHT),
+                    stroke: DEFAULT_COLOR,
+                    id: `border-${imageElement.id}`
+                });
+                svgElement.appendChild(borderEl);
+
                 let useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
                 this.setNSAttributesForElement(useElement, {
                     x: 0,
                     fill: DEFAULT_COLOR,
                     href: `#${imageElement.id}`
                 });
-                useElement.addEventListener('click', (event) => {
+                useElement.addEventListener('click', () => {
                     this.expand(item, index);
                 });
                 svgElement.appendChild(useElement);
@@ -324,6 +338,8 @@ export default {
         removeFromForeground() {
             let useEls = this.$el.querySelectorAll(".c-imagery__contents use");
             useEls.forEach(item => item.remove());
+            let borderEls = this.$el.querySelectorAll(".c-imagery__contents rect[id*=border]");
+            borderEls.forEach(item => item.remove());
         }
     }
 };
