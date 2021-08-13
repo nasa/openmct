@@ -34,7 +34,6 @@
 <script>
 import * as d3Scale from 'd3-scale';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-// import ImageryOverlay from "./ImageryOverlay.vue";
 import Vue from "vue";
 
 const PADDING = 1;
@@ -266,11 +265,16 @@ export default {
         plotImagery(item, showPlaceholders, svgElement, index) {
             //TODO: Placeholder image
             let url = showPlaceholders ? '' : item.url;
-            let handleElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            //imageWrapper wraps the vertical tick rect and the image
+            let imageWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            this.setNSAttributesForElement(imageWrapper, {
+                id: `id-${index}-${item.time}`,
+                class: 'image-wrapper'
+            });
 
-            // rx: don't round corners if the width of the rect is smaller than the rounding radius
-            this.setNSAttributesForElement(handleElement, {
-                class: 'activity-bounds',
+            let imageTickElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            this.setNSAttributesForElement(imageTickElement, {
+                class: 'image-handle',
                 x: this.xScale(item.time),
                 y: 0,
                 rx: 0,
@@ -278,68 +282,64 @@ export default {
                 height: String(ROW_HEIGHT),
                 fill: 'currentColor'
             });
-            svgElement.appendChild(handleElement);
+            imageWrapper.appendChild(imageTickElement);
 
             let imageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
             this.setNSAttributesForElement(imageElement, {
-                class: 'activity-bounds',
                 x: this.xScale(item.time) + 2,
                 y: 0,
                 rx: 0,
                 width: String(ROW_HEIGHT),
                 height: String(ROW_HEIGHT),
                 fill: DEFAULT_COLOR,
-                url: url,
-                id: `${index}-${item.time}`
+                url: url
             });
-            imageElement.addEventListener('mouseover', (event) => {
-                this.bringToForeground(event, svgElement, imageElement, item, index);
-            });
+            imageWrapper.appendChild(imageElement);
 
-            svgElement.appendChild(imageElement);
+            imageWrapper.addEventListener('mouseover', (event) => {
+                this.bringToForeground(event, svgElement, imageWrapper, item, index);
+            });
+            svgElement.appendChild(imageWrapper);
+
             svgElement.addEventListener('mouseout', (event) => {
                 if (event.target.nodeName === 'svg' || event.target.nodeName === 'use') {
                     this.removeFromForeground();
                 }
             });
         },
-        bringToForeground(event, svgElement, imageElement, item, index) {
+        bringToForeground(event, svgElement, imageWrapper, item, index) {
             let useEls = this.$el.querySelectorAll(".c-imagery__contents use");
             if (useEls.length <= 0
               || (`#${this.getNSAttributesForElement(event.currentTarget, 'id')}` !== this.getNSAttributesForElement(useEls[0], 'href'))) {
                 this.removeFromForeground();
 
-                let borderEl = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-
-                // Border for the highlighted element
-                this.setNSAttributesForElement(borderEl, {
-                    x: this.xScale(item.time),
-                    y: 0,
-                    rx: 0,
-                    width: String(ROW_HEIGHT + 2),
-                    height: String(ROW_HEIGHT),
-                    stroke: DEFAULT_COLOR,
-                    id: `border-${imageElement.id}`
-                });
-                svgElement.appendChild(borderEl);
-
                 let useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
                 this.setNSAttributesForElement(useElement, {
+                    class: 'image-highlight',
                     x: 0,
                     fill: DEFAULT_COLOR,
-                    href: `#${imageElement.id}`
+                    href: `#${imageWrapper.id}`
                 });
                 useElement.addEventListener('click', () => {
                     this.expand(item, index);
                 });
+                this.setNSAttributesForElement(imageWrapper, {
+                    class: 'image-wrapper highlighted'
+                });
+
                 svgElement.appendChild(useElement);
             }
         },
         removeFromForeground() {
             let useEls = this.$el.querySelectorAll(".c-imagery__contents use");
-            useEls.forEach(item => item.remove());
-            let borderEls = this.$el.querySelectorAll(".c-imagery__contents rect[id*=border]");
-            borderEls.forEach(item => item.remove());
+            useEls.forEach(item => {
+                let selector = `id*=${this.getNSAttributesForElement(item, 'href').replace('#', '')}`;
+                let imageWrapper = this.$el.querySelector(`.c-imagery__contents g[${selector}]`);
+                this.setNSAttributesForElement(imageWrapper, {
+                    class: 'image-wrapper'
+                });
+                item.remove();
+            });
         }
     }
 };
