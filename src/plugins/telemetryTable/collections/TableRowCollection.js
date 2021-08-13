@@ -36,85 +36,72 @@ define(
         /**
          * @constructor
          */
-        class SortedTableRowCollection extends EventEmitter {
+        class TableRowCollection extends EventEmitter {
             constructor() {
                 super();
 
-                this.dupeCheck = false;
                 this.rows = [];
+                this.columnFilters = {};
+                this.addRows = this.addRows.bind(this);
+                this.removeRowsByObject = this.removeRowsByObject.bind(this);
+                this.removeRowsByData = this.removeRowsByData.bind(this);
 
-                this.add = this.add.bind(this);
-                this.remove = this.remove.bind(this);
+                this.clear = this.clear.bind(this);
             }
 
-            /**
-             * Add a datum or array of data to this telemetry collection
-             * @fires TelemetryCollection#added
-             * @param {object | object[]} rows
-             */
-            add(rows) {
-                if (Array.isArray(rows)) {
-                    this.dupeCheck = false;
+            removeRowsByObject(keyString) {
+                let removed = [];
 
-                    let rowsAdded = rows.filter(this.addOne, this);
-                    if (rowsAdded.length > 0) {
-                        this.emit('add', rowsAdded);
-                    }
+                this.rows = this.rows.filter((row) => {
+                    if (row.objectKeyString === keyString) {
+                        removed.push(row);
 
-                    this.dupeCheck = true;
-                } else {
-                    let wasAdded = this.addOne(rows);
-                    if (wasAdded) {
-                        this.emit('add', rows);
+                        return false;
+                    } else {
+                        return true;
                     }
-                }
+                });
+
+                this.emit('remove', removed);
             }
 
-            /**
-             * @private
-             */
-            addOne(row) {
+            addRows(rows, type = 'add') {
                 if (this.sortOptions === undefined) {
                     throw 'Please specify sort options';
                 }
 
-                let isDuplicate = false;
+                let isFilterTriggeredReset = type === 'filter';
+                let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
+                let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
 
-                // Going to check for duplicates. Bound the search problem to
-                // items around the given time. Use sortedIndex because it
-                // employs a binary search which is O(log n). Can use binary search
-                // because the array is guaranteed ordered due to sorted insertion.
-                let startIx = this.sortedIndex(this.rows, row);
-                let endIx = undefined;
-
-                if (this.dupeCheck && startIx !== this.rows.length) {
-                    endIx = this.sortedLastIndex(this.rows, row);
-
-                    // Create an array of potential dupes, based on having the
-                    // same time stamp
-                    let potentialDupes = this.rows.slice(startIx, endIx + 1);
-                    // Search potential dupes for exact dupe
-                    isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, row));
+                // if type is filter, then it's a reset of all rows,
+                // need to wipe current rows
+                if (isFilterTriggeredReset) {
+                    this.rows = [];
                 }
 
-                if (!isDuplicate) {
-                    this.rows.splice(endIx || startIx, 0, row);
-
-                    return true;
+                for (let row of rowsToAdd) {
+                    let index = this.sortedIndex(this.rows, row);
+                    this.rows.splice(index, 0, row);
                 }
 
-                return false;
+                // we emit filter no matter what to trigger
+                // an update of visible rows
+                if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
+                    this.emit(type, rowsToAdd);
+                }
             }
 
             sortedLastIndex(rows, testRow) {
                 return this.sortedIndex(rows, testRow, _.sortedLastIndex);
             }
+
             /**
              * Finds the correct insertion point for the given row.
              * Leverages lodash's `sortedIndex` function which implements a binary search.
              * @private
              */
-            sortedIndex(rows, testRow, lodashFunction) {
+            sortedIndex(rows, testRow, lodashFunction = _.sortedIndexBy) {
                 if (this.rows.length === 0) {
                     return 0;
                 }
@@ -122,8 +109,6 @@ define(
                 const testRowValue = this.getValueForSortColumn(testRow);
                 const firstValue = this.getValueForSortColumn(this.rows[0]);
                 const lastValue = this.getValueForSortColumn(this.rows[this.rows.length - 1]);
-
-                lodashFunction = lodashFunction || _.sortedIndexBy;
 
                 if (this.sortOptions.direction === 'asc') {
                     if (testRowValue > lastValue) {
@@ -160,6 +145,22 @@ define(
                         });
                     }
                 }
+            }
+
+            removeRowsByData(data) {
+                let removed = [];
+
+                this.rows = this.rows.filter((row) => {
+                    if (data.includes(row.fullDatum)) {
+                        removed.push(row);
+
+                        return false;
+                    } else {
+                        return true;
+                    }
+                });
+
+                this.emit('remove', removed);
             }
 
             /**
@@ -205,6 +206,7 @@ define(
                 if (arguments.length > 0) {
                     this.sortOptions = sortOptions;
                     this.rows = _.orderBy(this.rows, (row) => row.getParsedValue(sortOptions.key), sortOptions.direction);
+
                     this.emit('sort');
                 }
 
@@ -212,35 +214,101 @@ define(
                 return Object.assign({}, this.sortOptions);
             }
 
-            removeAllRowsForObject(objectKeyString) {
-                let removed = [];
-                this.rows = this.rows.filter(row => {
-                    if (row.objectKeyString === objectKeyString) {
-                        removed.push(row);
+            setColumnFilter(columnKey, filter) {
+                filter = filter.trim().toLowerCase();
+                let wasBlank = this.columnFilters[columnKey] === undefined;
+                let isSubset = this.isSubsetOfCurrentFilter(columnKey, filter);
 
+                if (filter.length === 0) {
+                    delete this.columnFilters[columnKey];
+                } else {
+                    this.columnFilters[columnKey] = filter;
+                }
+
+                if (isSubset || wasBlank) {
+                    this.rows = this.rows.filter(this.matchesFilters, this);
+                    this.emit('filter');
+                } else {
+                    this.emit('resetRowsFromAllData');
+                }
+
+            }
+
+            setColumnRegexFilter(columnKey, filter) {
+                filter = filter.trim();
+                this.columnFilters[columnKey] = new RegExp(filter);
+
+                this.emit('resetRowsFromAllData');
+            }
+
+            getColumnMapForObject(objectKeyString) {
+                let columns = this.configuration.getColumns();
+
+                if (columns[objectKeyString]) {
+                    return columns[objectKeyString].reduce((map, column) => {
+                        map[column.getKey()] = column;
+
+                        return map;
+                    }, {});
+                }
+
+                return {};
+            }
+
+            // /**
+            //  * @private
+            //  */
+            isSubsetOfCurrentFilter(columnKey, filter) {
+                if (this.columnFilters[columnKey] instanceof RegExp) {
+                    return false;
+                }
+
+                return this.columnFilters[columnKey]
+                    && filter.startsWith(this.columnFilters[columnKey])
+                    // startsWith check will otherwise fail when filter cleared
+                    // because anyString.startsWith('') === true
+                    && filter !== '';
+            }
+
+            /**
+             * @private
+             */
+            matchesFilters(row) {
+                let doesMatchFilters = true;
+                Object.keys(this.columnFilters).forEach((key) => {
+                    if (!doesMatchFilters || !this.rowHasColumn(row, key)) {
                         return false;
                     }
 
-                    return true;
+                    let formattedValue = row.getFormattedValue(key);
+                    if (formattedValue === undefined) {
+                        return false;
+                    }
+
+                    if (this.columnFilters[key] instanceof RegExp) {
+                        doesMatchFilters = this.columnFilters[key].test(formattedValue);
+                    } else {
+                        doesMatchFilters = formattedValue.toLowerCase().indexOf(this.columnFilters[key]) !== -1;
+                    }
                 });
 
-                this.emit('remove', removed);
+                return doesMatchFilters;
             }
 
-            getValueForSortColumn(row) {
-                return row.getParsedValue(this.sortOptions.key);
-            }
-
-            remove(removedRows) {
-                this.rows = this.rows.filter(row => {
-                    return removedRows.indexOf(row) === -1;
-                });
-
-                this.emit('remove', removedRows);
+            rowHasColumn(row, key) {
+                return Object.prototype.hasOwnProperty.call(row.columns, key);
             }
 
             getRows() {
                 return this.rows;
+            }
+
+            getRowsLength() {
+                return this.rows.length;
+            }
+
+            getValueForSortColumn(row) {
+                return row.getParsedValue(this.sortOptions.key);
             }
 
             clear() {
@@ -249,7 +317,11 @@ define(
 
                 this.emit('remove', removedRows);
             }
+
+            destroy() {
+                this.removeAllListeners();
+            }
         }
 
-        return SortedTableRowCollection;
+        return TableRowCollection;
     });
