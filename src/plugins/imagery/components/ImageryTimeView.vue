@@ -289,12 +289,41 @@ export default {
                 width: String(ROW_HEIGHT),
                 height: String(ROW_HEIGHT),
                 fill: DEFAULT_COLOR,
-                url: url
+                url: url,
+                id: `${index}-${item.time}`
             });
-            imageElement.addEventListener('click', (event) => {
-                this.expand(item, index);
+            imageElement.addEventListener('mouseover', (event) => {
+                this.bringToForeground(event, svgElement, imageElement, item, index);
             });
+
             svgElement.appendChild(imageElement);
+            svgElement.addEventListener('mouseout', (event) => {
+                if (event.target.nodeName === 'svg' || event.target.nodeName === 'use') {
+                    this.removeFromForeground();
+                }
+            });
+        },
+        bringToForeground(event, svgElement, imageElement, item, index) {
+            let useEls = this.$el.querySelectorAll(".c-imagery__contents use");
+            if (useEls.length <= 0
+              || (`#${this.getNSAttributesForElement(event.currentTarget, 'id')}` !== this.getNSAttributesForElement(useEls[0], 'href'))) {
+                this.removeFromForeground();
+
+                let useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+                this.setNSAttributesForElement(useElement, {
+                    x: 0,
+                    fill: DEFAULT_COLOR,
+                    href: `#${imageElement.id}`
+                });
+                useElement.addEventListener('click', (event) => {
+                    this.expand(item, index);
+                });
+                svgElement.appendChild(useElement);
+            }
+        },
+        removeFromForeground() {
+            let useEls = this.$el.querySelectorAll(".c-imagery__contents use");
+            useEls.forEach(item => item.remove());
         }
     }
 };

@@ -323,6 +323,8 @@ export default {
             return result;
         },
         shouldDisplayCompass() {
+            console.log(this.focusedImage, this.focusedImageNaturalAspectRatio, this.imageContainerWidth, this.imageContainerHeight);
+
             return this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
@@ -448,15 +450,21 @@ export default {
         this.updateRelatedTelemetryForFocusedImage = _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
         this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400);
 
-        this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
-        this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+        if (this.$refs.imageBG) {
+            this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
+            this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+        }
 
         // For adjusting scroll bar size and position when resizing thumbs wrapper
         this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
         this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
+        this.handleThumbWindowResizeStart = _.debounce(this.handleThumbWindowResizeStart, SCROLL_LATENCY);
 
-        this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
-        this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
+        if (this.$refs.thumbsWrapper) {
+            this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
+            this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
+        }
+
     },
     beforeDestroy() {
         if (this.unsubscribe) {
@@ -497,6 +505,17 @@ export default {
         },
         expand() {
             this.viewingLarge = true;
+
+            if (this.$refs.imageBG && !this.imageContainerResizeObserver) {
+                this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
+                this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+            }
+
+            if (this.$refs.thumbsWrapper && !this.thumbWrapperResizeObserver) {
+                this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
+                this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
+            }
+
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
             const viewLargeAction = visibleActions
