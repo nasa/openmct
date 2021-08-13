@@ -323,8 +323,6 @@ export default {
             return result;
         },
         shouldDisplayCompass() {
-            console.log(this.focusedImage, this.focusedImageNaturalAspectRatio, this.imageContainerWidth, this.imageContainerHeight);
-
             return this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
@@ -500,21 +498,28 @@ export default {
     },
     methods: {
         expandTimeViewImage(imageObject, index) {
-            this.setFocusedImage(index, this.thumbnailClick);
-            this.expand();
-        },
-        expand() {
             this.viewingLarge = true;
 
-            if (this.$refs.imageBG && !this.imageContainerResizeObserver) {
-                this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
-                this.imageContainerResizeObserver.observe(this.$refs.imageBG);
-            }
+            //we need the nextTick so that Vue can react to the viewingLarge flag being set to true
+            // and show DOM elements that we need in the following code
+            this.$nextTick().then(() => {
+                this.setFocusedImage(index, this.thumbnailClick);
 
-            if (this.$refs.thumbsWrapper && !this.thumbWrapperResizeObserver) {
-                this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
-                this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
-            }
+                if (this.$refs.imageBG && !this.imageContainerResizeObserver) {
+                    this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
+                    this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+                }
+
+                if (this.$refs.thumbsWrapper && !this.thumbWrapperResizeObserver) {
+                    this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
+                    this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
+                }
+
+                this.expand(imageObject, index);
+            });
+
+        },
+        expand(imageObject, index) {
 
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
