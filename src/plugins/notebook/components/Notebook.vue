@@ -451,12 +451,9 @@ export default {
                 : undefined;
         },
         getDefaultNotebookObject() {
-            const oldNotebookStorage = getDefaultNotebook();
-            if (!oldNotebookStorage) {
-                return null;
-            }
+            const defaultNotebook = getDefaultNotebook();
 
-            return this.openmct.objects.get(oldNotebookStorage.identifier);
+            return defaultNotebook && this.openmct.objects.get(defaultNotebook.identifier);
         },
         getLinktoNotebook() {
             const objectPath = this.openmct.router.path;

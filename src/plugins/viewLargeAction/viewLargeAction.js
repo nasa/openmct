@@ -64,7 +64,7 @@ export default class ViewLargeAction {
         this.overlay = this.openmct.overlays.overlay({
             element: this._getPreview(objectPath),
             size: 'large',
-            disableAutoHide: true,
+            autoHide: false,
             onDestroy() {
                 parentElement.append(childElement);
             }

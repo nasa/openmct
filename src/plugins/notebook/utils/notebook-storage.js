@@ -54,12 +54,6 @@ export function getDefaultNotebook() {
     return JSON.parse(notebookStorage);
 }
 
-export function getDefaultNotebookObject(openmct) {
-    const defaultNotebook = getDefaultNotebook();
-
-    return defaultNotebook && openmct.objects.get(defaultNotebook.identifier);
-}
-
 export function getNotebookSectionAndPage(domainObject, sectionId, pageId) {
     const configuration = domainObject.configuration;
     const section = configuration && configuration.sections.find(s => s.id === sectionId);
@@ -77,11 +71,7 @@ export async function getDefaultNotebookLink(openmct, domainObject = null) {
     }
 
     const path = await openmct.objects.getOriginalPath(domainObject.identifier)
-        .then(objectPath => objectPath
-            .map(o => o && openmct.objects.makeKeyString(o.identifier))
-            .reverse()
-            .join('/')
-        );
+        .then(openmct.objects.getRelativePath);
     const { defaultPageId, defaultSectionId } = getDefaultNotebook();
 
     return `#/browse/${path}?sectionId=${defaultSectionId}&pageId=${defaultPageId}`;

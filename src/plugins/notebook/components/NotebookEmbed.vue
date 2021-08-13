@@ -141,7 +141,7 @@ export default {
                 });
         },
         changeLocation() {
-            if (this.openmct.editor.editing) {
+            if (this.openmct.editor.isEditing()) {
                 this.openmct.notifications.error('Error navigating while in edit mode');
 
                 return;

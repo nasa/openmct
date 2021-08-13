@@ -1,10 +1,10 @@
-import { getDefaultNotebook, getDefaultNotebookObject, getNotebookSectionAndPage } from './notebook-storage';
+import { getDefaultNotebook, getNotebookSectionAndPage } from './notebook-storage';
 
 export async function getMenuItems(openmct, menuItemOptions) {
     const notebookTypes = [];
 
     const defaultNotebook = getDefaultNotebook();
-    const defaultNotebookObject = defaultNotebook && await getDefaultNotebookObject(openmct);
+    const defaultNotebookObject = defaultNotebook && await openmct.objects.get(defaultNotebook.identifier);
     if (defaultNotebookObject) {
         const { section, page } = getNotebookSectionAndPage(defaultNotebookObject, defaultNotebook.defaultSectionId, defaultNotebook.defaultPageId);
         if (section && page) {

@@ -31,7 +31,7 @@ class OverlayAPI {
     showOverlay(overlay) {
         if (this.activeOverlays.length) {
             const previousOverlay = this.activeOverlays[this.activeOverlays.length - 1];
-            if (!previousOverlay.disableAutoHide) {
+            if (previousOverlay.autoHide) {
                 previousOverlay.container.classList.add('invisible');
             }
         }
@@ -100,7 +100,7 @@ class OverlayAPI {
     dialog(options) {
         let dialog = new Dialog(options);
 
-        this.showOverlay(dialog, options.skipHidePreviousOverlay);
+        this.showOverlay(dialog);
 
         return dialog;
     }

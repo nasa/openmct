@@ -63,25 +63,15 @@ export default {
     },
     methods: {
         getPreviewObjectLink() {
-            let path = '#/browse/';
-            path += this.objectPath
-                .map(p => this.openmct.objects.makeKeyString(p.identifier))
-                .reverse()
-                .join('/')
-            ;
-            path += `?view=${this.currentView.key}`;
-
+            const getRelativePath = this.openmct.objects.getRelativePath(this.objectPath);
             const urlParams = this.openmct.router.getParams();
-            Object.entries(urlParams)
-                .forEach(([key, value]) => {
-                    if (key === 'view') {
-                        return;
-                    }
+            urlParams.view = this.currentView.key;
 
-                    path += `&${key}=${value}`;
-                });
+            const urlParamsString = Object.entries(urlParams)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('&');
 
-            return path;
+            return `#/browse/${getRelativePath}?${urlParamsString}`;
         },
         async showMenu(event) {
             const menuItemOptions = {

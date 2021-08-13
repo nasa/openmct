@@ -10,18 +10,20 @@ const cssClasses = {
 };
 
 class Overlay extends EventEmitter {
-    constructor(options) {
+    constructor({
+        buttons,
+        autoHide = true,
+        dismissable = true,
+        element,
+        onDestroy,
+        size
+    } = {}) {
         super();
 
-        const {
-            disableAutoHide,
-            dismissable = true,
-            size
-        } = options;
-
-        this.disableAutoHide = disableAutoHide;
         this.container = document.createElement('div');
         this.container.classList.add('l-overlay-wrapper', cssClasses[size]);
+
+        this.autoHide = autoHide;
         this.dismissable = dismissable !== false;
 
         this.component = new Vue({
@@ -30,15 +32,15 @@ class Overlay extends EventEmitter {
             },
             provide: {
                 dismiss: this.dismiss.bind(this),
-                element: options.element,
-                buttons: options.buttons,
+                element,
+                buttons,
                 dismissable: this.dismissable
             },
             template: '<overlay-component></overlay-component>'
         });
 
-        if (options.onDestroy) {
-            this.once('destroy', options.onDestroy);
+        if (onDestroy) {
+            this.once('destroy', onDestroy);
         }
     }
 
