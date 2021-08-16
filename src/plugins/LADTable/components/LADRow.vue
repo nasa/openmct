@@ -96,12 +96,17 @@ export default {
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
+        // this.valueMetadata = this
+        //     .metadata
+        //     .valuesForHints(['range'])[0];
+
+        // this.valueKey = this.valueMetadata.key;
         this.valueMetadata = this
             .metadata
-            .valuesForHints(['range'])[0];
-
-        this.valueKey = this.valueMetadata.key;
-
+            .valuesForHints(['range']);
+        // console.log(this.valueMetadata);
+        this.valueKey = this.valueMetadata.map(value => value.key);
+        // console.log(this.valueKey);
         this.unsubscribe = this.openmct
             .telemetry
             .subscribe(this.domainObject, this.updateValues);
@@ -123,9 +128,15 @@ export default {
             let limit;
 
             if (this.shouldUpdate(newTimestamp)) {
+                // console.log(datum);
                 this.datum = datum;
                 this.timestamp = newTimestamp;
-                this.value = this.formats[this.valueKey].format(datum);
+                // console.log(this.formats);
+                // this.value = this.formats[this.valueKey].format(datum);
+                this.value = {};
+                this.valueKey.forEach(key => {
+                    this.value[key] = this.formats[key].format(datum);
+                });
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
                 if (limit) {
                     this.valueClass = limit.cssClass;
