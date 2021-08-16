@@ -21,12 +21,13 @@
  *****************************************************************************/
 
 import PlotViewProvider from './PlotViewProvider';
-import SpectralPlotViewProvider from './SpectralPlotViewProvider';
+import SpectralPlotViewProvider from './spectralPlot/SpectralPlotViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
+import SpectralPlotCompositionPolicy from './spectralPlot/SpectralPlotCompositionPolicy';
 
 export default function () {
     return function install(openmct) {
@@ -80,6 +81,7 @@ export default function () {
         openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
+        openmct.composition.addPolicy(new SpectralPlotCompositionPolicy(openmct).allow);
     };
 }
 
