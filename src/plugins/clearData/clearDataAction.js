@@ -30,24 +30,7 @@ export default class ClearDataAction {
         this._openmct = openmct;
         this._appliesToObjects = appliesToObjects;
     }
-    inNavigationPath(object) {
-        return this._openmct.router.path
-            .some(objectInPath => this._openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
-    }
-
-    navigateTo(objectPath) {
-        let urlPath = objectPath.reverse()
-            .map(object => this._openmct.objects.makeKeyString(object.identifier))
-            .join("/");
-
-        this._openmct.router.navigate('#/browse/' + urlPath);
-    }
     invoke(objectPath) {
-        let object = objectPath[0];
-        if (!this.inNavigationPath(object)) {
-            this.navigateTo(objectPath);
-        }
-
         this._openmct.objectViews.emit('clearData', objectPath[0]);
     }
     appliesTo(objectPath) {
