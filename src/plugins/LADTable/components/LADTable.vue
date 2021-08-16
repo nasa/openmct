@@ -22,19 +22,17 @@
 
 <template>
 <div class="c-lad-table-wrapper u-style-receiver js-style-receiver">
-    <table class="c-table c-lad-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Timestamp</th>
-                <th>Value</th>
-                <th v-if="hasUnits">Unit</th>
-            </tr>
-        </thead>
+    <table v-for="ladRow in items"
+           :key="ladRow.key"
+           class="c-table c-lad-table"
+    >
+        <lad-head
+            :item="ladRow"
+            :columnNames="columnNames(ladRow)"
+        />
         <tbody>
             <lad-row
-                v-for="ladRow in items"
-                :key="ladRow.key"
+                :col-names="columnNames(ladRow)"
                 :domain-object="ladRow.domainObject"
                 :path-to-table="objectPath"
                 :has-units="hasUnits"
@@ -47,10 +45,12 @@
 
 <script>
 import LadRow from './LADRow.vue';
+import LadHead from './LADHead.vue';
 
 export default {
     components: {
-        LadRow
+        LadRow,
+        LadHead
     },
     inject: ['openmct', 'currentView'],
     props: {
@@ -94,6 +94,13 @@ export default {
         this.composition.off('reorder', this.reorder);
     },
     methods: {
+        columnNames(item) {
+            let metadata = this.openmct.telemetry.getMetadata(item.domainObject);
+            let valueMetadata = metadata
+                .valuesForHints(['range']);
+
+            return valueMetadata.map(value => value.key);
+        },
         addItem(domainObject) {
             let item = {};
             item.domainObject = domainObject;

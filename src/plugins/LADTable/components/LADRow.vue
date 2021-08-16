@@ -63,6 +63,10 @@ export default {
         hasUnits: {
             type: Boolean,
             requred: true
+        },
+        colNames: {
+            type: Array,
+            required: true
         }
     },
     data() {
@@ -82,6 +86,7 @@ export default {
         }
     },
     mounted() {
+        console.log(this.colNames);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
