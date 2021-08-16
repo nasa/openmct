@@ -323,6 +323,8 @@ export default {
                 return;
             }
 
+            this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+
             this.startLoading();
             const options = {
                 size: this.$parent.$refs.plotWrapper.offsetWidth,
