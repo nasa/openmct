@@ -36,11 +36,14 @@ fdescribe('Open MCT Layout:', () => {
     let inspectorPane;
     let inspectorCollapseButton;
     let inspectorExpandButton;
-    let changeHash;
 
     beforeEach((done) => {
         openmct = createOpenMct();
         openmct.on('start', done);
+
+        // spyOn(openmct.objectViews, 'get')
+        //     .and.callFake(() => Promise.resolve([]));
+
         openmct.startHeadless();
     });
 
@@ -49,85 +52,52 @@ fdescribe('Open MCT Layout:', () => {
     });
 
     describe('the tree pane:', () => {
-        it('is diplayed on layout load', () => {
-            createLayout();
+        it('is displayed on layout load', async () => {
+            await createLayout();
+            await Vue.nextTick();
 
             expect(treePane).toBeTruthy();
             expect(isCollapsed(treePane)).toBeFalse();
         });
 
-        it('is collapsed on layout load if specified by a hide param', (done) => {
-            let paramChanged;
-            let currentHideParam = openmct.router.getSearchParam('hideTree');
-
-            changeHash = () => {
-                createLayout();
-                paramChanged = openmct.router.getSearchParam('hideTree') !== currentHideParam;
-
-                if (paramChanged) {
-                    expect(isCollapsed(treePane)).toBeTrue();
-
-                    openmct.router.removeListener('change:hash', changeHash);
-                    done();
-                }
-            };
-
-            openmct.router.on('change:hash', changeHash);
+        it('is collapsed on layout load if specified by a hide param', async () => {
             openmct.router.setSearchParam('hideTree', true);
+
+            await createLayout();
+            await Vue.nextTick();
+
+            expect(isCollapsed(treePane)).toBeTrue();
         });
 
-        it('on toggle collapses if expanded', (done) => {
-            let paramChanged;
-            let currentHideParam = openmct.router.getSearchParam('hideTree');
-
-            changeHash = () => {
-                paramChanged = openmct.router.getSearchParam('hideTree') !== currentHideParam;
-
-                if (paramChanged) {
-                    expect(isCollapsed(treePane)).toBeTrue();
-                    expect(openmct.router.getSearchParam('hideTree')).toEqual('true');
-
-                    openmct.router.removeListener('change:hash', changeHash);
-                    done();
-                }
-            };
-
-            openmct.router.on('change:hash', changeHash);
-            createLayout();
-
+        it('on toggle collapses if expanded', async () => {
+            await createLayout();
             treeCollapseButton.click();
+            await Vue.nextTick();
+
+            const isHideParamSet = openmct.router.getSearchParam('hideTree') === 'true';
+            expect(isHideParamSet).toBeTrue();
+            expect(isCollapsed(treePane)).toBeTrue();
         });
 
-        it('on toggle expands if collapsed', (done) => {
-            let paramChanged;
-            let currentHideParam = openmct.router.getSearchParam('hideTree');
-
-            changeHash = () => {
-                paramChanged = openmct.router.getSearchParam('hideTree') !== currentHideParam;
-
-                if (paramChanged) {
-                    expect(isCollapsed(treePane)).toBeFalse();
-                    expect(openmct.router.getSearchParam('hideTree')).not.toEqual('true');
-
-                    openmct.router.removeListener('change:hash', changeHash);
-                    done();
-                }
-            };
-
-            openmct.router.on('change:hash', changeHash);
+        it('on toggle expands if collapsed', async () => {
             openmct.router.setSearchParam('hideTree', true);
-            createLayout();
 
+            await createLayout();
             treeExpandButton.click();
+            await Vue.nextTick();
+
+            const isHideParamSet = openmct.router.getSearchParam('hideTree') === 'true';
+            expect(isHideParamSet).toBeFalse();
+            expect(isCollapsed(treePane)).toBeFalse();
         });
     });
 
-    function createLayout() {
+    async function createLayout() {
         const el = document.createElement('div');
         const child = document.createElement('div');
         el.appendChild(child);
 
-        element = new Vue({
+        element = await new Vue({
             el,
             components: {
                 Layout
