@@ -36,7 +36,7 @@ export default class MCTChartSeriesElement {
         this.listenTo(series, 'remove', this.remove, this);
         this.listenTo(series, 'reset', this.reset, this);
         this.listenTo(series, 'destroy', this.destroy, this);
-        series.data.forEach(function (point, index) {
+        this.series.getSeriesData().forEach(function (point, index) {
             this.append(point, index, series);
         }, this);
     }
@@ -133,7 +133,7 @@ export default class MCTChartSeriesElement {
         this.buffer = new Float32Array(20000);
         this.count = 0;
         if (this.offset.x) {
-            this.series.data.forEach(function (point, index) {
+            this.series.getSeriesData().forEach(function (point, index) {
                 this.append(point, index, this.series);
             }, this);
         }
