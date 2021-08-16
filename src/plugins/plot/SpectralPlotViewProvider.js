@@ -24,6 +24,28 @@ import SpectralView from './chart/spectral-view.vue';
 import Vue from 'vue';
 
 export default function SpectralPlotViewProvider(openmct) {
+    function hasSpectralDomainAndRange(metadata) {
+        const rangeValues = metadata.valuesForHints(['range']);
+        const domainValues = metadata.valuesForHints(['domain']);
+        const containsSomeSpectralData = domainValues.some(value => {
+            return ((value.key === 'wavelength') || (value.key === 'frequency'));
+        });
+
+        return rangeValues.length > 0
+        && domainValues.length > 0
+        && containsSomeSpectralData;
+    }
+
+    function hasSpectralTelemetry(domainObject) {
+        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+            return false;
+        }
+
+        let metadata = openmct.telemetry.getMetadata(domainObject);
+
+        return metadata.values().length > 0 && hasSpectralDomainAndRange(metadata);
+    }
+
     function isCompactView(objectPath) {
         return objectPath.find(object => object.type === 'time-strip');
     }
@@ -33,11 +55,11 @@ export default function SpectralPlotViewProvider(openmct) {
         name: 'Spectral Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.spectral';
+            return hasSpectralTelemetry(domainObject);
         },
 
         canEdit(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.spectral';
+            return hasSpectralTelemetry(domainObject);
         },
 
         view: function (domainObject, objectPath) {

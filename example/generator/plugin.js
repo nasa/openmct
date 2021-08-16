@@ -72,6 +72,7 @@ define([
                 object.telemetry = {
                     period: 10,
                     amplitude: 1,
+                    wavelength: 1,
                     offset: 0,
                     dataRateInHz: 1,
                     phase: 0,
