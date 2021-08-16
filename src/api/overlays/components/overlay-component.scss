@@ -21,8 +21,7 @@
 
     &__outer {
         @include abs();
-        background: $overlayColorBg;
-        color: $overlayColorFg;
+        background: $colorBodyBg;
         display: flex;
         flex-direction: column;
         padding: $overlayInnerMargin;
@@ -30,7 +29,6 @@
 
     &__close-button {
         $p: $interiorMargin + 2px;
-        color: $overlayColorFg;
         font-size: 1.5em;
         position: absolute;
         top: $p; right: $p;
@@ -82,11 +80,6 @@
         }
     }
 
-    .c-button,
-    .c-click-icon {
-        filter: $overlayBrightnessAdjust;
-    }
-
     .c-object-label__name {
         filter: $objectLabelNameFilter;
     }
@@ -103,6 +96,7 @@ body.desktop {
     }
 
     // Overlay types, styling for desktop. Appended to .l-overlay-wrapper element.
+    .l-overlay-large,
     .l-overlay-small,
     .l-overlay-fit {
         .c-overlay__outer {
@@ -124,12 +118,8 @@ body.desktop {
         $tbPad: floor($pad * 0.8);
         $lrPad: $pad;
         .c-overlay {
-            &__blocker {
-                display: none;
-            }
-
             &__outer {
-                @include overlaySizing($overlayOuterMarginFullscreen);
+                @include overlaySizing($overlayOuterMarginLarge);
                 padding: $tbPad $lrPad;
             }
 

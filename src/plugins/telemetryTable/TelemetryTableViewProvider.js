@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,96 +20,35 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './components/table.vue',
-    './TelemetryTable',
-    'vue'
-], function (
-    TableComponent,
-    TelemetryTable,
-    Vue
-) {
-    function TelemetryTableViewProvider(openmct) {
-        function hasTelemetry(domainObject) {
-            if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-                return false;
-            }
+import TelemetryTableView from './TelemetryTableView';
 
-            let metadata = openmct.telemetry.getMetadata(domainObject);
-
-            return metadata.values().length > 0;
+export default function TelemetryTableViewProvider(openmct) {
+    function hasTelemetry(domainObject) {
+        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+            return false;
         }
 
-        return {
-            key: 'table',
-            name: 'Telemetry Table',
-            cssClass: 'icon-tabular-realtime',
-            canView(domainObject) {
-                return domainObject.type === 'table'
-                    || hasTelemetry(domainObject);
-            },
-            canEdit(domainObject) {
-                return domainObject.type === 'table';
-            },
-            view(domainObject, objectPath) {
-                let table = new TelemetryTable(domainObject, openmct);
-                let component;
-                let markingProp = {
-                    enable: true,
-                    useAlternateControlBar: false,
-                    rowName: '',
-                    rowNamePlural: ''
-                };
-                const view = {
-                    show: function (element, editMode) {
-                        component = new Vue({
-                            el: element,
-                            components: {
-                                TableComponent: TableComponent.default
-                            },
-                            data() {
-                                return {
-                                    isEditing: editMode,
-                                    markingProp,
-                                    view
-                                };
-                            },
-                            provide: {
-                                openmct,
-                                table,
-                                objectPath
-                            },
-                            template: '<table-component ref="tableComponent" :isEditing="isEditing" :marking="markingProp" :view="view"/>'
-                        });
-                    },
-                    onEditModeChange(editMode) {
-                        component.isEditing = editMode;
-                    },
-                    onClearData() {
-                        table.clearData();
-                    },
-                    getViewContext() {
-                        if (component) {
-                            return component.$refs.tableComponent.getViewContext();
-                        } else {
-                            return {
-                                type: 'telemetry-table'
-                            };
-                        }
-                    },
-                    destroy: function (element) {
-                        component.$destroy();
-                        component = undefined;
-                    }
-                };
+        let metadata = openmct.telemetry.getMetadata(domainObject);
 
-                return view;
-            },
-            priority() {
-                return 1;
-            }
-        };
+        return metadata.values().length > 0;
     }
 
-    return TelemetryTableViewProvider;
-});
+    return {
+        key: 'table',
+        name: 'Telemetry Table',
+        cssClass: 'icon-tabular-realtime',
+        canView(domainObject) {
+            return domainObject.type === 'table'
+                || hasTelemetry(domainObject);
+        },
+        canEdit(domainObject) {
+            return domainObject.type === 'table';
+        },
+        view(domainObject, objectPath) {
+            return new TelemetryTableView(openmct, domainObject, objectPath);
+        },
+        priority() {
+            return 1;
+        }
+    };
+}

@@ -1,6 +1,6 @@
 
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -50,13 +50,13 @@ const CONTEXT_MENU_ACTIONS = [
 ];
 
 export default {
-    inject: ['openmct'],
+    inject: ['openmct', 'currentView'],
     props: {
         domainObject: {
             type: Object,
             required: true
         },
-        objectPath: {
+        pathToTable: {
             type: Array,
             required: true
         },
@@ -66,20 +66,19 @@ export default {
         }
     },
     data() {
-        let currentObjectPath = this.objectPath.slice();
-        currentObjectPath.unshift(this.domainObject);
-
         return {
             timestamp: undefined,
             value: '---',
             valueClass: '',
-            currentObjectPath,
             unit: ''
         };
     },
     computed: {
         formattedTimestamp() {
             return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
+        },
+        objectPath() {
+            return [this.domainObject, ...this.pathToTable];
         }
     },
     mounted() {
@@ -168,25 +167,23 @@ export default {
             this.resetValues();
             this.timestampKey = timeSystem.key;
         },
-        getView() {
-            return {
-                getViewContext: () => {
-                    return {
-                        viewHistoricalData: true,
-                        viewDatumAction: true,
-                        getDatum: () => {
-                            return this.datum;
-                        }
-                    };
+        updateViewContext() {
+            this.$emit('rowContextClick', {
+                viewHistoricalData: true,
+                viewDatumAction: true,
+                getDatum: () => {
+                    return this.datum;
                 }
-            };
+            });
         },
         showContextMenu(event) {
-            let actionCollection = this.openmct.actions.get(this.currentObjectPath, this.getView());
-            let allActions = actionCollection.getActionsObject();
-            let applicableActions = CONTEXT_MENU_ACTIONS.map(key => allActions[key]);
+            this.updateViewContext();
 
-            this.openmct.menus.showMenu(event.x, event.y, applicableActions);
+            const actions = CONTEXT_MENU_ACTIONS.map(key => this.openmct.actions.getAction(key));
+            const menuItems = this.openmct.menus.actionsToMenuItems(actions, this.objectPath, this.currentView);
+            if (menuItems.length) {
+                this.openmct.menus.showMenu(event.x, event.y, menuItems);
+            }
         },
         resetValues() {
             this.value = '---';

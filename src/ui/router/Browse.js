@@ -10,16 +10,14 @@ define([
         let unobserve = undefined;
         let currentObjectPath;
         let isRoutingInProgress = false;
-        let mutable;
 
         openmct.router.route(/^\/browse\/?$/, navigateToFirstChildOfRoot);
-
         openmct.router.route(/^\/browse\/(.*)$/, (path, results, params) => {
             isRoutingInProgress = true;
             let navigatePath = results[1];
             clearMutationListeners();
+
             navigateToPath(navigatePath, params.view);
-            onParamsChanged(null, null, params);
         });
 
         openmct.router.on('change:params', onParamsChanged);
@@ -38,24 +36,10 @@ define([
         }
 
         function viewObject(object, viewProvider) {
-            if (mutable) {
-                openmct.objects.destroyMutable(mutable);
-                mutable = undefined;
-            }
-
-            if (openmct.objects.supportsMutation(object)) {
-                mutable = openmct.objects._toMutable(object);
-            }
-
             currentObjectPath = openmct.router.path;
 
-            if (mutable !== undefined) {
-                openmct.layout.$refs.browseObject.show(mutable, viewProvider.key, true, currentObjectPath);
-                openmct.layout.$refs.browseBar.domainObject = mutable;
-            } else {
-                openmct.layout.$refs.browseObject.show(object, viewProvider.key, true, currentObjectPath);
-                openmct.layout.$refs.browseBar.domainObject = object;
-            }
+            openmct.layout.$refs.browseObject.show(object, viewProvider.key, true, currentObjectPath);
+            openmct.layout.$refs.browseBar.domainObject = object;
 
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }
@@ -100,13 +84,13 @@ define([
 
                 document.title = browseObject.name; //change document title to current object in main view
 
-                if (currentProvider && currentProvider.canView(browseObject)) {
+                if (currentProvider && currentProvider.canView(browseObject, openmct.router.path)) {
                     viewObject(browseObject, currentProvider);
 
                     return;
                 }
 
-                let defaultProvider = openmct.objectViews.get(browseObject)[0];
+                let defaultProvider = openmct.objectViews.get(browseObject, openmct.router.path)[0];
                 if (defaultProvider) {
                     openmct.router.updateParams({
                         view: defaultProvider.key
@@ -133,18 +117,21 @@ define([
         }
 
         function navigateToFirstChildOfRoot() {
-            openmct.objects.get('ROOT').then(rootObject => {
-                openmct.composition.get(rootObject).load()
-                    .then(children => {
-                        let lastChild = children[children.length - 1];
-                        if (!lastChild) {
-                            console.error('Unable to navigate to anything. No root objects found.');
-                        } else {
-                            let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
-                            openmct.router.setPath(`#/browse/${lastChildId}`);
-                        }
-                    });
-            });
+            openmct.objects.get('ROOT')
+                .then(rootObject => {
+                    openmct.composition.get(rootObject).load()
+                        .then(children => {
+                            let lastChild = children[children.length - 1];
+                            if (!lastChild) {
+                                console.error('Unable to navigate to anything. No root objects found.');
+                            } else {
+                                let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
+                                openmct.router.setPath(`#/browse/${lastChildId}`);
+                            }
+                        })
+                        .catch(e => console.error(e));
+                })
+                .catch(e => console.error(e));
         }
 
         function clearMutationListeners() {

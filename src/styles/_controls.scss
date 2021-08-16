@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -445,19 +445,27 @@ select {
 
 /******************************************************** HYPERLINKS AND HYPERLINK BUTTONS */
 .c-hyperlink {
-    &--link {
-        color: $colorKey;
-    }
+    display: inline-block;
+    color: $colorKey;
 
     &--button {
         @include cButton();
     }
 }
 
+.c-so-view--no-frame > .c-so-view__object-view > .c-hyperlink--button {
+    @include abs();
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
 /******************************************************** MENUS */
 @mixin menuOuter() {
     border-radius: $basicCr;
     background: $colorMenuBg;
+    filter: $filterMenu;
     text-shadow: $shdwMenuText;
     padding: $interiorMarginSm;
     box-shadow: $shdwMenu;

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -59,7 +59,7 @@ describe("The UTC Time System", () => {
         it("can be set to be the main time system", () => {
             openmct.time.timeSystem(UTC_SYSTEM_AND_FORMAT_KEY, {
                 start: 0,
-                end: 4
+                end: 1
             });
 
             expect(openmct.time.timeSystem().key).toBe(UTC_SYSTEM_AND_FORMAT_KEY);

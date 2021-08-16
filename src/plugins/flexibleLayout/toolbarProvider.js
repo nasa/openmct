@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -97,7 +97,7 @@ function ToolbarProvider(openmct) {
                             message: `This action will remove this frame from this Flexible Layout. Do you want to continue?`,
                             buttons: [
                                 {
-                                    label: 'Ok',
+                                    label: 'OK',
                                     emphasis: 'true',
                                     callback: function () {
                                         deleteFrameAction(primary.context.frameId);
@@ -162,7 +162,7 @@ function ToolbarProvider(openmct) {
                             message: 'This action will permanently delete this container from this Flexible Layout',
                             buttons: [
                                 {
-                                    label: 'Ok',
+                                    label: 'OK',
                                     emphasis: 'true',
                                     callback: function () {
                                         removeContainer(containerId);

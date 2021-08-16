@@ -1,6 +1,6 @@
 <template>
 <div class="c-list__item js-list__item"
-     :class="[{ 'is-selected': section.isSelected, 'is-notebook-default' : (defaultSectionId === section.id) }]"
+     :class="[{ 'is-selected': isSelected, 'is-notebook-default' : (defaultSectionId === section.id) }]"
      :data-id="section.id"
      @click="selectSection"
 >
@@ -13,24 +13,25 @@
 </div>
 </template>
 
-<style lang="scss">
-</style>
-
 <script>
 import PopupMenu from './PopupMenu.vue';
 import RemoveDialog from '../utils/removeDialog';
 
 export default {
-    inject: ['openmct'],
     components: {
         PopupMenu
     },
+    inject: ['openmct'],
     props: {
         defaultSectionId: {
             type: String,
             default() {
                 return '';
             }
+        },
+        selectedSectionId: {
+            type: String,
+            required: true
         },
         section: {
             type: Object,
@@ -48,6 +49,11 @@ export default {
             popupMenuItems: [],
             removeActionString: `Delete ${this.sectionTitle}`
         };
+    },
+    computed: {
+        isSelected() {
+            return this.selectedSectionId === this.section.id;
+        }
     },
     watch: {
         section(newSection) {
@@ -76,7 +82,7 @@ export default {
             this.$emit('deleteSection', this.section.id);
         },
         getRemoveDialog() {
-            const message = 'This action will delete this section and all of its pages and entries. Do you want to continue?';
+            const message = 'Other users may be editing entries in this section, and deleting it is permanent. Do you want to continue?';
             const options = {
                 name: this.removeActionString,
                 callback: this.deleteSection.bind(this),

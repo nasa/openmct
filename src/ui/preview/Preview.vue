@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 <template>
-<div class="l-preview-window">
+<div class="l-preview-window js-preview-window">
     <PreviewHeader
         :current-view="currentView"
         :action-collection="actionCollection"
@@ -58,7 +58,7 @@ export default {
         };
     },
     mounted() {
-        this.views = this.openmct.objectViews.get(this.domainObject).map((view) => {
+        this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view) => {
             view.callBack = () => {
                 return this.setView(view);
             };
@@ -116,7 +116,7 @@ export default {
                 this.actionCollection.destroy();
             }
 
-            this.actionCollection = this.openmct.actions._get(this.objectPath, this.view);
+            this.actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.view);
         },
         initObjectStyles() {
             if (!this.styleRuleManager) {

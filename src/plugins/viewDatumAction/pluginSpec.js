@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -57,15 +57,15 @@ describe("the plugin", () => {
         mockView = {
             getViewContext: () => {
                 return {
-                    viewDatumAction: true,
-                    getDatum: () => {
-                        return mockDatum;
+                    row: {
+                        viewDatumAction: true,
+                        getDatum: () => {
+                            return mockDatum;
+                        }
                     }
                 };
             }
         };
-
-        done();
     });
 
     afterEach(() => {

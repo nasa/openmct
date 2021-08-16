@@ -19,7 +19,8 @@
                 ></span>
             </div>
             <span
-                class="l-browse-bar__object-name c-object-label__name c-input-inline"
+                class="l-browse-bar__object-name c-object-label__name"
+                :class="{ 'c-input-inline' : type.creatable}"
                 :contenteditable="type.creatable"
                 @blur="updateName"
                 @keydown.enter.prevent
@@ -31,7 +32,7 @@
     </div>
 
     <div class="l-browse-bar__end">
-        <view-switcher
+        <ViewSwitcher
             v-if="!isEditing"
             :current-view="currentView"
             :views="views"
@@ -48,7 +49,7 @@
                 :key="index"
                 class="c-button"
                 :class="item.cssClass"
-                @click="item.callBack"
+                @click="item.onItemClicked"
             >
             </button>
 
@@ -124,11 +125,11 @@ import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwit
 const PLACEHOLDER_OBJECT = {};
 
 export default {
-    inject: ['openmct'],
     components: {
         NotebookMenuSwitcher,
         ViewSwitcher
     },
+    inject: ['openmct'],
     props: {
         actionCollection: {
             type: Object,
@@ -158,33 +159,35 @@ export default {
             return this.views.filter(v => v.key === this.viewKey)[0] || {};
         },
         views() {
+            if (this.domainObject && (this.openmct.router.started !== true)) {
+                return [];
+            }
+
             return this
                 .openmct
                 .objectViews
-                .get(this.domainObject)
+                .get(this.domainObject, this.openmct.router.path)
                 .map((p) => {
                     return {
                         key: p.key,
                         cssClass: p.cssClass,
                         name: p.name,
-                        callBack: () => {
-                            return this.setView({key: p.key});
-                        }
+                        onItemClicked: () => this.setView({key: p.key})
                     };
                 });
         },
         hasParent() {
             return this.domainObject !== PLACEHOLDER_OBJECT
-                    && this.parentUrl !== '#/browse';
+                    && this.parentUrl !== '/browse';
         },
         parentUrl() {
-            let objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            let hash = window.location.hash;
+            const objectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            const hash = this.openmct.router.getCurrentLocation().path;
 
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
         },
         type() {
-            let objectType = this.openmct.types.get(this.domainObject.type);
+            const objectType = this.openmct.types.get(this.domainObject.type);
             if (!objectType) {
                 return {};
             }
@@ -196,7 +199,7 @@ export default {
             if (currentViewKey !== undefined) {
                 let currentViewProvider = this.openmct.objectViews.getByProviderKey(currentViewKey);
 
-                return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject);
+                return currentViewProvider.canEdit && currentViewProvider.canEdit(this.domainObject, this.openmct.router.path);
             }
 
             return false;
@@ -283,7 +286,7 @@ export default {
                 message: 'Any unsaved changes will be lost. Are you sure you want to continue?',
                 buttons: [
                     {
-                        label: 'Ok',
+                        label: 'OK',
                         emphasis: true,
                         callback: () => {
                             this.openmct.editor.cancel().then(() => {
@@ -331,15 +334,17 @@ export default {
             });
         },
         goToParent() {
-            window.location.hash = this.parentUrl;
+            this.openmct.router.navigate(this.parentUrl);
         },
         updateActionItems(actionItems) {
-            this.statusBarItems = this.actionCollection.getStatusBarActions();
+            const statusBarItems = this.actionCollection.getStatusBarActions();
+            this.statusBarItems = this.openmct.menus.actionsToMenuItems(statusBarItems, this.actionCollection.objectPath, this.actionCollection.view);
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
         showMenuItems(event) {
-            let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
-            this.openmct.menus.showMenu(event.x, event.y, sortedActions);
+            const sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
+            const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, this.actionCollection.objectPath, this.actionCollection.view);
+            this.openmct.menus.showMenu(event.x, event.y, menuItems);
         },
         unlistenToActionCollection() {
             this.actionCollection.off('update', this.updateActionItems);

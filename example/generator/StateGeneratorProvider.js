@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -63,7 +63,7 @@ define([
 
     StateGeneratorProvider.prototype.request = function (domainObject, options) {
         var start = options.start;
-        var end = options.end;
+        var end = Math.min(Date.now(), options.end); // no future values
         var duration = domainObject.telemetry.duration * 1000;
         if (options.strategy === 'latest' || options.size === 1) {
             start = end;

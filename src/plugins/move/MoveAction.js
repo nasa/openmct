@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,7 +37,14 @@ export default class MoveAction {
         let oldParent = objectPath[1];
         let dialogService = this.openmct.$injector.get('dialogService');
         let dialogForm = this.getDialogForm(object, oldParent);
-        let userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
+        let userInput;
+
+        try {
+            userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
+        } catch (err) {
+            // user canceled, most likely
+            return;
+        }
 
         // if we need to update name
         if (object.name !== userInput.name) {
@@ -104,13 +111,13 @@ export default class MoveAction {
                         {
                             key: "name",
                             control: "textfield",
-                            name: "Folder Name",
+                            name: "Name",
                             pattern: "\\S+",
                             required: true,
                             cssClass: "l-input-lg"
                         },
                         {
-                            name: "location",
+                            name: "Location",
                             control: "locator",
                             validate: this.validate(object, parent),
                             key: 'location'

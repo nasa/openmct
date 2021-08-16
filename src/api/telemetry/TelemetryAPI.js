@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+const { TelemetryCollection } = require("./TelemetryCollection");
 
 define([
     '../../plugins/displayLayout/CustomStringFormatter',
@@ -274,6 +276,28 @@ define([
     };
 
     /**
+     * Request telemetry collection for a domain object.
+     * The `options` argument allows you to specify filters
+     * (start, end, etc.), sort order, and strategies for retrieving
+     * telemetry (aggregation, latest available, etc.).
+     *
+     * @method requestTelemetryCollection
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     * @param {module:openmct.DomainObject} domainObject the object
+     *        which has associated telemetry
+     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+     *        options for this telemetry collection request
+     * @returns {TelemetryCollection} a TelemetryCollection instance
+     */
+    TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject, options = {}) {
+        return new TelemetryCollection(
+            this.openmct,
+            domainObject,
+            options
+        );
+    };
+
+    /**
      * Request historical telemetry for a domain object.
      * The `options` argument allows you to specify filters
      * (start, end, etc.), sort order, and strategies for retrieving
@@ -505,6 +529,26 @@ define([
     };
 
     /**
+     * Get a limits for this domain object.
+     * Limits help you display limits and alarms of
+     * telemetry for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to get limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limits
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.limitDefinition = function (domainObject) {
+        return this.getLimits(domainObject);
+    };
+
+    /**
      * Get a limit evaluator for this domain object.
      * Limit Evaluators help you evaluate limit and alarm status of individual
      * telemetry datums for display purposes without having to interact directly
@@ -529,6 +573,46 @@ define([
         }
 
         return provider.getLimitEvaluator(domainObject);
+    };
+
+    /**
+     * Get a limit definitions for this domain object.
+     * Limit Definitions help you indicate limits and alarms of
+     * telemetry for display purposes without having to interact directly
+     * with the Limit API.
+     *
+     * This method is optional.
+     * If a provider does not implement this method, it is presumed
+     * that no limits are defined for this domain object's telemetry.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain
+     *        object for which to display limits
+     * @returns {module:openmct.TelemetryAPI~LimitEvaluator}
+     * @method limits returns a limits object of
+     * type {
+     *          level1: {
+     *              low: { key1: value1, key2: value2, color: <supportedColor> },
+     *              high: { key1: value1, key2: value2, color: <supportedColor> }
+     *          },
+     *          level2: {
+     *              low: { key1: value1, key2: value2 },
+     *              high: { key1: value1, key2: value2 }
+     *          }
+     *       }
+     *  supported colors are purple, red, orange, yellow and cyan
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     */
+    TelemetryAPI.prototype.getLimits = function (domainObject) {
+        const provider = this.findLimitEvaluator(domainObject);
+        if (!provider || !provider.getLimits) {
+            return {
+                limits: function () {
+                    return Promise.resolve(undefined);
+                }
+            };
+        }
+
+        return provider.getLimits(domainObject);
     };
 
     return TelemetryAPI;

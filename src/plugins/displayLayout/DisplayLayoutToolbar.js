@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -235,7 +235,7 @@ define(['lodash'], function (_) {
                                 message: `Warning! This action will remove this item from the Display Layout. Do you want to continue?`,
                                 buttons: [
                                     {
-                                        label: 'Ok',
+                                        label: 'OK',
                                         emphasis: 'true',
                                         callback: function () {
                                             removeItem(getAllTypes(selection));

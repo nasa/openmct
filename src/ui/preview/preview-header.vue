@@ -24,7 +24,7 @@
                 :key="index"
                 class="c-button"
                 :class="item.cssClass"
-                @click="item.callBack"
+                @click="item.onItemClicked"
             >
             </button>
             <button
@@ -42,16 +42,17 @@ import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
 const HIDDEN_ACTIONS = [
     'remove',
     'move',
-    'preview'
+    'preview',
+    'large.view'
 ];
 
 export default {
-    inject: [
-        'openmct'
-    ],
     components: {
         ViewSwitcher
     },
+    inject: [
+        'openmct'
+    ],
     props: {
         currentView: {
             type: Object,
@@ -107,7 +108,25 @@ export default {
             this.updateActionItems(this.actionCollection.getActionsObject());
         }
     },
+    destroyed() {
+        if (this.actionCollection) {
+            this.actionCollection.off('update', this.updateActionItems);
+        }
+    },
     methods: {
+        filterHiddenItems(menuItems) {
+            const items = [];
+            menuItems.forEach(menuItem => {
+                const isGroup = Array.isArray(menuItem);
+                if (isGroup) {
+                    items.push(this.filterHiddenItems(menuItem));
+                } else if (!HIDDEN_ACTIONS.includes(menuItem.key)) {
+                    items.push(menuItem);
+                }
+            });
+
+            return items;
+        },
         setView(view) {
             this.$emit('setView', view);
         },
@@ -116,13 +135,16 @@ export default {
             delete this.actionCollection;
         },
         updateActionItems() {
-            this.actionCollection.hide(HIDDEN_ACTIONS);
-            this.statusBarItems = this.actionCollection.getStatusBarActions();
+            const statusBarItems = this.actionCollection.getStatusBarActions();
+            const menuItems = this.openmct.menus.actionsToMenuItems(statusBarItems, this.actionCollection.objectPath, this.actionCollection.view);
+            this.statusBarItems = this.filterHiddenItems(menuItems);
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
         showMenuItems(event) {
             let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
-            this.openmct.menus.showMenu(event.x, event.y, sortedActions);
+            const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, this.actionCollection.objectPath, this.actionCollection.view);
+            const visibleMenuItems = this.filterHiddenItems(menuItems);
+            this.openmct.menus.showMenu(event.x, event.y, visibleMenuItems);
         }
     }
 };

@@ -19,8 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import RemoveActionPlugin from './plugin.js';
-import RemoveAction from './RemoveAction.js';
 import {
     createOpenMct,
     resetApplicationState,
@@ -36,10 +34,6 @@ describe("The Remove Action plugin", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
 
         childObject = getMockObjects({
@@ -64,25 +58,23 @@ describe("The Remove Action plugin", () => {
             }
         }).folder;
 
-        // already installed by default, but never hurts, just adds to context menu
-        openmct.install(RemoveActionPlugin());
-
         openmct.on('start', done);
-        openmct.startHeadless(appHolder);
+        openmct.startHeadless();
+
+        removeAction = openmct.actions._allActions.remove;
     });
 
     afterEach(() => {
-        resetApplicationState(openmct);
+        return resetApplicationState(openmct);
     });
 
     it("should be defined", () => {
-        expect(RemoveActionPlugin).toBeDefined();
+        expect(removeAction).toBeDefined();
     });
 
     describe("when removing an object from a parent composition", () => {
 
         beforeEach(() => {
-            removeAction = new RemoveAction(openmct);
             spyOn(removeAction, 'removeFromComposition').and.callThrough();
             spyOn(removeAction, 'inNavigationPath').and.returnValue(false);
             spyOn(openmct.objects, 'mutate').and.callThrough();
@@ -103,7 +95,6 @@ describe("The Remove Action plugin", () => {
     describe("when determining the object is applicable", () => {
 
         beforeEach(() => {
-            removeAction = new RemoveAction(openmct);
             spyOn(removeAction, 'appliesTo').and.callThrough();
         });
 

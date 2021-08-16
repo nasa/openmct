@@ -36,11 +36,16 @@ export default {
             event.preventDefault();
             event.stopPropagation();
 
-            let actionsCollection = this.openmct.actions.get(this.objectPath);
+            let actionsCollection = this.openmct.actions.getActionsCollection(this.objectPath);
             let actions = actionsCollection.getVisibleActions();
             let sortedActions = this.openmct.actions._groupAndSortActions(actions);
 
-            this.openmct.menus.showMenu(event.clientX, event.clientY, sortedActions, this.onContextMenuDestroyed);
+            const menuOptions = {
+                onDestroy: this.onContextMenuDestroyed
+            };
+
+            const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, actionsCollection.objectPath, actionsCollection.view);
+            this.openmct.menus.showMenu(event.clientX, event.clientY, menuItems, menuOptions);
             this.contextClickActive = true;
             this.$emit('context-click-active', true);
         },

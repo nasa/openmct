@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -33,11 +33,12 @@
         </thead>
         <tbody>
             <lad-row
-                v-for="item in items"
-                :key="item.key"
-                :domain-object="item.domainObject"
-                :object-path="objectPath"
+                v-for="ladRow in items"
+                :key="ladRow.key"
+                :domain-object="ladRow.domainObject"
+                :path-to-table="objectPath"
                 :has-units="hasUnits"
+                @rowContextClick="updateViewContext"
             />
         </tbody>
     </table>
@@ -48,10 +49,10 @@
 import LadRow from './LADRow.vue';
 
 export default {
-    inject: ['openmct'],
     components: {
         LadRow
     },
+    inject: ['openmct', 'currentView'],
     props: {
         domainObject: {
             type: Object,
@@ -64,7 +65,8 @@ export default {
     },
     data() {
         return {
-            items: []
+            items: [],
+            viewContext: {}
         };
     },
     computed: {
@@ -114,6 +116,12 @@ export default {
             let metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
 
             return metadataWithUnits.length > 0;
+        },
+        updateViewContext(rowContext) {
+            this.viewContext.row = rowContext;
+        },
+        getViewContext() {
+            return this.viewContext;
         }
     }
 };

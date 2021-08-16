@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -75,8 +75,13 @@ export default class PreviewAction {
         PreviewAction.isVisible = true;
     }
 
-    appliesTo(objectPath) {
-        return !PreviewAction.isVisible && !this._isNavigatedObject(objectPath);
+    appliesTo(objectPath, view = {}) {
+        const parentElement = view.parentElement;
+        const isObjectView = parentElement && parentElement.classList.contains('js-object-view');
+
+        return !PreviewAction.isVisible
+            && !this._isNavigatedObject(objectPath)
+            && !isObjectView;
     }
 
     _isNavigatedObject(objectPath) {
@@ -85,6 +90,7 @@ export default class PreviewAction {
 
         return this._openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
+
     _preventPreview(objectPath) {
         const noPreviewTypes = ['folder'];
 

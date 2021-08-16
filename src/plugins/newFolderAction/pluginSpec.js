@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -79,7 +79,7 @@ describe("the plugin", () => {
             spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
             spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 
-            newFolderAction.invoke(mockObjectPath);
+            return newFolderAction.invoke(mockObjectPath);
         });
 
         it('gets user input for folder name', () => {

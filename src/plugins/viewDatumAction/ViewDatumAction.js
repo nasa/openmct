@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,14 +34,15 @@ export default class ViewDatumAction {
     }
     invoke(objectPath, view) {
         let viewContext = view.getViewContext && view.getViewContext();
-        let attributes = viewContext.getDatum && viewContext.getDatum();
+        const row = viewContext.row;
+        let attributes = row.getDatum && row.getDatum();
         let component = new Vue ({
+            components: {
+                MetadataListView
+            },
             provide: {
                 name: this.name,
                 attributes
-            },
-            components: {
-                MetadataListView
             },
             template: '<MetadataListView />'
         });
@@ -57,9 +58,13 @@ export default class ViewDatumAction {
     }
     appliesTo(objectPath, view = {}) {
         let viewContext = (view.getViewContext && view.getViewContext()) || {};
-        let datum = viewContext.getDatum;
-        let enabled = viewContext.viewDatumAction;
+        const row = viewContext.row;
+        if (!row) {
+            return false;
+        }
 
+        let datum = row.getDatum;
+        let enabled = row.viewDatumAction;
         if (enabled && datum) {
             return true;
         }

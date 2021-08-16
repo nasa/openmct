@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,10 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import {
-    getAllSearchParams,
-    setAllSearchParams
-} from 'utils/openmctLocation';
 
 const TIME_EVENTS = ['timeSystem', 'clock', 'clockOffsets'];
 const SEARCH_MODE = 'tc.mode';
@@ -50,8 +46,8 @@ export default class URLTimeSettingsSynchronizer {
 
     initialize() {
         this.updateTimeSettings();
+        this.openmct.router.on('change:params', this.updateTimeSettings);
 
-        window.addEventListener('hashchange', this.updateTimeSettings);
         TIME_EVENTS.forEach(event => {
             this.openmct.time.on(event, this.setUrlFromTimeApi);
         });
@@ -59,7 +55,8 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     destroy() {
-        window.removeEventListener('hashchange', this.updateTimeSettings);
+        this.openmct.router.off('change:params', this.updateTimeSettings);
+
         this.openmct.off('start', this.initialize);
         this.openmct.off('destroy', this.destroy);
 
@@ -70,22 +67,18 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     updateTimeSettings() {
-        // Prevent from triggering self
-        if (!this.isUrlUpdateInProgress) {
-            let timeParameters = this.parseParametersFromUrl();
+        let timeParameters = this.parseParametersFromUrl();
 
-            if (this.areTimeParametersValid(timeParameters)) {
-                this.setTimeApiFromUrl(timeParameters);
-            } else {
-                this.setUrlFromTimeApi();
-            }
+        if (this.areTimeParametersValid(timeParameters)) {
+            this.setTimeApiFromUrl(timeParameters);
+            this.openmct.router.setLocationFromUrl();
         } else {
-            this.isUrlUpdateInProgress = false;
+            this.setUrlFromTimeApi();
         }
     }
 
     parseParametersFromUrl() {
-        let searchParams = getAllSearchParams();
+        let searchParams = this.openmct.router.getAllSearchParams();
 
         let mode = searchParams.get(SEARCH_MODE);
         let timeSystem = searchParams.get(SEARCH_TIME_SYSTEM);
@@ -148,7 +141,7 @@ export default class URLTimeSettingsSynchronizer {
     }
 
     setUrlFromTimeApi() {
-        let searchParams = getAllSearchParams();
+        let searchParams = this.openmct.router.getAllSearchParams();
         let clock = this.openmct.time.clock();
         let bounds = this.openmct.time.bounds();
         let clockOffsets = this.openmct.time.clockOffsets();
@@ -176,8 +169,7 @@ export default class URLTimeSettingsSynchronizer {
         }
 
         searchParams.set(SEARCH_TIME_SYSTEM, this.openmct.time.timeSystem().key);
-        this.isUrlUpdateInProgress = true;
-        setAllSearchParams(searchParams);
+        this.openmct.router.setAllSearchParams(searchParams);
     }
 
     areTimeParametersValid(timeParameters) {

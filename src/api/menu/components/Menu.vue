@@ -1,20 +1,22 @@
 <template>
-<div class="c-menu">
-    <ul v-if="actions.length && actions[0].length">
+<div class="c-menu"
+     :class="options.menuClass"
+>
+    <ul v-if="options.actions.length && options.actions[0].length">
         <template
-            v-for="(actionGroups, index) in actions"
+            v-for="(actionGroups, index) in options.actions"
         >
             <li
                 v-for="action in actionGroups"
                 :key="action.name"
                 :class="[action.cssClass, action.isDisabled ? 'disabled' : '']"
                 :title="action.description"
-                @click="action.callBack"
+                @click="action.onItemClicked"
             >
                 {{ action.name }}
             </li>
             <div
-                v-if="index !== actions.length - 1"
+                v-if="index !== options.actions.length - 1"
                 :key="index"
                 class="c-menu__section-separator"
             >
@@ -30,15 +32,15 @@
 
     <ul v-else>
         <li
-            v-for="action in actions"
+            v-for="action in options.actions"
             :key="action.name"
             :class="action.cssClass"
             :title="action.description"
-            @click="action.callBack"
+            @click="action.onItemClicked"
         >
             {{ action.name }}
         </li>
-        <li v-if="actions.length === 0">
+        <li v-if="options.actions.length === 0">
             No actions defined.
         </li>
     </ul>
@@ -47,6 +49,6 @@
 
 <script>
 export default {
-    inject: ['actions']
+    inject: ['options']
 };
 </script>

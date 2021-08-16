@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -72,7 +72,7 @@
 <script>
 import LayoutFrame from './LayoutFrame.vue';
 import conditionalStylesMixin from "../mixins/objectStyles-mixin";
-import { getDefaultNotebook } from '@/plugins/notebook/utils/notebook-storage.js';
+import { getDefaultNotebook, getNotebookSectionAndPage } from '@/plugins/notebook/utils/notebook-storage.js';
 
 const DEFAULT_TELEMETRY_DIMENSIONS = [10, 5];
 const DEFAULT_POSITION = [1, 1];
@@ -98,11 +98,11 @@ export default {
             font: 'default'
         };
     },
-    inject: ['openmct', 'objectPath'],
     components: {
         LayoutFrame
     },
     mixins: [conditionalStylesMixin],
+    inject: ['openmct', 'objectPath', 'currentView'],
     props: {
         item: {
             type: Object,
@@ -131,7 +131,8 @@ export default {
             domainObject: undefined,
             formats: undefined,
             viewKey: `alphanumeric-format-${Math.random()}`,
-            status: ''
+            status: '',
+            mutablePromise: undefined
         };
     },
     computed: {
@@ -213,7 +214,7 @@ export default {
     },
     mounted() {
         if (this.openmct.objects.supportsMutation(this.item.identifier)) {
-            this.openmct.objects.getMutable(this.item.identifier)
+            this.mutablePromise = this.openmct.objects.getMutable(this.item.identifier)
                 .then(this.setObject);
         } else {
             this.openmct.objects.get(this.item.identifier)
@@ -235,7 +236,11 @@ export default {
 
         this.openmct.time.off("bounds", this.refreshData);
 
-        if (this.domainObject.isMutable) {
+        if (this.mutablePromise) {
+            this.mutablePromise.then(() => {
+                this.openmct.objects.destroyMutable(this.domainObject);
+            });
+        } else if (this.domainObject.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
@@ -264,7 +269,12 @@ export default {
         },
         subscribeToObject() {
             this.subscription = this.openmct.telemetry.subscribe(this.domainObject, function (datum) {
-                if (this.openmct.time.clock() !== undefined) {
+                const key = this.openmct.time.timeSystem().key;
+                const datumTimeStamp = datum[key];
+                if (this.openmct.time.clock() !== undefined
+                    || (datumTimeStamp
+                        && (this.openmct.time.bounds().end >= datumTimeStamp))
+                ) {
                     this.updateView(datum);
                 }
             }.bind(this));
@@ -284,18 +294,9 @@ export default {
                 this.requestHistoricalData(this.domainObject);
             }
         },
-        getView() {
-            return {
-                getViewContext: () => {
-                    return {
-                        viewHistoricalData: true,
-                        formattedValueForCopy: this.formattedValueForCopy
-                    };
-                }
-            };
-        },
         setObject(domainObject) {
             this.domainObject = domainObject;
+            this.mutablePromise = undefined;
             this.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
             this.limitEvaluator = this.openmct.telemetry.limitEvaluator(this.domainObject);
@@ -327,30 +328,41 @@ export default {
 
             this.$emit('formatChanged', this.item, format);
         },
+        updateViewContext() {
+            this.$emit('contextClick', {
+                viewHistoricalData: true,
+                formattedValueForCopy: this.formattedValueForCopy
+            });
+        },
         async getContextMenuActions() {
             const defaultNotebook = getDefaultNotebook();
-            const domainObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
-            const actionCollection = this.openmct.actions.get(this.currentObjectPath, this.getView());
-            const actionsObject = actionCollection.getActionsObject();
 
-            let copyToNotebookAction = actionsObject.copyToNotebook;
-
+            let defaultNotebookName;
             if (defaultNotebook) {
-                const defaultPath = domainObject && `${domainObject.name} - ${defaultNotebook.section.name} - ${defaultNotebook.page.name}`;
-                copyToNotebookAction.name = `Copy to Notebook ${defaultPath}`;
-            } else {
-                actionsObject.copyToNotebook = undefined;
-                delete actionsObject.copyToNotebook;
+                const domainObject = await this.openmct.objects.get(defaultNotebook.identifier);
+                const { section, page } = getNotebookSectionAndPage(domainObject, defaultNotebook.defaultSectionId, defaultNotebook.defaultPageId);
+                if (section && page) {
+                    const defaultPath = domainObject && `${domainObject.name} - ${section.name} - ${page.name}`;
+                    defaultNotebookName = `Copy to Notebook ${defaultPath}`;
+                }
             }
 
-            return CONTEXT_MENU_ACTIONS.map(actionKey => {
-                return actionsObject[actionKey];
-            }).filter(action => action !== undefined);
+            return CONTEXT_MENU_ACTIONS
+                .map(actionKey => {
+                    const action = this.openmct.actions.getAction(actionKey);
+                    if (action.key === 'copyToNotebook') {
+                        action.name = defaultNotebookName;
+                    }
+
+                    return action;
+                })
+                .filter(action => action.name !== undefined);
         },
         async showContextMenu(event) {
+            this.updateViewContext();
             const contextMenuActions = await this.getContextMenuActions();
-
-            this.openmct.menus.showMenu(event.x, event.y, contextMenuActions);
+            const menuItems = this.openmct.menus.actionsToMenuItems(contextMenuActions, this.currentObjectPath, this.currentView);
+            this.openmct.menus.showMenu(event.x, event.y, menuItems);
         },
         setStatus(status) {
             this.status = status;

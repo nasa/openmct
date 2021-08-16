@@ -28,6 +28,10 @@ export default {
         layoutFont: {
             type: String,
             default: ''
+        },
+        objectViewKey: {
+            type: String,
+            default: ''
         }
     },
     data() {
@@ -114,10 +118,11 @@ export default {
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         getStyleReceiver() {
-            let styleReceiver = this.$el.querySelector('.js-style-receiver');
+            let styleReceiver = this.$el.querySelector('.js-style-receiver')
+                || this.$el.querySelector(':first-child');
 
-            if (!styleReceiver) {
-                styleReceiver = this.$el.querySelector(':first-child');
+            if (styleReceiver === null) {
+                styleReceiver = undefined;
             }
 
             return styleReceiver;
@@ -138,12 +143,13 @@ export default {
             this.updateView(true);
         },
         updateStyle(styleObj) {
-            if (!styleObj) {
+            let elemToStyle = this.getStyleReceiver();
+
+            if (!styleObj || elemToStyle === undefined) {
                 return;
             }
 
             let keys = Object.keys(styleObj);
-            let elemToStyle = this.getStyleReceiver();
 
             keys.forEach(key => {
                 if (elemToStyle) {
@@ -203,7 +209,6 @@ export default {
                 }
             }
 
-            this.getActionCollection();
             this.currentView.show(this.viewContainer, this.openmct.editor.isEditing());
 
             if (immediatelySelect) {
@@ -212,13 +217,17 @@ export default {
             }
 
             this.openmct.objectViews.on('clearData', this.clearData);
+
+            this.$nextTick(() => {
+                this.getActionCollection();
+            });
         },
         getActionCollection() {
             if (this.actionCollection) {
                 this.actionCollection.destroy();
             }
 
-            this.actionCollection = this.openmct.actions._get(this.currentObjectPath || this.objectPath, this.currentView);
+            this.actionCollection = this.openmct.actions.getActionsCollection(this.currentObjectPath || this.objectPath, this.currentView);
             this.$emit('change-action-collection', this.actionCollection);
         },
         show(object, viewKey, immediatelySelect, currentObjectPath) {
@@ -303,11 +312,20 @@ export default {
                 event.stopPropagation();
             }
         },
+        getViewKey() {
+            let viewKey = this.viewKey;
+            if (this.objectViewKey) {
+                viewKey = this.objectViewKey;
+            }
+
+            return viewKey;
+        },
         getViewProvider() {
-            let provider = this.openmct.objectViews.getByProviderKey(this.viewKey);
+            let provider = this.openmct.objectViews.getByProviderKey(this.getViewKey());
 
             if (!provider) {
-                provider = this.openmct.objectViews.get(this.domainObject)[0];
+                let objectPath = this.currentObjectPath || this.objectPath;
+                provider = this.openmct.objectViews.get(this.domainObject, objectPath)[0];
                 if (!provider) {
                     return;
                 }
@@ -316,10 +334,11 @@ export default {
             return provider;
         },
         editIfEditable(event) {
+            let objectPath = this.currentObjectPath || this.objectPath;
             let provider = this.getViewProvider();
             if (provider
                 && provider.canEdit
-                && provider.canEdit(this.domainObject)
+                && provider.canEdit(this.domainObject, objectPath)
                 && this.isEditingAllowed()
                 && !this.openmct.editor.isEditing()) {
                 this.openmct.editor.edit();
@@ -358,11 +377,17 @@ export default {
         },
         setFontSize(newSize) {
             let elemToStyle = this.getStyleReceiver();
-            elemToStyle.dataset.fontSize = newSize;
+
+            if (elemToStyle !== undefined) {
+                elemToStyle.dataset.fontSize = newSize;
+            }
         },
         setFont(newFont) {
             let elemToStyle = this.getStyleReceiver();
-            elemToStyle.dataset.font = newFont;
+
+            if (elemToStyle !== undefined) {
+                elemToStyle.dataset.font = newFont;
+            }
         }
     }
 };

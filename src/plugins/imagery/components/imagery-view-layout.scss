@@ -1,7 +1,7 @@
 .c-imagery {
     display: flex;
     flex-direction: column;
-    flex: 1 1 auto;
+    height: 100%;
     overflow: hidden;
 
     &:focus {
@@ -22,7 +22,11 @@
         &__bg {
             background-color: $colorPlotBg;
             border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex: 1 1 auto;
+            height: 0;
 
             &.unnsynced{
                 @include sUnsynced();
@@ -30,10 +34,8 @@
         }
 
         &__image {
-            @include abs(); // Safari fix
-            background-position: center;
-            background-repeat: no-repeat;
-            background-size: contain;
+            height: 100%;
+            width: 100%;
         }
     }
 
@@ -71,13 +73,14 @@
     }
 
     &__age {
-        border-radius: $controlCr;
+        border-radius: $smallCr;
         display: flex;
         flex-shrink: 0;
-        align-items: baseline;
-        padding: 1px $interiorMarginSm;
+        align-items: center;
+        padding: 2px $interiorMarginSm;
 
         &:before {
+            font-size: 0.9em;
             opacity: 0.5;
             margin-right: $interiorMarginSm;
         }
@@ -86,28 +89,48 @@
     &--new {
         // New imagery
         $bgColor: $colorOk;
+        color: $colorOkFg;
         background: rgba($bgColor, 0.5);
-        @include flash($animName: flashImageAge, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
+        @include flash($animName: flashImageAge, $iter: 2, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
     }
 
     &__thumbs-wrapper {
-        flex: 0 0 auto;
+        display: flex; // Uses row layout
+
+        &.is-autoscroll-off {
+            background: $colorInteriorBorder;
+            [class*='__auto-scroll-resume-button'] {
+                display: block;
+            }
+        }
+
+        &.is-paused {
+            background: rgba($colorPausedBg, 0.4);
+        }
+    }
+
+    &__thumbs-scroll-area {
+        flex: 0 1 auto;
         display: flex;
         flex-direction: row;
         height: 135px;
         overflow-x: auto;
         overflow-y: hidden;
+        margin-bottom: 1px;
         padding-bottom: $interiorMarginSm;
-
-        &.is-paused {
-            background: rgba($colorPausedBg, 0.4);
-        }
 
         .c-thumb:last-child {
             // Hilite the lastest thumb
             background: $colorBodyFg;
             color: $colorBodyBg;
         }
+    }
+
+    &__auto-scroll-resume-button {
+        display: none; // Set to block when __thumbs-wrapper has .is-autoscroll-off
+        flex: 0 0 auto;
+        font-size: 0.8em;
+        margin: $interiorMarginSm;
     }
 }
 
@@ -140,7 +163,7 @@
 
 .l-layout,
 .c-fl {
-    .c-imagery__thumbs-wrapper {
+    .c-imagery__thumbs-scroll-area {
         //  When Imagery is in a layout, hide the thumbs area
         display: none;
     }
@@ -170,6 +193,10 @@
             &:before {
                 margin-right: $interiorMarginSm;
             }
+        }
+
+        .s-status-taking-snapshot & {
+            display: none;
         }
     }
 
@@ -252,6 +279,10 @@
             content: $glyph-icon-play;
         }
     }
+
+    .s-status-taking-snapshot & {
+        display: none;
+    }
 }
 
 .c-imagery__prev-next-buttons {
@@ -265,6 +296,10 @@
 
     .c-nav {
         pointer-events: all;
+    }
+
+    .s-status-taking-snapshot & {
+        display: none;
     }
 }
 

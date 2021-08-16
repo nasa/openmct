@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2020, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -122,6 +122,7 @@ define([
             }
         };
 
+        this.destroy = this.destroy.bind(this);
         /**
          * Tracks current selection state of the application.
          * @private
@@ -219,7 +220,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name objects
          */
-        this.objects = new api.ObjectAPI.default(this.types);
+        this.objects = new api.ObjectAPI.default(this.types, this);
 
         /**
          * An interface for retrieving and interpreting telemetry data associated
@@ -252,7 +253,7 @@ define([
 
         this.status = new api.StatusAPI(this);
 
-        this.router = new ApplicationRouter();
+        this.router = new ApplicationRouter(this);
 
         this.branding = BrandingAPI.default;
 
@@ -262,7 +263,7 @@ define([
         // Plugins that are installed by default
 
         this.install(this.plugins.Plot());
-        this.install(this.plugins.TelemetryTable());
+        this.install(this.plugins.TelemetryTable.default());
         this.install(PreviewPlugin.default());
         this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
@@ -274,6 +275,7 @@ define([
         this.install(ImageryPlugin.default());
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
+        this.install(this.plugins.OpenInNewTabAction());
         this.install(this.plugins.ImportExport());
         this.install(this.plugins.WebPage());
         this.install(this.plugins.Condition());
@@ -282,7 +284,9 @@ define([
         this.install(this.plugins.NotificationIndicator());
         this.install(this.plugins.NewFolderAction());
         this.install(this.plugins.ViewDatumAction());
+        this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
+        this.install(this.plugins.NonEditableFolder());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -432,6 +436,8 @@ define([
                     Browse(this);
                 }
 
+                window.addEventListener('beforeunload', this.destroy);
+
                 this.router.start();
                 this.emit('start');
             }.bind(this));
@@ -455,6 +461,7 @@ define([
     };
 
     MCT.prototype.destroy = function () {
+        window.removeEventListener('beforeunload', this.destroy);
         this.emit('destroy');
         this.router.destroy();
     };

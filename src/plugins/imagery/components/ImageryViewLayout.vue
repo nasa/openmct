@@ -1,3 +1,25 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
 <template>
 <div
     tabindex="0"
@@ -33,17 +55,34 @@
                 ></a>
             </span>
         </div>
-        <div class="c-imagery__main-image__bg"
+        <div ref="imageBG"
+             class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused,'stale':false }"
+             @click="expand"
         >
-            <div class="c-imagery__main-image__image js-imageryView-image"
+            <div class="image-wrapper"
                  :style="{
-                     'background-image': imageUrl ? `url(${imageUrl})` : 'none',
-                     'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                     'width': `${sizedImageDimensions.width}px`,
+                     'height': `${sizedImageDimensions.height}px`
                  }"
-                 :data-openmct-image-timestamp="time"
-                 :data-openmct-object-keystring="keyString"
-            ></div>
+            >
+                <img ref="focusedImage"
+                     class="c-imagery__main-image__image js-imageryView-image"
+                     :src="imageUrl"
+                     :style="{
+                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                     }"
+                     :data-openmct-image-timestamp="time"
+                     :data-openmct-object-keystring="keyString"
+                >
+                <Compass
+                    v-if="shouldDisplayCompass"
+                    :compass-rose-sizing-classes="compassRoseSizingClasses"
+                    :image="focusedImage"
+                    :natural-aspect-ratio="focusedImageNaturalAspectRatio"
+                    :sized-image-dimensions="sizedImageDimensions"
+                />
+            </div>
         </div>
         <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
             <button class="c-nav c-nav--prev"
@@ -61,11 +100,25 @@
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
                 <div class="c-imagery__timestamp u-style-receiver js-style-receiver">{{ time }}</div>
+
+                <!-- image fresh -->
                 <div
                     v-if="canTrackDuration"
                     :class="{'c-imagery--new': isImageNew && !refreshCSS}"
                     class="c-imagery__age icon-timer"
                 >{{ formattedDuration }}</div>
+
+                <!-- spacecraft position fresh -->
+                <div
+                    v-if="relatedTelemetry.hasRelatedTelemetry && isSpacecraftPositionFresh"
+                    class="c-imagery__age icon-check c-imagery--new"
+                >POS</div>
+
+                <!-- camera position fresh -->
+                <div
+                    v-if="relatedTelemetry.hasRelatedTelemetry && isCameraPositionFresh"
+                    class="c-imagery__age icon-check c-imagery--new"
+                >CAM</div>
             </div>
             <div class="h-local-controls">
                 <button
@@ -76,28 +129,51 @@
             </div>
         </div>
     </div>
-    <div ref="thumbsWrapper"
-         class="c-imagery__thumbs-wrapper"
-         :class="{'is-paused': isPaused}"
-         @scroll="handleScroll"
+    <div
+        class="c-imagery__thumbs-wrapper"
+        :class="[
+            { 'is-paused': isPaused },
+            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+        ]"
     >
-        <div v-for="(datum, index) in imageHistory"
-             :key="datum.url"
-             class="c-imagery__thumb c-thumb"
-             :class="{ selected: focusedImageIndex === index && isPaused }"
-             @click="setFocusedImage(index, thumbnailClick)"
+        <div
+            ref="thumbsWrapper"
+            class="c-imagery__thumbs-scroll-area"
+            @scroll="handleScroll"
         >
-            <img class="c-thumb__image"
-                 :src="formatImageUrl(datum)"
+            <div v-for="(image, index) in imageHistory"
+                 :key="image.url + image.time"
+                 class="c-imagery__thumb c-thumb"
+                 :class="{ selected: focusedImageIndex === index && isPaused }"
+                 @click="setFocusedImage(index, thumbnailClick)"
             >
-            <div class="c-thumb__timestamp">{{ formatTime(datum) }}</div>
+                <a href=""
+                   :download="image.imageDownloadName"
+                   @click.prevent
+                >
+                    <img class="c-thumb__image"
+                         :src="image.url"
+                    >
+                </a>
+                <div class="c-thumb__timestamp">{{ image.formattedTime }}</div>
+            </div>
         </div>
+
+        <button
+            class="c-imagery__auto-scroll-resume-button c-icon-button icon-play"
+            title="Resume automatic scrolling of image thumbnails"
+            @click="scrollToRight('reset')"
+        ></button>
     </div>
 </div>
 </template>
 
 <script>
+import _ from 'lodash';
 import moment from 'moment';
+
+import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
+import Compass from './Compass/Compass.vue';
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 const REFRESH_CSS_MS = 500;
@@ -115,8 +191,13 @@ const TWENTYFOUR_HOURS = EIGHT_HOURS * 3;
 const ARROW_RIGHT = 39;
 const ARROW_LEFT = 37;
 
+const SCROLL_LATENCY = 250;
+
 export default {
-    inject: ['openmct', 'domainObject'],
+    components: {
+        Compass
+    },
+    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
     data() {
         let timeSystem = this.openmct.time.timeSystem();
 
@@ -137,10 +218,31 @@ export default {
             refreshCSS: false,
             keyString: undefined,
             focusedImageIndex: undefined,
-            numericDuration: undefined
+            focusedImageRelatedTelemetry: {},
+            numericDuration: undefined,
+            metadataEndpoints: {},
+            relatedTelemetry: {},
+            latestRelatedTelemetry: {},
+            focusedImageNaturalAspectRatio: undefined,
+            imageContainerWidth: undefined,
+            imageContainerHeight: undefined,
+            lockCompass: true,
+            resizingWindow: false
         };
     },
     computed: {
+        compassRoseSizingClasses() {
+            let compassRoseSizingClasses = '';
+            if (this.sizedImageDimensions.width < 300) {
+                compassRoseSizingClasses = '--rose-small --rose-min';
+            } else if (this.sizedImageDimensions.width < 500) {
+                compassRoseSizingClasses = '--rose-small';
+            } else if (this.sizedImageDimensions.width > 1000) {
+                compassRoseSizingClasses = '--rose-max';
+            }
+
+            return compassRoseSizingClasses;
+        },
         time() {
             return this.formatTime(this.focusedImage);
         },
@@ -155,6 +257,9 @@ export default {
         },
         canTrackDuration() {
             return this.openmct.time.clock() && this.timeSystem.isUTCBased;
+        },
+        focusedImageDownloadName() {
+            return this.getImageDownloadName(this.focusedImage);
         },
         isNextDisabled() {
             let disabled = false;
@@ -195,15 +300,97 @@ export default {
             }
 
             return result;
+        },
+        shouldDisplayCompass() {
+            return this.focusedImage !== undefined
+                && this.focusedImageNaturalAspectRatio !== undefined
+                && this.imageContainerWidth !== undefined
+                && this.imageContainerHeight !== undefined;
+        },
+        isSpacecraftPositionFresh() {
+            let isFresh = undefined;
+            let latest = this.latestRelatedTelemetry;
+            let focused = this.focusedImageRelatedTelemetry;
+
+            if (this.relatedTelemetry.hasRelatedTelemetry) {
+                isFresh = true;
+                for (let key of this.spacecraftPositionKeys) {
+                    if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                        isFresh = isFresh && Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
+                    } else {
+                        isFresh = false;
+                    }
+                }
+            }
+
+            return isFresh;
+        },
+        isSpacecraftOrientationFresh() {
+            let isFresh = undefined;
+            let latest = this.latestRelatedTelemetry;
+            let focused = this.focusedImageRelatedTelemetry;
+
+            if (this.relatedTelemetry.hasRelatedTelemetry) {
+                isFresh = true;
+                for (let key of this.spacecraftOrientationKeys) {
+                    if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                        isFresh = isFresh && Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
+                    } else {
+                        isFresh = false;
+                    }
+                }
+            }
+
+            return isFresh;
+        },
+        isCameraPositionFresh() {
+            let isFresh = undefined;
+            let latest = this.latestRelatedTelemetry;
+            let focused = this.focusedImageRelatedTelemetry;
+
+            if (this.relatedTelemetry.hasRelatedTelemetry) {
+                isFresh = true;
+
+                // camera freshness relies on spacecraft position freshness
+                if (this.isSpacecraftPositionFresh && this.isSpacecraftOrientationFresh) {
+                    for (let key of this.cameraKeys) {
+                        if (this.relatedTelemetry[key] && latest[key] && focused[key]) {
+                            isFresh = isFresh && Boolean(this.relatedTelemetry[key].comparisonFunction(latest[key], focused[key]));
+                        } else {
+                            isFresh = false;
+                        }
+                    }
+                } else {
+                    isFresh = false;
+                }
+            }
+
+            return isFresh;
+        },
+        sizedImageDimensions() {
+            let sizedImageDimensions = {};
+            if ((this.imageContainerWidth / this.imageContainerHeight) > this.focusedImageNaturalAspectRatio) {
+                // container is wider than image
+                sizedImageDimensions.width = this.imageContainerHeight * this.focusedImageNaturalAspectRatio;
+                sizedImageDimensions.height = this.imageContainerHeight;
+            } else {
+                // container is taller than image
+                sizedImageDimensions.width = this.imageContainerWidth;
+                sizedImageDimensions.height = this.imageContainerWidth * this.focusedImageNaturalAspectRatio;
+            }
+
+            return sizedImageDimensions;
         }
     },
     watch: {
         focusedImageIndex() {
             this.trackDuration();
             this.resetAgeCSS();
+            this.updateRelatedTelemetryForFocusedImage();
+            this.getImageNaturalDimensions();
         }
     },
-    mounted() {
+    async mounted() {
         // listen
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
@@ -212,8 +399,16 @@ export default {
         // set
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
         this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+        this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
         this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-        this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.metadata.valuesForHints(['image'])[0]);
+        this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
+        this.imageDownloadNameHints = { ...this.metadata.valuesForHints(['imageDownloadName'])[0]};
+
+        // related telemetry keys
+        this.spacecraftPositionKeys = ['positionX', 'positionY', 'positionZ'];
+        this.spacecraftOrientationKeys = ['heading'];
+        this.cameraKeys = ['cameraPan', 'cameraTilt'];
+        this.sunKeys = ['sunOrientation'];
 
         // initialize
         this.timeKey = this.timeSystem.key;
@@ -222,9 +417,25 @@ export default {
         // kickoff
         this.subscribe();
         this.requestHistory();
-    },
-    updated() {
-        this.scrollToRight();
+
+        // related telemetry
+        await this.initializeRelatedTelemetry();
+        this.updateRelatedTelemetryForFocusedImage();
+        this.trackLatestRelatedTelemetry();
+
+        // for scrolling through images quickly and resizing the object view
+        _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
+        _.debounce(this.resizeImageContainer, 400);
+
+        this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
+        this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+
+        // For adjusting scroll bar size and position when resizing thumbs wrapper
+        this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
+        this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
+
+        this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
+        this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
     },
     beforeDestroy() {
         if (this.unsubscribe) {
@@ -232,12 +443,136 @@ export default {
             delete this.unsubscribe;
         }
 
+        if (this.imageContainerResizeObserver) {
+            this.imageContainerResizeObserver.disconnect();
+        }
+
+        if (this.thumbWrapperResizeObserver) {
+            this.thumbWrapperResizeObserver.disconnect();
+        }
+
+        if (this.relatedTelemetry.hasRelatedTelemetry) {
+            this.relatedTelemetry.destroy();
+        }
+
         this.stopDurationTracking();
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
+
+        // unsubscribe from related telemetry
+        if (this.relatedTelemetry.hasRelatedTelemetry) {
+            for (let key of this.relatedTelemetry.keys) {
+                if (this.relatedTelemetry[key] && this.relatedTelemetry[key].unsubscribe) {
+                    this.relatedTelemetry[key].unsubscribe();
+                }
+            }
+        }
     },
     methods: {
+        expand() {
+            const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
+            const visibleActions = actionCollection.getVisibleActions();
+            const viewLargeAction = visibleActions
+                && visibleActions.find(action => action.key === 'large.view');
+
+            if (viewLargeAction && viewLargeAction.appliesTo(this.objectPath, this.currentView)) {
+                viewLargeAction.onItemClicked();
+            }
+        },
+        async initializeRelatedTelemetry() {
+            this.relatedTelemetry = new RelatedTelemetry(
+                this.openmct,
+                this.domainObject,
+                [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys]
+            );
+
+            if (this.relatedTelemetry.hasRelatedTelemetry) {
+                await this.relatedTelemetry.load();
+            }
+        },
+        async getMostRecentRelatedTelemetry(key, targetDatum) {
+            if (!this.relatedTelemetry.hasRelatedTelemetry) {
+                throw new Error(`${this.domainObject.name} does not have any related telemetry`);
+            }
+
+            if (!this.relatedTelemetry[key]) {
+                throw new Error(`${key} does not exist on related telemetry`);
+            }
+
+            let mostRecent;
+            let valueKey = this.relatedTelemetry[key].historical.valueKey;
+            let valuesOnTelemetry = this.relatedTelemetry[key].hasTelemetryOnDatum;
+
+            if (valuesOnTelemetry) {
+                mostRecent = targetDatum[valueKey];
+
+                if (mostRecent) {
+                    return mostRecent;
+                } else {
+                    console.warn(`Related Telemetry for ${key} does NOT exist on this telemetry datum as configuration implied.`);
+
+                    return;
+                }
+            }
+
+            mostRecent = await this.relatedTelemetry[key].requestLatestFor(targetDatum);
+
+            return mostRecent[valueKey];
+        },
+        // will subscribe to data for this key if not already done
+        subscribeToDataForKey(key) {
+            if (this.relatedTelemetry[key].isSubscribed) {
+                return;
+            }
+
+            if (this.relatedTelemetry[key].realtimeDomainObject) {
+                this.relatedTelemetry[key].unsubscribe = this.openmct.telemetry.subscribe(
+                    this.relatedTelemetry[key].realtimeDomainObject, datum => {
+                        this.relatedTelemetry[key].listeners.forEach(callback => {
+                            callback(datum);
+                        });
+
+                    }
+                );
+
+                this.relatedTelemetry[key].isSubscribed = true;
+            }
+        },
+        async updateRelatedTelemetryForFocusedImage() {
+            if (!this.relatedTelemetry.hasRelatedTelemetry || !this.focusedImage) {
+                return;
+            }
+
+            // set data ON image telemetry as well as in focusedImageRelatedTelemetry
+            for (let key of this.relatedTelemetry.keys) {
+                if (
+                    this.relatedTelemetry[key]
+                    && this.relatedTelemetry[key].historical
+                    && this.relatedTelemetry[key].requestLatestFor
+
+                ) {
+                    let valuesOnTelemetry = this.relatedTelemetry[key].hasTelemetryOnDatum;
+                    let value = await this.getMostRecentRelatedTelemetry(key, this.focusedImage);
+
+                    if (!valuesOnTelemetry) {
+                        this.$set(this.imageHistory[this.focusedImageIndex], key, value); // manually add to telemetry
+                    }
+
+                    this.$set(this.focusedImageRelatedTelemetry, key, value);
+                }
+            }
+        },
+        trackLatestRelatedTelemetry() {
+            [...this.spacecraftPositionKeys, ...this.spacecraftOrientationKeys, ...this.cameraKeys, ...this.sunKeys].forEach(key => {
+                if (this.relatedTelemetry[key] && this.relatedTelemetry[key].subscribe) {
+                    this.relatedTelemetry[key].subscribe((datum) => {
+                        let valueKey = this.relatedTelemetry[key].realtime.valueKey;
+                        this.$set(this.latestRelatedTelemetry, key, datum[valueKey]);
+                    });
+                }
+            });
+        },
         focusElement() {
             this.$el.focus();
         },
@@ -275,6 +610,15 @@ export default {
             // Replace ISO "T" with a space to allow wrapping
             return dateTimeStr.replace("T", " ");
         },
+        getImageDownloadName(datum) {
+            let imageDownloadName = '';
+            if (datum) {
+                const key = this.imageDownloadNameHints.key;
+                imageDownloadName = datum[key];
+            }
+
+            return imageDownloadName;
+        },
         parseTime(datum) {
             if (!datum) {
                 return;
@@ -284,17 +628,15 @@ export default {
         },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
-            if (!thumbsWrapper) {
+            if (!thumbsWrapper || this.resizingWindow) {
                 return;
             }
 
-            const { scrollLeft, scrollWidth, clientWidth, scrollTop, scrollHeight, clientHeight } = thumbsWrapper;
-            const disableScroll = (scrollWidth - scrollLeft) > 2 * clientWidth
-                    || (scrollHeight - scrollTop) > 2 * clientHeight;
+            const { scrollLeft, scrollWidth, clientWidth } = thumbsWrapper;
+            const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;
         },
         paused(state, type) {
-
             this.isPaused = state;
 
             if (type === 'button') {
@@ -307,6 +649,7 @@ export default {
             }
 
             this.autoScroll = true;
+            this.scrollToRight();
         },
         scrollToFocused() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
@@ -323,8 +666,8 @@ export default {
                 });
             }
         },
-        scrollToRight() {
-            if (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll) {
+        scrollToRight(type) {
+            if (type !== 'reset' && (this.isPaused || !this.$refs.thumbsWrapper || !this.autoScroll)) {
                 return;
             }
 
@@ -333,7 +676,9 @@ export default {
                 return;
             }
 
-            setTimeout(() => this.$refs.thumbsWrapper.scrollLeft = scrollWidth, 0);
+            this.$nextTick(() => {
+                this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
+            });
         },
         setFocusedImage(index, thumbnailClick = false) {
             if (this.isPaused && !thumbnailClick) {
@@ -358,6 +703,7 @@ export default {
             this.requestCount++;
             const requestId = this.requestCount;
             this.imageHistory = [];
+
             let data = await this.openmct.telemetry
                 .request(this.domainObject, bounds) || [];
 
@@ -393,10 +739,16 @@ export default {
                 return;
             }
 
-            this.imageHistory.push(datum);
+            let image = { ...datum };
+            image.formattedTime = this.formatTime(datum);
+            image.url = this.formatImageUrl(datum);
+            image.time = datum[this.timeKey];
+            image.imageDownloadName = this.getImageDownloadName(datum);
 
+            this.imageHistory.push(image);
             if (setFocused) {
                 this.setFocusedImage(this.imageHistory.length - 1);
+                this.scrollToRight();
             }
         },
         getFormatter(key) {
@@ -420,7 +772,7 @@ export default {
             window.clearInterval(this.durationTracker);
         },
         updateDuration() {
-            let currentTime = this.openmct.time.clock().currentValue();
+            let currentTime = this.openmct.time.clock() && this.openmct.time.clock().currentValue();
             this.numericDuration = currentTime - this.parsedSelectedTime;
         },
         resetAgeCSS() {
@@ -509,6 +861,46 @@ export default {
         },
         isLeftOrRightArrowKey(keyCode) {
             return [ARROW_RIGHT, ARROW_LEFT].includes(keyCode);
+        },
+        getImageNaturalDimensions() {
+            this.focusedImageNaturalAspectRatio = undefined;
+
+            const img = this.$refs.focusedImage;
+            if (!img) {
+                return;
+            }
+
+            // TODO - should probably cache this
+            img.addEventListener('load', () => {
+                this.focusedImageNaturalAspectRatio = img.naturalWidth / img.naturalHeight;
+            }, { once: true });
+        },
+        resizeImageContainer() {
+            if (this.$refs.imageBG.clientWidth !== this.imageContainerWidth) {
+                this.imageContainerWidth = this.$refs.imageBG.clientWidth;
+            }
+
+            if (this.$refs.imageBG.clientHeight !== this.imageContainerHeight) {
+                this.imageContainerHeight = this.$refs.imageBG.clientHeight;
+            }
+        },
+        handleThumbWindowResizeStart() {
+            if (!this.autoScroll) {
+                return;
+            }
+
+            // To hide resume button while scrolling
+            this.resizingWindow = true;
+            this.handleThumbWindowResizeEnded();
+        },
+        handleThumbWindowResizeEnded() {
+            if (!this.isPaused) {
+                this.scrollToRight('reset');
+            }
+
+            this.$nextTick(() => {
+                this.resizingWindow = false;
+            });
         }
     }
 };
