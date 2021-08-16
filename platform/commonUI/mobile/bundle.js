@@ -21,25 +21,14 @@
  *****************************************************************************/
 
 define([
-    "./src/MCTDevice",
     "./src/AgentService"
 ], function (
-    MCTDevice,
     AgentService
 ) {
     return {
         name: "platform/commonUI/mobile",
         definition: {
             "extensions": {
-                "directives": [
-                    {
-                        "key": "mctDevice",
-                        "implementation": MCTDevice,
-                        "depends": [
-                            "agentService"
-                        ]
-                    }
-                ],
                 "services": [
                     {
                         "key": "agentService",
