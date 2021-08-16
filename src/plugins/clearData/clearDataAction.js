@@ -20,6 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+function inNavigationPath(openmct, object) {
+    return openmct.router.path
+        .some(objectInPath => openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+}
+
 export default class ClearDataAction {
     constructor(openmct, appliesToObjects) {
         this.name = 'Clear Data for Object';
@@ -35,6 +40,10 @@ export default class ClearDataAction {
     }
     appliesTo(objectPath) {
         let contextualDomainObject = objectPath[0];
+        // first check to see if contextualDomainObject matches what's selected in tree
+        if (!inNavigationPath(this._openmct, contextualDomainObject)) {
+            return false;
+        }
 
         return this._appliesToObjects.filter(type => contextualDomainObject.type === type).length;
     }
