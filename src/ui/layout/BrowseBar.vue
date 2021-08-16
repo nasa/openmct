@@ -232,6 +232,7 @@ export default {
     },
     mounted: function () {
         document.addEventListener('click', this.closeViewAndSaveMenu);
+        this.promptUserbeforeNavigatingAway = this.promptUserbeforeNavigatingAway.bind(this);
         window.addEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
 
         this.openmct.editor.on('isEditing', (isEditing) => {
@@ -252,7 +253,7 @@ export default {
         }
 
         document.removeEventListener('click', this.closeViewAndSaveMenu);
-        window.removeEventListener('click', this.promptUserbeforeNavigatingAway);
+        window.removeEventListener('beforeunload', this.promptUserbeforeNavigatingAway);
     },
     methods: {
         toggleSaveMenu() {
