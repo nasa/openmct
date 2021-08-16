@@ -137,7 +137,10 @@ describe("the RemoteClock plugin", () => {
 
         it('will request the latest datum for the object it received and process the datum returned', () => {
             expect(openmct.telemetry.request).toHaveBeenCalledWith(remoteClock.timeTelemetryObject, REQ_OPTIONS);
-            expect(boundsCallback).toHaveBeenCalledWith({ start: TIME_VALUE + OFFSET_START, end: TIME_VALUE + OFFSET_END }, true);
+            expect(boundsCallback).toHaveBeenCalledWith({
+                start: TIME_VALUE + OFFSET_START,
+                end: TIME_VALUE + OFFSET_END
+            }, true);
         });
 
         it('will set up subscriptions correctly', () => {
