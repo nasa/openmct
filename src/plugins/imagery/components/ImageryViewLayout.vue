@@ -497,7 +497,7 @@ export default {
         }
     },
     methods: {
-        expandTimeViewImage(imageObject, index) {
+        expandTimeViewImage(index) {
             this.viewingLarge = true;
 
             //we need the nextTick so that Vue can react to the viewingLarge flag being set to true
@@ -515,12 +515,11 @@ export default {
                     this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
                 }
 
-                this.expand(imageObject, index);
+                this.expand();
             });
 
         },
-        expand(imageObject, index) {
-
+        expand() {
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
             const viewLargeAction = visibleActions
@@ -929,6 +928,10 @@ export default {
             }, { once: true });
         },
         resizeImageContainer() {
+            if (!this.$refs.imageBG) {
+                return;
+            }
+
             if (this.$refs.imageBG.clientWidth !== this.imageContainerWidth) {
                 this.imageContainerWidth = this.$refs.imageBG.clientWidth;
             }

@@ -21,176 +21,195 @@
 -->
 
 <template>
-    <div ref="imagery"
-         class="c-imagery-tsv c-timeline-holder"
+<div ref="imagery"
+     class="c-imagery-tsv c-timeline-holder"
+>
+    <div ref="imageryHolder"
+         class="c-imagery-tsv__contents u-contents"
     >
-        <div ref="imageryHolder"
-             class="c-imagery-tsv__contents u-contents"
-        >
-        </div>
     </div>
+</div>
 </template>
 
 <script>
-    import * as d3Scale from 'd3-scale';
-    import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-    import Vue from "vue";
+import * as d3Scale from 'd3-scale';
+import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
+import Vue from "vue";
 
-    const PADDING = 1;
-    const RESIZE_POLL_INTERVAL = 200;
-    const ROW_HEIGHT = 100;
-    const DEFAULT_COLOR = '#cc9922';
+const PADDING = 1;
+const RESIZE_POLL_INTERVAL = 200;
+const ROW_HEIGHT = 100;
+const IMAGE_WIDTH_THRESHOLD = 40;
+const DEFAULT_COLOR = '#cc9922';
 
-    export default {
-        inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
-        props: {
-            imageHistory: {
-                type: Array,
-                required: true,
-                default() {
-                    return [];
-                }
+export default {
+    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    props: {
+        imageHistory: {
+            type: Array,
+            required: true,
+            default() {
+                return [];
             }
-        },
-        data() {
-            return {
-                viewBounds: undefined,
-                timeSystem: undefined,
-                height: 0
-            };
-        },
-        watch: {
-            imageHistory() {
-                this.updatePlotImagery();
-            }
-        },
-        mounted() {
-            this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
-            this.canvas.height = 0;
-            this.canvasContext = this.canvas.getContext('2d');
-            this.setDimensions();
+        }
+    },
+    data() {
+        return {
+            viewBounds: undefined,
+            timeSystem: undefined,
+            height: 0
+        };
+    },
+    watch: {
+        imageHistory() {
+            this.updatePlotImagery();
+        }
+    },
+    mounted() {
+        this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
+        this.canvas.height = 0;
+        this.canvasContext = this.canvas.getContext('2d');
+        this.setDimensions();
 
+        this.updateViewBounds();
+
+        this.openmct.time.on("timeSystem", this.setScaleAndPlotImagery);
+        this.openmct.time.on("bounds", this.updateViewBounds);
+        this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+        this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
+    },
+    beforeDestroy() {
+        if (this.unsubscribe) {
+            this.unsubscribe();
+            delete this.unsubscribe;
+        }
+
+        clearInterval(this.resizeTimer);
+        this.openmct.time.off("timeSystem", this.setScaleAndPlotImagery);
+        this.openmct.time.off("bounds", this.updateViewBounds);
+        if (this.unlisten) {
+            this.unlisten();
+        }
+    },
+    methods: {
+        expand(index) {
+            this.$emit('expand', index);
+        },
+        observeForChanges(mutatedObject) {
             this.updateViewBounds();
-
-            this.openmct.time.on("timeSystem", this.setScaleAndPlotImagery);
-            this.openmct.time.on("bounds", this.updateViewBounds);
-            this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
-            this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
         },
-        beforeDestroy() {
-            if (this.unsubscribe) {
-                this.unsubscribe();
-                delete this.unsubscribe;
-            }
-
-            clearInterval(this.resizeTimer);
-            this.openmct.time.off("timeSystem", this.setScaleAndPlotImagery);
-            this.openmct.time.off("bounds", this.updateViewBounds);
-            if (this.unlisten) {
-                this.unlisten();
-            }
-        },
-        methods: {
-            expand(imageObject, index) {
-                this.$emit('expand', imageObject, index);
-            },
-            observeForChanges(mutatedObject) {
+        resize() {
+            let clientWidth = this.getClientWidth();
+            if (clientWidth !== this.width) {
+                this.setDimensions();
                 this.updateViewBounds();
-            },
-            resize() {
-                let clientWidth = this.getClientWidth();
-                if (clientWidth !== this.width) {
-                    this.setDimensions();
-                    this.updateViewBounds();
-                }
-            },
-            getClientWidth() {
-                let clientWidth = this.$refs.imagery.clientWidth;
+            }
+        },
+        getClientWidth() {
+            let clientWidth = this.$refs.imagery.clientWidth;
 
-                if (!clientWidth) {
-                    //this is a hack - need a better way to find the parent of this component
-                    let parent = this.openmct.layout.$refs.browseObject.$el;
-                    if (parent) {
-                        clientWidth = parent.getBoundingClientRect().width;
+            if (!clientWidth) {
+                //this is a hack - need a better way to find the parent of this component
+                let parent = this.openmct.layout.$refs.browseObject.$el;
+                if (parent) {
+                    clientWidth = parent.getBoundingClientRect().width;
+                }
+            }
+
+            return clientWidth;
+        },
+        updateViewBounds(bounds, isTick) {
+            this.viewBounds = this.openmct.time.bounds();
+            //Add a 50% padding to the end bounds to look ahead
+            let timespan = (this.viewBounds.end - this.viewBounds.start);
+            let padding = timespan / 2;
+            this.viewBounds.end = this.viewBounds.end + padding;
+
+            if (this.timeSystem === undefined) {
+                this.timeSystem = this.openmct.time.timeSystem();
+            }
+
+            this.setScaleAndPlotImagery();
+
+        },
+        setScaleAndPlotImagery(timeSystem) {
+            if (timeSystem !== undefined) {
+                this.timeSystem = timeSystem;
+                this.timeFormatter = this.getFormatter(this.timeSystem.key);
+            }
+
+            this.setScale(this.timeSystem);
+            this.updatePlotImagery();
+        },
+        updatePlotImagery() {
+            this.clearPreviousImagery();
+            if (this.xScale) {
+                this.drawImagery();
+            }
+        },
+        clearPreviousImagery() {
+            //TODO: Only clear items that are out of bounds
+            let noItemsEl = this.$el.querySelectorAll(".c-imagery-tsv__contents .activity-label--outside-rect");
+            noItemsEl.forEach(item => {
+                item.remove();
+            });
+            let imagery = this.$el.querySelectorAll(".c-imagery-tsv__image-wrapper");
+            imagery.forEach(item => {
+                const id = this.getNSAttributesForElement(item, 'id');
+                if (id) {
+                    const timestamp = id.replace('id-', '');
+                    if (!this.isImageryInBounds({
+                        time: timestamp
+                    })) {
+                        item.remove();
                     }
                 }
+            });
+        },
+        setDimensions() {
+            const imageryHolder = this.$refs.imagery;
+            this.width = this.getClientWidth();
 
-                return clientWidth;
-            },
-            updateViewBounds(bounds, isTick) {
-                this.viewBounds = this.openmct.time.bounds();
-                //Add a 50% padding to the end bounds to look ahead
-                let timespan = (this.viewBounds.end - this.viewBounds.start);
-                let padding = timespan / 2;
-                this.viewBounds.end = this.viewBounds.end + padding;
+            this.height = Math.round(imageryHolder.getBoundingClientRect().height);
+        },
+        setScale(timeSystem) {
+            if (!this.width) {
+                return;
+            }
 
-                if (this.timeSystem === undefined) {
-                    this.timeSystem = this.openmct.time.timeSystem();
-                }
+            if (timeSystem === undefined) {
+                timeSystem = this.openmct.time.timeSystem();
+            }
 
-                this.setScaleAndPlotImagery();
+            if (timeSystem.isUTCBased) {
+                this.xScale = d3Scale.scaleUtc();
+                this.xScale.domain(
+                    [new Date(this.viewBounds.start), new Date(this.viewBounds.end)]
+                );
+            } else {
+                this.xScale = d3Scale.scaleLinear();
+                this.xScale.domain(
+                    [this.viewBounds.start, this.viewBounds.end]
+                );
+            }
 
-            },
-            setScaleAndPlotImagery(timeSystem) {
-                if (timeSystem !== undefined) {
-                    this.timeSystem = timeSystem;
-                    this.timeFormatter = this.getFormatter(this.timeSystem.key);
-                }
+            this.xScale.range([PADDING, this.width - PADDING * 2]);
+        },
+        isImageryInBounds(imageObj) {
+            return (imageObj.time < this.viewBounds.end) && (imageObj.time > this.viewBounds.start);
+        },
+        getImageryContainer() {
+            let svgHeight = 100;
+            let svgWidth = this.imageHistory.length ? this.width : 200;
+            let groupSVG;
 
-                this.setScale(this.timeSystem);
-                this.updatePlotImagery();
-            },
-            updatePlotImagery() {
-                this.clearPreviousImagery();
-                if (this.xScale) {
-                    this.drawImagery();
-                }
-            },
-            clearPreviousImagery() {
-                //TODO: Only clear items that are out of bounds
-                let imagery = this.$el.querySelectorAll(".c-imagery-tsv__contents > div");
-                imagery.forEach(item => item.remove());
-            },
-            setDimensions() {
-                const imageryHolder = this.$refs.imagery;
-                this.width = this.getClientWidth();
-
-                this.height = Math.round(imageryHolder.getBoundingClientRect().height);
-            },
-            setScale(timeSystem) {
-                if (!this.width) {
-                    return;
-                }
-
-                if (timeSystem === undefined) {
-                    timeSystem = this.openmct.time.timeSystem();
-                }
-
-                if (timeSystem.isUTCBased) {
-                    this.xScale = d3Scale.scaleUtc();
-                    this.xScale.domain(
-                        [new Date(this.viewBounds.start), new Date(this.viewBounds.end)]
-                    );
-                } else {
-                    this.xScale = d3Scale.scaleLinear();
-                    this.xScale.domain(
-                        [this.viewBounds.start, this.viewBounds.end]
-                    );
-                }
-
-                this.xScale.range([PADDING, this.width - PADDING * 2]);
-            },
-            isImageryInBounds(imageObj) {
-                return (imageObj.time < this.viewBounds.end) && (imageObj.time > this.viewBounds.start);
-            },
-            getImageryContainer() {
-                let svgHeight = 100;
-                let svgWidth = 200;
-
-                if (this.imageHistory.length) {
-                    svgWidth = this.width;
-                }
-
+            let existingSVG = this.$el.querySelector(".c-imagery-tsv__contents svg");
+            if (existingSVG) {
+                groupSVG = existingSVG;
+                this.setNSAttributesForElement(groupSVG, {
+                    width: svgWidth
+                });
+            } else {
                 let component = new Vue({
                     components: {
                         SwimLane
@@ -205,142 +224,209 @@
                             width: svgWidth
                         };
                     },
-                    template: `<swim-lane :is-nested="isNested" :hide-label="true"><template slot="object"><svg :height="height" :width="width"></svg></template></swim-lane>`
+                    template: `<swim-lane :is-nested="isNested" :hide-label="true"><template slot="object"><svg class="c-imagery-tsv-container" :height="height" :width="width"></svg></template></swim-lane>`
                 });
 
                 this.$refs.imageryHolder.appendChild(component.$mount().$el);
 
-                let groupLabel = component.$el.querySelector('div:nth-child(1)');
-                let groupSVG = component.$el.querySelector('svg');
+                groupSVG = component.$el.querySelector('svg');
 
-                return {
-                    groupLabel,
-                    groupSVG
-                };
-            },
-            drawImagery() {
-                const currentStart = this.viewBounds.start;
-                const currentEnd = this.viewBounds.end;
-                const rectX = this.xScale(currentStart);
-                const rectY = this.xScale(currentEnd);
-                const imageContainerWidth = this.imageHistory.length ? (rectY - rectX) / this.imageHistory.length : 0;
-                const showPlaceholders = imageContainerWidth < 40;
-
-                const groupElements = this.getImageryContainer();
-                let groupSVG = groupElements.groupSVG;
-
-                if (this.imageHistory.length) {
-                    this.imageHistory.forEach((imageObject, index) => {
-                        if (this.isImageryInBounds(imageObject)) {
-                            this.plotImagery(imageObject, showPlaceholders, groupSVG, index);
-                        }
-                    });
-                } else {
-                    this.plotNoItems(groupSVG);
-                }
-            },
-            plotNoItems(svgElement) {
-                let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                this.setNSAttributesForElement(textElement, {
-                    x: "10",
-                    y: "20",
-                    class: "activity-label--outside-rect"
-                });
-                textElement.innerHTML = 'No activities within timeframe';
-
-                svgElement.appendChild(textElement);
-            },
-            setNSAttributesForElement(element, attributes) {
-                Object.keys(attributes).forEach((key) => {
-                    if (key === 'url') {
-                        element.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attributes[key]);
-                    } else {
-                        element.setAttributeNS(null, key, attributes[key]);
-                    }
-                });
-            },
-            getNSAttributesForElement(element, attribute) {
-                return element.getAttributeNS(null, attribute);
-            },
-            plotImagery(item, showPlaceholders, svgElement, index) {
-                //TODO: Placeholder image
-                let url = showPlaceholders ? '' : item.url;
-                //imageWrapper wraps the vertical tick rect and the image
-                let imageWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-                this.setNSAttributesForElement(imageWrapper, {
-                    id: `id-${index}-${item.time}`,
-                    class: 'c-imagery-tsv__image-wrapper'
-                });
-
-                let imageTickElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                this.setNSAttributesForElement(imageTickElement, {
-                    class: 'image-handle',
-                    x: this.xScale(item.time),
-                    y: 0,
-                    rx: 0,
-                    width: 2,
-                    height: String(ROW_HEIGHT),
-                    fill: 'currentColor'
-                });
-                imageWrapper.appendChild(imageTickElement);
-
-                let imageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-                this.setNSAttributesForElement(imageElement, {
-                    x: this.xScale(item.time) + 2,
-                    y: 10,
-                    rx: 0,
-                    width: String(ROW_HEIGHT) - 10,
-                    height: String(ROW_HEIGHT) - 10,
-                    fill: DEFAULT_COLOR,
-                    url: url
-                });
-                imageWrapper.appendChild(imageElement);
-
-                imageWrapper.addEventListener('mouseover', (event) => {
-                    this.bringToForeground(event, svgElement, imageWrapper, item, index);
-                });
-                svgElement.appendChild(imageWrapper);
-
-                svgElement.addEventListener('mouseout', (event) => {
+                groupSVG.addEventListener('mouseout', (event) => {
                     if (event.target.nodeName === 'svg' || event.target.nodeName === 'use') {
                         this.removeFromForeground();
                     }
                 });
-            },
-            bringToForeground(event, svgElement, imageWrapper, item, index) {
-                let useEls = this.$el.querySelectorAll(".c-imagery-tsv__contents use");
-                if (useEls.length <= 0
-                    || (`#${this.getNSAttributesForElement(event.currentTarget, 'id')}` !== this.getNSAttributesForElement(useEls[0], 'href'))) {
-                    this.removeFromForeground();
-
-                    let useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-                    this.setNSAttributesForElement(useElement, {
-                        class: 'image-highlight',
-                        x: 0,
-                        fill: DEFAULT_COLOR,
-                        href: `#${imageWrapper.id}`
-                    });
-                    useElement.addEventListener('click', () => {
-                        this.expand(item, index);
-                    });
-                    this.setNSAttributesForElement(imageWrapper, {
-                        class: 'c-imagery-tsv__image-wrapper is-hovered'
-                    });
-
-                    svgElement.appendChild(useElement);
-                }
-            },
-            removeFromForeground() {
-                let useEls = this.$el.querySelectorAll(".c-imagery-tsv__contents use");
-                useEls.forEach(item => {
-                    let selector = `id*=${this.getNSAttributesForElement(item, 'href').replace('#', '')}`;
-                    let imageWrapper = this.$el.querySelector(`.c-imagery-tsv__contents g[${selector}]`);
-                    this.setNSAttributesForElement(imageWrapper, {
-                        class: 'c-imagery-tsv__image-wrapper'
-                    });
-                    item.remove();
-                });
             }
+
+            return groupSVG;
+        },
+        isImageryWidthAcceptable() {
+            // We're calculating if there is enough space between images to show the thumbnails.
+            // This algorithm could probably be enhanced to check the x co-ordinate distance between 2 consecutive images, but
+            // we will go with this for now assuming imagery is not sorted by asc time so it's difficult to calculate.
+            // TODO: Use telemetry.requestCollection to get sorted telemetry
+            const currentStart = this.viewBounds.start;
+            const currentEnd = this.viewBounds.end;
+            const rectX = this.xScale(currentStart);
+            const rectY = this.xScale(currentEnd);
+            const imageContainerWidth = this.imageHistory.length ? (rectY - rectX) / this.imageHistory.length : 0;
+
+            return imageContainerWidth < IMAGE_WIDTH_THRESHOLD;
+        },
+        drawImagery() {
+            let groupSVG = this.getImageryContainer();
+            const showImagePlaceholders = this.isImageryWidthAcceptable();
+
+            if (this.imageHistory.length) {
+                this.imageHistory.forEach((currentImageObject, index) => {
+                    if (this.isImageryInBounds(currentImageObject)) {
+                        this.plotImagery(currentImageObject, showImagePlaceholders, groupSVG, index);
+                    }
+                });
+            } else {
+                this.plotNoItems(groupSVG);
+            }
+        },
+        plotNoItems(svgElement) {
+            let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            this.setNSAttributesForElement(textElement, {
+                x: "10",
+                y: "20",
+                class: "activity-label--outside-rect"
+            });
+            textElement.innerHTML = 'No activities within timeframe';
+
+            svgElement.appendChild(textElement);
+        },
+        setNSAttributesForElement(element, attributes) {
+            Object.keys(attributes).forEach((key) => {
+                if (key === 'url') {
+                    element.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attributes[key]);
+                } else {
+                    element.setAttributeNS(null, key, attributes[key]);
+                }
+            });
+        },
+        getNSAttributesForElement(element, attribute) {
+            return element.getAttributeNS(null, attribute);
+        },
+        getImageWrapper(item) {
+            const id = `id-${item.time}`;
+
+            return this.$el.querySelector(`.c-imagery-tsv__contents g[id=${id}]`);
+        },
+        plotImagery(item, showImagePlaceholders, svgElement, index) {
+            //TODO: Placeholder image
+            let existingImageWrapper = this.getImageWrapper(item);
+            //imageWrapper wraps the vertical tick rect and the image
+            if (existingImageWrapper) {
+                this.updateExistingImageWrapper(existingImageWrapper, item, showImagePlaceholders);
+            } else {
+                let imageWrapper = this.createImageWrapper(index, item, showImagePlaceholders, svgElement);
+                svgElement.appendChild(imageWrapper);
+            }
+        },
+        updateExistingImageWrapper(existingImageWrapper, item, showImagePlaceholders) {
+            //Update the x co-ordinates of the handle and image elements and the url of image
+            //this is to avoid tearing down all elements completely and re-drawing them
+            this.setNSAttributesForElement(existingImageWrapper, {
+                showImagePlaceholders
+            });
+            let imageTickElement = existingImageWrapper.querySelector('rect');
+            this.setNSAttributesForElement(imageTickElement, {
+                x: this.xScale(item.time)
+            });
+
+            let imageElement = existingImageWrapper.querySelector('image');
+            const selector = `href*=${existingImageWrapper.id}`;
+            let hoverEl = this.$el.querySelector(`.c-imagery-tsv__contents use[${selector}]`);
+            const hideImageUrl = (showImagePlaceholders && !hoverEl);
+            this.setNSAttributesForElement(imageElement, {
+                x: this.xScale(item.time) + 2,
+                url: hideImageUrl ? '' : item.url,
+                fill: showImagePlaceholders ? DEFAULT_COLOR : 'none'
+            });
+        },
+        createImageWrapper(index, item, showImagePlaceholders, svgElement) {
+            const id = `id-${item.time}`;
+            let imageWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            this.setNSAttributesForElement(imageWrapper, {
+                id,
+                class: 'c-imagery-tsv__image-wrapper',
+                showImagePlaceholders
+            });
+            //create image tick indicator
+            let imageTickElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            this.setNSAttributesForElement(imageTickElement, {
+                class: 'image-handle',
+                x: this.xScale(item.time),
+                y: 0,
+                rx: 0,
+                width: 2,
+                height: String(ROW_HEIGHT),
+                fill: 'currentColor'
+            });
+            imageWrapper.appendChild(imageTickElement);
+
+            let imageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            this.setNSAttributesForElement(imageElement, {
+                x: this.xScale(item.time) + 2,
+                y: 10,
+                rx: 0,
+                width: String(ROW_HEIGHT) - 10,
+                height: String(ROW_HEIGHT) - 10,
+                url: showImagePlaceholders ? '' : item.url,
+                fill: showImagePlaceholders ? DEFAULT_COLOR : 'none'
+            });
+            imageWrapper.appendChild(imageElement);
+
+            //TODO: Don't add the hover listener if the width is too small
+            imageWrapper.addEventListener('mouseover', this.bringToForeground.bind(this, svgElement, imageWrapper, index, item.url));
+
+            return imageWrapper;
+        },
+        bringToForeground(svgElement, imageWrapper, index, url, event) {
+            const selector = `href*=${imageWrapper.id}`;
+            let hoverEls = this.$el.querySelectorAll(`.c-imagery-tsv__contents use:not([${selector}])`);
+            if (hoverEls.length > 0) {
+                this.removeFromForeground(hoverEls);
+            }
+
+            hoverEls = this.$el.querySelectorAll(`.c-imagery-tsv__contents use[${selector}]`);
+            if (hoverEls.length) {
+
+                return;
+            }
+
+            let imageElement = imageWrapper.querySelector('image');
+            this.setNSAttributesForElement(imageElement, {
+                url: url,
+                fill: 'none'
+            });
+            let hoverElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+            this.setNSAttributesForElement(hoverElement, {
+                class: 'image-highlight',
+                x: 0,
+                fill: DEFAULT_COLOR,
+                href: `#${imageWrapper.id}`
+            });
+            this.setNSAttributesForElement(imageWrapper, {
+                class: 'c-imagery-tsv__image-wrapper is-hovered'
+            });
+            //TODO: Check why click handler doesn't get triggered
+            hoverElement.addEventListener('click', () => {
+                this.expand(index);
+            });
+
+            svgElement.appendChild(hoverElement);
+
+        },
+        removeFromForeground(items) {
+            let hoverEls;
+            if (items) {
+                hoverEls = items;
+            } else {
+                hoverEls = this.$el.querySelectorAll(".c-imagery-tsv__contents use");
+            }
+
+            hoverEls.forEach(item => {
+                let selector = `id*=${this.getNSAttributesForElement(item, 'href').replace('#', '')}`;
+                let imageWrapper = this.$el.querySelector(`.c-imagery-tsv__contents g[${selector}]`);
+                this.setNSAttributesForElement(imageWrapper, {
+                    class: 'c-imagery-tsv__image-wrapper'
+                });
+                let showImagePlaceholders = this.getNSAttributesForElement(imageWrapper, 'showImagePlaceholders');
+                if (showImagePlaceholders === 'true') {
+                    let imageElement = imageWrapper.querySelector('image');
+                    this.setNSAttributesForElement(imageElement, {
+                        url: '',
+                        fill: DEFAULT_COLOR
+                    });
+                }
+
+                item.remove();
+            });
         }
-    };
+    }
+};
 </script>
