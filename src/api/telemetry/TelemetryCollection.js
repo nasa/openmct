@@ -308,7 +308,9 @@ export class TelemetryCollection extends EventEmitter {
      */
     _timeSystem(timeSystem) {
         this.timeKey = timeSystem.key;
-        let metadataValue = this.metadata.value(this.timeKey) || { format: this.timeKey };
+        console.log('metadata', this.metadata);
+        let domainHintKey = this.metadata.valuesForHints(['domain'])[0];
+        let metadataValue = this.metadata.value(domainHintKey || this.timeKey) || { format: this.timeKey };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (datum) => {
