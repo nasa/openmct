@@ -87,7 +87,6 @@ export default {
     },
     methods: {
         updatePosition(event) {
-            console.log('update position');
             let currentPosition = [event.pageX, event.pageY];
             this.initialPosition = this.initialPosition || currentPosition;
             this.delta = currentPosition.map(function (value, index) {
@@ -95,7 +94,6 @@ export default {
             }.bind(this));
         },
         startMove(posFactor, dimFactor, event) {
-            console.log('start move');
             document.body.addEventListener('mousemove', this.continueMove);
             document.body.addEventListener('mouseup', this.endMove);
             this.dragPosition = {
@@ -116,7 +114,6 @@ export default {
             }
         },
         endMove(event) {
-            console.log('end move');
             document.body.removeEventListener('mousemove', this.continueMove);
             document.body.removeEventListener('mouseup', this.endMove);
             this.continueMove(event);
