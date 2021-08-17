@@ -189,7 +189,7 @@ export class TelemetryCollection extends EventEmitter {
                     if (endIndex > startIndex) {
                         let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
 
-                        isDuplicate = potentialDupes.some(_.isEqual(undefined, datum));
+                        isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
                     }
                 }
 
