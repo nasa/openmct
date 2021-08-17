@@ -222,6 +222,7 @@ export class TelemetryCollection extends EventEmitter {
 
         let parsedValue = this.parseTime(datum);
         let lastValue = this.parseTime(this.boundedTelemetry[this.boundedTelemetry.length - 1]);
+        console.log('sorted index', datum, parsedValue, lastValue);
 
         if (parsedValue > lastValue || parsedValue === lastValue) {
             return this.boundedTelemetry.length;
