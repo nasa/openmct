@@ -177,22 +177,17 @@ export class TelemetryCollection extends EventEmitter {
                 let isDuplicate = false;
                 let startIndex = this._sortedIndex(datum);
                 let endIndex = undefined;
-                console.log('start index', startIndex);
 
                 // dupe check
                 if (startIndex !== this.boundedTelemetry.length) {
-                    console.log('start index not equal to bounded length', this.boundedTelemetry.length);
                     endIndex = _.sortedLastIndexBy(
                         this.boundedTelemetry,
                         datum,
                         boundedDatum => this.parseTime(boundedDatum)
                     );
-                    console.log('end index', endIndex);
 
                     if (endIndex > startIndex) {
-                        console.log('end index, greater than start index');
                         let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
-                        console.log('potential dupes', potentialDupes);
 
                         isDuplicate = potentialDupes.some(_.isEqual(undefined, datum));
                     }
