@@ -36,8 +36,9 @@ describe('Open MCT Layout:', () => {
         openmct = createOpenMct();
         openmct.on('start', done);
 
-        // spyOn(openmct.objectViews, 'get')
-        //     .and.callFake(() => Promise.resolve([]));
+        // to silence error from BrowseBar.vue
+        spyOn(openmct.objectViews, 'get')
+            .and.callFake(() => []);
 
         openmct.startHeadless();
     });
