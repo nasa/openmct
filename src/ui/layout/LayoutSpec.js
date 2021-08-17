@@ -27,15 +27,10 @@ import {
 import Vue from 'vue';
 import Layout from './Layout.vue';
 
-fdescribe('Open MCT Layout:', () => {
+describe('Open MCT Layout:', () => {
     let openmct;
     let element;
-    let treePane;
-    let treeCollapseButton;
-    let treeExpandButton;
-    let inspectorPane;
-    let inspectorCollapseButton;
-    let inspectorExpandButton;
+    let components;
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -51,44 +46,67 @@ fdescribe('Open MCT Layout:', () => {
         return resetApplicationState(openmct);
     });
 
-    describe('the tree pane:', () => {
+    describe('the pane:', () => {
         it('is displayed on layout load', async () => {
             await createLayout();
             await Vue.nextTick();
 
-            expect(treePane).toBeTruthy();
-            expect(isCollapsed(treePane)).toBeFalse();
+            Object.entries(components).forEach(([name, component]) => {
+                expect(
+                    component.pane
+                ).toBeTruthy();
+
+                expect(
+                    isCollapsed(component.pane)
+                ).toBeFalse();
+            });
         });
 
         it('is collapsed on layout load if specified by a hide param', async () => {
-            openmct.router.setSearchParam('hideTree', true);
+            setHideParams();
 
             await createLayout();
             await Vue.nextTick();
 
-            expect(isCollapsed(treePane)).toBeTrue();
+            Object.entries(components).forEach(([name, component]) => {
+                expect(
+                    isCollapsed(component.pane)
+                ).toBeTrue();
+            });
         });
 
         it('on toggle collapses if expanded', async () => {
             await createLayout();
-            treeCollapseButton.click();
+            toggleCollapseButtons();
             await Vue.nextTick();
 
-            const isHideParamSet = openmct.router.getSearchParam('hideTree') === 'true';
-            expect(isHideParamSet).toBeTrue();
-            expect(isCollapsed(treePane)).toBeTrue();
+            Object.entries(components).forEach(([name, component]) => {
+                expect(
+                    openmct.router.getSearchParam(component.param)
+                ).toEqual('true');
+
+                expect(
+                    isCollapsed(component.pane)
+                ).toBeTrue();
+            });
         });
 
         it('on toggle expands if collapsed', async () => {
-            openmct.router.setSearchParam('hideTree', true);
+            setHideParams();
 
             await createLayout();
-            treeExpandButton.click();
+            toggleExpandButtons();
             await Vue.nextTick();
 
-            const isHideParamSet = openmct.router.getSearchParam('hideTree') === 'true';
-            expect(isHideParamSet).toBeFalse();
-            expect(isCollapsed(treePane)).toBeFalse();
+            Object.entries(components).forEach(([name, component]) => {
+                expect(
+                    openmct.router.getSearchParam(component.param)
+                ).not.toEqual('true');
+
+                expect(
+                    isCollapsed(component.pane)
+                ).toBeFalse();
+            });
         });
     });
 
@@ -112,16 +130,41 @@ fdescribe('Open MCT Layout:', () => {
     }
 
     function setComponents() {
-        treePane = element.querySelector('.l-shell__pane-tree');
-        treeCollapseButton = element.querySelector('.l-shell__pane-tree .l-pane__collapse-button');
-        treeExpandButton = element.querySelector('.l-shell__pane-tree .l-pane__expand-button');
-
-        inspectorPane = element.querySelector('.l-shell__pane-inspector');
-        inspectorCollapseButton = inspectorPane.querySelector('.l-shell__pane-inspector .l-pane__collapse-button');
-        inspectorExpandButton = element.querySelector('.l-shell__pane-inspector .l-pane__expand-button');
+        components = {
+            tree: {
+                param: 'hideTree',
+                pane: element.querySelector('.l-shell__pane-tree'),
+                collapseButton: element.querySelector('.l-shell__pane-tree .l-pane__collapse-button'),
+                expandButton: element.querySelector('.l-shell__pane-tree .l-pane__expand-button')
+            },
+            inspector: {
+                param: 'hideInspector',
+                pane: element.querySelector('.l-shell__pane-inspector'),
+                collapseButton: element.querySelector('.l-shell__pane-inspector .l-pane__collapse-button'),
+                expandButton: element.querySelector('.l-shell__pane-inspector .l-pane__expand-button')
+            }
+        };
     }
 
     function isCollapsed(el) {
         return el.classList.contains('l-pane--collapsed');
+    }
+
+    function setHideParams() {
+        Object.entries(components).forEach(([name, component]) => {
+            openmct.router.setSearchParam(component.param, true);
+        });
+    }
+
+    function toggleCollapseButtons() {
+        Object.entries(components).forEach(([name, component]) => {
+            component.collapseButton.click();
+        });
+    }
+
+    function toggleExpandButtons() {
+        Object.entries(components).forEach(([name, component]) => {
+            component.expandButton.click();
+        });
     }
 });
