@@ -3,7 +3,7 @@
     <tr>
         <th>Name</th>
         <th>Timestamp</th>
-        <th v-for="name in names"
+        <th v-for="name in columnNames"
             :key="name"
         >
             {{ name }}
@@ -27,9 +27,7 @@ export default {
         }
     },
     data() {
-        return {
-            names: this.columnNames
-        };
+        return {};
     },
     computed: {
         hasUnits() {
@@ -45,7 +43,7 @@ export default {
         }
     },
     mounted() {
-        console.log(this.names);
+        // console.log(this.names);
     }
 };
 

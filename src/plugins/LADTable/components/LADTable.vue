@@ -28,11 +28,11 @@
     >
         <lad-head
             :item="ladRow"
-            :columnNames="columnNames(ladRow)"
+            :column-names="columnNames(ladRow)"
         />
         <tbody>
             <lad-row
-                :col-names="columnNames(ladRow)"
+                :column-names="columnNames(ladRow)"
                 :domain-object="ladRow.domainObject"
                 :path-to-table="objectPath"
                 :has-units="hasUnits"

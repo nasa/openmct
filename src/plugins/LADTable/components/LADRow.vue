@@ -29,9 +29,11 @@
     <td class="js-first-data">{{ domainObject.name }}</td>
     <td class="js-second-data">{{ formattedTimestamp }}</td>
     <td
+        v-for="name in columnNames"
+        :key="name"
         class="js-third-data"
         :class="valueClass"
-    >{{ value }}</td>
+    >{{ value[name] }}</td>
     <td
         v-if="hasUnits"
         class="js-units"
@@ -64,7 +66,7 @@ export default {
             type: Boolean,
             requred: true
         },
-        colNames: {
+        columnNames: {
             type: Array,
             required: true
         }
@@ -140,8 +142,11 @@ export default {
                 // this.value = this.formats[this.valueKey].format(datum);
                 this.value = {};
                 this.valueKey.forEach(key => {
-                    this.value[key] = this.formats[key].format(datum);
+                    let formattedDatum = this.formats[key].format(datum);
+                    this.value[key] = formattedDatum;
+                    limit = this.limitEvaluator.evaluate(formattedDatum, this.valueMetadata);
                 });
+                // console.log(this.value);
                 limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
                 if (limit) {
                     this.valueClass = limit.cssClass;
