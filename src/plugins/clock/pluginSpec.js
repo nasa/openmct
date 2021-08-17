@@ -34,48 +34,36 @@ describe("Clock plugin:", () => {
 
     let clockDomainObject;
 
-    beforeEach((done) => {
-        clockDomainObject = {
-            identifier: {
-                key: 'clock',
-                namespace: 'test-namespace'
-            },
-            type: 'clock'
-        };
+    function setupClock(enableClockIndicator) {
+        return new Promise((resolve, reject) => {
+            clockDomainObject = {
+                identifier: {
+                    key: 'clock',
+                    namespace: 'test-namespace'
+                },
+                type: 'clock'
+            };
 
-        appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-        document.body.appendChild(appHolder);
+            appHolder = document.createElement('div');
+            appHolder.style.width = '640px';
+            appHolder.style.height = '480px';
+            document.body.appendChild(appHolder);
 
-        openmct = createOpenMct();
+            openmct = createOpenMct();
 
-        element = document.createElement('div');
-        child = document.createElement('div');
-        element.appendChild(child);
+            element = document.createElement('div');
+            child = document.createElement('div');
+            element.appendChild(child);
 
-        openmct.install(clockPlugin({ enableClockIndicator: true }));
+            openmct.install(clockPlugin({ enableClockIndicator }));
 
-        clockDefinition = openmct.types.get('clock').definition;
-        clockDefinition.initialize(clockDomainObject);
+            clockDefinition = openmct.types.get('clock').definition;
+            clockDefinition.initialize(clockDomainObject);
 
-        openmct.on('start', done);
-        openmct.start(appHolder);
-    });
-
-    afterEach(() => {
-        appHolder.remove();
-
-        return resetApplicationState(openmct);
-    });
-
-    it("has name as Clock", () => {
-        expect(clockDefinition.name).toEqual('Clock');
-    });
-
-    it("is creatable", () => {
-        expect(clockDefinition.creatable).toEqual(true);
-    });
+            openmct.on('start', resolve);
+            openmct.start(appHolder);
+        });
+    }
 
     describe("Clock view:", () => {
         let clockViewProvider;
@@ -83,7 +71,9 @@ describe("Clock plugin:", () => {
         let clockViewObject;
         let mutableClockObject;
 
-        beforeEach(() => {
+        beforeEach(async () => {
+            await setupClock(true);
+
             clockViewObject = {
                 ...clockDomainObject,
                 id: "test-object",
@@ -101,19 +91,30 @@ describe("Clock plugin:", () => {
             const applicableViews = openmct.objectViews.get(clockViewObject, [clockViewObject]);
             clockViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'clock.view');
 
-            return openmct.objects.getMutable(clockViewObject.identifier).then((mutableObject) => {
-                mutableClockObject = mutableObject;
-                clockView = clockViewProvider.view(mutableClockObject);
-                clockView.show(child);
+            mutableClockObject = await openmct.objects.getMutable(clockViewObject.identifier);
 
-                return Vue.nextTick();
-            });
+            clockView = clockViewProvider.view(mutableClockObject);
+            clockView.show(child);
 
+            await Vue.nextTick();
         });
 
         afterEach(() => {
             clockView.destroy();
             openmct.objects.destroyMutable(mutableClockObject);
+            if (appHolder) {
+                appHolder.remove();
+            }
+
+            return resetApplicationState(openmct);
+        });
+
+        it("has name as Clock", () => {
+            expect(clockDefinition.name).toEqual('Clock');
+        });
+
+        it("is creatable", () => {
+            expect(clockDefinition.creatable).toEqual(true);
         });
 
         it("provides clock view", () => {
@@ -178,39 +179,46 @@ describe("Clock plugin:", () => {
 
     describe("Clock Indicator view:", () => {
         let clockIndicator;
-        let drawerElement;
 
-        beforeEach(() => {
+        afterEach(() => {
+            if (clockIndicator) {
+                clockIndicator.remove();
+            }
+
+            clockIndicator = undefined;
+            if (appHolder) {
+                appHolder.remove();
+            }
+
+            return resetApplicationState(openmct);
+        });
+
+        it("doesn't exist", async () => {
+            await setupClock(false);
+
+            clockIndicator = openmct.indicators.indicatorObjects
+                .find(indicator => indicator.key === 'clock-indicator');
+
+            const clockIndicatorMissing = clockIndicator === null || clockIndicator === undefined;
+            expect(clockIndicatorMissing).toBe(true);
+        });
+
+        it("exists", async () => {
+            await setupClock(true);
+
             clockIndicator = openmct.indicators.indicatorObjects
                 .find(indicator => indicator.key === 'clock-indicator').element;
 
-            element.append(clockIndicator);
-
-            return Vue.nextTick().then(() => {
-                drawerElement = document.querySelector('.l-shell__drawer');
-            });
-        });
-
-        afterEach(() => {
-            if (drawerElement) {
-                drawerElement.classList.remove('is-expanded');
-            }
-
-            clockIndicator.remove();
-            clockIndicator = undefined;
-
-            if (drawerElement) {
-                drawerElement.remove();
-                drawerElement = undefined;
-            }
-        });
-
-        it("exists", () => {
             const hasClockIndicator = clockIndicator !== null && clockIndicator !== undefined;
             expect(hasClockIndicator).toBe(true);
         });
 
-        it("contains text", () => {
+        it("contains text", async () => {
+            await setupClock(true);
+
+            clockIndicator = openmct.indicators.indicatorObjects
+                .find(indicator => indicator.key === 'clock-indicator').element;
+
             const clockIndicatorText = clockIndicator.textContent.trim();
             const textIncludesUTC = clockIndicatorText.includes('UTC');
 
