@@ -23,28 +23,13 @@ import * as NotebookEntries from './notebook-entries';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 const notebookStorage = {
-    notebookMeta: {
-        name: 'notebook',
-        identifier: {
-            namespace: '',
-            key: 'test-notebook'
-        }
+    name: 'notebook',
+    identifier: {
+        namespace: '',
+        key: 'test-notebook'
     },
-    section: {
-        id: '03a79b6a-971c-4e56-9892-ec536332c3f0',
-        isDefault: true,
-        isSelected: true,
-        name: 'section',
-        pages: [],
-        sectionTitle: 'Section'
-    },
-    page: {
-        id: '8b548fd9-2b8a-4b02-93a9-4138e22eba00',
-        isDefault: true,
-        isSelected: true,
-        name: 'page',
-        pageTitle: 'Page'
-    }
+    defaultSectionId: '03a79b6a-971c-4e56-9892-ec536332c3f0',
+    defaultPageId: '8b548fd9-2b8a-4b02-93a9-4138e22eba00'
 };
 
 const notebookEntries = {
@@ -112,7 +97,7 @@ let openmct;
 let mockIdentifierService;
 
 describe('Notebook Entries:', () => {
-    beforeEach(done => {
+    beforeEach(() => {
         openmct = createOpenMct();
         openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
         mockIdentifierService = jasmine.createSpyObj(
@@ -134,13 +119,12 @@ describe('Notebook Entries:', () => {
             'update'
         ]));
         window.localStorage.setItem('notebook-storage', null);
-
-        done();
     });
 
     afterEach(() => {
         notebookDomainObject.configuration.entries[selectedSection.id][selectedPage.id] = [];
-        resetApplicationState(openmct);
+
+        return resetApplicationState(openmct);
     });
 
     it('getNotebookEntries has no entries', () => {
@@ -149,12 +133,11 @@ describe('Notebook Entries:', () => {
         expect(entries.length).toEqual(0);
     });
 
-    it('addNotebookEntry adds entry', (done) => {
+    it('addNotebookEntry adds entry', () => {
         const unlisten = openmct.objects.observe(notebookDomainObject, '*', (object) => {
             const entries = NotebookEntries.getNotebookEntries(notebookDomainObject, selectedSection, selectedPage);
 
             expect(entries.length).toEqual(1);
-            done();
             unlisten();
         });
 

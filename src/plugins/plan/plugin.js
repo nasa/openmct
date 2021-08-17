@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import PlanViewProvider from './PlanViewProvider';
+import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
 
 export default function () {
     return function install(openmct) {
@@ -44,6 +45,7 @@ export default function () {
             }
         });
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
     };
 }
 

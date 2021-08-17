@@ -27,14 +27,17 @@ export default class StyleRuleManager extends EventEmitter {
         super();
         this.openmct = openmct;
         this.callback = callback;
+        this.refreshData = this.refreshData.bind(this);
+        this.toggleSubscription = this.toggleSubscription.bind(this);
         if (suppressSubscriptionOnEdit) {
-            this.openmct.editor.on('isEditing', this.toggleSubscription.bind(this));
+            this.openmct.editor.on('isEditing', this.toggleSubscription);
             this.isEditing = this.openmct.editor.editing;
         }
 
         if (styleConfiguration) {
             this.initialize(styleConfiguration);
             if (styleConfiguration.conditionSetIdentifier) {
+                this.openmct.time.on("bounds", this.refreshData);
                 this.subscribeToConditionSet();
             } else {
                 this.applyStaticStyle();
@@ -81,6 +84,25 @@ export default class StyleRuleManager extends EventEmitter {
                 });
             this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
         });
+    }
+
+    refreshData(bounds, isTick) {
+        if (!isTick) {
+            let options = {
+                start: bounds.start,
+                end: bounds.end,
+                size: 1,
+                strategy: 'latest'
+            };
+            this.openmct.objects.get(this.conditionSetIdentifier).then((conditionSetDomainObject) => {
+                this.openmct.telemetry.request(conditionSetDomainObject, options)
+                    .then(output => {
+                        if (output && output.length) {
+                            this.handleConditionSetResultUpdated(output[0]);
+                        }
+                    });
+            });
+        }
     }
 
     updateObjectStyleConfig(styleConfiguration) {
@@ -160,9 +182,13 @@ export default class StyleRuleManager extends EventEmitter {
 
     destroy() {
         if (this.stopProvidingTelemetry) {
+
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
         }
+
+        this.openmct.time.off("bounds", this.refreshData);
+        this.openmct.editor.off('isEditing', this.toggleSubscription);
 
         this.conditionSetIdentifier = undefined;
     }

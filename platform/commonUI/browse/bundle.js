@@ -24,7 +24,6 @@ define([
     "./src/navigation/NavigationService",
     "./src/navigation/NavigateAction",
     "./src/navigation/OrphanNavigationHandler",
-    "./src/windowing/NewTabAction",
     "./res/templates/browse.html",
     "./res/templates/browse-object.html",
     "./res/templates/browse/object-header.html",
@@ -37,7 +36,6 @@ define([
     NavigationService,
     NavigateAction,
     OrphanNavigationHandler,
-    NewTabAction,
     browseTemplate,
     browseObjectTemplate,
     objectHeaderTemplate,
@@ -128,23 +126,6 @@ define([
                         "depends": [
                             "navigationService"
                         ]
-                    },
-                    {
-                        "key": "window",
-                        "name": "Open In New Tab",
-                        "implementation": NewTabAction,
-                        "description": "Open in a new browser tab",
-                        "category": [
-                            "view-control",
-                            "contextual"
-                        ],
-                        "depends": [
-                            "urlService",
-                            "$window"
-                        ],
-                        "group": "windowing",
-                        "priority": 10,
-                        "cssClass": "icon-new-window"
                     }
                 ],
                 "runs": [

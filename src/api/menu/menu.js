@@ -71,11 +71,11 @@ class Menu extends EventEmitter {
 
     showMenu() {
         this.component = new Vue({
-            provide: {
-                options: this.options
-            },
             components: {
                 MenuComponent
+            },
+            provide: {
+                options: this.options
             },
             template: '<menu-component />'
         });
@@ -85,11 +85,11 @@ class Menu extends EventEmitter {
 
     showSuperMenu() {
         this.component = new Vue({
-            provide: {
-                options: this.options
-            },
             components: {
                 SuperMenuComponent
+            },
+            provide: {
+                options: this.options
             },
             template: '<super-menu-component />'
         });

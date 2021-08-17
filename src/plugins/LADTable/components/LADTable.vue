@@ -33,11 +33,12 @@
         </thead>
         <tbody>
             <lad-row
-                v-for="item in items"
-                :key="item.key"
-                :domain-object="item.domainObject"
-                :object-path="objectPath"
+                v-for="ladRow in items"
+                :key="ladRow.key"
+                :domain-object="ladRow.domainObject"
+                :path-to-table="objectPath"
                 :has-units="hasUnits"
+                @rowContextClick="updateViewContext"
             />
         </tbody>
     </table>
@@ -51,7 +52,7 @@ export default {
     components: {
         LadRow
     },
-    inject: ['openmct'],
+    inject: ['openmct', 'currentView'],
     props: {
         domainObject: {
             type: Object,
@@ -64,7 +65,8 @@ export default {
     },
     data() {
         return {
-            items: []
+            items: [],
+            viewContext: {}
         };
     },
     computed: {
@@ -114,6 +116,12 @@ export default {
             let metadataWithUnits = valueMetadatas.filter(metadatum => metadatum.unit);
 
             return metadataWithUnits.length > 0;
+        },
+        updateViewContext(rowContext) {
+            this.viewContext.row = rowContext;
+        },
+        getViewContext() {
+            return this.viewContext;
         }
     }
 };

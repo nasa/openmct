@@ -58,6 +58,7 @@
         :index="index"
         :multi-select="selectedLayoutItems.length > 1"
         :is-editing="isEditing"
+        @contextClick="updateViewContext"
         @move="move"
         @endMove="endMove"
         @endLineResize="endLineResize"
@@ -142,7 +143,7 @@ function getItemDefinition(itemType, ...options) {
 
 export default {
     components: components,
-    inject: ['openmct', 'options', 'objectPath'],
+    inject: ['openmct', 'objectPath', 'options', 'objectUtils', 'currentView'],
     props: {
         domainObject: {
             type: Object,
@@ -157,7 +158,8 @@ export default {
         return {
             initSelectIndex: undefined,
             selection: [],
-            showGrid: true
+            showGrid: true,
+            viewContext: {}
         };
     },
     computed: {
@@ -826,6 +828,12 @@ export default {
         },
         toggleGrid() {
             this.showGrid = !this.showGrid;
+        },
+        updateViewContext(viewContext) {
+            this.viewContext.row = viewContext;
+        },
+        getViewContext() {
+            return this.viewContext;
         }
     }
 };

@@ -43,10 +43,12 @@
                 </td>
             </tr>
             <lad-row
-                v-for="telemetryObject in ladTelemetryObjects[ladTable.key]"
-                :key="telemetryObject.key"
-                :domain-object="telemetryObject.domainObject"
+                v-for="ladRow in ladTelemetryObjects[ladTable.key]"
+                :key="ladRow.key"
+                :domain-object="ladRow.domainObject"
+                :path-to-table="ladTable.objectPath"
                 :has-units="hasUnits"
+                @rowContextClick="updateViewContext"
             />
         </template>
     </tbody>
@@ -60,12 +62,19 @@ export default {
     components: {
         LadRow
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'objectPath', 'currentView'],
+    props: {
+        domainObject: {
+            type: Object,
+            required: true
+        }
+    },
     data() {
         return {
             ladTableObjects: [],
             ladTelemetryObjects: {},
-            compositions: []
+            compositions: [],
+            viewContext: {}
         };
     },
     computed: {
@@ -106,6 +115,7 @@ export default {
             let ladTable = {};
             ladTable.domainObject = domainObject;
             ladTable.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+            ladTable.objectPath = [domainObject, ...this.objectPath];
 
             this.$set(this.ladTelemetryObjects, ladTable.key, []);
             this.ladTableObjects.push(ladTable);
@@ -158,6 +168,12 @@ export default {
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
             };
+        },
+        updateViewContext(rowContext) {
+            this.viewContext.row = rowContext;
+        },
+        getViewContext() {
+            return this.viewContext;
         }
     }
 };
