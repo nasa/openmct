@@ -25,7 +25,10 @@ function ConfigStore() {
 
 ConfigStore.prototype.deleteStore = function (id) {
     if (this.store[id]) {
-        this.store[id].destroy();
+        if (this.store[id].destroy) {
+            this.store[id].destroy();
+        }
+
         delete this.store[id];
     }
 };
