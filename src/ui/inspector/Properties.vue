@@ -1,5 +1,7 @@
 <template>
-<div class="c-inspector__properties c-inspect-properties">
+<div v-if="!activity"
+     class="c-inspector__properties c-inspect-properties"
+>
     <div class="c-inspect-properties__header">
         Details
     </div>
@@ -81,6 +83,7 @@ export default {
     data() {
         return {
             domainObject: {},
+            activity: undefined,
             multiSelect: false
         };
     },
@@ -157,6 +160,7 @@ export default {
             } else {
                 this.multiSelect = false;
                 this.domainObject = selection[0][0].context.item;
+                this.activity = selection[0][0].context.activity;
             }
         },
         formatTime(unixTime) {

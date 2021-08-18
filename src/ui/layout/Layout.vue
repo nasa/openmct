@@ -46,6 +46,7 @@
 
     <multipane
         class="l-shell__main"
+        :class="[resizingClass]"
         type="horizontal"
     >
         <pane
@@ -53,6 +54,8 @@
             handle="after"
             label="Browse"
             collapsable
+            @start-resizing="onStartResizing"
+            @end-resizing="onEndResizing"
         >
             <button
                 slot="controls"
@@ -87,7 +90,7 @@
             />
             <object-view
                 ref="browseObject"
-                class="l-shell__main-container"
+                class="l-shell__main-container js-main-container"
                 data-selectable
                 :show-edit-view="true"
                 @change-action-collection="setActionCollection"
@@ -102,6 +105,8 @@
             handle="before"
             label="Inspect"
             collapsable
+            @start-resizing="onStartResizing"
+            @end-resizing="onEndResizing"
         >
             <Inspector
                 ref="inspector"
@@ -157,12 +162,16 @@ export default {
             actionCollection: undefined,
             triggerSync: false,
             triggerReset: false,
-            headExpanded
+            headExpanded,
+            isResizing: false
         };
     },
     computed: {
         toolbar() {
             return this.hasToolbar && this.isEditing;
+        },
+        resizingClass() {
+            return this.isResizing ? 'l-shell__resizing' : '';
         }
     },
     mounted() {
@@ -240,6 +249,12 @@ export default {
         },
         handleTreeReset() {
             this.triggerReset = !this.triggerReset;
+        },
+        onStartResizing() {
+            this.isResizing = true;
+        },
+        onEndResizing() {
+            this.isResizing = false;
         }
     }
 };

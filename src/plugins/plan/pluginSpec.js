@@ -29,9 +29,10 @@ describe('the plugin', function () {
     let element;
     let child;
     let openmct;
+    let appHolder;
 
     beforeEach((done) => {
-        const appHolder = document.createElement('div');
+        appHolder = document.createElement('div');
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
 
@@ -48,10 +49,6 @@ describe('the plugin', function () {
         child.style.height = '480px';
         element.appendChild(child);
 
-        openmct.time.timeSystem('utc', {
-            start: 1597160002854,
-            end: 1597181232854
-        });
         openmct.on('start', done);
         openmct.start(appHolder);
     });
@@ -103,7 +100,12 @@ describe('the plugin', function () {
         ];
         let planView;
 
-        beforeEach((done) => {
+        beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: 1597160002854,
+                end: 1597181232854
+            });
+
             planDomainObject = {
                 identifier: {
                     key: 'test-object',
@@ -140,9 +142,7 @@ describe('the plugin', function () {
             let view = planView.view(planDomainObject, mockObjectPath);
             view.show(child, true);
 
-            return Vue.nextTick().then(() => {
-                done();
-            });
+            return Vue.nextTick();
         });
 
         it('loads activities into the view', () => {

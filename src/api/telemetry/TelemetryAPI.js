@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const { TelemetryCollection } = require("./TelemetryCollection");
+
 define([
     '../../plugins/displayLayout/CustomStringFormatter',
     './TelemetryMetadataManager',
@@ -271,6 +273,28 @@ define([
         if (!Object.prototype.hasOwnProperty.call(options, 'domain')) {
             options.domain = this.openmct.time.timeSystem().key;
         }
+    };
+
+    /**
+     * Request telemetry collection for a domain object.
+     * The `options` argument allows you to specify filters
+     * (start, end, etc.), sort order, and strategies for retrieving
+     * telemetry (aggregation, latest available, etc.).
+     *
+     * @method requestTelemetryCollection
+     * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
+     * @param {module:openmct.DomainObject} domainObject the object
+     *        which has associated telemetry
+     * @param {module:openmct.TelemetryAPI~TelemetryRequest} options
+     *        options for this telemetry collection request
+     * @returns {TelemetryCollection} a TelemetryCollection instance
+     */
+    TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject, options = {}) {
+        return new TelemetryCollection(
+            this.openmct,
+            domainObject,
+            options
+        );
     };
 
     /**
@@ -567,21 +591,24 @@ define([
      * @method limits returns a limits object of
      * type {
      *          level1: {
-     *              low: { key1: value1, key2: value2 },
-     *              high: { key1: value1, key2: value2 }
+     *              low: { key1: value1, key2: value2, color: <supportedColor> },
+     *              high: { key1: value1, key2: value2, color: <supportedColor> }
      *          },
      *          level2: {
      *              low: { key1: value1, key2: value2 },
      *              high: { key1: value1, key2: value2 }
      *          }
      *       }
+     *  supported colors are purple, red, orange, yellow and cyan
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.getLimits = function (domainObject) {
         const provider = this.findLimitEvaluator(domainObject);
         if (!provider || !provider.getLimits) {
             return {
-                limits: function () {}
+                limits: function () {
+                    return Promise.resolve(undefined);
+                }
             };
         }
 

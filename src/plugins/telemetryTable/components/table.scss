@@ -190,6 +190,11 @@
     }
 }
 
+// All tables
+td {
+    @include isLimit();
+}
+
 /******************************* SPECIFIC CASE WRAPPERS */
 .is-editing {
     .c-telemetry-table__headers__labels {

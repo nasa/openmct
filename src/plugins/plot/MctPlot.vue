@@ -25,16 +25,16 @@
      :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend :cursor-locked="!!lockHighlightPoint"
-                 :series="config.series.models"
+                 :series="seriesModels"
                  :highlights="highlights"
-                 :legend="config.legend"
+                 :legend="legend"
                  @legendHoverChanged="legendHoverChanged"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis v-if="config.series.models.length > 0"
+        <y-axis v-if="seriesModels.length > 0"
                 :tick-width="tickWidth"
-                :single-series="config.series.models.length === 1"
-                :series-model="config.series.models[0]"
+                :single-series="seriesModels.length === 1"
+                :series-model="seriesModels[0]"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
         />
@@ -74,7 +74,9 @@
                 </div>
 
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
-                    <div class="c-button-set c-button-set--strip-h">
+                    <div v-if="!options.compact"
+                         class="c-button-set c-button-set--strip-h js-zoom"
+                    >
                         <button class="c-button icon-minus"
                                 title="Zoom out"
                                 @click="zoom('out', 0.2)"
@@ -86,8 +88,8 @@
                         >
                         </button>
                     </div>
-                    <div v-if="plotHistory.length"
-                         class="c-button-set c-button-set--strip-h"
+                    <div v-if="plotHistory.length && !options.compact"
+                         class="c-button-set c-button-set--strip-h js-pan"
                     >
                         <button class="c-button icon-arrow-left"
                                 title="Restore previous pan/zoom"
@@ -100,8 +102,8 @@
                         >
                         </button>
                     </div>
-                    <div v-if="isRealTime"
-                         class="c-button-set c-button-set--strip-h"
+                    <div v-if="isRealTime && !options.compact"
+                         class="c-button-set c-button-set--strip-h js-pause"
                     >
                         <button v-if="!isFrozen"
                                 class="c-button icon-pause"
@@ -139,8 +141,8 @@
                 >
                 </div>
             </div>
-            <x-axis v-if="config.series.models.length > 0 && !options.compact"
-                    :series-model="config.series.models[0]"
+            <x-axis v-if="seriesModels.length > 0 && !options.compact"
+                    :series-model="seriesModels[0]"
             />
 
         </div>
@@ -211,7 +213,8 @@ export default {
             plotHistory: [],
             selectedXKeyOption: {},
             xKeyOptions: [],
-            config: {},
+            seriesModels: [],
+            legend: {},
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
@@ -237,18 +240,13 @@ export default {
     watch: {
         plotTickWidth(newTickWidth) {
             this.onTickWidthChange(newTickWidth, true);
-        },
-        gridLines(newGridLines) {
-            this.setGridLinesVisibility(newGridLines);
-        },
-        cursorGuide(newCursorGuide) {
-            this.setCursorGuideVisibility(newCursorGuide);
         }
     },
     mounted() {
         eventHelpers.extend(this);
 
         this.config = this.getConfig();
+        this.legend = this.config.legend;
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -288,14 +286,18 @@ export default {
                 config = new PlotConfigurationModel({
                     id: configId,
                     domainObject: this.domainObject,
-                    openmct: this.openmct
+                    openmct: this.openmct,
+                    callback: (data) => {
+                        this.data = data;
+                    }
                 });
                 configStore.add(configId, config);
             }
 
             return config;
         },
-        addSeries(series) {
+        addSeries(series, index) {
+            this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
             }, this);
@@ -320,6 +322,8 @@ export default {
 
                 return;
             }
+
+            this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
             this.startLoading();
             const options = {
@@ -375,11 +379,8 @@ export default {
         },
 
         stopLoading() {
-        //TODO: Is Vue.$nextTick ok to replace $scope.$evalAsync?
-            this.$nextTick().then(() => {
-                this.pending -= 1;
-                this.updateLoading();
-            });
+            this.pending -= 1;
+            this.updateLoading();
         },
 
         updateLoading() {
@@ -425,9 +426,12 @@ export default {
                 this.skipReloadOnInteraction = false;
                 this.loadMoreData(newRange, true);
             } else {
+                // If we're not panning or zooming (time conductor and plot x-axis times are not out of sync)
                 // Drop any data that is more than 1x (max-min) before min.
                 // Limit these purges to once a second.
-                if (!this.nextPurge || this.nextPurge < Date.now()) {
+                const isPanningOrZooming = this.isTimeOutOfSync;
+                const purgeRecords = !isPanningOrZooming && (!this.nextPurge || (this.nextPurge < Date.now()));
+                if (purgeRecords) {
                     const keepRange = {
                         min: newRange.min - (newRange.max - newRange.min),
                         max: newRange.max
@@ -493,14 +497,16 @@ export default {
 
             this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
 
-            this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
-            this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
-            this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
-            this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            if (!this.options.compact) {
+                this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
+                this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
+                this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
+                this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            }
         },
 
         initialize() {
-            _.debounce(this.handleWindowResize, 400);
+            this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
             this.plotContainerResizeObserver.observe(this.$parent.$refs.plotWrapper);
 
@@ -514,12 +520,7 @@ export default {
             this.chartElementBounds = undefined;
             this.tickUpdate = false;
 
-            this.canvas = this.$refs.chartContainer.querySelectorAll('canvas')[1];
-
-            this.listenTo(this.canvas, 'mousemove', this.trackMousePosition, this);
-            this.listenTo(this.canvas, 'mouseleave', this.untrackMousePosition, this);
-            this.listenTo(this.canvas, 'mousedown', this.onMouseDown, this);
-            this.listenTo(this.canvas, 'wheel', this.wheelZoom, this);
+            this.initCanvas();
 
             this.config.yAxisLabel = this.config.yAxis.get('label');
 
@@ -621,7 +622,7 @@ export default {
                 this.config.series.models.forEach(series => delete series.closest);
             } else {
                 this.highlights = this.config.series.models
-                    .filter(series => series.data.length > 0)
+                    .filter(series => series.getSeriesData().length > 0)
                     .map(series => {
                         series.closest = series.nearestPoint(point);
 
@@ -925,16 +926,8 @@ export default {
             this.userViewportChangeEnd();
         },
 
-        setCursorGuideVisibility(cursorGuide) {
-            this.cursorGuide = cursorGuide === true;
-        },
-
-        setGridLinesVisibility(gridLines) {
-            this.gridLines = gridLines === true;
-        },
-
         setYAxisKey(yKey) {
-            this.config.series.models[0].emit('change:yKey', yKey);
+            this.config.series.models[0].set('yKey', yKey);
         },
 
         pause() {
