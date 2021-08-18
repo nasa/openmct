@@ -144,7 +144,7 @@ export default {
         updatePlotImagery() {
             this.clearPreviousImagery();
             if (this.xScale) {
-                this.drawImagery();
+                requestAnimationFrame(this.drawImagery);
             }
         },
         clearPreviousImagery() {
@@ -312,9 +312,14 @@ export default {
             this.setNSAttributesForElement(existingImageWrapper, {
                 showImagePlaceholders
             });
-            let imageTickElement = existingImageWrapper.querySelector('rect');
+            let imageTickElement = existingImageWrapper.querySelector('rect.image-handle');
             this.setNSAttributesForElement(imageTickElement, {
                 x: this.xScale(item.time)
+            });
+
+            let imageRect = existingImageWrapper.querySelector('rect.image-rect');
+            this.setNSAttributesForElement(imageRect, {
+                x: this.xScale(item.time) + 2
             });
 
             let imageElement = existingImageWrapper.querySelector('image');
@@ -323,8 +328,7 @@ export default {
             const hideImageUrl = (showImagePlaceholders && !hoverEl);
             this.setNSAttributesForElement(imageElement, {
                 x: this.xScale(item.time) + 2,
-                url: hideImageUrl ? '' : item.url,
-                fill: showImagePlaceholders ? DEFAULT_COLOR : 'none'
+                url: hideImageUrl ? '' : item.url
             });
         },
         createImageWrapper(index, item, showImagePlaceholders, svgElement) {
@@ -348,15 +352,27 @@ export default {
             });
             imageWrapper.appendChild(imageTickElement);
 
-            let imageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-            this.setNSAttributesForElement(imageElement, {
+            let imageRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            this.setNSAttributesForElement(imageRect, {
+                class: 'image-rect',
                 x: this.xScale(item.time) + 2,
                 y: 10,
                 rx: 0,
                 width: String(ROW_HEIGHT) - 10,
                 height: String(ROW_HEIGHT) - 10,
-                url: showImagePlaceholders ? '' : item.url,
-                fill: showImagePlaceholders ? DEFAULT_COLOR : 'none'
+                mask: `#image-${item.time}`
+            });
+            imageWrapper.appendChild(imageRect);
+
+            let imageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            this.setNSAttributesForElement(imageElement, {
+                id: `image-${item.time}`,
+                x: this.xScale(item.time) + 2,
+                y: 10,
+                rx: 0,
+                width: String(ROW_HEIGHT) - 10,
+                height: String(ROW_HEIGHT) - 10,
+                url: showImagePlaceholders ? '' : item.url
             });
             imageWrapper.appendChild(imageElement);
 
@@ -387,15 +403,16 @@ export default {
             this.setNSAttributesForElement(hoverElement, {
                 class: 'image-highlight',
                 x: 0,
-                fill: DEFAULT_COLOR,
                 href: `#${imageWrapper.id}`
             });
             this.setNSAttributesForElement(imageWrapper, {
                 class: 'c-imagery-tsv__image-wrapper is-hovered'
             });
-            //TODO: Check why click handler doesn't get triggered
-            hoverElement.addEventListener('click', () => {
-                this.expand(index);
+            // We're using mousedown here and not 'click' because 'click' doesn't seem to be triggered reliably
+            hoverElement.addEventListener('mousedown', (e) => {
+                if (e.button === 0) {
+                    this.expand(index);
+                }
             });
 
             svgElement.appendChild(hoverElement);
@@ -419,8 +436,7 @@ export default {
                 if (showImagePlaceholders === 'true') {
                     let imageElement = imageWrapper.querySelector('image');
                     this.setNSAttributesForElement(imageElement, {
-                        url: '',
-                        fill: DEFAULT_COLOR
+                        url: ''
                     });
                 }
 

@@ -321,6 +321,10 @@
         &.is-hovered {
             filter: brightness(1) contrast(1) !important;
         }
+
+        .image-rect {
+            fill: #595959;
+        }
     }
 
     &:hover g.c-imagery-tsv__image-wrapper {
