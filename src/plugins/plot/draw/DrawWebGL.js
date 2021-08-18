@@ -176,7 +176,9 @@ DrawWebGL.prototype.doDraw = function (drawType, buf, color, points, shape) {
     this.gl.vertexAttribPointer(this.aVertexPosition, 2, this.gl.FLOAT, false, 0, 0);
     this.gl.uniform4fv(this.uColor, color);
     this.gl.uniform1i(this.uMarkerShape, shapeCode);
-    this.gl.drawArrays(drawType, 0, points);
+    if (points !== 0) {
+        this.gl.drawArrays(drawType, 0, points);
+    }
 };
 
 DrawWebGL.prototype.clear = function () {

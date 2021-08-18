@@ -22,7 +22,7 @@
 
 import RemoteClock from "./RemoteClock";
 /**
- * Install a clock that uses a configurable telemetry endpoint. 
+ * Install a clock that uses a configurable telemetry endpoint.
  */
 
 export default function (identifier) {
