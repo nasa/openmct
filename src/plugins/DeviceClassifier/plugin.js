@@ -19,26 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import Agent from "../../utils/agent/Agent";
+import DeviceClassifier from "./src/DeviceClassifier";
 
-define([
-    "./src/AgentService"
-], function (
-    AgentService
-) {
-    return {
-        name: "platform/commonUI/mobile",
-        definition: {
-            "extensions": {
-                "services": [
-                    {
-                        "key": "agentService",
-                        "implementation": AgentService,
-                        "depends": [
-                            "$window"
-                        ]
-                    }
-                ]
-            }
-        }
+export default () => {
+    return (openmct) => {
+        openmct.on("start", () => {
+            const agent = new Agent(window);
+            DeviceClassifier(agent, window.document);
+        });
     };
-});
+};
