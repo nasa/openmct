@@ -715,14 +715,15 @@ describe("the plugin", function () {
         });
 
         it("Adds a new point to the plot", (done) => {
-            let originalLength = config.series.models[0].data.length;
+            let originalLength = config.series.models[0].getSeriesData().length;
             config.series.models[0].add({
                 utc: 2,
                 'some-key': 1,
                 'some-other-key': 2
             });
             Vue.nextTick(() => {
-                expect(config.series.models[0].data.length).toEqual(originalLength + 1);
+                const seriesData = config.series.models[0].getSeriesData();
+                expect(seriesData.length).toEqual(originalLength + 1);
                 done();
             });
         });
