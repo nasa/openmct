@@ -313,7 +313,7 @@ export class TelemetryCollection extends EventEmitter {
      */
     _timeSystem(timeSystem) {
         let domains = this.metadata.valuesForHints(['domain']);
-        let domain = domains.filter((d) => d.key === timeSystem.key)[0];
+        let domain = domains.find((d) => d.key === timeSystem.key);
 
         if (domain === undefined) {
             this._error(ERRORS.TIMESYSTEM_KEY);
