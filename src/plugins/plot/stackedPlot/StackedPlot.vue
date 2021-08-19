@@ -90,7 +90,8 @@ export default {
             cursorGuide: false,
             gridLines: true,
             loading: false,
-            compositionObjects: []
+            compositionObjects: [],
+            tickWidthMap: {}
         };
     },
     computed: {
@@ -105,8 +106,6 @@ export default {
         eventHelpers.extend(this);
 
         this.imageExporter = new ImageExporter(this.openmct);
-
-        this.tickWidthMap = {};
 
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
@@ -127,18 +126,21 @@ export default {
         addChild(child) {
             const id = this.openmct.objects.makeKeyString(child.identifier);
 
-            this.tickWidthMap[id] = 0;
+            this.$set(this.tickWidthMap, id, 0);
             this.compositionObjects.push(child);
         },
 
         removeChild(childIdentifier) {
             const id = this.openmct.objects.makeKeyString(childIdentifier);
-            delete this.tickWidthMap[id];
+
+            this.$delete(this.tickWidthMap, id);
+
             const childObj = this.compositionObjects.filter((c) => {
                 const identifier = this.openmct.objects.makeKeyString(c.identifier);
 
                 return identifier === id;
             })[0];
+
             if (childObj) {
                 const index = this.compositionObjects.indexOf(childObj);
                 this.compositionObjects.splice(index, 1);

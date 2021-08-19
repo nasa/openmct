@@ -120,7 +120,9 @@ export default {
             });
         },
         onTickWidthChange() {
-            this.$emit('plotTickWidth', ...arguments);
+            const id = this.openmct.objects.makeKeyString(this.object.identifier);
+            const args = [...arguments, id];
+            this.$emit('plotTickWidth', ...args);
         },
         setStatus(status) {
             this.status = status;
