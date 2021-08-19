@@ -24,17 +24,20 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
-import myItemsIdentifier from './myItemsIdentifier';
+import {
+    createMyItemsIdentifier,
+    MY_ITEMS_KEY
+} from './createMyItemsIdentifier';
+
+const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;
+const myItemsIdentifier = createMyItemsIdentifier();
 
 describe("the plugin", () => {
     let openmct;
     let missingObj = {
-        identifier: {
-            key: 'mine',
-            namespace: ''
-        },
+        identifier: myItemsIdentifier,
         type: 'unknown',
-        name: 'Missing: mine'
+        name: MISSING_NAME
     };
 
     beforeEach((done) => {

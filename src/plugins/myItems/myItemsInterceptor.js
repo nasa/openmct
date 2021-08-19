@@ -20,27 +20,31 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import myItemsIdentifier from './myItemsIdentifier';
+import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
+const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;
 
-const MISSING_NAME = 'Missing: mine';
-const myItemsModel = {
-    identifier: myItemsIdentifier,
-    "name": "My Items",
-    "type": "folder",
-    "composition": [],
-    "location": "ROOT"
-};
-const myItemsInterceptor = {
-    appliesTo: (identifier) => {
-        return identifier.key === 'mine';
-    },
-    invoke: (identifier, object) => {
-        if (object === undefined || object && object.name === MISSING_NAME) {
-            return myItemsModel;
+function myItemsInterceptor(identifierObject) {
+
+    const myItemsModel = {
+        identifier: identifierObject,
+        "name": "My Items",
+        "type": "folder",
+        "composition": [],
+        "location": "ROOT"
+    };
+
+    return {
+        appliesTo: (identifier) => {
+            return identifier.key === MY_ITEMS_KEY;
+        },
+        invoke: (identifier, object) => {
+            if (object === undefined || object && object.name === MISSING_NAME) {
+                return myItemsModel;
+            }
+
+            return object;
         }
-
-        return object;
-    }
-};
+    };
+}
 
 export default myItemsInterceptor;

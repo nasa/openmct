@@ -20,12 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import myItemsIdentifier from "./myItemsIdentifier";
+import { createMyItemsIdentifier } from "./createMyItemsIdentifier";
 import myItemsInterceptor from "./myItemsInterceptor";
 
-export default function MyItemsPlugin() {
+export default function MyItemsPlugin(namespace = '') {
     return function install(openmct) {
-        openmct.objects.addGetInterceptor(myItemsInterceptor);
-        openmct.objects.addRoot(myItemsIdentifier);
+        const identifier = createMyItemsIdentifier(namespace);
+
+        openmct.objects.addGetInterceptor(myItemsInterceptor(identifier));
+        openmct.objects.addRoot(identifier);
     };
 }
