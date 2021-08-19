@@ -20,28 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from './TimelineViewProvider';
-import TimelineInspectorViewProvider from "./inspector/TimelineInspectorViewProvider";
-import timelineInterceptor from "./timelineInterceptor";
+export default function timelineInterceptor(openmct) {
 
-export default function () {
-    return function install(openmct) {
-        openmct.types.addType('time-strip', {
-            name: 'Time Strip',
-            key: 'time-strip',
-            description: 'An activity timeline',
-            creatable: true,
-            cssClass: 'icon-timeline',
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
+    openmct.objects.addGetInterceptor({
+        appliesTo: (identifier, domainObject) => {
+            return domainObject && domainObject.type === 'time-strip';
+        },
+        invoke: (identifier, object) => {
 
-                };
+            if (object && object.configuration === undefined) {
+                object.configuration = {};
             }
-        });
-        timelineInterceptor(openmct);
-        openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new TimelineInspectorViewProvider(openmct));
-    };
-}
 
+            return object;
+        }
+    });
+}

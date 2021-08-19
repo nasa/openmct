@@ -249,6 +249,9 @@ export default {
     },
     mounted() {
         eventHelpers.extend(this);
+        this.updateRealTime = this.updateRealTime.bind(this);
+        this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
+        this.setTimeContext = this.setTimeContext.bind(this);
 
         this.config = this.getConfig();
 
@@ -266,7 +269,6 @@ export default {
 
         this.openmct.objectViews.on('clearData', this.clearData);
         this.setTimeContext();
-        this.openmct.time.on('independentTime', this.setTimeContext);
 
         this.loaded = true;
 
@@ -280,38 +282,25 @@ export default {
     },
     methods: {
         setTimeContext(updatedKey) {
-            this.openmct.time.off('clock', this.updateRealTime);
-            this.openmct.time.off('bounds', this.updateDisplayBounds);
-            this.path.forEach(item => {
-                const key = this.openmct.objects.makeKeyString(item.identifier);
-                if (updatedKey !== undefined && (key !== updatedKey)) {
-                    return;
-                }
+            this.stopFollowingTimeContext();
 
-                const bounds = this.openmct.time.getIndependentTime(key);
-                if (bounds) {
-                    this.updateDisplayBounds(bounds);
-                    if (this.unObserve) {
-                        this.unObserve();
-                    }
-
-                    this.unObserve = this.openmct.time.observeIndependentTime(key, this.observeIndependentTime);
-                }
-            });
-            this.followTimeConductor(this.unObserve);
+            this.timeContext = this.openmct.time.getContextForView(this.path);
+            this.timeContext.on('timeContext', this.setTimeContext);
+            this.followTimeContext();
 
         },
-        observeIndependentTime(event, bounds, isTick) {
-            this.updateDisplayBounds(bounds, isTick);
-        },
-        followTimeConductor(skipBounds) {
-            this.openmct.time.on('clock', this.updateRealTime);
-            if (skipBounds === undefined) {
-                this.updateDisplayBounds(this.openmct.time.bounds());
-                this.openmct.time.on('bounds', this.updateDisplayBounds);
-            }
-
+        followTimeContext() {
+            this.updateDisplayBounds(this.timeContext.bounds());
+            this.timeContext.on('clock', this.updateRealTime);
+            this.timeContext.on('bounds', this.updateDisplayBounds);
             this.synchronized(true);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off("clock", this.updateRealTime);
+                this.timeContext.off("bounds", this.updateDisplayBounds);
+                this.timeContext.off("timeContext", this.setTimeContext);
+            }
         },
         getConfig() {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -497,7 +486,7 @@ export default {
        * displays can update accordingly.
        */
         synchronized(value) {
-            const isLocalClock = this.openmct.time.clock();
+            const isLocalClock = this.timeContext.clock();
 
             if (typeof value !== 'undefined') {
                 this._synchronized = value;
@@ -978,7 +967,7 @@ export default {
         },
 
         showSynchronizeDialog() {
-            const isLocalClock = this.openmct.time.clock();
+            const isLocalClock = this.timeContext.clock();
             if (isLocalClock !== undefined) {
                 const message = `
                 This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
@@ -1013,9 +1002,9 @@ export default {
         },
 
         synchronizeTimeConductor() {
-            this.openmct.time.stopClock();
+            this.timeContext.stopClock();
             const range = this.config.xAxis.get('displayRange');
-            this.openmct.time.bounds({
+            this.timeContext.bounds({
                 start: range.min,
                 end: range.max
             });
@@ -1026,9 +1015,6 @@ export default {
             configStore.deleteStore(this.config.id);
 
             this.stopListening();
-            if (this.unObserve) {
-                this.unObserve();
-            }
 
             if (this.checkForSize) {
                 clearInterval(this.checkForSize);
@@ -1045,9 +1031,7 @@ export default {
 
             this.plotContainerResizeObserver.disconnect();
 
-            this.openmct.time.off('clock', this.updateRealTime);
-            this.openmct.time.off('bounds', this.updateDisplayBounds);
-            this.openmct.time.off('independentTime', this.setTimeContext);
+            this.stopFollowingTimeContext();
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         updateStatus(status) {

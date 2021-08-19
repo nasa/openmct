@@ -24,7 +24,7 @@ import { createOpenMct, resetApplicationState } from "utils/testing";
 import TimelinePlugin from "./plugin";
 import Vue from 'vue';
 
-describe('the plugin', function () {
+fdescribe('the plugin', function () {
     let objectDef;
     let element;
     let child;

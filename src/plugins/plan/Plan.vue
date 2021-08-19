@@ -102,54 +102,32 @@ export default {
         this.setTimeContext();
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
-        this.openmct.time.on("independentTime", this.setTimeContext);
     },
     beforeDestroy() {
         clearInterval(this.resizeTimer);
-        this.openmct.time.off("timeSystem", this.setScaleAndPlotActivities);
-        this.openmct.time.off("bounds", this.updateViewBounds);
-        this.openmct.time.off("independentTime", this.setTimeContext);
+        this.stopFollowingTimeContext();
         if (this.unlisten) {
             this.unlisten();
         }
-
-        if (this.unObserve) {
-            this.unObserve();
-        }
-
     },
     methods: {
-        setTimeContext(updatedKey) {
-            this.openmct.time.off("timeSystem", this.setScaleAndPlotActivities);
-            this.openmct.time.off("bounds", this.updateViewBounds);
-            this.path.forEach(item => {
-                const key = this.openmct.objects.makeKeyString(item.identifier);
-                if (updatedKey !== undefined && (key !== updatedKey)) {
-                    return;
-                }
-
-                const bounds = this.openmct.time.getIndependentTime(key);
-                if (bounds) {
-                    this.updateViewBounds(bounds);
-
-                    if (this.unObserve) {
-                        this.unObserve();
-                    }
-
-                    this.unObserve = this.openmct.time.observeIndependentTime(key, this.observeIndependentTime);
-                }
-            });
-            this.followTimeConductor(this.unObserve);
-
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.path);
+            this.timeContext.on("timeContext", this.setTimeContext);
+            this.followTimeContext();
         },
-        observeIndependentTime(event, bounds, isTick) {
-            this.updateViewBounds(bounds, isTick);
+        followTimeContext() {
+            this.updateViewBounds(this.timeContext.bounds());
+
+            this.timeContext.on("timeSystem", this.setScaleAndPlotActivities);
+            this.timeContext.on("bounds", this.updateViewBounds);
         },
-        followTimeConductor(skipBounds) {
-            this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
-            if (skipBounds === undefined) {
-                this.updateViewBounds(this.openmct.time.bounds());
-                this.openmct.time.on("bounds", this.updateViewBounds);
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off("timeSystem", this.setScaleAndPlotActivities);
+                this.timeContext.off("bounds", this.updateViewBounds);
+                this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
         observeForChanges(mutatedObject) {

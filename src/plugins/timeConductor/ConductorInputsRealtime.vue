@@ -130,57 +130,40 @@ export default {
         }
     },
     mounted() {
+        this.setTimeContext();
         this.handleTimeSync(this.realtimeOffsets);
-        // this.followTime();
     },
     beforeDestroy() {
-        this.destroy();
         this.stopFollowingTime();
     },
     methods: {
         followTime() {
-            this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
-            this.openmct.time.on('timeSystem', this.setTimeSystem);
-            this.openmct.time.on('clock', this.clearAllValidation);
-            this.openmct.time.on('clockOffsets', this.setViewFromOffsets);
+            this.timeContext.on('bounds', _.throttle(this.handleNewBounds, 300));
+            this.timeContext.on('timeSystem', this.setTimeSystem);
+            this.timeContext.on('clock', this.clearAllValidation);
+            this.timeContext.on('clockOffsets', this.setViewFromOffsets);
         },
         stopFollowingTime() {
-            this.openmct.time.off('bounds', _.throttle(this.handleNewBounds, 300));
-            this.openmct.time.off('timeSystem', this.setTimeSystem);
-            this.openmct.time.off('clock', this.clearAllValidation);
-            this.openmct.time.off('clockOffsets', this.setViewFromOffsets);
+            if (this.timeContext) {
+                this.timeContext.off('bounds', _.throttle(this.handleNewBounds, 300));
+                this.timeContext.off('timeSystem', this.setTimeSystem);
+                this.timeContext.off('clock', this.clearAllValidation);
+                this.timeContext.off('clockOffsets', this.setViewFromOffsets);
+                this.timeContext.off('timeContext', this.setTimeContext);
+            }
         },
         handleTimeSync(offsets) {
             if (offsets) {
-                this.stopFollowingTime();
-                this.initializeIndependentTime(offsets);
-            } else {
-                this.destroy();
-                this.syncTime();
-                this.followTime();
-            }
-        },
-        destroy() {
-            if (this.unObserve) {
-                this.unObserve();
-            }
-        },
-        initializeIndependentTime(offsets) {
-            if (offsets) {
                 this.setViewFromOffsets(offsets);
+            } else {
+                this.syncTime();
             }
-
-            if (this.unObserve) {
-                this.unObserve();
-            }
-
-            this.unObserve = this.openmct.time.observeIndependentTime(this.keyString, this.observeIndependentTime);
-
         },
-        observeIndependentTime(event, bounds, isTick) {
-            _.throttle(() => {
-                this.handleNewBounds(bounds, isTick);
-            }, 300);
+        setTimeContext() {
+            this.stopFollowingTime();
+            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
+            this.timeContext.on('timeContext', this.setTimeContext);
+            this.followTime();
         },
         syncTime() {
             this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
@@ -260,7 +243,9 @@ export default {
                 return false;
             }
 
-            let validationResult = true;
+            let validationResult = {
+                valid: true
+            };
             const currentInput = this.$refs[ref];
 
             return [this.$refs.startDate, this.$refs.endDate].every((input) => {
@@ -268,15 +253,17 @@ export default {
                     start: this.timeFormatter.parse(this.formattedBounds.start),
                     end: this.timeFormatter.parse(this.formattedBounds.end)
                 };
-                const limit = this.getBoundsLimit();
+                //TODO: Do we need limits here? We have conductor limits disabled right now
+                // const limit = this.getBoundsLimit();
+                const limit = false;
 
-                if (
-                    this.timeSystem.isUTCBased
-              && limit
-              && boundsValues.end - boundsValues.start > limit
-                ) {
+                if (this.timeSystem.isUTCBased && limit
+                    && boundsValues.end - boundsValues.start > limit) {
                     if (input === currentInput) {
-                        validationResult = "Start and end difference exceeds allowable limit";
+                        validationResult = {
+                            valid: false,
+                            message: "Start and end difference exceeds allowable limit"
+                        };
                     }
                 } else {
                     if (input === currentInput) {
@@ -288,17 +275,15 @@ export default {
             });
         },
         handleValidationResults(input, validationResult) {
-            if (validationResult !== true) {
-                input.setCustomValidity(validationResult);
-                input.title = validationResult;
-
-                return false;
+            if (validationResult.valid !== true) {
+                input.setCustomValidity(validationResult.message);
+                input.title = validationResult.message;
             } else {
                 input.setCustomValidity('');
                 input.title = '';
-
-                return true;
             }
+
+            return validationResult.valid;
         }
     }
 };
