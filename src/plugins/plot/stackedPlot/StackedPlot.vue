@@ -193,14 +193,7 @@ export default {
                 return;
             }
 
-            //update the tickWidth for this plotId, the computed max tick width of the stacked plot will be cascaded down
-            //TODO: Might need to do this using $set
             this.tickWidthMap[plotId] = Math.max(width, this.tickWidthMap[plotId]);
-            // const newTickWidth = Math.max(...Object.values(this.tickWidthMap));
-            // if (newTickWidth !== tickWidth || width !== tickWidth) {
-            //     tickWidth = newTickWidth;
-            //     $scope.$broadcast('plot:tickWidth', tickWidth);
-            // }
         }
     }
 };
