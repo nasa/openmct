@@ -65,5 +65,29 @@ workflows:
           node-version: lts/fermium
           browser: ChromeHeadless
           always-pass: true
+  nightly:
+    jobs:
+      - test:
+          name: node10-chrome-nightly
+          node-version: lts/dubnium
+          browser: ChromeHeadless
+          always-pass: false
+      - test:
+          name: node12-firefoxESR-nightly
+          node-version: lts/erbium
+          browser: FirefoxESR
+          always-pass: false
+      - test:
+          name: node14-chrome-nightly
+          node-version: lts/fermium
+          browser: ChromeHeadless
+          always-pass: false
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master      
 
 
