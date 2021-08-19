@@ -30,29 +30,32 @@
          class="c-conductor__time-bounds"
     >
         <ConductorModeIcon />
-        <Mode class="c-conductor__mode-select"
-              :key-string="domainObject.identifier.key"
-              :mode="timeOptions.mode"
-              @modeChanged="saveMode"
+        <div class="c-conductor__controls">
+            <Mode v-if="mode"
+                  class="c-conductor__mode-select"
+                  :key-string="domainObject.identifier.key"
+                  :mode="mode"
+                  @modeChanged="saveMode"
+            />
+        </div>
+        <conductor-inputs-fixed v-if="isFixed"
+                                :key-string="domainObject.identifier.key"
+                                :offsets="timeOptions.fixedOffsets"
+                                @updated="saveFixedOffets"
         />
-        <conductor-delta-input-fixed v-if="isFixed"
-                                     :key-string="domainObject.identifier.key"
-                                     :offsets="timeOptions.fixedOffsets"
-                                     @updated="saveFixedOffets"
-        />
-        <conductor-delta-input-realtime v-else
-                                        :key-string="domainObject.identifier.key"
-                                        :realtime-offsets="timeOptions.clockOffsets"
-                                        @updated="saveClockOffsets"
+        <conductor-inputs-realtime v-else
+                                   :key-string="domainObject.identifier.key"
+                                   :realtime-offsets="timeOptions.clockOffsets"
+                                   @updated="saveClockOffsets"
         />
 
     </div>
 </div>
-</template>
+</div></template>
 
 <script>
-import ConductorDeltaInputFixed from "@/plugins/timeConductor/ConductorDeltaInputFixed.vue";
-import ConductorDeltaInputRealtime from "@/plugins/timeConductor/ConductorDeltaInputRealtime.vue";
+import ConductorInputsFixed from "../ConductorInputsFixed.vue";
+import ConductorInputsRealtime from "../ConductorInputsRealtime.vue";
 import ConductorModeIcon from "@/plugins/timeConductor/ConductorModeIcon.vue";
 import Mode from "./Mode.vue";
 
@@ -60,8 +63,8 @@ export default {
     components: {
         Mode,
         ConductorModeIcon,
-        ConductorDeltaInputRealtime,
-        ConductorDeltaInputFixed
+        ConductorInputsRealtime,
+        ConductorInputsFixed
     },
     inject: ['openmct', 'domainObject'],
     props: {
@@ -78,7 +81,8 @@ export default {
             timeOptions: this.options || {
                 clockOffsets: this.openmct.time.clockOffsets(),
                 fixedOffsets: this.openmct.time.bounds()
-            }
+            },
+            mode: undefined
         };
     },
     watch: {
@@ -98,20 +102,22 @@ export default {
         if (this.timeOptions.mode) {
             this.mode = this.timeOptions.mode;
         } else {
-            this.mode = this.openmct.time.clock() === undefined ? 'fixed' : this.openmct.time.clock();
+            this.mode = this.openmct.time.clock() === undefined ? { key: 'fixed' } : { key: this.openmct.time.clock().key};
         }
 
-        this.isFixed = this.mode === 'fixed';
-        this.openmct.time.on('clock', this.setViewFromClock);
-        this.openmct.time.on('clockOffsets', this.setTimeOptions);
+        this.isFixed = this.mode.key === 'fixed';
         this.registerIndependentTimeOffsets();
+        this.setTimeContext();
     },
     beforeDestroy() {
-        this.openmct.time.off('clock', this.setViewFromClock);
-        this.openmct.time.off('clockOffsets', this.setTimeOptions);
+        this.timeContext.off('clock', this.setViewFromClock);
         this.destroyIndependentTime();
     },
     methods: {
+        setTimeContext() {
+            this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
+            this.timeContext.on('clock', this.setViewFromClock);
+        },
         setViewFromClock(clock) {
             if (!this.mode) {
                 this.setTimeOptions(clock);
@@ -141,7 +147,7 @@ export default {
         },
         saveMode(mode) {
             this.mode = mode;
-            this.isFixed = this.mode === 'fixed';
+            this.isFixed = this.mode.key === 'fixed';
             const newOptions = Object.assign({}, this.timeOptions, {
                 mode: this.mode
             });
@@ -161,12 +167,12 @@ export default {
                 offsets = this.timeOptions.clockOffsets;
             }
 
-            this.destroyIndependentTime();
-            this.unregisterIndependentTime = this.openmct.time.registerIndependentTime(this.domainObject.identifier.key, offsets, this.mode === 'fixed' ? undefined : this.mode);
+            const key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.unregisterIndependentTime = this.openmct.time.addIndependentContext(key, offsets, this.mode.key === 'fixed' ? undefined : this.mode.key);
         },
         destroyIndependentTime() {
             if (this.unregisterIndependentTime) {
-                this.unregisterIndependentTime.delete(this.domainObject.identifier.key);
+                this.unregisterIndependentTime();
             }
         }
     }

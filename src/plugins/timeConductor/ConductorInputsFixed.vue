@@ -211,7 +211,9 @@ export default {
                 return false;
             }
 
-            let validationResult = true;
+            let validationResult = {
+                valid: true
+            };
             const currentInput = this.$refs[ref];
 
             return [this.$refs.startDate, this.$refs.endDate].every((input) => {
@@ -223,13 +225,13 @@ export default {
                 // const limit = this.getBoundsLimit();
                 const limit = false;
 
-                if (
-                    this.timeSystem.isUTCBased
-              && limit
-              && boundsValues.end - boundsValues.start > limit
-                ) {
+                if (this.timeSystem.isUTCBased && limit
+                    && boundsValues.end - boundsValues.start > limit) {
                     if (input === currentInput) {
-                        validationResult = "Start and end difference exceeds allowable limit";
+                        validationResult = {
+                            valid: false,
+                            message: "Start and end difference exceeds allowable limit"
+                        };
                     }
                 } else {
                     if (input === currentInput) {
@@ -241,7 +243,9 @@ export default {
             });
         },
         areBoundsFormatsValid() {
-            let validationResult = true;
+            let validationResult = {
+                valid: true
+            };
 
             return [this.$refs.startDate, this.$refs.endDate].every((input) => {
                 const formattedDate = input === this.$refs.startDate
@@ -250,7 +254,10 @@ export default {
           ;
 
                 if (!this.timeFormatter.validate(formattedDate)) {
-                    validationResult = 'Invalid date';
+                    validationResult = {
+                        valid: false,
+                        message: 'Invalid date'
+                    };
                 }
 
                 return this.handleValidationResults(input, validationResult);
@@ -266,17 +273,15 @@ export default {
             return limit;
         },
         handleValidationResults(input, validationResult) {
-            if (validationResult !== true) {
-                input.setCustomValidity(validationResult);
-                input.title = validationResult;
-
-                return false;
+            if (validationResult.valid !== true) {
+                input.setCustomValidity(validationResult.message);
+                input.title = validationResult.message;
             } else {
                 input.setCustomValidity('');
                 input.title = '';
-
-                return true;
             }
+
+            return validationResult.valid;
         },
         startDateSelected(date) {
             this.formattedBounds.start = this.timeFormatter.format(date);

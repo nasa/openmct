@@ -30,11 +30,11 @@
     ]"
 >
     <div class="c-conductor__time-bounds">
-        <conductor-delta-input-fixed v-if="isFixed"
-                                     @updated="saveFixedOffsets"
+        <conductor-inputs-fixed v-if="isFixed"
+                                @updated="saveFixedOffsets"
         />
-        <conductor-delta-input-realtime v-else
-                                        @updated="saveClockOffsets"
+        <conductor-inputs-realtime v-else
+                                   @updated="saveClockOffsets"
         />
         <ConductorModeIcon class="c-conductor__mode-icon" />
         <conductor-axis
@@ -69,15 +69,15 @@ import ConductorTimeSystem from './ConductorTimeSystem.vue';
 import ConductorAxis from './ConductorAxis.vue';
 import ConductorModeIcon from './ConductorModeIcon.vue';
 import ConductorHistory from './ConductorHistory.vue';
-import ConductorDeltaInputFixed from "@/plugins/timeConductor/ConductorDeltaInputFixed.vue";
-import ConductorDeltaInputRealtime from "@/plugins/timeConductor/ConductorDeltaInputRealtime.vue";
+import ConductorInputsFixed from "./ConductorInputsFixed.vue";
+import ConductorInputsRealtime from "./ConductorInputsRealtime.vue";
 
 const DEFAULT_DURATION_FORMATTER = 'duration';
 
 export default {
     components: {
-        ConductorDeltaInputRealtime,
-        ConductorDeltaInputFixed,
+        ConductorInputsRealtime,
+        ConductorInputsFixed,
         ConductorMode,
         ConductorTimeSystem,
         ConductorAxis,

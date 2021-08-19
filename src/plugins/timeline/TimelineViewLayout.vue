@@ -96,19 +96,16 @@ export default {
             items: [],
             timeSystems: [],
             height: 0,
-            useIndependentTime: this.domainObject.configuration ? this.domainObject.configuration.useIndependentTime : false,
+            useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
             isFixed: this.openmct.time.clock() === undefined,
-            timeOptions: this.domainObject.configuration ? this.domainObject.configuration.timeOptions : undefined
+            timeOptions: this.domainObject.configuration.timeOptions
         };
     },
     beforeDestroy() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
-        this.openmct.time.off("bounds", this.updateViewBounds);
-        if (this.unObserve) {
-            this.unObserve();
-        }
+        this.stopFollowingTimeContext();
 
         if (this.unObserveTime) {
             this.unObserveTime();
@@ -122,8 +119,9 @@ export default {
             this.composition.load();
         }
 
-        this.getTimeSystems();
         this.handleTimeSync(this.useIndependentTime);
+        this.setTimeContext();
+        this.getTimeSystems();
         this.unObserveTime = this.openmct.objects.observe(this.domainObject, 'configuration.useIndependentTime', this.handleTimeSync);
     },
     methods: {
@@ -173,7 +171,7 @@ export default {
             });
         },
         getBoundsForTimeSystem(timeSystem) {
-            const currentBounds = this.openmct.time.bounds();
+            const currentBounds = this.timeContext.bounds();
 
             //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
             return currentBounds;
@@ -184,23 +182,22 @@ export default {
                 currentTimeSystem.bounds = bounds;
             }
         },
-        observeIndependentTime(event, bounds, isTick) {
-            this.updateViewBounds(bounds);
-        },
         handleTimeSync(useIndependentTime) {
             this.useIndependentTime = useIndependentTime;
-            this.openmct.time.off('bounds', this.updateViewBounds);
+        },
+        setTimeContext() {
+            console.log('changing contexts');
+            this.stopFollowingTimeContext();
 
-            if (useIndependentTime) {
-                const key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-                this.updateViewBounds(this.openmct.time.getIndependentTime(key));
-                if (this.unObserve) {
-                    this.unObserve();
-                }
-
-                this.unObserve = this.openmct.time.observeIndependentTime(key, this.observeIndependentTime);
-            } else {
-                this.openmct.time.on('bounds', this.updateViewBounds);
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.timeContext.on('timeContext', this.setTimeContext);
+            this.updateViewBounds(this.timeContext.bounds());
+            this.timeContext.on('bounds', this.updateViewBounds);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off('bounds', this.updateViewBounds);
+                this.timeContext.off('timeContext', this.setTimeContext);
             }
         },
         saveTimeOptions(options) {
