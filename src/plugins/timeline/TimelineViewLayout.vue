@@ -97,7 +97,6 @@ export default {
             timeSystems: [],
             height: 0,
             useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
-            isFixed: this.openmct.time.clock() === undefined,
             timeOptions: this.domainObject.configuration.timeOptions
         };
     },
@@ -149,8 +148,8 @@ export default {
         },
         removeItem(identifier) {
             let index = this.items.findIndex(item => this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier));
-            this.removeSelectable(this.items[index]);
             this.items.splice(index, 1);
+            this.updateContentHeight();
         },
         reorder(reorderPlan) {
             let oldItems = this.items.slice();
