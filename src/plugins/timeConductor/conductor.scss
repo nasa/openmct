@@ -8,6 +8,10 @@
 
 /*********************************************** CONDUCTOR LAYOUT */
 .c-conductor {
+    &__inputs {
+        display: contents;
+    }
+
     &__time-bounds {
         display: grid;
         grid-column-gap: $interiorMargin;
@@ -175,9 +179,18 @@
 }
 
 .c-conductor-holder--compact {
+    min-height: 22px;
+
     .c-conductor {
+        &__inputs,
         &__time-bounds {
             display: flex;
+        }
+
+        &__inputs {
+            > * + * {
+                margin-left: $interiorMarginSm;
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 <template>
 <form ref="fixedDeltaInput"
-      class="u-contents"
+      class="c-conductor__inputs"
       @submit.prevent="updateTimeFromConductor"
 >
     <button

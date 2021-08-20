@@ -1,6 +1,6 @@
 <template>
 <form ref="deltaInput"
-      class="u-contents"
+      class="c-conductor__inputs"
 >
     <div
         class="c-ctrl-wrapper c-conductor-input c-conductor__start-delta"

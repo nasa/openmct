@@ -23,30 +23,41 @@
 <div
     class="c-conductor"
     :class="[
-        isFixed ? 'is-fixed-mode' : 'is-realtime-mode'
+        isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode'
     ]"
 >
     <div v-if="timeOptions"
          class="c-conductor__time-bounds"
     >
+        <toggle-switch
+                id="independentTCToggle"
+                :checked="independentTCEnabled"
+                @change="toggleIndependentTC"
+                :title="`${independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`"
+        />
+
         <ConductorModeIcon />
-        <div class="c-conductor__controls">
-            <Mode v-if="mode"
+
+        <div class="c-conductor__controls"
+             v-if="independentTCEnabled"
+        >
+            <Mode v-if="mode && !isFixed"
                   class="c-conductor__mode-select"
                   :key-string="domainObject.identifier.key"
                   :mode="timeOptions.mode"
                   @modeChanged="saveMode"
             />
-        </div>
-        <conductor-inputs-fixed v-if="isFixed"
-                                :key-string="domainObject.identifier.key"
-                                @updated="saveFixedOffsets"
-        />
-        <conductor-inputs-realtime v-else
-                                   :key-string="domainObject.identifier.key"
-                                   @updated="saveClockOffsets"
-        />
 
+            <conductor-inputs-fixed v-if="isFixed"
+                                    :key-string="domainObject.identifier.key"
+                                    @updated="saveFixedOffsets"
+            />
+
+            <conductor-inputs-realtime v-else
+                                       :key-string="domainObject.identifier.key"
+                                       @updated="saveClockOffsets"
+            />
+        </div>
     </div>
 </div>
 </template>
@@ -55,6 +66,7 @@
 import ConductorInputsFixed from "../ConductorInputsFixed.vue";
 import ConductorInputsRealtime from "../ConductorInputsRealtime.vue";
 import ConductorModeIcon from "@/plugins/timeConductor/ConductorModeIcon.vue";
+import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import Mode from "./Mode.vue";
 
 export default {
@@ -62,7 +74,8 @@ export default {
         Mode,
         ConductorModeIcon,
         ConductorInputsRealtime,
-        ConductorInputsFixed
+        ConductorInputsFixed,
+        ToggleSwitch
     },
     inject: ['openmct', 'domainObject'],
     props: {
@@ -79,7 +92,8 @@ export default {
                 clockOffsets: this.openmct.time.clockOffsets(),
                 fixedOffsets: this.openmct.time.bounds()
             },
-            mode: undefined
+            mode: undefined,
+            independentTCEnabled: false
         };
     },
     computed: {
@@ -120,6 +134,9 @@ export default {
         this.destroyIndependentTime();
     },
     methods: {
+        toggleIndependentTC() {
+            this.independentTCEnabled = !this.independentTCEnabled;
+        },
         setTimeContext() {
             this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
             this.timeContext.on('clock', this.setViewFromClock);
