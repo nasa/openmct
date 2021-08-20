@@ -29,7 +29,9 @@ export default function timelineInterceptor(openmct) {
         invoke: (identifier, object) => {
 
             if (object && object.configuration === undefined) {
-                object.configuration = {};
+                object.configuration = {
+                    useIndependentTime: true
+                };
             }
 
             return object;

@@ -34,24 +34,22 @@
             <Mode v-if="mode"
                   class="c-conductor__mode-select"
                   :key-string="domainObject.identifier.key"
-                  :mode="mode"
+                  :mode="timeOptions.mode"
                   @modeChanged="saveMode"
             />
         </div>
         <conductor-inputs-fixed v-if="isFixed"
                                 :key-string="domainObject.identifier.key"
-                                :offsets="timeOptions.fixedOffsets"
-                                @updated="saveFixedOffets"
+                                @updated="saveFixedOffsets"
         />
         <conductor-inputs-realtime v-else
                                    :key-string="domainObject.identifier.key"
-                                   :realtime-offsets="timeOptions.clockOffsets"
                                    @updated="saveClockOffsets"
         />
 
     </div>
 </div>
-</div></template>
+</template>
 
 <script>
 import ConductorInputsFixed from "../ConductorInputsFixed.vue";
@@ -77,13 +75,21 @@ export default {
     },
     data() {
         return {
-            isFixed: this.openmct.time.clock() === undefined,
             timeOptions: this.options || {
                 clockOffsets: this.openmct.time.clockOffsets(),
                 fixedOffsets: this.openmct.time.bounds()
             },
             mode: undefined
         };
+    },
+    computed: {
+        isFixed() {
+            if (!this.mode || !this.mode.key) {
+                return this.openmct.time.clock() === undefined;
+            } else {
+                return this.mode.key === 'fixed';
+            }
+        }
     },
     watch: {
         options: {
@@ -99,15 +105,15 @@ export default {
         }
     },
     mounted() {
+        this.setTimeContext();
+
         if (this.timeOptions.mode) {
             this.mode = this.timeOptions.mode;
         } else {
-            this.mode = this.openmct.time.clock() === undefined ? { key: 'fixed' } : { key: this.openmct.time.clock().key};
+            this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: this.timeContext.clock().key};
         }
 
-        this.isFixed = this.mode.key === 'fixed';
         this.registerIndependentTimeOffsets();
-        this.setTimeContext();
     },
     beforeDestroy() {
         this.timeContext.off('clock', this.setViewFromClock);
@@ -119,35 +125,37 @@ export default {
             this.timeContext.on('clock', this.setViewFromClock);
         },
         setViewFromClock(clock) {
-            if (!this.mode) {
+            if (!this.timeOptions.mode) {
                 this.setTimeOptions(clock);
             }
         },
         setTimeOptions() {
-            if (!this.timeOptions || !this.timeOptions.clockOffsets) {
+            if (!this.timeOptions || !this.timeOptions.mode) {
+                this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: this.timeContext.clock().key};
                 this.timeOptions = {
-                    clockOffsets: this.openmct.time.clockOffsets(),
-                    fixedOffsets: this.openmct.time.bounds()
+                    clockOffsets: this.timeContext.clockOffsets(),
+                    fixedOffsets: this.timeContext.bounds()
                 };
             }
 
             this.registerIndependentTimeOffsets();
         },
-        saveFixedOffets(offsets) {
+        saveFixedOffsets(offsets) {
             const newOptions = Object.assign({}, this.timeOptions, {
                 fixedOffsets: offsets
             });
+
             this.updateTimeOptions(newOptions);
         },
         saveClockOffsets(offsets) {
             const newOptions = Object.assign({}, this.timeOptions, {
                 clockOffsets: offsets
             });
+
             this.updateTimeOptions(newOptions);
         },
         saveMode(mode) {
             this.mode = mode;
-            this.isFixed = this.mode.key === 'fixed';
             const newOptions = Object.assign({}, this.timeOptions, {
                 mode: this.mode
             });
@@ -155,10 +163,18 @@ export default {
         },
         updateTimeOptions(options) {
             this.timeOptions = options;
+            if (!this.timeOptions.mode) {
+                this.timeOptions.mode = this.mode;
+            }
+
             this.registerIndependentTimeOffsets();
-            this.$emit('updated', options);
+            this.$emit('updated', this.timeOptions);
         },
         registerIndependentTimeOffsets() {
+            if (!this.timeOptions.mode) {
+                return;
+            }
+
             let offsets;
 
             if (this.isFixed) {
@@ -168,7 +184,7 @@ export default {
             }
 
             const key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.unregisterIndependentTime = this.openmct.time.addIndependentContext(key, offsets, this.mode.key === 'fixed' ? undefined : this.mode.key);
+            this.unregisterIndependentTime = this.openmct.time.addIndependentContext(key, offsets, this.isFixed ? undefined : this.mode.key);
         },
         destroyIndependentTime() {
             if (this.unregisterIndependentTime) {

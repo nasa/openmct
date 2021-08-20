@@ -10,7 +10,7 @@
         <time-popup
             v-if="showTCInputStart"
             class="pr-tc-input-menu--start"
-            :bottom="realtimeOffsets !== undefined"
+            :bottom="keyString !== undefined"
             :type="'start'"
             :offset="offsets.start"
             @focus.native="$event.target.select()"
@@ -49,7 +49,7 @@
         <time-popup
             v-if="showTCInputEnd"
             class="pr-tc-input-menu--end"
-            :bottom="realtimeOffsets !== undefined"
+            :bottom="keyString !== undefined"
             :type="'end'"
             :offset="offsets.end"
             @focus.native="$event.target.select()"
@@ -86,12 +86,6 @@ export default {
             default() {
                 return undefined;
             }
-        },
-        realtimeOffsets: {
-            type: Object,
-            default() {
-                return undefined;
-            }
         }
     },
     data() {
@@ -121,42 +115,30 @@ export default {
             isUTCBased: timeSystem.isUTCBased
         };
     },
-    watch: {
-        realtimeOffsets: {
-            handler(newOffsets) {
-                this.handleTimeSync(newOffsets);
-            },
-            deep: true
-        }
-    },
     mounted() {
+        this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+        this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
+        this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.setTimeContext();
-        this.handleTimeSync(this.realtimeOffsets);
     },
     beforeDestroy() {
+        this.openmct.time.off('timeSystem', this.setTimeSystem);
         this.stopFollowingTime();
     },
     methods: {
         followTime() {
-            this.timeContext.on('bounds', _.throttle(this.handleNewBounds, 300));
-            this.timeContext.on('timeSystem', this.setTimeSystem);
+            this.handleNewBounds(this.timeContext.bounds());
+            this.setViewFromOffsets(this.timeContext.clockOffsets());
+            this.timeContext.on('bounds', this.handleNewBounds);
             this.timeContext.on('clock', this.clearAllValidation);
             this.timeContext.on('clockOffsets', this.setViewFromOffsets);
         },
         stopFollowingTime() {
             if (this.timeContext) {
-                this.timeContext.off('bounds', _.throttle(this.handleNewBounds, 300));
-                this.timeContext.off('timeSystem', this.setTimeSystem);
+                this.timeContext.off('bounds', this.handleNewBounds);
                 this.timeContext.off('clock', this.clearAllValidation);
                 this.timeContext.off('clockOffsets', this.setViewFromOffsets);
                 this.timeContext.off('timeContext', this.setTimeContext);
-            }
-        },
-        handleTimeSync(offsets) {
-            if (offsets) {
-                this.setViewFromOffsets(offsets);
-            } else {
-                this.syncTime();
             }
         },
         setTimeContext() {
@@ -164,11 +146,6 @@ export default {
             this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
             this.timeContext.on('timeContext', this.setTimeContext);
             this.followTime();
-        },
-        syncTime() {
-            this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-            this.setViewFromOffsets(this.openmct.time.clockOffsets());
-            this.handleNewBounds(this.openmct.time.bounds());
         },
         handleNewBounds(bounds) {
             this.setBounds(bounds);

@@ -24,9 +24,9 @@
      class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
-        <button
-            class="c-button--menu c-mode-button"
-            @click.prevent.stop="showModesMenu"
+        <button v-if="selectedMode"
+                class="c-button--menu c-mode-button"
+                @click.prevent.stop="showModesMenu"
         >
             <span class="c-button__label">{{ selectedMode.name }}</span>
         </button>
@@ -44,9 +44,7 @@ export default {
         mode: {
             type: Object,
             default() {
-                return {
-                    key: 'fixed'
-                };
+                return undefined;
             }
         }
     },
@@ -55,12 +53,12 @@ export default {
         if (this.mode && this.mode.key === 'fixed') {
             clock = undefined;
         } else {
-            //We want the clock from the global time context here
+        //We want the clock from the global time context here
             clock = this.openmct.time.clock();
         }
 
         if (clock !== undefined) {
-            //Create copy of active clock so the time API does not get reactified.
+        //Create copy of active clock so the time API does not get reactified.
             clock = Object.create(clock);
         }
 
@@ -69,18 +67,33 @@ export default {
             modes: []
         };
     },
+    watch: {
+        mode: {
+            deep: true,
+            handler(newMode) {
+                if (newMode) {
+                    this.setViewFromClock(newMode.key === 'fixed' ? undefined : newMode);
+                }
+            }
+        }
+    },
     mounted: function () {
-        this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
         if (this.mode) {
             this.setViewFromClock(this.mode.key === 'fixed' ? undefined : this.mode);
         }
 
-        this.openmct.time.on('clock', this.setViewFromClock);
+        this.followTimeConductor();
     },
     destroyed: function () {
-        this.openmct.time.off('clock', this.setViewFromClock);
+        this.stopFollowTimeConductor();
     },
     methods: {
+        followTimeConductor() {
+            this.openmct.time.on('clock', this.setViewFromClock);
+        },
+        stopFollowTimeConductor() {
+            this.openmct.time.off('clock', this.setViewFromClock);
+        },
         showModesMenu() {
             const elementBoundingClientRect = this.$refs.modeButton.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
@@ -172,13 +185,15 @@ export default {
             const clock = matchingOptions.length && matchingOptions[0].clock ? Object.assign({}, matchingOptions[0], { key: matchingOptions[0].clock }) : undefined;
             this.selectedMode = this.getModeOptionForClock(clock);
 
-            this.$emit('modeChanged', { key: clockKey });
+            if (this.mode) {
+                this.$emit('modeChanged', { key: clockKey });
+            }
         },
 
         setViewFromClock(clock) {
             this.loadClocks();
-            //retain last selected mode
-            if (this.selectedMode) {
+            //retain the mode chosen by the user
+            if (this.mode) {
                 const found = this.modes.find(mode => mode.key === this.selectedMode.key);
 
                 if (!found) {

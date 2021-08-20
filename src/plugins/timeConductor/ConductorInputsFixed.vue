@@ -27,7 +27,7 @@
         <date-picker
             v-if="isUTCBased"
             class="c-ctrl-wrapper--menus-left"
-            :bottom="offsets !== undefined"
+            :bottom="keyString !== undefined"
             :default-date-time="formattedBounds.start"
             :formatter="timeFormatter"
             @date-selected="startDateSelected"
@@ -50,7 +50,7 @@
         <date-picker
             v-if="isUTCBased"
             class="c-ctrl-wrapper--menus-left"
-            :bottom="offsets !== undefined"
+            :bottom="keyString !== undefined"
             :default-date-time="formattedBounds.end"
             :formatter="timeFormatter"
             @date-selected="endDateSelected"
@@ -81,12 +81,6 @@ export default {
             default() {
                 return undefined;
             }
-        },
-        offsets: {
-            type: Object,
-            default() {
-                return undefined;
-            }
         }
     },
     data() {
@@ -111,49 +105,36 @@ export default {
             isUTCBased: timeSystem.isUTCBased
         };
     },
-    watch: {
-        offsets: {
-            handler(newOffsets) {
-                this.handleTimeSync(newOffsets);
-            },
-            deep: true
-        }
-    },
     mounted() {
-        this.handleTimeSync(this.offsets);
+        this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-        this.openmct.time.on('bounds', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.on('timeSystem', this.setTimeSystem);
-        this.openmct.time.on('clock', this.clearAllValidation);
+        this.setTimeContext();
     },
     beforeDestroy() {
-        this.openmct.time.off('bounds', _.throttle(this.handleNewBounds, 300));
         this.openmct.time.off('timeSystem', this.setTimeSystem);
-        this.openmct.time.off('clock', this.clearAllValidation);
+        this.stopFollowingTimeContext();
     },
     methods: {
-        handleTimeSync(offsets) {
-            if (offsets) {
-                this.initializeIndependentTime(offsets);
-            } else {
-                this.syncTime();
-            }
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
+            this.timeContext.on('timeContext', this.setTimeContext);
+
+            this.handleNewBounds(this.timeContext.bounds());
+            this.timeContext.on('bounds', this.handleNewBounds);
+            this.timeContext.on('clock', this.clearAllValidation);
         },
-        initializeIndependentTime(offsets) {
-            if (offsets) {
-                this.setBounds(offsets);
-                this.setViewFromBounds(offsets);
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off('bounds', this.handleNewBounds);
+                this.timeContext.off('clock', this.clearAllValidation);
+                this.timeContext.off('timeContext', this.setTimeContext);
             }
-        },
-        syncTime() {
-            this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
-            this.handleNewBounds(this.openmct.time.bounds());
         },
         handleNewBounds(bounds) {
-            if (!this.offsets) {
-                this.setBounds(bounds);
-                this.setViewFromBounds(bounds);
-            }
+            this.setBounds(bounds);
+            this.setViewFromBounds(bounds);
         },
         clearAllValidation() {
             [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);

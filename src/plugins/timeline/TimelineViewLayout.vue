@@ -186,7 +186,6 @@ export default {
             this.useIndependentTime = useIndependentTime;
         },
         setTimeContext() {
-            console.log('changing contexts');
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
