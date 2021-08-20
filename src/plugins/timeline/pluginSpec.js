@@ -24,7 +24,7 @@ import { createOpenMct, resetApplicationState } from "utils/testing";
 import TimelinePlugin from "./plugin";
 import Vue from 'vue';
 
-xdescribe('the plugin', function () {
+describe('the plugin', function () {
     let objectDef;
     let element;
     let child;
@@ -143,7 +143,9 @@ xdescribe('the plugin', function () {
             configuration: {
                 useIndependentTime: true,
                 timeOptions: {
-                    mode: 'local',
+                    mode: {
+                        key: 'local'
+                    },
                     fixedOffsets: {
                         start: 10,
                         end: 11
@@ -171,8 +173,8 @@ xdescribe('the plugin', function () {
                 const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
                 expect(independentTimeConductorEl).toBeDefined();
 
-                const independentTime = openmct.time.getIndependentTime(testViewObject.identifier.key);
-                expect(independentTime).toEqual(testViewObject.configuration.timeOptions.clockOffsets);
+                const independentTimeContext = openmct.time.getIndependentContext(testViewObject.identifier.key);
+                expect(independentTimeContext.clockOffsets()).toEqual(testViewObject.configuration.timeOptions.clockOffsets);
             });
         });
     });
@@ -189,7 +191,9 @@ xdescribe('the plugin', function () {
             configuration: {
                 useIndependentTime: true,
                 timeOptions: {
-                    mode: 'fixed',
+                    mode: {
+                        key: 'fixed'
+                    },
                     fixedOffsets: {
                         start: 10,
                         end: 11
@@ -216,8 +220,8 @@ xdescribe('the plugin', function () {
                 const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
                 expect(independentTimeConductorEl).toBeDefined();
 
-                const independentTime = openmct.time.getIndependentTime(testViewObject2.identifier.key);
-                expect(independentTime).toEqual(testViewObject2.configuration.timeOptions.fixedOffsets);
+                const independentTimeContext = openmct.time.getIndependentContext(testViewObject2.identifier.key);
+                expect(independentTimeContext.bounds()).toEqual(testViewObject2.configuration.timeOptions.fixedOffsets);
             });
         });
     });

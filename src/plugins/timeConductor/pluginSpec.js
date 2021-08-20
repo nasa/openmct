@@ -29,7 +29,7 @@ const ONE_MINUTE = THIRTY_SECONDS * 2;
 const FIVE_MINUTES = ONE_MINUTE * 5;
 const FIFTEEN_MINUTES = FIVE_MINUTES * 3;
 const THIRTY_MINUTES = FIFTEEN_MINUTES * 2;
-const date = new Date('Jan 20 1978').getTime();
+const date = new Date(Date.UTC(78, 0, 20, 0, 0, 0)).getTime();
 
 describe('time conductor', () => {
     let element;
@@ -96,8 +96,8 @@ describe('time conductor', () => {
     it('shows delta inputs in fixed mode', () => {
         const fixedModeEl = appHolder.querySelector('.is-fixed-mode');
         const dateTimeInputs = fixedModeEl.querySelectorAll('.c-input--datetime');
-        expect(dateTimeInputs[0].value).toEqual('1978-01-20 07:30:00.000Z');
-        expect(dateTimeInputs[1].value).toEqual('1978-01-20 08:00:00.000Z');
+        expect(dateTimeInputs[0].value).toEqual('1978-01-19 23:30:00.000Z');
+        expect(dateTimeInputs[1].value).toEqual('1978-01-20 00:00:00.000Z');
         expect(fixedModeEl.querySelector('.c-mode-button .c-button__label').innerHTML).toEqual('Fixed Timespan');
     });
 
