@@ -320,16 +320,22 @@
 
         &.is-hovered {
             filter: brightness(1) contrast(1) !important;
+            [class*='__image-handle'] {
+                fill: $colorBodyFg;
+            }
         }
+    }
 
-        .image-rect {
-            fill: #595959;
-        }
+    &__image-handle {
+        fill: rgba($colorBodyFg, 0.5);
+    }
+
+    &__image-placeholder {
+        fill: pushBack($colorBodyBg, 0.3);
     }
 
     &:hover g.c-imagery-tsv__image-wrapper {
         // TODO CH: convert to theme constants
         filter: brightness(0.5) contrast(0.7);
-        transition: filter 120ms;
     }
 }

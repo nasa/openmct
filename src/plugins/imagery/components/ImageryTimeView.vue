@@ -317,7 +317,7 @@ export default {
                 x: this.xScale(item.time)
             });
 
-            let imageRect = existingImageWrapper.querySelector('rect.image-rect');
+            let imageRect = existingImageWrapper.querySelector('rect.c-imagery-tsv__image-placeholder');
             this.setNSAttributesForElement(imageRect, {
                 x: this.xScale(item.time) + 2
             });
@@ -333,6 +333,7 @@ export default {
         },
         createImageWrapper(index, item, showImagePlaceholders, svgElement) {
             const id = `id-${item.time}`;
+            const imgSize = String(ROW_HEIGHT - 15);
             let imageWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
             this.setNSAttributesForElement(imageWrapper, {
                 id,
@@ -342,24 +343,23 @@ export default {
             //create image tick indicator
             let imageTickElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             this.setNSAttributesForElement(imageTickElement, {
-                class: 'image-handle',
+                class: 'c-imagery-tsv__image-handle',
                 x: this.xScale(item.time),
-                y: 0,
+                y: 5,
                 rx: 0,
                 width: 2,
-                height: String(ROW_HEIGHT),
-                fill: 'currentColor'
+                height: String(ROW_HEIGHT - 10)
             });
             imageWrapper.appendChild(imageTickElement);
 
             let imageRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
             this.setNSAttributesForElement(imageRect, {
-                class: 'image-rect',
+                class: 'c-imagery-tsv__image-placeholder',
                 x: this.xScale(item.time) + 2,
                 y: 10,
                 rx: 0,
-                width: String(ROW_HEIGHT) - 10,
-                height: String(ROW_HEIGHT) - 10,
+                width: imgSize,
+                height: imgSize,
                 mask: `#image-${item.time}`
             });
             imageWrapper.appendChild(imageRect);
@@ -370,8 +370,8 @@ export default {
                 x: this.xScale(item.time) + 2,
                 y: 10,
                 rx: 0,
-                width: String(ROW_HEIGHT) - 10,
-                height: String(ROW_HEIGHT) - 10,
+                width: imgSize,
+                height: imgSize,
                 url: showImagePlaceholders ? '' : item.url
             });
             imageWrapper.appendChild(imageElement);
