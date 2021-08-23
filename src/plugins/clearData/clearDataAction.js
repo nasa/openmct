@@ -41,7 +41,6 @@ export default class ClearDataAction {
     appliesTo(objectPath) {
         let contextualDomainObject = objectPath[0];
         // check to see if we're in a composition
-        // TODO fix not clearing everything in a composition
         if (!contextualDomainObject.composition) {
             // check to see if contextualDomainObject matches what's selected in tree
             if (!inNavigationPath(this._openmct, contextualDomainObject)) {

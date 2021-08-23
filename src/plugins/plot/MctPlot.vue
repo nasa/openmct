@@ -394,6 +394,7 @@ export default {
         },
 
         clearData(domainObjectToClear) {
+            // borrowing this from ObjectView, which also checks domain objects
             if (domainObjectToClear) {
                 const clearKeyString = this.openmct.objects.makeKeyString(domainObjectToClear.identifier);
                 const currentObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
