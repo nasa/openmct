@@ -996,7 +996,7 @@ reveal additional information when the mouse cursor is hovered over it.
 A common use case for indicators is to convey the state of some external system such as a 
 persistence backend or HTTP server. So long as this system is accessible via HTTP request, 
 Open MCT provides a general purpose indicator to show whether the server is available and 
-returing a 2xx status code. The URL Status Indicator is made available as a default plugin. See
+returning a 2xx status code. The URL Status Indicator is made available as a default plugin. See
 the [documentation](./src/plugins/URLIndicatorPlugin) for details on how to install and configure the 
 URL Status Indicator.
 

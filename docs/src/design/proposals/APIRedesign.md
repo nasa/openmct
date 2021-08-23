@@ -423,7 +423,7 @@ which can help with this, however.
   instead of separate approaches for static and substitutable
   dependencies.
 * Removes need to understand Angular's DI mechanism.
-* Improves useability of documentation (`typeService` is an
+* Improves usability of documentation (`typeService` is an
   instance of `CompositeService` and implements `TypeService`
   so you can easily traverse links in the JSDoc.)
 * Can be used more easily from Web Workers, allowing services
