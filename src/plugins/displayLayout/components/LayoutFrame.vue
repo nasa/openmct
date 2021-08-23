@@ -33,7 +33,7 @@
     <slot></slot>
     <div
         class="c-frame__move-bar"
-        @mousedown.left="startMove([1,1], [0,0], $event)"
+        @mousedown.left="startMove($event)"
     ></div>
 </div>
 </template>
@@ -93,7 +93,7 @@ export default {
                 return value - this.initialPosition[index];
             }.bind(this));
         },
-        startMove(posFactor, dimFactor, event) {
+        startMove(event, posFactor = [1, 1], dimFactor = [0, 0]) {
             if (!this.isEditing) {
                 return;
             }
