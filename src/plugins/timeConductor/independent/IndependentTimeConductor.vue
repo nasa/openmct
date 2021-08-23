@@ -26,22 +26,20 @@
         isFixed ? 'is-fixed-mode' : independentTCEnabled ? 'is-realtime-mode' : 'is-fixed-mode'
     ]"
 >
-    <div v-if="timeOptions"
-         class="c-conductor__time-bounds"
-    >
+    <div class="c-conductor__time-bounds">
         <toggle-switch
-                id="independentTCToggle"
-                :checked="independentTCEnabled"
-                @change="toggleIndependentTC"
-                :title="`${independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`"
+            id="independentTCToggle"
+            :checked="independentTCEnabled"
+            :title="`${independentTCEnabled ? 'Disable' : 'Enable'} independent Time Conductor`"
+            @change="toggleIndependentTC"
         />
 
         <ConductorModeIcon />
 
-        <div class="c-conductor__controls"
-             v-if="independentTCEnabled"
+        <div v-if="timeOptions && independentTCEnabled"
+             class="c-conductor__controls"
         >
-            <Mode v-if="mode && !isFixed"
+            <Mode v-if="mode"
                   class="c-conductor__mode-select"
                   :key-string="domainObject.identifier.key"
                   :mode="timeOptions.mode"
@@ -84,6 +82,10 @@ export default {
             default() {
                 return undefined;
             }
+        },
+        enabled: {
+            type: Boolean,
+            required: true
         }
     },
     data() {
@@ -93,7 +95,7 @@ export default {
                 fixedOffsets: this.openmct.time.bounds()
             },
             mode: undefined,
-            independentTCEnabled: false
+            independentTCEnabled: this.enabled === true
         };
     },
     computed: {
@@ -115,7 +117,6 @@ export default {
                 }
             },
             deep: true
-
         }
     },
     mounted() {
@@ -136,6 +137,13 @@ export default {
     methods: {
         toggleIndependentTC() {
             this.independentTCEnabled = !this.independentTCEnabled;
+            if (this.independentTCEnabled) {
+                this.registerIndependentTimeOffsets();
+            } else {
+                this.destroyIndependentTime();
+            }
+
+            this.$emit('stateChanged', this.independentTCEnabled);
         },
         setTimeContext() {
             this.timeContext = this.openmct.time.getContextForView([this.domainObject]);

@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 import TimelineViewProvider from './TimelineViewProvider';
-import TimelineInspectorViewProvider from "./inspector/TimelineInspectorViewProvider";
 import timelineInterceptor from "./timelineInterceptor";
 
 export default function () {
@@ -35,13 +34,12 @@ export default function () {
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
-                    useIndependentTime: true
+                    useIndependentTime: false
                 };
             }
         });
         timelineInterceptor(openmct);
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new TimelineInspectorViewProvider(openmct));
     };
 }
 

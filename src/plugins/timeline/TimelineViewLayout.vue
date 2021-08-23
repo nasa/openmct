@@ -24,10 +24,10 @@
 <div ref="timelineHolder"
      class="c-timeline-holder"
 >
-    <div v-if="useIndependentTime"
-         class="c-conductor-holder--compact"
-    >
+    <div class="c-conductor-holder--compact">
         <independent-time-conductor :options="timeOptions"
+                                    :enabled="useIndependentTime"
+                                    @stateChanged="updateIndependentTimeState"
                                     @updated="saveTimeOptions"
         />
     </div>
@@ -118,10 +118,8 @@ export default {
             this.composition.load();
         }
 
-        this.handleTimeSync(this.useIndependentTime);
         this.setTimeContext();
         this.getTimeSystems();
-        this.unObserveTime = this.openmct.objects.observe(this.domainObject, 'configuration.useIndependentTime', this.handleTimeSync);
     },
     methods: {
         addItem(domainObject) {
@@ -181,8 +179,9 @@ export default {
                 currentTimeSystem.bounds = bounds;
             }
         },
-        handleTimeSync(useIndependentTime) {
+        updateIndependentTimeState(useIndependentTime) {
             this.useIndependentTime = useIndependentTime;
+            this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', this.useIndependentTime);
         },
         setTimeContext() {
             this.stopFollowingTimeContext();

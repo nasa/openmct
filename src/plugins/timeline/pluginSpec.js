@@ -126,7 +126,7 @@ describe('the plugin', function () {
         });
 
         it('does not show the independent time conductor based on configuration', () => {
-            const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
+            const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor__controls');
             expect(independentTimeConductorEl).toBeNull();
         });
     });
@@ -170,7 +170,7 @@ describe('the plugin', function () {
         it('displays an independent time conductor with saved options - local clock', () => {
 
             return Vue.nextTick(() => {
-                const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
+                const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor__controls');
                 expect(independentTimeConductorEl).toBeDefined();
 
                 const independentTimeContext = openmct.time.getIndependentContext(testViewObject.identifier.key);
@@ -217,7 +217,7 @@ describe('the plugin', function () {
 
         it('displays an independent time conductor with saved options - fixed timespan', () => {
             return Vue.nextTick(() => {
-                const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor-holder--compact');
+                const independentTimeConductorEl = element.querySelector('.c-timeline-holder > .c-conductor__controls');
                 expect(independentTimeConductorEl).toBeDefined();
 
                 const independentTimeContext = openmct.time.getIndependentContext(testViewObject2.identifier.key);
