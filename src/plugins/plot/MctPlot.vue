@@ -393,10 +393,12 @@ export default {
             });
         },
 
-        clearData() {
-            this.config.series.forEach(function (series) {
-                series.reset();
-            });
+        clearData(path) {
+            if (this.domainObject.identifier.key === path.identifier.key) {
+                this.config.series.forEach(function (series) {
+                    series.reset();
+                });
+            }
         },
 
         setDisplayRange(series, xKey) {
