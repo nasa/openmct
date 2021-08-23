@@ -393,11 +393,16 @@ export default {
             });
         },
 
-        clearData(path) {
-            if (this.domainObject.identifier.key === path.identifier.key) {
-                this.config.series.forEach(function (series) {
-                    series.reset();
-                });
+        clearData(domainObjectToClear) {
+            if (domainObjectToClear) {
+                const clearKeyString = this.openmct.objects.makeKeyString(domainObjectToClear.identifier);
+                const currentObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+                if (clearKeyString === currentObjectKeyString) {
+                    this.config.series.forEach(function (series) {
+                        series.reset();
+                    });
+                }
             }
         },
 
