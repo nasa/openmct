@@ -81,7 +81,7 @@ export default {
                         cssClass: 'icon-notebook',
                         name: `Save to Notebook ${defaultPath}`,
                         onItemClicked: () => {
-                            return this.snapshot(NOTEBOOK_DEFAULT);
+                            return this.snapshot(NOTEBOOK_DEFAULT, event.target);
                         }
                     });
                 }
@@ -91,16 +91,17 @@ export default {
                 cssClass: 'icon-camera',
                 name: 'Save to Notebook Snapshots',
                 onItemClicked: () => {
-                    return this.snapshot(NOTEBOOK_SNAPSHOT);
+                    return this.snapshot(NOTEBOOK_SNAPSHOT, event.target);
                 }
             });
 
             this.openmct.menus.showMenu(x, y, notebookTypes);
         },
-        snapshot(notebookType) {
+        snapshot(notebookType, target) {
             this.$nextTick(() => {
-                const element = document.querySelector('.c-overlay__contents')
-                    || document.getElementsByClassName('l-shell__main-container')[0];
+                const wrapper = target && target.closest('.js-notebook-snapshot-item-wrapper')
+                    || document;
+                const element = wrapper.querySelector('.js-notebook-snapshot-item');
 
                 const bounds = this.openmct.time.bounds();
                 const link = !this.ignoreLink
