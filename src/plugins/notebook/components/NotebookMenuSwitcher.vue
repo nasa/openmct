@@ -63,7 +63,7 @@ export default {
     },
     methods: {
         getPreviewObjectLink() {
-            const getRelativePath = this.openmct.objects.getRelativePath(this.objectPath);
+            const relativePath = this.openmct.objects.getRelativePath(this.objectPath);
             const urlParams = this.openmct.router.getParams();
             urlParams.view = this.currentView.key;
 
@@ -71,7 +71,7 @@ export default {
                 .map(([key, value]) => `${key}=${value}`)
                 .join('&');
 
-            return `#/browse/${getRelativePath}?${urlParamsString}`;
+            return `#/browse/${relativePath}?${urlParamsString}`;
         },
         async showMenu(event) {
             const menuItemOptions = {
