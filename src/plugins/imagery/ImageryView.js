@@ -11,8 +11,6 @@ export default class ImageryView {
     }
 
     show(element) {
-        let isCompact = this.objectPath.find(object => object.type === 'time-strip');
-
         this.component = new Vue({
             el: element,
             components: {
@@ -24,14 +22,7 @@ export default class ImageryView {
                 objectPath: this.objectPath,
                 currentView: this
             },
-            data() {
-                return {
-                    options: {
-                        compact: isCompact
-                    }
-                };
-            },
-            template: '<imagery-view-layout ref="ImageryLayout" :options="options"></imagery-view-layout>'
+            template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
 
         });
     }

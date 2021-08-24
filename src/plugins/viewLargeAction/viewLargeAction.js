@@ -21,12 +21,11 @@
  *****************************************************************************/
 
 import PreviewHeader from '@/ui/preview/preview-header.vue';
-import EventEmitter from 'EventEmitter';
+
 import Vue from 'vue';
 
-export default class ViewLargeAction extends EventEmitter {
+export default class ViewLargeAction {
     constructor(openmct) {
-        super();
         this.openmct = openmct;
 
         this.cssClass = 'icon-items-expand';
@@ -60,7 +59,6 @@ export default class ViewLargeAction extends EventEmitter {
     }
 
     _expand(objectPath, childElement, view) {
-        let self = this;
         const parentElement = childElement.parentElement;
 
         this.overlay = this.openmct.overlays.overlay({
@@ -68,10 +66,8 @@ export default class ViewLargeAction extends EventEmitter {
             size: 'large',
             onDestroy() {
                 parentElement.append(childElement);
-                self.emit('destroy', view);
             }
         });
-        view.component.$children[0].viewingLarge = true;
     }
 
     _getOverlayElement(objectPath, childElement, view) {

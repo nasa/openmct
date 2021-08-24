@@ -35,33 +35,37 @@
 import * as d3Scale from 'd3-scale';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import Vue from "vue";
+import imageryData from "../../imagery/mixins/imageryData";
 
 const PADDING = 1;
 const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 100;
 const IMAGE_WIDTH_THRESHOLD = 40;
-const DEFAULT_COLOR = '#cc9922';
 
 export default {
-    inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
-    props: {
-        imageHistory: {
-            type: Array,
-            required: true,
-            default() {
-                return [];
-            }
-        }
-    },
+    mixins: [imageryData],
+    inject: ['openmct', 'domainObject', 'objectPath'],
     data() {
+        let timeSystem = this.openmct.time.timeSystem();
+        this.metadata = {};
+        this.requestCount = 0;
+
         return {
             viewBounds: undefined,
-            timeSystem: undefined,
-            height: 0
+            height: 0,
+            durationFormatter: undefined,
+            imageHistory: [],
+            timeSystem: timeSystem,
+            keyString: undefined
         };
     },
+    computed: {
+        imageHistorySize() {
+            return this.imageHistory.length;
+        }
+    },
     watch: {
-        imageHistory() {
+        imageHistorySize(newSize, oldSize) {
             this.updatePlotImagery();
         }
     },
@@ -93,7 +97,29 @@ export default {
     },
     methods: {
         expand(index) {
-            this.$emit('expand', index);
+            this.expandTimeViewImage(index);
+        },
+        expandTimeViewImage(index) {
+            this.viewingLarge = true;
+
+            //we need the nextTick so that Vue can react to the viewingLarge flag being set to true
+            // and show DOM elements that we need in the following code
+            this.$nextTick().then(() => {
+                this.setFocusedImage(index, this.thumbnailClick);
+
+                if (this.$refs.imageBG && !this.imageContainerResizeObserver) {
+                    this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
+                    this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+                }
+
+                if (this.$refs.thumbsWrapper && !this.thumbWrapperResizeObserver) {
+                    this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
+                    this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
+                }
+
+                this.expand();
+            });
+
         },
         observeForChanges(mutatedObject) {
             this.updateViewBounds();
@@ -274,7 +300,7 @@ export default {
                 y: "20",
                 class: "activity-label--outside-rect"
             });
-            textElement.innerHTML = 'No activities within timeframe';
+            textElement.innerHTML = 'No images within timeframe';
 
             svgElement.appendChild(textElement);
         },
@@ -312,7 +338,7 @@ export default {
             this.setNSAttributesForElement(existingImageWrapper, {
                 showImagePlaceholders
             });
-            let imageTickElement = existingImageWrapper.querySelector('rect.image-handle');
+            let imageTickElement = existingImageWrapper.querySelector('rect.c-imagery-tsv__image-handle');
             this.setNSAttributesForElement(imageTickElement, {
                 x: this.xScale(item.time)
             });
