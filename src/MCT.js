@@ -280,6 +280,7 @@ define([
         this.install(DuplicateActionPlugin.default());
         this.install(ExportAsJSONAction.default());
         this.install(ImportFromJSONAction.default());
+        this.install(this.plugins.FormActions.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(ImageryPlugin.default());

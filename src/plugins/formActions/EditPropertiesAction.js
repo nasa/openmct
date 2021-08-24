@@ -21,25 +21,35 @@
  *****************************************************************************/
 
 import PropertiesAction from './PropertiesAction';
-import CreateWizard from '../CreateWizard';
-
-import uuid from 'uuid';
-
-export default class CreateAction extends PropertiesAction {
-    constructor(openmct, type, parentDomainObject) {
+import CreateWizard from './CreateWizard';
+export default class EditPropertiesAction extends PropertiesAction {
+    constructor(openmct) {
         super(openmct);
 
-        this.type = type;
-        this.parentDomainObject = parentDomainObject;
+        this.name = 'Edit Properties...';
+        this.key = 'properties';
+        this.description = 'Edit properties of this object.';
+        this.cssClass = 'major icon-pencil';
+        this.hideInDefaultMenu = true;
+        this.group = 'action';
+        this.priority = 10;
+        this.formProperties = {};
     }
 
-    invoke() {
-        this._showCreateForm(this.type);
+    appliesTo(objectPath) {
+        const definition = this._getTypeDefinition(objectPath[0].type);
+
+        return definition && definition.creatable;
     }
 
-    // Private methods
+    invoke(objectPath) {
+        this._showEditForm(objectPath);
+    }
 
-    async _onSave(domainObject, changes, parentDomainObject, parentDomainObjectpath) {
+    /**
+     * @private
+     */
+    async _onSave(domainObject, changes, parentDomainObject) {
         Object.entries(changes).forEach(([key, value]) => {
             const properties = key.split('.');
             let object = this.domainObject;
@@ -57,8 +67,6 @@ export default class CreateAction extends PropertiesAction {
         });
 
         this.domainObject.modified = Date.now();
-        this.domainObject.location = this.openmct.objects.makeKeyString(parentDomainObject.identifier);
-        this.domainObject.identifier.namespace = parentDomainObject.identifier.namespace;
 
         // Show saving progress dialog
         let dialog = this.openmct.overlays.progressDialog({
@@ -70,11 +78,6 @@ export default class CreateAction extends PropertiesAction {
 
         const success = await this.openmct.objects.save(this.domainObject);
         if (success) {
-            const compositionCollection = await this.openmct.composition.get(parentDomainObject);
-            compositionCollection.add(this.domainObject);
-
-            this._navigateAndEdit(this.domainObject, parentDomainObjectpath);
-
             this.openmct.notifications.info('Save successful');
         } else {
             this.openmct.notifications.error('Error saving objects');
@@ -83,52 +86,18 @@ export default class CreateAction extends PropertiesAction {
         dialog.dismiss();
     }
 
-    async _navigateAndEdit(domainObject, parentDomainObjectpath) {
-        let objectPath;
-        if (parentDomainObjectpath) {
-            objectPath = parentDomainObjectpath && [domainObject].concat(parentDomainObjectpath);
-        } else {
-            objectPath = await this.openmct.objects.getOriginalPath(domainObject.identifier);
-        }
+    /**
+     * @private
+     */
+    _showEditForm(objectPath) {
+        this.domainObject = objectPath[0];
 
-        const url = '#/browse/' + objectPath
-            .map(object => object && this.openmct.objects.makeKeyString(object.identifier.key))
-            .reverse()
-            .join('/');
-
-        this.openmct.router.navigate(url);
-
-        const objectView = this.openmct.objectViews.get(domainObject, objectPath)[0];
-        const canEdit = objectView && objectView.canEdit && objectView.canEdit(domainObject, objectPath);
-        if (canEdit) {
-            this.openmct.editor.edit();
-        }
-    }
-
-    _showCreateForm(type) {
-        const typeDefinition = this.openmct.types.get(type);
-        const definition = typeDefinition.definition;
-        const domainObject = {
-            name: `Unnamed ${definition.name}`,
-            type,
-            identifier: {
-                key: uuid(),
-                namespace: this.parentDomainObject.identifier.namespace
-            }
-        };
-
-        this.domainObject = domainObject;
-
-        if (definition.initialize) {
-            definition.initialize(domainObject);
-        }
-
-        const createWizard = new CreateWizard(this.openmct, domainObject, this.parentDomainObject);
-        const formStructure = createWizard.getFormStructure(true);
-        formStructure.title = 'Create a New ' + definition.name;
+        const createWizard = new CreateWizard(this.openmct, this.domainObject, objectPath[1]);
+        const formStructure = createWizard.getFormStructure(false);
+        formStructure.title = 'Edit ' + this.domainObject.name;
 
         const options = {
-            domainObject,
+            domainObject: this.domainObject,
             onSave: this._onSave.bind(this)
         };
 

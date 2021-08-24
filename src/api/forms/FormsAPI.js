@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EditPropertiesAction from './actions/EditPropertiesAction';
 import FormProperties from './components/FormProperties.vue';
 
 import Vue from 'vue';

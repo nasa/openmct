@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import CreateAction from '@/api/forms/actions/CreateAction';
+import CreateAction from '@/plugins/formActions/CreateAction';
 import objectUtils from 'objectUtils';
 
 export default {
