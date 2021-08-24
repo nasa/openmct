@@ -25,53 +25,9 @@ import FormProperties from './components/FormProperties.vue';
 
 import Vue from 'vue';
 
-export const CONTROLS = [
-    "autocomplete",
-    "button",
-    "checkbox",
-    "color",
-    "composite",
-    "datetime",
-    "dialog-button",
-    "file-input",
-    "menu-button",
-    "numberfield",
-    "radio",
-    "select",
-    "textarea",
-    "textfield"
-];
-
 export default class FormsAPI {
     constructor(openmct) {
         this.openmct = openmct;
-        this.controls = {};
-
-        this.init();
-    }
-
-    addControl(name, actions) {
-        const control = this.controls[name];
-        if (control) {
-            this.openmct.notifications.error(`Error: provided form control '${name}', already exists`);
-
-            return;
-        }
-
-        this.controls[name] = actions;
-    }
-
-    getAllControls() {
-        return this.controls;
-    }
-
-    getControl(name) {
-        const control = this.controls[name];
-        if (control) {
-            console.error(`Error: form control '${name}', does not exist`);
-        }
-
-        return control;
     }
 
     /**
@@ -99,7 +55,7 @@ export default class FormsAPI {
     /**
      * Show form inside an Overlay dialog with given form structure
      *
-     * @private
+     * @public
      * @param {Array<Section>} formStructure a form structure, array of section
      * @param {Object} options
      *      @property {module:openmct.DomainObject} domainObject object to be used by form
@@ -108,13 +64,16 @@ export default class FormsAPI {
      *      @property {function} onSave a callback function when form is submitted
      *      @property {function} onDismiss a callback function when form is dismissed
      */
-    showForm(formStructure, options) {
+    showForm(formStructure, {
+        domainObject,
+        parentDomainObject = {},
+        onChange,
+        onSave,
+        onDismiss
+    }) {
         const changes = {};
         let overlay;
-
-        let parentDomainObject = options.parentDomainObject || {};
         let parentDomainObjectPath;
-        const domainObject = options.domainObject;
 
         const vm = new Vue({
             components: { FormProperties },
@@ -125,9 +84,9 @@ export default class FormsAPI {
             data() {
                 return {
                     formStructure,
-                    onChange,
-                    onDismiss,
-                    onSave
+                    onChange: onFormPropertyChange,
+                    onDismiss: onFormDismiss,
+                    onSave: onFormSave
                 };
             },
             template: '<FormProperties :model="formStructure" @onChange="onChange" @onDismiss="onDismiss" @onSave="onSave"></FormProperties>'
@@ -139,9 +98,9 @@ export default class FormsAPI {
             onDestroy: () => vm.$destroy()
         });
 
-        function onChange(data) {
-            if (options.onChange) {
-                options.onChange(data);
+        function onFormPropertyChange(data) {
+            if (onChange) {
+                onChange(data);
             }
 
             if (data.model) {
@@ -160,35 +119,20 @@ export default class FormsAPI {
             }
         }
 
-        function onDismiss() {
+        function onFormDismiss() {
             overlay.dismiss();
 
-            if (options.onDismiss) {
-                options.onDismiss();
+            if (onDismiss) {
+                onDismiss();
             }
         }
 
-        function onSave() {
+        function onFormSave() {
             overlay.dismiss();
 
-            if (options.onSave) {
-                options.onSave(domainObject, changes, parentDomainObject, parentDomainObjectPath);
+            if (onSave) {
+                onSave(domainObject, changes, parentDomainObject, parentDomainObjectPath);
             }
         }
-    }
-
-    /**
-     * @private
-     */
-    _addDefaultFormControls() {
-        CONTROLS.forEach(control => {
-            this.addControl(control);
-        });
-    }
-
-    init() {
-        this.openmct.actions.register(new EditPropertiesAction(this.openmct));
-
-        this._addDefaultFormControls();
     }
 }
