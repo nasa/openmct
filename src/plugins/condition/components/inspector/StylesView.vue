@@ -321,7 +321,7 @@ export default {
             if (item) {
                 const type = this.openmct.types.get(item.type);
                 if (type && type.definition) {
-                    creatable = (type.definition.creatable === true);
+                    creatable = (type.definition.creatable !== undefined && (type.definition.creatable === 'true' || type.definition.creatable === true));
                 }
             }
 
