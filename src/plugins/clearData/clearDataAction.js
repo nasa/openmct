@@ -20,9 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function inNavigationPath(openmct, object) {
-    return openmct.router.path
-        .some(objectInPath => openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+function inSelectionPath(openmct, domainObject) {
+    return openmct.selection.get().some(selectionPath => {
+        const domainObjectIdentifier = domainObject.identifier;
+
+        return selectionPath.some(objectInPath => {
+            const objectInPathIdentifier = objectInPath.context.item.identifier;
+            const idsAreEqual = openmct.objects.areIdsEqual(objectInPathIdentifier, domainObjectIdentifier);
+
+            return idsAreEqual;
+        });
+    });
 }
 
 export default class ClearDataAction {
@@ -36,18 +44,38 @@ export default class ClearDataAction {
         this._appliesToObjects = appliesToObjects;
     }
     invoke(objectPath) {
-        this._openmct.objectViews.emit('clearData', objectPath[0]);
+        let domainObject = null;
+        if (objectPath) {
+            domainObject = objectPath[0];
+        }
+
+        this._openmct.objectViews.emit('clearData', domainObject);
     }
     appliesTo(objectPath) {
-        let contextualDomainObject = objectPath[0];
-        // check to see if we're in a composition
-        if (!contextualDomainObject.composition) {
+        if (!objectPath) {
+            return false;
+        }
+
+        const contextualDomainObject = objectPath[0];
+        const appliesToThisObject = this._appliesToObjects.some(type => {
+            return contextualDomainObject.type === type;
+        });
+        const objectInSelectionPath = inSelectionPath(this._openmct, contextualDomainObject)
+        if (appliesToThisObject) {
             // check to see if contextualDomainObject matches what's selected in tree
-            if (!inNavigationPath(this._openmct, contextualDomainObject)) {
-                return false;
+            if (objectInSelectionPath) {
+                return true;
+            } else {
+                // if this it doesn't match up, lastly check to see if we're in a composition
+                console.debug(`Should check for composition parent`);
+                if (contextualDomainObject.composition.length) {
+                    // TODO: how do we distinguish between an item in a composition
+                    // and a stacked plot?
+                    return true;
+                }
             }
         }
 
-        return this._appliesToObjects.filter(type => contextualDomainObject.type === type).length;
+        return false;
     }
 }

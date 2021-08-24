@@ -393,17 +393,25 @@ export default {
             });
         },
 
+        clearSeries() {
+            this.config.series.forEach(function (series) {
+                series.reset();
+            });
+        },
+
         clearData(domainObjectToClear) {
+            // TODO need to also check for children in composite
             // borrowing this from ObjectView, which also checks domain objects
             if (domainObjectToClear) {
                 const clearKeyString = this.openmct.objects.makeKeyString(domainObjectToClear.identifier);
                 const currentObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
                 if (clearKeyString === currentObjectKeyString) {
-                    this.config.series.forEach(function (series) {
-                        series.reset();
-                    });
+                    this.clearSeries();
                 }
+            } else {
+                // global clear, fire it anyway!
+                this.clearSeries();
             }
         },
 
