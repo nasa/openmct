@@ -445,34 +445,6 @@
     }
 }
 
-//@mixin labelValidate($sym, $c) {
-//    > .label {
-//        @include glyphAfter($sym);
-//        &:after {
-//            color: $c;
-//            margin-left: $interiorMargin;
-//        }
-//    }
-//}
-
-//.mct-form {
-//    .form-row {
-//        > .label {
-//            padding-right: 1em; // Keep room for validation element
-//            &:after {
-//                font-size: .8em;
-//            }
-//        }
-//        &.invalid,
-//        &.invalid.req { @include labelValidate($glyph-icon-x, $colorFormInvalid); }
-//
-//        &.valid,
-//        &.valid.req { @include labelValidate($glyph-icon-check, $colorFormValid); }
-//
-//        &.req { @include labelValidate($glyph-icon-asterisk, $colorFormRequired); }
-//    }
-//}
-
 body.desktop .form-row > .label {
     &:after {
         position: absolute;

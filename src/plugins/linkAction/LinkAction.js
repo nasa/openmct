@@ -32,6 +32,13 @@ export default class LinkAction {
         this.openmct = openmct;
     }
 
+    appliesTo(objectPath) {
+        let domainObject = objectPath[0];
+        let type = domainObject && this.openmct.types.get(domainObject.type);
+
+        return type && type.definition.creatable;
+    }
+
     invoke(objectPath) {
         this.showForm(objectPath[0], objectPath[1]);
     }
@@ -57,7 +64,6 @@ export default class LinkAction {
     }
 
     showForm(domainObject, parentDomainObject) {
-
         const formStructure = {
             title: `Link "${domainObject.name}" to a New Location`,
             sections: [
@@ -85,11 +91,9 @@ export default class LinkAction {
     validate(currentParent) {
         return (object, data) => {
             const parentCandidate = data.value;
-            // console.log('move action : validateLocation', );
-            // TODO: remove getModel, checkPolicy and useCapability
-            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
-            let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
+            const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
+            const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
+            const objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
@@ -111,98 +115,4 @@ export default class LinkAction {
             return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, object);
         };
     }
-
-    appliesTo(objectPath) {
-        let domainObject = objectPath[0];
-        let type = domainObject && this.openmct.types.get(domainObject.type);
-
-        return type && type.definition.creatable;
-    }
-
-    // appliesTo(objectPath) {
-    //     let parent = objectPath[1];
-    //     let parentType = parent && this.openmct.types.get(parent.type);
-    //     let child = objectPath[0];
-    //     let childType = child && this.openmct.types.get(child.type);
-
-    //     if (child.locked || (parent && parent.locked)) {
-    //         return false;
-    //     }
-
-    //     return parentType
-    //         && parentType.definition.creatable
-    //         && childType
-    //         && childType.definition.creatable
-    //         && Array.isArray(parent.composition);
-    // }
-
-    // async invoke(objectPath) {
-    //     let objectToLink = objectPath[0];
-    //     let dialogService = this.openmct.$injector.get('dialogService');
-    //     let dialogForm = this.getDialogForm(objectToLink);
-    //     let userInput = await dialogService.getUserInput(dialogForm, {});
-    //     let newParent = userInput.location;
-
-    //     // legacy check
-    //     if (this.isLegacyDomainObject(newParent)) {
-    //         newParent = await this.convertFromLegacy(newParent);
-    //     }
-
-    //     this.linkInNewParent(objectToLink, newParent);
-    // }
-
-    // isLegacyDomainObject(domainObject) {
-    //     return domainObject.getCapability !== undefined;
-    // }
-
-    // async convertFromLegacy(legacyDomainObject) {
-    //     let objectContext = legacyDomainObject.getCapability('context');
-    //     let domainObject = await this.openmct.objects.get(objectContext.domainObject.id);
-
-    //     return domainObject;
-    // }
-
-    // getDialogForm(objectToLink) {
-    //     let validate = this.validate(objectToLink);
-
-    //     return {
-    //         name: `Link "${objectToLink.name}" to a New Location`,
-    //         sections: [
-    //             {
-    //                 rows: [
-    //                     {
-    //                         name: "Link To",
-    //                         control: "locator",
-    //                         validate,
-    //                         key: 'location'
-    //                     }
-    //                 ]
-    //             }
-    //         ]
-    //     };
-    // }
-
-    // validate(objectToLink) {
-    //     return (parentObject) => {
-    //         let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentObject.getId());
-    //         let objectToLinkKeystring = this.openmct.objects.makeKeyString(objectToLink.identifier);
-    //         let sameObjectOrChildAlready = parentCandidateKeystring === objectToLinkKeystring
-    //             || parentObject.getModel().composition.includes(objectToLinkKeystring);
-
-    //         // the same object or a child already, not valid
-    //         if (sameObjectOrChildAlready) {
-    //             return false;
-    //         }
-
-    //         if (parentObject.getModel().locked) {
-    //             return false;
-    //         }
-
-    //         // can contain
-    //         return this.openmct.composition.checkPolicy(
-    //             parentObject.useCapability('adapter'),
-    //             objectToLink
-    //         );
-    //     };
-    // }
 }
