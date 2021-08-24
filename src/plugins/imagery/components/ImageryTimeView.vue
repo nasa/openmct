@@ -36,6 +36,7 @@ import * as d3Scale from 'd3-scale';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import Vue from "vue";
 import imageryData from "../../imagery/mixins/imageryData";
+import PreviewAction from "@/ui/preview/PreviewAction";
 
 const PADDING = 1;
 const RESIZE_POLL_INTERVAL = 200;
@@ -70,6 +71,8 @@ export default {
         }
     },
     mounted() {
+        this.previewAction = new PreviewAction(this.openmct);
+
         this.canvas = this.$refs.imagery.appendChild(document.createElement('canvas'));
         this.canvas.height = 0;
         this.canvasContext = this.canvas.getContext('2d');
@@ -97,29 +100,8 @@ export default {
     },
     methods: {
         expand(index) {
-            this.expandTimeViewImage(index);
-        },
-        expandTimeViewImage(index) {
-            this.viewingLarge = true;
-
-            //we need the nextTick so that Vue can react to the viewingLarge flag being set to true
-            // and show DOM elements that we need in the following code
-            this.$nextTick().then(() => {
-                this.setFocusedImage(index, this.thumbnailClick);
-
-                if (this.$refs.imageBG && !this.imageContainerResizeObserver) {
-                    this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
-                    this.imageContainerResizeObserver.observe(this.$refs.imageBG);
-                }
-
-                if (this.$refs.thumbsWrapper && !this.thumbWrapperResizeObserver) {
-                    this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
-                    this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
-                }
-
-                this.expand();
-            });
-
+            const path = this.objectPath[0];
+            this.previewAction.invoke([path]);
         },
         observeForChanges(mutatedObject) {
             this.updateViewBounds();
