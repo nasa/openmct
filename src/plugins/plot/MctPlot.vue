@@ -401,13 +401,18 @@ export default {
 
         clearData(domainObjectToClear) {
             // TODO need to also check for children in composite
-            // borrowing this from ObjectView, which also checks domain objects
+            // TODO how to distinguish between plot inside composition (need correct domain object)
+            // and a plot that is a composition (e.g., a stacked plot)?
+            // what is the right way to get composition parents or children?
             if (domainObjectToClear) {
-                const clearKeyString = this.openmct.objects.makeKeyString(domainObjectToClear.identifier);
-                const currentObjectKeyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
-                if (clearKeyString === currentObjectKeyString) {
+                if (this.openmct.objects.areIdsEqual(domainObjectToClear.identifier, this.domainObject.identifier)) {
                     this.clearSeries();
+                } else {
+                    // check to see if our parent is a layout...Somehow
+                    const parent = this.$parent;
+                    if (parent.$refs.plotWrapper){
+                            this.clearSeries();
+                    }
                 }
             } else {
                 // global clear, fire it anyway!
