@@ -155,39 +155,51 @@ export default {
                 this.timeSystem = this.openmct.time.timeSystem();
             }
 
-            this.setScaleAndPlotImagery();
+            this.setScaleAndPlotImagery(this.timeSystem, !isTick);
 
         },
-        setScaleAndPlotImagery(timeSystem) {
+        setScaleAndPlotImagery(timeSystem, clearAllImagery) {
             if (timeSystem !== undefined) {
                 this.timeSystem = timeSystem;
                 this.timeFormatter = this.getFormatter(this.timeSystem.key);
             }
 
             this.setScale(this.timeSystem);
-            this.updatePlotImagery();
+            this.updatePlotImagery(clearAllImagery);
         },
-        updatePlotImagery() {
-            this.clearPreviousImagery();
+        getFormatter(key) {
+            const metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+
+            let metadataValue = metadata.value(key) || { format: key };
+            let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
+
+            return valueFormatter;
+        },
+        updatePlotImagery(clearAllImagery) {
+            this.clearPreviousImagery(clearAllImagery);
             if (this.xScale) {
-                requestAnimationFrame(this.drawImagery);
+                this.drawImagery();
             }
         },
-        clearPreviousImagery() {
+        clearPreviousImagery(clearAllImagery) {
             //TODO: Only clear items that are out of bounds
-            let noItemsEl = this.$el.querySelectorAll(".c-imagery-tsv__contents .activity-label--outside-rect");
+            let noItemsEl = this.$el.querySelectorAll(".c-imagery-tsv__no-items");
             noItemsEl.forEach(item => {
                 item.remove();
             });
             let imagery = this.$el.querySelectorAll(".c-imagery-tsv__image-wrapper");
             imagery.forEach(item => {
-                const id = this.getNSAttributesForElement(item, 'id');
-                if (id) {
-                    const timestamp = id.replace('id-', '');
-                    if (!this.isImageryInBounds({
-                        time: timestamp
-                    })) {
-                        item.remove();
+                if (clearAllImagery) {
+                    item.remove();
+                } else {
+                    const id = this.getNSAttributesForElement(item, 'id');
+                    if (id) {
+                        const timestamp = id.replace('id-', '');
+                        if (!this.isImageryInBounds({
+                            time: timestamp
+                        })) {
+                            item.remove();
+                        }
                     }
                 }
             });
@@ -298,7 +310,7 @@ export default {
             this.setNSAttributesForElement(textElement, {
                 x: "10",
                 y: "20",
-                class: "activity-label--outside-rect"
+                class: "c-imagery-tsv__no-items"
             });
             textElement.innerHTML = 'No images within timeframe';
 

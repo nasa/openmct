@@ -124,10 +124,6 @@ export default {
         drawAxis(bounds, timeSystem) {
             let viewBounds = Object.assign({}, bounds);
 
-            let timespan = (viewBounds.end - viewBounds.start);
-            let padding = timespan / 2;
-            viewBounds.end = viewBounds.end + padding;
-
             this.setScale(viewBounds, timeSystem);
             this.setAxis(viewBounds);
             this.axisElement.call(this.xAxis);

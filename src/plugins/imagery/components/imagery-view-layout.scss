@@ -326,6 +326,10 @@
         }
     }
 
+    &__no-items {
+        fill: $colorBodyFg !important;
+    }
+
     &__image-handle {
         fill: rgba($colorBodyFg, 0.5);
     }
