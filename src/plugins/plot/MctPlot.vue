@@ -408,10 +408,9 @@ export default {
                 if (this.openmct.objects.areIdsEqual(domainObjectToClear.identifier, this.domainObject.identifier)) {
                     this.clearSeries();
                 } else {
-                    // check to see if our parent is a layout...Somehow
-                    const parent = this.$parent;
-                    if (parent.$refs.plotWrapper){
-                            this.clearSeries();
+                    const routerPath = this.openmct.router.path[0];
+                    if (routerPath.type === 'telemetry.plot.stacked') {
+                        this.clearSeries();
                     }
                 }
             } else {
