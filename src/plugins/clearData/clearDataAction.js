@@ -57,6 +57,7 @@ export default class ClearDataAction {
         }
 
         const contextualDomainObject = objectPath[0];
+        // first check to see if this action applies to this sort of object at all
         const appliesToThisObject = this._appliesToObjects.some(type => {
             return contextualDomainObject.type === type;
         });
@@ -66,14 +67,14 @@ export default class ClearDataAction {
             if (objectInSelectionPath) {
                 return true;
             } else {
-                // if this it doesn't match up, lastly check to see if we're in a composition
-                console.debug(`Should check for composition parent in path`);
+                // if this it doesn't match up, check to see if we're in a composition (i.e., layout)
                 const routerPath = this._openmct.router.path[0];
-                console.debug(`routerPath - ${JSON.stringify(routerPath)}`);
+
                 return routerPath.type === 'layout';
             }
         }
 
+        // we've selected something not applicable
         return false;
     }
 }

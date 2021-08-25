@@ -400,14 +400,13 @@ export default {
         },
 
         clearData(domainObjectToClear) {
-            // TODO need to also check for children in composite
-            // TODO how to distinguish between plot inside composition (need correct domain object)
-            // and a plot that is a composition (e.g., a stacked plot)?
-            // what is the right way to get composition parents or children?
+            // see if this clearData event applies to our domain object
             if (domainObjectToClear) {
                 if (this.openmct.objects.areIdsEqual(domainObjectToClear.identifier, this.domainObject.identifier)) {
                     this.clearSeries();
                 } else {
+                    // if it doesn't, we may be asking to clear a stacked plot
+                    // if that's the case, clear the stacked plot
                     const routerPath = this.openmct.router.path[0];
                     if (routerPath.type === 'telemetry.plot.stacked') {
                         this.clearSeries();
