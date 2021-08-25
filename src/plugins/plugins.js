@@ -69,7 +69,8 @@ define([
     './CouchDBSearchFolder/plugin',
     './timeline/plugin',
     './hyperlink/plugin',
-    './DeviceClassifier/plugin'
+    './DeviceClassifier/plugin',
+    './LADTable2/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -119,7 +120,8 @@ define([
     CouchDBSearchFolder,
     Timeline,
     Hyperlink,
-    DeviceClassifier
+    DeviceClassifier,
+    LADTableNEW
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -224,6 +226,7 @@ define([
     plugins.Timeline = Timeline.default;
     plugins.Hyperlink = Hyperlink.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
+    plugins.LADTableNEW = LADTableNEW.default;
 
     return plugins;
 });
