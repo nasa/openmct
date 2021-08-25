@@ -149,7 +149,7 @@ define([
             this.removeTelemetryCollection(keyString);
 
             this.telemetryCollections[keyString] = this.openmct.telemetry
-                .requestTelemetryCollection(telemetryObject, requestOptions);
+                .requestCollection(telemetryObject, requestOptions);
 
             this.telemetryCollections[keyString].on('remove', telemetryRemover);
             this.telemetryCollections[keyString].on('add', telemetryProcessor);
