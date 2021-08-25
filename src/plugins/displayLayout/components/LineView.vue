@@ -45,7 +45,7 @@
 
     <div
         class="c-frame__move-bar"
-        @mousedown="startDrag($event)"
+        @mousedown.left="startDrag($event)"
     ></div>
     <div
         v-if="showFrameEdit"

@@ -21,7 +21,7 @@
  *****************************************************************************/
 <template>
 <div
-    class="c-so-view"
+    class="c-so-view js-notebook-snapshot-item-wrapper"
     :class="[
         statusClass,
         'c-so-view--' + domainObject.type,
@@ -56,6 +56,11 @@
                 'has-complex-content': complexContent
             }"
         >
+            <NotebookMenuSwitcher v-if="notebookEnabled"
+                                  :domain-object="domainObject"
+                                  :object-path="objectPath"
+                                  class="c-notebook-snapshot-menubutton"
+            />
             <div v-if="statusBarItems.length > 0"
                  class="c-so-view__frame-controls__btns"
             >
@@ -80,7 +85,7 @@
 
     <object-view
         ref="objectView"
-        class="c-so-view__object-view js-object-view"
+        class="c-so-view__object-view js-object-view js-notebook-snapshot-item"
         :show-edit-view="showEditView"
         :object-path="objectPath"
         :layout-font-size="layoutFontSize"
@@ -92,6 +97,7 @@
 
 <script>
 import ObjectView from './ObjectView.vue';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
 const SIMPLE_CONTENT_TYPES = [
     'clock',
@@ -103,7 +109,8 @@ const SIMPLE_CONTENT_TYPES = [
 
 export default {
     components: {
-        ObjectView
+        ObjectView,
+        NotebookMenuSwitcher
     },
     inject: ['openmct'],
     props: {
@@ -139,6 +146,7 @@ export default {
         return {
             cssClass,
             complexContent,
+            notebookEnabled: this.openmct.types.get('notebook'),
             statusBarItems: [],
             status: ''
         };
