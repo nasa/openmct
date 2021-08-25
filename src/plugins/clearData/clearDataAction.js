@@ -70,12 +70,7 @@ export default class ClearDataAction {
                 console.debug(`Should check for composition parent in path`);
                 const routerPath = this._openmct.router.path[0];
                 console.debug(`routerPath - ${JSON.stringify(routerPath)}`);
-                if (contextualDomainObject.composition.length) {
-                    // TODO: how do we distinguish between an item in a composition
-                    // and a stacked plot?
-                    // Nikhil recommends using the object path to get the parent
-                    return true;
-                }
+                return routerPath.type === 'layout';
             }
         }
 
