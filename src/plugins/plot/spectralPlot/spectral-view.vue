@@ -10,32 +10,6 @@
 </div>
 </template>
 
-<style lang="scss">
-    .c-spectral-plot {
-        > * + * {
-            margin-top: 5px;
-        }
-
-        &-view {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        &__plot-wrapper {
-            flex: 1 1 auto;
-            min-height: 300px;
-            min-width: 300px;
-        }
-
-        &__legend-wrapper {
-            flex: 0 1 auto;
-            overflow: auto;
-            padding-right: 5px;
-        }
-    }
-</style>
-
 <script>
 import * as SPECTRAL from './spectral-constants';
 import ColorPalette from '../lib/ColorPalette';
@@ -334,3 +308,29 @@ export default {
 };
 
 </script>
+
+<style lang="scss">
+    .c-spectral-plot {
+        > * + * {
+            margin-top: 5px;
+        }
+
+        &-view {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        &__plot-wrapper {
+            flex: 1 1 auto;
+            min-height: 300px;
+            min-width: 300px;
+        }
+
+        &__legend-wrapper {
+            flex: 0 1 auto;
+            overflow: auto;
+            padding-right: 5px;
+        }
+    }
+</style>
