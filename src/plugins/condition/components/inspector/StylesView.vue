@@ -141,6 +141,7 @@ const NON_STYLEABLE_CONTAINER_TYPES = [
 const NON_STYLEABLE_LAYOUT_ITEM_TYPES = [
     'line-view',
     'box-view',
+    'ellipse-view',
     'image-view'
 ];
 
