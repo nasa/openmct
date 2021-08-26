@@ -23,14 +23,7 @@ export default function SpectralPlotCompositionPolicy(openmct) {
 
     return {
         allow: function (parent, child) {
-
-            if ((parent.type === 'telemetry.plot.spectral')
-                && ((child.type !== 'telemetry.plot.overlay') && (hasSpectralTelemetry(child) === false))
-            ) {
-                return false;
-            }
-
-            return true;
+            return ((parent.type === 'telemetry.plot.spectral') && (hasSpectralTelemetry(child)));
         }
     };
 }
