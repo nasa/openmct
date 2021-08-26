@@ -24,7 +24,7 @@ import LADTableProvider from './LADTableProvider';
 
 export default function () {
     return function install(openmct) {
-        openmct.types.addType('LadTable', {
+        openmct.types.addType('telemetryTable', {
             name: "LAD Table NEW",
             creatable: true,
             description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
@@ -33,6 +33,8 @@ export default function () {
                 domainObject.composition = [];
             }
         });
-        openmct.objectViews.addProvider(new LADTableProvider(openmct));
+
+        openmct.telemetry.addProvider(new LADTableProvider(openmct));
+        // openmct.objectViews.addProvider(new LADTableProvider(openmct));
     };
 }

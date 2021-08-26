@@ -4,11 +4,10 @@ import Vue from 'vue';
 
 export default class LADTableView extends TelemetryTable {
     constructor(openmct, domainObject, objectPath) {
-        super(openmct, domainObject, objectPath);
-        this.openmct = openmct;
-        this.domainObject = domainObject;
+        super(domainObject, openmct);
         this.objectPath = objectPath;
         this.component = undefined;
+        this.table = new TelemetryTable(domainObject, openmct);
     }
 
     show(element) {
@@ -19,15 +18,23 @@ export default class LADTableView extends TelemetryTable {
             },
             provide: {
                 openmct: this.openmct,
-                currentView: this
+                currentView: this,
+                table: this.table,
+                objectPath: this.objectPath
             },
             data: () => {
                 return {
                     domainObject: this.domainObject,
-                    objectPath: this.objectPath
+                    marking: {
+                        disableMultiSelect: false,
+                        enable: true,
+                        rowName: '',
+                        rowNamePlural: '',
+                        useAlternateControlBar: false
+                    }
                 };
             },
-            template: '<lad-table ref="ladTable" :domain-object="domainObject" :object-path="objectPath"></lad-table>'
+            template: '<lad-table ref="ladTable" :marking="marking" :domain-object="domainObject"></lad-table>'
         });
     }
 

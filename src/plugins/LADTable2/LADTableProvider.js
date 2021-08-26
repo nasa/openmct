@@ -25,17 +25,17 @@ import LADTableView from './LADTableView';
 export default class LADTableViewProvider {
     constructor(openmct) {
         this.openmct = openmct;
-        this.name = 'LAD Table';
-        this.key = 'LadTable';
+        this.name = 'LAD Table NEW';
+        this.key = 'telemetryTable';
         this.cssClass = 'icon-tabular-lad';
     }
 
     canView(domainObject) {
-        return domainObject.type === 'LadTable';
+        return domainObject.type === 'telemetryTable';
     }
 
     canEdit(domainObject) {
-        return domainObject.type === 'LadTable';
+        return domainObject.type === 'telemetryTable';
     }
 
     view(domainObject, objectPath) {
