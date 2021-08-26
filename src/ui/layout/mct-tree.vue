@@ -522,7 +522,7 @@ export default {
         },
         searchTree(value) {
             // if an abort controller exists, regardless of the value passed in,
-            // there is an active search that should be cancled
+            // there is an active search that should be canceled
             if (this.abortSearchController) {
                 this.abortSearchController.abort();
                 delete this.abortSearchController;
