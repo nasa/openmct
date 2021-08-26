@@ -183,7 +183,7 @@ define(['lodash'], function (_) {
                                 },
                                 {
                                     "name": "Ellipse",
-                                    "class": "icon-contrast"
+                                    "class": "icon-circle"
                                 },
                                 {
                                     "name": "Line",
