@@ -407,8 +407,9 @@ export default {
                 } else {
                     // if it doesn't, we may be asking to clear a stacked plot
                     // if that's the case, clear the stacked plot
-                    const routerPath = this.openmct.router.path[0];
-                    if (routerPath.type === 'telemetry.plot.stacked') {
+                    if (domainObjectToClear.composition.some((compositionIdentifier) => {
+                        return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
+                    })) {
                         this.clearSeries();
                     }
                 }
