@@ -379,7 +379,7 @@ define(['../src/ConditionManager'], function (ConditionManager) {
             telemetryRequests[1].resolve([mockTelemetryValues.mockCompObject2]);
         });
 
-        it('updates its LAD cache upon recieving telemetry and invokes the appropriate handlers', function () {
+        it('updates its LAD cache upon receiving telemetry and invokes the appropriate handlers', function () {
             mockTelemetryAPI.triggerTelemetryCallback('mockCompObject1');
             expect(conditionManager.subscriptionCache.mockCompObject1.property1).toEqual('Its a different string');
             mockTelemetryAPI.triggerTelemetryCallback('mockCompObject2');

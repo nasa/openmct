@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "1.7.4",
+  "version": "1.7.7-SNAPSHOT",
   "description": "The Open MCT core platform",
   "dependencies": {},
   "devDependencies": {
@@ -42,6 +42,7 @@
     "jsdoc": "^3.3.2",
     "karma": "6.3.4",
     "karma-chrome-launcher": "3.1.0",
+    "karma-firefox-launcher": "2.1.1",
     "karma-cli": "2.0.0",
     "karma-coverage": "2.0.3",
     "karma-coverage-istanbul-reporter": "3.0.3",

@@ -21,7 +21,7 @@
  *****************************************************************************/
 <template>
 <div
-    class="c-so-view"
+    class="c-so-view js-notebook-snapshot-item-wrapper"
     :class="[
         statusClass,
         'c-so-view--' + domainObject.type,
@@ -56,26 +56,24 @@
                 'has-complex-content': complexContent
             }"
         >
-            <div class="c-so-view__frame-controls__btns">
+            <NotebookMenuSwitcher v-if="notebookEnabled"
+                                  :domain-object="domainObject"
+                                  :object-path="objectPath"
+                                  class="c-notebook-snapshot-menubutton"
+            />
+            <div v-if="statusBarItems.length > 0"
+                 class="c-so-view__frame-controls__btns"
+            >
                 <button
                     v-for="(item, index) in statusBarItems"
                     :key="index"
                     class="c-icon-button"
                     :class="item.cssClass"
                     :title="item.name"
-                    @click="item.callBack"
+                    @click="item.onItemClicked"
                 >
                     <span class="c-icon-button__label">{{ item.name }}</span>
                 </button>
-
-                <button
-                    class="c-icon-button icon-items-expand"
-                    title="View Large"
-                    @click="expand"
-                >
-                    <span class="c-icon-button__label">View Large</span>
-                </button>
-
             </div>
             <button
                 class="c-icon-button icon-3-dots c-so-view__frame-controls__more"
@@ -87,7 +85,7 @@
 
     <object-view
         ref="objectView"
-        class="c-so-view__object-view"
+        class="c-so-view__object-view js-object-view js-notebook-snapshot-item"
         :show-edit-view="showEditView"
         :object-path="objectPath"
         :layout-font-size="layoutFontSize"
@@ -99,8 +97,7 @@
 
 <script>
 import ObjectView from './ObjectView.vue';
-import PreviewHeader from '@/ui/preview/preview-header.vue';
-import Vue from 'vue';
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 
 const SIMPLE_CONTENT_TYPES = [
     'clock',
@@ -112,7 +109,8 @@ const SIMPLE_CONTENT_TYPES = [
 
 export default {
     components: {
-        ObjectView
+        ObjectView,
+        NotebookMenuSwitcher
     },
     inject: ['openmct'],
     props: {
@@ -148,6 +146,7 @@ export default {
         return {
             cssClass,
             complexContent,
+            notebookEnabled: this.openmct.types.get('notebook'),
             statusBarItems: [],
             status: ''
         };
@@ -160,7 +159,8 @@ export default {
     mounted() {
         this.status = this.openmct.status.get(this.domainObject.identifier);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
-        this.$refs.objectView.show(this.domainObject, undefined, false, this.objectPath);
+        const provider = this.openmct.objectViews.get(this.domainObject, this.objectPath)[0];
+        this.$refs.objectView.show(this.domainObject, provider.key, false, this.objectPath);
     },
     beforeDestroy() {
         this.removeStatusListener();
@@ -170,52 +170,6 @@ export default {
         }
     },
     methods: {
-        expand() {
-            let objectView = this.$refs.objectView;
-            let parentElement = objectView.$el;
-            let childElement = parentElement.children[0];
-
-            this.openmct.overlays.overlay({
-                element: this.getOverlayElement(childElement),
-                size: 'large',
-                onDestroy() {
-                    parentElement.append(childElement);
-                }
-            });
-        },
-        getOverlayElement(childElement) {
-            const fragment = new DocumentFragment();
-            const header = this.getPreviewHeader();
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('l-preview-window__object-view');
-            wrapper.append(childElement);
-            fragment.append(header);
-            fragment.append(wrapper);
-
-            return fragment;
-        },
-        getPreviewHeader() {
-            const domainObject = this.objectPath[0];
-            const actionCollection = this.actionCollection;
-            const preview = new Vue({
-                components: {
-                    PreviewHeader
-                },
-                provide: {
-                    openmct: this.openmct,
-                    objectPath: this.objectPath
-                },
-                data() {
-                    return {
-                        domainObject,
-                        actionCollection
-                    };
-                },
-                template: '<PreviewHeader :actionCollection="actionCollection" :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
-            });
-
-            return preview.$mount().$el;
-        },
         getSelectionContext() {
             return this.$refs.objectView.getSelectionContext();
         },
@@ -233,12 +187,14 @@ export default {
             delete this.actionCollection;
         },
         updateActionItems(actionItems) {
-            this.statusBarItems = this.actionCollection.getStatusBarActions();
+            const statusBarItems = this.actionCollection.getStatusBarActions();
+            this.statusBarItems = this.openmct.menus.actionsToMenuItems(statusBarItems, this.actionCollection.objectPath, this.actionCollection.view);
             this.menuActionItems = this.actionCollection.getVisibleActions();
         },
         showMenuItems(event) {
-            let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
-            this.openmct.menus.showMenu(event.x, event.y, sortedActions);
+            const sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
+            const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, this.actionCollection.objectPath, this.actionCollection.view);
+            this.openmct.menus.showMenu(event.x, event.y, menuItems);
         },
         setStatus(status) {
             this.status = status;
