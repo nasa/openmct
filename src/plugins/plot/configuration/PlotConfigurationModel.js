@@ -69,6 +69,7 @@ export default class PlotConfigurationModel extends Model {
             );
         }
 
+        this.xAxis.listenToSeriesCollection(this.series);
         this.yAxis.listenToSeriesCollection(this.series);
         this.legend.listenToSeriesCollection(this.series);
 

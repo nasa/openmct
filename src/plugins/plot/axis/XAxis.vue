@@ -84,7 +84,7 @@ export default {
         this.loaded = true;
         this.setUpXAxisOptions();
         this.openmct.time.on('timeSystem', this.syncXAxisToTimeSystem);
-        this.listenTo(this.xAxis, 'change', this.setUpXAxisOptions);
+        // this.listenTo(this.xAxis, 'change', this.setUpXAxisOptions);
     },
     beforeDestroy() {
         this.openmct.time.off('timeSystem', this.syncXAxisToTimeSystem);
@@ -104,15 +104,16 @@ export default {
                 return config.xAxis;
             }
         },
-        toggleXKeyOption() {
+        toggleXKeyOption(forced) {
             const selectedXKey = this.selectedXKeyOptionKey;
             const seriesData = this.seriesModel.getSeriesData();
-            const dataForSelectedXKey = seriesData
+            const dataForSelectedXKey = seriesData.length
                 ? seriesData[0][selectedXKey]
                 : undefined;
 
-            if (dataForSelectedXKey !== undefined) {
+            if (dataForSelectedXKey !== undefined || forced) {
                 this.xAxis.set('key', selectedXKey);
+                this.$emit('xKeyChanged', selectedXKey);
             } else {
                 this.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.');
                 const xAxisKey = this.xAxis.get('key');
@@ -132,6 +133,7 @@ export default {
         },
         setUpXAxisOptions() {
             const xAxisKey = this.xAxis.get('key');
+            const seriesXKey = this.seriesModel.get('xKey');
 
             this.xKeyOptions = this.seriesModel.metadata
                 .valuesForHints(['domain'])
@@ -142,7 +144,13 @@ export default {
                     };
                 });
             this.xAxisLabel = this.xAxis.get('label');
-            this.selectedXKeyOptionKey = this.getXKeyOption(xAxisKey).key;
+
+            if (xAxisKey !== seriesXKey && this.getXKeyOption(seriesXKey)) {
+                this.selectedXKeyOptionKey = seriesXKey;
+                this.toggleXKeyOption(true);
+            } else {
+                this.selectedXKeyOptionKey = this.getXKeyOption(xAxisKey).key;
+            }
         },
         onTickWidthChange(width) {
             this.$emit('tickWidthChanged', width);

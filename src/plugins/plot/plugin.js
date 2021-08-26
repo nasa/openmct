@@ -27,6 +27,8 @@ import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
+import SpectralAggregatePlotViewProvider from "./SpectralAggregatePlotViewProvider";
+import ScatterPlotViewProvider from "./ScatterPlotViewProvider";
 
 export default function () {
     return function install(openmct) {
@@ -67,13 +69,106 @@ export default function () {
             cssClass: "icon-plot-stacked",
             description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
             creatable: true,
+            form: [
+                {
+                    key: 'plotType',
+                    name: 'Plot Type',
+                    control: 'select',
+                    options: [
+                        {
+                            name: 'Scatter',
+                            value: "scattergl"
+                        },
+                        {
+                            name: 'Bar',
+                            value: "bar"
+                        }
+                    ],
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "plotType"
+                    ]
+                }
+            ],
             initialize: function (domainObject) {
                 domainObject.composition = [];
+                domainObject.configuration = {
+                    plotType: 'scattergl'
+                };
             },
             priority: 890
         });
 
+        openmct.types.addType('telemetry.plot.scatter', {
+            key: "telemetry.plot.scatter",
+            name: "Scatter Plot",
+            cssClass: "icon-plot-stacked",
+            description: "View data on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
+            creatable: true,
+            form: [
+                {
+                    key: 'plotType',
+                    name: 'Plot Type',
+                    control: 'select',
+                    options: [
+                        {
+                            name: 'Scatter',
+                            value: "scattergl"
+                        }
+                    ],
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "plotType"
+                    ]
+                }
+            ],
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {
+                    plotType: 'scattergl'
+                };
+            },
+            priority: 890
+        });
+
+        openmct.types.addType('telemetry.plot.spectral-aggregate', {
+            key: "telemetry.plot.spectral-aggregate",
+            name: "Spectral Plot from Aggregate",
+            cssClass: "icon-plot-stacked",
+            description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
+            creatable: true,
+            form: [
+                {
+                    key: 'plotType',
+                    name: 'Plot Type',
+                    control: 'select',
+                    options: [
+                        {
+                            name: 'Bar',
+                            value: "bar"
+                        }
+                    ],
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "plotType"
+                    ]
+                }
+            ],
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {
+                    plotType: 'bar'
+                };
+            },
+            priority: 891
+        });
+
         openmct.objectViews.addProvider(new SpectralPlotViewProvider(openmct));
+        openmct.objectViews.addProvider(new SpectralAggregatePlotViewProvider(openmct));
+        openmct.objectViews.addProvider(new ScatterPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new StackedPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));

@@ -286,7 +286,7 @@ export default {
             this.$emit(SUBSCRIBE);
         },
         updateConfiguration(configuration) {
-            if (!configuration || this.$refs.plot === undefined) {
+            if (!configuration || !configuration.xAxis || this.$refs.plot === undefined) {
                 return;
             }
 

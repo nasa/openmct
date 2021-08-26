@@ -42,6 +42,25 @@
             </div>
         </li>
         <li class="grid-row">
+            <!-- Value to be displayed -->
+            <div class="grid-cell label"
+                 title="The field to be plotted as a domain for this series."
+            >Value</div>
+            <div class="grid-cell value">
+                <select v-model="xKey"
+                        @change="updateForm('xKey')"
+                >
+                    <option v-for="option in xKeyOptions"
+                            :key="option.value"
+                            :value="option.value"
+                            :selected="option.value == xKey"
+                    >
+                        {{ option.name }}
+                    </option>
+                </select>
+            </div>
+        </li>
+        <li class="grid-row">
             <div class="grid-cell label"
                  title="The rendering method to join lines for this series."
             >Line Method</div>
@@ -175,6 +194,8 @@ export default {
             markerShapeOptions: [],
             yKey: this.series.get('yKey'),
             yKeyOptions: [],
+            xKey: this.series.get('xKey'),
+            xKeyOptions: [],
             interpolate: this.series.get('interpolate'),
             markers: this.series.get('markers'),
             markerShape: this.series.get('markerShape'),
@@ -232,6 +253,10 @@ export default {
                     objectPath: this.dynamicPathForKey('yKey')
                 },
                 {
+                    modelProp: 'xKey',
+                    objectPath: this.dynamicPathForKey('xKey')
+                },
+                {
                     modelProp: 'interpolate',
                     objectPath: this.dynamicPathForKey('interpolate')
                 },
@@ -263,6 +288,14 @@ export default {
             const metadata = this.series.metadata;
             this.yKeyOptions = metadata
                 .valuesForHints(['range'])
+                .map(function (o) {
+                    return {
+                        name: o.key,
+                        value: o.key
+                    };
+                });
+            this.xKeyOptions = metadata
+                .valuesForHints(['domain'])
                 .map(function (o) {
                     return {
                         name: o.key,

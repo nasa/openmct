@@ -35,6 +35,14 @@
             </li>
             <li class="grid-row">
                 <div class="grid-cell label"
+                     title="The field to be plotted as a domain for this series."
+                >Domain</div>
+                <div class="grid-cell value">
+                    {{ xKey }}
+                </div>
+            </li>
+            <li class="grid-row">
+                <div class="grid-cell label"
                      title="The rendering method to join lines for this series."
                 >Line Method</div>
                 <div class="grid-cell value">{{ {
@@ -133,6 +141,9 @@ export default {
         },
         yKey() {
             return this.series.get('yKey');
+        },
+        xKey() {
+            return this.series.get('xKey');
         },
         interpolate() {
             return this.series.get('interpolate');

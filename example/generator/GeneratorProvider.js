@@ -86,6 +86,7 @@ define([
         var workerRequest = this.makeWorkerRequest(domainObject, request);
         workerRequest.start = request.start;
         workerRequest.end = request.end;
+        workerRequest.spectra = request.spectra;
 
         return this.workerInterface.request(workerRequest);
     };

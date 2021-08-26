@@ -21,23 +21,24 @@
 -->
 <template>
 <div v-if="loaded"
+     ref="plotWrapper"
      class="gl-plot"
      :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
-    <plot-legend :cursor-locked="!!lockHighlightPoint"
-                 :series="seriesModels"
-                 :highlights="highlights"
-                 :legend="legend"
-                 @legendHoverChanged="legendHoverChanged"
-    />
+    <!--    <plot-legend :cursor-locked="!!lockHighlightPoint"-->
+    <!--                 :series="config.series.models"-->
+    <!--                 :highlights="highlights"-->
+    <!--                 :legend="config.legend"-->
+    <!--                 @legendHoverChanged="legendHoverChanged"-->
+    <!--    />-->
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis v-if="seriesModels.length > 0"
-                :tick-width="tickWidth"
-                :single-series="seriesModels.length === 1"
-                :series-model="seriesModels[0]"
-                @yKeyChanged="setYAxisKey"
-                @tickWidthChanged="onTickWidthChange"
-        />
+        <!--        <y-axis v-if="config.series.models.length > 0"-->
+        <!--                :tick-width="tickWidth"-->
+        <!--                :single-series="config.series.models.length === 1"-->
+        <!--                :series-model="config.series.models[0]"-->
+        <!--                @yKeyChanged="setYAxisKey"-->
+        <!--                @tickWidthChanged="onTickWidthChange"-->
+        <!--        />-->
         <div class="gl-plot-wrapper-display-area-and-x-axis"
              :style="{
                  left: (tickWidth + 20) + 'px'
@@ -51,26 +52,31 @@
                     ></span>
                 </div>
 
-                <mct-ticks v-show="gridLines && !options.compact"
-                           :axis-type="'xAxis'"
-                           :position="'right'"
-                           @plotTickWidth="onTickWidthChange"
-                />
+                <!--                <mct-ticks v-show="gridLines && !options.compact"-->
+                <!--                           :axis-type="'xAxis'"-->
+                <!--                           :position="'right'"-->
+                <!--                           @plotTickWidth="onTickWidthChange"-->
+                <!--                />-->
 
-                <mct-ticks v-show="gridLines"
-                           :axis-type="'yAxis'"
-                           :position="'bottom'"
-                           @plotTickWidth="onTickWidthChange"
-                />
+                <!--                <mct-ticks v-show="gridLines"-->
+                <!--                           :axis-type="'yAxis'"-->
+                <!--                           :position="'bottom'"-->
+                <!--                           @plotTickWidth="onTickWidthChange"-->
+                <!--                />-->
 
                 <div ref="chartContainer"
                      class="gl-plot-chart-wrapper"
                 >
-                    <mct-chart :rectangles="rectangles"
-                               :highlights="highlights"
-                               :show-limit-line-labels="showLimitLineLabels"
-                               @plotReinitializeCanvas="initCanvas"
+                    <spectral-plot ref="spectralPlot"
+                                   class="c-spectral-plot__plot-wrapper"
+                                   :data="visibleData"
+                                   :plot-axis-title="plotAxisTitle"
                     />
+                    <!--                    <mct-chart :rectangles="rectangles"-->
+                    <!--                               :highlights="highlights"-->
+                    <!--                               :show-limit-line-labels="showLimitLineLabels"-->
+                    <!--                               @plotReinitializeCanvas="initCanvas"-->
+                    <!--                    />-->
                 </div>
 
                 <div class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover">
@@ -141,10 +147,9 @@
                 >
                 </div>
             </div>
-            <x-axis v-if="seriesModels.length > 0 && !options.compact"
-                    :series-model="seriesModels[0]"
-                    @xKeyChanged="setXAxisKey"
-            />
+            <!--            <x-axis v-if="config.series.models.length > 0 && !options.compact"-->
+            <!--                    :series-model="config.series.models[0]"-->
+            <!--            />-->
 
         </div>
     </div>
@@ -154,17 +159,18 @@
 
 <script>
 
-import eventHelpers from './lib/eventHelpers';
-import LinearScale from "./LinearScale";
-import PlotConfigurationModel from './configuration/PlotConfigurationModel';
-import configStore from './configuration/configStore';
+import eventHelpers from '../lib/eventHelpers';
+import LinearScale from "../LinearScale";
+import PlotConfigurationModel from '../configuration/PlotConfigurationModel';
+import configStore from '../configuration/configStore';
 
-import PlotLegend from "./legend/PlotLegend.vue";
-import MctTicks from "./MctTicks.vue";
-import MctChart from "./chart/MctChart.vue";
-import XAxis from "./axis/XAxis.vue";
-import YAxis from "./axis/YAxis.vue";
-import _ from "lodash";
+import PlotLegend from "../legend/PlotLegend.vue";
+import MctTicks from "../MctTicks.vue";
+// import MctChart from "../chart/MctChart.vue";
+import XAxis from "../axis/XAxis.vue";
+import YAxis from "../axis/YAxis.vue";
+import SpectralPlot from "./spectral-plot.vue";
+import _, {debounce} from "lodash";
 
 export default {
     components: {
@@ -172,7 +178,8 @@ export default {
         YAxis,
         PlotLegend,
         MctTicks,
-        MctChart
+        // MctChart,
+        SpectralPlot
     },
     inject: ['openmct', 'domainObject'],
     props: {
@@ -214,13 +221,13 @@ export default {
             plotHistory: [],
             selectedXKeyOption: {},
             xKeyOptions: [],
-            seriesModels: [],
-            legend: {},
+            config: {},
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: undefined
+            showLimitLineLabels: undefined,
+            trace: []
         };
     },
     computed: {
@@ -236,18 +243,35 @@ export default {
             } else {
                 return 'plot-legend-collapsed';
             }
+        },
+        visibleData() {
+            return this.trace || [];
+        },
+        plotAxisTitle() {
+            const { xAxisMetadata = {}, yAxisMetadata = {} } = this.trace[0] || {};
+            const xAxisUnit = xAxisMetadata.units ? `(${xAxisMetadata.units})` : '';
+            const yAxisUnit = yAxisMetadata.units ? `(${yAxisMetadata.units})` : '';
+
+            return {
+                xAxisTitle: `${xAxisMetadata.name || ''} ${xAxisUnit}`,
+                yAxisTitle: `${yAxisMetadata.name || ''} ${yAxisUnit}`
+            };
         }
     },
     watch: {
         plotTickWidth(newTickWidth) {
             this.onTickWidthChange(newTickWidth, true);
+        },
+        gridLines(newGridLines) {
+            this.setGridLinesVisibility(newGridLines);
+        },
+        cursorGuide(newCursorGuide) {
+            this.setCursorGuideVisibility(newCursorGuide);
         }
     },
     mounted() {
         eventHelpers.extend(this);
-
         this.config = this.getConfig();
-        this.legend = this.config.legend;
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -287,18 +311,14 @@ export default {
                 config = new PlotConfigurationModel({
                     id: configId,
                     domainObject: this.domainObject,
-                    openmct: this.openmct,
-                    callback: (data) => {
-                        this.data = data;
-                    }
+                    openmct: this.openmct
                 });
                 configStore.add(configId, config);
             }
 
             return config;
         },
-        addSeries(series, index) {
-            this.$set(this.seriesModels, index, series);
+        addSeries(series) {
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
             }, this);
@@ -310,6 +330,10 @@ export default {
                 this.loadSeriesData(series);
             }, this);
 
+            this.listenTo(series, 'add', () => {
+                this.processData(series);
+            }, this);
+
             this.loadSeriesData(series);
         },
 
@@ -318,17 +342,15 @@ export default {
         },
 
         loadSeriesData(series) {
-            if (this.$parent.$refs.plotWrapper.offsetWidth === 0) {
+            if (this.$refs.plotWrapper.offsetWidth === 0) {
                 this.scheduleLoad(series);
 
                 return;
             }
 
-            this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
-
             this.startLoading();
             const options = {
-                size: this.$parent.$refs.plotWrapper.offsetWidth,
+                size: this.$refs.plotWrapper.offsetWidth,
                 domain: this.config.xAxis.get('key')
             };
 
@@ -340,7 +362,7 @@ export default {
             this.config.series.forEach(plotSeries => {
                 this.startLoading();
                 plotSeries.load({
-                    size: this.$parent.$refs.plotWrapper.offsetWidth,
+                    size: this.$refs.plotWrapper.offsetWidth,
                     start: range.min,
                     end: range.max,
                     domain: this.config.xAxis.get('key')
@@ -357,7 +379,7 @@ export default {
                 this.startLoading();
                 this.scheduledLoads = [];
                 this.checkForSize = setInterval(function () {
-                    if (this.$parent.$refs.plotWrapper.offsetWidth === 0) {
+                    if (this.$refs.plotWrapper.offsetWidth === 0) {
                         return;
                     }
 
@@ -380,8 +402,11 @@ export default {
         },
 
         stopLoading() {
-            this.pending -= 1;
-            this.updateLoading();
+            //TODO: Is Vue.$nextTick ok to replace $scope.$evalAsync?
+            this.$nextTick().then(() => {
+                this.pending -= 1;
+                this.updateLoading();
+            });
         },
 
         updateLoading() {
@@ -413,13 +438,9 @@ export default {
         },
 
         /**
-       * Track latest display bounds.  Forces update when not receiving ticks.
-       */
+     * Track latest display bounds.  Forces update when not receiving ticks.
+     */
         updateDisplayBounds(bounds, isTick) {
-            if (this.config.xAxis.get('key') !== this.openmct.time.timeSystem().key) {
-                return;
-            }
-
             const newRange = {
                 min: bounds.start,
                 max: bounds.end
@@ -450,9 +471,9 @@ export default {
         },
 
         /**
-       * Handle end of user viewport change: load more data for current display
-       * bounds, and mark view as synchronized if bounds match configured bounds.
-       */
+     * Handle end of user viewport change: load more data for current display
+     * bounds, and mark view as synchronized if bounds match configured bounds.
+     */
         userViewportChangeEnd() {
             const xDisplayRange = this.config.xAxis.get('displayRange');
             const xRange = this.config.xAxis.get('range');
@@ -462,14 +483,14 @@ export default {
             }
 
             this.synchronized(xRange.min === xDisplayRange.min
-            && xRange.max === xDisplayRange.max);
+          && xRange.max === xDisplayRange.max);
         },
 
         /**
-       * Getter/setter for "synchronized" value.  If not synchronized and
-       * time conductor is in clock mode, will mark objects as unsynced so that
-       * displays can update accordingly.
-       */
+     * Getter/setter for "synchronized" value.  If not synchronized and
+     * time conductor is in clock mode, will mark objects as unsynced so that
+     * displays can update accordingly.
+     */
         synchronized(value) {
             const isLocalClock = this.openmct.time.clock();
 
@@ -486,8 +507,8 @@ export default {
 
         setStatus(isNotInSync) {
             const outOfSync = isNotInSync === true
-                || this.isTimeOutOfSync === true
-                || this.isFrozen === true;
+          || this.isTimeOutOfSync === true
+          || this.isFrozen === true;
             if (outOfSync === true) {
                 this.openmct.status.set(this.domainObject.identifier, 'timeconductor-unsynced');
             } else {
@@ -511,9 +532,9 @@ export default {
         },
 
         initialize() {
-            this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
+            _.debounce(this.handleWindowResize, 400);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
-            this.plotContainerResizeObserver.observe(this.$parent.$refs.plotWrapper);
+            this.plotContainerResizeObserver.observe(this.$refs.plotWrapper);
 
             // Setup canvas etc.
             this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
@@ -525,7 +546,7 @@ export default {
             this.chartElementBounds = undefined;
             this.tickUpdate = false;
 
-            this.initCanvas();
+            // this.initCanvas();
 
             this.config.yAxisLabel = this.config.yAxis.get('label');
 
@@ -577,7 +598,7 @@ export default {
             this.positionOverElement = {
                 x: event.clientX - this.chartElementBounds.left,
                 y: this.chartElementBounds.height
-              - (event.clientY - this.chartElementBounds.top)
+            - (event.clientY - this.chartElementBounds.top)
             };
 
             this.positionOverPlot = {
@@ -646,7 +667,7 @@ export default {
         },
 
         onMouseDown(event) {
-        // do not monitor drag events on browser context click
+            // do not monitor drag events on browser context click
             if (event.ctrlKey) {
                 return;
             }
@@ -720,7 +741,7 @@ export default {
             const endPixels = this.marquee.endPixels;
             const marqueeDistance = Math.sqrt(
                 Math.pow(startPixels.x - endPixels.x, 2)
-            + Math.pow(startPixels.y - endPixels.y, 2)
+          + Math.pow(startPixels.y - endPixels.y, 2)
             );
             // Don't zoom if mouse moved less than 7.5 pixels.
             if (marqueeDistance > 7.5) {
@@ -789,7 +810,7 @@ export default {
             event.preventDefault();
 
             if (event.wheelDelta === undefined
-                || !this.positionOverPlot) {
+          || !this.positionOverPlot) {
                 return;
             }
 
@@ -872,7 +893,7 @@ export default {
         },
 
         updatePan() {
-        // calculate offset between points.  Apply that offset to viewport.
+            // calculate offset between points.  Apply that offset to viewport.
             if (!this.pan) {
                 return;
             }
@@ -931,12 +952,16 @@ export default {
             this.userViewportChangeEnd();
         },
 
-        setYAxisKey(yKey) {
-            this.config.series.models[0].set('yKey', yKey);
+        setCursorGuideVisibility(cursorGuide) {
+            this.cursorGuide = cursorGuide === true;
         },
 
-        setXAxisKey(xKey) {
-            this.config.series.models[0].set('xKey', xKey);
+        setGridLinesVisibility(gridLines) {
+            this.gridLines = gridLines === true;
+        },
+
+        setYAxisKey(yKey) {
+            this.config.series.models[0].emit('change:yKey', yKey);
         },
 
         pause() {
@@ -1009,7 +1034,7 @@ export default {
                 this.removeStatusListener();
             }
 
-            this.plotContainerResizeObserver.disconnect();
+            // this.plotContainerResizeObserver.disconnect();
 
             this.openmct.time.off('clock', this.updateRealTime);
             this.openmct.time.off('bounds', this.updateDisplayBounds);
@@ -1019,13 +1044,98 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
-            if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
-                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+            if (this.offsetWidth !== this.$refs.plotWrapper.offsetWidth) {
+                this.offsetWidth = this.$refs.plotWrapper.offsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
         },
         legendHoverChanged(data) {
             this.showLimitLineLabels = data;
+        },
+        processData(telemetryObject) {
+            const key = telemetryObject.keyString;
+
+            // if (data.message) {
+            //     this.openmct.notifications.alert(data.message);
+            // }
+
+            const trace = this.getTrace();
+
+            if (trace) {
+                this.addTrace(trace, key);
+            }
+        },
+        getTrace() {
+            let trace = {
+                key: '',
+                name: '',
+                x: [],
+                y: [],
+                type: 'scattergl',
+                mode: "markers",
+                marker: {
+                    size: 5,
+                    color: '#ff0000'
+                }
+            };
+
+            this.config.series.models.forEach((telemetryObject, index) => {
+                const axisMetadata = this.getAxisMetadata(telemetryObject);
+
+                const data = telemetryObject.getSeriesData().map((object) => {
+                    return telemetryObject.getXVal(object);
+                });
+
+                trace = Object.assign(trace, {
+                    key: trace.key ? `${telemetryObject.keyString}-${trace.key}` : telemetryObject.keyString,
+                    name: trace.name ? `${telemetryObject.name}-${trace.name}` : telemetryObject.name,
+                    x: data || [],
+                    xAxisMetadata: axisMetadata.xAxisMetadata,
+                    y: data || [],
+                    yAxisMetadata: axisMetadata.yAxisMetadata
+                });
+            });
+
+            if (trace.xAxisMetadata && trace.yAxisMetadata) {
+                trace.yaxis = this.trace.length > 1
+                    ? `y${trace.yAxisMetadata.hints.range}`
+                    : 'y1';
+
+                return trace;
+
+            }
+        },
+        getAxisMetadata(telemetryObject) {
+            const metadata = telemetryObject.metadata;
+            const xAxisMetadata = metadata.valuesForHints(['range'])[0];
+            const yAxisMetadata = metadata.valuesForHints(['range'])[1];
+
+            return {
+                xAxisMetadata,
+                yAxisMetadata
+            };
+        },
+        addTrace(trace, key) {
+            if (!this.trace.length) {
+                // this.trace = this.trace.concat([trace]);
+                this.$set(this.trace, 0, trace);
+
+                return;
+            }
+
+            // let isInTrace = false;
+            // const newTrace = this.trace.map((currentTrace, index) => {
+            //     if (currentTrace.key !== key) {
+            //         return currentTrace;
+            //     }
+            //
+            //     isInTrace = true;
+            //
+            //     return trace;
+            // });
+
+            this.$set(this.trace, 0, trace);
+            // this.updateTraceVisibility();
         }
     }
 };

@@ -88,11 +88,12 @@ export default class PlotSeries extends Model {
             .getFormatMap(this.metadata);
 
         const range = this.metadata.valuesForHints(['range'])[0];
+        const domain = this.metadata.valuesForHints(['domain'])[0];
 
         return {
             name: options.domainObject.name,
             unit: range.unit,
-            xKey: options.collection.plot.xAxis.get('key'),
+            xKey: domain.key,
             yKey: range.key,
             markers: true,
             markerShape: 'point',
@@ -303,26 +304,27 @@ export default class PlotSeries extends Model {
      * @private
      */
     updateStats(point) {
-        const value = this.getYVal(point);
+        //TODO: Also update xVal stats
+        const yValue = this.getYVal(point);
         let stats = this.get('stats');
         let changed = false;
         if (!stats) {
             stats = {
-                minValue: value,
+                minValue: yValue,
                 minPoint: point,
-                maxValue: value,
+                maxValue: yValue,
                 maxPoint: point
             };
             changed = true;
         } else {
-            if (stats.maxValue < value) {
-                stats.maxValue = value;
+            if (stats.maxValue < yValue) {
+                stats.maxValue = yValue;
                 stats.maxPoint = point;
                 changed = true;
             }
 
-            if (stats.minValue > value) {
-                stats.minValue = value;
+            if (stats.minValue > yValue) {
+                stats.minValue = yValue;
                 stats.minPoint = point;
                 changed = true;
             }
@@ -334,6 +336,40 @@ export default class PlotSeries extends Model {
                 minPoint: stats.minPoint,
                 maxValue: stats.maxValue,
                 maxPoint: stats.maxPoint
+            });
+        }
+
+        const xValue = this.getXVal(point);
+        let xStats = this.get('xStats');
+        changed = false;
+        if (!xStats) {
+            xStats = {
+                minValue: xValue,
+                minPoint: point,
+                maxValue: xValue,
+                maxPoint: point
+            };
+            changed = true;
+        } else {
+            if (xStats.maxValue < xValue) {
+                xStats.maxValue = xValue;
+                xStats.maxPoint = point;
+                changed = true;
+            }
+
+            if (xStats.minValue > xValue) {
+                xStats.minValue = xValue;
+                xStats.minPoint = point;
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            this.set('xStats', {
+                minValue: xStats.minValue,
+                minPoint: xStats.minPoint,
+                maxValue: xStats.maxValue,
+                maxPoint: xStats.maxPoint
             });
         }
     }

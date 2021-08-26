@@ -1,9 +1,9 @@
 <template>
-<div class="c-spectral-plot-view gl-plot plot-legend-bottom"
+<div class="c-spectral-aggregate-plot-view gl-plot plot-legend-bottom"
      :class="{'plot-legend-expanded': legendExpanded, 'plot-legend-collapsed': !legendExpanded }"
 >
     <SpectralPlot ref="spectralPlot"
-                  class="c-spectral-plot__plot-wrapper"
+                  class="c-spectral-aggregate-plot__plot-wrapper"
                   :data="visibleData"
                   :plot-axis-title="plotAxisTitle"
     />
@@ -121,6 +121,9 @@ export default {
             });
         },
         addTelemetryObject(telemetryObject) {
+            //We're allowing only 1 telemetry endpoint for aggregate spectral plots
+            Object.values(this.telemetryObjects).forEach(object => this.removeTelemetryObject(object.identifier));
+
             const key = objectUtils.makeKeyString(telemetryObject.identifier);
 
             if (!this.colorMapping[key]) {
@@ -249,9 +252,7 @@ export default {
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
                 type: this.currentDomainObject.configuration && this.currentDomainObject.configuration.plotType ? this.currentDomainObject.configuration.plotType : 'scattergl',
-                mode: "markers",
                 marker: {
-                    size: 1,
                     color
                 }
             };

@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import Model from "./Model";
+import _ from "lodash";
 /**
      * TODO: doc strings.
      */
@@ -27,6 +28,7 @@ export default class XAxisModel extends Model {
     initialize(options) {
         this.plot = options.plot;
         this.set('label', options.model.name || '');
+        this.listenTo(this, 'change:xStats', this.calculateAutoscaleExtents, this);
         this.on('change:range', function (newValue, oldValue, model) {
             if (!model.get('frozen')) {
                 model.set('displayRange', newValue);
@@ -44,6 +46,152 @@ export default class XAxisModel extends Model {
         }
 
         this.listenTo(this, 'change:key', this.changeKey, this);
+    }
+    listenToSeriesCollection(seriesCollection) {
+        this.seriesCollection = seriesCollection;
+        this.listenTo(this.seriesCollection, 'add', (series => {
+            this.trackSeries(series);
+            this.updateFromSeries(this.seriesCollection);
+        }), this);
+        this.listenTo(this.seriesCollection, 'remove', (series => {
+            this.untrackSeries(series);
+            this.updateFromSeries(this.seriesCollection);
+        }), this);
+        this.seriesCollection.forEach(this.trackSeries, this);
+        this.updateFromSeries(this.seriesCollection);
+    }
+    trackSeries(series) {
+        this.listenTo(series, 'change:xStats', seriesStats => {
+            if (!seriesStats) {
+                this.resetStats();
+            } else {
+                this.updateStats(seriesStats);
+            }
+        });
+        this.listenTo(series, 'change:xKey', () => {
+            this.updateFromSeries(this.seriesCollection);
+        });
+    }
+    untrackSeries(series) {
+        this.stopListening(series);
+        this.resetStats();
+        this.updateFromSeries(this.seriesCollection);
+    }
+    updateFromSeries(series) {
+        const plotModel = this.plot.get('domainObject');
+        const label = _.get(plotModel, 'configuration.xAxis.label');
+        const sampleSeries = series.first();
+        if (!sampleSeries) {
+            if (!label) {
+                this.unset('label');
+            }
+
+            return;
+        }
+
+        const xKey = sampleSeries.get('xKey');
+        const xMetadata = sampleSeries.metadata.value(xKey);
+        const xFormat = sampleSeries.formats[xKey];
+        this.set('format', xFormat.format.bind(xFormat));
+        this.set('values', xMetadata.values);
+        if (!label) {
+            const labelName = series.map(function (s) {
+                return s.metadata.value(s.get('xKey')).name;
+            }).reduce(function (a, b) {
+                if (a === undefined) {
+                    return b;
+                }
+
+                if (a === b) {
+                    return a;
+                }
+
+                return '';
+            }, undefined);
+
+            if (labelName) {
+                this.set('label', labelName);
+
+                return;
+            }
+
+            const labelUnits = series.map(function (s) {
+                return s.metadata.value(s.get('xKey')).units;
+            }).reduce(function (a, b) {
+                if (a === undefined) {
+                    return b;
+                }
+
+                if (a === b) {
+                    return a;
+                }
+
+                return '';
+            }, undefined);
+
+            if (labelUnits) {
+                this.set('label', labelUnits);
+
+                return;
+            }
+        }
+    }
+    updateStats(seriesStats) {
+        if (!this.has('xStats')) {
+            this.set('xStats', {
+                min: seriesStats.minValue,
+                max: seriesStats.maxValue
+            });
+
+            return;
+        }
+
+        const stats = this.get('xStats');
+        let changed = false;
+        if (stats.min > seriesStats.minValue) {
+            changed = true;
+            stats.min = seriesStats.minValue;
+        }
+
+        if (stats.max < seriesStats.maxValue) {
+            changed = true;
+            stats.max = seriesStats.maxValue;
+        }
+
+        if (changed) {
+            this.set('xStats', {
+                min: stats.min,
+                max: stats.max
+            });
+        }
+    }
+    resetStats() {
+        this.unset('xStats');
+        this.seriesCollection.forEach(function (series) {
+            if (series.has('xStats')) {
+                this.updateStats(series.get('xStats'));
+            }
+        }, this);
+    }
+    calculateAutoscaleExtents(newStats) {
+        if (!this.get('frozen')) {
+            if (!newStats) {
+                this.unset('displayRange');
+            } else {
+                this.set('displayRange', this.applyPadding(newStats));
+            }
+        }
+    }
+    applyPadding(range) {
+        let padding = Math.abs(range.max - range.min) * 0.1;
+        if (padding === 0) {
+            padding = 1;
+        }
+
+        return {
+            min: range.min - padding,
+            max: range.max + padding
+        };
     }
     changeKey(newKey) {
         const series = this.plot.series.first();

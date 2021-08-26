@@ -50,6 +50,10 @@
     function onSubscribe(message) {
         var data = message.data;
 
+        if (data.spectra) {
+            onRequest(message);
+        }
+
         // Keep
         var start = Date.now();
         var step = 1000 / data.dataRateInHz;
@@ -116,6 +120,11 @@
                 cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
+
+        data.values = {
+            y: data.slice().map(datum => datum.sin),
+            x: data.slice().map(datum => datum.utc)
+        };
 
         self.postMessage({
             id: message.id,
