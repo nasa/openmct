@@ -29,17 +29,17 @@ export default class XAxisModel extends Model {
         this.plot = options.plot;
         this.set('label', options.model.name || '');
         this.listenTo(this, 'change:xStats', this.calculateAutoscaleExtents, this);
-        this.on('change:range', function (newValue, oldValue, model) {
+        this.listenTo(this, 'change:range', (newValue, oldValue, model) => {
             if (!model.get('frozen')) {
-                model.set('displayRange', newValue);
+                this.updateDisplayRange(newValue);
             }
-        });
+        }, this);
 
-        this.on('change:frozen', ((frozen, oldValue, model) => {
+        this.listenTo(this, 'change:frozen', (frozen, oldValue, model) => {
             if (!frozen) {
                 model.set('range', this.get('range'));
             }
-        }));
+        }, this);
 
         if (this.get('range')) {
             this.set('range', this.get('range'));
@@ -59,6 +59,18 @@ export default class XAxisModel extends Model {
         }), this);
         this.seriesCollection.forEach(this.trackSeries, this);
         this.updateFromSeries(this.seriesCollection);
+    }
+    updateDisplayRange(range) {
+        if (!this.get('autoscale')) {
+            this.set('displayRange', range);
+        }
+    }
+    toggleAutoscale(autoscale) {
+        if (autoscale && this.has('stats')) {
+            this.set('displayRange', this.applyPadding(this.get('stats')));
+        } else {
+            this.set('displayRange', this.get('range'));
+        }
     }
     trackSeries(series) {
         this.listenTo(series, 'change:xStats', seriesStats => {
@@ -137,6 +149,10 @@ export default class XAxisModel extends Model {
         }
     }
     updateStats(seriesStats) {
+        if (!this.get('autoscale')) {
+            return;
+        }
+
         if (!this.has('xStats')) {
             this.set('xStats', {
                 min: seriesStats.minValue,
@@ -166,6 +182,10 @@ export default class XAxisModel extends Model {
         }
     }
     resetStats() {
+        if (!this.get('autoscale')) {
+            return;
+        }
+
         this.unset('xStats');
         this.seriesCollection.forEach(function (series) {
             if (series.has('xStats')) {
@@ -174,7 +194,7 @@ export default class XAxisModel extends Model {
         }, this);
     }
     calculateAutoscaleExtents(newStats) {
-        if (!this.get('frozen')) {
+        if (this.get('autoscale') && !this.get('frozen')) {
             if (!newStats) {
                 this.unset('displayRange');
             } else {
@@ -183,7 +203,7 @@ export default class XAxisModel extends Model {
         }
     }
     applyPadding(range) {
-        let padding = Math.abs(range.max - range.min) * 0.1;
+        let padding = Math.abs(range.max - range.min) * this.get('autoscalePadding');
         if (padding === 0) {
             padding = 1;
         }
@@ -194,6 +214,8 @@ export default class XAxisModel extends Model {
         };
     }
     changeKey(newKey) {
+        this.set('autoscale', this.plot.openmct.time.timeSystem().key !== newKey);
+
         const series = this.plot.series.first();
         if (series) {
             const xMetadata = series.metadata.value(newKey);
@@ -230,7 +252,9 @@ export default class XAxisModel extends Model {
                 min: bounds.start,
                 max: bounds.end
             },
-            frozen: false
+            frozen: false,
+            autoscale: false,
+            autoscalePadding: 0.1
         };
     }
 }

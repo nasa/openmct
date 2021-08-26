@@ -273,6 +273,11 @@ define(['EventEmitter'], function (EventEmitter) {
                 throw "Attempt to set invalid time system in Time API. Please provide a previously registered time system object or key";
             }
 
+            let oldTimeSystem;
+            if (this.system) {
+                oldTimeSystem = Object.create(this.system);
+            }
+
             this.system = timeSystem;
 
             /**
@@ -284,7 +289,7 @@ define(['EventEmitter'], function (EventEmitter) {
              * @property {TimeSystem} The value of the currently applied
              * Time System
              * */
-            this.emit('timeSystem', this.system);
+            this.emit('timeSystem', this.system, oldTimeSystem);
             if (bounds) {
                 this.bounds(bounds);
             }

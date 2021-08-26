@@ -406,6 +406,7 @@ export default {
             }
 
             const displayRange = series.getDisplayRange(xKey);
+            this.config.xAxis.set('key', xKey);
             this.config.xAxis.set('range', displayRange);
         },
         updateRealTime(clock) {
@@ -936,6 +937,7 @@ export default {
         },
 
         setXAxisKey(xKey) {
+            this.config.xAxis.set('key', xKey);
             this.config.series.models[0].set('xKey', xKey);
         },
 

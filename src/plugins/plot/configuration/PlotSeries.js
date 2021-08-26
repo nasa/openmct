@@ -240,6 +240,7 @@ export default class PlotSeries extends Model {
      */
     resetStats() {
         this.unset('stats');
+        this.unset('xStats');
         this.getSeriesData().forEach(this.updateStats, this);
     }
 

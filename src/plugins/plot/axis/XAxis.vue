@@ -81,15 +81,22 @@ export default {
     mounted() {
         eventHelpers.extend(this);
         this.xAxis = this.getXAxisFromConfig();
-        this.loaded = true;
+        this.syncSeriesXKey();
         this.setUpXAxisOptions();
+        this.loaded = true;
         this.openmct.time.on('timeSystem', this.syncXAxisToTimeSystem);
-        // this.listenTo(this.xAxis, 'change', this.setUpXAxisOptions);
     },
     beforeDestroy() {
         this.openmct.time.off('timeSystem', this.syncXAxisToTimeSystem);
     },
     methods: {
+        syncSeriesXKey() {
+            const seriesKey = this.seriesModel.get('xKey');
+            const xKey = this.xAxis.get('key');
+            if (seriesKey && seriesKey !== xKey) {
+                this.$emit('xKeyChanged', seriesKey);
+            }
+        },
         isEnabledXKeyToggle() {
             const isSinglePlot = this.xKeyOptions && this.xKeyOptions.length > 1 && this.seriesModel;
             const isFrozen = this.xAxis.get('frozen');
@@ -104,15 +111,15 @@ export default {
                 return config.xAxis;
             }
         },
-        toggleXKeyOption(forced) {
+        toggleXKeyOption() {
             const selectedXKey = this.selectedXKeyOptionKey;
             const seriesData = this.seriesModel.getSeriesData();
             const dataForSelectedXKey = seriesData.length
                 ? seriesData[0][selectedXKey]
                 : undefined;
 
-            if (dataForSelectedXKey !== undefined || forced) {
-                this.xAxis.set('key', selectedXKey);
+            if (dataForSelectedXKey !== undefined) {
+                //TODO: We may want to expose the autoscale toggle at some point in the inspector
                 this.$emit('xKeyChanged', selectedXKey);
             } else {
                 this.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.');
@@ -123,9 +130,9 @@ export default {
         getXKeyOption(key) {
             return this.xKeyOptions.find(option => option.key === key);
         },
-        syncXAxisToTimeSystem(timeSystem) {
+        syncXAxisToTimeSystem(timeSystem, oldTimeSystem) {
             const xAxisKey = this.xAxis.get('key');
-            if (xAxisKey !== timeSystem.key) {
+            if (xAxisKey && oldTimeSystem && xAxisKey === oldTimeSystem.key) {
                 this.xAxis.set('key', timeSystem.key);
                 this.xAxis.resetSeries();
                 this.setUpXAxisOptions();
@@ -133,7 +140,6 @@ export default {
         },
         setUpXAxisOptions() {
             const xAxisKey = this.xAxis.get('key');
-            const seriesXKey = this.seriesModel.get('xKey');
 
             this.xKeyOptions = this.seriesModel.metadata
                 .valuesForHints(['domain'])
@@ -144,11 +150,7 @@ export default {
                     };
                 });
             this.xAxisLabel = this.xAxis.get('label');
-
-            if (xAxisKey !== seriesXKey && this.getXKeyOption(seriesXKey)) {
-                this.selectedXKeyOptionKey = seriesXKey;
-                this.toggleXKeyOption(true);
-            } else {
+            if (this.getXKeyOption(xAxisKey)) {
                 this.selectedXKeyOptionKey = this.getXKeyOption(xAxisKey).key;
             }
         },

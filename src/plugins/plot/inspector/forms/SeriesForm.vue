@@ -194,7 +194,7 @@ export default {
             markerShapeOptions: [],
             yKey: this.series.get('yKey'),
             yKeyOptions: [],
-            xKey: this.series.get('xKey'),
+            xKey: this.series.get('xKey') || this.openmct.time.timeSystem().key,
             xKeyOptions: [],
             interpolate: this.series.get('interpolate'),
             markers: this.series.get('markers'),
