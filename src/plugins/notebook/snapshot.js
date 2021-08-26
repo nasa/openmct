@@ -46,20 +46,17 @@ export default class Snapshot {
             const notebookStorage = getDefaultNotebook();
 
             this._saveToDefaultNoteBook(notebookStorage, embed);
-            const notebookImageDomainObject = updateNamespaceOfDomainObject(object, notebookStorage.notebookMeta.identifier.namespace);
+            const notebookImageDomainObject = updateNamespaceOfDomainObject(object, notebookStorage.identifier.namespace);
             saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
-
-            return;
+        } else {
+            this._saveToNotebookSnapshots(object, embed);
         }
-
-        this._saveToNotebookSnapshots(object, embed);
     }
 
     /**
      * @private
      */
-    _saveToDefaultNoteBook(embed) {
-        const notebookStorage = getDefaultNotebook();
+    _saveToDefaultNoteBook(notebookStorage, embed) {
         this.openmct.objects.get(notebookStorage.identifier)
             .then(async (domainObject) => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
