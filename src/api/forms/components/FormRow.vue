@@ -50,40 +50,9 @@
 </template>
 
 <script>
-import AutoCompleteField from "@/api/forms/components/controls/AutoCompleteField.vue";
-import ClockDisplayFormatField from "@/api/forms/components/controls/ClockDisplayFormatField.vue";
-import Datetime from "@/api/forms/components/controls/Datetime.vue";
-import FileInput from "@/api/forms/components/controls/FileInput.vue";
-import Locator from "@/api/forms/components/controls/Locator.vue";
-import NumberField from "@/api/forms/components/controls/NumberField.vue";
-import SelectField from '@/api/forms/components/controls/SelectField.vue';
-import TextAreaField from "@/api/forms/components/controls/TextAreaField.vue";
-import TextField from "@/api/forms/components/controls/TextField.vue";
-
-const CONTROL_TYPE_VIEW_MAP = {
-    'autocomplete': AutoCompleteField,
-    'composite': ClockDisplayFormatField,
-    'datetime': Datetime,
-    'file-input': FileInput,
-    'locator': Locator,
-    'numberfield': NumberField,
-    'select': SelectField,
-    'textarea': TextAreaField,
-    'textfield': TextField
-};
-
 export default {
     name: 'FormRow',
     components: {
-        AutoCompleteField,
-        ClockDisplayFormatField,
-        Datetime,
-        FileInput,
-        Locator,
-        NumberField,
-        SelectField,
-        TextAreaField,
-        TextField
     },
     inject: ['openmct', 'domainObject'],
     props: {
@@ -104,13 +73,14 @@ export default {
     },
     data() {
         return {
+            formControl: this.openmct.forms.getFormControl(this.row.control),
             valid: undefined,
             visited: false
         };
     },
     computed: {
         rowComponent() {
-            return CONTROL_TYPE_VIEW_MAP[this.row.control];
+            return this.formControl.show();
         },
         rowClass() {
             let cssClass = this.cssClass;
@@ -138,6 +108,12 @@ export default {
             };
 
             this.onChange(data, false);
+        }
+    },
+    destroyed() {
+        const destroy = this.formControl.destroy;
+        if (destroy) {
+            destroy();
         }
     },
     methods: {

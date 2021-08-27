@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import FormController from './FormController';
 import FormProperties from './components/FormProperties.vue';
 
 import Vue from 'vue';
@@ -27,6 +28,39 @@ import Vue from 'vue';
 export default class FormsAPI {
     constructor(openmct) {
         this.openmct = openmct;
+        this.formController = new FormController(openmct);
+    }
+
+    /**
+     * Control View Provider definition for a form control
+     * @typedef ControlViewProvider
+        * @property {function} show a function which returns a vue component to be rendered for given form control
+        *   please refere to examples in /src/api/forms/components/controls for details about component implementation.
+        *   this vue component accepts 'model' as prop and emits 'onChange' event
+        * @property {function} destroy a callback function when a vue component gets destroyed
+    */
+
+    /**
+     * Create a new form control definition with a formControlViewProvider
+     *      this formControlViewProvider is used inside form overlay to show/render a form row
+     *
+     * @public
+     * @param {String} controlName a form structure, array of section
+     * @param {ControlViewProvider} controlViewProvider
+     */
+    addNewFormControl(controlName, controlViewProvider) {
+        this.formController.addControl(controlName, controlViewProvider);
+    }
+
+    /**
+     * Get a ControlViewProvider for a given/stored form controlName
+     *
+     * @public
+     * @param {String} controlName a form structure, array of section
+     * @return {ControlViewProvider}
+     */
+    getFormControl(controlName) {
+        return this.formController.getControl(controlName);
     }
 
     /**
