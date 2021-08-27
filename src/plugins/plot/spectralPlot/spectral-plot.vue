@@ -26,21 +26,6 @@
     </div>
 </div>
 </template>
-
-<style lang="scss">
-    .c-spectral-plot__plot {
-        height: 100%;
-    }
-
-    .c-spectral-plot-view .gl-plot__local-controls {
-        top: 25px;
-    }
-
-    .has-local-controls {
-        border: 1px solid transparent;
-    }
-</style>
-
 <script>
 import Plotly from 'plotly.js/dist/plotly';
 import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE } from './spectral-constants';
@@ -352,3 +337,18 @@ export default {
     }
 };
 </script>
+
+<style lang="scss">
+    .c-spectral-plot__plot {
+        height: 100%;
+    }
+
+    .c-spectral-plot-view .gl-plot__local-controls {
+        top: 25px;
+    }
+
+    .has-local-controls {
+        border: 1px solid transparent;
+    }
+</style>
+

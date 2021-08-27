@@ -28,6 +28,7 @@ define([
 
     var REQUEST_DEFAULTS = {
         amplitude: 1,
+        wavelength: 1,
         period: 10,
         offset: 0,
         dataRateInHz: 1,
@@ -50,6 +51,7 @@ define([
     SpectralGeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
         var props = [
             'amplitude',
+            'wavelength',
             'period',
             'offset',
             'dataRateInHz',
