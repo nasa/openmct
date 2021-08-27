@@ -37,10 +37,10 @@
 </style>
 
 <script>
-import * as SPECTRAL from './spectral-constants';
+import * as SPECTRAL from '../spectralPlot/spectral-constants';
 import ColorPalette from '../lib/ColorPalette';
 import objectUtils from 'objectUtils';
-import SpectralPlot from './spectral-plot.vue';
+import SpectralPlot from '../spectralPlot/spectral-plot.vue';
 
 export default {
     components: {

@@ -169,8 +169,8 @@ import MctTicks from "../MctTicks.vue";
 // import MctChart from "../chart/MctChart.vue";
 import XAxis from "../axis/XAxis.vue";
 import YAxis from "../axis/YAxis.vue";
-import SpectralPlot from "./spectral-plot.vue";
-import _, {debounce} from "lodash";
+import SpectralPlot from "../spectralPlot/spectral-plot.vue";
+import _ from "lodash";
 
 export default {
     components: {
