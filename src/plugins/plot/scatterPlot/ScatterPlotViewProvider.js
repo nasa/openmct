@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ScatterView from './chart/scatter-view.vue';
+import ScatterView from './scatter-view.vue';
 import Vue from 'vue';
 
 export default function ScatterPlotViewProvider(openmct) {

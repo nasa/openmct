@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SpectralAggregateView from './chart/spectral-aggregate-view.vue';
+import SpectralAggregateView from './spectral-aggregate-view.vue';
 import Vue from 'vue';
 
 export default function SpectralAggregatePlotViewProvider(openmct) {

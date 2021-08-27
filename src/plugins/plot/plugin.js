@@ -28,8 +28,8 @@ import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
 import SpectralPlotCompositionPolicy from './spectralPlot/SpectralPlotCompositionPolicy';
-import SpectralAggregatePlotViewProvider from "./SpectralAggregatePlotViewProvider";
-import ScatterPlotViewProvider from "./ScatterPlotViewProvider";
+import SpectralAggregatePlotViewProvider from "./spectralAggregatePlot/SpectralAggregatePlotViewProvider";
+import ScatterPlotViewProvider from "./scatterPlot/ScatterPlotViewProvider";
 
 export default function () {
     return function install(openmct) {
