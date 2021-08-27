@@ -61,7 +61,7 @@ export default class ClearDataAction {
         const appliesToThisObject = this._appliesToObjects.some(type => {
             return contextualDomainObject.type === type;
         });
-        const objectInSelectionPath = inSelectionPath(this._openmct, contextualDomainObject)
+        const objectInSelectionPath = inSelectionPath(this._openmct, contextualDomainObject);
         if (appliesToThisObject) {
             // check to see if contextualDomainObject matches what's selected in tree
             if (objectInSelectionPath) {

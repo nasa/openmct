@@ -23,10 +23,20 @@
 import ClearDataActionPlugin from '../plugin.js';
 import ClearDataAction from '../clearDataAction.js';
 
-describe('When the Clear Data Plugin is installed,', function () {
+describe('When the Clear Data Plugin is installed,', () => {
     const mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']);
     const mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']);
     const mockActionsProvider = jasmine.createSpyObj('actions', ['register']);
+    const goodMockSelectionPath = [[{
+        context: {
+            item: {
+                identifier: {
+                    key: 'apple',
+                    namespace: ''
+                }
+            }
+        }
+    }]];
 
     const openmct = {
         objectViews: mockObjectViews,
@@ -34,31 +44,97 @@ describe('When the Clear Data Plugin is installed,', function () {
         actions: mockActionsProvider,
         install: function (plugin) {
             plugin(this);
+        },
+        selection: {
+            get: function () {
+                return goodMockSelectionPath;
+            }
+        },
+        objects: {
+            areIdsEqual: function (obj1, obj2) {
+                return true;
+            }
         }
     };
 
     const mockObjectPath = [
-        {name: 'mockObject1'},
-        {name: 'mockObject2'}
+        {
+            name: 'mockObject1',
+            type: 'apple'
+        },
+        {
+            name: 'mockObject2',
+            type: 'banana'
+        }
     ];
 
-    it('Global Clear Indicator is installed', function () {
+    it('Global Clear Indicator is installed', () => {
         openmct.install(ClearDataActionPlugin([]));
 
         expect(mockIndicatorProvider.add).toHaveBeenCalled();
     });
 
-    it('Clear Data context menu action is installed', function () {
+    it('Clear Data context menu action is installed', () => {
         openmct.install(ClearDataActionPlugin([]));
 
         expect(mockActionsProvider.register).toHaveBeenCalled();
     });
 
-    it('clear data action emits a clearData event when invoked', function () {
-        let action = new ClearDataAction(openmct);
+    it('clear data action emits a clearData event when invoked', () => {
+        const action = new ClearDataAction(openmct);
 
         action.invoke(mockObjectPath);
 
         expect(mockObjectViews.emit).toHaveBeenCalledWith('clearData', mockObjectPath[0]);
+    });
+
+    it('clears data on applicable objects', () => {
+        let action = new ClearDataAction(openmct, ['apple']);
+
+        const actionApplies = action.appliesTo(mockObjectPath);
+
+        expect(actionApplies).toBe(true);
+    });
+
+    it('does not clear data on inapplicable objects', () => {
+        let action = new ClearDataAction(openmct, ['pineapple']);
+
+        const actionApplies = action.appliesTo(mockObjectPath);
+
+        expect(actionApplies).toBe(false);
+    });
+
+    it('does not clear data if not in the selection path and not a layout', () => {
+        openmct.objects = {
+            areIdsEqual: function (obj1, obj2) {
+                return false;
+            }
+        };
+        openmct.router = {
+            path: [{type: 'not-a-layout'}]
+        };
+
+        let action = new ClearDataAction(openmct, ['apple']);
+
+        const actionApplies = action.appliesTo(mockObjectPath);
+
+        expect(actionApplies).toBe(false);
+    });
+
+    it('does clear data if not in the selection path and is a layout', () => {
+        openmct.objects = {
+            areIdsEqual: function (obj1, obj2) {
+                return false;
+            }
+        };
+        openmct.router = {
+            path: [{type: 'layout'}]
+        };
+
+        let action = new ClearDataAction(openmct, ['apple']);
+
+        const actionApplies = action.appliesTo(mockObjectPath);
+
+        expect(actionApplies).toBe(true);
     });
 });
