@@ -399,22 +399,21 @@ export default {
             });
         },
 
+        compositionPathContainsId(domainObjectToClear) {
+            return domainObjectToClear.composition.some((compositionIdentifier) => {
+                return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
+            });
+        },
+
         clearData(domainObjectToClear) {
-            // see if this clearData event applies to our domain object
-            if (domainObjectToClear) {
-                if (this.openmct.objects.areIdsEqual(domainObjectToClear.identifier, this.domainObject.identifier)) {
-                    this.clearSeries();
-                } else {
-                    // if it doesn't, we may be asking to clear a stacked plot
-                    // if that's the case, clear the stacked plot
-                    if (domainObjectToClear.composition.some((compositionIdentifier) => {
-                        return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
-                    })) {
-                        this.clearSeries();
-                    }
-                }
-            } else {
-                // global clear, fire it anyway!
+            // If we don't have an object to clear (global), or the IDs are equal, just clear the data.
+            // If we have an object to clear, but the IDs don't match, we need to check the composition
+            // of the object we've been asked to clear to see if it contains the id we're looking for.
+            // This happens with stacked plots for example.
+            // If we find the ID, clear the plot.
+            if (!domainObjectToClear
+            || this.openmct.objects.areIdsEqual(domainObjectToClear.identifier, this.domainObject.identifier)
+            || this.compositionPathContainsId(domainObjectToClear)) {
                 this.clearSeries();
             }
         },
