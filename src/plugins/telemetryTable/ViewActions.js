@@ -119,7 +119,7 @@ viewActions.forEach(action => {
             return false;
         }
 
-        return viewContext.type === 'telemetry-table';
+        return viewContext.type === 'telemetry-table' || viewContext.type === 'new.ladTable';
     };
 });
 

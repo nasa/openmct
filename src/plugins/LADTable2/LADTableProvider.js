@@ -26,16 +26,16 @@ export default class LADTableViewProvider {
     constructor(openmct) {
         this.openmct = openmct;
         this.name = 'LAD Table NEW';
-        this.key = 'telemetryTable';
+        this.key = 'new.ladTableView';
         this.cssClass = 'icon-tabular-lad';
     }
 
     canView(domainObject) {
-        return domainObject.type === 'telemetryTable';
+        return domainObject.type === 'new.ladTable';
     }
 
     canEdit(domainObject) {
-        return domainObject.type === 'telemetryTable';
+        return domainObject.type === 'new.ladTable';
     }
 
     view(domainObject, objectPath) {

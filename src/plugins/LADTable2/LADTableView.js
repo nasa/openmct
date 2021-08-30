@@ -1,20 +1,20 @@
-import LadTable from '/src/plugins/telemetryTable/components/table.vue';
-import TelemetryTable from '/src/plugins/telemetryTable/TelemetryTable.js';
+import TableView from '/src/plugins/telemetryTable/components/table.vue';
+import LADTable from './LADTable.js';
 import Vue from 'vue';
 
-export default class LADTableView extends TelemetryTable {
+//change this to ladTable.js
+export default class LADTableView {
     constructor(openmct, domainObject, objectPath) {
-        super(domainObject, openmct);
         this.objectPath = objectPath;
         this.component = undefined;
-        this.table = new TelemetryTable(domainObject, openmct);
+        this.table = new LADTable(domainObject, openmct);
     }
 
     show(element) {
         this.component = new Vue({
             el: element,
             components: {
-                LadTable
+                TableView
             },
             provide: {
                 openmct: this.openmct,
@@ -34,7 +34,7 @@ export default class LADTableView extends TelemetryTable {
                     }
                 };
             },
-            template: '<lad-table ref="ladTable" :marking="marking" :domain-object="domainObject"></lad-table>'
+            template: '<table-view ref="tableView" :marking="marking" :domain-object="domainObject"></table-view>'
         });
     }
 
@@ -43,7 +43,7 @@ export default class LADTableView extends TelemetryTable {
             return {};
         }
 
-        return this.component.$refs.ladTable.getViewContext();
+        return this.component.$refs.tableView.getViewContext();
     }
 
     destroy(element) {
