@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ClearDataActionPlugin from '../plugin.js';
-import ClearDataAction from '../clearDataAction.js';
+import ClearDataAction from '../ClearDataAction.js';
 
 describe('When the Clear Data Plugin is installed,', () => {
     const mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']);
