@@ -149,6 +149,7 @@ define(['lodash'], function (_) {
                         return type === 'text-view'
                             || type === 'telemetry-view'
                             || type === 'box-view'
+                            || type === 'ellipse-view'
                             || type === 'image-view'
                             || type === 'line-view'
                             || type === 'subobject-view';
@@ -179,6 +180,10 @@ define(['lodash'], function (_) {
                                 {
                                     "name": "Box",
                                     "class": "icon-box-round-corners"
+                                },
+                                {
+                                    "name": "Ellipse",
+                                    "class": "icon-circle"
                                 },
                                 {
                                     "name": "Line",
@@ -745,7 +750,7 @@ define(['lodash'], function (_) {
                         if (toolbar.remove.length === 0) {
                             toolbar.remove = [getRemoveButton(selectedParent, selectionPath, selectedObjects)];
                         }
-                    } else if (layoutItem.type === 'box-view') {
+                    } else if (layoutItem.type === 'box-view' || layoutItem.type === 'ellipse-view') {
                         if (toolbar.position.length === 0) {
                             toolbar.position = [
                                 getStackOrder(selectedParent, selectionPath),
