@@ -143,7 +143,6 @@
             </div>
             <x-axis v-if="seriesModels.length > 0 && !options.compact"
                     :series-model="seriesModels[0]"
-                    @xKeyChanged="setXAxisKey"
             />
 
         </div>
@@ -401,13 +400,18 @@ export default {
         },
 
         setDisplayRange(series, xKey) {
-            if (this.config.series.length !== 1) {
+            if (this.config.series.models.length !== 1) {
                 return;
             }
 
-            const displayRange = series.getDisplayRange(xKey);
-            this.config.xAxis.set('key', xKey);
-            this.config.xAxis.set('range', displayRange);
+            if (xKey !== this.openmct.time.timeSystem().key) {
+                const displayRange = series.getDisplayRange(xKey);
+                this.config.xAxis.set('range', displayRange);
+            } else {
+                //TODO: Is there a better way to handle this time syncing?
+                this.updateDisplayBounds(this.openmct.time.bounds(), false);
+            }
+
         },
         updateRealTime(clock) {
             this.isRealTime = clock !== undefined;
@@ -934,11 +938,6 @@ export default {
 
         setYAxisKey(yKey) {
             this.config.series.models[0].set('yKey', yKey);
-        },
-
-        setXAxisKey(xKey) {
-            this.config.xAxis.set('key', xKey);
-            this.config.series.models[0].set('xKey', xKey);
         },
 
         pause() {

@@ -132,11 +132,11 @@ export default class MCTChartSeriesElement {
     reset() {
         this.buffer = new Float32Array(20000);
         this.count = 0;
-        if (this.offset.x) {
-            this.series.getSeriesData().forEach(function (point, index) {
-                this.append(point, index, this.series);
-            }, this);
-        }
+        // if (this.offset.x) {
+        this.series.getSeriesData().forEach(function (point, index) {
+            this.append(point, index, this.series);
+        }, this);
+        // }
     }
 
     growIfNeeded(pointsRequired) {

@@ -238,6 +238,11 @@ export default class XAxisModel extends Model {
             plotSeries.reset();
         });
     }
+    resetSeriesStats() {
+        this.plot.series.forEach(function (plotSeries) {
+            plotSeries.resetStats();
+        });
+    }
     defaults(options) {
         const bounds = options.openmct.time.bounds();
         const timeSystem = options.openmct.time.timeSystem();

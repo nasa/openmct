@@ -59,6 +59,11 @@ export default class MCTChartAlarmPointSet {
 
     reset() {
         this.points = [];
+        if (this.offset.xVal && this.offset.yVal) {
+            this.series.getSeriesData().forEach(function (point, index) {
+                this.append(point, index, this.series);
+            }, this);
+        }
     }
 
     destroy() {

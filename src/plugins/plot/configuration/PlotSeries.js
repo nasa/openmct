@@ -248,13 +248,14 @@ export default class PlotSeries extends Model {
      * Reset plot series.  If new data is provided, will add that
      * data to series after reset.
      */
-    reset(newData) {
+    reset(newData, appendOnly) {
         this.updateSeriesData([]);
         this.resetStats();
         this.emit('reset');
         if (newData) {
             newData.forEach(function (point) {
-                this.add(point, true);
+                //Note: the appendOnly flag was set to true here
+                this.add(point, appendOnly);
             }, this);
         }
     }
@@ -285,6 +286,7 @@ export default class PlotSeries extends Model {
      * @returns {Promise}
      */
     load(options) {
+        //TODO: Should we clear out existing data before loading new data?
         return this.fetch(options)
             .then(function (res) {
                 this.emit('load');
@@ -458,7 +460,7 @@ export default class PlotSeries extends Model {
                 this.resetStats();
             } else {
                 const newData = this.getSeriesData().slice(startIndex, endIndex);
-                this.reset(newData);
+                this.reset(newData, true);
             }
         }
 

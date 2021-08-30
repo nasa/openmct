@@ -85,6 +85,7 @@ export default {
         this.setUpXAxisOptions();
         this.loaded = true;
         this.openmct.time.on('timeSystem', this.syncXAxisToTimeSystem);
+        this.listenTo(this.xAxis, 'change', this.setUpXAxisOptions);
     },
     beforeDestroy() {
         this.openmct.time.off('timeSystem', this.syncXAxisToTimeSystem);
@@ -94,7 +95,7 @@ export default {
             const seriesKey = this.seriesModel.get('xKey');
             const xKey = this.xAxis.get('key');
             if (seriesKey && seriesKey !== xKey) {
-                this.$emit('xKeyChanged', seriesKey);
+                this.xAxis.set('key', seriesKey);
             }
         },
         isEnabledXKeyToggle() {
@@ -120,7 +121,8 @@ export default {
 
             if (dataForSelectedXKey !== undefined) {
                 //TODO: We may want to expose the autoscale toggle at some point in the inspector
-                this.$emit('xKeyChanged', selectedXKey);
+                this.xAxis.set('key', selectedXKey);
+                this.xAxis.resetSeriesStats();
             } else {
                 this.openmct.notifications.error('Cannot change x-axis view as no data exists for this view type.');
                 const xAxisKey = this.xAxis.get('key');

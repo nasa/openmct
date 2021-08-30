@@ -70,29 +70,9 @@ export default function () {
             cssClass: "icon-plot-stacked",
             description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
             creatable: true,
-            form: [
-                {
-                    key: 'plotType',
-                    name: 'Plot Type',
-                    control: 'select',
-                    options: [
-                        {
-                            name: 'Scatter',
-                            value: "scattergl"
-                        }
-                    ],
-                    cssClass: 'l-inline',
-                    property: [
-                        "configuration",
-                        "plotType"
-                    ]
-                }
-            ],
             initialize: function (domainObject) {
                 domainObject.composition = [];
-                domainObject.configuration = {
-                    plotType: 'scattergl'
-                };
+                domainObject.configuration = {};
             },
             priority: 890
         });
@@ -103,24 +83,6 @@ export default function () {
             cssClass: "icon-plot-stacked",
             description: "View data on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
             creatable: true,
-            form: [
-                {
-                    key: 'plotType',
-                    name: 'Plot Type',
-                    control: 'select',
-                    options: [
-                        {
-                            name: 'Scatter',
-                            value: "scattergl"
-                        }
-                    ],
-                    cssClass: 'l-inline',
-                    property: [
-                        "configuration",
-                        "plotType"
-                    ]
-                }
-            ],
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
@@ -136,24 +98,6 @@ export default function () {
             cssClass: "icon-plot-stacked",
             description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
             creatable: true,
-            form: [
-                {
-                    key: 'plotType',
-                    name: 'Plot Type',
-                    control: 'select',
-                    options: [
-                        {
-                            name: 'Bar',
-                            value: "bar"
-                        }
-                    ],
-                    cssClass: 'l-inline',
-                    property: [
-                        "configuration",
-                        "plotType"
-                    ]
-                }
-            ],
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {
