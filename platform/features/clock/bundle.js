@@ -101,7 +101,7 @@ define([
                 ],
                 "views": [
                     {
-                        "key": "timer",
+                        "key": "timer-old",
                         "type": "timer",
                         "editable": false,
                         "template": timerTemplate
@@ -109,7 +109,7 @@ define([
                 ],
                 "actions": [
                     {
-                        "key": "timer.start",
+                        "key": "timer.start-old",
                         "implementation": StartTimerAction,
                         "depends": [
                             "now"
@@ -120,7 +120,7 @@ define([
                         "priority": "preferred"
                     },
                     {
-                        "key": "timer.pause",
+                        "key": "timer.pause-old",
                         "implementation": PauseTimerAction,
                         "depends": [
                             "now"
@@ -131,7 +131,7 @@ define([
                         "priority": "preferred"
                     },
                     {
-                        "key": "timer.restart",
+                        "key": "timer.restart-old",
                         "implementation": RestartTimerAction,
                         "depends": [
                             "now"
@@ -142,7 +142,7 @@ define([
                         "priority": "preferred"
                     },
                     {
-                        "key": "timer.stop",
+                        "key": "timer.stop-old",
                         "implementation": StopTimerAction,
                         "depends": [
                             "now"
@@ -155,8 +155,8 @@ define([
                 ],
                 "types": [
                     {
-                        "key": "timer",
-                        "name": "Timer",
+                        "key": "timer-old",
+                        "name": "Old Timer",
                         "cssClass": "icon-timer",
                         "description": "A timer that counts up or down to a datetime. Timers can be started, stopped and reset whenever needed, and support a variety of display formats. Each Timer displays the same value to all users. Timers can be added to Display Layouts.",
                         "priority": 100,

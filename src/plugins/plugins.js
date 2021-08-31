@@ -69,7 +69,8 @@ define([
     './CouchDBSearchFolder/plugin',
     './timeline/plugin',
     './hyperlink/plugin',
-    './clock/plugin'
+    './clock/plugin',
+    './timer/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -119,7 +120,8 @@ define([
     CouchDBSearchFolder,
     Timeline,
     Hyperlink,
-    Clock
+    Clock,
+    Timer
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -224,6 +226,7 @@ define([
     plugins.Timeline = Timeline.default;
     plugins.Hyperlink = Hyperlink.default;
     plugins.Clock = Clock.default;
+    plugins.Timer = Timer.default;
 
     return plugins;
 });

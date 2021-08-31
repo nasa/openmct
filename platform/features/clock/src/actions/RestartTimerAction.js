@@ -48,7 +48,7 @@ define(
                 || {};
 
             // We show this variant for timers which already have a target time.
-            return model.type === 'timer'
+            return model.type === 'timer-old'
                 && model.timerState !== 'stopped';
         };
 

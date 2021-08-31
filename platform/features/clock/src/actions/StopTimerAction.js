@@ -49,7 +49,7 @@ define(
 
             // We show this variant for timers which do not yet have
             // a target time.
-            return model.type === 'timer'
+            return model.type === 'timer-old'
                     && model.timerState !== 'stopped';
         };
 
