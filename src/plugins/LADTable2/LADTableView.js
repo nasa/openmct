@@ -1,10 +1,9 @@
 import TableView from '/src/plugins/telemetryTable/components/table.vue';
 import LADTable from './LADTable.js';
 import Vue from 'vue';
-
-//change this to ladTable.js
 export default class LADTableView {
     constructor(openmct, domainObject, objectPath) {
+        this.openmct = openmct;
         this.objectPath = objectPath;
         this.component = undefined;
         this.table = new LADTable(domainObject, openmct);
