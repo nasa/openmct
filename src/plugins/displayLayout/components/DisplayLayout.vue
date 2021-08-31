@@ -76,6 +76,7 @@ import uuid from 'uuid';
 import SubobjectView from './SubobjectView.vue';
 import TelemetryView from './TelemetryView.vue';
 import BoxView from './BoxView.vue';
+import EllipseView from './EllipseView.vue';
 import TextView from './TextView.vue';
 import LineView from './LineView.vue';
 import ImageView from './ImageView.vue';
@@ -112,6 +113,7 @@ const ITEM_TYPE_VIEW_MAP = {
     'subobject-view': SubobjectView,
     'telemetry-view': TelemetryView,
     'box-view': BoxView,
+    'ellipse-view': EllipseView,
     'line-view': LineView,
     'text-view': TextView,
     'image-view': ImageView
