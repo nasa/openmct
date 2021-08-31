@@ -242,6 +242,23 @@ describe("The Imagery View Layout", () => {
         expect(imageryView).toBeDefined();
     });
 
+    it("should not provide an imagery view when in a time strip", () => {
+        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }]);
+        let imageryView = applicableViews.find(
+            viewProvider => viewProvider.key === imageryKey
+        );
+
+        console.log(imageryView);
+
+        expect(imageryView).toBeUndefined();
+    });
+
     describe("imagery view", () => {
         let applicableViews;
         let imageryViewProvider;
