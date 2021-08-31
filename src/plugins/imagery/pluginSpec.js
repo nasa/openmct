@@ -84,8 +84,9 @@ function generateTelemetry(start, count) {
     return telemetry;
 }
 
-describe("The Imagery View Layout", () => {
+fdescribe("The Imagery View Layouts", () => {
     const imageryKey = 'example.imagery';
+    const imageryForTimeStripKey = 'example.imagery.time-strip.view';
     const START = Date.now();
     const COUNT = 10;
 
@@ -254,9 +255,22 @@ describe("The Imagery View Layout", () => {
             viewProvider => viewProvider.key === imageryKey
         );
 
-        console.log(imageryView);
-
         expect(imageryView).toBeUndefined();
+    });
+
+    it("should provide an imagery time strip view when in a time strip", () => {
+        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }]);
+        let imageryView = applicableViews.find(
+            viewProvider => viewProvider.key === imageryForTimeStripKey
+        );
+
+        expect(imageryView).toBeDefined();
     });
 
     describe("imagery view", () => {
