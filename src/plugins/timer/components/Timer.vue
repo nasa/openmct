@@ -85,6 +85,15 @@ export default {
         timeDelta() {
             return this.lastTimestamp - this.relativeTimestamp;
         },
+        timeTextValue() {
+            if (isNaN(this.timeDelta)) {
+                return null;
+            }
+
+            const toWholeSeconds = Math.abs(Math.floor(this.timeDelta / 1000) * 1000);
+
+            return moment.duration(toWholeSeconds, 'ms').format(this.format, { trim: false });
+        },
         pausedTime() {
             let pausedTime;
             if (this.configuration && this.configuration.pausedTime) {
@@ -107,6 +116,22 @@ export default {
 
             return timerState;
         },
+        timerStateButtonText() {
+            let buttonText = 'Pause';
+            if (['paused', 'stopped'].includes(this.timerState)) {
+                buttonText = 'Start';
+            }
+
+            return buttonText;
+        },
+        timerStateButtonIcon() {
+            let buttonIcon = 'icon-pause';
+            if (['paused', 'stopped'].includes(this.timerState)) {
+                buttonIcon = 'icon-play';
+            }
+
+            return buttonIcon;
+        },
         timerFormat() {
             let timerFormat = 'long';
             if (this.configuration && this.configuration.timerFormat) {
@@ -117,7 +142,7 @@ export default {
         },
         format() {
             let format;
-            if (!this.timerFormat || this.timerFormat === 'long') {
+            if (this.timerFormat === 'long') {
                 format = 'd[D] HH:mm:ss';
             }
 
@@ -126,15 +151,6 @@ export default {
             }
 
             return format;
-        },
-        timeTextValue() {
-            if (isNaN(this.timeDelta)) {
-                return null;
-            }
-
-            const toWholeSeconds = Math.abs(Math.floor(this.timeDelta / 1000) * 1000);
-
-            return moment.duration(toWholeSeconds, 'ms').format(this.format, { trim: false });
         },
         timerType() {
             let timerType = null;
@@ -159,22 +175,6 @@ export default {
             }
 
             return timerSign;
-        },
-        timerStateButtonText() {
-            let buttonText = 'Pause';
-            if (['paused', 'stopped'].includes(this.timerState)) {
-                buttonText = 'Start';
-            }
-
-            return buttonText;
-        },
-        timerStateButtonIcon() {
-            let buttonIcon = 'icon-pause';
-            if (['paused', 'stopped'].includes(this.timerState)) {
-                buttonIcon = 'icon-play';
-            }
-
-            return buttonIcon;
         }
     },
     mounted() {
