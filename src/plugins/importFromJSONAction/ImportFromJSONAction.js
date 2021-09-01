@@ -36,7 +36,11 @@ export default class ImportAsJSONAction {
     }
 
     // Public
-
+    /**
+     *
+     * @param {object} objectPath
+     * @returns {boolean}
+     */
     appliesTo(objectPath) {
         const domainObject = objectPath[0];
         if (domainObject && domainObject.locked) {
@@ -46,11 +50,19 @@ export default class ImportAsJSONAction {
         return domainObject !== undefined
             && this.openmct.composition.get(domainObject);
     }
-
+    /**
+     *
+     * @param {object} objectPath
+     */
     invoke(objectPath) {
         this._showForm(objectPath[0], objectPath[1]);
     }
-
+    /**
+     *
+     * @param {object} object
+     * @param {object} changes
+     * @param {object} parent
+     */
     onSave(object, changes, parent) {
         const selectFile = changes.selectFile;
         const objectTree = selectFile.body;
@@ -58,7 +70,12 @@ export default class ImportAsJSONAction {
     }
 
     // Private
-
+    /**
+     * @private
+     * @param {object} parent
+     * @param {object} tree
+     * @param {object} seen
+     */
     _deepInstantiate(parent, tree, seen) {
         if (this.openmct.composition.get(parent)) {
             let newObj;
@@ -79,7 +96,12 @@ export default class ImportAsJSONAction {
             }, this);
         }
     }
-
+    /**
+     *
+     * @param {*} tree
+     * @param {*} namespace
+     * @returns
+     */
     _generateNewIdentifiers(tree, namespace) {
         // For each domain object in the file, generate new ID, replace in tree
         Object.keys(tree.openmct).forEach(domainObjectId => {

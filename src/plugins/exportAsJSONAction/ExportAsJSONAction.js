@@ -44,12 +44,20 @@ export default class ExportAsJSONAction {
     }
 
     // Public
+    /**
+     *
+     * @param {object} objectPath
+     * @returns {boolean}
+     */
     appliesTo(objectPath) {
         let domainObject = objectPath[0];
 
         return this._isCreatable(domainObject);
     }
-
+    /**
+     *
+     * @param {object} objectpath
+     */
     invoke(objectpath) {
         const root = objectpath[0];
         this.root = JSON.parse(JSON.stringify(root));
@@ -60,17 +68,30 @@ export default class ExportAsJSONAction {
     }
 
     // Private
-
+    /**
+     * @private
+     * @param {object} domainObject
+     * @returns {string} A string representation of the given identifier, including namespace and key
+     */
     _getId(domainObject) {
         return this.openmct.objects.makeKeyString(domainObject.identifier);
     }
-
+    /**
+     * @private
+     * @param {object} domainObject
+     * @returns {boolean}
+     */
     _isCreatable(domainObject) {
         const type = this.openmct.types.get(domainObject.type);
 
         return type && type.definition.creatable;
     }
-
+    /**
+     * @private
+     * @param {object} child
+     * @param {object} parent
+     * @returns {boolean}
+     */
     _isLinkedObject(child, parent) {
         if (child.location !== this._getId(parent)
             && !Object.keys(this.tree).includes(child.location)
@@ -82,7 +103,12 @@ export default class ExportAsJSONAction {
 
         return false;
     }
-
+    /**
+     * @private
+     * @param {object} child
+     * @param {object} parent
+     * @returns {object}
+     */
     _rewriteLink(child, parent) {
         this.externalIdentifiers.push(this._getId(child));
         const index = parent.composition.findIndex(id => {
@@ -101,7 +127,9 @@ export default class ExportAsJSONAction {
 
         return copyOfChild;
     }
-
+    /**
+     * @private
+     */
     _rewriteReferences() {
         let treeString = JSON.stringify(this.tree);
         Object.keys(this.idMap).forEach(function (oldId) {
@@ -110,21 +138,30 @@ export default class ExportAsJSONAction {
         }.bind(this));
         this.tree = JSON.parse(treeString);
     }
-
+    /**
+     * @private
+     * @param {object} completedTree
+     */
     _saveAs(completedTree) {
         this.exportService.exportJSON(
             completedTree,
             { filename: this.root.name + '.json' }
         );
     }
-
+    /**
+     * @private
+     * @returns {object}
+     */
     _wrapTree() {
         return {
             "openmct": this.tree,
             "rootId": this._getId(this.root)
         };
     }
-
+    /**
+     * @private
+     * @param {object} parent
+     */
     _write(parent) {
         this.calls++;
         const composition = this.openmct.composition.get(parent);
