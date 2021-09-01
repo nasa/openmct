@@ -31,6 +31,7 @@ define([
     './timeConductor/plugin',
     '../../example/imagery/plugin',
     './imagery/plugin',
+    '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
@@ -82,6 +83,7 @@ define([
     TimeConductorPlugin,
     ExampleImagery,
     ImageryPlugin,
+    ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
@@ -140,6 +142,9 @@ define([
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
+
+    plugins.ImportExport = ImportExport;
+
     plugins.StaticRootPlugin = StaticRootPlugin;
 
     /**
