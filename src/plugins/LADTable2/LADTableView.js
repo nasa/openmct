@@ -1,4 +1,5 @@
 import TableView from '/src/plugins/telemetryTable/components/table.vue';
+// import TableView from './LADTable.vue';
 import LADTable from './LADTable.js';
 import Vue from 'vue';
 export default class LADTableView {

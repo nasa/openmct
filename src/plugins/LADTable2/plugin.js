@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import LADTableProvider from './LADTableProvider';
+import LADTableViewProvider from './LADTableViewProvider';
 // import TelemetryTableViewActions from '/src/plugins/telemetryTable/ViewActions.js';
 
 export default function () {
@@ -40,7 +40,7 @@ export default function () {
         });
 
         // openmct.telemetry.addProvider(new LADTableProvider(openmct));
-        openmct.objectViews.addProvider(new LADTableProvider(openmct));
+        openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
         // TelemetryTableViewActions.forEach(action => {
         //     openmct.actions.register(action);
         // });
