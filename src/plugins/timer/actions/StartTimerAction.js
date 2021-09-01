@@ -27,9 +27,9 @@ export default class StartTimerAction {
         this.name = 'Start';
         this.key = 'timer.start';
         this.description = 'Start the currently displayed timer';
-        this.group = 'action';
+        this.group = 'view';
         this.cssClass = 'icon-play';
-        this.priority = 1;
+        this.priority = 3;
 
         this.openmct = openmct;
     }

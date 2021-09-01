@@ -139,7 +139,6 @@ export default {
         }
     },
     mounted() {
-        console.log(this.domainObject);
         if (this.configuration) {
             console.log(this.configuration);
             const { timerState, timestamp, timerFormat, pausedTime } = this.configuration;
@@ -197,13 +196,13 @@ export default {
             }
 
             if (this.timerState === undefined && this.domainObject) {
-                const hasTimeStamp = this.configuration.timestamp === undefined;
-                this.timerState = hasTimeStamp ? 'stopped' : 'started';
+                const hasTimeStamp = this.configuration && this.configuration.timestamp;
+                this.timerState = !hasTimeStamp ? 'stopped' : 'started';
             }
 
             if (this.timerState === 'paused' && !this.lastTimestamp) {
                 const { pausedTime } = this.configuration;
-                this.lastTimestamp = moment(pausedTime).toDate();
+                this.lastTimestamp = pausedTime;
             }
 
             if (this.active) {

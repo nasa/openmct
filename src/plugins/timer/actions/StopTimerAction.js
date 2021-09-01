@@ -25,9 +25,9 @@ export default class StopTimerAction {
         this.name = 'Stop';
         this.key = 'timer.stop';
         this.description = 'Stop the currently displayed timer';
-        this.group = 'action';
+        this.group = 'view';
         this.cssClass = 'icon-box-round-corners';
-        this.priority = 3;
+        this.priority = 1;
 
         this.openmct = openmct;
     }

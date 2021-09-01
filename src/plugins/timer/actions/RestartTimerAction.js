@@ -25,7 +25,7 @@ export default class RestartTimerAction {
         this.name = 'Restart at 0';
         this.key = 'timer.restart';
         this.description = 'Restart the currently displayed timer';
-        this.group = 'action';
+        this.group = 'view';
         this.cssClass = 'icon-refresh';
         this.priority = 2;
 

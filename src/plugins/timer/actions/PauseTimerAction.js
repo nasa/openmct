@@ -25,9 +25,9 @@ export default class PauseTimerAction {
         this.name = 'Pause';
         this.key = 'timer.pause';
         this.description = 'Pause the currently displayed timer';
-        this.group = 'action';
+        this.group = 'view';
         this.cssClass = 'icon-pause';
-        this.priority = 1;
+        this.priority = 3;
 
         this.openmct = openmct;
     }
