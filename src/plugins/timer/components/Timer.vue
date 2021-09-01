@@ -59,26 +59,65 @@ export default {
     },
     data() {
         return {
-            timerState: 'started',
             lastTimestamp: null,
-            relativeTimestamp: null,
-            timerFormat: 'long',
             active: true
         };
     },
     computed: {
         configuration() {
-            return this.domainObject.configuration;
+            let configuration;
+            if (this.domainObject && this.domainObject.configuration) {
+                configuration = this.domainObject.configuration;
+            }
+
+            return configuration;
         },
-        timezone() {
-            return this.configuration.timezone;
+        relativeTimestamp() {
+            let relativeTimestamp;
+            if (this.configuration && this.configuration.timestamp) {
+                relativeTimestamp = moment(this.configuration.timestamp).toDate();
+            } else if (this.configuration && this.configuration.timestamp === undefined) {
+                relativeTimestamp = undefined;
+            }
+
+            return relativeTimestamp;
         },
         timeDelta() {
             return this.lastTimestamp - this.relativeTimestamp;
         },
+        pausedTime() {
+            let pausedTime;
+            if (this.configuration && this.configuration.pausedTime) {
+                pausedTime = moment(this.configuration.pausedTime).toDate();
+            } else if (this.configuration && this.configuration.pausedTime === undefined) {
+                pausedTime = undefined;
+            }
+
+            return pausedTime;
+        },
+        timerState() {
+            let timerState = 'started';
+            if (this.configuration && this.configuration.timerState) {
+                timerState = this.configuration.timerState;
+            }
+
+            if (this.configuration && this.configuration.timerState === undefined) {
+                timerState = !this.timestamp ? 'stopped' : 'started';
+            }
+
+            return timerState;
+        },
+        timerFormat() {
+            let timerFormat = 'long';
+            if (this.configuration && this.configuration.timerFormat) {
+                timerFormat = this.configuration.timerFormat;
+            }
+
+            return timerFormat;
+        },
         format() {
             let format;
-            if (this.timerFormat === 'long') {
+            if (!this.timerFormat || this.timerFormat === 'long') {
                 format = 'd[D] HH:mm:ss';
             }
 
@@ -139,50 +178,6 @@ export default {
         }
     },
     mounted() {
-        if (this.configuration) {
-            console.log(this.configuration);
-            const { timerState, timestamp, timerFormat, pausedTime } = this.configuration;
-            this.timerState = timerState;
-
-            if (timestamp) {
-                this.relativeTimestamp = moment(timestamp).toDate();
-            }
-
-            this.timerFormat = timerFormat;
-
-            if (pausedTime) {
-                this.pausedTime = moment(pausedTime).toDate();
-            }
-        }
-
-        this.openmct.objects.observe(this.domainObject, 'configuration', (changedConfiguration) => {
-            const { timerState, timestamp, timerFormat, pausedTime } = changedConfiguration;
-            if (timerState) {
-                this.timerState = timerState;
-            }
-
-            if (pausedTime) {
-                this.pausedTime = moment(pausedTime).toDate();
-            } else {
-                this.pausedTime = undefined;
-            }
-
-            if (timerFormat) {
-                this.timerFormat = timerFormat;
-            }
-
-            if (timestamp) {
-                this.relativeTimestamp = moment(timestamp).toDate();
-            } else {
-                this.relativeTimestamp = undefined;
-            }
-
-            console.log('timerState: ', timerState);
-            console.log('pausedTime: ', pausedTime);
-            console.log('timerFormat: ', timerFormat);
-            console.log('timestamp: ', timestamp);
-        });
-
         window.requestAnimationFrame(this.tick);
     },
     destroyed() {
@@ -195,14 +190,8 @@ export default {
                 this.lastTimestamp = new Date();
             }
 
-            if (this.timerState === undefined && this.domainObject) {
-                const hasTimeStamp = this.configuration && this.configuration.timestamp;
-                this.timerState = !hasTimeStamp ? 'stopped' : 'started';
-            }
-
             if (this.timerState === 'paused' && !this.lastTimestamp) {
-                const { pausedTime } = this.configuration;
-                this.lastTimestamp = pausedTime;
+                this.lastTimestamp = this.pausedTime;
             }
 
             if (this.active) {
@@ -221,7 +210,9 @@ export default {
         },
         triggerAction(actionKey) {
             const action = this.openmct.actions.getAction(actionKey);
-            action.invoke(this.objectPath, this.currentView);
+            if (action) {
+                action.invoke(this.objectPath, this.currentView);
+            }
         }
     }
 };
