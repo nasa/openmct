@@ -22,10 +22,10 @@
 
 <template>
 <div class="u-contents">
-    <div v-if="!hideTitle"
+    <div v-if="title.length"
          class="c-overlay__top-bar"
     >
-        <div class="c-overlay__dialog-title">Select Condition Set</div>
+        <div class="c-overlay__dialog-title">{{ title }}</div>
     </div>
     <div class="c-selector c-tree-and-search"
          :class="cssClass"
@@ -98,11 +98,11 @@ export default {
                 return '';
             }
         },
-        hideTitle: {
-            type: Boolean,
+        title: {
+            type: String,
             required: false,
             default() {
-                return false;
+                return '';
             }
         },
         ignoreTypeCheck: {

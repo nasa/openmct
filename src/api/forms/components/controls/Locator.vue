@@ -21,8 +21,7 @@
 *****************************************************************************/
 
 <template>
-<SelectorDialogTree :hide-title="true"
-                    :ignore-type-check="true"
+<SelectorDialogTree :ignore-type-check="true"
                     :css-class="`form-locator c-form-control--locator`"
                     :parent="model.parent"
                     @treeItemSelected="handleItemSelection"
