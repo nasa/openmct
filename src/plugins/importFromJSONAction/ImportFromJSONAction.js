@@ -98,8 +98,8 @@ export default class ImportAsJSONAction {
     }
     /**
      *
-     * @param {*} tree
-     * @param {*} namespace
+     * @param {object} tree
+     * @param {string} namespace
      * @returns
      */
     _generateNewIdentifiers(tree, namespace) {
