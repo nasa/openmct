@@ -94,12 +94,12 @@ export default {
     },
     data() {
         return {
-            inValidProperties: {}
+            invalidProperties: {}
         };
     },
     computed: {
         isInvalid() {
-            return Object.entries(this.inValidProperties)
+            return Object.entries(this.invalidProperties)
                 .some(([key, value]) => {
                     return value;
                 });
@@ -107,7 +107,7 @@ export default {
     },
     methods: {
         onChange(data) {
-            this.$set(this.inValidProperties, data.model.key, data.invalid);
+            this.$set(this.invalidProperties, data.model.key, data.invalid);
 
             this.$emit('onChange', data);
         },
