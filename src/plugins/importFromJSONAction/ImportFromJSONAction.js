@@ -157,7 +157,7 @@ export default class ImportAsJSONAction {
     /**
      * @private
      * @param {object} rootModel
-     * @returns 
+     * @returns {object}
      */
     async _instantiate(rootModel) {
         const success = await this.openmct.objects.save(rootModel);
@@ -169,10 +169,10 @@ export default class ImportAsJSONAction {
     }
     /**
      * @private
-     * @param {*} oldId
-     * @param {*} newId
+     * @param {object} oldId
+     * @param {object} newId
      * @param {object} tree
-     * @returns 
+     * @returns {object}
      */
     _rewriteId(oldId, newId, tree) {
         let newIdKeyString = this.openmct.objects.makeKeyString(newId);
