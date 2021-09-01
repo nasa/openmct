@@ -103,10 +103,13 @@ export function validateNotebookStorageObject() {
 
     let valid = false;
     if (notebookStorage) {
-        Object.entries(notebookStorage).forEach(([key, value]) => {
+        const oldInvalidKeys = ['notebookMeta', 'page', 'section'];
+        valid = Object.entries(notebookStorage).every(([key, value]) => {
             const validKey = key !== undefined && key !== null;
             const validValue = value !== undefined && value !== null;
-            valid = validKey && validValue;
+            const hasOldInvalidKeys = oldInvalidKeys.includes(key);
+
+            return validKey && validValue && !hasOldInvalidKeys;
         });
     }
 
