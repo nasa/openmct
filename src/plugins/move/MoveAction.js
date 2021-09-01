@@ -142,7 +142,6 @@ export default class MoveAction {
     validate(currentParent) {
         return (object, data) => {
             const parentCandidate = data.value;
-            // TODO: remove getModel, checkPolicy and useCapability
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
             let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);

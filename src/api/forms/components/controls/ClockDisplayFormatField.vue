@@ -49,7 +49,6 @@ export default {
         };
     },
     mounted() {
-        // this.model.items.forEach((item, index) => item.key = `${this.model.key}.${index}`);
         const values = this.model.value || [];
         this.items = this.model.items.map((item, index) => {
             item.value = values[index];
