@@ -97,10 +97,10 @@ export default class ImportAsJSONAction {
         }
     }
     /**
-     *
+     * @private
      * @param {object} tree
      * @param {string} namespace
-     * @returns
+     * @returns {object}
      */
     _generateNewIdentifiers(tree, namespace) {
         // For each domain object in the file, generate new ID, replace in tree
@@ -117,7 +117,11 @@ export default class ImportAsJSONAction {
 
         return tree;
     }
-
+    /**
+     * @private
+     * @param {object} domainObject
+     * @param {object} objTree
+     */
     async _importObjectTree(domainObject, objTree) {
         const namespace = domainObject.identifier.namespace;
         const tree = this._generateNewIdentifiers(objTree, namespace);
@@ -150,7 +154,11 @@ export default class ImportAsJSONAction {
             });
         }
     }
-
+    /**
+     * @private
+     * @param {object} rootModel
+     * @returns 
+     */
     async _instantiate(rootModel) {
         const success = await this.openmct.objects.save(rootModel);
         if (success) {
@@ -159,7 +167,13 @@ export default class ImportAsJSONAction {
 
         this.openmct.notifications.error('Error saving objects');
     }
-
+    /**
+     * @private
+     * @param {*} oldId
+     * @param {*} newId
+     * @param {object} tree
+     * @returns 
+     */
     _rewriteId(oldId, newId, tree) {
         let newIdKeyString = this.openmct.objects.makeKeyString(newId);
         let oldIdKeyString = this.openmct.objects.makeKeyString(oldId);
@@ -178,7 +192,11 @@ export default class ImportAsJSONAction {
             }
         });
     }
-
+    /**
+     * @private
+     * @param {object} domainObject
+     * @param {object} parentDomainObject
+     */
     _showForm(domainObject, parentDomainObject) {
         const formStructure = {
             title: this.name,
@@ -205,7 +223,12 @@ export default class ImportAsJSONAction {
             onSave: this.onSave.bind(this)
         });
     }
-
+    /**
+     * @private
+     * @param {object} domainObject
+     * @param {object} data
+     * @returns {boolean}
+     */
     _validateJSON(domainObject, data) {
         const value = data.value;
         const objectTree = value && value.body;
