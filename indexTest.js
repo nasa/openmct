@@ -4,3 +4,4 @@ jasmine.getEnv().addReporter(new MemoryLeaksReporter());
 
 const testsContext = require.context('.', true, /\/(src|platform)\/.*Spec.js$/);
 testsContext.keys().forEach(testsContext);
+console.error("Done running tests?");

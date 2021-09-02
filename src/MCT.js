@@ -464,25 +464,36 @@ define([
     };
 
     MCT.prototype.destroy = function () {
-        //console.error("IT'S SMASHIN' TIME !!!");
-        this.$injector.get('$rootScope').$destroy();
-        this.$angular.element(this.element).off().removeData();
-        this.$angular.element(this.element).empty();
+        console.error("IT'S SMASHIN' TIME !!!");
+        this.emit('destroy');
+        this.removeAllListeners();
+
+        if (this.$injector) {
+            this.$injector.get('$rootScope').$destroy();
+            this.$injector = null;
+        }
+
+        if (this.$angular) {
+            this.$angular.element(this.element).off().removeData();
+            this.$angular.element(this.element).empty();
+            this.$angular = null;
+        }
+
         this.overlays.destroy();
         if (this.layout) {
             this.layout.$refs.browseObject.$destroy();
             this.layout.$destroy();
+            this.layout = null;
         }
 
-        this.element.remove();
-        this.emit('destroy');
+        if (this.element) {
+            this.element.remove();
+        }
+
         this.router.destroy();
-        this.removeAllListeners();
+
         stylesManager.default.removeAllListeners();
 
-        this.$angular = null;
-        this.$injector = null;
-        this.layout = null;
         window.angular = null;
         window.openmct = null;
         window.Zepto = null;
@@ -492,17 +503,16 @@ define([
 
         for (let script of document.scripts) {
             if (script.src.indexOf('openmct.js') !== -1) {
+                console.error('FOUND OPENMCT SCRIPT');
                 script.src = null;
                 script.parentElement.removeChild(script);
                 Object.keys(script).forEach(key => {
                     delete script[key];
                 });
-                //console.log("Found Open MCT UMD in scripts, removing it");
-                //script.remove();
             }
         }
 
-        //console.log("Done cleaning up");
+        console.error("Done cleaning up");
     };
 
     MCT.prototype.plugins = plugins;

@@ -79,7 +79,6 @@ export function resetApplicationState(openmct) {
 
     if (openmct !== undefined) {
         openmct.destroy();
-        activeInstance.openmct = undefined;
     }
 
     if (window.location.hash !== '#' && window.location.hash !== '') {
@@ -95,6 +94,8 @@ export function resetApplicationState(openmct) {
     } else {
         promise = Promise.resolve();
     }
+
+    openmct = null;
 
     return promise.then(() => {
         window.gc();

@@ -45,15 +45,22 @@ export default class MemoryLeaksReporter {
         }*/
     }
 
-    jasmineDone() {
+    async jasmineDone() {
         window.gc();
-        if (memoryLeaks.size > 0) {
-            console.error("\r\n");
-            console.error("##############################################");
-            console.error(`${memoryLeaks.size} test spec(s) contain memory leaks: `);
-            for (const specName of memoryLeaks) {
-                console.error(`- ${specName}`);
-            }
-        }
+
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                window.gc();
+                if (memoryLeaks.size > 0) {
+                    console.error("\r\n");
+                    console.error("##############################################");
+                    console.error(`${memoryLeaks.size} test spec(s) contain memory leaks: `);
+                    for (const specName of memoryLeaks) {
+                        console.error(`- ${specName}`);
+                    }
+                }
+                resolve();
+            });
+        });
     }
 }

@@ -66,135 +66,143 @@
     <body>
     </body>
     <script>
-        const THIRTY_SECONDS = 30 * 1000;
-        const ONE_MINUTE = THIRTY_SECONDS * 2;
-        const FIVE_MINUTES = ONE_MINUTE * 5;
-        const FIFTEEN_MINUTES = FIVE_MINUTES * 3;
-        const THIRTY_MINUTES = FIFTEEN_MINUTES * 2;
-        const ONE_HOUR = THIRTY_MINUTES * 2;
-        const TWO_HOURS = ONE_HOUR * 2;
-        const ONE_DAY = ONE_HOUR * 24;
+        (function() {
+            const THIRTY_SECONDS = 30 * 1000;
+            const ONE_MINUTE = THIRTY_SECONDS * 2;
+            const FIVE_MINUTES = ONE_MINUTE * 5;
+            const FIFTEEN_MINUTES = FIVE_MINUTES * 3;
+            const THIRTY_MINUTES = FIFTEEN_MINUTES * 2;
+            const ONE_HOUR = THIRTY_MINUTES * 2;
+            const TWO_HOURS = ONE_HOUR * 2;
+            const ONE_DAY = ONE_HOUR * 24;
 
-        let app = new openmct();
+            let app = new openmct();
 
-        [
-            'example/eventGenerator'
-        ].forEach(
-            app.legacyRegistry.enable.bind(app.legacyRegistry)
-        );
+            [
+                'example/eventGenerator'
+            ].forEach(
+                app.legacyRegistry.enable.bind(app.legacyRegistry)
+            );
 
-        app.install(app.plugins.LocalStorage());
-        app.install(app.plugins.Espresso());
-        app.install(app.plugins.MyItems());
-        app.install(app.plugins.ExampleImagery());
-        app.install(app.plugins.PlanLayout());
-        app.install(app.plugins.Timeline());
-        app.install(app.plugins.UTCTimeSystem());
-        app.install(app.plugins.AutoflowView({
-            type: "telemetry.panel"
-        }));
-        app.install(app.plugins.DisplayLayout({
-            showAsView: ['summary-widget', 'example.imagery']
-        }));
-        app.install(app.plugins.Conductor({
-            menuOptions: [
-                {
-                    name: "Fixed",
-                    timeSystem: 'utc',
-                    bounds: {
-                        start: Date.now() - THIRTY_MINUTES,
-                        end: Date.now()
+            app.install(app.plugins.LocalStorage());
+            app.install(app.plugins.Espresso());
+            app.install(app.plugins.MyItems());
+            //app.install(app.plugins.Generator());
+            app.install(app.plugins.ExampleImagery());
+            app.install(app.plugins.PlanLayout());
+            app.install(app.plugins.Timeline());
+            //app.install(app.plugins.Hyperlink());
+            app.install(app.plugins.UTCTimeSystem());
+            app.install(app.plugins.AutoflowView({
+                type: "telemetry.panel"
+            }));
+            app.install(app.plugins.DisplayLayout({
+                showAsView: ['summary-widget', 'example.imagery']
+            }));
+            app.install(app.plugins.Conductor({
+                menuOptions: [
+                    {
+                        name: "Fixed",
+                        timeSystem: 'utc',
+                        bounds: {
+                            start: Date.now() - THIRTY_MINUTES,
+                            end: Date.now()
+                        },
+                        // commonly used bounds can be stored in history
+                        // bounds (start and end) can accept either a milliseconds number
+                        // or a callback function returning a milliseconds number
+                        // a function is useful for invoking Date.now() at exact moment of preset selection
+                        presets: [
+                            {
+                                label: 'Last Day',
+                                bounds: {
+                                    start: () => Date.now() - ONE_DAY,
+                                    end: () => Date.now()
+                                }
+                            },
+                            {
+                                label: 'Last 2 hours',
+                                bounds: {
+                                    start: () => Date.now() - TWO_HOURS,
+                                    end: () => Date.now()
+                                }
+                            },
+                            {
+                                label: 'Last hour',
+                                bounds: {
+                                    start: () => Date.now() - ONE_HOUR,
+                                    end: () => Date.now()
+                                }
+                            }
+                        ],
+                        // maximum recent bounds to retain in conductor history
+                        records: 10
+                        // maximum duration between start and end bounds
+                        // for utc-based time systems this is in milliseconds
+                        // limit: ONE_DAY
                     },
-                    // commonly used bounds can be stored in history
-                    // bounds (start and end) can accept either a milliseconds number
-                    // or a callback function returning a milliseconds number
-                    // a function is useful for invoking Date.now() at exact moment of preset selection
-                    presets: [
-                        {
-                            label: 'Last Day',
-                            bounds: {
-                                start: () => Date.now() - ONE_DAY,
-                                end: () => Date.now()
-                            }
+                    {
+                        name: "Realtime",
+                        timeSystem: 'utc',
+                        clock: 'local',
+                        clockOffsets: {
+                            start: - THIRTY_MINUTES,
+                            end: THIRTY_SECONDS
                         },
-                        {
-                            label: 'Last 2 hours',
-                            bounds: {
-                                start: () => Date.now() - TWO_HOURS,
-                                end: () => Date.now()
+                        presets: [
+                            {
+                                label: '1 Hour',
+                                bounds: {
+                                    start: - ONE_HOUR,
+                                    end: THIRTY_SECONDS
+                                }
+                            },
+                            {
+                                label: '30 Minutes',
+                                bounds: {
+                                    start: - THIRTY_MINUTES,
+                                    end: THIRTY_SECONDS
+                                }
+                            },
+                            {
+                                label: '15 Minutes',
+                                bounds: {
+                                    start: - FIFTEEN_MINUTES,
+                                    end: THIRTY_SECONDS
+                                }
+                            },
+                            {
+                                label: '5 Minutes',
+                                bounds: {
+                                    start: - FIVE_MINUTES,
+                                    end: THIRTY_SECONDS
+                                }
+                            },
+                            {
+                                label: '1 Minute',
+                                bounds: {
+                                    start: - ONE_MINUTE,
+                                    end: THIRTY_SECONDS
+                                }
                             }
-                        },
-                        {
-                            label: 'Last hour',
-                            bounds: {
-                                start: () => Date.now() - ONE_HOUR,
-                                end: () => Date.now()
-                            }
-                        }
-                    ],
-                    // maximum recent bounds to retain in conductor history
-                    records: 10
-                    // maximum duration between start and end bounds
-                    // for utc-based time systems this is in milliseconds
-                    // limit: ONE_DAY
-                },
-                {
-                    name: "Realtime",
-                    timeSystem: 'utc',
-                    clock: 'local',
-                    clockOffsets: {
-                        start: - THIRTY_MINUTES,
-                        end: THIRTY_SECONDS
-                    },
-                    presets: [
-                        {
-                            label: '1 Hour',
-                            bounds: {
-                                start: - ONE_HOUR,
-                                end: THIRTY_SECONDS
-                            }
-                        },
-                        {
-                            label: '30 Minutes',
-                            bounds: {
-                                start: - THIRTY_MINUTES,
-                                end: THIRTY_SECONDS
-                            }
-                        },
-                        {
-                            label: '15 Minutes',
-                            bounds: {
-                                start: - FIFTEEN_MINUTES,
-                                end: THIRTY_SECONDS
-                            }
-                        },
-                        {
-                            label: '5 Minutes',
-                            bounds: {
-                                start: - FIVE_MINUTES,
-                                end: THIRTY_SECONDS
-                            }
-                        },
-                        {
-                            label: '1 Minute',
-                            bounds: {
-                                start: - ONE_MINUTE,
-                                end: THIRTY_SECONDS
-                            }
-                        }
-                    ]
-                }
-            ]
-        }));
-        app.install(app.plugins.SummaryWidget());
-        app.install(app.plugins.Notebook());
-        app.install(app.plugins.LADTable());
-        app.install(app.plugins.Filters(['table', 'telemetry.plot.overlay']));
-        app.install(app.plugins.ObjectMigration());
-        app.install(app.plugins.ClearData(
-            ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
-            {indicator: true}
-        ));
-        app.start();
+                        ]
+                    }
+                ]
+            }));
+            app.install(app.plugins.SummaryWidget());
+            app.install(app.plugins.Notebook());
+            app.install(app.plugins.LADTable());
+            app.install(app.plugins.Filters(['table', 'telemetry.plot.overlay']));
+            app.install(app.plugins.ObjectMigration());
+            app.install(app.plugins.ClearData(
+                ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
+                {indicator: true}
+            ));
+            app.start();
+
+            setTimeout(() => {
+                app.destroy();
+            }, 5000)
+        })();
     </script>
 </html>
