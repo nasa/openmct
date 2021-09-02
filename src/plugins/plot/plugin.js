@@ -22,12 +22,14 @@
 
 import PlotViewProvider from './PlotViewProvider';
 import SpectralPlotViewProvider from './spectralPlot/SpectralPlotViewProvider';
+import SpectralAggregatePlotViewProvider from './spectralAggregatePlot/SpectralAggregatePlotViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
 import SpectralPlotCompositionPolicy from './spectralPlot/SpectralPlotCompositionPolicy';
+import SpectralAggregatePlotCompositionPolicy from './spectralAggregatePlot/SpectralAggregatePlotCompositionPolicy';
 
 export default function () {
     return function install(openmct) {
@@ -63,6 +65,7 @@ export default function () {
         });
 
         openmct.objectViews.addProvider(new SpectralPlotViewProvider(openmct));
+        openmct.objectViews.addProvider(new SpectralAggregatePlotViewProvider(openmct));
         openmct.objectViews.addProvider(new StackedPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));
@@ -70,6 +73,7 @@ export default function () {
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new SpectralPlotCompositionPolicy(openmct).allow);
+        openmct.composition.addPolicy(new SpectralAggregatePlotCompositionPolicy(openmct).allow);
     };
 }
 
