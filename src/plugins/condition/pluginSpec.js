@@ -96,6 +96,8 @@ describe('the plugin', function () {
 
         mockListener = jasmine.createSpy('mockListener');
 
+        openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(true);
+
         conditionSetDefinition.initialize(mockConditionSetDomainObject);
 
         openmct.on('start', done);

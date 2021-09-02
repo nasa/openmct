@@ -126,7 +126,21 @@ class ApplicationRouter extends EventEmitter {
     }
 
     /**
-     * Navgate to given hash and update current location object and notify listeners about location change
+     * Navigate to given hash and update current location object and notify listeners about location change
+     *
+     * @param {Array<Object>} objectPath Object path of a given Domain Object
+     *
+     * @returns {Boolean}
+     */
+    isNavigatedObject(objectPath) {
+        const targetObject = objectPath[0];
+        const navigatedObject = this.path[0];
+
+        return this.openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
+    }
+
+    /**
+     * Navigate to given hash and update current location object and notify listeners about location change
      *
      * @param {string} paramName name of searchParam to get from current url searchParams
      *
