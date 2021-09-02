@@ -27,7 +27,7 @@ define(
     ],
     function (ImportAsJSONAction, domainObjectFactory) {
 
-        xdescribe("The import JSON action", function () {
+        describe("The import JSON action", function () {
 
             var context = {};
             var action,
@@ -146,7 +146,7 @@ define(
                 });
             });
 
-            it("can import self-containing objects", function () {
+            xit("can import self-containing objects", function () {
                 var compDomainObject = domainObjectFactory({
                     name: 'compObject',
                     model: { name: 'compObject'},
@@ -198,7 +198,7 @@ define(
                 });
             });
 
-            it("assigns new ids to each imported object", function () {
+            xit("assigns new ids to each imported object", function () {
                 dialogService.getUserInput.and.returnValue(Promise.resolve(
                     {
                         selectFile: {
