@@ -21,7 +21,13 @@ export default function SpectralAggregatePlotCompositionPolicy(openmct) {
 
     return {
         allow: function (parent, child) {
-            return ((parent.type === 'telemetry.plot.spectral.aggregate') && (hasSpectralAggregateTelemetry(child)));
+            if ((parent.type === 'telemetry.plot.spectral.aggregate')
+                && ((child.type !== 'telemetry.plot.overlay') && (hasSpectralAggregateTelemetry(child) === false))
+            ) {
+                return false;
+            }
+
+            return true;
         }
     };
 }
