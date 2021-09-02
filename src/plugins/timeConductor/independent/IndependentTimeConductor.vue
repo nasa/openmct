@@ -104,6 +104,10 @@ export default {
     watch: {
         domainObject: {
             handler(domainObject) {
+                if (!domainObject.configuration.timeOptions) {
+                    return;
+                }
+
                 if (this.timeOptions.start !== domainObject.configuration.timeOptions.start
                     || this.timeOptions.end !== domainObject.configuration.timeOptions.end) {
                     this.timeOptions = domainObject.configuration.timeOptions;
