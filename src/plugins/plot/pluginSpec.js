@@ -990,4 +990,29 @@ describe("the plugin", function () {
         });
     });
 
+    describe("the spectral plot", () => {
+        const mockObject = {
+            name: 'A Very Nice Spectral Plot',
+            key: 'telemetry.plot.spectral',
+            creatable: true
+        };
+
+        it('defines a spectral plot object type with the correct key', () => {
+            const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
+            expect(objectDef.key).toEqual(mockObject.key);
+        });
+    });
+
+    describe("the aggregate spectral plot", () => {
+        const mockObject = {
+            name: 'An Even Nicer Aggregate Spectral Plot',
+            key: 'telemetry.plot.spectral-aggregate',
+            creatable: true
+        };
+
+        it('defines a spectral plot object type with the correct key', () => {
+            const objectDef = openmct.types.get('telemetry.plot.spectral-aggregate').definition;
+            expect(objectDef.key).toEqual(mockObject.key);
+        });
+    });
 });
