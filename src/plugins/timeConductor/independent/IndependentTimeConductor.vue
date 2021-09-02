@@ -36,23 +36,24 @@
 
         <ConductorModeIcon />
 
-        <div v-if="timeOptions && independentTCEnabled"
+        <div v-if="timeOptions && independentTCEnabled && viewObject"
              class="c-conductor__controls"
         >
             <Mode v-if="mode"
                   class="c-conductor__mode-select"
+                  :domain-object="domainObject"
                   :key-string="domainObject.identifier.key"
                   :mode="timeOptions.mode"
                   @modeChanged="saveMode"
             />
 
             <conductor-inputs-fixed v-if="isFixed"
-                                    :key-string="domainObject.identifier.key"
+                                    :view-object="viewObject"
                                     @updated="saveFixedOffsets"
             />
 
             <conductor-inputs-realtime v-else
-                                       :key-string="domainObject.identifier.key"
+                                       :view-object="viewObject"
                                        @updated="saveClockOffsets"
             />
         </div>
@@ -75,27 +76,22 @@ export default {
         ConductorInputsFixed,
         ToggleSwitch
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     props: {
-        options: {
+        domainObject: {
             type: Object,
-            default() {
-                return undefined;
-            }
-        },
-        enabled: {
-            type: Boolean,
             required: true
         }
     },
     data() {
         return {
-            timeOptions: this.options || {
+            timeOptions: this.domainObject.configuration.timeOptions || {
                 clockOffsets: this.openmct.time.clockOffsets(),
                 fixedOffsets: this.openmct.time.bounds()
             },
             mode: undefined,
-            independentTCEnabled: this.enabled === true
+            independentTCEnabled: this.domainObject.configuration.useIndependentTime === true,
+            viewObject: this.$parent.currentView
         };
     },
     computed: {
@@ -105,18 +101,6 @@ export default {
             } else {
                 return this.mode.key === 'fixed';
             }
-        }
-    },
-    watch: {
-        options: {
-            handler(newOptions) {
-                if (this.timeOptions.start !== newOptions.start
-                    || this.timeOptions.end !== newOptions.end) {
-                    this.timeOptions = newOptions;
-                    this.registerIndependentTimeOffsets();
-                }
-            },
-            deep: true
         }
     },
     mounted() {
@@ -132,21 +116,20 @@ export default {
     },
     beforeDestroy() {
         this.timeContext.off('clock', this.setViewFromClock);
-        this.destroyIndependentTime();
     },
     methods: {
         toggleIndependentTC() {
             this.independentTCEnabled = !this.independentTCEnabled;
             if (this.independentTCEnabled) {
-                this.registerIndependentTimeOffsets();
+                this.saveMode(this.mode);
             } else {
-                this.destroyIndependentTime();
+                this.clearIndependentTimeOffsets();
             }
 
             this.$emit('stateChanged', this.independentTCEnabled);
         },
         setTimeContext() {
-            this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
+            this.timeContext = this.openmct.time.getViewContext(this.viewObject);
             this.timeContext.on('clock', this.setViewFromClock);
         },
         setViewFromClock(clock) {
@@ -200,20 +183,23 @@ export default {
                 return;
             }
 
-            let offsets;
-
             if (this.isFixed) {
-                offsets = this.timeOptions.fixedOffsets;
+                this.timeContext.stopClock();
+                this.timeContext.bounds(this.timeOptions.fixedOffsets);
             } else {
-                offsets = this.timeOptions.clockOffsets;
+                this.timeContext.clock(this.mode.key, this.timeOptions.clockOffsets);
+            }
+        },
+        clearIndependentTimeOffsets() {
+            if (!this.timeOptions.mode) {
+                return;
             }
 
-            const key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.unregisterIndependentTime = this.openmct.time.addIndependentContext(key, offsets, this.isFixed ? undefined : this.mode.key);
-        },
-        destroyIndependentTime() {
-            if (this.unregisterIndependentTime) {
-                this.unregisterIndependentTime();
+            if (this.isFixed) {
+                this.timeContext.stopClock();
+                this.timeContext.bounds(undefined);
+            } else {
+                this.timeContext.stopClock();
             }
         }
     }

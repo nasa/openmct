@@ -24,13 +24,6 @@
 <div ref="timelineHolder"
      class="c-timeline-holder"
 >
-    <div class="c-conductor-holder--compact">
-        <independent-time-conductor :options="timeOptions"
-                                    :enabled="useIndependentTime"
-                                    @stateChanged="updateIndependentTimeState"
-                                    @updated="saveTimeOptions"
-        />
-    </div>
     <div class="c-timeline">
         <div v-for="timeSystemItem in timeSystems"
              :key="timeSystemItem.timeSystem.key"
@@ -74,7 +67,6 @@ import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedPlan } from "../plan/util";
-import IndependentTimeConductor from "@/plugins/timeConductor/independent/IndependentTimeConductor.vue";
 
 const unknownObjectType = {
     definition: {
@@ -85,7 +77,6 @@ const unknownObjectType = {
 
 export default {
     components: {
-        IndependentTimeConductor,
         TimelineObjectView,
         TimelineAxis,
         SwimLane
@@ -105,10 +96,6 @@ export default {
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
         this.stopFollowingTimeContext();
-
-        if (this.unObserveTime) {
-            this.unObserveTime();
-        }
     },
     mounted() {
         if (this.composition) {
@@ -179,10 +166,6 @@ export default {
                 currentTimeSystem.bounds = bounds;
             }
         },
-        updateIndependentTimeState(useIndependentTime) {
-            this.useIndependentTime = useIndependentTime;
-            this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', this.useIndependentTime);
-        },
         setTimeContext() {
             this.stopFollowingTimeContext();
 
@@ -196,10 +179,6 @@ export default {
                 this.timeContext.off('bounds', this.updateViewBounds);
                 this.timeContext.off('timeContext', this.setTimeContext);
             }
-        },
-        saveTimeOptions(options) {
-            this.timeOptions = options;
-            this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', this.timeOptions);
         }
     }
 };

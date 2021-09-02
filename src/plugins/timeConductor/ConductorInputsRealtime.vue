@@ -10,7 +10,7 @@
         <time-popup
             v-if="showTCInputStart"
             class="pr-tc-input-menu--start"
-            :bottom="keyString !== undefined"
+            :bottom="viewObject !== undefined"
             :type="'start'"
             :offset="offsets.start"
             @focus.native="$event.target.select()"
@@ -49,7 +49,7 @@
         <time-popup
             v-if="showTCInputEnd"
             class="pr-tc-input-menu--end"
-            :bottom="keyString !== undefined"
+            :bottom="viewObject !== undefined"
             :type="'end'"
             :offset="offsets.end"
             @focus.native="$event.target.select()"
@@ -81,8 +81,8 @@ export default {
     },
     inject: ['openmct'],
     props: {
-        keyString: {
-            type: String,
+        viewObject: {
+            type: Object,
             default() {
                 return undefined;
             }
@@ -138,13 +138,11 @@ export default {
                 this.timeContext.off('bounds', this.handleNewBounds);
                 this.timeContext.off('clock', this.clearAllValidation);
                 this.timeContext.off('clockOffsets', this.setViewFromOffsets);
-                this.timeContext.off('timeContext', this.setTimeContext);
             }
         },
         setTimeContext() {
             this.stopFollowingTime();
-            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
-            this.timeContext.on('timeContext', this.setTimeContext);
+            this.timeContext = this.openmct.time.getViewContext(this.viewObject);
             this.followTime();
         },
         handleNewBounds(bounds) {
@@ -159,8 +157,10 @@ export default {
             input.title = '';
         },
         setViewFromOffsets(offsets) {
-            this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
-            this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
+            if (offsets) {
+                this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
+                this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
+            }
         },
         setBounds(bounds) {
             this.bounds = bounds;

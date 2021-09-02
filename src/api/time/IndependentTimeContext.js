@@ -23,10 +23,8 @@
 import TimeContext from "./TimeContext";
 
 class IndependentTimeContext extends TimeContext {
-    constructor(globalTimeContext, key) {
+    constructor(globalTimeContext) {
         super();
-        this.key = key;
-        this.tick = this.tick.bind(this);
 
         this.globalTimeContext = globalTimeContext;
         this.globalTimeContext.on('tick', this.tick);
@@ -45,26 +43,38 @@ class IndependentTimeContext extends TimeContext {
      */
     bounds(newBounds) {
         if (arguments.length > 0) {
-            const validationResult = this.validateBounds(newBounds);
-            if (validationResult.valid !== true) {
-                throw new Error(validationResult.message);
-            }
+            if (newBounds === undefined) {
+                //clear the independent time context
+                this.boundsVal = {
+                    start: undefined,
+                    end: undefined
+                };
+            } else {
+                const validationResult = this.validateBounds(newBounds);
+                if (validationResult.valid !== true) {
+                    throw new Error(validationResult.message);
+                }
 
-            //Create a copy to avoid direct mutation of conductor bounds
-            this.boundsVal = JSON.parse(JSON.stringify(newBounds));
-            /**
-             * The start time, end time, or both have been updated.
-             * @event bounds
-             * @memberof module:openmct.TimeAPI~
-             * @property {TimeConductorBounds} bounds The newly updated bounds
-             * @property {boolean} [tick] `true` if the bounds update was due to
-             * a "tick" event (ie. was an automatic update), false otherwise.
-             */
-            this.emit('bounds', this.boundsVal, false);
+                //Create a copy to avoid direct mutation of conductor bounds
+                this.boundsVal = JSON.parse(JSON.stringify(newBounds));
+                /**
+                 * The start time, end time, or both have been updated.
+                 * @event bounds
+                 * @memberof module:openmct.TimeAPI~
+                 * @property {TimeConductorBounds} bounds The newly updated bounds
+                 * @property {boolean} [tick] `true` if the bounds update was due to
+                 * a "tick" event (ie. was an automatic update), false otherwise.
+                 */
+                this.emit('bounds', this.boundsVal, false);
+            }
         }
 
-        //Return a copy to prevent direct mutation of time conductor bounds.
-        return JSON.parse(JSON.stringify(this.boundsVal));
+        if (this.boundsVal.start === undefined && this.boundsVal.end === undefined) {
+            return this.globalTimeContext.bounds();
+        } else {
+            //Return a copy to prevent direct mutation of time conductor bounds.
+            return JSON.parse(JSON.stringify(this.boundsVal));
+        }
     }
 
     /**
@@ -114,7 +124,11 @@ class IndependentTimeContext extends TimeContext {
             throw "When setting the clock, clock offsets must also be provided";
         }
 
-        return this.activeClock;
+        if (this.activeClock === undefined) {
+            return this.globalTimeContext.clock();
+        } else {
+            return this.activeClock;
+        }
     }
 
     /**

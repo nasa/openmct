@@ -27,7 +27,7 @@
         <date-picker
             v-if="isUTCBased"
             class="c-ctrl-wrapper--menus-left"
-            :bottom="keyString !== undefined"
+            :bottom="viewObject !== undefined"
             :default-date-time="formattedBounds.start"
             :formatter="timeFormatter"
             @date-selected="startDateSelected"
@@ -50,7 +50,7 @@
         <date-picker
             v-if="isUTCBased"
             class="c-ctrl-wrapper--menus-left"
-            :bottom="keyString !== undefined"
+            :bottom="viewObject !== undefined"
             :default-date-time="formattedBounds.end"
             :formatter="timeFormatter"
             @date-selected="endDateSelected"
@@ -76,8 +76,8 @@ export default {
     },
     inject: ['openmct'],
     props: {
-        keyString: {
-            type: String,
+        viewObject: {
+            type: Object,
             default() {
                 return undefined;
             }
@@ -118,8 +118,7 @@ export default {
     methods: {
         setTimeContext() {
             this.stopFollowingTimeContext();
-            this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
-            this.timeContext.on('timeContext', this.setTimeContext);
+            this.timeContext = this.openmct.time.getViewContext(this.viewObject);
 
             this.handleNewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.handleNewBounds);
@@ -129,7 +128,6 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.handleNewBounds);
                 this.timeContext.off('clock', this.clearAllValidation);
-                this.timeContext.off('timeContext', this.setTimeContext);
             }
         },
         handleNewBounds(bounds) {

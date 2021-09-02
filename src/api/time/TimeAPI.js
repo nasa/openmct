@@ -47,6 +47,7 @@ class TimeAPI extends GlobalTimeContext {
         super();
         this.openmct = openmct;
         this.independentContexts = new Map();
+        this.viewSpecificContexts = new WeakMap();
     }
 
     /**
@@ -182,6 +183,33 @@ class TimeAPI extends GlobalTimeContext {
         });
 
         return timeContext;
+    }
+
+    /**
+     * Get the timeContext for a view based on it's objectPath. If there is any object in the objectPath with an independent time context, it will be returned.
+     * Otherwise, the global time context will be returned.
+     * @param { ViewRegistry } view The view
+     * @memberof module:openmct.TimeAPI#
+     * @method getContextForView
+     */
+    getViewContext(view, objectPath) {
+        if (!view) {
+            return (this);
+        }
+
+        //How to deal with composition views? We need to traverse up the view chain to get to time contexts
+        if (this.viewSpecificContexts.has(view)) {
+            return this.viewSpecificContexts.get(view);
+        } else {
+            const viewSpecificContext = this.createContext();
+            this.viewSpecificContexts.set(view, viewSpecificContext);
+
+            return viewSpecificContext;
+        }
+    }
+
+    createContext() {
+        return new IndependentTimeContext(this); //Pass in the global time context so it can react to events from it.
     }
 
 }
