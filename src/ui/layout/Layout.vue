@@ -54,7 +54,6 @@
             handle="after"
             label="Browse"
             hide-param="hideTree"
-            collapsable
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
@@ -106,7 +105,6 @@
             handle="before"
             label="Inspect"
             hide-param="hideInspector"
-            collapsable
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >

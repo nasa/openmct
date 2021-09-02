@@ -52,10 +52,6 @@ export default {
                 return ['', 'before', 'after'].indexOf(value) !== -1;
             }
         },
-        collapsable: {
-            type: Boolean,
-            default: false
-        },
         label: {
             type: String,
             default: ''
@@ -70,6 +66,11 @@ export default {
             collapsed: false,
             resizing: false
         };
+    },
+    computed: {
+        collapsable() {
+            return this.hideParam && this.hideParam.length;
+        }
     },
     beforeMount() {
         this.type = this.$parent.type;
