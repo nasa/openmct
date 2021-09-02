@@ -53,7 +53,7 @@
             class="l-shell__pane-tree"
             handle="after"
             label="Browse"
-            collapsable
+            hide-param="hideTree"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
@@ -104,7 +104,7 @@
             class="l-shell__pane-inspector l-pane--holds-multipane"
             handle="before"
             label="Inspect"
-            collapsable
+            hide-param="hideInspector"
             @start-resizing="onStartResizing"
             @end-resizing="onEndResizing"
         >
