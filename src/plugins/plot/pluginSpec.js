@@ -495,7 +495,7 @@ describe("the plugin", function () {
         });
     });
 
-    /* 
+    /*
     * disabling this until we develop the plot view
     describe("The spectral plot view", () => {
         let testTelemetryObject;
