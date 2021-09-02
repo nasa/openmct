@@ -1,4 +1,5 @@
 import TelemetryTable from '/src/plugins/telemetryTable/TelemetryTable.js';
+import TelemetryTableRow from '/src/plugins/telemetryTable/TelemetryTableRow.js';
 
 export default class LADTable extends TelemetryTable {
     constructor(domainObject, openmct) {
@@ -22,7 +23,6 @@ export default class LADTable extends TelemetryTable {
         let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
         requestOptions.strategy = 'latest';
         requestOptions.size = 1;
-        console.log(requestOptions);
         let columnMap = this.getColumnMapForObject(keyString);
         let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
@@ -32,10 +32,8 @@ export default class LADTable extends TelemetryTable {
         const telemetryRemover = this.getTelemetryRemover();
 
         this.removeTelemetryCollection(keyString);
-
         this.telemetryCollections[keyString] = this.openmct.telemetry
             .requestCollection(telemetryObject, requestOptions);
-
         this.telemetryCollections[keyString].on('remove', telemetryRemover);
         this.telemetryCollections[keyString].on('add', telemetryProcessor);
         this.telemetryCollections[keyString].load();
@@ -52,23 +50,21 @@ export default class LADTable extends TelemetryTable {
 
         this.emit('object-added', telemetryObject);
     }
-    // requestDataFor(telemetryObject) {
-    //     this.incrementOutstandingRequests();
-    //     let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
-    //     requestOptions.strategy = 'latest';
-    //     requestOptions.size = 1;
 
-    //     return this.openmct.telemetry.request(telemetryObject, requestOptions)
-    //         .then(telemetryData => {
-    //             let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-    //             let columnMap = this.getColumnMapForObject(keyString);
-    //             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-    //             this.processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator);
-    //         }).finally(() => this.decrementOutstandingRequests());
-    // }
+    getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
+        return (telemetry) => {
+            //Check that telemetry object has not been removed since telemetry was requested.
+            if (!this.telemetryObjects[keyString]) {
+                return;
+            }
 
-    // processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
-    //     let telemetryRows = telemetryData.map(datum => this.createRow(datum, columnMap, keyString, limitEvaluator));
-    //     this.boundedRows.add(telemetryRows);
-    // }
+            let latest = telemetry[telemetry.length - 1];
+            let telemetryRow = [new TelemetryTableRow(latest, columnMap, keyString, limitEvaluator)];
+            if (this.paused) {
+                this.delayedActions.push(this.tableRows.addRows.bind(this, telemetryRow, 'add'));
+            } else {
+                this.tableRows.addRows(telemetryRow, 'add');
+            }
+        };
+    }
 }
