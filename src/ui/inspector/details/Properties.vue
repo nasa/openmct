@@ -47,13 +47,12 @@
 </template>
 
 <script>
+import Moment from 'moment';
 import DetailText from './DetailText.vue';
-import DetailTime from './DetailTime.vue';
 
 export default {
     components: {
-        DetailText,
-        DetailTime
+        DetailText
     },
     inject: ['openmct'],
     data() {
@@ -108,11 +107,14 @@ export default {
             ];
 
             if (timestamp !== undefined) {
+                const formattedTimestamp = Moment.utc(timestamp)
+                    .format('YYYY-MM-DD[\n]HH:mm:ss')
+                    + ' UTC';
+
                 details.push(
                     {
                         name: timestampLabel,
-                        value: timestamp,
-                        component: 'time'
+                        value: formattedTimestamp
                     }
                 );
             }
