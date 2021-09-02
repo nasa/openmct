@@ -1001,6 +1001,11 @@ describe("the plugin", function () {
             const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
             expect(objectDef.key).toEqual(mockObject.key);
         });
+
+        it('is creatable', () => {
+            const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
+            expect(objectDef.creatable).toEqual(mockObject.creatable);
+        });
     });
 
     describe("the aggregate spectral plot", () => {
@@ -1013,6 +1018,11 @@ describe("the plugin", function () {
         it('defines a spectral plot object type with the correct key', () => {
             const objectDef = openmct.types.get('telemetry.plot.spectral-aggregate').definition;
             expect(objectDef.key).toEqual(mockObject.key);
+        });
+
+        it('is creatable', () => {
+            const objectDef = openmct.types.get('telemetry.plot.spectral-aggregate').definition;
+            expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
     });
 });
