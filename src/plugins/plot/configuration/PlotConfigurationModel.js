@@ -107,6 +107,7 @@ export default class PlotConfigurationModel extends Model {
     updateDomainObject(domainObject) {
         this.set('domainObject', domainObject);
     }
+
     /**
      * Clean up all objects and remove all listeners.
      */

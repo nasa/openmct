@@ -25,16 +25,16 @@
      :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend :cursor-locked="!!lockHighlightPoint"
-                 :series="config.series.models"
+                 :series="seriesModels"
                  :highlights="highlights"
-                 :legend="config.legend"
+                 :legend="legend"
                  @legendHoverChanged="legendHoverChanged"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis v-if="config.series.models.length > 0"
+        <y-axis v-if="seriesModels.length > 0"
                 :tick-width="tickWidth"
-                :single-series="config.series.models.length === 1"
-                :series-model="config.series.models[0]"
+                :single-series="seriesModels.length === 1"
+                :series-model="seriesModels[0]"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
         />
@@ -141,8 +141,8 @@
                 >
                 </div>
             </div>
-            <x-axis v-if="config.series.models.length > 0 && !options.compact"
-                    :series-model="config.series.models[0]"
+            <x-axis v-if="seriesModels.length > 0 && !options.compact"
+                    :series-model="seriesModels[0]"
             />
 
         </div>
@@ -213,7 +213,8 @@ export default {
             plotHistory: [],
             selectedXKeyOption: {},
             xKeyOptions: [],
-            config: {},
+            seriesModels: [],
+            legend: {},
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
@@ -239,18 +240,13 @@ export default {
     watch: {
         plotTickWidth(newTickWidth) {
             this.onTickWidthChange(newTickWidth, true);
-        },
-        gridLines(newGridLines) {
-            this.setGridLinesVisibility(newGridLines);
-        },
-        cursorGuide(newCursorGuide) {
-            this.setCursorGuideVisibility(newCursorGuide);
         }
     },
     mounted() {
         eventHelpers.extend(this);
 
         this.config = this.getConfig();
+        this.legend = this.config.legend;
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -290,14 +286,18 @@ export default {
                 config = new PlotConfigurationModel({
                     id: configId,
                     domainObject: this.domainObject,
-                    openmct: this.openmct
+                    openmct: this.openmct,
+                    callback: (data) => {
+                        this.data = data;
+                    }
                 });
                 configStore.add(configId, config);
             }
 
             return config;
         },
-        addSeries(series) {
+        addSeries(series, index) {
+            this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
             }, this);
@@ -322,6 +322,8 @@ export default {
 
                 return;
             }
+
+            this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
             this.startLoading();
             const options = {
@@ -377,11 +379,8 @@ export default {
         },
 
         stopLoading() {
-        //TODO: Is Vue.$nextTick ok to replace $scope.$evalAsync?
-            this.$nextTick().then(() => {
-                this.pending -= 1;
-                this.updateLoading();
-            });
+            this.pending -= 1;
+            this.updateLoading();
         },
 
         updateLoading() {
@@ -507,7 +506,7 @@ export default {
         },
 
         initialize() {
-            _.debounce(this.handleWindowResize, 400);
+            this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
             this.plotContainerResizeObserver.observe(this.$parent.$refs.plotWrapper);
 
@@ -623,7 +622,7 @@ export default {
                 this.config.series.models.forEach(series => delete series.closest);
             } else {
                 this.highlights = this.config.series.models
-                    .filter(series => series.data.length > 0)
+                    .filter(series => series.getSeriesData().length > 0)
                     .map(series => {
                         series.closest = series.nearestPoint(point);
 
@@ -925,14 +924,6 @@ export default {
             this.config.xAxis.set('displayRange', previousAxisRanges.x);
             this.config.yAxis.set('displayRange', previousAxisRanges.y);
             this.userViewportChangeEnd();
-        },
-
-        setCursorGuideVisibility(cursorGuide) {
-            this.cursorGuide = cursorGuide === true;
-        },
-
-        setGridLinesVisibility(gridLines) {
-            this.gridLines = gridLines === true;
         },
 
         setYAxisKey(yKey) {
