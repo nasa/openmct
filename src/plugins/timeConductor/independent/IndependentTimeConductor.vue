@@ -75,27 +75,21 @@ export default {
         ConductorInputsFixed,
         ToggleSwitch
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     props: {
-        options: {
+        domainObject: {
             type: Object,
-            default() {
-                return undefined;
-            }
-        },
-        enabled: {
-            type: Boolean,
             required: true
         }
     },
     data() {
         return {
-            timeOptions: this.options || {
+            timeOptions: this.domainObject.configuration.timeOptions || {
                 clockOffsets: this.openmct.time.clockOffsets(),
                 fixedOffsets: this.openmct.time.bounds()
             },
             mode: undefined,
-            independentTCEnabled: this.enabled === true
+            independentTCEnabled: this.domainObject.configuration.useIndependentTime === true
         };
     },
     computed: {
@@ -108,11 +102,11 @@ export default {
         }
     },
     watch: {
-        options: {
-            handler(newOptions) {
-                if (this.timeOptions.start !== newOptions.start
-                    || this.timeOptions.end !== newOptions.end) {
-                    this.timeOptions = newOptions;
+        domainObject: {
+            handler(domainObject) {
+                if (this.timeOptions.start !== domainObject.configuration.timeOptions.start
+                    || this.timeOptions.end !== domainObject.configuration.timeOptions.end) {
+                    this.timeOptions = domainObject.configuration.timeOptions;
                     this.registerIndependentTimeOffsets();
                 }
             },

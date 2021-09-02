@@ -39,7 +39,7 @@ import toggleMixin from '../../../ui/mixins/toggle-mixin';
 
 export default {
     mixins: [toggleMixin],
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     props: {
         mode: {
             type: Object,

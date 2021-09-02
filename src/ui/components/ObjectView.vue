@@ -1,13 +1,29 @@
 <template>
-<div></div>
+<div>
+    <div v-if="domainObject && domainObject.type === 'time-strip'"
+         class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
+    >
+        <independent-time-conductor :domain-object="domainObject"
+                                    @stateChanged="updateIndependentTimeState"
+                                    @updated="saveTimeOptions"
+        />
+    </div>
+    <div ref="objectViewWrapper"
+         :class="objectViewStyle"
+    ></div>
+</div>
 </template>
 
 <script>
 import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
+import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
 export default {
+    components: {
+        IndependentTimeConductor
+    },
     inject: ["openmct"],
     props: {
         showEditView: Boolean,
@@ -48,6 +64,13 @@ export default {
         },
         font() {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
+        },
+        objectViewStyle() {
+            if (this.domainObject && this.domainObject.type === 'time-strip') {
+                return 'l-shell__main-object-view';
+            } else {
+                return 'u-contents';
+            }
         }
     },
     destroyed() {
@@ -79,13 +102,13 @@ export default {
     },
     mounted() {
         this.updateView();
-        this.$el.addEventListener('dragover', this.onDragOver, {
+        this.$refs.objectViewWrapper.addEventListener('dragover', this.onDragOver, {
             capture: true
         });
-        this.$el.addEventListener('drop', this.editIfEditable, {
+        this.$refs.objectViewWrapper.addEventListener('drop', this.editIfEditable, {
             capture: true
         });
-        this.$el.addEventListener('drop', this.addObjectToParent);
+        this.$refs.objectViewWrapper.addEventListener('drop', this.addObjectToParent);
         if (this.domainObject) {
             //This is to apply styles to subobjects in a layout
             this.initObjectStyles();
@@ -95,7 +118,9 @@ export default {
         clear() {
             if (this.currentView) {
                 this.currentView.destroy();
-                this.$el.innerHTML = '';
+                if (this.$refs.objectViewWrapper) {
+                    this.$refs.objectViewWrapper.innerHTML = '';
+                }
 
                 if (this.releaseEditModeHandler) {
                     this.releaseEditModeHandler();
@@ -118,8 +143,8 @@ export default {
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         getStyleReceiver() {
-            let styleReceiver = this.$el.querySelector('.js-style-receiver')
-                || this.$el.querySelector(':first-child');
+            let styleReceiver = this.$refs.objectViewWrapper.querySelector('.js-style-receiver')
+                || this.$refs.objectViewWrapper.querySelector(':first-child');
 
             if (styleReceiver === null) {
                 styleReceiver = undefined;
@@ -183,7 +208,7 @@ export default {
 
             this.viewContainer = document.createElement('div');
             this.viewContainer.classList.add('l-angular-ov-wrapper');
-            this.$el.append(this.viewContainer);
+            this.$refs.objectViewWrapper.append(this.viewContainer);
             let provider = this.getViewProvider();
             if (!provider) {
                 return;
@@ -213,7 +238,7 @@ export default {
 
             if (immediatelySelect) {
                 this.removeSelectable = this.openmct.selection.selectable(
-                    this.$el, this.getSelectionContext(), true);
+                    this.$refs.objectViewWrapper, this.getSelectionContext(), true);
             }
 
             this.openmct.objectViews.on('clearData', this.clearData);
@@ -388,6 +413,13 @@ export default {
             if (elemToStyle !== undefined) {
                 elemToStyle.dataset.font = newFont;
             }
+        },
+        //Should the domainObject be updated in the Independent Time conductor component itself?
+        updateIndependentTimeState(useIndependentTime) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.useIndependentTime', useIndependentTime);
+        },
+        saveTimeOptions(options) {
+            this.openmct.objects.mutate(this.domainObject, 'configuration.timeOptions', options);
         }
     }
 };
