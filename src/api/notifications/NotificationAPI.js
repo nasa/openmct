@@ -42,7 +42,7 @@ import EventEmitter from 'EventEmitter';
  *
  * @typedef {object} NotificationModel
  * @property {string} message The message to be displayed by the notification
- * @property {number | 'unknown'} [progress] The progres of some ongoing task. Should be a number between 0 and 100, or
+ * @property {number | 'unknown'} [progress] The progress of some ongoing task. Should be a number between 0 and 100, or
  * with the string literal 'unknown'.
  * @property {string} [progressText] A message conveying progress of some ongoing task.
 
@@ -98,7 +98,7 @@ export default class NotificationAPI extends EventEmitter {
      * Present an alert to the user.
      * @param {string} message The message to display to the user.
      * @param {Object} [options] object with following properties
-     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
+     *      autoDismissTimeout: {number} in milliseconds to automatically dismisses notification
      *      link: {Object} Add a link to notifications for navigation
      *              onClick: callback function
      *              cssClass: css class name to add style on link
@@ -119,7 +119,7 @@ export default class NotificationAPI extends EventEmitter {
      * Present an error message to the user
      * @param {string} message
      * @param {Object} [options] object with following properties
-     *      autoDismissTimeout: {number} in miliseconds to automatically dismisses notification
+     *      autoDismissTimeout: {number} in milliseconds to automatically dismisses notification
      *      link: {Object} Add a link to notifications for navigation
      *              onClick: callback function
      *              cssClass: css class name to add style on link
