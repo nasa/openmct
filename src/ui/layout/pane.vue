@@ -83,8 +83,6 @@ export default {
             this.handleHideUrl();
         }
     },
-    beforeDestroy() {
-    },
     methods: {
         toggleCollapse: function (e) {
             if (this.collapsed) {
