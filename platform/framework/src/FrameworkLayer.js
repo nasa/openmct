@@ -58,7 +58,7 @@ define([
     ) {
         var $http = this.$http,
             $log = this.$log,
-            app = angular.module(Constants.MODULE_NAME, ["ngRoute"]),
+            app = angular.module(Constants.MODULE_NAME, []),
             loader = new BundleLoader($http, $log, openmct.legacyRegistry),
             resolver = new BundleResolver(
                 new ExtensionResolver(

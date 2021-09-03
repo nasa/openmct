@@ -138,34 +138,6 @@ define(
             }
         }
 
-        // Custom registration function for extensions of category "route"
-        function registerRoute(extension) {
-            var app = this.app,
-                $log = this.$log,
-                route = Object.create(extension);
-
-            // Adjust path for bundle
-            if (route.templateUrl) {
-                route.templateUrl = [
-                    route.bundle.path,
-                    route.bundle.resources,
-                    route.templateUrl
-                ].join(Constants.SEPARATOR);
-            }
-
-            // Log the registration
-            $log.info("Registering route: " + (route.key || route.when));
-
-            // Register the route with Angular
-            app.config(['$routeProvider', function ($routeProvider) {
-                if (route.when) {
-                    $routeProvider.when(route.when, route);
-                } else {
-                    $routeProvider.otherwise(route);
-                }
-            }]);
-        }
-
         // Handle service compositing
         function registerComponents(components) {
             var app = this.app,
@@ -193,13 +165,6 @@ define(
          */
         CustomRegistrars.prototype.constants =
             mapUpon(registerConstant);
-
-        /**
-         * Register Angular routes.
-         * @param {Array} extensions the resolved extensions
-         */
-        CustomRegistrars.prototype.routes =
-            mapUpon(registerRoute);
 
         /**
          * Register Angular directives.

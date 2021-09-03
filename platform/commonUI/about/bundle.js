@@ -164,16 +164,6 @@ define([
                         "license": "license-apache",
                         "link": "http://logging.apache.org/log4net/license.html"
                     }
-                ],
-                "routes": [
-                    {
-                        "when": "/licenses",
-                        "template": licensesTemplate
-                    },
-                    {
-                        "when": "/licenses-md",
-                        "template": licensesExportMdTemplate
-                    }
                 ]
             }
         }
