@@ -32,8 +32,13 @@ define(
          * @param $timeout Angular's $timeout
          * @param {Function} now function to provide the current time in ms
          */
-        function TickerService($timeout, now) {
+        function TickerService($timeout, now, $rootScope) {
             var self = this;
+            var timeoutId;
+
+            $rootScope.$on('$destroy', function () {
+                $timeout.cancel(timeoutId);
+            });
 
             function tick() {
                 var timestamp = now(),
@@ -48,7 +53,7 @@ define(
                 }
 
                 // Try to update at exactly the next second
-                $timeout(tick, 1000 - millis, true);
+                timeoutId = $timeout(tick, 1000 - millis, true);
             }
 
             tick();

@@ -30,16 +30,18 @@ define(
             var mockTimeout,
                 mockNow,
                 mockCallback,
-                tickerService;
+                tickerService,
+                mockRootScope;
 
             beforeEach(function () {
                 mockTimeout = jasmine.createSpy('$timeout');
                 mockNow = jasmine.createSpy('now');
                 mockCallback = jasmine.createSpy('callback');
+                mockRootScope = jasmine.createSpyObj('rootScope', ['$on']);
 
                 mockNow.and.returnValue(TEST_TIMESTAMP);
 
-                tickerService = new TickerService(mockTimeout, mockNow);
+                tickerService = new TickerService(mockTimeout, mockNow, mockRootScope);
             });
 
             it("notifies listeners of clock ticks", function () {
