@@ -26,10 +26,8 @@ class IndependentTimeContext extends TimeContext {
     constructor(globalTimeContext, key) {
         super();
         this.key = key;
-        this.tick = this.tick.bind(this);
 
         this.globalTimeContext = globalTimeContext;
-        this.globalTimeContext.on('tick', this.tick);
     }
 
     /**
@@ -95,6 +93,11 @@ class IndependentTimeContext extends TimeContext {
                 }
             }
 
+            const previousClock = this.activeClock;
+            if (previousClock !== undefined) {
+                previousClock.off("tick", this.tick);
+            }
+
             this.activeClock = clock;
 
             /**
@@ -108,6 +111,7 @@ class IndependentTimeContext extends TimeContext {
 
             if (this.activeClock !== undefined) {
                 this.clockOffsets(offsets);
+                this.activeClock.on("tick", this.tick);
             }
 
         } else if (arguments.length === 1) {

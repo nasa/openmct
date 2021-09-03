@@ -43,6 +43,7 @@
                   class="c-conductor__mode-select"
                   :key-string="domainObject.identifier.key"
                   :mode="timeOptions.mode"
+                  :enabled="independentTCEnabled"
                   @modeChanged="saveMode"
             />
 
@@ -123,13 +124,15 @@ export default {
         if (this.timeOptions.mode) {
             this.mode = this.timeOptions.mode;
         } else {
-            this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: this.timeContext.clock().key};
+            this.timeOptions.mode = this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: Object.create(this.timeContext.clock()).key};
         }
 
-        this.registerIndependentTimeOffsets();
+        if (this.independentTCEnabled) {
+            this.registerIndependentTimeOffsets();
+        }
     },
     beforeDestroy() {
-        this.timeContext.off('clock', this.setViewFromClock);
+        this.stopFollowingTimeContext();
         this.destroyIndependentTime();
     },
     methods: {
@@ -144,8 +147,16 @@ export default {
             this.$emit('stateChanged', this.independentTCEnabled);
         },
         setTimeContext() {
+            this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
+            this.timeContext.on('timeContext', this.setTimeContext);
             this.timeContext.on('clock', this.setViewFromClock);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off('timeContext', this.setTimeContext);
+                this.timeContext.off('clock', this.setViewFromClock);
+            }
         },
         setViewFromClock(clock) {
             if (!this.timeOptions.mode) {
@@ -154,7 +165,7 @@ export default {
         },
         setTimeOptions() {
             if (!this.timeOptions || !this.timeOptions.mode) {
-                this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: this.timeContext.clock().key};
+                this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: Object.create(this.timeContext.clock()).key};
                 this.timeOptions = {
                     clockOffsets: this.timeContext.clockOffsets(),
                     fixedOffsets: this.timeContext.bounds()

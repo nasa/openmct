@@ -159,8 +159,10 @@ export default {
             input.title = '';
         },
         setViewFromOffsets(offsets) {
-            this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
-            this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
+            if (offsets) {
+                this.offsets.start = this.durationFormatter.format(Math.abs(offsets.start));
+                this.offsets.end = this.durationFormatter.format(Math.abs(offsets.end));
+            }
         },
         setBounds(bounds) {
             this.bounds = bounds;

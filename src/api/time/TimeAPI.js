@@ -142,6 +142,7 @@ class TimeAPI extends GlobalTimeContext {
         if (clockKey) {
             timeContext.clock(clockKey, value);
         } else {
+            timeContext.stopClock();
             timeContext.bounds(value);
         }
 

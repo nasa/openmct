@@ -20,7 +20,7 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-<div ref="modeButton"
+<div ref="modeMenuButton"
      class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
@@ -45,6 +45,12 @@ export default {
             type: Object,
             default() {
                 return undefined;
+            }
+        },
+        enabled: {
+            type: Boolean,
+            default() {
+                return false;
             }
         }
     },
@@ -75,6 +81,11 @@ export default {
                     this.setViewFromClock(newMode.key === 'fixed' ? undefined : newMode);
                 }
             }
+        },
+        enabled(newValue, oldValue) {
+            if (newValue !== undefined && (newValue !== oldValue) && (newValue === true)) {
+                this.setViewFromClock(this.mode.key === 'fixed' ? undefined : this.mode);
+            }
         }
     },
     mounted: function () {
@@ -95,7 +106,7 @@ export default {
             this.openmct.time.off('clock', this.setViewFromClock);
         },
         showModesMenu() {
-            const elementBoundingClientRect = this.$refs.modeButton.getBoundingClientRect();
+            const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
             const y = elementBoundingClientRect.y;
 
@@ -194,10 +205,13 @@ export default {
             this.loadClocks();
             //retain the mode chosen by the user
             if (this.mode) {
-                const found = this.modes.find(mode => mode.key === this.selectedMode.key);
+                let found = this.modes.find(mode => mode.key === this.selectedMode.key);
 
                 if (!found) {
-                    this.setOption(this.getModeOptionForClock(clock).key);
+                    found = this.modes.find(mode => mode.key === clock.key);
+                    this.setOption(found ? this.getModeOptionForClock(clock).key : this.getModeOptionForClock().key);
+                } else if (this.mode.key !== this.selectedMode.key) {
+                    this.setOption(this.selectedMode.key);
                 }
             } else {
                 this.setOption(this.getModeOptionForClock(clock).key);
