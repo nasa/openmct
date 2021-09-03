@@ -4,7 +4,7 @@ define([
 
 ) {
     function TypeInspectorViewProvider(typeDefinition, openmct, convertToLegacyObject) {
-        //console.warn(`DEPRECATION WARNING: Migrate ${typeDefinition.key} from ${typeDefinition.bundle.path} to use the new Inspector View APIs.  Legacy Inspector view support will be removed soon.`);
+        console.warn(`DEPRECATION WARNING: Migrate ${typeDefinition.key} from ${typeDefinition.bundle.path} to use the new Inspector View APIs.  Legacy Inspector view support will be removed soon.`);
         let representation = openmct.$injector.get('representations[]')
             .filter((r) => r.key === typeDefinition.inspector)[0];
 

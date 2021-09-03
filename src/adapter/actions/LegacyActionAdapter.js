@@ -28,7 +28,7 @@ export default function LegacyActionAdapter(openmct, legacyActions) {
             return true;
         }
 
-        //console.warn(`DEPRECATION WARNING: Action ${action.definition.key} in bundle ${action.bundle.path} is non-contextual and should be migrated.`);
+        console.warn(`DEPRECATION WARNING: Action ${action.definition.key} in bundle ${action.bundle.path} is non-contextual and should be migrated.`);
 
         return false;
     }

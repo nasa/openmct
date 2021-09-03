@@ -84,7 +84,7 @@ define([
                 this.appHolder = null;
             });
 
-            fit("calls plugins for configuration", function () {
+            it("calls plugins for configuration", function () {
                 expect(this.mockPlugin).toHaveBeenCalledWith(this.openmct);
                 expect(this.mockPlugin2).toHaveBeenCalledWith(this.openmct);
             });

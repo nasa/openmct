@@ -31,7 +31,6 @@ export default class Editor extends EventEmitter {
 
         openmct.once('destroy', () => {
             this.removeAllListeners();
-            //console.log("Editor destroy called");
         });
     }
 

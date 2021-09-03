@@ -15,7 +15,7 @@ define([
     };
 
     function LegacyViewProvider(legacyView, openmct, convertToLegacyObject) {
-        //console.warn(`DEPRECATION WARNING: Migrate ${legacyView.key} from ${legacyView.bundle.path} to use the new View APIs.  Legacy view support will be removed soon.`);
+        console.warn(`DEPRECATION WARNING: Migrate ${legacyView.key} from ${legacyView.bundle.path} to use the new View APIs.  Legacy view support will be removed soon.`);
 
         return {
             key: legacyView.key,
