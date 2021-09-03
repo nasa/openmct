@@ -286,8 +286,6 @@ define([
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
-
-        this._isVue = true;
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -464,7 +462,6 @@ define([
     };
 
     MCT.prototype.destroy = function () {
-        console.error("IT'S SMASHIN' TIME !!!");
         this.emit('destroy');
         this.removeAllListeners();
 
@@ -480,39 +477,17 @@ define([
         }
 
         this.overlays.destroy();
-        if (this.layout) {
-            this.layout.$refs.browseObject.$destroy();
-            this.layout.$destroy();
-            this.layout = null;
-        }
 
         if (this.element) {
             this.element.remove();
         }
 
-        this.router.destroy();
-
         stylesManager.default.removeAllListeners();
 
         window.angular = null;
         window.openmct = null;
-        window.Zepto = null;
-        window.$ = null;
 
         Object.keys(require.cache).forEach(key => delete require.cache[key]);
-
-        for (let script of document.scripts) {
-            if (script.src.indexOf('openmct.js') !== -1) {
-                console.error('FOUND OPENMCT SCRIPT');
-                script.src = null;
-                script.parentElement.removeChild(script);
-                Object.keys(script).forEach(key => {
-                    delete script[key];
-                });
-            }
-        }
-
-        console.error("Done cleaning up");
     };
 
     MCT.prototype.plugins = plugins;
