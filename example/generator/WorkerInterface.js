@@ -40,6 +40,11 @@ define([
         this.callbacks = {};
     }
 
+    WorkerInterface.prototype.destroy = function () {
+        delete this.worker.onmessage;
+        this.worker.terminate();
+    };
+
     WorkerInterface.prototype.onMessage = function (message) {
         message = message.data;
         var callback = this.callbacks[message.id];

@@ -110,8 +110,15 @@ define([
             worker = workerService.run('bareBonesSearchWorker');
         }
 
-        worker.addEventListener('message', function (messageEvent) {
+        function handleWorkerMessage(messageEvent) {
             provider.onWorkerMessage(messageEvent);
+        }
+
+        worker.addEventListener('message', handleWorkerMessage);
+
+        this.openmct.once('destroy', () => {
+            worker.removeEventListener('message', handleWorkerMessage);
+            worker.terminate();
         });
 
         return worker;

@@ -96,5 +96,9 @@ define([
         return this.workerInterface.subscribe(workerRequest, callback);
     };
 
+    GeneratorProvider.prototype.destroy = function () {
+        this.workerInterface.destroy();
+    };
+
     return GeneratorProvider;
 });
