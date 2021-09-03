@@ -9,6 +9,7 @@ export default class LADTable extends TelemetryTable {
     }
     initialize() {
         this.tableRows.addRows = this.addRows;
+        // this.tableRows.removeRowsByData = this.removeRowsByData;
         if (this.domainObject.type === 'new.ladTable') {
             this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
             this.filters = this.domainObject.configuration.filters;
@@ -51,26 +52,7 @@ export default class LADTable extends TelemetryTable {
 
         this.emit('object-added', telemetryObject);
     }
-
-    getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
-        return (telemetry) => {
-            //Check that telemetry object has not been removed since telemetry was requested.
-            if (!this.telemetryObjects[keyString]) {
-                return;
-            }
-
-            let latest = telemetry[telemetry.length - 1];
-            let telemetryRow = [new TelemetryTableRow(latest, columnMap, keyString, limitEvaluator)];
-            if (this.paused) {
-                this.delayedActions.push(this.tableRows.addRows.bind(this, telemetryRow, 'add'));
-            } else {
-                this.tableRows.addRows(telemetryRow, 'add');
-            }
-        };
-    }
-
     addRows(rows, type = 'add') {
-        // override original addRows
         if (this.sortOptions === undefined) {
             throw 'Please specify sort options';
         }
@@ -79,8 +61,16 @@ export default class LADTable extends TelemetryTable {
         let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
         let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
 
-        // clear rows before adding
-        this.rows = [];
+        // if type is filter, then it's a reset of all rows,
+        // need to wipe current rows
+        if (isFilterTriggeredReset) {
+            this.rows = [];
+        }
+        // remove old rows of the object before adding
+        // there's only 1 row so keystring will be the same
+        const keyString = rows[0].objectKeyString;
+        this.removeRowsByObject(keyString);
+
         for (let row of rowsToAdd) {
             let index = this.sortedIndex(this.rows, row);
             this.rows.splice(index, 0, row);
@@ -91,5 +81,21 @@ export default class LADTable extends TelemetryTable {
         if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
             this.emit(type, rowsToAdd);
         }
+    }
+    getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
+        return (telemetry) => {
+            //Check that telemetry object has not been removed since telemetry was requested.
+            if (!this.telemetryObjects[keyString]) {
+                return;
+            }
+            // only add the latest telemetry
+            let latest = telemetry[telemetry.length - 1];
+            let telemetryRow = [new TelemetryTableRow(latest, columnMap, keyString, limitEvaluator)];
+            if (this.paused) {
+                this.delayedActions.push(this.tableRows.addRows.bind(this, telemetryRow, 'add'));
+            } else {
+                this.tableRows.addRows(telemetryRow, 'add');
+            }
+        };
     }
 }
