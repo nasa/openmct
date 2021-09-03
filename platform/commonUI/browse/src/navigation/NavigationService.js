@@ -39,9 +39,6 @@ define(
             this.callbacks = [];
             this.checks = [];
             this.$window = $window;
-
-            this.oldUnload = $window.onbeforeunload;
-            $window.onbeforeunload = this.onBeforeUnload.bind(this);
         }
 
         /**
