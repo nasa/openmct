@@ -8,6 +8,7 @@ export default class LADTable extends TelemetryTable {
         this.openmct = openmct;
     }
     initialize() {
+        this.tableRows.addRows = this.addRows;
         if (this.domainObject.type === 'new.ladTable') {
             this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
             this.filters = this.domainObject.configuration.filters;
@@ -66,5 +67,29 @@ export default class LADTable extends TelemetryTable {
                 this.tableRows.addRows(telemetryRow, 'add');
             }
         };
+    }
+
+    addRows(rows, type = 'add') {
+        // override original addRows
+        if (this.sortOptions === undefined) {
+            throw 'Please specify sort options';
+        }
+
+        let isFilterTriggeredReset = type === 'filter';
+        let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
+        let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
+
+        // clear rows before adding
+        this.rows = [];
+        for (let row of rowsToAdd) {
+            let index = this.sortedIndex(this.rows, row);
+            this.rows.splice(index, 0, row);
+        }
+
+        // we emit filter no matter what to trigger
+        // an update of visible rows
+        if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
+            this.emit(type, rowsToAdd);
+        }
     }
 }
