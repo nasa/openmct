@@ -175,18 +175,13 @@ export default {
         }
     },
     mounted() {
-        this.openmct.editor.on('isEditing', this.toggleEditing);
+        this.openmct.editor.on('isEditing', (isEditing) => {
+            this.isEditing = isEditing;
+        });
 
         this.openmct.selection.on('change', this.toggleHasToolbar);
     },
-    destroyed() {
-        this.openmct.selection.off('change', this.toggleHasToolbar);
-        this.openmct.editor.off('isEditing', this.toggleEditing);
-    },
     methods: {
-        toggleEditing(isEditing) {
-            this.isEditing = isEditing;
-        },
         enterFullScreen() {
             let docElm = document.documentElement;
 
