@@ -22,6 +22,7 @@
 
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
+import { Generator } from 'webpack';
 
 const ERRORS = {
     TIMESYSTEM_KEY: 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.',
@@ -126,6 +127,8 @@ export class TelemetryCollection extends EventEmitter {
 
         let historicalData;
 
+        this.options.yieldRequestProcessor = this._getProcessGenerator();
+
         try {
             this.requestAbort = new AbortController();
             this.options.signal = this.requestAbort.signal;
@@ -140,6 +143,27 @@ export class TelemetryCollection extends EventEmitter {
         this._processNewTelemetry(historicalData);
 
     }
+
+    /**
+     * Returns a primed generator, that can be used for incremental processing
+     * of telemetry data if the provider so chooses
+     * @private
+     */
+    _getProcessGenerator() {
+        let telemetryCollection = this;
+
+        function* processGenerator() {
+            let telemetry = yield;
+
+            telemetryCollection._processNewTelemetry(telemetry);
+        }
+
+        let generator = processGenerator();
+        generator.next();
+
+        return generator;
+    }
+
     /**
      * This uses the built in subscription function from Telemetry API
      * @private
