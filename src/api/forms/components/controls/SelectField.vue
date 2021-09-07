@@ -21,7 +21,7 @@
 *****************************************************************************/
 
 <template>
-<div class="form-control SelectField">
+<div class="form-control select-field">
     <select v-model="selected"
             required="model.required"
             name="mctControl"

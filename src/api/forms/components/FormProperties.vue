@@ -31,8 +31,8 @@
           autocomplete="off"
           @submit.prevent
     >
-        <div v-for="section in model.sections"
-             :key="section.name"
+        <div v-for="section in formSections"
+             :key="section.id"
              class="c-form__section"
              :class="section.cssClass"
         >
@@ -42,7 +42,7 @@
                 {{ section.name }}
             </h2>
             <div v-for="(row, index) in section.rows"
-                 :key="row.name"
+                 :key="row.id"
                  class="u-contents"
             >
                 <FormRow :css-class="section.cssClass"
@@ -74,6 +74,8 @@
 
 <script>
 import FormRow from "@/api/forms/components/FormRow.vue";
+import uuid from 'uuid';
+
 export default {
     components: {
         FormRow
@@ -86,7 +88,6 @@ export default {
         },
         value: {
             type: Object,
-            required: false,
             default() {
                 return {};
             }
@@ -94,7 +95,8 @@ export default {
     },
     data() {
         return {
-            invalidProperties: {}
+            invalidProperties: {},
+            formSections: []
         };
     },
     computed: {
@@ -104,6 +106,19 @@ export default {
                     return value;
                 });
         }
+    },
+    mounted() {
+        this.formSections = this.model.sections.map(section => {
+            section.id = uuid();
+
+            section.rows = section.rows.map(row => {
+                row.id = uuid();
+
+                return row;
+            });
+
+            return section;
+        });
     },
     methods: {
         onChange(data) {

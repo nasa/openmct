@@ -21,7 +21,7 @@
 *****************************************************************************/
 
 <template>
-<div class="form-control autocomplete">
+<div class="form-control auto-complete">
     <input v-model="field"
            class="autocompleteInput"
            type="text"

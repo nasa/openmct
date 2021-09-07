@@ -31,7 +31,7 @@ export default class FormControl {
     addControl(controlName, controlViewProvider) {
         const control = this.controls[controlName];
         if (control) {
-            this.openmct.notifications.error(`Error: provided form control '${controlName}', already exists`);
+            console.warn(`Error: provided form control '${controlName}', already exists`);
 
             return;
         }
