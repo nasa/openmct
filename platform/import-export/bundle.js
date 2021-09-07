@@ -30,8 +30,8 @@ define([
 
     return function ImportExportPlugin() {
         return function (openmct) {
-            ExportAsJSONAction.appliesTo = function (context) {
-                return openmct.$injector.get('policyService')
+            ExportAsJSONAction.prototype.appliesTo = function (context) {
+                return this.openmct.$injector.get('policyService')
                     .allow("creation", context.domainObject.getCapability("type")
                     );
             };
