@@ -22,7 +22,6 @@
 
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
-import { Generator } from 'webpack';
 
 const ERRORS = {
     TIMESYSTEM_KEY: 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.',
@@ -155,7 +154,7 @@ export class TelemetryCollection extends EventEmitter {
         function* processGenerator() {
             let telemetry = yield;
 
-            telemetryCollection._processNewTelemetry(telemetry);
+            telemetryCollection._processNewTelemetry(telemetry.value);
         }
 
         let generator = processGenerator();
