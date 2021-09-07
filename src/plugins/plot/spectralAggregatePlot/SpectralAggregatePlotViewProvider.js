@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import SpectralView from './SpectralAggregateView.vue';
+import * as SPECTRAL_AGGREGATE from './SpectralAggregateConstants';
 import Vue from 'vue';
 
 export default function SpectralAggregatePlotViewProvider(openmct) {
@@ -29,7 +30,7 @@ export default function SpectralAggregatePlotViewProvider(openmct) {
     }
 
     return {
-        key: 'plot-spectral-aggregate',
+        key: SPECTRAL_AGGREGATE.SPECTRAL_AGGREGATE_VIEW,
         name: 'Spectral Aggregate Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
