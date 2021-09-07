@@ -1,5 +1,5 @@
-import TelemetryTable from '/src/plugins/telemetryTable/TelemetryTable.js';
-import TelemetryTableRow from '/src/plugins/telemetryTable/TelemetryTableRow.js';
+import TelemetryTable from '../telemetryTable/TelemetryTable.js';
+import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
 
 export default class LADTable extends TelemetryTable {
     constructor(domainObject, openmct) {
@@ -9,7 +9,6 @@ export default class LADTable extends TelemetryTable {
     }
     initialize() {
         this.tableRows.addRows = this.addRows;
-        // this.tableRows.removeRowsByData = this.removeRowsByData;
         if (this.domainObject.type === 'new.ladTable') {
             this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
             this.filters = this.domainObject.configuration.filters;
