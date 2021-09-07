@@ -28,6 +28,7 @@ define([
 
     var REQUEST_DEFAULTS = {
         amplitude: 1,
+        wavelength: 1,
         period: 10,
         offset: 0,
         dataRateInHz: 1,
@@ -35,21 +36,22 @@ define([
         phase: 0
     };
 
-    function GeneratorProvider() {
+    function SpectralGeneratorProvider() {
         this.workerInterface = new WorkerInterface();
     }
 
-    GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
-        return domainObject.type === 'generator';
+    SpectralGeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
+        return domainObject.type === 'example.spectral-generator';
     };
 
-    GeneratorProvider.prototype.supportsRequest =
-        GeneratorProvider.prototype.supportsSubscribe =
-            GeneratorProvider.prototype.canProvideTelemetry;
+    SpectralGeneratorProvider.prototype.supportsRequest =
+        SpectralGeneratorProvider.prototype.supportsSubscribe =
+            SpectralGeneratorProvider.prototype.canProvideTelemetry;
 
-    GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
+    SpectralGeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
         var props = [
             'amplitude',
+            'wavelength',
             'period',
             'offset',
             'dataRateInHz',
@@ -82,20 +84,19 @@ define([
         return workerRequest;
     };
 
-    GeneratorProvider.prototype.request = function (domainObject, request) {
+    SpectralGeneratorProvider.prototype.request = function (domainObject, request) {
         var workerRequest = this.makeWorkerRequest(domainObject, request);
         workerRequest.start = request.start;
         workerRequest.end = request.end;
-        workerRequest.spectra = request.spectra;
 
         return this.workerInterface.request(workerRequest);
     };
 
-    GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
+    SpectralGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
         var workerRequest = this.makeWorkerRequest(domainObject, {});
 
         return this.workerInterface.subscribe(workerRequest, callback);
     };
 
-    return GeneratorProvider;
+    return SpectralGeneratorProvider;
 });

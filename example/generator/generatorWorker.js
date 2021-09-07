@@ -64,6 +64,7 @@
                         utc: nextStep,
                         yesterday: nextStep - 60 * 60 * 24 * 1000,
                         sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
+                        wavelength: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
                         cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
                     }
                 });
@@ -111,6 +112,7 @@
                 utc: nextStep,
                 yesterday: nextStep - 60 * 60 * 24 * 1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),
+                wavelength: sin(nextStep, period, amplitude, offset, phase, randomness),
                 cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
