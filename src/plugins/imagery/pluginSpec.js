@@ -219,7 +219,7 @@ describe("The Imagery View Layouts", () => {
         });
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({identifier: {namespace: ''}}));
 
         openmct.on('start', done);
         openmct.start(appHolder);
@@ -311,60 +311,60 @@ describe("The Imagery View Layouts", () => {
             expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
         });
 
-        xit("should show the clicked thumbnail as the main image", (done) => {
-            const target = imageTelemetry[5].url;
-            parent.querySelectorAll(`img[src='${target}']`)[0].click();
-            Vue.nextTick(() => {
-                const imageInfo = getImageInfo(parent);
-
-                expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
-                done();
-            });
-        });
-
-        xit("should show that an image is new", (done) => {
-            Vue.nextTick(() => {
-                // used in code, need to wait to the 500ms here too
-                setTimeout(() => {
-                    const imageIsNew = isNew(parent);
-                    expect(imageIsNew).toBeTrue();
-                    done();
-                }, REFRESH_CSS_MS);
-            });
-        });
-
-        xit("should show that an image is not new", (done) => {
-            const target = imageTelemetry[2].url;
-            parent.querySelectorAll(`img[src='${target}']`)[0].click();
-
-            Vue.nextTick(() => {
-                // used in code, need to wait to the 500ms here too
-                setTimeout(() => {
-                    const imageIsNew = isNew(parent);
-
-                    expect(imageIsNew).toBeFalse();
-                    done();
-                }, REFRESH_CSS_MS);
-            });
-        });
-
-        xit("should navigate via arrow keys", (done) => {
-            let keyOpts = {
-                element: parent.querySelector('.c-imagery'),
-                key: 'ArrowLeft',
-                keyCode: 37,
-                type: 'keyup'
-            };
-
-            simulateKeyEvent(keyOpts);
-
-            Vue.nextTick(() => {
-                const imageInfo = getImageInfo(parent);
-
-                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
-                done();
-            });
-        });
+        // xit("should show the clicked thumbnail as the main image", (done) => {
+        //     const target = imageTelemetry[5].url;
+        //     parent.querySelectorAll(`img[src='${target}']`)[0].click();
+        //     Vue.nextTick(() => {
+        //         const imageInfo = getImageInfo(parent);
+        //
+        //         expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
+        //         done();
+        //     });
+        // });
+        //
+        // xit("should show that an image is new", (done) => {
+        //     Vue.nextTick(() => {
+        //         // used in code, need to wait to the 500ms here too
+        //         setTimeout(() => {
+        //             const imageIsNew = isNew(parent);
+        //             expect(imageIsNew).toBeTrue();
+        //             done();
+        //         }, REFRESH_CSS_MS);
+        //     });
+        // });
+        //
+        // xit("should show that an image is not new", (done) => {
+        //     const target = imageTelemetry[2].url;
+        //     parent.querySelectorAll(`img[src='${target}']`)[0].click();
+        //
+        //     Vue.nextTick(() => {
+        //         // used in code, need to wait to the 500ms here too
+        //         setTimeout(() => {
+        //             const imageIsNew = isNew(parent);
+        //
+        //             expect(imageIsNew).toBeFalse();
+        //             done();
+        //         }, REFRESH_CSS_MS);
+        //     });
+        // });
+        //
+        // xit("should navigate via arrow keys", (done) => {
+        //     let keyOpts = {
+        //         element: parent.querySelector('.c-imagery'),
+        //         key: 'ArrowLeft',
+        //         keyCode: 37,
+        //         type: 'keyup'
+        //     };
+        //
+        //     simulateKeyEvent(keyOpts);
+        //
+        //     Vue.nextTick(() => {
+        //         const imageInfo = getImageInfo(parent);
+        //
+        //         expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
+        //         done();
+        //     });
+        // });
 
         it("should navigate via numerous arrow keys", (done) => {
             let element = parent.querySelector('.c-imagery');
