@@ -117,51 +117,51 @@ describe("The Imagery View Layouts", () => {
                         "image": 1,
                         "priority": 3
                     },
-                    "source": "url",
-                    "relatedTelemetry": {
-                        "heading": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "heading",
-                                "valueKey": "value"
-                            }
-                        },
-                        "roll": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "roll",
-                                "valueKey": "value"
-                            }
-                        },
-                        "pitch": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "pitch",
-                                "valueKey": "value"
-                            }
-                        },
-                        "cameraPan": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "cameraPan",
-                                "valueKey": "value"
-                            }
-                        },
-                        "cameraTilt": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "cameraTilt",
-                                "valueKey": "value"
-                            }
-                        },
-                        "sunOrientation": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "sunOrientation",
-                                "valueKey": "value"
-                            }
-                        }
-                    }
+                    "source": "url"
+                    // "relatedTelemetry": {
+                    //     "heading": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "heading",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "roll": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "roll",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "pitch": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "pitch",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "cameraPan": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "cameraPan",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "cameraTilt": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "cameraTilt",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "sunOrientation": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "sunOrientation",
+                    //             "valueKey": "value"
+                    //         }
+                    //     }
+                    // }
                 },
                 {
                     "name": "Name",
@@ -219,7 +219,7 @@ describe("The Imagery View Layouts", () => {
         });
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({identifier: {namespace: ''}}));
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
 
         openmct.on('start', done);
         openmct.start(appHolder);
@@ -232,6 +232,21 @@ describe("The Imagery View Layouts", () => {
         });
 
         return resetApplicationState(openmct);
+    });
+
+    it("should provide an imagery time strip view when in a time strip", () => {
+        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }]);
+        let imageryView = applicableViews.find(
+            viewProvider => viewProvider.key === imageryForTimeStripKey
+        );
+
+        expect(imageryView).toBeDefined();
     });
 
     it("should provide an imagery view only for imagery producing objects", () => {
@@ -256,21 +271,6 @@ describe("The Imagery View Layouts", () => {
         );
 
         expect(imageryView).toBeUndefined();
-    });
-
-    it("should provide an imagery time strip view when in a time strip", () => {
-        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
-            identifier: {
-                key: 'test-timestrip',
-                namespace: ''
-            },
-            type: 'time-strip'
-        }]);
-        let imageryView = applicableViews.find(
-            viewProvider => viewProvider.key === imageryForTimeStripKey
-        );
-
-        expect(imageryView).toBeDefined();
     });
 
     describe("imagery view", () => {
@@ -311,60 +311,60 @@ describe("The Imagery View Layouts", () => {
             expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
         });
 
-        // xit("should show the clicked thumbnail as the main image", (done) => {
-        //     const target = imageTelemetry[5].url;
-        //     parent.querySelectorAll(`img[src='${target}']`)[0].click();
-        //     Vue.nextTick(() => {
-        //         const imageInfo = getImageInfo(parent);
-        //
-        //         expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
-        //         done();
-        //     });
-        // });
-        //
-        // xit("should show that an image is new", (done) => {
-        //     Vue.nextTick(() => {
-        //         // used in code, need to wait to the 500ms here too
-        //         setTimeout(() => {
-        //             const imageIsNew = isNew(parent);
-        //             expect(imageIsNew).toBeTrue();
-        //             done();
-        //         }, REFRESH_CSS_MS);
-        //     });
-        // });
-        //
-        // xit("should show that an image is not new", (done) => {
-        //     const target = imageTelemetry[2].url;
-        //     parent.querySelectorAll(`img[src='${target}']`)[0].click();
-        //
-        //     Vue.nextTick(() => {
-        //         // used in code, need to wait to the 500ms here too
-        //         setTimeout(() => {
-        //             const imageIsNew = isNew(parent);
-        //
-        //             expect(imageIsNew).toBeFalse();
-        //             done();
-        //         }, REFRESH_CSS_MS);
-        //     });
-        // });
-        //
-        // xit("should navigate via arrow keys", (done) => {
-        //     let keyOpts = {
-        //         element: parent.querySelector('.c-imagery'),
-        //         key: 'ArrowLeft',
-        //         keyCode: 37,
-        //         type: 'keyup'
-        //     };
-        //
-        //     simulateKeyEvent(keyOpts);
-        //
-        //     Vue.nextTick(() => {
-        //         const imageInfo = getImageInfo(parent);
-        //
-        //         expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
-        //         done();
-        //     });
-        // });
+        xit("should show the clicked thumbnail as the main image", (done) => {
+            const target = imageTelemetry[5].url;
+            parent.querySelectorAll(`img[src='${target}']`)[0].click();
+            Vue.nextTick(() => {
+                const imageInfo = getImageInfo(parent);
+
+                expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
+                done();
+            });
+        });
+
+        xit("should show that an image is new", (done) => {
+            Vue.nextTick(() => {
+                // used in code, need to wait to the 500ms here too
+                setTimeout(() => {
+                    const imageIsNew = isNew(parent);
+                    expect(imageIsNew).toBeTrue();
+                    done();
+                }, REFRESH_CSS_MS);
+            });
+        });
+
+        xit("should show that an image is not new", (done) => {
+            const target = imageTelemetry[2].url;
+            parent.querySelectorAll(`img[src='${target}']`)[0].click();
+
+            Vue.nextTick(() => {
+                // used in code, need to wait to the 500ms here too
+                setTimeout(() => {
+                    const imageIsNew = isNew(parent);
+
+                    expect(imageIsNew).toBeFalse();
+                    done();
+                }, REFRESH_CSS_MS);
+            });
+        });
+
+        xit("should navigate via arrow keys", (done) => {
+            let keyOpts = {
+                element: parent.querySelector('.c-imagery'),
+                key: 'ArrowLeft',
+                keyCode: 37,
+                type: 'keyup'
+            };
+
+            simulateKeyEvent(keyOpts);
+
+            Vue.nextTick(() => {
+                const imageInfo = getImageInfo(parent);
+
+                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
+                done();
+            });
+        });
 
         it("should navigate via numerous arrow keys", (done) => {
             let element = parent.querySelector('.c-imagery');
