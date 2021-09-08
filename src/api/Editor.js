@@ -34,7 +34,6 @@ export default class Editor extends EventEmitter {
      * Initiate an editing session. This will start a transaction during
      * which any persist operations will be deferred until either save()
      * or finish() are called.
-     * @private
      */
     edit() {
         if (this.editing === true) {
@@ -42,8 +41,8 @@ export default class Editor extends EventEmitter {
         }
 
         this.editing = true;
-        this.getTransactionService().startTransaction();
         this.emit('isEditing', true);
+        this.openmct.objects.startTransaction();
     }
 
     /**
@@ -56,41 +55,24 @@ export default class Editor extends EventEmitter {
     /**
      * Save any unsaved changes from this editing session. This will
      * end the current transaction.
-     *
-     * @private
      */
     save() {
-        return this.getTransactionService().commit().then((result) => {
-            this.editing = false;
-            this.emit('isEditing', false);
-
-            return result;
-        }).catch((error) => {
-            throw error;
-        });
+        return this.openmct.objects.CommitAllTransactions()
+            .then(() => {
+                this.editing = false;
+                this.emit('isEditing', false);
+            }).catch(error => {
+                throw error;
+            });
     }
 
     /**
      * End the currently active transaction and discard unsaved changes.
-     *
-     * @private
      */
     cancel() {
-        let cancelPromise = this.getTransactionService().cancel();
         this.editing = false;
         this.emit('isEditing', false);
 
-        return cancelPromise;
-    }
-
-    /**
-     * @private
-     */
-    getTransactionService() {
-        if (!this.transactionService) {
-            this.transactionService = this.openmct.$injector.get('transactionService');
-        }
-
-        return this.transactionService;
+        return this.openmct.objects.CancelAllTransactions();
     }
 }
