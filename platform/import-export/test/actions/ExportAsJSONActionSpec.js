@@ -29,7 +29,7 @@ define(
     ],
     function (ExportAsJSONAction, domainObjectFactory, MCT, AdapterCapability) {
 
-        xdescribe("The export JSON action", function () {
+        describe("The export JSON action", function () {
 
             var context,
                 action,
@@ -102,7 +102,7 @@ define(
                 expect(action).toBeDefined();
             });
 
-            it("doesn't export non-creatable objects in tree", function () {
+            xit("doesn't export non-creatable objects in tree", function () {
                 var nonCreatableType = {
                     hasFeature:
                         function (feature) {
@@ -149,7 +149,7 @@ define(
                 });
             });
 
-            it("can export self-containing objects", function () {
+            xit("can export self-containing objects", function () {
                 var parent = domainObjectFactory({
                     name: 'parent',
                     model: {
@@ -191,7 +191,7 @@ define(
                 });
             });
 
-            it("exports links to external objects as new objects", function () {
+            xit("exports links to external objects as new objects", function () {
                 var parent = domainObjectFactory({
                     name: 'parent',
                     model: {
