@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import LADTableViewProvider from './LADTableViewProvider';
-// import TelemetryTableViewActions from '/src/plugins/telemetryTable/ViewActions.js';
+import ladTableCompositionPolicy from './ladTableCompositionPolicy.js';
 
 export default function () {
     return function install(openmct) {
@@ -39,17 +39,21 @@ export default function () {
             }
         });
 
+        openmct.types.addType('new.LadTableSet', {
+            name: "LAD Table Set NEW",
+            creatable: true,
+            description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+            cssClass: 'icon-tabular-lad-set',
+            initialize(domainObject) {
+                domainObject.composition = [];
+            }
+        });
+
         // openmct.telemetry.addProvider(new LADTableProvider(openmct));
         openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
         // TelemetryTableViewActions.forEach(action => {
         //     openmct.actions.register(action);
         // });
-        openmct.composition.addPolicy((parent, child) => {
-            // if (parent.type === 'new.ladTable') {
-            //     return child.type === 'vista.alarmMessageStream';
-            // }
-
-            return true;
-        });
+        openmct.composition.addPolicy(ladTableCompositionPolicy(openmct));
     };
 }
