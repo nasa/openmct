@@ -162,6 +162,7 @@ export class TelemetryCollection extends EventEmitter {
         }
 
         let generator = processGenerator();
+        console.log('initial next call');
         generator.next();
 
         return generator;
