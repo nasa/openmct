@@ -154,8 +154,9 @@ export class TelemetryCollection extends EventEmitter {
 
         function* processGenerator() {
             let telemetry = yield;
-            console.log('telemetry', telemetry);
-            telemetryCollection._processNewTelemetry(telemetry.value);
+            if (telemetry) {
+                telemetryCollection._processNewTelemetry(telemetry.value);
+            }
         }
 
         let generator = processGenerator();
