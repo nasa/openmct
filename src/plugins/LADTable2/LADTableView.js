@@ -55,7 +55,7 @@ export default class LADTableView {
                     }
                 };
             },
-            template: '<table-view ref="tableView" :marking="marking" :domain-object="domainObject"></table-view>'
+            template: '<table-view ref="tableView" :allowFiltering=false :marking="marking" :domain-object="domainObject"></table-view>'
         });
     }
 
