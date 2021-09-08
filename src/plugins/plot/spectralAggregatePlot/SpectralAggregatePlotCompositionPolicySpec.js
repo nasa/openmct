@@ -23,7 +23,7 @@
 import SpectralAggregatePlotCompositionPolicy from "./SpectralAggregatePlotCompositionPolicy";
 import { createOpenMct } from "utils/testing";
 
-fdescribe("The spectral aggregation plot composition policy", () => {
+describe("The spectral aggregation plot composition policy", () => {
     let openmct;
     const mockNonSpectralMetaData = {
         "period": 10,
