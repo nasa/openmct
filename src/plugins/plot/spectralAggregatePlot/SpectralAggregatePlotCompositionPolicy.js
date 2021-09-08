@@ -22,13 +22,11 @@
 
 export default function SpectralAggregatePlotCompositionPolicy(openmct) {
     function hasAggregateDomainAndRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']);
-        const domainValues = metadata.valuesForHints(['domain']);
-
-        // TODO: not quire sure what aggregate data will look like yet.
+        const rangeValues = metadata.valuesForHints(['spectralAttribute']);
+        const domainValues = metadata.valuesForHints(['spectralAttribute']);
 
         return rangeValues.length > 0
-        && domainValues.length > 0;
+        || domainValues.length > 0;
     }
 
     function hasSpectralAggregateTelemetry(domainObject) {

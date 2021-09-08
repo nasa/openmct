@@ -25,82 +25,15 @@ import { createOpenMct } from "utils/testing";
 
 fdescribe("The spectral aggregation plot composition policy", () => {
     let openmct;
-
-    beforeEach(() => {
-        const mockNonSpectralMetaData = {
-            "period": 10,
-            "amplitude": 1,
-            "offset": 0,
-            "dataRateInHz": 1,
-            "phase": 0,
-            "randomness": 0,
-            valuesForHints: () => {
-                return [
-                    {
-                        "key": "sin",
-                        "name": "Sine",
-                        "unit": "Hz",
-                        "formatString": "%0.2f",
-                        "hints": {
-                            "range": 1,
-                            "priority": 4
-                        },
-                        "source": "sin"
-                    },
-                    {
-                        "key": "cos",
-                        "name": "Cosine",
-                        "unit": "deg",
-                        "formatString": "%0.2f",
-                        "hints": {
-                            "range": 2,
-                            "priority": 5
-                        },
-                        "source": "cos"
-                    }
-                ];
-            },
-            values: [
-                {
-                    "key": "name",
-                    "name": "Name",
-                    "format": "string",
-                    "source": "name",
-                    "hints": {
-                        "priority": 0
-                    }
-                },
-                {
-                    "key": "utc",
-                    "name": "Time",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 1,
-                        "priority": 1
-                    },
-                    "source": "utc"
-                },
-                {
-                    "key": "yesterday",
-                    "name": "Yesterday",
-                    "format": "utc",
-                    "hints": {
-                        "domain": 2,
-                        "priority": 2
-                    },
-                    "source": "yesterday"
-                },
-                {
-                    "key": "cos",
-                    "name": "Cosine",
-                    "unit": "deg",
-                    "formatString": "%0.2f",
-                    "hints": {
-                        "domain": 3,
-                        "priority": 3
-                    },
-                    "source": "cos"
-                },
+    const mockNonSpectralMetaData = {
+        "period": 10,
+        "amplitude": 1,
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": 0,
+        valuesForHints: () => {
+            return [
                 {
                     "key": "sin",
                     "name": "Sine",
@@ -123,11 +56,177 @@ fdescribe("The spectral aggregation plot composition policy", () => {
                     },
                     "source": "cos"
                 }
-            ]
-        };
+            ];
+        },
+        values: [
+            {
+                "key": "name",
+                "name": "Name",
+                "format": "string",
+                "source": "name",
+                "hints": {
+                    "priority": 0
+                }
+            },
+            {
+                "key": "utc",
+                "name": "Time",
+                "format": "utc",
+                "hints": {
+                    "domain": 1,
+                    "priority": 1
+                },
+                "source": "utc"
+            },
+            {
+                "key": "yesterday",
+                "name": "Yesterday",
+                "format": "utc",
+                "hints": {
+                    "domain": 2,
+                    "priority": 2
+                },
+                "source": "yesterday"
+            },
+            {
+                "key": "cos",
+                "name": "Cosine",
+                "unit": "deg",
+                "formatString": "%0.2f",
+                "hints": {
+                    "domain": 3,
+                    "priority": 3
+                },
+                "source": "cos"
+            },
+            {
+                "key": "sin",
+                "name": "Sine",
+                "unit": "Hz",
+                "formatString": "%0.2f",
+                "hints": {
+                    "range": 1,
+                    "priority": 4
+                },
+                "source": "sin"
+            },
+            {
+                "key": "cos",
+                "name": "Cosine",
+                "unit": "deg",
+                "formatString": "%0.2f",
+                "hints": {
+                    "range": 2,
+                    "priority": 5
+                },
+                "source": "cos"
+            }
+        ]
+    };
+    const mockGoodSpectralMetaData = {
+        "period": 10,
+        "amplitude": 1,
+        "offset": 0,
+        "dataRateInHz": 1,
+        "phase": 0,
+        "randomness": 0,
+        "wavelength": 0,
+        valuesForHints: () => {
+            return [
+                {
+                    "key": "sin",
+                    "name": "Sine",
+                    "unit": "Hz",
+                    "formatString": "%0.2f",
+                    "hints": {
+                        "range": 1,
+                        "priority": 4
+                    },
+                    "source": "sin"
+                },
+                {
+                    "key": "cos",
+                    "name": "Cosine",
+                    "unit": "deg",
+                    "formatString": "%0.2f",
+                    "hints": {
+                        "range": 2,
+                        "priority": 5
+                    },
+                    "source": "cos"
+                }
+            ];
+        },
+        values: [
+            {
+                "key": "name",
+                "name": "Name",
+                "format": "string",
+                "source": "name",
+                "hints": {
+                    "priority": 0
+                }
+            },
+            {
+                "key": "utc",
+                "name": "Time",
+                "format": "utc",
+                "hints": {
+                    "domain": 1,
+                    "priority": 1
+                },
+                "source": "utc"
+            },
+            {
+                "key": "yesterday",
+                "name": "Yesterday",
+                "format": "utc",
+                "hints": {
+                    "domain": 2,
+                    "priority": 2
+                },
+                "source": "yesterday"
+            },
+            {
+                "key": "cos",
+                "name": "Cosine",
+                "unit": "deg",
+                "formatString": "%0.2f",
+                "hints": {
+                    "domain": 3,
+                    "priority": 3
+                },
+                "source": "cos"
+            },
+            {
+                "key": "sin",
+                "name": "Sine",
+                "unit": "Hz",
+                "formatString": "%0.2f",
+                "hints": {
+                    "range": 1,
+                    "spectralAttribute": true
+                },
+                "source": "sin"
+            },
+            {
+                "key": "cos",
+                "name": "Cosine",
+                "unit": "deg",
+                "formatString": "%0.2f",
+                "hints": {
+                    "range": 2,
+                    "priority": 5
+                },
+                "source": "cos"
+            }
+        ]
+    };
+
+    beforeEach(() => {
         openmct = createOpenMct();
         const mockTypeDef = {
-            telemetry: mockNonSpectralMetaData
+            telemetry: mockGoodSpectralMetaData
         };
         const mockTypeService = {
             getType: () => {
@@ -188,7 +287,21 @@ fdescribe("The spectral aggregation plot composition policy", () => {
     });
 
     it("disallows composition for telemetry that contain anything else", () => {
-
+        const mockTypeDef = {
+            telemetry: mockNonSpectralMetaData
+        };
+        const mockTypeService = {
+            getType: () => {
+                return {
+                    typeDef: mockTypeDef
+                };
+            }
+        };
+        openmct.$injector = {
+            get: () => {
+                return mockTypeService;
+            }
+        };
         const parent = {
             "composition": [],
             "configuration": {},
@@ -224,7 +337,7 @@ fdescribe("The spectral aggregation plot composition policy", () => {
         expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(false);
     });
 
-    it("disallows composition for non-aggregate plots", () => {
+    it("passthrough for composition for non spectral aggregate plots", () => {
         const parent = {
             "composition": [],
             "configuration": {},
@@ -257,7 +370,7 @@ fdescribe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(false);
+        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
     });
 });
 
