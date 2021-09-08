@@ -115,6 +115,7 @@ export class TelemetryCollection extends EventEmitter {
 
         this._requestHistoricalTelemetry();
     }
+
     /**
      * If a historical provider exists, then historical requests will be made
      * @private
@@ -153,7 +154,7 @@ export class TelemetryCollection extends EventEmitter {
 
         function* processGenerator() {
             let telemetry = yield;
-
+            console.log('telemetry', telemetry);
             telemetryCollection._processNewTelemetry(telemetry.value);
         }
 
