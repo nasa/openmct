@@ -161,11 +161,12 @@ export class TelemetryCollection extends EventEmitter {
             }
         }
 
-        let generator = processGenerator();
-        console.log('initial next call');
-        generator.next();
+        return () => {
+            const generator = processGenerator();
+            generator.next();
 
-        return generator;
+            return generator;
+        };
     }
 
     /**
