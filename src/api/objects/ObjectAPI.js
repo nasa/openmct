@@ -26,6 +26,7 @@ import RootRegistry from './RootRegistry';
 import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
+import TransactionManager from './TransactionManager';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -34,12 +35,14 @@ import InterceptorRegistry from './InterceptorRegistry';
  */
 
 function ObjectAPI(typeRegistry, openmct) {
+    this.openmct = openmct;
+
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
     this.injectIdentifierService = function () {
-        this.identifierService = openmct.$injector.get("identifierService");
+        this.identifierService = this.openmct.$injector.get("identifierService");
     };
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
@@ -324,6 +327,27 @@ ObjectAPI.prototype.save = function (domainObject) {
 };
 
 /**
+ * After entering into edit mode, creates a new instance of TransactionManager to keep track of changes in Objects
+ */
+ObjectAPI.prototype.startTransaction = function () {
+    this.transactionManager = new TransactionManager();
+};
+
+/**
+ * When in edit mode, after save action commit/persists all stored transactions
+ */
+ObjectAPI.prototype.CommitAllTransactions = function () {
+    return this.transactionManager.CommitAllTransactions(this.save.bind(this));
+};
+
+/**
+ * When in edit mode, after cancel action discard all stored transactions
+ */
+ObjectAPI.prototype.CancelAllTransactions = function () {
+    return this.transactionManager.CancelAllTransactions();
+};
+
+/**
  * Add a root-level object.
  * @param {module:openmct.ObjectAPI~Identifier|function} an array of
  *        identifiers for root level objects, or a function that returns a
@@ -411,6 +435,12 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
 
         //Destroy temporary mutable object
         this.destroyMutable(mutableDomainObject);
+    }
+
+    if (this.openmct.editor.isEditing()) {
+        this.transactionManager.addTransaction(domainObject);
+    } else {
+        this.save(domainObject);
     }
 };
 

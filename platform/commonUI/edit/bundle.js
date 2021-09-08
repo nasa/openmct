@@ -33,10 +33,6 @@ define([
     "./src/actions/CancelAction",
     "./src/policies/EditPersistableObjectsPolicy",
     "./src/representers/EditRepresenter",
-    "./src/capabilities/EditorCapability",
-    "./src/capabilities/TransactionCapabilityDecorator",
-    "./src/services/TransactionManager",
-    "./src/services/TransactionService",
     "./src/creation/CreateMenuController",
     "./src/creation/LocatorController",
     "./src/creation/CreationPolicy",
@@ -62,10 +58,6 @@ define([
     CancelAction,
     EditPersistableObjectsPolicy,
     EditRepresenter,
-    EditorCapability,
-    TransactionCapabilityDecorator,
-    TransactionManager,
-    TransactionService,
     CreateMenuController,
     LocatorController,
     CreationPolicy,
@@ -264,26 +256,6 @@ define([
                 ],
                 "components": [
                     {
-                        "type": "decorator",
-                        "provides": "capabilityService",
-                        "implementation": TransactionCapabilityDecorator,
-                        "depends": [
-                            "$q",
-                            "transactionManager"
-                        ],
-                        "priority": "fallback"
-                    },
-                    {
-                        "type": "provider",
-                        "provides": "transactionService",
-                        "implementation": TransactionService,
-                        "depends": [
-                            "$q",
-                            "$log",
-                            "cacheService"
-                        ]
-                    },
-                    {
                         "key": "CreateActionProvider",
                         "provides": "actionService",
                         "type": "provider",
@@ -313,31 +285,10 @@ define([
                         ]
                     }
                 ],
-                "capabilities": [
-                    {
-                        "key": "editor",
-                        "name": "Editor Capability",
-                        "description": "Provides transactional editing capabilities",
-                        "implementation": EditorCapability,
-                        "depends": [
-                            "transactionService",
-                            "openmct"
-                        ]
-                    }
-                ],
                 "controls": [
                     {
                         "key": "locator",
                         "template": locatorTemplate
-                    }
-                ],
-                "services": [
-                    {
-                        "key": "transactionManager",
-                        "implementation": TransactionManager,
-                        "depends": [
-                            "transactionService"
-                        ]
                     }
                 ],
                 "runs": [
