@@ -21,44 +21,46 @@
  *****************************************************************************/
 
 import SpectralAggregatePlotCompositionPolicy from "./SpectralAggregatePlotCompositionPolicy";
-import {createOpenMct} from "utils/testing";
+import { createOpenMct } from "utils/testing";
 
 fdescribe("The spectral aggregation plot composition policy", () => {
-    const mockNonSpectralData = {
-        "period": 10,
-        "amplitude": 1,
-        "offset": 0,
-        "dataRateInHz": 1,
-        "phase": 0,
-        "randomness": 0,
-        valuesForHints: () => {
-            return [
-                {
-                    "key": "sin",
-                    "name": "Sine",
-                    "unit": "Hz",
-                    "formatString": "%0.2f",
-                    "hints": {
-                        "range": 1,
-                        "priority": 4
+    let openmct;
+
+    beforeEach(() => {
+        const mockNonSpectralMetaData = {
+            "period": 10,
+            "amplitude": 1,
+            "offset": 0,
+            "dataRateInHz": 1,
+            "phase": 0,
+            "randomness": 0,
+            valuesForHints: () => {
+                return [
+                    {
+                        "key": "sin",
+                        "name": "Sine",
+                        "unit": "Hz",
+                        "formatString": "%0.2f",
+                        "hints": {
+                            "range": 1,
+                            "priority": 4
+                        },
+                        "source": "sin"
                     },
-                    "source": "sin"
-                },
-                {
-                    "key": "cos",
-                    "name": "Cosine",
-                    "unit": "deg",
-                    "formatString": "%0.2f",
-                    "hints": {
-                        "range": 2,
-                        "priority": 5
-                    },
-                    "source": "cos"
-                }
-            ];
-        },
-        values: () => {
-            return [
+                    {
+                        "key": "cos",
+                        "name": "Cosine",
+                        "unit": "deg",
+                        "formatString": "%0.2f",
+                        "hints": {
+                            "range": 2,
+                            "priority": 5
+                        },
+                        "source": "cos"
+                    }
+                ];
+            },
+            values: [
                 {
                     "key": "name",
                     "name": "Name",
@@ -121,17 +123,29 @@ fdescribe("The spectral aggregation plot composition policy", () => {
                     },
                     "source": "cos"
                 }
-            ];
-        }
-    };
-    const openmct = createOpenMct();
-    openmct.telemetry.getMetaData = function (domainObject) {
-        return mockNonSpectralData;
-    };
+            ]
+        };
+        openmct = createOpenMct();
+        const mockTypeDef = {
+            telemetry: mockNonSpectralMetaData
+        };
+        const mockTypeService = {
+            getType: () => {
+                return {
+                    typeDef: mockTypeDef
+                };
+            }
+        };
+        openmct.$injector = {
+            get: () => {
+                return mockTypeService;
+            }
+        };
 
-    openmct.telemetry.isTelemetryObject = function (domainObject) {
-        return true;
-    };
+        openmct.telemetry.isTelemetryObject = function (domainObject) {
+            return true;
+        };
+    });
 
     it("exists", () => {
         expect(SpectralAggregatePlotCompositionPolicy(openmct).allow).toBeDefined();
