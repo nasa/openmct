@@ -127,7 +127,7 @@ export class TelemetryCollection extends EventEmitter {
 
         let historicalData;
 
-        this.options.yieldRequestProcessor = this._getProcessGenerator();
+        this.options.yieldRequestProcessor = this._processNewTelemetry.bind(this);
 
         try {
             this.requestAbort = new AbortController();
@@ -142,31 +142,6 @@ export class TelemetryCollection extends EventEmitter {
 
         this._processNewTelemetry(historicalData);
 
-    }
-
-    /**
-     * Returns a primed generator, that can be used for incremental processing
-     * of telemetry data if the provider so chooses
-     * @private
-     */
-    _getProcessGenerator() {
-        let telemetryCollection = this;
-
-        function* processGenerator() {
-            let telemetry = yield;
-            console.log('generator', telemetry);
-            if (telemetry) {
-                console.log('process telemetry', telemetry, this, telemetryCollection);
-                telemetryCollection._processNewTelemetry(telemetry.value);
-            }
-        }
-
-        return () => {
-            const generator = processGenerator();
-            generator.next();
-
-            return generator;
-        };
     }
 
     /**
