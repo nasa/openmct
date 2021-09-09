@@ -94,7 +94,30 @@ export default {
                 color
             });
         },
-        addTelemetryObject(telemetryObject) {
+        async addTelemetryObject(telemetryObject) {
+            if (this.domainObject.composition && this.domainObject.composition.length > 1) {
+                console.debug('Already at max telmetry objects for this plot');
+                const childIDToRemove = this.domainObject.composition[1];
+                const childObjectToRemove = await this.openmct.objects.get(childIDToRemove);
+                const compositionCollection = this.openmct.composition.get(this.domainObject);
+                compositionCollection.remove(childObjectToRemove);
+                const dialog = this.openmct.overlays.dialog({
+                    iconClass: 'info',
+                    message: 'Spectral aggregate plots can only contain one piece of telemetry. Please remove the existing item before adding a new one.',
+                    buttons: [
+                        {
+                            label: 'OK',
+                            emphasis: true,
+                            callback: function () {
+                                dialog.dismiss();
+                            }
+                        }
+                    ]
+                });
+
+                return;
+            }
+
             const key = objectUtils.makeKeyString(telemetryObject.identifier);
 
             if (!this.colorMapping[key]) {
