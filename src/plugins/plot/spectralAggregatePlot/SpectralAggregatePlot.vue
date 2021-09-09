@@ -27,6 +27,7 @@
 </div>
 </template>
 <script>
+import eventHelpers from '../lib/eventHelpers';
 import Plotly from 'plotly.js/dist/plotly';
 import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE } from './SpectralAggregateConstants';
 
@@ -240,6 +241,7 @@ export default {
 
             return yaxis;
         },
+        // eslint-disable-next-line default-param-last
         handleHover(isHovered = false, data) {
             return hoverData => {
                 this.updateLocalControlPosition(isHovered);
@@ -252,6 +254,11 @@ export default {
             this.$refs.plot.on('plotly_hover', this.handleHover(true).bind(this));
             this.$refs.plot.on('plotly_unhover', this.handleHover(false).bind(this));
             this.$refs.plot.on('plotly_relayout', this.zoom);
+
+            eventHelpers.extend(this);
+            this.config = this.getConfig();
+            this.listenTo(this.config.series, 'add', this.addSeries, this);
+
             this.resizeTimer = false;
             if (window.ResizeObserver) {
                 this.plotResizeObserver = new ResizeObserver(() => {
@@ -263,6 +270,11 @@ export default {
                 });
                 this.plotResizeObserver.observe(this.$refs.plotWrapper);
             }
+        },
+        addSeries(series, index) {
+            console.debug('Series was added 🐹');
+            console.dir(series);
+            console.dir(index);
         },
         reset() {
             this.updatePlot();
