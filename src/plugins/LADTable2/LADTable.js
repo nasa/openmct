@@ -44,8 +44,6 @@ export default class LADTable extends TelemetryTable {
 
         const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
         let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
-        requestOptions.strategy = 'latest';
-        requestOptions.size = 1;
         let columnMap = this.getColumnMapForObject(keyString);
         let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
@@ -120,5 +118,18 @@ export default class LADTable extends TelemetryTable {
                 this.tableRows.addRows(telemetryRow, 'add');
             }
         };
+    }
+    buildOptionsFromConfiguration(telemetryObject) {
+        let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        let filters = this.domainObject.configuration
+            && this.domainObject.configuration.filters
+            && this.domainObject.configuration.filters[keyString];
+        let options = {
+            strategy: 'latest',
+            size: 1,
+            filters: filters
+        };
+
+        return options;
     }
 }
