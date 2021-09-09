@@ -70,7 +70,8 @@ define([
     './timeline/plugin',
     './hyperlink/plugin',
     './clock/plugin',
-    './timer/plugin'
+    './timer/plugin',
+    './DeviceClassifier/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -121,7 +122,8 @@ define([
     Timeline,
     Hyperlink,
     Clock,
-    Timer
+    Timer,
+    DeviceClassifier
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -227,6 +229,7 @@ define([
     plugins.Hyperlink = Hyperlink.default;
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
+    plugins.DeviceClassifier = DeviceClassifier.default;
 
     return plugins;
 });

@@ -186,7 +186,7 @@ describe('the plugin', function () {
                 'configuration': {
                     'items': [
                         {
-                            'fill': '#717171',
+                            'fill': '#666666',
                             'stroke': '',
                             'x': 1,
                             'y': 1,
@@ -196,11 +196,21 @@ describe('the plugin', function () {
                             'id': '89b88746-d325-487b-aec4-11b79afff9e8'
                         },
                         {
+                            'fill': '#666666',
+                            'stroke': '',
+                            'x': 1,
+                            'y': 1,
+                            'width': 10,
+                            'height': 10,
+                            'type': 'ellipse-view',
+                            'id': '19b88746-d325-487b-aec4-11b79afff9z8'
+                        },
+                        {
                             'x': 18,
                             'y': 9,
                             'x2': 23,
                             'y2': 4,
-                            'stroke': '#717171',
+                            'stroke': '#666666',
                             'type': 'line-view',
                             'id': '57d49a28-7863-43bd-9593-6570758916f0'
                         },
@@ -341,7 +351,7 @@ describe('the plugin', function () {
         it('provides controls including separators', () => {
             const displayLayoutToolbar = openmct.toolbars.get(selection);
 
-            expect(displayLayoutToolbar.length).toBe(9);
+            expect(displayLayoutToolbar.length).toBe(7);
         });
     });
 });

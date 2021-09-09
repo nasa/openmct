@@ -223,6 +223,28 @@ describe("The Object API", () => {
             expect(testObject.name).toBe(MUTATED_NAME);
         });
 
+        it('Provides a way of refreshing an object from the persistence store', () => {
+            const modifiedTestObject = JSON.parse(JSON.stringify(testObject));
+            const OTHER_ATTRIBUTE_VALUE = 'Modified value';
+            const NEW_ATTRIBUTE_VALUE = 'A new attribute';
+            modifiedTestObject.otherAttribute = OTHER_ATTRIBUTE_VALUE;
+            modifiedTestObject.newAttribute = NEW_ATTRIBUTE_VALUE;
+            delete modifiedTestObject.objectAttribute;
+
+            spyOn(objectAPI, 'get');
+            objectAPI.get.and.returnValue(Promise.resolve(modifiedTestObject));
+
+            expect(objectAPI.get).not.toHaveBeenCalled();
+
+            return objectAPI.refresh(testObject).then(() => {
+                expect(objectAPI.get).toHaveBeenCalledWith(testObject.identifier);
+
+                expect(testObject.otherAttribute).toEqual(OTHER_ATTRIBUTE_VALUE);
+                expect(testObject.newAttribute).toEqual(NEW_ATTRIBUTE_VALUE);
+                expect(testObject.objectAttribute).not.toBeDefined();
+            });
+        });
+
         describe ('uses a MutableDomainObject', () => {
             it('and retains properties of original object ', function () {
                 expect(hasOwnProperty(mutable, 'identifier')).toBe(true);

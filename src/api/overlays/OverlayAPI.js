@@ -60,7 +60,7 @@ class OverlayAPI {
      * A description of option properties that can be passed into the overlay
      * @typedef options
         * @property {object} element DOMElement that is to be inserted/shown on the overlay
-        * @property {string} size prefered size of the overlay (large, small, fit)
+        * @property {string} size preferred size of the overlay (large, small, fit)
         * @property {array} buttons optional button objects with label and callback properties
         * @property {function} onDestroy callback to be called when overlay is destroyed
         * @property {boolean} dismissable allow user to dismiss overlay by using esc, and clicking away
