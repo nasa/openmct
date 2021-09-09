@@ -59,12 +59,15 @@
             while (nextStep < now) {
                 self.postMessage({
                     id: message.id,
-                    data: {
+                    data: message.spectra ? {
+                        wavelength: [wavelength(nextStep)],
+                        cos: [cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)]
+                    } : {
                         name: data.name,
                         utc: nextStep,
                         yesterday: nextStep - 60 * 60 * 24 * 1000,
                         sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
-                        wavelength: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
+                        wavelength: wavelength(nextStep),
                         cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
                     }
                 });
@@ -112,14 +115,21 @@
                 utc: nextStep,
                 yesterday: nextStep - 60 * 60 * 24 * 1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),
-                wavelength: sin(nextStep, period, amplitude, offset, phase, randomness),
+                wavelength: wavelength(nextStep),
                 cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
 
         self.postMessage({
             id: message.id,
-            data: data
+            data: request.spectra ? {
+                wavelength: data.map((item) => {
+                    return item.wavelength;
+                }),
+                cos: data.map((item) => {
+                    return item.cos;
+                })
+            } : data
         });
     }
 
@@ -131,6 +141,13 @@
     function sin(timestamp, period, amplitude, offset, phase, randomness) {
         return amplitude
             * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
+    }
+
+    function wavelength(timestamp) {
+        // eslint-disable-next-line no-bitwise
+        const value = String(timestamp).substr(5, 10);
+
+        return value;
     }
 
     function sendError(error, message) {
