@@ -29,7 +29,7 @@ import configStore from "./configuration/configStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
-import SpectralAggregateConstants, { SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
+import { SPECTRAL_AGGREGATE_VIEW, SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
 
 describe("the plugin", function () {
     let element;
@@ -343,7 +343,7 @@ describe("the plugin", function () {
             };
 
             const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-spectral-aggregate");
+            let plotView = applicableViews.find((viewProvider) => viewProvider.key === SPECTRAL_AGGREGATE_VIEW);
             expect(plotView).toBeDefined();
         });
     });
@@ -1185,7 +1185,7 @@ describe("the plugin", function () {
     describe("the aggregate spectral plot", () => {
         const mockObject = {
             name: 'An Even Nicer Aggregate Spectral Plot',
-            key: SpectralAggregateConstants.SPECTRAL_AGGREGATE_TELMETRY,
+            key: SPECTRAL_AGGREGATE_KEY,
             creatable: true
         };
 
