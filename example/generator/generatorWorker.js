@@ -54,27 +54,39 @@
         var start = Date.now();
         var step = 1000 / data.dataRateInHz;
         var nextStep = start - (start % step) + step;
+        let work;
+        console.log('dataRate', data);
+        if (data.spectra) {
+            work = function (now) {
+                while (nextStep < now) {
+                    const messageCopy = Object.create(message);
+                    message.data.start = nextStep - (60 * 1000);
+                    message.data.end = nextStep;
+                    onRequest(messageCopy);
+                    nextStep += step;
+                }
 
-        function work(now) {
-            while (nextStep < now) {
-                self.postMessage({
-                    id: message.id,
-                    data: message.spectra ? {
-                        wavelength: [wavelength(nextStep)],
-                        cos: [cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)]
-                    } : {
-                        name: data.name,
-                        utc: nextStep,
-                        yesterday: nextStep - 60 * 60 * 24 * 1000,
-                        sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
-                        wavelength: wavelength(nextStep),
-                        cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
-                    }
-                });
-                nextStep += step;
-            }
+                return nextStep;
+            };
+        } else {
+            work = function (now) {
+                while (nextStep < now) {
+                    self.postMessage({
+                        id: message.id,
+                        data: {
+                            name: data.name,
+                            utc: nextStep,
+                            yesterday: nextStep - 60 * 60 * 24 * 1000,
+                            sin: sin(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness),
+                            wavelength: wavelength(start, nextStep),
+                            cos: cos(nextStep, data.period, data.amplitude, data.offset, data.phase, data.randomness)
+                        }
+                    });
+                    nextStep += step;
+                }
 
-            return nextStep;
+                return nextStep;
+            };
         }
 
         subscriptions[message.id] = work;
@@ -115,7 +127,7 @@
                 utc: nextStep,
                 yesterday: nextStep - 60 * 60 * 24 * 1000,
                 sin: sin(nextStep, period, amplitude, offset, phase, randomness),
-                wavelength: wavelength(nextStep),
+                wavelength: wavelength(start, nextStep),
                 cos: cos(nextStep, period, amplitude, offset, phase, randomness)
             });
         }
@@ -143,11 +155,8 @@
             * Math.sin(phase + (timestamp / period / 1000 * Math.PI * 2)) + (amplitude * Math.random() * randomness) + offset;
     }
 
-    function wavelength(timestamp) {
-        // eslint-disable-next-line no-bitwise
-        const value = String(timestamp).substr(5, 10);
-
-        return value;
+    function wavelength(start, nextStep) {
+        return (nextStep - start) / 10;
     }
 
     function sendError(error, message) {
