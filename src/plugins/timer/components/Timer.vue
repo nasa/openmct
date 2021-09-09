@@ -48,6 +48,7 @@
 
 <script>
 import moment from 'moment';
+import ticker from '../../../utils/clock/Ticker';
 
 export default {
     inject: ['openmct', 'currentView', 'objectPath'],
@@ -179,9 +180,15 @@ export default {
     },
     mounted() {
         window.requestAnimationFrame(this.tick);
+        this.unlisten = ticker.listen(() => {
+            this.openmct.objects.refresh(this.domainObject);
+        });
     },
     destroyed() {
         this.active = false;
+        if (this.unlisten) {
+            this.unlisten();
+        }
     },
     methods: {
         tick() {

@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 define([
-    "./src/services/TickerService",
     "./src/services/TimerService",
     "./src/controllers/TimerController",
     "./src/controllers/RefreshingController",
@@ -31,7 +30,6 @@ define([
     "./src/actions/PauseTimerAction",
     "./res/templates/timer.html"
 ], function (
-    TickerService,
     TimerService,
     TimerController,
     RefreshingController,
@@ -66,14 +64,6 @@ define([
                     }
                 ],
                 "services": [
-                    {
-                        "key": "tickerService",
-                        "implementation": TickerService,
-                        "depends": [
-                            "$timeout",
-                            "now"
-                        ]
-                    },
                     {
                         "key": "timerService",
                         "implementation": TimerService,
