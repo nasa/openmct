@@ -140,7 +140,8 @@ define([
                     unit: "Hz",
                     formatString: '%0.2f',
                     hints: {
-                        domain: 2
+                        domain: 2,
+                        spectralAttribute: true
                     }
                 },
                 {
@@ -149,7 +150,8 @@ define([
                     unit: "deg",
                     formatString: '%0.2f',
                     hints: {
-                        range: 2
+                        range: 2,
+                        spectralAttribute: true
                     }
                 }
             ]

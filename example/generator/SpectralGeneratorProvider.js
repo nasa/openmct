@@ -88,12 +88,14 @@ define([
         var workerRequest = this.makeWorkerRequest(domainObject, request);
         workerRequest.start = request.start;
         workerRequest.end = request.end;
+        workerRequest.spectra = true;
 
         return this.workerInterface.request(workerRequest);
     };
 
     SpectralGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
         var workerRequest = this.makeWorkerRequest(domainObject, {});
+        workerRequest.spectra = true;
 
         return this.workerInterface.subscribe(workerRequest, callback);
     };
