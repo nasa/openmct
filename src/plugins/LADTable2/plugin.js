@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import LADTableViewProvider from './LADTableViewProvider';
+import LADTableSetViewProvider from './LADTableSetViewProvider';
 import ladTableCompositionPolicy from './ladTableCompositionPolicy.js';
 
 export default function () {
@@ -51,6 +52,7 @@ export default function () {
 
         // openmct.telemetry.addProvider(new LADTableProvider(openmct));
         openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
+        openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
         // TelemetryTableViewActions.forEach(action => {
         //     openmct.actions.register(action);
         // });

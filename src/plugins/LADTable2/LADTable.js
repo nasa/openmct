@@ -31,7 +31,7 @@ export default class LADTable extends TelemetryTable {
     }
     initialize() {
         this.tableRows.addRows = this.addRows;
-        if (this.domainObject.type === 'new.ladTable') {
+        if (this.domainObject.type === 'new.ladTable' || this.domainObject.type === 'new.LadTableSet') {
             // this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
             // this.filters = this.domainObject.configuration.filters;
             this.loadComposition();
@@ -87,6 +87,7 @@ export default class LADTable extends TelemetryTable {
         if (isFilterTriggeredReset) {
             this.rows = [];
         }
+
         // remove old rows of the object before adding
         // there's only 1 row so keystring will be the same
         const keyString = rows[0].objectKeyString;
@@ -109,6 +110,7 @@ export default class LADTable extends TelemetryTable {
             if (!this.telemetryObjects[keyString]) {
                 return;
             }
+
             // only add the latest telemetry
             let latest = telemetry[telemetry.length - 1];
             let telemetryRow = [new TelemetryTableRow(latest, columnMap, keyString, limitEvaluator)];

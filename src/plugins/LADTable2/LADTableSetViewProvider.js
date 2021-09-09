@@ -1,4 +1,3 @@
-
 /*****************************************************************************
  * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
@@ -21,17 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-<template>
-    <div>table set</div>
-</template>
+import LadTableSetView from './LadTableSetView';
 
-<script>
-
-export default ({
-    data() {
-        return {
-
-        };
-    }
-});
-</script>
+export default function LADTableSetViewProvider(openmct) {
+    return {
+        key: 'new.LadTableSet',
+        name: 'LAD Table Set',
+        cssClass: 'icon-tabular-lad-set',
+        canView: function (domainObject) {
+            return domainObject.type === 'new.LadTableSet';
+        },
+        canEdit: function (domainObject) {
+            return domainObject.type === 'new.LadTableSet';
+        },
+        view: function (domainObject, objectPath) {
+            return new LadTableSetView(openmct, domainObject, objectPath);
+        },
+        priority: function () {
+            return 1;
+        }
+    };
+}
