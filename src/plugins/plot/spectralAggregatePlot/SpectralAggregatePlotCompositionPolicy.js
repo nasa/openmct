@@ -1,3 +1,5 @@
+import { SPECTRAL_AGGREGATE_KEY } from './SpectralAggregateConstants';
+
 export default function SpectralAggregatePlotCompositionPolicy(openmct) {
     function hasAggregateDomainAndRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
@@ -21,7 +23,7 @@ export default function SpectralAggregatePlotCompositionPolicy(openmct) {
 
     return {
         allow: function (parent, child) {
-            if ((parent.type === 'telemetry.plot.spectral.aggregate')
+            if ((parent.type === SPECTRAL_AGGREGATE_KEY)
                 && ((child.type !== 'telemetry.plot.overlay') && (hasSpectralAggregateTelemetry(child) === false))
             ) {
                 return false;

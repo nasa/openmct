@@ -29,6 +29,7 @@ import configStore from "./configuration/configStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
+import SpectralAggregateConstants, { SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
 
 describe("the plugin", function () {
     let element;
@@ -333,7 +334,7 @@ describe("the plugin", function () {
         it("provides a spectral aggregate plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
-                type: "telemetry.plot.spectral.aggregate",
+                type: SPECTRAL_AGGREGATE_KEY,
                 telemetry: {
                     values: [{
                         key: "lots-of-aggregate-telemetry"
@@ -1184,17 +1185,17 @@ describe("the plugin", function () {
     describe("the aggregate spectral plot", () => {
         const mockObject = {
             name: 'An Even Nicer Aggregate Spectral Plot',
-            key: 'telemetry.plot.spectral-aggregate',
+            key: SpectralAggregateConstants.SPECTRAL_AGGREGATE_TELMETRY,
             creatable: true
         };
 
         it('defines a spectral plot object type with the correct key', () => {
-            const objectDef = openmct.types.get('telemetry.plot.spectral-aggregate').definition;
+            const objectDef = openmct.types.get(SPECTRAL_AGGREGATE_KEY).definition;
             expect(objectDef.key).toEqual(mockObject.key);
         });
 
         it('is creatable', () => {
-            const objectDef = openmct.types.get('telemetry.plot.spectral-aggregate').definition;
+            const objectDef = openmct.types.get(SPECTRAL_AGGREGATE_KEY).definition;
             expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
     });

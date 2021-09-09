@@ -95,7 +95,7 @@ ColorPalette.prototype.getNextColor = function () {
  * @returns {Color}
  */
 ColorPalette.prototype.getColor = function (index) {
-    return this.colors[index % this.colors.length];
+    return this.availableColors[index % this.availableColors.length];
 };
 
 export default ColorPalette;
