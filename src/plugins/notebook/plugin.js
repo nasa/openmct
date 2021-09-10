@@ -117,6 +117,10 @@ export default function NotebookPlugin() {
             key: 'notebook-snapshot-indicator'
         };
 
+        openmct.once('destroy', () => {
+            snapshotContainer.destroy();
+        });
+
         openmct.indicators.add(indicator);
 
         openmct.objectViews.addProvider({

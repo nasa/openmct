@@ -80,4 +80,8 @@ export default class SnapshotContainer extends EventEmitter {
 
         return this.saveSnapshots(updatedSnapshots);
     }
+
+    destroy() {
+        delete SnapshotContainer.instance;
+    }
 }
