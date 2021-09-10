@@ -49,6 +49,10 @@ class ApplicationRouter extends EventEmitter {
         this.routes = [];
         this.started = false;
 
+        openmct.once('destroy', () => {
+            this.destroy();
+        });
+
         this.setHash = _.debounce(this.setHash.bind(this), 300);
     }
 
