@@ -122,6 +122,8 @@ define([
             }
         };
 
+        this.destroy = this.destroy.bind(this);
+
         /**
          * Tracks current selection state of the application.
          * @private
@@ -286,6 +288,7 @@ define([
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
+        this.install(this.plugins.DeviceClassifier());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -439,6 +442,8 @@ define([
                     Browse(this);
                 }
 
+                window.addEventListener('beforeunload', this.destroy);
+
                 this.router.start();
                 this.emit('start');
             }.bind(this));
@@ -462,6 +467,12 @@ define([
     };
 
     MCT.prototype.destroy = function () {
+        if (this._destroyed === true) {
+            return;
+        }
+
+        window.removeEventListener('beforeunload', this.destroy);
+
         this.emit('destroy');
         this.removeAllListeners();
 
@@ -488,6 +499,8 @@ define([
         window.openmct = null;
 
         Object.keys(require.cache).forEach(key => delete require.cache[key]);
+
+        this._destroyed = true;
     };
 
     MCT.prototype.plugins = plugins;
