@@ -35,7 +35,6 @@ export default class StatusAPI extends EventEmitter {
 
         openmct.once('destroy', () => {
             this.removeAllListeners();
-            //console.log("Destroyed Status API");
         });
     }
 
