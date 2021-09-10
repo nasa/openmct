@@ -20,6 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+function inSelectionPath(openmct, domainObject) {
+    const domainObjectIdentifier = domainObject.identifier;
+
+    return openmct.selection.get().some(selectionPath => {
+        return selectionPath.some(objectInPath => {
+            const objectInPathIdentifier = objectInPath.context.item.identifier;
+
+            return openmct.objects.areIdsEqual(objectInPathIdentifier, domainObjectIdentifier);
+        });
+    });
+}
+
 export default class ClearDataAction {
     constructor(openmct, appliesToObjects) {
         this.name = 'Clear Data for Object';
@@ -31,11 +43,36 @@ export default class ClearDataAction {
         this._appliesToObjects = appliesToObjects;
     }
     invoke(objectPath) {
-        this._openmct.objectViews.emit('clearData', objectPath[0]);
+        let domainObject = null;
+        if (objectPath) {
+            domainObject = objectPath[0];
+        }
+
+        this._openmct.objectViews.emit('clearData', domainObject);
     }
     appliesTo(objectPath) {
-        let contextualDomainObject = objectPath[0];
+        if (!objectPath) {
+            return false;
+        }
 
-        return this._appliesToObjects.filter(type => contextualDomainObject.type === type).length;
+        const contextualDomainObject = objectPath[0];
+        // first check to see if this action applies to this sort of object at all
+        const appliesToThisObject = this._appliesToObjects.some(type => {
+            return contextualDomainObject.type === type;
+        });
+        if (!appliesToThisObject) {
+            // we've selected something not applicable
+            return false;
+        }
+
+        const objectInSelectionPath = inSelectionPath(this._openmct, contextualDomainObject);
+        if (objectInSelectionPath) {
+            return true;
+        } else {
+            // if this it doesn't match up, check to see if we're in a composition (i.e., layout)
+            const routerPath = this._openmct.router.path[0];
+
+            return routerPath.type === 'layout';
+        }
     }
 }

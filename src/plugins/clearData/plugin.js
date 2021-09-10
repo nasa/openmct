@@ -22,7 +22,7 @@
 
 define([
     './components/globalClearIndicator.vue',
-    './clearDataAction',
+    './ClearDataAction',
     'vue'
 ], function (
     GlobaClearIndicator,
