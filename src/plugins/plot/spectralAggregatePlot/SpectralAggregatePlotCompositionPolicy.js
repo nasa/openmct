@@ -23,8 +23,8 @@
 import { SPECTRAL_AGGREGATE_KEY } from './SpectralAggregateConstants';
 export default function SpectralAggregatePlotCompositionPolicy(openmct) {
     function hasAggregateDomainAndRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['spectralAttribute']);
-        const domainValues = metadata.valuesForHints(['spectralAttribute']);
+        const rangeValues = metadata.valuesForHints(['domain']);
+        const domainValues = metadata.valuesForHints(['range']);
 
         return rangeValues.length > 0
         || domainValues.length > 0;
@@ -40,10 +40,14 @@ export default function SpectralAggregatePlotCompositionPolicy(openmct) {
         return metadata.values().length > 0 && hasAggregateDomainAndRange(metadata);
     }
 
+    function hasNoChildren(parentObject) {
+        return parentObject.composition && parentObject.composition.length < 1;
+    }
+
     return {
         allow: function (parent, child) {
             if ((parent.type === SPECTRAL_AGGREGATE_KEY)
-                && ((child.type !== 'telemetry.plot.overlay') && (hasSpectralAggregateTelemetry(child) === false))
+                && ((child.type !== 'telemetry.plot.overlay') && (hasSpectralAggregateTelemetry(child) === false) || (hasNoChildren(parent) === false))
             ) {
                 return false;
             }
