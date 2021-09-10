@@ -28,6 +28,11 @@ export default class Editor extends EventEmitter {
         super();
         this.editing = false;
         this.openmct = openmct;
+
+        openmct.once('destroy', () => {
+            this.removeAllListeners();
+            //console.log("Editor destroy called");
+        });
     }
 
     /**

@@ -32,6 +32,10 @@ define([
     // cannot be injected.
     function AlternateCompositionInitializer(openmct) {
         AlternateCompositionCapability.appliesTo = function (model, id) {
+            openmct.once('destroy', () => {
+                delete AlternateCompositionCapability.appliesTo;
+            });
+
             model = objectUtils.toNewFormat(model, id || '');
 
             return Boolean(openmct.composition.get(model));

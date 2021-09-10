@@ -17,11 +17,7 @@ class OverlayAPI {
 
         this.dismissLastOverlay = this.dismissLastOverlay.bind(this);
 
-        document.addEventListener('keyup', (event) => {
-            if (event.key === 'Escape') {
-                this.dismissLastOverlay();
-            }
-        });
+        document.addEventListener('keyup', this.dismissLastOverlay);
 
     }
 
@@ -49,10 +45,12 @@ class OverlayAPI {
     /**
      * private
      */
-    dismissLastOverlay() {
-        let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
-        if (lastOverlay && lastOverlay.dismissable) {
-            lastOverlay.dismiss();
+    dismissLastOverlay(event) {
+        if (event.key === 'Escape') {
+            let lastOverlay = this.activeOverlays[this.activeOverlays.length - 1];
+            if (lastOverlay && lastOverlay.dismissable) {
+                lastOverlay.dismiss();
+            }
         }
     }
 
@@ -60,7 +58,7 @@ class OverlayAPI {
      * A description of option properties that can be passed into the overlay
      * @typedef options
         * @property {object} element DOMElement that is to be inserted/shown on the overlay
-        * @property {string} size preferred size of the overlay (large, small, fit)
+        * @property {string} size prefered size of the overlay (large, small, fit)
         * @property {array} buttons optional button objects with label and callback properties
         * @property {function} onDestroy callback to be called when overlay is destroyed
         * @property {boolean} dismissable allow user to dismiss overlay by using esc, and clicking away
@@ -127,6 +125,10 @@ class OverlayAPI {
         this.showOverlay(progressDialog);
 
         return progressDialog;
+    }
+
+    destroy() {
+        document.removeEventListener('keyup', this.dismissLastOverlay);
     }
 
 }

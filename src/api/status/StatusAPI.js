@@ -32,6 +32,11 @@ export default class StatusAPI extends EventEmitter {
         this.get = this.get.bind(this);
         this.set = this.set.bind(this);
         this.observe = this.observe.bind(this);
+
+        openmct.once('destroy', () => {
+            this.removeAllListeners();
+            //console.log("Destroyed Status API");
+        });
     }
 
     get(identifier) {

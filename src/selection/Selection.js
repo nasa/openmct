@@ -38,6 +38,11 @@ define(
 
             this.openmct = openmct;
             this.selected = [];
+
+            this.openmct.once('destroy', () => {
+                //console.log("Selection Destroy called");
+                this.removeAllListeners();
+            });
         }
 
         Selection.prototype = Object.create(EventEmitter.prototype);
