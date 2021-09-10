@@ -22,95 +22,109 @@
 import * as NotebookEntries from './notebook-entries';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-const notebookStorage = {
-    name: 'notebook',
-    identifier: {
-        namespace: '',
-        key: 'test-notebook'
-    },
-    defaultSectionId: '03a79b6a-971c-4e56-9892-ec536332c3f0',
-    defaultPageId: '8b548fd9-2b8a-4b02-93a9-4138e22eba00'
-};
-
-const notebookEntries = {
-    '03a79b6a-971c-4e56-9892-ec536332c3f0': {
-        '8b548fd9-2b8a-4b02-93a9-4138e22eba00': []
-    }
-};
-
-const notebookDomainObject = {
-    identifier: {
-        key: 'notebook',
-        namespace: ''
-    },
-    type: 'notebook',
-    configuration: {
-        defaultSort: 'oldest',
-        entries: notebookEntries,
-        pageTitle: 'Page',
-        sections: [],
-        sectionTitle: 'Section',
-        type: 'General'
-    }
-};
-
-const selectedSection = {
-    id: '03a79b6a-971c-4e56-9892-ec536332c3f0',
-    isDefault: false,
-    isSelected: true,
-    name: 'Day 1',
-    pages: [
-        {
-            id: '54deb3d5-8267-4be4-95e9-3579ed8c082d',
-            isDefault: false,
-            isSelected: false,
-            name: 'Shift 1',
-            pageTitle: 'Page'
-        },
-        {
-            id: '2ea41c78-8e60-4657-a350-53f1a1fa3021',
-            isDefault: false,
-            isSelected: false,
-            name: 'Shift 2',
-            pageTitle: 'Page'
-        },
-        {
-            id: '8b548fd9-2b8a-4b02-93a9-4138e22eba00',
-            isDefault: false,
-            isSelected: true,
-            name: 'Unnamed Page',
-            pageTitle: 'Page'
-        }
-    ],
-    sectionTitle: 'Section'
-};
-
-const selectedPage = {
-    id: '8b548fd9-2b8a-4b02-93a9-4138e22eba00',
-    isDefault: false,
-    isSelected: true,
-    name: 'Unnamed Page',
-    pageTitle: 'Page'
-};
+let notebookStorage;
+let notebookEntries;
+let notebookDomainObject;
+let selectedSection;
+let selectedPage;
 
 let openmct;
 let mockIdentifierService;
 
 describe('Notebook Entries:', () => {
     beforeEach(() => {
+        notebookStorage = {
+            name: 'notebook',
+            identifier: {
+                namespace: '',
+                key: 'test-notebook'
+            },
+            defaultSectionId: '03a79b6a-971c-4e56-9892-ec536332c3f0',
+            defaultPageId: '8b548fd9-2b8a-4b02-93a9-4138e22eba00'
+        };
+
+        notebookEntries = {
+            '03a79b6a-971c-4e56-9892-ec536332c3f0': {
+                '8b548fd9-2b8a-4b02-93a9-4138e22eba00': []
+            }
+        };
+
+        notebookDomainObject = {
+            identifier: {
+                key: 'notebook',
+                namespace: ''
+            },
+            type: 'notebook',
+            configuration: {
+                defaultSort: 'oldest',
+                entries: notebookEntries,
+                pageTitle: 'Page',
+                sections: [],
+                sectionTitle: 'Section',
+                type: 'General'
+            }
+        };
+
+        selectedSection = {
+            id: '03a79b6a-971c-4e56-9892-ec536332c3f0',
+            isDefault: false,
+            isSelected: true,
+            name: 'Day 1',
+            pages: [
+                {
+                    id: '54deb3d5-8267-4be4-95e9-3579ed8c082d',
+                    isDefault: false,
+                    isSelected: false,
+                    name: 'Shift 1',
+                    pageTitle: 'Page'
+                },
+                {
+                    id: '2ea41c78-8e60-4657-a350-53f1a1fa3021',
+                    isDefault: false,
+                    isSelected: false,
+                    name: 'Shift 2',
+                    pageTitle: 'Page'
+                },
+                {
+                    id: '8b548fd9-2b8a-4b02-93a9-4138e22eba00',
+                    isDefault: false,
+                    isSelected: true,
+                    name: 'Unnamed Page',
+                    pageTitle: 'Page'
+                }
+            ],
+            sectionTitle: 'Section'
+        };
+
+        selectedPage = {
+            id: '8b548fd9-2b8a-4b02-93a9-4138e22eba00',
+            isDefault: false,
+            isSelected: true,
+            name: 'Unnamed Page',
+            pageTitle: 'Page'
+        };
+
         openmct = createOpenMct();
         openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
         mockIdentifierService = jasmine.createSpyObj(
             'identifierService',
             ['parse']
         );
+        openmct.$injector.get.and.callFake((key) => {
+            return {
+                'identifierService': mockIdentifierService,
+                '$rootScope': {
+                    '$destroy': () => {}
+                }
+            }[key];
+        });
+
         mockIdentifierService.parse.and.returnValue({
             getSpace: () => {
                 return '';
             }
         });
 
-        openmct.$injector.get.and.returnValue(mockIdentifierService);
         openmct.types.addType('notebook', {
             creatable: true
         });

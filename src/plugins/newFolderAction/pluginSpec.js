@@ -75,7 +75,16 @@ describe("the plugin", () => {
 
             mockDialogService.getUserInput.and.returnValue(mockPromise);
 
-            spyOn(openmct.$injector, 'get').and.returnValue(mockDialogService);
+            spyOn(openmct.$injector, 'get');
+            openmct.$injector.get.and.callFake((key) => {
+                return {
+                    'dialogService': mockDialogService,
+                    '$rootScope': {
+                        '$destroy': () => {}
+                    }
+                }[key];
+            });
+
             spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
             spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 

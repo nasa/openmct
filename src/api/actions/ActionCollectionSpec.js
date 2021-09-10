@@ -44,7 +44,15 @@ describe('The ActionCollection', () => {
             }
         });
 
-        openmct.$injector.get.and.returnValue(mockIdentifierService);
+        openmct.$injector.get.and.callFake((key) => {
+            return {
+                'identifierService': mockIdentifierService,
+                '$rootScope': {
+                    '$destroy': () => {}
+                }
+            }[key];
+        });
+
         mockObjectPath = [
             {
                 name: 'mock folder',

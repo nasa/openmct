@@ -23,51 +23,55 @@
 import * as NotebookStorage from './notebook-storage';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
-const notebookSection = {
-    id: 'temp-section',
-    isDefault: false,
-    isSelected: true,
-    name: 'section',
-    pages: [
-        {
-            id: 'temp-page',
-            isDefault: false,
-            isSelected: true,
-            name: 'page',
-            pageTitle: 'Page'
-        }
-    ],
-    sectionTitle: 'Section'
-};
-
-const domainObject = {
-    name: 'notebook',
-    identifier: {
-        namespace: '',
-        key: 'test-notebook'
-    },
-    configuration: {
-        sections: [
-            notebookSection
-        ]
-    }
-};
-
-const notebookStorage = {
-    name: 'notebook',
-    identifier: {
-        namespace: '',
-        key: 'test-notebook'
-    },
-    defaultSectionId: 'temp-section',
-    defaultPageId: 'temp-page'
-};
+let notebookSection;
+let domainObject;
+let notebookStorage;
 
 let openmct;
 let mockIdentifierService;
 
 describe('Notebook Storage:', () => {
     beforeEach(() => {
+        notebookSection = {
+            id: 'temp-section',
+            isDefault: false,
+            isSelected: true,
+            name: 'section',
+            pages: [
+                {
+                    id: 'temp-page',
+                    isDefault: false,
+                    isSelected: true,
+                    name: 'page',
+                    pageTitle: 'Page'
+                }
+            ],
+            sectionTitle: 'Section'
+        };
+
+        domainObject = {
+            name: 'notebook',
+            identifier: {
+                namespace: '',
+                key: 'test-notebook'
+            },
+            configuration: {
+                sections: [
+                    notebookSection
+                ]
+            }
+        };
+
+        notebookStorage = {
+            name: 'notebook',
+            identifier: {
+                namespace: '',
+                key: 'test-notebook'
+            },
+            defaultSectionId: 'temp-section',
+            defaultPageId: 'temp-page'
+        };
+
         openmct = createOpenMct();
         openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
         mockIdentifierService = jasmine.createSpyObj(
@@ -80,7 +84,15 @@ describe('Notebook Storage:', () => {
             }
         });
 
-        openmct.$injector.get.and.returnValue(mockIdentifierService);
+        openmct.$injector.get.and.callFake((key) => {
+            return {
+                'identifierService': mockIdentifierService,
+                '$rootScope': {
+                    '$destroy': () => {}
+                }
+            }[key];
+        });
+
         window.localStorage.setItem('notebook-storage', null);
         openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
             'create',
