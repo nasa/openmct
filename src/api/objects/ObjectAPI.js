@@ -437,7 +437,7 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
         this.destroyMutable(mutableDomainObject);
     }
 
-    if (this.openmct.editor.isEditing()) {
+    if (this.transactionManager && this.openmct.editor.isEditing()) {
         this.transactionManager.addTransaction(domainObject);
     } else {
         this.save(domainObject);
