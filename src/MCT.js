@@ -31,7 +31,6 @@ define([
     'objectUtils',
     './plugins/plugins',
     './adapter/indicators/legacy-indicators-plugin',
-    './plugins/buildInfo/plugin',
     './ui/registries/ViewRegistry',
     './plugins/imagery/plugin',
     './ui/registries/InspectorViewRegistry',
@@ -40,6 +39,7 @@ define([
     './ui/router/Browse',
     '../platform/framework/src/Main',
     './ui/layout/Layout.vue',
+    './ui/inspector/styles/StylesManager',
     '../platform/core/src/objects/DomainObjectImpl',
     '../platform/core/src/capabilities/ContextualDomainObject',
     './ui/preview/plugin',
@@ -60,7 +60,6 @@ define([
     objectUtils,
     plugins,
     LegacyIndicatorsPlugin,
-    buildInfoPlugin,
     ViewRegistry,
     ImageryPlugin,
     InspectorViewRegistry,
@@ -69,6 +68,7 @@ define([
     Browse,
     Main,
     Layout,
+    stylesManager,
     DomainObjectImpl,
     ContextualDomainObject,
     PreviewPlugin,
@@ -122,7 +122,6 @@ define([
             }
         };
 
-        this.destroy = this.destroy.bind(this);
         /**
          * Tracks current selection state of the application.
          * @private
@@ -287,7 +286,6 @@ define([
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
-        this.install(this.plugins.DeviceClassifier());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -376,6 +374,7 @@ define([
      *        MCT; if undefined, MCT will be run in the body of the document
      */
     MCT.prototype.start = function (domElement = document.body, isHeadlessMode = false) {
+
         if (this.types.get('layout') === undefined) {
             this.install(this.plugins.DisplayLayout({
                 showAsView: ['summary-widget']
@@ -434,10 +433,11 @@ define([
                     domElement.appendChild(appLayout.$mount().$el);
 
                     this.layout = appLayout.$refs.layout;
+                    this.once('destroy', () => {
+                        this.layout.$destroy();
+                    });
                     Browse(this);
                 }
-
-                window.addEventListener('beforeunload', this.destroy);
 
                 this.router.start();
                 this.emit('start');
@@ -462,9 +462,32 @@ define([
     };
 
     MCT.prototype.destroy = function () {
-        window.removeEventListener('beforeunload', this.destroy);
         this.emit('destroy');
-        this.router.destroy();
+        this.removeAllListeners();
+
+        if (this.$injector) {
+            this.$injector.get('$rootScope').$destroy();
+            this.$injector = null;
+        }
+
+        if (this.$angular) {
+            this.$angular.element(this.element).off().removeData();
+            this.$angular.element(this.element).empty();
+            this.$angular = null;
+        }
+
+        this.overlays.destroy();
+
+        if (this.element) {
+            this.element.remove();
+        }
+
+        stylesManager.default.removeAllListeners();
+
+        window.angular = null;
+        window.openmct = null;
+
+        Object.keys(require.cache).forEach(key => delete require.cache[key]);
     };
 
     MCT.prototype.plugins = plugins;
