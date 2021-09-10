@@ -4,10 +4,8 @@
 }
 
 @mixin progressAnim($c1, $c2, $size) {
-    $edge: 20%;
-    background-image: linear-gradient(-90deg,
-            $c1 0%, $c2 $edge,
-            $c2 $edge, $c1 100%
+    background-image: linear-gradient(90deg,
+            $c1 0%, $c2 100%
     );
     background-position: 0 center;
     background-repeat: repeat-x;
@@ -31,7 +29,8 @@
     }
 
     &__bar {
-        @include progressAnim($colorProgressBar, lighten($colorProgressBar, 10%), $progressAnimW);
+        //background: rgba(black, 0.2);
+        @include progressAnim(transparent, $colorProgressBar, 80%);
         animation: progress 1000ms linear infinite;
         min-height: $progressBarMinH;
         height: 100%;

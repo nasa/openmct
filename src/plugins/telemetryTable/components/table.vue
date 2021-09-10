@@ -138,6 +138,13 @@
             class="c-telemetry-table__drop-target"
             :style="dropTargetStyle"
         ></div>
+
+        <div v-if="true"
+             class="c-telemetry-table__progress-bar c-progress-bar"
+        >
+            <div class="c-progress-bar__bar"></div>
+        </div>
+
         <!-- Headers table -->
         <div
             v-show="!hideHeaders"
