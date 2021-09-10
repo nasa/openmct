@@ -25,12 +25,14 @@ define([
     "./SinewaveLimitProvider",
     "./StateGeneratorProvider",
     "./SpectralGeneratorProvider",
+    "./SpectralAggregateGeneratorProvider",
     "./GeneratorMetadataProvider"
 ], function (
     GeneratorProvider,
     SinewaveLimitProvider,
     StateGeneratorProvider,
     SpectralGeneratorProvider,
+    SpectralAggregateGeneratorProvider,
     GeneratorMetadataProvider
 ) {
 
@@ -82,6 +84,17 @@ define([
             }
         });
         openmct.telemetry.addProvider(new SpectralGeneratorProvider());
+
+        openmct.types.addType("example.spectral-aggregate-generator", {
+            name: "Spectral Aggregate Generator",
+            description: "For development use. Generates example streaming telemetry data using a simple state algorithm.",
+            cssClass: "icon-generator-telemetry",
+            creatable: true,
+            initialize: function (object) {
+                object.telemetry = {};
+            }
+        });
+        openmct.telemetry.addProvider(new SpectralAggregateGeneratorProvider());
 
         openmct.types.addType("generator", {
             name: "Sine Wave Generator",

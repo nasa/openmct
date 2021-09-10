@@ -155,6 +155,63 @@ define([
                     }
                 }
             ]
+        },
+        'example.spectral-aggregate-generator': {
+            values: [
+                {
+                    key: "name",
+                    name: "Name",
+                    format: "string"
+                },
+                {
+                    key: "utc",
+                    name: "Time",
+                    format: "utc",
+                    hints: {
+                        domain: 1
+                    }
+                },
+                {
+                    key: "ch1",
+                    name: "Channel 1",
+                    format: "string",
+                    hints: {
+                        range: 1
+                    }
+                },
+                {
+                    key: "ch2",
+                    name: "Channel 2",
+                    format: "string",
+                    hints: {
+                        range: 2
+                    }
+                },
+                {
+                    key: "ch3",
+                    name: "Channel 3",
+                    format: "string",
+                    hints: {
+                        range: 3
+                    }
+                },
+                {
+                    key: "ch4",
+                    name: "Channel 4",
+                    format: "string",
+                    hints: {
+                        range: 4
+                    }
+                },
+                {
+                    key: "ch5",
+                    name: "Channel 5",
+                    format: "string",
+                    hints: {
+                        range: 5
+                    }
+                }
+            ]
         }
     };
 
