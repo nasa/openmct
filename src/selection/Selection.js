@@ -40,7 +40,6 @@ define(
             this.selected = [];
 
             this.openmct.once('destroy', () => {
-                //console.log("Selection Destroy called");
                 this.removeAllListeners();
             });
         }
