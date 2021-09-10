@@ -39,25 +39,14 @@ const MULTI_AXES_X_PADDING_PERCENT = {
 export default {
     inject: ['openmct', 'domainObject'],
     props: [
-        'averageExpanded',
         'data',
         'legendExpanded',
-        'plotAxisTitle',
-        'spectralAggregateConfiguration',
-        'referenceExpanded'
+        'plotAxisTitle'
     ],
     data() {
         return {
             isZoomed: false,
             primaryYAxisRange: {
-                min: '',
-                max: ''
-            },
-            secondaryYAxisRange: {
-                min: '',
-                max: ''
-            },
-            tertiaryYAxisRange: {
                 min: '',
                 max: ''
             },
@@ -68,10 +57,6 @@ export default {
         };
     },
     watch: {
-        averageExpanded: {
-            immediate: false,
-            handler: 'updatePlot'
-        },
         data: {
             immediate: false,
             handler: 'updateData'
@@ -79,24 +64,14 @@ export default {
         legendExpanded: {
             immediate: false,
             handler: 'updatePlot'
-        },
-        referenceExpanded: {
-            immediate: false,
-            handler: 'updatePlot'
         }
     },
     mounted() {
-        if (this.spectralAggregateConfiguration) {
-            this.spectralAggregateConfiguration.on('change', this.updateConfiguration.bind(this));
-        }
-
         Plotly.newPlot(this.$refs.plot, Array.from(this.data), this.getLayout(), {
             responsive: true,
             displayModeBar: false
         });
         this.registerListeners();
-
-        this.updateConfiguration(this.domainObject.configuration);
     },
     beforeDestroy() {
         this.$refs.plot.removeAllListeners();
@@ -124,15 +99,13 @@ export default {
             return (Math.abs(max - min) * PLOT_PADDING_IN_PERCENT / 100) || 0;
         },
         getLayout() {
-            const yAxesMeta = this.getMultiYAxisMeta();
+            const yAxesMeta = this.getYAxisMeta();
             const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
-            const secondaryYaxis = this.getYaxisLayout(yAxesMeta['2']);
-            const tertiaryYaxis = this.getYaxisLayout(yAxesMeta['3']);
             const xAxisDomain = this.getXAxisDomain(yAxesMeta);
 
             return {
-                hovermode: 'compare',
-                hoverdistance: -1,
+                // hovermode: 'closest',
+                // hoverdistance: -1,
                 autosize: true,
                 showlegend: false,
                 font: {
@@ -142,14 +115,12 @@ export default {
                 },
                 xaxis: {
                     domain: xAxisDomain,
-                    hoverformat: '.2r',
+                    // hoverformat: '.2r',
                     range: [this.xAxisRange.min, this.xAxisRange.max],
-                    title: this.plotAxisTitle.xAxisTitle,
-                    zeroline: false
+                    title: this.plotAxisTitle.xAxisTitle
+                    // zeroline: false
                 },
                 yaxis: primaryYaxis,
-                yaxis2: secondaryYaxis,
-                yaxis3: tertiaryYaxis,
                 margin: {
                     l: 40,
                     r: 10,
@@ -160,22 +131,17 @@ export default {
                 plot_bgcolor: 'transparent'
             };
         },
-        getMultiYAxisMeta() {
+        getYAxisMeta() {
             const yAxisMeta = {};
-            const onlyPrimary = this.data.length === 1;
 
             this.data.forEach(d => {
                 const yAxisMetadata = d.yAxisMetadata;
-                const range = onlyPrimary
-                    ? '1'
-                    : yAxisMetadata.hints.range.toString();
-                const side = onlyPrimary
-                    ? 'left'
-                    : yAxisMetadata.hints.side;
-                const name = yAxisMetadata.name;
+                const range = '1';
+                const side = 'left';
+                const name = '';
                 const unit = yAxisMetadata.units;
 
-                yAxisMeta[range] = yAxisMeta[range] || {
+                yAxisMeta[range] = {
                     range,
                     side,
                     name,
@@ -208,10 +174,10 @@ export default {
             const { name, range, side = 'left', unit } = yAxisMeta;
             const title = `${name} ${unit ? '(' + unit + ')' : ''}`;
             const yaxis = {
-                hoverformat: '.2r',
-                showgrid: true,
-                title,
-                zeroline: false
+                // hoverformat: '.2r',
+                // showgrid: true,
+                title
+                // zeroline: false
             };
 
             let yAxistype = this.primaryYAxisRange;
@@ -219,14 +185,6 @@ export default {
                 yaxis.range = [yAxistype.min, yAxistype.max];
 
                 return yaxis;
-            }
-
-            if (range === '2') {
-                yAxistype = this.secondaryYAxisRange;
-            }
-
-            if (range === '3') {
-                yAxistype = this.tertiaryYAxisRange;
             }
 
             yaxis.range = [yAxistype.min, yAxistype.max];
@@ -240,20 +198,18 @@ export default {
 
             return yaxis;
         },
-        // eslint-disable-next-line default-param-last
-        handleHover(isHovered = false, data) {
-            return hoverData => {
+        handleHover(isHovered, itemValues) {
+            return () => {
                 this.updateLocalControlPosition(isHovered);
 
                 const eventName = isHovered ? HOVER_VALUES_CHANGED : HOVER_VALUES_CLEARED;
-                this.$emit(eventName, { hoverData });
+                this.$emit(eventName, { itemValues });
             };
         },
         registerListeners() {
-            this.$refs.plot.on('plotly_hover', this.handleHover(true).bind(this));
-            this.$refs.plot.on('plotly_unhover', this.handleHover(false).bind(this));
+            this.$refs.plot.on('plotly_hover', this.handleHover.bind(this, true));
+            this.$refs.plot.on('plotly_unhover', this.handleHover.bind(this, false));
             this.$refs.plot.on('plotly_relayout', this.zoom);
-
             this.resizeTimer = false;
             if (window.ResizeObserver) {
                 this.plotResizeObserver = new ResizeObserver(() => {
@@ -266,39 +222,11 @@ export default {
                 this.plotResizeObserver.observe(this.$refs.plotWrapper);
             }
         },
-        addSeries(series, index) {
-            console.debug('Series was added 🐹');
-            console.dir(series);
-            console.dir(index);
-        },
         reset() {
             this.updatePlot();
 
             this.isZoomed = false;
             this.$emit(SUBSCRIBE);
-        },
-        updateConfiguration(configuration) {
-            if (!configuration || !configuration.xAxis || this.$refs.plot === undefined) {
-                return;
-            }
-
-            const xAxisRange = this.getAxisMinMax(configuration.xAxis);
-            this.xAxisRange.min = xAxisRange.min;
-            this.xAxisRange.max = xAxisRange.max;
-
-            const primaryYAxisRange = this.getAxisMinMax(configuration.primaryYAxis);
-            this.primaryYAxisRange.min = primaryYAxisRange.min;
-            this.primaryYAxisRange.max = primaryYAxisRange.max;
-
-            const secondaryYAxisRange = this.getAxisMinMax(configuration.secondaryYAxis);
-            this.secondaryYAxisRange.min = secondaryYAxisRange.min;
-            this.secondaryYAxisRange.max = secondaryYAxisRange.max;
-
-            const tertiaryYAxisRange = this.getAxisMinMax(configuration.tertiaryYAxis);
-            this.tertiaryYAxisRange.min = tertiaryYAxisRange.min;
-            this.tertiaryYAxisRange.max = tertiaryYAxisRange.max;
-
-            this.updatePlot();
         },
         updateData() {
             this.updatePlot();

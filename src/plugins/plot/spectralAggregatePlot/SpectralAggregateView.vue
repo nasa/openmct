@@ -28,6 +28,7 @@
                            class="c-spectral-aggregate-plot__plot-wrapper"
                            :data="visibleData"
                            :plot-axis-title="plotAxisTitle"
+                           :legend-expanded="legendExpanded"
     />
 </div>
 </template>
@@ -103,8 +104,7 @@ export default {
     },
     methods: {
         addColorForTelemetry(key) {
-            const index = Object.keys(this.colorMapping).length;
-            const color = this.colorPalette.getColor(index).asHexString();
+            const color = this.colorPalette.getNextColor().asHexString();
             this.colorMapping[key] = color;
 
             return color;
@@ -116,30 +116,7 @@ export default {
                 color
             });
         },
-        async addTelemetryObject(telemetryObject) {
-            if (this.domainObject.composition && this.domainObject.composition.length > 1) {
-                console.debug('Already at max telmetry objects for this plot');
-                const childIDToRemove = this.domainObject.composition[1];
-                const childObjectToRemove = await this.openmct.objects.get(childIDToRemove);
-                const compositionCollection = this.openmct.composition.get(this.domainObject);
-                compositionCollection.remove(childObjectToRemove);
-                const dialog = this.openmct.overlays.dialog({
-                    iconClass: 'info',
-                    message: 'Spectral aggregate plots can only contain one piece of telemetry. Please remove the existing item before adding a new one.',
-                    buttons: [
-                        {
-                            label: 'OK',
-                            emphasis: true,
-                            callback: function () {
-                                dialog.dismiss();
-                            }
-                        }
-                    ]
-                });
-
-                return;
-            }
-
+        addTelemetryObject(telemetryObject) {
             const key = objectUtils.makeKeyString(telemetryObject.identifier);
 
             if (!this.colorMapping[key]) {
@@ -148,7 +125,6 @@ export default {
 
             this.telemetryObjects[key] = telemetryObject;
 
-            this.updateAxisConfig();
             this.requestDataFor(telemetryObject);
             this.subscribeToObject(telemetryObject);
         },
@@ -181,8 +157,10 @@ export default {
         },
         getAxisMetadata(telemetryObject) {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
-            const xAxisMetadata = metadata.valuesForHints(['domain'])[0];
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
+            const xAxisMetadata = metadata.valueMetadatas.filter((valueMetadata => {
+                return valueMetadata.key !== 'name' && !this.openmct.time.getAllTimeSystems().find((timeSystem) => timeSystem.key === valueMetadata.key);
+            }));
 
             return {
                 xAxisMetadata,
@@ -239,7 +217,6 @@ export default {
             });
 
             this.trace = this.trace.filter(t => t.key !== key);
-            this.updateAxisConfig();
         },
         processData(telemetryObject, data, axisMetadata) {
             const key = objectUtils.makeKeyString(telemetryObject.identifier);
@@ -256,28 +233,26 @@ export default {
                 this.openmct.notifications.alert(data.message);
             }
 
-            if (!data.values) {
-                return;
-            }
+            let xValues = [];
+            let yValues = [];
+            axisMetadata.xAxisMetadata.forEach((metadata) => {
+                xValues.push(metadata.name);
+                if (data[metadata.key]) {
+                    yValues.push(data[metadata.key]);
+                } else {
+                    yValues.push('');
+                }
+            });
 
             const trace = {
                 key,
                 name: telemetryObject.name,
-                x: data.values && data.values.x || [],
-                y: data.values && data.values.y || [],
+                x: xValues,
+                y: yValues,
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: this.currentDomainObject.configuration && this.currentDomainObject.configuration.plotType ? this.currentDomainObject.configuration.plotType : 'scattergl',
-                mode: "markers",
-                marker: {
-                    size: 1,
-                    color
-                }
+                type: 'bar'
             };
-
-            trace.yaxis = this.trace.length > 1
-                ? `y${axisMetadata.yAxisMetadata.hints.range}`
-                : 'y1';
 
             this.addTrace(trace, key);
         },
@@ -288,6 +263,12 @@ export default {
         },
         subscribeToObject(telemetryObject) {
             const key = objectUtils.makeKeyString(telemetryObject.identifier);
+            const found = Object.values(this.subscriptions).findIndex(objectKey => objectKey === key);
+            if (found > -1) {
+                this.subscriptions[found].unsubscribe();
+                delete this.subscriptions[found];
+            }
+
             const options = this.getOptions(telemetryObject);
             const axisMetadata = this.getAxisMetadata(telemetryObject);
             const unsubscribe = this.openmct.telemetry.subscribe(telemetryObject,
@@ -303,45 +284,6 @@ export default {
             this.colorPalette.reset();
             const telemetryObjects = Object.values(this.telemetryObjects);
             telemetryObjects.forEach(this.subscribeToObject);
-        },
-        updateAxisConfig() {
-            if (!this.spectralAggregateConfiguration) {
-                return;
-            }
-
-            const configuration = JSON.parse(JSON.stringify(this.spectralAggregateConfiguration.getConfiguration()));
-            const axisNameMapping = {};
-
-            Object.entries(this.telemetryObjects).forEach(([key, telemetryObject]) => {
-                const {
-                    xAxisMetadata,
-                    yAxisMetadata
-                } = this.getAxisMetadata(telemetryObject);
-
-                configuration.xAxis.name = xAxisMetadata.name;
-                configuration.xAxis.disabled = false;
-
-                const range = yAxisMetadata.hints.range.toString();
-                axisNameMapping[range] = yAxisMetadata.name;
-            });
-
-            Object.values(configuration).forEach(config => {
-                if (!Object.keys(this.telemetryObjects).length) {
-                    config.name = '';
-                    config.disabled = true;
-                }
-
-                const type = config.type;
-                if (!type) {
-                    return;
-                }
-
-                const name = axisNameMapping[type];
-                config.disabled = !name;
-                config.name = name || '';
-            });
-
-            this.spectralAggregateConfiguration.updateConfiguration(configuration);
         },
         updateDomainObject(newDomainObject) {
             this.currentDomainObject = newDomainObject;
