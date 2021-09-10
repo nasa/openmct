@@ -40,15 +40,15 @@ export default function () {
             }
         });
 
-        openmct.types.addType('new.LadTableSet', {
-            name: "LAD Table Set NEW",
-            creatable: true,
-            description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
-            cssClass: 'icon-tabular-lad-set',
-            initialize(domainObject) {
-                domainObject.composition = [];
-            }
-        });
+        // openmct.types.addType('new.LadTableSet', {
+        //     name: "LAD Table Set NEW",
+        //     creatable: true,
+        //     description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+        //     cssClass: 'icon-tabular-lad-set',
+        //     initialize(domainObject) {
+        //         domainObject.composition = [];
+        //     }
+        // });
 
         // openmct.telemetry.addProvider(new LADTableProvider(openmct));
         openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
