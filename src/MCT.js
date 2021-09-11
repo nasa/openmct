@@ -437,7 +437,7 @@ define([
 
                     this.layout = appLayout.$refs.layout;
                     this.once('destroy', () => {
-                        this.layout.$destroy();
+                        appLayout.$destroy();
                     });
                     Browse(this);
                 }
