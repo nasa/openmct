@@ -29,13 +29,8 @@ describe('the plugin', function () {
     let element;
     let child;
     let openmct;
-    let appHolder;
 
     beforeEach((done) => {
-        appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         openmct = createOpenMct();
         openmct.install(new PlanPlugin());
 
@@ -50,7 +45,7 @@ describe('the plugin', function () {
         element.appendChild(child);
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.start(element);
     });
 
     afterEach(() => {
@@ -99,6 +94,7 @@ describe('the plugin', function () {
             }
         ];
         let planView;
+        let view;
 
         beforeEach(() => {
             openmct.time.timeSystem('utc', {
@@ -139,10 +135,14 @@ describe('the plugin', function () {
 
             const applicableViews = openmct.objectViews.get(planDomainObject, []);
             planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
-            let view = planView.view(planDomainObject, mockObjectPath);
+            view = planView.view(planDomainObject, mockObjectPath);
             view.show(child, true);
 
             return Vue.nextTick();
+        });
+
+        afterEach(() => {
+            view.destroy();
         });
 
         it('loads activities into the view', () => {

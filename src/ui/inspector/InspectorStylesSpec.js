@@ -54,6 +54,9 @@ describe("the inspector", () => {
     });
 
     afterEach(() => {
+        stylesViewComponent.$destroy();
+        savedStylesViewComponent.$destroy();
+
         return resetApplicationState(openmct);
     });
 
@@ -77,7 +80,7 @@ describe("the inspector", () => {
         expect(savedStylesViewComponent.$children[0].$children.length).toBe(0);
         stylesViewComponent.$children[0].saveStyle(mockStyle);
 
-        stylesViewComponent.$nextTick().then(() => {
+        return stylesViewComponent.$nextTick().then(() => {
             expect(savedStylesViewComponent.$children[0].$children.length).toBe(1);
         });
     });
@@ -91,7 +94,7 @@ describe("the inspector", () => {
 
         stylesViewComponent.$children[0].saveStyle(mockStyle);
 
-        stylesViewComponent.$nextTick().then(() => {
+        return stylesViewComponent.$nextTick().then(() => {
             const styleSelectorComponent = savedStylesViewComponent.$children[0].$children[0];
 
             styleSelectorComponent.selectStyle();
@@ -147,7 +150,7 @@ describe("the inspector", () => {
         stylesViewComponent = createViewComponent(StylesView, selection, openmct);
         savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-        stylesViewComponent.$nextTick().then(() => {
+        return stylesViewComponent.$nextTick().then(() => {
             const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
             const styleEditorComponent = stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
             const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
@@ -168,7 +171,7 @@ describe("the inspector", () => {
         stylesViewComponent = createViewComponent(StylesView, selection, openmct);
         savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-        stylesViewComponent.$nextTick().then(() => {
+        return stylesViewComponent.$nextTick().then(() => {
             const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
             const styleEditorComponent = stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
             const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
@@ -185,7 +188,7 @@ describe("the inspector", () => {
         stylesViewComponent = createViewComponent(StylesView, selection, openmct);
         savedStylesViewComponent = createViewComponent(SavedStylesView, selection, openmct);
 
-        stylesViewComponent.$nextTick().then(() => {
+        return stylesViewComponent.$nextTick().then(() => {
             const styleEditorComponentIndex = stylesViewComponent.$children[0].$children.length - 1;
             const styleEditorComponent = stylesViewComponent.$children[0].$children[styleEditorComponentIndex];
             const saveStyleButtonIndex = styleEditorComponent.$children.length - 1;
