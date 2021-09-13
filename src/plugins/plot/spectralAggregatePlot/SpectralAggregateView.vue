@@ -259,7 +259,11 @@ export default {
         requestDataFor(telemetryObject) {
             const axisMetadata = this.getAxisMetadata(telemetryObject);
             this.openmct.telemetry.request(telemetryObject, this.getOptions(telemetryObject))
-                .then(data => this.processData(telemetryObject, data, axisMetadata));
+                .then(data => {
+                    data.forEach((datum) => {
+                        this.processData(telemetryObject, datum, axisMetadata);
+                    });
+                });
         },
         subscribeToObject(telemetryObject) {
             const key = objectUtils.makeKeyString(telemetryObject.identifier);
