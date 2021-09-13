@@ -33,7 +33,7 @@
     <slot></slot>
     <div
         class="c-frame__move-bar"
-        @mousedown="isEditing ? startMove([1,1], [0,0], $event) : null"
+        @mousedown.left="startMove($event)"
     ></div>
 </div>
 </template>
@@ -93,7 +93,11 @@ export default {
                 return value - this.initialPosition[index];
             }.bind(this));
         },
-        startMove(posFactor, dimFactor, event) {
+        startMove(event, posFactor = [1, 1], dimFactor = [0, 0]) {
+            if (!this.isEditing) {
+                return;
+            }
+
             document.body.addEventListener('mousemove', this.continueMove);
             document.body.addEventListener('mouseup', this.endMove);
             this.dragPosition = {

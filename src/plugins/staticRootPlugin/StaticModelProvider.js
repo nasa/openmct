@@ -36,7 +36,7 @@ define([
     }
 
     /**
-     * Convets all objects in an object make from old format objects to new
+     * Converts all objects in an object make from old format objects to new
      * format objects.
      */
     function convertToNewObjects(oldObjectMap) {
