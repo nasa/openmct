@@ -23,11 +23,9 @@
 import { SPECTRAL_AGGREGATE_KEY } from './SpectralAggregateConstants';
 export default function SpectralAggregatePlotCompositionPolicy(openmct) {
     function hasAggregateDomainAndRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['domain']);
-        const domainValues = metadata.valuesForHints(['range']);
+        const rangeValues = metadata.valuesForHints(['range']);
 
-        return rangeValues.length > 0
-        || domainValues.length > 0;
+        return rangeValues.length > 0;
     }
 
     function hasSpectralAggregateTelemetry(domainObject) {

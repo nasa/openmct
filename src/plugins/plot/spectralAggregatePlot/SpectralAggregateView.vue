@@ -158,10 +158,8 @@ export default {
         getAxisMetadata(telemetryObject) {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
-            //Exclude 'name' and 'time' based metadata from the x-Axis values
-            const xAxisMetadata = metadata.valueMetadatas.filter((valueMetadata => {
-                return valueMetadata.key !== 'name' && !this.openmct.time.getAllTimeSystems().find((timeSystem) => timeSystem.key === valueMetadata.key);
-            }));
+            //Exclude 'name' and 'time' based metadata specifically, from the x-Axis values by using range hints only
+            const xAxisMetadata = metadata.valuesForHints(['range']);
 
             return {
                 xAxisMetadata,

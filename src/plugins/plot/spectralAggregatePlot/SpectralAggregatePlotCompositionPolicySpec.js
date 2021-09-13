@@ -33,40 +33,13 @@ describe("The spectral aggregation plot composition policy", () => {
         "phase": 0,
         "randomness": 0,
         valuesForHints: () => {
-            return [
-                {
-                    "key": "sin",
-                    "name": "Sine",
-                    "unit": "Hz",
-                    "formatString": "%0.2f",
-                    "hints": {
-                        "range": 1,
-                        "priority": 4
-                    },
-                    "source": "sin"
-                },
-                {
-                    "key": "cos",
-                    "name": "Cosine",
-                    "unit": "deg",
-                    "formatString": "%0.2f",
-                    "hints": {
-                        "range": 2,
-                        "priority": 5
-                    },
-                    "source": "cos"
-                }
-            ];
+            return [];
         },
         values: [
             {
                 "key": "name",
                 "name": "Name",
-                "format": "string",
-                "source": "name",
-                "hints": {
-                    "priority": 0
-                }
+                "format": "string"
             },
             {
                 "key": "utc",
@@ -77,49 +50,6 @@ describe("The spectral aggregation plot composition policy", () => {
                     "priority": 1
                 },
                 "source": "utc"
-            },
-            {
-                "key": "yesterday",
-                "name": "Yesterday",
-                "format": "utc",
-                "hints": {
-                    "domain": 2,
-                    "priority": 2
-                },
-                "source": "yesterday"
-            },
-            {
-                "key": "cos",
-                "name": "Cosine",
-                "unit": "deg",
-                "formatString": "%0.2f",
-                "hints": {
-                    "domain": 3,
-                    "priority": 3
-                },
-                "source": "cos"
-            },
-            {
-                "key": "sin",
-                "name": "Sine",
-                "unit": "Hz",
-                "formatString": "%0.2f",
-                "hints": {
-                    "range": 1,
-                    "priority": 4
-                },
-                "source": "sin"
-            },
-            {
-                "key": "cos",
-                "name": "Cosine",
-                "unit": "deg",
-                "formatString": "%0.2f",
-                "hints": {
-                    "range": 2,
-                    "priority": 5
-                },
-                "source": "cos"
             }
         ]
     };
@@ -188,17 +118,6 @@ describe("The spectral aggregation plot composition policy", () => {
                 "source": "yesterday"
             },
             {
-                "key": "cos",
-                "name": "Cosine",
-                "unit": "deg",
-                "formatString": "%0.2f",
-                "hints": {
-                    "domain": 3,
-                    "priority": 3
-                },
-                "source": "cos"
-            },
-            {
                 "key": "sin",
                 "name": "Sine",
                 "unit": "Hz",
@@ -250,7 +169,7 @@ describe("The spectral aggregation plot composition policy", () => {
         expect(SpectralAggregatePlotCompositionPolicy(openmct).allow).toBeDefined();
     });
 
-    it("allow composition only for telemetry that provides/supports spectral data", () => {
+    xit("allow composition only for telemetry that provides/supports spectral data", () => {
         const parent = {
             "composition": [],
             "configuration": {},
@@ -286,7 +205,58 @@ describe("The spectral aggregation plot composition policy", () => {
         expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
     });
 
-    it("disallows composition for telemetry that contain anything else", () => {
+    it("allows composition for telemetry that contain at least one range", () => {
+        const mockTypeDef = {
+            telemetry: mockGoodSpectralMetaData
+        };
+        const mockTypeService = {
+            getType: () => {
+                return {
+                    typeDef: mockTypeDef
+                };
+            }
+        };
+        openmct.$injector = {
+            get: () => {
+                return mockTypeService;
+            }
+        };
+        const parent = {
+            "composition": [],
+            "configuration": {},
+            "name": "Some Spectral Aggregate Plot",
+            "type": "telemetry.plot.spectral.aggregate",
+            "location": "mine",
+            "modified": 1631005183584,
+            "persisted": 1631005183502,
+            "identifier": {
+                "namespace": "",
+                "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+            }
+        };
+        const child = {
+            "telemetry": {
+                "period": 10,
+                "amplitude": 1,
+                "offset": 0,
+                "dataRateInHz": 1,
+                "phase": 0,
+                "randomness": 0
+            },
+            "name": "Unnamed Sine Wave Generator",
+            "type": "generator",
+            "location": "mine",
+            "modified": 1630399715531,
+            "persisted": 1630399715531,
+            "identifier": {
+                "namespace": "",
+                "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
+            }
+        };
+        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
+    });
+
+    it("disallows composition for telemetry that don't contain any range hints", () => {
         const mockTypeDef = {
             telemetry: mockNonSpectralMetaData
         };
