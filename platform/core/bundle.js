@@ -379,7 +379,7 @@ define([
                     {
                         "name": "Math.uuid.js",
                         "version": "1.4.7",
-                        "description": "Unique identifer generation (code adapted.)",
+                        "description": "Unique identifier generation (code adapted.)",
                         "author": "Robert Kieffer",
                         "website": "https://github.com/broofa/node-uuid",
                         "copyright": "Copyright (c) 2010-2012 Robert Kieffer",

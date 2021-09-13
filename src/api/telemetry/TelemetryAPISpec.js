@@ -603,7 +603,7 @@ describe('Telemetry API', function () {
         });
 
         it('when requested, returns an instance of telemetry collection', () => {
-            const telemetryCollection = telemetryAPI.requestTelemetryCollection(domainObject);
+            const telemetryCollection = telemetryAPI.requestCollection(domainObject);
 
             expect(telemetryCollection).toBeInstanceOf(TelemetryCollection);
         });

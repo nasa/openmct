@@ -115,7 +115,7 @@ define([
             expect(condition.evaluate(telemetryState)).toBe(true);
         });
 
-        it('can evalute "if any object matches"', function () {
+        it('can evaluate "if any object matches"', function () {
             condition = new SummaryWidgetCondition({
                 object: 'any',
                 key: 'raw',
