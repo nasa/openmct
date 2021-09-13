@@ -20,22 +20,38 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class ClearDataAction {
-    constructor(openmct, appliesToObjects) {
-        this.name = 'Clear Data for Object';
-        this.key = 'clear-data-action';
-        this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
-        this.cssClass = 'icon-clear-data';
+/**
+ * An object containing key-value pairs, where keys are symbolic of
+ * device attributes, and values are functions that take the
+ * `agent` as inputs and return boolean values indicating
+ * whether or not the current device has these attributes.
+ *
+ * For internal use by the mobile support bundle.
+ *
+ * @memberof src/plugins/DeviceClassifier
+ * @private
+ */
 
-        this._openmct = openmct;
-        this._appliesToObjects = appliesToObjects;
+export default {
+    mobile: function (agent) {
+        return agent.isMobile();
+    },
+    phone: function (agent) {
+        return agent.isPhone();
+    },
+    tablet: function (agent) {
+        return agent.isTablet();
+    },
+    desktop: function (agent) {
+        return !agent.isMobile();
+    },
+    portrait: function (agent) {
+        return agent.isPortrait();
+    },
+    landscape: function (agent) {
+        return agent.isLandscape();
+    },
+    touch: function (agent) {
+        return agent.isTouch();
     }
-    invoke(objectPath) {
-        this._openmct.objectViews.emit('clearData', objectPath[0]);
-    }
-    appliesTo(objectPath) {
-        let contextualDomainObject = objectPath[0];
-
-        return this._appliesToObjects.filter(type => contextualDomainObject.type === type).length;
-    }
-}
+};
