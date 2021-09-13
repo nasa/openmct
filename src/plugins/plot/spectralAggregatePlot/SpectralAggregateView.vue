@@ -158,6 +158,7 @@ export default {
         getAxisMetadata(telemetryObject) {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
+            //Exclude 'name' and 'time' based metadata from the x-Axis values
             const xAxisMetadata = metadata.valueMetadatas.filter((valueMetadata => {
                 return valueMetadata.key !== 'name' && !this.openmct.time.getAllTimeSystems().find((timeSystem) => timeSystem.key === valueMetadata.key);
             }));
@@ -235,6 +236,8 @@ export default {
 
             let xValues = [];
             let yValues = [];
+
+            //populate X and Y values for plotly
             axisMetadata.xAxisMetadata.forEach((metadata) => {
                 xValues.push(metadata.name);
                 if (data[metadata.key]) {
