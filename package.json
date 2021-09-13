@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "1.7.8-SNAPSHOT",
+  "version": "mct4102-shefali",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "angular": ">=1.8.0",
