@@ -19,13 +19,17 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+import { SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
 import PlotViewProvider from './PlotViewProvider';
+import SpectralPlotViewProvider from './spectralPlot/SpectralPlotViewProvider';
+import SpectralAggregatePlotViewProvider from './spectralAggregatePlot/SpectralAggregatePlotViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
+import SpectralPlotCompositionPolicy from './spectralPlot/SpectralPlotCompositionPolicy';
+import SpectralAggregatePlotCompositionPolicy from './spectralAggregatePlot/SpectralAggregatePlotCompositionPolicy';
 
 export default function () {
     return function install(openmct) {
@@ -59,13 +63,46 @@ export default function () {
             },
             priority: 890
         });
+        openmct.types.addType('telemetry.plot.spectral', {
+            key: "telemetry.plot.spectral",
+            name: "Spectral Plot",
+            cssClass: "icon-plot-stacked",
+            description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
+            creatable: true,
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {};
+            },
+            priority: 890
+        });
+
+        openmct.types.addType(SPECTRAL_AGGREGATE_KEY, {
+            key: SPECTRAL_AGGREGATE_KEY,
+            name: "Spectral Aggregate Plot",
+            cssClass: "icon-plot-stacked",
+            description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
+            creatable: true,
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {
+                    plotType: 'bar'
+                };
+            },
+            priority: 891
+        });
 
         openmct.objectViews.addProvider(new StackedPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));
+        openmct.objectViews.addProvider(new SpectralPlotViewProvider(openmct));
+        openmct.objectViews.addProvider(new SpectralAggregatePlotViewProvider(openmct));
+
         openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
+
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
+        openmct.composition.addPolicy(new SpectralPlotCompositionPolicy(openmct).allow);
+        openmct.composition.addPolicy(new SpectralAggregatePlotCompositionPolicy(openmct).allow);
     };
 }
 
