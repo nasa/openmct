@@ -281,7 +281,7 @@ define([
      * (start, end, etc.), sort order, and strategies for retrieving
      * telemetry (aggregation, latest available, etc.).
      *
-     * @method requestTelemetryCollection
+     * @method requestCollection
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      * @param {module:openmct.DomainObject} domainObject the object
      *        which has associated telemetry
@@ -289,7 +289,7 @@ define([
      *        options for this telemetry collection request
      * @returns {TelemetryCollection} a TelemetryCollection instance
      */
-    TelemetryAPI.prototype.requestTelemetryCollection = function (domainObject, options = {}) {
+    TelemetryAPI.prototype.requestCollection = function (domainObject, options = {}) {
         return new TelemetryCollection(
             this.openmct,
             domainObject,

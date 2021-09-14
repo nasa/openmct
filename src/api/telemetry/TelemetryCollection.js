@@ -23,6 +23,11 @@
 import _ from 'lodash';
 import EventEmitter from 'EventEmitter';
 
+const ERRORS = {
+    TIMESYSTEM_KEY: 'All telemetry metadata must have a telemetry value with a key that matches the key of the active time system.',
+    LOADED: 'Telemetry Collection has already been loaded.'
+};
+
 /** Class representing a Telemetry Collection. */
 
 export class TelemetryCollection extends EventEmitter {
@@ -57,7 +62,7 @@ export class TelemetryCollection extends EventEmitter {
      */
     load() {
         if (this.loaded) {
-            throw new Error('Telemetry Collection has already been loaded.');
+            this._error(ERRORS.LOADED);
         }
 
         this._timeSystem(this.openmct.time.timeSystem());
@@ -123,13 +128,13 @@ export class TelemetryCollection extends EventEmitter {
 
         try {
             this.requestAbort = new AbortController();
-            this.options.abortSignal = this.requestAbort.signal;
+            this.options.signal = this.requestAbort.signal;
             historicalData = await this.historicalProvider.request(this.domainObject, this.options);
             this.requestAbort = undefined;
         } catch (error) {
             console.error('Error requesting telemetry data...');
             this.requestAbort = undefined;
-            throw new Error(error);
+            this._error(error);
         }
 
         this._processNewTelemetry(historicalData);
@@ -189,7 +194,7 @@ export class TelemetryCollection extends EventEmitter {
                     if (endIndex > startIndex) {
                         let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
 
-                        isDuplicate = potentialDupes.some(_.isEqual(undefined, datum));
+                        isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
                     }
                 }
 
@@ -307,8 +312,16 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _timeSystem(timeSystem) {
-        this.timeKey = timeSystem.key;
-        let metadataValue = this.metadata.value(this.timeKey) || { format: this.timeKey };
+        let domains = this.metadata.valuesForHints(['domain']);
+        let domain = domains.find((d) => d.key === timeSystem.key);
+
+        if (domain === undefined) {
+            this._error(ERRORS.TIMESYSTEM_KEY);
+        }
+
+        // timeKey is used to create a dummy datum used for sorting
+        this.timeKey = domain.source; // this defaults to key if no source is set
+        let metadataValue = this.metadata.value(timeSystem.key) || { format: timeSystem.key };
         let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
 
         this.parseTime = (datum) => {
@@ -362,5 +375,14 @@ export class TelemetryCollection extends EventEmitter {
      */
     _unwatchTimeSystem() {
         this.openmct.time.off('timeSystem', this._timeSystem, this);
+    }
+
+    /**
+     * will throw a new Error, for passed in message
+     * @param  {string} message Message describing the error
+     * @private
+     */
+    _error(message) {
+        throw new Error(message);
     }
 }
