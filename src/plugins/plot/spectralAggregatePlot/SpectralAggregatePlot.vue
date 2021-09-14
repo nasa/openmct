@@ -104,10 +104,9 @@ export default {
             const xAxisDomain = this.getXAxisDomain(yAxesMeta);
 
             return {
-                // hovermode: 'closest',
-                // hoverdistance: -1,
                 autosize: true,
                 showlegend: false,
+                textposition: 'auto',
                 font: {
                     family: 'Helvetica Neue, Helvetica, Arial, sans-serif',
                     size: '12px',
@@ -115,10 +114,8 @@ export default {
                 },
                 xaxis: {
                     domain: xAxisDomain,
-                    // hoverformat: '.2r',
                     range: [this.xAxisRange.min, this.xAxisRange.max],
                     title: this.plotAxisTitle.xAxisTitle
-                    // zeroline: false
                 },
                 yaxis: primaryYaxis,
                 margin: {
