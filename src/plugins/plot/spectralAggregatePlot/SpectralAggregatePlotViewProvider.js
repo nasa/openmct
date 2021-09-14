@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SpectralView from './SpectralAggregateView.vue';
+import SpectralAggregateView from './SpectralAggregateView.vue';
+import { SPECTRAL_AGGREGATE_KEY, SPECTRAL_AGGREGATE_VIEW } from './SpectralAggregateConstants';
 import Vue from 'vue';
 
 export default function SpectralAggregatePlotViewProvider(openmct) {
@@ -29,15 +30,15 @@ export default function SpectralAggregatePlotViewProvider(openmct) {
     }
 
     return {
-        key: 'plot-spectral-aggregate',
+        key: SPECTRAL_AGGREGATE_VIEW,
         name: 'Spectral Aggregate Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === 'telemetry.plot.spectral.aggregate';
+            return domainObject && domainObject.type === SPECTRAL_AGGREGATE_KEY;
         },
 
         canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === 'telemetry.plot.spectral.aggregate';
+            return domainObject && domainObject.type === SPECTRAL_AGGREGATE_KEY;
         },
 
         view: function (domainObject, objectPath) {
@@ -49,7 +50,7 @@ export default function SpectralAggregatePlotViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            SpectralView
+                            SpectralAggregateView
                         },
                         provide: {
                             openmct,

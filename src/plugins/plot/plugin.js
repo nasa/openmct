@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
+import { SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
 import PlotViewProvider from './PlotViewProvider';
 import SpectralPlotViewProvider from './spectralPlot/SpectralPlotViewProvider';
 import SpectralAggregatePlotViewProvider from './spectralAggregatePlot/SpectralAggregatePlotViewProvider';
@@ -76,9 +76,9 @@ export default function () {
             priority: 890
         });
 
-        openmct.types.addType('telemetry.plot.spectral-aggregate', {
-            key: "telemetry.plot.spectral-aggregate",
-            name: "Spectral Plot from Aggregate",
+        openmct.types.addType(SPECTRAL_AGGREGATE_KEY, {
+            key: SPECTRAL_AGGREGATE_KEY,
+            name: "Spectral Aggregate Plot",
             cssClass: "icon-plot-stacked",
             description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
             creatable: true,
