@@ -55,7 +55,6 @@
         var step = 1000 / data.dataRateInHz;
         var nextStep = start - (start % step) + step;
         let work;
-        console.log('dataRate', data);
         if (data.spectra) {
             work = function (now) {
                 while (nextStep < now) {

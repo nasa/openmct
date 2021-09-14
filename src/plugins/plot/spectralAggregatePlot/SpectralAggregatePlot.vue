@@ -27,7 +27,7 @@
 </div>
 </template>
 <script>
-import Plotly from 'plotly.js/dist/plotly';
+import Plotly from 'plotly.js-basic-dist';
 import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE } from './SpectralAggregateConstants';
 
 const PLOT_PADDING_IN_PERCENT = 1;
