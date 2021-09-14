@@ -37,6 +37,7 @@ import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import Vue from "vue";
 import imageryData from "../../imagery/mixins/imageryData";
 import PreviewAction from "@/ui/preview/PreviewAction";
+import _ from "lodash";
 
 const PADDING = 1;
 const RESIZE_POLL_INTERVAL = 200;
@@ -82,7 +83,11 @@ export default {
 
         this.openmct.time.on("timeSystem", this.setScaleAndPlotImagery);
         this.openmct.time.on("bounds", this.updateViewBounds);
-        this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
+
+        this.resize = _.debounce(this.resize, 400);
+        this.imageryStripResizeObserver = new ResizeObserver(this.resize);
+        this.imageryStripResizeObserver.observe(this.$refs.imagery);
+
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     },
     beforeDestroy() {
@@ -91,7 +96,10 @@ export default {
             delete this.unsubscribe;
         }
 
-        clearInterval(this.resizeTimer);
+        if (this.imageryStripResizeObserver) {
+            this.imageryStripResizeObserver.disconnect();
+        }
+
         this.openmct.time.off("timeSystem", this.setScaleAndPlotImagery);
         this.openmct.time.off("bounds", this.updateViewBounds);
         if (this.unlisten) {

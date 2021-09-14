@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ImageryView from './ImageryView';
+import Imagery_View from './Imagery_View';
 
 export default function ImageryViewProvider(openmct) {
     const type = 'example.imagery';
@@ -38,12 +38,12 @@ export default function ImageryViewProvider(openmct) {
         name: 'Imagery Layout',
         cssClass: 'icon-image',
         canView: function (domainObject, objectPath) {
-            let isCompact = objectPath.find(object => object.type === 'time-strip');
+            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
 
-            return hasImageTelemetry(domainObject) && !isCompact;
+            return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
         },
         view: function (domainObject, objectPath) {
-            return new ImageryView(openmct, domainObject, objectPath);
+            return new Imagery_View(openmct, domainObject, objectPath);
         }
     };
 }

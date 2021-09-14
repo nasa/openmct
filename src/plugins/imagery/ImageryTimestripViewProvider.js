@@ -39,9 +39,9 @@ export default function ImageryTimestripViewProvider(openmct) {
         name: 'Imagery Timestrip View',
         cssClass: 'icon-image',
         canView: function (domainObject, objectPath) {
-            let isCompact = objectPath.find(object => object.type === 'time-strip');
+            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
 
-            return hasImageTelemetry(domainObject) && isCompact;
+            return hasImageTelemetry(domainObject) && isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
         },
         view: function (domainObject, objectPath) {
             let component;

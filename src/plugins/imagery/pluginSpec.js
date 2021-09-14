@@ -398,18 +398,18 @@ describe("The Imagery View Layouts", () => {
         });
         it ('shows an auto scroll button when scroll to left', async () => {
             // to mock what a scroll would do
-            imageryView._getInstance().$refs.ImageryLayout.autoScroll = false;
+            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
             await Vue.nextTick();
             let autoScrollButton = parent.querySelector('.c-imagery__auto-scroll-resume-button');
             expect(autoScrollButton).toBeTruthy();
         });
         it ('scrollToRight is called when clicking on auto scroll button', async () => {
             // use spyon to spy the scroll function
-            spyOn(imageryView._getInstance().$refs.ImageryLayout, 'scrollToRight');
-            imageryView._getInstance().$refs.ImageryLayout.autoScroll = false;
+            spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollToRight');
+            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
             await Vue.nextTick();
             parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
-            expect(imageryView._getInstance().$refs.ImageryLayout.scrollToRight).toHaveBeenCalledWith('reset');
+            expect(imageryView._getInstance().$refs.ImageryContainer.scrollToRight).toHaveBeenCalledWith('reset');
 
         });
     });
