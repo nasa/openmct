@@ -105,7 +105,7 @@ export default {
     watch: {
         domainObject: {
             handler(domainObject) {
-                if (!domainObject.configuration.timeOptions) {
+                if (!domainObject.configuration.timeOptions || !this.independentTCEnabled) {
                     return;
                 }
 
@@ -149,12 +149,10 @@ export default {
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
-            this.timeContext.on('timeContext', this.setTimeContext);
             this.timeContext.on('clock', this.setViewFromClock);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off('timeContext', this.setTimeContext);
                 this.timeContext.off('clock', this.setViewFromClock);
             }
         },

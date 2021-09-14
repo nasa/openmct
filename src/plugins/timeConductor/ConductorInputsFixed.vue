@@ -120,7 +120,6 @@ export default {
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
-            this.timeContext.on('timeContext', this.setTimeContext);
 
             this.handleNewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.handleNewBounds);
@@ -130,7 +129,6 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.handleNewBounds);
                 this.timeContext.off('clock', this.clearAllValidation);
-                this.timeContext.off('timeContext', this.setTimeContext);
             }
         },
         handleNewBounds(bounds) {

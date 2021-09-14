@@ -22,6 +22,10 @@
 
 import TimeContext from "./TimeContext";
 
+/**
+ * The GlobalContext handles getting and setting time of the openmct application in general.
+ * Views will use this context unless they specify an alternate/independent time context
+ */
 class GlobalTimeContext extends TimeContext {
     constructor() {
         super();

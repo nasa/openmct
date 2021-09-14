@@ -208,7 +208,7 @@ export default {
                 let found = this.modes.find(mode => mode.key === this.selectedMode.key);
 
                 if (!found) {
-                    found = this.modes.find(mode => mode.key === clock.key);
+                    found = this.modes.find(mode => mode.key === clock && clock.key);
                     this.setOption(found ? this.getModeOptionForClock(clock).key : this.getModeOptionForClock().key);
                 } else if (this.mode.key !== this.selectedMode.key) {
                     this.setOption(this.selectedMode.key);

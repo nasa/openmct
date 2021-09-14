@@ -35,7 +35,7 @@ import IndependentTimeContext from "@/api/time/IndependentTimeContext";
 * the temporal state of the application. The current time bounds are also
 * used in queries for historical data.
 *
-* The TimeAPI extends the EventEmitter class. A number of events are
+* The TimeAPI extends the GlobalTimeContext which in turn extends the TimeContext/EventEmitter class. A number of events are
 * fired when properties of the time conductor change, which are documented
 * below.
 *
@@ -46,7 +46,6 @@ class TimeAPI extends GlobalTimeContext {
     constructor(openmct) {
         super();
         this.openmct = openmct;
-        this.independentContexts = new Map();
     }
 
     /**
@@ -124,8 +123,7 @@ class TimeAPI extends GlobalTimeContext {
     }
 
     /**
-     * Get or set an independent time observer which follows the TimeAPI timeSystem,
-     * but with different offsets for a given domain object
+     * Get or set an independent time configuration for a given domain object
      * @param {key | string} key The identifier key of the domain object these offsets are set for
      * @param {ClockOffsets | TimeBounds} value This maintains a sliding time window of a fixed width that automatically updates
      * @param {key | string} clockKey the real time clock key currently in use
@@ -133,56 +131,39 @@ class TimeAPI extends GlobalTimeContext {
      * @method addIndependentTimeContext
      */
     addIndependentContext(key, value, clockKey) {
-        let timeContext = this.independentContexts.get(key);
-        if (!timeContext) {
-            timeContext = new IndependentTimeContext(this, key);
-            this.independentContexts.set(key, timeContext);
-        }
+        this.timeConfigByObjectId.set(key, {
+            value,
+            clockKey
+        });
 
-        if (clockKey) {
-            timeContext.clock(clockKey, value);
-        } else {
-            timeContext.stopClock();
-            timeContext.bounds(value);
-        }
-
-        this.emit('timeContext', key);
+        this.emit('refreshContext');
 
         return () => {
-            this.independentContexts.delete(key);
-            timeContext.emit('timeContext', key);
+            this.timeConfigByObjectId.delete(key);
+            this.emit('refreshContext');
         };
     }
 
     /**
-     * Get the independent time observer which follows the TimeAPI timeSystem,
-     * but with different offsets.
+     * Get the independent time configuration by key.
      * @param {key | string} key The identifier key of the domain object these offsets
      * @memberof module:openmct.TimeAPI#
      * @method getIndependentTimeContext
      */
     getIndependentContext(key) {
-        return this.independentContexts.get(key);
+        return this.timeConfigByObjectId.get(key);
     }
 
     /**
-     * Get the timeContext for a view based on it's objectPath. If there is any object in the objectPath with an independent time context, it will be returned.
-     * Otherwise, the global time context will be returned.
+     * Get the a timeContext for a view. If there is any object in the objectPath with an independent time configuration enabled, it will be returned.
+     * Otherwise, the global time context will be returned. This determination is transparent to views as they will continue to respond to changes
+     * from a single timeContext.
      * @param { Array } objectPath The view's objectPath
      * @memberof module:openmct.TimeAPI#
      * @method getContextForView
      */
     getContextForView(objectPath) {
-        let timeContext = this;
-
-        objectPath.forEach(item => {
-            const key = this.openmct.objects.makeKeyString(item.identifier);
-            if (this.independentContexts.get(key)) {
-                timeContext = this.independentContexts.get(key);
-            }
-        });
-
-        return timeContext;
+        return new IndependentTimeContext(this, objectPath);
     }
 
 }
