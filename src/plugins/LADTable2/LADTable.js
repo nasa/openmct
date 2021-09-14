@@ -22,15 +22,17 @@
 
 import TelemetryTable from '../telemetryTable/TelemetryTable.js';
 import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
+import LADTableRowCollection from './LADTableRowCollection.js';
 
 export default class LADTable extends TelemetryTable {
     constructor(domainObject, openmct) {
         super(domainObject, openmct);
         this.domainObject = domainObject;
         this.openmct = openmct;
+        // this.tableRows = new LADTableRowCollection();
+        this.createTableRowCollections();
     }
     initialize() {
-        this.tableRows.addRows = this.addRows;
         if (this.domainObject.type === 'new.ladTable' || this.domainObject.type === 'new.LadTableSet') {
             // this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
             // this.filters = this.domainObject.configuration.filters;
@@ -71,37 +73,7 @@ export default class LADTable extends TelemetryTable {
 
         this.emit('object-added', telemetryObject);
     }
-    addRows(rows, type = 'add') {
-        if (this.sortOptions === undefined) {
-            throw 'Please specify sort options';
-        }
 
-        let isFilterTriggeredReset = type === 'filter';
-        let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
-        let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
-
-        // if type is filter, then it's a reset of all rows,
-        // need to wipe current rows
-        if (isFilterTriggeredReset) {
-            this.rows = [];
-        }
-
-        // remove old rows of the object before adding
-        // there's only 1 row so keystring will be the same
-        const keyString = rows[0].objectKeyString;
-        this.removeRowsByObject(keyString);
-
-        for (let row of rowsToAdd) {
-            let index = this.sortedIndex(this.rows, row);
-            this.rows.splice(index, 0, row);
-        }
-
-        // we emit filter no matter what to trigger
-        // an update of visible rows
-        if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
-            this.emit(type, rowsToAdd);
-        }
-    }
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
         return (telemetry) => {
             //Check that telemetry object has not been removed since telemetry was requested.
@@ -131,5 +103,20 @@ export default class LADTable extends TelemetryTable {
         };
 
         return options;
+    }
+    createTableRowCollections() {
+        this.tableRows = new LADTableRowCollection();
+
+        //Fetch any persisted default sort
+        let sortOptions = this.configuration.getConfiguration().sortOptions;
+
+        //If no persisted sort order, default to sorting by time system, ascending.
+        sortOptions = sortOptions || {
+            key: this.openmct.time.timeSystem().key,
+            direction: 'asc'
+        };
+
+        this.tableRows.sortBy(sortOptions);
+        this.tableRows.on('resetRowsFromAllData', this.resetRowsFromAllData);
     }
 }
