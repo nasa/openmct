@@ -91,6 +91,7 @@ describe("The Imagery View Layouts", () => {
     const COUNT = 10;
 
     let resolveFunction;
+    let originalRouterPath;
 
     let openmct;
     let appHolder;
@@ -221,6 +222,8 @@ describe("The Imagery View Layouts", () => {
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
 
+        originalRouterPath = openmct.router.path;
+
         openmct.on('start', done);
         openmct.start(appHolder);
     });
@@ -230,11 +233,20 @@ describe("The Imagery View Layouts", () => {
             start: 0,
             end: 1
         });
+        openmct.router.path = originalRouterPath;
 
         return resetApplicationState(openmct);
     });
 
     it("should provide an imagery time strip view when in a time strip", () => {
+        openmct.router.path = [{
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }];
+
         let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
             identifier: {
                 key: 'test-timestrip',
@@ -259,6 +271,14 @@ describe("The Imagery View Layouts", () => {
     });
 
     it("should not provide an imagery view when in a time strip", () => {
+        openmct.router.path = [{
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }];
+
         let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
             identifier: {
                 key: 'test-timestrip',
@@ -271,6 +291,23 @@ describe("The Imagery View Layouts", () => {
         );
 
         expect(imageryView).toBeUndefined();
+    });
+
+    it("should provide an imagery view when navigated to in the composition of a time strip", () => {
+        openmct.router.path = [imageryObject];
+
+        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }]);
+        let imageryView = applicableViews.find(
+            viewProvider => viewProvider.key === imageryKey
+        );
+
+        expect(imageryView).toBeDefined();
     });
 
     describe("imagery view", () => {
