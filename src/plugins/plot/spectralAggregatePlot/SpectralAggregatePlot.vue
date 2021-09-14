@@ -40,7 +40,6 @@ export default {
     inject: ['openmct', 'domainObject'],
     props: [
         'data',
-        'legendExpanded',
         'plotAxisTitle'
     ],
     data() {
@@ -60,10 +59,6 @@ export default {
         data: {
             immediate: false,
             handler: 'updateData'
-        },
-        legendExpanded: {
-            immediate: false,
-            handler: 'updatePlot'
         }
     },
     mounted() {
