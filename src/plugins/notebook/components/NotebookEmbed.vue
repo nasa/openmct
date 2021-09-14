@@ -40,12 +40,18 @@ export default {
     components: {
         PopupMenu
     },
-    inject: ['openmct'],
+    inject: ['openmct', 'snapshotContainer'],
     props: {
         embed: {
             type: Object,
             default() {
                 return {};
+            }
+        },
+        isSnapshotContainer: {
+            type: Boolean,
+            default() {
+                return false;
             }
         },
         removeActionString: {
@@ -135,6 +141,14 @@ export default {
                 return;
             }
 
+            if (this.isSnapshotContainer) {
+                const snapshot = this.snapshotContainer.getSnapshot(this.embed.id);
+                const fullSizeImageURL = snapshot.notebookImageDomainObject.configuration.fullSizeImageURL;
+                painterroInstance.show(fullSizeImageURL);
+
+                return;
+            }
+
             this.openmct.objects.get(fullSizeImageObjectIdentifier)
                 .then(object => {
                     painterroInstance.show(object.configuration.fullSizeImageURL);
@@ -186,6 +200,14 @@ export default {
             if (!fullSizeImageObjectIdentifier) {
                 // legacy image data stored in embed
                 this.openSnapshotOverlay(this.embed.snapshot.src);
+
+                return;
+            }
+
+            if (this.isSnapshotContainer) {
+                const snapshot = this.snapshotContainer.getSnapshot(this.embed.id);
+                const fullSizeImageURL = snapshot.notebookImageDomainObject.configuration.fullSizeImageURL;
+                this.openSnapshotOverlay(fullSizeImageURL);
 
                 return;
             }
@@ -259,8 +281,20 @@ export default {
         updateSnapshot(snapshotObject) {
             this.embed.snapshot.thumbnailImage = snapshotObject.thumbnailImage;
 
-            updateNotebookImageDomainObject(this.openmct, this.embed.snapshot.fullSizeImageObjectIdentifier, snapshotObject.fullSizeImage);
+            this.updateNotebookImageDomainObjectSnapshot(snapshotObject);
             this.updateEmbed(this.embed);
+        },
+        updateNotebookImageDomainObjectSnapshot(snapshotObject) {
+            if (this.isSnapshotContainer) {
+                const snapshot = this.snapshotContainer.getSnapshot(this.embed.id);
+
+                snapshot.embedObject.snapshot.thumbnailImage = snapshotObject.thumbnailImage;
+                snapshot.notebookImageDomainObject.configuration.fullSizeImageURL = snapshotObject.fullSizeImage.src;
+
+                this.snapshotContainer.updateSnapshot(snapshot);
+            } else {
+                updateNotebookImageDomainObject(this.openmct, this.embed.snapshot.fullSizeImageObjectIdentifier, snapshotObject.fullSizeImage);
+            }
         }
     }
 };
