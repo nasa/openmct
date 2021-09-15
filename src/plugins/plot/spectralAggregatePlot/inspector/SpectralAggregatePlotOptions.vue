@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import configStore from "../../configuration/configStore";
+import configStore from "../../configuration/ConfigStore";
 import eventHelpers from "../../lib/eventHelpers";
 
 export default {
@@ -105,10 +105,10 @@ export default {
             return this.isEditing && !this.domainObject.locked;
         },
         colorPalette() {
-            return this.series.collection.palette.groups();
+            return this.plotSeries.collection.palette.groups();
         },
         seriesColorAsHex() {
-            return this.series.get('color').asHexString();
+            return this.plotSeries.get('color').asHexString();
         }
     },
     mounted() {
@@ -124,6 +124,9 @@ export default {
     methods: {
         setEditState(isEditing) {
             this.isEditing = isEditing;
+        },
+        seriesHexColor() {
+            return this.plotSeries.get('color').asHexString();
         },
         getConfig() {
             this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -158,15 +161,15 @@ export default {
        * already assigned to a different plot series, then swap the colors.
        */
         setColor: function (color) {
-            const oldColor = this.series.get('color');
-            const otherSeriesWithColor = this.series.collection.filter(function (s) {
+            const oldColor = this.plotSeries.get('color');
+            const otherSeriesWithColor = this.plotSeries.collection.filter(function (s) {
                 return s.get('color') === color;
             })[0];
 
-            this.series.set('color', color);
+            this.plotSeries.set('color', color);
 
             const getPath = this.dynamicPathForKey('color');
-            const seriesColorPath = getPath(this.domainObject, this.series);
+            const seriesColorPath = getPath(this.domainObject, this.plotSeries);
 
             this.openmct.objects.mutate(
                 this.domainObject,

@@ -25,7 +25,7 @@ import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "./stackedPlot/StackedPlot.vue";
 // import SpectralPlot from "./spectralPlot/SpectralPlot.vue";
-import configStore from "./configuration/configStore";
+import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
