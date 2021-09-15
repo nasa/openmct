@@ -30,7 +30,7 @@ export default function SpectralAggregatePlotInspectorViewProvider(openmct) {
                             openmct,
                             domainObject: selection[0][0].context.item
                         },
-                        template: '<spectral-aggregate-options></spectral-aggregate-options>'
+                        template: '<SpectralAggregatePlotOptions></SpectralAggregatePlotOptions>'
                     });
                 },
                 destroy: function () {
