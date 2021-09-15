@@ -160,13 +160,6 @@ export default {
         updateViewBounds(bounds) {
             if (bounds) {
                 this.viewBounds = Object.create(bounds);
-
-                if (!this.options.compact) {
-                    //Add a 50% padding to the end bounds to look ahead
-                    let timespan = (this.viewBounds.end - this.viewBounds.start);
-                    let padding = timespan / 2;
-                    this.viewBounds.end = this.viewBounds.end + padding;
-                }
             }
 
             if (this.timeSystem === undefined) {
