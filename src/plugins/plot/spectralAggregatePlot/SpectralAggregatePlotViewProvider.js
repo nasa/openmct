@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import SpectralAggregateView from './SpectralAggregateView.vue';
-import { SPECTRAL_AGGREGATE_KEY, SPECTRAL_AGGREGATE_VIEW } from './SpectralAggregateConstants';
+import { SPECTRAL_AGGREGATE_KEY, SPECTRAL_AGGREGATE_VIEW } from './SpectralAggregatePlotConstants';
 import Vue from 'vue';
 
 export default function SpectralAggregatePlotViewProvider(openmct) {

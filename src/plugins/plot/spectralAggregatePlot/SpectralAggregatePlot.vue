@@ -28,7 +28,7 @@
 </template>
 <script>
 import Plotly from 'plotly.js-basic-dist';
-import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE } from './SpectralAggregateConstants';
+import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE } from './SpectralAggregatePlotConstants';
 
 const PLOT_PADDING_IN_PERCENT = 1;
 const MULTI_AXES_X_PADDING_PERCENT = {

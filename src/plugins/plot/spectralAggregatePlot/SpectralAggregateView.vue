@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import * as SPECTRAL_AGGREGATE from './SpectralAggregateConstants';
+import * as SPECTRAL_AGGREGATE from './SpectralAggregatePlotConstants';
 import ColorPalette from '../lib/ColorPalette';
 import SpectralAggregatePlot from './SpectralAggregatePlot.vue';
 

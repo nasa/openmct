@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { SPECTRAL_AGGREGATE_KEY } from './SpectralAggregateConstants';
+import { SPECTRAL_AGGREGATE_KEY } from './SpectralAggregatePlotConstants';
 export default function SpectralAggregatePlotCompositionPolicy(openmct) {
     function hasAggregateDomainAndRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);

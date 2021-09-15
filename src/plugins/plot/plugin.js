@@ -19,13 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
+import { SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregatePlotConstants';
 import PlotViewProvider from './PlotViewProvider';
 import SpectralPlotViewProvider from './spectralPlot/SpectralPlotViewProvider';
 import SpectralAggregatePlotViewProvider from './spectralAggregatePlot/SpectralAggregatePlotViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
+import SpectralAggregatePlotInspectorViewProvider from './spectralAggregatePlot/inspector/SpectralAggregatePlotInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
 import SpectralPlotCompositionPolicy from './spectralPlot/SpectralPlotCompositionPolicy';
@@ -98,6 +99,7 @@ export default function () {
         openmct.objectViews.addProvider(new SpectralAggregatePlotViewProvider(openmct));
 
         openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new SpectralAggregatePlotInspectorViewProvider(openmct));
 
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);

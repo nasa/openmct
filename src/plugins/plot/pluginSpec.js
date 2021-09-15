@@ -29,7 +29,7 @@ import configStore from "./configuration/configStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
-import { SPECTRAL_AGGREGATE_VIEW, SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
+import { SPECTRAL_AGGREGATE_VIEW, SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregatePlotConstants';
 
 describe("the plugin", function () {
     let element;

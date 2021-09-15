@@ -1,8 +1,8 @@
-import { SPECTRAL_AGGREGATE_INSPECTOR_KEY, SPECTRAL_AGGREGATE_KEY } from './SpectralAggregateConstants';
+import { SPECTRAL_AGGREGATE_INSPECTOR_KEY, SPECTRAL_AGGREGATE_KEY } from '../SpectralAggregatePlotConstants';
 import Vue from 'vue';
 import SpectralAggregatePlotOptions from "./SpectralAggregatePlotOptions.vue";
 
-export default function SpectralAggregateInspectorViewProvider(openmct) {
+export default function SpectralAggregatePlotInspectorViewProvider(openmct) {
     return {
         key: SPECTRAL_AGGREGATE_INSPECTOR_KEY,
         name: 'Spectral Aggregate Plot Inspector View',
