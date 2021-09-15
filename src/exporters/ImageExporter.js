@@ -90,7 +90,7 @@ class ImageExporter {
                 element.id = oldId;
             },
             removeContainer: true // Set to false to debug what html2canvas renders
-        }).then(function (canvas) {
+        }).then(canvas => {
             dialog.dismiss();
 
             return new Promise(function (resolve, reject) {
@@ -105,9 +105,10 @@ class ImageExporter {
 
                 return canvas.toBlob(blob => resolve({ blob }), mimeType);
             });
-        }, function (error) {
-            console.log('error capturing image', error);
+        }).catch(error => {
             dialog.dismiss();
+
+            console.error('error capturing image', error);
             const errorDialog = overlays.dialog({
                 iconClass: 'error',
                 message: 'Image was not captured successfully!',

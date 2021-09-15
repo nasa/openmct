@@ -20,34 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * Module defining url handling.
- */
+import Clock from './components/Clock.vue';
+import Vue from 'vue';
 
-export function paramsToArray(openmct) {
-    // parse urParams from an object to an array.
-    let urlParams = openmct.router.getParams();
-    let newTabParams = [];
-    for (let key in urlParams) {
-        if ({}.hasOwnProperty.call(urlParams, key)) {
-            let param = `${key}=${urlParams[key]}`;
-            newTabParams.push(param);
+export default function ClockViewProvider(openmct) {
+    return {
+        key: 'clock.view',
+        name: 'Clock',
+        cssClass: 'icon-clock',
+        canView(domainObject) {
+            return domainObject.type === 'clock';
+        },
+
+        view: function (domainObject) {
+            let component;
+
+            return {
+                show: function (element) {
+                    component = new Vue({
+                        el: element,
+                        components: {
+                            Clock
+                        },
+                        provide: {
+                            openmct,
+                            domainObject
+                        },
+                        template: '<clock />'
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
         }
-    }
-
-    return newTabParams;
-}
-
-export function identifierToString(openmct, objectPath) {
-    return '#/browse/' + openmct.objects.getRelativePath(objectPath);
-}
-
-export default function objectPathToUrl(openmct, objectPath) {
-    let url = identifierToString(openmct, objectPath);
-    let urlParams = paramsToArray(openmct);
-    if (urlParams.length) {
-        url += '?' + urlParams.join('&');
-    }
-
-    return url;
+    };
 }
