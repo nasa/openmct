@@ -59,7 +59,8 @@
             </div>
         </li>
     </ul>
-    <ul v-elseclass="grid-properties">
+    <ul v-else
+        class="grid-properties">
         <li class="grid-row">
             <div class="grid-cell label"
                  title="The plot line and marker color for this series."
