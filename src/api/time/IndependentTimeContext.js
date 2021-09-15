@@ -35,41 +35,6 @@ class IndependentTimeContext extends TimeContext {
     }
 
     /**
-     * Get or set the start and end time of the time conductor. Basic validation
-     * of bounds is performed.
-     *
-     * @param {module:openmct.TimeAPI~TimeConductorBounds} newBounds
-     * @throws {Error} Validation error
-     * @fires module:openmct.TimeAPI~bounds
-     * @returns {module:openmct.TimeAPI~TimeConductorBounds}
-     * @memberof module:openmct.TimeAPI#
-     * @method bounds
-     */
-    bounds(newBounds) {
-        if (arguments.length > 0) {
-            const validationResult = this.validateBounds(newBounds);
-            if (validationResult.valid !== true) {
-                throw new Error(validationResult.message);
-            }
-
-            //Create a copy to avoid direct mutation of conductor bounds
-            this.boundsVal = JSON.parse(JSON.stringify(newBounds));
-            /**
-             * The start time, end time, or both have been updated.
-             * @event bounds
-             * @memberof module:openmct.TimeAPI~
-             * @property {TimeConductorBounds} bounds The newly updated bounds
-             * @property {boolean} [tick] `true` if the bounds update was due to
-             * a "tick" event (ie. was an automatic update), false otherwise.
-             */
-            this.emit('bounds', this.boundsVal, false);
-        }
-
-        //Return a copy to prevent direct mutation of time conductor bounds.
-        return JSON.parse(JSON.stringify(this.boundsVal));
-    }
-
-    /**
      * Set the active clock. Tick source will be immediately subscribed to
      * and ticking will begin. Offsets from 'now' must also be provided. A clock
      * can be unset by calling {@link stopClock}.
@@ -123,26 +88,6 @@ class IndependentTimeContext extends TimeContext {
         }
 
         return this.activeClock;
-    }
-
-    /**
-     * Update bounds based on provided time and current offsets
-     * @private
-     * @param {number} timestamp A time from which bounds will be calculated
-     * using current offsets.
-     */
-    tick(timestamp) {
-        if (!this.activeClock) {
-            return;
-        }
-
-        const newBounds = {
-            start: timestamp + this.offsets.start,
-            end: timestamp + this.offsets.end
-        };
-
-        this.boundsVal = newBounds;
-        this.emit('bounds', this.boundsVal, true);
     }
 }
 
