@@ -69,6 +69,7 @@ define([
     './CouchDBSearchFolder/plugin',
     './timeline/plugin',
     './hyperlink/plugin',
+    './clock/plugin',
     './DeviceClassifier/plugin'
 ], function (
     _,
@@ -119,6 +120,7 @@ define([
     CouchDBSearchFolder,
     Timeline,
     Hyperlink,
+    Clock,
     DeviceClassifier
 ) {
     const bundleMap = {
@@ -223,6 +225,7 @@ define([
     plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
     plugins.Timeline = Timeline.default;
     plugins.Hyperlink = Hyperlink.default;
+    plugins.Clock = Clock.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
 
     return plugins;
