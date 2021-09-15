@@ -1,13 +1,15 @@
 /******************************************************** PROGRESS BAR */
 @keyframes progressIndeterminate {
-    from { left: -100%; width: 0; }
-    to { left: 100%; width: 200%;}
+    0% { left: 0; width: 0; }
+    70% { left: 0; width: 100%; opacity: 1; }
+    100% { left: 100%; opacity: 0; }
 }
 
 .c-progress-bar {
     background: $colorProgressBarHolder;
     display: block;
     min-height: $progressBarMinH;
+    overflow: hidden;
     width: 100%;
 
     &__bar {
@@ -16,7 +18,7 @@
 
         &.--indeterminate {
             position: absolute;
-            animation: progressIndeterminate 1.5s ease-in-out infinite;
+            animation: progressIndeterminate 1.5s ease-in infinite;
         }
     }
 }

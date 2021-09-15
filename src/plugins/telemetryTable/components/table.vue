@@ -385,7 +385,7 @@ export default {
     computed: {
         progressLoad() {
             return {
-                progressPerc: 'unknown'
+                progressPerc: undefined
             };
         },
         dropTargetStyle() {
