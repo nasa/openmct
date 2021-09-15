@@ -69,6 +69,7 @@ define([
     './CouchDBSearchFolder/plugin',
     './timeline/plugin',
     './hyperlink/plugin',
+    './clock/plugin',
     './DeviceClassifier/plugin',
     './LADTable2/plugin'
 ], function (
@@ -120,6 +121,7 @@ define([
     CouchDBSearchFolder,
     Timeline,
     Hyperlink,
+    Clock,
     DeviceClassifier,
     LADTableNEW
 ) {
@@ -225,6 +227,7 @@ define([
     plugins.CouchDBSearchFolder = CouchDBSearchFolder.default;
     plugins.Timeline = Timeline.default;
     plugins.Hyperlink = Hyperlink.default;
+    plugins.Clock = Clock.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.LADTableNEW = LADTableNEW.default;
 
