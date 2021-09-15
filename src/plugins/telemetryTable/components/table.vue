@@ -139,11 +139,11 @@
             :style="dropTargetStyle"
         ></div>
 
-        <div v-if="true"
-             class="c-telemetry-table__progress-bar c-progress-bar"
-        >
-            <div class="c-progress-bar__bar"></div>
-        </div>
+        <progress-bar
+            v-if="progressLoad.progressPerc !== 100"
+            class="c-telemetry-table__progress-bar"
+            :model="progressLoad"
+        />
 
         <!-- Headers table -->
         <div
@@ -292,6 +292,7 @@ import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import SizingRow from './sizing-row.vue';
+import ProgressBar from "../../../ui/components/ProgressBar.vue";
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -305,7 +306,8 @@ export default {
         search,
         TableFooterIndicator,
         ToggleSwitch,
-        SizingRow
+        SizingRow,
+        ProgressBar
     },
     inject: ['openmct', 'objectPath', 'table', 'currentView'],
     props: {
@@ -381,6 +383,11 @@ export default {
         };
     },
     computed: {
+        progressLoad() {
+            return {
+                progressPerc: 'unknown'
+            };
+        },
         dropTargetStyle() {
             return {
                 top: this.$refs.headersTable.offsetTop + 'px',
