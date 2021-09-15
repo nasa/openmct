@@ -297,10 +297,7 @@ export default {
             this.openmct.objects.getOriginalPath(this.conditionSetDomainObject.identifier).then(
                 (objectPath) => {
                     this.objectPath = objectPath;
-                    this.navigateToPath = '#/browse/' + this.objectPath
-                        .map(o => o && this.openmct.objects.makeKeyString(o.identifier))
-                        .reverse()
-                        .join('/');
+                    this.navigateToPath = '#/browse/' + this.openmct.objects.getRelativePath(this.objectPath);
                 }
             );
         },

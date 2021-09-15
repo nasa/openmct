@@ -30,7 +30,10 @@ class OverlayAPI {
      */
     showOverlay(overlay) {
         if (this.activeOverlays.length) {
-            this.activeOverlays[this.activeOverlays.length - 1].container.classList.add('invisible');
+            const previousOverlay = this.activeOverlays[this.activeOverlays.length - 1];
+            if (previousOverlay.autoHide) {
+                previousOverlay.container.classList.add('invisible');
+            }
         }
 
         this.activeOverlays.push(overlay);
