@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ExportService from '../../../platform/exporters/ExportService.js';
+import JSONExporter from '/src/exporters/JSONExporter.js';
 
 import _ from 'lodash';
 import { saveAs } from 'saveAs';
@@ -40,7 +40,7 @@ export default class ExportAsJSONAction {
         this.calls = 0;
         this.idMap = {};
 
-        this.exportService = new ExportService(saveAs);
+        this.JSONExportService = new JSONExporter(saveAs);
     }
 
     // Public
@@ -143,7 +143,7 @@ export default class ExportAsJSONAction {
      * @param {object} completedTree
      */
     _saveAs(completedTree) {
-        this.exportService.exportJSON(
+        this.JSONExportService.export(
             completedTree,
             { filename: this.root.name + '.json' }
         );
