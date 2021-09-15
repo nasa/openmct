@@ -79,8 +79,6 @@
 </template>
 
 <script>
-import configStore from "../../configuration/ConfigStore";
-import eventHelpers from "../../lib/eventHelpers";
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -113,10 +111,6 @@ export default {
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.setEditState);
-        eventHelpers.extend(this);
-        this.config = this.getConfig();
-        this.registerListeners();
-        this.loaded = true;
     },
     beforeDestroy() {
         this.openmct.editor.off('isEditing', this.setEditState);
@@ -128,17 +122,6 @@ export default {
         seriesHexColor() {
             return this.plotSeries.get('color').asHexString();
         },
-        getConfig() {
-            this.configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
-            return configStore.get(this.configId);
-        },
-        registerListeners() {
-            this.config.series.forEach(this.addSeries, this);
-
-            this.listenTo(this.config.series, 'add', this.addSeries, this);
-            this.listenTo(this.config.series, 'remove', this.resetAllSeries, this);
-        },
         addSeries(series, index) {
             this.$set(this.plotSeries, index, series);
         },
@@ -146,26 +129,7 @@ export default {
             this.plotSeries = [];
             this.config.series.forEach(this.addSeries, this);
         },
-        dynamicPathForKey(key) {
-            return function (object, model) {
-                const modelIdentifier = model.get('identifier');
-                const index = object.configuration.series.findIndex(s => {
-                    return _.isEqual(s.identifier, modelIdentifier);
-                });
-
-                return 'configuration.series[' + index + '].' + key;
-            };
-        },
-        /**
-       * Set the color for the current plot series.  If the new color was
-       * already assigned to a different plot series, then swap the colors.
-       */
         setColor: function (color) {
-            const oldColor = this.plotSeries.get('color');
-            const otherSeriesWithColor = this.plotSeries.collection.filter(function (s) {
-                return s.get('color') === color;
-            })[0];
-
             this.plotSeries.set('color', color);
 
             const getPath = this.dynamicPathForKey('color');
@@ -176,21 +140,6 @@ export default {
                 seriesColorPath,
                 color.asHexString()
             );
-
-            if (otherSeriesWithColor) {
-                otherSeriesWithColor.set('color', oldColor);
-
-                const otherSeriesColorPath = getPath(
-                    this.domainObject,
-                    otherSeriesWithColor
-                );
-
-                this.openmct.objects.mutate(
-                    this.domainObject,
-                    otherSeriesColorPath,
-                    oldColor.asHexString()
-                );
-            }
         }
     }
 };
