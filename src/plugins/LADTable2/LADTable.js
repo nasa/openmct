@@ -21,8 +21,7 @@
  *****************************************************************************/
 
 import TelemetryTable from '../telemetryTable/TelemetryTable.js';
-// import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
-import LADRow from './LADRow.js';
+import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
 import LADTableRowCollection from './LADTableRowCollection.js';
 
 export default class LADTable extends TelemetryTable {
