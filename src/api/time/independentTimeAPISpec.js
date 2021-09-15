@@ -60,7 +60,7 @@ describe("The Independent Time API", function () {
     it("Creates an independent time context", () => {
         let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         let timeContext = api.getIndependentContext(domainObjectKey);
-        expect(timeContext.value).toEqual(independentBounds);
+        expect(timeContext.bounds()).toEqual(independentBounds);
         destroyTimeContext();
     });
 

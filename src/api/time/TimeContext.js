@@ -29,9 +29,6 @@ class TimeContext extends EventEmitter {
         //The Time System
         this.timeSystems = new Map();
 
-        //The independent time bounds/offsets and clock
-        this.timeConfigByObjectId = new Map();
-
         this.system = undefined;
 
         this.clocks = new Map();

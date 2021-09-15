@@ -27,14 +27,11 @@ import TimeContext from "./TimeContext";
  * Views will use the GlobalTimeContext unless they specify an alternate/independent time context here.
  */
 class IndependentTimeContext extends TimeContext {
-    constructor(globalTimeContext, objectPath) {
+    constructor(globalTimeContext, key) {
         super();
-        this.objectPath = objectPath;
+        this.key = key;
+
         this.globalTimeContext = globalTimeContext;
-        this.globalTimeContext.on('refreshContext', this.refreshContext.bind(this));
-        this.emitBounds = this.emitBounds.bind(this);
-        this.emitClock = this.emitClock.bind(this);
-        this.refreshContext();
     }
 
     /**
@@ -68,15 +65,8 @@ class IndependentTimeContext extends TimeContext {
             this.emit('bounds', this.boundsVal, false);
         }
 
-        let boundsVal;
-        if (this.useGlobalTimeContext) {
-            boundsVal = this.globalTimeContext.boundsVal;
-        } else {
-            boundsVal = this.boundsVal;
-        }
-
         //Return a copy to prevent direct mutation of time conductor bounds.
-        return JSON.parse(JSON.stringify(boundsVal));
+        return JSON.parse(JSON.stringify(this.boundsVal));
     }
 
     /**
@@ -132,14 +122,7 @@ class IndependentTimeContext extends TimeContext {
             throw "When setting the clock, clock offsets must also be provided";
         }
 
-        let activeClock;
-        if (this.useGlobalTimeContext) {
-            activeClock = this.globalTimeContext.activeClock;
-        } else {
-            activeClock = this.activeClock;
-        }
-
-        return activeClock;
+        return this.activeClock;
     }
 
     /**
@@ -160,46 +143,6 @@ class IndependentTimeContext extends TimeContext {
 
         this.boundsVal = newBounds;
         this.emit('bounds', this.boundsVal, true);
-    }
-
-    emitBounds(bounds, tick) {
-        this.emit('bounds', bounds, tick);
-    }
-
-    emitClock(activeClock) {
-        this.emit('clock', activeClock);
-    }
-
-    refreshContext() {
-        let found = this.objectPath.filter(item => {
-            const objectId = this.globalTimeContext.openmct.objects.makeKeyString(item.identifier);
-
-            return this.globalTimeContext.timeConfigByObjectId.get(objectId) !== undefined;
-        });
-
-        this.globalTimeContext.off('bounds', this.emitBounds);
-        this.globalTimeContext.off('clock', this.emitClock);
-
-        if (found.length > 0) {
-            this.useGlobalTimeContext = false;
-            const objectId = this.globalTimeContext.openmct.objects.makeKeyString(found[0].identifier);
-            const timeConfig = this.globalTimeContext.timeConfigByObjectId.get(objectId);
-            let clockKey = timeConfig.clockKey;
-            let value = timeConfig.value;
-
-            if (clockKey) {
-                this.clock(clockKey, value);
-            } else {
-                this.stopClock();
-                this.bounds(value);
-            }
-        } else {
-            //fallback to global time context
-            this.useGlobalTimeContext = true;
-            this.emit('bounds', this.globalTimeContext.bounds());
-            this.globalTimeContext.on('bounds', this.emitBounds);
-            this.globalTimeContext.on('clock', this.emitClock);
-        }
     }
 }
 

@@ -281,6 +281,7 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.path);
+            this.timeContext.on('timeContext', this.setTimeContext);
             this.followTimeContext();
 
         },
@@ -294,6 +295,7 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off("clock", this.updateRealTime);
                 this.timeContext.off("bounds", this.updateDisplayBounds);
+                this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
         getConfig() {

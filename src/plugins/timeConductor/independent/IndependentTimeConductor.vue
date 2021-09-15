@@ -150,10 +150,12 @@ export default {
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
+            this.timeContext.on('timeContext', this.setTimeContext);
             this.timeContext.on('clock', this.setViewFromClock);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
+                this.timeContext.off('timeContext', this.setTimeContext);
                 this.timeContext.off('clock', this.setViewFromClock);
             }
         },
@@ -171,7 +173,7 @@ export default {
                 };
             }
 
-            // this.registerIndependentTimeOffsets();
+            this.registerIndependentTimeOffsets();
         },
         saveFixedOffsets(offsets) {
             const newOptions = Object.assign({}, this.timeOptions, {

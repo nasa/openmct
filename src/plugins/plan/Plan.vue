@@ -114,6 +114,7 @@ export default {
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.path);
+            this.timeContext.on("timeContext", this.setTimeContext);
             this.followTimeContext();
         },
         followTimeContext() {
@@ -126,6 +127,7 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.setScaleAndPlotActivities);
                 this.timeContext.off("bounds", this.updateViewBounds);
+                this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
         observeForChanges(mutatedObject) {

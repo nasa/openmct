@@ -46,6 +46,7 @@ class TimeAPI extends GlobalTimeContext {
     constructor(openmct) {
         super();
         this.openmct = openmct;
+        this.independentContexts = new Map();
     }
 
     /**
@@ -123,7 +124,8 @@ class TimeAPI extends GlobalTimeContext {
     }
 
     /**
-     * Get or set an independent time configuration for a given domain object
+     * Get or set an independent time context which follows the TimeAPI timeSystem,
+     * but with different offsets for a given domain object
      * @param {key | string} key The identifier key of the domain object these offsets are set for
      * @param {ClockOffsets | TimeBounds} value This maintains a sliding time window of a fixed width that automatically updates
      * @param {key | string} clockKey the real time clock key currently in use
@@ -131,39 +133,56 @@ class TimeAPI extends GlobalTimeContext {
      * @method addIndependentTimeContext
      */
     addIndependentContext(key, value, clockKey) {
-        this.timeConfigByObjectId.set(key, {
-            value,
-            clockKey
-        });
+        let timeContext = this.independentContexts.get(key);
+        if (!timeContext) {
+            timeContext = new IndependentTimeContext(this, key);
+            this.independentContexts.set(key, timeContext);
+        }
 
-        this.emit('refreshContext');
+        if (clockKey) {
+            timeContext.clock(clockKey, value);
+        } else {
+            timeContext.stopClock();
+            timeContext.bounds(value);
+        }
+
+        this.emit('timeContext', key);
 
         return () => {
-            this.timeConfigByObjectId.delete(key);
-            this.emit('refreshContext');
+            this.independentContexts.delete(key);
+            timeContext.emit('timeContext', key);
         };
     }
 
     /**
-     * Get the independent time configuration by key.
+     * Get the independent time context which follows the TimeAPI timeSystem,
+     * but with different offsets.
      * @param {key | string} key The identifier key of the domain object these offsets
      * @memberof module:openmct.TimeAPI#
      * @method getIndependentTimeContext
      */
     getIndependentContext(key) {
-        return this.timeConfigByObjectId.get(key);
+        return this.independentContexts.get(key);
     }
 
     /**
-     * Get the a timeContext for a view. If there is any object in the objectPath with an independent time configuration enabled, it will be returned.
-     * Otherwise, the global time context will be returned. This determination is transparent to views as they will continue to respond to changes
-     * from a single timeContext.
+     * Get the a timeContext for a view based on it's objectPath. If there is any object in the objectPath with an independent time context, it will be returned.
+     * Otherwise, the global time context will be returned.
      * @param { Array } objectPath The view's objectPath
      * @memberof module:openmct.TimeAPI#
      * @method getContextForView
      */
     getContextForView(objectPath) {
-        return new IndependentTimeContext(this, objectPath);
+        let timeContext = this;
+
+        objectPath.forEach(item => {
+            const key = this.openmct.objects.makeKeyString(item.identifier);
+            if (this.independentContexts.get(key)) {
+                timeContext = this.independentContexts.get(key);
+            }
+        });
+
+        return timeContext;
     }
 
 }
