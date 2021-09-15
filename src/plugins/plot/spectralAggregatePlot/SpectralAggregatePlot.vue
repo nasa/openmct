@@ -39,8 +39,9 @@ const MULTI_AXES_X_PADDING_PERCENT = {
 export default {
     inject: ['openmct', 'domainObject'],
     props: [
+        // eslint-disable-next-line vue/require-prop-types
         'data',
-        'legendExpanded',
+        // eslint-disable-next-line vue/require-prop-types
         'plotAxisTitle'
     ],
     data() {
@@ -60,10 +61,6 @@ export default {
         data: {
             immediate: false,
             handler: 'updateData'
-        },
-        legendExpanded: {
-            immediate: false,
-            handler: 'updatePlot'
         }
     },
     mounted() {

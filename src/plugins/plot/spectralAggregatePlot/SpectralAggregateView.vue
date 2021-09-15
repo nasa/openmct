@@ -21,14 +21,11 @@
 -->
 
 <template>
-<div class="c-spectral-aggregate-plot-view gl-plot plot-legend-bottom"
-     :class="{'plot-legend-expanded': legendExpanded, 'plot-legend-collapsed': !legendExpanded }"
->
+<div class="c-spectral-aggregate-plot-view gl-plot plot-legend-bottom plot-legend-collapsed">
     <SpectralAggregatePlot ref="spectralAggregatePlot"
                            class="c-spectral-aggregate-plot__plot-wrapper"
-                           :data="visibleData"
+                           :data="trace"
                            :plot-axis-title="plotAxisTitle"
-                           :legend-expanded="legendExpanded"
     />
 </div>
 </template>
@@ -36,7 +33,6 @@
 <script>
 import * as SPECTRAL_AGGREGATE from './SpectralAggregateConstants';
 import ColorPalette from '../lib/ColorPalette';
-import objectUtils from 'objectUtils';
 import SpectralAggregatePlot from './SpectralAggregatePlot.vue';
 
 export default {
@@ -49,12 +45,9 @@ export default {
             colorMapping: {},
             composition: {},
             currentDomainObject: this.domainObject,
-            isRealTime: (this.openmct.time.clock() !== undefined),
-            spectralAggregateTypes: {},
             subscriptions: [],
             telemetryObjects: {},
-            trace: [],
-            legendExpanded: false
+            trace: []
         };
     },
     computed: {
@@ -70,9 +63,6 @@ export default {
                 xAxisTitle: `${xAxisMetadata.name || ''} ${xAxisUnit}`,
                 yAxisTitle: `${yAxisMetadata.name || ''} ${yAxisUnit}`
             };
-        },
-        visibleData() {
-            return this.trace.filter((trace) => trace.hidden !== true);
         }
     },
     mounted() {
@@ -109,15 +99,8 @@ export default {
 
             return color;
         },
-        addSpectralAggregateType(key, name, timestamp, color) {
-            this.$set(this.spectralAggregateTypes, key, {
-                name,
-                timestamp,
-                color
-            });
-        },
         addTelemetryObject(telemetryObject) {
-            const key = objectUtils.makeKeyString(telemetryObject.identifier);
+            const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
             if (!this.colorMapping[key]) {
                 this.addColorForTelemetry(key);
@@ -147,11 +130,8 @@ export default {
             });
 
             this.trace = isInTrace ? newTrace : newTrace.concat([trace]);
-            this.updateTraceVisibility();
         },
         clockChanged() {
-            this.isRealTime = this.openmct.time.clock() !== undefined;
-
             this.removeAllSubscriptions();
             this.subscribeToAll();
         },
@@ -170,7 +150,6 @@ export default {
             const { start, end } = this.openmct.time.bounds();
 
             return {
-                averages: 0,
                 end,
                 start,
                 startTime: null,
@@ -202,9 +181,8 @@ export default {
             this.subscriptions = [];
         },
         removeTelemetryObject(identifier) {
-            const key = objectUtils.makeKeyString(identifier);
+            const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
-            this.$delete(this.spectralAggregateTypes, key);
 
             this.subscriptions.forEach(subscription => {
                 if (subscription.key !== key) {
@@ -218,15 +196,13 @@ export default {
             this.trace = this.trace.filter(t => t.key !== key);
         },
         processData(telemetryObject, data, axisMetadata) {
-            const key = objectUtils.makeKeyString(telemetryObject.identifier);
+            const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
+            // eslint-disable-next-line no-unused-vars
             const formattedTimestamp = 'N/A';
 
+            // eslint-disable-next-line no-unused-vars
             const color = this.colorMapping[key];
-            const spectralAggregateValue = this.spectralAggregateTypes[key];
-            if (!spectralAggregateValue) {
-                this.addSpectralAggregateType(key, telemetryObject.name, formattedTimestamp, color);
-            }
 
             if (data.message) {
                 this.openmct.notifications.alert(data.message);
@@ -268,7 +244,7 @@ export default {
                 });
         },
         subscribeToObject(telemetryObject) {
-            const key = objectUtils.makeKeyString(telemetryObject.identifier);
+            const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             const found = Object.values(this.subscriptions).findIndex(objectKey => objectKey === key);
             if (found > -1) {
                 this.subscriptions[found].unsubscribe();
@@ -293,14 +269,6 @@ export default {
         },
         updateDomainObject(newDomainObject) {
             this.currentDomainObject = newDomainObject;
-        },
-        updateTraceVisibility() {
-            // We create a copy here to improve performance since visibleData - a computed property - is dependent on this.trace.
-            this.trace = this.trace.map((currentTrace, index) => {
-                currentTrace.hidden = this.spectralAggregateTypes[currentTrace.key].hidden === true;
-
-                return currentTrace;
-            });
         }
     }
 };
