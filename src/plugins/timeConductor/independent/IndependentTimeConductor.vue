@@ -112,6 +112,7 @@ export default {
                 if (this.timeOptions.start !== domainObject.configuration.timeOptions.start
                     || this.timeOptions.end !== domainObject.configuration.timeOptions.end) {
                     this.timeOptions = domainObject.configuration.timeOptions;
+                    this.destroyIndependentTime();
                     this.registerIndependentTimeOffsets();
                 }
             },
@@ -170,7 +171,7 @@ export default {
                 };
             }
 
-            this.registerIndependentTimeOffsets();
+            // this.registerIndependentTimeOffsets();
         },
         saveFixedOffsets(offsets) {
             const newOptions = Object.assign({}, this.timeOptions, {
