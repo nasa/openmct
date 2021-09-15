@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import TelemetryTable from '../telemetryTable/TelemetryTable.js';
-import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
+import EmptyLADTableRow from './EmptyLADTableRow.js';
+import LADTableRow from './LADTableRow.js';
 import LADTableRowCollection from './LADTableRowCollection.js';
 
 export default class LADTable extends TelemetryTable {
@@ -29,7 +30,6 @@ export default class LADTable extends TelemetryTable {
         super(domainObject, openmct);
         this.domainObject = domainObject;
         this.openmct = openmct;
-        // need change: replace LADTableRowCollection
         this.tableRows = new LADTableRowCollection();
         this.createTableRowCollections();
     }
@@ -45,19 +45,17 @@ export default class LADTable extends TelemetryTable {
     addTelemetryObject(telemetryObject) {
         // addTelemetryObject is exactly the same as the parent's
         super.addTelemetryObject(telemetryObject);
-        // this.addaddDummyRowForObject(telemetryObject);
+        this.addDummyRowForObject(telemetryObject);
     }
     addDummyRowForObject(object) {
         let objectKeyString = this.openmct.objects.makeKeyString(object.identifier);
         let columns = this.getColumnMapForObject(objectKeyString);
-        // need change: create dummy row with a new LADRow. this will take care of empty values
-        // let dummyRow = new EmptyChannelListRow(columns, objectKeyString);
-        // this.tableRows.add(dummyRow);
+        let dummyRow = new EmptyLADTableRow(columns, objectKeyString);
+        this.tableRows.addRows([dummyRow]);
     }
 
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
         // this is where only latest telemetry is retrived
-        // need change: replace TelemetryTableRow with LADRow
         return (telemetry) => {
             //Check that telemetry object has not been removed since telemetry was requested.
             if (!this.telemetryObjects[keyString]) {
@@ -66,7 +64,7 @@ export default class LADTable extends TelemetryTable {
 
             // only add the latest telemetry
             let latest = telemetry[telemetry.length - 1];
-            let telemetryRow = [new TelemetryTableRow(latest, columnMap, keyString, limitEvaluator)];
+            let telemetryRow = [new LADTableRow(latest, columnMap, keyString, limitEvaluator)];
             if (this.paused) {
                 this.delayedActions.push(this.tableRows.addRows.bind(this, telemetryRow, 'add'));
             } else {

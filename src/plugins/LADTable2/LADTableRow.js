@@ -21,50 +21,33 @@
  *****************************************************************************/
 
 // extend telemetryTableRow
-// it should take care of rows with empty values
+// it should take care of refular LAD rows
 // import it in LADTableRowCollection
-// refer to emptyChannelListRow.js
+// refer to ChannelListTableRow.js
 import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
+import printj from 'printj';
 
-export default class LADRow extends TelemetryTableRow {
-    constructor(columns, objectKeyString) {
-        super({}, columns, objectKeyString);
-        this.isDummyRow = true;
-        this.columns = columns;
-        this.objectKeyString = objectKeyString;
-        this.datum = Object.keys(columns).reduce((datum, column) => {
-            datum[column] = undefined;
-
-            return datum;
-        }, {});
+export default class LADTableRow extends TelemetryTableRow {
+    constructor(datum, columns, objectKeyString, limitEvaluator, rowFormatConfiguration) {
+        super(datum, columns, objectKeyString, limitEvaluator);
+        this.rowFormats = rowFormatConfiguration || {};
     }
 
-    getFormattedDatum(headers) {
-        return Object.keys(headers).reduce((formattedDatum, columnKey) => {
-            formattedDatum[columnKey] = this.getFormattedValue(columnKey);
-
-            return formattedDatum;
-        }, {});
-    }
-
-    // populate value if empty
     getFormattedValue(key) {
-        if (key === 'vista-lad-name') {
+        if (this.rowFormats[key]) {
+            return this.getCustomFormattedValue(this.datum[key], this.rowFormats[key]);
+        } else {
             let column = this.columns[key];
 
-            return column && column.getFormattedValue();
-        } else if (this.columns[key] === undefined) {
-            return '';
-        } else {
-            return this.datum[key] || '--';
+            return column && column.getFormattedValue(this.datum[key]);
         }
     }
 
-    // getRowClass() {
-    // }
+    getCustomFormattedValue(value, format) {
+        return printj.sprintf(format, value);
+    }
 
-    // getCellLimitClasses() {
-    //     return {};
-    // }
-
+    updateRowConfiguration(rowFormatConfiguration) {
+        this.rowFormats = rowFormatConfiguration || {};
+    }
 }
