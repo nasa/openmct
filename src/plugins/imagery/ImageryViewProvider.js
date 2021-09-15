@@ -19,7 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import Imagery_View from './Imagery_View';
+import ImageryView from './ImageryView';
 
 export default function ImageryViewProvider(openmct) {
     const type = 'example.imagery';
@@ -43,7 +43,7 @@ export default function ImageryViewProvider(openmct) {
             return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
         },
         view: function (domainObject, objectPath) {
-            return new Imagery_View(openmct, domainObject, objectPath);
+            return new ImageryView(openmct, domainObject, objectPath);
         }
     };
 }
