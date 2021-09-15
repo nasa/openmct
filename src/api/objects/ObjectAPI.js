@@ -359,6 +359,20 @@ ObjectAPI.prototype.applyGetInterceptors = function (identifier, domainObject) {
 };
 
 /**
+ * Return relative url path from a given object path
+ * eg: #/browse/mine/cb56f6bf-c900-43b7-b923-2e3b64b412db/6e89e858-77ce-46e4-a1ad-749240286497/....
+ * @param {Array} objectPath
+ * @returns {string} relative url for object
+ */
+ObjectAPI.prototype.getRelativePath = function (objectPath) {
+    return objectPath
+        .map(p => this.makeKeyString(p.identifier))
+        .reverse()
+        .join('/')
+    ;
+};
+
+/**
  * Modify a domain object.
  * @param {module:openmct.DomainObject} object the object to mutate
  * @param {string} path the property to modify
