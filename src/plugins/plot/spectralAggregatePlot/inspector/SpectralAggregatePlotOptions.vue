@@ -33,7 +33,7 @@
                      @click="toggleSwatch()"
                 >
                     <span class="c-color-swatch"
-                          :style="{ background: seriesColorAsHex }"
+                          :style="{ background: currentBarColor }"
                     >
                     </span>
                 </div>
@@ -68,7 +68,7 @@
             <div class="grid-cell value">
                 <span class="c-color-swatch"
                       :style="{
-                          'background': seriesHexColor
+                          'background': currentBarColor
                       }"
                 >
                 </span>
@@ -79,23 +79,13 @@
 </template>
 
 <script>
+import ColorPalette from '../../lib/ColorPalette';
 
 export default {
     inject: ['openmct', 'domainObject'],
-    props: {
-        series: {
-            type: Object,
-            default() {
-                return {};
-            }
-        }
-    },
     data() {
         return {
-            swatchActive: false,
-            config: {},
-            plotSeries: [],
-            loaded: false
+            swatchActive: false
         };
     },
     computed: {
@@ -103,10 +93,10 @@ export default {
             return this.isEditing && !this.domainObject.locked;
         },
         colorPalette() {
-            return this.plotSeries.collection.palette.groups();
+            return ColorPalette;
         },
-        seriesColorAsHex() {
-            return this.plotSeries.get('color').asHexString();
+        currentBarColor() {
+            return this.domainObject.configuration.barStyles.color;
         }
     },
     mounted() {
@@ -119,26 +109,12 @@ export default {
         setEditState(isEditing) {
             this.isEditing = isEditing;
         },
-        seriesHexColor() {
-            return this.plotSeries.get('color').asHexString();
-        },
-        addSeries(series, index) {
-            this.$set(this.plotSeries, index, series);
-        },
-        resetAllSeries() {
-            this.plotSeries = [];
-            this.config.series.forEach(this.addSeries, this);
-        },
         setColor: function (color) {
-            this.plotSeries.set('color', color);
-
-            const getPath = this.dynamicPathForKey('color');
-            const seriesColorPath = getPath(this.domainObject, this.plotSeries);
-
+            this.domainObject.configuration.barStyles.color = color;
             this.openmct.objects.mutate(
                 this.domainObject,
-                seriesColorPath,
-                color.asHexString()
+                'configuration.barStyles.color',
+                color
             );
         }
     }

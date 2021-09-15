@@ -42,7 +42,6 @@ export default {
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            colorMapping: {},
             composition: {},
             currentDomainObject: this.domainObject,
             subscriptions: [],
@@ -93,18 +92,8 @@ export default {
         this.composition.off('remove', this.removeTelemetryObject);
     },
     methods: {
-        addColorForTelemetry(key) {
-            const color = this.colorPalette.getNextColor().asHexString();
-            this.colorMapping[key] = color;
-
-            return color;
-        },
         addTelemetryObject(telemetryObject) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-
-            if (!this.colorMapping[key]) {
-                this.addColorForTelemetry(key);
-            }
 
             this.telemetryObjects[key] = telemetryObject;
 
@@ -198,12 +187,6 @@ export default {
         processData(telemetryObject, data, axisMetadata) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
-            // eslint-disable-next-line no-unused-vars
-            const formattedTimestamp = 'N/A';
-
-            // eslint-disable-next-line no-unused-vars
-            const color = this.colorMapping[key];
-
             if (data.message) {
                 this.openmct.notifications.alert(data.message);
             }
@@ -221,6 +204,14 @@ export default {
                 }
             });
 
+            // check to see if we've set a bar color
+            if (!this.domainObject.configuration.barStyles) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.barStyles = {
+                    color
+                };
+            }
+
             const trace = {
                 key,
                 name: telemetryObject.name,
@@ -229,7 +220,10 @@ export default {
                 text: yValues.map(String),
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: 'bar'
+                type: 'bar',
+                marker: {
+                    color: this.domainObject.configuration.barStyles.color
+                }
             };
 
             this.addTrace(trace, key);
