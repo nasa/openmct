@@ -52,7 +52,7 @@ export default function () {
 
         // openmct.telemetry.addProvider(new LADTableProvider(openmct));
         openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
-        openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
+        // openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
         // TelemetryTableViewActions.forEach(action => {
         //     openmct.actions.register(action);
         // });

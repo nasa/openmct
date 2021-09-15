@@ -42,6 +42,8 @@ export default class LADTableRowCollection extends TableRowCollection {
             this.rows = [];
         }
 
+        // need to use bounded row logic to keep it 1
+
         // remove old rows of the object before adding
         // there's only 1 row so keystring will be the same
         const keyString = rows[0].objectKeyString;

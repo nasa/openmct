@@ -42,36 +42,47 @@ export default class LADTable extends TelemetryTable {
         }
     }
     addTelemetryObject(telemetryObject) {
-        this.addColumnsForObject(telemetryObject, true);
+        super.addTelemetryObject(telemetryObject);
+        this.addDummyRowForObject(telemetryObject);
+        // 
 
-        const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-        let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
-        let columnMap = this.getColumnMapForObject(keyString);
-        let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-        this.incrementOutstandingRequests();
+        // this.addColumnsForObject(telemetryObject, true);
+        // // super.
+        // const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        // let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
+        // let columnMap = this.getColumnMapForObject(keyString);
+        // let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-        const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
-        const telemetryRemover = this.getTelemetryRemover();
+        // this.incrementOutstandingRequests();
 
-        this.removeTelemetryCollection(keyString);
-        this.telemetryCollections[keyString] = this.openmct.telemetry
-            .requestCollection(telemetryObject, requestOptions);
-        this.telemetryCollections[keyString].on('remove', telemetryRemover);
-        this.telemetryCollections[keyString].on('add', telemetryProcessor);
-        this.telemetryCollections[keyString].load();
+        // const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
+        // const telemetryRemover = this.getTelemetryRemover();
+        // // check
+        // this.removeTelemetryCollection(keyString);
+        // this.telemetryCollections[keyString] = this.openmct.telemetry
+        //     .requestCollection(telemetryObject, requestOptions);
+        // this.telemetryCollections[keyString].on('remove', telemetryRemover);
+        // this.telemetryCollections[keyString].on('add', telemetryProcessor);
+        // this.telemetryCollections[keyString].load();
 
-        this.decrementOutstandingRequests();
+        // this.decrementOutstandingRequests();
 
-        this.telemetryObjects[keyString] = {
-            telemetryObject,
-            keyString,
-            requestOptions,
-            columnMap,
-            limitEvaluator
-        };
+        // this.telemetryObjects[keyString] = {
+        //     telemetryObject,
+        //     keyString,
+        //     requestOptions,
+        //     columnMap,
+        //     limitEvaluator
+        // };
 
-        this.emit('object-added', telemetryObject);
+        // this.emit('object-added', telemetryObject);
+    }
+    addDummyRowForObject(object) {
+        let objectKeyString = this.openmct.objects.makeKeyString(object.identifier);
+        let columns = this.getColumnMapForObject(objectKeyString);
+        // let dummyRow = new EmptyChannelListRow(columns, objectKeyString);
+        this.tableRows.add(dummyRow);
     }
 
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
@@ -92,16 +103,21 @@ export default class LADTable extends TelemetryTable {
         };
     }
     buildOptionsFromConfiguration(telemetryObject) {
-        let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-        let filters = this.domainObject.configuration
-            && this.domainObject.configuration.filters
-            && this.domainObject.configuration.filters[keyString];
-        let options = {
+        // let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+        // let filters = this.domainObject.configuration
+        //     && this.domainObject.configuration.filters
+        //     && this.domainObject.configuration.filters[keyString];
+        // let options = {
+        //     strategy: 'latest',
+        //     size: 1,
+        //     filters: filters
+        // };
+        //
+        let LADOptions = {            
             strategy: 'latest',
-            size: 1,
-            filters: filters
-        };
-
+            size: 1
+        }
+        let options = Object.assign(super.buildOptionsFromConfiguration(telemetryObject), LADOptions);
         return options;
     }
     createTableRowCollections() {
