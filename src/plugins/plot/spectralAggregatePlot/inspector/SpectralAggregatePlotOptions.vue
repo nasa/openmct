@@ -83,7 +83,7 @@ import configStore from "../../configuration/configStore";
 import eventHelpers from "../../lib/eventHelpers";
 
 export default {
-    inject: ['openmct', 'domainObject', 'path'],
+    inject: ['openmct', 'domainObject'],
     props: {
         series: {
             type: Object,
