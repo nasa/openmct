@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 import TelemetryTable from '../telemetryTable/TelemetryTable.js';
-import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
+// import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
+import LADRow from './LADRow.js';
 import LADTableRowCollection from './LADTableRowCollection.js';
 
 export default class LADTable extends TelemetryTable {
@@ -29,7 +30,8 @@ export default class LADTable extends TelemetryTable {
         super(domainObject, openmct);
         this.domainObject = domainObject;
         this.openmct = openmct;
-        // this.tableRows = new LADTableRowCollection();
+        // need change: replace LADTableRowCollection
+        this.tableRows = new LADTableRowCollection();
         this.createTableRowCollections();
     }
     initialize() {
@@ -42,50 +44,21 @@ export default class LADTable extends TelemetryTable {
         }
     }
     addTelemetryObject(telemetryObject) {
+        // addTelemetryObject is exactly the same as the parent's
         super.addTelemetryObject(telemetryObject);
-        this.addDummyRowForObject(telemetryObject);
-        // 
-
-
-        // this.addColumnsForObject(telemetryObject, true);
-        // // super.
-        // const keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-        // let requestOptions = this.buildOptionsFromConfiguration(telemetryObject);
-        // let columnMap = this.getColumnMapForObject(keyString);
-        // let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
-
-        // this.incrementOutstandingRequests();
-
-        // const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
-        // const telemetryRemover = this.getTelemetryRemover();
-        // // check
-        // this.removeTelemetryCollection(keyString);
-        // this.telemetryCollections[keyString] = this.openmct.telemetry
-        //     .requestCollection(telemetryObject, requestOptions);
-        // this.telemetryCollections[keyString].on('remove', telemetryRemover);
-        // this.telemetryCollections[keyString].on('add', telemetryProcessor);
-        // this.telemetryCollections[keyString].load();
-
-        // this.decrementOutstandingRequests();
-
-        // this.telemetryObjects[keyString] = {
-        //     telemetryObject,
-        //     keyString,
-        //     requestOptions,
-        //     columnMap,
-        //     limitEvaluator
-        // };
-
-        // this.emit('object-added', telemetryObject);
+        // this.addaddDummyRowForObject(telemetryObject);
     }
     addDummyRowForObject(object) {
         let objectKeyString = this.openmct.objects.makeKeyString(object.identifier);
         let columns = this.getColumnMapForObject(objectKeyString);
+        // need change: create dummy row with a new LADRow. this will take care of empty values
         // let dummyRow = new EmptyChannelListRow(columns, objectKeyString);
-        this.tableRows.add(dummyRow);
+        // this.tableRows.add(dummyRow);
     }
 
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
+        // this is where only latest telemetry is retrived
+        // need change: replace TelemetryTableRow with LADRow
         return (telemetry) => {
             //Check that telemetry object has not been removed since telemetry was requested.
             if (!this.telemetryObjects[keyString]) {
@@ -103,16 +76,6 @@ export default class LADTable extends TelemetryTable {
         };
     }
     buildOptionsFromConfiguration(telemetryObject) {
-        // let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-        // let filters = this.domainObject.configuration
-        //     && this.domainObject.configuration.filters
-        //     && this.domainObject.configuration.filters[keyString];
-        // let options = {
-        //     strategy: 'latest',
-        //     size: 1,
-        //     filters: filters
-        // };
-        //
         let LADOptions = {            
             strategy: 'latest',
             size: 1
@@ -121,6 +84,7 @@ export default class LADTable extends TelemetryTable {
         return options;
     }
     createTableRowCollections() {
+        // need change: can this part be refactored by using super?
         this.tableRows = new LADTableRowCollection();
 
         //Fetch any persisted default sort

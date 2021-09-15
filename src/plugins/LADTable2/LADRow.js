@@ -60,11 +60,11 @@ export default class LADRow extends TelemetryTableRow {
         }
     }
 
-    getRowClass() {
-    }
+    // getRowClass() {
+    // }
 
-    getCellLimitClasses() {
-        return {};
-    }
+    // getCellLimitClasses() {
+    //     return {};
+    // }
 
 }
