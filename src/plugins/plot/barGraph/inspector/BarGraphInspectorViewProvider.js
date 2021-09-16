@@ -5,7 +5,7 @@ import BarGraphOptions from "./BarGraphOptions.vue";
 export default function BarGraphInspectorViewProvider(openmct) {
     return {
         key: BAR_GRAPH_INSPECTOR_KEY,
-        name: 'Spectral Aggregate Plot Inspector View',
+        name: 'Bar Graph Inspector View',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
                 return false;
