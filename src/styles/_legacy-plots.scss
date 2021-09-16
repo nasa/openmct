@@ -729,6 +729,12 @@ mct-plot {
 
 }
 
+/********************************************************************* BAR CHARTS */
+.c-bar-chart {
+    flex: 1 1 auto;
+    overflow: hidden;
+}
+
 /***************** CURSOR GUIDES */
 [class*='c-cursor-guide'] {
     box-shadow: $shdwCursorGuide;

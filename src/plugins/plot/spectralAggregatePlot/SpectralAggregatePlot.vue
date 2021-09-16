@@ -11,9 +11,10 @@
         ></span>
     </div>
     <div ref="plot"
-         class="c-spectral-aggregate-plot__plot"
+         class="c-bar-chart"
     ></div>
-    <div ref="localControl"
+    <div v-if="false"
+         ref="localControl"
          class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover"
     >
         <button v-if="data.length"
@@ -110,14 +111,16 @@ export default {
                 xaxis: {
                     domain: xAxisDomain,
                     range: [this.xAxisRange.min, this.xAxisRange.max],
-                    title: this.plotAxisTitle.xAxisTitle
+                    title: this.plotAxisTitle.xAxisTitle,
+                    automargin: true,
+                    fixedrange: true
                 },
                 yaxis: primaryYaxis,
                 margin: {
-                    l: 40,
-                    r: 10,
-                    b: 40,
-                    t: 20
+                    l: 5,
+                    r: 5,
+                    t: 5,
+                    b: 0
                 },
                 paper_bgcolor: 'transparent',
                 plot_bgcolor: 'transparent'
@@ -168,6 +171,8 @@ export default {
             const yaxis = {
                 // hoverformat: '.2r',
                 // showgrid: true,
+                automargin: true,
+                fixedrange: true,
                 title
                 // zeroline: false
             };
@@ -264,18 +269,3 @@ export default {
     }
 };
 </script>
-
-<style lang="scss">
-    .c-spectral-aggregate-plot__plot {
-        height: 100%;
-    }
-
-    .c-spectral-aggregate-plot-view .gl-plot__local-controls {
-        top: 25px;
-    }
-
-    .has-local-controls {
-        border: 1px solid transparent;
-    }
-</style>
-
