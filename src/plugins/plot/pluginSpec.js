@@ -25,11 +25,11 @@ import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "./stackedPlot/StackedPlot.vue";
 // import SpectralPlot from "./spectralPlot/SpectralPlot.vue";
-import configStore from "./configuration/configStore";
+import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
-import { SPECTRAL_AGGREGATE_VIEW, SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
+import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './barGraph/BarGraphConstants';
 
 describe("the plugin", function () {
     let element;
@@ -334,7 +334,7 @@ describe("the plugin", function () {
         it("provides a spectral aggregate plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
-                type: SPECTRAL_AGGREGATE_KEY,
+                type: BAR_GRAPH_KEY,
                 telemetry: {
                     values: [{
                         key: "lots-of-aggregate-telemetry"
@@ -343,7 +343,7 @@ describe("the plugin", function () {
             };
 
             const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === SPECTRAL_AGGREGATE_VIEW);
+            let plotView = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
             expect(plotView).toBeDefined();
         });
     });
@@ -1185,17 +1185,17 @@ describe("the plugin", function () {
     describe("the aggregate spectral plot", () => {
         const mockObject = {
             name: 'An Even Nicer Aggregate Spectral Plot',
-            key: SPECTRAL_AGGREGATE_KEY,
+            key: BAR_GRAPH_KEY,
             creatable: true
         };
 
         it('defines a spectral plot object type with the correct key', () => {
-            const objectDef = openmct.types.get(SPECTRAL_AGGREGATE_KEY).definition;
+            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
             expect(objectDef.key).toEqual(mockObject.key);
         });
 
         it('is creatable', () => {
-            const objectDef = openmct.types.get(SPECTRAL_AGGREGATE_KEY).definition;
+            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
             expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
     });

@@ -20,15 +20,15 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { SPECTRAL_AGGREGATE_KEY } from './SpectralAggregateConstants';
-export default function SpectralAggregatePlotCompositionPolicy(openmct) {
+import { BAR_GRAPH_KEY } from './BarGraphConstants';
+export default function BarGraphCompositionPolicy(openmct) {
     function hasAggregateDomainAndRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
 
         return rangeValues.length > 0;
     }
 
-    function hasSpectralAggregateTelemetry(domainObject) {
+    function hasBarGraphTelemetry(domainObject) {
         if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
             return false;
         }
@@ -44,8 +44,8 @@ export default function SpectralAggregatePlotCompositionPolicy(openmct) {
 
     return {
         allow: function (parent, child) {
-            if ((parent.type === SPECTRAL_AGGREGATE_KEY)
-                && ((child.type !== 'telemetry.plot.overlay') && (hasSpectralAggregateTelemetry(child) === false) || (hasNoChildren(parent) === false))
+            if ((parent.type === BAR_GRAPH_KEY)
+                && ((child.type !== 'telemetry.plot.overlay') && (hasBarGraphTelemetry(child) === false) || (hasNoChildren(parent) === false))
             ) {
                 return false;
             }
