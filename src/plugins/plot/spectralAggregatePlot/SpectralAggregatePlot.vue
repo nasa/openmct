@@ -119,16 +119,14 @@ export default {
             const yAxesMeta = this.getYAxisMeta();
             const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
             const xAxisDomain = this.getXAxisDomain(yAxesMeta);
+            const font = this.processFontConfig();
+            console.debug(`color is ${font.color}`);
 
             return {
                 autosize: true,
                 showlegend: false,
                 textposition: 'auto',
-                font: {
-                    family: 'monospace',
-                    size: '12px',
-                    color: '#666'
-                },
+                font,
                 xaxis: {
                     domain: xAxisDomain,
                     range: [this.xAxisRange.min, this.xAxisRange.max],
@@ -265,26 +263,33 @@ export default {
             Plotly.restyle(this.$refs.plot, plotUpdate);
         },
         fontChanged() {
-            const fontColor = this.domainObject.configuration.objectStyles.staticStyle.style.color;
-            let fontSize = this.domainObject.configuration.fontStyle.fontSize;
-            if (fontSize === 'default') {
-                fontSize = 12;
-            } else {
-                fontSize = parseInt(fontSize, 10);
-            }
+            const font = this.processFontConfig();
 
             const plotUpdate = {
-                font: {
-                    size: fontSize,
-                    color: fontColor,
-                    family: DEFAULT_FONT_FAMILY
-                }
+                font
             };
 
             Plotly.restyle(this.$refs.plot, plotUpdate);
         },
         updateData() {
             this.updatePlot();
+        },
+        processFontConfig() {
+            const color = this.domainObject.configuration.objectStyles.staticStyle.style.color;
+            let size = this.domainObject.configuration.fontStyle.fontSize;
+            if (size === 'default') {
+                size = 12;
+            } else {
+                size = parseInt(size, 10);
+            }
+
+            const font = {
+                family: DEFAULT_FONT_FAMILY,
+                size,
+                color
+            };
+
+            return font;
         },
         updateLocalControlPosition() {
             const localControl = this.$refs.localControl;

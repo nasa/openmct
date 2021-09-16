@@ -217,7 +217,6 @@ export default {
                 name: telemetryObject.name,
                 x: xValues,
                 y: yValues,
-                font,
                 text: yValues.map(String),
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
