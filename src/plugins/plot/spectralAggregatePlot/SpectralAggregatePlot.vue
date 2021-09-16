@@ -115,7 +115,6 @@ export default {
             const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
             const xAxisDomain = this.getXAxisDomain(yAxesMeta);
             const font = this.processFontConfig();
-            console.debug(`color is ${font.color}`);
 
             return {
                 autosize: true,
