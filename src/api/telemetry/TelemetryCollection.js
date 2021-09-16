@@ -135,10 +135,11 @@ export class TelemetryCollection extends EventEmitter {
             historicalData = await this.historicalProvider.request(this.domainObject, this.options);
             this.requestAbort = undefined;
         } catch (error) {
-            console.log('error', error);
-            console.error('Error requesting telemetry data...');
-            this.requestAbort = undefined;
-            this._error(error);
+            if (error.name !== 'AbortError') {
+                console.error('Error requesting telemetry data...');
+                this.requestAbort = undefined;
+                this._error(error);
+            }
         }
 
         this._processNewTelemetry(historicalData);
