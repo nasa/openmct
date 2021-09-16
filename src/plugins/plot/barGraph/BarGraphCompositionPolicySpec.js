@@ -23,7 +23,7 @@
 import BarGraphCompositionPolicy from "./BarGraphCompositionPolicy";
 import { createOpenMct } from "utils/testing";
 
-describe("The spectral aggregation plot composition policy", () => {
+describe("The bar graph composition policy", () => {
     let openmct;
     const mockNonSpectralMetaData = {
         "period": 10,
@@ -53,7 +53,7 @@ describe("The spectral aggregation plot composition policy", () => {
             }
         ]
     };
-    const mockGoodSpectralMetaData = {
+    const mockSpectralMetaData = {
         "period": 10,
         "amplitude": 1,
         "offset": 0,
@@ -145,7 +145,7 @@ describe("The spectral aggregation plot composition policy", () => {
     beforeEach(() => {
         openmct = createOpenMct();
         const mockTypeDef = {
-            telemetry: mockGoodSpectralMetaData
+            telemetry: mockSpectralMetaData
         };
         const mockTypeService = {
             getType: () => {
@@ -169,12 +169,12 @@ describe("The spectral aggregation plot composition policy", () => {
         expect(BarGraphCompositionPolicy(openmct).allow).toBeDefined();
     });
 
-    xit("allow composition only for telemetry that provides/supports spectral data", () => {
+    xit("allow composition for telemetry that provides/supports spectral data", () => {
         const parent = {
             "composition": [],
             "configuration": {},
-            "name": "Some Spectral Aggregate Plot",
-            "type": "telemetry.plot.spectral.aggregate",
+            "name": "Some Bar Graph",
+            "type": "telemetry.plot.bar-graph",
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -207,7 +207,7 @@ describe("The spectral aggregation plot composition policy", () => {
 
     it("allows composition for telemetry that contain at least one range", () => {
         const mockTypeDef = {
-            telemetry: mockGoodSpectralMetaData
+            telemetry: mockSpectralMetaData
         };
         const mockTypeService = {
             getType: () => {
@@ -224,8 +224,8 @@ describe("The spectral aggregation plot composition policy", () => {
         const parent = {
             "composition": [],
             "configuration": {},
-            "name": "Some Spectral Aggregate Plot",
-            "type": "telemetry.plot.spectral.aggregate",
+            "name": "Some Bar Graph",
+            "type": "telemetry.plot.bar-graph",
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -275,8 +275,8 @@ describe("The spectral aggregation plot composition policy", () => {
         const parent = {
             "composition": [],
             "configuration": {},
-            "name": "Some Spectral Aggregate Plot",
-            "type": "telemetry.plot.spectral.aggregate",
+            "name": "Some Bar Graph",
+            "type": "telemetry.plot.bar-graph",
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -307,7 +307,7 @@ describe("The spectral aggregation plot composition policy", () => {
         expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(false);
     });
 
-    it("passthrough for composition for non spectral aggregate plots", () => {
+    it("passthrough for composition for non bar graph plots", () => {
         const parent = {
             "composition": [],
             "configuration": {},
