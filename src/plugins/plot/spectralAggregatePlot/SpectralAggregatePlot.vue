@@ -29,7 +29,7 @@
 <script>
 import Plotly from 'plotly.js-basic-dist';
 import eventHelpers from '../lib/eventHelpers';
-import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE } from './SpectralAggregatePlotConstants';
+import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE, DEFAULT_FONT_FAMILY } from './SpectralAggregatePlotConstants';
 
 const PLOT_PADDING_IN_PERCENT = 1;
 const MULTI_AXES_X_PADDING_PERCENT = {
@@ -89,6 +89,14 @@ export default {
         if (this.removeBarColorListener) {
             this.removeBarColorListener();
         }
+
+        if (this.removeFontStyleListener) {
+            this.removeFontStyleListener();
+        }
+
+        if (this.removeObjectStylesListener) {
+            this.removeObjectStylesListener();
+        }
     },
     methods: {
         getAxisMinMax(axis) {
@@ -117,7 +125,7 @@ export default {
                 showlegend: false,
                 textposition: 'auto',
                 font: {
-                    family: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+                    family: 'monospace',
                     size: '12px',
                     color: '#666'
                 },
@@ -180,10 +188,7 @@ export default {
             const { name, range, side = 'left', unit } = yAxisMeta;
             const title = `${name} ${unit ? '(' + unit + ')' : ''}`;
             const yaxis = {
-                // hoverformat: '.2r',
-                // showgrid: true,
                 title
-                // zeroline: false
             };
 
             let yAxistype = this.primaryYAxisRange;
@@ -223,6 +228,16 @@ export default {
                 'configuration.barStyles.color',
                 this.barColorChanged
             );
+            this.removeFontStyleListener = this.openmct.objects.observe(
+                this.domainObject,
+                'configuration.fontStyle',
+                this.fontChanged
+            );
+            this.removeObjectStylesListener = this.openmct.objects.observe(
+                this.domainObject,
+                'configuration.objectStyles',
+                this.fontChanged
+            );
             this.resizeTimer = false;
             if (window.ResizeObserver) {
                 this.plotResizeObserver = new ResizeObserver(() => {
@@ -242,10 +257,31 @@ export default {
             this.$emit(SUBSCRIBE);
         },
         barColorChanged() {
-            const colorToUpdate = {
-                'marker.color': this.domainObject.configuration.barStyles.color
+            const plotUpdate = {
+                marker: {
+                    color: this.domainObject.configuration.barStyles.color
+                }
             };
-            Plotly.restyle(this.$refs.plot, colorToUpdate);
+            Plotly.restyle(this.$refs.plot, plotUpdate);
+        },
+        fontChanged() {
+            const fontColor = this.domainObject.configuration.objectStyles.staticStyle.style.color;
+            let fontSize = this.domainObject.configuration.fontStyle.fontSize;
+            if (fontSize === 'default') {
+                fontSize = 12;
+            } else {
+                fontSize = parseInt(fontSize, 10);
+            }
+
+            const plotUpdate = {
+                font: {
+                    size: fontSize,
+                    color: fontColor,
+                    family: DEFAULT_FONT_FAMILY
+                }
+            };
+
+            Plotly.restyle(this.$refs.plot, plotUpdate);
         },
         updateData() {
             this.updatePlot();

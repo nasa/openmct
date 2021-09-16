@@ -9,3 +9,4 @@ export const SPECTRAL_AGGREGATE_KEY = 'telemetry.plot.spectral.aggregate';
 export const SPECTRAL_AGGREGATE_INSPECTOR_KEY = 'telemetry.plot.spectral.aggregate.inspector';
 export const SUBSCRIBE = 'subscribe';
 export const UNSUBSCRIBE = 'unsubscribe';
+export const DEFAULT_FONT_FAMILY = 'Helvetica Neue, Helvetica, Arial, sans-serif';
