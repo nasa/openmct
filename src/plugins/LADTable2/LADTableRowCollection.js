@@ -21,11 +21,12 @@
  *****************************************************************************/
 
 import TableRowCollection from '../telemetryTable/collections/TableRowCollection.js';
+import EmptyLADTableRow from './EmptyLADTableRow.js';
 
 export default class LADTableRowCollection extends TableRowCollection {
     constructor(domainObject, openmct) {
         super(domainObject, openmct);
-
+        this.domainObject = domainObject;
         this.ladMap = new Map();
         this.timeColumn = openmct.time.timeSystem().key;
     }
@@ -54,5 +55,18 @@ export default class LADTableRowCollection extends TableRowCollection {
         item.datum[this.timeColumn] > latestRow.datum[this.timeColumn] ||
         latestRow.isDummyRow;
         return !this.ladMap.has(item.objectKeyString) || newerThanLatest;
+    }
+    clear() {
+        this.rows = this.rows.map(
+            row => new EmptyLADTableRow(row.columns, row.objectKeyString)
+        );
+        this.rebuildLadMap();
+    }
+
+    rebuildLadMap() {
+        this.ladMap.clear();
+        this.rows.forEach((row, index) => {
+            this.ladMap.set(row.objectKeyString, index);
+        });
     }
 }

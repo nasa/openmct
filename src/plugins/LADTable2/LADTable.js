@@ -28,8 +28,8 @@ import LADTableRowCollection from './LADTableRowCollection.js';
 export default class LADTable extends TelemetryTable {
     constructor(domainObject, openmct) {
         super(domainObject, openmct);
-        this.domainObject = domainObject;
-        this.openmct = openmct;
+        // this.domainObject = domainObject;
+        // this.openmct = openmct;
         this.createTableRowCollections();
     }
     initialize() {
