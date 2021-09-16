@@ -144,6 +144,7 @@ describe("Clock plugin:", () => {
         });
 
         it("updates the 24 hour option in the configuration", (done) => {
+            expect(clockDomainObject.configuration.use24).toBe('clock12');
             const new24Option = 'clock24';
 
             openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
@@ -155,6 +156,7 @@ describe("Clock plugin:", () => {
         });
 
         it("updates the timezone option in the configuration", (done) => {
+            expect(clockDomainObject.configuration.timezone).toBe('UTC');
             const newZone = 'CST6CDT';
 
             openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
@@ -166,6 +168,7 @@ describe("Clock plugin:", () => {
         });
 
         it("updates the time format option in the configuration", (done) => {
+            expect(clockDomainObject.configuration.baseFormat).toBe('YYYY/MM/DD hh:mm:ss');
             const newFormat = 'hh:mm:ss';
 
             openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
