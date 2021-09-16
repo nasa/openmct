@@ -28,7 +28,7 @@
 </template>
 <script>
 import Plotly from 'plotly.js-basic-dist';
-import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE } from './BarGraphConstants';
+import { SUBSCRIBE, UNSUBSCRIBE } from './BarGraphConstants';
 
 const MULTI_AXES_X_PADDING_PERCENT = {
     LEFT: 8,
@@ -198,17 +198,7 @@ export default {
 
             return yaxis;
         },
-        handleHover(isHovered, itemValues) {
-            return () => {
-                this.updateLocalControlPosition(isHovered);
-
-                const eventName = isHovered ? HOVER_VALUES_CHANGED : HOVER_VALUES_CLEARED;
-                this.$emit(eventName, { itemValues });
-            };
-        },
         registerListeners() {
-            this.$refs.plot.on('plotly_hover', this.handleHover.bind(this, true));
-            this.$refs.plot.on('plotly_unhover', this.handleHover.bind(this, false));
             this.$refs.plot.on('plotly_relayout', this.zoom);
 
             this.removeBarColorListener = this.openmct.objects.observe(

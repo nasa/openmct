@@ -217,12 +217,14 @@ export default {
                 name: telemetryObject.name,
                 x: xValues,
                 y: yValues,
+                text: yValues.map(String),
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
                 type: 'bar',
                 marker: {
                     color: this.domainObject.configuration.barStyles.color
-                }
+                },
+                hoverinfo: 'skip'
             };
 
             this.addTrace(trace, key);
