@@ -21,11 +21,11 @@
 -->
 
 <template>
-    <BarGraph ref="barGraph"
-              class="c-plot c-bar-chart-view"
-              :data="trace"
-              :plot-axis-title="plotAxisTitle"
-    />
+<BarGraph ref="barGraph"
+          class="c-plot c-bar-chart-view"
+          :data="trace"
+          :plot-axis-title="plotAxisTitle"
+/>
 </template>
 
 <script>
