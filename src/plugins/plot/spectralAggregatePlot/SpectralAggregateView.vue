@@ -154,6 +154,14 @@ export default {
                 return;
             }
 
+            // check to see if we've set a bar color
+            if (!this.domainObject.configuration.barStyles) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.barStyles = {
+                    color
+                };
+            }
+
             this.composition.on('add', this.addTelemetryObject);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
@@ -203,14 +211,6 @@ export default {
                     yValues.push('');
                 }
             });
-
-            // check to see if we've set a bar color
-            if (!this.domainObject.configuration.barStyles) {
-                const color = this.colorPalette.getNextColor().asHexString();
-                this.domainObject.configuration.barStyles = {
-                    color
-                };
-            }
 
             const trace = {
                 key,

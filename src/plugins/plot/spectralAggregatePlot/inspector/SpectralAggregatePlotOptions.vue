@@ -41,14 +41,14 @@
                     <div v-show="swatchActive"
                          class="c-palette__items"
                     >
-                        <div v-for="(group, index) in colorPalette"
+                        <div v-for="(group, index) in colorPaletteGroups"
                              :key="index"
                              class="u-contents"
                         >
                             <div v-for="(color, colorIndex) in group"
                                  :key="colorIndex"
                                  class="c-palette__item"
-                                 :class="{ 'selected': series.get('color').equalTo(color) }"
+                                 :class="{ 'selected': currentBarColor == color.asHexString() }"
                                  :style="{ background: color.asHexString() }"
                                  @click="setColor(color)"
                             >
@@ -60,7 +60,8 @@
         </li>
     </ul>
     <ul v-else
-        class="grid-properties">
+        class="grid-properties"
+    >
         <li class="grid-row">
             <div class="grid-cell label"
                  title="The plot line and marker color for this series."
@@ -85,21 +86,23 @@ export default {
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            swatchActive: false
+            swatchActive: false,
+            isEditing: this.openmct.editor.isEditing()
         };
     },
     computed: {
         canEdit() {
             return this.isEditing && !this.domainObject.locked;
         },
-        colorPalette() {
-            return ColorPalette;
-        },
         currentBarColor() {
             return this.domainObject.configuration.barStyles.color;
+        },
+        colorPaletteGroups() {
+            return this.colorPalette.groups();
         }
     },
     mounted() {
+        this.colorPalette = new ColorPalette();
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     beforeDestroy() {
@@ -109,13 +112,16 @@ export default {
         setEditState(isEditing) {
             this.isEditing = isEditing;
         },
-        setColor: function (color) {
-            this.domainObject.configuration.barStyles.color = color;
+        setColor: function (chosenColor) {
+            this.domainObject.configuration.barStyles.color = chosenColor.asHexString();
             this.openmct.objects.mutate(
                 this.domainObject,
                 'configuration.barStyles.color',
-                color
+                chosenColor.asHexString()
             );
+        },
+        toggleSwatch() {
+            this.swatchActive = !this.swatchActive;
         }
     }
 };
