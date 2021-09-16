@@ -20,22 +20,40 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class ClearDataAction {
-    constructor(openmct, appliesToObjects) {
-        this.name = 'Clear Data for Object';
-        this.key = 'clear-data-action';
-        this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
-        this.cssClass = 'icon-clear-data';
+import Clock from './components/Clock.vue';
+import Vue from 'vue';
 
-        this._openmct = openmct;
-        this._appliesToObjects = appliesToObjects;
-    }
-    invoke(objectPath) {
-        this._openmct.objectViews.emit('clearData', objectPath[0]);
-    }
-    appliesTo(objectPath) {
-        let contextualDomainObject = objectPath[0];
+export default function ClockViewProvider(openmct) {
+    return {
+        key: 'clock.view',
+        name: 'Clock',
+        cssClass: 'icon-clock',
+        canView(domainObject) {
+            return domainObject.type === 'clock';
+        },
 
-        return this._appliesToObjects.filter(type => contextualDomainObject.type === type).length;
-    }
+        view: function (domainObject) {
+            let component;
+
+            return {
+                show: function (element) {
+                    component = new Vue({
+                        el: element,
+                        components: {
+                            Clock
+                        },
+                        provide: {
+                            openmct,
+                            domainObject
+                        },
+                        template: '<clock />'
+                    });
+                },
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
+        }
+    };
 }
