@@ -25,7 +25,7 @@ import { createOpenMct } from "utils/testing";
 
 describe("The bar graph composition policy", () => {
     let openmct;
-    const mockNonSpectralMetaData = {
+    const mockMetaDataWithNoRangeHints = {
         "period": 10,
         "amplitude": 1,
         "offset": 0,
@@ -53,7 +53,7 @@ describe("The bar graph composition policy", () => {
             }
         ]
     };
-    const mockSpectralMetaData = {
+    const mockMetaDataWithRangeHints = {
         "period": 10,
         "amplitude": 1,
         "offset": 0,
@@ -145,7 +145,7 @@ describe("The bar graph composition policy", () => {
     beforeEach(() => {
         openmct = createOpenMct();
         const mockTypeDef = {
-            telemetry: mockSpectralMetaData
+            telemetry: mockMetaDataWithRangeHints
         };
         const mockTypeService = {
             getType: () => {
@@ -169,7 +169,7 @@ describe("The bar graph composition policy", () => {
         expect(BarGraphCompositionPolicy(openmct).allow).toBeDefined();
     });
 
-    xit("allow composition for telemetry that provides/supports spectral data", () => {
+    xit("allow composition for telemetry that provides/supports bar graph meta data", () => {
         const parent = {
             "composition": [],
             "configuration": {},
@@ -207,7 +207,7 @@ describe("The bar graph composition policy", () => {
 
     it("allows composition for telemetry that contain at least one range", () => {
         const mockTypeDef = {
-            telemetry: mockSpectralMetaData
+            telemetry: mockMetaDataWithRangeHints
         };
         const mockTypeService = {
             getType: () => {
@@ -258,7 +258,7 @@ describe("The bar graph composition policy", () => {
 
     it("disallows composition for telemetry that don't contain any range hints", () => {
         const mockTypeDef = {
-            telemetry: mockNonSpectralMetaData
+            telemetry: mockMetaDataWithNoRangeHints
         };
         const mockTypeService = {
             getType: () => {

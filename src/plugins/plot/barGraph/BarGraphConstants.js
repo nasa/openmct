@@ -9,4 +9,5 @@ export const BAR_GRAPH_KEY = 'telemetry.plot.bar-graph';
 export const BAR_GRAPH_INSPECTOR_KEY = 'telemetry.plot.bar-graph.inspector';
 export const SUBSCRIBE = 'subscribe';
 export const UNSUBSCRIBE = 'unsubscribe';
-export const DEFAULT_FONT_FAMILY = 'Helvetica Neue, Helvetica, Arial, sans-serif';
+export const DEFAULT_FONT_FAMILY = 'Helvetica, Arial, Verdana, sans-serif';
+export const DEFAULT_FONT_SIZE = 12;

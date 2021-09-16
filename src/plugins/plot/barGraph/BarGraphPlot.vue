@@ -28,7 +28,7 @@
 </template>
 <script>
 import Plotly from 'plotly.js-basic-dist';
-import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE, DEFAULT_FONT_FAMILY } from './BarGraphConstants';
+import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE, DEFAULT_FONT_FAMILY, DEFAULT_FONT_SIZE } from './BarGraphConstants';
 
 const MULTI_AXES_X_PADDING_PERCENT = {
     LEFT: 8,
@@ -79,6 +79,7 @@ export default {
     },
     beforeDestroy() {
         this.$refs.plot.removeAllListeners();
+
         if (this.plotResizeObserver) {
             this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
             clearTimeout(this.resizeTimer);
@@ -86,14 +87,6 @@ export default {
 
         if (this.removeBarColorListener) {
             this.removeBarColorListener();
-        }
-
-        if (this.removeFontStyleListener) {
-            this.removeFontStyleListener();
-        }
-
-        if (this.removeObjectStylesListener) {
-            this.removeObjectStylesListener();
         }
     },
     methods: {
@@ -114,13 +107,16 @@ export default {
             const yAxesMeta = this.getYAxisMeta();
             const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
             const xAxisDomain = this.getXAxisDomain(yAxesMeta);
-            const font = this.processFontConfig();
 
             return {
                 autosize: true,
                 showlegend: false,
                 textposition: 'auto',
-                font,
+                font: {
+                    family: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+                    size: '12px',
+                    color: '#666'
+                },
                 xaxis: {
                     domain: xAxisDomain,
                     range: [this.xAxisRange.min, this.xAxisRange.max],
@@ -220,16 +216,6 @@ export default {
                 'configuration.barStyles.color',
                 this.barColorChanged
             );
-            this.removeFontStyleListener = this.openmct.objects.observe(
-                this.domainObject,
-                'configuration.fontStyle',
-                this.fontChanged
-            );
-            this.removeObjectStylesListener = this.openmct.objects.observe(
-                this.domainObject,
-                'configuration.objectStyles',
-                this.fontChanged
-            );
             this.resizeTimer = false;
             if (window.ResizeObserver) {
                 this.plotResizeObserver = new ResizeObserver(() => {
@@ -256,42 +242,8 @@ export default {
             };
             Plotly.restyle(this.$refs.plot, plotUpdate);
         },
-        fontChanged() {
-            const font = this.processFontConfig();
-
-            const plotUpdate = {
-                font
-            };
-
-            Plotly.restyle(this.$refs.plot, plotUpdate);
-        },
         updateData() {
             this.updatePlot();
-        },
-        processFontConfig() {
-            const font = {
-                family: DEFAULT_FONT_FAMILY
-            };
-
-            const objectStyles = this.domainObject.configuration.objectStyles;
-            if (objectStyles && objectStyles.staticStyle.style && objectStyles.staticStyle.style.color) {
-                font.color = objectStyles.staticStyle.style.color;
-            }
-
-            let size;
-            const fontStyle = this.domainObject.configuration.fontStyle;
-            if (fontStyle && fontStyle.fontSize) {
-                size = fontStyle.fontSize;
-                if (size === 'default') {
-                    size = 12;
-                } else {
-                    size = parseInt(size, 10);
-                }
-
-                font.size = size;
-            }
-
-            return font;
         },
         updateLocalControlPosition() {
             const localControl = this.$refs.localControl;

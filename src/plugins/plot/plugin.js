@@ -81,7 +81,7 @@ export default function () {
             key: BAR_GRAPH_KEY,
             name: "Bar Graph",
             cssClass: "icon-plot-stacked",
-            description: "View plots as a bar chart. Can be added to Display Layouts.",
+            description: "View data as a bar chart. Can be added to Display Layouts.",
             creatable: true,
             initialize: function (domainObject) {
                 domainObject.composition = [];

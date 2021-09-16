@@ -87,7 +87,8 @@ export default {
     data() {
         return {
             swatchActive: false,
-            isEditing: this.openmct.editor.isEditing()
+            isEditing: this.openmct.editor.isEditing(),
+            colorPalette: new ColorPalette()
         };
     },
     computed: {
@@ -102,7 +103,6 @@ export default {
         }
     },
     mounted() {
-        this.colorPalette = new ColorPalette();
         this.openmct.editor.on('isEditing', this.setEditState);
     },
     beforeDestroy() {
