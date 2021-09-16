@@ -29,9 +29,8 @@
 </template>
 <script>
 import Plotly from 'plotly.js-basic-dist';
-import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE } from './SpectralAggregateConstants';
+import { SUBSCRIBE, UNSUBSCRIBE } from './BarGraphConstants';
 
-const PLOT_PADDING_IN_PERCENT = 1;
 const MULTI_AXES_X_PADDING_PERCENT = {
     LEFT: 8,
     RIGHT: 94
@@ -39,10 +38,20 @@ const MULTI_AXES_X_PADDING_PERCENT = {
 
 export default {
     inject: ['openmct', 'domainObject'],
-    props: [
-        'data',
-        'plotAxisTitle'
-    ],
+    props: {
+        data: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
+        plotAxisTitle: {
+            type: Object,
+            default() {
+                return {};
+            }
+        }
+    },
     data() {
         return {
             isZoomed: false,
@@ -76,6 +85,10 @@ export default {
             this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
             clearTimeout(this.resizeTimer);
         }
+
+        if (this.removeBarColorListener) {
+            this.removeBarColorListener();
+        }
     },
     methods: {
         getAxisMinMax(axis) {
@@ -90,9 +103,6 @@ export default {
                 min,
                 max
             };
-        },
-        getAxisPadding(min, max) {
-            return (Math.abs(max - min) * PLOT_PADDING_IN_PERCENT / 100) || 0;
         },
         getLayout() {
             const yAxesMeta = this.getYAxisMeta();
@@ -169,12 +179,9 @@ export default {
             const { name, range, side = 'left', unit } = yAxisMeta;
             const title = `${name} ${unit ? '(' + unit + ')' : ''}`;
             const yaxis = {
-                // hoverformat: '.2r',
-                // showgrid: true,
                 automargin: true,
                 fixedrange: true,
                 title
-                // zeroline: false
             };
 
             let yAxistype = this.primaryYAxisRange;
@@ -195,18 +202,14 @@ export default {
 
             return yaxis;
         },
-        handleHover(isHovered, itemValues) {
-            return () => {
-                this.updateLocalControlPosition(isHovered);
-
-                const eventName = isHovered ? HOVER_VALUES_CHANGED : HOVER_VALUES_CLEARED;
-                this.$emit(eventName, { itemValues });
-            };
-        },
         registerListeners() {
-            this.$refs.plot.on('plotly_hover', this.handleHover.bind(this, true));
-            this.$refs.plot.on('plotly_unhover', this.handleHover.bind(this, false));
             this.$refs.plot.on('plotly_relayout', this.zoom);
+
+            this.removeBarColorListener = this.openmct.objects.observe(
+                this.domainObject,
+                'configuration.barStyles.color',
+                this.barColorChanged
+            );
             this.resizeTimer = false;
             if (window.ResizeObserver) {
                 this.plotResizeObserver = new ResizeObserver(() => {
@@ -224,6 +227,14 @@ export default {
 
             this.isZoomed = false;
             this.$emit(SUBSCRIBE);
+        },
+        barColorChanged() {
+            const plotUpdate = {
+                marker: {
+                    color: this.domainObject.configuration.barStyles.color
+                }
+            };
+            Plotly.restyle(this.$refs.plot, plotUpdate);
         },
         updateData() {
             this.updatePlot();
@@ -269,3 +280,5 @@ export default {
     }
 };
 </script>
+
+

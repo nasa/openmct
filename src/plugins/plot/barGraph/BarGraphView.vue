@@ -21,26 +21,25 @@
 -->
 
 <template>
-<SpectralAggregatePlot ref="spectralAggregatePlot"
-                       class="c-plot c-bar-chart-view"
-                       :data="trace"
-                       :plot-axis-title="plotAxisTitle"
-/>
+    <BarGraph ref="barGraph"
+              class="c-plot c-bar-chart-view"
+              :data="trace"
+              :plot-axis-title="plotAxisTitle"
+    />
 </template>
 
 <script>
-import * as SPECTRAL_AGGREGATE from './SpectralAggregateConstants';
+import * as SPECTRAL_AGGREGATE from './BarGraphConstants';
 import ColorPalette from '../lib/ColorPalette';
-import SpectralAggregatePlot from './SpectralAggregatePlot.vue';
+import BarGraph from './BarGraphPlot.vue';
 
 export default {
     components: {
-        SpectralAggregatePlot
+        BarGraph
     },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            colorMapping: {},
             composition: {},
             currentDomainObject: this.domainObject,
             subscriptions: [],
@@ -70,13 +69,13 @@ export default {
         this.openmct.time.on('bounds', this.refreshData);
         this.openmct.time.on('clock', this.clockChanged);
 
-        this.$refs.spectralAggregatePlot.$on(SPECTRAL_AGGREGATE.SUBSCRIBE, this.subscribeToAll);
-        this.$refs.spectralAggregatePlot.$on(SPECTRAL_AGGREGATE.UNSUBSCRIBE, this.removeAllSubscriptions);
+        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.SUBSCRIBE, this.subscribeToAll);
+        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.UNSUBSCRIBE, this.removeAllSubscriptions);
 
         this.unobserve = this.openmct.objects.observe(this.currentDomainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
-        this.$refs.spectralAggregatePlot.$off();
+        this.$refs.barGraph.$off();
         this.openmct.time.off('bounds', this.refreshData);
         this.openmct.time.off('clock', this.clockChanged);
 
@@ -91,18 +90,8 @@ export default {
         this.composition.off('remove', this.removeTelemetryObject);
     },
     methods: {
-        addColorForTelemetry(key) {
-            const color = this.colorPalette.getNextColor().asHexString();
-            this.colorMapping[key] = color;
-
-            return color;
-        },
         addTelemetryObject(telemetryObject) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-
-            if (!this.colorMapping[key]) {
-                this.addColorForTelemetry(key);
-            }
 
             this.telemetryObjects[key] = telemetryObject;
 
@@ -163,6 +152,14 @@ export default {
                 return;
             }
 
+            // check to see if we've set a bar color
+            if (!this.domainObject.configuration.barStyles) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.barStyles = {
+                    color
+                };
+            }
+
             this.composition.on('add', this.addTelemetryObject);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
@@ -196,10 +193,6 @@ export default {
         processData(telemetryObject, data, axisMetadata) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
-            const formattedTimestamp = 'N/A';
-
-            const color = this.colorMapping[key];
-
             if (data.message) {
                 this.openmct.notifications.alert(data.message);
             }
@@ -225,7 +218,11 @@ export default {
                 text: yValues.map(String),
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: 'bar'
+                type: 'bar',
+                marker: {
+                    color: this.domainObject.configuration.barStyles.color
+                },
+                hoverinfo: 'skip'
             };
 
             this.addTrace(trace, key);

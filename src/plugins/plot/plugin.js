@@ -19,17 +19,18 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { SPECTRAL_AGGREGATE_KEY } from './spectralAggregatePlot/SpectralAggregateConstants';
+import { BAR_GRAPH_KEY } from './barGraph/BarGraphConstants';
 import PlotViewProvider from './PlotViewProvider';
 import SpectralPlotViewProvider from './spectralPlot/SpectralPlotViewProvider';
-import SpectralAggregatePlotViewProvider from './spectralAggregatePlot/SpectralAggregatePlotViewProvider';
+import BarGraphViewProvider from './barGraph/BarGraphViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
+import BarGraphInspectorViewProvider from './barGraph/inspector/BarGraphInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
 import SpectralPlotCompositionPolicy from './spectralPlot/SpectralPlotCompositionPolicy';
-import SpectralAggregatePlotCompositionPolicy from './spectralAggregatePlot/SpectralAggregatePlotCompositionPolicy';
+import BarGraphCompositionPolicy from './barGraph/BarGraphCompositionPolicy';
 
 export default function () {
     return function install(openmct) {
@@ -76,11 +77,11 @@ export default function () {
             priority: 890
         });
 
-        openmct.types.addType(SPECTRAL_AGGREGATE_KEY, {
-            key: SPECTRAL_AGGREGATE_KEY,
-            name: "Spectral Aggregate Plot",
+        openmct.types.addType(BAR_GRAPH_KEY, {
+            key: BAR_GRAPH_KEY,
+            name: "Bar Graph",
             cssClass: "icon-plot-stacked",
-            description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
+            description: "View data as a bar chart. Can be added to Display Layouts.",
             creatable: true,
             initialize: function (domainObject) {
                 domainObject.composition = [];
@@ -95,14 +96,15 @@ export default function () {
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));
         openmct.objectViews.addProvider(new SpectralPlotViewProvider(openmct));
-        openmct.objectViews.addProvider(new SpectralAggregatePlotViewProvider(openmct));
+        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
 
         openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
 
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new SpectralPlotCompositionPolicy(openmct).allow);
-        openmct.composition.addPolicy(new SpectralAggregatePlotCompositionPolicy(openmct).allow);
+        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
     };
 }
 

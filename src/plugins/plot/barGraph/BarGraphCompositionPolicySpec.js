@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SpectralAggregatePlotCompositionPolicy from "./SpectralAggregatePlotCompositionPolicy";
+import BarGraphCompositionPolicy from "./BarGraphCompositionPolicy";
 import { createOpenMct } from "utils/testing";
 
-describe("The spectral aggregation plot composition policy", () => {
+describe("The bar graph composition policy", () => {
     let openmct;
-    const mockNonSpectralMetaData = {
+    const mockMetaDataWithNoRangeHints = {
         "period": 10,
         "amplitude": 1,
         "offset": 0,
@@ -53,7 +53,7 @@ describe("The spectral aggregation plot composition policy", () => {
             }
         ]
     };
-    const mockGoodSpectralMetaData = {
+    const mockMetaDataWithRangeHints = {
         "period": 10,
         "amplitude": 1,
         "offset": 0,
@@ -145,7 +145,7 @@ describe("The spectral aggregation plot composition policy", () => {
     beforeEach(() => {
         openmct = createOpenMct();
         const mockTypeDef = {
-            telemetry: mockGoodSpectralMetaData
+            telemetry: mockMetaDataWithRangeHints
         };
         const mockTypeService = {
             getType: () => {
@@ -166,15 +166,15 @@ describe("The spectral aggregation plot composition policy", () => {
     });
 
     it("exists", () => {
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow).toBeDefined();
+        expect(BarGraphCompositionPolicy(openmct).allow).toBeDefined();
     });
 
-    xit("allow composition only for telemetry that provides/supports spectral data", () => {
+    xit("allow composition for telemetry that provides/supports bar graph meta data", () => {
         const parent = {
             "composition": [],
             "configuration": {},
-            "name": "Some Spectral Aggregate Plot",
-            "type": "telemetry.plot.spectral.aggregate",
+            "name": "Some Bar Graph",
+            "type": "telemetry.plot.bar-graph",
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -202,12 +202,12 @@ describe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
+        expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
     });
 
     it("allows composition for telemetry that contain at least one range", () => {
         const mockTypeDef = {
-            telemetry: mockGoodSpectralMetaData
+            telemetry: mockMetaDataWithRangeHints
         };
         const mockTypeService = {
             getType: () => {
@@ -224,8 +224,8 @@ describe("The spectral aggregation plot composition policy", () => {
         const parent = {
             "composition": [],
             "configuration": {},
-            "name": "Some Spectral Aggregate Plot",
-            "type": "telemetry.plot.spectral.aggregate",
+            "name": "Some Bar Graph",
+            "type": "telemetry.plot.bar-graph",
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -253,12 +253,12 @@ describe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
+        expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
     });
 
     it("disallows composition for telemetry that don't contain any range hints", () => {
         const mockTypeDef = {
-            telemetry: mockNonSpectralMetaData
+            telemetry: mockMetaDataWithNoRangeHints
         };
         const mockTypeService = {
             getType: () => {
@@ -275,8 +275,8 @@ describe("The spectral aggregation plot composition policy", () => {
         const parent = {
             "composition": [],
             "configuration": {},
-            "name": "Some Spectral Aggregate Plot",
-            "type": "telemetry.plot.spectral.aggregate",
+            "name": "Some Bar Graph",
+            "type": "telemetry.plot.bar-graph",
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -304,10 +304,10 @@ describe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(false);
+        expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(false);
     });
 
-    it("passthrough for composition for non spectral aggregate plots", () => {
+    it("passthrough for composition for non bar graph plots", () => {
         const parent = {
             "composition": [],
             "configuration": {},
@@ -340,7 +340,7 @@ describe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
+        expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
     });
 });
 
