@@ -28,7 +28,6 @@
 </template>
 <script>
 import Plotly from 'plotly.js-basic-dist';
-import eventHelpers from '../lib/eventHelpers';
 import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE, DEFAULT_FONT_FAMILY } from './SpectralAggregatePlotConstants';
 
 const MULTI_AXES_X_PADDING_PERCENT = {
@@ -213,7 +212,6 @@ export default {
             };
         },
         registerListeners() {
-            eventHelpers.extend(this);
             this.$refs.plot.on('plotly_hover', this.handleHover.bind(this, true));
             this.$refs.plot.on('plotly_unhover', this.handleHover.bind(this, false));
             this.$refs.plot.on('plotly_relayout', this.zoom);
