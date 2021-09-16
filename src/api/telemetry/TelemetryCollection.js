@@ -127,7 +127,7 @@ export class TelemetryCollection extends EventEmitter {
 
         let historicalData;
 
-        // this.options.onPartialResponse = this._processNewTelemetry.bind(this);
+        this.options.onPartialResponse = this._processNewTelemetry.bind(this);
 
         try {
             this.requestAbort = new AbortController();
