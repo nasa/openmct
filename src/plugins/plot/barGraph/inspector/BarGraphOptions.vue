@@ -20,10 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div>
+<div class="grid-properties">
     <ul v-if="canEdit"
-        class="grid-properties"
+        class="l-inspector-part"
     >
+        <h2 title="Settings for this chart">Graph Settings</h2>
         <li class="grid-row">
             <div class="grid-cell label"
                  title="Manually set the plot line and marker color for this series."
@@ -60,8 +61,9 @@
         </li>
     </ul>
     <ul v-else
-        class="grid-properties"
+        class="l-inspector-part"
     >
+        <h2 title="Settings for this chart">Graph Settings</h2>
         <li class="grid-row">
             <div class="grid-cell label"
                  title="The plot line and marker color for this series."
