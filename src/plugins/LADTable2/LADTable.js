@@ -52,16 +52,6 @@ export default class LADTable extends TelemetryTable {
         let dummyRow = new EmptyLADTableRow(columns, objectKeyString);
         this.tableRows.addOne(dummyRow);
     }
-    
-    // processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
-    //     let telemetryRows = telemetryData.map(datum => this.createRow(datum, columnMap, keyString, limitEvaluator));
-    //     this.boundedRows.add(telemetryRows);
-    // }
-    // createRow(datum, columnMap, keyString, limitEvaluator) {
-    //     let cellFormatConfiguration = this.configuration.getConfiguration().cellFormat || {};
-    //     return new LADTableRow(datum, columnMap, keyString, limitEvaluator, cellFormatConfiguration[keyString]);
-    // }
-    
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
         return (telemetry) => {
             //Check that telemetry object has not been removed since telemetry was requested.
@@ -81,11 +71,12 @@ export default class LADTable extends TelemetryTable {
         };
     }
     buildOptionsFromConfiguration(telemetryObject) {
-        let LADOptions = {            
+        let LADOptions = {
             strategy: 'latest',
             size: 1
-        }
+        };
         let options = Object.assign(super.buildOptionsFromConfiguration(telemetryObject), LADOptions);
+
         return options;
     }
     createTableRowCollections() {

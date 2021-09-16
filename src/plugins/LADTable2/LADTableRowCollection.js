@@ -30,30 +30,35 @@ export default class LADTableRowCollection extends TableRowCollection {
         this.ladMap = new Map();
         this.timeColumn = openmct.time.timeSystem().key;
     }
-    addOne (item) {
+    addOne(item) {
         if (item.isDummyRow) {
             this.ladMap.set(item.objectKeyString, this.rows.length);
             this.rows.push(item);
             this.emit('add', item);
+
             return true;
         }
+
         if (this.isNewerThanLAD(item)) {
             let rowIndex = this.ladMap.get(item.objectKeyString);
             let itemToReplace = this.rows[rowIndex];
             this.rows[rowIndex] = item;
             this.emit('remove', [itemToReplace]);
             this.emit('add', [item]);
+
             return true;
         }
+
         return false;
     }
 
     isNewerThanLAD(item) {
         let rowIndex = this.ladMap.get(item.objectKeyString);
         let latestRow = this.rows[rowIndex];
-        let newerThanLatest = latestRow === undefined ||
-        item.datum[this.timeColumn] > latestRow.datum[this.timeColumn] ||
-        latestRow.isDummyRow;
+        let newerThanLatest = latestRow === undefined
+        || item.datum[this.timeColumn] > latestRow.datum[this.timeColumn]
+        || latestRow.isDummyRow;
+
         return !this.ladMap.has(item.objectKeyString) || newerThanLatest;
     }
     clear() {
