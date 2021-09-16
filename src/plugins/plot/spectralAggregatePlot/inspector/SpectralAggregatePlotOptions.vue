@@ -113,7 +113,6 @@ export default {
             this.isEditing = isEditing;
         },
         setColor: function (chosenColor) {
-            this.domainObject.configuration.barStyles.color = chosenColor.asHexString();
             this.openmct.objects.mutate(
                 this.domainObject,
                 'configuration.barStyles.color',

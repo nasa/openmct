@@ -28,6 +28,7 @@
 </template>
 <script>
 import Plotly from 'plotly.js-basic-dist';
+import eventHelpers from '../lib/eventHelpers';
 import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE } from './SpectralAggregatePlotConstants';
 
 const PLOT_PADDING_IN_PERCENT = 1;
@@ -38,12 +39,20 @@ const MULTI_AXES_X_PADDING_PERCENT = {
 
 export default {
     inject: ['openmct', 'domainObject'],
-    props: [
-        // eslint-disable-next-line vue/require-prop-types
-        'data',
-        // eslint-disable-next-line vue/require-prop-types
-        'plotAxisTitle'
-    ],
+    props: {
+        data: {
+            type: Array,
+            default() {
+                return [];
+            }
+        },
+        plotAxisTitle: {
+            type: Object,
+            default() {
+                return {};
+            }
+        }
+    },
     data() {
         return {
             isZoomed: false,
@@ -72,10 +81,13 @@ export default {
     },
     beforeDestroy() {
         this.$refs.plot.removeAllListeners();
-
         if (this.plotResizeObserver) {
             this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
             clearTimeout(this.resizeTimer);
+        }
+
+        if (this.removeBarColorListener) {
+            this.removeBarColorListener();
         }
     },
     methods: {
@@ -201,9 +213,16 @@ export default {
             };
         },
         registerListeners() {
+            eventHelpers.extend(this);
             this.$refs.plot.on('plotly_hover', this.handleHover.bind(this, true));
             this.$refs.plot.on('plotly_unhover', this.handleHover.bind(this, false));
             this.$refs.plot.on('plotly_relayout', this.zoom);
+
+            this.removeBarColorListener = this.openmct.objects.observe(
+                this.domainObject,
+                'configuration.barStyles.color',
+                this.barColorChanged
+            );
             this.resizeTimer = false;
             if (window.ResizeObserver) {
                 this.plotResizeObserver = new ResizeObserver(() => {
@@ -221,6 +240,12 @@ export default {
 
             this.isZoomed = false;
             this.$emit(SUBSCRIBE);
+        },
+        barColorChanged() {
+            const colorToUpdate = {
+                'marker.color': this.domainObject.configuration.barStyles.color
+            };
+            Plotly.restyle(this.$refs.plot, colorToUpdate);
         },
         updateData() {
             this.updatePlot();
