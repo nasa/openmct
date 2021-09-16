@@ -1,10 +1,10 @@
-import { SPECTRAL_AGGREGATE_INSPECTOR_KEY, SPECTRAL_AGGREGATE_KEY } from '../SpectralAggregatePlotConstants';
+import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants';
 import Vue from 'vue';
-import SpectralAggregatePlotOptions from "./SpectralAggregatePlotOptions.vue";
+import BarGraphOptions from "./BarGraphOptions.vue";
 
-export default function SpectralAggregatePlotInspectorViewProvider(openmct) {
+export default function BarGraphInspectorViewProvider(openmct) {
     return {
-        key: SPECTRAL_AGGREGATE_INSPECTOR_KEY,
+        key: BAR_GRAPH_INSPECTOR_KEY,
         name: 'Spectral Aggregate Plot Inspector View',
         canView: function (selection) {
             if (selection.length === 0 || selection[0].length === 0) {
@@ -14,7 +14,7 @@ export default function SpectralAggregatePlotInspectorViewProvider(openmct) {
             let object = selection[0][0].context.item;
 
             return object
-                && object.type === SPECTRAL_AGGREGATE_KEY;
+                && object.type === BAR_GRAPH_KEY;
         },
         view: function (selection) {
             let component;
@@ -24,13 +24,13 @@ export default function SpectralAggregatePlotInspectorViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            SpectralAggregatePlotOptions
+                            BarGraphOptions
                         },
                         provide: {
                             openmct,
                             domainObject: selection[0][0].context.item
                         },
-                        template: '<SpectralAggregatePlotOptions></SpectralAggregatePlotOptions>'
+                        template: '<BarGraphOptions></BarGraphOptions>'
                     });
                 },
                 destroy: function () {

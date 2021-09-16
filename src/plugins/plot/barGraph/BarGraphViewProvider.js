@@ -20,25 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SpectralAggregateView from './SpectralAggregateView.vue';
-import { SPECTRAL_AGGREGATE_KEY, SPECTRAL_AGGREGATE_VIEW } from './SpectralAggregatePlotConstants';
+import BarGraphView from './BarGraphView.vue';
+import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
 import Vue from 'vue';
 
-export default function SpectralAggregatePlotViewProvider(openmct) {
+export default function BarGraphViewProvider(openmct) {
     function isCompactView(objectPath) {
         return objectPath.find(object => object.type === 'time-strip');
     }
 
     return {
-        key: SPECTRAL_AGGREGATE_VIEW,
+        key: BAR_GRAPH_VIEW,
         name: 'Spectral Aggregate Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === SPECTRAL_AGGREGATE_KEY;
+            return domainObject && domainObject.type === BAR_GRAPH_KEY;
         },
 
         canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === SPECTRAL_AGGREGATE_KEY;
+            return domainObject && domainObject.type === BAR_GRAPH_KEY;
         },
 
         view: function (domainObject, objectPath) {
@@ -50,7 +50,7 @@ export default function SpectralAggregatePlotViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            SpectralAggregateView
+                            BarGraphView
                         },
                         provide: {
                             openmct,
@@ -63,7 +63,7 @@ export default function SpectralAggregatePlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<spectral-aggregate-view :options="options"></spectral-aggregate-view>'
+                        template: '<bar-graph-view :options="options"></bar-graph-view>'
                     });
                 },
                 destroy: function () {

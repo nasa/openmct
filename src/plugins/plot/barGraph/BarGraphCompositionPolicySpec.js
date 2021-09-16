@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SpectralAggregatePlotCompositionPolicy from "./SpectralAggregatePlotCompositionPolicy";
+import BarGraphCompositionPolicy from "./BarGraphCompositionPolicy";
 import { createOpenMct } from "utils/testing";
 
 describe("The spectral aggregation plot composition policy", () => {
@@ -166,7 +166,7 @@ describe("The spectral aggregation plot composition policy", () => {
     });
 
     it("exists", () => {
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow).toBeDefined();
+        expect(BarGraphCompositionPolicy(openmct).allow).toBeDefined();
     });
 
     xit("allow composition only for telemetry that provides/supports spectral data", () => {
@@ -202,7 +202,7 @@ describe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
+        expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
     });
 
     it("allows composition for telemetry that contain at least one range", () => {
@@ -253,7 +253,7 @@ describe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
+        expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
     });
 
     it("disallows composition for telemetry that don't contain any range hints", () => {
@@ -304,7 +304,7 @@ describe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(false);
+        expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(false);
     });
 
     it("passthrough for composition for non spectral aggregate plots", () => {
@@ -340,7 +340,7 @@ describe("The spectral aggregation plot composition policy", () => {
                 "key": "21d61f2d-6d2d-4bea-8b0a-7f59fd504c6c"
             }
         };
-        expect(SpectralAggregatePlotCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
+        expect(BarGraphCompositionPolicy(openmct).allow(parent, child)).toEqual(true);
     });
 });
 

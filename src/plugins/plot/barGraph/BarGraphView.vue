@@ -21,23 +21,23 @@
 -->
 
 <template>
-<div class="c-spectral-aggregate-plot-view gl-plot plot-legend-bottom plot-legend-collapsed">
-    <SpectralAggregatePlot ref="spectralAggregatePlot"
-                           class="c-spectral-aggregate-plot__plot-wrapper"
-                           :data="trace"
-                           :plot-axis-title="plotAxisTitle"
+<div class="c-bar-graph-view gl-plot plot-legend-bottom plot-legend-collapsed">
+    <BarGraph ref="barGraph"
+              class="c-bar-graph__plot-wrapper"
+              :data="trace"
+              :plot-axis-title="plotAxisTitle"
     />
 </div>
 </template>
 
 <script>
-import * as SPECTRAL_AGGREGATE from './SpectralAggregatePlotConstants';
+import * as SPECTRAL_AGGREGATE from './BarGraphConstants';
 import ColorPalette from '../lib/ColorPalette';
-import SpectralAggregatePlot from './SpectralAggregatePlot.vue';
+import BarGraph from './BarGraphPlot.vue';
 
 export default {
     components: {
-        SpectralAggregatePlot
+        BarGraph
     },
     inject: ['openmct', 'domainObject'],
     data() {
@@ -71,13 +71,13 @@ export default {
         this.openmct.time.on('bounds', this.refreshData);
         this.openmct.time.on('clock', this.clockChanged);
 
-        this.$refs.spectralAggregatePlot.$on(SPECTRAL_AGGREGATE.SUBSCRIBE, this.subscribeToAll);
-        this.$refs.spectralAggregatePlot.$on(SPECTRAL_AGGREGATE.UNSUBSCRIBE, this.removeAllSubscriptions);
+        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.SUBSCRIBE, this.subscribeToAll);
+        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.UNSUBSCRIBE, this.removeAllSubscriptions);
 
         this.unobserve = this.openmct.objects.observe(this.currentDomainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
-        this.$refs.spectralAggregatePlot.$off();
+        this.$refs.barGraph.$off();
         this.openmct.time.off('bounds', this.refreshData);
         this.openmct.time.off('clock', this.clockChanged);
 
@@ -270,7 +270,7 @@ export default {
 </script>
 
 <style lang="scss">
-    .c-spectral-aggregate-plot {
+    .c-bar-graph {
         > * + * {
             margin-top: 5px;
         }

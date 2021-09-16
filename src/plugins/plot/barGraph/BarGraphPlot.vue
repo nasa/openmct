@@ -11,7 +11,7 @@
         ></span>
     </div>
     <div ref="plot"
-         class="c-spectral-aggregate-plot__plot"
+         class="c-bar-graph__plot"
     ></div>
     <div ref="localControl"
          class="gl-plot__local-controls h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover"
@@ -28,7 +28,7 @@
 </template>
 <script>
 import Plotly from 'plotly.js-basic-dist';
-import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE, DEFAULT_FONT_FAMILY } from './SpectralAggregatePlotConstants';
+import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE, DEFAULT_FONT_FAMILY } from './BarGraphConstants';
 
 const MULTI_AXES_X_PADDING_PERCENT = {
     LEFT: 8,
@@ -269,19 +269,27 @@ export default {
             this.updatePlot();
         },
         processFontConfig() {
-            const color = this.domainObject.configuration.objectStyles.staticStyle.style.color;
-            let size = this.domainObject.configuration.fontStyle.fontSize;
-            if (size === 'default') {
-                size = 12;
-            } else {
-                size = parseInt(size, 10);
+            const font = {
+                family: DEFAULT_FONT_FAMILY
+            };
+
+            const objectStyles = this.domainObject.configuration.objectStyles;
+            if (objectStyles && objectStyles.staticStyle.style && objectStyles.staticStyle.style.color) {
+                font.color = objectStyles.staticStyle.style.color;
             }
 
-            const font = {
-                family: DEFAULT_FONT_FAMILY,
-                size,
-                color
-            };
+            let size;
+            const fontStyle = this.domainObject.configuration.fontStyle;
+            if (fontStyle && fontStyle.fontSize) {
+                size = fontStyle.fontSize;
+                if (size === 'default') {
+                    size = 12;
+                } else {
+                    size = parseInt(size, 10);
+                }
+
+                font.size = size;
+            }
 
             return font;
         },
@@ -328,11 +336,11 @@ export default {
 </script>
 
 <style lang="scss">
-    .c-spectral-aggregate-plot__plot {
+    .c-bar-graph__plot {
         height: 100%;
     }
 
-    .c-spectral-aggregate-plot-view .gl-plot__local-controls {
+    .c-bar-graph-view .gl-plot__local-controls {
         top: 25px;
     }
 
