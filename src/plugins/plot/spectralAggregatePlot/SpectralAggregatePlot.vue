@@ -31,7 +31,6 @@ import Plotly from 'plotly.js-basic-dist';
 import eventHelpers from '../lib/eventHelpers';
 import { HOVER_VALUES_CLEARED, HOVER_VALUES_CHANGED, SUBSCRIBE, UNSUBSCRIBE, DEFAULT_FONT_FAMILY } from './SpectralAggregatePlotConstants';
 
-const PLOT_PADDING_IN_PERCENT = 1;
 const MULTI_AXES_X_PADDING_PERCENT = {
     LEFT: 8,
     RIGHT: 94
@@ -112,9 +111,6 @@ export default {
                 max
             };
         },
-        getAxisPadding(min, max) {
-            return (Math.abs(max - min) * PLOT_PADDING_IN_PERCENT / 100) || 0;
-        },
         getLayout() {
             const yAxesMeta = this.getYAxisMeta();
             const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
@@ -137,7 +133,8 @@ export default {
                     l: 40,
                     r: 10,
                     b: 40,
-                    t: 20
+                    t: 20,
+                    pad: 5
                 },
                 paper_bgcolor: 'transparent',
                 plot_bgcolor: 'transparent'
