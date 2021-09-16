@@ -127,7 +127,7 @@ export class TelemetryCollection extends EventEmitter {
 
         let historicalData;
 
-        this.options.onPartialResponse = this._processNewTelemetry.bind(this);
+        // this.options.onPartialResponse = this._processNewTelemetry.bind(this);
 
         try {
             this.requestAbort = new AbortController();
@@ -135,6 +135,7 @@ export class TelemetryCollection extends EventEmitter {
             historicalData = await this.historicalProvider.request(this.domainObject, this.options);
             this.requestAbort = undefined;
         } catch (error) {
+            console.log('error', error);
             console.error('Error requesting telemetry data...');
             this.requestAbort = undefined;
             this._error(error);
