@@ -586,6 +586,10 @@ export default class CouchObjectProvider {
     }
 
     update(model) {
+        // if (model.type === 'notebook') {
+        //     throw new this.openmct.objects.errors.Conflict("Conflict while saving notebook");
+        // }
+
         let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
         this.enqueueObject(key, model, intermediateResponse);

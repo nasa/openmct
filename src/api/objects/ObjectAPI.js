@@ -27,6 +27,7 @@ import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
 import TransactionManager from './TransactionManager';
+import ConflictError from './ConflictError';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -50,6 +51,10 @@ function ObjectAPI(typeRegistry, openmct) {
     this.interceptorRegistry = new InterceptorRegistry();
 
     this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
+
+    this.errors = {
+        Conflict: ConflictError
+    };
 }
 
 /**

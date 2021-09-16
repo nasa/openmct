@@ -592,13 +592,25 @@ export default {
 
             return section.id;
         },
-        newEntry(embed = null) {
+        async newEntry(embed = null) {
+            let transaction = this.openmct.objects.startTransaction();
+
             this.resetSearch();
             const notebookStorage = this.createNotebookStorageObject();
             this.updateDefaultNotebook(notebookStorage);
             const id = addNotebookEntry(this.openmct, this.domainObject, notebookStorage, embed);
             this.focusEntryId = id;
+
+            try {
+                await transaction.CommitAllTransactions();
+            } catch (error) {
+                if (error instanceof this.openmct.objects.errors.Conflict) {
+                    transaction.CancelAllTransactions().then(this.newEntry);
+                }
+            }
+
         },
+
         orientationChange() {
             this.formatSidebar();
         },
