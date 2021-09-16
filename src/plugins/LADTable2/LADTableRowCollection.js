@@ -24,9 +24,9 @@ import TableRowCollection from '../telemetryTable/collections/TableRowCollection
 import EmptyLADTableRow from './EmptyLADTableRow.js';
 
 export default class LADTableRowCollection extends TableRowCollection {
-    constructor(domainObject, openmct) {
-        super(domainObject, openmct);
-        this.domainObject = domainObject;
+    constructor(openmct) {
+        super(openmct);
+
         this.ladMap = new Map();
         this.timeColumn = openmct.time.timeSystem().key;
     }

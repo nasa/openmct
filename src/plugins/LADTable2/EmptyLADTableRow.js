@@ -47,13 +47,8 @@ export default class EmptyLADTableRow extends TelemetryTableRow {
         }, {});
     }
 
-    // populate value if empty
     getFormattedValue(key) {
-        if (key === 'vista-lad-name') {
-            let column = this.columns[key];
-
-            return column && column.getFormattedValue();
-        } else if (this.columns[key] === undefined) {
+        if (this.columns[key] === undefined) {
             return '';
         } else {
             return this.datum[key] || '--';

@@ -22,27 +22,25 @@
 
 import TelemetryTable from '../telemetryTable/TelemetryTable.js';
 import EmptyLADTableRow from './EmptyLADTableRow.js';
-import LADTableRow from './LADTableRow.js';
+import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
 import LADTableRowCollection from './LADTableRowCollection.js';
 
 export default class LADTable extends TelemetryTable {
     constructor(domainObject, openmct) {
         super(domainObject, openmct);
-        // this.domainObject = domainObject;
-        // this.openmct = openmct;
+
         this.createTableRowCollections();
     }
     initialize() {
-        if (this.domainObject.type === 'new.ladTable' || this.domainObject.type === 'new.LadTableSet') {
-            // this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
-            // this.filters = this.domainObject.configuration.filters;
+        if (this.domainObject.type === 'new.ladTable') {
+            this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
+            this.filters = this.domainObject.configuration.filters;
             this.loadComposition();
         } else {
             this.addTelemetryObject(this.domainObject);
         }
     }
     addTelemetryObject(telemetryObject) {
-        // addTelemetryObject is exactly the same as the parent's
         super.addTelemetryObject(telemetryObject);
         this.addDummyRowForObject(telemetryObject);
     }
@@ -61,7 +59,7 @@ export default class LADTable extends TelemetryTable {
 
             // only add the latest telemetry
             let latest = telemetry[telemetry.length - 1];
-            let telemetryRow = new LADTableRow(latest, columnMap, keyString, limitEvaluator);
+            let telemetryRow = new TelemetryTableRow(latest, columnMap, keyString, limitEvaluator);
 
             if (this.paused) {
                 this.delayedActions.push(this.tableRows.addOne.bind(this, telemetryRow, 'add'));
@@ -81,7 +79,8 @@ export default class LADTable extends TelemetryTable {
     }
     createTableRowCollections() {
         // need change: can this part be refactored by using super?
-        this.tableRows = new LADTableRowCollection(this.domainObject, this.openmct);
+        // split the original method
+        this.tableRows = new LADTableRowCollection(this.openmct);
 
         //Fetch any persisted default sort
         let sortOptions = this.configuration.getConfiguration().sortOptions;
