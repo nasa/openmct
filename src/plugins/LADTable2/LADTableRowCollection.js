@@ -23,41 +23,36 @@
 import TableRowCollection from '../telemetryTable/collections/TableRowCollection.js';
 
 export default class LADTableRowCollection extends TableRowCollection {
-    // constructor() {
-    //     super();
-    //     // this.addRows = this.addRows.bind(this);
-    // }
-    addRows(rows, type = 'add') {
-        if (this.sortOptions === undefined) {
-            throw 'Please specify sort options';
+    constructor(domainObject, openmct) {
+        super(domainObject, openmct);
+
+        this.ladMap = new Map();
+        this.timeColumn = openmct.time.timeSystem().key;
+    }
+    addOne (item) {
+        if (item.isDummyRow) {
+            this.ladMap.set(item.objectKeyString, this.rows.length);
+            this.rows.push(item);
+            this.emit('add', item);
+            return true;
         }
-
-        let isFilterTriggeredReset = type === 'filter';
-        let anyActiveFilters = Object.keys(this.columnFilters).length > 0;
-        let rowsToAdd = !anyActiveFilters ? rows : rows.filter(this.matchesFilters, this);
-
-        // if type is filter, then it's a reset of all rows,
-        // need to wipe current rows
-        if (isFilterTriggeredReset) {
-            this.rows = [];
+        if (this.isNewerThanLAD(item)) {
+            let rowIndex = this.ladMap.get(item.objectKeyString);
+            let itemToReplace = this.rows[rowIndex];
+            this.rows[rowIndex] = item;
+            this.emit('remove', [itemToReplace]);
+            this.emit('add', [item]);
+            return true;
         }
+        return false;
+    }
 
-        // need to use bounded row logic to keep it 1
-
-        // remove old rows of the object before adding
-        // there's only 1 row so keystring will be the same
-        const keyString = rows[0].objectKeyString;
-        this.removeRowsByObject(keyString);
-
-        for (let row of rowsToAdd) {
-            let index = this.sortedIndex(this.rows, row);
-            this.rows.splice(index, 0, row);
-        }
-
-        // we emit filter no matter what to trigger
-        // an update of visible rows
-        if (rowsToAdd.length > 0 || isFilterTriggeredReset) {
-            this.emit(type, rowsToAdd);
-        }
+    isNewerThanLAD(item) {
+        let rowIndex = this.ladMap.get(item.objectKeyString);
+        let latestRow = this.rows[rowIndex];
+        let newerThanLatest = latestRow === undefined ||
+        item.datum[this.timeColumn] > latestRow.datum[this.timeColumn] ||
+        latestRow.isDummyRow;
+        return !this.ladMap.has(item.objectKeyString) || newerThanLatest;
     }
 }

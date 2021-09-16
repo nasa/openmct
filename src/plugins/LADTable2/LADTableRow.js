@@ -28,9 +28,9 @@ import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
 import printj from 'printj';
 
 export default class LADTableRow extends TelemetryTableRow {
-    constructor(datum, columns, objectKeyString, limitEvaluator, rowFormatConfiguration) {
+    constructor(datum, columns, objectKeyString, limitEvaluator, rowFormatConfiguration = {}) {
         super(datum, columns, objectKeyString, limitEvaluator);
-        this.rowFormats = rowFormatConfiguration || {};
+        this.rowFormats = rowFormatConfiguration;
     }
 
     getFormattedValue(key) {

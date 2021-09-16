@@ -26,7 +26,7 @@
 // refer to emptyChannelListRow.js
 import TelemetryTableRow from '../telemetryTable/TelemetryTableRow.js';
 
-export default class LADRow extends TelemetryTableRow {
+export default class EmptyLADTableRow extends TelemetryTableRow {
     constructor(columns, objectKeyString) {
         super({}, columns, objectKeyString);
         this.isDummyRow = true;

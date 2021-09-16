@@ -30,7 +30,6 @@ export default class LADTable extends TelemetryTable {
         super(domainObject, openmct);
         this.domainObject = domainObject;
         this.openmct = openmct;
-        this.tableRows = new LADTableRowCollection();
         this.createTableRowCollections();
     }
     initialize() {
@@ -51,11 +50,19 @@ export default class LADTable extends TelemetryTable {
         let objectKeyString = this.openmct.objects.makeKeyString(object.identifier);
         let columns = this.getColumnMapForObject(objectKeyString);
         let dummyRow = new EmptyLADTableRow(columns, objectKeyString);
-        this.tableRows.addRows([dummyRow]);
+        this.tableRows.addOne(dummyRow);
     }
-
+    
+    // processHistoricalData(telemetryData, columnMap, keyString, limitEvaluator) {
+    //     let telemetryRows = telemetryData.map(datum => this.createRow(datum, columnMap, keyString, limitEvaluator));
+    //     this.boundedRows.add(telemetryRows);
+    // }
+    // createRow(datum, columnMap, keyString, limitEvaluator) {
+    //     let cellFormatConfiguration = this.configuration.getConfiguration().cellFormat || {};
+    //     return new LADTableRow(datum, columnMap, keyString, limitEvaluator, cellFormatConfiguration[keyString]);
+    // }
+    
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
-        // this is where only latest telemetry is retrived
         return (telemetry) => {
             //Check that telemetry object has not been removed since telemetry was requested.
             if (!this.telemetryObjects[keyString]) {
@@ -64,11 +71,12 @@ export default class LADTable extends TelemetryTable {
 
             // only add the latest telemetry
             let latest = telemetry[telemetry.length - 1];
-            let telemetryRow = [new LADTableRow(latest, columnMap, keyString, limitEvaluator)];
+            let telemetryRow = new LADTableRow(latest, columnMap, keyString, limitEvaluator);
+
             if (this.paused) {
-                this.delayedActions.push(this.tableRows.addRows.bind(this, telemetryRow, 'add'));
+                this.delayedActions.push(this.tableRows.addOne.bind(this, telemetryRow, 'add'));
             } else {
-                this.tableRows.addRows(telemetryRow, 'add');
+                this.tableRows.addOne(telemetryRow, 'add');
             }
         };
     }
@@ -82,7 +90,7 @@ export default class LADTable extends TelemetryTable {
     }
     createTableRowCollections() {
         // need change: can this part be refactored by using super?
-        this.tableRows = new LADTableRowCollection();
+        this.tableRows = new LADTableRowCollection(this.domainObject, this.openmct);
 
         //Fetch any persisted default sort
         let sortOptions = this.configuration.getConfiguration().sortOptions;
