@@ -1048,7 +1048,8 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
-            if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
+            if (this.$parent.$refs.plotWrapper
+                && (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth)) {
                 this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
