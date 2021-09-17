@@ -140,7 +140,7 @@
         ></div>
 
         <progress-bar
-            v-if="progressLoad.progressPerc !== 100"
+            v-if="loading"
             class="c-telemetry-table__progress-bar"
             :model="progressLoad"
         />
@@ -362,7 +362,7 @@ export default {
             autoScroll: true,
             sortOptions: {},
             filters: {},
-            loading: false,
+            loading: true,
             scrollable: undefined,
             tableEl: undefined,
             headersHolderEl: undefined,
