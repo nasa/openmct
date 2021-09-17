@@ -25,40 +25,7 @@
         class="l-inspector-part"
     >
         <h2 title="Settings for this chart">Graph Settings</h2>
-        <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Manually set the plot line and marker color for this series."
-            >Color</div>
-            <div class="grid-cell value">
-                <div class="c-click-swatch c-click-swatch--menu"
-                     @click="toggleSwatch()"
-                >
-                    <span class="c-color-swatch"
-                          :style="{ background: currentBarColor }"
-                    >
-                    </span>
-                </div>
-                <div class="c-palette c-palette--color">
-                    <div v-show="swatchActive"
-                         class="c-palette__items"
-                    >
-                        <div v-for="(group, index) in colorPaletteGroups"
-                             :key="index"
-                             class="u-contents"
-                        >
-                            <div v-for="(color, colorIndex) in group"
-                                 :key="colorIndex"
-                                 class="c-palette__item"
-                                 :class="{ 'selected': currentBarColor == color.asHexString() }"
-                                 :style="{ background: color.asHexString() }"
-                                 @click="setColor(color)"
-                            >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </li>
+        <ColorSwatch :current-bar-color="currentBarColor" />
     </ul>
     <ul v-else
         class="l-inspector-part"
@@ -82,47 +49,25 @@
 </template>
 
 <script>
-import ColorPalette from '../../lib/ColorPalette';
+import ColorSwatch from '../../ColorSwatch.vue';
 
 export default {
+    components: {
+        ColorSwatch
+    },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            swatchActive: false,
-            isEditing: this.openmct.editor.isEditing(),
-            colorPalette: new ColorPalette()
+            currentBarColor: this.domainObject.configuration.barStyles.color
         };
     },
-    computed: {
-        canEdit() {
-            return this.isEditing && !this.domainObject.locked;
-        },
-        currentBarColor() {
-            return this.domainObject.configuration.barStyles.color;
-        },
-        colorPaletteGroups() {
-            return this.colorPalette.groups();
-        }
-    },
-    mounted() {
-        this.openmct.editor.on('isEditing', this.setEditState);
-    },
-    beforeDestroy() {
-        this.openmct.editor.off('isEditing', this.setEditState);
-    },
     methods: {
-        setEditState(isEditing) {
-            this.isEditing = isEditing;
-        },
         setColor: function (chosenColor) {
             this.openmct.objects.mutate(
                 this.domainObject,
                 'configuration.barStyles.color',
                 chosenColor.asHexString()
             );
-        },
-        toggleSwatch() {
-            this.swatchActive = !this.swatchActive;
         }
     }
 };
