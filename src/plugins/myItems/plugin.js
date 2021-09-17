@@ -25,7 +25,6 @@ import myItemsInterceptor from "./myItemsInterceptor";
 
 export default function MyItemsPlugin(namespace = '') {
     return function install(openmct) {
-        console.log('installing my items');
         const identifier = createMyItemsIdentifier(namespace);
 
         openmct.objects.addGetInterceptor(myItemsInterceptor(identifier));

@@ -32,7 +32,7 @@ import {
 const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;
 const myItemsIdentifier = createMyItemsIdentifier();
 
-fdescribe("the plugin", () => {
+describe("the plugin", () => {
     let openmct;
     let missingObj = {
         identifier: myItemsIdentifier,
@@ -57,10 +57,11 @@ fdescribe("the plugin", () => {
         const root = await openmct.objects.get('ROOT');
         const rootCompostionCollection = openmct.composition.get(root);
         const rootCompostion = await rootCompostionCollection.load();
-        let myItems = rootCompostion.filter((identifier) => {
-            return openmct.objects.areIdsEqual(identifier, myItemsIdentifier);
+        let myItems = rootCompostion.filter((domainObject) => {
+            return openmct.objects.areIdsEqual(domainObject.identifier, myItemsIdentifier);
         })[0];
 
+        // expect(rootCompostion).toEqual(1);
         expect(myItems).toBeDefined();
     });
 
