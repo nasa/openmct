@@ -20,15 +20,27 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<ColorSwatch :current-color="currentColor"
-             title="Manually set the color for this bar graph."
-             edit-title="Manually set the color for this bar graph"
-             view-title="The color for this bar graph."
-             short-label="Color"
-             heading="Graph Settings"
-             class="grid-properties"
-             @colorSet="setColor"
-/>
+<ul>
+    <li class="c-tree__item menus-to-left">
+        <span class="c-disclosure-triangle is-enabled flex-elem"
+              :class="expandedCssClass"
+              @click="expanded = !expanded"
+        >
+        </span>
+        <div>
+            <div class="c-object-label__name">{{ name }}</div>
+        </div>
+    </li>
+    <ColorSwatch v-if="expanded"
+                 :current-color="currentColor"
+                 title="Manually set the color for this bar graph."
+                 edit-title="Manually set the color for this bar graph"
+                 view-title="The color for this bar graph."
+                 short-label="Color"
+                 class="grid-properties"
+                 @colorSet="setColor"
+    />
+</ul>
 </template>
 
 <script>
@@ -39,17 +51,55 @@ export default {
         ColorSwatch
     },
     inject: ['openmct', 'domainObject'],
+    props: {
+        item: {
+            type: Object,
+            required: true
+        }
+    },
+    data() {
+        return {
+            currentColor: undefined,
+            name: '',
+            expanded: false
+        };
+    },
     computed: {
-        currentColor() {
-            return this.domainObject.configuration.barStyles.color;
+        expandedCssClass() {
+            return this.expanded ? 'c-disclosure-triangle--expanded' : '';
+        }
+    },
+    watch: {
+        item: {
+            handler() {
+                this.initColor();
+            },
+            deep: true
+        }
+    },
+    mounted() {
+        this.key = this.openmct.objects.makeKeyString(this.item);
+        this.initColor();
+        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles[${this.key}]`, this.initColor);
+    },
+    beforeDestroy() {
+        if (this.unObserve) {
+            this.unObserve();
         }
     },
     methods: {
+        initColor() {
+            if (this.domainObject.configuration.barStyles && this.domainObject.configuration.barStyles[this.key]) {
+                this.currentColor = this.domainObject.configuration.barStyles[this.key].color;
+                this.name = this.domainObject.configuration.barStyles[this.key].name;
+            }
+        },
         setColor: function (chosenColor) {
+            this.currentColor = chosenColor.asHexString();
             this.openmct.objects.mutate(
                 this.domainObject,
-                'configuration.barStyles.color',
-                chosenColor.asHexString()
+                `configuration.barStyles[${this.key}].color`,
+                this.currentColor
             );
         }
     }

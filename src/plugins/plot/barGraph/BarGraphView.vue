@@ -32,6 +32,7 @@
 import * as SPECTRAL_AGGREGATE from './BarGraphConstants';
 import ColorPalette from '../lib/ColorPalette';
 import BarGraph from './BarGraphPlot.vue';
+import Color from "@/plugins/plot/lib/Color";
 
 export default {
     components: {
@@ -93,6 +94,31 @@ export default {
         addTelemetryObject(telemetryObject) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
+            if (!this.domainObject.configuration.barStyles) {
+                this.domainObject.configuration.barStyles = {};
+            }
+
+            // check to see if we've set a bar color
+            if (!this.domainObject.configuration.barStyles[key] || !this.domainObject.configuration.barStyles[key].color) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.barStyles[key] = {
+                    name: telemetryObject.name,
+                    color
+                };
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    `configuration.barStyles[${this.key}]`,
+                    this.domainObject.configuration.barStyles[key]
+                );
+            } else {
+                let color = this.domainObject.configuration.barStyles[key].color;
+                if (!(color instanceof Color)) {
+                    color = Color.fromHexString(color);
+                }
+
+                this.colorPalette.remove(color);
+            }
+
             this.telemetryObjects[key] = telemetryObject;
 
             this.requestDataFor(telemetryObject);
@@ -152,21 +178,12 @@ export default {
                 return;
             }
 
-            // check to see if we've set a bar color
-            if (!this.domainObject.configuration.barStyles) {
-                const color = this.colorPalette.getNextColor().asHexString();
-                this.domainObject.configuration.barStyles = {
-                    color
-                };
-            }
-
             this.composition.on('add', this.addTelemetryObject);
             this.composition.on('remove', this.removeTelemetryObject);
             this.composition.load();
         },
         refreshData(bounds, isTick) {
             if (!isTick) {
-                this.colorPalette.reset();
                 const telemetryObjects = Object.values(this.telemetryObjects);
                 telemetryObjects.forEach(this.requestDataFor);
             }
@@ -178,6 +195,9 @@ export default {
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
+            if (this.domainObject.configuration.barStyles[key]) {
+                delete this.domainObject.configuration.barStyles[key];
+            }
 
             this.subscriptions.forEach(subscription => {
                 if (subscription.key !== key) {
@@ -204,6 +224,7 @@ export default {
             axisMetadata.xAxisMetadata.forEach((metadata) => {
                 xValues.push(metadata.name);
                 if (data[metadata.key]) {
+                    //TODO: Format the data?
                     yValues.push(data[metadata.key]);
                 } else {
                     yValues.push('');
@@ -220,7 +241,7 @@ export default {
                 yAxisMetadata: axisMetadata.yAxisMetadata,
                 type: 'bar',
                 marker: {
-                    color: this.domainObject.configuration.barStyles.color
+                    color: this.domainObject.configuration.barStyles[key].color
                 },
                 hoverinfo: 'skip'
             };
@@ -256,7 +277,6 @@ export default {
             });
         },
         subscribeToAll() {
-            this.colorPalette.reset();
             const telemetryObjects = Object.values(this.telemetryObjects);
             telemetryObjects.forEach(this.subscribeToObject);
         },

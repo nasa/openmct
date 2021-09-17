@@ -207,7 +207,7 @@ export default {
 
             this.removeBarColorListener = this.openmct.objects.observe(
                 this.domainObject,
-                'configuration.barStyles.color',
+                'configuration.barStyles',
                 this.barColorChanged
             );
             this.resizeTimer = false;
@@ -229,12 +229,22 @@ export default {
             this.$emit(SUBSCRIBE);
         },
         barColorChanged() {
-            const plotUpdate = {
-                marker: {
-                    color: this.domainObject.configuration.barStyles.color
+            const colors = [];
+            const indices = [];
+            this.data.forEach((item, index) => {
+                const key = item.key;
+                const color = this.domainObject.configuration.barStyles[key] && this.domainObject.configuration.barStyles[key].color;
+                indices.push(index);
+                if (color) {
+                    colors.push();
+                } else {
+                    colors.push(item.marker.color);
                 }
+            });
+            const plotUpdate = {
+                'marker.color': colors
             };
-            Plotly.restyle(this.$refs.plot, plotUpdate);
+            Plotly.restyle(this.$refs.plot, plotUpdate, indices);
         },
         updateData() {
             this.updatePlot();
