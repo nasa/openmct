@@ -20,32 +20,9 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="grid-properties">
-    <ul v-if="canEdit"
-        class="l-inspector-part"
-    >
-        <h2 title="Settings for this chart">Graph Settings</h2>
-        <ColorSwatch :current-bar-color="currentBarColor" />
-    </ul>
-    <ul v-else
-        class="l-inspector-part"
-    >
-        <h2 title="Settings for this chart">Graph Settings</h2>
-        <li class="grid-row">
-            <div class="grid-cell label"
-                 title="The plot line and marker color for this series."
-            >Color</div>
-            <div class="grid-cell value">
-                <span class="c-color-swatch"
-                      :style="{
-                          'background': currentBarColor
-                      }"
-                >
-                </span>
-            </div>
-        </li>
-    </ul>
-</div>
+<ColorSwatch :current-bar-color="currentBarColor"
+             @colorSet="setColor"
+/>
 </template>
 
 <script>
@@ -56,10 +33,10 @@ export default {
         ColorSwatch
     },
     inject: ['openmct', 'domainObject'],
-    data() {
-        return {
-            currentBarColor: this.domainObject.configuration.barStyles.color
-        };
+    computed: {
+        currentBarColor() {
+            return this.domainObject.configuration.barStyles.color;
+        }
     },
     methods: {
         setColor: function (chosenColor) {
