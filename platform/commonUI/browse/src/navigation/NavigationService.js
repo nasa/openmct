@@ -64,7 +64,7 @@ define(
          *
          * @param {DomainObject} domainObject the domain object to navigate to
          * @param {Boolean} force if true, force navigation to occur.
-         * @returns {Boolean} true if navigation occured, otherwise false.
+         * @returns {Boolean} true if navigation occurred, otherwise false.
          */
         NavigationService.prototype.setNavigation = function (domainObject, force) {
             if (force) {

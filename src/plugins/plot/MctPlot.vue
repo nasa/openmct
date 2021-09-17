@@ -393,10 +393,29 @@ export default {
             });
         },
 
-        clearData() {
+        clearSeries() {
             this.config.series.forEach(function (series) {
                 series.reset();
             });
+        },
+
+        compositionPathContainsId(domainObjectToClear) {
+            return domainObjectToClear.composition.some((compositionIdentifier) => {
+                return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
+            });
+        },
+
+        clearData(domainObjectToClear) {
+            // If we don't have an object to clear (global), or the IDs are equal, just clear the data.
+            // If we have an object to clear, but the IDs don't match, we need to check the composition
+            // of the object we've been asked to clear to see if it contains the id we're looking for.
+            // This happens with stacked plots for example.
+            // If we find the ID, clear the plot.
+            if (!domainObjectToClear
+            || this.openmct.objects.areIdsEqual(domainObjectToClear.identifier, this.domainObject.identifier)
+            || this.compositionPathContainsId(domainObjectToClear)) {
+                this.clearSeries();
+            }
         },
 
         setDisplayRange(series, xKey) {
@@ -1012,7 +1031,8 @@ export default {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
-            if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
+            if (this.$parent.$refs.plotWrapper
+                && (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth)) {
                 this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
