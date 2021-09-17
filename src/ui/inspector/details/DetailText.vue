@@ -21,41 +21,22 @@
  *****************************************************************************/
 
 <template>
-<div></div>
+<li class="c-inspect-properties__row">
+    <div class="c-inspect-properties__label">
+        {{ detail.name }}
+    </div>
+    <div class="c-inspect-properties__value">
+        {{ detail.value }}
+    </div>
+</li>
 </template>
 
 <script>
 export default {
-    inject: ['openmct'],
-    data() {
-        return {
-            selection: []
-        };
-    },
-    mounted() {
-        this.openmct.selection.on('change', this.updateSelection);
-        this.updateSelection(this.openmct.selection.get());
-    },
-    destroyed() {
-        this.openmct.selection.off('change', this.updateSelection);
-    },
-    methods: {
-        updateSelection(selection) {
-            this.selection = selection;
-
-            if (this.selectedViews) {
-                this.selectedViews.forEach(selectedView => {
-                    selectedView.destroy();
-                });
-                this.$el.innerHTML = '';
-            }
-
-            this.selectedViews = this.openmct.inspectorViews.get(selection);
-            this.selectedViews.forEach(selectedView => {
-                let viewContainer = document.createElement('div');
-                this.$el.append(viewContainer);
-                selectedView.show(viewContainer);
-            });
+    props: {
+        detail: {
+            type: Object,
+            required: true
         }
     }
 };
