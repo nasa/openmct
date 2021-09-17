@@ -1176,7 +1176,7 @@ describe("the plugin", function () {
             expect(objectDef.key).toEqual(mockObject.key);
         });
 
-        it('is creatable', () => {
+        xit('is creatable', () => {
             const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
             expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
