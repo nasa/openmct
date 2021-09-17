@@ -44,6 +44,7 @@ define([
     './flexibleLayout/plugin',
     './tabs/plugin',
     './LADTable/plugin',
+    './LADTable2/plugin',
     './filters/plugin',
     './objectMigration/plugin',
     './goToOriginalAction/plugin',
@@ -70,8 +71,7 @@ define([
     './timeline/plugin',
     './hyperlink/plugin',
     './clock/plugin',
-    './DeviceClassifier/plugin',
-    './LADTable2/plugin'
+    './DeviceClassifier/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -96,6 +96,7 @@ define([
     FlexibleLayout,
     Tabs,
     LADTable,
+    LADTableNEW,
     Filters,
     ObjectMigration,
     GoToOriginalAction,
@@ -122,8 +123,7 @@ define([
     Timeline,
     Hyperlink,
     Clock,
-    DeviceClassifier,
-    LADTableNEW
+    DeviceClassifier
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -201,7 +201,8 @@ define([
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
-    plugins.LADTable = LADTable.default;
+    // plugins.LADTable = LADTable.default;
+    plugins.LADTableNEW = LADTableNEW.default;
     plugins.Filters = Filters;
     plugins.ObjectMigration = ObjectMigration.default;
     plugins.GoToOriginalAction = GoToOriginalAction.default;
@@ -229,7 +230,6 @@ define([
     plugins.Hyperlink = Hyperlink.default;
     plugins.Clock = Clock.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
-    plugins.LADTableNEW = LADTableNEW.default;
 
     return plugins;
 });

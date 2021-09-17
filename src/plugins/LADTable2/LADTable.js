@@ -32,7 +32,7 @@ export default class LADTable extends TelemetryTable {
         this.createTableRowCollections();
     }
     initialize() {
-        if (this.domainObject.type === 'new.ladTable') {
+        if (this.domainObject.type === 'LadTable') {
             this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
             this.filters = this.domainObject.configuration.filters;
             this.loadComposition();

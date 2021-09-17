@@ -21,12 +21,12 @@
  *****************************************************************************/
 
 import LADTableViewProvider from './LADTableViewProvider';
-import LADTableSetViewProvider from './LADTableSetViewProvider';
+// import LADTableSetViewProvider from './LADTableSetViewProvider';
 import ladTableCompositionPolicy from './ladTableCompositionPolicy.js';
 
 export default function () {
     return function install(openmct) {
-        openmct.types.addType('new.ladTable', {
+        openmct.types.addType('LadTable', {
             name: "LAD Table NEW",
             creatable: true,
             description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
@@ -40,7 +40,7 @@ export default function () {
             }
         });
 
-        // openmct.types.addType('new.LadTableSet', {
+        // openmct.types.addType('LadTableSet', {
         //     name: "LAD Table Set NEW",
         //     creatable: true,
         //     description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
