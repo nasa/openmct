@@ -47,7 +47,6 @@ define([], function () {
      * @returns {object} the domain object's model
      */
     ModelCacheService.prototype.get = function (id) {
-        console.log('model cache service get', id);
         return this.cache[id];
     };
 
