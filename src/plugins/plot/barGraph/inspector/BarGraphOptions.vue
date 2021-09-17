@@ -25,6 +25,8 @@
              edit-title="Manually set the color for this bar graph"
              view-title="The color for this bar graph."
              short-label="Color"
+             heading="Graph Settings"
+             class="grid-properties"
              @colorSet="setColor"
 />
 </template>

@@ -20,10 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div>
+<div class="u-contents">
     <ul v-if="canEdit"
-        class="grid-properties"
+        class="l-inspector-part"
     >
+        <h2 v-if="heading"
+            :title="heading"
+        >{{ heading }}</h2>
         <li class="grid-row">
             <div class="grid-cell label"
                  :title="editTitle"
@@ -60,8 +63,11 @@
         </li>
     </ul>
     <ul v-else
-        class="grid-properties"
+        class="l-inspector-part"
     >
+        <h2 v-if="heading"
+            :title="heading"
+        >{{ heading }}</h2>
         <li class="grid-row">
             <div class="grid-cell label"
                  :title="viewTitle"
@@ -107,6 +113,12 @@ export default {
             type: String,
             default() {
                 return 'Color';
+            }
+        },
+        heading: {
+            type: String,
+            default() {
+                return '';
             }
         }
     },
