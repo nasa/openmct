@@ -90,13 +90,16 @@ export default class Snapshot {
 
     _showNotification(msg, url) {
         const options = {
-            autoDismissTimeout: 30000,
-            link: {
+            autoDismissTimeout: 30000
+        };
+
+        if (!this.openmct.editor.isEditing()) {
+            options.link = {
                 cssClass: '',
                 text: 'click to view',
                 onClick: this._navigateToNotebook(url)
-            }
-        };
+            };
+        }
 
         this.openmct.notifications.info(msg, options);
     }
@@ -107,7 +110,8 @@ export default class Snapshot {
         }
 
         return () => {
-            window.location.href = window.location.origin + url;
+            const path = window.location.href.split('#');
+            window.location.href = path[0] + url;
         };
     }
 }

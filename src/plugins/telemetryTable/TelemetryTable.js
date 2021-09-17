@@ -153,6 +153,7 @@ define([
 
             this.telemetryCollections[keyString].on('remove', telemetryRemover);
             this.telemetryCollections[keyString].on('add', telemetryProcessor);
+            this.telemetryCollections[keyString].on('clear', this.tableRows.clear);
             this.telemetryCollections[keyString].load();
 
             this.decrementOutstandingRequests();
