@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<ColorSwatch :current-bar-color="currentBarColor"
+<ColorSwatch :current-bar-color="currentColor"
              @colorSet="setColor"
 />
 </template>
@@ -34,7 +34,7 @@ export default {
     },
     inject: ['openmct', 'domainObject'],
     computed: {
-        currentBarColor() {
+        currentColor() {
             return this.domainObject.configuration.barStyles.color;
         }
     },

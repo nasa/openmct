@@ -33,7 +33,7 @@
                      @click="toggleSwatch()"
                 >
                     <span class="c-color-swatch"
-                          :style="{ background: currentBarColor }"
+                          :style="{ background: currentColor }"
                     >
                     </span>
                 </div>
@@ -48,7 +48,7 @@
                             <div v-for="(color, colorIndex) in group"
                                  :key="colorIndex"
                                  class="c-palette__item"
-                                 :class="{ 'selected': currentBarColor == color.asHexString() }"
+                                 :class="{ 'selected': currentColor == color.asHexString() }"
                                  :style="{ background: color.asHexString() }"
                                  @click="setColor(color)"
                             >
@@ -69,7 +69,7 @@
             <div class="grid-cell value">
                 <span class="c-color-swatch"
                       :style="{
-                          'background': currentBarColor
+                          'background': currentColor
                       }"
                 >
                 </span>
@@ -85,7 +85,7 @@ import ColorPalette from './lib/ColorPalette';
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
-        currentBarColor: {
+        currentColor: {
             type: String,
             default() {
                 return '';

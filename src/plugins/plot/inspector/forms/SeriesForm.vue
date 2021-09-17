@@ -117,7 +117,7 @@
         <li v-show="interpolate !== 'none' || markers"
             class="grid-row"
         >
-            <ColorSwatch :current-bar-color="currentBarColor"
+            <ColorSwatch :current-bar-color="currentColor"
                          @colorSet="setColor"
             />
         </li>
@@ -184,7 +184,7 @@ export default {
         expandedCssClass() {
             return this.expanded ? 'c-disclosure-triangle--expanded' : '';
         },
-        currentBarColor() {
+        currentColor() {
             return this.series.get('color').asHexString();
         }
     },
