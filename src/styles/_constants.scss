@@ -259,6 +259,8 @@ $glyph-icon-condition-widget: '\eb28';
 $glyph-icon-alphanumeric: '\eb29';
 $glyph-icon-image-telemetry: '\eb2a';
 $glyph-icon-telemetry-aggregate: '\eb2b';
+$glyph-icon-bar-chart: '\eb2c';
+$glyph-icon-map: '\eb2d';
 
 /************************** GLYPHS AS DATA URI */
 // Only objects have been converted, for use in Create menu and folder views
@@ -310,3 +312,5 @@ $bg-icon-spectra-telemetry: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='
 $bg-icon-command: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M185.1 229.7a96.5 96.5 0 0015.8 11.7A68.5 68.5 0 01192 208c0-19.8 8.9-38.8 25.1-53.7 18.5-17 43.7-26.3 70.9-26.3 20.1 0 39.1 5.1 55.1 14.6a81.3 81.3 0 00-16.2-20.3C308.4 105.3 283.2 96 256 96s-52.4 9.3-70.9 26.3C168.9 137.2 160 156.2 160 176s8.9 38.8 25.1 53.7z'/%3e%3cpath d='M442.7 134.8C422.4 57.5 346.5 0 256 0S89.6 57.5 69.3 134.8C26.3 174.8 0 228.7 0 288c0 123.7 114.6 224 256 224s256-100.3 256-224c0-59.3-26.3-113.2-69.3-153.2zM256 64c70.6 0 128 50.2 128 112s-57.4 112-128 112-128-50.2-128-112S185.4 64 256 64zm0 352c-87.7 0-159.2-63.9-160-142.7 34.4 47.4 93.2 78.7 160 78.7s125.6-31.3 160-78.7c-.8 78.8-72.3 142.7-160 142.7z'/%3e%3c/svg%3e");
 $bg-icon-conditional: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M256 0C114.62 0 0 114.62 0 256s114.62 256 256 256 256-114.62 256-256S397.38 0 256 0zm0 384L64 256l192-128 192 128z'/%3e%3c/svg%3e");
 $bg-icon-condition-widget: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath fill='%23000000' d='M416 0H96C43.2 0 0 43.2 0 96v320c0 52.8 43.2 96 96 96h320c52.8 0 96-43.2 96-96V96c0-52.8-43.2-96-96-96zM256 384L64 256l192-128 192 128z'/%3e%3c/svg%3e");
+$bg-icon-bar-chart: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath d='M416 0H96C43.2 0 0 43.2 0 96v320c0 52.8 43.2 96 96 96h320c52.8 0 96-43.2 96-96V96c0-52.8-43.2-96-96-96ZM133.82 448H64V224h69.82Zm104.73 0h-69.82V64h69.82Zm104.72 0h-69.82V288h69.82ZM448 448h-69.82V128H448Z'/%3e%3c/svg%3e");
+$bg-icon-map: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3e%3cpath d='M448 32.7 384 64v448l64-31.3c35.2-17.21 64-60.1 64-95.3v-320c0-35.2-28.8-49.91-64-32.7ZM160 456l193.6 48.4v-448L160 8v448zM129.6.4 128 0 64 31.3C28.8 48.51 0 91.4 0 126.6v320c0 35.2 28.8 49.91 64 32.7l64-31.3 1.6.4Z'/%3e%3c/svg%3e");

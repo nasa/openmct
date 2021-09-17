@@ -2,7 +2,7 @@
   "metadata": {
     "name": "Open MCT Symbols 16px",
     "lastOpened": 0,
-    "created": 1629996145999
+    "created": 1631832601684
   },
   "iconSets": [
     {
@@ -1214,6 +1214,22 @@
           "prevSize": 24,
           "code": 60203,
           "tempChar": ""
+        },
+        {
+          "order": 199,
+          "id": 172,
+          "name": "icon-bar-graph",
+          "prevSize": 24,
+          "code": 60204,
+          "tempChar": ""
+        },
+        {
+          "order": 200,
+          "id": 171,
+          "name": "icon-map",
+          "prevSize": 24,
+          "code": 60205,
+          "tempChar": ""
         }
       ],
       "id": 0,
@@ -3838,6 +3854,52 @@
           "grid": 16,
           "tags": [
             "icon-telemetry-aggregate"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {},
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": 172,
+          "paths": [
+            "M832 0h-640c-105.6 0-192 86.4-192 192v640c0 105.6 86.4 192 192 192h640c105.6 0 192-86.4 192-192v-640c0-105.6-86.4-192-192-192zM267.64 896h-139.64v-448h139.64zM477.1 896h-139.64v-768h139.64zM686.54 896h-139.64v-320h139.64zM896 896h-139.64v-640h139.64z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-bar-graph"
+          ],
+          "colorPermutations": {
+            "12552552551": [
+              {}
+            ]
+          }
+        },
+        {
+          "id": 171,
+          "paths": [
+            "M896 65.4l-128 62.6v896l128-62.6c70.4-34.42 128-120.2 128-190.6v-640c0-70.4-57.6-99.82-128-65.4z",
+            "M320 912l387.2 96.8v-896l-387.2-96.8v896z",
+            "M259.2 0.8l-3.2-0.8-128 62.6c-70.4 34.42-128 120.2-128 190.6v640c0 70.4 57.6 99.82 128 65.4l128-62.6 3.2 0.8z"
+          ],
+          "attrs": [
+            {},
+            {},
+            {}
+          ],
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "grid": 16,
+          "tags": [
+            "icon-map"
           ],
           "colorPermutations": {
             "12552552551": [
