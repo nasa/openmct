@@ -24,14 +24,14 @@ import LadTableSetView from './LadTableSetView';
 
 export default function LADTableSetViewProvider(openmct) {
     return {
-        key: 'new.LadTableSet',
+        key: 'LadTableSet',
         name: 'LAD Table Set',
         cssClass: 'icon-tabular-lad-set',
         canView: function (domainObject) {
-            return domainObject.type === 'new.LadTableSet';
+            return domainObject.type === 'LadTableSet';
         },
         canEdit: function (domainObject) {
-            return domainObject.type === 'new.LadTableSet';
+            return domainObject.type === 'LadTableSet';
         },
         view: function (domainObject, objectPath) {
             return new LadTableSetView(openmct, domainObject, objectPath);
