@@ -28,7 +28,6 @@ define([
     "./src/models/ModelCacheService",
     "./src/models/PersistedModelProvider",
     "./src/models/CachingModelDecorator",
-    "./src/models/MissingModelDecorator",
     "./src/types/TypeProvider",
     "./src/actions/ActionProvider",
     "./src/actions/ActionAggregator",
@@ -58,7 +57,6 @@ define([
     ModelCacheService,
     PersistedModelProvider,
     CachingModelDecorator,
-    MissingModelDecorator,
     TypeProvider,
     ActionProvider,
     ActionAggregator,
@@ -149,12 +147,6 @@ define([
                         "depends": [
                             "cacheService"
                         ]
-                    },
-                    {
-                        "provides": "modelService",
-                        "type": "decorator",
-                        "priority": "fallback",
-                        "implementation": MissingModelDecorator
                     },
                     {
                         "provides": "typeService",
