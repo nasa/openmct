@@ -33,10 +33,16 @@ export default class RestartTimerAction {
     }
     invoke(objectPath) {
         const domainObject = objectPath[0];
+        if (!domainObject || !domainObject.configuration) {
+            return;
+        }
 
-        this.openmct.objects.mutate(domainObject, 'configuration.timerState', 'started');
-        this.openmct.objects.mutate(domainObject, 'configuration.pausedTime', undefined);
-        this.openmct.objects.mutate(domainObject, 'configuration.timestamp', new Date());
+        const newConfiguration = { ...domainObject.configuration };
+        newConfiguration.timerState = 'started';
+        newConfiguration.timestamp = new Date();
+        newConfiguration.pausedTime = undefined;
+
+        this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
     }
     appliesTo(objectPath) {
         const domainObject = objectPath[0];

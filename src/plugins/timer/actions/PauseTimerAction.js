@@ -33,9 +33,15 @@ export default class PauseTimerAction {
     }
     invoke(objectPath) {
         const domainObject = objectPath[0];
+        if (!domainObject || !domainObject.configuration) {
+            return;
+        }
 
-        this.openmct.objects.mutate(domainObject, 'configuration.timerState', 'paused');
-        this.openmct.objects.mutate(domainObject, 'configuration.pausedTime', new Date());
+        const newConfiguration = { ...domainObject.configuration };
+        newConfiguration.timerState = 'paused';
+        newConfiguration.pausedTime = new Date();
+
+        this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
     }
     appliesTo(objectPath) {
         const domainObject = objectPath[0];

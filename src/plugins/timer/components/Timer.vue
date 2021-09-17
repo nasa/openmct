@@ -111,10 +111,6 @@ export default {
                 timerState = this.configuration.timerState;
             }
 
-            if (this.configuration && this.configuration.timerState === undefined) {
-                timerState = !this.timestamp ? 'stopped' : 'started';
-            }
-
             return timerState;
         },
         timerStateButtonText() {
@@ -179,9 +175,16 @@ export default {
         }
     },
     mounted() {
-        window.requestAnimationFrame(this.tick);
-        this.unlisten = ticker.listen(() => {
-            this.openmct.objects.refresh(this.domainObject);
+        this.$nextTick(() => {
+            if (this.configuration && this.configuration.timerState === undefined) {
+                const timerAction = !this.relativeTimestamp ? 'stop' : 'start';
+                this.triggerAction(`timer.${timerAction}`);
+            }
+
+            window.requestAnimationFrame(this.tick);
+            this.unlisten = ticker.listen(() => {
+                this.openmct.objects.refresh(this.domainObject);
+            });
         });
     },
     destroyed() {

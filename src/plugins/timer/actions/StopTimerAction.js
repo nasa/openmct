@@ -33,10 +33,16 @@ export default class StopTimerAction {
     }
     invoke(objectPath) {
         const domainObject = objectPath[0];
+        if (!domainObject || !domainObject.configuration) {
+            return;
+        }
 
-        this.openmct.objects.mutate(domainObject, 'configuration.timestamp', undefined);
-        this.openmct.objects.mutate(domainObject, 'configuration.timerState', 'stopped');
-        this.openmct.objects.mutate(domainObject, 'configuration.pausedTime', undefined);
+        const newConfiguration = { ...domainObject.configuration };
+        newConfiguration.timerState = 'stopped';
+        newConfiguration.timestamp = undefined;
+        newConfiguration.pausedTime = undefined;
+
+        this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
     }
     appliesTo(objectPath) {
         const domainObject = objectPath[0];
