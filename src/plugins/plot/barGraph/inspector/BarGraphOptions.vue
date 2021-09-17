@@ -20,7 +20,11 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<ColorSwatch :current-bar-color="currentColor"
+<ColorSwatch :current-color="currentColor"
+             title="Manually set the color for this bar graph."
+             edit-title="Manually set the color for this bar graph"
+             view-title="The color for this bar graph."
+             short-label="Color"
              @colorSet="setColor"
 />
 </template>

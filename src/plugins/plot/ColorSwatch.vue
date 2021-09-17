@@ -26,8 +26,8 @@
     >
         <li class="grid-row">
             <div class="grid-cell label"
-                 title="Manually set the color for this plot."
-            >Color</div>
+                 :title="editTitle"
+            >{{ shortLabel }}</div>
             <div class="grid-cell value">
                 <div class="c-click-swatch c-click-swatch--menu"
                      @click="toggleSwatch()"
@@ -64,8 +64,8 @@
     >
         <li class="grid-row">
             <div class="grid-cell label"
-                 title="The plot line and marker color for this series."
-            >Color</div>
+                 :title="viewTitle"
+            >{{ shortLabel }}</div>
             <div class="grid-cell value">
                 <span class="c-color-swatch"
                       :style="{
@@ -89,6 +89,24 @@ export default {
             type: String,
             default() {
                 return '';
+            }
+        },
+        editTitle: {
+            type: String,
+            default() {
+                return 'Set the color.';
+            }
+        },
+        viewTitle: {
+            type: String,
+            default() {
+                return 'The current color.';
+            }
+        },
+        shortLabel: {
+            type: String,
+            default() {
+                return 'Color';
             }
         }
     },

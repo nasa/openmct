@@ -117,7 +117,10 @@
         <li v-show="interpolate !== 'none' || markers"
             class="grid-row"
         >
-            <ColorSwatch :current-bar-color="currentColor"
+            <ColorSwatch :current-color="currentColor"
+                         edit-title="Manually set the plot line and marker color for this series."
+                         view-title="The plot line and marker color for this series."
+                         short-label="Color"
                          @colorSet="setColor"
             />
         </li>
