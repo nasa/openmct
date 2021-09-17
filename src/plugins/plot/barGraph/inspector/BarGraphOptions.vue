@@ -20,109 +20,35 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div class="grid-properties">
-    <ul v-if="canEdit"
-        class="l-inspector-part"
-    >
-        <h2 title="Settings for this chart">Graph Settings</h2>
-        <li class="grid-row">
-            <div class="grid-cell label"
-                 title="Manually set the plot line and marker color for this series."
-            >Color</div>
-            <div class="grid-cell value">
-                <div class="c-click-swatch c-click-swatch--menu"
-                     @click="toggleSwatch()"
-                >
-                    <span class="c-color-swatch"
-                          :style="{ background: currentBarColor }"
-                    >
-                    </span>
-                </div>
-                <div class="c-palette c-palette--color">
-                    <div v-show="swatchActive"
-                         class="c-palette__items"
-                    >
-                        <div v-for="(group, index) in colorPaletteGroups"
-                             :key="index"
-                             class="u-contents"
-                        >
-                            <div v-for="(color, colorIndex) in group"
-                                 :key="colorIndex"
-                                 class="c-palette__item"
-                                 :class="{ 'selected': currentBarColor == color.asHexString() }"
-                                 :style="{ background: color.asHexString() }"
-                                 @click="setColor(color)"
-                            >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </li>
-    </ul>
-    <ul v-else
-        class="l-inspector-part"
-    >
-        <h2 title="Settings for this chart">Graph Settings</h2>
-        <li class="grid-row">
-            <div class="grid-cell label"
-                 title="The plot line and marker color for this series."
-            >Color</div>
-            <div class="grid-cell value">
-                <span class="c-color-swatch"
-                      :style="{
-                          'background': currentBarColor
-                      }"
-                >
-                </span>
-            </div>
-        </li>
-    </ul>
-</div>
+<ColorSwatch :current-color="currentColor"
+             title="Manually set the color for this bar graph."
+             edit-title="Manually set the color for this bar graph"
+             view-title="The color for this bar graph."
+             short-label="Color"
+             @colorSet="setColor"
+/>
 </template>
 
 <script>
-import ColorPalette from '../../lib/ColorPalette';
+import ColorSwatch from '../../ColorSwatch.vue';
 
 export default {
-    inject: ['openmct', 'domainObject'],
-    data() {
-        return {
-            swatchActive: false,
-            isEditing: this.openmct.editor.isEditing(),
-            colorPalette: new ColorPalette()
-        };
+    components: {
+        ColorSwatch
     },
+    inject: ['openmct', 'domainObject'],
     computed: {
-        canEdit() {
-            return this.isEditing && !this.domainObject.locked;
-        },
-        currentBarColor() {
+        currentColor() {
             return this.domainObject.configuration.barStyles.color;
-        },
-        colorPaletteGroups() {
-            return this.colorPalette.groups();
         }
     },
-    mounted() {
-        this.openmct.editor.on('isEditing', this.setEditState);
-    },
-    beforeDestroy() {
-        this.openmct.editor.off('isEditing', this.setEditState);
-    },
     methods: {
-        setEditState(isEditing) {
-            this.isEditing = isEditing;
-        },
         setColor: function (chosenColor) {
             this.openmct.objects.mutate(
                 this.domainObject,
                 'configuration.barStyles.color',
                 chosenColor.asHexString()
             );
-        },
-        toggleSwatch() {
-            this.swatchActive = !this.swatchActive;
         }
     }
 };

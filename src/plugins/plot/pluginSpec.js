@@ -1136,7 +1136,7 @@ describe("the plugin", function () {
                 expandControl.dispatchEvent(clickEvent);
 
                 const plotOptionsProperties = editOptionsEl.querySelectorAll(".js-plot-options-edit-properties .grid-row");
-                expect(plotOptionsProperties.length).toEqual(7);
+                expect(plotOptionsProperties.length).toEqual(8);
             });
 
             it('shows yKeyOptions', () => {
