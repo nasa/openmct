@@ -32,7 +32,7 @@ import {
 const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;
 const myItemsIdentifier = createMyItemsIdentifier();
 
-describe("the plugin", () => {
+fdescribe("the plugin", () => {
     let openmct;
     let missingObj = {
         identifier: myItemsIdentifier,
@@ -55,7 +55,9 @@ describe("the plugin", () => {
 
     it('when installed, adds "My Items" to the root', async () => {
         const root = await openmct.objects.get('ROOT');
-        let myItems = root.composition.filter((identifier) => {
+        const rootCompostionCollection = openmct.composition.get(root);
+        const rootCompostion = await rootCompostionCollection.load();
+        let myItems = rootCompostion.filter((identifier) => {
             return openmct.objects.areIdsEqual(identifier, myItemsIdentifier);
         })[0];
 
