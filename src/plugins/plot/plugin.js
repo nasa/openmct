@@ -80,8 +80,8 @@ export default function () {
         openmct.types.addType(BAR_GRAPH_KEY, {
             key: BAR_GRAPH_KEY,
             name: "Bar Graph",
-            cssClass: "icon-plot-stacked",
-            description: "View data as a bar chart. Can be added to Display Layouts.",
+            cssClass: "icon-bar-chart",
+            description: "View data as a bar graph. Can be added to Display Layouts.",
             creatable: true,
             initialize: function (domainObject) {
                 domainObject.composition = [];

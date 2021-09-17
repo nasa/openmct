@@ -21,13 +21,11 @@
 -->
 
 <template>
-<div class="c-bar-graph-view gl-plot plot-legend-bottom plot-legend-collapsed">
-    <BarGraph ref="barGraph"
-              class="c-bar-graph__plot-wrapper"
-              :data="trace"
-              :plot-axis-title="plotAxisTitle"
-    />
-</div>
+<BarGraph ref="barGraph"
+          class="c-plot c-bar-chart-view"
+          :data="trace"
+          :plot-axis-title="plotAxisTitle"
+/>
 </template>
 
 <script>
@@ -269,29 +267,3 @@ export default {
 };
 
 </script>
-
-<style lang="scss">
-    .c-bar-graph {
-        > * + * {
-            margin-top: 5px;
-        }
-
-        &-view {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        &__plot-wrapper {
-            flex: 1 1 auto;
-            min-height: 300px;
-            min-width: 300px;
-        }
-
-        &__legend-wrapper {
-            flex: 0 1 auto;
-            overflow: auto;
-            padding-right: 5px;
-        }
-    }
-</style>
