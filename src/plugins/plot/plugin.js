@@ -69,7 +69,8 @@ export default function () {
             name: "Spectral Plot",
             cssClass: "icon-plot-stacked",
             description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
-            creatable: true,
+            //Temporarily disabling spectral plots
+            creatable: false,
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {};
