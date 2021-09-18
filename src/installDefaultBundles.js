@@ -41,7 +41,6 @@ const DEFAULTS = [
     'platform/forms',
     'platform/identity',
     'platform/persistence/aggregator',
-    'platform/persistence/queue',
     'platform/policy',
     'platform/entanglement',
     'platform/search',

@@ -126,11 +126,12 @@ export default class CouchObjectProvider {
         }
 
         return fetch(this.url + '/' + subPath, fetchOptions)
-            .then(response => response.json())
-            .then(function (response) {
-                return response;
-            }, function () {
-                return undefined;
+            .then((response) => {
+                if (response.status === 409) {
+                    throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
+                }
+
+                return response.json();
             });
     }
 
@@ -581,6 +582,9 @@ export default class CouchObjectProvider {
             let document = new CouchDocument(key, queued.model, this.objectQueue[key].rev);
             this.request(key, "PUT", document).then((response) => {
                 this.checkResponse(response, queued.intermediateResponse, key);
+            }).catch((error) => {
+                queued.intermediateResponse.reject(error);
+                this.objectQueue[key].pending = false;
             });
         }
     }
