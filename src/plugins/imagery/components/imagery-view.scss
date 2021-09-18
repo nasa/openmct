@@ -312,3 +312,34 @@
         @include cArrowButtonSizing($dimOuter: 32px);
     }
 }
+
+/*************************************** IMAGERY IN TIMESTRIP VIEWS */
+.c-imagery-tsv {
+    g.c-imagery-tsv__image-wrapper {
+        cursor: pointer;
+
+        &.is-hovered {
+            filter: brightness(1) contrast(1) !important;
+            [class*='__image-handle'] {
+                fill: $colorBodyFg;
+            }
+        }
+    }
+
+    &__no-items {
+        fill: $colorBodyFg !important;
+    }
+
+    &__image-handle {
+        fill: rgba($colorBodyFg, 0.5);
+    }
+
+    &__image-placeholder {
+        fill: pushBack($colorBodyBg, 0.3);
+    }
+
+    &:hover g.c-imagery-tsv__image-wrapper {
+        // TODO CH: convert to theme constants
+        filter: brightness(0.5) contrast(0.7);
+    }
+}
