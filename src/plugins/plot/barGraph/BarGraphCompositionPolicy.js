@@ -20,44 +20,38 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/***************** PLOTLY OVERRIDES */
-.plot-container.plotly {
-    .bglayer .bg {
-        fill: $colorPlotBg !important;
-        fill-opacity: 1 !important;
-        stroke: $colorInteriorBorder;
-        stroke-width: 1 !important;
+import { BAR_GRAPH_KEY } from './BarGraphConstants';
+
+export default function BarGraphCompositionPolicy(openmct) {
+    function hasAggregateDomainAndRange(metadata) {
+        const rangeValues = metadata.valuesForHints(['range']);
+
+        return rangeValues.length > 0;
     }
 
-    .cartesianlayer {
-        .gridlayer {
-            .x,
-            .y {
-                path {
-                    opacity: $opacityPlotHash;
-                    stroke: $colorPlotHash !important;
-                }
+    function hasBarGraphTelemetry(domainObject) {
+        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+            return false;
+        }
+
+        let metadata = openmct.telemetry.getMetadata(domainObject);
+
+        return metadata.values().length > 0 && hasAggregateDomainAndRange(metadata);
+    }
+
+    function hasNoChildren(parentObject) {
+        return parentObject.composition && parentObject.composition.length < 1;
+    }
+
+    return {
+        allow: function (parent, child) {
+            if ((parent.type === BAR_GRAPH_KEY)
+                && ((child.type !== 'telemetry.plot.overlay') && (hasBarGraphTelemetry(child) === false))
+            ) {
+                return false;
             }
-        }
 
-        .zerolinelayer {
-            // Hide unneeded plotly-styled horizontal line
-            display: none;
+            return true;
         }
-
-        path.xy2-y {
-            stroke: $colorPlotHash !important; // Using this instead of $colorPlotAreaBorder because that is an rgba
-            opacity: $opacityPlotHash !important;
-        }
-    }
-
-    .xtick,
-    .ytick,
-    [class^="g-"] text[class*="title"] {
-        // Matches <g class="g-*"> <text class="*title">
-        text {
-            fill: $colorPlotFg !important;
-            font-size: 12px !important;
-        }
-    }
+    };
 }

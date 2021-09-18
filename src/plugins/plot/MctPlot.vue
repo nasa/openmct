@@ -156,7 +156,7 @@
 import eventHelpers from './lib/eventHelpers';
 import LinearScale from "./LinearScale";
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
-import configStore from './configuration/configStore';
+import configStore from './configuration/ConfigStore';
 
 import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";

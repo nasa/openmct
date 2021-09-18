@@ -115,7 +115,7 @@
 
 <script>
 import PlotOptionsItem from "./PlotOptionsItem.vue";
-import configStore from "../configuration/configStore";
+import configStore from "../configuration/ConfigStore";
 import eventHelpers from "../lib/eventHelpers";
 
 export default {
