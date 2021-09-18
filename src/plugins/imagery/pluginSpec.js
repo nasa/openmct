@@ -84,12 +84,14 @@ function generateTelemetry(start, count) {
     return telemetry;
 }
 
-describe("The Imagery View Layout", () => {
+describe("The Imagery View Layouts", () => {
     const imageryKey = 'example.imagery';
+    const imageryForTimeStripKey = 'example.imagery.time-strip.view';
     const START = Date.now();
     const COUNT = 10;
 
     let resolveFunction;
+    let originalRouterPath;
 
     let openmct;
     let appHolder;
@@ -116,51 +118,51 @@ describe("The Imagery View Layout", () => {
                         "image": 1,
                         "priority": 3
                     },
-                    "source": "url",
-                    "relatedTelemetry": {
-                        "heading": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "heading",
-                                "valueKey": "value"
-                            }
-                        },
-                        "roll": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "roll",
-                                "valueKey": "value"
-                            }
-                        },
-                        "pitch": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "pitch",
-                                "valueKey": "value"
-                            }
-                        },
-                        "cameraPan": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "cameraPan",
-                                "valueKey": "value"
-                            }
-                        },
-                        "cameraTilt": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "cameraTilt",
-                                "valueKey": "value"
-                            }
-                        },
-                        "sunOrientation": {
-                            "comparisonFunction": comparisonFunction,
-                            "historical": {
-                                "telemetryObjectId": "sunOrientation",
-                                "valueKey": "value"
-                            }
-                        }
-                    }
+                    "source": "url"
+                    // "relatedTelemetry": {
+                    //     "heading": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "heading",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "roll": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "roll",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "pitch": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "pitch",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "cameraPan": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "cameraPan",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "cameraTilt": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "cameraTilt",
+                    //             "valueKey": "value"
+                    //         }
+                    //     },
+                    //     "sunOrientation": {
+                    //         "comparisonFunction": comparisonFunction,
+                    //         "historical": {
+                    //             "telemetryObjectId": "sunOrientation",
+                    //             "valueKey": "value"
+                    //         }
+                    //     }
+                    // }
                 },
                 {
                     "name": "Name",
@@ -220,6 +222,8 @@ describe("The Imagery View Layout", () => {
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
 
+        originalRouterPath = openmct.router.path;
+
         openmct.on('start', done);
         openmct.start(appHolder);
     });
@@ -229,12 +233,76 @@ describe("The Imagery View Layout", () => {
             start: 0,
             end: 1
         });
+        openmct.router.path = originalRouterPath;
 
         return resetApplicationState(openmct);
     });
 
+    it("should provide an imagery time strip view when in a time strip", () => {
+        openmct.router.path = [{
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }];
+
+        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }]);
+        let imageryView = applicableViews.find(
+            viewProvider => viewProvider.key === imageryForTimeStripKey
+        );
+
+        expect(imageryView).toBeDefined();
+    });
+
     it("should provide an imagery view only for imagery producing objects", () => {
         let applicableViews = openmct.objectViews.get(imageryObject, []);
+        let imageryView = applicableViews.find(
+            viewProvider => viewProvider.key === imageryKey
+        );
+
+        expect(imageryView).toBeDefined();
+    });
+
+    it("should not provide an imagery view when in a time strip", () => {
+        openmct.router.path = [{
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }];
+
+        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }]);
+        let imageryView = applicableViews.find(
+            viewProvider => viewProvider.key === imageryKey
+        );
+
+        expect(imageryView).toBeUndefined();
+    });
+
+    it("should provide an imagery view when navigated to in the composition of a time strip", () => {
+        openmct.router.path = [imageryObject];
+
+        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
+            identifier: {
+                key: 'test-timestrip',
+                namespace: ''
+            },
+            type: 'time-strip'
+        }]);
         let imageryView = applicableViews.find(
             viewProvider => viewProvider.key === imageryKey
         );
@@ -367,18 +435,18 @@ describe("The Imagery View Layout", () => {
         });
         it ('shows an auto scroll button when scroll to left', async () => {
             // to mock what a scroll would do
-            imageryView._getInstance().$refs.ImageryLayout.autoScroll = false;
+            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
             await Vue.nextTick();
             let autoScrollButton = parent.querySelector('.c-imagery__auto-scroll-resume-button');
             expect(autoScrollButton).toBeTruthy();
         });
         it ('scrollToRight is called when clicking on auto scroll button', async () => {
             // use spyon to spy the scroll function
-            spyOn(imageryView._getInstance().$refs.ImageryLayout, 'scrollToRight');
-            imageryView._getInstance().$refs.ImageryLayout.autoScroll = false;
+            spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollToRight');
+            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
             await Vue.nextTick();
             parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
-            expect(imageryView._getInstance().$refs.ImageryLayout.scrollToRight).toHaveBeenCalledWith('reset');
+            expect(imageryView._getInstance().$refs.ImageryContainer.scrollToRight).toHaveBeenCalledWith('reset');
 
         });
     });

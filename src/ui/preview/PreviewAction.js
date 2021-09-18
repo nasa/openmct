@@ -81,15 +81,8 @@ export default class PreviewAction {
         const isObjectView = parentElement && parentElement.classList.contains('js-object-view');
 
         return !PreviewAction.isVisible
-            && !this._isNavigatedObject(objectPath)
+            && !this._openmct.router.isNavigatedObject(objectPath)
             && !isObjectView;
-    }
-
-    _isNavigatedObject(objectPath) {
-        let targetObject = objectPath[0];
-        let navigatedObject = this._openmct.router.path[0];
-
-        return this._openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
 
     _preventPreview(objectPath) {
