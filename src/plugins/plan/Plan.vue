@@ -67,7 +67,7 @@ export default {
         TimelineAxis,
         SwimLane
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         options: {
             type: Object,
@@ -99,21 +99,37 @@ export default {
         this.canvasContext = this.canvas.getContext('2d');
 
         this.setDimensions();
-        this.updateViewBounds();
-        this.openmct.time.on("timeSystem", this.setScaleAndPlotActivities);
-        this.openmct.time.on("bounds", this.updateViewBounds);
+        this.setTimeContext();
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     },
     beforeDestroy() {
         clearInterval(this.resizeTimer);
-        this.openmct.time.off("timeSystem", this.setScaleAndPlotActivities);
-        this.openmct.time.off("bounds", this.updateViewBounds);
+        this.stopFollowingTimeContext();
         if (this.unlisten) {
             this.unlisten();
         }
     },
     methods: {
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.path);
+            this.timeContext.on("timeContext", this.setTimeContext);
+            this.followTimeContext();
+        },
+        followTimeContext() {
+            this.updateViewBounds(this.timeContext.bounds());
+
+            this.timeContext.on("timeSystem", this.setScaleAndPlotActivities);
+            this.timeContext.on("bounds", this.updateViewBounds);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off("timeSystem", this.setScaleAndPlotActivities);
+                this.timeContext.off("bounds", this.updateViewBounds);
+                this.timeContext.off("timeContext", this.setTimeContext);
+            }
+        },
         observeForChanges(mutatedObject) {
             this.getPlanData(mutatedObject);
             this.setScaleAndPlotActivities();
@@ -141,13 +157,9 @@ export default {
         getPlanData(domainObject) {
             this.planData = getValidatedPlan(domainObject);
         },
-        updateViewBounds() {
-            this.viewBounds = this.openmct.time.bounds();
-            if (!this.options.compact) {
-            //Add a 50% padding to the end bounds to look ahead
-                let timespan = (this.viewBounds.end - this.viewBounds.start);
-                let padding = timespan / 2;
-                this.viewBounds.end = this.viewBounds.end + padding;
+        updateViewBounds(bounds) {
+            if (bounds) {
+                this.viewBounds = Object.create(bounds);
             }
 
             if (this.timeSystem === undefined) {
