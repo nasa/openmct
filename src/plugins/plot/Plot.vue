@@ -80,7 +80,7 @@ export default {
     components: {
         MctPlot
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         options: {
             type: Object,

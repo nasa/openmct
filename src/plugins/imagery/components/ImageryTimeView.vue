@@ -40,7 +40,6 @@ import PreviewAction from "@/ui/preview/PreviewAction";
 import _ from "lodash";
 
 const PADDING = 1;
-const RESIZE_POLL_INTERVAL = 200;
 const ROW_HEIGHT = 100;
 const IMAGE_WIDTH_THRESHOLD = 40;
 
