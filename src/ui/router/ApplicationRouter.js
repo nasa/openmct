@@ -136,6 +136,13 @@ class ApplicationRouter extends EventEmitter {
         this.handleLocationChange(hash.substring(1));
     }
 
+    isNavigatedObject(objectPath) {
+        let targetObject = objectPath[0];
+        let navigatedObject = this.path[0];
+
+        return this.openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
+    }
+
     /**
      * Add routes listeners
      *
