@@ -19,10 +19,11 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import ImageryView from './ImageryView';
+import ImageryTimeView from './components/ImageryTimeView.vue';
+import Vue from "vue";
 
-export default function ImageryViewProvider(openmct) {
-    const type = 'example.imagery';
+export default function ImageryTimestripViewProvider(openmct) {
+    const type = 'example.imagery.time-strip.view';
 
     function hasImageTelemetry(domainObject) {
         const metadata = openmct.telemetry.getMetadata(domainObject);
@@ -35,15 +36,38 @@ export default function ImageryViewProvider(openmct) {
 
     return {
         key: type,
-        name: 'Imagery Layout',
+        name: 'Imagery Timestrip View',
         cssClass: 'icon-image',
         canView: function (domainObject, objectPath) {
             let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
 
-            return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
+            return hasImageTelemetry(domainObject) && isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
         },
         view: function (domainObject, objectPath) {
-            return new ImageryView(openmct, domainObject, objectPath);
+            let component;
+
+            return {
+                show: function (element) {
+                    component = new Vue({
+                        el: element,
+                        components: {
+                            ImageryTimeView
+                        },
+                        provide: {
+                            openmct: openmct,
+                            domainObject: domainObject,
+                            objectPath: objectPath
+                        },
+                        template: '<imagery-time-view></imagery-time-view>'
+
+                    });
+                },
+
+                destroy: function () {
+                    component.$destroy();
+                    component = undefined;
+                }
+            };
         }
     };
 }

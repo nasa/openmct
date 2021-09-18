@@ -143,10 +143,12 @@ export default {
         },
         updateViewBounds() {
             this.viewBounds = this.openmct.time.bounds();
+            if (!this.options.compact) {
             //Add a 50% padding to the end bounds to look ahead
-            let timespan = (this.viewBounds.end - this.viewBounds.start);
-            let padding = timespan / 2;
-            this.viewBounds.end = this.viewBounds.end + padding;
+                let timespan = (this.viewBounds.end - this.viewBounds.start);
+                let padding = timespan / 2;
+                this.viewBounds.end = this.viewBounds.end + padding;
+            }
 
             if (this.timeSystem === undefined) {
                 this.timeSystem = this.openmct.time.timeSystem();
