@@ -32,7 +32,7 @@ const TEN_MINUTES = ONE_MINUTE * 10;
 const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
 const REFRESH_CSS_MS = 500;
-const TOLERANCE = 0.50;
+// const TOLERANCE = 0.50;
 
 // function comparisonFunction(valueOne, valueTwo) {
 //     let larger = valueOne;
