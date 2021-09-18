@@ -129,12 +129,11 @@
             </div>
         </div>
     </div>
-    <div
-        class="c-imagery__thumbs-wrapper"
-        :class="[
-            { 'is-paused': isPaused },
-            { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
-        ]"
+    <div class="c-imagery__thumbs-wrapper"
+         :class="[
+             { 'is-paused': isPaused },
+             { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
+         ]"
     >
         <div
             ref="thumbsWrapper"
@@ -175,7 +174,8 @@ import moment from 'moment';
 import RelatedTelemetry from './RelatedTelemetry/RelatedTelemetry';
 import Compass from './Compass/Compass.vue';
 
-const DEFAULT_DURATION_FORMATTER = 'duration';
+import imageryData from "../../imagery/mixins/imageryData";
+
 const REFRESH_CSS_MS = 500;
 const DURATION_TRACK_MS = 1000;
 const ARROW_DOWN_DELAY_CHECK_MS = 400;
@@ -197,30 +197,29 @@ export default {
     components: {
         Compass
     },
+    mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
     data() {
         let timeSystem = this.openmct.time.timeSystem();
+        this.metadata = {};
+        this.requestCount = 0;
 
         return {
-            autoScroll: true,
             durationFormatter: undefined,
+            imageHistory: [],
+            timeSystem: timeSystem,
+            keyString: undefined,
+            autoScroll: true,
             filters: {
                 brightness: 100,
                 contrast: 100
             },
-            imageHistory: [],
             thumbnailClick: THUMBNAIL_CLICKED,
             isPaused: false,
-            metadata: {},
-            requestCount: 0,
-            timeSystem: timeSystem,
-            timeFormatter: undefined,
             refreshCSS: false,
-            keyString: undefined,
             focusedImageIndex: undefined,
             focusedImageRelatedTelemetry: {},
             numericDuration: undefined,
-            metadataEndpoints: {},
             relatedTelemetry: {},
             latestRelatedTelemetry: {},
             focusedImageNaturalAspectRatio: undefined,
@@ -231,6 +230,9 @@ export default {
         };
     },
     computed: {
+        imageHistorySize() {
+            return this.imageHistory.length;
+        },
         compassRoseSizingClasses() {
             let compassRoseSizingClasses = '';
             if (this.sizedImageDimensions.width < 300) {
@@ -257,9 +259,6 @@ export default {
         },
         canTrackDuration() {
             return this.openmct.time.clock() && this.timeSystem.isUTCBased;
-        },
-        focusedImageDownloadName() {
-            return this.getImageDownloadName(this.focusedImage);
         },
         isNextDisabled() {
             let disabled = false;
@@ -383,6 +382,10 @@ export default {
         }
     },
     watch: {
+        imageHistorySize(newSize, oldSize) {
+            this.setFocusedImage(newSize - 1, false);
+            this.scrollToRight();
+        },
         focusedImageIndex() {
             this.trackDuration();
             this.resetAgeCSS();
@@ -391,18 +394,9 @@ export default {
         }
     },
     async mounted() {
-        // listen
-        this.openmct.time.on('bounds', this.boundsChange);
-        this.openmct.time.on('timeSystem', this.timeSystemChange);
-        this.openmct.time.on('clock', this.clockChange);
-
-        // set
-        this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
-        this.imageHints = { ...this.metadata.valuesForHints(['image'])[0] };
-        this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-        this.imageFormatter = this.openmct.telemetry.getValueFormatter(this.imageHints);
-        this.imageDownloadNameHints = { ...this.metadata.valuesForHints(['imageDownloadName'])[0]};
+        //listen
+        this.openmct.time.on('timeSystem', this.trackDuration);
+        this.openmct.time.on('clock', this.trackDuration);
 
         // related telemetry keys
         this.spacecraftPositionKeys = ['positionX', 'positionY', 'positionZ'];
@@ -410,55 +404,48 @@ export default {
         this.cameraKeys = ['cameraPan', 'cameraTilt'];
         this.sunKeys = ['sunOrientation'];
 
-        // initialize
-        this.timeKey = this.timeSystem.key;
-        this.timeFormatter = this.getFormatter(this.timeKey);
-
-        // kickoff
-        this.subscribe();
-        this.requestHistory();
-
         // related telemetry
         await this.initializeRelatedTelemetry();
-        this.updateRelatedTelemetryForFocusedImage();
+        await this.updateRelatedTelemetryForFocusedImage();
         this.trackLatestRelatedTelemetry();
 
         // for scrolling through images quickly and resizing the object view
-        _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
-        _.debounce(this.resizeImageContainer, 400);
+        this.updateRelatedTelemetryForFocusedImage = _.debounce(this.updateRelatedTelemetryForFocusedImage, 400);
 
-        this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
-        this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+        // for resizing the object view
+        this.resizeImageContainer = _.debounce(this.resizeImageContainer, 400);
+
+        if (this.$refs.imageBG) {
+            this.imageContainerResizeObserver = new ResizeObserver(this.resizeImageContainer);
+            this.imageContainerResizeObserver.observe(this.$refs.imageBG);
+        }
 
         // For adjusting scroll bar size and position when resizing thumbs wrapper
         this.handleScroll = _.debounce(this.handleScroll, SCROLL_LATENCY);
         this.handleThumbWindowResizeEnded = _.debounce(this.handleThumbWindowResizeEnded, SCROLL_LATENCY);
+        this.handleThumbWindowResizeStart = _.debounce(this.handleThumbWindowResizeStart, SCROLL_LATENCY);
 
-        this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
-        this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
+        if (this.$refs.thumbsWrapper) {
+            this.thumbWrapperResizeObserver = new ResizeObserver(this.handleThumbWindowResizeStart);
+            this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
+        }
+
     },
     beforeDestroy() {
-        if (this.unsubscribe) {
-            this.unsubscribe();
-            delete this.unsubscribe;
+        this.openmct.time.off('timeSystem', this.trackDuration);
+        this.openmct.time.off('clock', this.trackDuration);
+
+        if (this.thumbWrapperResizeObserver) {
+            this.thumbWrapperResizeObserver.disconnect();
         }
 
         if (this.imageContainerResizeObserver) {
             this.imageContainerResizeObserver.disconnect();
         }
 
-        if (this.thumbWrapperResizeObserver) {
-            this.thumbWrapperResizeObserver.disconnect();
-        }
-
         if (this.relatedTelemetry.hasRelatedTelemetry) {
             this.relatedTelemetry.destroy();
         }
-
-        this.stopDurationTracking();
-        this.openmct.time.off('bounds', this.boundsChange);
-        this.openmct.time.off('timeSystem', this.timeSystemChange);
-        this.openmct.time.off('clock', this.clockChange);
 
         // unsubscribe from related telemetry
         if (this.relatedTelemetry.hasRelatedTelemetry) {
@@ -576,56 +563,6 @@ export default {
         focusElement() {
             this.$el.focus();
         },
-        datumIsNotValid(datum) {
-            if (this.imageHistory.length === 0) {
-                return false;
-            }
-
-            const datumURL = this.formatImageUrl(datum);
-            const lastHistoryURL = this.formatImageUrl(this.imageHistory.slice(-1)[0]);
-
-            // datum is not valid if it matches the last datum in history,
-            // or it is before the last datum in the history
-            const datumTimeCheck = this.parseTime(datum);
-            const historyTimeCheck = this.parseTime(this.imageHistory.slice(-1)[0]);
-            const matchesLast = (datumTimeCheck === historyTimeCheck) && (datumURL === lastHistoryURL);
-            const isStale = datumTimeCheck < historyTimeCheck;
-
-            return matchesLast || isStale;
-        },
-        formatImageUrl(datum) {
-            if (!datum) {
-                return;
-            }
-
-            return this.imageFormatter.format(datum);
-        },
-        formatTime(datum) {
-            if (!datum) {
-                return;
-            }
-
-            let dateTimeStr = this.timeFormatter.format(datum);
-
-            // Replace ISO "T" with a space to allow wrapping
-            return dateTimeStr.replace("T", " ");
-        },
-        getImageDownloadName(datum) {
-            let imageDownloadName = '';
-            if (datum) {
-                const key = this.imageDownloadNameHints.key;
-                imageDownloadName = datum[key];
-            }
-
-            return imageDownloadName;
-        },
-        parseTime(datum) {
-            if (!datum) {
-                return;
-            }
-
-            return this.timeFormatter.parse(datum);
-        },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
             if (!thumbsWrapper || this.resizingWindow) {
@@ -683,6 +620,10 @@ export default {
         setFocusedImage(index, thumbnailClick = false) {
             if (this.isPaused && !thumbnailClick) {
                 this.nextImageIndex = index;
+                //this could happen if bounds changes
+                if (this.focusedImageIndex > this.imageHistory.length - 1) {
+                    this.focusedImageIndex = index;
+                }
 
                 return;
             }
@@ -692,70 +633,6 @@ export default {
             if (thumbnailClick && !this.isPaused) {
                 this.paused(true);
             }
-        },
-        boundsChange(bounds, isTick) {
-            if (!isTick) {
-                this.requestHistory();
-            }
-        },
-        async requestHistory() {
-            let bounds = this.openmct.time.bounds();
-            this.requestCount++;
-            const requestId = this.requestCount;
-            this.imageHistory = [];
-
-            let data = await this.openmct.telemetry
-                .request(this.domainObject, bounds) || [];
-
-            if (this.requestCount === requestId) {
-                data.forEach((datum, index) => {
-                    this.updateHistory(datum, index === data.length - 1);
-                });
-            }
-        },
-        timeSystemChange(system) {
-            this.timeSystem = this.openmct.time.timeSystem();
-            this.timeKey = this.timeSystem.key;
-            this.timeFormatter = this.getFormatter(this.timeKey);
-            this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
-            this.trackDuration();
-        },
-        clockChange(clock) {
-            this.trackDuration();
-        },
-        subscribe() {
-            this.unsubscribe = this.openmct.telemetry
-                .subscribe(this.domainObject, (datum) => {
-                    let parsedTimestamp = this.parseTime(datum);
-                    let bounds = this.openmct.time.bounds();
-
-                    if (parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
-                        this.updateHistory(datum);
-                    }
-                });
-        },
-        updateHistory(datum, setFocused = true) {
-            if (this.datumIsNotValid(datum)) {
-                return;
-            }
-
-            let image = { ...datum };
-            image.formattedTime = this.formatTime(datum);
-            image.url = this.formatImageUrl(datum);
-            image.time = datum[this.timeKey];
-            image.imageDownloadName = this.getImageDownloadName(datum);
-
-            this.imageHistory.push(image);
-            if (setFocused) {
-                this.setFocusedImage(this.imageHistory.length - 1);
-                this.scrollToRight();
-            }
-        },
-        getFormatter(key) {
-            let metadataValue = this.metadata.value(key) || { format: key };
-            let valueFormatter = this.openmct.telemetry.getValueFormatter(metadataValue);
-
-            return valueFormatter;
         },
         trackDuration() {
             if (this.canTrackDuration) {
@@ -876,6 +753,10 @@ export default {
             }, { once: true });
         },
         resizeImageContainer() {
+            if (!this.$refs.imageBG) {
+                return;
+            }
+
             if (this.$refs.imageBG.clientWidth !== this.imageContainerWidth) {
                 this.imageContainerWidth = this.$refs.imageBG.clientWidth;
             }
