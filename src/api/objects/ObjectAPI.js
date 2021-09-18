@@ -26,6 +26,7 @@ import RootRegistry from './RootRegistry';
 import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
+import ConflictError from './ConflictError';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -34,6 +35,7 @@ import InterceptorRegistry from './InterceptorRegistry';
  */
 
 function ObjectAPI(typeRegistry, openmct) {
+    this.openmct = openmct;
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
@@ -47,6 +49,10 @@ function ObjectAPI(typeRegistry, openmct) {
     this.interceptorRegistry = new InterceptorRegistry();
 
     this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
+
+    this.errors = {
+        Conflict: ConflictError
+    };
 }
 
 /**
@@ -298,10 +304,11 @@ ObjectAPI.prototype.save = function (domainObject) {
                 savedResolve = resolve;
             });
             domainObject.persisted = persistedTime;
-            provider.create(domainObject).then((response) => {
-                this.mutate(domainObject, 'persisted', persistedTime);
-                savedResolve(response);
-            });
+            provider.create(domainObject)
+                .then((response) => {
+                    this.mutate(domainObject, 'persisted', persistedTime);
+                    savedResolve(response);
+                });
         } else {
             domainObject.persisted = persistedTime;
             this.mutate(domainObject, 'persisted', persistedTime);
@@ -309,7 +316,23 @@ ObjectAPI.prototype.save = function (domainObject) {
         }
     }
 
-    return result;
+    return result.catch((error) => {
+        if (error instanceof this.errors.Conflict) {
+            if (this.supportsMutation(domainObject.identifier)) {
+                return this.getMutable(domainObject.identifier).then((mutable) => {
+                    mutable.$refresh(mutable);
+                    this.destroyMutable(mutable);
+                    this.openmct.notifications.alert(`Conflict while saving ${domainObject.name}. Please try again.`, {
+                        autoDismissTimeout: 5000
+                    });
+
+                    return true;
+                });
+            }
+        }
+
+        throw error;
+    });
 };
 
 /**
