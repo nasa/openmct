@@ -94,7 +94,7 @@ export default {
                 this.name = this.domainObject.configuration.barStyles[this.key].name;
             }
         },
-        setColor: function (chosenColor) {
+        setColor(chosenColor) {
             this.currentColor = chosenColor.asHexString();
             this.openmct.objects.mutate(
                 this.domainObject,

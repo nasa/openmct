@@ -192,6 +192,13 @@ export default {
             this.subscriptions.forEach(subscription => subscription.unsubscribe());
             this.subscriptions = [];
         },
+        removeSubscription(key) {
+            const found = this.subscriptions.findIndex(subscription => subscription.key === key);
+            if (found > -1) {
+                this.subscriptions[found].unsubscribe();
+                this.subscriptions.splice(found, 1);
+            }
+        },
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
@@ -199,14 +206,7 @@ export default {
                 delete this.domainObject.configuration.barStyles[key];
             }
 
-            this.subscriptions.forEach(subscription => {
-                if (subscription.key !== key) {
-                    return;
-                }
-
-                subscription.unsubscribe();
-                delete this.subscriptions[key];
-            });
+            this.removeSubscription(key);
 
             this.trace = this.trace.filter(t => t.key !== key);
         },
@@ -259,11 +259,8 @@ export default {
         },
         subscribeToObject(telemetryObject) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-            const found = Object.values(this.subscriptions).findIndex(objectKey => objectKey === key);
-            if (found > -1) {
-                this.subscriptions[found].unsubscribe();
-                delete this.subscriptions[found];
-            }
+
+            this.removeSubscription(key);
 
             const options = this.getOptions(telemetryObject);
             const axisMetadata = this.getAxisMetadata(telemetryObject);

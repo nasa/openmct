@@ -44,15 +44,15 @@
                     <div v-show="swatchActive"
                          class="c-palette__items"
                     >
-                        <div v-for="(group, index) in colorPaletteGroups"
-                             :key="index"
+                        <div v-for="group in colorPaletteGroups"
+                             :key="group.id"
                              class="u-contents"
                         >
-                            <div v-for="(color, colorIndex) in group"
-                                 :key="colorIndex"
+                            <div v-for="color in group"
+                                 :key="color.id"
                                  class="c-palette__item"
-                                 :class="{ 'selected': currentColor == color.asHexString() }"
-                                 :style="{ background: color.asHexString() }"
+                                 :class="{ 'selected': currentColor === color.hexString }"
+                                 :style="{ background: color.hexString }"
                                  @click="setColor(color)"
                             >
                             </div>
@@ -125,29 +125,41 @@ export default {
     data() {
         return {
             swatchActive: false,
-            colorPalette: new ColorPalette(),
+            colorPaletteGroups: [],
             isEditing: this.openmct.editor.isEditing()
         };
     },
     computed: {
         canEdit() {
             return this.isEditing && !this.domainObject.locked;
-        },
-        colorPaletteGroups() {
-            return this.colorPalette.groups();
         }
     },
     mounted() {
+        this.colorPalette = new ColorPalette();
         this.openmct.editor.on('isEditing', this.setEditState);
+        this.initialize();
     },
     beforeDestroy() {
         this.openmct.editor.off('isEditing', this.setEditState);
     },
     methods: {
+        initialize() {
+            const colorPaletteGroups = this.colorPalette.groups();
+            colorPaletteGroups.forEach((group, index) => {
+                let groupId = [];
+                group.forEach(color => {
+                    color.hexString = color.asHexString();
+                    color.id = `${color.hexString}-${index}`;
+                    groupId.push(color.id);
+                });
+                group.id = groupId.join('-');
+            });
+            this.colorPaletteGroups = colorPaletteGroups;
+        },
         setEditState(isEditing) {
             this.isEditing = isEditing;
         },
-        setColor: function (chosenColor) {
+        setColor(chosenColor) {
             this.$emit('colorSet', chosenColor);
         },
         toggleSwatch() {

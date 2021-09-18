@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
+
 export default function BarGraphCompositionPolicy(openmct) {
     function hasAggregateDomainAndRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);

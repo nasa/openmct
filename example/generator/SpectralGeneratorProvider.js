@@ -48,7 +48,7 @@ define([
         SpectralGeneratorProvider.prototype.supportsSubscribe =
             SpectralGeneratorProvider.prototype.canProvideTelemetry;
 
-    SpectralGeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
+    SpectralGeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request = {}) {
         var props = [
             'amplitude',
             'wavelength',
@@ -58,8 +58,6 @@ define([
             'phase',
             'randomness'
         ];
-
-        request = request || {};
 
         var workerRequest = {};
 
