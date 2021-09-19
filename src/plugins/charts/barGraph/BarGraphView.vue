@@ -25,11 +25,12 @@
           class="c-plot c-bar-chart-view"
           :data="trace"
           :plot-axis-title="plotAxisTitle"
+          @subscribe="subscribeToAll"
+          @unsubscribe="removeAllSubscriptions"
 />
 </template>
 
 <script>
-import * as SPECTRAL_AGGREGATE from './BarGraphConstants';
 import ColorPalette from '../../plot/lib/ColorPalette';
 import BarGraph from './BarGraphPlot.vue';
 import Color from "@/plugins/plot/lib/Color";
@@ -42,16 +43,12 @@ export default {
     data() {
         return {
             composition: {},
-            currentDomainObject: this.domainObject,
             subscriptions: [],
             telemetryObjects: {},
             trace: []
         };
     },
     computed: {
-        activeClock() {
-            return this.openmct.time.activeClock;
-        },
         plotAxisTitle() {
             const { xAxisMetadata = {}, yAxisMetadata = {} } = this.trace[0] || {};
             const xAxisUnit = xAxisMetadata.units ? `(${xAxisMetadata.units})` : '';
@@ -68,20 +65,11 @@ export default {
         this.loadComposition();
 
         this.openmct.time.on('bounds', this.refreshData);
-        this.openmct.time.on('clock', this.clockChanged);
-
-        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.SUBSCRIBE, this.subscribeToAll);
-        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.UNSUBSCRIBE, this.removeAllSubscriptions);
-
-        this.unobserve = this.openmct.objects.observe(this.currentDomainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
-        this.$refs.barGraph.$off();
         this.openmct.time.off('bounds', this.refreshData);
-        this.openmct.time.off('clock', this.clockChanged);
 
         this.removeAllSubscriptions();
-        this.unobserve();
 
         if (!this.composition) {
             return;
@@ -94,21 +82,16 @@ export default {
         addTelemetryObject(telemetryObject) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
-            if (!this.domainObject.configuration.barStyles) {
-                this.domainObject.configuration.barStyles = {};
-            }
-
             // check to see if we've set a bar color
             if (!this.domainObject.configuration.barStyles[key] || !this.domainObject.configuration.barStyles[key].color) {
                 const color = this.colorPalette.getNextColor().asHexString();
-                this.domainObject.configuration.barStyles[key] = {
-                    name: telemetryObject.name,
-                    color
-                };
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles[${this.key}]`,
-                    this.domainObject.configuration.barStyles[key]
+                    `configuration.barStyles[${key}]`,
+                    {
+                        name: telemetryObject.name,
+                        color
+                    }
                 );
             } else {
                 let color = this.domainObject.configuration.barStyles[key].color;
@@ -144,10 +127,6 @@ export default {
 
             this.trace = isInTrace ? newTrace : newTrace.concat([trace]);
         },
-        clockChanged() {
-            this.removeAllSubscriptions();
-            this.subscribeToAll();
-        },
         getAxisMetadata(telemetryObject) {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
@@ -170,10 +149,10 @@ export default {
             };
         },
         loadComposition() {
-            this.composition = this.openmct.composition.get(this.currentDomainObject);
+            this.composition = this.openmct.composition.get(this.domainObject);
 
             if (!this.composition) {
-                this.addTelemetryObject(this.currentDomainObject);
+                this.addTelemetryObject(this.domainObject);
 
                 return;
             }
@@ -276,9 +255,6 @@ export default {
         subscribeToAll() {
             const telemetryObjects = Object.values(this.telemetryObjects);
             telemetryObjects.forEach(this.subscribeToObject);
-        },
-        updateDomainObject(newDomainObject) {
-            this.currentDomainObject = newDomainObject;
         }
     }
 };
