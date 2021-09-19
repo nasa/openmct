@@ -226,12 +226,6 @@ export default function NotebookPlugin() {
                             shouldMutate = true;
                         }
                     });
-                    console.log("REMOTE");
-                    console.log(JSON.stringify(remoteEntries));
-                    console.log("LOCAL");
-                    console.log(JSON.stringify(localEntries));
-                    console.log("MERGED");
-                    console.log(JSON.stringify(mergedEntries));
 
                     if (shouldMutate) {
                         mutable.$set(`configuration.entries.${sectionKey}.${pageKey}`, mergedEntries);
