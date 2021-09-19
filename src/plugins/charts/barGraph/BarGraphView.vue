@@ -30,7 +30,7 @@
 
 <script>
 import * as SPECTRAL_AGGREGATE from './BarGraphConstants';
-import ColorPalette from '../lib/ColorPalette';
+import ColorPalette from '../../plot/lib/ColorPalette';
 import BarGraph from './BarGraphPlot.vue';
 import Color from "@/plugins/plot/lib/Color";
 

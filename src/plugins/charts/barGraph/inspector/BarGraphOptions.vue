@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import ColorSwatch from '../../ColorSwatch.vue';
+import ColorSwatch from '../../../plot/ColorSwatch.vue';
 
 export default {
     components: {
