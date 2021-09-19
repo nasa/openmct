@@ -41,10 +41,12 @@ export default {
     },
     inject: ['openmct', 'domainObject'],
     data() {
+        this.telemetryObjects = {};
+        this.telemetryObjectFormats = {};
+        this.subscriptions = [];
+        this.composition = {};
+
         return {
-            composition: {},
-            subscriptions: [],
-            telemetryObjects: {},
             trace: []
         };
     },
@@ -103,6 +105,9 @@ export default {
             }
 
             this.telemetryObjects[key] = telemetryObject;
+            const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            const formats = this.openmct.telemetry.getFormatMap(metadata);
+            this.telemetryObjectFormats[key] = formats;
 
             this.requestDataFor(telemetryObject);
             this.subscribeToObject(telemetryObject);
@@ -179,6 +184,7 @@ export default {
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
+            delete this.this.telemetryObjectFormats[key];
             if (this.domainObject.configuration.barStyles[key]) {
                 delete this.domainObject.configuration.barStyles[key];
             }
@@ -187,11 +193,15 @@ export default {
 
             this.trace = this.trace.filter(t => t.key !== key);
         },
-        processData(telemetryObject, data, axisMetadata) {
+        addDataToGraph(telemetryObject, data, axisMetadata) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
             if (data.message) {
                 this.openmct.notifications.alert(data.message);
+            }
+
+            if (!this.isDataInTimeRange(data)) {
+                return;
             }
 
             let xValues = [];
@@ -201,8 +211,8 @@ export default {
             axisMetadata.xAxisMetadata.forEach((metadata) => {
                 xValues.push(metadata.name);
                 if (data[metadata.key]) {
-                    //TODO: Format the data?
-                    yValues.push(data[metadata.key]);
+                    const formattedValue = this.format(key, metadata.key, data);
+                    yValues.push(formattedValue);
                 } else {
                     yValues.push('');
                 }
@@ -225,12 +235,23 @@ export default {
 
             this.addTrace(trace, key);
         },
+        isDataInTimeRange(data) {
+            const timeSystemKey = this.openmct.time.timeSystem().key;
+            const currentTimestamp = data[timeSystemKey];
+
+            return currentTimestamp && this.openmct.time.bounds().end >= currentTimestamp;
+        },
+        format(telemetryObjectKey, metadataKey, data) {
+            const formats = this.telemetryObjectFormats[telemetryObjectKey];
+
+            return formats[metadataKey].format(data);
+        },
         requestDataFor(telemetryObject) {
             const axisMetadata = this.getAxisMetadata(telemetryObject);
             this.openmct.telemetry.request(telemetryObject)
                 .then(data => {
                     data.forEach((datum) => {
-                        this.processData(telemetryObject, datum, axisMetadata);
+                        this.addDataToGraph(telemetryObject, datum, axisMetadata);
                     });
                 });
         },
@@ -242,7 +263,7 @@ export default {
             const options = this.getOptions();
             const axisMetadata = this.getAxisMetadata(telemetryObject);
             const unsubscribe = this.openmct.telemetry.subscribe(telemetryObject,
-                data => this.processData(telemetryObject, data, axisMetadata)
+                data => this.addDataToGraph(telemetryObject, data, axisMetadata)
                 , options);
 
             this.subscriptions.push({
