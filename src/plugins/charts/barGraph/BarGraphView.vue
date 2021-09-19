@@ -138,14 +138,12 @@ export default {
                 yAxisMetadata
             };
         },
-        getOptions(telemetryObject) {
+        getOptions() {
             const { start, end } = this.openmct.time.bounds();
 
             return {
                 end,
-                start,
-                startTime: null,
-                spectra: true
+                start
             };
         },
         loadComposition() {
@@ -229,7 +227,7 @@ export default {
         },
         requestDataFor(telemetryObject) {
             const axisMetadata = this.getAxisMetadata(telemetryObject);
-            this.openmct.telemetry.request(telemetryObject, this.getOptions(telemetryObject))
+            this.openmct.telemetry.request(telemetryObject)
                 .then(data => {
                     data.forEach((datum) => {
                         this.processData(telemetryObject, datum, axisMetadata);
@@ -241,7 +239,7 @@ export default {
 
             this.removeSubscription(key);
 
-            const options = this.getOptions(telemetryObject);
+            const options = this.getOptions();
             const axisMetadata = this.getAxisMetadata(telemetryObject);
             const unsubscribe = this.openmct.telemetry.subscribe(telemetryObject,
                 data => this.processData(telemetryObject, data, axisMetadata)
