@@ -214,7 +214,7 @@ export default {
                     const formattedValue = this.format(key, metadata.key, data);
                     yValues.push(formattedValue);
                 } else {
-                    yValues.push('');
+                    yValues.push(null);
                 }
             });
 
