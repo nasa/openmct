@@ -316,23 +316,7 @@ ObjectAPI.prototype.save = function (domainObject) {
         }
     }
 
-    return result.catch((error) => {
-        if (error instanceof this.errors.Conflict) {
-            if (this.supportsMutation(domainObject.identifier)) {
-                return this.getMutable(domainObject.identifier).then((mutable) => {
-                    mutable.$refresh(mutable);
-                    this.destroyMutable(mutable);
-                    this.openmct.notifications.alert(`Conflict while saving ${domainObject.name}. Please try again.`, {
-                        autoDismissTimeout: 5000
-                    });
-
-                    return true;
-                });
-            }
-        }
-
-        throw error;
-    });
+    return result;
 };
 
 /**

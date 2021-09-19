@@ -106,13 +106,6 @@
         }
 
         console.log('Done reading changes feed');
-
-        if (error) {
-            console.log(`Finished with error ${error.toString()}`);
-            port.postMessage({
-                error
-            });
-        }
     };
 
 }());
