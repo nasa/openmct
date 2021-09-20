@@ -187,6 +187,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
 
     let objectPromise = provider.get(identifier, abortSignal).then(result => {
         delete this.cache[keystring];
+
         result = this.applyGetInterceptors(identifier, result);
 
         return result;
@@ -291,6 +292,7 @@ ObjectAPI.prototype.isPersistable = function (idOrKeyString) {
 ObjectAPI.prototype.save = function (domainObject) {
     let provider = this.getProvider(domainObject.identifier);
     let savedResolve;
+    let savedReject;
     let result;
 
     if (!this.isPersistable(domainObject.identifier)) {
@@ -300,14 +302,17 @@ ObjectAPI.prototype.save = function (domainObject) {
     } else {
         const persistedTime = Date.now();
         if (domainObject.persisted === undefined) {
-            result = new Promise((resolve) => {
+            result = new Promise((resolve, reject) => {
                 savedResolve = resolve;
+                savedReject = reject;
             });
             domainObject.persisted = persistedTime;
             provider.create(domainObject)
                 .then((response) => {
                     this.mutate(domainObject, 'persisted', persistedTime);
                     savedResolve(response);
+                }).catch((error) => {
+                    savedReject(error);
                 });
         } else {
             domainObject.persisted = persistedTime;
