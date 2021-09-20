@@ -125,6 +125,7 @@ describe("the plugin", function () {
     describe("The bar graph view", () => {
         let testTelemetryObject;
         let barGraphObject;
+        // eslint-disable-next-line no-unused-vars
         let component;
         let mockComposition;
 
@@ -280,7 +281,11 @@ describe("the plugin", function () {
                     }]
                 }
             };
-            expect(openmct.composition.checkPolicy(parent, testTelemetryObject)).toEqual(true);
+            const composition = openmct.composition.get(parent);
+            expect(() => {
+                composition.add(testTelemetryObject);
+            }).not.toThrow();
+            expect(parent.composition.length).toBe(1);
         });
 
         it("disallows composition for telemetry that don't contain any range hints", () => {
@@ -314,7 +319,11 @@ describe("the plugin", function () {
                     }]
                 }
             };
-            expect(openmct.composition.checkPolicy(parent, testTelemetryObject)).toEqual(false);
+            const composition = openmct.composition.get(parent);
+            expect(() => {
+                composition.add(testTelemetryObject);
+            }).toThrow();
+            expect(parent.composition.length).toBe(0);
         });
     });
 });
