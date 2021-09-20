@@ -23,20 +23,20 @@
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
 
 export default function BarGraphCompositionPolicy(openmct) {
-    function hasAggregateDomainAndRange(metadata) {
+    function hasDomainAndRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
 
         return rangeValues.length > 0;
     }
 
-    function hasBarGraphTelemetry(domainObject) {
+    function hasTelemetry(domainObject) {
         if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
             return false;
         }
 
         let metadata = openmct.telemetry.getMetadata(domainObject);
 
-        return metadata.values().length > 0 && hasAggregateDomainAndRange(metadata);
+        return metadata.values().length > 0 && hasDomainAndRange(metadata);
     }
 
     function hasNoChildren(parentObject) {
@@ -46,7 +46,7 @@ export default function BarGraphCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
             if ((parent.type === BAR_GRAPH_KEY)
-                && ((child.type !== 'telemetry.plot.overlay') && (hasBarGraphTelemetry(child) === false))
+                && ((child.type !== 'telemetry.plot.overlay') && (hasTelemetry(child) === false) && hasNoChildren(parent))
             ) {
                 return false;
             }

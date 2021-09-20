@@ -123,8 +123,7 @@ describe("The bar graph composition policy", () => {
                 "unit": "Hz",
                 "formatString": "%0.2f",
                 "hints": {
-                    "range": 1,
-                    "spectralAttribute": true
+                    "range": 1
                 },
                 "source": "sin"
             },
