@@ -233,10 +233,10 @@ export default {
             const indices = [];
             this.data.forEach((item, index) => {
                 const key = item.key;
-                const color = this.domainObject.configuration.barStyles.series[key] && this.domainObject.configuration.barStyles.series[key].color;
+                const colorExists = this.domainObject.configuration.barStyles.series[key] && this.domainObject.configuration.barStyles.series[key].color;
                 indices.push(index);
-                if (color) {
-                    colors.push();
+                if (colorExists) {
+                    colors.push(this.domainObject.configuration.barStyles.series[key].color);
                 } else {
                     colors.push(item.marker.color);
                 }
