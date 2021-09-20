@@ -55,6 +55,7 @@
     "node-sass": "^4.14.1",
     "painterro": "^1.2.56",
     "plotly.js-basic-dist": "^2.5.0",
+    "plotly.js-gl2d-dist": "^2.5.0",
     "printj": "^1.2.1",
     "raw-loader": "^0.5.1",
     "request": "^2.69.0",

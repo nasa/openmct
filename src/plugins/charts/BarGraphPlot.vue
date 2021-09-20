@@ -12,6 +12,7 @@
     </div>
     <div ref="plot"
          class="c-bar-chart"
+         @plotly_relayout="zoom"
     ></div>
     <div v-if="false"
          ref="localControl"
@@ -28,8 +29,7 @@
 </div>
 </template>
 <script>
-import Plotly from 'plotly';
-import { SUBSCRIBE, UNSUBSCRIBE } from './BarGraphConstants';
+import Plotly from 'plotly-basic';
 
 const MULTI_AXES_X_PADDING_PERCENT = {
     LEFT: 8,
@@ -79,8 +79,6 @@ export default {
         this.registerListeners();
     },
     beforeDestroy() {
-        this.$refs.plot.removeAllListeners();
-
         if (this.plotResizeObserver) {
             this.plotResizeObserver.unobserve(this.$refs.plotWrapper);
             clearTimeout(this.resizeTimer);
@@ -203,8 +201,6 @@ export default {
             return yaxis;
         },
         registerListeners() {
-            this.$refs.plot.on('plotly_relayout', this.zoom);
-
             this.removeBarColorListener = this.openmct.objects.observe(
                 this.domainObject,
                 'configuration.barStyles',
@@ -226,7 +222,7 @@ export default {
             this.updatePlot();
 
             this.isZoomed = false;
-            this.$emit(SUBSCRIBE);
+            this.$emit('subscribe');
         },
         barColorChanged() {
             const colors = [];
@@ -285,7 +281,7 @@ export default {
             }
 
             this.isZoomed = true;
-            this.$emit(UNSUBSCRIBE);
+            this.$emit('unsubscribe');
         }
     }
 };

@@ -19,35 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
+import BarGraphViewProvider from './BarGraphViewProvider';
+import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider';
+import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 
-export default function BarGraphCompositionPolicy(openmct) {
-    function hasRange(metadata) {
-        const rangeValues = metadata.valuesForHints(['range']);
+export default function () {
+    return function install(openmct) {
+        openmct.types.addType(BAR_GRAPH_KEY, {
+            key: BAR_GRAPH_KEY,
+            name: "Bar Graph",
+            cssClass: "icon-bar-chart",
+            description: "View data as a bar graph. Can be added to Display Layouts.",
+            creatable: true,
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {
+                    barStyles: {}
+                };
+            },
+            priority: 891
+        });
 
-        return rangeValues.length > 0;
-    }
+        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
 
-    function hasTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
-            return false;
-        }
+        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
 
-        let metadata = openmct.telemetry.getMetadata(domainObject);
-
-        return metadata.values().length > 0 && hasRange(metadata);
-    }
-
-    return {
-        allow: function (parent, child) {
-            if ((parent.type === BAR_GRAPH_KEY)
-                && ((child.type !== 'telemetry.plot.overlay') && (hasTelemetry(child) === false))
-            ) {
-                return false;
-            }
-
-            return true;
-        }
+        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
     };
 }
+

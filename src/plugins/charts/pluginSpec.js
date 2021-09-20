@@ -33,8 +33,6 @@ describe("the plugin", function () {
     let openmct;
     let telemetryPromise;
     let telemetryPromiseResolve;
-    let cleanupFirst;
-    let telemetrylimitProvider;
     let mockObjectPath;
 
     beforeEach((done) => {
@@ -73,7 +71,6 @@ describe("the plugin", function () {
                 'some-other-key': 'some-other-value 3'
             }
         ];
-        cleanupFirst = [];
 
         openmct = createOpenMct();
 
@@ -86,45 +83,6 @@ describe("the plugin", function () {
 
             return telemetryPromise;
         });
-
-        telemetrylimitProvider = jasmine.createSpyObj('telemetrylimitProvider', [
-            'supportsLimits',
-            'getLimits',
-            'getLimitEvaluator'
-        ]);
-        telemetrylimitProvider.supportsLimits.and.returnValue(true);
-        telemetrylimitProvider.getLimits.and.returnValue({
-            limits: function () {
-                return Promise.resolve({
-                    WARNING: {
-                        low: {
-                            cssClass: "is-limit--lwr is-limit--yellow",
-                            'some-key': -0.5
-                        },
-                        high: {
-                            cssClass: "is-limit--upr is-limit--yellow",
-                            'some-key': 0.5
-                        }
-                    },
-                    DISTRESS: {
-                        low: {
-                            cssClass: "is-limit--lwr is-limit--red",
-                            'some-key': -0.9
-                        },
-                        high: {
-                            cssClass: "is-limit--upr is-limit--red",
-                            'some-key': 0.9
-                        }
-                    }
-                });
-            }
-        });
-        telemetrylimitProvider.getLimitEvaluator.and.returnValue({
-            evaluate: function () {
-                return {};
-            }
-        });
-        openmct.telemetry.addProvider(telemetrylimitProvider);
 
         openmct.install(new BarGraphPlugin());
 
@@ -152,11 +110,6 @@ describe("the plugin", function () {
             creatable: true
         });
 
-        spyOnBuiltins(["requestAnimationFrame"]);
-        window.requestAnimationFrame.and.callFake((callBack) => {
-            callBack();
-        });
-
         openmct.on("start", done);
         openmct.startHeadless();
     });
@@ -166,18 +119,7 @@ describe("the plugin", function () {
             start: 0,
             end: 1
         });
-
-        // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
-        // teardown, which causes problems
-        // This is hacky, we should find a better approach here.
-        setTimeout(() => {
-            //Cleanup code that needs to happen before dom elements start being destroyed
-            cleanupFirst.forEach(cleanup => cleanup());
-            cleanupFirst = [];
-            document.body.removeChild(element);
-
-            resetApplicationState(openmct).then(done).catch(done);
-        });
+        resetApplicationState(openmct).then(done).catch(done);
     });
 
     describe("The bar graph view", () => {
@@ -369,10 +311,10 @@ describe("the plugin", function () {
                 telemetry: {
                     values: [{
                         key: "some-key",
-                        name: "Some attribute",
+                        name: "Some attribute"
                     }, {
                         key: "some-other-key",
-                        name: "Another attribute",
+                        name: "Another attribute"
                     }]
                 }
             };
