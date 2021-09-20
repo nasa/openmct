@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import * as SPECTRAL_AGGREGATE from './BarGraphConstants';
+import { SUBSCRIBE, UNSUBSCRIBE } from './BarGraphConstants';
 import ColorPalette from '../lib/ColorPalette';
 import BarGraph from './BarGraphPlot.vue';
 import Color from "@/plugins/plot/lib/Color";
@@ -49,9 +49,6 @@ export default {
         };
     },
     computed: {
-        activeClock() {
-            return this.openmct.time.activeClock;
-        },
         plotAxisTitle() {
             const { xAxisMetadata = {}, yAxisMetadata = {} } = this.trace[0] || {};
             const xAxisUnit = xAxisMetadata.units ? `(${xAxisMetadata.units})` : '';
@@ -68,17 +65,15 @@ export default {
         this.loadComposition();
 
         this.openmct.time.on('bounds', this.refreshData);
-        this.openmct.time.on('clock', this.clockChanged);
 
-        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.SUBSCRIBE, this.subscribeToAll);
-        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.UNSUBSCRIBE, this.removeAllSubscriptions);
+        this.$refs.barGraph.$on(SUBSCRIBE, this.subscribeToAll);
+        this.$refs.barGraph.$on(UNSUBSCRIBE, this.removeAllSubscriptions);
 
         this.unobserve = this.openmct.objects.observe(this.currentDomainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
         this.$refs.barGraph.$off();
         this.openmct.time.off('bounds', this.refreshData);
-        this.openmct.time.off('clock', this.clockChanged);
 
         this.removeAllSubscriptions();
         this.unobserve();
@@ -98,27 +93,18 @@ export default {
                 this.domainObject.configuration.barStyles = {};
             }
 
-            // check to see if we've set a bar color
-            if (!this.domainObject.configuration.barStyles[key] || !this.domainObject.configuration.barStyles[key].color) {
+            if (!this.domainObject.configuration.barStyles[key]) {
                 const color = this.colorPalette.getNextColor().asHexString();
                 this.domainObject.configuration.barStyles[key] = {
                     name: telemetryObject.name,
                     color
                 };
-                this.openmct.objects.mutate(
-                    this.domainObject,
-                    `configuration.barStyles[${this.key}]`,
-                    this.domainObject.configuration.barStyles[key]
-                );
-            } else {
-                let color = this.domainObject.configuration.barStyles[key].color;
-                if (!(color instanceof Color)) {
-                    color = Color.fromHexString(color);
-                }
-
-                this.colorPalette.remove(color);
             }
 
+            let colorHexString = this.domainObject.configuration.barStyles[key].color;
+            const colorObject = Color.fromHexString(colorHexString);
+
+            this.colorPalette.remove(colorObject);
             this.telemetryObjects[key] = telemetryObject;
 
             this.requestDataFor(telemetryObject);
@@ -143,10 +129,6 @@ export default {
             });
 
             this.trace = isInTrace ? newTrace : newTrace.concat([trace]);
-        },
-        clockChanged() {
-            this.removeAllSubscriptions();
-            this.subscribeToAll();
         },
         getAxisMetadata(telemetryObject) {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
