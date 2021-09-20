@@ -45,7 +45,6 @@
 
 <script>
 import ColorSwatch from '@/ui/color/ColorSwatch.vue';
-import ColorPalette from '@/ui/color/ColorPalette';
 import Color from "@/ui/color/Color";
 
 export default {
@@ -55,6 +54,10 @@ export default {
     inject: ['openmct', 'domainObject'],
     props: {
         item: {
+            type: Object,
+            required: true
+        },
+        colorPalette: {
             type: Object,
             required: true
         }
@@ -80,7 +83,6 @@ export default {
         }
     },
     mounted() {
-        this.colorPalette = new ColorPalette();
         this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColor();
         this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColor);

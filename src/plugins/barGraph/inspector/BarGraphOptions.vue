@@ -25,7 +25,9 @@
         <li v-for="series in domainObject.composition"
             :key="series.key"
         >
-            <series-options :item="series" />
+            <series-options :item="series"
+                            :color-palette="colorPalette"
+            />
         </li>
     </ul>
 </div>
@@ -33,6 +35,8 @@
 
 <script>
 import SeriesOptions from "./SeriesOptions.vue";
+import ColorPalette from '@/ui/color/ColorPalette';
+
 export default {
     components: {
         SeriesOptions
@@ -40,7 +44,8 @@ export default {
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            isEditing: this.openmct.editor.isEditing()
+            isEditing: this.openmct.editor.isEditing(),
+            colorPalette: this.colorPalette
         };
     },
     computed: {
@@ -50,6 +55,7 @@ export default {
     },
     mounted() {
         this.openmct.editor.on('isEditing', this.setEditState);
+        this.colorPalette = new ColorPalette();
     },
     beforeDestroy() {
         this.openmct.editor.off('isEditing', this.setEditState);
