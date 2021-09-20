@@ -30,9 +30,7 @@
 
 <script>
 import { SUBSCRIBE, UNSUBSCRIBE } from './BarGraphConstants';
-import ColorPalette from '../lib/ColorPalette';
 import BarGraph from './BarGraphPlot.vue';
-import Color from "@/plugins/plot/lib/Color";
 
 export default {
     components: {
@@ -61,7 +59,6 @@ export default {
         }
     },
     mounted() {
-        this.colorPalette = new ColorPalette();
         this.loadComposition();
 
         this.openmct.time.on('bounds', this.refreshData);
@@ -88,24 +85,6 @@ export default {
     methods: {
         addTelemetryObject(telemetryObject) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-
-            if (!this.domainObject.configuration.barStyles) {
-                this.domainObject.configuration.barStyles = {};
-                this.domainObject.configuration.barStyles.series = [];
-            }
-
-            if (!this.domainObject.configuration.barStyles.series[key]) {
-                const color = this.colorPalette.getNextColor().asHexString();
-                this.domainObject.configuration.barStyles.series[key] = {
-                    name: telemetryObject.name,
-                    color
-                };
-            }
-
-            let colorHexString = this.domainObject.configuration.barStyles.series[key].color;
-            const colorObject = Color.fromHexString(colorHexString);
-
-            this.colorPalette.remove(colorObject);
             this.telemetryObjects[key] = telemetryObject;
 
             this.requestDataFor(telemetryObject);

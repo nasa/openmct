@@ -45,6 +45,8 @@
 
 <script>
 import ColorSwatch from '../../ColorSwatch.vue';
+import ColorPalette from '../../lib/ColorPalette';
+import Color from "@/plugins/plot/lib/Color";
 
 export default {
     components: {
@@ -78,6 +80,7 @@ export default {
         }
     },
     mounted() {
+        this.colorPalette = new ColorPalette();
         this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColor();
         this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColor);
@@ -88,11 +91,32 @@ export default {
         }
     },
     methods: {
-        initColor() {
+        async initColor() {
+            // this is called before the plot is initialized
+            if (!this.domainObject.configuration.barStyles) {
+                this.domainObject.configuration.barStyles = {};
+                this.domainObject.configuration.barStyles.series = {};
+            }
+
+            const telemetryObject = await this.openmct.objects.get(this.key);
+
+            if (!this.domainObject.configuration.barStyles.series[this.key]) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.barStyles.series[this.key] = {
+                    name: telemetryObject.name,
+                    color
+                };
+            }
+
             if (this.domainObject.configuration.barStyles && this.domainObject.configuration.barStyles.series[this.key]) {
                 this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
                 this.name = this.domainObject.configuration.barStyles.series[this.key].name;
             }
+
+            let colorHexString = this.domainObject.configuration.barStyles.series[this.key].color;
+            const colorObject = Color.fromHexString(colorHexString);
+
+            this.colorPalette.remove(colorObject);
         },
         setColor(chosenColor) {
             this.currentColor = chosenColor.asHexString();
