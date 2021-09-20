@@ -31,7 +31,7 @@ export default function BarGraphViewProvider(openmct) {
 
     return {
         key: BAR_GRAPH_VIEW,
-        name: 'Spectral Aggregate Plot',
+        name: 'Bar Graph',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
             return domainObject && domainObject.type === BAR_GRAPH_KEY;

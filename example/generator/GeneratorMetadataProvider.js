@@ -28,15 +28,6 @@ define([
                         domain: 2
                     }
                 },
-                {
-                    key: "cos",
-                    name: "Cosine",
-                    unit: "deg",
-                    formatString: '%0.2f',
-                    hints: {
-                        domain: 3
-                    }
-                },
                 // Need to enable "LocalTimeSystem" plugin to make use of this
                 // {
                 //     key: "local",
@@ -54,6 +45,15 @@ define([
                     formatString: '%0.2f',
                     hints: {
                         range: 1
+                    }
+                },
+                {
+                    key: "cos",
+                    name: "Cosine",
+                    unit: "deg",
+                    formatString: '%0.2f',
+                    hints: {
+                        range: 2
                     }
                 }
             ]

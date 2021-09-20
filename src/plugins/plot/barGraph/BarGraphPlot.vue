@@ -139,12 +139,15 @@ export default {
         getYAxisMeta() {
             const yAxisMeta = {};
 
-            this.data.forEach(d => {
-                const yAxisMetadata = d.yAxisMetadata;
+            this.data.forEach(datum => {
+                const yAxisMetadata = datum.yAxisMetadata;
                 const range = '1';
                 const side = 'left';
                 const name = '';
-                const unit = yAxisMetadata.units;
+                let unit = '';
+                if (yAxisMetadata.units) {
+                    unit = yAxisMetadata.units;
+                }
 
                 yAxisMeta[range] = {
                     range,
