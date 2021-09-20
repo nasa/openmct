@@ -345,22 +345,6 @@ describe("the plugin", function () {
             expect(plotView).toBeDefined();
         });
 
-        it("provides a spectral plot view for objects with telemetry", () => {
-            const testTelemetryObject = {
-                id: "test-object",
-                type: "telemetry.plot.spectral",
-                telemetry: {
-                    values: [{
-                        key: "a-very-fine-key"
-                    }]
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-spectral");
-            expect(plotView).toBeDefined();
-        });
-
         it("provides a bar graph view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
@@ -1149,24 +1133,6 @@ describe("the plugin", function () {
                 const colorSwatch = editOptionsEl.querySelector(".c-click-swatch");
                 expect(colorSwatch).toBeDefined();
             });
-        });
-    });
-
-    describe("the spectral plot", () => {
-        const mockObject = {
-            name: 'A Very Nice Spectral Plot',
-            key: 'telemetry.plot.spectral',
-            creatable: true
-        };
-
-        it('defines a spectral plot object type with the correct key', () => {
-            const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
-            expect(objectDef.key).toEqual(mockObject.key);
-        });
-
-        xit('is not creatable', () => {
-            const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
-            expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
     });
 
