@@ -3,38 +3,35 @@ import {NOTEBOOK_TYPE} from './notebook-constants';
 export default function (openmct) {
     const apiSave = openmct.objects.save.bind(openmct.objects);
 
-    openmct.objects.save = (domainObject) => {
+    openmct.objects.save = async (domainObject) => {
         if (domainObject.type !== NOTEBOOK_TYPE) {
             return apiSave(domainObject);
         }
 
         const localMutable = openmct.objects._toMutable(domainObject);
+        let result;
 
-        return apiSave(localMutable).catch((error) => {
+        try {
+            result = await apiSave(localMutable);
+        } catch (error) {
             if (error instanceof openmct.objects.errors.Conflict) {
-                return resolveConflicts(localMutable, openmct);
+                result = resolveConflicts(localMutable, openmct);
+            } else {
+                result = Promise.reject(error);
             }
-
-            throw error;
-        }).finally((result) => {
+        } finally {
             openmct.objects.destroyMutable(localMutable);
+        }
 
-            if (result instanceof Error) {
-                throw result;
-            }
-
-            return result;
-        });
+        return result;
     };
 }
 
 function resolveConflicts(localMutable, openmct) {
-    return openmct.objects.getMutable(localMutable.identifier).then((remoteMutable) => {
+    return openmct.objects.get(localMutable.identifier).then((remoteObject) => {
         const localEntries = localMutable.configuration.entries;
-        remoteMutable.$refresh(remoteMutable);
-        applyLocalEntries(remoteMutable, localEntries);
-
-        openmct.objects.destroyMutable(remoteMutable);
+        localMutable.$refresh(remoteObject);
+        applyLocalEntries(remoteObject, localEntries);
 
         return true;
     });
