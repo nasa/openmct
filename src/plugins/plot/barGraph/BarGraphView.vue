@@ -67,8 +67,6 @@ export default {
         this.loadComposition();
 
         this.openmct.time.on('bounds', this.refreshData);
-
-        this.unobserve = this.openmct.objects.observe(this.currentDomainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
         this.$refs.barGraph.$off();
@@ -179,6 +177,8 @@ export default {
                 xValues.push(metadata.name);
                 if (data[metadata.key]) {
                     //TODO: Format the data?
+                    // const formats = this.openmct.telemetry.getFormatMap(metadata);
+                    // const formattedData = formats[this.get(metadata.key)].format(data[metadata.key]);
                     yValues.push(data[metadata.key]);
                 } else {
                     yValues.push('');
@@ -228,9 +228,6 @@ export default {
         subscribeToAll() {
             const telemetryObjects = Object.values(this.telemetryObjects);
             telemetryObjects.forEach(this.subscribeToObject);
-        },
-        updateDomainObject(newDomainObject) {
-            this.currentDomainObject = newDomainObject;
         }
     }
 };
