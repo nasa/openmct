@@ -24,12 +24,10 @@ import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} f
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "./stackedPlot/StackedPlot.vue";
-import BarGraph from './barGraph/BarGraphPlot.vue';
 import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
-import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './barGraph/BarGraphConstants';
 
 describe("the plugin", function () {
     let element;
@@ -300,35 +298,6 @@ describe("the plugin", function () {
             expect(plotInspectorView.length).toEqual(1);
         });
 
-        it('provides an inspector view for bar graphs', () => {
-            let selection = [
-                [
-                    {
-                        context: {
-                            item: {
-                                id: "some-really-cool-telemetry",
-                                type: "telemetry.plot.bar-graph",
-                                telemetry: {
-                                    values: [{
-                                        key: "some-key"
-                                    }]
-                                }
-                            }
-                        }
-                    },
-                    {
-                        context: {
-                            item: {
-                                type: 'time-strip'
-                            }
-                        }
-                    }
-                ]
-            ];
-            const barGraphInspectorView = openmct.inspectorViews.get(selection);
-            expect(barGraphInspectorView.length).toEqual(1);
-        });
-
         it("provides a stacked plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
@@ -342,22 +311,6 @@ describe("the plugin", function () {
 
             const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
             let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-stacked");
-            expect(plotView).toBeDefined();
-        });
-
-        it("provides a bar graph view for objects with telemetry", () => {
-            const testTelemetryObject = {
-                id: "test-object",
-                type: BAR_GRAPH_KEY,
-                telemetry: {
-                    values: [{
-                        key: "lots-of-bar-graph-telemetry"
-                    }]
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
             expect(plotView).toBeDefined();
         });
     });
@@ -825,98 +778,6 @@ describe("the plugin", function () {
         });
     });
 
-    describe("The bar graph view", () => {
-        let testTelemetryObject;
-        let barGraphObject;
-        let component;
-        let mockComposition;
-
-        beforeEach(() => {
-            const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, "get")
-                .withArgs("exportImageService").and.returnValue({
-                    exportPNG: () => {},
-                    exportJPG: () => {}
-                })
-                .and.callFake(getFunc);
-
-            barGraphObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-plot"
-                },
-                type: "telemetry.plot.bar-graph",
-                name: "Test Bar Graph"
-            };
-
-            testTelemetryObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-object"
-                },
-                type: "test-object",
-                name: "Test Object",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
-            };
-
-            mockComposition = new EventEmitter();
-            mockComposition.load = () => {
-                mockComposition.emit('add', testTelemetryObject);
-
-                return [testTelemetryObject];
-            };
-
-            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
-
-            let viewContainer = document.createElement("div");
-            child.append(viewContainer);
-            component = new Vue({
-                el: viewContainer,
-                components: {
-                    BarGraph
-                },
-                provide: {
-                    openmct: openmct,
-                    domainObject: barGraphObject,
-                    composition: openmct.composition.get(barGraphObject)
-                },
-                template: "<BarGraph></BarGraph>"
-            });
-
-            cleanupFirst.push(() => {
-                component.$destroy();
-                component = undefined;
-            });
-
-        });
-
-        it("Renders bar graph", () => {
-            let barChartElement = element.querySelectorAll(".c-bar-chart");
-            expect(barChartElement.length).toBe(1);
-        });
-    });
-
     describe('the inspector view', () => {
         let component;
         let viewComponentObject;
@@ -1133,24 +994,6 @@ describe("the plugin", function () {
                 const colorSwatch = editOptionsEl.querySelector(".c-click-swatch");
                 expect(colorSwatch).toBeDefined();
             });
-        });
-    });
-
-    describe("the bar graph", () => {
-        const mockObject = {
-            name: 'A very nice bar graph',
-            key: BAR_GRAPH_KEY,
-            creatable: true
-        };
-
-        it('defines a bar graph object type with the correct key', () => {
-            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
-            expect(objectDef.key).toEqual(mockObject.key);
-        });
-
-        it('is creatable', () => {
-            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
-            expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
     });
 });
