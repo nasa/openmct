@@ -144,10 +144,7 @@ export default {
                 const range = '1';
                 const side = 'left';
                 const name = '';
-                let unit = '';
-                if (yAxisMetadata.units) {
-                    unit = yAxisMetadata.units;
-                }
+                const unit = yAxisMetadata.units;
 
                 yAxisMeta[range] = {
                     range,
