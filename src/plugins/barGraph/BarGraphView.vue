@@ -176,8 +176,6 @@ export default {
                 xValues.push(metadata.name);
                 if (data[metadata.key]) {
                     //TODO: Format the data?
-                    // const formats = this.openmct.telemetry.getFormatMap(metadata);
-                    // const formattedData = formats[this.get(metadata.key)].format(data[metadata.key]);
                     yValues.push(data[metadata.key]);
                 } else {
                     yValues.push('');
@@ -216,6 +214,7 @@ export default {
             this.removeSubscription(key);
 
             const axisMetadata = this.getAxisMetadata(telemetryObject);
+
             const unsubscribe = this.openmct.telemetry.subscribe(telemetryObject,
                 data => this.addDataToPlot(telemetryObject, data, axisMetadata));
 

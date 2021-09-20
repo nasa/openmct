@@ -53,9 +53,11 @@ export default {
             return this.isEditing && !this.domainObject.locked;
         }
     },
+    beforeMount() {
+        this.colorPalette = new ColorPalette();
+    },
     mounted() {
         this.openmct.editor.on('isEditing', this.setEditState);
-        this.colorPalette = new ColorPalette();
     },
     beforeDestroy() {
         this.openmct.editor.off('isEditing', this.setEditState);

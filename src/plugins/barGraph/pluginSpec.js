@@ -267,7 +267,7 @@ describe("the plugin", function () {
         });
 
         it("provides a bar graph view for objects with telemetry", () => {
-            const testTelemetryObject = {
+            const barGraphObjectWithTelemetry = {
                 id: "test-object",
                 type: BAR_GRAPH_KEY,
                 telemetry: {
@@ -277,7 +277,7 @@ describe("the plugin", function () {
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
+            const applicableViews = openmct.objectViews.get(barGraphObjectWithTelemetry, mockObjectPath);
             let plotView = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
             expect(plotView).toBeDefined();
         });
@@ -288,7 +288,7 @@ describe("the plugin", function () {
         });
     });
 
-    describe("the bar graph", () => {
+    describe("the bar graph objects", () => {
         const mockObject = {
             name: 'A very nice bar graph',
             key: BAR_GRAPH_KEY,
