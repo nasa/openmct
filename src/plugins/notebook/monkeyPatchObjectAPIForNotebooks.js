@@ -28,10 +28,12 @@ export default function (openmct) {
 }
 
 function resolveConflicts(localMutable, openmct) {
-    return openmct.objects.get(localMutable.identifier).then((remoteObject) => {
+    return openmct.objects.getMutable(localMutable.identifier).then((remoteMutable) => {
         const localEntries = localMutable.configuration.entries;
-        localMutable.$refresh(remoteObject);
-        applyLocalEntries(remoteObject, localEntries);
+        remoteMutable.$refresh(remoteMutable);
+        applyLocalEntries(remoteMutable, localEntries);
+
+        openmct.objects.destroyMutable(remoteMutable);
 
         return true;
     });
