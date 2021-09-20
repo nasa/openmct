@@ -28,7 +28,7 @@
 </div>
 </template>
 <script>
-import Plotly from 'plotly.js-basic-dist';
+import Plotly from 'plotly';
 import { SUBSCRIBE, UNSUBSCRIBE } from './BarGraphConstants';
 
 const MULTI_AXES_X_PADDING_PERCENT = {

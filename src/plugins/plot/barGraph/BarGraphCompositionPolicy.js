@@ -23,7 +23,7 @@
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
 
 export default function BarGraphCompositionPolicy(openmct) {
-    function hasDomainAndRange(metadata) {
+    function hasRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
 
         return rangeValues.length > 0;
@@ -36,7 +36,7 @@ export default function BarGraphCompositionPolicy(openmct) {
 
         let metadata = openmct.telemetry.getMetadata(domainObject);
 
-        return metadata.values().length > 0 && hasDomainAndRange(metadata);
+        return metadata.values().length > 0 && hasRange(metadata);
     }
 
     function hasNoChildren(parentObject) {

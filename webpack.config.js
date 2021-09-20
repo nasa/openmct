@@ -44,6 +44,7 @@ const webpackConfig = {
             "bourbon": "bourbon.scss",
             "vue": vueFile,
             "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js"),
+            "plotly": path.join(__dirname, "node_modules/plotly.js-basic-dist/plotly-basic.js"),
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
             "styles": path.join(__dirname, "src/styles"),
             "MCT": path.join(__dirname, "src/MCT"),
