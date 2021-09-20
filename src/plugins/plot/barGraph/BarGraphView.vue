@@ -25,6 +25,9 @@
           class="c-plot c-bar-chart-view"
           :data="trace"
           :plot-axis-title="plotAxisTitle"
+          v-on="{ [SUBSCRIBE]: subscribeToAll,
+                  [UNSUBSCRIBE]: removeAllSubscriptions,
+          }"
 />
 </template>
 
@@ -43,7 +46,9 @@ export default {
             currentDomainObject: this.domainObject,
             subscriptions: [],
             telemetryObjects: {},
-            trace: []
+            trace: [],
+            SUBSCRIBE,
+            UNSUBSCRIBE
         };
     },
     computed: {
@@ -62,9 +67,6 @@ export default {
         this.loadComposition();
 
         this.openmct.time.on('bounds', this.refreshData);
-
-        this.$refs.barGraph.$on(SUBSCRIBE, this.subscribeToAll);
-        this.$refs.barGraph.$on(UNSUBSCRIBE, this.removeAllSubscriptions);
 
         this.unobserve = this.openmct.objects.observe(this.currentDomainObject, '*', this.updateDomainObject);
     },
