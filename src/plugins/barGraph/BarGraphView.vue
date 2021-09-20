@@ -73,7 +73,6 @@ export default {
         this.openmct.time.off('bounds', this.refreshData);
 
         this.removeAllSubscriptions();
-        this.unobserve();
 
         if (!this.composition) {
             return;
