@@ -46,7 +46,7 @@ define([
     StatusAPI
 ) {
     return {
-        TimeAPI: TimeAPI,
+        TimeAPI: TimeAPI.default,
         ObjectAPI: ObjectAPI,
         CompositionAPI: CompositionAPI,
         TypeRegistry: TypeRegistry,

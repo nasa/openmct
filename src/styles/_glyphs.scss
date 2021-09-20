@@ -190,6 +190,8 @@
 .icon-alphanumeric {  @include glyphBefore($glyph-icon-alphanumeric); }
 .icon-image-telemetry {  @include glyphBefore($glyph-icon-image-telemetry); }
 .icon-telemetry-aggregate {  @include glyphBefore($glyph-icon-telemetry-aggregate); }
+.icon-bar-chart {  @include glyphBefore($glyph-icon-bar-chart); }
+.icon-map {  @include glyphBefore($glyph-icon-map); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
@@ -249,3 +251,5 @@
 .bg-icon-command { @include glyphBg($bg-icon-command); }
 .bg-icon-conditional { @include glyphBg($bg-icon-conditional); }
 .bg-icon-condition-widget { @include glyphBg($bg-icon-condition-widget); }
+.bg-icon-bar-chart { @include glyphBg($bg-icon-bar-chart); }
+.bg-icon-map { @include glyphBg($bg-icon-map); }
