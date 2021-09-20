@@ -43,7 +43,7 @@ define([
     }
 
     SpectralGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
-        return domainObject.type === 'example.spectral-aggregate-generator';
+        return domainObject.type === 'example.spectral-generator';
     };
 
     SpectralGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
@@ -61,7 +61,7 @@ define([
     };
 
     SpectralGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
-        return domainObject.type === 'example.spectral-aggregate-generator';
+        return domainObject.type === 'example.spectral-generator';
     };
 
     SpectralGeneratorProvider.prototype.request = function (domainObject, options) {

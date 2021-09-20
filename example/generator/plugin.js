@@ -65,7 +65,7 @@ define([
 
         openmct.telemetry.addProvider(new StateGeneratorProvider());
 
-        openmct.types.addType("example.spectral-aggregate-generator", {
+        openmct.types.addType("example.spectral-generator", {
             name: "Spectral Generator",
             description: "For development use. Generates example streaming telemetry data using a simple state algorithm.",
             cssClass: "icon-generator-telemetry",
