@@ -61,7 +61,6 @@ describe("the plugin", () => {
             return openmct.objects.areIdsEqual(domainObject.identifier, myItemsIdentifier);
         })[0];
 
-        // expect(rootCompostion).toEqual(1);
         expect(myItems).toBeDefined();
     });
 
