@@ -25,14 +25,14 @@ define([
     "./SinewaveLimitProvider",
     "./StateGeneratorProvider",
     "./SpectralGeneratorProvider",
-    "./SpectralAggregateGeneratorProvider",
+    "./SpectralGeneratorProvider",
     "./GeneratorMetadataProvider"
 ], function (
     GeneratorProvider,
     SinewaveLimitProvider,
     StateGeneratorProvider,
     SpectralGeneratorProvider,
-    SpectralAggregateGeneratorProvider,
+    SpectralGeneratorProvider,
     GeneratorMetadataProvider
 ) {
 
@@ -94,7 +94,7 @@ define([
                 object.telemetry = {};
             }
         });
-        openmct.telemetry.addProvider(new SpectralAggregateGeneratorProvider());
+        openmct.telemetry.addProvider(new SpectralGeneratorProvider());
 
         openmct.types.addType("generator", {
             name: "Sine Wave Generator",

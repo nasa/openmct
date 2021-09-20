@@ -26,7 +26,7 @@ define([
 
 ) {
 
-    function SpectralAggregateGeneratorProvider() {
+    function SpectralGeneratorProvider() {
 
     }
 
@@ -42,11 +42,11 @@ define([
         };
     }
 
-    SpectralAggregateGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
+    SpectralGeneratorProvider.prototype.supportsSubscribe = function (domainObject) {
         return domainObject.type === 'example.spectral-aggregate-generator';
     };
 
-    SpectralAggregateGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
+    SpectralGeneratorProvider.prototype.subscribe = function (domainObject, callback) {
         var count = 5000;
 
         var interval = setInterval(function () {
@@ -60,11 +60,11 @@ define([
         };
     };
 
-    SpectralAggregateGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
+    SpectralGeneratorProvider.prototype.supportsRequest = function (domainObject, options) {
         return domainObject.type === 'example.spectral-aggregate-generator';
     };
 
-    SpectralAggregateGeneratorProvider.prototype.request = function (domainObject, options) {
+    SpectralGeneratorProvider.prototype.request = function (domainObject, options) {
         var start = options.start;
         var end = Math.min(Date.now(), options.end); // no future values
         var count = 5000;
@@ -81,6 +81,6 @@ define([
         return Promise.resolve(data);
     };
 
-    return SpectralAggregateGeneratorProvider;
+    return SpectralGeneratorProvider;
 
 });
