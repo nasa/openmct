@@ -32,7 +32,9 @@ export default function plugin() {
             creatable: true,
             cssClass: 'icon-condition-widget',
             initialize(domainObject) {
+                domainObject.configuration = {};
                 domainObject.label = 'Condition Widget';
+                domainObject.conditionalLabel = '';
             },
             form: [
                 {

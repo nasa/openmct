@@ -87,6 +87,18 @@
             </template>
         </div>
 
+        <div v-if="isConditionWidget">
+            <label class="c-toggle-switch">
+                <input
+                    type="checkbox"
+                    :checked="useConditionSetOutputAsLabel"
+                    @change="updateConditionSetOutputLabel"
+                >
+                <span class="c-toggle-switch__slider"></span>
+                <span class="c-toggle-switch__label">Use condition set output as label</span>
+            </label>
+        </div>
+
         <FontStyleEditor
             v-if="canStyleFont"
             :font-style="consolidatedFontStyle"
@@ -172,7 +184,8 @@ export default {
             selectedConditionId: '',
             items: [],
             domainObject: undefined,
-            consolidatedFontStyle: {}
+            consolidatedFontStyle: {},
+            useConditionSetOutputAsLabel: false
         };
     },
     computed: {
@@ -186,6 +199,9 @@ export default {
         },
         allowEditing() {
             return this.isEditing && !this.locked;
+        },
+        isConditionWidget() {
+            return this.domainObject && this.domainObject.type === 'conditionWidget' && this.allowEditing;
         },
         styleableFontItems() {
             return this.selection.filter(selectionPath => {
@@ -204,28 +220,6 @@ export default {
 
                 return true;
             });
-        },
-        computedconsolidatedFontStyle() {
-            let consolidatedFontStyle;
-            const styles = [];
-
-            this.styleableFontItems.forEach(styleable => {
-                const fontStyle = this.getFontStyle(styleable[0]);
-
-                styles.push(fontStyle);
-            });
-
-            if (styles.length) {
-                const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
-                const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
-
-                consolidatedFontStyle = {
-                    fontSize: hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC,
-                    font: hasConsolidatedFont ? styles[0].font : NON_SPECIFIC
-                };
-            }
-
-            return consolidatedFontStyle;
         },
         nonSpecificFontProperties() {
             if (!this.consolidatedFontStyle) {
@@ -247,6 +241,8 @@ export default {
         this.previewAction = new PreviewAction(this.openmct);
         this.isMultipleSelection = this.selection.length > 1;
         this.getObjectsAndItemsFromSelection();
+        this.useConditionSetOutputAsLabel = this.domainObject && this.domainObject.configuration.useConditionSetOutputAsLabel;
+
         if (!this.isMultipleSelection) {
             let objectStyles = this.getObjectStyles();
             this.initializeStaticStyle(objectStyles);
@@ -487,13 +483,14 @@ export default {
 
                 this.conditions[conditionConfiguration.id] = conditionConfiguration;
                 let foundStyle = this.findStyleByConditionId(conditionConfiguration.id);
+                let output = { output: conditionConfiguration.configuration.output };
                 if (foundStyle) {
-                    foundStyle.style = Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles, foundStyle.style);
+                    foundStyle.style = Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles, foundStyle.style, output);
                     conditionalStyles.push(foundStyle);
                 } else {
                     conditionalStyles.splice(index, 0, {
                         conditionId: conditionConfiguration.id,
-                        style: Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles)
+                        style: Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles, output)
                     });
                 }
             });
@@ -678,11 +675,13 @@ export default {
             }
         },
         getDomainObjectStyle(domainObject, property, items, defaultConditionId) {
+
             let objectStyle = {
                 styles: this.conditionalStyles,
                 staticStyle: this.staticStyle,
                 selectedConditionId: this.selectedConditionId
             };
+
             if (defaultConditionId) {
                 objectStyle.defaultConditionId = defaultConditionId;
             }
@@ -714,6 +713,12 @@ export default {
                     } else {
                         objectStyle.styles.forEach((conditionalStyle, index) => {
                             let style = {};
+                            if (this.useConditionSetOutputAsLabel) {
+                                style.output = conditionalStyle.style.output;
+                            } else {
+                                style.output = '';
+                            }
+
                             Object.keys(item.applicableStyles).concat(['isStyleInvisible']).forEach(key => {
                                 style[key] = conditionalStyle.style[key];
                             });
@@ -730,16 +735,34 @@ export default {
                     }
                 });
             } else {
-                domainObjectStyles = {
-                    ...domainObjectStyles,
-                    ...objectStyle
-                };
+                if (this.useConditionSetOutputAsLabel === false) {
+                    let styles = [];
+                    objectStyle.styles.forEach((conditionalStyle) => {
+                        let style = Object.create(conditionalStyle);
+                        style.style.output = '';
+                        styles.push(style);
+                    });
+                    domainObjectStyles = {
+                        ...domainObjectStyles,
+                        ...objectStyle,
+                        styles
+                    };
+                } else {
+                    domainObjectStyles = {
+                        ...domainObjectStyles,
+                        ...objectStyle
+                    };
+                }
             }
 
             return domainObjectStyles;
         },
         applySelectedConditionStyle(conditionId) {
             this.selectedConditionId = conditionId;
+            this.getAndPersistStyles();
+        },
+        persistLabelConfiguration(domainObject) {
+            this.openmct.objects.mutate(domainObject, 'configuration.useConditionSetOutputAsLabel', this.useConditionSetOutputAsLabel);
             this.getAndPersistStyles();
         },
         persist(domainObject, style) {
@@ -862,6 +885,10 @@ export default {
             const layoutItemType = selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type;
 
             return layoutItemType && layoutItemType !== 'subobject-view';
+        },
+        updateConditionSetOutputLabel() {
+            this.useConditionSetOutputAsLabel = !this.useConditionSetOutputAsLabel;
+            this.persistLabelConfiguration(this.domainObject);
         }
     }
 };

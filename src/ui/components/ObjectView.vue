@@ -168,6 +168,12 @@ export default {
                     }
                 }
             });
+
+            if (this.domainObject && this.domainObject.type === 'conditionWidget' && keys.includes('output')) {
+                this.domainObject.conditionalLabel = styleObj.output;
+            } else {
+                this.domainObject.conditionalLabel = '';
+            }
         },
         updateView(immediatelySelect) {
             this.clear();
