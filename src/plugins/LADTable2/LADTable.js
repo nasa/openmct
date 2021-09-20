@@ -62,7 +62,7 @@ export default class LADTable extends TelemetryTable {
             let telemetryRow = new TelemetryTableRow(latest, columnMap, keyString, limitEvaluator);
 
             if (this.paused) {
-                this.delayedActions.push(this.tableRows.addOne.bind(this, telemetryRow, 'add'));
+                this.delayedActions.push(this.tableRows.addOne.bind(this.tableRows, telemetryRow, 'add'));
             } else {
                 this.tableRows.addOne(telemetryRow, 'add');
             }
