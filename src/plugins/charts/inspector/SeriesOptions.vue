@@ -95,14 +95,6 @@ export default {
     methods: {
         initColorAndName() {
             // this is called before the plot is initialized
-            if (!this.domainObject.configuration.barStyles) {
-                this.domainObject.configuration.barStyles = {};
-            }
-
-            if (!this.domainObject.configuration.barStyles.series) {
-                this.domainObject.configuration.barStyles.series = {};
-            }
-
             if (!this.domainObject.configuration.barStyles.series[this.key]) {
                 const color = this.colorPalette.getNextColor().asHexString();
                 this.domainObject.configuration.barStyles.series[this.key] = {
