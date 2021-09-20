@@ -21,10 +21,12 @@
  *****************************************************************************/
 
 import ImageryViewProvider from './ImageryViewProvider';
+import ImageryTimestripViewProvider from './ImageryTimestripViewProvider';
 
 export default function () {
     return function install(openmct) {
         openmct.objectViews.addProvider(new ImageryViewProvider(openmct));
+        openmct.objectViews.addProvider(new ImageryTimestripViewProvider(openmct));
     };
 }
 

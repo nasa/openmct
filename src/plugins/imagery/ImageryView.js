@@ -1,4 +1,4 @@
-import ImageryViewLayout from './components/ImageryViewLayout.vue';
+import ImageryViewComponent from './components/ImageryView.vue';
 
 import Vue from 'vue';
 
@@ -14,7 +14,7 @@ export default class ImageryView {
         this.component = new Vue({
             el: element,
             components: {
-                ImageryViewLayout
+                'imagery-view': ImageryViewComponent
             },
             provide: {
                 openmct: this.openmct,
@@ -22,7 +22,8 @@ export default class ImageryView {
                 objectPath: this.objectPath,
                 currentView: this
             },
-            template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
+            template: '<imagery-view ref="ImageryContainer"></imagery-view>'
+
         });
     }
 
