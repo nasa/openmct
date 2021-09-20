@@ -23,9 +23,9 @@
 import {createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
 import Vue from "vue";
 import BarGraphPlugin from "./plugin";
-import BarGraph from './barGraph/BarGraphPlot.vue';
-import configStore from "./configuration/ConfigStore";
-import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './barGraph/BarGraphConstants';
+import BarGraph from './BarGraphPlot.vue';
+import EventEmitter from "EventEmitter";
+import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './BarGraphConstants';
 
 describe("the plugin", function () {
     let element;
@@ -175,8 +175,6 @@ describe("the plugin", function () {
             cleanupFirst.forEach(cleanup => cleanup());
             cleanupFirst = [];
             document.body.removeChild(element);
-
-            configStore.deleteAll();
 
             resetApplicationState(openmct).then(done).catch(done);
         });
