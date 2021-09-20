@@ -80,7 +80,7 @@ export default {
     mounted() {
         this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColor();
-        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles[${this.key}]`, this.initColor);
+        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColor);
     },
     beforeDestroy() {
         if (this.unObserve) {
@@ -89,16 +89,16 @@ export default {
     },
     methods: {
         initColor() {
-            if (this.domainObject.configuration.barStyles && this.domainObject.configuration.barStyles[this.key]) {
-                this.currentColor = this.domainObject.configuration.barStyles[this.key].color;
-                this.name = this.domainObject.configuration.barStyles[this.key].name;
+            if (this.domainObject.configuration.barStyles && this.domainObject.configuration.barStyles.series[this.key]) {
+                this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
+                this.name = this.domainObject.configuration.barStyles.series[this.key].name;
             }
         },
         setColor(chosenColor) {
             this.currentColor = chosenColor.asHexString();
             this.openmct.objects.mutate(
                 this.domainObject,
-                `configuration.barStyles[${this.key}].color`,
+                `configuration.barStyles.series[${this.key}].color`,
                 this.currentColor
             );
         }

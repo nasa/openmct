@@ -91,17 +91,18 @@ export default {
 
             if (!this.domainObject.configuration.barStyles) {
                 this.domainObject.configuration.barStyles = {};
+                this.domainObject.configuration.barStyles.series = [];
             }
 
-            if (!this.domainObject.configuration.barStyles[key]) {
+            if (!this.domainObject.configuration.barStyles.series[key]) {
                 const color = this.colorPalette.getNextColor().asHexString();
-                this.domainObject.configuration.barStyles[key] = {
+                this.domainObject.configuration.barStyles.series[key] = {
                     name: telemetryObject.name,
                     color
                 };
             }
 
-            let colorHexString = this.domainObject.configuration.barStyles[key].color;
+            let colorHexString = this.domainObject.configuration.barStyles.series[key].color;
             const colorObject = Color.fromHexString(colorHexString);
 
             this.colorPalette.remove(colorObject);
@@ -141,16 +142,6 @@ export default {
                 yAxisMetadata
             };
         },
-        getOptions(telemetryObject) {
-            const { start, end } = this.openmct.time.bounds();
-
-            return {
-                end,
-                start,
-                startTime: null,
-                spectra: true
-            };
-        },
         loadComposition() {
             this.composition = this.openmct.composition.get(this.currentDomainObject);
 
@@ -184,15 +175,15 @@ export default {
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
-            if (this.domainObject.configuration.barStyles[key]) {
-                delete this.domainObject.configuration.barStyles[key];
+            if (this.domainObject.configuration.barStyles.series[key]) {
+                delete this.domainObject.configuration.barStyles.series[key];
             }
 
             this.removeSubscription(key);
 
             this.trace = this.trace.filter(t => t.key !== key);
         },
-        processData(telemetryObject, data, axisMetadata) {
+        addDataToPlot(telemetryObject, data, axisMetadata) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
             if (data.message) {
@@ -223,7 +214,7 @@ export default {
                 yAxisMetadata: axisMetadata.yAxisMetadata,
                 type: 'bar',
                 marker: {
-                    color: this.domainObject.configuration.barStyles[key].color
+                    color: this.domainObject.configuration.barStyles.series[key].color
                 },
                 hoverinfo: 'skip'
             };
@@ -232,10 +223,10 @@ export default {
         },
         requestDataFor(telemetryObject) {
             const axisMetadata = this.getAxisMetadata(telemetryObject);
-            this.openmct.telemetry.request(telemetryObject, this.getOptions(telemetryObject))
+            this.openmct.telemetry.request(telemetryObject)
                 .then(data => {
                     data.forEach((datum) => {
-                        this.processData(telemetryObject, datum, axisMetadata);
+                        this.addDataToPlot(telemetryObject, datum, axisMetadata);
                     });
                 });
         },
@@ -244,11 +235,9 @@ export default {
 
             this.removeSubscription(key);
 
-            const options = this.getOptions(telemetryObject);
             const axisMetadata = this.getAxisMetadata(telemetryObject);
             const unsubscribe = this.openmct.telemetry.subscribe(telemetryObject,
-                data => this.processData(telemetryObject, data, axisMetadata)
-                , options);
+                data => this.addDataToPlot(telemetryObject, data, axisMetadata));
 
             this.subscriptions.push({
                 key,
