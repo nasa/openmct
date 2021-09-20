@@ -98,6 +98,8 @@ describe('the plugin', function () {
 
         conditionSetDefinition.initialize(mockConditionSetDomainObject);
 
+        spyOn(openmct.objects, "save").and.returnValue(Promise.resolve(true));
+
         openmct.on('start', done);
         openmct.startHeadless();
     });
