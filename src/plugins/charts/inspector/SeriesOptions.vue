@@ -77,15 +77,15 @@ export default {
     watch: {
         item: {
             handler() {
-                this.initColor();
+                this.initColorAndName();
             },
             deep: true
         }
     },
     mounted() {
         this.key = this.openmct.objects.makeKeyString(this.item);
-        this.initColor();
-        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColor);
+        this.initColorAndName();
+        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColorAndName);
     },
     beforeDestroy() {
         if (this.unObserve) {
@@ -93,7 +93,7 @@ export default {
         }
     },
     methods: {
-        async initColor() {
+        initColorAndName() {
             // this is called before the plot is initialized
             if (!this.domainObject.configuration.barStyles) {
                 this.domainObject.configuration.barStyles = {};
@@ -103,20 +103,16 @@ export default {
                 this.domainObject.configuration.barStyles.series = {};
             }
 
-            const telemetryObject = await this.openmct.objects.get(this.key);
-
             if (!this.domainObject.configuration.barStyles.series[this.key]) {
                 const color = this.colorPalette.getNextColor().asHexString();
                 this.domainObject.configuration.barStyles.series[this.key] = {
-                    name: telemetryObject.name,
-                    color
+                    color,
+                    name: ''
                 };
             }
 
-            if (this.domainObject.configuration.barStyles && this.domainObject.configuration.barStyles.series[this.key]) {
-                this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
-                this.name = this.domainObject.configuration.barStyles.series[this.key].name;
-            }
+            this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
+            this.name = this.domainObject.configuration.barStyles.series[this.key].name;
 
             let colorHexString = this.domainObject.configuration.barStyles.series[this.key].color;
             const colorObject = Color.fromHexString(colorHexString);

@@ -83,6 +83,29 @@ export default {
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
+            const telemetryName = telemetryObject.name;
+
+            if (!this.domainObject.configuration.barStyles) {
+                this.domainObject.configuration.barStyles = {};
+            }
+
+            if (!this.domainObject.configuration.barStyles.series) {
+                this.domainObject.configuration.barStyles.series = {};
+            }
+
+            if (!this.domainObject.configuration.barStyles.series[key]) {
+                this.domainObject.configuration.barStyles.series[key] = {};
+            }
+
+            // if the existing telemetry name is absent, or different, mutate the object
+            const existingTelemetryName = this.domainObject.configuration.barStyles.series[key].name;
+            if (existingTelemetryName !== telemetryName) {
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    `configuration.barStyles.series[${key}].name`,
+                    telemetryName
+                );
+            }
 
             this.requestDataFor(telemetryObject);
             this.subscribeToObject(telemetryObject);
@@ -159,7 +182,10 @@ export default {
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
-            delete this.this.telemetryObjectFormats[key];
+            if (this.telemetryObjectFormats && this.this.telemetryObjectFormats[key]) {
+                delete this.this.telemetryObjectFormats[key];
+            }
+
             if (this.domainObject.configuration.barStyles.series[key]) {
                 delete this.domainObject.configuration.barStyles.series[key];
             }
