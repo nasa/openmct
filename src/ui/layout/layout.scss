@@ -240,6 +240,14 @@
         overflow: auto;
     }
 
+    &__main-object-view {
+        height: 100%;
+    }
+
+    &__main-independent-time-conductor {
+        margin-bottom: 5px;
+    }
+
     &__tree {
         // Tree component within __pane-tree
         flex: 1 1 auto !important;
@@ -247,7 +255,13 @@
 
     &__time-conductor {
         border-top: 1px solid $colorInteriorBorder;
+        display: flex;
+        flex-direction: column;
         padding-top: $interiorMargin;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
     }
 
     &__main {
