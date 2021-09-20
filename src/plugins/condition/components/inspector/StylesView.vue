@@ -736,16 +736,13 @@ export default {
                 });
             } else {
                 if (this.useConditionSetOutputAsLabel === false) {
-                    let styles = [];
-                    objectStyle.styles.forEach((conditionalStyle) => {
-                        let style = Object.create(conditionalStyle);
-                        style.style.output = '';
-                        styles.push(style);
+                    let objectConditionStyle = JSON.parse(JSON.stringify(objectStyle));
+                    objectConditionStyle.styles.forEach((conditionalStyle) => {
+                        conditionalStyle.style.output = '';
                     });
                     domainObjectStyles = {
                         ...domainObjectStyles,
-                        ...objectStyle,
-                        styles
+                        ...objectConditionStyle
                     };
                 } else {
                     domainObjectStyles = {
@@ -886,8 +883,8 @@ export default {
 
             return layoutItemType && layoutItemType !== 'subobject-view';
         },
-        updateConditionSetOutputLabel() {
-            this.useConditionSetOutputAsLabel = !this.useConditionSetOutputAsLabel;
+        updateConditionSetOutputLabel(event) {
+            this.useConditionSetOutputAsLabel = event.target.checked === true;
             this.persistLabelConfiguration(this.domainObject);
         }
     }
