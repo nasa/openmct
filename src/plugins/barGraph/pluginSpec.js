@@ -186,7 +186,7 @@ describe("the plugin", function () {
         let component;
         let mockComposition;
 
-        beforeEach(() => {
+        beforeEach(async () => {
             const getFunc = openmct.$injector.get;
             spyOn(openmct.$injector, "get")
                 .withArgs("exportImageService").and.returnValue({
@@ -263,17 +263,14 @@ describe("the plugin", function () {
                 component.$destroy();
                 component = undefined;
             });
-
+            await Vue.nextTick();
         });
 
-        it("provides a bar graph view for objects with telemetry", () => {
+        it("provides a bar graph view", () => {
             const barGraphObjectWithTelemetry = {
                 id: "test-object",
                 type: BAR_GRAPH_KEY,
                 telemetry: {
-                    values: [{
-                        key: "lots-of-bar-graph-telemetry"
-                    }]
                 }
             };
 
@@ -282,8 +279,8 @@ describe("the plugin", function () {
             expect(plotView).toBeDefined();
         });
 
-        it("Renders bar graph", () => {
-            let barChartElement = element.querySelectorAll(".c-bar-chart");
+        it("Renders plotly bar graph", () => {
+            let barChartElement = element.querySelectorAll(".plotly");
             expect(barChartElement.length).toBe(1);
         });
     });
@@ -303,6 +300,83 @@ describe("the plugin", function () {
         it('is creatable', () => {
             const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
             expect(objectDef.creatable).toEqual(mockObject.creatable);
+        });
+    });
+
+    describe("The bar graph composition policy", () => {
+
+        it("allows composition for telemetry that contain at least one range", () => {
+            const parent = {
+                "composition": [],
+                "configuration": {},
+                "name": "Some Bar Graph",
+                "type": "telemetry.plot.bar-graph",
+                "location": "mine",
+                "modified": 1631005183584,
+                "persisted": 1631005183502,
+                "identifier": {
+                    "namespace": "",
+                    "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+                }
+            };
+            const testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }]
+                }
+            };
+            expect(openmct.composition.checkPolicy(parent, testTelemetryObject)).toEqual(true);
+        });
+
+        it("disallows composition for telemetry that don't contain any range hints", () => {
+            const parent = {
+                "composition": [],
+                "configuration": {},
+                "name": "Some Bar Graph",
+                "type": "telemetry.plot.bar-graph",
+                "location": "mine",
+                "modified": 1631005183584,
+                "persisted": 1631005183502,
+                "identifier": {
+                    "namespace": "",
+                    "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+                }
+            };
+            const testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        name: "Some attribute",
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                    }]
+                }
+            };
+            expect(openmct.composition.checkPolicy(parent, testTelemetryObject)).toEqual(false);
         });
     });
 });
