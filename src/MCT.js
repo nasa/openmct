@@ -136,7 +136,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name conductor
          */
-        this.time = new api.TimeAPI();
+        this.time = new api.TimeAPI(this);
 
         /**
          * An interface for interacting with the composition of domain objects.
