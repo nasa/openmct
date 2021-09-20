@@ -39,14 +39,10 @@ export default function BarGraphCompositionPolicy(openmct) {
         return metadata.values().length > 0 && hasRange(metadata);
     }
 
-    function hasChildren(parentObject) {
-        return parentObject.composition && parentObject.composition.length >= 1;
-    }
-
     return {
         allow: function (parent, child) {
             if ((parent.type === BAR_GRAPH_KEY)
-                && ((child.type !== 'telemetry.plot.overlay') && (hasTelemetry(child) === false) && hasChildren(parent))
+                && ((child.type !== 'telemetry.plot.overlay') && (hasTelemetry(child) === false))
             ) {
                 return false;
             }
