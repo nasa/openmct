@@ -97,6 +97,9 @@ export default {
             // this is called before the plot is initialized
             if (!this.domainObject.configuration.barStyles) {
                 this.domainObject.configuration.barStyles = {};
+            }
+
+            if (!this.domainObject.configuration.barStyles.series) {
                 this.domainObject.configuration.barStyles.series = {};
             }
 
