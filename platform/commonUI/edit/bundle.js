@@ -33,6 +33,7 @@ define([
     "./src/actions/CancelAction",
     "./src/policies/EditPersistableObjectsPolicy",
     "./src/representers/EditRepresenter",
+    "./src/capabilities/EditorCapability",
     "./src/creation/CreateMenuController",
     "./src/creation/LocatorController",
     "./src/creation/CreationPolicy",
@@ -58,6 +59,7 @@ define([
     CancelAction,
     EditPersistableObjectsPolicy,
     EditRepresenter,
+    EditorCapability,
     CreateMenuController,
     LocatorController,
     CreationPolicy,
@@ -282,6 +284,17 @@ define([
                         "implementation": EditRepresenter,
                         "depends": [
                             "$log"
+                        ]
+                    }
+                ],
+                "capabilities": [
+                    {
+                        "key": "editor",
+                        "name": "Editor Capability",
+                        "description": "Provides transactional editing capabilities",
+                        "implementation": EditorCapability,
+                        "depends": [
+                            "openmct"
                         ]
                     }
                 ],
