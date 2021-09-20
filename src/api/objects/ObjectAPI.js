@@ -26,7 +26,7 @@ import RootRegistry from './RootRegistry';
 import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
-import TransactionManager from './TransactionManager';
+import Transaction from './Transaction';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -87,6 +87,14 @@ ObjectAPI.prototype.getProvider = function (identifier) {
     }
 
     return this.providers[namespace] || this.fallbackProvider;
+};
+
+/**
+ * Get an active transaction instance
+ * @returns {Transaction} a transaction object
+ */
+ObjectAPI.prototype.getActiveTransaction = function () {
+    return this.transaction;
 };
 
 /**
@@ -327,24 +335,10 @@ ObjectAPI.prototype.save = function (domainObject) {
 };
 
 /**
- * After entering into edit mode, creates a new instance of TransactionManager to keep track of changes in Objects
+ * After entering into edit mode, creates a new instance of Transaction to keep track of changes in Objects
  */
 ObjectAPI.prototype.startTransaction = function () {
-    this.transactionManager = new TransactionManager();
-};
-
-/**
- * When in edit mode, after save action commit/persists all stored transactions
- */
-ObjectAPI.prototype.CommitAllTransactions = function () {
-    return this.transactionManager.CommitAllTransactions(this.save.bind(this));
-};
-
-/**
- * When in edit mode, after cancel action discard all stored transactions
- */
-ObjectAPI.prototype.CancelAllTransactions = function () {
-    return this.transactionManager.CancelAllTransactions();
+    this.transaction = new Transaction(this);
 };
 
 /**
@@ -437,8 +431,8 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
         this.destroyMutable(mutableDomainObject);
     }
 
-    if (this.transactionManager && this.openmct.editor.isEditing()) {
-        this.transactionManager.addTransaction(domainObject);
+    if (this.isTransactionActive()) {
+        this.transaction.add(domainObject);
     } else {
         this.save(domainObject);
     }
@@ -552,6 +546,10 @@ ObjectAPI.prototype.isObjectPathToALink = function (domainObject, objectPath) {
     return objectPath !== undefined
         && objectPath.length > 1
         && domainObject.location !== this.makeKeyString(objectPath[1].identifier);
+};
+
+ObjectAPI.prototype.isTransactionActive = function () {
+    return Boolean(this.transaction && this.openmct.editor.isEditing());
 };
 
 /**

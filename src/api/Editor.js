@@ -57,7 +57,9 @@ export default class Editor extends EventEmitter {
      * end the current transaction.
      */
     save() {
-        return this.openmct.objects.CommitAllTransactions()
+        const transaction = this.openmct.objects.getActiveTransaction();
+
+        return transaction.commit()
             .then(() => {
                 this.editing = false;
                 this.emit('isEditing', false);
@@ -73,6 +75,8 @@ export default class Editor extends EventEmitter {
         this.editing = false;
         this.emit('isEditing', false);
 
-        return this.openmct.objects.CancelAllTransactions();
+        const transaction = this.openmct.objects.getActiveTransaction();
+
+        return transaction.cancel();
     }
 }

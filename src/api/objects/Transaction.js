@@ -20,34 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class TransactionManager {
-    constructor() {
-        this.transactions = new Set();
+export default class Transaction {
+    constructor(objectAPI) {
+        this.dirtyObjects = new Set();
+        this.objectAPI = objectAPI;
     }
 
-    addTransaction(object) {
-        this.transactions.add(object);
+    add(object) {
+        this.dirtyObjects.add(object);
     }
 
-    CancelAllTransactions() {
-        return this.clearTransactions();
+    cancel() {
+        return this._clear();
     }
 
-    CommitAllTransactions(save) {
-        const promisesArray = [];
-        this.transactions.forEach(o => {
-            promisesArray.push(save(o));
+    commit() {
+        const promiseArray = [];
+        this.dirtyObjects.forEach(object => {
+            promiseArray.push(this.objectAPI.save(object));
         });
 
-        this.clearTransactions();
+        // TODO: clear only when all promises are resolved
+        //      else remove objects for resolved promises and keep unresolved dirtyObjects
+        //      notify user and keep edit mode on.
+        this._clear();
 
-        return Promise.all(promisesArray);
+        return Promise.all(promiseArray);
     }
 
-    clearTransactions() {
-        this.transactions = new Set();
+    start() {
+        this.dirtyObjects = new Set();
+    }
+
+    _clear() {
+        this.dirtyObjects = new Set();
         // TODO:
-        // call `this.opemct.objects.refresh()`
+        // call `this.objectAPI.refresh()`
 
         return Promise.resolve();
     }
