@@ -29,7 +29,7 @@ const ID = "_id";
 const HEARTBEAT = 50000;
 const ALL_DOCS = "_all_docs?include_docs=true";
 
-export default class CouchObjectProvider {
+class CouchObjectProvider {
     constructor(openmct, options, namespace) {
         options = this._normalize(options);
         this.openmct = openmct;
@@ -120,7 +120,7 @@ export default class CouchObjectProvider {
 
         return fetch(this.url + '/' + subPath, fetchOptions)
             .then((response) => {
-                if (response.status === 409) {
+                if (response.status === CouchObjectProvider.HTTP_CONFLICT) {
                     throw new this.openmct.objects.errors.Conflict(`Conflict persisting ${fetchOptions.body.name}`);
                 }
 
@@ -560,6 +560,9 @@ export default class CouchObjectProvider {
         let document = new CouchDocument(key, queued.model);
         this.request(key, "PUT", document).then((response) => {
             this.checkResponse(response, queued.intermediateResponse, key);
+        }).catch(error => {
+            queued.intermediateResponse.reject(error);
+            this.objectQueue[key].pending = false;
         });
 
         return intermediateResponse.promise;
@@ -591,3 +594,7 @@ export default class CouchObjectProvider {
         return intermediateResponse.promise;
     }
 }
+
+CouchObjectProvider.HTTP_CONFLICT = 409;
+
+export default CouchObjectProvider;
