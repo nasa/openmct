@@ -25,17 +25,17 @@
         <li v-for="series in domainObject.composition"
             :key="series.key"
         >
-            <bar-graph-options :item="series" />
+            <series-options :item="series" />
         </li>
     </ul>
 </div>
 </template>
 
 <script>
-import BarGraphOptions from "./BarGraphOptions.vue";
+import SeriesOptions from "./SeriesOptions.vue";
 export default {
     components: {
-        BarGraphOptions
+        SeriesOptions
     },
     inject: ['openmct', 'domainObject'],
     data() {
