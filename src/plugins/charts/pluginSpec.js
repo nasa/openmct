@@ -201,10 +201,6 @@ describe("the plugin", function () {
                 template: "<BarGraph></BarGraph>"
             });
 
-            cleanupFirst.push(() => {
-                component.$destroy();
-                component = undefined;
-            });
             await Vue.nextTick();
         });
 
