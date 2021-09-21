@@ -555,15 +555,18 @@ class CouchObjectProvider {
         let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
         this.enqueueObject(key, model, intermediateResponse);
-        this.objectQueue[key].pending = true;
-        const queued = this.objectQueue[key].dequeue();
-        let document = new CouchDocument(key, queued.model);
-        this.request(key, "PUT", document).then((response) => {
-            this.checkResponse(response, queued.intermediateResponse, key);
-        }).catch(error => {
-            queued.intermediateResponse.reject(error);
-            this.objectQueue[key].pending = false;
-        });
+        if (!this.objectQueue[key].pending) {
+            this.objectQueue[key].pending = true;
+            const queued = this.objectQueue[key].dequeue();
+            let document = new CouchDocument(key, queued.model);
+            this.request(key, "PUT", document).then((response) => {
+                console.log('create check response', key);
+                this.checkResponse(response, queued.intermediateResponse, key);
+            }).catch(error => {
+                queued.intermediateResponse.reject(error);
+                this.objectQueue[key].pending = false;
+            });
+        }
 
         return intermediateResponse.promise;
     }
