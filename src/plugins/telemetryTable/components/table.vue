@@ -1027,6 +1027,12 @@ export default {
                 this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
             }
 
+            if (this.loading) {
+                this.viewActionsCollection.disable(['export-csv-all']);
+            } else {
+                this.viewActionsCollection.enable(['export-csv-all']);
+            }
+
             if (this.paused) {
                 this.viewActionsCollection.hide(['pause-data']);
                 this.viewActionsCollection.show(['play-data']);
