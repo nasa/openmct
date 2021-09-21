@@ -421,6 +421,14 @@ export default {
         }
     },
     watch: {
+        loading: {
+            handler(isLoading) {
+                if (this.viewActionsCollection) {
+                    let action = isLoading ? 'disable' : 'enable';
+                    this.viewActionsCollection[action]('export-csv-all');
+                }
+            }
+        },
         markedRows: {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);

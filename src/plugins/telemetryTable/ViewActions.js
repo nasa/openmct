@@ -26,7 +26,6 @@ const exportCSV = {
     description: "Export this view's data",
     cssClass: 'icon-download labeled',
     invoke: (objectPath, view) => {
-        console.log('get view context', view.getViewContext());
         view.getViewContext().exportAllDataAsCSV();
     },
     group: 'view'
