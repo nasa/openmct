@@ -60,6 +60,8 @@ define([
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
             this.removeTelemetryCollection = this.removeTelemetryCollection.bind(this);
+            this.incrementOutstandingRequests = this.incrementOutstandingRequests.bind(this);
+            this.decrementOutstandingRequests = this.decrementOutstandingRequests.bind(this);
             this.resetRowsFromAllData = this.resetRowsFromAllData.bind(this);
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
             this.refreshData = this.refreshData.bind(this);
@@ -267,7 +269,7 @@ define([
         }
 
         refreshData(bounds, isTick) {
-            if (!isTick && this.tableRows.outstandingRequests === 0) {
+            if (!isTick && this.outstandingRequests === 0) {
                 this.tableRows.clear();
                 this.tableRows.sortBy({
                     key: this.openmct.time.timeSystem().key,
