@@ -24,7 +24,7 @@ import LadTableSetView from './LadTableSetView';
 
 export default function LADTableSetViewProvider(openmct) {
     return {
-        key: 'LadTableSet',
+        key: 'LadTableSet.view',
         name: 'LAD Table Set',
         cssClass: 'icon-tabular-lad-set',
         canView: function (domainObject) {

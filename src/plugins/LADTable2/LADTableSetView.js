@@ -1,15 +1,11 @@
 import LadTableSet from './components/LadTableSet.vue';
-import LADTable from './LADTable.js';
-
 import Vue from 'vue';
-
 export default class LadTableSetView {
     constructor(openmct, domainObject, objectPath) {
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.objectPath = objectPath;
         this.component = undefined;
-        this.table = new LADTable(domainObject, openmct);
     }
 
     show(element) {
@@ -21,8 +17,7 @@ export default class LadTableSetView {
             provide: {
                 openmct: this.openmct,
                 objectPath: this.objectPath,
-                currentView: this,
-                table: this.table
+                currentView: this
 
             },
             data: () => {

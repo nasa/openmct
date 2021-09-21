@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import LADTableViewProvider from './LADTableViewProvider';
-// import LADTableSetViewProvider from './LADTableSetViewProvider';
+import LADTableSetViewProvider from './LADTableSetViewProvider';
 import ladTableCompositionPolicy from './ladTableCompositionPolicy.js';
 
 export default function () {
@@ -40,22 +40,23 @@ export default function () {
             }
         });
 
-        // openmct.types.addType('LadTableSet', {
-        //     name: "LAD Table Set NEW",
-        //     creatable: true,
-        //     description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
-        //     cssClass: 'icon-tabular-lad-set',
-        //     initialize(domainObject) {
-        //         domainObject.composition = [];
-        //     }
-        // });
+        openmct.types.addType('LadTableSet', {
+            name: "LAD Table Set NEW",
+            creatable: true,
+            description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+            cssClass: 'icon-tabular-lad-set',
+            initialize(domainObject) {
+                domainObject.composition = [];
+            }
+        });
 
         // openmct.telemetry.addProvider(new LADTableProvider(openmct));
         openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
-        // openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
-        // TelemetryTableViewActions.forEach(action => {
-        //     openmct.actions.register(action);
-        // });
+        openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
+
         openmct.composition.addPolicy(ladTableCompositionPolicy(openmct));
+        // openmct.composition.addPolicy((parent, child) => {
+        //     return true;
+        // });
     };
 }

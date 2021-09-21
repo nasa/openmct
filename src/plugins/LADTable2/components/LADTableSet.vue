@@ -22,27 +22,79 @@
 
 <template>
 <table class="c-table c-lad-table">
-    <tbody>
-        <table-view
-            ref="tableView"
-            :allow-filtering="false"
-            :table="table"
-            :domain-object="domainObject"
-            :marking="{}"
-        />
-    </tbody>
+    <thead>
+        <!-- <table-header
+            v-for="(title, key, headerIndex) in headers"
+            :key="key"
+            :header-key="key"
+            :header-index="headerIndex"
+            :column-width="columnWidths[key]"
+            :sort-options="sortOptions"
+            :is-editing="isEditing"
+        >
+            <span class="c-telemetry-table__headers__label">{{ title }}</span>
+            <table-header />
+        </table-header> -->
+    </thead>
+    <template
+        v-for="ladTable in ladTableObjects"
+    >
+        <!-- Header rows goes here -->
+        <tbody
+            :key="ladTable.key"
+        >
+            <!-- subheder for each table -->
+            <tr
+                :key="ladTable.key"
+                class="c-table__group-header js-lad-table-set__table-headers"
+            >
+                <td colspan="10">
+                    {{ ladTable.domainObject.name }}
+                </td>
+            </tr>
+            <!-- rows of each table -->
+            <!-- <table-row
+                v-for="(ladTelemetry, ladIndex) in ladTelemetryObjects"
+                :key="ladIndex"
+                :headers="headers"
+                :column-widths="columnWidths"
+                :row-index="ladIndex"
+                :object-path="objectPath"
+                :row-offset="rowOffset"
+                :row-height="rowHeight"
+                :row="ladTelemetry"
+                :marked="ladTelemetry.marked"
+            /> -->
+        </tbody>
+    </template>
 </table>
 </template>
 
 <script>
-// import LadRow from './LADRow.vue'
-import TableView from '../../telemetryTable/components/table.vue';
+// import TableRow from '/src/plugins/telemetryTable/components/table-row.vue';
+// import LADTable from '../LADTable';
+// import TableHeader from '/src/plugins/telemetryTable/components/table-column-header.vue';
+
+// headers is an object:
+// { cos: "Cosine"
+// cos-unit: "Cosine Unit"
+// local: "Time"
+// name: "Name"
+// sin: "Sine"
+// sin-unit: "Sine Unit"
+// state: "State"
+// utc: "Time"
+// value: "Value"
+// yesterday: "Yesterday }
+
+// row is a telemetry table row (comes with each LAD table)
 
 export default {
     components: {
-        TableView
+        // TableRow,
+        // TableHeader
     },
-    inject: ['openmct', 'objectPath', 'currentView', 'table'],
+    inject: ['openmct', 'objectPath', 'table', 'currentView'],
     props: {
         domainObject: {
             type: Object,
@@ -51,10 +103,18 @@ export default {
     },
     data() {
         return {
+            headers: {},
             ladTableObjects: [],
             ladTelemetryObjects: {},
             compositions: [],
-            viewContext: {}
+            viewContext: {},
+            marking: {
+                disableMultiSelect: false,
+                enable: true,
+                rowName: '',
+                rowNamePlural: '',
+                useAlternateControlBar: false
+            }
         };
     },
     computed: {
@@ -66,6 +126,10 @@ export default {
         this.composition.on('remove', this.removeLadTable);
         this.composition.on('reorder', this.reorderLadTables);
         this.composition.load();
+        // ladTableObjects are the tables domain object (not instance of LADTable.js yet)
+        // ladTelemetryObjects are the soruce (ex: sine wave gen)
+        // console.log('tables', this.ladTableObjects);
+        // console.log('telemetries', this.ladTelemetryObjects);
     },
     destroyed() {
         this.composition.off('add', this.addLadTable);
@@ -77,6 +141,9 @@ export default {
         });
     },
     methods: {
+        // createLADTable(table) {
+        //     return new LADTable(table.domainObject, this.openmct);
+        // },
         addLadTable(domainObject) {
             let ladTable = {};
             ladTable.domainObject = domainObject;
