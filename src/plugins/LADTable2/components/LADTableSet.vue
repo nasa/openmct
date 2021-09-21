@@ -72,7 +72,7 @@
 
 <script>
 // import TableRow from '/src/plugins/telemetryTable/components/table-row.vue';
-// import LADTable from '../LADTable';
+import LADTable from '../LADTable';
 // import TableHeader from '/src/plugins/telemetryTable/components/table-column-header.vue';
 
 // headers is an object:
@@ -94,7 +94,7 @@ export default {
         // TableRow,
         // TableHeader
     },
-    inject: ['openmct', 'objectPath', 'table', 'currentView'],
+    inject: ['openmct', 'objectPath', 'currentView'],
     props: {
         domainObject: {
             type: Object,
@@ -130,6 +130,7 @@ export default {
         // ladTelemetryObjects are the soruce (ex: sine wave gen)
         // console.log('tables', this.ladTableObjects);
         // console.log('telemetries', this.ladTelemetryObjects);
+        console.log('headers', this.ladTableObjects);
     },
     destroyed() {
         this.composition.off('add', this.addLadTable);
@@ -145,12 +146,9 @@ export default {
         //     return new LADTable(table.domainObject, this.openmct);
         // },
         addLadTable(domainObject) {
-            let ladTable = {};
-            ladTable.domainObject = domainObject;
-            ladTable.key = this.openmct.objects.makeKeyString(domainObject.identifier);
-            ladTable.objectPath = [domainObject, ...this.objectPath];
-
-            this.$set(this.ladTelemetryObjects, ladTable.key, []);
+            //ladTable is an instance of LADTable.js
+            let ladTable = new LADTable(domainObject, this.openmct);
+            this.$set(this.ladTelemetryObjects, ladTable.keyString, []);
             this.ladTableObjects.push(ladTable);
 
             let composition = this.openmct.composition.get(ladTable.domainObject);
@@ -186,7 +184,7 @@ export default {
                 telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
                 telemetryObject.domainObject = domainObject;
 
-                let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                let telemetryObjects = this.ladTelemetryObjects[ladTable.keyString];
                 telemetryObjects.push(telemetryObject);
 
                 this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
