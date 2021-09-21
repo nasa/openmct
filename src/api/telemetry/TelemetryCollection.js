@@ -132,6 +132,7 @@ export class TelemetryCollection extends EventEmitter {
         try {
             this.requestAbort = new AbortController();
             this.options.signal = this.requestAbort.signal;
+            this.emit('requestStarted');
             historicalData = await this.historicalProvider.request(this.domainObject, this.options);
         } catch (error) {
             if (error.name !== 'AbortError') {
@@ -140,6 +141,7 @@ export class TelemetryCollection extends EventEmitter {
             }
         }
 
+        this.emit('requestEnded');
         this.requestAbort = undefined;
 
         this._processNewTelemetry(historicalData);

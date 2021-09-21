@@ -141,8 +141,6 @@ define([
             let columnMap = this.getColumnMapForObject(keyString);
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-            this.incrementOutstandingRequests();
-
             const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
             const telemetryRemover = this.getTelemetryRemover();
 
@@ -151,12 +149,12 @@ define([
             this.telemetryCollections[keyString] = this.openmct.telemetry
                 .requestCollection(telemetryObject, requestOptions);
 
+            this.telemetryCollections[keyString].on('requestStarted', this.incrementOutstandingRequests);
+            this.telemetryCollections[keyString].on('requestEnded', this.decrementOutstandingRequests);
             this.telemetryCollections[keyString].on('remove', telemetryRemover);
             this.telemetryCollections[keyString].on('add', telemetryProcessor);
             this.telemetryCollections[keyString].on('clear', this.tableRows.clear);
             this.telemetryCollections[keyString].load();
-
-            this.decrementOutstandingRequests();
 
             this.telemetryObjects[keyString] = {
                 telemetryObject,
