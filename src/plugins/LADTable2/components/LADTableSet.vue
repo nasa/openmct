@@ -72,7 +72,7 @@
 
 <script>
 // import TableRow from '/src/plugins/telemetryTable/components/table-row.vue';
-import LADTable from '../LADTable';
+import LADTable from '../LADTable.js';
 // import TableHeader from '/src/plugins/telemetryTable/components/table-column-header.vue';
 
 // headers is an object:
@@ -130,7 +130,6 @@ export default {
         // ladTelemetryObjects are the soruce (ex: sine wave gen)
         // console.log('tables', this.ladTableObjects);
         // console.log('telemetries', this.ladTelemetryObjects);
-        console.log('headers', this.ladTableObjects);
     },
     destroyed() {
         this.composition.off('add', this.addLadTable);
@@ -146,6 +145,8 @@ export default {
         //     return new LADTable(table.domainObject, this.openmct);
         // },
         addLadTable(domainObject) {
+            // adds a lad talble to this.ladTableObjects
+            // and all its telemetryObjects to this.ladTelemetryObjects
             //ladTable is an instance of LADTable.js
             let ladTable = new LADTable(domainObject, this.openmct);
             this.$set(this.ladTelemetryObjects, ladTable.keyString, []);
@@ -179,6 +180,7 @@ export default {
             });
         },
         addTelemetryObject(ladTable) {
+            // add all the telemetry objects to this.telemetryObjects
             return (domainObject) => {
                 let telemetryObject = {};
                 telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
@@ -187,17 +189,17 @@ export default {
                 let telemetryObjects = this.ladTelemetryObjects[ladTable.keyString];
                 telemetryObjects.push(telemetryObject);
 
-                this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+                this.$set(this.ladTelemetryObjects, ladTable.keyString, telemetryObjects);
             };
         },
         removeTelemetryObject(ladTable) {
             return (identifier) => {
-                let telemetryObjects = this.ladTelemetryObjects[ladTable.key];
+                let telemetryObjects = this.ladTelemetryObjects[ladTable.keyString];
                 let index = telemetryObjects.findIndex(telemetryObject => this.openmct.objects.makeKeyString(identifier) === telemetryObject.key);
 
                 telemetryObjects.splice(index, 1);
 
-                this.$set(this.ladTelemetryObjects, ladTable.key, telemetryObjects);
+                this.$set(this.ladTelemetryObjects, ladTable.keyString, telemetryObjects);
             };
         },
         updateViewContext(rowContext) {
