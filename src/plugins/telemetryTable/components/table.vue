@@ -425,7 +425,7 @@ export default {
             handler(isLoading) {
                 if (this.viewActionsCollection) {
                     let action = isLoading ? 'disable' : 'enable';
-                    this.viewActionsCollection[action]('export-csv-all');
+                    this.viewActionsCollection[action](['export-csv-all']);
                 }
             }
         },
