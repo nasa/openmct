@@ -13,7 +13,7 @@ jobs:
         type: string
       browser:
         type: string
-      always-pass:
+      build-only:
         type: boolean  
     executor: linux
     steps:
