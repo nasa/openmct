@@ -107,6 +107,7 @@ export default {
     },
     mounted() {
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
+        this.updateTimeFromConductor = _.debounce(this.updateTimeFromConductor, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.setTimeContext();
@@ -268,12 +269,12 @@ export default {
         startDateSelected(date) {
             this.formattedBounds.start = this.timeFormatter.format(date);
             this.validateAllBounds('startDate');
-            // this.submitForm();
+            this.submitForm();
         },
         endDateSelected(date) {
             this.formattedBounds.end = this.timeFormatter.format(date);
             this.validateAllBounds('endDate');
-            // this.submitForm();
+            this.submitForm();
         }
     }
 };
