@@ -41,11 +41,11 @@
         v-for="ladTable in ladTableObjects"
     >
         <tbody
-            :key="ladTable.key"
+            :key="ladTable.keyString"
         >
             <!-- subheder for each table -->
             <tr
-                :key="ladTable.key"
+                :key="ladTable.keyString"
                 class="c-table__group-header js-lad-table-set__table-headers"
             >
                 <td colspan="10">
@@ -53,8 +53,8 @@
                 </td>
             </tr>
             <!-- rows of each table -->
-            <!-- <table-row
-                v-for="(ladTelemetry, ladIndex) in ladTelemetryObjects"
+            <table-row
+                v-for="(ladTelemetry, ladIndex) in ladTelemetryObjects[ladTable.keyString]"
                 :key="ladIndex"
                 :headers="headers"
                 :column-widths="columnWidths"
@@ -64,14 +64,14 @@
                 :row-height="rowHeight"
                 :row="ladTelemetry"
                 :marked="ladTelemetry.marked"
-            /> -->
+            />
         </tbody>
     </template>
 </table>
 </template>
 
 <script>
-// import TableRow from '/src/plugins/telemetryTable/components/table-row.vue';
+import TableRow from '/src/plugins/telemetryTable/components/table-row.vue';
 import LADTable from '../LADTable.js';
 // import TableHeader from '/src/plugins/telemetryTable/components/table-column-header.vue';
 
@@ -91,7 +91,7 @@ import LADTable from '../LADTable.js';
 
 export default {
     components: {
-        // TableRow,
+        TableRow
         // TableHeader
     },
     inject: ['openmct', 'objectPath', 'currentView'],
@@ -114,7 +114,10 @@ export default {
                 rowName: '',
                 rowNamePlural: '',
                 useAlternateControlBar: false
-            }
+            },
+            columnWidths: {},
+            rowOffset: 0,
+            rowHeight: 0
         };
     },
     computed: {
@@ -168,10 +171,10 @@ export default {
             });
         },
         removeLadTable(identifier) {
-            let index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.key);
+            let index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.keyString);
             let ladTable = this.ladTableObjects[index];
 
-            this.$delete(this.ladTelemetryObjects, ladTable.key);
+            this.$delete(this.ladTelemetryObjects, ladTable.keyString);
             this.ladTableObjects.splice(index, 1);
         },
         reorderLadTables(reorderPlan) {
@@ -182,8 +185,8 @@ export default {
         },
         addTelemetryObject(ladTable) {
             // why headers is empty? check getVisibleHeaders()
-            let headers = ladTable.configuration.getVisibleHeaders();
-            console.log(headers);
+            // let headers = ladTable.configuration.getVisibleHeaders();
+            // console.log(headers);
 
             // add all the telemetry objects to this.telemetryObjects
             return (domainObject) => {
