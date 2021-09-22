@@ -268,12 +268,12 @@ export default {
         startDateSelected(date) {
             this.formattedBounds.start = this.timeFormatter.format(date);
             this.validateAllBounds('startDate');
-            this.submitForm();
+            // this.submitForm();
         },
         endDateSelected(date) {
             this.formattedBounds.end = this.timeFormatter.format(date);
             this.validateAllBounds('endDate');
-            this.submitForm();
+            // this.submitForm();
         }
     }
 };
