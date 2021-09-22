@@ -107,7 +107,6 @@ export default {
     },
     mounted() {
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
-        this.updateTimeFromConductor = _.debounce(this.updateTimeFromConductor, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
         this.openmct.time.on('timeSystem', this.setTimeSystem);
         this.setTimeContext();
