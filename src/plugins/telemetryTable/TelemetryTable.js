@@ -151,7 +151,7 @@ define([
             this.telemetryCollections[keyString].on('requestEnded', this.decrementOutstandingRequests);
             this.telemetryCollections[keyString].on('remove', telemetryRemover);
             this.telemetryCollections[keyString].on('add', telemetryProcessor);
-            this.telemetryCollections[keyString].on('clear', this.clearAndResubscribe);
+            this.telemetryCollections[keyString].on('clear', this.clearData);
             this.telemetryCollections[keyString].load();
 
             this.telemetryObjects[keyString] = {
