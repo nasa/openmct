@@ -64,16 +64,12 @@ define([
             this.decrementOutstandingRequests = this.decrementOutstandingRequests.bind(this);
             this.resetRowsFromAllData = this.resetRowsFromAllData.bind(this);
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
-            this.refreshData = this.refreshData.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
             this.filterObserver = undefined;
 
             this.createTableRowCollections();
-
-            openmct.time.on('bounds', this.refreshData);
-            openmct.time.on('timeSystem', this.refreshData);
         }
 
         /**
@@ -155,7 +151,7 @@ define([
             this.telemetryCollections[keyString].on('requestEnded', this.decrementOutstandingRequests);
             this.telemetryCollections[keyString].on('remove', telemetryRemover);
             this.telemetryCollections[keyString].on('add', telemetryProcessor);
-            this.telemetryCollections[keyString].on('clear', this.tableRows.clear);
+            this.telemetryCollections[keyString].on('clear', this.clearAndResubscribe);
             this.telemetryCollections[keyString].load();
 
             this.telemetryObjects[keyString] = {
@@ -268,17 +264,6 @@ define([
             this.emit('object-removed', objectIdentifier);
         }
 
-        refreshData(bounds, isTick) {
-            if (!isTick && this.outstandingRequests === 0) {
-                this.tableRows.clear();
-                this.tableRows.sortBy({
-                    key: this.openmct.time.timeSystem().key,
-                    direction: 'asc'
-                });
-                this.tableRows.clearAndResubscribe();
-            }
-        }
-
         clearData() {
             this.tableRows.clear();
             this.emit('refresh');
@@ -377,9 +362,6 @@ define([
 
             let keystrings = Object.keys(this.telemetryCollections);
             keystrings.forEach(this.removeTelemetryCollection);
-
-            this.openmct.time.off('bounds', this.refreshData);
-            this.openmct.time.off('timeSystem', this.refreshData);
 
             if (this.filterObserver) {
                 this.filterObserver();
