@@ -42,7 +42,7 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.always-pass>>
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.build-only>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
@@ -54,34 +54,34 @@ workflows:
           name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
-          always-pass: false
+          build-only: false
       - test:
           name: node12-firefoxESR-build-only
           node-version: lts/erbium
           browser: FirefoxESR
-          always-pass: true
+          build-only: true
       - test:
           name: node14-chrome-build-only
           node-version: lts/fermium
           browser: ChromeHeadless
-          always-pass: true
+          build-only: true
   nightly:
     jobs:
       - test:
           name: node10-chrome-nightly
           node-version: lts/dubnium
           browser: ChromeHeadless
-          always-pass: false
+          build-only: false
       - test:
           name: node12-firefoxESR-nightly
           node-version: lts/erbium
           browser: FirefoxESR
-          always-pass: false
+          build-only: false
       - test:
           name: node14-chrome-nightly
           node-version: lts/fermium
           browser: ChromeHeadless
-          always-pass: false
+          build-only: false
     triggers:
       - schedule:
           cron: "0 0 * * *"
