@@ -4,12 +4,12 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
     use: {
-        /*httpCredentials: {
+        httpCredentials: {
             username: process.env.USERNAME,
             password: process.env.PASSWORD
-        },*/
+        },
         browserName: "chromium",
-        baseURL: 'http://localhost:8080',
+        baseURL: 'https://browserless.io',
         headless: false,
         ignoreHTTPSErrors: true,
         trace: 'on',
