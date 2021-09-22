@@ -23,6 +23,7 @@
 <template>
 <table class="c-table c-lad-table">
     <thead>
+        <!-- Header rows goes here -->
         <!-- <table-header
             v-for="(title, key, headerIndex) in headers"
             :key="key"
@@ -39,7 +40,6 @@
     <template
         v-for="ladTable in ladTableObjects"
     >
-        <!-- Header rows goes here -->
         <tbody
             :key="ladTable.key"
         >
@@ -149,6 +149,7 @@ export default {
             // and all its telemetryObjects to this.ladTelemetryObjects
             //ladTable is an instance of LADTable.js
             let ladTable = new LADTable(domainObject, this.openmct);
+            ladTable.initialize();
             this.$set(this.ladTelemetryObjects, ladTable.keyString, []);
             this.ladTableObjects.push(ladTable);
 
@@ -180,6 +181,10 @@ export default {
             });
         },
         addTelemetryObject(ladTable) {
+            // why headers is empty? check getVisibleHeaders()
+            let headers = ladTable.configuration.getVisibleHeaders();
+            console.log(headers);
+
             // add all the telemetry objects to this.telemetryObjects
             return (domainObject) => {
                 let telemetryObject = {};
