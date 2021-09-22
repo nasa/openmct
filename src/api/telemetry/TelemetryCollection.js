@@ -130,6 +130,10 @@ export class TelemetryCollection extends EventEmitter {
         this.options.onPartialResponse = this._processNewTelemetry.bind(this);
 
         try {
+            if (this.requestAbort) {
+                this.requestAbort.abort();
+            }
+
             this.requestAbort = new AbortController();
             this.options.signal = this.requestAbort.signal;
             this.emit('requestStarted');
