@@ -65,6 +65,7 @@ define([
             this.resetRowsFromAllData = this.resetRowsFromAllData.bind(this);
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
+            this.clearData = this.clearData.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
             this.filterObserver = undefined;
