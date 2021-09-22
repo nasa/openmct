@@ -275,7 +275,7 @@ define([
                     key: this.openmct.time.timeSystem().key,
                     direction: 'asc'
                 });
-                this.tableRows.resubscribe();
+                this.tableRows.clearAndResubscribe();
             }
         }
 
