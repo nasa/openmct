@@ -28,7 +28,7 @@ import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
 import ConditionManager from "@/plugins/condition/ConditionManager";
 
-describe('the plugin', () => {
+describe('the plugin', function () {
     let conditionSetDefinition;
     let mockConditionSetDomainObject;
     let mockListener;
@@ -99,20 +99,6 @@ describe('the plugin', () => {
         conditionSetDefinition.initialize(mockConditionSetDomainObject);
 
         spyOn(openmct.objects, "save").and.returnValue(Promise.resolve(true));
-
-        // eslint-disable-next-line require-await
-        async function telemetryRequest() {
-            return [{
-                sin: 2
-            }];
-        }
-
-        // eslint-disable-next-line require-await
-        spyOn(openmct.telemetry, 'request').and.callFake(async () => {
-            return telemetryRequest();
-        });
-
-        spyOn(openmct.telemetry, 'subscribe').and.callThrough();
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -498,17 +484,6 @@ describe('the plugin', () => {
                     });
                 });
             });
-        });
-
-        it('after done editing, resubscribes to telemetry properly', async () => {
-            styleViewComponentObject.conditionSetDomainObject = conditionSetDomainObject;
-            styleViewComponentObject.conditionalStyles = [];
-            styleViewComponentObject.initializeConditionalStyles();
-            await styleViewComponentObject.setEditState(false);
-
-            // these should have been both been called by now
-            expect(openmct.telemetry.request).toHaveBeenCalled();
-            expect(openmct.telemetry.subscribe).toHaveBeenCalled();
         });
 
     });

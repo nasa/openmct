@@ -118,7 +118,7 @@ export default class StyleRuleManager extends EventEmitter {
             let isNewConditionSet = !this.conditionSetIdentifier
                                     || !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
             this.initialize(styleConfiguration);
-            if (this.openmct.editor.editing) {
+            if (this.isEditing) {
                 this.applySelectedConditionStyle();
             } else {
                 //Only resubscribe if the conditionSet has changed.
