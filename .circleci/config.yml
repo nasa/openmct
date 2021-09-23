@@ -18,16 +18,12 @@ jobs:
     executor: linux
     steps:
       - checkout
-      - run:
-          name: clean dist
-          command: rm -rf dist
-      - run:
-          name: clean node modules
-          command: rm -rf node_modules
+      - restore_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           node-version: << parameters.node-version >>
       - node/install-packages:
-          override-ci-command: npm install --force
+          override-ci-command: npm install
       - when: # Just to save time until caching saves the browser bin
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
@@ -40,6 +36,12 @@ jobs:
           steps:
             - browser-tools/install-chrome:
                 replace-existing: false
+      - save_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+            - node_modules
       - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.always-pass>>
       - store_test_results:
           path: dist/reports/tests/
