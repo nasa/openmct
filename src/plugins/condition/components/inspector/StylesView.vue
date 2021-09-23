@@ -63,7 +63,7 @@
         <div class="c-inspect-styles__header">
             Conditional Object Styles
         </div>
-        <div class="c-inspect-styles__content c-inspect-styles__condition-set">
+        <div class="c-inspect-styles__content c-inspect-styles__condition-set c-inspect-styles__elem">
             <a v-if="conditionSetDomainObject"
                class="c-object-label"
                @click="navigateOrPreview"
@@ -87,7 +87,9 @@
             </template>
         </div>
 
-        <div v-if="isConditionWidget">
+        <div v-if="isConditionWidget"
+             class="c-inspect-styles__elem c-inspect-styles__output-label-toggle"
+        >
             <label class="c-toggle-switch">
                 <input
                     type="checkbox"
@@ -95,7 +97,7 @@
                     @change="updateConditionSetOutputLabel"
                 >
                 <span class="c-toggle-switch__slider"></span>
-                <span class="c-toggle-switch__label">Use condition set output as label</span>
+                <span class="c-toggle-switch__label">Use Condition Set output as label</span>
             </label>
         </div>
 
