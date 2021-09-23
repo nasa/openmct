@@ -449,19 +449,18 @@ export default {
 
             this.unObserveObjects = [];
         },
-        subscribeToConditionSet() {
+        async subscribeToConditionSet() {
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
                 delete this.stopProvidingTelemetry;
             }
 
             if (this.conditionSetDomainObject) {
-                this.openmct.telemetry.request(this.conditionSetDomainObject)
-                    .then(output => {
-                        if (output && output.length) {
-                            this.handleConditionSetResultUpdated(output[0]);
-                        }
-                    });
+                const telemetryOutput = await this.openmct.telemetry.request(this.conditionSetDomainObject);
+                if (telemetryOutput && telemetryOutput.length) {
+                    this.handleConditionSetResultUpdated(telemetryOutput[0]);
+                }
+
                 this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
             }
         },
