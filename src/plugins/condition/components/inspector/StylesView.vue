@@ -282,7 +282,7 @@ export default {
 
             return objectStyles;
         },
-        setEditState(isEditing) {
+        async setEditState(isEditing) {
             this.isEditing = isEditing;
             if (this.isEditing) {
                 if (this.stopProvidingTelemetry) {
@@ -290,7 +290,7 @@ export default {
                     delete this.stopProvidingTelemetry;
                 }
             } else {
-                this.subscribeToConditionSet();
+                await this.subscribeToConditionSet();
             }
         },
         enableConditionSetNav() {
