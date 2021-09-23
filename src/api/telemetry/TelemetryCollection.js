@@ -125,6 +125,8 @@ export class TelemetryCollection extends EventEmitter {
             return;
         }
 
+        console.log('requesting historical');
+
         let historicalData;
 
         this.options.onPartialResponse = this._processNewTelemetry.bind(this);
