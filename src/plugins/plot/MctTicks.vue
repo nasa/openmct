@@ -77,7 +77,7 @@
 <script>
 import eventHelpers from "./lib/eventHelpers";
 import { ticks, getFormattedTicks } from "./tickUtils";
-import configStore from "./configuration/configStore";
+import configStore from "./configuration/ConfigStore";
 
 export default {
     inject: ['openmct', 'domainObject'],

@@ -89,13 +89,4 @@ ColorPalette.prototype.getNextColor = function () {
     return this.availableColors.shift();
 };
 
-/**
- * @param {number} index the index of the color to return.  An index
- * value larger than the size of the index will wrap around.
- * @returns {Color}
- */
-ColorPalette.prototype.getColor = function (index) {
-    return this.colors[index % this.colors.length];
-};
-
 export default ColorPalette;
