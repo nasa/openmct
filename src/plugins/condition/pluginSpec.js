@@ -506,6 +506,7 @@ describe('the plugin', () => {
             styleViewComponentObject.initializeConditionalStyles();
             await styleViewComponentObject.setEditState(false);
 
+            // these should have been both been called by now
             expect(openmct.telemetry.request).toHaveBeenCalled();
             expect(openmct.telemetry.subscribe).toHaveBeenCalled();
         });
