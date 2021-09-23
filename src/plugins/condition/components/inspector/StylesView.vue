@@ -282,7 +282,7 @@ export default {
 
             return objectStyles;
         },
-        async setEditState(isEditing) {
+        setEditState(isEditing) {
             this.isEditing = isEditing;
             if (this.isEditing) {
                 if (this.stopProvidingTelemetry) {
@@ -290,7 +290,7 @@ export default {
                     delete this.stopProvidingTelemetry;
                 }
             } else {
-                await this.subscribeToConditionSet();
+                this.subscribeToConditionSet();
             }
         },
         enableConditionSetNav() {
@@ -449,18 +449,19 @@ export default {
 
             this.unObserveObjects = [];
         },
-        async subscribeToConditionSet() {
+        subscribeToConditionSet() {
             if (this.stopProvidingTelemetry) {
                 this.stopProvidingTelemetry();
                 delete this.stopProvidingTelemetry;
             }
 
             if (this.conditionSetDomainObject) {
-                const telemetryOutput = await this.openmct.telemetry.request(this.conditionSetDomainObject);
-                if (telemetryOutput && telemetryOutput.length) {
-                    this.handleConditionSetResultUpdated(telemetryOutput[0]);
-                }
-
+                this.openmct.telemetry.request(this.conditionSetDomainObject)
+                    .then(output => {
+                        if (output && output.length) {
+                            this.handleConditionSetResultUpdated(output[0]);
+                        }
+                    });
                 this.stopProvidingTelemetry = this.openmct.telemetry.subscribe(this.conditionSetDomainObject, this.handleConditionSetResultUpdated.bind(this));
             }
         },
