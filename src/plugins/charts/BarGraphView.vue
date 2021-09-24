@@ -86,7 +86,11 @@ export default {
             const telemetryName = telemetryObject.name;
 
             // if the existing telemetry name is absent, or different, mutate the object
-            const existingTelemetryName = this.domainObject.configuration.barStyles.series[key].name;
+            let existingTelemetryName;
+            if (this.domainObject.configuration.barStyles.series[key]) {
+                existingTelemetryName = this.domainObject.configuration.barStyles.series[key].name;
+            }
+
             if (existingTelemetryName !== telemetryName) {
                 this.openmct.objects.mutate(
                     this.domainObject,

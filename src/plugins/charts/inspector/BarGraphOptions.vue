@@ -22,10 +22,13 @@
 <template>
 <ul class="c-tree">
     <h2 title="Display properties for this object">Bar Graph Series</h2>
-    <series-options :key="series.key"
-                    :item="series"
-                    :color-palette="colorPalette"
-    />
+    <li v-for="series in domainObject.composition"
+        :key="series.key"
+    >
+        <series-options :item="series"
+                        :color-palette="colorPalette"
+        />
+    </li>
 </ul>
 </template>
 
