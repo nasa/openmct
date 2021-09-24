@@ -775,6 +775,8 @@ describe('the plugin', function () {
 
             openmct.$injector.get.and.returnValue(mockTransactionService);
             await openmct.editor.save();
+            // if the context was passed properly to the event handler,
+            // this.conditionSetIdentifier will not be null, and subscribeToConditionSet will be called
             expect(styleRuleManger.subscribeToConditionSet).toHaveBeenCalledTimes(1);
         });
     });
