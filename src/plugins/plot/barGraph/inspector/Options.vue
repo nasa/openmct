@@ -20,15 +20,13 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div>
-    <ul class="c-tree">
-        <li v-for="series in domainObject.composition"
-            :key="series.key"
-        >
-            <bar-graph-options :item="series" />
-        </li>
-    </ul>
-</div>
+<ul class="c-tree">
+    <h2 title="Display properties for this object">Bar Graph Series</h2>
+    <bar-graph-options v-for="series in domainObject.composition"
+                       :key="series.key"
+                       :item="series"
+    />
+</ul>
 </template>
 
 <script>
