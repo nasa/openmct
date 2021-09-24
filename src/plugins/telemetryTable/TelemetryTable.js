@@ -266,6 +266,7 @@ define([
         }
 
         clearData() {
+            console.log('tt clearData');
             this.tableRows.clear();
             this.emit('refresh');
         }

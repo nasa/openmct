@@ -133,6 +133,7 @@ export class TelemetryCollection extends EventEmitter {
 
         try {
             if (this.requestAbort) {
+                console.log('existing request');
                 this.requestAbort.abort();
             }
 
