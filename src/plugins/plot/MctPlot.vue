@@ -706,7 +706,13 @@ export default {
             }
 
             if (this.marquee) {
-                return this.endMarquee(event);
+                this.endMarquee(event);
+            }
+
+            // resume the plot if no pan, zoom, or drag action is taken
+            // needs to follow endMarquee so that plotHistory is pruned
+            if (!this.plotHistory.length) {
+                return this.play();
             }
         },
 
