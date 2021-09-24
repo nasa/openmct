@@ -1,12 +1,12 @@
 <template>
 <form ref="fixedDeltaInput"
       class="c-conductor__inputs"
-      @submit.prevent="updateTimeFromConductor"
 >
     <button
         ref="submitButton"
         class="c-input--submit"
-        type="submit"
+        type="button"
+        @click.prevent="updateTimeFromConductor"
     ></button>
     <div
         class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
