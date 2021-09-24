@@ -28,7 +28,6 @@ import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
-import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './barGraph/BarGraphConstants';
 
 describe("the plugin", function () {
     let element;
@@ -315,37 +314,6 @@ describe("the plugin", function () {
             expect(plotView).toBeDefined();
         });
 
-        it("provides a spectral plot view for objects with telemetry", () => {
-            const testTelemetryObject = {
-                id: "test-object",
-                type: "telemetry.plot.spectral",
-                telemetry: {
-                    values: [{
-                        key: "a-very-fine-key"
-                    }]
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-spectral");
-            expect(plotView).toBeDefined();
-        });
-
-        it("provides a spectral aggregate plot view for objects with telemetry", () => {
-            const testTelemetryObject = {
-                id: "test-object",
-                type: BAR_GRAPH_KEY,
-                telemetry: {
-                    values: [{
-                        key: "lots-of-aggregate-telemetry"
-                    }]
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
-            expect(plotView).toBeDefined();
-        });
     });
 
     describe("The single plot view", () => {
@@ -495,146 +463,6 @@ describe("the plugin", function () {
 
         });
     });
-
-    /*
-    * disabling this until we develop the plot view
-    describe("The spectral plot view", () => {
-        let testTelemetryObject;
-        // eslint-disable-next-line no-unused-vars
-        let testTelemetryObject2;
-        // eslint-disable-next-line no-unused-vars
-        let config;
-        let spectralPlotObject;
-        let component;
-        let mockComposition;
-        // eslint-disable-next-line no-unused-vars
-        let plotViewComponentObject;
-
-        beforeEach(() => {
-            const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, "get")
-                .withArgs("exportImageService").and.returnValue({
-                    exportPNG: () => {},
-                    exportJPG: () => {}
-                })
-                .and.callFake(getFunc);
-
-            spectralPlotObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-spectral-plot"
-                },
-                type: "telemetry.plot.spectral",
-                name: "Test Spectral Plot"
-            };
-
-            testTelemetryObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-object"
-                },
-                type: "test-object",
-                name: "Test Object",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
-            };
-
-            testTelemetryObject2 = {
-                identifier: {
-                    namespace: "",
-                    key: "test-object2"
-                },
-                type: "test-object",
-                name: "Test Object2",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "wavelength",
-                        name: "Wavelength",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key2",
-                        name: "Another attribute2",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
-            };
-
-            mockComposition = new EventEmitter();
-            mockComposition.load = () => {
-                mockComposition.emit('add', testTelemetryObject);
-
-                return [testTelemetryObject];
-            };
-
-            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
-
-            let viewContainer = document.createElement("div");
-            child.append(viewContainer);
-            component = new Vue({
-                el: viewContainer,
-                components: {
-                    SpectralPlot
-                },
-                provide: {
-                    openmct: openmct,
-                    domainObject: spectralPlotObject,
-                    composition: openmct.composition.get(spectralPlotObject)
-                },
-                template: "<spectral-plot></spectral-plot>"
-            });
-
-            cleanupFirst.push(() => {
-                component.$destroy();
-                component = undefined;
-            });
-
-            return telemetryPromise
-                .then(Vue.nextTick())
-                .then(() => {
-                    plotViewComponentObject = component.$root.$children[0];
-                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
-                    config = configStore.get(configId);
-                });
-        });
-
-        it("Renders a collapsed legend for every telemetry", () => {
-            let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
-            expect(legend.length).toBe(1);
-            expect(legend[0].innerHTML).toEqual("Test Object");
-        });
-
-    }); */
 
     describe("The stacked plot view", () => {
         let testTelemetryObject;

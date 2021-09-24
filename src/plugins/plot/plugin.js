@@ -19,21 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-<<<<<<< HEAD
-=======
-import { BAR_GRAPH_KEY } from './barGraph/BarGraphConstants';
->>>>>>> 1.7.8
 import PlotViewProvider from './PlotViewProvider';
-import SpectralPlotViewProvider from './spectralPlot/SpectralPlotViewProvider';
-import BarGraphViewProvider from './barGraph/BarGraphViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
-import BarGraphInspectorViewProvider from './barGraph/inspector/BarGraphInspectorViewProvider';
 import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPolicy';
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
-import SpectralPlotCompositionPolicy from './spectralPlot/SpectralPlotCompositionPolicy';
-import BarGraphCompositionPolicy from './barGraph/BarGraphCompositionPolicy';
 
 export default function () {
     return function install(openmct) {
@@ -67,53 +58,15 @@ export default function () {
             },
             priority: 890
         });
-        openmct.types.addType('telemetry.plot.spectral', {
-            key: "telemetry.plot.spectral",
-            name: "Spectral Plot",
-            cssClass: "icon-plot-stacked",
-            description: "View Spectra on Y Axes with non-time domain on the X axis. Can be added to Display Layouts.",
-            //Temporarily disabling spectral plots
-            creatable: false,
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {};
-            },
-            priority: 890
-        });
-
-        openmct.types.addType(BAR_GRAPH_KEY, {
-            key: BAR_GRAPH_KEY,
-            name: "Bar Graph",
-            cssClass: "icon-bar-chart",
-            description: "View data as a bar graph. Can be added to Display Layouts.",
-            creatable: true,
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    plotType: 'bar'
-                };
-            },
-            priority: 891
-        });
 
         openmct.objectViews.addProvider(new StackedPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));
-<<<<<<< HEAD
 
         openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
-=======
-        openmct.objectViews.addProvider(new SpectralPlotViewProvider(openmct));
-        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
-
-        openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
->>>>>>> 1.7.8
 
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
-        openmct.composition.addPolicy(new SpectralPlotCompositionPolicy(openmct).allow);
-        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
     };
 }
 
