@@ -90,13 +90,8 @@ export default {
             if (existingTelemetryName !== telemetryName) {
                 this.openmct.objects.mutate(
                     this.domainObject,
-<<<<<<< HEAD:src/plugins/charts/BarGraphView.vue
                     `configuration.barStyles.series[${key}].name`,
                     telemetryName
-=======
-                    `configuration.barStyles[${key}]`,
-                    this.domainObject.configuration.barStyles[key]
->>>>>>> origin/1.7.8:src/plugins/plot/barGraph/BarGraphView.vue
                 );
             }
 
