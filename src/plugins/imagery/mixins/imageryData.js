@@ -159,7 +159,7 @@ export default {
             let image = { ...datum };
             image.formattedTime = this.formatTime(datum);
             image.url = this.formatImageUrl(datum);
-            image.time = datum[this.timeKey];
+            image.time = this.parseTime(image.formattedTime);
             image.imageDownloadName = this.getImageDownloadName(datum);
 
             return image;
