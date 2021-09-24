@@ -115,25 +115,25 @@ export class TelemetryCollection extends EventEmitter {
         this.openmct.telemetry.standardizeRequestOptions(options);
         console.log('tc standardized options', { ...options });
         this.historicalProvider = this.openmct.telemetry.
-            findRequestProvider(this.domainObject, this.options);
+            findRequestProvider(this.domainObject, options);
 
-        this._requestHistoricalTelemetry();
+        this._requestHistoricalTelemetry(options);
     }
 
     /**
      * If a historical provider exists, then historical requests will be made
      * @private
      */
-    async _requestHistoricalTelemetry() {
+    async _requestHistoricalTelemetry(options) {
         if (!this.historicalProvider) {
             return;
         }
 
-        console.log('requesting historical, options', { ...this.options });
+        console.log('requesting historical, options', { ...options });
 
         let historicalData;
 
-        this.options.onPartialResponse = this._processNewTelemetry.bind(this);
+        options.onPartialResponse = this._processNewTelemetry.bind(this);
 
         try {
             if (this.requestAbort) {
@@ -142,9 +142,9 @@ export class TelemetryCollection extends EventEmitter {
             }
 
             this.requestAbort = new AbortController();
-            this.options.signal = this.requestAbort.signal;
+            options.signal = this.requestAbort.signal;
             this.emit('requestStarted');
-            historicalData = await this.historicalProvider.request(this.domainObject, this.options);
+            historicalData = await this.historicalProvider.request(this.domainObject, options);
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Error requesting telemetry data...');
