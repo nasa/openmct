@@ -51,6 +51,7 @@ export class TelemetryCollection extends EventEmitter {
         this.unsubscribe = undefined;
         this.historicalProvider = undefined;
         this.options = options;
+        console.log(this.domainObject.name, 'tc options', { ...this.options });
         this.pageState = undefined;
         this.lastBounds = undefined;
         this.requestAbort = undefined;
@@ -110,6 +111,7 @@ export class TelemetryCollection extends EventEmitter {
      */
     _initiateHistoricalRequests() {
         this.openmct.telemetry.standardizeRequestOptions(this.options);
+        console.log('tc standardized options', { ...this.options });
         this.historicalProvider = this.openmct.telemetry.
             findRequestProvider(this.domainObject, this.options);
 
@@ -125,7 +127,7 @@ export class TelemetryCollection extends EventEmitter {
             return;
         }
 
-        console.log('requesting historical');
+        console.log('requesting historical, options', { ...this.options });
 
         let historicalData;
 
