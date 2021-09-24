@@ -361,7 +361,7 @@ export default {
             autoScroll: true,
             sortOptions: {},
             filters: {},
-            loading: true,
+            loading: false,
             scrollable: undefined,
             tableEl: undefined,
             headersHolderEl: undefined,
