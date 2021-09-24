@@ -184,6 +184,10 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
+        if (telemetryData === undefined) {
+            return;
+        }
+
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
         let parsedValue;
         let beforeStartOfBounds;
