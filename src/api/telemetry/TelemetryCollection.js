@@ -110,8 +110,10 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _initiateHistoricalRequests() {
-        this.openmct.telemetry.standardizeRequestOptions(this.options);
-        console.log('tc standardized options', { ...this.options });
+        let options = this.options ? { ...this.options } : undefined;
+
+        this.openmct.telemetry.standardizeRequestOptions(options);
+        console.log('tc standardized options', { ...options });
         this.historicalProvider = this.openmct.telemetry.
             findRequestProvider(this.domainObject, this.options);
 
@@ -365,7 +367,7 @@ export class TelemetryCollection extends EventEmitter {
 
         this.emit('clear');
 
-        this._requestHistoricalTelemetry();
+        this._initiateHistoricalRequests();
     }
 
     /**
