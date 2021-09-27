@@ -101,7 +101,7 @@ export default {
         addChildren(domainObject) {
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let metadata = this.openmct.telemetry.getMetadata(domainObject);
-            let metadataWithFilters = metadata.valueMetadatas.filter(value => value.filters);
+            let metadataWithFilters = metadata ? metadata.valueMetadatas.filter(value => value.filters) : [];
             let hasFiltersWithKeyString = this.persistedFilters[keyString] !== undefined;
             let mutateFilters = false;
             let childObject = {

@@ -191,6 +191,14 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
         result = this.applyGetInterceptors(identifier, result);
 
         return result;
+    }).catch((result) => {
+        console.log(`Failed to retrieve ${keystring}:`, result);
+
+        delete this.cache[keystring];
+
+        result = this.applyGetInterceptors(identifier);
+
+        return result;
     });
 
     this.cache[keystring] = objectPromise;
