@@ -110,7 +110,7 @@ export default class ConditionManager extends EventEmitter {
             let index = this.conditionSetDomainObject.configuration.conditionCollection.findIndex(item => item.id === condition.id);
             if (index > -1) {
                 //Only assign the summary, don't mutate the domain object
-                this.conditionSetDomainObject.configuration.conditionCollection[index].summary = this.getConditionDescription(condition);
+                this.conditionSetDomainObject.configuration.conditionCollection[index].summary = this.updateConditionDescription(condition);
             }
         });
     }
@@ -146,7 +146,7 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    getConditionDescription(condition) {
+    updateConditionDescription(condition) {
         condition.updateDescription();
 
         return condition.summary;
@@ -156,7 +156,7 @@ export default class ConditionManager extends EventEmitter {
         let condition = this.findConditionById(conditionConfiguration.id);
         if (condition) {
             condition.update(conditionConfiguration);
-            conditionConfiguration.summary = this.getConditionDescription(condition);
+            conditionConfiguration.summary = this.updateConditionDescription(condition);
         }
 
         let index = this.conditionSetDomainObject.configuration.conditionCollection.findIndex(item => item.id === conditionConfiguration.id);
@@ -166,11 +166,9 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    initCondition(conditionConfiguration, index, updateDescription) {
+    initCondition(conditionConfiguration, index) {
         let condition = new Condition(conditionConfiguration, this.openmct, this);
-        if (updateDescription) {
-            conditionConfiguration.summary = this.getConditionDescription(condition);
-        }
+        conditionConfiguration.summary = this.updateConditionDescription(condition);
 
         if (index !== undefined) {
             this.conditions.splice(index + 1, 0, condition);
@@ -230,7 +228,7 @@ export default class ConditionManager extends EventEmitter {
             this.conditionSetDomainObject.configuration.conditionCollection.unshift(newCondition);
         }
 
-        this.initCondition(newCondition, index, true);
+        this.initCondition(newCondition, index);
         this.persistConditions();
     }
 
