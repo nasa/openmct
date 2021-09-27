@@ -288,6 +288,8 @@ define([
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
         this.install(this.plugins.DeviceClassifier());
+
+        this._isVue = true;
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
