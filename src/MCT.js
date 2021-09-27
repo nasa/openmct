@@ -122,6 +122,7 @@ define([
             }
         };
 
+        this.destroy = this.destroy.bind(this);
         /**
          * Tracks current selection state of the application.
          * @private
@@ -135,7 +136,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name conductor
          */
-        this.time = new api.TimeAPI();
+        this.time = new api.TimeAPI(this);
 
         /**
          * An interface for interacting with the composition of domain objects.
@@ -286,6 +287,7 @@ define([
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
+        this.install(this.plugins.DeviceClassifier());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
@@ -435,6 +437,8 @@ define([
                     Browse(this);
                 }
 
+                window.addEventListener('beforeunload', this.destroy);
+
                 this.router.start();
                 this.emit('start');
             }.bind(this));
@@ -458,6 +462,7 @@ define([
     };
 
     MCT.prototype.destroy = function () {
+        window.removeEventListener('beforeunload', this.destroy);
         this.emit('destroy');
         this.router.destroy();
     };

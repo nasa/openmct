@@ -68,26 +68,23 @@
                     {{ limitLines ? "Enabled" : "Disabled" }}
                 </div>
             </li>
-            <li class="grid-row">
-                <div class="grid-cell label"
-                     title="The plot line and marker color for this series."
-                >Color</div>
-                <div class="grid-cell value">
-                    <span class="c-color-swatch"
-                          :style="{
-                              'background': seriesHexColor
-                          }"
-                    >
-                    </span>
-                </div>
-            </li>
+            <ColorSwatch :current-color="seriesHexColor"
+                         edit-title="Manually set the plot line and marker color for this series."
+                         view-title="The plot line and marker color for this series."
+                         short-label="Color"
+            />
         </ul>
     </li>
 </ul>
 </template>
 
 <script>
+import ColorSwatch from "@/plugins/plot/ColorSwatch.vue";
+
 export default {
+    components: {
+        ColorSwatch
+    },
     inject: ['openmct', 'domainObject', 'path'],
     props: {
         series: {

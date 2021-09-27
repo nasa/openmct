@@ -1,43 +1,24 @@
 /******************************************************** PROGRESS BAR */
-@keyframes progress {
-    100% { background-position: $progressAnimW center; }
-}
-
-@mixin progressAnim($c1, $c2, $size) {
-    $edge: 20%;
-    background-image: linear-gradient(-90deg,
-            $c1 0%, $c2 $edge,
-            $c2 $edge, $c1 100%
-    );
-    background-position: 0 center;
-    background-repeat: repeat-x;
-    background-size: $size 100%;
+@keyframes progressIndeterminate {
+    0% { left: 0; width: 0; }
+    70% { left: 0; width: 100%; opacity: 1; }
+    100% { left: 100%; opacity: 0; }
 }
 
 .c-progress-bar {
-    display: flex;
-    flex-direction: column;
+    background: $colorProgressBarHolder;
+    display: block;
+    min-height: $progressBarMinH;
+    overflow: hidden;
     width: 100%;
 
-    > * + * {
-        margin-top: $interiorMargin;
-    }
-
-    &__holder {
-        background: $colorProgressBarHolder;
-        box-shadow: inset rgba(black, 0.4) 0 0.25px 3px;
-        flex: 1 1 auto;
-        padding: 1px;
-    }
-
     &__bar {
-        @include progressAnim($colorProgressBar, lighten($colorProgressBar, 10%), $progressAnimW);
-        animation: progress 1000ms linear infinite;
-        min-height: $progressBarMinH;
+        background: $colorProgressBar;
         height: 100%;
 
         &.--indeterminate {
-            width: 100% !important;
+            position: absolute;
+            animation: progressIndeterminate 1.5s ease-in infinite;
         }
     }
 }

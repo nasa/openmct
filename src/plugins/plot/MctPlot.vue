@@ -25,16 +25,16 @@
      :class="[plotLegendExpandedStateClass, plotLegendPositionClass]"
 >
     <plot-legend :cursor-locked="!!lockHighlightPoint"
-                 :series="config.series.models"
+                 :series="seriesModels"
                  :highlights="highlights"
-                 :legend="config.legend"
+                 :legend="legend"
                  @legendHoverChanged="legendHoverChanged"
     />
     <div class="plot-wrapper-axis-and-display-area flex-elem grows">
-        <y-axis v-if="config.series.models.length > 0"
+        <y-axis v-if="seriesModels.length > 0"
                 :tick-width="tickWidth"
-                :single-series="config.series.models.length === 1"
-                :series-model="config.series.models[0]"
+                :single-series="seriesModels.length === 1"
+                :series-model="seriesModels[0]"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
         />
@@ -141,8 +141,8 @@
                 >
                 </div>
             </div>
-            <x-axis v-if="config.series.models.length > 0 && !options.compact"
-                    :series-model="config.series.models[0]"
+            <x-axis v-if="seriesModels.length > 0 && !options.compact"
+                    :series-model="seriesModels[0]"
             />
 
         </div>
@@ -156,7 +156,7 @@
 import eventHelpers from './lib/eventHelpers';
 import LinearScale from "./LinearScale";
 import PlotConfigurationModel from './configuration/PlotConfigurationModel';
-import configStore from './configuration/configStore';
+import configStore from './configuration/ConfigStore';
 
 import PlotLegend from "./legend/PlotLegend.vue";
 import MctTicks from "./MctTicks.vue";
@@ -173,7 +173,7 @@ export default {
         MctTicks,
         MctChart
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         options: {
             type: Object,
@@ -213,7 +213,8 @@ export default {
             plotHistory: [],
             selectedXKeyOption: {},
             xKeyOptions: [],
-            config: {},
+            seriesModels: [],
+            legend: {},
             pending: 0,
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
@@ -239,18 +240,16 @@ export default {
     watch: {
         plotTickWidth(newTickWidth) {
             this.onTickWidthChange(newTickWidth, true);
-        },
-        gridLines(newGridLines) {
-            this.setGridLinesVisibility(newGridLines);
-        },
-        cursorGuide(newCursorGuide) {
-            this.setCursorGuideVisibility(newCursorGuide);
         }
     },
     mounted() {
         eventHelpers.extend(this);
+        this.updateRealTime = this.updateRealTime.bind(this);
+        this.updateDisplayBounds = this.updateDisplayBounds.bind(this);
+        this.setTimeContext = this.setTimeContext.bind(this);
 
         this.config = this.getConfig();
+        this.legend = this.config.legend;
 
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
@@ -265,7 +264,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
-        this.followTimeConductor();
+        this.setTimeContext();
 
         this.loaded = true;
 
@@ -278,10 +277,26 @@ export default {
         this.destroy();
     },
     methods: {
-        followTimeConductor() {
-            this.openmct.time.on('clock', this.updateRealTime);
-            this.openmct.time.on('bounds', this.updateDisplayBounds);
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+
+            this.timeContext = this.openmct.time.getContextForView(this.path);
+            this.timeContext.on('timeContext', this.setTimeContext);
+            this.followTimeContext();
+
+        },
+        followTimeContext() {
+            this.updateDisplayBounds(this.timeContext.bounds());
+            this.timeContext.on('clock', this.updateRealTime);
+            this.timeContext.on('bounds', this.updateDisplayBounds);
             this.synchronized(true);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off("clock", this.updateRealTime);
+                this.timeContext.off("bounds", this.updateDisplayBounds);
+                this.timeContext.off("timeContext", this.setTimeContext);
+            }
         },
         getConfig() {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -290,14 +305,18 @@ export default {
                 config = new PlotConfigurationModel({
                     id: configId,
                     domainObject: this.domainObject,
-                    openmct: this.openmct
+                    openmct: this.openmct,
+                    callback: (data) => {
+                        this.data = data;
+                    }
                 });
                 configStore.add(configId, config);
             }
 
             return config;
         },
-        addSeries(series) {
+        addSeries(series, index) {
+            this.$set(this.seriesModels, index, series);
             this.listenTo(series, 'change:xKey', (xKey) => {
                 this.setDisplayRange(series, xKey);
             }, this);
@@ -322,6 +341,8 @@ export default {
 
                 return;
             }
+
+            this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
             this.startLoading();
             const options = {
@@ -377,11 +398,8 @@ export default {
         },
 
         stopLoading() {
-        //TODO: Is Vue.$nextTick ok to replace $scope.$evalAsync?
-            this.$nextTick().then(() => {
-                this.pending -= 1;
-                this.updateLoading();
-            });
+            this.pending -= 1;
+            this.updateLoading();
         },
 
         updateLoading() {
@@ -394,10 +412,29 @@ export default {
             });
         },
 
-        clearData() {
+        clearSeries() {
             this.config.series.forEach(function (series) {
                 series.reset();
             });
+        },
+
+        compositionPathContainsId(domainObjectToClear) {
+            return domainObjectToClear.composition.some((compositionIdentifier) => {
+                return this.openmct.objects.areIdsEqual(compositionIdentifier, this.domainObject.identifier);
+            });
+        },
+
+        clearData(domainObjectToClear) {
+            // If we don't have an object to clear (global), or the IDs are equal, just clear the data.
+            // If we have an object to clear, but the IDs don't match, we need to check the composition
+            // of the object we've been asked to clear to see if it contains the id we're looking for.
+            // This happens with stacked plots for example.
+            // If we find the ID, clear the plot.
+            if (!domainObjectToClear
+            || this.openmct.objects.areIdsEqual(domainObjectToClear.identifier, this.domainObject.identifier)
+            || this.compositionPathContainsId(domainObjectToClear)) {
+                this.clearSeries();
+            }
         },
 
         setDisplayRange(series, xKey) {
@@ -467,7 +504,7 @@ export default {
        * displays can update accordingly.
        */
         synchronized(value) {
-            const isLocalClock = this.openmct.time.clock();
+            const isLocalClock = this.timeContext.clock();
 
             if (typeof value !== 'undefined') {
                 this._synchronized = value;
@@ -507,7 +544,7 @@ export default {
         },
 
         initialize() {
-            _.debounce(this.handleWindowResize, 400);
+            this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
             this.plotContainerResizeObserver.observe(this.$parent.$refs.plotWrapper);
 
@@ -623,7 +660,7 @@ export default {
                 this.config.series.models.forEach(series => delete series.closest);
             } else {
                 this.highlights = this.config.series.models
-                    .filter(series => series.data.length > 0)
+                    .filter(series => series.getSeriesData().length > 0)
                     .map(series => {
                         series.closest = series.nearestPoint(point);
 
@@ -927,16 +964,8 @@ export default {
             this.userViewportChangeEnd();
         },
 
-        setCursorGuideVisibility(cursorGuide) {
-            this.cursorGuide = cursorGuide === true;
-        },
-
-        setGridLinesVisibility(gridLines) {
-            this.gridLines = gridLines === true;
-        },
-
         setYAxisKey(yKey) {
-            this.config.series.models[0].emit('change:yKey', yKey);
+            this.config.series.models[0].set('yKey', yKey);
         },
 
         pause() {
@@ -948,7 +977,7 @@ export default {
         },
 
         showSynchronizeDialog() {
-            const isLocalClock = this.openmct.time.clock();
+            const isLocalClock = this.timeContext.clock();
             if (isLocalClock !== undefined) {
                 const message = `
                 This action will change the Time Conductor to Fixed Timespan mode with this plot view's current time bounds.
@@ -983,9 +1012,9 @@ export default {
         },
 
         synchronizeTimeConductor() {
-            this.openmct.time.stopClock();
+            this.timeContext.stopClock();
             const range = this.config.xAxis.get('displayRange');
-            this.openmct.time.bounds({
+            this.timeContext.bounds({
                 start: range.min,
                 end: range.max
             });
@@ -996,6 +1025,7 @@ export default {
             configStore.deleteStore(this.config.id);
 
             this.stopListening();
+
             if (this.checkForSize) {
                 clearInterval(this.checkForSize);
                 delete this.checkForSize;
@@ -1011,15 +1041,15 @@ export default {
 
             this.plotContainerResizeObserver.disconnect();
 
-            this.openmct.time.off('clock', this.updateRealTime);
-            this.openmct.time.off('bounds', this.updateDisplayBounds);
+            this.stopFollowingTimeContext();
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         updateStatus(status) {
             this.$emit('statusUpdated', status);
         },
         handleWindowResize() {
-            if (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth) {
+            if (this.$parent.$refs.plotWrapper
+                && (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth)) {
                 this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }

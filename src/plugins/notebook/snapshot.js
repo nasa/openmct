@@ -1,7 +1,7 @@
 import { addNotebookEntry, createNewEmbed } from './utils/notebook-entries';
-import { getDefaultNotebook, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
+import { getDefaultNotebook, getNotebookSectionAndPage, getDefaultNotebookLink, setDefaultNotebook } from './utils/notebook-storage';
 import { NOTEBOOK_DEFAULT } from '@/plugins/notebook/notebook-constants';
-import { createNotebookImageDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
+import { createNotebookImageDomainObject, saveNotebookImageDomainObject, updateNamespaceOfDomainObject, DEFAULT_SIZE } from './utils/notebook-image';
 
 import SnapshotContainer from './snapshot-container';
 import ImageExporter from '../../exporters/ImageExporter';
@@ -35,43 +35,47 @@ export default class Snapshot {
      * @private
      */
     _saveSnapShot(notebookType, fullSizeImageURL, thumbnailImageURL, snapshotMeta) {
-        createNotebookImageDomainObject(this.openmct, fullSizeImageURL)
-            .then(object => {
-                const thumbnailImage = { src: thumbnailImageURL || '' };
-                const snapshot = {
-                    fullSizeImageObjectIdentifier: object.identifier,
-                    thumbnailImage
-                };
-                const embed = createNewEmbed(snapshotMeta, snapshot);
-                if (notebookType === NOTEBOOK_DEFAULT) {
-                    this._saveToDefaultNoteBook(embed);
+        const object = createNotebookImageDomainObject(fullSizeImageURL);
+        const thumbnailImage = { src: thumbnailImageURL || '' };
+        const snapshot = {
+            fullSizeImageObjectIdentifier: object.identifier,
+            thumbnailImage
+        };
+        const embed = createNewEmbed(snapshotMeta, snapshot);
+        if (notebookType === NOTEBOOK_DEFAULT) {
+            const notebookStorage = getDefaultNotebook();
 
-                    return;
-                }
-
-                this._saveToNotebookSnapshots(embed);
-            });
+            this._saveToDefaultNoteBook(notebookStorage, embed);
+            const notebookImageDomainObject = updateNamespaceOfDomainObject(object, notebookStorage.identifier.namespace);
+            saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
+        } else {
+            this._saveToNotebookSnapshots(object, embed);
+        }
     }
 
     /**
      * @private
      */
-    _saveToDefaultNoteBook(embed) {
-        const notebookStorage = getDefaultNotebook();
-        this.openmct.objects.get(notebookStorage.notebookMeta.identifier)
+    _saveToDefaultNoteBook(notebookStorage, embed) {
+        this.openmct.objects.get(notebookStorage.identifier)
             .then(async (domainObject) => {
                 addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
 
-                let link = notebookStorage.notebookMeta.link;
+                let link = notebookStorage.link;
 
                 // Backwards compatibility fix (old notebook model without link)
                 if (!link) {
                     link = await getDefaultNotebookLink(this.openmct, domainObject);
-                    notebookStorage.notebookMeta.link = link;
+                    notebookStorage.link = link;
                     setDefaultNotebook(this.openmct, notebookStorage);
                 }
 
-                const defaultPath = `${domainObject.name} - ${notebookStorage.section.name} - ${notebookStorage.page.name}`;
+                const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.defaultSectionId, notebookStorage.defaultPageId);
+                if (!section || !page) {
+                    return;
+                }
+
+                const defaultPath = `${domainObject.name} - ${section.name} - ${page.name}`;
                 const msg = `Saved to Notebook ${defaultPath}`;
                 this._showNotification(msg, link);
             });
@@ -80,19 +84,22 @@ export default class Snapshot {
     /**
      * @private
      */
-    _saveToNotebookSnapshots(embed) {
-        this.snapshotContainer.addSnapshot(embed);
+    _saveToNotebookSnapshots(notebookImageDomainObject, embed) {
+        this.snapshotContainer.addSnapshot(notebookImageDomainObject, embed);
     }
 
     _showNotification(msg, url) {
         const options = {
-            autoDismissTimeout: 30000,
-            link: {
+            autoDismissTimeout: 30000
+        };
+
+        if (!this.openmct.editor.isEditing()) {
+            options.link = {
                 cssClass: '',
                 text: 'click to view',
                 onClick: this._navigateToNotebook(url)
-            }
-        };
+            };
+        }
 
         this.openmct.notifications.info(msg, options);
     }
@@ -103,7 +110,8 @@ export default class Snapshot {
         }
 
         return () => {
-            window.location.href = window.location.origin + url;
+            const path = window.location.href.split('#');
+            window.location.href = path[0] + url;
         };
     }
 }

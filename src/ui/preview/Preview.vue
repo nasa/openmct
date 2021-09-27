@@ -27,7 +27,7 @@
         :domain-object="domainObject"
         :views="views"
     />
-    <div class="l-preview-window__object-view">
+    <div class="l-preview-window__object-view js-notebook-snapshot-item">
         <div ref="objectView"></div>
     </div>
 </div>
@@ -59,12 +59,13 @@ export default {
     },
     mounted() {
         this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view) => {
-            view.callBack = () => {
+            view.onItemClicked = () => {
                 return this.setView(view);
             };
 
             return view;
         });
+
         this.setView(this.views[0]);
     },
     beforeDestroy() {

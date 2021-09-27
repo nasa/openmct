@@ -226,18 +226,21 @@ export default {
     },
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
-        this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
+        this.handleTreeResize = _.debounce(this.handleTreeResize, 300);
         this.scrollEndEvent = _.debounce(this.scrollEndEvent, 100);
     },
     destroyed() {
-        window.removeEventListener('resize', this.handleWindowResize);
+        if (this.treeResizeObserver) {
+            this.treeResizeObserver.disconnect();
+        }
     },
     methods: {
         async initialize() {
             this.isLoading = true;
             this.openmct.$injector.get('searchService');
             this.getSavedOpenItems();
-            window.addEventListener('resize', this.handleWindowResize);
+            this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
+            this.treeResizeObserver.observe(this.$el);
 
             await this.calculateHeights();
 
@@ -519,7 +522,7 @@ export default {
         },
         searchTree(value) {
             // if an abort controller exists, regardless of the value passed in,
-            // there is an active search that should be cancled
+            // there is an active search that should be canceled
             if (this.abortSearchController) {
                 this.abortSearchController.abort();
                 delete this.abortSearchController;
@@ -710,7 +713,7 @@ export default {
         setSavedOpenItems() {
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.openTreeItems));
         },
-        handleWindowResize() {
+        handleTreeResize() {
             this.calculateHeights();
         }
     }

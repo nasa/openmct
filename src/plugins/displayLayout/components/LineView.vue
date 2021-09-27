@@ -45,7 +45,7 @@
 
     <div
         class="c-frame__move-bar"
-        @mousedown="startDrag($event)"
+        @mousedown.left="startDrag($event)"
     ></div>
     <div
         v-if="showFrameEdit"
@@ -96,7 +96,7 @@ export default {
             y: 10,
             x2: 10,
             y2: 5,
-            stroke: '#717171'
+            stroke: '#666666'
         };
     },
     mixins: [conditionalStylesMixin],

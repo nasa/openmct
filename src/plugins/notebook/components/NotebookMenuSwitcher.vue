@@ -19,17 +19,24 @@
 import Snapshot from '../snapshot';
 import { getDefaultNotebook, validateNotebookStorageObject } from '../utils/notebook-storage';
 import { NOTEBOOK_DEFAULT, NOTEBOOK_SNAPSHOT } from '../notebook-constants';
+import { getMenuItems } from '../utils/notebook-snapshot-menu';
 
 export default {
     inject: ['openmct'],
     props: {
+        currentView: {
+            type: Object,
+            default() {
+                return {};
+            }
+        },
         domainObject: {
             type: Object,
             default() {
                 return {};
             }
         },
-        ignoreLink: {
+        isPreview: {
             type: Boolean,
             default() {
                 return false;
@@ -50,65 +57,53 @@ export default {
     },
     mounted() {
         validateNotebookStorageObject();
-        this.getDefaultNotebookObject();
 
         this.notebookSnapshot = new Snapshot(this.openmct);
         this.setDefaultNotebookStatus();
     },
     methods: {
-        async getDefaultNotebookObject() {
-            const defaultNotebook = getDefaultNotebook();
-            const defaultNotebookObject = defaultNotebook && await this.openmct.objects.get(defaultNotebook.notebookMeta.identifier);
+        getPreviewObjectLink() {
+            const relativePath = this.openmct.objects.getRelativePath(this.objectPath);
+            const urlParams = this.openmct.router.getParams();
+            urlParams.view = this.currentView.key;
 
-            return defaultNotebookObject;
+            const urlParamsString = Object.entries(urlParams)
+                .map(([key, value]) => `${key}=${value}`)
+                .join('&');
+
+            return `#/browse/${relativePath}?${urlParamsString}`;
         },
         async showMenu(event) {
-            const notebookTypes = [];
+            const menuItemOptions = {
+                default: {
+                    cssClass: 'icon-notebook',
+                    name: `Save to Notebook`,
+                    onItemClicked: () => this.snapshot(NOTEBOOK_DEFAULT, event.target)
+                },
+                snapshot: {
+                    cssClass: 'icon-camera',
+                    name: 'Save to Notebook Snapshots',
+                    onItemClicked: () => this.snapshot(NOTEBOOK_SNAPSHOT, event.target)
+                }
+            };
+
+            const notebookTypes = await getMenuItems(this.openmct, menuItemOptions);
             const elementBoundingClientRect = this.$el.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
             const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
-
-            const defaultNotebookObject = await this.getDefaultNotebookObject();
-            if (defaultNotebookObject) {
-                const name = defaultNotebookObject.name;
-
-                const defaultNotebook = getDefaultNotebook();
-                const sectionName = defaultNotebook.section.name;
-                const pageName = defaultNotebook.page.name;
-                const defaultPath = `${name} - ${sectionName} - ${pageName}`;
-
-                notebookTypes.push({
-                    cssClass: 'icon-notebook',
-                    name: `Save to Notebook ${defaultPath}`,
-                    onItemClicked: () => {
-                        return this.snapshot(NOTEBOOK_DEFAULT);
-                    }
-                });
-            }
-
-            notebookTypes.push({
-                cssClass: 'icon-camera',
-                name: 'Save to Notebook Snapshots',
-                onItemClicked: () => {
-                    return this.snapshot(NOTEBOOK_SNAPSHOT);
-                }
-            });
-
             this.openmct.menus.showMenu(x, y, notebookTypes);
         },
-        snapshot(notebookType) {
+        snapshot(notebookType, target) {
             this.$nextTick(() => {
-                const element = document.querySelector('.c-overlay__contents')
-                    || document.getElementsByClassName('l-shell__main-container')[0];
-
-                const bounds = this.openmct.time.bounds();
-                const link = !this.ignoreLink
-                    ? window.location.hash
-                    : null;
-
+                const wrapper = target && target.closest('.js-notebook-snapshot-item-wrapper')
+                    || document;
+                const element = wrapper.querySelector('.js-notebook-snapshot-item');
                 const objectPath = this.objectPath || this.openmct.router.path;
+                const link = this.isPreview
+                    ? this.getPreviewObjectLink()
+                    : window.location.hash;
                 const snapshotMeta = {
-                    bounds,
+                    bounds: this.openmct.time.bounds(),
                     link,
                     objectPath,
                     openmct: this.openmct
@@ -119,9 +114,8 @@ export default {
         },
         setDefaultNotebookStatus() {
             let defaultNotebookObject = getDefaultNotebook();
-
-            if (defaultNotebookObject && defaultNotebookObject.notebookMeta) {
-                let notebookIdentifier = defaultNotebookObject.notebookMeta.identifier;
+            if (defaultNotebookObject) {
+                let notebookIdentifier = defaultNotebookObject.identifier;
 
                 this.openmct.status.set(notebookIdentifier, 'notebook-default');
             }

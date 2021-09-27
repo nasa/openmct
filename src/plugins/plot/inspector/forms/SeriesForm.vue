@@ -117,49 +117,27 @@
         <li v-show="interpolate !== 'none' || markers"
             class="grid-row"
         >
-            <div class="grid-cell label"
-                 title="Manually set the plot line and marker color for this series."
-            >Color</div>
-            <div class="grid-cell value">
-                <div class="c-click-swatch c-click-swatch--menu"
-                     @click="toggleSwatch()"
-                >
-                    <span class="c-color-swatch"
-                          :style="{ background: seriesColorAsHex }"
-                    >
-                    </span>
-                </div>
-                <div class="c-palette c-palette--color">
-                    <div v-show="swatchActive"
-                         class="c-palette__items"
-                    >
-                        <div v-for="(group, index) in colorPalette"
-                             :key="index"
-                             class="u-contents"
-                        >
-                            <div v-for="(color, colorIndex) in group"
-                                 :key="colorIndex"
-                                 class="c-palette__item"
-                                 :class="{ 'selected': series.get('color').equalTo(color) }"
-                                 :style="{ background: color.asHexString() }"
-                                 @click="setColor(color)"
-                            >
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ColorSwatch :current-color="currentColor"
+                         edit-title="Manually set the plot line and marker color for this series."
+                         view-title="The plot line and marker color for this series."
+                         short-label="Color"
+                         @colorSet="setColor"
+            />
         </li>
     </ul>
 </ul>
 </template>
 
 <script>
+import ColorSwatch from '../../ColorSwatch.vue';
 import { MARKER_SHAPES } from "../../draw/MarkerShapes";
 import { objectPath, validate, coerce } from "./formUtil";
 import _ from 'lodash';
 
 export default {
+    components: {
+        ColorSwatch
+    },
     inject: ['openmct', 'domainObject', 'path'],
     props: {
         series: {
@@ -209,7 +187,7 @@ export default {
         expandedCssClass() {
             return this.expanded ? 'c-disclosure-triangle--expanded' : '';
         },
-        seriesColorAsHex() {
+        currentColor() {
             return this.series.get('color').asHexString();
         }
     },

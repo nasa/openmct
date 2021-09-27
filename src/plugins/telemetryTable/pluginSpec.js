@@ -48,6 +48,8 @@ describe("the plugin", () => {
     let tablePlugin;
     let element;
     let child;
+    let historicalProvider;
+    let originalRouterPath;
     let unlistenConfigMutation;
 
     beforeEach((done) => {
@@ -58,7 +60,12 @@ describe("the plugin", () => {
         tablePlugin = new TablePlugin();
         openmct.install(tablePlugin);
 
-        spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
+        historicalProvider = {
+            request: () => {
+                return Promise.resolve([]);
+            }
+        };
+        spyOn(openmct.telemetry, 'findRequestProvider').and.returnValue(historicalProvider);
 
         element = document.createElement('div');
         child = document.createElement('div');
@@ -77,6 +84,8 @@ describe("the plugin", () => {
         window.requestAnimationFrame.and.callFake((callBack) => {
             callBack();
         });
+
+        originalRouterPath = openmct.router.path;
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -190,11 +199,12 @@ describe("the plugin", () => {
             let telemetryPromise = new Promise((resolve) => {
                 telemetryPromiseResolve = resolve;
             });
-            openmct.telemetry.request.and.callFake(() => {
+
+            historicalProvider.request = () => {
                 telemetryPromiseResolve(testTelemetry);
 
                 return telemetryPromise;
-            });
+            };
 
             openmct.router.path = [testTelemetryObject];
 
@@ -206,6 +216,10 @@ describe("the plugin", () => {
             tableInstance = tableView.getTable();
 
             return telemetryPromise.then(() => Vue.nextTick());
+        });
+
+        afterEach(() => {
+            openmct.router.path = originalRouterPath;
         });
 
         it("Renders a row for every telemetry datum returned", (done) => {

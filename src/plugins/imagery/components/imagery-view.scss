@@ -1,0 +1,345 @@
+.c-imagery {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+
+    &:focus {
+        outline: none;
+    }
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
+
+    &__main-image-wrapper {
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
+    }
+
+    &__main-image {
+        &__bg {
+            background-color: $colorPlotBg;
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1 1 auto;
+            height: 0;
+
+            &.unnsynced{
+                @include sUnsynced();
+            }
+        }
+
+        &__image {
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+    &__control-bar,
+    &__time {
+        display: flex;
+        align-items: baseline;
+
+        > * + * {
+            margin-left: $interiorMarginSm;
+        }
+
+    }
+
+    &__control-bar {
+        margin-top: 2px;
+        padding: $interiorMarginSm 0;
+        justify-content: space-between;
+
+    }
+
+    &__time {
+        flex: 0 1 auto;
+        overflow: hidden;
+    }
+
+    &__timestamp,
+    &__age {
+        @include ellipsize();
+        flex: 0 1 auto;
+    }
+
+    &__timestamp {
+        flex-shrink: 10;
+    }
+
+    &__age {
+        border-radius: $smallCr;
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        padding: 2px $interiorMarginSm;
+
+        &:before {
+            font-size: 0.9em;
+            opacity: 0.5;
+            margin-right: $interiorMarginSm;
+        }
+    }
+
+    &--new {
+        // New imagery
+        $bgColor: $colorOk;
+        color: $colorOkFg;
+        background: rgba($bgColor, 0.5);
+        @include flash($animName: flashImageAge, $iter: 2, $dur: 250ms, $valStart: rgba($colorOk, 0.7), $valEnd: rgba($colorOk, 0));
+    }
+
+    &__thumbs-wrapper {
+        display: flex; // Uses row layout
+
+        &.is-autoscroll-off {
+            background: $colorInteriorBorder;
+            [class*='__auto-scroll-resume-button'] {
+                display: block;
+            }
+        }
+
+        &.is-paused {
+            background: rgba($colorPausedBg, 0.4);
+        }
+    }
+
+    &__thumbs-scroll-area {
+        flex: 0 1 auto;
+        display: flex;
+        flex-direction: row;
+        height: 135px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        margin-bottom: 1px;
+        padding-bottom: $interiorMarginSm;
+
+        .c-thumb:last-child {
+            // Hilite the lastest thumb
+            background: $colorBodyFg;
+            color: $colorBodyBg;
+        }
+    }
+
+    &__auto-scroll-resume-button {
+        display: none; // Set to block when __thumbs-wrapper has .is-autoscroll-off
+        flex: 0 0 auto;
+        font-size: 0.8em;
+        margin: $interiorMarginSm;
+    }
+}
+
+/*************************************** THUMBS */
+.c-thumb {
+    display: flex;
+    flex-direction: column;
+    padding: 4px;
+    width: $imageThumbsD;
+
+    &:hover {
+        background: $colorThumbHoverBg;
+    }
+
+    &.selected {
+        background: $colorPausedBg !important;
+        color: $colorPausedFg !important;
+    }
+
+    &__image {
+        background-color: rgba($colorBodyFg, 0.2);
+        width: 100%;
+    }
+
+    &__timestamp {
+        flex: 0 0 auto;
+        padding: 2px 3px;
+    }
+}
+
+.l-layout,
+.c-fl {
+    .c-imagery__thumbs-scroll-area {
+        //  When Imagery is in a layout, hide the thumbs area
+        display: none;
+    }
+}
+
+/*************************************** IMAGERY LOCAL CONTROLS*/
+.c-imagery {
+    .h-local-controls--overlay-content {
+        position: absolute;
+        left: $interiorMargin; top: $interiorMargin;
+        z-index: 2;
+        background: $colorLocalControlOvrBg;
+        border-radius: $basicCr;
+        max-width: 200px;
+        min-width: 70px;
+        width: 35%;
+        align-items: center;
+        padding: $interiorMargin $interiorMarginLg;
+
+        input[type="range"] {
+            display: block;
+            width: 100%;
+            &:not(:first-child) {
+                margin-top: $interiorMarginLg;
+            }
+
+            &:before {
+                margin-right: $interiorMarginSm;
+            }
+        }
+
+        .s-status-taking-snapshot & {
+            display: none;
+        }
+    }
+
+    &__lc {
+        &__reset-btn {
+            $bc: $scrollbarTrackColorBg;
+
+            &:before,
+            &:after {
+                border-right: 1px solid $bc;
+                content:'';
+                display: block;
+                width: 5px;
+                height: 4px;
+            }
+
+            &:before {
+                border-top: 1px solid $bc;
+                margin-bottom: 2px;
+            }
+
+            &:after {
+                border-bottom: 1px solid $bc;
+                margin-top: 2px;
+            }
+        }
+    }
+}
+
+.c-image-controls {
+    // Brightness/contrast
+
+    &__controls {
+        // Sliders and reset element
+        display: flex;
+        align-items: center;
+        margin-right: $interiorMargin; // Need some extra space due to proximity to close button
+    }
+
+    &__sliders {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: 11px;
+        }
+    }
+
+    &__slider-wrapper {
+        // A wrapper is needed to add the type icon to left of each range input
+        display: flex;
+        align-items: center;
+
+        &:before {
+            color: rgba($colorMenuFg, 0.5);
+            margin-right: $interiorMarginSm;
+        }
+
+        input[type='range'] {
+            width: 100px;
+        }
+    }
+
+    &__btn-reset {
+        flex: 0 0 auto;
+    }
+}
+
+/*************************************** BUTTONS */
+.c-button.pause-play {
+    // Pause icon set by default in markup
+    justify-self: end;
+
+    &.is-paused {
+        background: $colorPausedBg !important;
+        color: $colorPausedFg;
+
+        &:before {
+            content: $glyph-icon-play;
+        }
+    }
+
+    .s-status-taking-snapshot & {
+        display: none;
+    }
+}
+
+.c-imagery__prev-next-buttons {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-75%);
+
+    .c-nav {
+        pointer-events: all;
+    }
+
+    .s-status-taking-snapshot & {
+        display: none;
+    }
+}
+
+.c-nav {
+    @include cArrowButtonBase($colorBg: rgba($colorLocalControlOvrBg, 0.1), $colorFg: $colorBtnBg);
+    @include cArrowButtonSizing($dimOuter: 48px);
+    border-radius: $controlCr;
+
+    .is-in-small-container & {
+        @include cArrowButtonSizing($dimOuter: 32px);
+    }
+}
+
+/*************************************** IMAGERY IN TIMESTRIP VIEWS */
+.c-imagery-tsv {
+    g.c-imagery-tsv__image-wrapper {
+        cursor: pointer;
+
+        &.is-hovered {
+            filter: brightness(1) contrast(1) !important;
+            [class*='__image-handle'] {
+                fill: $colorBodyFg;
+            }
+        }
+    }
+
+    &__no-items {
+        fill: $colorBodyFg !important;
+    }
+
+    &__image-handle {
+        fill: rgba($colorBodyFg, 0.5);
+    }
+
+    &__image-placeholder {
+        fill: pushBack($colorBodyBg, 0.3);
+    }
+
+    &:hover g.c-imagery-tsv__image-wrapper {
+        // TODO CH: convert to theme constants
+        filter: brightness(0.5) contrast(0.7);
+    }
+}

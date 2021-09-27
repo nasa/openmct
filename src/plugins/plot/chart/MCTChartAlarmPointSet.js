@@ -36,7 +36,7 @@ export default class MCTChartAlarmPointSet {
         this.listenTo(series, 'reset', this.reset, this);
         this.listenTo(series, 'destroy', this.destroy, this);
 
-        series.data.forEach(function (point, index) {
+        this.series.getSeriesData().forEach(function (point, index) {
             this.append(point, index, series);
         }, this);
     }

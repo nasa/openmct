@@ -39,13 +39,7 @@ export function paramsToArray(openmct) {
 }
 
 export function identifierToString(openmct, objectPath) {
-    let identifier = '#/browse/' + objectPath.map(function (o) {
-        return o && openmct.objects.makeKeyString(o.identifier);
-    })
-        .reverse()
-        .join('/');
-
-    return identifier;
+    return '#/browse/' + openmct.objects.getRelativePath(objectPath);
 }
 
 export default function objectPathToUrl(openmct, objectPath) {
