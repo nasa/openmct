@@ -192,7 +192,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
 
         return result;
     }).catch((result) => {
-        console.log(`Failed to retrieve ${keystring}:`, result);
+        console.warn(`Failed to retrieve ${keystring}:`, result);
 
         delete this.cache[keystring];
 

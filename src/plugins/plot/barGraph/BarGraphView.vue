@@ -261,7 +261,7 @@ export default {
                     });
                 })
                 .catch((error) => {
-                    console.log(`Error fetching data`, error);
+                    console.warn(`Error fetching data`, error);
                 });
         },
         subscribeToObject(telemetryObject) {

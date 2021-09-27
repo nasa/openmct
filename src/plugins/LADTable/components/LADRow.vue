@@ -153,7 +153,7 @@ export default {
                 })
                 .then((array) => this.updateValues(array[array.length - 1]))
                 .catch((error) => {
-                    console.log('Error fetching data', error);
+                    console.warn('Error fetching data', error);
                 });
         },
         updateBounds(bounds, isTick) {

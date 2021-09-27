@@ -198,7 +198,7 @@ export default class PlotSeries extends Model {
                 this.reset(newPoints);
             }.bind(this))
             .catch((error) => {
-                console.log('Error fetching data', error);
+                console.warn('Error fetching data', error);
             });
         /* eslint-enable you-dont-need-lodash-underscore/concat */
     }
