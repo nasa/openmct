@@ -49,9 +49,7 @@ export class TelemetryCollection extends EventEmitter {
         this.parseTime = undefined;
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);
         this.unsubscribe = undefined;
-        this.historicalProvider = undefined;
         this.options = options;
-        console.log(this.domainObject.name, 'tc options', { ...this.options });
         this.pageState = undefined;
         this.lastBounds = undefined;
         this.requestAbort = undefined;
@@ -105,31 +103,20 @@ export class TelemetryCollection extends EventEmitter {
     }
 
     /**
-     * Sets up  the telemetry collection for historical requests,
-     * this uses the "standardizeRequestOptions" from Telemetry API
-     * @private
-     */
-    _initiateHistoricalRequests() {
-        let options = this.options ? { ...this.options } : undefined;
-
-        this.openmct.telemetry.standardizeRequestOptions(options);
-        console.log('tc standardized options', { ...options });
-        this.historicalProvider = this.openmct.telemetry.
-            findRequestProvider(this.domainObject, options);
-
-        this._requestHistoricalTelemetry(options);
-    }
-
-    /**
      * If a historical provider exists, then historical requests will be made
      * @private
      */
-    async _requestHistoricalTelemetry(options) {
-        if (!this.historicalProvider) {
+    async _requestHistoricalTelemetry() {
+        let options = this.options ? { ...this.options } : undefined;
+        let historicalProvider;
+
+        this.openmct.telemetry.standardizeRequestOptions(options);
+        historicalProvider = this.openmct.telemetry.
+            findRequestProvider(this.domainObject, options);
+
+        if (!historicalProvider) {
             return;
         }
-
-        console.log('requesting historical, options', { ...options });
 
         let historicalData;
 
@@ -137,14 +124,13 @@ export class TelemetryCollection extends EventEmitter {
 
         try {
             if (this.requestAbort) {
-                console.log('existing request');
                 this.requestAbort.abort();
             }
 
             this.requestAbort = new AbortController();
             options.signal = this.requestAbort.signal;
             this.emit('requestStarted');
-            historicalData = await this.historicalProvider.request(this.domainObject, options);
+            historicalData = await historicalProvider.request(this.domainObject, options);
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Error requesting telemetry data...');
