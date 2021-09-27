@@ -107,7 +107,7 @@ export default {
                 };
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles[${this.key}]`,
+                    `configuration.barStyles[${key}]`,
                     this.domainObject.configuration.barStyles[key]
                 );
             } else {
