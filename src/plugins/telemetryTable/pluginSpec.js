@@ -273,23 +273,39 @@ describe("the plugin", () => {
             });
         });
 
-        it("Supports filtering telemetry by regular text search", (done) => {
-            tableInstance.filteredRows.setColumnFilter("some-key", "1");
+        it("Supports filtering telemetry by regular text search", () => {
+            tableInstance.tableRows.setColumnFilter("some-key", "1");
 
-            Vue.nextTick(() => {
-                expect(tableInstance.filteredRows.getRows().length).toEqual(1);
+            return Vue.nextTick().then(() => {
+                let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
 
-                done();
+                expect(filteredRowElements.length).toEqual(1);
+
+                tableInstance.tableRows.setColumnFilter("some-key", "");
+
+                return Vue.nextTick().then(() => {
+                    let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+
+                    expect(allRowElements.length).toEqual(3);
+                });
             });
         });
 
-        it("Supports filtering using Regex", (done) => {
-            tableInstance.filteredRows.setColumnRegexFilter("some-key", "^some-value$");
+        it("Supports filtering using Regex", () => {
+            tableInstance.tableRows.setColumnRegexFilter("some-key", "^some-value$");
 
-            Vue.nextTick(() => {
-                expect(tableInstance.filteredRows.getRows().length).toEqual(0);
+            return Vue.nextTick().then(() => {
+                let filteredRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
 
-                done();
+                expect(filteredRowElements.length).toEqual(0);
+
+                tableInstance.tableRows.setColumnRegexFilter("some-key", "^some-value");
+
+                return Vue.nextTick().then(() => {
+                    let allRowElements = element.querySelectorAll('table.c-telemetry-table__body tr');
+
+                    expect(allRowElements.length).toEqual(3);
+                });
             });
         });
 
