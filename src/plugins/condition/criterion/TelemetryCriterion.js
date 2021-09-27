@@ -167,6 +167,11 @@ export default class TelemetryCriterion extends EventEmitter {
                 id: this.id,
                 data: this.formatData(normalizedDatum)
             };
+        }).catch((error) => {
+            return {
+                id: this.id,
+                data: this.formatData()
+            };
         });
     }
 
