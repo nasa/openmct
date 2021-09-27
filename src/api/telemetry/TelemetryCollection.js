@@ -70,7 +70,7 @@ export class TelemetryCollection extends EventEmitter {
         this._watchBounds();
         this._watchTimeSystem();
 
-        this._initiateHistoricalRequests();
+        this._requestHistoricalTelemetry();
         this._initiateSubscriptionTelemetry();
 
         this.loaded = true;
@@ -353,7 +353,7 @@ export class TelemetryCollection extends EventEmitter {
 
         this.emit('clear');
 
-        this._initiateHistoricalRequests();
+        this._requestHistoricalTelemetry();
     }
 
     /**
