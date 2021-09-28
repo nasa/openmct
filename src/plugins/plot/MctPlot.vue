@@ -717,7 +717,8 @@ export default {
 
             // resume the plot if no pan, zoom, or drag action is taken
             // needs to follow endMarquee so that plotHistory is pruned
-            if (!this.plotHistory.length && !this.isFrozenOnMouseDown) {
+            const isAction = Boolean(this.plotHistory.length);
+            if (!isAction && !this.isFrozenOnMouseDown) {
                 return this.play();
             }
         },
