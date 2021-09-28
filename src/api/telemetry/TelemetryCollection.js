@@ -107,7 +107,7 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     async _requestHistoricalTelemetry() {
-        let options = this.options ? { ...this.options } : undefined;
+        let options = { ...this.options };
         let historicalProvider;
 
         this.openmct.telemetry.standardizeRequestOptions(options);
