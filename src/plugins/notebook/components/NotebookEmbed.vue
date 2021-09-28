@@ -180,9 +180,13 @@ export default {
                 this.openmct.notifications.alert(message);
             }
 
-            const relativeHash = hash.slice(hash.indexOf('#'));
-            const url = new URL(relativeHash, `${location.protocol}//${location.host}${location.pathname}`);
-            this.openmct.router.navigate(url.hash);
+            if (this.openmct.editor.isEditing()) {
+                this.previewEmbed();
+            } else {
+                const relativeHash = hash.slice(hash.indexOf('#'));
+                const url = new URL(relativeHash, `${location.protocol}//${location.host}${location.pathname}`);
+                this.openmct.router.navigate(url.hash);
+            }
         },
         formatTime(unixTime, timeFormat) {
             return Moment.utc(unixTime).format(timeFormat);
