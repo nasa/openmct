@@ -49,7 +49,6 @@ export class TelemetryCollection extends EventEmitter {
         this.parseTime = undefined;
         this.metadata = this.openmct.telemetry.getMetadata(domainObject);
         this.unsubscribe = undefined;
-        this.historicalProvider = undefined;
         this.options = options;
         this.pageState = undefined;
         this.lastBounds = undefined;
@@ -71,7 +70,7 @@ export class TelemetryCollection extends EventEmitter {
         this._watchBounds();
         this._watchTimeSystem();
 
-        this._initiateHistoricalRequests();
+        this._requestHistoricalTelemetry();
         this._initiateSubscriptionTelemetry();
 
         this.loaded = true;
@@ -104,30 +103,24 @@ export class TelemetryCollection extends EventEmitter {
     }
 
     /**
-     * Sets up  the telemetry collection for historical requests,
-     * this uses the "standardizeRequestOptions" from Telemetry API
-     * @private
-     */
-    _initiateHistoricalRequests() {
-        this.openmct.telemetry.standardizeRequestOptions(this.options);
-        this.historicalProvider = this.openmct.telemetry.
-            findRequestProvider(this.domainObject, this.options);
-
-        this._requestHistoricalTelemetry();
-    }
-
-    /**
      * If a historical provider exists, then historical requests will be made
      * @private
      */
     async _requestHistoricalTelemetry() {
-        if (!this.historicalProvider) {
+        let options = { ...this.options };
+        let historicalProvider;
+
+        this.openmct.telemetry.standardizeRequestOptions(options);
+        historicalProvider = this.openmct.telemetry.
+            findRequestProvider(this.domainObject, options);
+
+        if (!historicalProvider) {
             return;
         }
 
         let historicalData;
 
-        this.options.onPartialResponse = this._processNewTelemetry.bind(this);
+        options.onPartialResponse = this._processNewTelemetry.bind(this);
 
         try {
             if (this.requestAbort) {
@@ -135,9 +128,9 @@ export class TelemetryCollection extends EventEmitter {
             }
 
             this.requestAbort = new AbortController();
-            this.options.signal = this.requestAbort.signal;
+            options.signal = this.requestAbort.signal;
             this.emit('requestStarted');
-            historicalData = await this.historicalProvider.request(this.domainObject, this.options);
+            historicalData = await historicalProvider.request(this.domainObject, options);
         } catch (error) {
             if (error.name !== 'AbortError') {
                 console.error('Error requesting telemetry data...');
@@ -179,6 +172,10 @@ export class TelemetryCollection extends EventEmitter {
      * @private
      */
     _processNewTelemetry(telemetryData) {
+        if (telemetryData === undefined) {
+            return;
+        }
+
         let data = Array.isArray(telemetryData) ? telemetryData : [telemetryData];
         let parsedValue;
         let beforeStartOfBounds;
@@ -205,9 +202,10 @@ export class TelemetryCollection extends EventEmitter {
 
                     if (endIndex > startIndex) {
                         let potentialDupes = this.boundedTelemetry.slice(startIndex, endIndex);
-
                         isDuplicate = potentialDupes.some(_.isEqual.bind(undefined, datum));
                     }
+                } else if (startIndex === this.boundedTelemetry.length) {
+                    isDuplicate = _.isEqual(datum, this.boundedTelemetry[this.boundedTelemetry.length - 1]);
                 }
 
                 if (!isDuplicate) {

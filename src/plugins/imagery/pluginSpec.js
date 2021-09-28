@@ -29,6 +29,7 @@ import {
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
+const FIVE_MINUTES = ONE_MINUTE * 5;
 const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
 const REFRESH_CSS_MS = 500;
@@ -90,8 +91,11 @@ describe("The Imagery View Layouts", () => {
     const START = Date.now();
     const COUNT = 10;
 
-    let resolveFunction;
+    // let resolveFunction;
     let originalRouterPath;
+    let telemetryPromise;
+    let telemetryPromiseResolve;
+    let cleanupFirst;
 
     let openmct;
     let appHolder;
@@ -202,24 +206,43 @@ describe("The Imagery View Layouts", () => {
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
 
-        openmct = createOpenMct();
+        cleanupFirst = [];
 
-        openmct.install(openmct.plugins.MyItems());
-        openmct.install(openmct.plugins.LocalTimeSystem());
-        openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct = createOpenMct();
+        openmct.time.timeSystem('utc', {
+            start: START - FIVE_MINUTES,
+            end: START + TEN_MINUTES
+        });
+
+        // openmct.install(openmct.plugins.MyItems());
+        // openmct.install(openmct.plugins.LocalTimeSystem());
+
+        telemetryPromise = new Promise((resolve) => {
+            telemetryPromiseResolve = resolve;
+        });
+
+        spyOn(openmct.telemetry, 'request').and.callFake(() => {
+            telemetryPromiseResolve(imageTelemetry);
+
+            return telemetryPromise;
+        });
 
         parent = document.createElement('div');
-        child = document.createElement('div');
-        parent.appendChild(child);
+        parent.style.width = '640px';
+        parent.style.height = '480px';
 
-        // document.querySelector('body').append(parent);
+        child = document.createElement('div');
+        child.style.width = '640px';
+        child.style.height = '480px';
+
+        parent.appendChild(child);
 
         spyOn(window, 'ResizeObserver').and.returnValue({
             observe() {},
             disconnect() {}
         });
 
-        spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
+        // spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
         spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
 
         originalRouterPath = openmct.router.path;
@@ -228,14 +251,19 @@ describe("The Imagery View Layouts", () => {
         openmct.start(appHolder);
     });
 
-    afterEach(() => {
-        openmct.time.timeSystem('utc', {
-            start: 0,
-            end: 1
-        });
+    afterEach((done) => {
         openmct.router.path = originalRouterPath;
 
-        return resetApplicationState(openmct);
+        // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
+        // teardown, which causes problems
+        // This is hacky, we should find a better approach here.
+        setTimeout(() => {
+            //Cleanup code that needs to happen before dom elements start being destroyed
+            cleanupFirst.forEach(cleanup => cleanup());
+            cleanupFirst = [];
+
+            resetApplicationState(openmct).then(done).catch(done);
+        });
     });
 
     it("should provide an imagery time strip view when in a time strip", () => {
@@ -262,7 +290,7 @@ describe("The Imagery View Layouts", () => {
     });
 
     it("should provide an imagery view only for imagery producing objects", () => {
-        let applicableViews = openmct.objectViews.get(imageryObject, []);
+        let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
         let imageryView = applicableViews.find(
             viewProvider => viewProvider.key === imageryKey
         );
@@ -315,51 +343,53 @@ describe("The Imagery View Layouts", () => {
         let imageryViewProvider;
         let imageryView;
 
-        beforeEach(async () => {
-            let telemetryRequestResolve;
-            let telemetryRequestPromise = new Promise((resolve) => {
-                telemetryRequestResolve = resolve;
-            });
+        beforeEach(() => {
 
-            openmct.telemetry.request.and.callFake(() => {
-                telemetryRequestResolve(imageTelemetry);
-
-                return telemetryRequestPromise;
-            });
-
-            applicableViews = openmct.objectViews.get(imageryObject, []);
+            applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
-            imageryView = imageryViewProvider.view(imageryObject);
+            imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
             imageryView.show(child);
 
-            await telemetryRequestPromise;
+            return Vue.nextTick();
         });
 
-        afterEach(() => {
-            openmct.time.stopClock();
-            openmct.router.removeListener('change:hash', resolveFunction);
+        // afterEach(() => {
+        //     openmct.time.stopClock();
+        //     openmct.router.removeListener('change:hash', resolveFunction);
+        //
+        //     imageryView.destroy();
+        // });
 
-            imageryView.destroy();
-        });
-
-        it("on mount should show the the most recent image", () => {
-            const imageInfo = getImageInfo(parent);
-
-            expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
-        });
-
-        xit("should show the clicked thumbnail as the main image", (done) => {
-            const target = imageTelemetry[5].url;
-            parent.querySelectorAll(`img[src='${target}']`)[0].click();
+        it("on mount should show the the most recent image", (done) => {
+            //Looks like we need Vue.nextTick here so that computed properties settle down
             Vue.nextTick(() => {
                 const imageInfo = getImageInfo(parent);
 
-                expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
+                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 1].timeId)).not.toEqual(-1);
                 done();
             });
         });
 
+        it("should show the clicked thumbnail as the main image", (done) => {
+            //Looks like we need Vue.nextTick here so that computed properties settle down
+            Vue.nextTick(() => {
+                const target = imageTelemetry[5].url;
+                parent.querySelectorAll(`img[src='${target}']`)[0].click();
+                Vue.nextTick(() => {
+                    const imageInfo = getImageInfo(parent);
+
+                    expect(imageInfo.url.indexOf(imageTelemetry[5].timeId)).not.toEqual(-1);
+                    done();
+                });
+            });
+        });
+
         xit("should show that an image is new", (done) => {
+            openmct.time.clock('local', {
+                start: -1000,
+                end: 1000
+            });
+
             Vue.nextTick(() => {
                 // used in code, need to wait to the 500ms here too
                 setTimeout(() => {
@@ -385,69 +415,80 @@ describe("The Imagery View Layouts", () => {
             });
         });
 
-        xit("should navigate via arrow keys", (done) => {
-            let keyOpts = {
-                element: parent.querySelector('.c-imagery'),
-                key: 'ArrowLeft',
-                keyCode: 37,
-                type: 'keyup'
-            };
-
-            simulateKeyEvent(keyOpts);
-
+        it("should navigate via arrow keys", (done) => {
             Vue.nextTick(() => {
-                const imageInfo = getImageInfo(parent);
+                let keyOpts = {
+                    element: parent.querySelector('.c-imagery'),
+                    key: 'ArrowLeft',
+                    keyCode: 37,
+                    type: 'keyup'
+                };
 
-                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
-                done();
+                simulateKeyEvent(keyOpts);
+
+                Vue.nextTick(() => {
+                    const imageInfo = getImageInfo(parent);
+
+                    expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 2].timeId)).not.toEqual(-1);
+                    done();
+                });
             });
         });
 
         it("should navigate via numerous arrow keys", (done) => {
-            let element = parent.querySelector('.c-imagery');
-            let type = 'keyup';
-            let leftKeyOpts = {
-                element,
-                type,
-                key: 'ArrowLeft',
-                keyCode: 37
-            };
-            let rightKeyOpts = {
-                element,
-                type,
-                key: 'ArrowRight',
-                keyCode: 39
-            };
-
-            // left thrice
-            simulateKeyEvent(leftKeyOpts);
-            simulateKeyEvent(leftKeyOpts);
-            simulateKeyEvent(leftKeyOpts);
-            // right once
-            simulateKeyEvent(rightKeyOpts);
-
             Vue.nextTick(() => {
-                const imageInfo = getImageInfo(parent);
+                let element = parent.querySelector('.c-imagery');
+                let type = 'keyup';
+                let leftKeyOpts = {
+                    element,
+                    type,
+                    key: 'ArrowLeft',
+                    keyCode: 37
+                };
+                let rightKeyOpts = {
+                    element,
+                    type,
+                    key: 'ArrowRight',
+                    keyCode: 39
+                };
 
-                expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
-                done();
+                // left thrice
+                simulateKeyEvent(leftKeyOpts);
+                simulateKeyEvent(leftKeyOpts);
+                simulateKeyEvent(leftKeyOpts);
+                // right once
+                simulateKeyEvent(rightKeyOpts);
+
+                Vue.nextTick(() => {
+                    const imageInfo = getImageInfo(parent);
+
+                    expect(imageInfo.url.indexOf(imageTelemetry[COUNT - 3].timeId)).not.toEqual(-1);
+                    done();
+                });
             });
         });
-        it ('shows an auto scroll button when scroll to left', async () => {
-            // to mock what a scroll would do
-            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
-            await Vue.nextTick();
-            let autoScrollButton = parent.querySelector('.c-imagery__auto-scroll-resume-button');
-            expect(autoScrollButton).toBeTruthy();
+        it ('shows an auto scroll button when scroll to left', (done) => {
+            Vue.nextTick(() => {
+                // to mock what a scroll would do
+                imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
+                Vue.nextTick(() => {
+                    let autoScrollButton = parent.querySelector('.c-imagery__auto-scroll-resume-button');
+                    expect(autoScrollButton).toBeTruthy();
+                    done();
+                });
+            });
         });
-        it ('scrollToRight is called when clicking on auto scroll button', async () => {
-            // use spyon to spy the scroll function
-            spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollToRight');
-            imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
-            await Vue.nextTick();
-            parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
-            expect(imageryView._getInstance().$refs.ImageryContainer.scrollToRight).toHaveBeenCalledWith('reset');
-
+        it ('scrollToRight is called when clicking on auto scroll button', (done) => {
+            Vue.nextTick(() => {
+                // use spyon to spy the scroll function
+                spyOn(imageryView._getInstance().$refs.ImageryContainer, 'scrollToRight');
+                imageryView._getInstance().$refs.ImageryContainer.autoScroll = false;
+                Vue.nextTick(() => {
+                    parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
+                    expect(imageryView._getInstance().$refs.ImageryContainer.scrollToRight).toHaveBeenCalledWith('reset');
+                    done();
+                });
+            });
         });
     });
 });
