@@ -107,7 +107,7 @@ export default {
                 };
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles[${this.key}]`,
+                    `configuration.barStyles[${key}]`,
                     this.domainObject.configuration.barStyles[key]
                 );
             } else {
@@ -150,6 +150,10 @@ export default {
         },
         getAxisMetadata(telemetryObject) {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            if (!metadata) {
+                return {};
+            }
+
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
             //Exclude 'name' and 'time' based metadata specifically, from the x-Axis values by using range hints only
             const xAxisMetadata = metadata.valuesForHints(['range']);
@@ -255,6 +259,9 @@ export default {
                     data.forEach((datum) => {
                         this.processData(telemetryObject, datum, axisMetadata);
                     });
+                })
+                .catch((error) => {
+                    console.warn(`Error fetching data`, error);
                 });
         },
         subscribeToObject(telemetryObject) {

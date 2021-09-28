@@ -20,7 +20,8 @@
 * at runtime from the About dialog for additional information.
 *****************************************************************************/
 <template>
-<div ref="modeMenuButton"
+<div v-if="modes.length > 1"
+     ref="modeMenuButton"
      class="c-ctrl-wrapper c-ctrl-wrapper--menus-up"
 >
     <div class="c-menu-button c-ctrl-wrapper c-ctrl-wrapper--menus-left">
