@@ -78,12 +78,12 @@ export default {
         this.canvasContext = this.canvas.getContext('2d');
         this.setDimensions();
 
-        this.updateViewBounds();
-
         this.setScaleAndPlotImagery = this.setScaleAndPlotImagery.bind(this);
         this.updateViewBounds = this.updateViewBounds.bind(this);
         this.setTimeContext = this.setTimeContext.bind(this);
         this.setTimeContext();
+
+        this.updateViewBounds();
 
         this.resize = _.debounce(this.resize, 400);
         this.imageryStripResizeObserver = new ResizeObserver(this.resize);
