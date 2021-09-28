@@ -763,17 +763,39 @@ describe('the plugin', function () {
                     "key": "035c589c-d98f-429e-8b89-d76bd8d22b29"
                 }
             };
-            const styleRuleManger = new StyleRuleManager(stylesObject, openmct, null, true);
-            spyOn(styleRuleManger, 'subscribeToConditionSet');
             openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
             const mockTransactionService = jasmine.createSpyObj(
                 'transactionService',
                 ['commit']
             );
+            openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata", "getValueFormatter", "request"]);
+            openmct.telemetry.isTelemetryObject.and.returnValue(true);
+            openmct.telemetry.subscribe.and.returnValue(function () {});
+            openmct.telemetry.getValueFormatter.and.returnValue({
+                parse: function (value) {
+                    return value;
+                }
+            });
+            openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
+            openmct.telemetry.request.and.returnValue(Promise.resolve([]));
 
             mockTransactionService.commit = async () => {};
+            const mockIdentifierService = jasmine.createSpyObj(
+                'identifierService',
+                ['parse']
+            );
+            mockIdentifierService.parse.and.returnValue({
+                getSpace: () => {
+                    return '';
+                }
+            });
 
-            openmct.$injector.get.and.returnValue(mockTransactionService);
+            openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
+            openmct.$injector.get.withArgs('identifierService').and.returnValue(mockIdentifierService)
+                .withArgs('transactionService').and.returnValue(mockTransactionService);
+
+            const styleRuleManger = new StyleRuleManager(stylesObject, openmct, null, true);
+            spyOn(styleRuleManger, 'subscribeToConditionSet');
             await openmct.editor.save();
             // if the context was passed properly to the event handler,
             // this.conditionSetIdentifier will not be null, and subscribeToConditionSet will be called
