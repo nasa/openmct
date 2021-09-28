@@ -219,7 +219,8 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: undefined
+            showLimitLineLabels: undefined,
+            isFrozenOnMouseDown: false
         };
     },
     computed: {
@@ -686,6 +687,11 @@ export default {
 
             this.listenTo(window, 'mouseup', this.onMouseUp, this);
             this.listenTo(window, 'mousemove', this.trackMousePosition, this);
+
+            // track frozen state on mouseDown to be read on mouseUp
+            const isFrozen = this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+            this.isFrozenOnMouseDown = isFrozen;
+
             if (event.altKey) {
                 return this.startPan(event);
             } else {
@@ -711,7 +717,7 @@ export default {
 
             // resume the plot if no pan, zoom, or drag action is taken
             // needs to follow endMarquee so that plotHistory is pruned
-            if (!this.plotHistory.length) {
+            if (!this.plotHistory.length && !this.isFrozenOnMouseDown) {
                 return this.play();
             }
         },
