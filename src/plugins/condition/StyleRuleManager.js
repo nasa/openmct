@@ -44,7 +44,7 @@ export default class StyleRuleManager extends EventEmitter {
             this.openmct.editor.on('isEditing', (isEditing) => {
                 this.toggleSubscription(isEditing);
             });
-            this.isEditing = this.openmct.editor.editing;
+            this.isEditing = this.openmct.editor.isEditing();
         }
 
     }
