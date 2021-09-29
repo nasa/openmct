@@ -178,7 +178,7 @@ export default {
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
-            if (this.telemetryObjectFormats && this.this.telemetryObjectFormats[key]) {
+            if (this.telemetryObjectFormats && this.telemetryObjectFormats[key]) {
                 delete this.telemetryObjectFormats[key];
             }
 
