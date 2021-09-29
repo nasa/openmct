@@ -26,7 +26,9 @@ import Vue from 'vue';
 
 export default function BarGraphViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+
+        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
     }
 
     return {
