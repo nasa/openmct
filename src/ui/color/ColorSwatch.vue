@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import ColorPalette from './lib/ColorPalette';
+import ColorPalette from './ColorPalette';
 
 export default {
     inject: ['openmct', 'domainObject'],
