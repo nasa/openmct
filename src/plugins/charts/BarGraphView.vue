@@ -179,7 +179,7 @@ export default {
             const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
             if (this.telemetryObjectFormats && this.this.telemetryObjectFormats[key]) {
-                delete this.this.telemetryObjectFormats[key];
+                delete this.telemetryObjectFormats[key];
             }
 
             if (this.domainObject.configuration.barStyles.series[key]) {
