@@ -476,6 +476,58 @@ describe("the plugin", function () {
             });
         });
 
+        describe('pause/play actions on errant click', () => {
+            beforeEach(() => {
+                openmct.time.clock('local', {
+                    start: -1000,
+                    end: 100
+                });
+
+                return Vue.nextTick();
+            });
+
+            it("clicking the plot view without movement resumes the plot while active", async () => {
+
+                const pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
+                console.log('pauseElem', pauseEl);
+                // if the pause button is present, the chart is running
+                expect(pauseEl.length).toBe(1);
+
+                // simulate an errant mouse click
+                const clickEvent = createMouseEvent("click");
+                const plotDisplayArea = element.querySelector("div.u-contents");
+                plotDisplayArea.dispatchEvent(clickEvent);
+
+                await Vue.nextTick();
+                const pauseElAfterClick = element.querySelectorAll(".c-button-set .icon-pause");
+                console.log('pauseElAfterClick', pauseElAfterClick);
+                expect(pauseElAfterClick.length).toBe(1);
+
+            });
+
+            it("clicking the plot view without movement leaves the plot paused", async () => {
+
+                const pauseEl = element.querySelector(".c-button-set .icon-pause");
+                // pause the plot
+                pauseEl.dispatchEvent(createMouseEvent('click'));
+                await Vue.nextTick();
+
+                const playEl = element.querySelectorAll('.c-button-set .is-paused');
+                expect(playEl.length).toBe(1);
+
+                // simulate an errant mouse click
+                const plotDisplayArea = element.querySelector("div.u-contents");
+                const clickEvent = createMouseEvent('click');
+                plotDisplayArea.dispatchEvent(clickEvent);
+                await Vue.nextTick();
+
+                const playElAfterChartClick = element.querySelectorAll(".c-button-set .is-paused");
+                console.log('playElem', playElAfterChartClick);
+                expect(playElAfterChartClick.length).toBe(1);
+
+            });
+        });
+
         describe('controls in time strip view', () => {
 
             it('zoom controls are hidden', () => {
