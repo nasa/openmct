@@ -236,7 +236,7 @@ export default {
             this.xScale.range([PADDING, this.width - PADDING * 2]);
         },
         isImageryInBounds(imageObj) {
-            return (imageObj.time < this.viewBounds.end) && (imageObj.time > this.viewBounds.start);
+            return (imageObj.time <= this.viewBounds.end) && (imageObj.time >= this.viewBounds.start);
         },
         getImageryContainer() {
             let svgHeight = 100;
@@ -296,11 +296,12 @@ export default {
         drawImagery() {
             let groupSVG = this.getImageryContainer();
             const showImagePlaceholders = this.isImageryWidthAcceptable();
-
+            let count = 0;
             if (this.imageHistory.length) {
-                this.imageHistory.forEach((currentImageObject, index) => {
+                this.imageHistory.forEach((currentImageObject) => {
                     if (this.isImageryInBounds(currentImageObject)) {
-                        this.plotImagery(currentImageObject, showImagePlaceholders, groupSVG, index);
+                        this.plotImagery(currentImageObject, showImagePlaceholders, groupSVG, count);
+                        count = count + 1;
                     }
                 });
             } else {
