@@ -476,7 +476,7 @@ describe("the plugin", function () {
             });
         });
 
-        describe('pause/play actions on errant click', () => {
+        describe('resume actions on errant click', () => {
             beforeEach(() => {
                 openmct.time.clock('local', {
                     start: -1000,
@@ -489,16 +489,19 @@ describe("the plugin", function () {
             it("clicking the plot view without movement resumes the plot while active", async () => {
 
                 const pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
-                console.log('pauseElem', pauseEl);
                 // if the pause button is present, the chart is running
                 expect(pauseEl.length).toBe(1);
 
                 // simulate an errant mouse click
-                const clickEvent = createMouseEvent("click");
-                const plotDisplayArea = element.querySelector("div.u-contents");
-                plotDisplayArea.dispatchEvent(clickEvent);
-
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
                 await Vue.nextTick();
+
                 const pauseElAfterClick = element.querySelectorAll(".c-button-set .icon-pause");
                 console.log('pauseElAfterClick', pauseElAfterClick);
                 expect(pauseElAfterClick.length).toBe(1);
@@ -516,13 +519,16 @@ describe("the plugin", function () {
                 expect(playEl.length).toBe(1);
 
                 // simulate an errant mouse click
-                const plotDisplayArea = element.querySelector("div.u-contents");
-                const clickEvent = createMouseEvent('click');
-                plotDisplayArea.dispatchEvent(clickEvent);
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
                 await Vue.nextTick();
 
                 const playElAfterChartClick = element.querySelectorAll(".c-button-set .is-paused");
-                console.log('playElem', playElAfterChartClick);
                 expect(playElAfterChartClick.length).toBe(1);
 
             });
