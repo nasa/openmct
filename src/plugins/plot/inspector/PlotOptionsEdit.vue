@@ -49,7 +49,7 @@ import SeriesForm from "./forms/SeriesForm.vue";
 import YAxisForm from "./forms/YAxisForm.vue";
 import LegendForm from "./forms/LegendForm.vue";
 import eventHelpers from "../lib/eventHelpers";
-import configStore from "../configuration/configStore";
+import configStore from "../configuration/ConfigStore";
 
 export default {
     components: {

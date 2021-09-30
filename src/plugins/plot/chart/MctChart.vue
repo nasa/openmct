@@ -38,7 +38,7 @@ import MCTChartLineStepAfter from './MCTChartLineStepAfter';
 import MCTChartPointSet from './MCTChartPointSet';
 import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
 import MCTChartAlarmLineSet from "./MCTChartAlarmLineSet";
-import configStore from "../configuration/configStore";
+import configStore from "../configuration/ConfigStore";
 import PlotConfigurationModel from "../configuration/PlotConfigurationModel";
 import LimitLine from "./LimitLine.vue";
 import LimitLabel from "./LimitLabel.vue";

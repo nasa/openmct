@@ -8,6 +8,10 @@
 
 /*********************************************** CONDUCTOR LAYOUT */
 .c-conductor {
+    &__inputs {
+        display: contents;
+    }
+
     &__time-bounds {
         display: grid;
         grid-column-gap: $interiorMargin;
@@ -47,13 +51,6 @@
         align-items: center;
         > * + * {
             margin-left: $interiorMargin;
-        }
-    }
-
-    [class*='-delta'] {
-        &:before {
-            content: $glyph-icon-clock;
-            font-family: symbolsfont;
         }
     }
 
@@ -181,6 +178,27 @@
     }
 }
 
+.c-conductor-holder--compact {
+    min-height: 22px;
+
+    .c-conductor {
+        &__inputs,
+        &__time-bounds {
+            display: flex;
+        }
+
+        &__inputs {
+            > * + * {
+                margin-left: $interiorMarginSm;
+            }
+        }
+    }
+
+    .is-realtime-mode .c-conductor__end-fixed {
+        display: none !important;
+    }
+}
+
 .c-conductor-input {
     color: $colorInputFg;
     display: flex;
@@ -250,17 +268,21 @@
     box-shadow: $shdwMenu;
     padding: $interiorMargin;
     position: absolute;
+    left: 8px;
     bottom: 24px;
     z-index: 99;
 
-    &[class*='--start'] {
-        left: -25px;
-    }
-
-    &[class*='--end'] {
-        right: 0;
+    &[class*='--bottom'] {
+        bottom: auto;
+        top: 24px;
     }
 }
+
+.l-shell__time-conductor .pr-tc-input-menu--end {
+    left: auto;
+    right: 0;
+}
+
 
 [class^='pr-time'] {
     &[class*='label'] {
