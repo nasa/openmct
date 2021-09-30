@@ -57,7 +57,7 @@
         </div>
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused,'stale':false }"
+             :class="{'paused unnsynced': isPaused && !isFixed(),'stale':false }"
              @click="expand"
         >
             <div class="image-wrapper"
@@ -122,6 +122,7 @@
             </div>
             <div class="h-local-controls">
                 <button
+                    v-if="!isFixed()"
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': isPaused}"
                     @click="paused(!isPaused, 'button')"
@@ -131,7 +132,7 @@
     </div>
     <div class="c-imagery__thumbs-wrapper"
          :class="[
-             { 'is-paused': isPaused },
+             { 'is-paused': isPaused && !isFixed() },
              { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
          ]"
     >
@@ -457,6 +458,9 @@ export default {
         }
     },
     methods: {
+        isFixed() {
+            return this.openmct.time.clock() === undefined;
+        },
         expand() {
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();

@@ -1,13 +1,7 @@
 <template>
 <form ref="fixedDeltaInput"
       class="c-conductor__inputs"
-      @submit.prevent="updateTimeFromConductor"
 >
-    <button
-        ref="submitButton"
-        class="c-input--submit"
-        type="submit"
-    ></button>
     <div
         class="c-ctrl-wrapper c-conductor-input c-conductor__start-fixed"
     >
@@ -183,10 +177,7 @@ export default {
         submitForm() {
         // Allow Vue model to catch up to user input.
         // Submitting form will cause validation messages to display (but only if triggered by button click)
-            this.$nextTick(() => this.$refs.submitButton.click());
-        },
-        updateTimeFromConductor() {
-            this.setBoundsFromView();
+            this.$nextTick(() => this.setBoundsFromView());
         },
         validateAllBounds(ref) {
             if (!this.areBoundsFormatsValid()) {

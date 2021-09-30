@@ -97,6 +97,8 @@ describe('the plugin', function () {
 
         mockListener = jasmine.createSpy('mockListener');
 
+        openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(true);
+
         conditionSetDefinition.initialize(mockConditionSetDomainObject);
 
         spyOn(openmct.objects, "save").and.returnValue(Promise.resolve(true));
@@ -129,21 +131,6 @@ describe('the plugin', function () {
             expect(mockConditionSetDomainObject.composition instanceof Array).toBeTrue();
             expect(mockConditionSetDomainObject.composition.length).toEqual(0);
         });
-
-        it('provides a view', () => {
-            const testViewObject = {
-                id: "test-object",
-                type: "conditionSet",
-                configuration: {
-                    conditionCollection: []
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(testViewObject, []);
-            let conditionSetView = applicableViews.find((viewProvider) => viewProvider.key === 'conditionSet.view');
-            expect(conditionSetView).toBeDefined();
-        });
-
     });
 
     describe('the condition set usage for multiple display layout items', () => {
@@ -723,6 +710,50 @@ describe('the plugin', function () {
             });
             let result = conditionMgr.conditions.map(condition => condition.result);
             expect(result[2]).toBeUndefined();
+        });
+    });
+
+    describe('canView of ConditionSetViewProvider', () => {
+        let conditionSetView;
+        const testViewObject = {
+            id: "test-object",
+            type: "conditionSet",
+            configuration: {
+                conditionCollection: []
+            }
+        };
+
+        beforeEach(() => {
+            const applicableViews = openmct.objectViews.get(testViewObject, []);
+            conditionSetView = applicableViews.find((viewProvider) => viewProvider.key === 'conditionSet.view');
+        });
+
+        it('provides a view', () => {
+            expect(conditionSetView).toBeDefined();
+        });
+
+        it('returns true for type `conditionSet` and is a navigated Object', () => {
+            openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(true);
+
+            const isCanView = conditionSetView.canView(testViewObject, []);
+
+            expect(isCanView).toBe(true);
+        });
+
+        it('returns false for type `conditionSet` and is not a navigated Object', () => {
+            openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(false);
+
+            const isCanView = conditionSetView.canView(testViewObject, []);
+
+            expect(isCanView).toBe(false);
+        });
+
+        it('returns false for type `notConditionSet` and is a navigated Object', () => {
+            openmct.router.isNavigatedObject = jasmine.createSpy().and.returnValue(true);
+            testViewObject.type = 'notConditionSet';
+            const isCanView = conditionSetView.canView(testViewObject, []);
+
+            expect(isCanView).toBe(false);
         });
     });
 

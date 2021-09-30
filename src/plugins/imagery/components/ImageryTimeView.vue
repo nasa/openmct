@@ -78,10 +78,12 @@ export default {
         this.canvasContext = this.canvas.getContext('2d');
         this.setDimensions();
 
-        this.updateViewBounds();
+        this.setScaleAndPlotImagery = this.setScaleAndPlotImagery.bind(this);
+        this.updateViewBounds = this.updateViewBounds.bind(this);
+        this.setTimeContext = this.setTimeContext.bind(this);
+        this.setTimeContext();
 
-        this.openmct.time.on("timeSystem", this.setScaleAndPlotImagery);
-        this.openmct.time.on("bounds", this.updateViewBounds);
+        this.updateViewBounds();
 
         this.resize = _.debounce(this.resize, 400);
         this.imageryStripResizeObserver = new ResizeObserver(this.resize);
@@ -90,22 +92,30 @@ export default {
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     },
     beforeDestroy() {
-        if (this.unsubscribe) {
-            this.unsubscribe();
-            delete this.unsubscribe;
-        }
-
         if (this.imageryStripResizeObserver) {
             this.imageryStripResizeObserver.disconnect();
         }
 
-        this.openmct.time.off("timeSystem", this.setScaleAndPlotImagery);
-        this.openmct.time.off("bounds", this.updateViewBounds);
+        this.stopFollowingTimeContext();
         if (this.unlisten) {
             this.unlisten();
         }
     },
     methods: {
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.timeContext.on("timeSystem", this.setScaleAndPlotImagery);
+            this.timeContext.on("bounds", this.updateViewBounds);
+            this.timeContext.on("timeContext", this.setTimeContext);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off("timeSystem", this.setScaleAndPlotImagery);
+                this.timeContext.off("bounds", this.updateViewBounds);
+                this.timeContext.off("timeContext", this.setTimeContext);
+            }
+        },
         expand(index) {
             const path = this.objectPath[0];
             this.previewAction.invoke([path]);
@@ -134,14 +144,14 @@ export default {
             return clientWidth;
         },
         updateViewBounds(bounds, isTick) {
-            this.viewBounds = this.openmct.time.bounds();
+            this.viewBounds = this.timeContext.bounds();
             //Add a 50% padding to the end bounds to look ahead
             let timespan = (this.viewBounds.end - this.viewBounds.start);
             let padding = timespan / 2;
             this.viewBounds.end = this.viewBounds.end + padding;
 
             if (this.timeSystem === undefined) {
-                this.timeSystem = this.openmct.time.timeSystem();
+                this.timeSystem = this.timeContext.timeSystem();
             }
 
             this.setScaleAndPlotImagery(this.timeSystem, !isTick);
@@ -205,7 +215,7 @@ export default {
             }
 
             if (timeSystem === undefined) {
-                timeSystem = this.openmct.time.timeSystem();
+                timeSystem = this.timeContext.timeSystem();
             }
 
             if (timeSystem.isUTCBased) {
@@ -306,6 +316,10 @@ export default {
             svgElement.appendChild(textElement);
         },
         setNSAttributesForElement(element, attributes) {
+            if (!element) {
+                return;
+            }
+
             Object.keys(attributes).forEach((key) => {
                 if (key === 'url') {
                     element.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attributes[key]);
