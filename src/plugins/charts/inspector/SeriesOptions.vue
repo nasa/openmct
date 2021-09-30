@@ -27,7 +27,14 @@
               @click="expanded = !expanded"
         >
         </span>
-        <div>
+        <div :class="objectLabelCss">
+            <div class="c-object-label__type-icon"
+                 :class="[seriesCss]"
+            >
+                <span class="is-status__indicator"
+                      title="This item is missing or suspect"
+                ></span>
+            </div>
             <div class="c-object-label__name">{{ name }}</div>
         </div>
     </li>
@@ -72,6 +79,14 @@ export default {
     computed: {
         expandedCssClass() {
             return this.expanded ? 'c-disclosure-triangle--expanded' : '';
+        },
+        seriesCss() {
+            let type = this.openmct.types.get(this.domainObject.type);
+
+            return type.definition.cssClass ? `c-object-label__type-icon ${type.definition.cssClass}` : `c-object-label__type-icon`;
+        },
+        objectLabelCss() {
+            return this.status ? `c-object-label is-status--${this.status}'` : 'c-object-label';
         }
     },
     watch: {
@@ -85,11 +100,17 @@ export default {
     mounted() {
         this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColorAndName();
-        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColorAndName);
+        this.removeBarStylesListener = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColorAndName);
+        this.status = this.openmct.status.get(this.domainObject.identifier);
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
     },
     beforeDestroy() {
-        if (this.unObserve) {
-            this.unObserve();
+        if (this.removeStatusListener) {
+            this.removeStatusListener();
+        }
+
+        if (this.removeBarStylesListener) {
+            this.removeBarStylesListener();
         }
     },
     methods: {
