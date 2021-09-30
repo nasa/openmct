@@ -21,7 +21,9 @@
 -->
 <template>
 <ul>
-    <li class="c-tree__item menus-to-left">
+    <li class="c-tree__item menus-to-left"
+        :class="aliasCss"
+    >
         <span class="c-disclosure-triangle is-enabled flex-elem"
               :class="expandedCssClass"
               @click="expanded = !expanded"
@@ -72,6 +74,7 @@ export default {
             currentColor: undefined,
             name: '',
             type: '',
+            isAlias: false,
             expanded: false
         };
     },
@@ -86,6 +89,14 @@ export default {
             }
 
             return 'c-object-label__type-icon';
+        },
+        aliasCss() {
+            let cssClass = '';
+            if (this.isAlias) {
+                cssClass = 'is-alias';
+            }
+
+            return cssClass;
         }
     },
     watch: {
@@ -114,13 +125,15 @@ export default {
                 this.domainObject.configuration.barStyles.series[this.key] = {
                     color,
                     type: '',
-                    name: ''
+                    name: '',
+                    isAlias: false
                 };
             }
 
             this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
             this.name = this.domainObject.configuration.barStyles.series[this.key].name;
             this.type = this.domainObject.configuration.barStyles.series[this.key].type;
+            this.isAlias = this.domainObject.configuration.barStyles.series[this.key].isAlias;
 
             let colorHexString = this.domainObject.configuration.barStyles.series[this.key].color;
             const colorObject = Color.fromHexString(colorHexString);

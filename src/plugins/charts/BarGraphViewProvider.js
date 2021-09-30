@@ -54,7 +54,8 @@ export default function BarGraphViewProvider(openmct) {
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            domainObject,
+                            path: objectPath
                         },
                         data() {
                             return {

@@ -37,7 +37,7 @@ export default {
     components: {
         BarGraph
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     data() {
         this.telemetryObjects = {};
         this.telemetryObjectFormats = {};
@@ -85,37 +85,30 @@ export default {
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
             const telemetryName = telemetryObject.name;
             const telemetryType = telemetryObject.type;
+            const telemetryObjectPath = [telemetryObject, ...this.path];
+            const telemetryIsAlias = this.openmct.objects.isObjectPathToALink(telemetryObject, telemetryObjectPath);
 
-            // if the existing telemetry name is absent, or different, mutate the object
-            let existingTelemetryName;
-            if (this.domainObject.configuration.barStyles.series[key]) {
-                existingTelemetryName = this.domainObject.configuration.barStyles.series[key].name;
-            }
-
-            if (existingTelemetryName !== telemetryName) {
-                this.openmct.objects.mutate(
-                    this.domainObject,
-                    `configuration.barStyles.series[${key}].name`,
-                    telemetryName
-                );
-            }
-
-            // if the existing telemetry name is absent, or different, mutate the object
-            let existingTelemetryType;
-            if (this.domainObject.configuration.barStyles.series[key]) {
-                existingTelemetryType = this.domainObject.configuration.barStyles.series[key].type;
-            }
-
-            if (existingTelemetryType !== telemetryType) {
-                this.openmct.objects.mutate(
-                    this.domainObject,
-                    `configuration.barStyles.series[${key}].type`,
-                    telemetryType
-                );
-            }
+            this.addAndMutateStyleConfig(key, 'name', telemetryName);
+            this.addAndMutateStyleConfig(key, 'type', telemetryType);
+            this.addAndMutateStyleConfig(key, 'isAlias', telemetryIsAlias);
 
             this.requestDataFor(telemetryObject);
             this.subscribeToObject(telemetryObject);
+        },
+        addAndMutateStyleConfig(key, propertyName, newProperty) {
+            // if the existing property is absent, or different, mutate the object
+            let existingTelemetryProperty;
+            if (this.domainObject.configuration.barStyles.series[key]) {
+                existingTelemetryProperty = this.domainObject.configuration.barStyles.series[key][propertyName];
+            }
+
+            if (existingTelemetryProperty !== newProperty) {
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    `configuration.barStyles.series[${key}].${propertyName}`,
+                    newProperty
+                );
+            }
         },
         addTrace(trace, key) {
             if (!this.trace.length) {
