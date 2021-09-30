@@ -27,7 +27,8 @@
               @click="expanded = !expanded"
         >
         </span>
-        <div :class="objectLabelCss">
+
+        <div class="c-object-label">
             <div class="c-object-label__type-icon"
                  :class="[seriesCss]"
             >
@@ -73,6 +74,7 @@ export default {
         return {
             currentColor: undefined,
             name: '',
+            type: '',
             expanded: false
         };
     },
@@ -81,12 +83,12 @@ export default {
             return this.expanded ? 'c-disclosure-triangle--expanded' : '';
         },
         seriesCss() {
-            let type = this.openmct.types.get(this.domainObject.type);
+            const type = this.openmct.types.get(this.type);
+            if (type && type.definition && type.definition.cssClass) {
+                return `c-object-label__type-icon ${type.definition.cssClass}`;
+            }
 
-            return type.definition.cssClass ? `c-object-label__type-icon ${type.definition.cssClass}` : `c-object-label__type-icon`;
-        },
-        objectLabelCss() {
-            return this.status ? `c-object-label is-status--${this.status}'` : 'c-object-label';
+            return 'c-object-label__type-icon';
         }
     },
     watch: {
@@ -101,14 +103,8 @@ export default {
         this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColorAndName();
         this.removeBarStylesListener = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColorAndName);
-        this.status = this.openmct.status.get(this.domainObject.identifier);
-        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
     },
     beforeDestroy() {
-        if (this.removeStatusListener) {
-            this.removeStatusListener();
-        }
-
         if (this.removeBarStylesListener) {
             this.removeBarStylesListener();
         }
@@ -120,12 +116,14 @@ export default {
                 const color = this.colorPalette.getNextColor().asHexString();
                 this.domainObject.configuration.barStyles.series[this.key] = {
                     color,
+                    type: '',
                     name: ''
                 };
             }
 
             this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
             this.name = this.domainObject.configuration.barStyles.series[this.key].name;
+            this.type = this.domainObject.configuration.barStyles.series[this.key].type;
 
             let colorHexString = this.domainObject.configuration.barStyles.series[this.key].color;
             const colorObject = Color.fromHexString(colorHexString);

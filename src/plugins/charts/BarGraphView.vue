@@ -84,6 +84,7 @@ export default {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
             const telemetryName = telemetryObject.name;
+            const telemetryType = telemetryObject.type;
 
             // if the existing telemetry name is absent, or different, mutate the object
             let existingTelemetryName;
@@ -96,6 +97,20 @@ export default {
                     this.domainObject,
                     `configuration.barStyles.series[${key}].name`,
                     telemetryName
+                );
+            }
+
+            // if the existing telemetry name is absent, or different, mutate the object
+            let existingTelemetryType;
+            if (this.domainObject.configuration.barStyles.series[key]) {
+                existingTelemetryType = this.domainObject.configuration.barStyles.series[key].type;
+            }
+
+            if (existingTelemetryType !== telemetryType) {
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    `configuration.barStyles.series[${key}].type`,
+                    telemetryType
                 );
             }
 
