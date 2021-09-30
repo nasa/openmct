@@ -90,9 +90,9 @@ define(['EventEmitter'], function (EventEmitter) {
         provider.view = (domainObject, objectPath) => {
             const viewObject = wrappedView(domainObject, objectPath);
             const wrappedShow = viewObject.show.bind(viewObject);
-            viewObject.show = (element, isEditing) => {
+            viewObject.show = (element, isEditing, viewOptions) => {
                 viewObject.parentElement = element.parentElement;
-                wrappedShow(element, isEditing);
+                wrappedShow(element, isEditing, viewOptions);
             };
 
             return viewObject;

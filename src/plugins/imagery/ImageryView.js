@@ -10,7 +10,14 @@ export default class ImageryView {
         this.component = undefined;
     }
 
-    show(element) {
+    show(element, isEditing, viewOptions) {
+        let indexForFocusedImage;
+        if (viewOptions) {
+            indexForFocusedImage = viewOptions.indexForFocusedImage;
+        }
+
+        console.log(indexForFocusedImage);
+
         this.component = new Vue({
             el: element,
             components: {
@@ -22,7 +29,12 @@ export default class ImageryView {
                 objectPath: this.objectPath,
                 currentView: this
             },
-            template: '<imagery-view ref="ImageryContainer"></imagery-view>'
+            data() {
+                return {
+                    indexForFocusedImage
+                };
+            },
+            template: '<imagery-view :index-for-focused-image="indexForFocusedImage" ref="ImageryContainer"></imagery-view>'
 
         });
     }

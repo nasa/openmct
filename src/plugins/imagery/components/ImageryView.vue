@@ -200,6 +200,14 @@ export default {
     },
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    props: {
+        indexForFocusedImage: {
+            type: Number,
+            default() {
+                return undefined;
+            }
+        }
+    },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
         this.metadata = {};
@@ -384,7 +392,14 @@ export default {
     },
     watch: {
         imageHistorySize(newSize, oldSize) {
-            this.setFocusedImage(newSize - 1, false);
+            let imageIndex;
+            if (this.indexForFocusedImage !== undefined) {
+                imageIndex = this.initFocusedImageIndex;
+            } else {
+                imageIndex = newSize - 1;
+            }
+
+            this.setFocusedImage(imageIndex, false);
             this.scrollToRight();
         },
         focusedImageIndex() {
@@ -395,6 +410,12 @@ export default {
         }
     },
     async mounted() {
+        //We only need to use this till the user focuses an image manually
+        if (this.indexForFocusedImage !== undefined) {
+            this.initFocusedImageIndex = this.indexForFocusedImage;
+            this.isPaused = true;
+        }
+
         //listen
         this.openmct.time.on('timeSystem', this.trackDuration);
         this.openmct.time.on('clock', this.trackDuration);
@@ -622,7 +643,12 @@ export default {
             });
         },
         setFocusedImage(index, thumbnailClick = false) {
-            if (this.isPaused && !thumbnailClick) {
+            if (thumbnailClick) {
+                //We use the props till the user changes what they want to see
+                this.initFocusedImageIndex = undefined;
+            }
+
+            if (this.isPaused && !thumbnailClick && this.initFocusedImageIndex === undefined) {
                 this.nextImageIndex = index;
                 //this could happen if bounds changes
                 if (this.focusedImageIndex > this.imageHistory.length - 1) {
