@@ -593,7 +593,9 @@ export default {
                 }
             }
 
-            this.$emit('plotTickWidth', this.tickWidth);
+            const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            this.$emit('plotTickWidth', this.tickWidth, id);
         },
 
         trackMousePosition(event) {

@@ -19,40 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { BAR_GRAPH_KEY } from './BarGraphConstants';
+import BarGraphViewProvider from './BarGraphViewProvider';
+import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider';
+import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 
-/***************** PLOTLY OVERRIDES */
-.plot-container.plotly {
-    .bglayer .bg {
-        fill: $colorPlotBg !important;
-        fill-opacity: 1 !important;
-        stroke: $colorInteriorBorder;
-        stroke-width: 1 !important;
-    }
+export default function () {
+    return function install(openmct) {
+        openmct.types.addType(BAR_GRAPH_KEY, {
+            key: BAR_GRAPH_KEY,
+            name: "Bar Graph",
+            cssClass: "icon-bar-chart",
+            description: "View data as a bar graph. Can be added to Display Layouts.",
+            creatable: true,
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {
+                    barStyles: { series: {} }
+                };
+            },
+            priority: 891
+        });
 
-    .cartesianlayer {
-        .gridlayer {
-            .x,
-            .y {
-                path {
-                    opacity: $opacityPlotHash;
-                    stroke: $colorPlotHash !important;
-                }
-            }
-        }
+        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
 
-        path.xy2-y {
-            stroke: $colorPlotHash !important; // Using this instead of $colorPlotAreaBorder because that is an rgba
-            opacity: $opacityPlotHash !important;
-        }
-    }
+        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
 
-    .xtick,
-    .ytick,
-    [class^="g-"] text[class*="title"] {
-        // Matches <g class="g-*"> <text class="*title">
-        text {
-            fill: $colorPlotFg !important;
-            font-size: 12px !important;
-        }
-    }
+        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
+    };
 }
+
