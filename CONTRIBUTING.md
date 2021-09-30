@@ -317,7 +317,6 @@ checklist).
 ### Reviewer Checklist
 
 * [ ] Changes appear to address issue?
-* [ ] Changes appear not to be breaking changes?
 * [ ] Appropriate unit tests included?
 * [ ] Code style and in-line documentation are appropriate?
 * [ ] Commit messages meet standards?
