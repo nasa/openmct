@@ -119,7 +119,8 @@ export default {
         expand(index) {
             const path = this.objectPath[0];
             this.previewAction.invoke([path], {
-                indexForFocusedImage: index
+                indexForFocusedImage: index,
+                objectPath: this.objectPath
             });
         },
         observeForChanges(mutatedObject) {

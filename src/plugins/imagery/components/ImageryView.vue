@@ -57,7 +57,7 @@
         </div>
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused && !isFixed(),'stale':false }"
+             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false }"
              @click="expand"
         >
             <div class="image-wrapper"
@@ -122,7 +122,7 @@
             </div>
             <div class="h-local-controls">
                 <button
-                    v-if="!isFixed()"
+                    v-if="!isFixed"
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': isPaused}"
                     @click="paused(!isPaused, 'button')"
@@ -132,7 +132,7 @@
     </div>
     <div class="c-imagery__thumbs-wrapper"
          :class="[
-             { 'is-paused': isPaused && !isFixed() },
+             { 'is-paused': isPaused && !isFixed },
              { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
          ]"
     >
@@ -235,7 +235,8 @@ export default {
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
             lockCompass: true,
-            resizingWindow: false
+            resizingWindow: false,
+            timeContext: undefined
         };
     },
     computed: {
@@ -267,7 +268,14 @@ export default {
             return age < cutoff && !this.refreshCSS;
         },
         canTrackDuration() {
-            return this.openmct.time.clock() && this.timeSystem.isUTCBased;
+            let hasClock;
+            if (this.timeContext) {
+                hasClock = this.timeContext.clock();
+            } else {
+                hasClock = this.openmct.time.clock();
+            }
+
+            return hasClock && this.timeSystem.isUTCBased;
         },
         isNextDisabled() {
             let disabled = false;
@@ -388,6 +396,16 @@ export default {
             }
 
             return sizedImageDimensions;
+        },
+        isFixed() {
+            let clock;
+            if (this.timeContext) {
+                clock = this.timeContext.clock();
+            } else {
+                clock = this.openmct.time.clock();
+            }
+
+            return clock === undefined;
         }
     },
     watch: {
@@ -416,9 +434,8 @@ export default {
             this.isPaused = true;
         }
 
-        //listen
-        this.openmct.time.on('timeSystem', this.trackDuration);
-        this.openmct.time.on('clock', this.trackDuration);
+        this.setTimeContext = this.setTimeContext.bind(this);
+        this.setTimeContext();
 
         // related telemetry keys
         this.spacecraftPositionKeys = ['positionX', 'positionY', 'positionZ'];
@@ -454,8 +471,7 @@ export default {
 
     },
     beforeDestroy() {
-        this.openmct.time.off('timeSystem', this.trackDuration);
-        this.openmct.time.off('clock', this.trackDuration);
+        this.stopFollowingTimeContext();
 
         if (this.thumbWrapperResizeObserver) {
             this.thumbWrapperResizeObserver.disconnect();
@@ -479,8 +495,20 @@ export default {
         }
     },
     methods: {
-        isFixed() {
-            return this.openmct.time.clock() === undefined;
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            //listen
+            this.timeContext.on('timeSystem', this.trackDuration);
+            this.timeContext.on('clock', this.trackDuration);
+            this.timeContext.on("timeContext", this.setTimeContext);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off("timeSystem", this.trackDuration);
+                this.timeContext.off("clock", this.trackDuration);
+                this.timeContext.off("timeContext", this.setTimeContext);
+            }
         },
         expand() {
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
@@ -679,7 +707,7 @@ export default {
             window.clearInterval(this.durationTracker);
         },
         updateDuration() {
-            let currentTime = this.openmct.time.clock() && this.openmct.time.clock().currentValue();
+            let currentTime = this.timeContext.clock() && this.timeContext.clock().currentValue();
             this.numericDuration = currentTime - this.parsedSelectedTime;
         },
         resetAgeCSS() {
