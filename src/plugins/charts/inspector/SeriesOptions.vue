@@ -33,9 +33,9 @@
     </li>
     <ColorSwatch v-if="expanded"
                  :current-color="currentColor"
-                 title="Manually set the color for this bar graph."
-                 edit-title="Manually set the color for this bar graph"
-                 view-title="The color for this bar graph."
+                 title="Manually set the color for this bar graph series."
+                 edit-title="Manually set the color for this bar graph series"
+                 view-title="The color for this bar graph series."
                  short-label="Color"
                  class="grid-properties"
                  @colorSet="setColor"
@@ -44,7 +44,8 @@
 </template>
 
 <script>
-import ColorSwatch from '../../ColorSwatch.vue';
+import ColorSwatch from '@/ui/color/ColorSwatch.vue';
+import Color from "@/ui/color/Color";
 
 export default {
     components: {
@@ -53,6 +54,10 @@ export default {
     inject: ['openmct', 'domainObject'],
     props: {
         item: {
+            type: Object,
+            required: true
+        },
+        colorPalette: {
             type: Object,
             required: true
         }
@@ -72,15 +77,15 @@ export default {
     watch: {
         item: {
             handler() {
-                this.initColor();
+                this.initColorAndName();
             },
             deep: true
         }
     },
     mounted() {
         this.key = this.openmct.objects.makeKeyString(this.item);
-        this.initColor();
-        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles[${this.key}]`, this.initColor);
+        this.initColorAndName();
+        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColorAndName);
     },
     beforeDestroy() {
         if (this.unObserve) {
@@ -88,17 +93,29 @@ export default {
         }
     },
     methods: {
-        initColor() {
-            if (this.domainObject.configuration.barStyles && this.domainObject.configuration.barStyles[this.key]) {
-                this.currentColor = this.domainObject.configuration.barStyles[this.key].color;
-                this.name = this.domainObject.configuration.barStyles[this.key].name;
+        initColorAndName() {
+            // this is called before the plot is initialized
+            if (!this.domainObject.configuration.barStyles.series[this.key]) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.barStyles.series[this.key] = {
+                    color,
+                    name: ''
+                };
             }
+
+            this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
+            this.name = this.domainObject.configuration.barStyles.series[this.key].name;
+
+            let colorHexString = this.domainObject.configuration.barStyles.series[this.key].color;
+            const colorObject = Color.fromHexString(colorHexString);
+
+            this.colorPalette.remove(colorObject);
         },
         setColor(chosenColor) {
             this.currentColor = chosenColor.asHexString();
             this.openmct.objects.mutate(
                 this.domainObject,
-                `configuration.barStyles[${this.key}].color`,
+                `configuration.barStyles.series[${this.key}].color`,
                 this.currentColor
             );
         }

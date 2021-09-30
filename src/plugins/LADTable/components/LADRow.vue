@@ -96,11 +96,11 @@ export default {
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
-        this.valueMetadata = this
+        this.valueMetadata = this.metadata ? this
             .metadata
-            .valuesForHints(['range'])[0];
+            .valuesForHints(['range'])[0] : undefined;
 
-        this.valueKey = this.valueMetadata.key;
+        this.valueKey = this.valueMetadata ? this.valueMetadata.key : undefined;
 
         this.unsubscribe = this.openmct
             .telemetry
@@ -151,7 +151,10 @@ export default {
                     size: 1,
                     strategy: 'latest'
                 })
-                .then((array) => this.updateValues(array[array.length - 1]));
+                .then((array) => this.updateValues(array[array.length - 1]))
+                .catch((error) => {
+                    console.warn('Error fetching data', error);
+                });
         },
         updateBounds(bounds, isTick) {
             this.bounds = bounds;

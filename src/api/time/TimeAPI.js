@@ -172,7 +172,7 @@ class TimeAPI extends GlobalTimeContext {
      * @memberof module:openmct.TimeAPI#
      * @method getContextForView
      */
-    getContextForView(objectPath) {
+    getContextForView(objectPath = []) {
         let timeContext = this;
 
         objectPath.forEach(item => {

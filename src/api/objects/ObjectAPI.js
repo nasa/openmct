@@ -26,6 +26,7 @@ import RootRegistry from './RootRegistry';
 import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
+import ConflictError from './ConflictError';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -34,6 +35,7 @@ import InterceptorRegistry from './InterceptorRegistry';
  */
 
 function ObjectAPI(typeRegistry, openmct) {
+    this.openmct = openmct;
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
@@ -47,6 +49,10 @@ function ObjectAPI(typeRegistry, openmct) {
     this.interceptorRegistry = new InterceptorRegistry();
 
     this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
+
+    this.errors = {
+        Conflict: ConflictError
+    };
 }
 
 /**
@@ -181,7 +187,16 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
 
     let objectPromise = provider.get(identifier, abortSignal).then(result => {
         delete this.cache[keystring];
+
         result = this.applyGetInterceptors(identifier, result);
+
+        return result;
+    }).catch((result) => {
+        console.warn(`Failed to retrieve ${keystring}:`, result);
+
+        delete this.cache[keystring];
+
+        result = this.applyGetInterceptors(identifier);
 
         return result;
     });
@@ -285,6 +300,7 @@ ObjectAPI.prototype.isPersistable = function (idOrKeyString) {
 ObjectAPI.prototype.save = function (domainObject) {
     let provider = this.getProvider(domainObject.identifier);
     let savedResolve;
+    let savedReject;
     let result;
 
     if (!this.isPersistable(domainObject.identifier)) {
@@ -294,14 +310,18 @@ ObjectAPI.prototype.save = function (domainObject) {
     } else {
         const persistedTime = Date.now();
         if (domainObject.persisted === undefined) {
-            result = new Promise((resolve) => {
+            result = new Promise((resolve, reject) => {
                 savedResolve = resolve;
+                savedReject = reject;
             });
             domainObject.persisted = persistedTime;
-            provider.create(domainObject).then((response) => {
-                this.mutate(domainObject, 'persisted', persistedTime);
-                savedResolve(response);
-            });
+            provider.create(domainObject)
+                .then((response) => {
+                    this.mutate(domainObject, 'persisted', persistedTime);
+                    savedResolve(response);
+                }).catch((error) => {
+                    savedReject(error);
+                });
         } else {
             domainObject.persisted = persistedTime;
             this.mutate(domainObject, 'persisted', persistedTime);
