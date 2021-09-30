@@ -1,4 +1,5 @@
-import LadTableSet from './components/LadTableSet.vue';
+import TableSetView from './components/LADTableSet.vue';
+import LADSet from './LADTableSet';
 import Vue from 'vue';
 export default class LadTableSetView {
     constructor(openmct, domainObject, objectPath) {
@@ -6,26 +7,27 @@ export default class LadTableSetView {
         this.domainObject = domainObject;
         this.objectPath = objectPath;
         this.component = undefined;
+        this.tableSet = new LADSet(this.domainObject, this.openmct);
     }
 
     show(element) {
         this.component = new Vue({
             el: element,
             components: {
-                LadTableSet
+                TableSetView
             },
             provide: {
                 openmct: this.openmct,
                 objectPath: this.objectPath,
-                currentView: this
-
+                currentView: this,
+                tableSet: this.tableSet
             },
             data: () => {
                 return {
                     domainObject: this.domainObject
                 };
             },
-            template: '<lad-table-set ref="ladTableSet" :domain-object="domainObject"></lad-table-set>'
+            template: '<table-set-view ref="TableSetView" :domain-object="domainObject"></table-set-view>'
         });
     }
 
@@ -34,7 +36,7 @@ export default class LadTableSetView {
             return {};
         }
 
-        return this.component.$refs.ladTableSet.getViewContext();
+        return this.component.$refs.TableSetView.getViewContext();
     }
 
     destroy(element) {
