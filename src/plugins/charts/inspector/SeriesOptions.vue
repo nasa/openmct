@@ -32,9 +32,6 @@
             <div class="c-object-label__type-icon"
                  :class="[seriesCss]"
             >
-                <span class="is-status__indicator"
-                      title="This item is missing or suspect"
-                ></span>
             </div>
             <div class="c-object-label__name">{{ name }}</div>
         </div>
