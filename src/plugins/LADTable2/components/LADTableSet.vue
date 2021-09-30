@@ -55,7 +55,6 @@
 
 <script>
 import LadRow from './LADRow.vue';
-import LADTable from '../LADTable';
 // 1. get headers
 // 2. create needed functions in LADTableSet.js
 export default {
@@ -89,7 +88,7 @@ export default {
 
         // call this.tableSet.getHeaders for headers
         // call this.tableSet.getRows for all the rows
-
+        this.tableSet.initialize();
         // this.tableSet.on('add', this.addLadTable);
 
     },
@@ -104,12 +103,10 @@ export default {
     },
     methods: {
         addLadTable(domainObject) {
-            // let ladTable = {};
-            let ladTable = new LADTable(domainObject, this.openmct);
-            // ladTable.domainObject = domainObject;
-            // ladTable.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+            let ladTable = {};
+            ladTable.domainObject = domainObject;
+            ladTable.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             ladTable.objectPath = [domainObject, ...this.objectPath];
-            ladTable.initialize();
 
             this.$set(this.ladTelemetryObjects, ladTable.keyString, []);
             this.ladTableObjects.push(ladTable);
