@@ -27,29 +27,21 @@ export default class StyleRuleManager extends EventEmitter {
         super();
         this.openmct = openmct;
         this.callback = callback;
-        this.suppressSubscriptionOnEdit = suppressSubscriptionOnEdit;
         this.refreshData = this.refreshData.bind(this);
         this.toggleSubscription = this.toggleSubscription.bind(this);
-        this.addBoundsAndEditSubscriptions(styleConfiguration);
+        if (suppressSubscriptionOnEdit) {
+            this.openmct.editor.on('isEditing', this.toggleSubscription);
+            this.isEditing = this.openmct.editor.editing;
+        }
 
         if (styleConfiguration) {
             this.initialize(styleConfiguration);
             if (styleConfiguration.conditionSetIdentifier) {
+                this.openmct.time.on("bounds", this.refreshData);
                 this.subscribeToConditionSet();
             } else {
                 this.applyStaticStyle();
             }
-        }
-    }
-
-    addBoundsAndEditSubscriptions(styleConfiguration) {
-        if (this.suppressSubscriptionOnEdit) {
-            this.openmct.editor.on('isEditing', this.toggleSubscription);
-            this.isEditing = this.openmct.editor.isEditing();
-        }
-
-        if (styleConfiguration && styleConfiguration.conditionSetIdentifier) {
-            this.openmct.time.on("bounds", this.refreshData);
         }
     }
 
@@ -128,7 +120,6 @@ export default class StyleRuleManager extends EventEmitter {
                 //Only resubscribe if the conditionSet has changed.
                 if (isNewConditionSet) {
                     this.subscribeToConditionSet();
-                    this.addBoundsAndEditSubscriptions(styleConfiguration);
                 }
             }
         }
@@ -191,6 +182,7 @@ export default class StyleRuleManager extends EventEmitter {
 
     destroy() {
         if (this.stopProvidingTelemetry) {
+
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
         }

@@ -758,7 +758,7 @@ describe('the plugin', function () {
     });
 
     describe('The Style Rule Manager', () => {
-        it('should keep class context when responding to an edit event', async () => {
+        it('should subscribe to the conditionSet after the editor saves', async () => {
             const stylesObject = {
                 "styles": [
                     {
@@ -828,8 +828,6 @@ describe('the plugin', function () {
             const styleRuleManger = new StyleRuleManager(stylesObject, openmct, null, true);
             spyOn(styleRuleManger, 'subscribeToConditionSet');
             await openmct.editor.save();
-            // if the context was passed properly to the event handler,
-            // this.conditionSetIdentifier will not be null, and subscribeToConditionSet will be called
             expect(styleRuleManger.subscribeToConditionSet).toHaveBeenCalledTimes(1);
         });
     });
