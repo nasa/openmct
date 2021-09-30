@@ -64,7 +64,7 @@ export class TelemetryCollection extends EventEmitter {
             this._error(ERRORS.LOADED);
         }
 
-        this._timeSystem(this.openmct.time.timeSystem());
+        this._setTimeSystem(this.openmct.time.timeSystem());
         this.lastBounds = this.openmct.time.bounds();
 
         this._watchBounds();
@@ -321,7 +321,7 @@ export class TelemetryCollection extends EventEmitter {
      * Time System
      * @private
      */
-    _timeSystem(timeSystem) {
+    _setTimeSystem(timeSystem) {
         let domains = this.metadata.valuesForHints(['domain']);
         let domain = domains.find((d) => d.key === timeSystem.key);
 
@@ -337,7 +337,10 @@ export class TelemetryCollection extends EventEmitter {
         this.parseTime = (datum) => {
             return valueFormatter.parse(datum);
         };
+    }
 
+    _setTimeSystemAndFetchData(timeSystem) {
+        this._setTimeSystem(timeSystem);
         this._reset();
     }
 
@@ -374,19 +377,19 @@ export class TelemetryCollection extends EventEmitter {
     }
 
     /**
-     * adds the _timeSystem callback to the 'timeSystem' timeAPI listener
+     * adds the _setTimeSystemAndFetchData callback to the 'timeSystem' timeAPI listener
      * @private
      */
     _watchTimeSystem() {
-        this.openmct.time.on('timeSystem', this._timeSystem, this);
+        this.openmct.time.on('timeSystem', this._setTimeSystemAndFetchData, this);
     }
 
     /**
-     * removes the _timeSystem callback from the 'timeSystem' timeAPI listener
+     * removes the _setTimeSystemAndFetchData callback from the 'timeSystem' timeAPI listener
      * @private
      */
     _unwatchTimeSystem() {
-        this.openmct.time.off('timeSystem', this._timeSystem, this);
+        this.openmct.time.off('timeSystem', this._setTimeSystemAndFetchData, this);
     }
 
     /**
