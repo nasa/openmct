@@ -27,6 +27,7 @@ import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
 import ConditionManager from "@/plugins/condition/ConditionManager";
+import StyleRuleManager from "./StyleRuleManager";
 
 describe('the plugin', function () {
     let conditionSetDefinition;
@@ -753,6 +754,81 @@ describe('the plugin', function () {
             const isCanView = conditionSetView.canView(testViewObject, []);
 
             expect(isCanView).toBe(false);
+        });
+    });
+
+    describe('The Style Rule Manager', () => {
+        it('should subscribe to the conditionSet after the editor saves', async () => {
+            const stylesObject = {
+                "styles": [
+                    {
+                        "conditionId": "a8bf7d1a-c1bb-4fc7-936a-62056a51b5cd",
+                        "style": {
+                            "backgroundColor": "#38761d",
+                            "border": "",
+                            "color": "#073763",
+                            "isStyleInvisible": ""
+                        }
+                    },
+                    {
+                        "conditionId": "0558fa77-9bdc-4142-9f9a-7a28fe95182e",
+                        "style": {
+                            "backgroundColor": "#980000",
+                            "border": "",
+                            "color": "#ff9900",
+                            "isStyleInvisible": ""
+                        }
+                    }
+                ],
+                "staticStyle": {
+                    "style": {
+                        "backgroundColor": "",
+                        "border": "",
+                        "color": ""
+                    }
+                },
+                "selectedConditionId": "0558fa77-9bdc-4142-9f9a-7a28fe95182e",
+                "defaultConditionId": "0558fa77-9bdc-4142-9f9a-7a28fe95182e",
+                "conditionSetIdentifier": {
+                    "namespace": "",
+                    "key": "035c589c-d98f-429e-8b89-d76bd8d22b29"
+                }
+            };
+            openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
+            const mockTransactionService = jasmine.createSpyObj(
+                'transactionService',
+                ['commit']
+            );
+            openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata", "getValueFormatter", "request"]);
+            openmct.telemetry.isTelemetryObject.and.returnValue(true);
+            openmct.telemetry.subscribe.and.returnValue(function () {});
+            openmct.telemetry.getValueFormatter.and.returnValue({
+                parse: function (value) {
+                    return value;
+                }
+            });
+            openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
+            openmct.telemetry.request.and.returnValue(Promise.resolve([]));
+
+            mockTransactionService.commit = async () => {};
+            const mockIdentifierService = jasmine.createSpyObj(
+                'identifierService',
+                ['parse']
+            );
+            mockIdentifierService.parse.and.returnValue({
+                getSpace: () => {
+                    return '';
+                }
+            });
+
+            openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
+            openmct.$injector.get.withArgs('identifierService').and.returnValue(mockIdentifierService)
+                .withArgs('transactionService').and.returnValue(mockTransactionService);
+
+            const styleRuleManger = new StyleRuleManager(stylesObject, openmct, null, true);
+            spyOn(styleRuleManger, 'subscribeToConditionSet');
+            await openmct.editor.save();
+            expect(styleRuleManger.subscribeToConditionSet).toHaveBeenCalledTimes(1);
         });
     });
 });
