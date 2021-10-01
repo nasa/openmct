@@ -34,10 +34,8 @@ export default class LADTableSet extends EventEmitter {
 
         if (this.tableSetComposition !== undefined) {
             this.tableSetComposition.load().then((composition) => {
-                // console.log(composition);
-                composition = composition.filter(this.isLADTableObject);
                 composition.forEach(this.addLADTable.bind(this));
-                // this.tableSetComposition.on('add', this.addTelemetryObject);
+                // this.tableSetComposition.on('add', this.this.addLADTable);
                 // this.tableSetComposition.on('remove', this.removeTelemetryObject);
             });
         }
@@ -61,19 +59,17 @@ export default class LADTableSet extends EventEmitter {
     }
     addLADTable(domainObject) {
         let key = domainObject.identifier.key;
-        let ladTable = new LADTable(domainObject, this.openmct);
-        this.tables[key] = ladTable;
-        this.addTelemetryObject(ladTable);
-        this.addHeaders(ladTable);
-    }
-    addTelemetryObject(ladTable) {
-        // add telemetry objects to telemetryObjects
-        let telemetryObjects = ladTable.telemetryObjects;
-        // console.log('telemetryObjects', ladTable);
+        this.tables[key] = new LADTable(domainObject, this.openmct);
+        this.tables[key].on('loaded', () => {
+            this.addHeaders(this.tables[key]);
+        });
+        this.tables[key].initialize();
     }
     addHeaders(ladTable) {
-        let headers = ladTable.configuration.getVisibleHeaders();
-        // console.log('headers', headers);
+        // combine any new columns to this.headers
+        let headers = ladTable.headers;
+        console.log('ladTable', headers);
+        this.tables[ladTable.keyString].off('loaded');
     }
     getHeaders() {
         // return all the headers

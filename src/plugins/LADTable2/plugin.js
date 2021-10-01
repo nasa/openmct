@@ -47,6 +47,7 @@ export default function () {
             cssClass: 'icon-tabular-lad-set',
             initialize(domainObject) {
                 domainObject.composition = [];
+                domainObject.configuration = {};
             }
         });
 

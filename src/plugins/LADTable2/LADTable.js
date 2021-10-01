@@ -40,6 +40,21 @@ export default class LADTable extends TelemetryTable {
             this.addTelemetryObject(this.domainObject);
         }
     }
+    loadComposition() {
+        this.tableComposition = this.openmct.composition.get(this.domainObject);
+
+        if (this.tableComposition !== undefined) {
+            this.tableComposition.load().then((composition) => {
+
+                composition = composition.filter(this.isTelemetryObject);
+                composition.forEach(this.addTelemetryObject);
+
+                this.tableComposition.on('add', this.addTelemetryObject);
+                this.tableComposition.on('remove', this.removeTelemetryObject);
+                this.emit('loaded');
+            });
+        }
+    }
     addTelemetryObject(telemetryObject) {
         super.addTelemetryObject(telemetryObject);
         this.addDummyRowForObject(telemetryObject);
@@ -49,6 +64,7 @@ export default class LADTable extends TelemetryTable {
         let columns = this.getColumnMapForObject(objectKeyString);
         let dummyRow = new EmptyLADTableRow(columns, objectKeyString);
         this.tableRows.addOne(dummyRow);
+        this.headers = this.configuration.getVisibleHeaders();
     }
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
         return (telemetry) => {
