@@ -97,7 +97,7 @@ describe('Telemetry API', function () {
             expect(telemetryProvider.subscribe).not.toHaveBeenCalled();
             expect(unsubscribe).toEqual(jasmine.any(Function));
 
-            telemetryAPI.request(domainObject).then((response) => {
+            return telemetryAPI.request(domainObject).then((response) => {
                 expect(telemetryProvider.supportsRequest)
                     .toHaveBeenCalledWith(domainObject, jasmine.any(Object));
                 expect(telemetryProvider.request).not.toHaveBeenCalled();
