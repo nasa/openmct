@@ -526,21 +526,16 @@ describe("The Imagery View Layouts", () => {
 
         it("should show the clicked thumbnail as the preview image", (done) => {
             Vue.nextTick(() => {
-                const mouseOverEvent = createMouseEvent("mouseover");
+                const mouseDownEvent = createMouseEvent("mousedown");
                 let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
-                imageWrapper[2].dispatchEvent(mouseOverEvent);
+                imageWrapper[2].dispatchEvent(mouseDownEvent);
 
                 Vue.nextTick(() => {
-                    const hoveredEl = parent.querySelector(`.image-highlight`);
-                    const mouseDownEvent = createMouseEvent("mousedown");
-                    hoveredEl.dispatchEvent(mouseDownEvent);
-                    Vue.nextTick(() => {
-                        expect(componentView.previewAction.invoke).toHaveBeenCalledWith([componentView.objectPath[0]], {
-                            indexForFocusedImage: 2,
-                            objectPath: componentView.objectPath
-                        });
-                        done();
+                    expect(componentView.previewAction.invoke).toHaveBeenCalledWith([componentView.objectPath[0]], {
+                        indexForFocusedImage: 2,
+                        objectPath: componentView.objectPath
                     });
+                    done();
                 });
             });
         });
