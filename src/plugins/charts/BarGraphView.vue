@@ -32,6 +32,7 @@
 
 <script>
 import BarGraph from './BarGraphPlot.vue';
+import _ from 'lodash';
 
 export default {
     components: {
@@ -79,36 +80,32 @@ export default {
     },
     methods: {
         addTelemetryObject(telemetryObject) {
+            // grab information we need from the added telmetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
-            const telemetryName = telemetryObject.name;
-            const telemetryType = telemetryObject.type;
             const telemetryObjectPath = [telemetryObject, ...this.path];
             const telemetryIsAlias = this.openmct.objects.isObjectPathToALink(telemetryObject, telemetryObjectPath);
 
-            this.addAndMutateStyleConfig(key, 'name', telemetryName);
-            this.addAndMutateStyleConfig(key, 'type', telemetryType);
-            this.addAndMutateStyleConfig(key, 'isAlias', telemetryIsAlias);
+            // make an update object that's a clone of the existing styles object so we preserve existing choices
+            const stylesUpdate = _.clone(this.domainObject.configuration.barStyles.series[key]);
+            stylesUpdate.name = telemetryObject.name;
+            stylesUpdate.type = telemetryObject.type;
+            stylesUpdate.isAlias = telemetryIsAlias;
 
-            this.requestDataFor(telemetryObject);
-            this.subscribeToObject(telemetryObject);
-        },
-        addAndMutateStyleConfig(key, propertyName, newProperty) {
-            // if the existing property is absent, or different, mutate the object
-            let existingTelemetryProperty;
-            if (this.domainObject.configuration.barStyles.series[key]) {
-                existingTelemetryProperty = this.domainObject.configuration.barStyles.series[key][propertyName];
-            }
-
-            if (existingTelemetryProperty !== newProperty) {
+            // if something has changed, mutate and notify listeners
+            if (!_.isEqual(stylesUpdate, this.domainObject.configuration.barStyles.series[key])) {
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles.series[${key}].${propertyName}`,
-                    newProperty
+                    `configuration.barStyles.series[${key}]`,
+                    stylesUpdate
                 );
             }
+
+            // ask for the current telemetry data, then subcribe for changes
+            this.requestDataFor(telemetryObject);
+            this.subscribeToObject(telemetryObject);
         },
         addTrace(trace, key) {
             if (!this.trace.length) {

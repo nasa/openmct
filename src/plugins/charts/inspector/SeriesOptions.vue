@@ -31,9 +31,7 @@
         </span>
 
         <div class="c-object-label">
-            <div class="c-object-label__type-icon"
-                 :class="[seriesCss]"
-            >
+            <div :class="[seriesCss]">
             </div>
             <div class="c-object-label__name">{{ name }}</div>
         </div>
