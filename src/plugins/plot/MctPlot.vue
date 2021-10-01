@@ -35,6 +35,9 @@
                 :tick-width="tickWidth"
                 :single-series="seriesModels.length === 1"
                 :series-model="seriesModels[0]"
+                :style="{
+                    left: (plotWidth - tickWidth) + 'px'
+                }"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
         />
