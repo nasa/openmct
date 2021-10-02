@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const ONE_MINUTE = 60 * 1000;
+const ONE_SECOND = 1000;
+const ONE_MINUTE = 60 * ONE_SECOND;
 const ONE_HOUR = ONE_MINUTE * 60;
 const ONE_DAY = ONE_HOUR * 24;
 
@@ -37,6 +38,16 @@ function toDoubleDigits(num) {
     } else {
         return `0${num}`;
     }
+}
+
+export function milisecondsToDHMS(numericDuration) {
+    const ms = numericDuration || 0;
+    const d = Math.floor(normalizeAge(ms / ONE_DAY));
+    const h = Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR));
+    const m = Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE));
+    const s = Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND));
+
+    return `+ ${d > 0 ? d + "d " : ""}${h > 0 ? h + "h " : ""}${ m > 0 ? m + "m " : ""}${s > 0 ? s + "s " : ""}`;
 }
 
 export function getDuration(numericDuration) {

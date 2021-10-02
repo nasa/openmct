@@ -55,13 +55,21 @@ define([
 
     /**
      * @param {number} value The value to format.
-     * @returns {string} the formatted date(s). If multiple values were requested, then an array of
+     * @param {number} formatId The format id to format.
+     * The format ids:
+     * undefined - "YYYY-MM-DD HH:mm:ss.SSS" + "Z"
+     * 0 - "YYYY-MM-DD HH:mm:ss.SSS"
+     * 1 - "YYYY-MM-DD HH:mm:ss.SSSZ"
+     * 2 - "YYYY-MM-DD HH:mm:ss"
+     * 3 - "YYYY-MM-DD HH:mm"
+     * 4 - "YYYY-MM-DD"
+     * @returns {string} the formatted date(s) - "YYYY-MM-DD HH:mm:ss.SSS" + "Z". If multiple values were requested, then an array of
      * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
      * in the array.
      */
-    UTCTimeFormat.prototype.format = function (value) {
+    UTCTimeFormat.prototype.format = function (value, formatId) {
         if (value !== undefined) {
-            return moment.utc(value).format(DATE_FORMAT) + "Z";
+            return formatId ? moment.utc(value).format(DATE_FORMATS[formatId]) : moment.utc(value).format(DATE_FORMAT) + "Z";
         } else {
             return value;
         }
