@@ -47,7 +47,7 @@ define(
          * @param $interval Angular's $interval service
          * @param {string} space the name of the persistence space being served
          * @param {string} root the root of the path to ElasticSearch
-         * @param {stirng} path the path to domain objects within ElasticSearch
+         * @param {string} path the path to domain objects within ElasticSearch
          */
         function ElasticPersistenceProvider($http, $q, space, root, path) {
             this.spaces = [space];

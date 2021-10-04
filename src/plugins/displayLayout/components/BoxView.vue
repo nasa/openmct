@@ -43,7 +43,7 @@ import conditionalStylesMixin from '../mixins/objectStyles-mixin';
 export default {
     makeDefinition() {
         return {
-            fill: '#717171',
+            fill: '#666666',
             stroke: '',
             x: 1,
             y: 1,

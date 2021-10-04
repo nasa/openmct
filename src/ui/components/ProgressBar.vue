@@ -1,12 +1,9 @@
 <template>
 <div class="c-progress-bar">
-    <div class="c-progress-bar__holder">
-        <div
-            class="c-progress-bar__bar"
-            :class="{'--indeterminate': model.progressPerc === 'unknown'}"
-            :style="styleBarWidth"
-        ></div>
-    </div>
+    <div class="c-progress-bar__bar"
+         :class="{ '--indeterminate': model.progressPerc === undefined }"
+         :style="styleBarWidth"
+    ></div>
     <div
         v-if="model.progressText !== undefined"
         class="c-progress-bar__text"
@@ -27,7 +24,7 @@ export default {
     },
     computed: {
         styleBarWidth() {
-            return `width: ${this.model.progressPerc}%;`;
+            return (this.model.progressPerc !== undefined) ? `width: ${this.model.progressPerc}%;` : '';
         }
     }
 };

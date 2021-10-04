@@ -21,43 +21,20 @@
  *****************************************************************************/
 
 define([
-    "./src/MCTDevice",
-    "./src/AgentService",
-    "./src/DeviceClassifier"
+    "./src/AgentService"
 ], function (
-    MCTDevice,
-    AgentService,
-    DeviceClassifier
+    AgentService
 ) {
-
     return {
         name: "platform/commonUI/mobile",
         definition: {
             "extensions": {
-                "directives": [
-                    {
-                        "key": "mctDevice",
-                        "implementation": MCTDevice,
-                        "depends": [
-                            "agentService"
-                        ]
-                    }
-                ],
                 "services": [
                     {
                         "key": "agentService",
                         "implementation": AgentService,
                         "depends": [
                             "$window"
-                        ]
-                    }
-                ],
-                "runs": [
-                    {
-                        "implementation": DeviceClassifier,
-                        "depends": [
-                            "agentService",
-                            "$document"
                         ]
                     }
                 ]

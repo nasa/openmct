@@ -12,7 +12,7 @@
         ></button>
         <div
             ref="element"
-            class="c-overlay__contents"
+            class="c-overlay__contents js-notebook-snapshot-item-wrapper"
             tabindex="0"
         ></div>
         <div

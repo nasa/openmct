@@ -136,7 +136,7 @@ define([
          * @memberof module:openmct.MCT#
          * @name conductor
          */
-        this.time = new api.TimeAPI();
+        this.time = new api.TimeAPI(this);
 
         /**
          * An interface for interacting with the composition of domain objects.
@@ -287,6 +287,7 @@ define([
         this.install(this.plugins.ViewLargeAction());
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
+        this.install(this.plugins.DeviceClassifier());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

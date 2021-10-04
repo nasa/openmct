@@ -122,8 +122,10 @@ export default {
             }
         },
         drawAxis(bounds, timeSystem) {
-            this.setScale(bounds, timeSystem);
-            this.setAxis(bounds);
+            let viewBounds = Object.assign({}, bounds);
+
+            this.setScale(viewBounds, timeSystem);
+            this.setAxis(viewBounds);
             this.axisElement.call(this.xAxis);
             this.updateNowMarker();
 
