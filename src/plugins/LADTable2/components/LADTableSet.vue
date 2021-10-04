@@ -46,6 +46,7 @@
             <lad-row
                 v-for="ladRow in ladTelemetryObjects[ladTable.keyString]"
                 :key="ladRow.key"
+                :headers="headers"
                 :domain-object="ladRow.domainObject"
                 :path-to-table="ladTable.objectPath"
                 @rowContextClick="updateViewContext"

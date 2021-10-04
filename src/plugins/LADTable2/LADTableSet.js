@@ -72,10 +72,4 @@ export default class LADTableSet extends EventEmitter {
         this.emit('headers-added');
         this.tables[ladTable.keyString].off('loaded');
     }
-    getHeaders() {
-        // return all the headers
-    }
-    getTelemetryObjects() {
-        // return all the telemetry objects in an object
-    }
 }
