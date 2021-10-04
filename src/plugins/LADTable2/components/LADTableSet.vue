@@ -90,7 +90,7 @@ export default {
 
         // call this.tableSet.getHeaders for headers
         // call this.tableSet.getRows for all the rows
-        this.tableSet.on('table-added', this.updateHeaders);
+        this.tableSet.on('headers-added', this.updateHeaders);
         this.tableSet.initialize();
         // this.tableSet.on('add', this.addLadTable);
 
