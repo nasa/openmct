@@ -24,9 +24,11 @@
 <table class="c-table c-lad-table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Timestamp</th>
-            <th>Value</th>
+            <th v-for="header in headers"
+                :key="header"
+            >
+                {{ header }}
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -88,6 +90,7 @@ export default {
 
         // call this.tableSet.getHeaders for headers
         // call this.tableSet.getRows for all the rows
+        this.tableSet.on('table-added', this.updateHeaders);
         this.tableSet.initialize();
         // this.tableSet.on('add', this.addLadTable);
 
@@ -165,6 +168,9 @@ export default {
         },
         getViewContext() {
             return this.viewContext;
+        },
+        updateHeaders() {
+            this.headers = this.tableSet.headers;
         }
     }
 };

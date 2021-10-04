@@ -64,11 +64,12 @@ export default class LADTableSet extends EventEmitter {
             this.addHeaders(this.tables[key]);
         });
         this.tables[key].initialize();
+        this.emit('table-added');
     }
     addHeaders(ladTable) {
         // combine any new columns to this.headers
         let headers = ladTable.headers;
-        console.log('ladTable', headers);
+        Object.assign(this.headers, headers);
         this.tables[ladTable.keyString].off('loaded');
     }
     getHeaders() {
