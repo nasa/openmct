@@ -42,7 +42,7 @@ export default function BarGraphCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
             if ((parent.type === BAR_GRAPH_KEY)
-                && ((child.type !== 'telemetry.plot.overlay') && (hasBarGraphTelemetry(child) === false))
+                && (hasBarGraphTelemetry(child) === false)
             ) {
                 return false;
             }
