@@ -197,7 +197,7 @@ export default {
                 this.openmct.notifications.alert(data.message);
             }
 
-            if (!this.isDataInTimeRange(data)) {
+            if (!this.isDataInTimeRange(data, key)) {
                 return;
             }
 
@@ -232,9 +232,9 @@ export default {
 
             this.addTrace(trace, key);
         },
-        isDataInTimeRange(data) {
+        isDataInTimeRange(datum, key) {
             const timeSystemKey = this.openmct.time.timeSystem().key;
-            const currentTimestamp = data[timeSystemKey];
+            let currentTimestamp = this.parse(key, timeSystemKey, datum);
 
             return currentTimestamp && this.openmct.time.bounds().end >= currentTimestamp;
         },
@@ -242,6 +242,15 @@ export default {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];
 
             return formats[metadataKey].format(data);
+        },
+        parse(telemetryObjectKey, metadataKey, datum) {
+            if (!datum) {
+                return;
+            }
+
+            const formats = this.telemetryObjectFormats[telemetryObjectKey];
+
+            return formats[metadataKey].parse(datum);
         },
         requestDataFor(telemetryObject) {
             const axisMetadata = this.getAxisMetadata(telemetryObject);
