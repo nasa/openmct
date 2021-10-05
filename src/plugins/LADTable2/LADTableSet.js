@@ -13,17 +13,14 @@ export default class LADTableSet extends EventEmitter {
         // add a function to get all the telemetry objects from LAD table in LADTable.js
         this.updateFilters = this.updateFilters.bind(this);
         this.tables = {}; // key: table key, value: lad table
-        this.telemetryObjects = {}; // key: table key, value: telemetry object
         this.headers = {};
-
-        // this.initialize();
+        this.ladRows = {};// key: table key, value: lad rows array
     }
     initialize() {
         // go through each lad tables and call initialize.
         if (this.domainObject.type === 'LadTableSet') {
             this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
-            // somehow configuration is not defined
-            // this.filters = this.domainObject.configuration.filters;
+            this.filters = this.domainObject.configuration.filters;
             this.loadComposition();
         } else {
             this.addLADTable(this.domainObject);
@@ -63,7 +60,13 @@ export default class LADTableSet extends EventEmitter {
         this.tables[key].on('loaded', () => {
             this.addHeaders(this.tables[key]);
         });
+        this.tables[key].tableRows.on('add', (row) => {
+            if (!row.isDummyRow) {
+                this.updateLadRows(this.tables[key]);
+            }
+        });
         this.tables[key].initialize();
+        this.emit('table-added', this.tables[key]);
     }
     addHeaders(ladTable) {
         // combine any new columns to this.headers
@@ -71,5 +74,12 @@ export default class LADTableSet extends EventEmitter {
         Object.assign(this.headers, headers);
         this.emit('headers-added');
         this.tables[ladTable.keyString].off('loaded');
+    }
+    updateLadRows(ladTable) {
+        this.ladRows[ladTable.keyString] = ladTable.tableRows.getRows();
+        this.emit('updateLadRows', {
+            key: ladTable.keyString,
+            ladRows: this.ladRows[ladTable.keyString]
+        });
     }
 }

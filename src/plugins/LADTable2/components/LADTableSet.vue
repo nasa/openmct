@@ -44,11 +44,12 @@
                 </td>
             </tr>
             <lad-row
-                v-for="ladRow in ladTelemetryObjects[ladTable.keyString]"
-                :key="ladRow.key"
+                v-for="ladRow in ladRows[ladTable.keyString]"
+                :key="ladRow.objectKeyString"
+                :lad-row="ladRow"
+                :lad-table="ladTable"
                 :headers="headers"
-                :domain-object="ladRow.domainObject"
-                :path-to-table="ladTable.objectPath"
+                :path-to-table="getObjectPath(ladTable)"
                 @rowContextClick="updateViewContext"
             />
         </template>
@@ -58,8 +59,6 @@
 
 <script>
 import LadRow from './LADRow.vue';
-// 1. get headers
-// 2. create needed functions in LADTableSet.js
 export default {
     components: {
         LadRow
@@ -75,7 +74,7 @@ export default {
         return {
             headers: {},
             ladTableObjects: [],
-            ladTelemetryObjects: {},
+            ladRows: {},
             compositions: [],
             viewContext: {}
         };
@@ -92,6 +91,8 @@ export default {
         // call this.tableSet.getHeaders for headers
         // call this.tableSet.getRows for all the rows
         this.tableSet.on('headers-added', this.updateHeaders);
+        this.tableSet.on('table-added', this.addLadTable);
+        this.tableSet.on('updateLadRows', this.updateLadRows);
         this.tableSet.initialize();
         // this.tableSet.on('add', this.addLadTable);
 
@@ -106,64 +107,64 @@ export default {
         // });
     },
     methods: {
-        addLadTable(domainObject) {
-            let ladTable = {};
-            ladTable.domainObject = domainObject;
-            ladTable.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
-            ladTable.objectPath = [domainObject, ...this.objectPath];
+        // addLadTable(domainObject) {
+        //     let ladTable = {};
+        //     ladTable.domainObject = domainObject;
+        //     ladTable.keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+        //     ladTable.objectPath = [domainObject, ...this.objectPath];
 
-            this.$set(this.ladTelemetryObjects, ladTable.keyString, []);
-            this.ladTableObjects.push(ladTable);
+        //     this.$set(this.ladTelemetryObjects, ladTable.keyString, []);
+        //     this.ladTableObjects.push(ladTable);
 
-            let composition = this.openmct.composition.get(ladTable.domainObject);
-            let addCallback = this.addTelemetryObject(ladTable);
-            let removeCallback = this.removeTelemetryObject(ladTable);
+        //     let composition = this.openmct.composition.get(ladTable.domainObject);
+        //     let addCallback = this.addTelemetryObject(ladTable);
+        //     let removeCallback = this.removeTelemetryObject(ladTable);
 
-            composition.on('add', addCallback);
-            composition.on('remove', removeCallback);
-            composition.load();
+        //     composition.on('add', addCallback);
+        //     composition.on('remove', removeCallback);
+        //     composition.load();
 
-            this.compositions.push({
-                composition,
-                addCallback,
-                removeCallback
-            });
-        },
-        removeLadTable(identifier) {
-            let index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.keyString);
-            let ladTable = this.ladTableObjects[index];
+        //     this.compositions.push({
+        //         composition,
+        //         addCallback,
+        //         removeCallback
+        //     });
+        // },
+        // removeLadTable(identifier) {
+        //     let index = this.ladTableObjects.findIndex(ladTable => this.openmct.objects.makeKeyString(identifier) === ladTable.keyString);
+        //     let ladTable = this.ladTableObjects[index];
 
-            this.$delete(this.ladTelemetryObjects, ladTable.keyString);
-            this.ladTableObjects.splice(index, 1);
-        },
-        reorderLadTables(reorderPlan) {
-            let oldComposition = this.ladTableObjects.slice();
-            reorderPlan.forEach(reorderEvent => {
-                this.$set(this.ladTableObjects, reorderEvent.newIndex, oldComposition[reorderEvent.oldIndex]);
-            });
-        },
-        addTelemetryObject(ladTable) {
-            return (domainObject) => {
-                let telemetryObject = {};
-                telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
-                telemetryObject.domainObject = domainObject;
+        //     this.$delete(this.ladTelemetryObjects, ladTable.keyString);
+        //     this.ladTableObjects.splice(index, 1);
+        // },
+        // reorderLadTables(reorderPlan) {
+        //     let oldComposition = this.ladTableObjects.slice();
+        //     reorderPlan.forEach(reorderEvent => {
+        //         this.$set(this.ladTableObjects, reorderEvent.newIndex, oldComposition[reorderEvent.oldIndex]);
+        //     });
+        // },
+        // addTelemetryObject(ladTable) {
+        //     return (domainObject) => {
+        //         let telemetryObject = {};
+        //         telemetryObject.key = this.openmct.objects.makeKeyString(domainObject.identifier);
+        //         telemetryObject.domainObject = domainObject;
 
-                let telemetryObjects = this.ladTelemetryObjects[ladTable.keyString];
-                telemetryObjects.push(telemetryObject);
+        //         let telemetryObjects = this.ladTelemetryObjects[ladTable.keyString];
+        //         telemetryObjects.push(telemetryObject);
 
-                this.$set(this.ladTelemetryObjects, ladTable.keyString, telemetryObjects);
-            };
-        },
-        removeTelemetryObject(ladTable) {
-            return (identifier) => {
-                let telemetryObjects = this.ladTelemetryObjects[ladTable.keyString];
-                let index = telemetryObjects.findIndex(telemetryObject => this.openmct.objects.makeKeyString(identifier) === telemetryObject.key);
+        //         this.$set(this.ladTelemetryObjects, ladTable.keyString, telemetryObjects);
+        //     };
+        // },
+        // removeTelemetryObject(ladTable) {
+        //     return (identifier) => {
+        //         let telemetryObjects = this.ladTelemetryObjects[ladTable.keyString];
+        //         let index = telemetryObjects.findIndex(telemetryObject => this.openmct.objects.makeKeyString(identifier) === telemetryObject.key);
 
-                telemetryObjects.splice(index, 1);
+        //         telemetryObjects.splice(index, 1);
 
-                this.$set(this.ladTelemetryObjects, ladTable.keyString, telemetryObjects);
-            };
-        },
+        //         this.$set(this.ladTelemetryObjects, ladTable.keyString, telemetryObjects);
+        //     };
+        // },
         updateViewContext(rowContext) {
             this.viewContext.row = rowContext;
         },
@@ -172,6 +173,18 @@ export default {
         },
         updateHeaders() {
             this.headers = this.tableSet.headers;
+        },
+        getObjectPath(ladTable) {
+            return [ladTable.domainObject, ...this.objectPath];
+        },
+        addLadTable(ladTable) {
+            this.ladTableObjects.push(ladTable);
+        },
+        updateLadRows(ladObject) {
+            let key = ladObject.key;
+            let ladRows = ladObject.ladRows;
+            this.ladRows[key] = ladRows;
+            console.log(this.ladRows);
         }
     }
 };
