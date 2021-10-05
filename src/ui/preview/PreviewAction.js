@@ -44,7 +44,7 @@ export default class PreviewAction {
         }
     }
 
-    invoke(objectPath) {
+    invoke(objectPath, viewOptions) {
         let preview = new Vue({
             components: {
                 Preview
@@ -53,7 +53,12 @@ export default class PreviewAction {
                 openmct: this._openmct,
                 objectPath: objectPath
             },
-            template: '<Preview></Preview>'
+            data() {
+                return {
+                    viewOptions
+                };
+            },
+            template: '<Preview :view-options="viewOptions"></Preview>'
         });
         preview.$mount();
 
