@@ -94,6 +94,7 @@ export default class FormsAPI {
      * @param {Array<Section>} formStructure a form structure, array of section
      * @param {Object} options
      *      @property {module:openmct.DomainObject} domainObject object to be used by form
+     *      @property {HTMLElement} element Parent Element to render a Form
      *      @property {module:openmct.DomainObject} parentDomainObject parent object to be used by form
      *      @property {function} onChange a callback function when any changes detected
      *      @property {function} onSave a callback function when form is submitted
@@ -101,6 +102,7 @@ export default class FormsAPI {
      */
     showForm(formStructure, {
         domainObject,
+        element,
         parentDomainObject = {},
         onChange,
         onSave,
@@ -127,11 +129,16 @@ export default class FormsAPI {
             template: '<FormProperties :model="formStructure" @onChange="onChange" @onDismiss="onDismiss" @onSave="onSave"></FormProperties>'
         }).$mount();
 
-        overlay = this.openmct.overlays.overlay({
-            element: vm.$el,
-            size: 'small',
-            onDestroy: () => vm.$destroy()
-        });
+        const formElement = vm.$el;
+        if (element) {
+            element.append(formElement);
+        } else {
+            overlay = this.openmct.overlays.overlay({
+                element: vm.$el,
+                size: 'small',
+                onDestroy: () => vm.$destroy()
+            });
+        }
 
         function onFormPropertyChange(data) {
             if (onChange) {
@@ -155,7 +162,11 @@ export default class FormsAPI {
         }
 
         function onFormDismiss() {
-            overlay.dismiss();
+            if (element) {
+                formElement.remove();
+            } else {
+                overlay.dismiss();
+            }
 
             if (onDismiss) {
                 onDismiss();
