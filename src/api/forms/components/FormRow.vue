@@ -38,13 +38,7 @@
     <div v-if="row.control"
          class="c-form-row__controls"
     >
-        <component
-            :is="rowComponent"
-            :key="row.key"
-            :ref="`form-control-${row.key}`"
-            :model="row"
-            @onChange="onChange"
-        />
+        <div ref="rowElement"></div>
     </div>
 </div>
 </template>
@@ -79,9 +73,6 @@ export default {
         };
     },
     computed: {
-        rowComponent() {
-            return this.formControl.show();
-        },
         rowClass() {
             let cssClass = this.cssClass;
 
@@ -109,6 +100,8 @@ export default {
 
             this.onChange(data, false);
         }
+
+        this.formControl.show(this.$refs.rowElement, this.row, this.onChange);
     },
     destroyed() {
         const destroy = this.formControl.destroy;

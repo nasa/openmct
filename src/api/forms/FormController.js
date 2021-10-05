@@ -8,6 +8,8 @@ import SelectField from './components/controls/SelectField.vue';
 import TextAreaField from './components/controls/TextAreaField.vue';
 import TextField from './components/controls/TextField.vue';
 
+import Vue from 'vue';
+
 export const DEFAULT_CONTROLS_MAP = {
     'autocomplete': AutoCompleteField,
     'composite': ClockDisplayFormatField,
@@ -62,9 +64,28 @@ export default class FormControl {
      * @private
      */
     _getControlViewProvider(control) {
+        const self = this;
+
         return {
-            show() {
-                return DEFAULT_CONTROLS_MAP[control];
+            show(element, model, onChange) {
+                const rowComponent = new Vue({
+                    el: element,
+                    components: {
+                        MyComponent: DEFAULT_CONTROLS_MAP[control]
+                    },
+                    provide: {
+                        openmct: self.openmct
+                    },
+                    data() {
+                        return {
+                            model,
+                            onChange
+                        };
+                    },
+                    template: `<MyComponent :model="model" @onChange="onChange"></MyComponent>`
+                });
+
+                return rowComponent;
             }
         };
     }

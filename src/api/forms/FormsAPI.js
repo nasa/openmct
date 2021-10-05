@@ -34,9 +34,11 @@ export default class FormsAPI {
     /**
      * Control View Provider definition for a form control
      * @typedef ControlViewProvider
-        * @property {function} show a function which returns a vue component to be rendered for given form control
-        *   please refer to examples in /src/api/forms/components/controls for details about component implementation.
-        *   this vue component accepts 'model' as prop and emits 'onChange' event
+        * @property {function} show a function renders view in place of given element
+        *   This function accepts element, model and onChange function
+        *   element - html element (place holder) to render a row view
+        *   model - row data for rendering name, value etc for given row type
+        *   onChange - an onChange event callback funtion to keep track of any change in value
         * @property {function} destroy a callback function when a vue component gets destroyed
     */
 
