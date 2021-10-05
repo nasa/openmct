@@ -708,7 +708,11 @@ export default {
         },
         updateDuration() {
             let currentTime = this.timeContext.clock() && this.timeContext.clock().currentValue();
-            this.numericDuration = currentTime - this.parsedSelectedTime;
+            if (currentTime === undefined) {
+                this.numericDuration = currentTime;
+            } else {
+                this.numericDuration = currentTime - this.parsedSelectedTime;
+            }
         },
         resetAgeCSS() {
             this.refreshCSS = true;
