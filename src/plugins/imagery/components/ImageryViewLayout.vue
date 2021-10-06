@@ -395,6 +395,7 @@ export default {
         this.openmct.time.on('bounds', this.boundsChange);
         this.openmct.time.on('timeSystem', this.timeSystemChange);
         this.openmct.time.on('clock', this.clockChange);
+        this.openmct.objectViews.on('clearData', this.clearData);
 
         // set
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -719,6 +720,10 @@ export default {
             this.timeFormatter = this.getFormatter(this.timeKey);
             this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
             this.trackDuration();
+        },
+        clearData(domainObjectToClear) {
+            // clear domainObject
+
         },
         clockChange(clock) {
             this.trackDuration();
