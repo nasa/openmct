@@ -231,8 +231,8 @@ export default {
             const panStart = bounds.start - percX * deltaTime;
 
             return {
-                start: panStart,
-                end: panStart + deltaTime
+                start: parseInt(panStart, 10),
+                end: parseInt(panStart + deltaTime, 10)
             };
         },
         startZoom() {
@@ -265,8 +265,8 @@ export default {
             if (this.isChangingViewBounds()) {
                 const zoomRange = this.getZoomRange();
                 zoomBounds = {
-                    start: this.scaleToBounds(zoomRange.start),
-                    end: this.scaleToBounds(zoomRange.end)
+                    start: parseInt(this.scaleToBounds(zoomRange.start), 10),
+                    end: parseInt(this.scaleToBounds(zoomRange.end), 10)
                 };
             }
 
