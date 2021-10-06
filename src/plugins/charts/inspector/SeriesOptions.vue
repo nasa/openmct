@@ -21,13 +21,18 @@
 -->
 <template>
 <ul>
-    <li class="c-tree__item menus-to-left">
+    <li class="c-tree__item menus-to-left"
+        :class="aliasCss"
+    >
         <span class="c-disclosure-triangle is-enabled flex-elem"
               :class="expandedCssClass"
               @click="expanded = !expanded"
         >
         </span>
-        <div>
+
+        <div class="c-object-label">
+            <div :class="[seriesCss]">
+            </div>
             <div class="c-object-label__name">{{ name }}</div>
         </div>
     </li>
@@ -66,12 +71,30 @@ export default {
         return {
             currentColor: undefined,
             name: '',
+            type: '',
+            isAlias: false,
             expanded: false
         };
     },
     computed: {
         expandedCssClass() {
             return this.expanded ? 'c-disclosure-triangle--expanded' : '';
+        },
+        seriesCss() {
+            const type = this.openmct.types.get(this.type);
+            if (type && type.definition && type.definition.cssClass) {
+                return `c-object-label__type-icon ${type.definition.cssClass}`;
+            }
+
+            return 'c-object-label__type-icon';
+        },
+        aliasCss() {
+            let cssClass = '';
+            if (this.isAlias) {
+                cssClass = 'is-alias';
+            }
+
+            return cssClass;
         }
     },
     watch: {
@@ -85,11 +108,11 @@ export default {
     mounted() {
         this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColorAndName();
-        this.unObserve = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColorAndName);
+        this.removeBarStylesListener = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColorAndName);
     },
     beforeDestroy() {
-        if (this.unObserve) {
-            this.unObserve();
+        if (this.removeBarStylesListener) {
+            this.removeBarStylesListener();
         }
     },
     methods: {
@@ -99,12 +122,16 @@ export default {
                 const color = this.colorPalette.getNextColor().asHexString();
                 this.domainObject.configuration.barStyles.series[this.key] = {
                     color,
-                    name: ''
+                    type: '',
+                    name: '',
+                    isAlias: false
                 };
             }
 
             this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
             this.name = this.domainObject.configuration.barStyles.series[this.key].name;
+            this.type = this.domainObject.configuration.barStyles.series[this.key].type;
+            this.isAlias = this.domainObject.configuration.barStyles.series[this.key].isAlias;
 
             let colorHexString = this.domainObject.configuration.barStyles.series[this.key].color;
             const colorObject = Color.fromHexString(colorHexString);

@@ -22,6 +22,7 @@
 
 import Vue from 'vue';
 import {
+    createMouseEvent,
     createOpenMct,
     resetApplicationState,
     simulateKeyEvent
@@ -29,23 +30,9 @@ import {
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
-const FIVE_MINUTES = ONE_MINUTE * 5;
 const MAIN_IMAGE_CLASS = '.js-imageryView-image';
 const NEW_IMAGE_CLASS = '.c-imagery__age.c-imagery--new';
 const REFRESH_CSS_MS = 500;
-// const TOLERANCE = 0.50;
-
-// function comparisonFunction(valueOne, valueTwo) {
-//     let larger = valueOne;
-//     let smaller = valueTwo;
-//
-//     if (larger < smaller) {
-//         larger = valueTwo;
-//         smaller = valueOne;
-//     }
-//
-//     return (larger - smaller) < TOLERANCE;
-// }
 
 function getImageInfo(doc) {
     let imageElement = doc.querySelectorAll(MAIN_IMAGE_CLASS)[0];
@@ -98,7 +85,6 @@ describe("The Imagery View Layouts", () => {
     let cleanupFirst;
 
     let openmct;
-    let appHolder;
     let parent;
     let child;
     let imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
@@ -202,20 +188,13 @@ describe("The Imagery View Layouts", () => {
 
     // this setups up the app
     beforeEach((done) => {
-        appHolder = document.createElement('div');
-        appHolder.style.width = '640px';
-        appHolder.style.height = '480px';
-
         cleanupFirst = [];
 
         openmct = createOpenMct();
         openmct.time.timeSystem('utc', {
-            start: START - FIVE_MINUTES,
-            end: START + TEN_MINUTES
+            start: START - (5 * ONE_MINUTE),
+            end: START + (5 * ONE_MINUTE)
         });
-
-        // openmct.install(openmct.plugins.MyItems());
-        // openmct.install(openmct.plugins.LocalTimeSystem());
 
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
@@ -236,6 +215,7 @@ describe("The Imagery View Layouts", () => {
         child.style.height = '480px';
 
         parent.appendChild(child);
+        document.body.appendChild(parent);
 
         spyOn(window, 'ResizeObserver').and.returnValue({
             observe() {},
@@ -248,7 +228,7 @@ describe("The Imagery View Layouts", () => {
         originalRouterPath = openmct.router.path;
 
         openmct.on('start', done);
-        openmct.start(appHolder);
+        openmct.startHeadless();
     });
 
     afterEach((done) => {
@@ -261,6 +241,7 @@ describe("The Imagery View Layouts", () => {
             //Cleanup code that needs to happen before dom elements start being destroyed
             cleanupFirst.forEach(cleanup => cleanup());
             cleanupFirst = [];
+            document.body.removeChild(parent);
 
             resetApplicationState(openmct).then(done).catch(done);
         });
@@ -486,6 +467,74 @@ describe("The Imagery View Layouts", () => {
                 Vue.nextTick(() => {
                     parent.querySelector('.c-imagery__auto-scroll-resume-button').click();
                     expect(imageryView._getInstance().$refs.ImageryContainer.scrollToRight).toHaveBeenCalledWith('reset');
+                    done();
+                });
+            });
+        });
+    });
+
+    describe("imagery time strip view", () => {
+        let applicableViews;
+        let imageryViewProvider;
+        let imageryView;
+        let componentView;
+
+        beforeEach(() => {
+            openmct.time.timeSystem('utc', {
+                start: START - (5 * ONE_MINUTE),
+                end: START + (5 * ONE_MINUTE)
+            });
+
+            openmct.router.path = [{
+                identifier: {
+                    key: 'test-timestrip',
+                    namespace: ''
+                },
+                type: 'time-strip'
+            }];
+
+            applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
+                identifier: {
+                    key: 'test-timestrip',
+                    namespace: ''
+                },
+                type: 'time-strip'
+            }]);
+            imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryForTimeStripKey);
+            imageryView = imageryViewProvider.view(imageryObject, [imageryObject, {
+                identifier: {
+                    key: 'test-timestrip',
+                    namespace: ''
+                },
+                type: 'time-strip'
+            }]);
+            imageryView.show(child);
+
+            componentView = imageryView.getComponent().$children[0];
+            spyOn(componentView.previewAction, 'invoke').and.callThrough();
+
+            return Vue.nextTick();
+        });
+
+        it("on mount should show imagery within the given bounds", (done) => {
+            Vue.nextTick(() => {
+                const imageElements = parent.querySelectorAll('.c-imagery-tsv__image-wrapper');
+                expect(imageElements.length).toEqual(6);
+                done();
+            });
+        });
+
+        it("should show the clicked thumbnail as the preview image", (done) => {
+            Vue.nextTick(() => {
+                const mouseDownEvent = createMouseEvent("mousedown");
+                let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
+                imageWrapper[2].dispatchEvent(mouseDownEvent);
+
+                Vue.nextTick(() => {
+                    expect(componentView.previewAction.invoke).toHaveBeenCalledWith([componentView.objectPath[0]], {
+                        indexForFocusedImage: 2,
+                        objectPath: componentView.objectPath
+                    });
                     done();
                 });
             });
