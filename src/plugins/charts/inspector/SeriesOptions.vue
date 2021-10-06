@@ -126,6 +126,8 @@ export default {
                     name: '',
                     isAlias: false
                 };
+            } else if (!this.domainObject.configuration.barStyles.series[this.key].color) {
+                this.domainObject.configuration.barStyles.series[this.key].color = this.colorPalette.getNextColor().asHexString();
             }
 
             this.currentColor = this.domainObject.configuration.barStyles.series[this.key].color;
@@ -133,7 +135,7 @@ export default {
             this.type = this.domainObject.configuration.barStyles.series[this.key].type;
             this.isAlias = this.domainObject.configuration.barStyles.series[this.key].isAlias;
 
-            let colorHexString = this.domainObject.configuration.barStyles.series[this.key].color;
+            let colorHexString = this.currentColor;
             const colorObject = Color.fromHexString(colorHexString);
 
             this.colorPalette.remove(colorObject);
