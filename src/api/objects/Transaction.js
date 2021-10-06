@@ -54,9 +54,8 @@ export default class Transaction {
 
     _clear() {
         this.dirtyObjects = new Set();
-        // TODO:
-        // call `this.objectAPI.refresh()`
+        const domainPbject = this.objectAPI.refresh();
 
-        return Promise.resolve();
+        return Promise.resolve(domainPbject);
     }
 }
