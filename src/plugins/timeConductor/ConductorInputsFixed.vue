@@ -50,10 +50,6 @@
             @date-selected="endDateSelected"
         />
     </div>
-    <input
-        type="submit"
-        class="invisible"
-    >
 </form>
 </template>
 
