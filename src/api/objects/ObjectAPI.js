@@ -346,6 +346,13 @@ ObjectAPI.prototype.startTransaction = function () {
 };
 
 /**
+ * Clear instance of Transaction
+ */
+ObjectAPI.prototype.endTransaction = function () {
+    this.transaction = null;
+};
+
+/**
  * Add a root-level object.
  * @param {module:openmct.ObjectAPI~Identifier|function} an array of
  *        identifiers for root level objects, or a function that returns a

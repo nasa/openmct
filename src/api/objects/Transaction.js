@@ -36,16 +36,23 @@ export default class Transaction {
 
     commit() {
         const promiseArray = [];
+        const save = this.objectAPI.save.bind(this.objectAPI);
         this.dirtyObjects.forEach(object => {
-            promiseArray.push(this.objectAPI.save(object));
+            promiseArray.push(this.createDirtyObjectPromise(object, save));
         });
 
-        // TODO: clear only when all promises are resolved
-        //      else remove objects for resolved promises and keep unresolved dirtyObjects
-        //      notify user and keep edit mode on.
-        this._clear();
-
         return Promise.all(promiseArray);
+    }
+
+    createDirtyObjectPromise(object, action) {
+        return new Promise((resolve, reject) => {
+            action(object)
+                .then(resolve)
+                .catch(reject)
+                .finally(() => {
+                    this.dirtyObjects.delete(object);
+                });
+        });
     }
 
     start() {
@@ -53,9 +60,12 @@ export default class Transaction {
     }
 
     _clear() {
-        this.dirtyObjects = new Set();
-        const domainPbject = this.objectAPI.refresh();
+        const promiseArray = [];
+        const refresh = this.objectAPI.refresh.bind(this.objectAPI);
+        this.dirtyObjects.forEach(object => {
+            promiseArray.push(this.createDirtyObjectPromise(object, refresh));
+        });
 
-        return Promise.resolve(domainPbject);
+        return Promise.all(promiseArray);
     }
 }

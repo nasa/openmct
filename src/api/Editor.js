@@ -65,6 +65,8 @@ export default class Editor extends EventEmitter {
                 this.emit('isEditing', false);
             }).catch(error => {
                 throw error;
+            }).finally(() => {
+                this.openmct.objects.endTransaction();
             });
     }
 
@@ -75,8 +77,14 @@ export default class Editor extends EventEmitter {
         this.editing = false;
         this.emit('isEditing', false);
 
-        const transaction = this.openmct.objects.getActiveTransaction();
-
-        return transaction.cancel();
+        return new Promise((resolve, reject) => {
+            const transaction = this.openmct.objects.getActiveTransaction();
+            transaction.cancel()
+                .then(resolve)
+                .catch(reject)
+                .finally(() => {
+                    this.openmct.objects.endTransaction();
+                });
+        });
     }
 }
