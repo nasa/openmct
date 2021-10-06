@@ -265,8 +265,8 @@ export default {
             if (this.isChangingViewBounds()) {
                 const zoomRange = this.getZoomRange();
                 zoomBounds = {
-                    start: parseInt(this.scaleToBounds(zoomRange.start), 10),
-                    end: parseInt(this.scaleToBounds(zoomRange.end), 10)
+                    start: this.scaleToBounds(zoomRange.start),
+                    end: this.scaleToBounds(zoomRange.end)
                 };
             }
 
@@ -296,7 +296,7 @@ export default {
             const valueDelta = value - this.left;
             const offset = valueDelta / this.width * timeDelta;
 
-            return bounds.start + offset;
+            return parseInt(bounds.start + offset, 10);
         },
         isChangingViewBounds() {
             return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
