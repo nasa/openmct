@@ -31,7 +31,7 @@
             </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody :key="ladRowKey">
         <template
             v-for="ladTable in ladTableObjects"
         >
@@ -44,8 +44,8 @@
                 </td>
             </tr>
             <lad-row
-                v-for="ladRow in ladRows[ladTable.keyString]"
-                :key="ladRow.objectKeyString"
+                v-for="ladRow in ladTable.tableRows.getRows()"
+                :key="ladRow.keyString"
                 :lad-row="ladRow"
                 :lad-table="ladTable"
                 :headers="headers"
@@ -59,6 +59,7 @@
 
 <script>
 import LadRow from './LADRow.vue';
+
 export default {
     components: {
         LadRow
@@ -76,7 +77,8 @@ export default {
             ladTableObjects: [],
             ladRows: {},
             compositions: [],
-            viewContext: {}
+            viewContext: {},
+            ladRowKey: 0
         };
     },
     computed: {
@@ -184,7 +186,8 @@ export default {
             let key = ladObject.key;
             let ladRows = ladObject.ladRows;
             this.ladRows[key] = ladRows;
-            console.log(this.ladRows);
+            this.$set(this.ladRows, key, ladRows);
+            this.ladRowKey++;
         }
     }
 };

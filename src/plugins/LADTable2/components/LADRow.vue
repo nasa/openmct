@@ -80,6 +80,7 @@ export default {
         }
     },
     mounted() {
+        // console.log('ladRow updating');
         this.updateValues();
         // console.log(this.headers);
         // this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
