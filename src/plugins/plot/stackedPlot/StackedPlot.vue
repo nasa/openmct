@@ -192,7 +192,7 @@ export default {
                 return;
             }
 
-            this.tickWidthMap[plotId] = Math.max(width, this.tickWidthMap[plotId]);
+            this.$set(this.tickWidthMap, plotId, width);
         }
     }
 };
