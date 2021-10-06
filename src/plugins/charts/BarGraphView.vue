@@ -89,7 +89,11 @@ export default {
             const telemetryIsAlias = this.openmct.objects.isObjectPathToALink(telemetryObject, telemetryObjectPath);
 
             // make an update object that's a clone of the existing styles object so we preserve existing choices
-            const stylesUpdate = _.clone(this.domainObject.configuration.barStyles.series[key]);
+            let stylesUpdate = {};
+            if (this.domainObject.configuration.barStyles.series[key]) {
+                stylesUpdate = _.clone(this.domainObject.configuration.barStyles.series[key]);
+            }
+
             stylesUpdate.name = telemetryObject.name;
             stylesUpdate.type = telemetryObject.type;
             stylesUpdate.isAlias = telemetryIsAlias;

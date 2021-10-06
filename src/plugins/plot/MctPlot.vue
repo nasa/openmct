@@ -35,12 +35,15 @@
                 :tick-width="tickWidth"
                 :single-series="seriesModels.length === 1"
                 :series-model="seriesModels[0]"
+                :style="{
+                    left: (plotWidth - tickWidth) + 'px'
+                }"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
         />
         <div class="gl-plot-wrapper-display-area-and-x-axis"
              :style="{
-                 left: (tickWidth + 20) + 'px'
+                 left: (plotWidth + 20) + 'px'
              }"
         >
 
@@ -236,11 +239,9 @@ export default {
             } else {
                 return 'plot-legend-collapsed';
             }
-        }
-    },
-    watch: {
-        plotTickWidth(newTickWidth) {
-            this.onTickWidthChange(newTickWidth, true);
+        },
+        plotWidth() {
+            return this.plotTickWidth || this.tickWidth;
         }
     },
     mounted() {
@@ -595,7 +596,6 @@ export default {
             }
 
             const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-
             this.$emit('plotTickWidth', this.tickWidth, id);
         },
 
