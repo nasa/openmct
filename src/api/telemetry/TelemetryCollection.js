@@ -115,6 +115,7 @@ export class TelemetryCollection extends EventEmitter {
 
         this._requestHistoricalTelemetry();
     }
+
     /**
      * If a historical provider exists, then historical requests will be made
      * @private
@@ -126,20 +127,25 @@ export class TelemetryCollection extends EventEmitter {
 
         let historicalData;
 
+        this.options.onPartialResponse = this._processNewTelemetry.bind(this);
+
         try {
             this.requestAbort = new AbortController();
             this.options.signal = this.requestAbort.signal;
             historicalData = await this.historicalProvider.request(this.domainObject, this.options);
-            this.requestAbort = undefined;
         } catch (error) {
-            console.error('Error requesting telemetry data...');
-            this.requestAbort = undefined;
-            this._error(error);
+            if (error.name !== 'AbortError') {
+                console.error('Error requesting telemetry data...');
+                this._error(error);
+            }
         }
+
+        this.requestAbort = undefined;
 
         this._processNewTelemetry(historicalData);
 
     }
+
     /**
      * This uses the built in subscription function from Telemetry API
      * @private
