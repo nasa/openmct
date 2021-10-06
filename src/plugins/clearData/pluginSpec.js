@@ -20,12 +20,12 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import ClearDataActionPlugin from '../plugin.js';
-import ClearDataAction from '../ClearDataAction.js';
+import ClearDataActionPlugin from './plugin.js';
+import ClearDataAction from './ClearDataAction.js';
 import Vue from 'vue';
-import GlobalClearIndicator from "../components/GlobalClearIndicator.vue";
+import GlobalClearIndicator from "./components/GlobalClearIndicator.vue";
 
-fdescribe('When the Clear Data Plugin is installed,', () => {
+describe('When the Clear Data Plugin is installed,', () => {
     const mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']);
     const mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']);
     const mockActionsProvider = jasmine.createSpyObj('actions', ['register']);
