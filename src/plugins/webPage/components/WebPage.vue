@@ -1,16 +1,28 @@
 <template>
 <div class="l-iframe abs">
-    <iframe :src="currentDomainObject.url"></iframe>
+    <iframe :src="url"></iframe>
 </div>
 </template>
 
 <script>
+const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
+
 export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
         return {
             currentDomainObject: this.domainObject
         };
+    },
+    computed: {
+        url() {
+            let url = this.currentDomainObject.url;
+            if (url) {
+                url = sanitizeUrl(url);
+            }
+
+            return url;
+        }
     }
 };
 </script>

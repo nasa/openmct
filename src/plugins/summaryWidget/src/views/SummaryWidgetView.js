@@ -1,7 +1,9 @@
 define([
-    './summary-widget.html'
+    './summary-widget.html',
+    '@braintree/sanitize-url'
 ], function (
-    summaryWidgetTemplate
+    summaryWidgetTemplate,
+    urlSanitizeLib
 ) {
     const WIDGET_ICON_CLASS = 'c-sw__icon js-sw__icon';
 
@@ -35,8 +37,11 @@ define([
         this.icon = this.container.querySelector('#widgetIcon');
         this.label = this.container.querySelector('.js-sw__label');
 
-        if (this.domainObject.url) {
-            this.widget.setAttribute('href', this.domainObject.url);
+        let url = this.domainObject.url;
+        if (url) {
+            const sanitizeUrl = urlSanitizeLib.sanitizeUrl;
+            url = sanitizeUrl(url);
+            this.widget.setAttribute('href', url);
         } else {
             this.widget.removeAttribute('href');
         }
