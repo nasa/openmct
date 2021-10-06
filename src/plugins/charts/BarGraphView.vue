@@ -32,12 +32,13 @@
 
 <script>
 import BarGraph from './BarGraphPlot.vue';
+import _ from 'lodash';
 
 export default {
     components: {
         BarGraph
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     data() {
         this.telemetryObjects = {};
         this.telemetryObjectFormats = {};
@@ -79,26 +80,30 @@ export default {
     },
     methods: {
         addTelemetryObject(telemetryObject) {
+            // grab information we need from the added telmetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
-            const telemetryName = telemetryObject.name;
+            const telemetryObjectPath = [telemetryObject, ...this.path];
+            const telemetryIsAlias = this.openmct.objects.isObjectPathToALink(telemetryObject, telemetryObjectPath);
 
-            // if the existing telemetry name is absent, or different, mutate the object
-            let existingTelemetryName;
-            if (this.domainObject.configuration.barStyles.series[key]) {
-                existingTelemetryName = this.domainObject.configuration.barStyles.series[key].name;
-            }
+            // make an update object that's a clone of the existing styles object so we preserve existing choices
+            const stylesUpdate = _.clone(this.domainObject.configuration.barStyles.series[key]);
+            stylesUpdate.name = telemetryObject.name;
+            stylesUpdate.type = telemetryObject.type;
+            stylesUpdate.isAlias = telemetryIsAlias;
 
-            if (existingTelemetryName !== telemetryName) {
+            // if something has changed, mutate and notify listeners
+            if (!_.isEqual(stylesUpdate, this.domainObject.configuration.barStyles.series[key])) {
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles.series[${key}].name`,
-                    telemetryName
+                    `configuration.barStyles.series[${key}]`,
+                    stylesUpdate
                 );
             }
 
+            // ask for the current telemetry data, then subcribe for changes
             this.requestDataFor(telemetryObject);
             this.subscribeToObject(telemetryObject);
         },
