@@ -22,8 +22,10 @@
 
 import ClearDataActionPlugin from '../plugin.js';
 import ClearDataAction from '../ClearDataAction.js';
+import Vue from 'vue';
+import GlobalClearIndicator from "../components/GlobalClearIndicator.vue";
 
-describe('When the Clear Data Plugin is installed,', () => {
+fdescribe('When the Clear Data Plugin is installed,', () => {
     const mockObjectViews = jasmine.createSpyObj('objectViews', ['emit']);
     const mockIndicatorProvider = jasmine.createSpyObj('indicators', ['add']);
     const mockActionsProvider = jasmine.createSpyObj('actions', ['register']);
@@ -136,5 +138,25 @@ describe('When the Clear Data Plugin is installed,', () => {
         const actionApplies = action.appliesTo(mockObjectPath);
 
         expect(actionApplies).toBe(true);
+    });
+
+    it('should provide global clear data indicator', async () => {
+        const parent = document.createElement('div');
+        const child = document.createElement('div');
+        parent.appendChild(child);
+
+        const component = new Vue({
+            el: parent,
+            name: 'GlobalClear',
+            components: {
+                GlobalClearIndicator
+            },
+            provide: {
+                openmct: openmct
+            }
+        });
+
+        await Vue.nextTick();
+
     });
 });
