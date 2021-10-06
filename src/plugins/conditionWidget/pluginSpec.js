@@ -20,11 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, resetApplicationState, getMockObjects } from 'utils/testing';
 import ConditionWidgetPlugin from "./plugin";
+import Vue from 'vue';
 
 describe('the plugin', () => {
+    const CONDITION_WIDGET_KEY = 'conditionWidget';
     let openmct;
+
+    const mockObj = getMockObjects({
+        objectKeyStrings: [CONDITION_WIDGET_KEY, 'telemetry'],
+        format: 'utc'
+    });
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -36,5 +43,45 @@ describe('the plugin', () => {
 
     afterEach(() => {
         return resetApplicationState(openmct);
+    });
+
+    it("should have a view provider for condition widget objects", () => {
+        const applicableViews = openmct.objectViews.get(mockObj[CONDITION_WIDGET_KEY], []);
+
+        const conditionWidgetViewProvider = applicableViews.find(
+            (viewProvider) => viewProvider.key === CONDITION_WIDGET_KEY
+        );
+
+        expect(applicableViews.length).toEqual(1);
+        expect(conditionWidgetViewProvider).toBeDefined();
+    });
+
+    it("should render a view with a URL and label", async () => {
+        const parent = document.createElement('div');
+        const child = document.createElement('div');
+        parent.appendChild(child);
+
+        const applicableViews = openmct.objectViews.get(mockObj[CONDITION_WIDGET_KEY], []);
+
+        const conditionWidgetViewProvider = applicableViews.find(
+            (viewProvider) => viewProvider.key === CONDITION_WIDGET_KEY
+        );
+
+        const conditionWidgetView = conditionWidgetViewProvider.view(mockObj[CONDITION_WIDGET_KEY], [mockObj[CONDITION_WIDGET_KEY]]);
+        conditionWidgetView.show(child);
+
+        await Vue.nextTick();
+
+        const domainUrl = mockObj[CONDITION_WIDGET_KEY].url;
+        expect(parent.innerHTML).toContain(`<a href="${domainUrl}"`);
+
+        const conditionWidgetRender = parent.querySelector('.c-condition-widget');
+        expect(conditionWidgetRender).toBeDefined();
+        expect(conditionWidgetRender.innerHTML).toContain('<div class="c-condition-widget__label">');
+
+        const conditionWidgetLabel = conditionWidgetRender.querySelector('.c-condition-widget__label');
+        expect(conditionWidgetLabel).toBeDefined();
+        const domainLabel = mockObj[CONDITION_WIDGET_KEY].label;
+        expect(conditionWidgetLabel.textContent).toContain(domainLabel);
     });
 });
