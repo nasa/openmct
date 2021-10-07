@@ -20,22 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export default class ClearDataAction {
-    constructor(openmct, appliesToObjects) {
-        this.name = 'Clear Data for Object';
-        this.key = 'clear-data-action';
-        this.description = 'Clears current data for object, unsubscribes and resubscribes to data';
-        this.cssClass = 'icon-clear-data';
+<template>
+<li class="c-inspect-properties__row">
+    <div class="c-inspect-properties__label">
+        {{ detail.name }}
+    </div>
+    <div class="c-inspect-properties__value">
+        {{ detail.value }}
+    </div>
+</li>
+</template>
 
-        this._openmct = openmct;
-        this._appliesToObjects = appliesToObjects;
+<script>
+export default {
+    props: {
+        detail: {
+            type: Object,
+            required: true
+        }
     }
-    invoke(objectPath) {
-        this._openmct.objectViews.emit('clearData', objectPath[0]);
-    }
-    appliesTo(objectPath) {
-        let contextualDomainObject = objectPath[0];
-
-        return this._appliesToObjects.filter(type => contextualDomainObject.type === type).length;
-    }
-}
+};
+</script>

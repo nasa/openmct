@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PreviewHeader from '@/ui/preview/preview-header.vue';
+import Preview from '@/ui/preview/Preview.vue';
 
 import Vue from 'vue';
 
@@ -46,70 +46,43 @@ export default class ViewLargeAction {
             throw new Error(message);
         }
 
-        this._expand(objectPath, childElement, view);
+        this._expand(objectPath, childElement);
     }
 
     appliesTo(objectPath, view = {}) {
         const parentElement = view.parentElement;
         const element = parentElement && parentElement.firstChild;
         const viewLargeAction = element && !element.classList.contains('js-main-container')
-            && !this._isNavigatedObject(objectPath);
+            && !this.openmct.router.isNavigatedObject(objectPath);
 
         return viewLargeAction;
     }
 
-    _expand(objectPath, childElement, view) {
+    _expand(objectPath, childElement) {
         const parentElement = childElement.parentElement;
 
         this.overlay = this.openmct.overlays.overlay({
-            element: this._getOverlayElement(objectPath, childElement, view),
+            element: this._getPreview(objectPath),
             size: 'large',
+            autoHide: false,
             onDestroy() {
                 parentElement.append(childElement);
             }
         });
     }
 
-    _getOverlayElement(objectPath, childElement, view) {
-        const fragment = new DocumentFragment();
-        const header = this._getPreviewHeader(objectPath, view);
-        fragment.append(header);
-
-        const wrapper = document.createElement('div');
-        wrapper.classList.add('l-preview-window__object-view');
-        wrapper.append(childElement);
-        fragment.append(wrapper);
-
-        return fragment;
-    }
-
-    _getPreviewHeader(objectPath, view) {
-        const domainObject = objectPath[0];
-        const actionCollection = this.openmct.actions.getActionsCollection(objectPath, view);
+    _getPreview(objectPath) {
         const preview = new Vue({
             components: {
-                PreviewHeader
+                Preview
             },
             provide: {
                 openmct: this.openmct,
-                objectPath: this.objectPath
+                objectPath
             },
-            data() {
-                return {
-                    domainObject,
-                    actionCollection
-                };
-            },
-            template: '<PreviewHeader :actionCollection="actionCollection" :domainObject="domainObject" :hideViewSwitcher="true" :showNotebookMenuSwitcher="true"></PreviewHeader>'
+            template: '<Preview></Preview>'
         });
 
         return preview.$mount().$el;
-    }
-
-    _isNavigatedObject(objectPath) {
-        let targetObject = objectPath[0];
-        let navigatedObject = this.openmct.router.path[0];
-
-        return this.openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
 }

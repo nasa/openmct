@@ -138,6 +138,13 @@
             class="c-telemetry-table__drop-target"
             :style="dropTargetStyle"
         ></div>
+
+        <progress-bar
+            v-if="loading"
+            class="c-telemetry-table__progress-bar"
+            :model="progressLoad"
+        />
+
         <!-- Headers table -->
         <div
             v-show="!hideHeaders"
@@ -285,6 +292,7 @@ import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import SizingRow from './sizing-row.vue';
+import ProgressBar from "../../../ui/components/ProgressBar.vue";
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -298,7 +306,8 @@ export default {
         search,
         TableFooterIndicator,
         ToggleSwitch,
-        SizingRow
+        SizingRow,
+        ProgressBar
     },
     inject: ['openmct', 'objectPath', 'table', 'currentView'],
     props: {
@@ -353,7 +362,7 @@ export default {
             autoScroll: true,
             sortOptions: {},
             filters: {},
-            loading: false,
+            loading: true,
             scrollable: undefined,
             tableEl: undefined,
             headersHolderEl: undefined,
@@ -374,6 +383,11 @@ export default {
         };
     },
     computed: {
+        progressLoad() {
+            return {
+                progressPerc: undefined
+            };
+        },
         dropTargetStyle() {
             return {
                 top: this.$refs.headersTable.offsetTop + 'px',
