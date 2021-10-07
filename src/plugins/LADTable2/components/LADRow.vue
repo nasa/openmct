@@ -28,11 +28,11 @@
     @contextmenu.prevent="showContextMenu"
 >
     <td
-        v-for="(value, i) in values"
+        v-for="(header, i) in headerKeys"
         :key="i"
         class="js-data"
     >
-        {{ value }}
+        {{ values[header] }}
     </td>
 </tr>
 </template>
@@ -69,11 +69,14 @@ export default {
     },
     data() {
         return {
-            values: [],
+            values: {},
             valueKey: 0
         };
     },
     computed: {
+        headerKeys() {
+            return Object.keys(this.headers);
+        },
         formattedTimestamp() {
             return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
         },
@@ -120,19 +123,13 @@ export default {
     },
     methods: {
         updateValues(data) {
-            this.resetValues();
-            for (let header in this.headers) {
-                if (header) {
-                    // console.log(header, data[header]);
-                    let value = data[header] || '';
-                    this.values.push(value);
-                }
+            this.values = data;
+            if (!this.values.name) {
+                this.values.name = this.telemetryObject.domainObject.name;
             }
-
-            // console.log(this.values);
         },
         resetValues() {
-            this.values = [];
+            this.values = {};
         },
         // shouldUpdate(newTimestamp) {
         //     let newTimestampInBounds = this.inBounds(newTimestamp);
