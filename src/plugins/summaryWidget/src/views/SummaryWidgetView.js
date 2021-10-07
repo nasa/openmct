@@ -39,9 +39,7 @@ define([
 
         let url = this.domainObject.url;
         if (url) {
-            const sanitizeUrl = urlSanitizeLib.sanitizeUrl;
-            url = sanitizeUrl(url);
-            this.widget.setAttribute('href', url);
+            this.widget.setAttribute('href', urlSanitizeLib.sanitizeUrl(url));
         } else {
             this.widget.removeAttribute('href');
         }

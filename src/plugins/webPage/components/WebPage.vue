@@ -16,12 +16,7 @@ export default {
     },
     computed: {
         url() {
-            let url = this.currentDomainObject.url;
-            if (url) {
-                url = sanitizeUrl(url);
-            }
-
-            return url;
+            return sanitizeUrl(this.currentDomainObject.url);
         }
     }
 };

@@ -42,14 +42,11 @@ export default {
         };
     },
     computed: {
+        urlDefined() {
+            return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
+        },
         url() {
-            const urlDefined = this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
-            let url = urlDefined ? this.internalDomainObject.url : null;
-            if (url) {
-                url = sanitizeUrl(url);
-            }
-
-            return url;
+            return this.urlDefined ? sanitizeUrl(this.internalDomainObject.url) : null;
         }
     },
     mounted() {

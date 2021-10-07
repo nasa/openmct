@@ -48,12 +48,7 @@ export default {
             return true;
         },
         url() {
-            let url = this.domainObject.url;
-            if (url) {
-                url = sanitizeUrl(url);
-            }
-
-            return url;
+            return sanitizeUrl(this.domainObject.url);
         }
     }
 };

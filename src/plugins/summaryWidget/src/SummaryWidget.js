@@ -116,9 +116,7 @@ define([
      */
     SummaryWidget.prototype.addHyperlink = function (url, openNewTab) {
         if (url) {
-            const sanitizeUrl = urlSanitizeLib.sanitizeUrl;
-            url = sanitizeUrl(url);
-            this.widgetButton.attr('href', url);
+            this.widgetButton.attr('href', urlSanitizeLib.sanitizeUrl(url));
         } else {
             this.widgetButton.removeAttr('href');
         }
