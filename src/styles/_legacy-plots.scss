@@ -46,9 +46,6 @@ mct-plot {
 
 .c-plot,
 .gl-plot {
-    overflow: hidden;
-    min-height: $plotMinH;
-
         .s-status-taking-snapshot & {
         .c-control-bar {
             display: none;
@@ -67,9 +64,10 @@ mct-plot {
 
 .c-plot {
     @include abs($mainViewPad);
-
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    min-height: $plotMinH;
 
     .c-control-bar {
         flex: 0 0 auto;
@@ -94,6 +92,8 @@ mct-plot {
 ;
 
     &--stacked {
+        min-height: auto !important;
+
         .child-frame {
             .has-control-bar {
                 .c-control-bar {
@@ -109,10 +109,6 @@ mct-plot {
                 position: relative;
             }
             flex: 1 1 auto;
-        }
-
-        .plot-wrapper-axis-and-display-area {
-            min-height: auto !important;
         }
 
         .s-status-timeconductor-unsynced .holder-plot {
@@ -137,7 +133,7 @@ mct-plot {
     .plot-wrapper-axis-and-display-area {
         position: relative;
         flex: 1 1 auto;
-        min-height: $plotMinH;
+        //min-height: $plotMinH;
     }
 
     .gl-plot-wrapper-display-area-and-x-axis {
