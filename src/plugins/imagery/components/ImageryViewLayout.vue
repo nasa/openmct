@@ -460,6 +460,7 @@ export default {
         this.openmct.time.off('bounds', this.boundsChange);
         this.openmct.time.off('timeSystem', this.timeSystemChange);
         this.openmct.time.off('clock', this.clockChange);
+        this.openmct.objectViews.off('clearData', this.clearData);
 
         // unsubscribe from related telemetry
         if (this.relatedTelemetry.hasRelatedTelemetry) {
