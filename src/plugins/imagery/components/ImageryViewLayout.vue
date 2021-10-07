@@ -722,16 +722,26 @@ export default {
             this.trackDuration();
         },
         clearData(domainObjectToClear) {
-            // clear domainObject
+            // global clearData button is accepted therefore no truthy check on inputted param
 
-            if (!domainObjectToClear) {
-                return;
+            const clearDataForObjectSelected = Boolean(domainObjectToClear);
+            if (clearDataForObjectSelected) {
+                const idsEqual = this.openmct.objects.areIdsEqual(
+                    domainObjectToClear.identifier,
+                    this.domainObject.identifier
+                );
+                if (!idsEqual) {
+                    return;
+                }
             }
 
-            const idsEqual = this.openmct.objects.areIdsEqual(domainObjectToClear.identifier, this.domainObject.identifier);
-            if (!domainObjectToClear || idsEqual) {
-                // clear the imagery
-            }
+            // clear focus image index
+            this.focusedImageIndex = undefined;
+            // splice array to encourage garbage collection
+            this.imageHistory.splice(0, this.imageHistory.length);
+
+            // requesting history effectively clears imageHistory array
+            return this.requestHistory();
 
         },
         clockChange(clock) {
@@ -749,7 +759,6 @@ export default {
                 });
         },
         updateHistory(datum, setFocused = true) {
-           console.log('updateHistory', datum); 
             if (this.datumIsNotValid(datum)) {
                 return;
             }
