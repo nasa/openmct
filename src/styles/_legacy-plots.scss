@@ -47,7 +47,7 @@ mct-plot {
 .c-plot,
 .gl-plot {
     overflow: hidden;
-    min-height: 100px;
+    min-height: $plotMinH;
 
         .s-status-taking-snapshot & {
         .c-control-bar {
@@ -76,13 +76,22 @@ mct-plot {
         margin-bottom: $interiorMargin;
     }
 
-    .l-view-section, .c-plot--stacked-container {
+    .l-view-section {
         display: flex;
         flex: 1 1 auto;
         flex-direction: column;
         overflow-y: auto;
         overflow-x: hidden;
     }
+
+    .c-plot--stacked-container {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        min-height: $plotMinH;
+        overflow: hidden;
+    }
+;
 
     &--stacked {
         .child-frame {
@@ -100,6 +109,10 @@ mct-plot {
                 position: relative;
             }
             flex: 1 1 auto;
+        }
+
+        .plot-wrapper-axis-and-display-area {
+            min-height: auto !important;
         }
 
         .s-status-timeconductor-unsynced .holder-plot {
@@ -465,6 +478,7 @@ mct-plot {
 .gl-plot-legend,
 .c-plot-legend {
     overflow: hidden;
+    flex: 0 0 auto; // Prevents clipping for all legend placements (top, bottom, etc.)
 
     &__wrapper {
         // Holds view-control and both collapsed and expanded legends
