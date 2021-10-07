@@ -47,7 +47,8 @@ define([
                 });
 
                 let indicator = {
-                    element: component.$mount().$el
+                    element: component.$mount().$el,
+                    key: 'global-clear-indicator'
                 };
 
                 openmct.indicators.add(indicator);
