@@ -1,4 +1,5 @@
 import EventEmitter from 'EventEmitter';
+// import TelemetryTableConfiguration from '../telemetryTable/TelemetryTableConfiguration.js';
 import LADTable from './LADTable';
 
 export default class LADTableSet extends EventEmitter {
@@ -15,6 +16,7 @@ export default class LADTableSet extends EventEmitter {
         this.tables = {}; // key: table key, value: lad table
         this.headers = {};
         this.ladRows = {};// key: table key, value: lad rows array
+        this.telemetryObjects = {};
     }
     initialize() {
         // go through each lad tables and call initialize.
@@ -57,8 +59,10 @@ export default class LADTableSet extends EventEmitter {
     addLADTable(domainObject) {
         let key = domainObject.identifier.key;
         this.tables[key] = new LADTable(domainObject, this.openmct);
+
         this.tables[key].on('loaded', () => {
             this.addHeaders(this.tables[key]);
+            this.addTelemetryObjects(this.tables[key]);
         });
         this.tables[key].tableRows.on('add', (row) => {
             if (!row.isDummyRow) {
@@ -67,6 +71,22 @@ export default class LADTableSet extends EventEmitter {
         });
         this.tables[key].initialize();
         this.emit('table-added', this.tables[key]);
+    }
+    addTelemetryObjects(ladTable) {
+        let telemetryObjects = ladTable.telemetryObjects;
+        if (!this.telemetryObjects[ladTable.keyString]) {
+            this.telemetryObjects[ladTable.keyString] = [];
+        }
+
+        for (let key in telemetryObjects) {
+            if (telemetryObjects[key]) {
+                let telemetryObject = {};
+                telemetryObject.key = this.openmct.objects.makeKeyString(telemetryObjects[key].telemetryObject.identifier);
+                telemetryObject.domainObject = telemetryObjects[key].telemetryObject;
+                this.telemetryObjects[ladTable.keyString].push(telemetryObject);
+                // console.log('telemetryObject', telemetryObject);
+            }
+        }
     }
     addHeaders(ladTable) {
         // combine any new columns to this.headers

@@ -48,7 +48,7 @@
 export default {
     inject: ['openmct', 'currentView'],
     props: {
-        ladRow: {
+        telemetryObject: {
             type: Object,
             required: true
         },
@@ -80,8 +80,17 @@ export default {
         }
     },
     mounted() {
-        // console.log('ladRow updating');
-        this.updateValues();
+        // this.updateValues();
+        // this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
+        // this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+        // this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+        this.bounds = this.openmct.time.bounds();
+        console.log('telemetryObject', this.telemetryObject);
+
+        this.ladTable.tableRows.on('add', () => {
+            this.requestHistory();
+        });
+
         // console.log(this.headers);
         // this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
         // this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
@@ -125,8 +134,6 @@ export default {
                 }
             }
 
-            // console.log(this.values);
-            // console.log(this.ladRow);
         },
         resetValues() {
             this.values = [];
@@ -156,17 +163,20 @@ export default {
         //     return newTimestampInBounds
         //         && (noExistingTimestamp || newTimestampIsLatest);
         // },
-        // requestHistory() {
-        //     this.openmct
-        //         .telemetry
-        //         .request(this.domainObject, {
-        //             start: this.bounds.start,
-        //             end: this.bounds.end,
-        //             size: 1,
-        //             strategy: 'latest'
-        //         })
-        //         .then((array) => this.updateValues(array[array.length - 1]));
-        // },
+        requestHistory() {
+            this.openmct
+                .telemetry
+                .request(this.telemetryObject, {
+                    start: this.bounds.start,
+                    end: this.bounds.end,
+                    size: 1,
+                    strategy: 'latest'
+                })
+                // .then((array) => this.updateValues(array[array.length - 1]));
+                .then(array => {
+                    console.log(array);
+                });
+        },
         // updateBounds(bounds, isTick) {
         //     this.bounds = bounds;
         //     if (!isTick) {
