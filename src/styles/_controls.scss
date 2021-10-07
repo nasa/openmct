@@ -1006,6 +1006,9 @@ input[type="range"] {
         transition: $transIn;
         opacity: 1;
         pointer-events: inherit;
+
+        &[disabled] { opacity: $controlDisabledOpacity; }
+
     }
 }
 

@@ -599,8 +599,6 @@
 @mixin cArrowButtonBase($colorBg: transparent, $colorFg: $colorBtnFg, $filterHov: $filterHov) {
     // Copied from branch new-tree-refactor
 
-    flex: 0 0 auto;
-    position: relative;
     background: $colorBg;
 
     &:before {
