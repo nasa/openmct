@@ -168,9 +168,9 @@ export default {
             }
         },
         zoom(bounds) {
-            if(isNaN(bounds.start) || isNaN(bounds.end)){
+            if (isNaN(bounds.start) || isNaN(bounds.end)) {
                 this.isZooming = false;
-            }else{
+            } else {
                 this.isZooming = true;
                 this.formattedBounds.start = this.timeFormatter.format(bounds.start);
                 this.formattedBounds.end = this.timeFormatter.format(bounds.end);
