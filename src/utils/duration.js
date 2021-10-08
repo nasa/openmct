@@ -40,14 +40,20 @@ function toDoubleDigits(num) {
     }
 }
 
+function addTimeSuffix(value, suffix) {
+    return typeof value === 'number' && value > 0 ? `${value + suffix}` : '';
+}
+
 export function milisecondsToDHMS(numericDuration) {
     const ms = numericDuration || 0;
-    const d = Math.floor(normalizeAge(ms / ONE_DAY));
-    const h = Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR));
-    const m = Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE));
-    const s = Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND));
+    const dhms = [
+        addTimeSuffix(Math.floor(normalizeAge(ms / ONE_DAY)), 'd'),
+        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR)), 'h'),
+        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE)), 'm'),
+        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)), 's')
+    ].filter(Boolean).join(' ');
 
-    return `+ ${d > 0 ? d + "d " : ""}${h > 0 ? h + "h " : ""}${ m > 0 ? m + "m " : ""}${s > 0 ? s + "s " : ""}`;
+    return `${ dhms ? '+' : ''} ${dhms}`;
 }
 
 export function getDuration(numericDuration) {

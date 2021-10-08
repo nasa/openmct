@@ -54,22 +54,26 @@ define([
     }
 
     /**
+     * @param {string} formatString
+     * @returns the value of formatString if the value is a string type and exists in the DATE_FORMATS array; otherwise the DATE_FORMAT value.
+     */
+    function validateFormatString(formatString) {
+        return typeof formatString === 'string' && DATE_FORMATS.includes(formatString) ? formatString : DATE_FORMAT;
+    }
+
+    /**
      * @param {number} value The value to format.
-     * @param {number} formatId The format id to format.
-     * The format ids:
-     * undefined - "YYYY-MM-DD HH:mm:ss.SSS" + "Z"
-     * 0 - "YYYY-MM-DD HH:mm:ss.SSS"
-     * 1 - "YYYY-MM-DD HH:mm:ss.SSSZ"
-     * 2 - "YYYY-MM-DD HH:mm:ss"
-     * 3 - "YYYY-MM-DD HH:mm"
-     * 4 - "YYYY-MM-DD"
-     * @returns {string} the formatted date(s) - "YYYY-MM-DD HH:mm:ss.SSS" + "Z". If multiple values were requested, then an array of
+     * @param {string} formatString The string format to format. Default "YYYY-MM-DD HH:mm:ss.SSS" + "Z"
+     * @returns {string} the formatted date(s) according to the proper parameter of formatString or the default value of "YYYY-MM-DD HH:mm:ss.SSS" + "Z".
+     * If multiple values were requested, then an array of
      * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
      * in the array.
      */
-    UTCTimeFormat.prototype.format = function (value, formatId) {
+    UTCTimeFormat.prototype.format = function (value, formatString) {
         if (value !== undefined) {
-            return formatId ? moment.utc(value).format(DATE_FORMATS[formatId]) : moment.utc(value).format(DATE_FORMAT) + "Z";
+            const format = validateFormatString(formatString);
+
+            return moment.utc(value).format(format) + (formatString ? '' : 'Z');
         } else {
             return value;
         }

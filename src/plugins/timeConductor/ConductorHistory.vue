@@ -263,7 +263,7 @@ export default {
                 format: format
             }).formatter;
 
-            return (isNegativeOffset ? '-' : '') + formatter.format(time, 2);
+            return (isNegativeOffset ? '-' : '') + formatter.format(time, 'YYYY-MM-DD HH:mm:ss');
         },
         showHistoryMenu() {
             const elementBoundingClientRect = this.$refs.historyButton.getBoundingClientRect();
