@@ -35,7 +35,7 @@ describe('The Clear Data Plugin:', () => {
     let testViewObject;
     let selection;
 
-    beforeEach(() => {
+    beforeEach((done) => {
         openmct = createOpenMct();
 
         clearDataPlugin = new ClearDataPlugin(
@@ -78,11 +78,13 @@ describe('The Clear Data Plugin:', () => {
 
         openmct.selection.select(selection);
 
+        openmct.on('start', done);
         openmct.startHeadless();
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    afterEach(async () => {
+        openmct.router.path = null;
+        await resetApplicationState(openmct);
     });
 
     it('Installs the global clear indicator', () => {
@@ -185,5 +187,11 @@ describe('The Clear Data Plugin:', () => {
         const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
 
         expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
+    });
+
+    it('installs a global clear indicator', async () => {
+        const globalClearIndicator = openmct.indicators.indicatorObjects
+            .find(indicator => indicator.key === 'global-clear-indicator').element;
+        expect(globalClearIndicator).toBeDefined();
     });
 });
