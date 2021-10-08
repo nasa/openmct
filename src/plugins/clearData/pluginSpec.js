@@ -27,7 +27,7 @@ import { createOpenMct, resetApplicationState, createMouseEvent } from 'utils/te
 describe('The Clear Data Plugin:', () => {
     let clearDataPlugin;
 
-    describe('The action:', () => {
+    describe('The clear data action:', () => {
         let openmct;
         let selection;
         let mockObjectPath;
@@ -79,17 +79,17 @@ describe('The Clear Data Plugin:', () => {
             openmct.router.path = null;
             await resetApplicationState(openmct);
         });
-        it('Clear Data action is installed', () => {
+        it('is installed', () => {
             expect(clearDataAction).toBeDefined();
         });
 
-        it('activated on applicable objects', () => {
+        it('is applicable on applicable objects', () => {
             const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
 
             expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
         });
 
-        it('not activated on inapplicable objects', () => {
+        it('is not applicable on inapplicable objects', () => {
             testViewObject = [{
                 identifier: {
                     key: "foo-widget",
@@ -122,7 +122,7 @@ describe('The Clear Data Plugin:', () => {
             expect(gatheredActions.applicableActions['clear-data-action']).toBeUndefined();
         });
 
-        it('does not clear data if not in the selection path and not a layout', () => {
+        it('is not applicable if object not in the selection path and not a layout', () => {
             selection = [
                 {
                     context: {
@@ -145,7 +145,7 @@ describe('The Clear Data Plugin:', () => {
             expect(gatheredActions.applicableActions['clear-data-action']).toBeUndefined();
         });
 
-        it('does clear data if not in the selection path and is a layout', () => {
+        it('is applicable if object not in the selection path and is a layout', () => {
             selection = [
                 {
                     context: {
@@ -177,7 +177,7 @@ describe('The Clear Data Plugin:', () => {
             expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
         });
 
-        it('fires event upon invocation', (done) => {
+        it('fires an event upon invocation', (done) => {
             openmct.objectViews.on('clearData', (domainObject) => {
                 expect(domainObject).toEqual(testViewObject[0]);
                 done();
@@ -186,7 +186,7 @@ describe('The Clear Data Plugin:', () => {
         });
     });
 
-    describe('The indicator:', () => {
+    describe('The clear data indicator:', () => {
         let openmct;
         let appHolder;
 
@@ -204,13 +204,13 @@ describe('The Clear Data Plugin:', () => {
             openmct.start(appHolder);
         });
 
-        it('installs a global clear indicator', () => {
+        it('installs', () => {
             const globalClearIndicator = openmct.indicators.indicatorObjects
                 .find(indicator => indicator.key === 'global-clear-indicator').element;
             expect(globalClearIndicator).toBeDefined();
         });
 
-        it("renders major elements", async () => {
+        it("renders its major elements", async () => {
             await Vue.nextTick();
             const indicatorClass = appHolder.querySelector('.c-indicator');
             const iconClass = appHolder.querySelector('.icon-clear-data');
