@@ -22,7 +22,7 @@
 
 import ClearDataPlugin from './plugin.js';
 import Vue from 'vue';
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, resetApplicationState, createMouseEvent } from 'utils/testing';
 
 describe('The Clear Data Plugin:', () => {
     let clearDataPlugin;
@@ -220,6 +220,17 @@ describe('The Clear Data Plugin:', () => {
 
             expect(hasMajorElements).toBe(true);
             expect(buttonElement.innerText).toEqual('Clear Data');
+        });
+
+        it("clicking the button fires the global clear", (done) => {
+            const indicatorLabel = appHolder.querySelector('.c-indicator__label');
+            const buttonElement = indicatorLabel.querySelector('button');
+            const clickEvent = createMouseEvent('click');
+            openmct.objectViews.on('clearData', () => {
+                // when we click the button, this event should fire
+                done();
+            });
+            buttonElement.dispatchEvent(clickEvent);
         });
     });
 });
