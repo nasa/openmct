@@ -21,177 +21,205 @@
  *****************************************************************************/
 
 import ClearDataPlugin from './plugin.js';
-import GlobalClearIndicator from "./components/GlobalClearIndicator.vue";
+import Vue from 'vue';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 
 describe('The Clear Data Plugin:', () => {
     let clearDataPlugin;
-    let openmct;
-    let indicatorObject;
-    let indicatorElement;
-    let parentElement;
-    let mockObjectPath;
-    let clearDataAction;
-    let testViewObject;
-    let selection;
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
+    describe('The action:', () => {
+        let openmct;
+        let selection;
+        let mockObjectPath;
+        let clearDataAction;
+        let testViewObject;
+        beforeEach((done) => {
+            openmct = createOpenMct();
 
-        clearDataPlugin = new ClearDataPlugin(
-            ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
-            {indicator: true}
-        );
-        openmct.install(clearDataPlugin);
+            clearDataPlugin = new ClearDataPlugin(
+                ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
+                {indicator: true}
+            );
+            openmct.install(clearDataPlugin);
 
-        parentElement = document.createElement('div');
-
-        indicatorObject = openmct.indicators.indicatorObjects.find(indicator => indicator.key === 'global-clear-indicator');
-        indicatorElement = indicatorObject.element;
-
-        clearDataAction = openmct.actions.getAction('clear-data-action');
-        testViewObject = [{
-            identifier: {
-                key: "foo-table",
-                namespace: ''
-            },
-            type: "table"
-        }];
-        openmct.router.path = testViewObject;
-        mockObjectPath = [
-            {
-                name: 'Mock Table',
-                type: 'table',
+            clearDataAction = openmct.actions.getAction('clear-data-action');
+            testViewObject = [{
                 identifier: {
                     key: "foo-table",
                     namespace: ''
+                },
+                type: "table"
+            }];
+            openmct.router.path = testViewObject;
+            mockObjectPath = [
+                {
+                    name: 'Mock Table',
+                    type: 'table',
+                    identifier: {
+                        key: "foo-table",
+                        namespace: ''
+                    }
                 }
-            }
-        ];
-        selection = [
-            {
-                context: {
-                    item: mockObjectPath[0]
+            ];
+            selection = [
+                {
+                    context: {
+                        item: mockObjectPath[0]
+                    }
                 }
-            }
-        ];
+            ];
 
-        openmct.selection.select(selection);
+            openmct.selection.select(selection);
 
-        openmct.on('start', done);
-        openmct.startHeadless();
-    });
+            openmct.on('start', done);
+            openmct.startHeadless();
+        });
 
-    afterEach(async () => {
-        openmct.router.path = null;
-        await resetApplicationState(openmct);
-    });
+        afterEach(async () => {
+            openmct.router.path = null;
+            await resetApplicationState(openmct);
+        });
+        it('Clear Data action is installed', () => {
+            expect(clearDataAction).toBeDefined();
+        });
 
-    it('Installs the global clear indicator', () => {
-        expect(indicatorObject).toBeDefined();
-    });
+        it('activated on applicable objects', () => {
+            const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
 
-    it('Clear Data context menu action is installed', () => {
-        expect(clearDataAction).toBeDefined();
-    });
+            expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
+        });
 
-    it('activated on applicable objects', () => {
-        const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
-
-        expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
-    });
-
-    it('not activated on inapplicable objects', () => {
-        testViewObject = [{
-            identifier: {
-                key: "foo-widget",
-                namespace: ''
-            },
-            type: "widget"
-        }];
-        mockObjectPath = [
-            {
-                name: 'Mock Widget',
-                type: 'widget',
+        it('not activated on inapplicable objects', () => {
+            testViewObject = [{
                 identifier: {
                     key: "foo-widget",
                     namespace: ''
+                },
+                type: "widget"
+            }];
+            mockObjectPath = [
+                {
+                    name: 'Mock Widget',
+                    type: 'widget',
+                    identifier: {
+                        key: "foo-widget",
+                        namespace: ''
+                    }
                 }
-            }
-        ];
-        selection = [
-            {
-                context: {
-                    item: mockObjectPath[0]
+            ];
+            selection = [
+                {
+                    context: {
+                        item: mockObjectPath[0]
+                    }
                 }
-            }
-        ];
+            ];
 
-        openmct.selection.select(selection);
+            openmct.selection.select(selection);
 
-        const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
+            const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
 
-        expect(gatheredActions.applicableActions['clear-data-action']).toBeUndefined();
-    });
+            expect(gatheredActions.applicableActions['clear-data-action']).toBeUndefined();
+        });
 
-    it('does not clear data if not in the selection path and not a layout', () => {
-        selection = [
-            {
-                context: {
-                    item: {
-                        name: 'Some Random Widget',
-                        type: 'not-in-path-widget',
-                        identifier: {
-                            key: "something-else-widget",
-                            namespace: ''
+        it('does not clear data if not in the selection path and not a layout', () => {
+            selection = [
+                {
+                    context: {
+                        item: {
+                            name: 'Some Random Widget',
+                            type: 'not-in-path-widget',
+                            identifier: {
+                                key: "something-else-widget",
+                                namespace: ''
+                            }
                         }
                     }
                 }
-            }
-        ];
+            ];
 
-        openmct.selection.select(selection);
+            openmct.selection.select(selection);
 
-        const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
+            const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
 
-        expect(gatheredActions.applicableActions['clear-data-action']).toBeUndefined();
-    });
+            expect(gatheredActions.applicableActions['clear-data-action']).toBeUndefined();
+        });
 
-    it('does clear data if not in the selection path and is a layout', () => {
-        selection = [
-            {
-                context: {
-                    item: {
-                        name: 'Some Random Widget',
-                        type: 'not-in-path-widget',
-                        identifier: {
-                            key: "something-else-widget",
-                            namespace: ''
+        it('does clear data if not in the selection path and is a layout', () => {
+            selection = [
+                {
+                    context: {
+                        item: {
+                            name: 'Some Random Widget',
+                            type: 'not-in-path-widget',
+                            identifier: {
+                                key: "something-else-widget",
+                                namespace: ''
+                            }
                         }
                     }
                 }
-            }
-        ];
+            ];
 
-        openmct.selection.select(selection);
+            openmct.selection.select(selection);
 
-        testViewObject = [{
-            identifier: {
-                key: "foo-layout",
-                namespace: ''
-            },
-            type: "layout"
-        }];
-        openmct.router.path = testViewObject;
+            testViewObject = [{
+                identifier: {
+                    key: "foo-layout",
+                    namespace: ''
+                },
+                type: "layout"
+            }];
+            openmct.router.path = testViewObject;
 
-        const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
+            const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
 
-        expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
+            expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
+        });
+
+        it('fires event upon invocation', (done) => {
+            openmct.objectViews.on('clearData', (domainObject) => {
+                expect(domainObject).toEqual(testViewObject[0]);
+                done();
+            });
+            clearDataAction.invoke(testViewObject);
+        });
     });
 
-    it('installs a global clear indicator', async () => {
-        const globalClearIndicator = openmct.indicators.indicatorObjects
-            .find(indicator => indicator.key === 'global-clear-indicator').element;
-        expect(globalClearIndicator).toBeDefined();
+    describe('The indicator:', () => {
+        let openmct;
+        let appHolder;
+
+        beforeEach((done) => {
+            openmct = createOpenMct();
+
+            clearDataPlugin = new ClearDataPlugin(
+                ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
+                {indicator: true}
+            );
+            openmct.install(clearDataPlugin);
+            appHolder = document.createElement('div');
+            document.body.appendChild(appHolder);
+            openmct.on('start', done);
+            openmct.start(appHolder);
+        });
+
+        it('installs a global clear indicator', () => {
+            const globalClearIndicator = openmct.indicators.indicatorObjects
+                .find(indicator => indicator.key === 'global-clear-indicator').element;
+            expect(globalClearIndicator).toBeDefined();
+        });
+
+        it("renders major elements", async () => {
+            await Vue.nextTick();
+            const indicatorClass = appHolder.querySelector('.c-indicator');
+            const iconClass = appHolder.querySelector('.icon-clear-data');
+            const indicatorLabel = appHolder.querySelector('.c-indicator__label');
+            const buttonElement = indicatorLabel.querySelector('button');
+            const hasMajorElements = Boolean(indicatorClass && iconClass && buttonElement);
+
+            expect(hasMajorElements).toBe(true);
+            expect(buttonElement.innerText).toEqual('Clear Data');
+        });
     });
 });
