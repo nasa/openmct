@@ -44,7 +44,7 @@ function addTimeSuffix(value, suffix) {
     return typeof value === 'number' && value > 0 ? `${value + suffix}` : '';
 }
 
-export function milisecondsToDHMS(numericDuration) {
+export function millisecondsToDHMS(numericDuration) {
     const ms = numericDuration || 0;
     const dhms = [
         addTimeSuffix(Math.floor(normalizeAge(ms / ONE_DAY)), 'd'),

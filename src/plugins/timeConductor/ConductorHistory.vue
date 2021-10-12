@@ -40,7 +40,7 @@ const LOCAL_STORAGE_HISTORY_KEY_FIXED = 'tcHistory';
 const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 
-import { milisecondsToDHMS } from "utils/duration";
+import { millisecondsToDHMS } from "utils/duration";
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -142,7 +142,7 @@ export default {
                 let description = `${startTime} - ${this.formatTime(timespan.end)}`;
 
                 if (this.timeSystem.isUTCBased && !this.openmct.time.clock()) {
-                    name = `${startTime} ${milisecondsToDHMS(timespan.end - timespan.start)}`;
+                    name = `${startTime} ${millisecondsToDHMS(timespan.end - timespan.start)}`;
                 } else {
                     name = description;
                 }
