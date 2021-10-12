@@ -192,7 +192,7 @@
         openmct.install(openmct.plugins.Filters(['table', 'telemetry.plot.overlay']));
         openmct.install(openmct.plugins.ObjectMigration());
         openmct.install(openmct.plugins.ClearData(
-            ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
+            ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked', 'example.imagery'],
             {indicator: true}
         ));
         openmct.install(openmct.plugins.Clock({ enableClockIndicator: true }));
