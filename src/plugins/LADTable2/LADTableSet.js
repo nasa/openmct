@@ -60,7 +60,7 @@ export default class LADTableSet extends EventEmitter {
         let key = domainObject.identifier.key;
         this.tables[key] = new LADTable(domainObject, this.openmct);
 
-        this.tables[key].on('loaded', () => {
+        this.tables[key].once('loaded', () => {
             this.addHeaders(this.tables[key]);
             this.addTelemetryObjects(this.tables[key]);
         });
@@ -93,7 +93,6 @@ export default class LADTableSet extends EventEmitter {
         let headers = ladTable.headers;
         Object.assign(this.headers, headers);
         this.emit('headers-added');
-        this.tables[ladTable.keyString].off('loaded');
     }
     updateLadRows(ladTable) {
         this.ladRows[ladTable.keyString] = ladTable.tableRows.getRows();
