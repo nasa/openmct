@@ -144,7 +144,7 @@ export default {
             this.currentColor = chosenColor.asHexString();
             this.openmct.objects.mutate(
                 this.domainObject,
-                `configuration.barStyles.series[${this.key}].color`,
+                `configuration.barStyles.series["${this.key}"].color`,
                 this.currentColor
             );
         }
