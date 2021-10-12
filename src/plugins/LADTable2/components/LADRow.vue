@@ -23,7 +23,6 @@
 
 <template>
 <tr
-    :key="valueKey"
     class="js-lad-table__body__row"
     @contextmenu.prevent="showContextMenu"
 >
@@ -32,28 +31,17 @@
         :key="i"
         class="js-data"
     >
-        {{ values[header] }}
+        {{ parseValue(header) }}
     </td>
 </tr>
 </template>
 
 <script>
 
-// const CONTEXT_MENU_ACTIONS = [
-//     'viewDatumAction',
-//     'viewHistoricalData',
-//     'remove'
-// ];
-//  update the values based on the headers.
-// a lad table is passed here. create the rows
 export default {
     inject: ['openmct', 'currentView'],
     props: {
-        telemetryObject: {
-            type: Object,
-            required: true
-        },
-        ladTable: {
+        ladRow: {
             type: Object,
             required: true
         },
@@ -69,8 +57,6 @@ export default {
     },
     data() {
         return {
-            values: {},
-            valueKey: 0
         };
     },
     computed: {
@@ -85,88 +71,18 @@ export default {
         }
     },
     mounted() {
-        // this.metadata = this.openmct.telemetry.getMetadata(this.domainObject);
-        // this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
-        // this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-        this.bounds = this.openmct.time.bounds();
-        // console.log('telemetryObject', this.telemetryObject);
-
-        // this.ladTable.tableRows.on('add', () => {
-        //     this.requestHistory();
-        // });
-        this.openmct.time.on('timeSystem', this.updateTimeSystem);
-        this.openmct.time.on('bounds', this.updateBounds);
-
-        // this.limitEvaluator = this.openmct
-        //     .telemetry
-        //     .limitEvaluator(this.domainObject);
-
-        // this.timestampKey = this.openmct.time.timeSystem().key;
-
-        // this.valueMetadata = this
-        //     .metadata
-        //     .valuesForHints(['range']);
-
-        // this.valueKey = this.valueMetadata.key;
-
-        this.unsubscribe = this.openmct
-            .telemetry
-            .subscribe(this.telemetryObject.domainObject, this.updateValues);
-
-        this.requestHistory();
+        // this.bounds = this.openmct.time.bounds();
 
     },
     destroyed() {
-        this.unsubscribe();
-        this.openmct.time.off('timeSystem', this.updateTimeSystem);
-        this.openmct.time.off('bounds', this.updateBounds);
     },
     methods: {
-        updateValues(data) {
-            this.values = data;
-            if (!this.values.name) {
-                this.values.name = this.telemetryObject.domainObject.name;
+        parseValue(header) {
+            if (this.ladRow.datum[header] === undefined) {
+                return '--';
+            } else {
+                return this.ladRow.datum[header];
             }
-        },
-        resetValues() {
-            this.values = {};
-        },
-        // shouldUpdate(newTimestamp) {
-        //     let newTimestampInBounds = this.inBounds(newTimestamp);
-        //     let noExistingTimestamp = this.timestamp === undefined;
-        //     let newTimestampIsLatest = newTimestamp > this.timestamp;
-
-        //     return newTimestampInBounds
-        //         && (noExistingTimestamp || newTimestampIsLatest);
-        // },
-        requestHistory() {
-            this.openmct
-                .telemetry
-                .request(this.telemetryObject.domainObject, {
-                    start: this.bounds.start,
-                    end: this.bounds.end,
-                    size: 1,
-                    strategy: 'latest'
-                })
-                // .then((array) => this.updateValues(array[array.length - 1]));
-                .then(array => {
-                    // console.log(array[array.length - 1]);
-                    this.updateValues(array[array.length - 1]);
-                });
-        },
-        updateBounds(bounds, isTick) {
-            this.bounds = bounds;
-            if (!isTick) {
-                this.resetValues();
-                this.requestHistory();
-            }
-        },
-        inBounds(timestamp) {
-            return timestamp >= this.bounds.start && timestamp <= this.bounds.end;
-        },
-        updateTimeSystem(timeSystem) {
-            this.resetValues();
-            this.timestampKey = timeSystem.key;
         },
         updateViewContext() {
             this.$emit('rowContextClick', {
@@ -177,15 +93,6 @@ export default {
                 }
             });
         },
-        // showContextMenu(event) {
-        //     this.updateViewContext();
-
-        //     const actions = CONTEXT_MENU_ACTIONS.map(key => this.openmct.actions.getAction(key));
-        //     const menuItems = this.openmct.menus.actionsToMenuItems(actions, this.objectPath, this.currentView);
-        //     if (menuItems.length) {
-        //         this.openmct.menus.showMenu(event.x, event.y, menuItems);
-        //     }
-        // },
         getParsedTimestamp(timestamp) {
             if (this.timeSystemFormat()) {
                 return this.formats[this.timestampKey].parse(timestamp);

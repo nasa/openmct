@@ -31,7 +31,7 @@
             </th>
         </tr>
     </thead>
-    <tbody :key="ladRowKey">
+    <tbody >
         <template
             v-for="ladTable in ladTableObjects"
         >
@@ -44,10 +44,9 @@
                 </td>
             </tr>
             <lad-row
-                v-for="telemetryObject in tableSet.telemetryObjects[ladTable.keyString]"
-                :key="telemetryObject.keyString"
-                :telemetry-object="telemetryObject"
-                :lad-table="ladTable"
+                v-for="ladRow in ladTable.tableRows.getRows()"
+                :key="ladRow.objectKeyString"
+                :lad-row="ladRow"
                 :headers="headers"
                 :path-to-table="getObjectPath(ladTable)"
                 @rowContextClick="updateViewContext"
@@ -77,31 +76,18 @@ export default {
             ladTableObjects: [],
             ladRows: {},
             compositions: [],
-            viewContext: {},
-            ladRowKey: 0
+            viewContext: {}
         };
     },
     computed: {
-        // 1. store only the domainObject of the ladTable in LadTableSet
-        //      a. can still get the headers from this.configuration by creating it
-        //      eg: this.configuration = new TelemetryTableConfiguration(domainObject, openmct);
-        // 2. Pass only the telemetry object from LADTable to LADRow.vue
-        //      a. check loadCompoisition to get all the telemetry objects
-        // 3. in LADRow.vue call the telemetry api to get the data
-        //      a. check addTelemetryObject in telemetryTable
     },
     mounted() {
-        // this.composition = this.openmct.composition.get(this.domainObject);
-        // this.composition.on('add', this.addLadTable);
-        // this.composition.on('remove', this.removeLadTable);
-        // this.composition.on('reorder', this.reorderLadTables);
-        // this.composition.load();
 
         // call this.tableSet.getHeaders for headers
         // call this.tableSet.getRows for all the rows
         this.tableSet.on('headers-added', this.updateHeaders);
         this.tableSet.on('table-added', this.addLadTable);
-        this.tableSet.on('updateLadRows', this.updateLadRows);
+        // this.tableSet.on('updateLadRows', this.updateLadRows);
         this.tableSet.initialize();
         // this.tableSet.on('add', this.addLadTable);
 
@@ -109,7 +95,7 @@ export default {
     destroyed() {
         this.tableSet.off('headers-added', this.updateHeaders);
         this.tableSet.off('table-added', this.addLadTable);
-        this.tableSet.off('updateLadRows', this.updateLadRows);
+        // this.tableSet.off('updateLadRows', this.updateLadRows);
     },
     methods: {
         updateViewContext(rowContext) {
@@ -126,14 +112,13 @@ export default {
         },
         addLadTable(ladTable) {
             this.ladTableObjects.push(ladTable);
-        },
-        updateLadRows(ladObject) {
-            let key = ladObject.key;
-            let ladRows = ladObject.ladRows;
-            this.ladRows[key] = ladRows;
-            this.$set(this.ladRows, key, ladRows);
-            this.ladRowKey++;
         }
+        // updateLadRows(ladObject) {
+        //     let key = ladObject.key;
+        //     let ladRows = ladObject.ladRows;
+        //     this.ladRows[key] = ladRows;
+        //     this.$set(this.ladRows, key, ladRows);
+        // }
     }
 };
 </script>
