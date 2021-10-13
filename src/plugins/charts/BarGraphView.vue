@@ -102,7 +102,7 @@ export default {
             if (!_.isEqual(stylesUpdate, this.domainObject.configuration.barStyles.series[key])) {
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles.series[${key}]`,
+                    `configuration.barStyles.series["${key}"]`,
                     stylesUpdate
                 );
             }
@@ -193,6 +193,11 @@ export default {
 
             if (this.domainObject.configuration.barStyles.series[key]) {
                 delete this.domainObject.configuration.barStyles.series[key];
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    `configuration.barStyles.series["${key}"]`,
+                    undefined
+                );
             }
 
             this.removeSubscription(key);
