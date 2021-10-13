@@ -46,6 +46,24 @@
             margin-left: $interiorMargin;
         }
     }
+
+    &.is-status--draft {
+        &:after {
+            content: $glyph-icon-hourglass;
+            display: block;
+            margin-left: $interiorMargin;
+            font-family: symbolsfont;
+        }
+    }
+
+    &.is-status--current {
+        &:after {
+            content: $glyph-icon-asterisk;
+            display: block;
+            margin-left: $interiorMargin;
+            font-family: symbolsfont;
+        }
+    }
 }
 
 .c-tree .c-object-label {

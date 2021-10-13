@@ -10,6 +10,24 @@
         background: rgba($colorBodyFg, 0.2);
         color: $colorBodyFg;
         padding: $interiorMarginSm;
+
+        &.is-status--draft {
+            &:after {
+                content: $glyph-icon-hourglass;
+                display: block;
+                margin-left: $interiorMargin;
+                font-family: symbolsfont;
+            }
+        }
+
+        &.is-status--current {
+            &:after {
+                content: $glyph-icon-asterisk;
+                display: block;
+                margin-left: $interiorMargin;
+                font-family: symbolsfont;
+            }
+        }
     }
 
     [class*='--span-cols'] {

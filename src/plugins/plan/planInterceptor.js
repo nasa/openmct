@@ -20,34 +20,19 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import PlanViewProvider from './PlanViewProvider';
-import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
-import planInterceptor from "@/plugins/plan/planInterceptor";
+export default function planInterceptor(openmct, configuration) {
 
-export default function (configuration) {
-    return function install(openmct) {
-        openmct.types.addType('plan', {
-            name: 'Plan',
-            key: 'plan',
-            description: 'A plan',
-            creatable: true,
-            cssClass: 'icon-calendar',
-            form: [
-                {
-                    name: 'Upload Plan (JSON File)',
-                    key: 'selectFile',
-                    control: 'file-input',
-                    required: true,
-                    text: 'Select File...',
-                    type: 'application/json'
-                }
-            ],
-            initialize: function (domainObject) {
+    openmct.objects.addGetInterceptor({
+        appliesTo: (identifier, domainObject) => {
+            return domainObject && domainObject.type === 'plan';
+        },
+        invoke: (identifier, object) => {
+
+            if (object && configuration !== undefined && configuration.getState) {
+                openmct.status.set(identifier, configuration.getState(object));
             }
-        });
-        planInterceptor(openmct, configuration);
-        openmct.objectViews.addProvider(new PlanViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
-    };
-}
 
+            return object;
+        }
+    });
+}
