@@ -20,12 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createOpenMct, resetApplicationState} from "utils/testing";
+import {createOpenMct, resetApplicationState, createMouseEvent} from "utils/testing";
 import Vue from "vue";
 import BarGraphPlugin from "./plugin";
 import BarGraph from './BarGraphPlot.vue';
 import EventEmitter from "EventEmitter";
-import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './BarGraphConstants';
+import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY, BAR_GRAPH_INSPECTOR_KEY } from './BarGraphConstants';
+import BarGraphOptions from "./inspector/BarGraphOptions.vue";
 
 describe("the plugin", function () {
     let element;
@@ -259,7 +260,8 @@ describe("the plugin", function () {
             barGraphView.show(child, true);
             expect(testDomainObject.configuration.barStyles.series["test-object"].name).toEqual("Test Object");
             mockComposition.emit('add', dotFullTelemetryObject);
-            expect(testDomainObject.configuration.barStyles.series["~OpenMCT~outer.test-object.foo.bar"].name).toEqual("A Dotful Object");
+            expect(testDomainObject.configuration.barStyles.series["someNamespace:~OpenMCT~outer.test-object.foo.bar"].name).toEqual("A Dotful Object");
+            barGraphView.destroy();
         });
     });
 
@@ -363,6 +365,122 @@ describe("the plugin", function () {
                 composition.add(testTelemetryObject);
             }).toThrow();
             expect(parent.composition.length).toBe(0);
+        });
+    });
+    describe('the inspector view', () => {
+        let mockComposition;
+        let testDomainObject;
+        let selection;
+        let plotInspectorView;
+        let viewContainer;
+        let optionsElement;
+        beforeEach(async () => {
+            testDomainObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "test-object",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "utc",
+                        format: "utc",
+                        name: "Time",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-key",
+                        name: "Some attribute",
+                        hints: {
+                            range: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 2
+                        }
+                    }]
+                }
+            };
+
+            selection = [
+                [
+                    {
+                        context: {
+                            item: {
+                                id: "test-object",
+                                identifier: {
+                                    key: "test-object",
+                                    namespace: ''
+                                },
+                                type: "telemetry.plot.bar-graph",
+                                configuration: {
+                                    barStyles: {
+                                        series: {
+                                            '~Some~foo.bar': {
+                                                name: 'A telemetry object',
+                                                type: 'some-type',
+                                                isAlias: true
+                                            }
+                                        }
+                                    }
+                                },
+                                composition: [
+                                    {
+                                        key: '~Some~foo.bar'
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        context: {
+                            item: {
+                                type: 'time-strip',
+                                identifier: {
+                                    key: 'some-other-key',
+                                    namespace: ''
+                                }
+                            }
+                        }
+                    }
+                ]
+            ];
+
+            mockComposition = new EventEmitter();
+            mockComposition.load = () => {
+                mockComposition.emit('add', testDomainObject);
+
+                return [testDomainObject];
+            };
+
+            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
+
+            viewContainer = document.createElement('div');
+            child.append(viewContainer);
+
+            const applicableViews = openmct.inspectorViews.get(selection);
+            plotInspectorView = applicableViews[0];
+            plotInspectorView.show(viewContainer);
+
+            await Vue.nextTick();
+            optionsElement = element.querySelector('.c-bar-graph-options');
+        });
+
+        afterEach(() => {
+            plotInspectorView.destroy();
+        });
+
+        it('it renders the options', () => {
+            expect(optionsElement).toBeDefined();
+        });
+
+        it('shows the name', () => {
+            const seriesEl = optionsElement.querySelector('.c-object-label__name');
+            expect(seriesEl.innerHTML).toEqual('A telemetry object');
         });
     });
 });
