@@ -25,8 +25,7 @@
      :class="[{ 'first': first }]"
      @onChange="onChange"
 >
-    <div v-if="row.name"
-         class="c-form-row__label"
+    <div class="c-form-row__label"
          :title="row.description"
     >
         {{ row.name }}

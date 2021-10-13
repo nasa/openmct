@@ -58,7 +58,7 @@ define([
         ObjectAPI: ObjectAPI,
         StatusAPI: StatusAPI.default,
         TelemetryAPI: TelemetryAPI,
-        TimeAPI: TimeAPI,
+        TimeAPI: TimeAPI.default,
         TypeRegistry: TypeRegistry
     };
 });
