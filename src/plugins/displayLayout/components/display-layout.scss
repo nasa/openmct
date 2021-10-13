@@ -47,8 +47,8 @@
 
 .is-editing {
     .l-shell__main-container {
-        &[s-selected],
-        &[s-selected-parent] {
+        [s-selected],
+        [s-selected-parent] {
             // Display grid and allow edit marquee to display in main layout holder when editing
             > .l-layout {
                 background: $editUIGridColorBg;
