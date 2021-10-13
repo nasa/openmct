@@ -108,7 +108,7 @@ export default {
     mounted() {
         this.key = this.openmct.objects.makeKeyString(this.item);
         this.initColorAndName();
-        this.removeBarStylesListener = this.openmct.objects.observe(this.domainObject, `this.domainObject.configuration.barStyles.series[${this.key}]`, this.initColorAndName);
+        this.removeBarStylesListener = this.openmct.objects.observe(this.domainObject, `configuration.barStyles.series["${this.key}"]`, this.initColorAndName);
     },
     beforeDestroy() {
         if (this.removeBarStylesListener) {
