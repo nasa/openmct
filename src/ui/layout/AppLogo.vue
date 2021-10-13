@@ -42,10 +42,10 @@ export default {
     methods: {
         launchAbout() {
             let vm = new Vue({
+                components: {AboutDialog},
                 provide: {
                     openmct: this.openmct
                 },
-                components: {AboutDialog},
                 template: '<about-dialog></about-dialog>'
             }).$mount();
 
