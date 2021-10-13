@@ -193,6 +193,11 @@ export default {
 
             if (this.domainObject.configuration.barStyles.series[key]) {
                 delete this.domainObject.configuration.barStyles.series[key];
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    `configuration.barStyles.series["${key}"]`,
+                    undefined
+                );
             }
 
             this.removeSubscription(key);
