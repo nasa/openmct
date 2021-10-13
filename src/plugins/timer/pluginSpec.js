@@ -25,7 +25,7 @@ import timerPlugin from './plugin';
 
 import Vue from 'vue';
 
-fdescribe("Timer plugin:", () => {
+describe("Timer plugin:", () => {
     let openmct;
     let timerDefinition;
     let element;
