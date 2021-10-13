@@ -556,10 +556,10 @@ export default {
             }
 
             let vm = new Vue({
+                components: {ConditionSetSelectorDialog},
                 provide: {
                     openmct: this.openmct
                 },
-                components: {ConditionSetSelectorDialog},
                 data() {
                     return {
                         handleItemSelection
