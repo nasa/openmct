@@ -39,8 +39,8 @@ export default class StartTimerAction {
             return;
         }
 
-        let { pausedTime, timestamp, configuration } = domainObject.configuration;
-        const newConfiguration = { ...configuration };
+        let { pausedTime, timestamp } = domainObject.configuration;
+        const newConfiguration = { ...domainObject.configuration };
 
         if (pausedTime) {
             pausedTime = moment(pausedTime);
@@ -55,13 +55,12 @@ export default class StartTimerAction {
             const timeShift = moment.duration(now.diff(pausedTime));
             const shiftedTime = timestamp.add(timeShift);
             newConfiguration.timestamp = shiftedTime.toDate();
-        } else {
+        } else if (!timestamp) {
             newConfiguration.timestamp = now.toDate();
         }
 
         newConfiguration.timerState = 'started';
         newConfiguration.pausedTime = undefined;
-
         this.openmct.objects.mutate(domainObject, 'configuration', newConfiguration);
     }
     appliesTo(objectPath) {

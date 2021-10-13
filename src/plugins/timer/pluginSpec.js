@@ -20,209 +20,224 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-// import { createOpenMct, resetApplicationState } from 'utils/testing';
-// import clockPlugin from './plugin';
+import { createOpenMct, spyOnBuiltins, resetApplicationState } from 'utils/testing';
+import timerPlugin from './plugin';
 
-// import Vue from 'vue';
+import Vue from 'vue';
 
-// describe("Clock plugin:", () => {
-//     let openmct;
-//     let clockDefinition;
-//     let element;
-//     let child;
-//     let appHolder;
+fdescribe("Timer plugin:", () => {
+    let openmct;
+    let timerDefinition;
+    let element;
+    let child;
+    let appHolder;
 
-//     let clockDomainObject;
+    let timerDomainObject;
 
-//     function setupClock(enableClockIndicator) {
-//         return new Promise((resolve, reject) => {
-//             clockDomainObject = {
-//                 identifier: {
-//                     key: 'clock',
-//                     namespace: 'test-namespace'
-//                 },
-//                 type: 'clock'
-//             };
+    function setupTimer() {
+        return new Promise((resolve, reject) => {
+            timerDomainObject = {
+                identifier: {
+                    key: 'timer',
+                    namespace: 'test-namespace'
+                },
+                type: 'timer'
+            };
 
-//             appHolder = document.createElement('div');
-//             appHolder.style.width = '640px';
-//             appHolder.style.height = '480px';
-//             document.body.appendChild(appHolder);
+            appHolder = document.createElement('div');
+            appHolder.style.width = '640px';
+            appHolder.style.height = '480px';
+            document.body.appendChild(appHolder);
 
-//             openmct = createOpenMct();
+            openmct = createOpenMct();
 
-//             element = document.createElement('div');
-//             child = document.createElement('div');
-//             element.appendChild(child);
+            element = document.createElement('div');
+            child = document.createElement('div');
+            element.appendChild(child);
 
-//             openmct.install(clockPlugin({ enableClockIndicator }));
+            openmct.install(timerPlugin());
 
-//             clockDefinition = openmct.types.get('clock').definition;
-//             clockDefinition.initialize(clockDomainObject);
+            timerDefinition = openmct.types.get('timer').definition;
+            timerDefinition.initialize(timerDomainObject);
 
-//             openmct.on('start', resolve);
-//             openmct.start(appHolder);
-//         });
-//     }
+            openmct.on('start', resolve);
+            openmct.start(appHolder);
+        });
+    }
 
-//     describe("Clock view:", () => {
-//         let clockViewProvider;
-//         let clockView;
-//         let clockViewObject;
-//         let mutableClockObject;
+    describe("Timer view:", () => {
+        let timerViewProvider;
+        let timerView;
+        let timerViewObject;
+        let mutableTimerObject;
+        let timerObjectPath;
 
-//         beforeEach(async () => {
-//             await setupClock(true);
+        beforeEach(async () => {
+            await setupTimer();
 
-//             clockViewObject = {
-//                 ...clockDomainObject,
-//                 id: "test-object",
-//                 name: 'Clock',
-//                 configuration: {
-//                     baseFormat: 'YYYY/MM/DD hh:mm:ss',
-//                     use24: 'clock12',
-//                     timezone: 'UTC'
-//                 }
-//             };
+            spyOnBuiltins(['requestAnimationFrame']);
+            window.requestAnimationFrame.and.callFake((cb) => setTimeout(cb, 500));
+            const baseTimestamp = 1634688000000; // Oct 20, 2021, 12:00 AM
+            const relativeTimestamp = 1634774400000; // Oct 21 2021, 12:00 AM
 
-//             spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(clockViewObject));
-//             spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
+            jasmine.clock().install();
+            const baseTime = new Date(baseTimestamp);
+            jasmine.clock().mockDate(baseTime);
 
-//             const applicableViews = openmct.objectViews.get(clockViewObject, [clockViewObject]);
-//             clockViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'clock.view');
+            timerViewObject = {
+                ...timerDomainObject,
+                id: "test-object",
+                name: 'Timer',
+                configuration: {
+                    timerFormat: 'long',
+                    timestamp: relativeTimestamp,
+                    timezone: 'UTC',
+                    timerState: undefined,
+                    pausedTime: undefined
+                }
+            };
 
-//             mutableClockObject = await openmct.objects.getMutable(clockViewObject.identifier);
+            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(timerViewObject));
+            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
 
-//             clockView = clockViewProvider.view(mutableClockObject);
-//             clockView.show(child);
+            const applicableViews = openmct.objectViews.get(timerViewObject, [timerViewObject]);
+            timerViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'timer.view');
 
-//             await Vue.nextTick();
-//         });
+            mutableTimerObject = await openmct.objects.getMutable(timerViewObject.identifier);
 
-//         afterEach(() => {
-//             clockView.destroy();
-//             openmct.objects.destroyMutable(mutableClockObject);
-//             if (appHolder) {
-//                 appHolder.remove();
-//             }
+            timerObjectPath = [mutableTimerObject];
+            timerView = timerViewProvider.view(mutableTimerObject, timerObjectPath);
+            timerView.show(child);
 
-//             return resetApplicationState(openmct);
-//         });
+            await Vue.nextTick();
+        });
 
-//         it("has name as Clock", () => {
-//             expect(clockDefinition.name).toEqual('Clock');
-//         });
+        afterEach(() => {
+            jasmine.clock().uninstall();
+            timerView.destroy();
+            openmct.objects.destroyMutable(mutableTimerObject);
+            if (appHolder) {
+                appHolder.remove();
+            }
 
-//         it("is creatable", () => {
-//             expect(clockDefinition.creatable).toEqual(true);
-//         });
+            return resetApplicationState(openmct);
+        });
 
-//         it("provides clock view", () => {
-//             expect(clockViewProvider).toBeDefined();
-//         });
+        it("has name as Timer", () => {
+            expect(timerDefinition.name).toEqual('Timer');
+        });
 
-//         it("renders clock element", () => {
-//             const clockElement = element.querySelectorAll('.c-clock');
-//             expect(clockElement.length).toBe(1);
-//         });
+        it("is creatable", () => {
+            expect(timerDefinition.creatable).toEqual(true);
+        });
 
-//         it("renders major elements", () => {
-//             const clockElement = element.querySelector('.c-clock');
-//             const timezone = clockElement.querySelector('.c-clock__timezone');
-//             const time = clockElement.querySelector('.c-clock__value');
-//             const amPm = clockElement.querySelector('.c-clock__ampm');
-//             const hasMajorElements = Boolean(timezone && time && amPm);
+        it("provides timer view", () => {
+            expect(timerViewProvider).toBeDefined();
+        });
 
-//             expect(hasMajorElements).toBe(true);
-//         });
+        it("renders timer element", () => {
+            const timerElement = element.querySelectorAll('.c-timer');
+            expect(timerElement.length).toBe(1);
+        });
 
-//         it("renders time in UTC", () => {
-//             const clockElement = element.querySelector('.c-clock');
-//             const timezone = clockElement.querySelector('.c-clock__timezone').textContent.trim();
+        it("renders major elements", () => {
+            const timerElement = element.querySelector('.c-timer');
+            const resetButton = timerElement.querySelector('.c-timer__ctrl-reset');
+            const pausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
+            const timerDirectionIcon = timerElement.querySelector('.c-timer__direction');
+            const timerValue = timerElement.querySelector('.c-timer__value');
+            const hasMajorElements = Boolean(resetButton && pausePlayButton && timerDirectionIcon && timerValue);
 
-//             expect(timezone).toBe('UTC');
-//         });
+            expect(hasMajorElements).toBe(true);
+        });
 
-//         it("updates the 24 hour option in the configuration", (done) => {
-//             const new24Option = 'clock24';
+        it("displays a started timer ticking down to a future date", async () => {
+            const newBaseTime = 1634774400000; // Oct 21 2021, 12:00 AM
+            openmct.objects.mutate(timerViewObject, 'configuration.timestamp', newBaseTime);
 
-//             openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
-//                 expect(changedDomainObject.use24).toBe(new24Option);
-//                 done();
-//             });
+            jasmine.clock().tick(5000);
+            await Vue.nextTick();
 
-//             openmct.objects.mutate(clockViewObject, 'configuration.use24', new24Option);
-//         });
+            const timerElement = element.querySelector('.c-timer');
+            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
+            const timerDirectionIcon = timerElement.querySelector('.c-timer__direction');
+            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
 
-//         it("updates the timezone option in the configuration", (done) => {
-//             const newZone = 'CST6CDT';
+            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(true);
+            expect(timerDirectionIcon.classList.contains('icon-minus')).toBe(true);
+            expect(timerValue).toBe('0D 23:59:55');
+        });
 
-//             openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
-//                 expect(changedDomainObject.timezone).toBe(newZone);
-//                 done();
-//             });
+        it("displays a started timer ticking up from a past date", async () => {
+            const newBaseTime = 1634601600000; // Oct 19, 2021, 12:00 AM
+            openmct.objects.mutate(timerViewObject, 'configuration.timestamp', newBaseTime);
 
-//             openmct.objects.mutate(clockViewObject, 'configuration.timezone', newZone);
-//         });
+            jasmine.clock().tick(5000);
+            await Vue.nextTick();
 
-//         it("updates the time format option in the configuration", (done) => {
-//             const newFormat = 'hh:mm:ss';
+            const timerElement = element.querySelector('.c-timer');
+            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
+            const timerDirectionIcon = timerElement.querySelector('.c-timer__direction');
+            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
 
-//             openmct.objects.observe(clockViewObject, 'configuration', (changedDomainObject) => {
-//                 expect(changedDomainObject.baseFormat).toBe(newFormat);
-//                 done();
-//             });
+            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(true);
+            expect(timerDirectionIcon.classList.contains('icon-plus')).toBe(true);
+            expect(timerValue).toBe('1D 00:00:05');
+        });
 
-//             openmct.objects.mutate(clockViewObject, 'configuration.baseFormat', newFormat);
-//         });
-//     });
+        it("displays a paused timer correctly in the DOM", async () => {
+            jasmine.clock().tick(5000);
+            await Vue.nextTick();
 
-//     describe("Clock Indicator view:", () => {
-//         let clockIndicator;
+            const action = openmct.actions.getAction('timer.pause');
+            if (action) {
+                action.invoke(timerObjectPath, timerView);
+            }
 
-//         afterEach(() => {
-//             if (clockIndicator) {
-//                 clockIndicator.remove();
-//             }
+            await Vue.nextTick();
+            const timerElement = element.querySelector('.c-timer');
+            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
+            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
 
-//             clockIndicator = undefined;
-//             if (appHolder) {
-//                 appHolder.remove();
-//             }
+            expect(timerPausePlayButton.classList.contains('icon-play')).toBe(true);
+            expect(timerValue).toBe('0D 23:59:55');
 
-//             return resetApplicationState(openmct);
-//         });
+            jasmine.clock().tick(5000);
+            await Vue.nextTick();
+            expect(timerValue).toBe('0D 23:59:55');
+        });
 
-//         it("doesn't exist", async () => {
-//             await setupClock(false);
+        it("displays a stopped timer correctly in the DOM", async () => {
+            const action = openmct.actions.getAction('timer.stop');
+            if (action) {
+                action.invoke(timerObjectPath, timerView);
+            }
 
-//             clockIndicator = openmct.indicators.indicatorObjects
-//                 .find(indicator => indicator.key === 'clock-indicator');
+            await Vue.nextTick();
+            const timerElement = element.querySelector('.c-timer');
+            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
+            const timerResetButton = timerElement.querySelector('.c-timer__ctrl-reset');
+            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
 
-//             const clockIndicatorMissing = clockIndicator === null || clockIndicator === undefined;
-//             expect(clockIndicatorMissing).toBe(true);
-//         });
+            expect(timerResetButton.classList.contains('hide')).toBe(true);
+            expect(timerPausePlayButton.classList.contains('icon-play')).toBe(true);
+            expect(timerValue).toBe('--:--:--');
+        });
 
-//         it("exists", async () => {
-//             await setupClock(true);
+        it("displays a restarted timer correctly in the DOM", async () => {
+            const action = openmct.actions.getAction('timer.restart');
+            if (action) {
+                action.invoke(timerObjectPath, timerView);
+            }
 
-//             clockIndicator = openmct.indicators.indicatorObjects
-//                 .find(indicator => indicator.key === 'clock-indicator').element;
+            jasmine.clock().tick(5000);
+            await Vue.nextTick();
+            const timerElement = element.querySelector('.c-timer');
+            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
+            const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
 
-//             const hasClockIndicator = clockIndicator !== null && clockIndicator !== undefined;
-//             expect(hasClockIndicator).toBe(true);
-//         });
-
-//         it("contains text", async () => {
-//             await setupClock(true);
-
-//             clockIndicator = openmct.indicators.indicatorObjects
-//                 .find(indicator => indicator.key === 'clock-indicator').element;
-
-//             const clockIndicatorText = clockIndicator.textContent.trim();
-//             const textIncludesUTC = clockIndicatorText.includes('UTC');
-
-//             expect(textIncludesUTC).toBe(true);
-//         });
-//     });
-// });
+            expect(timerPausePlayButton.classList.contains('icon-pause')).toBe(true);
+            expect(timerValue).toBe('0D 00:00:05');
+        });
+    });
+});
