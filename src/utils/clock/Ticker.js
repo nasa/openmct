@@ -32,9 +32,7 @@ class Ticker {
      * Calls functions every second, as close to the actual second
      * tick as is feasible.
      * @constructor
-     * @memberof platform/features/clock
-     * @param $timeout Angular's $timeout
-     * @param {Function} now function to provide the current time in ms
+     * @memberof utils/clock
      */
     tick() {
         const timestamp = new Date();
