@@ -15,7 +15,7 @@ export default class LADTableSet extends EventEmitter {
         this.updateFilters = this.updateFilters.bind(this);
         this.tables = {}; // key: table key, value: lad table
         this.headers = {};
-        this.ladRows = {};// key: table key, value: lad rows array
+        // this.ladRows = {};// key: table key, value: lad rows array
         this.telemetryObjects = {};
     }
     initialize() {
@@ -68,17 +68,13 @@ export default class LADTableSet extends EventEmitter {
             this.addHeaders(this.tables[key]);
             this.addTelemetryObjects(this.tables[key]);
         });
-        this.tables[key].tableRows.on('add', (row) => {
-            if (!row.isDummyRow) {
-                this.updateLadRows(this.tables[key]);
-            }
-        });
         this.tables[key].initialize();
         this.emit('table-added', this.tables[key]);
     }
     removeLADTable(identifier) {
         let key = identifier.key;
         delete this.tables[key];
+        this.emit('table-removed', identifier);
     }
     addTelemetryObjects(ladTable) {
         let telemetryObjects = ladTable.telemetryObjects;
@@ -102,11 +98,11 @@ export default class LADTableSet extends EventEmitter {
         Object.assign(this.headers, headers);
         this.emit('headers-added');
     }
-    updateLadRows(ladTable) {
-        this.ladRows[ladTable.keyString] = ladTable.tableRows.getRows();
-        this.emit('updateLadRows', {
-            key: ladTable.keyString,
-            ladRows: this.ladRows[ladTable.keyString]
-        });
-    }
+    // updateLadRows(ladTable) {
+    //     this.ladRows[ladTable.keyString] = ladTable.tableRows.getRows();
+    //     this.emit('updateLadRows', {
+    //         key: ladTable.keyString,
+    //         ladRows: this.ladRows[ladTable.keyString]
+    //     });
+    // }
 }

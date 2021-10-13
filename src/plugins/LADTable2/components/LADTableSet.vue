@@ -82,24 +82,16 @@ export default {
     computed: {
     },
     mounted() {
-        this.composition = this.openmct.composition.get(this.domainObject);
-        // this.composition.on('add', this.addLadTable);
-        this.composition.on('remove', this.removeLadTable);
-        // this.composition.on('reorder', this.reorderLadTables);
-        this.composition.load();
-
         this.tableSet.on('headers-added', this.updateHeaders);
         this.tableSet.on('table-added', this.addLadTable);
-        // this.tableSet.on('updateLadRows', this.updateLadRows);
+        this.tableSet.on('table-removed', this.removeLadTable);
         this.tableSet.initialize();
 
     },
     destroyed() {
-        this.composition.off('remove', this.removeLadTable);
-
         this.tableSet.off('headers-added', this.updateHeaders);
         this.tableSet.off('table-added', this.addLadTable);
-        // this.tableSet.off('updateLadRows', this.updateLadRows);
+        this.tableSet.off('table-removed', this.removeLadTable);
     },
     methods: {
         updateViewContext(rowContext) {
@@ -130,12 +122,6 @@ export default {
                 this.ladTableObjects.splice(idx, 1);
             }
         }
-        // updateLadRows(ladObject) {
-        //     let key = ladObject.key;
-        //     let ladRows = ladObject.ladRows;
-        //     this.ladRows[key] = ladRows;
-        //     this.$set(this.ladRows, key, ladRows);
-        // }
     }
 };
 </script>
