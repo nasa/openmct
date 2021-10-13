@@ -47,8 +47,12 @@
 </template>
 
 <script>
-import moment from 'moment';
 import ticker from '../../../utils/clock/Ticker';
+
+const moment = require("moment-timezone");
+const momentDurationFormatSetup = require("moment-duration-format");
+
+momentDurationFormatSetup(moment);
 
 export default {
     inject: ['openmct', 'currentView', 'objectPath'],
