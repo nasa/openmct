@@ -25,15 +25,14 @@ define([
 ], function (
     moment
 ) {
-
-    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS",
-        DATE_FORMATS = [
-            DATE_FORMAT,
-            DATE_FORMAT + "Z",
-            "YYYY-MM-DD HH:mm:ss",
-            "YYYY-MM-DD HH:mm",
-            "YYYY-MM-DD"
-        ];
+    const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
+    const DATE_FORMATS = [
+        DATE_FORMAT,
+        DATE_FORMAT + "Z",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM-DD HH:mm",
+        "YYYY-MM-DD"
+    ];
 
     /**
      * @typedef Scale

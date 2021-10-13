@@ -56,36 +56,6 @@ export function millisecondsToDHMS(numericDuration) {
     return `${ dhms ? '+' : ''} ${dhms}`;
 }
 
-export function getDuration(numericDuration) {
-    let result;
-    let age;
-
-    if (numericDuration > ONE_DAY - 1) {
-        age = normalizeAge((numericDuration / ONE_DAY)).toFixed(2);
-        result = `+ ${age} day`;
-
-        if (age !== 1) {
-            result += 's';
-        }
-    } else if (numericDuration > ONE_HOUR - 1) {
-        age = normalizeAge((numericDuration / ONE_HOUR).toFixed(2));
-        result = `+ ${age} hour`;
-
-        if (age !== 1) {
-            result += 's';
-        }
-    } else {
-        age = normalizeAge((numericDuration / ONE_MINUTE).toFixed(2));
-        result = `+ ${age} min`;
-
-        if (age !== 1) {
-            result += 's';
-        }
-    }
-
-    return result;
-}
-
 export function getPreciseDuration(numericDuration) {
     let result;
 
