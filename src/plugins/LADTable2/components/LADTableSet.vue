@@ -82,17 +82,21 @@ export default {
     computed: {
     },
     mounted() {
+        this.composition = this.openmct.composition.get(this.domainObject);
+        // this.composition.on('add', this.addLadTable);
+        this.composition.on('remove', this.removeLadTable);
+        // this.composition.on('reorder', this.reorderLadTables);
+        this.composition.load();
 
-        // call this.tableSet.getHeaders for headers
-        // call this.tableSet.getRows for all the rows
         this.tableSet.on('headers-added', this.updateHeaders);
         this.tableSet.on('table-added', this.addLadTable);
         // this.tableSet.on('updateLadRows', this.updateLadRows);
         this.tableSet.initialize();
-        // this.tableSet.on('add', this.addLadTable);
 
     },
     destroyed() {
+        this.composition.off('remove', this.removeLadTable);
+
         this.tableSet.off('headers-added', this.updateHeaders);
         this.tableSet.off('table-added', this.addLadTable);
         // this.tableSet.off('updateLadRows', this.updateLadRows);
@@ -112,6 +116,19 @@ export default {
         },
         addLadTable(ladTable) {
             this.ladTableObjects.push(ladTable);
+        },
+        removeLadTable(identifier) {
+            let idx;
+            for (let i in this.ladTableObjects) {
+                if (this.ladTableObjects[i].keyString === identifier.key) {
+                    idx = i;
+                    break;
+                }
+            }
+
+            if (idx !== undefined) {
+                this.ladTableObjects.splice(idx, 1);
+            }
         }
         // updateLadRows(ladObject) {
         //     let key = ladObject.key;

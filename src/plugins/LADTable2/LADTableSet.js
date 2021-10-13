@@ -7,7 +7,7 @@ export default class LADTableSet extends EventEmitter {
         super();
         this.domainObject = domainObject;
         this.openmct = openmct;
-
+        this.composition = this.openmct.composition.get(this.domainObject);
         // refer to telemetry table. create an array for lad tables and telemetry objects
         // get the headers from the lad tables
         // when a lad table is added, add it and its telemetry objects to the array
@@ -27,6 +27,10 @@ export default class LADTableSet extends EventEmitter {
         } else {
             this.addLADTable(this.domainObject);
         }
+
+        // console.log(this.tables);
+        this.composition.on('add', () => console.log('added'));
+        this.composition.on('remove', this.removeLADTable.bind(this));
     }
     loadComposition() {
         this.tableSetComposition = this.openmct.composition.get(this.domainObject);
@@ -71,6 +75,10 @@ export default class LADTableSet extends EventEmitter {
         });
         this.tables[key].initialize();
         this.emit('table-added', this.tables[key]);
+    }
+    removeLADTable(identifier) {
+        let key = identifier.key;
+        delete this.tables[key];
     }
     addTelemetryObjects(ladTable) {
         let telemetryObjects = ladTable.telemetryObjects;
