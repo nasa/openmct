@@ -253,6 +253,8 @@ export default {
         this.config = this.getConfig();
         this.legend = this.config.legend;
 
+        this.setTimeContext();
+
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
 
@@ -266,7 +268,6 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
-        this.setTimeContext();
 
         this.loaded = true;
 
