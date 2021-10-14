@@ -160,9 +160,6 @@ export default {
                 }
             }
 
-            // clear focus image index
-            // this.focusedImageIndex = undefined;
-            // this.focusedImageRelatedTelemetry = {};
             // splice array to encourage garbage collection
             this.imageHistory.splice(0, this.imageHistory.length);
 
