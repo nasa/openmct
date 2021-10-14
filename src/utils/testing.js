@@ -296,16 +296,6 @@ function setMockObjects() {
                 composition: [],
                 location: "mine"
             },
-            conditionWidget: {
-                identifier: {
-                    namespace: "",
-                    key: "condition-widget-object"
-                },
-                url: 'https://nasa.github.io/openmct/',
-                label: 'Foo Widget',
-                type: 'conditionWidget',
-                composition: []
-            },
             ladTable: {
                 identifier: {
                     namespace: "",

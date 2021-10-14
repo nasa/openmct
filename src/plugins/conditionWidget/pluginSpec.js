@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState, getMockObjects } from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import ConditionWidgetPlugin from "./plugin";
 import Vue from 'vue';
 
@@ -28,10 +28,54 @@ describe('the plugin', () => {
     const CONDITION_WIDGET_KEY = 'conditionWidget';
     let openmct;
 
-    const mockObj = getMockObjects({
-        objectKeyStrings: [CONDITION_WIDGET_KEY, 'telemetry'],
-        format: 'utc'
-    });
+    const mockObj = {
+        "conditionWidget": {
+            "identifier": {
+                "namespace": "",
+                "key": "condition-widget-object"
+            },
+            "url": "https://nasa.github.io/openmct/",
+            "label": "Foo Widget",
+            "type": "conditionWidget",
+            "composition": []
+        },
+        "telemetry": {
+            "identifier": {
+                "namespace": "",
+                "key": "telemetry-object"
+            },
+            "type": "test-telemetry-object",
+            "name": "Test Telemetry Object",
+            "telemetry": {
+                "values": [
+                    {
+                        "key": "name",
+                        "name": "Name",
+                        "format": "string"
+                    },
+                    {
+                        "key": "utc",
+                        "name": "Time",
+                        "format": "utc",
+                        "hints": {
+                            "domain": 1
+                        }
+                    },
+                    {
+                        "name": "Some attribute 1",
+                        "key": "some-key-1",
+                        "hints": {
+                            "range": 1
+                        }
+                    },
+                    {
+                        "name": "Some attribute 2",
+                        "key": "some-key-2"
+                    }
+                ]
+            }
+        }
+    };
 
     beforeEach((done) => {
         openmct = createOpenMct();
