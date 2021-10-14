@@ -31,7 +31,7 @@
             </th>
         </tr>
     </thead>
-    <tbody >
+    <tbody>
         <template
             v-for="ladTable in ladTableObjects"
         >

@@ -1,5 +1,4 @@
 import EventEmitter from 'EventEmitter';
-// import TelemetryTableConfiguration from '../telemetryTable/TelemetryTableConfiguration.js';
 import LADTable from './LADTable';
 
 export default class LADTableSet extends EventEmitter {
@@ -7,19 +6,17 @@ export default class LADTableSet extends EventEmitter {
         super();
         this.domainObject = domainObject;
         this.openmct = openmct;
-        this.composition = this.openmct.composition.get(this.domainObject);
-        // refer to telemetry table. create an array for lad tables and telemetry objects
-        // get the headers from the lad tables
-        // when a lad table is added, add it and its telemetry objects to the array
-        // add a function to get all the telemetry objects from LAD table in LADTable.js
         this.updateFilters = this.updateFilters.bind(this);
-        this.tables = {}; // key: table key, value: lad table
+        this.tables = {};
         this.headers = {};
-        // this.ladRows = {};// key: table key, value: lad rows array
+
+        this.composition = this.openmct.composition.get(this.domainObject);
         this.telemetryObjects = {};
+        //where do i remove events below?
+        this.composition.on('add', this.addLADTable.bind(this));
+        this.composition.on('remove', this.removeLADTable.bind(this));
     }
     initialize() {
-        // go through each lad tables and call initialize.
         if (this.domainObject.type === 'LadTableSet') {
             this.filterObserver = this.openmct.objects.observe(this.domainObject, 'configuration.filters', this.updateFilters);
             this.filters = this.domainObject.configuration.filters;
@@ -27,10 +24,6 @@ export default class LADTableSet extends EventEmitter {
         } else {
             this.addLADTable(this.domainObject);
         }
-
-        // console.log(this.tables);
-        this.composition.on('add', () => console.log('added'));
-        this.composition.on('remove', this.removeLADTable.bind(this));
     }
     loadComposition() {
         this.tableSetComposition = this.openmct.composition.get(this.domainObject);
@@ -38,16 +31,8 @@ export default class LADTableSet extends EventEmitter {
         if (this.tableSetComposition !== undefined) {
             this.tableSetComposition.load().then((composition) => {
                 composition.forEach(this.addLADTable.bind(this));
-                // this.tableSetComposition.on('add', this.this.addLADTable);
-                // this.tableSetComposition.on('remove', this.removeTelemetryObject);
             });
         }
-    }
-    isLADTableObject(domainObject) {
-        // not sure why hasOwnProperty returns false
-        // tried adding this.type in LADTable.js but still false
-        return domainObject.type === 'LadTable';
-        // return Object.prototype.hasOwnProperty.call(domainObject, 'LadTable');
     }
     updateFilters(updatedFilters) {
         let deepCopiedFilters = JSON.parse(JSON.stringify(updatedFilters));
@@ -88,21 +73,12 @@ export default class LADTableSet extends EventEmitter {
                 telemetryObject.key = this.openmct.objects.makeKeyString(telemetryObjects[key].telemetryObject.identifier);
                 telemetryObject.domainObject = telemetryObjects[key].telemetryObject;
                 this.telemetryObjects[ladTable.keyString].push(telemetryObject);
-                // console.log('telemetryObject', telemetryObject);
             }
         }
     }
     addHeaders(ladTable) {
-        // combine any new columns to this.headers
         let headers = ladTable.headers;
         Object.assign(this.headers, headers);
         this.emit('headers-added');
     }
-    // updateLadRows(ladTable) {
-    //     this.ladRows[ladTable.keyString] = ladTable.tableRows.getRows();
-    //     this.emit('updateLadRows', {
-    //         key: ladTable.keyString,
-    //         ladRows: this.ladRows[ladTable.keyString]
-    //     });
-    // }
 }
