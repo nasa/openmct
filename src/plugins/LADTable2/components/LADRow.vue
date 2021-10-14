@@ -49,6 +49,10 @@ export default {
             type: Object,
             required: true
         },
+        telemetryObject: {
+            type: Object,
+            required: true
+        },
         pathToTable: {
             type: Array,
             required: true
@@ -65,16 +69,18 @@ export default {
         },
         formattedTimestamp() {
             return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
-        },
-        objectPath() {
-            return [this.domainObject, ...this.pathToTable];
         }
     },
     mounted() {
-        // this.bounds = this.openmct.time.bounds();
+        // this.metadata = this.openmct.telemetry.getMetadata(this.telemetryObject);
+        // this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
+        console.log(this.telemetryObject);
 
+        this.openmct.time.on('timeSystem', this.updateTimeSystem);
+        this.timestampKey = this.openmct.time.timeSystem().key;
     },
     destroyed() {
+        this.openmct.time.off('timeSystem', this.updateTimeSystem);
     },
     methods: {
         parseValue(header) {
@@ -111,6 +117,9 @@ export default {
 
                 return false;
             }
+        },
+        updateTimeSystem(timeSystem) {
+            this.timestampKey = timeSystem.key;
         }
     }
 };

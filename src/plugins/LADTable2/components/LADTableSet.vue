@@ -47,6 +47,7 @@
                 v-for="ladRow in ladTable.tableRows.getRows()"
                 :key="ladRow.objectKeyString"
                 :lad-row="ladRow"
+                :telemetry-object="ladTable"
                 :headers="headers"
                 :path-to-table="getObjectPath(ladTable)"
                 @rowContextClick="updateViewContext"
