@@ -72,10 +72,6 @@ export default {
         }
     },
     mounted() {
-        // this.metadata = this.openmct.telemetry.getMetadata(this.telemetryObject);
-        // this.formats = this.openmct.telemetry.getFormatMap(this.metadata);
-        console.log(this.telemetryObject);
-
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
         this.timestampKey = this.openmct.time.timeSystem().key;
     },
@@ -84,6 +80,12 @@ export default {
     },
     methods: {
         parseValue(header) {
+            if (header === this.timestampKey) {
+                let time = this.getFormattedTimestamp(this.ladRow.datum[header]);
+
+                return time;
+            }
+
             if (this.ladRow.datum[header] === undefined) {
                 return '--';
             } else {
@@ -106,14 +108,15 @@ export default {
         },
         getFormattedTimestamp(timestamp) {
             if (this.timeSystemFormat()) {
-                return this.formats[this.timestampKey].format(timestamp);
+                return this.telemetryObject.formats[this.timestampKey].format(timestamp);
             }
         },
         timeSystemFormat() {
-            if (this.formats[this.timestampKey]) {
+            // .formats takes time to load
+            if (this.telemetryObject.formats[this.timestampKey]) {
                 return true;
             } else {
-                console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
+                console.warn(`No formatter for ${this.timestampKey} time system for ${this.telemetryObject.domainObject.name}.`);
 
                 return false;
             }

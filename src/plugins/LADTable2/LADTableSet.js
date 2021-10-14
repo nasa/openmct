@@ -63,16 +63,29 @@ export default class LADTableSet extends EventEmitter {
     }
     addTelemetryObjects(ladTable) {
         let telemetryObjects = ladTable.telemetryObjects;
-        if (!this.telemetryObjects[ladTable.keyString]) {
-            this.telemetryObjects[ladTable.keyString] = [];
-        }
+        // if (!this.telemetryObjects[ladTable.keyString]) {
+        //     this.telemetryObjects[ladTable.keyString] = [];
+        // }
+
+        // for (let key in telemetryObjects) {
+        //     if (telemetryObjects[key]) {
+        //         let telemetryObject = {};
+        //         telemetryObject.key = this.openmct.objects.makeKeyString(telemetryObjects[key].telemetryObject.identifier);
+        //         telemetryObject.domainObject = telemetryObjects[key].telemetryObject;
+        //         this.telemetryObjects[ladTable.keyString].push(telemetryObject);
+        //     }
+        // }
 
         for (let key in telemetryObjects) {
             if (telemetryObjects[key]) {
                 let telemetryObject = {};
+                let metadata = this.openmct.telemetry.getMetadata(telemetryObjects[key].telemetryObject);
+                let formats = this.openmct.telemetry.getFormatMap(metadata);
                 telemetryObject.key = this.openmct.objects.makeKeyString(telemetryObjects[key].telemetryObject.identifier);
                 telemetryObject.domainObject = telemetryObjects[key].telemetryObject;
-                this.telemetryObjects[ladTable.keyString].push(telemetryObject);
+                telemetryObject.formats = formats;
+                // console.log(telemetryObject);
+                this.telemetryObjects[telemetryObject.key] = telemetryObject;
             }
         }
     }
