@@ -253,11 +253,10 @@ export default {
         this.config = this.getConfig();
         this.legend = this.config.legend;
 
-        //this also updates bounds which loads series data
-        this.setTimeContext();
-
         this.listenTo(this.config.series, 'add', this.addSeries, this);
         this.listenTo(this.config.series, 'remove', this.removeSeries, this);
+
+        this.config.series.models.forEach(this.addSeries, this);
 
         this.filterObserver = this.openmct.objects.observe(
             this.domainObject,
@@ -267,6 +266,7 @@ export default {
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.updateStatus);
 
         this.openmct.objectViews.on('clearData', this.clearData);
+        this.setTimeContext();
 
         this.loaded = true;
 
@@ -338,6 +338,11 @@ export default {
         },
 
         loadSeriesData(series) {
+            //this check ensures that duplicate requests don't happen on load
+            if (!this.timeContext) {
+                return;
+            }
+
             if (this.$parent.$refs.plotWrapper.offsetWidth === 0) {
                 this.scheduleLoad(series);
 
@@ -350,10 +355,9 @@ export default {
             const bounds = this.timeContext.bounds();
             const options = {
                 size: this.$parent.$refs.plotWrapper.offsetWidth,
-                domain: {
-                    max: bounds.start,
-                    min: bounds.end
-                }
+                domain: this.config.xAxis.get('key'),
+                start: bounds.start,
+                end: bounds.end
             };
 
             series.load(options)
@@ -362,24 +366,17 @@ export default {
 
         loadMoreData(range, purge) {
             this.config.series.forEach(plotSeries => {
-                const domain = {
-                    max: range.start,
-                    min: range.end
-                };
-                if (!_.isEqual(domain, this.config.xAxis.get('key'))) {
-                    this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
-
-                    this.startLoading();
-                    plotSeries.load({
-                        size: this.offsetWidth,
-                        start: range.min,
-                        end: range.max,
-                        domain: this.config.xAxis.get('key')
-                    })
-                        .then(this.stopLoading());
-                    if (purge) {
-                        plotSeries.purgeRecordsOutsideRange(range);
-                    }
+                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+                this.startLoading();
+                plotSeries.load({
+                    size: this.offsetWidth,
+                    start: range.min,
+                    end: range.max,
+                    domain: this.config.xAxis.get('key')
+                })
+                    .then(this.stopLoading());
+                if (purge) {
+                    plotSeries.purgeRecordsOutsideRange(range);
                 }
             });
         },
