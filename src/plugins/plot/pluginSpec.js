@@ -370,6 +370,10 @@ describe("the plugin", function () {
             return Vue.nextTick();
         });
 
+        it("Makes only one request for telemetry on load", () => {
+            expect(openmct.telemetry.request).toHaveBeenCalledTimes(1);
+        });
+
         it("Renders a collapsed legend for every telemetry", () => {
             let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
             expect(legend.length).toBe(1);
