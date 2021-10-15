@@ -117,7 +117,7 @@ export default function ClockPlugin(options) {
             const indicator = {
                 element: clockIndicator.$mount().$el,
                 key: 'clock-indicator',
-                priority: 70
+                priority: -100
             };
 
             openmct.indicators.add(indicator);
