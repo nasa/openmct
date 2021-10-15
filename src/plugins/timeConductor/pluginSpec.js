@@ -133,17 +133,13 @@ describe('duration functions', () => {
         const functionResults = [millisecondsToDHMS(0), millisecondsToDHMS(86400000),
             millisecondsToDHMS(129600000), millisecondsToDHMS(661824000)];
         const validResults = [' ', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s'];
-        for (let i = 0; i < functionResults.length; i++) {
-            expect(validResults[i]).toEqual(functionResults[i]);
-        }
+        expect(validResults).toEqual(functionResults);
     });
 
     it('should get precise duration', () => {
         const functionResults = [getPreciseDuration(0), getPreciseDuration(643680000),
             getPreciseDuration(1605312000)];
         const validResults = ['00:00:00:00', '07:10:48:00', '18:13:55:12'];
-        for (let i = 0; i < functionResults.length; i++) {
-            expect(validResults[i]).toEqual(functionResults[i]);
-        }
+        expect(validResults).toEqual(functionResults);
     });
 });

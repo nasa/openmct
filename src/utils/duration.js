@@ -33,11 +33,7 @@ function normalizeAge(num) {
 }
 
 function toDoubleDigits(num) {
-    if (num >= 10) {
-        return num;
-    } else {
-        return `0${num}`;
-    }
+    return num >= 10 ? num : `0${num}`;
 }
 
 function addTimeSuffix(value, suffix) {
@@ -57,8 +53,6 @@ export function millisecondsToDHMS(numericDuration) {
 }
 
 export function getPreciseDuration(numericDuration) {
-    let result;
-
     const days = toDoubleDigits(Math.floor((numericDuration) / (24 * 60 * 60 * 1000)));
     let remaining = (numericDuration) % (24 * 60 * 60 * 1000);
     const hours = toDoubleDigits(Math.floor((remaining) / (60 * 60 * 1000)));
@@ -66,7 +60,5 @@ export function getPreciseDuration(numericDuration) {
     const minutes = toDoubleDigits(Math.floor((remaining) / (60 * 1000)));
     remaining = (remaining) % (60 * 1000);
     const seconds = toDoubleDigits(Math.floor((remaining) / (1000)));
-    result = `${days}:${hours}:${minutes}:${seconds}`;
-
-    return result;
+    return `${days}:${hours}:${minutes}:${seconds}`;
 }
