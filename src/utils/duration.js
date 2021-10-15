@@ -60,5 +60,6 @@ export function getPreciseDuration(numericDuration) {
     const minutes = toDoubleDigits(Math.floor((remaining) / (60 * 1000)));
     remaining = (remaining) % (60 * 1000);
     const seconds = toDoubleDigits(Math.floor((remaining) / (1000)));
+
     return `${days}:${hours}:${minutes}:${seconds}`;
 }
