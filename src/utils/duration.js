@@ -52,14 +52,14 @@ export function millisecondsToDHMS(numericDuration) {
     return `${ dhms ? '+' : ''} ${dhms}`;
 }
 
-export function getPreciseDuration(numericDuration) {
-    const days = toDoubleDigits(Math.floor((numericDuration) / (24 * 60 * 60 * 1000)));
-    let remaining = (numericDuration) % (24 * 60 * 60 * 1000);
-    const hours = toDoubleDigits(Math.floor((remaining) / (60 * 60 * 1000)));
-    remaining = (remaining) % (60 * 60 * 1000);
-    const minutes = toDoubleDigits(Math.floor((remaining) / (60 * 1000)));
-    remaining = (remaining) % (60 * 1000);
-    const seconds = toDoubleDigits(Math.floor((remaining) / (1000)));
+export function getPreciseDuration(value) {
+    const ms = value || 0;
 
-    return `${days}:${hours}:${minutes}:${seconds}`;
+    return [
+        toDoubleDigits(Math.floor(normalizeAge(ms / ONE_DAY))),
+        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
+        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
+        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)))
+    ].join(":");
+
 }
