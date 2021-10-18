@@ -15,7 +15,8 @@ export default function (folderName, couchPlugin, searchFilter, isEditable = fal
                     return Promise.resolve({
                         identifier,
                         type: isEditable ? 'folder' : 'noneditable.folder',
-                        name: folderName || "CouchDB Documents"
+                        name: folderName || "CouchDB Documents",
+                        location: 'ROOT'
                     });
                 }
             }
