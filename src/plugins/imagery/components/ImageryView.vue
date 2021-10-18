@@ -84,18 +84,18 @@
                 />
             </div>
         </div>
-        <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
-            <button class="c-nav c-nav--prev"
-                    title="Previous image"
-                    :disabled="isPrevDisabled"
-                    @click="prevImage()"
-            ></button>
-            <button class="c-nav c-nav--next"
-                    title="Next image"
-                    :disabled="isNextDisabled"
-                    @click="nextImage()"
-            ></button>
-        </div>
+
+        <button class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--prev"
+                title="Previous image"
+                :disabled="isPrevDisabled"
+                @click="prevImage()"
+        ></button>
+
+        <button class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--next"
+                title="Next image"
+                :disabled="isNextDisabled"
+                @click="nextImage()"
+        ></button>
 
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
