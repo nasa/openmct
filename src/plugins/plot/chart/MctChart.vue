@@ -19,6 +19,9 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+
+<!-- eslint-disable vue/no-v-html -->
+
 <template>
 <div class="gl-plot-chart-area">
     <span v-html="canvasTemplate"></span>
