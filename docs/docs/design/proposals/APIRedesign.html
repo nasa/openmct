@@ -1,0 +1,1529 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#goals">Goals</a><ul>
+<li><a href="#characteristics-of-a-good-api">Characteristics of a good API</a></li>
+<li><a href="#evaluating-apis">Evaluating APIs</a></li>
+</ul>
+</li>
+<li><a href="#developer-feedback">Developer Feedback</a><ul>
+<li><a href="#developer-intern-feedback">Developer Intern Feedback</a><ul>
+<li><a href="#developer-intern-1">Developer Intern 1</a></li>
+<li><a href="#developer-intern-2">Developer Intern 2</a></li>
+</ul>
+</li>
+<li><a href="#plugin-developer-feedback">Plugin Developer Feedback</a><ul>
+<li><a href="#plugin-developer-1">Plugin Developer 1</a></li>
+<li><a href="#plugin-developer-2">Plugin Developer 2</a></li>
+<li><a href="#open-source-contributer">Open Source Contributer</a></li>
+</ul>
+</li>
+<li><a href="#misc-feedback--mostly-verbal-">Misc. Feedback (mostly verbal)</a></li>
+<li><a href="#long-term-developer-notes">Long-term Developer Notes</a></li>
+<li><a href="#angularjs">AngularJS</a><ul>
+<li><a href="#angular-s-role">Angular&#39;s Role</a></li>
+<li><a href="#rationale-for-adopting-angular">Rationale for Adopting Angular</a></li>
+<li><a href="#actual-experience-with-angular">Actual Experience with Angular</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#feedback-review">Feedback Review</a><ul>
+<li><a href="#problem-summary">Problem Summary</a></li>
+<li><a href="#positive-features">Positive Features</a></li>
+<li><a href="#requirements">Requirements</a></li>
+</ul>
+</li>
+<li><a href="#proposals">Proposals</a><ul>
+<li><a href="#requirejs-as-dependency-injector">RequireJS as dependency injector</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#arbitrary-html-views">Arbitrary HTML Views</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#wrap-angular-services">Wrap Angular Services</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#bundle-declarations-in-javascript">Bundle Declarations in JavaScript</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#pass-around-a-dependency-injector">Pass around a dependency injector</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#remove-partial-constructors">Remove partial constructors</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#rename-views-to-applications">Rename Views to Applications</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#provide-classes-for-extensions">Provide Classes for Extensions</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#normalize-naming-conventions">Normalize naming conventions</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#expose-no-third-party-apis">Expose no third-party APIs</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#register-extensions-as-instances-instead-of-constructors">Register Extensions as Instances instead of Constructors</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#remove-capability-delegation">Remove capability delegation</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#nomenclature-change">Nomenclature Change</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#capabilities-as-mixins">Capabilities as Mixins</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#remove-applies-to-methods">Remove Applies-To Methods</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#revise-telemetry-api">Revise Telemetry API</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#allow-composite-services-to-fail-gracefully">Allow Composite Services to Fail Gracefully</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#plugins-as-angular-modules">Plugins as Angular Modules</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#contextual-injection">Contextual Injection</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#add-new-abstractions-for-actions">Add new abstractions for actions</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+<li><a href="#add-gesture-handlers">Add gesture handlers</a><ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#detriments">Detriments</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#decisions">Decisions</a></li>
+</ul>
+<a name="overview" href="#overview"><h1 id="undefinedoverview">Overview</h1>
+</a><p>The purpose of this document is to review feedback on Open MCT&#39;s
+current API and propose improvements to the API, particularly for a
+1.0.0 release.</p>
+<p>Strategically, this is handled by:</p>
+<ul>
+<li>Identifying broader goals.</li>
+<li>Documenting feedback and related background information.</li>
+<li>Reviewing feedback to identify trends and useful features.<ul>
+<li>In particular, pull out &quot;pain points&quot; to attempt to address,
+as well as positive attributes to attempt to preserve.</li>
+</ul>
+</li>
+<li>Proposing a set of API changes to address these &quot;pain points.&quot;<ul>
+<li>This also takes into account scheduling concerns.</li>
+</ul>
+</li>
+<li>Once agreed-upon, formalize this set of changes (e.g. as UML
+diagrams) and plan to implement them.</li>
+</ul>
+<a name="goals" href="#goals"><h1 id="undefinedgoals">Goals</h1>
+</a><a name="characteristics-of-a-good-api" href="#characteristics-of-a-good-api"><h2 id="undefinedcharacteristics-of-a-good-api">Characteristics of a good API</h2>
+</a><p>A good API:</p>
+<ul>
+<li>Is easy to understand.</li>
+<li>Rewards doing things &quot;the right way.&quot;</li>
+<li>Saves development effort.</li>
+<li>Is powerful enough to support a broad range of applications.</li>
+<li>Lends itself to good documentation.</li>
+</ul>
+<p>These characteristics can sometimes be at odds with each other, or
+with other concerns. These should typically be viewed as participants
+in trades.</p>
+<a name="evaluating-apis" href="#evaluating-apis"><h2 id="undefinedevaluating-apis">Evaluating APIs</h2>
+</a><p>APIs may be evaluated based on:</p>
+<ul>
+<li>Number of interfaces.<ul>
+<li>How many application-specific interfaces do I need to know to
+solve a certain class of problems?</li>
+</ul>
+</li>
+<li>Size of interfaces.<ul>
+<li>How many methods does each interface have?</li>
+</ul>
+</li>
+<li>Depth of interfaces.<ul>
+<li>Specifically, how many methods do I need to call before the return
+value is of a form that is not specific to the API?</li>
+</ul>
+</li>
+<li>Clarity of interfaces.<ul>
+<li>How much documentation or learning is required before an interface is
+useful?</li>
+</ul>
+</li>
+<li>Consistency of interfaces.<ul>
+<li>How similar is one interface to an analogous interface?</li>
+</ul>
+</li>
+<li>Utility of interfaces.<ul>
+<li>How much development effort is reduced by utilizing these interfaces,
+versus accomplishing the same goals with other tools?</li>
+</ul>
+</li>
+<li>Power of interfaces.<ul>
+<li>How much application functionality can I influence with the interfaces
+that are available to me?</li>
+</ul>
+</li>
+</ul>
+<p>In general, prefer to have a small number of simple, shallow, clear,
+useful, powerful interfaces.</p>
+<a name="developer-feedback" href="#developer-feedback"><h1 id="undefineddeveloper-feedback">Developer Feedback</h1>
+</a><a name="developer-intern-feedback" href="#developer-intern-feedback"><h2 id="undefineddeveloper-intern-feedback">Developer Intern Feedback</h2>
+</a><p>This feedback comes from interns who worked closely with
+Open MCT as their primary task over the Summer of 2015.</p>
+<a name="developer-intern-1" href="#developer-intern-1"><h3 id="undefineddeveloper-intern-1">Developer Intern 1</h3>
+</a><p>Worked on bug fixes in the platform and a plugin for search.</p>
+<ul>
+<li>Initially, it was confusing that many things in files that are in
+very different locations in the code base refer to each other.<ul>
+<li>Perhaps explain more the organization strategy behind the
+different main sections, like &quot;commonUI&quot; vs &quot;core&quot;.</li>
+</ul>
+</li>
+<li>This may be just me, but there are often long chains of related
+functions calling each other, and when I had to modify the behavior,
+I had a hard time remembering to look for the highest level function
+in the call chain to change. I also sometimes had a hard time finding
+the connections between the functions. But, that is important because
+the implementation of the functions along the chain may change later.</li>
+<li>One very helpful thing that you could add might just be documentation
+that is not in paragraph format like in the current developer guide.
+I would just like a list of all the functions and members of each kind
+of object there is, and descriptions of what they are and how they&#39;re
+used.<ul>
+<li>Also, the current developer guide pdf&#39;s words that are in &#39;code font&#39;,
+rather than the normal text, are not searchable.
+(Depending on the pdf viewer.)</li>
+</ul>
+</li>
+<li>I do appreciate that there is some example code.</li>
+<li>I am still slightly confused about what &quot;domainObject&quot; refers to in
+different situations.</li>
+<li>The tutorials are helpful, but only really for designing new views.
+It doesn&#39;t help much with gaining understanding of how the other parts
+of the application work.</li>
+<li>The general idea of &#39;telemetry&#39; in this context is kind of confusing.
+It is hard to figure out what the difference between the various ways of
+dealing with telemetry are. e.g., what is the difference between just
+&quot;Telemetry&quot; and the &quot;Telemetry Service&quot;? There are many
+&quot;Telemetry Thing&quot;s which seem related, but in an unclear way.</li>
+</ul>
+<a name="developer-intern-2" href="#developer-intern-2"><h3 id="undefineddeveloper-intern-2">Developer Intern 2</h3>
+</a><p>Worked on platform bug fixes and mobile support.</p>
+<ul>
+<li>No guide for the UI and front end for the HTML/CSS part of Open MCT.
+Not sure if this is applicable or needed for developers, however would
+be helpful to any front end development</li>
+<li>Found it difficult to follow the plot controller &amp; subplot
+functions/features, such as zooming.</li>
+<li>If the developer guide could have for references to which files or
+functions are key for gestures, browse navigation, etc it would be
+helpful for future developers as a place to start looking. I found
+it occasionally difficult to find which files or functions I wanted
+at first.</li>
+</ul>
+<a name="plugin-developer-feedback" href="#plugin-developer-feedback"><h2 id="undefinedplugin-developer-feedback">Plugin Developer Feedback</h2>
+</a><p>This feedback comes from developers who have worked on plugins for
+Open MCT, but have not worked on the platform.</p>
+<a name="plugin-developer-1" href="#plugin-developer-1"><h3 id="undefinedplugin-developer-1">Plugin Developer 1</h3>
+</a><p>Used Open MCT over the course of several months (on a
+less-than-half-time basis) to develop a
+spectrum visualization plugin.</p>
+<ul>
+<li>Not a lot of time to work on this, made it hard to get up the learning
+curve.<ul>
+<li>Note that this is the norm, particularly for GDS development.</li>
+</ul>
+</li>
+<li>JavaScript carries its own learning curve.</li>
+<li>The fact that it pulls in other tools whose APIs need to be learned
+also makes the learning curve harder to get up.</li>
+<li>Tracking down interconnected parts was a bit difficult.</li>
+<li>Could really use examples.</li>
+<li>Easy to get lost when not immersed in the style.</li>
+</ul>
+<a name="plugin-developer-2" href="#plugin-developer-2"><h3 id="undefinedplugin-developer-2">Plugin Developer 2</h3>
+</a><p>Used Open MCT over the course of several weeks (on a half-time basis)
+to develop a tabular visualization plugin.</p>
+<ul>
+<li>Pain points<ul>
+<li>Unable to copy and paste from tutorial pdfs into code<ul>
+<li>Wanted to verify my environment was setup properly so that I
+could get the final product working in the end without having
+to type everything out.  Perhaps there could be something in
+github that has the final completed tutorial for new users to
+checkout?  Or a step by step one kind of like the tutorials on
+the angular js webpage?</li>
+</ul>
+</li>
+<li>Typing too long without seeing results of what I was doing<ul>
+<li>At some points in the tutorial I ended up typing for the sake
+of typing without knowing what I was really typing for.</li>
+<li>If there were break points where we could run the incomplete
+code and just see a variable dump or something even that would
+be helpful to know that I am on the right track.</li>
+</ul>
+</li>
+<li>Documentation on features are a bit hard to find.<ul>
+<li>I&#39;m not sure what I can do until I search through examples of
+existing code and work my way backwards.</li>
+<li>Maybe you can link the features we are using in the tutorial to
+their respective parts in the developer guide?  Not sure if that
+can be done on PDFs, so maybe a webpage instead?</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Positive Attributes<ul>
+<li>Unable to copy and paste from tutorial pdfs into code<ul>
+<li>I know I also listed this as a pain, but it was kind of helpful
+being forced to read and type everything out.</li>
+</ul>
+</li>
+<li>&quot;Widgets&quot; are self contained in their own directories.  I don&#39;t have
+ to be afraid of exploding things.</li>
+<li>All files/config that I care about for a &quot;widget&quot; can be found in
+the bundles.json</li>
+</ul>
+</li>
+<li>Misc<ul>
+<li>Coming from a not so strong webdev background and on top of that a
+zero strong angular background I think starting off with a simple
+&quot;Hello World&quot; webpage tutorial would have been nice.<ul>
+<li>Start off with a bare bones bundle json with an empty controller
+and static &quot;Hello World&quot; in the view</li>
+<li>Add the variable &quot;Hello World&quot; into the controller for the view
+to display</li>
+<li>Add a model property to the bundle.json to take in &quot;Hello World&quot;
+as a parameter and pass through to the controller/view</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<a name="open-source-contributer" href="#open-source-contributer"><h3 id="undefinedopen-source-contributer">Open Source Contributer</h3>
+</a><ul>
+<li><a href="https://github.com/nasa/openmctweb/issues/79">Failures are non-graceful when services are missing.</a></li>
+</ul>
+<a name="misc--feedback--mostly-verbal-" href="#misc--feedback--mostly-verbal-"><h2 id="undefinedmisc-feedback-mostly-verbal-">Misc. Feedback (mostly verbal)</h2>
+</a><ul>
+<li>Easy to add things.</li>
+<li>Separation of concerns is unclear (particularly: &quot;where&#39;s the MVC?&quot;)</li>
+<li>Telemetry API is confusing. In particular, <code>TelemetrySeries</code> should
+just be an array.<ul>
+<li>Came out of design discussions for Limits.</li>
+</ul>
+</li>
+<li>Capabilities are confusing.</li>
+</ul>
+<a name="long-term-developer-notes" href="#long-term-developer-notes"><h2 id="undefinedlong-term-developer-notes">Long-term Developer Notes</h2>
+</a><p>The following notes are from original platform developer, with long
+term experience using Open MCT.</p>
+<ul>
+<li>Bundle mechanism allows for grouping related components across concerns,
+and adding and removing these easily. (e.g. model and view components of
+Edit mode are all grouped together in the Edit bundle.)</li>
+</ul>
+<a name="angularjs" href="#angularjs"><h2 id="undefinedangularjs">AngularJS</h2>
+</a><p>Angular 2.0.0 is coming (maybe by end of 2015.)</p>
+<p>It will not be backwards-compatible with Angular 1.x.
+The differences are significant enough that switching to
+Angular 2 will require only slightly less effort than switching
+to an entirely different framework.</p>
+<p>We can expect AngularJS 1.x to reach end-of-life reasonably soon thereafter.</p>
+<p>Our API is currently a superset of Angular&#39;s API, so this directly effects
+our API. Specifically, API changes should be oriented towards removing
+or reducing the Angular dependency.</p>
+<a name="angular--39-s-role" href="#angular--39-s-role"><h3 id="undefinedangular-s-role">Angular&#39;s Role</h3>
+</a><p>Angular is Open MCT&#39;s:</p>
+<ul>
+<li>Dependency injection framework.</li>
+<li>Template rendering.</li>
+<li>DOM interactions.</li>
+<li>Services library.</li>
+<li>Form validator.</li>
+<li>Routing.</li>
+</ul>
+<p>This is the problem with frameworks: They become a single point of
+failure for unrelated concerns.</p>
+<a name="rationale-for-adopting-angular" href="#rationale-for-adopting-angular"><h3 id="undefinedrationale-for-adopting-angular">Rationale for Adopting Angular</h3>
+</a><p>The rationale for adopting AngularJS as a framework is
+documented in <a href="https://trunk.arc.nasa.gov/jira/browse/WTD-208">https://trunk.arc.nasa.gov/jira/browse/WTD-208</a>.
+Summary of the expected benefits:</p>
+<ul>
+<li>Establishes design patterns that are well-documented and
+understood in industry. This can be beneficial in training
+new staff, and lowers the documentation burden on the local
+development team. If MCT-Web were to stay with its current
+architecture, significant developer-oriented documentation
+and training materials would need to be produced.</li>
+<li>The maintainability of MCT-Web would be enhanced by using a
+framework like Angular. The local team would enjoy the benefits of
+maintenance performed by the sponsor, but would not incur any cost
+for this. This would include future upgrades, testing, and bug fixes.</li>
+<li>Replaces DOM-manipulation with a declarative data-binding syntax
+which automatically updates views when the model data changes. This
+pattern has the potential to save the development team from
+time-consuming and difficult-to-debug DOM manipulation.</li>
+<li>Provides data binding to backend models.</li>
+<li>Provides patterns for form validation.</li>
+<li>Establishes documented patterns for add-on modules and services.</li>
+<li>Supports unit tests and system tests (tests which simulate user
+interactions in the browser)</li>
+<li>Angular software releases can be expected to be tested, which would
+allow MCT-Web developers to focus on MCT-specific features, instead
+of the maintenance of custom infrastructure.</li>
+</ul>
+<a name="actual-experience-with-angular" href="#actual-experience-with-angular"><h3 id="undefinedactual-experience-with-angular">Actual Experience with Angular</h3>
+</a><p>Most of the expected benefits of Angular have been invalidated
+by experience:</p>
+<ul>
+<li>Feedback from new developers is that Angular was a hindrance to
+training, not a benefit. (&quot;One more thing to learn.&quot;) Significant
+documentation remains necessary for Open MCT.</li>
+<li>Expected enhancements to maintainability will be effectively
+invalidated by an expected Angular end-of-life.</li>
+<li>Data binding and automatic view updates do save development effort,
+but also carry a performance penalty. This can be solved, but requires
+resorting to exactly the sort of DOM manipulations we want to avoid.
+In some cases this can require more total development (writing a
+poorly-performing Angular version, then &quot;optimizing&quot; by rewriting a
+non-Angular version.)</li>
+<li>Expected reduction of test scope will also be invalidated by an
+expected end-of-life.</li>
+</ul>
+<p>Other problems:</p>
+<ul>
+<li>Hinders integrating non-Angular components. (Need to wrap with
+Angular API, e.g. as directives, which may be non-trivial.)</li>
+<li>Interferes with debugging by swallowing or obscuring exceptions.</li>
+</ul>
+<a name="feedback-review" href="#feedback-review"><h1 id="undefinedfeedback-review">Feedback Review</h1>
+</a><a name="problem-summary" href="#problem-summary"><h2 id="undefinedproblem-summary">Problem Summary</h2>
+</a><p>The following attributes of the current API are undesirable:</p>
+<ul>
+<li>[ ] It is difficult to tell &quot;where things are&quot; in the code base.</li>
+<li>[ ] It is difficult to see how objects are passed around at run-time.</li>
+<li>[ ] It is difficult to trace flow of control generally.</li>
+<li>[ ] Multiple interfaces for related concepts (e.g. telemetry) is confusing.</li>
+<li>[ ] API documentation is missing or not well-formatted for use.</li>
+<li>[ ] High-level separation of concerns is not made clear.</li>
+<li>[ ] Interface depth of telemetry API is excessive (esp. <code>TelemetrySeries</code>)</li>
+<li>[ ] Capabilities as a concept lack clarity.</li>
+<li>[ ] Too many interfaces and concepts to learn.</li>
+<li>[ ] Exposing third-party APIs (e.g. Angular&#39;s) increases the learning curve.</li>
+<li>[ ] Want more examples, easier-to-use documentation.</li>
+<li>[ ] UI-relevant features (HTML, CSS) under-documented</li>
+<li>[ ] Good MVC for views of domain objects not enforced (e.g. plots)</li>
+</ul>
+<a name="positive-features" href="#positive-features"><h2 id="undefinedpositive-features">Positive Features</h2>
+</a><p>It is desirable to retain the following features in an API redesign:</p>
+<ul>
+<li>[ ] Creating new features and implementing them additively is well-supported.</li>
+<li>[ ] Easy to add/remove features which involve multiple concerns.</li>
+<li>[ ] Features can be self-contained.</li>
+<li>[ ] Declarative syntax makes it easy to tell what&#39;s in use.</li>
+</ul>
+<a name="requirements" href="#requirements"><h2 id="undefinedrequirements">Requirements</h2>
+</a><p>The following are considered &quot;must-haves&quot; of any complete API
+redesign:</p>
+<ul>
+<li>[ ] Don&#39;t require usage of Angular API.</li>
+<li>[ ] Don&#39;t require support for Angular API.</li>
+</ul>
+<a name="proposals" href="#proposals"><h1 id="undefinedproposals">Proposals</h1>
+</a><a name="requirejs-as-dependency-injector" href="#requirejs-as-dependency-injector"><h2 id="undefinedrequirejs-as-dependency-injector">RequireJS as dependency injector</h2>
+</a><p>Use Require.JS for dependency injection.</p>
+<p>Dependencies will then be responsible for being sufficiently
+mutable/extensible/customizable. This can be facilitated by
+adding platform classes which can facilitate the addition
+of reusable components.</p>
+<p>Things that we usefully acquire via dependency injection currently:</p>
+<ul>
+<li>Services.</li>
+<li>Extensions (by category).</li>
+<li>Configuration constants.</li>
+</ul>
+<p>Services would be defined (by whatever component is responsible
+for declaring it) using <code>define</code> and the explicit name of the
+service. To allow for the power of composite services, the
+platform would provide a <code>CompositeService</code> class that supports
+this process by providing <code>register</code>, <code>decorate</code>, and <code>composite</code>
+methods to register providers, decorators, and aggregators
+respectively. (Note that nomenclature changes are also implied
+here, to map more clearly to the Composite Pattern and to
+avoid the use of the word &quot;provider&quot;, which has ambiguity with
+Angular.)</p>
+<pre><code class="lang-js">define(
+  &quot;typeService&quot;,
+  [&quot;CompositeService&quot;],
+  function (CompositeService) {
+    var typeService = new CompositeService([
+      &quot;listTypes&quot;,
+      &quot;getType&quot;
+    ]);
+
+    // typeService has `listTypes` and `getType` as methods;
+    // at this point they are stubbed (will return undefined
+    // or throw or similar) but this will change as
+    // decorators/compositors/providers are added.
+
+    // You could build in a compositor here, or
+    // someone could also define one later
+    typeService.composite(function (typeServices) {
+      // ... return a TypeService
+    });
+
+    // Similarly, you could register a default implementation
+    // here, or from some other script.
+    typeService.register(function (typeService) {
+      // ... return a TypeService
+    }, { priority: &#39;default&#39; });
+
+    return typeService;
+  }
+);
+</code></pre>
+<p>Other code could then register additional <code>TypeService</code>
+implementations (or decorators, or even compositors) by
+requiring <code>typeService</code> and calling those methods; or, it
+could use <code>typeService</code> directly. Priority ordering could
+be utilized by adding a second &quot;options&quot; argument.</p>
+<p>For extension categories, you could simply use registries:</p>
+<pre><code class="lang-js">define(
+  &quot;typeRegistry&quot;,
+  [&quot;ExtensionRegistry&quot;],
+  function (ExtensionRegistry) {
+    return new ExtensionRegistry();
+  }
+);
+</code></pre>
+<p>Where <code>ExtensionRegistry</code> extends <code>Array</code>, and adds a
+<code>register</code> method which inserts into the array at some
+appropriate point (e.g. with an options parameter that
+respects priority order.)</p>
+<p>This makes unit testing somewhat more difficult when you
+want to mock injected dependencies; there are tools out
+there (e.g. <a href="https://github.com/iammerrick/Squire.js/">Squire</a>)
+which can help with this, however.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Clarifies &quot;how objects are passed around at run-time&quot;;
+answer is always &quot;via RequireJS.&quot;</li>
+<li>Preserves flexibility/power provided by composite services.</li>
+<li>Lends itself fairly naturally to API documentation via JSDoc
+(as compared to declaring things in bundles, which does not.)</li>
+<li>Reduces interface complexity for acquiring dependencies;
+one interface for both explicit and &quot;implicit&quot; dependencies,
+instead of separate approaches for static and substitutable
+dependencies.</li>
+<li>Removes need to understand Angular&#39;s DI mechanism.</li>
+<li>Improves useability of documentation (<code>typeService</code> is an
+instance of <code>CompositeService</code> and implements <code>TypeService</code>
+so you can easily traverse links in the JSDoc.)</li>
+<li>Can be used more easily from Web Workers, allowing services
+to be used on background threads trivially.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Having services which both implement the service, and
+have methods for registering the service, is a little
+weird; would be cleaner if these were separate.
+(Mixes concerns.)</li>
+<li>Syntax becomes non-declarative, which may make it harder to
+understand &quot;what uses what.&quot;</li>
+<li>Allows for ordering problems (e.g. you start using a
+service before everything has been registered.)</li>
+</ul>
+<a name="arbitrary-html-views" href="#arbitrary-html-views"><h2 id="undefinedarbitrary-html-views">Arbitrary HTML Views</h2>
+</a><p>Currently, writing new views requires writing Angular templates.
+This must change if we want to reduce our dependence on Angular.</p>
+<p>Instead, propose that:</p>
+<ul>
+<li>What are currently called &quot;views&quot; we call something different.
+(Want the term view to be more like &quot;view&quot; in the MVC sense.)<ul>
+<li>For example, call them &quot;applications.&quot;</li>
+</ul>
+</li>
+<li>Consolidate what are currently called &quot;representations&quot; and
+&quot;templates&quot;, and instead have them be &quot;views&quot;.</li>
+</ul>
+<p>For parity with actions, a <code>View</code> would be a constructor which
+takes an <code>ActionContext</code> as a parameter (with similarly-defined
+properties) and exposes a method to retrieve the HTML elements
+associateed with it.</p>
+<p>The platform would then additionally expose an <code>AngularView</code>
+implementation to improve compatibility with existing
+representations, whose usage would something like:</p>
+<pre><code class="lang-js">define(
+  [&quot;AngularView&quot;],
+  function (AngularView) {
+    var template = &quot;&lt;span ng-click=&#39;...&#39;&gt;Hello world&lt;/span&gt;&quot;;
+    return new AngularView(template);
+  }
+);
+</code></pre>
+<p>The interface exposed by a view is TBD, but should provide at
+least the following:</p>
+<ul>
+<li>A way to get the HTML elements that are exposed by &amp; managed
+by the view.</li>
+<li>A <code>destroy</code> method to detach any listeners at the model level.</li>
+</ul>
+<p>Individual views are responsible for managing their resources,
+e.g. listening to domain objects for mutation. To keep DRY, the
+platform should include one or more view implementations that
+can be used/subclassed which handle common behavior(s).</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Using Angular API for views is no longer required.</li>
+<li>Views become less-coupled to domain objects. Domain objects
+may be present in the <code>ViewContext</code>, but this also might
+just be a &quot;view&quot; of some totally different thing.</li>
+<li>Helps clarify high-level concerns in the API (a View is now
+really more like a View in the MVC sense; although, not
+completely, so this gets double-booked as a detriment.)</li>
+<li>Having a <code>ViewContext</code> that gets passed in allows views to
+be more &quot;contextually aware,&quot; which is something that has
+been flagged previously as a UX desire.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Becomes less clear how views relate to domain objects.</li>
+<li>Adds another interface.</li>
+<li>Leaves an open problem of how to distinguish views that
+a user can choose (Plot, Scrolling List) from views that
+are used more internally by the application (tree view.)</li>
+<li>Views are still not Views in the MVC sense (in practice,
+the will likely be view-controller pairs.) We could call
+them widgets to disambiguate this.</li>
+<li>Related to the above, even if we called these &quot;widgets&quot;
+it would still fail to enforce good MVC.</li>
+</ul>
+<a name="wrap-angular-services" href="#wrap-angular-services"><h2 id="undefinedwrap-angular-services">Wrap Angular Services</h2>
+</a><p>Wrap Angular&#39;s services in a custom interfaces; e.g.
+replace <code>$http</code> with an <code>httpService</code> which exposes a useful
+subset of <code>$http</code>&#39;s functionality.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Removes a ubiquitous dependency on Angular.</li>
+<li>Allows documentation for these features to be co-located
+and consistent with other documentation.</li>
+<li>Facilitates replacing these with non-Angular versions
+in the future.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Increases the number of interfaces in Open MCT. (Arguably,
+not really, since the same interfaces would exist if exposed
+by Angular.)</li>
+</ul>
+<a name="bundle-declarations-in-javascript" href="#bundle-declarations-in-javascript"><h2 id="undefinedbundle-declarations-in-javascript">Bundle Declarations in JavaScript</h2>
+</a><p>Replace <code>bundle.json</code> files (and bundle syntax generally) with
+an imperative form. There would instead be a <code>Bundle</code> interface
+which scripts can implement (perhaps assisted by a platform
+class.)</p>
+<p>The <code>bundles.json</code> file would then be replaced with a <code>bundles.js</code>
+or <code>Bundles.js</code> that would look something like:</p>
+<pre><code class="lang-js">define(
+  [
+    &#39;platform/core/PlatformBundle&#39;,
+    // ... etc ...
+    &#39;platform/features/plot/PlotBundle&#39;
+  ],
+  function () {
+    return arguments;
+  }
+);
+</code></pre>
+<p>Which could in turn be used by an initializer:</p>
+<pre><code class="lang-js">define(
+  [&#39;./bundles&#39;, &#39;mct&#39;],
+  function (bundles, mct) {
+    mct.initialize(bundles);
+  }
+);
+</code></pre>
+<p>A <code>Bundle</code> would have a constructor that took some JSON object
+(a <code>BundleContext</code>, lets say) and would provide methods for
+application life-cycle events. Depending on other choices,
+a dependency injector could be passed in at some appropriate
+life-cycle call (e.g. initialize.)</p>
+<p>This would also allow for &quot;composite bundles&quot; which serve as
+proxies for multiple bundles. The <code>BundleContext</code> could contain
+(or later be amended to contain) filtering rules to ignore
+other bundles and so forth (this has been useful for administering
+Open MCT in subtly different configurations in the past.)</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Imperative; more explicit, less magic, more clear what is going on.</li>
+<li>Having a hierarchy of &quot;bundles&quot; could make it easier to navigate
+(relevant groupings can be nested in a manner which is not
+currently well-supported.)</li>
+<li>Lends itself naturally to a compilation step.</li>
+<li>Nudges plugin authors to &quot;do your initialization and registration
+in a specific place&quot; instead of mixing in registration of features
+with their implementations.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Introduces another interface.</li>
+<li>Loses some of the convenience of having a declarative
+summary of components and their dependencies.</li>
+</ul>
+<a name="pass-around-a-dependency-injector" href="#pass-around-a-dependency-injector"><h2 id="undefinedpass-around-a-dependency-injector">Pass around a dependency injector</h2>
+</a><p>:warning: Note that this is incompatible with the
+<a href="#requirejs-as-dependency-injector">RequireJS as dependency injector</a>
+proposal.</p>
+<p>Via some means (such as in a registration lifecycle event as
+described above) pass a dependency injector to plugins to allow
+for dependencies to be registered.</p>
+<p>For example:</p>
+<pre><code class="lang-js">MyBundle.prototype.registration = function (architecture) {
+  architecture.service(&#39;typeService&#39;).register(MyTypeService);
+  architecture.extension(&#39;actions&#39;).register(
+    [ &#39;foo&#39; ],
+    function (foo) { return new MyAction(foo); }
+  );
+};
+</code></pre>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Ensures that registration occurs at an appropriate stage of
+application execution, avoiding start-up problems.</li>
+<li>Makes registration explicit (generally easier to understand)
+rather than implicit.</li>
+<li>Encapsulates dependency injection nicely.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Increases number of interfaces to learn.</li>
+<li>Syntax likely to be awkward, since in many cases we really
+want to be registering constructors.</li>
+</ul>
+<a name="remove-partial-constructors" href="#remove-partial-constructors"><h2 id="undefinedremove-partial-constructors">Remove partial constructors</h2>
+</a><p>Remove partial constructors; these are confusing. It is hard to
+recognize which constructor arguments are from dependencies, and
+which will be provided at run-time. Instead, it is the responsibility
+of whoever is introducing a component to manage these things
+separately.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>More clarity.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Possibly results in redundant effort to manage this difference
+(other APIs may need to be adjusted accordingly.)</li>
+</ul>
+<a name="rename-views-to-applications" href="#rename-views-to-applications"><h2 id="undefinedrename-views-to-applications">Rename Views to Applications</h2>
+</a><p>Rename (internally to the application, not necessarily in UI or
+in user guide) what are currently called <code>views</code> to <code>applications</code>.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Easier to understand. What is currently called a &quot;view&quot; is,
+in the MVC sense, a view-controller pair, usually with its own
+internal model for view state. Calling these &quot;applications&quot;
+would avoid this ambiguity/inconsistency.</li>
+<li>Also provides an appropriate mindset for building these;
+particularly, sets the expectation that you&#39;ll want to decompose
+this &quot;application&quot; into smaller pieces. This nudges developers
+in appropriate directions (in contrast to <code>views</code>, which
+typically get implemented as templates with over-complicated
+&quot;controllers&quot;.)</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Developer terminology falls out of sync with what is used in
+the user guide.</li>
+</ul>
+<a name="provide-classes-for-extensions" href="#provide-classes-for-extensions"><h2 id="undefinedprovide-classes-for-extensions">Provide Classes for Extensions</h2>
+</a><p>As a general pattern, when introducing extension categories, provide
+classes with a standard implementation of these interfaces that
+plugin developers can <code>new</code> and register.</p>
+<p>For example, instead of declaring a type as:</p>
+<pre><code class="lang-json">{
+  &quot;types&quot;: [{
+    &quot;key&quot;: &quot;sometype&quot;,
+    &quot;glyph&quot;: &quot;X&quot;,
+    &quot;etc&quot;: &quot;...&quot;
+  }]
+}
+</code></pre>
+<p>You would register one as:</p>
+<pre><code class="lang-js">// Assume we have gotten a reference to a type registry somehow
+typeRegistry.register(new Type({
+    &quot;key&quot;: &quot;sometype&quot;,
+    &quot;glyph&quot;: &quot;X&quot;,
+    &quot;etc&quot;: &quot;...&quot;
+}));
+</code></pre>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Easier to understand (less &quot;magic&quot;).</li>
+<li>Lends itself naturally to substitution of different implementations
+of the same interface.</li>
+<li>Allows for run-time decisions about exactly what gets registered.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Adds some modest boilerplate.</li>
+<li>Provides more opportunity to &quot;do it wrong.&quot;</li>
+</ul>
+<a name="normalize-naming-conventions" href="#normalize-naming-conventions"><h2 id="undefinednormalize-naming-conventions">Normalize naming conventions</h2>
+</a><p>Adopt and obey the following naming conventions for AMD modules
+(and for injectable dependencies, which may end up being modules):</p>
+<ul>
+<li>Use <code>UpperCamelCase</code> for classes.</li>
+<li>Use <code>lowerCase</code> names for instances.<ul>
+<li>Use <code>someNoun</code> for object instances which implement some
+interface. The noun should match the implemented interface,
+when applicable.</li>
+<li><code>useSomeVerb</code> for functions.</li>
+</ul>
+</li>
+<li>Use <code>ALL_CAPS_WITH_UNDERSCORES</code> for other values, including
+&quot;struct-like&quot; objects (that is, where the object conceptually
+contains properties rather than methods.)</li>
+</ul>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Once familiar with the conventions, easier to understand what
+individual modules are.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>A little bit inflexible.</li>
+</ul>
+<a name="expose-no-third-party-apis" href="#expose-no-third-party-apis"><h2 id="undefinedexpose-no-third-party-apis">Expose no third-party APIs</h2>
+</a><p>As a general practice, expose no third-party APIs as part of the
+platform.</p>
+<p>For cases where you do want to access third-party APIs directly
+from other scripts, this behavior should be &quot;opt-in&quot; instead of
+mandatory. For instance, to allow addition of Angular templates,
+an Angular-support bundle could be included which provides an
+<code>AngularView</code> class, a <code>controllerRegistry</code>, et cetera. Importantly,
+such a bundle would need to be kept separate from the platform API,
+or appropriately marked as non-platform in the API docs (an
+<code>@experimental</code> tag would be nice here if we feel like extending
+JSDoc.)</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Simplifies learning curve (only one API to learn.)</li>
+<li>Reduces Angular dependency.</li>
+<li>Avoids the problems of ubiquitous dependencies generally.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Increases documentation burden.</li>
+</ul>
+<a name="register-extensions-as-instances-instead-of-constructors" href="#register-extensions-as-instances-instead-of-constructors"><h2 id="undefinedregister-extensions-as-instances-instead-of-constructors">Register Extensions as Instances instead of Constructors</h2>
+</a><p>Register extensions as object instances instead of constructors.
+This allows for API flexibility w.r.t. constructor signatures
+(and avoids the need for partial constructors) and additionally
+makes it easier to provide platform implementations of extensions
+that can be used, subclassed, etc.</p>
+<p>For instance, instead of taking an <code>ActionContext</code> in its
+constructor, an <code>Action</code> would be instantiated once and would
+accept appropriate arguments to its methods:</p>
+<pre><code class="lang-js">function SomeAction {
+}
+SomeAction.prototype.canHandle = function (actionContext) {
+    // Check if we can handle this context
+};
+SomeAction.prototype.perform = function (actionContext) {
+    // Perform this action, in this context
+};
+</code></pre>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Reduces scope of interfaces to understand (don&#39;t need to know
+what constructor signature to provide for compatibility.)</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Requires refactoring of various types; may result in some
+awkward APIs or extra factory interfaces.</li>
+</ul>
+<a name="remove-capability-delegation" href="#remove-capability-delegation"><h2 id="undefinedremove-capability-delegation">Remove capability delegation</h2>
+</a><p>The <code>delegation</code> capability has only been useful for the
+<code>telemetry</code> capability, but using both together creates
+some complexity to manage. In practice, these means that
+telemetry views need to go through <code>telemetryHandler</code> to
+get their telemetry, which in turn has an awkward API.</p>
+<p>This could be resolved by:</p>
+<ul>
+<li>Removing <code>delegation</code> as a capability altogether.</li>
+<li>Reworking <code>telemetry</code> capability API to account for
+the possibility of multiple telemetry-providing
+domain objects. (Perhaps just stick <code>domainObject</code>
+in as a field in each property of <code>TelemetryMetadata</code>?)</li>
+<li>Move the behavior currently found in <code>telemetryHandler</code>
+into the <code>telemetry</code> capability itself (either the
+generic version, or a version specific to telemetry
+panels - probably want some distinct functionality
+for each.)</li>
+</ul>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Reduces number of interfaces.</li>
+<li>Accounting for the possibility of multiple telemetry objects
+in the <code>telemetry</code> capability API means that views using
+this will be more immediately aware of this as a possibility.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Increases complexity of <code>telemetry</code> capability&#39;s interface
+(although this could probably be minimized.)</li>
+</ul>
+<a name="nomenclature-change" href="#nomenclature-change"><h2 id="undefinednomenclature-change">Nomenclature Change</h2>
+</a><p>Instead of presenting Open MCT as a &quot;framework&quot; or
+&quot;platform&quot;, present it as an &quot;extensible application.&quot;</p>
+<p>This is mostly a change for the developer guide. A
+&quot;framework&quot; and a &quot;platform&quot; layer would still be useful
+architecturally, but the plugin developer&#39;s mental model
+for this would then be inclined toward looking at defined
+extension points. The underlying extension mechanism could
+still be exposed to retain the overall expressive power of
+the application.</p>
+<p>This may subtly influence other design decisions in order
+to match the &quot;extensible application&quot; identity. On a certain
+level, this contradicts the proposal to
+<a href="#rename-views-to-applications">rename views to applications</a>.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>May avoid incurring some of the &quot;framework aversion&quot; that
+is common among JavaScript developers.</li>
+<li>More accurately describes the application.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>May also be a deterrent to developers who prefer the more
+&quot;green field&quot; feel of developing applications on a useful
+platform.</li>
+</ul>
+<a name="capabilities-as-mixins" href="#capabilities-as-mixins"><h2 id="undefinedcapabilities-as-mixins">Capabilities as Mixins</h2>
+</a><p>Change the behavior of capabilities such that they act as
+mixins, adding additional methods to domain objects.
+Checking if a domain object has a <code>persistence</code> capability
+would instead be reduced to checking if it has a <code>persist</code>
+method.</p>
+<p>Mixins would be applied in priority order and filtered for
+applicability by policy.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Replaces &quot;capabilities&quot; (which, as a concept, can be hard
+to grasp) with a more familiar &quot;mixins&quot; concept, which has
+been used more generally across many languages.</li>
+<li>Reduces interface depth.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Requires checking for the interface exposed by a domain
+object. Alternately, could use <code>instanceof</code>, but would
+need to take care to ensure that the prototype chain of
+the domain object is sufficient to do this (which may
+enforce awkward or non-obvious constraints on the way these
+mixins are implemented.)</li>
+<li>May complicate documentation; understanding the interface
+of a given domain object requires visiting documentation
+for various mixins.</li>
+</ul>
+<a name="remove-applies-to-methods" href="#remove-applies-to-methods"><h2 id="undefinedremove-applies-to-methods">Remove Applies-To Methods</h2>
+</a><p>Remove all <code>appliesTo</code> static methods and replace them with
+appropriate policy categories.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Reduces sizes of interfaces. Handles filtering down sets
+of extensions in a single consistent way.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Mixes formal applicability with policy; presently, <code>appliesTo</code>
+is useful for cases where a given extension cannot, even in
+principle, be applied in a given context (e.g. a domain object
+model is missing the properties which describe the behavior),
+whereas policy is useful for cases where applicability is
+being refined for business or usability reasons. Colocating
+the former with the extension itself has some benefits
+(exhibits better cohesion.)<ul>
+<li>This could be mitigated in the proposed approach by locating
+<code>appliesTo</code>-like policies in the same bundle as the relevant
+extension.</li>
+</ul>
+</li>
+</ul>
+<a name="revise-telemetry-api" href="#revise-telemetry-api"><h2 id="undefinedrevise-telemetry-api">Revise Telemetry API</h2>
+</a><p>Revise telemetry API such that:</p>
+<ul>
+<li><code>TelemetrySeries</code> is replaced with arrays of JavaScript objects
+with properties.</li>
+<li>It is no longer necessary to use <code>telemetryHandler</code> (plays well
+with proposal to
+<a href="#remove-capability delegation">remove capability delegation</a>)</li>
+<li>Change <code>request</code> call to take a callback, instead of returning
+a promise. This allows that callback to be invoked several
+times (e.g. for progressive loading, or to reflect changes from
+the time conductor.)</li>
+</ul>
+<p>Should also consider:</p>
+<ul>
+<li>Merge <code>subscribe</code> functionality into <code>request</code>; that is, handle
+real-time data as just another thing that triggers the <code>request</code>
+callback.</li>
+<li>Add a useful API to telemetry metadata, allowing things like
+formats to be retrieved directly from there.</li>
+</ul>
+<p>As a consequence of this, <code>request</code> would need to return an object
+representing the active request. This would need to be able to
+answer the following questions and provide the following behavior:</p>
+<ul>
+<li>Has the request been fully filled? (For cases like progressive
+loading?)</li>
+<li>What data has changed since the previous callback? (To support
+performance optimizations in plotting; e.g. append real-time
+data.)</li>
+<li>Stop receiving updates for this request.</li>
+<li>Potentially, provide utility methods for dealing with incoming
+data from the request.</li>
+</ul>
+<p>Corollary to this, some revision of <code>TelemetryMetadata</code> properties
+may be necessary to fully and usably describe the contents of
+a telemetry series.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Reduces interface depth.</li>
+<li>Reduces interface size (number of methods.)</li>
+<li>Supports a broader range of behaviors (e.g. progressive loading)
+within the same interface.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Merging with <code>subscribe</code> may lose the clarity/simplicity of the
+current API.</li>
+</ul>
+<a name="allow-composite-services-to-fail-gracefully" href="#allow-composite-services-to-fail-gracefully"><h2 id="undefinedallow-composite-services-to-fail-gracefully">Allow Composite Services to Fail Gracefully</h2>
+</a><p>Currently, when no providers are available for a composite service
+that is depended-upon, dependencies cannot be resolved and the
+application fails to initialize, with errors appearing in the
+developer console.</p>
+<p>This is acceptable behavior for truly unrecoverable missing
+dependencies, but in many cases it would be preferable to allow a
+given type of composite service to define some failure behavior
+when no service of an appropriate type is available.</p>
+<p>To address this:</p>
+<ul>
+<li>Provide an interface (preferably
+<a href="#bundle-Declarations-in-javascript">imperative</a>)
+for declaring composite services, independent of any implementation
+of an aggregator/decorator/provider. This allows the framework
+layer to distinguish between unimplemented dependencies (which
+could have defined failover strategies) from undefined dependencies
+(which cannot.)</li>
+<li>Provide a default strategy for service composition that picks
+the highest-priority provider, and logs an error (and fails to
+satisfy) if no providers have been defined.</li>
+<li>Allow this aggregation strategy to be overridden, much as one
+can declare aggregators currently. However, these aggregators should
+get empty arrays when no providers have been registered (instead of
+being ignored), at which point they can decide how to handle this
+situation (graceful failure when it&#39;s possible, noisy errors when
+it is not.)</li>
+</ul>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Allows for improved robustness and fault tolerance.</li>
+<li>Makes service declarations explicit, reducing &quot;magic.&quot;</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Requires the inclusion of software units which define services,
+instead of inferring their existence (slight increase in amount
+of code that needs to be written.)</li>
+<li>May result in harder-to-understand errors when overridden
+composition strategies do not failover well (that is, when they
+do need at least implementation, but fail to check for this.)</li>
+</ul>
+<a name="plugins-as-angular-modules" href="#plugins-as-angular-modules"><h2 id="undefinedplugins-as-angular-modules">Plugins as Angular Modules</h2>
+</a><p>Do away with the notion of bundles entirely; use Angular modules
+instead. Registering extensions or components of composite services
+would then be handled by configuring a provider; reusable classes
+could be exposed by the platform for these.</p>
+<p>Example (details are flexible, included for illustrative purposes):</p>
+<pre><code class="lang-javascript">var mctEdit = angular.module(&#39;mct-edit&#39;, [&#39;ng&#39;, &#39;mct&#39;]);
+
+// Expose a new extension category
+mctEdit.provider(&#39;actionRegistry&#39;, ExtensionCategoryProvider);
+
+// Expose a new extension
+mctEdit.config([&#39;actionRegistryProvider&#39;, function (arp) {
+    arp.register(EditPropertiesAction);
+}])
+
+return mctEdit;
+</code></pre>
+<p>Incompatible with proposal to
+(expose no third-party APIs)[#expose-no-third-party-apis]; Angular
+API would be ubiquitously exposed.</p>
+<p>This is a more specific variant of
+(Bundle Declarations in JavaScript)[#bundle-declarations-in-javascript].</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Removes a whole category of API (bundle definitions), reducing
+learning curve associated with the software.</li>
+<li>Closer to Angular style, reducing disconnect between learning
+Angular and learning Open MCT (reducing burden of having
+to learn multiple paradigms.)</li>
+<li>Clarifies &quot;what can be found where&quot; (albeit not perfectly)
+since you can look to module dependencies and follow back from there.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Hardens dependency on Angular.</li>
+<li>Increases depth of understanding required of Angular.</li>
+<li>Increases amount of boilerplate (since a lot of this has
+been short-handed by existing framework layer.)</li>
+</ul>
+<a name="contextual-injection" href="#contextual-injection"><h2 id="undefinedcontextual-injection">Contextual Injection</h2>
+</a><p>For extensions that depend on certain instance-level run-time
+properties (e.g. actions or views which use objects and/or specific
+capabilities of those objects), declare these features as dependencies
+and expose them via dependency injection. (AngularJS does this for
+<code>$scope</code> in the context of controllers, for example.)</p>
+<p>A sketch of an implementation for this might look like:</p>
+<pre><code class="lang-js">function ExtensionRegistry($injector, extensions, getLocals) {
+    this.$injector = $injector;
+    this.extensions = extensions;
+    this.getLocals = getLocals;
+}
+ExtensionRegistry.prototype.get = function () {
+    var $injector = this.$injector,
+        locals = this.getLocals.apply(null, arguments);
+    return this.extensions.filter(function (extension) {
+        return depsSatisfiable(extension, $injector, locals);
+    }).map(function (extension) {
+        return $injector.instantiate(extension, locals);
+    });
+};
+
+
+function ExtensionRegistryProvider(getLocals) {
+    this.getLocals = getLocals || function () { return {}; };
+    this.extensions = [];
+}
+ExtensionRegistryProvider.prototype.register = function (extension) {
+    this.extensions.push(extension);
+};
+ExtensionRegistryProvider.prototype.$get = [&#39;$injector&#39;, function ($injector) {
+    return new ExtensionRegistry($injector, this.extensions, this.getLocals);
+}];
+</code></pre>
+<p>Extension registries which need to behave context-sensitively could
+subclass this to describe how these contextual dependencies are satisfied
+(for instance, by returning various capability properties in <code>getLocals</code>).</p>
+<p>Specific extensions could then declare dependencies as appropriate to the
+registry they are using:</p>
+<pre><code class="lang-js">app.config([&#39;actionRegistryProvider&#39;, function (arp) {
+    arp.register([&#39;contextCapability&#39;, &#39;domainObject&#39;, RemoveAction]);
+}]);
+</code></pre>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Allows contextual dependencies to be fulfilled in the same (or similar)
+manner as global dependencies, increasing overall consistency of API.</li>
+<li>Clarifies dependencies of individual extensions (currently, extensions
+themselves or policies generally need to imperatively describe what
+dependencies will be used in order to filter down to applicable
+extensions.)</li>
+<li>Factors out some redundant code from relevant extensions; actions,
+for instance, no longer need to interpret an <code>ActionContext</code> object.
+Instead, their constructors take inputs that are more relevant to
+their behavior.</li>
+<li>Removes need for partial construction, as any arguments which would
+normally be appended after partialization can instead be declared as
+dependencies. Constructors in general become much less bound to the
+specifics of the platform.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Slightly increases dependency on Angular; other dependency injectors
+may not offer comparable ways to specificy dependencies non-globally.</li>
+<li>Not clear (or will take effort to make clear) which dependencies are
+available for which extensions. Could be mitigated by standardizing
+descriptions of context across actions and views, but that may offer
+its own difficulties.</li>
+<li>May seem counter-intuitive coming from &quot;vanilla&quot; AngularJS, where
+<code>$scope</code> is the only commonly-used context-sensitive dependency.</li>
+</ul>
+<a name="add-new-abstractions-for-actions" href="#add-new-abstractions-for-actions"><h2 id="undefinedadd-new-abstractions-for-actions">Add new abstractions for actions</h2>
+</a><p>Originally suggested in
+<a href="https://github.com/nasa/openmctweb/pull/69#issuecomment-156199991">this comment</a>:</p>
+<blockquote>
+<p>I think there are some grey areas with actions: are they all directly
+tied to user input?  If so, why do they have any meaning in the back end?
+Maybe we should look at different abstractions for actions:</p>
+<ul>
+<li><code>actions</code> - the basic implementation of an action, essentially a
+  function declaration. for example, <code>copy</code> requires arguments of
+  <code>object</code> and a <code>target</code> to place the object in.  at this level,
+  it is reusable in a CLI.</li>
+<li><code>context menu actions</code> - has criteria for what it applies to.
+  when it is visible, and defines how to get extra &gt; input from a
+  user to complete that action. UI concern only.</li>
+<li><code>gesture-handler</code> - allows for mapping a <code>gesture</code> to an action,
+  e.g. drag and drop for link.  UI Concern only.</li>
+</ul>
+<p>We could add context menu actions for domain objects which navigate
+to that object, without having to implement an action that has no real
+usage on a command line / backend.</p>
+</blockquote>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Clearly delineates concerns (UI versus model)</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Increases number of interfaces.</li>
+</ul>
+<a name="add-gesture-handlers" href="#add-gesture-handlers"><h2 id="undefinedadd-gesture-handlers">Add gesture handlers</h2>
+</a><p>See <a href="#add-new-abstractions-for-actions">Add new abstractions for actions</a>;
+adding an intermediary between gestures and the actions that they
+trigger could be useful in separating concerns, and for more easily
+changing mappings in a mobile context.</p>
+<a name="benefits" href="#benefits"><h3 id="undefinedbenefits">Benefits</h3>
+</a><ul>
+<li>Clearly decouples UI concerns from the underlying model changes
+they initiate.</li>
+<li>Simplifies and clarifies mobile support.</li>
+</ul>
+<a name="detriments" href="#detriments"><h3 id="undefineddetriments">Detriments</h3>
+</a><ul>
+<li>Increases number of interfaces.</li>
+</ul>
+<a name="decisions" href="#decisions"><h1 id="undefineddecisions">Decisions</h1>
+</a><p>After review on Dec. 8, 2015, team consensus on these proposals is
+as follows:</p>
+<table>
+<thead>
+<tr>
+<th>Proposal</th>
+<th style="text-align:center">@VWoeltjen</th>
+<th style="text-align:center">@larkin</th>
+<th style="text-align:center">@akhenry</th>
+<th style="text-align:center">Consensus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RequireJS as dependency injector</td>
+<td style="text-align:center">:-1:</td>
+<td style="text-align:center">:neutral_face: :question:</td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/pull/69#discussion_r44349731">:-1:</a></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/461">:question:</a></td>
+</tr>
+<tr>
+<td>Arbitrary HTML Views</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/463">:+1: &lt;sup&gt;1&lt;/sup&gt;</a></td>
+</tr>
+<tr>
+<td>Wrap Angular Services</td>
+<td style="text-align:center">:-1:</td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/pull/69#discussion_r43801221">:-1:</a></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/pull/69#discussion_r44355057">:-1:</a></td>
+<td style="text-align:center">:no_entry_sign:</td>
+</tr>
+<tr>
+<td>Bundle Declarations in JavaScript</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:neutral_face: :question:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/450">:+1:</a></td>
+</tr>
+<tr>
+<td>Pass around a dependency injector</td>
+<td style="text-align:center">:-1:</td>
+<td style="text-align:center">:-1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">:-1:</td>
+</tr>
+<tr>
+<td>Remove partial constructors</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/462">:+1:</a></td>
+</tr>
+<tr>
+<td>Rename Views to <del>Applications</del></td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:neutral_face: :question:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/463">:+1: &lt;sup&gt;2&lt;/sup&gt;</a></td>
+</tr>
+<tr>
+<td>Provide Classes for Extensions</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/462">:+1:</a></td>
+</tr>
+<tr>
+<td>Normalize naming conventions</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">:+1:</td>
+</tr>
+<tr>
+<td>Expose no third-party APIs</td>
+<td style="text-align:center">:+1: &ast;</td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/pull/69#discussion_r43801221">:-1:</a></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/pull/69#discussion_r43801221">:+1:</a> &dagger;</td>
+<td style="text-align:center">:+1: &lt;sup&gt;3&lt;/sup&gt;</td>
+</tr>
+<tr>
+<td>Register Extensions as Instances instead of Constructors</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:-1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/462">:+1:</a></td>
+</tr>
+<tr>
+<td>Remove capability delegation</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/463">:+1:</a></td>
+</tr>
+<tr>
+<td>Nomenclature Change</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/229#issuecomment-153453035">:+1:</a></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">:white_check_mark: &Dagger;</td>
+</tr>
+<tr>
+<td>Capabilities as Mixins</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/pull/69#discussion_r44355473">:+1:</a></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/463">:question: &lt;sup&gt;4&lt;/sup&gt;</a></td>
+</tr>
+<tr>
+<td>Remove Applies-To Methods</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">:-1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">:-1:</td>
+</tr>
+<tr>
+<td>Revise Telemetry API</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/463">:+1: &lt;sup&gt;5&lt;/sup&gt;</a></td>
+</tr>
+<tr>
+<td>Allow Composite Services to Fail Gracefully</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:-1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/463">:+1: &lt;sup&gt;6&lt;/sup&gt;</a></td>
+</tr>
+<tr>
+<td>Plugins as Angular Modules</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:neutral_face: :question:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/461">:question:</a></td>
+</tr>
+<tr>
+<td>Contextual Injection</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">:-1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/461">:question:</a></td>
+</tr>
+<tr>
+<td>Add new abstractions for actions</td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/pull/69#issuecomment-158172485">:-1:</a> :question:</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">:-1:</td>
+</tr>
+<tr>
+<td>Add gesture handlers</td>
+<td style="text-align:center">:+1:</td>
+<td style="text-align:center">:+1: :question:</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><a href="https://github.com/nasa/openmctweb/issues/463">:+1:</a></td>
+</tr>
+</tbody>
+</table>
+<p>&ast; Excepting Angular APIs. Internally, continue to use code style
+where classes are declared separately from their registration, such
+that ubiquity of Angular dependency is minimized.</p>
+<p>&dagger; &quot;I think we should limit the third party APIs we expose to
+one or two, but I worry it might be counterproductive to
+completely hide them.&quot;</p>
+<p>&Dagger; Some ambiguity about what to call ourselves if not a platform,
+but general agreement that &quot;platform&quot; is not a good term.
+More Detail on Pete&#39;s Opinions Here:
+<a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign_PeteRichards.md#notes-on-current-api-proposals">https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign_PeteRichards.md#notes-on-current-api-proposals</a></p>
+<p>&lt;sup&gt;1&lt;/sup&gt; Needs to be designed carefully; don&#39;t want to do this with
+a complicated interface, needs to be significantly simpler than wrapping
+with an Angular directive would be.</p>
+<p>&lt;sup&gt;2&lt;/sup&gt; Agree that we need a new name, but it should not be &quot;application&quot;</p>
+<p>&lt;sup&gt;3&lt;/sup&gt; Don&#39;t want to expose (or require usage of) third-party
+APIs generally. Angular may be an exception in the sense that it is an
+API we presume to be present. Can use third-party APIs internally, but
+don&#39;t want to support them or be tied to them.</p>
+<p>&lt;sup&gt;4&lt;/sup&gt; Want to have a separate spin-off discussion about
+capabilities. Want to consider several alternatives here.
+At minimum, though, mixins would be an improvement relative
+to how these are currently handled.</p>
+<p>&lt;sup&gt;5&lt;/sup&gt; Agree we want to revise APIs, but this should
+be a larger spin-off.</p>
+<p>&lt;sup&gt;6&lt;/sup&gt; Not necessarily as described, but expected to be a
+property of composite services in whatever formulation they
+take. Should not be default behavior.</p>
+<p><a href="APIRedesign_PeteRichards.html">Additional proposals</a> considered:</p>
+<table>
+<thead>
+<tr>
+<th>Proposal</th>
+<th>Consensus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Imperitive component registries</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/462">:+1:</a></td>
+</tr>
+<tr>
+<td>Get rid of &quot;extension category&quot; concept.</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/462">:+1:</a></td>
+</tr>
+<tr>
+<td>Reduce number and depth of extension points</td>
+<td>:+1:</td>
+</tr>
+<tr>
+<td>Composite services should not be the default</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/463">:question:</a></td>
+</tr>
+<tr>
+<td>Get rid of views, representations, and templates.</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/463">:+1: &lt;sup&gt;1&lt;/sup&gt;</a></td>
+</tr>
+<tr>
+<td>More angular: for all services</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/461">:question:</a></td>
+</tr>
+<tr>
+<td>Less angular: only for views</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/461">:question:</a></td>
+</tr>
+<tr>
+<td>Use systemjs for module loading</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/459">:+1: &lt;sup&gt;2&lt;/sup&gt;</a></td>
+</tr>
+<tr>
+<td>Use gulp or grunt for standard tooling</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/459">:+1:</a></td>
+</tr>
+<tr>
+<td>Package openmctweb as single versioned file.</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/458">:+1:</a></td>
+</tr>
+<tr>
+<td>Refresh on navigation</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/463">:+1: &lt;sup&gt;3&lt;/sup&gt;</a></td>
+</tr>
+<tr>
+<td>Move persistence adapter to promise rejection.</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/463">:+1:</a></td>
+</tr>
+<tr>
+<td>Remove bulk requests from providers</td>
+<td><a href="https://github.com/nasa/openmctweb/issues/463">:+1: &lt;sup&gt;4&lt;/sup&gt;</a></td>
+</tr>
+</tbody>
+</table>
+<p>&lt;sup&gt;1&lt;/sup&gt; Need to agree upon details at design-time, but
+basic premise is agreed-upon - want to replace
+views/representations/templates with a common abstraction
+(and hoist out the non-commonalities to other places as appropriate)</p>
+<p>&lt;sup&gt;2&lt;/sup&gt; Beneficial but not strictly necessary (may be
+lower-effort alternatives); should prioritize accordingly during planning</p>
+<p>&lt;sup&gt;3&lt;/sup&gt; Some effort will be required to make all of the state
+that needs to persist among route changes actually be persistent.
+Will want to address this at design-time (will want to look at
+libraries to simplify this, for instance)</p>
+<p>&lt;sup&gt;4&lt;/sup&gt; Maybe not all providers, but anywhere there is not a
+strong case for building batching into the API we should prefer
+simplicity. (Want to pay specific attention to telemetry here.)</p>
+        <hr>
+    </body>
+</html>

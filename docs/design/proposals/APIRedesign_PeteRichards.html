@@ -1,0 +1,235 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#reducing-interface-depth--the-bundlejson-version-">Reducing interface depth (the bundle.json version)</a><ul>
+<li><a href="#imperative-component-registries">Imperative component registries</a></li>
+<li><a href="#get-rid-of--extension-category--concept">Get rid of &quot;extension category&quot; concept.</a></li>
+<li><a href="#reduce-number-and-depth-of-extension-points">Reduce number and depth of extension points</a></li>
+<li><a href="#composite-services-should-not-be-the-default">Composite services should not be the default</a></li>
+<li><a href="#get-rid-of-views--representations--and-templates">Get rid of views, representations, and templates.</a></li>
+</ul>
+</li>
+<li><a href="#reducing-interface-depth--the-angular-discussion-">Reducing interface depth (The angular discussion)</a><ul>
+<li><a href="#more-angular--for-all-services">More angular: for all services</a></li>
+<li><a href="#less-angular--only-for-views">Less angular: only for views</a></li>
+</ul>
+</li>
+<li><a href="#standard-packaging-and-build-system">Standard packaging and build system</a><ul>
+<li><a href="#use-systemjs-for-module-loading">Use systemjs for module loading</a></li>
+<li><a href="#use-gulp-or-grunt-for-standard-tooling">Use gulp or grunt for standard tooling</a></li>
+<li><a href="#package-openmctweb-as-single-versioned-file">Package openmctweb as single versioned file.</a></li>
+</ul>
+</li>
+<li><a href="#misc-improvements">Misc Improvements</a><ul>
+<li><a href="#refresh-on-navigation">Refresh on navigation</a></li>
+<li><a href="#move-persistence-adapter-to-promise-rejection">Move persistence adapter to promise rejection.</a></li>
+<li><a href="#remove-bulk-requests-from-providers">Remove bulk requests from providers</a></li>
+</ul>
+</li>
+<li><a href="#notes-on-current-api-proposals-">Notes on current API proposals:</a></li>
+<li><a href="#-1--footnote--the-angular-debacle">[1] Footnote: The angular debacle</a><ul>
+<li><a href="#-do-or-do-not--there-is-no-try-">&quot;Do or do not, there is no try&quot;</a></li>
+<li><a href="#a-lack-of-commitment">A lack of commitment</a></li>
+<li><a href="#commitment-is-good-">Commitment is good!</a></li>
+</ul>
+</li>
+</ul>
+<p>&lt;!-- START doctoc generated TOC please keep comment here to allow auto update --&gt;
+</p>
+<p>&lt;!-- DON&#39;T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE --&gt;
+</p>
+<p><strong>Table of Contents</strong>  <em>generated with <a href="https://github.com/thlorenz/doctoc">DocToc</a></em></p>
+<ul>
+<li><a href="#reducing-interface-depth-the-bundlejson-version">Reducing interface depth (the bundle.json version)</a><ul>
+<li><a href="#imperative-component-registries">Imperitive component registries</a></li>
+<li><a href="#get-rid-of-extension-category-concept">Get rid of &quot;extension category&quot; concept.</a></li>
+<li><a href="#reduce-number-and-depth-of-extension-points">Reduce number and depth of extension points</a></li>
+<li><a href="#composite-services-should-not-be-the-default">Composite services should not be the default</a></li>
+<li><a href="#get-rid-of-views-representations-and-templates">Get rid of views, representations, and templates.</a></li>
+</ul>
+</li>
+<li><a href="#reducing-interface-depth-the-angular-discussion">Reducing interface depth (The angular discussion)</a><ul>
+<li><a href="#more-angular-for-all-services">More angular: for all services</a></li>
+<li><a href="#less-angular-only-for-views">Less angular: only for views</a></li>
+</ul>
+</li>
+<li><a href="#standard-packaging-and-build-system">Standard packaging and build system</a><ul>
+<li><a href="#use-systemjs-for-module-loading">Use systemjs for module loading</a></li>
+<li><a href="#use-gulp-or-grunt-for-standard-tooling">Use gulp or grunt for standard tooling</a></li>
+<li><a href="#package-openmctweb-as-single-versioned-file">Package openmctweb as single versioned file.</a></li>
+</ul>
+</li>
+<li><a href="#misc-improvements">Misc Improvements</a><ul>
+<li><a href="#refresh-on-navigation">Refresh on navigation</a></li>
+<li><a href="#move-persistence-adapter-to-promise-rejection">Move persistence adapter to promise rejection.</a></li>
+<li><a href="#remove-bulk-requests-from-providers">Remove bulk requests from providers</a></li>
+</ul>
+</li>
+<li><a href="#notes-on-current-api-proposals">Notes on current API proposals:</a></li>
+<li><a href="#1-footnote-the-angular-debacle">[1] Footnote: The angular debacle</a><ul>
+<li><a href="#do-or-do-not-there-is-no-try">&quot;Do or do not, there is no try&quot;</a></li>
+<li><a href="#a-lack-of-commitment">A lack of commitment</a></li>
+<li><a href="#commitment-is-good">Commitment is good!</a></li>
+</ul>
+</li>
+</ul>
+<p>&lt;!-- END doctoc generated TOC please keep comment here to allow auto update --&gt;
+</p>
+<a name="reducing-interface-depth--the-bundle-json-version-" href="#reducing-interface-depth--the-bundle-json-version-"><h1 id="undefinedreducing-interface-depth-the-bundle-json-version-">Reducing interface depth (the bundle.json version)</h1>
+</a><a name="imperative-component-registries" href="#imperative-component-registries"><h2 id="undefinedimperative-component-registries">Imperative component registries</h2>
+</a><p>Transition component registries to javascript, get rid of bundle.json and bundles.json.  Prescribe a method for application configuration, but allow flexibility in how application configuration is defined.</p>
+<p>Register components in an imperative fashion, see angularApp.factory, angularApp.controller, etc.  Alternatively, implement our own application object with new registries and it&#39;s own form of registering objects.</p>
+<a name="get-rid-of--quot-extension-category-quot--concept-" href="#get-rid-of--quot-extension-category-quot--concept-"><h2 id="undefinedget-rid-of-extension-category-concept-">Get rid of &quot;extension category&quot; concept.</h2>
+</a><p>The concept of an &quot;extension category&quot; is itself an extraneous concept-- an extra layer of interface depth, an extra thing to learn before you can say &quot;hello world&quot;.  Extension points should be clearly supported and documented with whatever interfaces make sense.  Developers who wish to add something that is conceptually equivalent to an extension category can do so directly, in the manner that suites their needs, without us forcing a common method on them.</p>
+<a name="reduce-number-and-depth-of-extension-points" href="#reduce-number-and-depth-of-extension-points"><h2 id="undefinedreduce-number-and-depth-of-extension-points">Reduce number and depth of extension points</h2>
+</a><p>Clearly specify supported extension points (e.g. persistence, model providers, telemetry providers, routes, time systems), but don&#39;t claim that the system has a clear and perfect repeatable solution for unknown extension types.  New extension categories can be implemented in whatever way makes sense, without prescribing &quot;the one and only system for managing extensions&quot;.</p>
+<p>The underlying problem here is we are predicting needs for extension points where none exist-- if we try and design the extension system before we know how it is used, we design the wrong thing and have to rewrite it later.</p>
+<a name="composite-services-should-not-be-the-default" href="#composite-services-should-not-be-the-default"><h2 id="undefinedcomposite-services-should-not-be-the-default">Composite services should not be the default</h2>
+</a><p>Understanding composite services, and describing services as composite services can confuse developers.  Aggregators are implemented once and forgotten, while decorators tend to be hacky, brittle solutions that are generally needed to avoid circular imports.  While composite services are a useful construct, it reduces interface depth to implement them as registries + typed providers.</p>
+<p>You can write a provider (provides &quot;thing x&quot; for &quot;inputs y&quot;) with a simple interface.  A provider has two or more methods:</p>
+<ul>
+<li>a method which takes &quot;inputs y&quot; and returns True if it knows how to provide &quot;thing x&quot;, false otherwise.</li>
+<li>one or more methods which provide &quot;thing x&quot; for objects of &quot;inputs y&quot;.  </li>
+</ul>
+<p>Actually checking whether a provider can respond to a request before asking it to do work allows for faster failure and clearer errors when no providers match the request.</p>
+<a name="get-rid-of-views--representations--and-templates-" href="#get-rid-of-views--representations--and-templates-"><h2 id="undefinedget-rid-of-views-representations-and-templates-">Get rid of views, representations, and templates.</h2>
+</a><p>Templates are an implementation detail that should be handled by module loaders.  Views and representations become &quot;components,&quot; and a new concept, &quot;routes&quot;, is used to exposing specific views to end users.</p>
+<p><code>components</code> - building blocks for views, have clear inputs and outputs, and can be coupled to other components when it makes sense.  (e.g. parent-child components such as menu and menu item), but should have ZERO knowledge of our data models or telemetry apis.  They should define data models that enable them to do their job well while still being easy to test.</p>
+<p><code>routes</code> - a view type for a given domain object, e.g. a plot, table, display layout, etc.  Can be described as &quot;whatever shows in the main screen when you are viewing an object.&quot;  Handle loading of data from a domain object and passing that data to the view components.  Routes should support editing as it makes sense in their own context.</p>
+<p>To facilitate testing:</p>
+<ul>
+<li>routes should be testable without having to test the actual view.</li>
+<li>components should be independently testable with zero knowledge of our data models or telemetry APIs.</li>
+</ul>
+<p>Component code should be organized side by side, such as:</p>
+<pre><code>app
+|- components
+  |- productDetail
+  | |- productDetail.js
+  | |- productDetail.css
+  | |- productDetail.html
+  | |- productDetailSpec.js
+  |- productList
+  |- checkout
+  |- wishlist
+</code></pre><p>Components are not always reusable, and we shouldn&#39;t be overly concerned with making them so.  If components are heavily reused, they should either be moved to a platform feature (e.g. notifications, indicators), or broken off as an external dependency (e.g. publish mct-plot as mct-plot.js).</p>
+<a name="reducing-interface-depth--the-angular-discussion-" href="#reducing-interface-depth--the-angular-discussion-"><h1 id="undefinedreducing-interface-depth-the-angular-discussion-">Reducing interface depth (The angular discussion)</h1>
+</a><p>Two options here: use more angular, use less angular.  Wrapping angular methods does not reduce interface depth and must be avoided.</p>
+<p>The primary issue with angular is duplications of concerns-- both angular and the openmctweb platform implement the same tools side by side and it can be hard to comprehend-- it increases interface depth.  For other concerns, see footnotes[1].</p>
+<p>Wrapping angular methods for non-view related code is confusing to developers because of the random constraints angular places on these items-- developers ultimately have to understand both angular DI and our framework.  For example, it&#39;s not possible to name the topic service &quot;topicService&quot; because angular expects Services to be implemented by Providers, which is different than our expectation.</p>
+<p>To reduce interface depth, we can replace our own provider and registry patterns with angular patterns, or we can only utilize angular view logic, and only use our own DI patterns.</p>
+<a name="more-angular--for-all-services" href="#more-angular--for-all-services"><h2 id="undefinedmore-angular-for-all-services">More angular: for all services</h2>
+</a><p>Increasing our commitment to angular would mean using more of the angular factories, services, etc, and less of our home grown tools.  We&#39;d implement our services and extension points as angular providers, and make them configurable via app.config.</p>
+<p>As an example, registering a specific type of model provider in angular would look like:</p>
+<pre><code class="lang-javascript">mct.provider(&#39;model&#39;, modelProvider() { /* implementation */});
+
+mct.config([&#39;modelProvider&#39;, function (modelProvider) {
+    modelProvider.providers.push(RootModelProvider);
+}]);
+</code></pre>
+<a name="less-angular--only-for-views" href="#less-angular--only-for-views"><h2 id="undefinedless-angular-only-for-views">Less angular: only for views</h2>
+</a><p>If we wish to use less angular, I would recommend discontinuing use of all angular components that are not view related-- services, factories, $http, etc, and implementing them in our own paradigm.  Otherwise, we end up with layered interfaces-- one of the goals we would like to avoid.</p>
+<a name="standard-packaging-and-build-system" href="#standard-packaging-and-build-system"><h1 id="undefinedstandard-packaging-and-build-system">Standard packaging and build system</h1>
+</a><p>Standardize the packaging and build system, and completely separate the core platform from deployments.  Prescribe a starting point for deployments, but allow flexibility.</p>
+<a name="use-systemjs-for-module-loading" href="#use-systemjs-for-module-loading"><h2 id="undefineduse-systemjs-for-module-loading">Use systemjs for module loading</h2>
+</a><p>Allow developers to use whatever module loading system they&#39;d like to use, while still supporting all standard cases.  We should also use this system for loading assets (css, scss, html templates), which makes it easier to implement a single file deployment using standard build tooling.</p>
+<a name="use-gulp-or-grunt-for-standard-tooling" href="#use-gulp-or-grunt-for-standard-tooling"><h2 id="undefineduse-gulp-or-grunt-for-standard-tooling">Use gulp or grunt for standard tooling</h2>
+</a><p>Using gulp or grunt as a task runner would bring us in line with standard web developer workflows and help standardize rendering, deployment, and packaging.  Additional tools can be added to the workflow at low cost, simplifying the setup of developer environments.</p>
+<p>Gulp and grunt provide useful developer tooling such as live reload, automatic scss/less/etc compilation, and ease of extensibility for standard production build processes.  They&#39;re key in decoupling code.</p>
+<a name="package-openmctweb-as-single-versioned-file-" href="#package-openmctweb-as-single-versioned-file-"><h2 id="undefinedpackage-openmctweb-as-single-versioned-file-">Package openmctweb as single versioned file.</h2>
+</a><p>Deployments should depend on a specific version of openmctweb, but otherwise be allowed to have their own deployment and development toolsets.</p>
+<p>Customizations and deployments of openmctweb should not use the same build tooling as the core platform; instead they should be free to use their own build tools as they wish.  (We would provide a template for an application, based on our experience with warp-for-rp and vista)</p>
+<p>Installation and utilization of openmctweb should be as simple as downloading the js file, including it in your own html page, and then initializing an app and running it.  If a developer would prefer, they could use bower or npm to handle installation. </p>
+<p>Then, if we&#39;re using imperative methods for extending the application we can use the following for basic customization:</p>
+<pre><code class="lang-html">&lt;script src=&quot;//localhost/openmctweb.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+// can configure from object
+var myApp = new OpenMCTWeb({
+  persitence: {
+    providers: [
+      {
+        type: &#39;elastic&#39;,
+        uri: &#39;http://someElasticHost/&#39;
+      } // ...
+    ]
+  }
+});
+
+// alternative configurations
+myApp.persistence.addProvider(MyPersistenceAdapter); 
+myApp.model.addProvider(someProviderObject);
+
+// Removing via method
+myApp.persistence.removeProvider(&#39;some method for removing functionality&#39;);
+// directly mutating providers
+myApp.persistence.providers = [ThisProviderStandsAlone];
+//
+myApp.run();
+&lt;/script&gt;
+</code></pre>
+<p>This packaging reduces the complexity of managing multiple deployed versions, and also allows us to provide users with incredibly simple tutorials-- they can use whatever tooling they like.  For instance, a hello world tutorial may take the option of &quot;exposing a new object in the tree&quot;.</p>
+<pre><code class="lang-javascript">var myApp = new OpenMCTWeb();
+myApp.roots.addRoot({
+    id: &#39;myRoot&#39;,
+    name: &#39;Hello World!&#39;,
+});
+myApp.routes.setDefault(&#39;myRoot&#39;);
+myApp.run();
+</code></pre>
+<a name="misc-improvements" href="#misc-improvements"><h1 id="undefinedmisc-improvements">Misc Improvements</h1>
+</a><a name="refresh-on-navigation" href="#refresh-on-navigation"><h2 id="undefinedrefresh-on-navigation">Refresh on navigation</h2>
+</a><p>In cases where navigation events change the entire screen, we should be using routes and location changes to navigate between objects.  We should be using href for all navigation events.</p>
+<p>At the same time, navigating should refresh state of every visible object.  A properly configured persistence store will handle caching with standard cache headers and 304 not modified responses, which will provide good performance of object reloads, while helping us ensure that objects are always in sync between clients.</p>
+<p>View state (say, the expanded tree nodes) should not be tied to caching of data-- it should be something we intentionally persist and restore with each navigation.  Data (such as object definitions) should be reloaded from server as necessary to restore state.</p>
+<a name="move-persistence-adapter-to-promise-rejection-" href="#move-persistence-adapter-to-promise-rejection-"><h2 id="undefinedmove-persistence-adapter-to-promise-rejection-">Move persistence adapter to promise rejection.</h2>
+</a><p>Simple: reject on fail, resolve on success.</p>
+<a name="remove-bulk-requests-from-providers" href="#remove-bulk-requests-from-providers"><h2 id="undefinedremove-bulk-requests-from-providers">Remove bulk requests from providers</h2>
+</a><p>Aggregators can request multiple things at once, but individual providers should only have to implement handling at the level of a single request.  Each provider can implement it&#39;s own internal batching, but it should support making requests at a finer level of detail.  </p>
+<p>Excessive wrapping of code with $q.all causes additional digest cycles and decreased performance.</p>
+<p>For example, instead of every telemetry provider responding to a given telemetry request, aggregators should route each request to the first provider that can fulfill that request.</p>
+<a name="notes-on-current-api-proposals-" href="#notes-on-current-api-proposals-"><h1 id="undefinednotes-on-current-api-proposals-">Notes on current API proposals:</h1>
+</a><ul>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#requirejs-as-dependency-injector">RequireJS for Dependency Injection</a>: requires other topics to be discussed first.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#arbitrary-html-views">Arbitrary HTML Views</a>: think there is a place for it, requires other topics to be discussed first.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#wrap-angular-services">Wrap Angular Services</a>: No, this is bad.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#bundle-declarations-in-javascript">Bundle definitions in Javascript</a>: Points to a solution, but ultimately requires more discussion.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#pass-around-a-dependency-injector">pass around a dependency injector</a>: No.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#remove-partial-constructors">remove partial constructors</a>: Yes, this should be superseded by another proposal though.  The entire concept was a messy solution to dependency injection issues caused by declarative syntax.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#rename-views-to-applications">Rename views to applications</a>: Points to a problem that needs to be solved but I think the name is bad.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#provide-classes-for-extensions">Provide classes for extensions</a>: Yes, in specific places</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#normalize-naming-conventions">Normalize naming conventions</a>: Yes.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#expose-no-third-party-apis">Expose no third-party APIs</a>: Completely disagree, points to a real problem with poor angular integration.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#register-extensions-as-instances-instead-of-constructors">Register Extensions as Instances instead of Constructors</a>: Superseded by the fact that we should not hope to implement a generic construct.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#remove-capability-delegation">Remove capability delegation</a>: Yes.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#nomenclature-change">Nomenclature Change</a>: Yes, hope to discuss the implications of this more clearly in other proposals.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#capabilities-as-mixins">Capabilities as mixins</a>: Yes.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#remove-applies-to-methods">Remove appliesTo methods</a>: No-- I think some level of this is necessary.  I think a more holistic approach to policy is needed.  it&#39;s a rather complicated system.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#revise-telemetry-api">Revise telemetry API</a>: If we can rough out and agree to the specifics, then Yes.  Needs discussion.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#allow-composite-services-to-fail-gracefully">Allow composite services to fail gracefully</a>: No.  As mentioned above, I think composite services themselves should be eliminated for a more purpose bound tool.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#plugins-as-angular-modules">Plugins as angular modules</a>: Should we decide to embrace Angular completely, I would support this.  Otherwise, no.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#contextual-injection">Contextual Injection</a>: No, don&#39;t see a need.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#add-new-abstractions-for-actions">Add New Abstractions for Actions</a>: Worth a discussion.</li>
+<li><a href="https://github.com/nasa/openmctweb/blob/api-redesign/docs/src/design/proposals/APIRedesign.md#add-gesture-handlers">Add gesture handlers</a>: Yes if we can agree on details.  We need a platform implementation that is easy to use, but we should not reinvent the wheel.</li>
+</ul>
+<a name="-1--footnote--the-angular-debacle" href="#-1--footnote--the-angular-debacle"><h1 id="undefined-1-footnote-the-angular-debacle">[1] Footnote: The angular debacle</h1>
+</a><a name="-quot-do-or-do-not--there-is-no-try-quot-" href="#-quot-do-or-do-not--there-is-no-try-quot-"><h2 id="undefineddo-or-do-not-there-is-no-try">&quot;Do or do not, there is no try&quot;</h2>
+</a><p>A commonly voiced concern of embracing angular is the possibility of becoming dependent on a third party framework.  This concern is itself detrimental-- if we&#39;re afraid of becoming dependent on a third party framework, then we will do a bad job of using the framework, and inevitably will want to stop using it.  </p>
+<p>If we&#39;re using a framework, we need to use it fully, or not use it at all.</p>
+<a name="a-lack-of-commitment" href="#a-lack-of-commitment"><h2 id="undefineda-lack-of-commitment">A lack of commitment</h2>
+</a><p>A number of the concerns we heard from developers and interns can be attributed to the tenuous relationship between the OpenMCTWeb platform and angular.  We claimed to be angular, but we weren&#39;t really angular.  Instead, we are caught between our incomplete framework paradigm and the angular paradigm.  In many cases we reinvented the wheel or worked around functionality that angular provides, and ended up in a more confusing state.</p>
+<a name="commitment-is-good-" href="#commitment-is-good-"><h2 id="undefinedcommitment-is-good-">Commitment is good!</h2>
+</a><p>We could just be an application that is built with angular.  </p>
+<p>An application that is modular and extensible not because it reinvents tools for providing modularity and extensibility, but because it reuses existing tools for modularity and extensibility.</p>
+<p>There are benefits to buying into the angular paradigm: shift documentation burden to external project, engage a larger talent pool available both as voluntary open source contributors and as experienced developers for hire, and gain access to an ecosystem of tools that we can use to increase the speed of development.</p>
+<p>There are negatives too: Angular is a monolith, it has performance concerns, and an unclear future.  If we can&#39;t live with it, we should look at alternatives.</p>
+        <hr>
+    </body>
+</html>

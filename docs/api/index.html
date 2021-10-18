@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<p><strong>Table of Contents</strong> </p>
+<ul>
+<li><a href="#building-applications-with-open-mct">Building Applications With Open MCT</a><ul>
+<li><a href="#scope-and-purpose-of-this-document">Scope and purpose of this document</a></li>
+<li><a href="#building-from-source">Building From Source</a></li>
+<li><a href="#starting-an-open-mct-application">Starting an Open MCT application</a></li>
+<li><a href="#plugins">Plugins</a><ul>
+<li><a href="#defining-and-installing-a-new-plugin">Defining and Installing a New Plugin</a></li>
+</ul>
+</li>
+<li><a href="#domain-objects-and-identifiers">Domain Objects and Identifiers</a><ul>
+<li><a href="#object-attributes">Object Attributes</a></li>
+<li><a href="#domain-object-types">Domain Object Types</a></li>
+</ul>
+</li>
+<li><a href="#root-objects">Root Objects</a></li>
+<li><a href="#object-providers">Object Providers</a></li>
+<li><a href="#composition-providers">Composition Providers</a><ul>
+<li><a href="#adding-composition-providers">Adding Composition Providers</a></li>
+<li><a href="#default-composition-provider">Default Composition Provider</a></li>
+</ul>
+</li>
+<li><a href="#telemetry-api">Telemetry API</a><ul>
+<li><a href="#integrating-telemetry-sources">Integrating Telemetry Sources</a><ul>
+<li><a href="#telemetry-metadata">Telemetry Metadata</a><ul>
+<li><a href="#values">Values</a><ul>
+<li><a href="#value-hints">Value Hints</a></li>
+</ul>
+</li>
+<li><a href="#the-time-conductor-and-telemetry">The Time Conductor and Telemetry</a></li>
+</ul>
+</li>
+<li><a href="#telemetry-providers">Telemetry Providers</a></li>
+<li><a href="#telemetry-requests-and-responses">Telemetry Requests and Responses.</a></li>
+<li><a href="#request-strategies-draft">Request Strategies <strong>draft</strong></a><ul>
+<li><a href="#latest-request-strategy"><code>latest</code> request strategy</a></li>
+<li><a href="#minmax-request-strategy"><code>minmax</code> request strategy</a></li>
+</ul>
+</li>
+<li><a href="#telemetry-formats-draft">Telemetry Formats <strong>draft</strong></a><ul>
+<li><a href="#registering-formats">Registering Formats</a></li>
+</ul>
+</li>
+<li><a href="#telemetry-data">Telemetry Data</a><ul>
+<li><a href="#telemetry-datums">Telemetry Datums</a></li>
+</ul>
+</li>
+<li><a href="#limit-evaluators-draft">Limit Evaluators <strong>draft</strong></a></li>
+</ul>
+</li>
+<li><a href="#telemetry-consumer-apis-draft">Telemetry Consumer APIs <strong>draft</strong></a></li>
+</ul>
+</li>
+<li><a href="#time-api">Time API</a><ul>
+<li><a href="#time-systems-and-bounds">Time Systems and Bounds</a><ul>
+<li><a href="#defining-and-registering-time-systems">Defining and Registering Time Systems</a></li>
+<li><a href="#getting-and-setting-the-active-time-system">Getting and Setting the Active Time System</a></li>
+<li><a href="#time-bounds">Time Bounds</a></li>
+</ul>
+</li>
+<li><a href="#clocks">Clocks</a><ul>
+<li><a href="#defining-and-registering-clocks">Defining and registering clocks</a></li>
+<li><a href="#getting-and-setting-active-clock">Getting and setting active clock</a></li>
+<li><a href="#stopping-an-active-clock">Stopping an active clock</a></li>
+<li><a href="#clock-offsets">Clock Offsets</a></li>
+</ul>
+</li>
+<li><a href="#time-events">Time Events</a><ul>
+<li><a href="#list-of-time-events">List of Time Events</a></li>
+</ul>
+</li>
+<li><a href="#the-time-conductor">The Time Conductor</a><ul>
+<li><a href="#time-conductor-configuration">Time Conductor Configuration</a></li>
+<li><a href="#example-conductor-configuration">Example conductor configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#indicators">Indicators</a><ul>
+<li><a href="#the-url-status-indicator">The URL Status Indicator</a></li>
+<li><a href="#creating-a-simple-indicator">Creating a Simple Indicator</a></li>
+<li><a href="#custom-indicators">Custom Indicators</a></li>
+</ul>
+</li>
+<li><a href="#included-plugins">Included Plugins</a></li>
+</ul>
+</li>
+</ul>
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<h1>Building Applications With Open MCT</h1><h2>Scope and purpose of this document</h2><p>This document is intended to serve as a reference for developing an application 
+based on Open MCT. It will provide details of the API functions necessary to 
+extend the Open MCT platform meet common use cases such as integrating with a telemetry source. </p>
+<p>The best place to start is with the <a href="https://github.com/nasa/openmct-tutorial">Open MCT Tutorials</a>. 
+These will walk you through the process of getting up and running with Open 
+MCT, as well as addressing some common developer use cases.</p>
+<h2>Building From Source</h2><p>The latest version of Open MCT is available from <a href="https://github.com/nasa/openmct">our GitHub repository</a>. 
+If you have <code>git</code>, and <code>node</code> installed, you can build Open MCT with the
+commands </p>
+<pre class="prettyprint source lang-bash"><code>git clone https://github.com/nasa/openmct.git
+cd openmct
+npm install</code></pre><p>These commands will fetch the Open MCT source from our GitHub repository, and 
+build a minified version that can be included in your application. The output 
+of the build process is placed in a <code>dist</code> folder under the openmct source 
+directory, which can be copied out to another location as needed. The contents 
+of this folder will include a minified javascript file named <code>openmct.js</code> as 
+well as assets such as html, css, and images necessary for the UI. </p>
+<h2>Starting an Open MCT application</h2><p>To start a minimally functional Open MCT application, it is necessary to 
+include the Open MCT distributable, enable some basic plugins, and bootstrap 
+the application. The tutorials walk through the process of getting Open MCT up 
+and running from scratch, but provided below is a minimal HTML template that 
+includes Open MCT, installs some basic plugins, and bootstraps the application. 
+It assumes that Open MCT is installed under an <code>openmct</code> subdirectory, as 
+described in <a href="#building-from-source">Building From Source</a>. </p>
+<p>This approach includes openmct using a simple script tag, resulting in a global 
+variable named <code>openmct</code>. This <code>openmct</code> object is used subsequently to make 
+API calls. </p>
+<p>Open MCT is packaged as a UMD (Universal Module Definition) module, so common 
+script loaders are also supported.</p>
+<pre class="prettyprint source lang-html"><code>&lt;!DOCTYPE html>
+&lt;html>
+&lt;head>
+    &lt;title>Open MCT&lt;/title>
+    &lt;script src=&quot;openmct.js&quot;>&lt;/script>
+&lt;/head>
+&lt;body>
+    &lt;script>
+        openmct.setAssetPath('openmct/dist');
+        openmct.install(openmct.plugins.LocalStorage());
+        openmct.install(openmct.plugins.MyItems());
+        openmct.install(openmct.plugins.UTCTimeSystem());
+        openmct.install(openmct.plugins.Espresso());
+        openmct.start();
+    &lt;/script>
+&lt;/body>
+&lt;/html></code></pre><p>The Open MCT library included above requires certain assets such as html 
+templates, images, and css. If you installed Open MCT from GitHub as described 
+in the section on <a href="#building-from-source">Building from Source</a> then these
+assets will have been downloaded along with the Open MCT javascript library. 
+You can specify the location of these assets by calling <code>openmct.setAssetPath()</code>. 
+Typically this will be the same location as the <code>openmct.js</code> library is 
+included from.</p>
+<p>There are some plugins bundled with the application that provide UI, 
+persistence, and other default configuration which are necessary to be able to 
+do anything with the application initially. Any of these plugins can, in 
+principle, be replaced with a custom plugin. The included plugins are 
+documented in the <a href="#included-plugins">Included Plugins</a> section.  </p>
+<h2>Plugins</h2><h3>Defining and Installing a New Plugin</h3><pre class="prettyprint source lang-javascript"><code>openmct.install(function install(openmctAPI) {
+    // Do things here
+    // ...
+});</code></pre><p>New plugins are installed in Open MCT by calling <code>openmct.install</code>, and
+providing a plugin installation function. This function will be invoked on 
+application startup with one parameter - the openmct API object. A common 
+approach used in the Open MCT codebase is to define a plugin as a function that 
+returns this installation function. This allows configuration to be specified 
+when the plugin is included.</p>
+<p>eg.</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.install(openmct.plugins.Elasticsearch(&quot;http://localhost:8002/openmct&quot;));</code></pre><p>This approach can be seen in all of the <a href="https://github.com/nasa/openmct/blob/master/src/plugins/plugins.js">plugins provided with Open MCT</a>.</p>
+<h2>Domain Objects and Identifiers</h2><p><em>Domain Objects</em> are the basic entities that represent domain knowledge in Open 
+MCT.  The temperature sensor on a solar panel, an overlay plot comparing the 
+results of all temperature sensors, the command dictionary for a spacecraft, 
+the individual commands in that dictionary, the &quot;My Items&quot; folder: All of these 
+things are domain objects.</p>
+<p>A <em>Domain Object</em> is simply a javascript object with some standard attributes.<br>An example of a <em>Domain Object</em> is the &quot;My Items&quot; object which is a folder in 
+which a user can persist any objects that they create. The My Items object 
+looks like this: </p>
+<pre class="prettyprint source lang-javascript"><code>{
+    identifier: {
+        namespace: &quot;&quot;
+        key: &quot;mine&quot;
+    }
+    name:&quot;My Items&quot;,
+    type:&quot;folder&quot;,
+    location:&quot;ROOT&quot;,
+    composition: []
+}</code></pre><h3>Object Attributes</h3><p>The main attributes to note are the <code>identifier</code>, and <code>type</code> attributes.</p>
+<ul>
+<li><code>identifier</code>: A composite key that provides a universally unique identifier 
+for this object. The <code>namespace</code> and <code>key</code> are used to identify the object.
+The <code>key</code> must be unique within the namespace. </li>
+<li><code>type</code>: All objects in Open MCT have a type. Types allow you to form an 
+ontology of knowledge and provide an abstraction for grouping, visualizing, 
+and interpreting data. Details on how to define a new object type are 
+provided below. </li>
+</ul>
+<p>Open MCT uses a number of builtin types. Typically you are going to want to 
+define your own when extending Open MCT.</p>
+<h3>Domain Object Types</h3><p>Custom types may be registered via the <code>addType</code> function on the Open MCT Type 
+registry.</p>
+<p>eg.</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.types.addType('example.my-type', {
+    name: &quot;My Type&quot;,
+    description: &quot;This is a type that I added!&quot;,
+    creatable: true
+});</code></pre><p>The <code>addType</code> function accepts two arguments:</p>
+<ul>
+<li>A <code>string</code> key identifying the type. This key is used when specifying a type
+for an object.  We recommend prefixing your types with a namespace to avoid
+conflicts with other plugins.</li>
+<li>An object type specification. An object type definition supports the following 
+attributes      <ul>
+<li><code>name</code>: a <code>string</code> naming this object type</li>
+<li><code>description</code>: a <code>string</code> specifying a longer-form description of this type</li>
+<li><code>initialize</code>: a <code>function</code> which initializes the model for new domain objects 
+of this type. This can be used for setting default values on an object when 
+it is instantiated.</li>
+<li><code>creatable</code>: A <code>boolean</code> indicating whether users should be allowed to create 
+this type (default: <code>false</code>). This will determine whether the type appears 
+in the <code>Create</code> menu.</li>
+<li><code>cssClass</code>: A <code>string</code> specifying a CSS class to apply to each representation 
+of this object. This is used for specifying an icon to appear next to each 
+object of this type.</li>
+</ul>
+</li>
+</ul>
+<p>The <a href="https://github.com/openmct/openmct-tutorial">Open MCT Tutorials</a> provide a 
+step-by-step examples of writing code for Open MCT that includes a <a href="https://github.com/nasa/openmct-tutorial#step-3---providing-objects">section on 
+defining a new object type</a>.</p>
+<h2>Root Objects</h2><p>In many cases, you'd like a certain object (or a certain hierarchy of objects) 
+to be accessible from the top level of the application (the tree on the left-hand 
+side of Open MCT.) For example, it is typical to expose a telemetry dictionary 
+as a hierarchy of telemetry-providing domain objects in this fashion.</p>
+<p>To do so, use the <code>addRoot</code> method of the object API.</p>
+<p>eg.</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.objects.addRoot({
+        namespace: &quot;example.namespace&quot;,
+        key: &quot;my-key&quot;
+    });</code></pre><p>The <code>addRoot</code> function takes a single <a href="#domain-objects-and-identifiers">object identifier</a> 
+as an argument. </p>
+<p>Root objects are loaded just like any other objects, i.e. via an object
+provider.</p>
+<h2>Object Providers</h2><p>An Object Provider is used to build <em>Domain Objects</em>, typically retrieved from 
+some source such as a persistence store or telemetry dictionary. In order to 
+integrate telemetry from a new source an object provider will need to be created 
+that can build objects representing telemetry points exposed by the telemetry 
+source. The API call to define a new object provider is fairly straightforward. 
+Here's a very simple example:</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.objects.addProvider('example.namespace', {
+    get: function (identifier) {
+        return Promise.resolve({
+            identifier: identifier,
+            name: 'Example Object',
+            type: 'example-object-type'
+        });
+    }
+});</code></pre><p>The <code>addProvider</code> function takes two arguments:</p>
+<ul>
+<li><code>namespace</code>: A <code>string</code> representing the namespace that this object provider 
+will provide objects for.</li>
+<li><code>provider</code>: An <code>object</code> with a single function, <code>get</code>. This function accepts an 
+<a href="#domain-objects-and-identifiers">Identifier</a> for the object to be provided. 
+It is expected that the <code>get</code> function will return a 
+<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a> 
+that resolves with the object being requested.</li>
+</ul>
+<p>In future, object providers will support other methods to enable other operations with persistence stores, such as creating, updating, and deleting objects.</p>
+<h2>Composition Providers</h2><p>The <em>composition</em> of a domain object is the list of objects it contains, as
+shown (for example) in the tree for browsing. Open MCT provides a
+<a href="#default-composition-provider">default solution</a> for composition, but there
+may be cases where you want to provide the composition of a certain object
+(or type of object) dynamically.</p>
+<h3>Adding Composition Providers</h3><p>You may want to populate a hierarchy under a custom root-level object based on 
+the contents of a telemetry dictionary. To do this, you can add a new 
+Composition Provider:</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.composition.addProvider({
+    appliesTo: function (domainObject) {
+        return domainObject.type === 'example.my-type';
+    },
+    load: function (domainObject) {
+        return Promise.resolve(myDomainObjects);
+    }
+});</code></pre><p>The <code>addProvider</code> function accepts a Composition Provider object as its sole 
+argument. A Composition Provider is a javascript object exposing two functions:</p>
+<ul>
+<li><code>appliesTo</code>: A <code>function</code> that accepts a <code>domainObject</code> argument, and returns 
+a <code>boolean</code> value indicating whether this composition provider applies to the 
+given object.</li>
+<li><code>load</code>: A <code>function</code> that accepts a <code>domainObject</code> as an argument, and returns
+a <code>Promise</code> that resolves with an array of <a href="#domain-objects-and-identifiers">Identifier</a>.
+These identifiers will be used to fetch Domain Objects from an <a href="#object-provider">Object Provider</a></li>
+</ul>
+<h3>Default Composition Provider</h3><p>The default composition provider applies to any domain object with a 
+<code>composition</code> property. The value of <code>composition</code> should be an array of 
+identifiers, e.g.:</p>
+<pre class="prettyprint source lang-javascript"><code>var domainObject = {
+    name: &quot;My Object&quot;,
+    type: 'folder',
+    composition: [
+        {
+            id: '412229c3-922c-444b-8624-736d85516247',
+            namespace: 'foo'
+        },
+        {
+            key: 'd6e0ce02-5b85-4e55-8006-a8a505b64c75',
+            namespace: 'foo'
+        }
+    ]
+};</code></pre><h2>Telemetry API</h2><p>The Open MCT telemetry API provides two main sets of interfaces-- one for
+integrating telemetry data into Open MCT, and another for developing Open MCT
+visualization plugins utilizing the telemetry API.  </p>
+<p>The APIs for visualization plugins are still a work in progress and docs may
+change at any time.  However, the APIs for integrating telemetry metadata into
+Open MCT are stable and documentation is included below.</p>
+<h3>Integrating Telemetry Sources</h3><p>There are two main tasks for integrating telemetry sources-- describing telemetry objects with relevant metadata, and then providing telemetry data for those objects.  You'll use an <a href="#object-providers">Object Provider</a> to provide objects with the necessary <a href="#telemetry-metadata">Telemetry Metadata</a>, and then register a <a href="#telemetry-providers">Telemetry Provider</a> to retrieve telemetry data for those objects.  Alternatively, you can register a telemetry metadata provider to provide the necessary telemetry metadata.</p>
+<p>For a step-by-step guide to building a telemetry adapter, please see the 
+<a href="https://github.com/nasa/openmct-tutorial">Open MCT Tutorials</a>.</p>
+<h4>Telemetry Metadata</h4><p>A telemetry object is a domain object with a telemetry property.  To take an example from the tutorial, here is the telemetry object for the &quot;fuel&quot; measurement of the spacecraft:</p>
+<pre class="prettyprint source lang-json"><code>{
+    &quot;identifier&quot;: {
+        &quot;namespace&quot;: &quot;example.taxonomy&quot;,
+        &quot;key&quot;: &quot;prop.fuel&quot;
+    },
+    &quot;name&quot;: &quot;Fuel&quot;,
+    &quot;type&quot;: &quot;example.telemetry&quot;,
+    &quot;telemetry&quot;: {
+        &quot;values&quot;: [
+            {
+                &quot;key&quot;: &quot;value&quot;,
+                &quot;name&quot;: &quot;Value&quot;,
+                &quot;units&quot;: &quot;kilograms&quot;,
+                &quot;format&quot;: &quot;float&quot;,
+                &quot;min&quot;: 0,
+                &quot;max&quot;: 100,
+                &quot;hints&quot;: {
+                    &quot;range&quot;: 1
+                }
+            },
+            {
+                &quot;key&quot;: &quot;utc&quot;,
+                &quot;source&quot;: &quot;timestamp&quot;,
+                &quot;name&quot;: &quot;Timestamp&quot;,
+                &quot;format&quot;: &quot;utc&quot;,
+                &quot;hints&quot;: {
+                    &quot;domain&quot;: 1
+                }
+            }
+        ]
+    }
+}</code></pre><p>The most important part of the telemetry metadata is the <code>values</code> property-- this describes the attributes of telemetry datums (objects) that a telemetry provider returns.  These descriptions must be provided for telemetry views to work properly.</p>
+<h5>Values</h5><p><code>telemetry.values</code> is an array of value description objects, which have the following fields:</p>
+<table>
+<thead>
+<tr>
+<th>attribute</th>
+<th>type</th>
+<th>flags</th>
+<th>notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>key</code></td>
+<td>string</td>
+<td>required</td>
+<td>unique identifier for this field.  </td>
+</tr>
+<tr>
+<td><code>hints</code></td>
+<td>object</td>
+<td>required</td>
+<td>Hints allow views to intelligently select relevant attributes for display, and are required for most views to function.  See section on &quot;Value Hints&quot; below.</td>
+</tr>
+<tr>
+<td><code>name</code></td>
+<td>string</td>
+<td>optional</td>
+<td>a human readable label for this field.  If omitted, defaults to <code>key</code>.</td>
+</tr>
+<tr>
+<td><code>source</code></td>
+<td>string</td>
+<td>optional</td>
+<td>identifies the property of a datum where this value is stored.  If omitted, defaults to <code>key</code>.</td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td>string</td>
+<td>optional</td>
+<td>a specific format identifier, mapping to a formatter.  If omitted, uses a default formatter.  For enumerations, use <code>enum</code>.  For timestamps, use <code>utc</code> if you are using utc dates, otherwise use a key mapping to your custom date format.  </td>
+</tr>
+<tr>
+<td><code>units</code></td>
+<td>string</td>
+<td>optional</td>
+<td>the units of this value, e.g. <code>km</code>, <code>seconds</code>, <code>parsecs</code></td>
+</tr>
+<tr>
+<td><code>min</code></td>
+<td>number</td>
+<td>optional</td>
+<td>the minimum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a min value.</td>
+</tr>
+<tr>
+<td><code>max</code></td>
+<td>number</td>
+<td>optional</td>
+<td>the maximum possible value of this measurement.  Will be used by plots, gauges, etc to automatically set a max value.</td>
+</tr>
+<tr>
+<td><code>enumerations</code></td>
+<td>array</td>
+<td>optional</td>
+<td>for objects where <code>format</code> is <code>&quot;enum&quot;</code>, this array tracks all possible enumerations of the value.  Each entry in this array is an object, with a <code>value</code> property that is the numerical value of the enumeration, and a <code>string</code> property that is the text value of the enumeration.  ex: <code>{&quot;value&quot;: 0, &quot;string&quot;: &quot;OFF&quot;}</code>.  If you use an enumerations array, <code>min</code> and <code>max</code> will be set automatically for you.</td>
+</tr>
+</tbody>
+</table>
+<h6>Value Hints</h6><p>Each telemetry value description has an object defining hints.  Keys in this this object represent the hint itself, and the value represents the weight of that hint.  A lower weight means the hint has a higher priority.  For example, multiple values could be hinted for use as the y axis of a plot (raw, engineering), but the highest priority would be the default choice.  Likewise, a table will use hints to determine the default order of columns.</p>
+<p>Known hints:</p>
+<ul>
+<li><code>domain</code>: Indicates that the value represents the &quot;input&quot; of a datum. Values with a <code>domain</code> hint will be used for the x-axis of a plot, and tables will render columns for these values first.</li>
+<li><code>range</code>: Indicates that the value is the &quot;output&quot; of a datum.  Values with a <code>range</code> hint will be used as the y-axis on a plot, and tables will render columns for these values after the <code>domain</code> values.</li>
+<li><code>image</code>: Indicates that the value may be interpreted as the URL to an image file, in which case appropriate views will be made available.</li>
+</ul>
+<h5>The Time Conductor and Telemetry</h5><p>Open MCT provides a number of ways to pivot through data and link data via time.  The Time Conductor helps synchronize multiple views around the same time.</p>
+<p>In order for the time conductor to work, there will always be an active &quot;time system&quot;.  All telemetry metadata <em>must</em> have a telemetry value with a <code>key</code> that matches the <code>key</code> of the active time system.  You can use the <code>source</code> attribute on the value metadata to remap this to a different field in the telemetry datum-- especially useful if you are working with disparate datasources that have different field mappings.</p>
+<h4>Telemetry Providers</h4><p>Telemetry providers are responsible for providing historical and real-time telemetry data for telemetry objects.  Each telemetry provider determines which objects it can provide telemetry for, and then must implement methods to provide telemetry for those objects.</p>
+<p>A telemetry provider is a javascript object with up to four methods:</p>
+<ul>
+<li><code>supportsSubscribe(domainObject, callback, options)</code> optional.  Must be implemented to provide realtime telemetry.  Should return <code>true</code> if the provider supports subscriptions for the given domain object (and request options).</li>
+<li><code>subscribe(domainObject, callback, options)</code> required if <code>supportsSubscribe</code> is implemented.  Establish a subscription for realtime data for the given domain object.  Should invoke <code>callback</code> with a single telemetry datum every time data is received.  Must return an unsubscribe function.  Multiple views can subscribe to the same telemetry object, so it should always return a new unsubscribe function.</li>
+<li><code>supportsRequest(domainObject, options)</code> optional.  Must be implemented to provide historical telemetry.  Should return <code>true</code> if the provider supports historical requests for the given domain object.</li>
+<li><code>request(domainObject, options)</code> required if <code>supportsRequest</code> is implemented.  Must return a promise for an array of telemetry datums that fulfills the request.  The <code>options</code> argument will include a <code>start</code>, <code>end</code>, and <code>domain</code> attribute representing the query bounds.  See <a href="#telemetry-requests-and-responses">Telemetry Requests and Responses</a> for more info on how to respond to requests.</li>
+<li><code>supportsMetadata(domainObject)</code> optional.  Implement and return <code>true</code> for objects that you want to provide dynamic metadata for.</li>
+<li><code>getMetadata(domainObject)</code> required if <code>supportsMetadata</code> is implemented.  Must return a valid telemetry metadata definition that includes at least one valueMetadata definition.</li>
+<li><code>supportsLimits(domainObject)</code> optional.  Implement and return <code>true</code> for domain objects that you want to provide a limit evaluator for.</li>
+<li><code>getLimitEvaluator(domainObject)</code> required if <code>supportsLimits</code> is implemented.  Must return a valid LimitEvaluator for a given domain object.</li>
+</ul>
+<p>Telemetry providers are registered by calling <code>openmct.telemetry.addProvider(provider)</code>, e.g.</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.telemetry.addProvider({
+    supportsRequest: function (domainObject, options) { /*...*/ },
+    request: function (domainObject, options) { /*...*/ },
+})</code></pre><p>Note: it is not required to implement all of the methods on every provider.  Depending on the complexity of your implementation, it may be helpful to instantiate and register your realtime, historical, and metadata providers separately.</p>
+<h4>Telemetry Requests and Responses.</h4><p>Telemetry requests support time bounded queries. A call to a <em>Telemetry Provider</em>'s <code>request</code> function will include an <code>options</code> argument. These are simply javascript objects with attributes for the request parameters. An example of a telemetry request object with a start and end time is included below:</p>
+<pre class="prettyprint source lang-javascript"><code>{
+    start: 1487981997240,
+    end: 1487982897240,
+    domain: 'utc'
+}</code></pre><p>In this case, the <code>domain</code> is the currently selected time-system, and the start and end dates are valid dates in that time system.</p>
+<p>A telemetry provider's <code>request</code> method should return a promise for an array of telemetry datums.  These datums must be sorted by <code>domain</code> in ascending order.</p>
+<h4>Request Strategies <strong>draft</strong></h4><p>To improve performance views may request a certain strategy for data reduction.  These are intended to improve visualization performance by reducing the amount of data needed to be sent to the client.  These strategies will be indicated by additional parameters in the request options.  You may choose to handle them or ignore them.  </p>
+<p>Note: these strategies are currently being tested in core plugins and may change based on developer feedback.</p>
+<h5><code>latest</code> request strategy</h5><p>This request is a &quot;depth based&quot; strategy.  When a view is only capable of
+displaying a single value (or perhaps the last ten values), then it can
+use the <code>latest</code> request strategy with a <code>size</code> parameter that specifies
+the number of results it desires.  The <code>size</code> parameter is a hint; views
+must not assume the response will have the exact number of results requested.</p>
+<p>example:</p>
+<pre class="prettyprint source lang-javascript"><code>{
+    start: 1487981997240,
+    end: 1487982897240,
+    domain: 'utc',
+    strategy: 'latest',
+    size: 1
+}</code></pre><p>This strategy says &quot;I want the lastest data point in this time range&quot;.  A provider which recognizes this request should return only one value-- the latest-- in the requested time range.  Depending on your back-end implementation, performing these queries in bulk can be a large performance increase.  These are generally issued by views that are only capable of displaying a single value and only need to show the latest value.</p>
+<h5><code>minmax</code> request strategy</h5><p>example:</p>
+<pre class="prettyprint source lang-javascript"><code>{
+    start: 1487981997240,
+    end: 1487982897240,
+    domain: 'utc',
+    strategy: 'minmax',
+    size: 720
+}</code></pre><p>MinMax queries are issued by plots, and may be issued by other types as well.  The aim is to reduce the amount of data returned but still faithfully represent the full extent of the data.  In order to do this, the view calculates the maximum data resolution it can display (i.e. the number of horizontal pixels in a plot) and sends that as the <code>size</code>.  The response should include at least one minimum and one maximum value per point of resolution.</p>
+<h4>Telemetry Formats <strong>draft</strong></h4><p>Telemetry format objects define how to interpret and display telemetry data. 
+They have a simple structure:</p>
+<ul>
+<li><code>key</code>: A <code>string</code> that uniquely identifies this formatter.</li>
+<li><code>format</code>: A <code>function</code> that takes a raw telemetry value, and returns a 
+human-readable <code>string</code> representation of that value. It has one required 
+argument, and three optional arguments that provide context and can be used 
+for returning scaled representations of a value. An example of this is 
+representing time values in a scale such as the time conductor scale. There 
+are multiple ways of representing a point in time, and by providing a minimum
+scale value, maximum scale value, and a count, it's possible to provide more
+useful representations of time given the provided limitations.  <ul>
+<li><code>value</code>: The raw telemetry value in its native type.</li>
+<li><code>minValue</code>: An <strong>optional</strong> argument specifying the minimum displayed 
+value.</li>
+<li><code>maxValue</code>: An <strong>optional</strong> argument specifying the maximum displayed 
+value.</li>
+<li><code>count</code>: An <strong>optional</strong> argument specifying the number of displayed 
+values.</li>
+</ul>
+</li>
+<li><code>parse</code>: A <code>function</code> that takes a <code>string</code> representation of a telemetry 
+value, and returns the value in its native type. <strong>Note</strong> parse might receive an already-parsed value.  This function should be idempotent.</li>
+<li><code>validate</code>: A <code>function</code> that takes a <code>string</code> representation of a telemetry 
+value, and returns a <code>boolean</code> value indicating whether the provided string
+can be parsed.</li>
+</ul>
+<h5>Registering Formats</h5><p>Formats are registered with the Telemetry API using the <code>addFormat</code> function. eg.</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.telemetry.addFormat({
+    key: 'number-to-string',
+    format: function (number) {
+        return number + '';
+    },
+    parse: function (text) {
+        return Number(text);
+    },
+    validate: function (text) {
+        return !isNaN(text);
+    }
+});</code></pre><h4>Telemetry Data</h4><p>A single telemetry point is considered a Datum, and is represented by a standard
+javascript object.  Realtime subscriptions (obtained via <strong>subscribe</strong>) will 
+invoke the supplied callback once for each telemetry datum recieved.  Telemetry
+requests (obtained via <strong>request</strong>) will return a promise for an array of 
+telemetry datums.</p>
+<h5>Telemetry Datums</h5><p>A telemetry datum is a simple javascript object, e.g.:</p>
+<pre class="prettyprint source lang-json"><code>{
+    &quot;timestamp&quot;: 1491267051538,
+    &quot;value&quot;: 77,
+    &quot;id&quot;: &quot;prop.fuel&quot;
+}</code></pre><p>The key-value pairs of this object are described by the telemetry metadata of
+a domain object, as discussed in the <a href="#telemetry-metadata">Telemetry Metadata</a>
+section.</p>
+<h4>Limit Evaluators <strong>draft</strong></h4><p>Limit evaluators allow a telemetry integrator to define how limits should be 
+applied to telemetry from a given domain object.  For an example of a limit 
+evaluator, take a look at <code>examples/generator/SinewaveLimitProvider.js</code>.</p>
+<h3>Telemetry Consumer APIs <strong>draft</strong></h3><p>The APIs for requesting telemetry from Open MCT -- e.g. for use in custom views -- are currently in draft state and are being revised.  If you'd like to experiement with them before they are finalized, please contact the team via the contact-us link on our website.</p>
+<h2>Time API</h2><p>Open MCT provides API for managing the temporal state of the application.
+Central to this is the concept of &quot;time bounds&quot;. Views in Open MCT will 
+typically show telemetry data for some prescribed date range, and the Time API 
+provides a way to centrally manage these bounds.</p>
+<p>The Time API exposes a number of methods for querying and setting the temporal 
+state of the application, and emits events to inform listeners when the state changes.</p>
+<p>Because the data displayed tends to be time domain data, Open MCT must always 
+have at least one time system installed and activated. When you download Open
+MCT, it will be pre-configured to use the UTC time system, which is installed and activated, along with other default plugins, in <code>index.html</code>. Installing and activating a time system is simple, and is covered 
+<a href="#defining-and-registering-time-systems">in the next section</a>. </p>
+<h3>Time Systems and Bounds</h3><h4>Defining and Registering Time Systems</h4><p>The time bounds of an Open MCT application are defined as numbers, and a Time 
+System gives meaning and context to these numbers so that they can be correctly 
+interpreted. Time Systems are JavaScript objects that provide some information 
+about the current time reference frame. An example of defining and registering 
+a new time system is given below:</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.time.addTimeSystem({
+    key: 'utc',
+    name: 'UTC Time',
+    cssClass = 'icon-clock',
+    timeFormat = 'utc',
+    durationFormat = 'duration',
+    isUTCBased = true
+});</code></pre><p>The example above defines a new utc based time system. In fact, this time system 
+is configured and activated by default from <code>index.html</code> in the default 
+installation of Open MCT if you download the source from GitHub. Some details of 
+each of the required properties is provided below.</p>
+<ul>
+<li><code>key</code>: A <code>string</code> that uniquely identifies this time system.</li>
+<li><code>name</code>: A <code>string</code> providing a brief human readable label. If the <a href="#the-time-conductor">Time Conductor</a> 
+plugin is enabled, this name will identify the time system in a dropdown menu.</li>
+<li><code>cssClass</code>: A class name <code>string</code> that will be applied to the time system when 
+it appears in the UI. This will be used to represent the time system with an icon. 
+There are a number of built-in icon classes <a href="https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss">available in Open MCT</a>, 
+or a custom class can be used here. </li>
+<li><code>timeFormat</code>: A <code>string</code> corresponding to the key of a registered 
+<a href="#telemetry-formats">telemetry time format</a>. The format will be used for 
+displaying discrete timestamps from telemetry streams when this time system is 
+activated. If the <a href="#included-plugins">UTCTimeSystem</a> is enabled, then the <code>utc</code> 
+format can be used if this is a utc-based time system</li>
+<li><code>durationFormat</code>: A <code>string</code> corresponding to the key of a registered 
+<a href="#telemetry-formats">telemetry time format</a>. The format will be used for 
+displaying time ranges, for example <code>00:15:00</code> might be used to represent a time 
+period of fifteen minutes. These are used by the Time Conductor plugin to specify
+relative time offsets. If the <a href="#included-plugins">UTCTimeSystem</a> is enabled, 
+then the <code>duration</code> format can be used if this is a utc-based time system</li>
+<li><code>isUTCBased</code>: A <code>boolean</code> that defines whether this time system represents 
+numbers in UTC terrestrial time. </li>
+</ul>
+<h4>Getting and Setting the Active Time System</h4><p>Once registered, a time system can be activated by calling <code>timeSystem</code> with
+the timeSystem <code>key</code> or an instance of the time system.  If you are not using a
+<a href="#clocks">clock</a>, you must also specify valid <a href="#time-bounds">bounds</a> for the
+timeSystem.</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.time.timeSystem('utc', bounds);</code></pre><p>A time system can be immediately activated after registration: </p>
+<pre class="prettyprint source lang-javascript"><code>openmct.time.addTimeSystem(utcTimeSystem);
+openmct.time.timeSystem(utcTimeSystem, bounds);</code></pre><p>Setting the active time system will trigger a <a href="#time-events"><code>'timeSystem'</code></a> 
+event.  If you supplied bounds, a <a href="#time-events"><code>'bounds'</code></a> event will be triggered afterwards with your newly supplied bounds.</p>
+<h4>Time Bounds</h4><p>The TimeAPI provides a getter/setter for querying and setting time bounds. Time 
+bounds are simply an object with a <code>start</code> and an end <code>end</code> attribute.</p>
+<ul>
+<li><code>start</code>: A <code>number</code> representing a moment in time in the active <a href="#defining-and-registering-time-systems">Time System</a>. 
+This will be used as the beginning of the time period displayed by time-responsive
+telemetry views.</li>
+<li><code>end</code>: A <code>number</code> representing a moment in time in the active <a href="#defining-and-registering-time-systems">Time System</a>.
+This will be used as the end of the time period displayed by time-responsive
+telemetry views.</li>
+</ul>
+<p>If invoked with bounds, it will set the new time bounds system-wide. If invoked 
+without any parameters, it will return the current application-wide time bounds. </p>
+<pre class="prettyprint source lang-javascript"><code>const ONE_HOUR = 60 * 60 * 1000;
+let now = Date.now();
+openmct.time.bounds({start: now - ONE_HOUR, now);</code></pre><p>To respond to bounds change events, listen for the <a href="#time-events"><code>'bounds'</code></a>
+event.</p>
+<h3>Clocks</h3><p>The Time API can be set to follow a clock source which will cause the bounds
+to be updated automatically whenever the clock source &quot;ticks&quot;. A clock is simply
+an object that supports registration of listeners and periodically invokes its 
+listeners with a number. Open MCT supports registration of new clock sources that 
+tick on almost anything. A tick occurs when the clock invokes callback functions 
+registered by its listeners with a new time value.</p>
+<p>An example of a clock source is the <a href="https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js">LocalClock</a> 
+which emits the current time in UTC every 100ms. Clocks can tick on anything. For 
+example, a clock could be defined to provide the timestamp of any new data 
+received via a telemetry subscription. This would have the effect of advancing 
+the bounds of views automatically whenever data is received. A clock could also 
+be defined to tick on some remote timing source.</p>
+<p>The values provided by clocks are simple <code>number</code>s, which are interpreted in the
+context of the active <a href="#defining-and-registering-time-systems">Time System</a>.</p>
+<h4>Defining and registering clocks</h4><p>A clock is an object that defines certain required metadata and functions:</p>
+<ul>
+<li><code>key</code>: A <code>string</code> uniquely identifying this clock. This can be used later to 
+reference the clock in places such as the <a href="#time-conductor-configuration">Time Conductor configuration</a></li>
+<li><code>cssClass</code>: A <code>string</code> identifying a CSS class to apply to this clock when it's 
+displayed in the UI. This will be used to represent the time system with an icon. 
+There are a number of built-in icon classes <a href="https://github.com/nasa/openmct/blob/master/platform/commonUI/general/res/sass/_glyphs.scss">available in Open MCT</a>, 
+or a custom class can be used here. </li>
+<li><code>name</code>: A <code>string</code> providing a human-readable identifier for the clock source. 
+This will be displayed in the clock selector menu in the Time Conductor UI 
+component, if active. </li>
+<li><code>description</code>: An <strong>optional</strong> <code>string</code> providing a longer description of the 
+clock. The description will be visible in the clock selection menu in the Time 
+Conductor plugin.</li>
+<li><code>on</code>: A <code>function</code> supporting registration of a new callback that will be 
+invoked when the clock next ticks. It will be invoked with two arguments:<ul>
+<li><code>eventName</code>: A <code>string</code> specifying the event to listen on. For now, clocks 
+support one event - <code>tick</code>.</li>
+<li><code>callback</code>: A <code>function</code> that will be invoked when this clock ticks. The 
+function must be invoked with one parameter - a <code>number</code> representing a valid
+time in the current time system.</li>
+</ul>
+</li>
+<li><code>off</code>: A <code>function</code> that allows deregistration of a tick listener. It accepts 
+the same arguments as <code>on</code>.</li>
+<li><code>currentValue</code>: A <code>function</code> that returns a <code>number</code> representing a point in 
+time in the active time system. It should be the last value provided by a tick, 
+or some default value if no ticking has yet occurred.</li>
+</ul>
+<p>A new clock can be registered using the <code>addClock</code> function exposed by the Time 
+API:</p>
+<pre class="prettyprint source lang-javascript"><code>var someClock = {
+    key: 'someClock',
+    cssClass: 'icon-clock',
+    name: 'Some clock',
+    description: &quot;Presumably does something useful&quot;,
+    on: function (event, callback) {
+        // Some function that registers listeners, and updates them on a tick
+    },
+    off: function (event, callback) {
+        // Some function that unregisters listeners.
+    },
+    currentValue: function () {
+        // A function that returns the last ticked value for the clock
+    }
+}
+
+openmct.time.addClock(someClock);</code></pre><p>An example clock implementation is provided in the form of the <a href="https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js">LocalClock</a></p>
+<h4>Getting and setting active clock</h4><p>Once registered a clock can be activated by calling the <code>clock</code> function on the 
+Time API passing in the key or instance of a registered clock. Only one clock 
+may be active at once, so activating a clock will deactivate any currently 
+active clock. <a href="#clock-offsets"><code>clockOffsets</code></a> must be specified when changing a clock.</p>
+<p>Setting the clock triggers a <a href="#time-events"><code>'clock'</code></a> event, followed by a <a href="#time-events"><code>'clockOffsets'</code></a> event, and then a <a href="#time-events"><code>'bounds'</code></a> event as the offsets are applied to the clock's currentValue().</p>
+<pre class="prettyprint source"><code>openmct.time.clock(someClock, clockOffsets);</code></pre><p>Upon being activated, the time API will listen for tick events on the clock by calling <code>clock.on</code>.</p>
+<p>The currently active clock (if any) can be retrieved by calling the same 
+function without any arguments.</p>
+<h4>Stopping an active clock</h4><p>The <code>stopClock</code> method can be used to stop an active clock, and to clear it. It 
+will stop the clock from ticking, and set the active clock to <code>undefined</code>.</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.time.stopClock();</code></pre><h4>Clock Offsets</h4><p>When a clock is active, the time bounds of the application will be updated 
+automatically each time the clock &quot;ticks&quot;. The bounds are calculated based on 
+the current value provided by the active clock (via its <code>tick</code> event, or its 
+<code>currentValue()</code> method). </p>
+<p>Unlike bounds, which represent absolute time values, clock offsets represent
+relative time spans. Offsets are defined as an object with two properties:</p>
+<ul>
+<li><code>start</code>: A <code>number</code> that must be &lt; 0 and which is used to calculate the start 
+bounds on each clock tick. The start offset will be calculated relative to the 
+value provided by a clock's tick callback, or its <code>currentValue()</code> function.</li>
+<li><code>end</code>: A <code>number</code> that must be &gt;= 0 and which is used to calculate the end 
+bounds on each clock tick.</li>
+</ul>
+<p>The <code>clockOffsets</code> function can be used to get or set clock offsets. For example, 
+to show the last fifteen minutes in a ms-based time system: </p>
+<pre class="prettyprint source lang-javascript"><code>var FIFTEEN_MINUTES = 15 * 60 * 1000;
+
+openmct.time.clockOffsets({
+    start: -FIFTEEN_MINUTES,
+    end: 0
+})</code></pre><p><strong>Note:</strong> Setting the clock offsets will trigger an immediate bounds change, as 
+new bounds will be calculated based on the <code>currentValue()</code> of the active clock. 
+Clock offsets are only relevant when a clock source is active.</p>
+<h3>Time Events</h3><p>The Time API is a standard event emitter; you can register callbacks for events using the <code>on</code> method and remove callbacks for events with the <code>off</code> method.</p>
+<p>For example:</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.time.on('bounds', function callback (newBounds, tick) {
+    // Do something with new bounds
+});</code></pre><h4>List of Time Events</h4><p>The events emitted by the Time API are:</p>
+<ul>
+<li><code>bounds</code>: emitted whenever the bounds change.  The callback will be invoked 
+with two arguments:<ul>
+<li><code>bounds</code>: A <a href="#getting-and-setting-bounds">bounds</a> bounds object
+representing a new time period bound by the specified start and send times.</li>
+<li><code>tick</code>: A <code>boolean</code> indicating whether or not this bounds change is due to
+a &quot;tick&quot; from a <a href="#clocks">clock source</a>. This information can be useful 
+when determining a strategy for fetching telemetry data in response to a 
+bounds change event. For example, if the bounds change was automatic, and 
+is due to a tick then it's unlikely that you would need to perform a 
+historical data query. It should be sufficient to just show any new 
+telemetry received via subscription since the last tick, and optionally to 
+discard any older data that now falls outside of the currently set bounds. 
+If <code>tick</code> is false,then the bounds change was not due to an automatic tick, 
+and a query for historical data may be necessary, depending on your data 
+caching strategy, and how significantly the start bound has changed.</li>
+</ul>
+</li>
+<li><code>timeSystem</code>: emitted whenever the active time system changes.  The callback will be invoked with a single argument:<ul>
+<li><code>timeSystem</code>: The newly active <a href="#defining-and-registering-time-systems">time system</a>.</li>
+</ul>
+</li>
+<li><code>clock</code>: emitted whenever the clock changes.  The callback will be invoked 
+with a single argument:<ul>
+<li><code>clock</code>: The newly active <a href="#clocks">clock</a>, or <code>undefined</code> if an active 
+clock has been deactivated.</li>
+</ul>
+</li>
+<li><code>clockOffsets</code>: emitted whenever the active clock offsets change.  The 
+callback will be invoked with a single argument:<ul>
+<li><code>clockOffsets</code>: The new <a href="#clock-offsets">clock offsets</a>.</li>
+</ul>
+</li>
+</ul>
+<h3>The Time Conductor</h3><p>The Time Conductor provides a user interface for managing time bounds in Open 
+MCT. It allows a user to select from configured time systems and clocks, and to set bounds and clock offsets.</p>
+<p>If activated, the time conductor must be provided with configuration options, 
+detailed below.</p>
+<h4>Time Conductor Configuration</h4><p>The time conductor is configured by specifying the options that will be 
+available to the user from the menus in the time conductor. These will determine 
+the clocks available from the conductor, the time systems available for each 
+clock, and some default bounds and clock offsets for each combination of clock 
+and time system. By default, the conductor always supports a <code>fixed</code> mode where 
+no clock is active. To specify configuration for fixed mode, simply leave out a
+<code>clock</code> attribute in the configuration entry object.</p>
+<p>Configuration is provided as an <code>array</code> of menu options. Each entry of the 
+array is an object with some properties specifying configuration. The configuration
+options specified are slightly different depending on whether or not it is for 
+an active clock mode.</p>
+<p><strong>Configuration for Fixed Time Mode (no active clock)</strong></p>
+<ul>
+<li><code>timeSystem</code>: A <code>string</code>, the key for the time system that this configuration 
+relates to.</li>
+<li><code>bounds</code>: A <a href="#time-bounds"><code>Time Bounds</code></a> object. These bounds will be applied 
+when the user selects the time system specified in the previous <code>timeSystem</code> 
+property.</li>
+<li><code>zoomOutLimit</code>: An <strong>optional</strong> <code>number</code> specifying the longest period of time 
+that can be represented by the conductor when zooming. If a <code>zoomOutLimit</code> is 
+provided, then a <code>zoomInLimit</code> must also be provided. If provided, the zoom 
+slider will automatically become available in the Time Conductor UI.</li>
+<li><code>zoomInLimit</code>: An <strong>optional</strong> <code>number</code> specifying the shortest period of time 
+that can be represented by the conductor when zooming. If a <code>zoomInLimit</code> is 
+provided, then a <code>zoomOutLimit</code> must also be provided. If provided, the zoom 
+slider will automatically become available in the Time Conductor UI.</li>
+</ul>
+<p><strong>Configuration for Active Clock</strong></p>
+<ul>
+<li><code>clock</code>: A <code>string</code>, the <code>key</code> of the clock that this configuration applies to. </li>
+<li><code>timeSystem</code>: A <code>string</code>, the key for the time system that this configuration 
+relates to. Separate configuration must be provided for each time system that you 
+wish to be available to users when they select the specified clock.</li>
+<li><code>clockOffsets</code>: A <a href="#clock-offsets"><code>clockOffsets</code></a> object that will be 
+automatically applied when the combination of clock and time system specified in 
+this configuration is selected from the UI.</li>
+</ul>
+<h4>Example conductor configuration</h4><p>An example time conductor configuration is provided below. It sets up some 
+default options for the <a href="https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/UTCTimeSystem.js">UTCTimeSystem</a> 
+and <a href="https://github.com/nasa/openmct/blob/master/src/plugins/localTimeSystem/LocalTimeSystem.js">LocalTimeSystem</a>, 
+in both fixed mode, and for the <a href="https://github.com/nasa/openmct/blob/master/src/plugins/utcTimeSystem/LocalClock.js">LocalClock</a> 
+source. In this configutation, the local clock supports both the UTCTimeSystem 
+and LocalTimeSystem. Configuration for fixed bounds mode is specified by omitting 
+a clock key.</p>
+<pre class="prettyprint source lang-javascript"><code>const ONE_YEAR = 365 * 24 * 60 * 60 * 1000;
+const ONE_MINUTE = 60 * 1000;
+
+openmct.install(openmct.plugins.Conductor({
+    menuOptions: [
+        // 'Fixed' bounds mode configuation for the UTCTimeSystem
+        {
+            timeSystem: 'utc',
+            bounds: {start: Date.now() - 30 * ONE_MINUTE, end: Date.now()},
+            zoomOutLimit: ONE_YEAR,
+            zoomInLimit: ONE_MINUTE
+        },
+        // Configuration for the LocalClock in the UTC time system
+        {
+            clock: 'local',
+            timeSystem: 'utc',
+            clockOffsets: {start: - 30 * ONE_MINUTE, end: 0},
+            zoomOutLimit: ONE_YEAR,
+            zoomInLimit: ONE_MINUTE
+        },
+        //Configuration for the LocaLClock in the Local time system
+        {
+            clock: 'local',
+            timeSystem: 'local',
+            clockOffsets: {start: - 15 * ONE_MINUTE, end: 0}
+        }
+    ]
+}));</code></pre><h2>Indicators</h2><p>Indicators are small widgets that reside at the bottom of the screen and are visible from 
+every screen in Open MCT. They can be used to convey system state using an icon and text.
+Typically an indicator will display an icon (customizable with a CSS class) that will 
+reveal additional information when the mouse cursor is hovered over it.</p>
+<h3>The URL Status Indicator</h3><p>A common use case for indicators is to convey the state of some external system such as a 
+persistence backend or HTTP server. So long as this system is accessible via HTTP request, 
+Open MCT provides a general purpose indicator to show whether the server is available and 
+returing a 2xx status code. The URL Status Indicator is made available as a default plugin. See
+<a href="#included-plugins">Included Plugins</a> below for details on how to install and configure the 
+URL Status Indicator.</p>
+<h3>Creating a Simple Indicator</h3><p>A simple indicator with an icon and some text can be created and added with minimal code. An indicator 
+of this type exposes functions for customizing the text, icon, and style of the indicator.</p>
+<p>eg.</p>
+<pre class="prettyprint source lang-javascript"><code>var myIndicator = openmct.indicators.simpleIndicator();
+myIndicator.text(&quot;Hello World!&quot;);
+openmct.indicators.add(myIndicator);</code></pre><p>This will create a new indicator and add it to the bottom of the screen in Open MCT.
+By default, the indicator will appear as an information icon. Hovering over the icon will
+reveal the text set via the call to <code>.text()</code>. The Indicator object returned by the API 
+call exposes a number of functions for customizing the content and appearance of the indicator:</p>
+<ul>
+<li><code>.text([text])</code>: Gets or sets the text shown when the user hovers over the indicator.
+Accepts an <strong>optional</strong> <code>string</code> argument that, if provided, will be used to set the text. 
+Hovering over the indicator will expand it to its full size, revealing this text alongside 
+the icon. Returns the currently set text as a <code>string</code>.</li>
+<li><code>.description([description])</code>: Gets or sets the indicator's description. Accepts an 
+<strong>optional</strong> <code>string</code> argument that, if provided, will be used to set the text. The description 
+allows for more detail to be provided in a tooltip when the user hovers over the indicator. 
+Returns the currently set text as a <code>string</code>.</li>
+<li><code>.iconClass([className])</code>: Gets or sets the CSS class used to define the icon. Accepts an <strong>optional</strong> 
+<code>string</code> parameter to be used to set the class applied to the indicator. Any of 
+<a href="https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home/glyphs?view=styleguide.glyphs">the built-in glyphs</a> 
+may be used here, or a custom CSS class can be provided. Returns the currently defined CSS 
+class as a <code>string</code>.</li>
+<li><code>.statusClass([className])</code>: Gets or sets the CSS class used to determine status. Accepts an <strong>optional </strong>
+<code>string</code> parameter to be used to set a status class applied to the indicator. May be used to apply 
+different colors to indicate status.</li>
+</ul>
+<h3>Custom Indicators</h3><p>A completely custom indicator can be added by simple providing a DOM element to place alongside other indicators.</p>
+<pre class="prettyprint source lang-javascript"><code>    var domNode = document.createElement('div');
+    domNode.innerText = new Date().toString();
+    setInterval(function () {
+        domNode.innerText = new Date().toString();
+    }, 1000);
+
+    openmct.indicators.add({
+        element: domNode
+    });</code></pre><h2>Included Plugins</h2><p>Open MCT is packaged along with a few general-purpose plugins:</p>
+<ul>
+<li><code>openmct.plugins.Conductor</code> provides a user interface for working with time
+within the application. If activated, configuration must be provided. This is 
+detailed in the section on <a href="#time-conductor-configuration">Time Conductor Configuration</a>.</li>
+<li><code>openmct.plugins.CouchDB</code> is an adapter for using CouchDB for persistence
+of user-created objects. This is a constructor that takes the URL for the
+CouchDB database as a parameter, e.g.<pre class="prettyprint source lang-javascript"><code>openmct.install(openmct.plugins.CouchDB('http://localhost:5984/openmct'))</code></pre></li>
+<li><code>openmct.plugins.Elasticsearch</code> is an adapter for using Elasticsearch for
+persistence of user-created objects. This is a
+constructor that takes the URL for the Elasticsearch instance as a
+parameter. eg.<pre class="prettyprint source lang-javascript"><code>openmct.install(openmct.plugins.CouchDB('http://localhost:9200'))</code></pre></li>
+<li><code>openmct.plugins.Espresso</code> and <code>openmct.plugins.Snow</code> are two different
+themes (dark and light) available for Open MCT. Note that at least one
+of these themes must be installed for Open MCT to appear correctly.</li>
+<li><code>openmct.plugins.URLIndicator</code> adds an indicator which shows the
+availability of a URL with the following options: <ul>
+<li><code>url</code> : URL to indicate the status of</li>
+<li><code>iconClass</code>: Icon to show in the status bar, defaults to <code>icon-database</code>, <a href="https://nasa.github.io/openmct/style-guide/#/browse/styleguide:home?view=items">list of all icons</a></li>
+<li><code>interval</code>: Interval between checking the connection, defaults to <code>10000</code></li>
+<li><code>label</code> Name showing up as text in the status bar, defaults to url<pre class="prettyprint source lang-javascript"><code>openmct.install(openmct.plugins.URLIndicator({
+url: 'http://localhost:8080',
+iconClass: 'check',
+interval: 10000,
+label: 'Localhost'
+})
+);</code></pre></li>
+</ul>
+</li>
+<li><code>openmct.plugins.LocalStorage</code> provides persistence of user-created
+objects in browser-local storage. This is particularly useful in
+development environments.</li>
+<li><code>openmct.plugins.MyItems</code> adds a top-level folder named &quot;My Items&quot;
+when the application is first started, providing a place for a
+user to store created items.</li>
+<li><code>openmct.plugins.UTCTimeSystem</code> provides a default time system for Open MCT.</li>
+</ul>
+<p>Generally, you will want to either install these plugins, or install
+different plugins that provide persistence and an initial folder
+hierarchy.</p>
+<p>eg.</p>
+<pre class="prettyprint source lang-javascript"><code>openmct.install(openmct.plugins.LocalStorage());
+openmct.install(openmct.plugins.MyItems());</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-openmct.Dialog.html">Dialog</a></li><li><a href="module-openmct.MCT.html">MCT</a></li><li><a href="module-openmct.Type.html">Type</a></li><li><a href="platform_commonUI_formats.LocalTimeFormat.html">LocalTimeFormat</a></li><li><a href="platform_commonUI_regions.InspectorRegion.html">InspectorRegion</a></li><li><a href="platform_commonUI_regions.Region.html">Region</a></li><li><a href="platform_features_plot.PlotViewPolicy.html">PlotViewPolicy</a></li></ul><h3>Events</h3><ul><li><a href="module-openmct.MCT.html#~event:start">start</a></li><li><a href="module-openmct.TimeAPI.html#~event:bounds">bounds</a></li><li><a href="module-openmct.TimeAPI.html#~event:clock">clock</a></li><li><a href="module-openmct.TimeAPI.html#~event:clockOffsets">clockOffsets</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeOfInterest">timeOfInterest</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeSystem">timeSystem</a></li></ul><h3>Interfaces</h3><ul><li><a href="module-openmct.CompositionAPI.html">CompositionAPI</a></li><li><a href="module-openmct.CompositionCollection.html">CompositionCollection</a></li><li><a href="module-openmct.CompositionProvider.html">CompositionProvider</a></li><li><a href="module-openmct.GestureAPI.html">GestureAPI</a></li><li><a href="module-openmct.InspectorViewProvider.html">InspectorViewProvider</a></li><li><a href="module-openmct.InspectorViewRegistry.html">InspectorViewRegistry</a></li><li><a href="module-openmct.ObjectAPI.html">ObjectAPI</a></li><li><a href="module-openmct.ObjectProvider.html">ObjectProvider</a></li><li><a href="module-openmct.TelemetryAPI.html">TelemetryAPI</a></li><li><a href="module-openmct.TelemetryAPI-LimitEvaluator.html">LimitEvaluator</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryFormatter.html">TelemetryFormatter</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryProvider.html">TelemetryProvider</a></li><li><a href="module-openmct.TimeAPI.html">TimeAPI</a></li><li><a href="module-openmct.ToolbarProvider.html">ToolbarProvider</a></li><li><a href="module-openmct.ToolbarRegistry.html">ToolbarRegistry</a></li><li><a href="module-openmct.TypeRegistry.html">TypeRegistry</a></li><li><a href="module-openmct.View.html">View</a></li><li><a href="module-openmct.ViewProvider.html">ViewProvider</a></li><li><a href="module-openmct.ViewRegistry.html">ViewRegistry</a></li><li><a href="MutableObject.html">MutableObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#defaults">defaults</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#getDrawAPI">getDrawAPI</a></li><li><a href="global.html#getFallbackDrawAPI">getFallbackDrawAPI</a></li><li><a href="global.html#getPersistedSeriesConfig">getPersistedSeriesConfig</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#nearestPoint">nearestPoint</a></li><li><a href="global.html#onDestroy">onDestroy</a></li><li><a href="global.html#onXKeyChange">onXKeyChange</a></li><li><a href="global.html#onYKeyChange">onYKeyChange</a></li><li><a href="global.html#purgeRecordsOutsideRange">purgeRecordsOutsideRange</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#resetStats">resetStats</a></li><li><a href="global.html#setColor">setColor</a></li><li><a href="global.html#updateDomainObject">updateDomainObject</a></li><li><a href="global.html#updateFromSeries">updateFromSeries</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jul 20 2018 22:50:59 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Interface: ObjectAPI</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Interface: ObjectAPI</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>ObjectAPI</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>Utilities for loading, saving, and manipulating domain objects.</p></div>
+        
+
+        
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="api_objects_ObjectAPI.js.html">api/objects/ObjectAPI.js</a>, <a href="api_objects_ObjectAPI.js.html#line40">line 40</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="addRoot"><span class="type-signature"></span>addRoot<span class="signature">(an)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Add a root-level object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>an</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-openmct.ObjectAPI.html#~Identifier">module:openmct.ObjectAPI~Identifier</a></span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>array of
+       identifiers for root level objects, or a function that returns a
+       promise for an identifier or an array of root level objects.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="api_objects_ObjectAPI.js.html">api/objects/ObjectAPI.js</a>, <a href="api_objects_ObjectAPI.js.html#line168">line 168</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="get"><span class="type-signature"></span>get<span class="signature">(identifier)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Get a domain object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>identifier</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-openmct.ObjectAPI.html#~Identifier">module:openmct.ObjectAPI~Identifier</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the identifier for the domain object to load</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="api_objects_ObjectAPI.js.html">api/objects/ObjectAPI.js</a>, <a href="api_objects_ObjectAPI.js.html#line135">line 135</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>a promise which will resolve when the domain object
+         has been saved, or be rejected if it cannot be saved</p>
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="mutate"><span class="type-signature"></span>mutate<span class="signature">(object, path, value)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Modify a domain object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-openmct.html#.DomainObject">module:openmct.DomainObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the object to mutate</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the property to modify</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>value</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">*</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the new value for this property</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="api_objects_ObjectAPI.js.html">api/objects/ObjectAPI.js</a>, <a href="api_objects_ObjectAPI.js.html#line180">line 180</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="observe"><span class="type-signature"></span>observe<span class="signature">(object, path, callback)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    <p>Observe changes to a domain object.</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>object</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-openmct.html#.DomainObject">module:openmct.DomainObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the object to observe</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>path</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the property to observe</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a callback to invoke when new values for
+       this property are observed</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="api_objects_ObjectAPI.js.html">api/objects/ObjectAPI.js</a>, <a href="api_objects_ObjectAPI.js.html#line194">line 194</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+<h4 class="name" id="~Identifier">Identifier</h4>
+
+
+
+
+<div class="description">
+    <p>Uniquely identifies a domain object.</p>
+</div>
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>namespace</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the namespace to/from which this domain
+          object should be loaded/stored.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>key</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>a unique identifier for the domain object
+          within that namespace</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="api_objects_ObjectAPI.js.html">api/objects/ObjectAPI.js</a>, <a href="api_objects_ObjectAPI.js.html#line218">line 218</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+            
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-openmct.Dialog.html">Dialog</a></li><li><a href="module-openmct.MCT.html">MCT</a></li><li><a href="module-openmct.Type.html">Type</a></li><li><a href="platform_commonUI_formats.LocalTimeFormat.html">LocalTimeFormat</a></li><li><a href="platform_commonUI_regions.InspectorRegion.html">InspectorRegion</a></li><li><a href="platform_commonUI_regions.Region.html">Region</a></li><li><a href="platform_features_plot.PlotViewPolicy.html">PlotViewPolicy</a></li></ul><h3>Events</h3><ul><li><a href="module-openmct.MCT.html#~event:start">start</a></li><li><a href="module-openmct.TimeAPI.html#~event:bounds">bounds</a></li><li><a href="module-openmct.TimeAPI.html#~event:clock">clock</a></li><li><a href="module-openmct.TimeAPI.html#~event:clockOffsets">clockOffsets</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeOfInterest">timeOfInterest</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeSystem">timeSystem</a></li></ul><h3>Interfaces</h3><ul><li><a href="module-openmct.CompositionAPI.html">CompositionAPI</a></li><li><a href="module-openmct.CompositionCollection.html">CompositionCollection</a></li><li><a href="module-openmct.CompositionProvider.html">CompositionProvider</a></li><li><a href="module-openmct.GestureAPI.html">GestureAPI</a></li><li><a href="module-openmct.InspectorViewProvider.html">InspectorViewProvider</a></li><li><a href="module-openmct.InspectorViewRegistry.html">InspectorViewRegistry</a></li><li><a href="module-openmct.ObjectAPI.html">ObjectAPI</a></li><li><a href="module-openmct.ObjectProvider.html">ObjectProvider</a></li><li><a href="module-openmct.TelemetryAPI.html">TelemetryAPI</a></li><li><a href="module-openmct.TelemetryAPI-LimitEvaluator.html">LimitEvaluator</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryFormatter.html">TelemetryFormatter</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryProvider.html">TelemetryProvider</a></li><li><a href="module-openmct.TimeAPI.html">TimeAPI</a></li><li><a href="module-openmct.ToolbarProvider.html">ToolbarProvider</a></li><li><a href="module-openmct.ToolbarRegistry.html">ToolbarRegistry</a></li><li><a href="module-openmct.TypeRegistry.html">TypeRegistry</a></li><li><a href="module-openmct.View.html">View</a></li><li><a href="module-openmct.ViewProvider.html">ViewProvider</a></li><li><a href="module-openmct.ViewRegistry.html">ViewRegistry</a></li><li><a href="MutableObject.html">MutableObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#defaults">defaults</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#getDrawAPI">getDrawAPI</a></li><li><a href="global.html#getFallbackDrawAPI">getFallbackDrawAPI</a></li><li><a href="global.html#getPersistedSeriesConfig">getPersistedSeriesConfig</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#nearestPoint">nearestPoint</a></li><li><a href="global.html#onDestroy">onDestroy</a></li><li><a href="global.html#onXKeyChange">onXKeyChange</a></li><li><a href="global.html#onYKeyChange">onYKeyChange</a></li><li><a href="global.html#purgeRecordsOutsideRange">purgeRecordsOutsideRange</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#resetStats">resetStats</a></li><li><a href="global.html#setColor">setColor</a></li><li><a href="global.html#updateDomainObject">updateDomainObject</a></li><li><a href="global.html#updateFromSeries">updateFromSeries</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jul 20 2018 22:50:59 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

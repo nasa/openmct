@@ -1,0 +1,259 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#development-cycle">Development Cycle</a><ul>
+<li><a href="#roles">Roles</a></li>
+<li><a href="#sprint-calendar">Sprint Calendar</a><ul>
+<li><a href="#sprints-by-release">Sprints by Release</a></li>
+<li><a href="#sprints-1-3">Sprints 1-3</a></li>
+<li><a href="#sprint-4">Sprint 4</a></li>
+</ul>
+</li>
+<li><a href="#process-points">Process Points</a></li>
+</ul>
+</li>
+</ul>
+<a name="development-cycle" href="#development-cycle"><h1 id="undefineddevelopment-cycle">Development Cycle</h1>
+</a><p>Development of Open MCT occurs on an iterative cycle of
+sprints and releases.</p>
+<ul>
+<li>A <em>sprint</em> is three weeks in duration, and represents a
+set of improvements that can be completed and tested by the
+development team. Software at the end of the sprint is
+&quot;semi-stable&quot;; it will have undergone reduced testing and may carry
+defects or usability issues of lower severity, particularly if
+there are workarounds.</li>
+<li>A <em>release</em> occurs every four sprints. Releases are stable, and
+will have undergone full acceptance testing to ensure that the
+software behaves correctly and usably.</li>
+</ul>
+<a name="roles" href="#roles"><h2 id="undefinedroles">Roles</h2>
+</a><p>The sprint process assumes the presence of a <strong>project manager.</strong>
+The project manager is responsible for
+making tactical decisions about what development work will be
+performed, and for coordinating with stakeholders to arrive at
+higher-level strategic decisions about desired functionality
+and characteristics of the software, major external milestones,
+and so forth.</p>
+<p>In the absence of a dedicated project manager, this role may be rotated
+among members of the development team on a per-sprint basis.</p>
+<p>Responsibilities of the project manager including:</p>
+<ul>
+<li>Maintaining (with agreement of stakeholders) a &quot;road map&quot; of work
+planned for future releases/sprints; this should be higher-level,
+usually expressed as &quot;themes&quot;,
+with just enough specificity to gauge feasibility of plans,
+relate work back to milestones, and identify longer-term
+dependencies.</li>
+<li>Determining (with assistance from the rest of the team) which
+issues to work on in a given sprint and how they shall be
+assigned.</li>
+<li>Pre-planning subsequent sprints to ensure that all members of the
+team always have a clear direction.</li>
+<li>Scheduling and/or ensuring adherence to
+<a href="#process-points">process points</a>.</li>
+<li>Responding to changes within the sprint (shifting priorities,
+new issues) and re-allocating work for the sprint as needed.</li>
+</ul>
+<a name="sprint-calendar" href="#sprint-calendar"><h2 id="undefinedsprint-calendar">Sprint Calendar</h2>
+</a><p>Certain <a href="#process-points">process points</a> are regularly scheduled in
+the sprint cycle.</p>
+<a name="sprints-by-release" href="#sprints-by-release"><h3 id="undefinedsprints-by-release">Sprints by Release</h3>
+</a><p>Allocation of work among sprints should be planned relative to release
+goals and milestones. As a general guideline, higher-risk work (large
+new features which may carry new defects, major refactoring, design
+changes with uncertain effects on usability) should be allocated to
+earlier sprints, allowing for time in later sprints to ensure stability.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Sprint</th>
+<th style="text-align:left">Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>1</strong></td>
+<td style="text-align:left">Prototyping, design, experimentation.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>2</strong></td>
+<td style="text-align:left">New features, refinements, enhancements.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>3</strong></td>
+<td style="text-align:left">Feature completion, low-risk enhancements, bug fixing.</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>4</strong></td>
+<td style="text-align:left">Stability &amp; quality assurance.</td>
+</tr>
+</tbody>
+</table>
+<a name="sprints-1-3" href="#sprints-1-3"><h3 id="undefinedsprints-1-3">Sprints 1-3</h3>
+</a><p>The first three sprints of a release are primarily centered around
+development work, with regular acceptance testing in the third
+week. During this third week, the top priority should be passing
+acceptance testing (e.g. by resolving any blockers found); any
+resources not needed for this effort should be used to begin work
+for the subsequent sprint.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Week</th>
+<th style="text-align:center">Mon</th>
+<th style="text-align:center">Tue</th>
+<th style="text-align:center">Wed</th>
+<th style="text-align:center">Thu</th>
+<th style="text-align:center">Fri</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>1</strong></td>
+<td style="text-align:center">Sprint plan</td>
+<td style="text-align:center">Tag-up</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>2</strong></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Tag-up</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Code freeze</td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>3</strong></td>
+<td style="text-align:center">Per-sprint testing</td>
+<td style="text-align:center">Triage</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>Per-sprint testing*</em></td>
+<td style="text-align:center">Ship</td>
+</tr>
+</tbody>
+</table>
+<p>&ast; If necessary.</p>
+<a name="sprint-4" href="#sprint-4"><h3 id="undefinedsprint-4">Sprint 4</h3>
+</a><p>The software must be stable at the end of the fourth sprint; because of
+this, the fourth sprint is scheduled differently, with a heightened
+emphasis on testing.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Week</th>
+<th style="text-align:center">Mon</th>
+<th style="text-align:center">Tue</th>
+<th style="text-align:center">Wed</th>
+<th style="text-align:center">Thu</th>
+<th style="text-align:center">Fri</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right"><strong>1</strong></td>
+<td style="text-align:center">Sprint plan</td>
+<td style="text-align:center">Tag-up</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center">Code freeze</td>
+</tr>
+<tr>
+<td style="text-align:right"><strong>2</strong></td>
+<td style="text-align:center">Per-release testing</td>
+<td style="text-align:center">Triage</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:right"><strong>3</strong></td>
+<td style="text-align:center"><em>Per-release testing*</em></td>
+<td style="text-align:center">Triage</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>Per-release testing*</em></td>
+<td style="text-align:center">Ship</td>
+</tr>
+</tbody>
+</table>
+<p>&ast; If necessary.</p>
+<a name="process-points" href="#process-points"><h2 id="undefinedprocess-points">Process Points</h2>
+</a><ul>
+<li><strong>Sprint plan.</strong> Project manager allocates issues based on
+theme(s) for sprint, then reviews with team. Each team member
+should have roughly two weeks of work allocated (to allow time
+in the third week for testing of work completed.)<ul>
+<li>Project manager should also sketch out subsequent sprint so
+that team may begin work for that sprint during the
+third week, since testing and blocker resolution is unlikely
+to require all available resources.</li>
+</ul>
+</li>
+<li><strong>Tag-up.</strong> Check in and status update among development team.
+May amend plan for sprint as-needed.</li>
+<li><strong>Code freeze.</strong> Any new work from this sprint
+(features, bug fixes, enhancements) must be integrated by the
+end of the second week of the sprint. After code freeze
+(and until the end of the sprint) the only changes that should be
+merged into the master branch should directly address issues
+needed to pass acceptance testing.</li>
+<li><a href="testing/plan.html#per-release-testing"><strong>Per-release Testing.</strong></a>
+Structured testing with predefined
+success criteria. No release should ship without passing
+acceptance tests. Time is allocated in each sprint for subsequent
+rounds of acceptance testing if issues are identified during a
+prior round. Specific details of acceptance testing need to be
+agreed-upon with relevant stakeholders and delivery recipients,
+and should be flexible enough to allow changes to plans
+(e.g. deferring delivery of some feature in order to ensure
+stability of other features.) Baseline testing includes:<ul>
+<li><a href="testing/plan.html#user-testing"><strong>Testathon.</strong></a>
+Multi-user testing, involving as many users as
+is feasible, plus development team. Open-ended; should verify
+completed work from this sprint, test exploratorily for
+regressions, et cetera.</li>
+<li><a href="testing/plan.html#long-duration-testing"><strong>Long-Duration Test.</strong></a> A
+test to verify that the software remains
+stable after running for longer durations. May include some
+combination of automated testing and user verification (e.g.
+checking to verify that software remains subjectively
+responsive at conclusion of test.)</li>
+<li><a href="testing/plan.html#unit-testing"><strong>Unit Testing.</strong></a>
+Automated testing integrated into the
+build. (These tests are verified to pass more often than once
+per sprint, as they run before any merge to master, but still
+play an important role in per-release testing.)</li>
+</ul>
+</li>
+<li><a href="testing/plan.html#per-sprint-testing"><strong>Per-sprint Testing.</strong></a>
+Subset of Pre-release Testing
+which should be performed before shipping at the end of any
+sprint. Time is allocated for a second round of
+Pre-release Testing if the first round is not passed.</li>
+<li><strong>Triage.</strong> Team reviews issues from acceptance testing and uses
+success criteria to determine whether or not they should block
+release, then formulates a plan to address these issues before
+the next round of acceptance testing. Focus here should be on
+ensuring software passes that testing in order to ship on time;
+may prefer to disable malfunctioning components and fix them
+in a subsequent sprint, for example.</li>
+<li><a href="version.html"><strong>Ship.</strong></a> Tag a code snapshot that has passed release/sprint
+testing and deploy that version. (Only true if relevant
+testing has passed by this point; if testing has not
+been passed, will need to make ad hoc decisions with stakeholders,
+e.g. &quot;extend the sprint&quot; or &quot;defer shipment until end of next
+sprint.&quot;)</li>
+</ul>
+        <hr>
+    </body>
+</html>

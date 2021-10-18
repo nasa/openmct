@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: plugins/summaryWidget/src/input/OperationSelect.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: plugins/summaryWidget/src/input/OperationSelect.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>define([
+    './Select',
+    '../eventHelpers'
+], function (
+    Select,
+    eventHelpers
+) {
+
+    /**
+     * Create a {Select} element whose composition is dynamically updated with
+     * the operations applying to a particular telemetry property
+     * @constructor
+     * @param {Object} config The current state of this select. Must have object,
+     *                        key, and operation fields
+     * @param {KeySelect} keySelect The linked Key Select instance to which
+     *                              this OperationSelect should listen to for change
+     *                              events
+     * @param {ConditionManager} manager A ConditionManager instance from which
+     *                                   to receive telemetry metadata
+     * @param {function} changeCallback A change event callback to register with this
+     *                                  select on initialization
+     */
+    var NULLVALUE = '- Select Comparison -';
+
+    function OperationSelect(config, keySelect, manager, changeCallback) {
+        eventHelpers.extend(this);
+        var self = this;
+
+        this.config = config;
+        this.keySelect = keySelect;
+        this.manager = manager;
+
+        this.operationKeys = [];
+        this.evaluator = this.manager.getEvaluator();
+        this.loadComplete = false;
+
+        this.select = new Select();
+        this.select.hide();
+        this.select.addOption('', NULLVALUE);
+        if (changeCallback) {
+            this.listenTo(this.select, 'change', changeCallback);
+        }
+
+        /**
+         * Change event handler for the {KeySelect} to which this OperationSelect instance
+         * is linked. Loads the operations applicable to the given telemetry property and updates
+         * its select element's composition
+         * @param {Object} key The key identifying the newly selected property
+         * @private
+         */
+        function onKeyChange(key) {
+            var selected = self.config.operation;
+            if (self.manager.metadataLoadCompleted()) {
+                self.loadOptions(key);
+                self.generateOptions();
+                self.select.setSelected(selected);
+            }
+        }
+
+        /**
+         * Event handler for the intial metadata load event from the associated
+         * ConditionManager. Retreives telemetry property types and updates the
+         * select
+         * @private
+         */
+        function onMetadataLoad() {
+            if (self.manager.getTelemetryPropertyType(self.config.object, self.config.key)) {
+                self.loadOptions(self.config.key);
+                self.generateOptions();
+            }
+            self.select.setSelected(self.config.operation);
+        }
+        this.keySelect.on('change', onKeyChange);
+        this.manager.on('metadata', onMetadataLoad);
+
+        if (this.manager.metadataLoadCompleted()) {
+            onMetadataLoad();
+        }
+
+        return this.select;
+    }
+
+    /**
+     * Populate this select with options based on its current composition
+     */
+    OperationSelect.prototype.generateOptions = function () {
+        var self = this,
+            items = this.operationKeys.map(function (operation) {
+                return [operation, self.evaluator.getOperationText(operation)];
+            });
+        items.splice(0, 0, ['', NULLVALUE]);
+        this.select.setOptions(items);
+
+        if (this.select.options.length &lt; 2) {
+            this.select.hide();
+        } else {
+            this.select.show();
+        }
+    };
+
+    /**
+     * Retrieve the data type associated with a given telemetry property and
+     * the applicable operations from the {ConditionEvaluator}
+     * @param {string} key The telemetry property to load operations for
+     */
+    OperationSelect.prototype.loadOptions = function (key) {
+        var self = this,
+            operations = self.evaluator.getOperationKeys(),
+            type;
+
+        type = self.manager.getTelemetryPropertyType(self.config.object, key);
+
+        self.operationKeys = operations.filter(function (operation) {
+            return self.evaluator.operationAppliesTo(operation, type);
+        });
+    };
+
+    OperationSelect.prototype.destroy = function () {
+        this.stopListening();
+    };
+
+    return OperationSelect;
+
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-openmct.Dialog.html">Dialog</a></li><li><a href="module-openmct.MCT.html">MCT</a></li><li><a href="module-openmct.Type.html">Type</a></li><li><a href="platform_commonUI_formats.LocalTimeFormat.html">LocalTimeFormat</a></li><li><a href="platform_commonUI_regions.InspectorRegion.html">InspectorRegion</a></li><li><a href="platform_commonUI_regions.Region.html">Region</a></li><li><a href="platform_features_plot.PlotViewPolicy.html">PlotViewPolicy</a></li></ul><h3>Events</h3><ul><li><a href="module-openmct.MCT.html#~event:start">start</a></li><li><a href="module-openmct.TimeAPI.html#~event:bounds">bounds</a></li><li><a href="module-openmct.TimeAPI.html#~event:clock">clock</a></li><li><a href="module-openmct.TimeAPI.html#~event:clockOffsets">clockOffsets</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeOfInterest">timeOfInterest</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeSystem">timeSystem</a></li></ul><h3>Interfaces</h3><ul><li><a href="module-openmct.CompositionAPI.html">CompositionAPI</a></li><li><a href="module-openmct.CompositionCollection.html">CompositionCollection</a></li><li><a href="module-openmct.CompositionProvider.html">CompositionProvider</a></li><li><a href="module-openmct.GestureAPI.html">GestureAPI</a></li><li><a href="module-openmct.InspectorViewProvider.html">InspectorViewProvider</a></li><li><a href="module-openmct.InspectorViewRegistry.html">InspectorViewRegistry</a></li><li><a href="module-openmct.ObjectAPI.html">ObjectAPI</a></li><li><a href="module-openmct.ObjectProvider.html">ObjectProvider</a></li><li><a href="module-openmct.TelemetryAPI.html">TelemetryAPI</a></li><li><a href="module-openmct.TelemetryAPI-LimitEvaluator.html">LimitEvaluator</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryFormatter.html">TelemetryFormatter</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryProvider.html">TelemetryProvider</a></li><li><a href="module-openmct.TimeAPI.html">TimeAPI</a></li><li><a href="module-openmct.ToolbarProvider.html">ToolbarProvider</a></li><li><a href="module-openmct.ToolbarRegistry.html">ToolbarRegistry</a></li><li><a href="module-openmct.TypeRegistry.html">TypeRegistry</a></li><li><a href="module-openmct.View.html">View</a></li><li><a href="module-openmct.ViewProvider.html">ViewProvider</a></li><li><a href="module-openmct.ViewRegistry.html">ViewRegistry</a></li><li><a href="MutableObject.html">MutableObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#defaults">defaults</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#getDrawAPI">getDrawAPI</a></li><li><a href="global.html#getFallbackDrawAPI">getFallbackDrawAPI</a></li><li><a href="global.html#getPersistedSeriesConfig">getPersistedSeriesConfig</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#nearestPoint">nearestPoint</a></li><li><a href="global.html#onDestroy">onDestroy</a></li><li><a href="global.html#onXKeyChange">onXKeyChange</a></li><li><a href="global.html#onYKeyChange">onYKeyChange</a></li><li><a href="global.html#purgeRecordsOutsideRange">purgeRecordsOutsideRange</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#resetStats">resetStats</a></li><li><a href="global.html#setColor">setColor</a></li><li><a href="global.html#updateDomainObject">updateDomainObject</a></li><li><a href="global.html#updateFromSeries">updateFromSeries</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jul 20 2018 22:50:59 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

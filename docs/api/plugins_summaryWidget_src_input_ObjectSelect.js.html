@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: plugins/summaryWidget/src/input/ObjectSelect.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: plugins/summaryWidget/src/input/ObjectSelect.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>define([
+    './Select',
+    '../../../../api/objects/object-utils'
+], function (
+    Select,
+    objectUtils
+) {
+
+    /**
+     * Create a {Select} element whose composition is dynamically updated with
+     * the current composition of the Summary Widget
+     * @constructor
+     * @param {Object} config The current state of this select. Must have an
+     *                        object field
+     * @param {ConditionManager} manager A ConditionManager instance from which
+     *                                   to receive the current composition status
+     * @param {string[][]} baseOptions A set of [value, label] keyword pairs to
+     *                                 display regardless of the composition state
+     */
+    function ObjectSelect(config, manager, baseOptions) {
+        var self = this;
+
+        this.config = config;
+        this.manager = manager;
+
+        this.select = new Select();
+        this.baseOptions = [['', '- Select Telemetry -']];
+        if (baseOptions) {
+            this.baseOptions = this.baseOptions.concat(baseOptions);
+        }
+
+        this.baseOptions.forEach(function (option) {
+            self.select.addOption(option[0], option[1]);
+        });
+
+        this.compositionObjs = this.manager.getComposition();
+        self.generateOptions();
+
+        /**
+         * Add a new composition object to this select when a composition added
+         * is detected on the Summary Widget
+         * @param {Object} obj The newly added domain object
+         * @private
+         */
+        function onCompositionAdd(obj) {
+            self.select.addOption(objectUtils.makeKeyString(obj.identifier), obj.name);
+        }
+
+        /**
+         * Refresh the composition of this select when a domain object is removed
+         * from the Summary Widget's composition
+         * @private
+         */
+        function onCompositionRemove() {
+            var selected = self.select.getSelected();
+            self.generateOptions();
+            self.select.setSelected(selected);
+        }
+
+        /**
+         * Defer setting the selected state on initial load until load is complete
+         * @private
+         */
+        function onCompositionLoad() {
+            self.select.setSelected(self.config.object);
+        }
+
+        this.manager.on('add', onCompositionAdd);
+        this.manager.on('remove', onCompositionRemove);
+        this.manager.on('load', onCompositionLoad);
+
+        if (this.manager.loadCompleted()) {
+            onCompositionLoad();
+        }
+
+        return this.select;
+    }
+
+    /**
+     * Populate this select with options based on its current composition
+     */
+    ObjectSelect.prototype.generateOptions = function () {
+        var items = Object.values(this.compositionObjs).map(function (obj) {
+            return [objectUtils.makeKeyString(obj.identifier), obj.name];
+        });
+        this.baseOptions.forEach(function (option, index) {
+            items.splice(index, 0, option);
+        });
+        this.select.setOptions(items);
+    };
+
+    return ObjectSelect;
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-openmct.Dialog.html">Dialog</a></li><li><a href="module-openmct.MCT.html">MCT</a></li><li><a href="module-openmct.Type.html">Type</a></li><li><a href="platform_commonUI_formats.LocalTimeFormat.html">LocalTimeFormat</a></li><li><a href="platform_commonUI_regions.InspectorRegion.html">InspectorRegion</a></li><li><a href="platform_commonUI_regions.Region.html">Region</a></li><li><a href="platform_features_plot.PlotViewPolicy.html">PlotViewPolicy</a></li></ul><h3>Events</h3><ul><li><a href="module-openmct.MCT.html#~event:start">start</a></li><li><a href="module-openmct.TimeAPI.html#~event:bounds">bounds</a></li><li><a href="module-openmct.TimeAPI.html#~event:clock">clock</a></li><li><a href="module-openmct.TimeAPI.html#~event:clockOffsets">clockOffsets</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeOfInterest">timeOfInterest</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeSystem">timeSystem</a></li></ul><h3>Interfaces</h3><ul><li><a href="module-openmct.CompositionAPI.html">CompositionAPI</a></li><li><a href="module-openmct.CompositionCollection.html">CompositionCollection</a></li><li><a href="module-openmct.CompositionProvider.html">CompositionProvider</a></li><li><a href="module-openmct.GestureAPI.html">GestureAPI</a></li><li><a href="module-openmct.InspectorViewProvider.html">InspectorViewProvider</a></li><li><a href="module-openmct.InspectorViewRegistry.html">InspectorViewRegistry</a></li><li><a href="module-openmct.ObjectAPI.html">ObjectAPI</a></li><li><a href="module-openmct.ObjectProvider.html">ObjectProvider</a></li><li><a href="module-openmct.TelemetryAPI.html">TelemetryAPI</a></li><li><a href="module-openmct.TelemetryAPI-LimitEvaluator.html">LimitEvaluator</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryFormatter.html">TelemetryFormatter</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryProvider.html">TelemetryProvider</a></li><li><a href="module-openmct.TimeAPI.html">TimeAPI</a></li><li><a href="module-openmct.ToolbarProvider.html">ToolbarProvider</a></li><li><a href="module-openmct.ToolbarRegistry.html">ToolbarRegistry</a></li><li><a href="module-openmct.TypeRegistry.html">TypeRegistry</a></li><li><a href="module-openmct.View.html">View</a></li><li><a href="module-openmct.ViewProvider.html">ViewProvider</a></li><li><a href="module-openmct.ViewRegistry.html">ViewRegistry</a></li><li><a href="MutableObject.html">MutableObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#defaults">defaults</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#getDrawAPI">getDrawAPI</a></li><li><a href="global.html#getFallbackDrawAPI">getFallbackDrawAPI</a></li><li><a href="global.html#getPersistedSeriesConfig">getPersistedSeriesConfig</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#nearestPoint">nearestPoint</a></li><li><a href="global.html#onDestroy">onDestroy</a></li><li><a href="global.html#onXKeyChange">onXKeyChange</a></li><li><a href="global.html#onYKeyChange">onYKeyChange</a></li><li><a href="global.html#purgeRecordsOutsideRange">purgeRecordsOutsideRange</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#resetStats">resetStats</a></li><li><a href="global.html#setColor">setColor</a></li><li><a href="global.html#updateDomainObject">updateDomainObject</a></li><li><a href="global.html#updateFromSeries">updateFromSeries</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jul 20 2018 22:50:59 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

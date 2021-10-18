@@ -1,0 +1,48 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Standards</h1>
+
+    <div class="l-section">
+        <h2>Absolute Positioning and Z-Indexing</h2>
+        <p>Absolute positioning is used in Open MCT in the main envelope interface to handle layout and draggable pane splitters, for elements that must be dynamically created and positioned (like context menus) and for buttons that are placed over other elements, such as a plot's zoom/pan history and reset buttons. When using absolute positioning, follow these guidelines:</p>
+        <ul>
+            <li>Don't specify a z-index if you don't have to.</li>
+            <li>If you must specify a z-index, use the lowest number you that prevents your element from being covered and puts it at the correct level per the table below.</li>
+        </ul>
+        <!-- This content maintained at https://docs.google.com/spreadsheets/d/1AzhUY0P3hLCfT8yPa2Cb1dwOOsQXBuSgCrOkhIoVm0A/edit#gid=0 -->
+        <table>
+            <tr class='header'><td>Type</td><td>Description</td><td>Z-index Range</td></tr>
+            <tr><td>Base interface items</td><td>Base level elements</td><td>0 - 1</td></tr>
+            <tr><td>Primary pane</td><td>Elements in the primary "view area" pane</td><td>2</td></tr>
+            <tr><td>Inspector pane, splitters</td><td>Elements in the Inspector, and splitters themselves</td><td>3</td></tr>
+            <tr><td>More base interface stuff</td><td>Base level elements</td><td>4 - 9</td></tr>
+            <tr><td>Treeview</td><td>Lefthand treeview elements</td><td>30 - 39</td></tr>
+            <tr><td>Help bubbles, rollover hints</td><td>Infobubbles, and similar</td><td>50 - 59</td></tr>
+            <tr><td>Context, button and dropdown menus</td><td>Context menus, button menus, etc. that must overlay other elements</td><td>70 - 79</td></tr>
+            <tr><td>Overlays</td><td>Modal overlay displays</td><td>100 - 109</td></tr>
+            <tr><td>Event messages</td><td>Alerts, event dialogs</td><td>1000</td></tr>
+        </table>
+    </div>
+
+</div>

@@ -1,0 +1,2394 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#open-mct-developer-guide">Open MCT Developer Guide</a></li>
+<li><a href="#introduction">Introduction</a><ul>
+<li><a href="#what-is-open-mct">What is Open MCT</a></li>
+<li><a href="#client-server-relationship">Client-Server Relationship</a></li>
+<li><a href="#developing-with-open-mct">Developing with Open MCT</a><ul>
+<li><a href="#technologies">Technologies</a></li>
+<li><a href="#forking">Forking</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#overview">Overview</a><ul>
+<li><a href="#framework-overview">Framework Overview</a><ul>
+<li><a href="#tiers">Tiers</a></li>
+</ul>
+</li>
+<li><a href="#platform-overview">Platform Overview</a><ul>
+<li><a href="#web-services">Web Services</a></li>
+<li><a href="#glossary">Glossary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#framework">Framework</a><ul>
+<li><a href="#bundles">Bundles</a><ul>
+<li><a href="#configuring-active-bundles">Configuring Active Bundles</a></li>
+<li><a href="#bundle-definition">Bundle Definition</a></li>
+<li><a href="#bundle-directory-structure">Bundle Directory Structure</a></li>
+</ul>
+</li>
+<li><a href="#extensions">Extensions</a><ul>
+<li><a href="#general-extensions">General Extensions</a></li>
+<li><a href="#extension-definitions">Extension Definitions</a>
+~ <a href="#partial-construction">Partial Construction</a>
+~ <a href="#priority">Priority</a></li>
+<li><a href="#angular-built-ins">Angular Built-ins</a>
+~ <a href="#angular-directives">Angular Directives</a>
+~ <a href="#angular-controllers">Angular Controllers</a>
+~ <a href="#angular-services">Angular Services</a>
+~ <a href="#angular-constants">Angular Constants</a>
+~ <a href="#angular-runs">Angular Runs</a>
+~ <a href="#angular-routes">Angular Routes</a></li>
+<li><a href="#composite-services">Composite Services</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#core-api">Core API</a><ul>
+<li><a href="#domain-objects">Domain Objects</a><ul>
+<li><a href="#identifier-syntax">Identifier Syntax</a></li>
+</ul>
+</li>
+<li><a href="#domain-object-actions">Domain Object Actions</a><ul>
+<li><a href="#action-contexts">Action Contexts</a></li>
+</ul>
+</li>
+<li><a href="#telemetry">Telemetry</a><ul>
+<li><a href="#telemetry-requests">Telemetry Requests</a></li>
+<li><a href="#telemetry-responses">Telemetry Responses</a></li>
+<li><a href="#telemetry-series">Telemetry Series</a></li>
+<li><a href="#telemetry-metadata">Telemetry Metadata</a></li>
+</ul>
+</li>
+<li><a href="#types">Types</a><ul>
+<li><a href="#type-features">Type Features</a></li>
+<li><a href="#type-properties">Type Properties</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#extension-categories">Extension Categories</a><ul>
+<li><a href="#actions-category">Actions Category</a></li>
+<li><a href="#capabilities-category">Capabilities Category</a></li>
+<li><a href="#containers-category">Containers Category</a></li>
+<li><a href="#controls-category">Controls Category</a></li>
+<li><a href="#gestures-category">Gestures Category</a></li>
+<li><a href="#indicators-category">Indicators Category</a><ul>
+<li><a href="#standard-indicators">Standard Indicators</a></li>
+<li><a href="#custom-indicators">Custom Indicators</a></li>
+</ul>
+</li>
+<li><a href="#licenses-category">Licenses Category</a></li>
+<li><a href="#policies-category">Policies Category</a></li>
+<li><a href="#representations-category">Representations Category</a><ul>
+<li><a href="#representation-scope">Representation Scope</a></li>
+</ul>
+</li>
+<li><a href="#representers-category">Representers Category</a></li>
+<li><a href="#roots-category">Roots Category</a></li>
+<li><a href="#stylesheets-category">Stylesheets Category</a></li>
+<li><a href="#templates-category">Templates Category</a></li>
+<li><a href="#types-category">Types Category</a></li>
+<li><a href="#versions-category">Versions Category</a></li>
+<li><a href="#views-category">Views Category</a><ul>
+<li><a href="#view-scope">View Scope</a>
+~ <a href="#selection-state">Selection State</a></li>
+</ul>
+</li>
+<li><a href="#workers-category">Workers Category</a></li>
+</ul>
+</li>
+<li><a href="#directives">Directives</a><ul>
+<li><a href="#container">Container</a></li>
+<li><a href="#control">Control</a></li>
+<li><a href="#drag">Drag</a></li>
+<li><a href="#form">Form</a><ul>
+<li><a href="#form-structure">Form Structure</a></li>
+<li><a href="#form-controls">Form Controls</a></li>
+</ul>
+</li>
+<li><a href="#include">Include</a></li>
+<li><a href="#representation">Representation</a></li>
+<li><a href="#resize">Resize</a></li>
+<li><a href="#scroll">Scroll</a></li>
+<li><a href="#toolbar">Toolbar</a><ul>
+<li><a href="#toolbar-structure">Toolbar Structure</a></li>
+</ul>
+</li>
+<li><a href="#table">Table</a><ul>
+<li><a href="#events">Events</a></li>
+<li><a href="#parameters">Parameters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#services">Services</a><ul>
+<li><a href="#composite-type-services">Composite Type Services</a><ul>
+<li><a href="#action-service">Action Service</a></li>
+<li><a href="#capability-service">Capability Service</a></li>
+<li><a href="#dialog-service">Dialog Service</a></li>
+<li><a href="#dialog-structure">Dialog Structure</a></li>
+<li><a href="#domain-object-service">Domain Object Service</a></li>
+<li><a href="#gesture-service">Gesture Service</a></li>
+<li><a href="#model-service">Model Service</a></li>
+<li><a href="#persistence-service">Persistence Service</a></li>
+<li><a href="#policy-service">Policy Service</a></li>
+<li><a href="#telemetry-service">Telemetry Service</a></li>
+<li><a href="#type-service">Type Service</a></li>
+<li><a href="#view-service">View Service</a></li>
+</ul>
+</li>
+<li><a href="#other-services">Other Services</a><ul>
+<li><a href="#drag-and-drop">Drag and Drop</a></li>
+<li><a href="#navigation">Navigation</a></li>
+<li><a href="#now">Now</a></li>
+<li><a href="#telemetry-formatter">Telemetry Formatter</a></li>
+<li><a href="#telemetry-handler">Telemetry Handler</a>
+~ <a href="#telemetry-handle">Telemetry Handle</a></li>
+<li><a href="#worker-service">Worker Service</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#models">Models</a><ul>
+<li><a href="#general-metadata">General Metadata</a></li>
+<li><a href="#extension-specific-properties">Extension-specific Properties</a><ul>
+<li><a href="#capability-specific-properties">Capability-specific Properties</a></li>
+<li><a href="#view-configurations">View Configurations</a></li>
+</ul>
+</li>
+<li><a href="#modifying-models">Modifying Models</a></li>
+</ul>
+</li>
+<li><a href="#capabilities">Capabilities</a><ul>
+<li><a href="#action-capability">Action Capability</a></li>
+<li><a href="#composition-capability">Composition Capability</a></li>
+<li><a href="#delegation-capability">Delegation Capability</a></li>
+<li><a href="#editor-capability">Editor Capability</a></li>
+<li><a href="#mutation-capability">Mutation Capability</a><ul>
+<li><a href="#mutator-function">Mutator Function</a></li>
+</ul>
+</li>
+<li><a href="#persistence-capability">Persistence Capability</a></li>
+<li><a href="#relationship-capability">Relationship Capability</a></li>
+<li><a href="#status-capability">Status Capability</a></li>
+<li><a href="#telemetry-capability">Telemetry Capability</a></li>
+<li><a href="#type-capability">Type Capability</a></li>
+<li><a href="#view-capability">View Capability</a></li>
+</ul>
+</li>
+<li><a href="#actions">Actions</a><ul>
+<li><a href="#action-categories">Action Categories</a></li>
+<li><a href="#platform-actions">Platform Actions</a></li>
+</ul>
+</li>
+<li><a href="#policies">Policies</a><ul>
+<li><a href="#policy-categories">Policy Categories</a></li>
+</ul>
+</li>
+<li><a href="#build-test-deploy">Build-Test-Deploy</a><ul>
+<li><a href="#command-line-build">Command-line Build</a></li>
+<li><a href="#test-suite">Test Suite</a></li>
+<li><a href="#code-coverage">Code Coverage</a></li>
+<li><a href="#deployment">Deployment</a><ul>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#configuration-constants">Configuration Constants</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<a name="open-mct-developer-guide" href="#open-mct-developer-guide"><h1 id="undefinedopen-mct-developer-guide">Open MCT Developer Guide</h1>
+</a><p>Victor Woeltjen</p>
+<p><a href="mailto:victor.woeltjen@nasa.gov">victor.woeltjen@nasa.gov</a></p>
+<p>September 23, 2015<br>Document Version 1.1  </p>
+<table>
+<thead>
+<tr>
+<th>Date</th>
+<th>Version</th>
+<th>Summary of Changes</th>
+<th>Author</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>April 29, 2015</td>
+<td>0</td>
+<td>Initial Draft</td>
+<td>Victor Woeltjen</td>
+</tr>
+<tr>
+<td>May 12, 2015</td>
+<td>0.1</td>
+<td></td>
+<td>Victor Woeltjen</td>
+</tr>
+<tr>
+<td>June 4, 2015</td>
+<td>1.0</td>
+<td>Name Changes</td>
+<td>Victor Woeltjen</td>
+</tr>
+<tr>
+<td>October 4, 2015</td>
+<td>1.1</td>
+<td>Conversion to MarkDown</td>
+<td>Andrew Henry</td>
+</tr>
+<tr>
+<td>April 5, 2016</td>
+<td>1.2</td>
+<td>Added Mct-table directive</td>
+<td>Andrew Henry</td>
+</tr>
+</tbody>
+</table>
+<a name="introduction" href="#introduction"><h1 id="undefinedintroduction">Introduction</h1>
+</a><p>The purpose of this guide is to familiarize software developers with the Open
+MCT Web platform.</p>
+<a name="what-is-open-mct" href="#what-is-open-mct"><h2 id="undefinedwhat-is-open-mct">What is Open MCT</h2>
+</a><p>Open MCT is a platform for building user interface and display tools,
+developed at the NASA Ames Research Center in collaboration with teams at the
+Jet Propulsion Laboratory. It is written in HTML5, CSS3, and JavaScript, using 
+<a href="http://www.angularjs.org">AngularJS</a> as a framework. Its intended use is to 
+create single-page web applications which integrate data and behavior from a 
+variety of sources and domains.</p>
+<p>Open MCT has been developed to support the remote operation of space
+vehicles, so some of its features are specific to that task; however, it is
+flexible enough to be adapted to a variety of other application domains where a
+display tool oriented toward browsing, composing, and visualizing would be
+useful.</p>
+<p>Open MCT provides:</p>
+<ul>
+<li>A common user interface paradigm which can be applied to a variety of domains
+and tasks. Open MCT is more than a widget toolkit - it provides a standard
+tree-on-the-left, view-on-the-right browsing environment which you customize by
+adding new browsable object types, visualizations, and back-end adapters.  </li>
+<li>A plugin framework and an extensible API for introducing new application
+features of a variety of types.  </li>
+<li>A set of general-purpose object types and visualizations, as well as some
+visualizations and infrastructure specific to telemetry display.</li>
+</ul>
+<a name="client-server-relationship" href="#client-server-relationship"><h2 id="undefinedclient-server-relationship">Client-Server Relationship</h2>
+</a><p>Open MCT is client software - it runs entirely in the user&#39;s web browser. As
+such, it is largely &#39;server agnostic&#39;; any web server capable of serving files
+from paths is capable of providing Open MCT.</p>
+<p>While Open MCT can be configured to run as a standalone client, this is
+rarely very useful. Instead, it is intended to be used as a display and
+interaction layer for information obtained from a variety of back-end services.
+Doing so requires authoring or utilizing adapter plugins which allow Open MCT
+Web to interact with these services.</p>
+<p>Typically, the pattern here is to provide a known interface that Open MCT
+can utilize, and implement it such that it interacts with whatever back-end
+provides the relevant information. Examples of back-ends that can be utilized in
+this fashion include databases for the persistence of user-created objects, or
+sources of telemetry data.</p>
+<p>See the <a href="../architecture/index.html#Overview">Architecture Guide</a> for information
+on the client-server relationship.</p>
+<a name="developing-with-open-mct" href="#developing-with-open-mct"><h2 id="undefineddeveloping-with-open-mct">Developing with Open MCT</h2>
+</a><p>Building applications with Open MCT typically means authoring and utilizing
+a set of plugins which provide application-specific details about how Open MCT
+Web should behave.</p>
+<a name="technologies" href="#technologies"><h3 id="undefinedtechnologies">Technologies</h3>
+</a><p>Open MCT sources are written in JavaScript, with a number of configuration
+files written in JSON. Displayable components are written in HTML5 and CSS3.<br>Open MCT is built using <a href="http://www.angularjs.org">AngularJS</a>  from Google. A
+good understanding of Angular is recommended for developers working with Open
+MCT Web.</p>
+<a name="forking" href="#forking"><h3 id="undefinedforking">Forking</h3>
+</a><p>Open MCT does not currently have a single stand-alone artifact that can be
+used as a library. Instead, the recommended approach for creating a new
+application is to start by forking/branching Open MCT, and then adding new
+features from there. Put another way, Open MCT&#39;s source structure is built
+to serve as a template for specific applications.</p>
+<p>Forking in this manner should not require that you edit Open MCT&#39;s sources.
+The preferred approach is to create a new directory (peer to <code>index.html</code>) for
+the new application, then add new bundles (as described in the Framework
+chapter) within that directory.</p>
+<p>To initially clone the Open MCT repository:
+<code>git clone &lt;repository URL&gt; &lt;local repo directory&gt; -b open-master</code></p>
+<p>To create a fork to begin working on a new application using Open MCT:  </p>
+<pre><code>cd &lt;local repo directory&gt;  
+git checkout open-master
+git checkout -b &lt;new branch name&gt;
+</code></pre><p>As a convention used internally, applications built using Open MCT have
+master branch names with an identifying prefix. For instance, if building an
+application called &#39;Foo&#39;, the last statement above would look like:</p>
+<pre><code>git checkout -b foo-master
+</code></pre><p>This convention is not enforced or understood by Open MCT in any way; it is
+mentioned here as a more general recommendation.</p>
+<a name="overview" href="#overview"><h1 id="undefinedoverview">Overview</h1>
+</a><p>Open MCT is implemented as a framework component which manages a set of
+other components. These components, called <em>bundles</em>, act as containers to group
+sets of related functionality; individual units of functionality are expressed
+within these bundles as <em>extensions</em>.</p>
+<p>Extensions declare dependencies on other extensions (either individually or
+categorically), and the framework provides actual extension instances at
+run-time to satisfy these declared dependency. This dependency injection
+approach allows software components which have been authored separately (e.g. as
+plugins) but to collaborate at run-time.</p>
+<p>Open MCT&#39;s framework layer is implemented on top of AngularJS&#39;s <a href="https://docs.angularjs.org/guide/di">dependency
+injection mechanism</a>  and is modelled after
+<a href="hhttp://www.osgi.org/">OSGi</a>  and its <a href="http://wiki.osgi.org/wiki/Declarative_Services">Declarative Services component model</a>. 
+In particular, this is where the term <em>bundle</em> comes from.</p>
+<a name="framework-overview" href="#framework-overview"><h2 id="undefinedframework-overview">Framework Overview</h2>
+</a><p>The framework&#39;s role in the application is to manage connections between
+bundles. All application-specific behavior is provided by individual bundles, or
+as the result of their collaboration.</p>
+<p>The framework is described in more detail in the <a href="../architecture/framework.html#overview">Framework Overview</a> of the 
+architecture guide.</p>
+<a name="tiers" href="#tiers"><h3 id="undefinedtiers">Tiers</h3>
+</a><p>While all bundles in a running Open MCT instance are effectively peers, it
+is useful to think of them as a tiered architecture, where each tier adds more
+specificity to the application.</p>
+<p><img src="index-1.png" alt="Diagram 1"></p>
+<ul>
+<li><strong>Framework</strong> : This tier is responsible for wiring together the set of
+configured components (called <em>bundles</em>) together to instantiate the running
+application. It is responsible for mediating between AngularJS (in particular,
+its dependency injection mechanism) and RequireJS (to load scripts at run-time.)
+It additionally interprets bundle definitions (see explanation below, as well as
+further detail in the Framework chapter.) At this tier, we are at our most
+general: We know only that we are a plugin-based application.</li>
+<li><strong>Platform</strong>: Components in the Platform tier describe both the general user
+interface and corresponding developer-facing interfaces of Open MCT. This
+tier provides the general infrastructure for applications. It is less general
+than the framework tier, insofar as this tier introduces a specific user
+interface paradigm, but it is still non-specific as to what useful features
+will be provided. Although they can be removed or replaced easily, bundles
+provided by the Platform tier generally should not be thought of as optional.</li>
+<li><strong>Application</strong>: The application tier consists of components which utilize the
+infrastructure provided by the Platform to provide functionality which will (or
+could) be useful to specific applications built using Open MCT. These
+include adapters to specific persistence back-ends (such as ElasticSearch or
+CouchDB) as well as bundles which describe more user-facing features (such as
+<em>Plot</em> views for visualizing time series data, or <em>Layout</em> objects for
+display-building.) Bundles from this tier can be added or removed without
+compromising basic application functionality, with the caveat that at least one
+persistence adapter needs to be present.</li>
+<li><strong>Plugins</strong>: Conceptually, this tier is not so different from the application
+tier; it consists of bundles describing new features, back-end adapters, that
+are specific to the application being built on Open MCT. It is described as
+a separate tier here because it has one important distinction from the
+application tier: It consists of bundles that are not included with the platform
+(either authored anew for the specific application, or obtained from elsewhere.)</li>
+</ul>
+<p>Note that bundles in any tier can go off and consult back-end services. In
+practice, this responsibility is handled at the Application and/or Plugin tiers;
+Open MCT is built to be server-agnostic, so any back-end is considered an
+application-specific detail.</p>
+<a name="platform-overview" href="#platform-overview"><h2 id="undefinedplatform-overview">Platform Overview</h2>
+</a><p>The &quot;tiered&quot; architecture described in the preceding text describes a way of
+thinking of and categorizing software components of a Open MCT application,
+as well as the framework layer&#39;s role in mediating between these components.
+Once the framework layer has wired these software components together, however,
+the application&#39;s logical architecture emerges.</p>
+<p>An overview of the logical architecture of the platform is given in the 
+<a href="../architecture/platform.html#platform-architecture">Platform Architecture</a> 
+section of the Platform guide</p>
+<a name="web-services" href="#web-services"><h3 id="undefinedweb-services">Web Services</h3>
+</a><p>As mentioned in the Introduction, Open MCT is a platform single-page 
+applications which runs entirely in the browser. Most applications will want to 
+additionally interact with server-side resources, to (for example) read 
+telemetry data or store user-created objects. This interaction is handled by 
+individual bundles using APIs which are supported in browser (such as 
+<code>XMLHttpRequest</code>, typically wrapped by Angular&#39;s <code>$http</code>.)</p>
+<p><img src="index-2.png" alt="Diagram 2"></p>
+<p>This architectural approach ensures a loose coupling between applications built 
+using Open MCT and the backends which support them. </p>
+<a name="glossary" href="#glossary"><h3 id="undefinedglossary">Glossary</h3>
+</a><p>Certain terms are used throughout Open MCT with consistent meanings or 
+conventions. Other developer documentation, particularly in-line documentation, 
+may presume an understanding of these terms.</p>
+<ul>
+<li><strong>bundle</strong>: A bundle is a removable, reusable grouping of software elements. 
+The application is composed of bundles. Plug-ins are bundles.</li>
+<li><strong>capability</strong>: A JavaScript object which exposes dynamic behavior or 
+non-persistent state associated with a domain object.</li>
+<li><strong>category</strong>: A machine-readable identifier for a group that something may 
+belong to.</li>
+<li><strong>composition</strong>: In the context of a domain object, this refers to the set of 
+other domain objects that compose or are contained by that object. A domain 
+object&#39;s composition is the set of domain objects that should appear immediately
+beneath it in a tree hierarchy. A domain object&#39;s composition is described in 
+its model as an array of identifiers; its composition capability provides a 
+means to retrieve the actual domain object instances associated with these 
+identifiers asynchronously. </li>
+<li><strong>description</strong>: When used as an object property, this refers to the human-
+readable description of a thing; usually a single sentence or short paragraph. 
+(Most often used in the context of extensions, domain object models, or other 
+similar application-specific objects.) </li>
+<li><strong>domain object</strong>: A meaningful object to the user; a distinct thing in the 
+work support by Open MCT. Anything that appears in the left-hand tree is a 
+domain object. </li>
+<li><strong>extension</strong>: An extension is a unit of functionality exposed to the platform 
+in a declarative fashion by a bundle. The term &#39;extension category&#39; is used to 
+distinguish types of extensions from specific extension instances. </li>
+<li><strong>id</strong>: A string which uniquely identifies a domain object. </li>
+<li><strong>key</strong>: When used as an object property, this refers to the machine-readable 
+identifier for a specific thing in a set of things. (Most often used in the 
+context of extensions or other similar application-specific object sets.) This 
+term is chosen to avoid attaching ambiguous meanings to &#39;id&#39;. </li>
+<li><strong>model</strong>: The persistent state associated with a domain object. A domain 
+object&#39;s model is a JavaScript object which can be converted to JSON without 
+losing information (that is, it contains no methods.) </li>
+<li><strong>name</strong>: When used as an object property, this refers to the human-readable 
+name for a thing. (Most often used in the context of extensions, domain object 
+models, or other similar application-specific objects.) </li>
+<li><strong>navigation</strong>: Refers to the current state of the application with respect to 
+the user&#39;s expressed interest in a specific domain object; e.g. when a user 
+clicks on a domain object in the tree, they are navigating to it, and it is 
+thereafter considered the navigated object (until the user makes another such 
+choice.) This term is used to distinguish navigation from selection, which 
+occurs in an editing context. </li>
+<li><strong>space</strong>: A machine-readable name used to identify a persistence store. 
+Interactions with persistence with generally involve a space parameter in some 
+form, to distinguish multiple persistence stores from one another (for cases 
+where there are multiple valid persistence locations available.) </li>
+<li><strong>source</strong>: A machine-readable name used to identify a source of telemetry 
+data. Similar to &quot;space&quot;, this allows multiple telemetry sources to operate 
+side-by-side without conflicting. </li>
+</ul>
+<a name="framework" href="#framework"><h1 id="undefinedframework">Framework</h1>
+</a><p>Open MCT is built on the <a href="http://www.angularjs.org">AngularJS framework</a>. A 
+good understanding of that framework is recommended. </p>
+<p>Open MCT adds an extra layer on top of AngularJS to (a) generalize its 
+dependency injection mechanism slightly, particularly to handle many-to-one 
+relationships; and (b) handle script loading. Combined, these features become a 
+plugin mechanism. </p>
+<p>This framework layer operates on two key concepts: </p>
+<ul>
+<li><strong>Bundle:</strong>  A bundle is a collection of related functionality that can be 
+added to the application as a group. More concretely, a bundle is a directory 
+containing a JSON file declaring its contents, as well as JavaScript sources, 
+HTML templates, and other resources used to support that functionality. (The 
+term bundle is borrowed from <a href="http://www.osgi.org/">OSGi</a>  - which has also 
+inspired many of the concepts used in the framework layer. A familiarity with 
+OSGi, particularly Declarative Services, may be useful when working with Open 
+MCT Web.)</li>
+<li><strong>Extension:</strong>  An extension is an individual unit of functionality. Extensions 
+are collected together in bundles, and may interact with other extensions. </li>
+</ul>
+<p>The framework layer, loaded and initiated from <code>index.html</code>, is the main point 
+of entry for an application built on Open MCT. It is responsible for wiring 
+together the application at run time (much of this responsibility is actually 
+delegated to Angular); at a high-level, the framework does this by proceeding 
+through four stages:</p>
+<ol>
+<li><strong>Loading definitions:</strong> JSON declarations are loaded for all bundles which 
+will constitute the application, and wrapped in a useful API for subsequent 
+stages. </li>
+<li><strong>Resolving extensions:</strong> Any scripts which provide implementations for 
+extensions exposed by bundles are loaded, using Require. </li>
+<li><strong>Registering extensions</strong> Resolved extensions are registered with Angular, 
+such that they can be used by the application at run-time. This stage includes 
+both registration of Angular built-ins (directives, controllers, routes, 
+constants, and services) as well as registration of non-Angular extensions. </li>
+<li><strong>Bootstrapping</strong> The Angular application is bootstrapped; at that point, 
+Angular takes over and populates the body of the page using the extensions that 
+have been registered. </li>
+</ol>
+<a name="bundles" href="#bundles"><h2 id="undefinedbundles">Bundles</h2>
+</a><p>The basic configurable unit of Open MCT is the <em>bundle</em>. This term has been 
+used a bit already; now we&#39;ll get to a more formal definition. </p>
+<p>A bundle is a directory which contains:</p>
+<ul>
+<li>A bundle definition; a file named <code>bundle.json</code>.</li>
+<li>Subdirectories for sources, resources, and tests. </li>
+<li>Optionally, a <code>README.md</code> Markdown file describing its contents (this is not 
+used by Open MCT in any way, but it&#39;s a helpful convention to follow.)</li>
+</ul>
+<p>The bundle definition is the main point of entry for the bundle. The framework 
+looks at this to determine which components need to be loaded and how they 
+interact.</p>
+<p>A plugin in Open MCT is a bundle. The platform itself is also decomposed 
+into bundles, each of which provides some category of functionality. The 
+difference between a <em>bundle</em> and a <em>plugin</em> is purely a matter of the intended 
+use; a plugin is just a bundle that is meant to be easily added or removed. When 
+developing, it is typically more useful to think in terms of bundles. </p>
+<a name="configuring-active-bundles" href="#configuring-active-bundles"><h3 id="undefinedconfiguring-active-bundles">Configuring Active Bundles</h3>
+</a><p>To decide which bundles should be loaded, the framework loads a file named 
+<code>bundles.json</code> (peer to the <code>index.html</code> file which serves the application) to 
+determine which bundles should be loaded. This file should contain a single JSON 
+array of strings, where each is the path to a bundle. These paths should not 
+include bundle.json  (this is implicit) or a trailing slash. </p>
+<p>For instance, if <code>bundles.json</code> contained: </p>
+<pre><code>[ 
+    &quot;example/builtins&quot;, 
+    &quot;example/extensions&quot; 
+] 
+</code></pre><p>...then the Open MCT framework would look for bundle definitions at 
+<code>example/builtins/bundle.json</code> and <code>example/extensions/bundle.json</code>, relative 
+to the path of <code>index.html</code>. No other bundles would be loaded.  </p>
+<a name="bundle-definition" href="#bundle-definition"><h3 id="undefinedbundle-definition">Bundle Definition</h3>
+</a><p>A bundle definition (the <code>bundle.json</code> file located within a bundle) contains a 
+description of the bundle itself, as well as the information exposed by the 
+bundle. </p>
+<p>This definition is expressed as a single JSON object with the following 
+properties (all of which are optional, falling back to reasonable defaults):</p>
+<ul>
+<li><code>key</code>: A machine-readable name for the bundle. (Currently used only in 
+logging.) </li>
+<li><code>name</code>: A human-readable name for the bundle. (Also only used in logging.) </li>
+<li><code>sources</code>: Names a directory in which source scripts (which will implement 
+extensions) are located. Defaults to &#39;src&#39; </li>
+<li><code>resources</code>: Names a directory in which resource files (such as HTML templates, 
+images, CS files, and other non-JavaScript files needed by this bundle) are 
+located. Defaults to &#39;res&#39;  </li>
+<li><code>libraries</code>: Names a directory in which third-party libraries are located. 
+Defaults to &#39;lib&#39; </li>
+<li><code>configuration</code>: A bundle&#39;s configuration object, which should be formatted as 
+would be passed to require.config (see <a href="http://requirejs.org/docs/api.html">RequireJS documentation</a> ); 
+note that only paths and shim have been tested. </li>
+<li><code>extensions</code>: An object containing key-value pairs, where keys are extension 
+categories, and values are extension definitions. See the section on Extensions 
+for more information.  </li>
+</ul>
+<p>For example, the bundle definition for example/policy looks like:  </p>
+<pre><code>{
+    &quot;name&quot;: &quot;Example Policy&quot;, 
+    &quot;description&quot;: &quot;Provides an example of using policies.&quot;, 
+    &quot;sources&quot;: &quot;src&quot;, 
+    &quot;extensions&quot;: { 
+        &quot;policies&quot;: [ 
+            { 
+                &quot;implementation&quot;: &quot;ExamplePolicy.js&quot;, 
+                &quot;category&quot;: &quot;action&quot; 
+            }
+        ] 
+    } 
+}
+</code></pre><a name="bundle-directory-structure" href="#bundle-directory-structure"><h3 id="undefinedbundle-directory-structure">Bundle Directory Structure</h3>
+</a><p>In addition to the directories defined in the bundle definition, a bundle will 
+typically contain other directories not used at run-time. Additionally, some 
+useful development scripts (such as the command line build and the test suite) 
+expect this directory structure to be in use, and may ignore options chosen by 
+<code>bundle.json</code>. It is recommended that the directory structure described below be
+used for new bundles.</p>
+<ul>
+<li><code>src</code>: Contains JavaScript sources for this bundle. May contain additional 
+subdirectories to organize these sources; typically, these subdirectories are 
+named to correspond to the extension categories they contain and/or support, but 
+this is only a convention. </li>
+<li><code>res</code>: Contains other files needed by this bundle, such as HTML templates. May 
+contain additional subdirectories to organize these sources. </li>
+<li><code>lib</code>: Contains JavaScript sources from third-party libraries. These are 
+separated from bundle sources in order to ignore them during code style checking 
+from the command line build.</li>
+<li><code>test</code>: Contains JavaScript sources implementing <a href="http://jasmine.github.io/">Jasmine</a> 
+tests, as well as a file named <code>suite.json</code> describing which files to test. 
+Should have the same folder structure as the <code>src</code> directory; see the section on 
+automated testing for more information. </li>
+</ul>
+<p>For example, the directory structure for bundle <code>platform/commonUI/about</code>  looks 
+like: </p>
+<pre><code>Platform
+  |
+  |-commonUI
+  |
+  +-about
+    |
+    |-res
+    |
+    |-src
+    |
+    |-test
+    |
+    |-bundle.json
+    |
+    +-README.md
+</code></pre><a name="extensions" href="#extensions"><h2 id="undefinedextensions">Extensions</h2>
+</a><p>While bundles provide groupings of related behaviors, the individual units of 
+behavior are called extensions. </p>
+<p>Extensions belong to categories; an extension category is the machine-readable 
+identifier used to identify groups of extensions. In the <code>extensions</code> property 
+of a bundle definition, the keys are extension categories and the values are 
+arrays of extension definitions. </p>
+<a name="general-extensions" href="#general-extensions"><h3 id="undefinedgeneral-extensions">General Extensions</h3>
+</a><p>Extensions are intended as a general-purpose mechanism for adding new types of 
+functionality to Open MCT. </p>
+<p>An extension category is registered with Angular under the name of the 
+extension, plus a suffix of two square brackets; so, an Angular service (or, 
+generally, any other extension) can access the full set of registered 
+extensions, from all bundles, by including this string (e.g. <code>types[]</code> to get 
+all type definitions) in a dependency declaration. </p>
+<p>As a convention, extension categories are given single-word, plural nouns for 
+names within Open MCT (e.g. <code>types</code>.) This convention is not enforced by the 
+platform in any way. For extension categories introduced by external plugins, it 
+is recommended to prefix the extension category with a vendor identifier (or 
+similar) followed by a dot, to avoid collisions. </p>
+<a name="extension-definitions" href="#extension-definitions"><h3 id="undefinedextension-definitions">Extension Definitions</h3>
+</a><p>The properties used in extension definitions are typically unique to each 
+category of extension; a few properties have standard interpretations by the 
+platform. </p>
+<ul>
+<li><code>implementation</code>: Identifies a JavaScript source file (in the sources 
+folder) which implements this extension. This JavaScript file is expected to 
+contain an AMD module (see <a href="http://requirejs.org/docs/whyamd.html#amd">http://requirejs.org/docs/whyamd.html#amd</a> ) which 
+gives as its result a single constructor function. </li>
+<li><code>depends</code>: An array of dependencies needed by this extension; these will be 
+passed on to Angular&#39;s <a href="https://docs.angularjs.org/guide/di">dependency injector</a> . 
+By default, this is treated as an empty array. Note that depends does not make 
+sense without <code>implementation</code> (since these dependencies will be passed to the 
+implementation when it is instantiated.) </li>
+<li><code>priority</code>: A number or string indicating the priority order (see below) of 
+this extension instance. Before an extension category is registered with 
+AngularJS, the extensions of this category from all bundles will be concatenated 
+into a single array, and then sorted by priority. </li>
+</ul>
+<p>Extensions do not need to have an implementation. If no implementation is 
+provided, consumers of the extension category will receive the extension 
+definition as a plain JavaScript object. Otherwise, they will receive the 
+partialized (see below) constructor for that implementation, which will 
+additionally have all properties from the extension definition attached. </p>
+<a name="partial-construction" href="#partial-construction"><h4 id="undefinedpartial-construction">Partial Construction</h4>
+</a><p>In general, extensions are intended to be implemented as constructor functions, 
+which will be used elsewhere to instantiate new objects of that type. However, 
+the Angular-supported method for dependency injection is (effectively) 
+constructor-style injection; so, both declared dependencies and run-time 
+arguments are competing for space in a constructor&#39;s arguments. </p>
+<p>To resolve this, the Open MCT framework registers extension instances in a 
+partially constructed form. That is, the constructor exposed by the extension&#39;s 
+implementation is effectively decomposed into two calls; the first takes the 
+dependencies, and returns the constructor in its second form, which takes the 
+remaining arguments. </p>
+<p>This means that, when writing implementations, the constructor function should 
+be written to include all declared dependencies, followed by all run-time 
+arguments. When using extensions, only the run-time arguments need to be 
+provided. </p>
+<a name="priority" href="#priority"><h4 id="undefinedpriority">Priority</h4>
+</a><p>Within each extension category, registration occurs in priority order. An 
+extension&#39;s priority may be specified as a <code>priority</code> property in its extension 
+definition; this may be a number, or a symbolic string. Extensions are 
+registered in reverse order (highest-priority first), and symbolic strings are 
+mapped to the numeric values as follows: </p>
+<ul>
+<li><code>fallback</code>: Negative infinity. Used for extensions that are not intended for 
+use (that is, they are meant to be overridden) but are present as an option of 
+last resort. </li>
+<li><code>default</code>: <code>-100</code>. Used for extensions that are expected to be overridden, but 
+need a useful default. </li>
+<li><code>none</code>: <code>0</code>. Also used if no priority is specified, or if an unknown or 
+malformed priority is specified. </li>
+<li><code>optional</code>: <code>100</code>. Used for extensions that are meant to be used, but may be 
+overridden. </li>
+<li><code>preferred</code>: <code>1000</code>. Used for extensions that are specifically intended to be 
+used, but still may be overridden in principle. </li>
+<li><code>mandatory</code>: Positive infinity. Used when an extension should definitely not 
+be overridden. </li>
+</ul>
+<p>These symbolic names are chosen to support usage where many extensions may 
+satisfy a given need, but only one may be used; in this case, as a convention it 
+should be the lowest-ordered (highest-priority) extensions available. In other 
+cases, a full set (or multi-element subset) of extensions may be desired, with a 
+specific ordering; in these cases, it is preferable to specify priority 
+numerically when declaring extensions, and to understand that extensions will be 
+sorted according to these conventions when using them. </p>
+<a name="angular-built-ins" href="#angular-built-ins"><h3 id="undefinedangular-built-ins">Angular Built-ins</h3>
+</a><p>Several entities supported Angular are expressed and managed as extensions in 
+Open MCT. Specifically, these extension categories are <em>directives</em>, 
+<em>controllers</em>, <em>services</em>, <em>constants</em>, <em>runs</em>, and <em>routes</em>. </p>
+<a name="angular-directives" href="#angular-directives"><h4 id="undefinedangular-directives">Angular Directives</h4>
+</a><p>New <a href="https://docs.angularjs.org/guide/directive">directives</a> may be 
+registered as extensions of the directives category. Implementations of 
+directives in this category should take only dependencies as arguments, and 
+should return a directive definition object. </p>
+<p>The directive&#39;s name should be provided as a key property of its extension 
+definition, in camel-case format. </p>
+<a name="angular-controllers" href="#angular-controllers"><h4 id="undefinedangular-controllers">Angular Controllers</h4>
+</a><p>New <a href="https://docs.angularjs.org/guide/controller">controllers</a> may be registered 
+as extensions of the controllers category. The implementation is registered 
+directly as the controller; its only constructor arguments are its declared 
+dependencies. </p>
+<p>The directive&#39;s identifier should be provided as a key property of its extension 
+definition. </p>
+<a name="angular-services" href="#angular-services"><h4 id="undefinedangular-services">Angular Services</h4>
+</a><p>New <a href="https://docs.angularjs.org/guide/services">services</a> may be registered as 
+extensions of the services category. The implementation is registered via a 
+<a href="https://docs.angularjs.org/api/auto/service/$provide#service">service call</a>, so 
+it will be instantiated with the new operator. </p>
+<a name="angular-constants" href="#angular-constants"><h4 id="undefinedangular-constants">Angular Constants</h4>
+</a><p>Constant values may be registered as extensions of the <a href="https://docs.angularjs.org/api/ng/type/angular.Module#constant"> constants category</a>. 
+These extensions have no implementation; instead, they should contain a property 
+ key , which is the name under which the constant will be registered, and a 
+property value , which is the constant value that will be registered.</p>
+<a name="angular-runs" href="#angular-runs"><h4 id="undefinedangular-runs">Angular Runs</h4>
+</a><p>In some cases, you want to register code to run as soon as the application 
+starts; these can be registered as extensions of the <a href="https://docs.angularjs.org/api/ng/type/angular.Module#run"> runs category</a>. 
+Implementations registered in this category will be invoked (with their declared 
+dependencies) when the Open MCT application first starts. (Note that, in 
+this case, the implementation is better thought of as just a function, as 
+opposed to a constructor function.)</p>
+<a name="angular-routes" href="#angular-routes"><h4 id="undefinedangular-routes">Angular Routes</h4>
+</a><p>Extensions of category <code>routes</code> will be registered with Angular&#39;s <a href="https://docs.angularjs.org/api/ngRoute/provider/$routeProvider">route provider</a>. 
+Extensions of this category have no implementations, and need only two 
+properties in their definition: </p>
+<ul>
+<li><code>when</code>: The value that will be passed as the path argument to <code>$routeProvider.when</code>; 
+specifically, the string that will appear in the trailing 
+part of the URL corresponding to this route. This property may be omitted, in 
+which case this extension instance will be treated as the default route. </li>
+<li><code>templateUrl</code>: A path to the template to render for this route. Specified as a 
+path relative to the bundle&#39;s resource directory (<code>res</code> by default.) </li>
+</ul>
+<a name="composite-services" href="#composite-services"><h3 id="undefinedcomposite-services">Composite Services</h3>
+</a><p>Composite services are described in the <a href="../architecture/framework.html#composite-services">Composite Services</a> 
+section of the framework guide.</p>
+<p>A component should include the following properties in its extension definition:</p>
+<ul>
+<li><code>provides</code>: The symbolic identifier for the service that will be composed. The 
+fully-composed service will be registered with Angular under this name.</li>
+<li><code>type</code>: One of <code>provider</code>, <code>aggregator</code> or <code>decorator</code> (as above) </li>
+</ul>
+<p>In addition to any declared dependencies, <em>aggregators</em> and <em>decorators</em> both 
+receive one more argument (immediately following declared dependencies) that is 
+provided by the framework. For an aggregator, this will be an array of all 
+providers of the same service (that is, with matching <code>provides</code> properties); 
+for a decorator, this will be whichever provider, decorator, or aggregator is 
+next in the sequence of decorators. </p>
+<p>Services exposed by the Open MCT platform are often declared as composite 
+services, as this form is open for a variety of common modifications. </p>
+<a name="core-api" href="#core-api"><h1 id="undefinedcore-api">Core API</h1>
+</a><p>Most of Open MCT&#39;s relevant API is provided and/or mediated by the 
+framework; that is, much of developing for Open MCT is a matter of adding 
+extensions which access other parts of the platform by means of dependency 
+injection. </p>
+<p>The core bundle (<code>platform/core</code>) introduces a few additional object types meant 
+to be passed along by other services. </p>
+<a name="domain-objects" href="#domain-objects"><h2 id="undefineddomain-objects">Domain Objects</h2>
+</a><p>Domain objects are the most fundamental component of Open MCT&#39;s information 
+model. A domain object is some distinct thing relevant to a user&#39;s workflow, 
+such as a telemetry channel, display, or similar. Open MCT is a tool for 
+viewing, browsing, manipulating, and otherwise interacting with a graph of 
+domain objects. </p>
+<p>A domain object should be conceived of as the union of the following:</p>
+<ul>
+<li><strong>Identifier</strong>: A machine-readable string that uniquely identifies the domain 
+object within this application instance. </li>
+<li><strong>Model</strong>: The persistent state of the domain object. A domain object&#39;s model 
+is a JavaScript object that can be losslessly converted to JSON. </li>
+<li><strong>Capabilities</strong>: Dynamic behavior associated with the domain object. 
+Capabilities are JavaScript objects which provide additional methods for 
+interacting with the domain objects which expose those capabilities. Not all 
+domain objects expose all capabilities. </li>
+</ul>
+<p>At run-time, a domain object has the following interface:</p>
+<ul>
+<li><code>getId()</code>: Get the identifier for this domain object. </li>
+<li><code>getModel()</code>: Get the plain state associated with this domain object. This 
+will return a JavaScript object that can be losslessly converted to JSON. Note 
+that the model returned here can be modified directly but should not be; 
+instead, use the mutation capability. </li>
+<li><code>getCapability(key)</code>: Get the specified capability associated with this domain 
+object. This will return a JavaScript object whose interface is specific to the 
+type of capability being requested. If the requested capability is not exposed 
+by this domain object, this will return undefined .</li>
+<li><code>hasCapability(key)</code>: Shorthand for checking if a domain object exposes the 
+requested capability.</li>
+<li><code>useCapability(key, arguments  )</code>: Shorthand for 
+<code>getCapability(key).invoke(arguments)</code>, with additional checking between calls. 
+If the provided capability has no invoke method, the return value here functions 
+as <code>getCapability</code> including returning <code>undefined</code> if the capability is not 
+exposed.</li>
+</ul>
+<a name="identifier-syntax" href="#identifier-syntax"><h3 id="undefinedidentifier-syntax">Identifier Syntax</h3>
+</a><p>For most purposes, a domain object identifier can be treated as a purely
+symbolic string; these are typically generated by Open MCT and plug-ins
+should rarely be concerned with its internal structure.</p>
+<p>A domain object identifier has one or two parts, separated by a colon.</p>
+<ul>
+<li>If two parts are present, the part before the colon refers to the space
+in which the domain object resides. This may be a persistence space or
+a purely symbolic space recognized by a specific model provider. The
+part after the colon is the key to use when looking up the domain object
+model within that space.</li>
+<li>If only one part is present, the domain object has no space specified,
+and may presume to reside in the application-configured default space
+defined by the <code>PERSISTENCE_SPACE</code> constant.</li>
+<li>Both the key and the space identifier may consist of any combination
+of alphanumeric characters, underscores, dashes, and periods.</li>
+</ul>
+<p>Some examples:</p>
+<ul>
+<li>A domain object with the identifier <code>foo:xyz</code> would have its model
+loaded using key <code>xyz</code> from persistence space <code>foo</code>.</li>
+<li>A domain object with the identifier <code>bar</code> would have its model loaded
+using key <code>bar</code> from the space identified by the <code>PERSISTENCE_SPACE</code>
+constant.</li>
+</ul>
+<pre><code class="lang-bnf">&lt;identifier&gt; ::= &lt;space&gt; &quot;:&quot; &lt;key&gt; | &lt;key&gt;
+&lt;space&gt; ::= &lt;id char&gt;+
+&lt;key&gt; ::= &lt;id char&gt;+
+&lt;id char&gt; ::= &lt;letter&gt; | &lt;digit&gt; | &quot;-&quot; | &quot;.&quot; | &quot;_&quot;
+</code></pre>
+<a name="domain-object-actions" href="#domain-object-actions"><h2 id="undefineddomain-object-actions">Domain Object Actions</h2>
+</a><p>An <code>Action</code> is behavior that can be performed upon/using a <code>DomainObject</code>. An 
+Action has the following interface:</p>
+<ul>
+<li><code>perform()</code>: Do this action. For example, if one had an instance of a 
+<code>RemoveAction</code> invoking its perform method would cause the domain object which 
+exposed it to be removed from its container.</li>
+<li><code>getMetadata()</code>: Get metadata associated with this action. Returns an object 
+containing: <ul>
+<li><code>name</code>: Human-readable name.</li>
+<li><code>description</code>: Human-readable summary of this action. </li>
+<li><code>glyph</code>: Single character to be displayed in Open MCT&#39;s icon font set. </li>
+<li><code>context</code>: The context in which this action is being performed (see below)</li>
+</ul>
+</li>
+</ul>
+<p>Action instances are typically obtained via a domain object&#39;s <code>action</code> 
+capability. </p>
+<a name="action-contexts" href="#action-contexts"><h3 id="undefinedaction-contexts">Action Contexts</h3>
+</a><p>An action context is a JavaScript object with the following properties: </p>
+<ul>
+<li><code>domainObject</code>: The domain object being acted upon. </li>
+<li><code>selectedObject</code>: Optional; the selection at the time of action (e.g. the 
+dragged object in a drag-and-drop operation.)</li>
+</ul>
+<a name="telemetry" href="#telemetry"><h2 id="undefinedtelemetry">Telemetry</h2>
+</a><p>Telemetry series data in Open MCT is represented by a common interface, and 
+packaged in a consistent manner to facilitate passing telemetry updates around 
+multiple visualizations. </p>
+<a name="telemetry-requests" href="#telemetry-requests"><h3 id="undefinedtelemetry-requests">Telemetry Requests</h3>
+</a><p>A telemetry request is a JavaScript object containing the following properties: </p>
+<ul>
+<li><code>source</code>: A machine-readable identifier for the source of this telemetry. This 
+is useful when multiple distinct data sources are in use side-by-side. </li>
+<li><code>key</code>: A machine-readable identifier for a unique series of telemetry within 
+that source. </li>
+<li><em>Note: This API is still under development; additional properties, such as 
+start and end time, should be present in future versions of Open MCT.</em> </li>
+</ul>
+<p>Additional properties may be included in telemetry requests which have specific 
+interpretations for specific sources.</p>
+<a name="telemetry-responses" href="#telemetry-responses"><h3 id="undefinedtelemetry-responses">Telemetry Responses</h3>
+</a><p>When returned from the <code>telemetryService</code> (see <a href="#telemetry-service">Telemetry Services</a> 
+section), telemetry series data will be packaged in a <code>source -&gt; key -&gt; TelemetrySeries</code> 
+fashion. That is, telemetry is passed in an object containing key-value pairs. 
+Keys identify telemetry sources; values are objects containing additional 
+key-value pairs. In this object, keys identify individual telemetry series (and 
+match they <code>key</code> property from corresponding requests) and values are 
+<code>TelemetrySeries</code> objects (see below.) </p>
+<a name="telemetry-series" href="#telemetry-series"><h3 id="undefinedtelemetry-series">Telemetry Series</h3>
+</a><p>A telemetry series is a specific sequence of data, typically associated with a 
+specific instrument. Telemetry is modeled as an ordered sequence of domain and 
+range values, where domain values must be non-decreasing but range values do 
+not. (Typically, domain values are interpreted as UTC timestamps in milliseconds 
+relative to the UNIX epoch.) A series must have at least one domain and one 
+range, and may have more than one.</p>
+<p>Telemetry series data in Open MCT is expressed via the following 
+<code>TelemetrySeries</code> interface: </p>
+<ul>
+<li><code>getPointCount()</code>: Returns the number of unique points/samples in this series. </li>
+<li><code>getDomainValue(index, [domain])</code>:  Get the domain value at the specified index . 
+If a second domain argument is provided, this is taken as a string identifier 
+indicating which domain option (of, presumably, multiple) should be returned. </li>
+<li><code>getRangeValue(index, [range])</code>:  Get the domain value at the specified index . 
+If a second range argument is provided, this is taken as a string identifier 
+indicating which range option (of, presumably, multiple) should be returned. </li>
+</ul>
+<a name="telemetry-metadata" href="#telemetry-metadata"><h3 id="undefinedtelemetry-metadata">Telemetry Metadata</h3>
+</a><p>Domain objects which have associated telemetry also expose metadata about that 
+telemetry; this is retrievable via the <code>getMetadata()</code> of the telemetry 
+capability. This will return a single JavaScript object containing the following 
+properties: </p>
+<ul>
+<li><code>source</code>: The machine-readable identifier for the source of telemetry data for 
+this object. </li>
+<li><code>key</code>: The machine-readable identifier for the individual telemetry series. </li>
+<li><code>domains</code>: An array of supported domains (see TelemetrySeries above.) Each 
+domain should be expressed as an object which includes: <ul>
+<li><code>key</code>: Machine-readable identifier for this domain, as will be passed into 
+a getDomainValue(index, domain)  call. </li>
+<li><code>name</code>: Human-readable name for this domain. </li>
+</ul>
+</li>
+<li><code>ranges</code>: An array of supported ranges; same format as domains . </li>
+</ul>
+<p>Note that this metadata is also used as the prototype for telemetry requests 
+made using this capability. </p>
+<a name="types" href="#types"><h2 id="undefinedtypes">Types</h2>
+</a><p>A domain object&#39;s type is represented as a Type object, which has the following 
+interface:</p>
+<ul>
+<li><code>getKey()</code>: Get the machine-readable identifier for this type. </li>
+<li><code>getName()</code>: Get the human-readable name for this type. </li>
+<li><code>getDescription()</code>: Get a human-readable summary of this type. </li>
+<li><code>getGlyph()</code>: Get the single character to be rendered as an icon for this type 
+in Open MCT&#39;s custom font set. </li>
+<li><code>getInitialModel()</code>: Get a domain object model that represents the initial 
+state (before user specification of properties) for domain objects of this type. </li>
+<li><code>getDefinition()</code>: Get the extension definition for this type, as a JavaScript 
+object. </li>
+<li><code>instanceOf(type)</code>: Check if this type is (or inherits from) a specified type . 
+This type can be either a string, in which case it is taken to be that type&#39;s 
+key , or it may be a  <code>Type</code> instance. </li>
+<li><code>hasFeature(feature)</code>: Returns a boolean value indicating whether or not this 
+type supports the specified feature, which is a symbolic string. </li>
+<li><code>getProperties()</code>: Get all properties associated with this type, expressed as 
+an array of <code>TypeProperty</code> instances. </li>
+</ul>
+<a name="type-features" href="#type-features"><h3 id="undefinedtype-features">Type Features</h3>
+</a><p>Features of a domain object type are expressed as symbolic string identifiers. 
+They are defined in practice by usage; currently, the Open MCT platform only 
+uses the creation feature to determine which domain object types should appear 
+in the Create menu. </p>
+<a name="type-properties" href="#type-properties"><h3 id="undefinedtype-properties">Type Properties</h3>
+</a><p>Types declare the user-editable properties of their domain object instances in 
+order to allow the forms which appear in the <strong>Create</strong> and <strong>Edit Properties</strong> 
+dialogs to be generated by the platform. A <code>TypeProperty</code> has the following interface:</p>
+<ul>
+<li><code>getValue(model)</code>: Get the current value for this property, as it appears in 
+the provided domain object model. </li>
+<li><code>setValue(model, value)</code>: Set a new value for this property in the provided 
+domain object model . </li>
+<li><code>getDefinition()</code>: Get the raw definition for this property as a JavaScript 
+object (as it was declared in this type&#39;s extension definition.) </li>
+</ul>
+<a name="extension-categories" href="#extension-categories"><h1 id="undefinedextension-categories">Extension Categories</h1>
+</a><p>The information in this section is focused on registering new extensions of 
+specific types; it does not contain a catalog of the extension instances of 
+these categories provided by the platform. Relevant summaries there are provided 
+in subsequent sections.</p>
+<a name="actions-category" href="#actions-category"><h2 id="undefinedactions-category">Actions Category</h2>
+</a><p>An action is a thing that can be done to or using a domain object, typically as 
+initiated by the user. </p>
+<p>An action&#39;s implementation:</p>
+<ul>
+<li>Should take a single <code>context</code> argument in its constructor. (See Action 
+Contexts, under Core API.)</li>
+<li>Should provide a method <code>perform</code> which causes the behavior associated with 
+the action to occur.</li>
+<li>May provide a method <code>getMetadata</code> which provides metadata associated with 
+the action. If omitted, one will be provided by the platform which includes 
+metadata from the action&#39;s extension definition.</li>
+<li>May provide a static method <code>appliesTo(context)</code> (that is, a function 
+available as a property of the implementation&#39;s constructor itself), which will 
+be used by the platform to filter out actions from contexts in which they are 
+inherently inapplicable.</li>
+</ul>
+<p>An action&#39;s bundle definition (and/or <code>getMetadata()</code> return value) may include:</p>
+<ul>
+<li><code>category</code>: A string or array of strings identifying which category or 
+categories an action falls into; used to determine when an action is displayed. 
+Categories supported by the platform include: <ul>
+<li><code>contextual</code>: Actions in a context menu. </li>
+<li><code>view-control</code>: Actions triggered by buttons in the top-right of Browse 
+view. </li>
+</ul>
+</li>
+<li><code>key</code>: A machine-readable identifier for this action. </li>
+<li><code>name</code>: A human-readable name for this action (e.g. to show in a menu) </li>
+<li><code>description</code>: A human-readable summary of the behavior of this action. </li>
+<li><code>glyph</code>: A single character which will be rendered in Open MCT&#39;s custom 
+font set as an icon for this action.</li>
+</ul>
+<a name="capabilities-category" href="#capabilities-category"><h2 id="undefinedcapabilities-category">Capabilities Category</h2>
+</a><p>Capabilities are exposed by domain objects (e.g. via the <code>getCapability</code> method) 
+but most commonly originate as extensions of this category.</p>
+<p>Extension definitions for capabilities should include both an implementation, 
+and a property named key whose value should be a string used as a 
+machine-readable identifier for that capability, e.g. when passed as the 
+argument to a domain object&#39;s <code>getCapability(key)</code> call.</p>
+<p>A capability&#39;s implementation should have methods specific to that capability; 
+that is, there is no common format for capability implementations, aside from 
+support for invocation via the <code>useCapability</code> shorthand.</p>
+<p>A capability&#39;s implementation will take a single argument (in addition to any 
+declared dependencies), which is the domain object that will expose that 
+capability.</p>
+<p>A capability&#39;s implementation may also expose a static method <code>appliesTo(model)</code> 
+which should return a boolean value, and will be used by the platform to filter 
+down capabilities to those which should be exposed by specific domain objects, 
+based on their domain object models. </p>
+<a name="containers-category" href="#containers-category"><h2 id="undefinedcontainers-category">Containers Category</h2>
+</a><p>Containers provide options for the <code>mct-container</code> directive.</p>
+<p>The definition for an extension in the <code>containers</code> category should include:</p>
+<ul>
+<li><code>key</code>: An identifier for the container.</li>
+<li><code>template</code>: An Angular template for the container, including an
+<code>ng-transclude</code> where contained content should go.</li>
+<li><code>attributes</code>: An array of attribute names. The values associated with
+ these attributes will be exposed in the template&#39;s scope under the
+ name provided by the <code>alias</code> property.</li>
+<li><code>alias</code>: The property name in scope under which attributes will be
+exposed. Optional; defaults to &quot;container&quot;.</li>
+</ul>
+<p>Note that <code>templateUrl</code> is not supported for <code>containers</code>.</p>
+<a name="controls-category" href="#controls-category"><h2 id="undefinedcontrols-category">Controls Category</h2>
+</a><p>Controls provide options for the <code>mct-control</code> directive. </p>
+<p>These standard control types are included in the forms bundle:</p>
+<ul>
+<li><code>textfield</code>: A text input to enter plain text.</li>
+<li><code>numberfield</code>: A text input to enter numbers.</li>
+<li><code>select</code>: A drop-down list of options.</li>
+<li><code>checkbox</code>: A box which may be checked/unchecked.</li>
+<li><code>color</code>: A color picker.</li>
+<li><code>button</code>: A button.</li>
+<li><code>datetime</code>: An input for UTC date/time entry; gives result as a UNIX 
+timestamp, in milliseconds since start of 1970, UTC.</li>
+<li><code>composite</code>: A control parenting an array of other controls.</li>
+<li><code>menu-button</code>: A drop-down list of items supporting custom behavior
+on click.</li>
+<li><code>dialog-button</code>: A button which opens a dialog allowing a single property
+to be edited.</li>
+<li><code>radio</code>: A radio button.</li>
+</ul>
+<p>New controls may be added as extensions of the controls category. Extensions of 
+this category have two properties: </p>
+<ul>
+<li><code>key</code>: The symbolic name for this control (matched against the control field 
+in rows of the form structure).</li>
+<li><code>templateUrl</code>: The URL to the control&#39;s Angular template, relative to the 
+resources directory of the bundle which exposes the extension. </li>
+</ul>
+<p>Within the template for a control, the following variables will be included in 
+scope:</p>
+<ul>
+<li><code>ngModel</code>: The model where form input will be stored. Notably we also need to 
+look at field  (see below) to determine which field in the model should be 
+modified. </li>
+<li><code>ngRequired</code>: True if input is required.</li>
+<li><code>ngPattern</code>: The pattern to match against (for text entry)</li>
+<li><code>ngBlur</code>: A function that may be invoked to evaluate the expression
+associated with the <code>ng-blur</code> attribute associated with the control.<ul>
+<li>This should be called when the control has lost focus; for controls
+which simply wrap or augment <code>input</code> elements, this should be fired
+on <code>blur</code> events associated with those elements, while more complex
+custom controls may fire this at the end of more specific interactions.</li>
+</ul>
+</li>
+<li><code>options</code>: The options for this control, as passed from the <code>options</code> property 
+of an individual row definition. </li>
+<li><code>field</code>: Name of the field in <code>ngModel</code> which will hold the value for this 
+control. </li>
+</ul>
+<a name="gestures-category" href="#gestures-category"><h2 id="undefinedgestures-category">Gestures Category</h2>
+</a><p>A <em>gesture</em> is a user action which can be taken upon a representation of a 
+domain object. </p>
+<p>Examples of gestures included in the platform are:</p>
+<ul>
+<li><code>drag</code>: For representations that can be used to initiate drag-and-drop 
+composition.</li>
+<li><code>drop</code>: For representations that can be drop targets for drag-and-drop 
+composition. </li>
+<li><code>menu</code>: For representations that can be used to popup a context menu. </li>
+</ul>
+<p>Gesture definitions have a property <code>key</code> which is used as a machine-readable 
+identifier for the gesture (e.g. <code>drag</code>, <code>drop</code>, <code>menu</code> above.) </p>
+<p>A gesture&#39;s implementation is instantiated once per representation that uses the 
+gesture. This class will receive the jqLite-wrapped <code>mct-representation</code> element 
+and the domain object being represented as arguments, and should do any 
+necessary &quot;wiring&quot; (e.g. listening for events) during its constructor call. The 
+gesture&#39;s implementation may also expose an optional <code>destroy()</code>  method which 
+will be called when the gesture should be removed, to avoid memory leaks by way 
+of unremoved listeners.</p>
+<a name="indicators-category" href="#indicators-category"><h2 id="undefinedindicators-category">Indicators Category</h2>
+</a><p>An indicator is an element that should appear in the status area at the bottom 
+of a running Open MCT client instance. </p>
+<a name="standard-indicators" href="#standard-indicators"><h3 id="undefinedstandard-indicators">Standard Indicators</h3>
+</a><p>Indicators which wish to appear in the common form of an icon-text pair should 
+provide implementations with the following methods:</p>
+<ul>
+<li><code>getText()</code>: Provides the human-readable text that will be displayed for this 
+indicator. </li>
+<li><code>getGlyph()</code>: Provides a single-character string that will be displayed as an 
+icon in Open MCT&#39;s custom font set. </li>
+<li><code>getDescription()</code>: Provides a human-readable summary of the current state of 
+this indicator; will be displayed in a tooltip on hover. </li>
+<li><code>getClass()</code>: Get a CSS class that will be applied to this indicator. </li>
+<li><code>getTextClass()</code>: Get a CSS class that will be applied to this indicator&#39;s 
+text portion. </li>
+<li><code>getGlyphClass()</code>: Get a CSS class that will be applied to this indicator&#39;s 
+icon portion. </li>
+<li><code>configure()</code>: If present, a configuration icon will appear to the right of 
+this indicator, and clicking it will invoke this method. </li>
+</ul>
+<p>Note that all methods are optional, and are called directly from an Angular 
+template, so they should be appropriate to run during digest cycles. </p>
+<a name="custom-indicators" href="#custom-indicators"><h3 id="undefinedcustom-indicators">Custom Indicators</h3>
+</a><p>Indicators which wish to have an arbitrary appearance (instead of following the 
+icon-text convention commonly used) may specify a <code>template</code> property in their 
+extension definition. The value of this property will be used as the <code>key</code> for 
+an <code>mct-include</code> directive (so should refer to an extension of category 
+ templates .) This template will be rendered to the status area. Indicators of 
+this variety do not need to provide an implementation. </p>
+<a name="licenses-category" href="#licenses-category"><h2 id="undefinedlicenses-category">Licenses Category</h2>
+</a><p>The extension category <code>licenses</code> can be used to add entries into the &#39;Licensing 
+information&#39; page, reachable from Open MCT&#39;s About dialog. </p>
+<p>Licenses may have the following properties, all of which are strings:</p>
+<ul>
+<li><code>name</code>: Human-readable name of the licensed component. (e.g. &#39;AngularJS&#39;.)</li>
+<li><code>version</code>: Human-readable version of the licensed component. (e.g. &#39;1.2.26&#39;.)</li>
+<li><code>description</code>: Human-readable summary of the component.</li>
+<li><code>author</code>: Name or names of entities to which authorship should be attributed.</li>
+<li><code>copyright</code>: Copyright text to display for this component.</li>
+<li><code>link</code>: URL to full license text. </li>
+</ul>
+<a name="policies-category" href="#policies-category"><h2 id="undefinedpolicies-category">Policies Category</h2>
+</a><p>Policies are used to handle decisions made using Open MCT&#39;s <code>policyService</code>; 
+examples of these decisions are determining the applicability of certain 
+actions, or checking whether or not a domain object of one type can contain a 
+domain object of a different type. See the section on the Policies for an 
+overview of Open MCT&#39;s policy model.</p>
+<p>A policy&#39;s extension definition should include:</p>
+<ul>
+<li><code>category</code>: The machine-readable identifier for the type of policy decision 
+being supported here. For a list of categories supported by the platform, see 
+the section on Policies. Plugins may introduce and utilize additional policy 
+categories not in that list. </li>
+<li><code>message</code>: Optional; a human-readable message describing the policy, intended 
+for display in situations where this specific policy has disallowed something. </li>
+</ul>
+<p>A policy&#39;s implementation should include a single method, <code>allow(candidate,
+context)</code>. The specific types used for <code>candidate</code> and <code>context</code> vary by policy 
+category; in general, what is being asked is &#39;is this candidate allowed in this 
+context?&#39; This method should return a boolean value. </p>
+<p>Open MCT&#39;s policy model requires consensus; a policy decision is allowed 
+when and only when all policies choose to allow it. As such, policies should 
+generally be written to reject a certain case, and allow (by returning <code>true</code>) 
+anything else. </p>
+<a name="representations-category" href="#representations-category"><h2 id="undefinedrepresentations-category">Representations Category</h2>
+</a><p>A representation is an Angular template used to display a domain object. The 
+<code>representations</code> extension category is used to add options for the 
+<code>mct-representation</code> directive. </p>
+<p>A representation definition should include the following properties:</p>
+<ul>
+<li><code>key</code>: The machine-readable name which identifies the representation. </li>
+<li><code>templateUrl</code>: The path to the representation&#39;s Angular template. This path is 
+relative to the bundle&#39;s resources directory. </li>
+<li><code>uses</code>: Optional; an array of capability names. Indicates that this 
+representation intends to use those capabilities of a domain object (via a 
+<code>useCapability</code> call), and expects to find the latest results of that 
+<code>useCapability</code> call in the scope of the presented template (under the same name 
+as the capability itself.) Note that, if <code>useCapability</code> returns a promise, this 
+will be resolved before being placed in the representation&#39;s scope. </li>
+<li><code>gestures</code>: An array of keys identifying gestures (see the <code>gestures</code> 
+extension category) which should be available upon this representation. Examples 
+of gestures include <code>drag</code> (for representations that should act as draggable 
+sources for drag-drop operations) and <code>menu</code> (for representations which should 
+show a domain-object-specific context menu on right-click.) </li>
+</ul>
+<a name="representation-scope" href="#representation-scope"><h3 id="undefinedrepresentation-scope">Representation Scope</h3>
+</a><p>While  <em>representations</em> do not have implementations, per se, they do refer to 
+Angular templates which need to interact with information (e.g. the domain 
+object being represented) provided by the platform. This information is passed 
+in through the template&#39;s scope, such that simple representations may be created 
+by providing only templates. (More complex representations will need controllers 
+which are referenced from templates. See <a href="https://docs.angularjs.org/guide/controller">https://docs.angularjs.org/guide/controller</a>
+for more information on controllers in Angular.) </p>
+<p>A representation&#39;s scope will contain:</p>
+<ul>
+<li><code>domainObject</code>: The represented domain object.</li>
+<li><code>model</code>: The domain object&#39;s model.</li>
+<li><code>configuration</code>: An object containing configuration information for this 
+representation (an empty object if there is no saved configuration.) The 
+contents of this object are managed entirely by the view/representation which 
+receives it. </li>
+<li><code>representation</code>: An empty object, useful as a &#39;scratch pad&#39; for 
+representation state. </li>
+<li><code>ngModel</code>: An object passed through the ng-model attribute of the 
+<code>mct-representation</code> , if any. </li>
+<li><code>parameters</code>: An object passed through the parameters attribute of the 
+<code>mct-representation</code>, if any. </li>
+<li>Any capabilities requested by the uses property of the representation 
+definition.</li>
+</ul>
+<a name="representers-category" href="#representers-category"><h2 id="undefinedrepresenters-category">Representers Category</h2>
+</a><p>The <code>representers</code> extension category is used to add additional behavior to the 
+<code>mct-representation</code> directive. This extension category is intended primarily 
+for use internal to the platform. </p>
+<p>Unlike <em>representations</em>, which describe specific ways to represent domain 
+objects, <em>representers</em> are used to modify or augment the process of 
+representing domain objects in general. For example, support for the  <em>gestures</em> 
+extension category is added by a <em>representer</em>.</p>
+<p>A representer needs only provide an implementation. When an <code>mct-representation</code> 
+is linked (see <a href="https://docs.angularjs.org/guide/directive">https://docs.angularjs.org/guide/directive</a> ) or when the 
+domain object being represented changes, a new <em>representer</em> of each declared 
+type is instantiated. The constructor arguments for a <em>representer</em> are the same 
+as the arguments to the link function in an Angular directive: <code>scope</code> the 
+Angular scope for this representation; <code>element</code> the jqLite-wrapped 
+<code>mct-representation</code> element, and <code>attrs</code> a set of key-value pairs of that 
+element&#39;s attributes. <em>Representers</em> may wish to populate the scope, attach 
+event listeners to the element, etc.</p>
+<p>This implementation must provide a single method, <code>destroy()</code>, which will be 
+invoked when the representer is no longer needed. </p>
+<a name="roots-category" href="#roots-category"><h2 id="undefinedroots-category">Roots Category</h2>
+</a><p>The extension category <code>roots</code> is used to provide root-level domain object 
+models. Root-level domain objects appear at the top-level of the tree hierarchy. 
+For example, the <em>My Items</em> folder is added as an extension of this category. </p>
+<p>Extensions of this category should have the following properties:</p>
+<ul>
+<li><code>id</code>: The machine-readable identifier for the domain object being exposed.</li>
+<li><code>model</code>: The model, as a JSON object, for the domain object being exposed. </li>
+</ul>
+<a name="stylesheets-category" href="#stylesheets-category"><h2 id="undefinedstylesheets-category">Stylesheets Category</h2>
+</a><p>The stylesheets extension category is used to add CSS files to style the 
+application. Extension definitions for this category should include one 
+property:</p>
+<ul>
+<li><code>stylesheetUrl</code>: Path and filename, including extension, for the stylesheet to 
+include. This path is relative to the bundle&#39;s resources folder (by default,<br><code>res</code>) </li>
+<li><code>theme</code>: Optional; if present, this stylesheet will only be included if this
+value matches the <code>THEME</code> constant.</li>
+</ul>
+<p>To control the order of CSS files, use priority  (see the section on Extension 
+Definitions above.) </p>
+<a name="templates-category" href="#templates-category"><h2 id="undefinedtemplates-category">Templates Category</h2>
+</a><p>The <code>templates</code> extension category is used to expose Angular templates under 
+symbolic identifiers. These can then be utilized using the <code>mct-include</code> 
+directive, which behaves similarly to <code>ng-include</code> except that it uses these 
+symbolic identifiers instead of paths.</p>
+<p>A template&#39;s extension definition should include the following properties:</p>
+<ul>
+<li><code>key</code>: The machine-readable name which identifies this template, matched 
+against the value given to the key attribute of the <code>mct-include</code> directive.</li>
+<li><code>templateUrl</code>: The path to the relevant Angular template. This path is 
+relative to the bundle&#39;s resources directory. </li>
+</ul>
+<p>Note that, when multiple templates are present with the same key , the one with 
+the highest priority will be used from <code>mct-include</code>. This behavior can be used 
+to override templates exposed by the platform (to change the logo which appears 
+in the bottom right, for instance.)</p>
+<p>Templates do not have implementations. </p>
+<a name="types-category" href="#types-category"><h2 id="undefinedtypes-category">Types Category</h2>
+</a><p>The types extension category describes types of domain objects which may 
+appear within Open MCT.</p>
+<p>A type&#39;s extension definition should have the following properties:</p>
+<ul>
+<li><code>key</code>: The machine-readable identifier for this domain object type. Will be 
+stored to and matched against the type property of domain object models.</li>
+<li><code>name</code>: The human-readable name for this domain object type.</li>
+<li><code>description</code>: A human-readable summary of this domain object type.</li>
+<li><code>glyph</code>: A single character to be rendered as an icon in Open MCT&#39;s custom 
+font set. </li>
+<li><code>model</code>: A domain object model, used as the initial state for created domain 
+objects of this type (before any properties are specified.)</li>
+<li><code>features</code>: Optional; an array of strings describing features of this domain 
+object type. Currently, only creation is recognized by the platform; this is 
+used to determine that this type should appear in the Create menu. More 
+generally, this is used to support the <code>hasFeature(...)</code>  method of the type<br>capability. </li>
+<li><code>properties</code>: An array describing individual properties of this domain object
+(as should appear in the <em>Create</em> or the <em>Edit Properties</em> dialog.) Each 
+property is described by an object containing the following properties:<ul>
+<li><code>control</code>: The key of the control (see <code>mct-control</code> and the <code>controls</code> 
+<a href="#controls-category">extension category</a>) to use for editing this property. </li>
+<li><code>property</code>: A string which will be used as the name of the property in the 
+domain object&#39;s model that the value for this property should be stored 
+under. If this value should be stored in an object nested within the domain 
+object model, then property should be specified as an array of strings 
+identifying these nested objects and, finally, the property itself. </li>
+<li>other properties as appropriate for a control of this type (each 
+property&#39;s definition will also be passed in as the structure for its 
+control.) See documentation of mct-form for more detail on these 
+properties.</li>
+</ul>
+</li>
+</ul>
+<p>Types do not have implementations. </p>
+<a name="versions-category" href="#versions-category"><h2 id="undefinedversions-category">Versions Category</h2>
+</a><p>The versions extension category is used to introduce line items in Open MCT 
+Web&#39;s About dialog. These should have the following properties: </p>
+<ul>
+<li><code>name</code>: The name of this line item, as should appear in the left-hand side of 
+the list of version information in the About dialog.</li>
+<li><code>value</code>: The value which should appear to the right of the name in the About 
+dialog.</li>
+</ul>
+<p>To control the ordering of line items within the About dialog, use <code>priority</code>. 
+(See section on <a href="#extensions">Extensions</a> above.) </p>
+<p>This extension category does not have implementations. </p>
+<a name="views-category" href="#views-category"><h2 id="undefinedviews-category">Views Category</h2>
+</a><p>The views extension category is used to determine which options appear to the 
+user as available views of domain objects of specific types. A view&#39;s extension 
+definition has the same properties as a representation (and views can be 
+utilized via <code>mct-representation</code>); additionally:</p>
+<ul>
+<li><code>name</code>: The human-readable name for this view type.</li>
+<li>description : A human-readable summary of this view type.</li>
+<li><code>glyph</code>: A single character to be rendered as an icon in Open MCT&#39;s custom 
+font set.</li>
+<li><code>type</code>: Optional; if present, this representation is only applicable for 
+domain object&#39;s of this type.</li>
+<li><code>needs</code>: Optional array of strings; if present, this representation is only 
+applicable for domain objects which have the capabilities identified by these 
+strings. </li>
+<li><code>delegation</code>: Optional boolean, intended to be used in conjunction with<br><code>needs</code>;  if present, allow required capabilities to be satisfied by means of 
+capability delegation. (See <a href="#delegation-capability">Delegation</a>)</li>
+<li><code>toolbar</code>: Optional; a definition for the toolbar which may appear in a 
+toolbar when using this view in Edit mode. This should be specified as a 
+structure for mct-toolbar , with additional properties available for each item in 
+that toolbar: <ul>
+<li><code>property</code>: A property name. This will refer to a property in the view&#39;s 
+current selection; that property on the selected object will be modifiable 
+as the <code>ng-model</code> of the displayed control in the toolbar. If the value of 
+the property is a function, it will be used as a getter-setter (called with 
+no arguments to use as a getter, called with a value to use as a setter.) </li>
+<li><code>method</code>: A method to invoke (again, on the selected object) from the 
+toolbar control. Useful particularly for buttons (which don&#39;t edit a single 
+property, necessarily.)</li>
+</ul>
+</li>
+</ul>
+<a name="view-scope" href="#view-scope"><h3 id="undefinedview-scope">View Scope</h3>
+</a><p>Views do not have implementations, but do get the same properties in scope that 
+are provided for <code>representations</code>. </p>
+<p>When a view is in Edit mode, this scope will additionally contain:</p>
+<ul>
+<li><code>commit()</code>: A function which can be invoked to mark any changes to the view&#39;s 
+configuration as ready to persist.</li>
+<li><code>selection</code>: An object representing the current selection state. </li>
+</ul>
+<a name="selection-state" href="#selection-state"><h4 id="undefinedselection-state">Selection State</h4>
+</a><p>A view&#39;s selection state is, conceptually, a set of JavaScript objects. The 
+presence of methods/properties on these objects determine which toolbar controls 
+are visible, and what state they manage and/or behavior they invoke. </p>
+<p>This set may contain up to two different objects: The  <em>view proxy</em>, which is 
+used to make changes to the view as a whole, and the <em>selected object</em>, which is 
+used to represent some state within the view. (Future versions of Open MCT 
+may support multiple selected objects.) </p>
+<p>The <code>selection</code> object made available during Edit mode has the following 
+methods: </p>
+<ul>
+<li><code>proxy([object])</code>: Get (or set, if called with an argument) the current view 
+proxy.  </li>
+<li><code>select(object)</code>: Make this object the selected object. </li>
+<li><code>deselect()</code>: Clear the currently selected object. </li>
+<li><code>get()</code>: Get the currently selected object. Returns undefined if there is no 
+currently selected object.</li>
+<li><code>selected(object)</code>: Check if the JavaScript object is currently in the 
+selection set. Returns true if the object is either the currently selected 
+object, or the current view proxy. </li>
+<li><code>all()</code>: Get an array of all objects in the selection state. Will include 
+either or both of the view proxy and selected object. </li>
+</ul>
+<a name="workers-category" href="#workers-category"><h2 id="undefinedworkers-category">Workers Category</h2>
+</a><p>The <code>workers</code> extension category allows scripts to be run as web workers
+using the <code>workerService</code>.</p>
+<p>An extension of this category has no implementation. The following properties
+are supported:</p>
+<ul>
+<li><code>key</code>: A symbolic string used to identify this worker.</li>
+<li><code>workerUrl</code>: The path, relative to this bundle&#39;s <code>src</code> folder, where
+this worker&#39;s source code resides.</li>
+<li><code>shared</code>: Optional; a boolean flag which, if true, indicates that this
+worker should be instantiated as a
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker/SharedWorker"><code>SharedWorker</code></a>.
+Default value is <code>false</code>.</li>
+</ul>
+<a name="directives" href="#directives"><h1 id="undefineddirectives">Directives</h1>
+</a><p>Open MCT defines several Angular directives that are intended for use both 
+internally within the platform, and by plugins. </p>
+<a name="container" href="#container"><h2 id="undefinedcontainer">Container</h2>
+</a><p>The <code>mct-container</code> is similar to the <code>mct-include</code> directive insofar as it allows 
+templates to be referenced by symbolic keys instead of by URL. Unlike 
+<code>mct-include</code> it supports transclusion.</p>
+<p>Unlike <code>mct-include</code> <code>mct-container</code> accepts a key as a plain string attribute, 
+instead of as an Angular expression.</p>
+<a name="control" href="#control"><h2 id="undefinedcontrol">Control</h2>
+</a><p>The <code>mct-control</code> directive is used to display user input elements. Several 
+controls are included with the platform to wrap default input types. This 
+directive is primarily intended for internal use by the <code>mct-form</code> and 
+<code>mct-toolbar</code> directives. </p>
+<p>When using <code>mct-control</code> the attributes <code>ng-model</code> <code>ng-disabled</code> 
+<code>ng-required</code> and <code>ng-pattern</code> may also be used. These have the usual meaning 
+(as they would for an input element) except for <code>ng-model</code>; when used, it will 
+actually be <code>ngModel[field]</code> (see below) that is two-way bound by this control. 
+This allows <code>mct-control</code> elements to more easily delegate to other 
+<code>mct-control</code> instances, and also facilitates usage for generated forms. </p>
+<p>This directive supports the following additional attributes, all specified as 
+Angular expressions:</p>
+<ul>
+<li><code>key</code>: A machine-readable identifier for the specific type of control to 
+display.</li>
+<li><code>options</code>: A set of options to display in this control.</li>
+<li><code>structure</code>: In practice, contains the definition object which describes this 
+form row or toolbar item. Used to pass additional control-specific parameters. </li>
+<li><code>field</code>: The field in the <code>ngModel</code> under which to read/store the property 
+associated with this control. </li>
+</ul>
+<a name="drag" href="#drag"><h2 id="undefineddrag">Drag</h2>
+</a><p>The <code>mct-drag</code> directive is used to support drag-based gestures on HTML 
+elements. Note that this is not &#39;drag&#39; in the &#39;drag-and-drop&#39; sense, but &#39;drag&#39; 
+in the more general &#39;mouse down, mouse move, mouse up&#39; sense. </p>
+<p>This takes the form of three attributes: </p>
+<ul>
+<li><code>mct-drag</code>: An Angular expression to evaluate during drag movement.</li>
+<li><code>mct-drag-down</code>: An Angular expression to evaluate when the drag starts.</li>
+<li><code>mct-drag-up</code>: An Angular expression to evaluate when the drag ends.</li>
+</ul>
+<p>In each case, a variable <code>delta</code> will be provided to the expression; this is a 
+two-element array or the horizontal and vertical pixel offset of the current 
+mouse position relative to the mouse position where dragging began. </p>
+<a name="form" href="#form"><h2 id="undefinedform">Form</h2>
+</a><p>The <code>mct-form</code> directive is used to generate forms using a declarative structure, 
+and to gather back user input. It is applicable at the element level and 
+supports the following attributes: </p>
+<ul>
+<li><code>ng-model</code>: The object which should contain the full form input. Individual 
+fields in this model are bound to individual controls; the names used for these 
+fields are provided in the form structure (see below).</li>
+<li><code>structure</code>: The structure of the form; e.g. sections, rows, their names, and 
+so forth. The value of this attribute should be an Angular expression. </li>
+<li><code>name</code>: The name in the containing scope under which to publish form 
+&quot;meta-state&quot;, e.g. <code>$valid</code> <code>$dirty</code> etc. This is as the behavior of <code>ng-form</code>. 
+Passed as plain text in the attribute. </li>
+</ul>
+<a name="form-structure" href="#form-structure"><h3 id="undefinedform-structure">Form Structure</h3>
+</a><p>Forms in Open MCT have a common structure to permit consistent display. A 
+form is broken down into sections, which will be displayed in groups; each 
+section is broken down into rows, each of which provides a control for a single 
+property. Input from this form is two-way bound to the object passed via 
+<code>ng-model</code>. </p>
+<p>A form&#39;s structure is represented by a JavaScript object in the following form:</p>
+<pre><code>{ 
+    &quot;name&quot;: ... title to display for the form, as a string ..., 
+    &quot;sections&quot;: [
+    { 
+        &quot;name&quot;: ... title to display for the section ..., 
+        &quot;rows&quot;: [ 
+            { 
+                &quot;name&quot;: ... title to display for this row ...,
+                &quot;control&quot;: ... symbolic key for the control ..., 
+                &quot;key&quot;: ... field name in ng-model ... 
+                &quot;pattern&quot;: ... optional, reg exp to match against ... 
+                &quot;required&quot;: ... optional boolean ... 
+                &quot;options&quot;: [ 
+                    &quot;name&quot;: ... name to display (e.g. in a select) ..., 
+                    &quot;value&quot;: ... value to store in the model ... 
+                ] 
+                }, 
+            ... and other rows ... 
+        ] 
+    }, 
+    ... and other sections ... 
+    ] 
+} 
+</code></pre><p>Note that <code>pattern</code> may be specified as a string, to simplify storing for 
+structures as JSON when necessary. The string should be given in a form 
+appropriate to pass to a <code>RegExp</code> constructor. </p>
+<a name="form-controls" href="#form-controls"><h3 id="undefinedform-controls">Form Controls</h3>
+</a><p>A few standard control types are included in the platform/forms bundle: </p>
+<ul>
+<li><code>textfield</code>: An area to enter plain text. </li>
+<li><code>select</code>: A drop-down list of options. </li>
+<li><code>checkbox</code>: A box which may be checked/unchecked. </li>
+<li><code>color</code>: A color picker. </li>
+<li><code>button</code>: A button. </li>
+<li><code>datetime</code>: An input for UTC date/time entry; gives result as a UNIX 
+timestamp, in milliseconds since start of 1970, UTC. </li>
+</ul>
+<a name="include" href="#include"><h2 id="undefinedinclude">Include</h2>
+</a><p>The <code>mct-include</code> directive is similar to ng-include , except that it takes a 
+symbolic identifier for a template instead of a URL. Additionally, templates 
+included via mct-include will have an isolated scope. </p>
+<p>The directive should be used at the element level and supports the following 
+attributes, all of which are specified as Angular expressions: </p>
+<ul>
+<li><code>key</code>: Machine-readable identifier for the template (of extension category<br>templates ) to be displayed. </li>
+<li><code>ng-model</code>: <em>Optional</em>; will be passed into the template&#39;s scope as <code>ngModel</code>. 
+Intended usage is for two-way bound user input.</li>
+<li><code>parameters</code>: <em>Optional</em>; will be passed into the template&#39;s scope as 
+parameters. Intended usage is for template-specific display parameters. </li>
+</ul>
+<a name="representation" href="#representation"><h2 id="undefinedrepresentation">Representation</h2>
+</a><p>The <code>mct-representation</code> directive is used to include templates which 
+specifically represent domain objects. Usage is similar to <code>mct-include</code>. </p>
+<p>The directive should be used at the element level and supports the following 
+attributes, all of which are specified as Angular expressions:</p>
+<ul>
+<li><code>key</code>: Machine-readable identifier for the representation (of extension 
+category <em>representations</em> or <em>views</em> ) to be displayed. </li>
+<li><code>mct-object</code>: The domain object being represented. </li>
+<li><code>ng-model</code>: Optional; will be passed into the template&#39;s scope as <code>ngModel</code>. 
+Intended usage is for two-way bound user input. </li>
+<li><code>parameters</code>: Optional; will be passed into the template&#39;s scope as<br>parameters . Intended usage is for template-specific display parameters. </li>
+</ul>
+<a name="resize" href="#resize"><h2 id="undefinedresize">Resize</h2>
+</a><p>The <code>mct-resize</code> directive is used to monitor the size of an HTML element. It is 
+specified as an attribute whose value is an Angular expression that will be 
+evaluated when the size of the HTML element changes. This expression will be 
+provided a single variable, <code>bounds</code> which is an object containing two 
+properties, <code>width</code> and <code>height</code> describing the size in pixels of the element.</p>
+<p>When using this directive, an attribute <code>mct-resize-interval</code> may optionally be 
+provided. Its value is an Angular expression describing the number of 
+milliseconds to wait before next checking the size of the HTML element; this 
+expression is evaluated when the directive is linked and reevaluated whenever 
+the size is checked.</p>
+<a name="scroll" href="#scroll"><h2 id="undefinedscroll">Scroll</h2>
+</a><p>The <code>mct-scroll-x</code> and <code>mct-scroll-y</code> directives are used to both monitor and 
+control the horizontal and vertical scroll bar state of an element, 
+respectively. They are intended to be used as attributes whose values are 
+assignable Angular expressions which two-way bind to the scroll bar state.</p>
+<a name="toolbar" href="#toolbar"><h2 id="undefinedtoolbar">Toolbar</h2>
+</a><p>The <code>mct-toolbar</code> directive is used to generate toolbars using a declarative 
+structure, and to gather back user input. It is applicable at the element level 
+and supports the following attributes: </p>
+<ul>
+<li><code>ng-model</code>: The object which should contain the full toolbar input. Individual 
+fields in this model are bound to individual controls; the names used for these 
+fields are provided in the form structure (see below). </li>
+<li><code>structure</code>: The structure of the toolbar; e.g. sections, rows, their names, and 
+so forth. The value of this attribute should be an Angular expression.</li>
+<li><code>name</code>: The name in the containing scope under which to publish form 
+&quot;meta-state&quot;, e.g. <code>$valid</code>, <code>$dirty</code> etc. This is as the behavior of 
+<code>ng-form</code>. Passed as plain text in the attribute. </li>
+</ul>
+<p>Toolbars support the same control options as forms.  </p>
+<a name="toolbar-structure" href="#toolbar-structure"><h3 id="undefinedtoolbar-structure">Toolbar Structure</h3>
+</a><p>A toolbar&#39;s structure is defined similarly to forms, except instead of rows<br>there are items . </p>
+<pre><code>{ 
+    &quot;name&quot;: ... title to display for the form, as a string ..., 
+    &quot;sections&quot;: [ 
+        { 
+            &quot;name&quot;: ... title to display for the section ..., 
+            &quot;items&quot;: [ 
+                { 
+                    &quot;name&quot;: ... title to display for this row ..., 
+                    &quot;control&quot;: ... symbolic key for the control ..., 
+                    &quot;key&quot;: ... field name in ng-model ... 
+                    &quot;pattern&quot;: ... optional, reg exp to match against ... 
+                    &quot;required&quot;: ... optional boolean ... 
+                    &quot;options&quot;: [ 
+                        &quot;name&quot;: ... name to display (e.g. in a select) ..., 
+                        &quot;value&quot;: ... value to store in the model ... 
+                    ], 
+                    &quot;disabled&quot;: ... true if control should be disabled ... 
+                    &quot;size&quot;: ... size of the control (for textfields) ... 
+                    &quot;click&quot;: ... function to invoke (for buttons) ... 
+                    &quot;glyph&quot;: ... glyph to display (for buttons) ... 
+                    &quot;text&quot;: ... text within control (for buttons) ... 
+                }, 
+                ... and other rows ... 
+            ] 
+        }, 
+        ... and other sections ... 
+    ] 
+}
+</code></pre><a name="table" href="#table"><h2 id="undefinedtable">Table</h2>
+</a><p>The <code>mct-table</code> directive provides a generic table component, with optional 
+sorting and filtering capabilities. The table can be pre-populated with data 
+by setting the <code>rows</code> parameter, and it can be updated in real-time using the
+<code>add:row</code> and <code>remove:row</code> broadcast events. The table will expand to occupy 
+100% of the size of its containing element. The table is highly optimized for 
+very large data sets.</p>
+<a name="events" href="#events"><h3 id="undefinedevents">Events</h3>
+</a><p>The table supports two events for notifying that the rows have changed. For 
+performance reasons, the table does not monitor the content of <code>rows</code> 
+constantly. </p>
+<ul>
+<li><code>add:row</code>: A <code>$broadcast</code> event that will notify the table that a new row 
+has been added to the table.</li>
+</ul>
+<p>eg. The code below adds a new row, and alerts the table using the <code>add:row</code> 
+event. Sorting and filtering will be applied automatically by the table component.</p>
+<pre><code>$scope.rows.push(newRow);
+$scope.$broadcast(&#39;add:row&#39;, $scope.rows.length-1);
+</code></pre><ul>
+<li><code>remove:row</code>: A <code>$broadcast</code> event that will notify the table that a row 
+should be removed from the table.</li>
+</ul>
+<p>eg. The code below removes a row from the rows array, and then alerts the table 
+to its removal.</p>
+<pre><code>$scope.rows.slice(5, 1);
+$scope.$broadcast(&#39;remove:row&#39;, 5);
+</code></pre><a name="parameters" href="#parameters"><h3 id="undefinedparameters">Parameters</h3>
+</a><ul>
+<li><code>headers</code>: An array of string values which will constitute the column titles
+that appear at the top of the table. Corresponding values are specified in 
+the rows using the header title provided here.</li>
+<li><code>rows</code>: An array of objects containing row values. Each element in the 
+array must be an associative array, where the key corresponds to a column header. </li>
+<li><code>enableFilter</code>: A boolean that if true, will enable searching and result 
+filtering. When enabled, each column will have a text input field that can be
+used to filter the table rows in real time.</li>
+<li><code>enableSort</code>: A boolean determining whether rows can be sorted. If true, 
+sorting will be enabled allowing sorting by clicking on column headers. Only 
+one column may be sorted at a time.</li>
+<li><code>autoScroll</code>: A boolean value that if true, will cause the table to automatically 
+scroll to the bottom as new data arrives. Auto-scroll can be disengaged manually 
+by scrolling away from the bottom of the table, and can also be enabled manually 
+by scrolling to the bottom of the table rows.</li>
+</ul>
+<a name="services" href="#services"><h1 id="undefinedservices">Services</h1>
+</a><p>The Open MCT platform provides a variety of services which can be retrieved 
+and utilized via dependency injection. These services fall into two categories: </p>
+<ul>
+<li><em>Composite Services</em> are defined by a set of components extensions; plugins may 
+introduce additional components with matching interfaces to extend or augment 
+the functionality of the composed service. (See the Framework section on 
+Composite Services.) </li>
+<li><em>Other services</em> which are defined as standalone service objects; these can be 
+utilized by plugins but are not intended to be modified or augmented. </li>
+</ul>
+<a name="composite-type-services" href="#composite-type-services"><h2 id="undefinedcomposite-type-services">Composite Type Services</h2>
+</a><p>This section describes the composite services exposed by Open MCT, 
+specifically focusing on their interface and contract. </p>
+<p>In many cases, the platform will include a provider for a service which consumes 
+a specific extension category; for instance, the <code>actionService</code> depends on 
+<code>actions[]</code> and will expose available actions based on the rules defined for 
+that extension category.  </p>
+<p>In these cases, it will usually be simpler to add a new extension of a given 
+category (e.g. of category <code>actions</code>) even when the same behavior could be 
+introduced by a service component (e.g. an extension of category <code>components</code> 
+where <code>provides</code> is <code>actionService</code> and <code>type</code> is <code>provider</code>.)  </p>
+<p>Occasionally, the extension category does not provide enough expressive power to 
+achieve a desired result. For instance, the Create menu is populated with 
+<code>create</code> actions, where one such action exists for each creatable type. Since 
+the framework does not provide a declarative means to introduce a new action per 
+type declaratively, the platform implements this explicitly in an <code>actionService</code> 
+component of type <code>provider</code>. Plugins may use a similar approach when the normal 
+extension mechanism is insufficient to achieve a desired result. </p>
+<a name="action-service" href="#action-service"><h3 id="undefinedaction-service">Action Service</h3>
+</a><p>The <a href="../architecture/platform.html#action-service">Action Service</a> 
+(<code>actionService</code>) 
+provides <code>Action</code> instances which are applicable in specific contexts. See Core 
+API for additional notes on the interface for actions. The <code>actionService</code> has 
+the following interface: </p>
+<ul>
+<li><code>getActions(context)</code>: Returns an array of Action objects which are applicable 
+in the specified action context.   </li>
+</ul>
+<a name="capability-service" href="#capability-service"><h3 id="undefinedcapability-service">Capability Service</h3>
+</a><p>The <a href="../architecture/platform.html#capability-service">Capability Service</a> 
+(<code>capabilityService</code>) 
+provides constructors for capabilities which will be exposed for a given domain 
+object. </p>
+<p>The capabilityService has the following interface: </p>
+<ul>
+<li><code>getCapabilities(model)</code>: Returns a an object containing key-value pairs, 
+representing capabilities which should be exposed by the domain object with this 
+model. Keys in this object are the capability keys (as used in a 
+<code>getCapability(...)</code> call) and values are either: <ul>
+<li>Functions, in which case they will be used as constructors, which will 
+receive the domain object instance to which the capability applies as their 
+sole argument.The resulting object will be provided as the result of a 
+domain object&#39;s <code>getCapability(...)</code>  call. Note that these instances are cached 
+by each object, but may be recreated when an object is mutated. </li>
+<li>Other objects, which will be used directly as the result of a domain 
+object&#39;s <code>getCapability(...)</code> call. </li>
+</ul>
+</li>
+</ul>
+<a name="dialog-service" href="#dialog-service"><h3 id="undefineddialog-service">Dialog Service</h3>
+</a><p>The <code>dialogService</code> provides a means for requesting user input via a modal 
+dialog. It has the following interface: </p>
+<ul>
+<li><code>getUserInput(formStructure, formState)</code>: Prompt the user to fill out a form. 
+The first argument describes the form&#39;s structure (as will be passed to 
+mct-form ) while the second argument contains the initial state of that form. 
+This returns a Promise for the state of the form after the user has filled it 
+in; this promise will be rejected if the user cancels input. </li>
+<li><code>getUserChoice(dialogStructure)</code>: Prompt the user to make a single choice from 
+a set of options, which (in the platform implementation) will be expressed as 
+buttons in the displayed dialog. Returns a Promise for the user&#39;s choice, which 
+will be rejected if the user cancels input. </li>
+</ul>
+<a name="dialog-structure" href="#dialog-structure"><h3 id="undefineddialog-structure">Dialog Structure</h3>
+</a><p>The object passed as the <code>dialogStructure</code> to <code>getUserChoice</code> should have the 
+following properties:</p>
+<ul>
+<li><code>title</code>: The title to display at the top of the dialog. </li>
+<li><code>hint</code>: Short message to display below the title. </li>
+<li><code>template</code>: Identifying key  (as will be passed to mct-include ) for the 
+template which will be used to populate the inner area of the dialog. </li>
+<li><code>model</code>: Model to pass in the ng-model attribute of mct-include . </li>
+<li><code>parameters</code>: Parameters to pass in the parameters attribute of mct-include . </li>
+<li><code>options</code>: An array of options describing each button at the bottom. Each 
+option may have the following properties:<ul>
+<li><code>name</code>: Human-readable name to display in the button. </li>
+<li><code>key</code>: Machine-readable key, to pass as the result of the resolved promise 
+when clicked. </li>
+<li><code>description</code>: Description to show in tooltip on hover.</li>
+</ul>
+</li>
+</ul>
+<a name="domain-object-service" href="#domain-object-service"><h3 id="undefineddomain-object-service">Domain Object Service</h3>
+</a><p>The <a href="../architecture/platform.html#object-service">Object Service</a> (<code>objectService</code>)
+provides domain object instances. It has the following interface:</p>
+<ul>
+<li><code>getObjects(ids)</code>: For the provided array of domain object identifiers, 
+returns a Promise for an object containing key-value pairs, where keys are 
+domain object identifiers and values are corresponding DomainObject instances. 
+Note that the result may contain a superset or subset of the objects requested. </li>
+</ul>
+<a name="gesture-service" href="#gesture-service"><h3 id="undefinedgesture-service">Gesture Service</h3>
+</a><p>The <code>gestureService</code> is used to attach gestures (see extension category gestures) 
+to representations. It has the following interface:</p>
+<ul>
+<li><code>attachGestures(element, domainObject, keys)</code>: Attach gestures specified by 
+the provided gesture keys  (an array of strings) to this jqLite-wrapped HTML 
+element , which represents the specified domainObject . Returns an object with a 
+single method <code>destroy()</code>, to be invoked when it is time to detach these 
+gestures. </li>
+</ul>
+<a name="model-service" href="#model-service"><h3 id="undefinedmodel-service">Model Service</h3>
+</a><p>The <a href="../architecture/platform.html#model-service">Model Service</a> (<code>modelService</code>) 
+provides domain object models. It has the following interface: </p>
+<ul>
+<li><code>getModels(ids)</code>: For the provided array of domain object identifiers, returns 
+a Promise for an object containing key-value pairs, where keys are domain object 
+identifiers and values are corresponding domain object models. Note that the 
+result may contain a superset or subset of the models requested. </li>
+</ul>
+<a name="persistence-service" href="#persistence-service"><h3 id="undefinedpersistence-service">Persistence Service</h3>
+</a><p>The <a href="../architecture/platform.html#persistence-service">Persistence Service</a> (<code>persistenceService</code>)
+provides the ability to load/store JavaScript objects 
+(presumably serializing/deserializing to JSON in the process.) This is used 
+primarily to store domain object models. It has the following interface: </p>
+<ul>
+<li><code>listSpaces()</code>: Returns a Promise for an array of strings identifying the 
+different persistence spaces this service supports. Spaces are intended to be 
+used to distinguish between different underlying persistence stores, to allow 
+these to live side by side. </li>
+<li><code>listObjects()</code>: Returns a Promise for an array of strings identifying all 
+documents stored in this persistence service. </li>
+<li><code>createObject(space, key, value)</code>: Create a new document in the specified 
+persistence space , identified by the specified key , the contents of which shall 
+match the specified value . Returns a promise that will be rejected if creation 
+fails. </li>
+<li><code>readObject(space, key)</code>: Read an existing document in the specified 
+persistence space , identified by the specified key . Returns a promise for the 
+specified document; this promise will resolve to undefined if the document does 
+not exist. </li>
+<li><code>updateObject(space, key, value)</code>: Update an existing document in the 
+specified persistence space , identified by the specified key , such that its 
+contents match the specified value . Returns a promise that will be rejected if 
+the update fails. </li>
+<li><code>deleteObject(space, key)</code>: Delete an existing document from the specified 
+persistence space , identified by the specified key . Returns a promise which will 
+be rejected if deletion fails. </li>
+</ul>
+<a name="policy-service" href="#policy-service"><h3 id="undefinedpolicy-service">Policy Service</h3>
+</a><p>The <a href="../architecture/platform.html#policy-service">Policy Service</a> (<code>policyService</code>) 
+may be used to determine whether or not certain behaviors are 
+allowed within the application. It has the following interface: </p>
+<ul>
+<li><code>allow(category, candidate, context, [callback])</code>: Check if this decision 
+should be allowed. Returns a boolean. Its arguments are interpreted as: <ul>
+<li><code>category</code>: A string identifying which kind of decision is being made. See 
+the <a href="#policy-categories">section on Categories</a> for categories supported by 
+the platform; plugins may define and utilize policies of additional 
+categories, as well. </li>
+<li><code>candidate</code>: An object representing the thing which shall or shall not be 
+allowed. Usually, this will be an instance of an extension of the category 
+defined above. This does need to be the case; additional policies which are 
+not specific to any extension may also be defined and consulted using unique 
+category identifiers. In this case, the type of the object delivered for the 
+candidate may be unique to the policy type. </li>
+<li><code>context</code>: An object representing the context in which the decision is 
+occurring. Its contents are specific to each policy category. </li>
+<li><code>callback</code>: Optional; a function to call if the policy decision is rejected. 
+This function will be called with the message string (which may be 
+undefined) of whichever individual policy caused the operation to fail. </li>
+</ul>
+</li>
+</ul>
+<a name="telemetry-service" href="#telemetry-service"><h3 id="undefinedtelemetry-service">Telemetry Service</h3>
+</a><p>The <a href="../architecture/platform.html#telemetry-service">Telemetry Service</a> (<code>telemetryService</code>)
+is used to acquire telemetry data. See the section on 
+Telemetry in Core API for more information on how both the arguments and 
+responses of this service are structured. </p>
+<p>When acquiring telemetry for display, it is recommended that the 
+<code>telemetryHandler</code> service be used instead of this service. The 
+<code>telemetryHandler</code> has additional support for subscribing to and requesting 
+telemetry data associated with domain objects or groups of domain objects. See 
+the <a href="#other-services">Other Services</a> section for more information. </p>
+<p>The <code>telemetryService</code> has the following interface:</p>
+<ul>
+<li><code>requestTelemetry(requests)</code>: Issue a request for telemetry, matching the 
+specified telemetry requests . Returns a _ Promise _ for a telemetry response 
+object.</li>
+<li><code>subscribe(callback, requests)</code>: Subscribe to real-time updates for telemetry, 
+matching the specified <code>requests</code>. The specified <code>callback</code> will be invoked with 
+telemetry response objects as they become available. This method returns a 
+function which can be invoked to terminate the subscription. </li>
+</ul>
+<a name="type-service" href="#type-service"><h3 id="undefinedtype-service">Type Service</h3>
+</a><p>The <a href="../architecture/platform.html#type-service">Type Service</a> (<code>typeService</code>) exposes 
+domain object types. It has the following interface:</p>
+<ul>
+<li><code>listTypes()</code>: Returns all domain object types supported in the application, 
+as an array of <code>Type</code> instances.</li>
+<li><code>getType(key)</code>: Returns the <code>Type</code> instance identified by the provided key, or 
+undefined if no such type exists. </li>
+</ul>
+<a name="view-service" href="#view-service"><h3 id="undefinedview-service">View Service</h3>
+</a><p>The <a href="../architecture/platform.html#view-service">View Service</a> (<code>viewService</code>) exposes 
+definitions for views of domain objects. It has the following interface:</p>
+<ul>
+<li><code>getViews(domainObject)</code>:  Get an array of extension definitions of category 
+<code>views</code> which are valid and applicable to the specified <code>domainObject</code>. </li>
+</ul>
+<a name="other-services" href="#other-services"><h2 id="undefinedother-services">Other Services</h2>
+</a><a name="drag-and-drop" href="#drag-and-drop"><h3 id="undefineddrag-and-drop">Drag and Drop</h3>
+</a><p>The <code>dndService</code> provides information about the content of an active 
+drag-and-drop gesture within the application. It is intended to complement the 
+<code>DataTransfer</code> API of HTML5 drag-and-drop, by providing access to non-serialized 
+JavaScript objects being dragged, as well as by permitting inspection during 
+drag (which is normally prohibited by browsers for security reasons.) </p>
+<p>The <code>dndService</code> has the following methods: </p>
+<ul>
+<li><code>setData(key, value)</code>: Set drag data associated with a given type, specified 
+by the <code>key</code> argument. </li>
+<li><code>getData(key)</code>: Get drag data associated with a given type, specified by the<br><code>key</code> argument. </li>
+<li><code>removeData(key)</code>: Clear drag data associated with a given type, specified by 
+the <code>key</code> argument. </li>
+</ul>
+<a name="navigation" href="#navigation"><h3 id="undefinednavigation">Navigation</h3>
+</a><p>The <em>Navigation</em> service provides information about the current navigation state 
+of the application; that is, which object is the user currently viewing? This 
+service merely tracks this state and notifies listeners; it does not take 
+immediate action when navigation changes, although its listeners might. </p>
+<p>The <code>navigationService</code> has the following methods:</p>
+<ul>
+<li><code>getNavigation()</code>: Get the current navigation state. Returns a <code>DomainObject</code>. </li>
+<li><code>setNavigation(domainObject)</code>: Set the current navigation state. Returns a 
+<code>DomainObject</code>. </li>
+<li><code>addListener(callback)</code>: Listen for changes in navigation state. The provided 
+<code>callback</code> should be a <code>Function</code> which takes a single <code>DomainObject</code> as an 
+argument. </li>
+<li><code>removeListener(callback)</code>: Stop listening for changes in navigation state. 
+The provided <code>callback</code> should be a <code>Function</code> which has previously been passed 
+to addListener .</li>
+</ul>
+<a name="now" href="#now"><h3 id="undefinednow">Now</h3>
+</a><p>The service now is a function which acts as a simple wrapper for <code>Date.now()</code>. 
+It is present mainly so that this functionality may be more easily mocked in 
+tests for scripts which use the current time. </p>
+<a name="telemetry-formatter" href="#telemetry-formatter"><h3 id="undefinedtelemetry-formatter">Telemetry Formatter</h3>
+</a><p>The <em>Telemetry Formatter</em> is a utility for formatting domain and range values 
+read from a telemetry series. </p>
+<p><code>telemetryFormatter</code> has the following methods: </p>
+<ul>
+<li><code>formatDomainValue(value)</code>: Format the provided domain value (which will be 
+assumed to be a timestamp) for display; returns a string. </li>
+<li><code>formatRangeValue(value)</code>: Format the provided range value (a number) for 
+display; returns a string.</li>
+</ul>
+<a name="telemetry-handler" href="#telemetry-handler"><h3 id="undefinedtelemetry-handler">Telemetry Handler</h3>
+</a><p>The <em>Telemetry Handler</em> is a utility for retrieving telemetry data associated 
+with domain objects; it is particularly useful for dealing with cases where the 
+telemetry capability is delegated to contained objects (as occurs 
+in <em>Telemetry Panels</em>.) </p>
+<p>The <code>telemetryHandler</code> has the following methods: </p>
+<ul>
+<li><code>handle(domainObject, callback, [lossless])</code>: Subscribe to and issue future 
+requests for telemetry associated with the provided <code>domainObject</code>, invoking the 
+provided callback function when streaming data becomes available. Returns a 
+<code>TelemetryHandle</code> (see below.) </li>
+</ul>
+<a name="telemetry-handle" href="#telemetry-handle"><h4 id="undefinedtelemetry-handle">Telemetry Handle</h4>
+</a><p>A TelemetryHandle has the following methods: </p>
+<ul>
+<li><code>getTelemetryObjects()</code>: Get the domain objects (as a <code>DomainObject[]</code>) that 
+have a telemetry capability and are being handled here. Note that these are 
+looked up asynchronously, so this method may return an empty array if the 
+initial lookup is not yet completed. </li>
+<li><code>promiseTelemetryObjects()</code>: As <code>getTelemetryObjects()</code>, but returns a Promise<br>that will be fulfilled when the lookup is complete. </li>
+<li><code>unsubscribe()</code>: Unsubscribe to streaming telemetry updates associated with 
+this handle. </li>
+<li><code>getDomainValue(domainObject)</code>: Get the most recent domain value received via 
+a streaming update for the specified <code>domainObject</code>. </li>
+<li><code>getRangeValue(domainObject)</code>: Get the most recent range value received via a 
+streaming update for the specified <code>domainObject</code>. </li>
+<li><code>getMetadata()</code>: Get metadata (as reported by the <code>getMetadata()</code> method of a 
+telemetry capability) associated with telemetry-providing domain objects. 
+Returns an array, which is in the same order as getTelemetryObjects() . </li>
+<li><code>request(request, callback)</code>: Issue a new request for historical telemetry 
+data. The provided callback will be invoked when new data becomes available, 
+which may occur multiple times (e.g. if there are multiple domain objects.) It 
+will be invoked with the DomainObject for which a new series is available, and 
+the TelemetrySeries itself, in that order. </li>
+<li><code>getSeries(domainObject)</code>: Get the latest <code>TelemetrySeries</code> (as resulted from 
+a previous <code>request(...)</code> call) available for this domain object.</li>
+</ul>
+<a name="worker-service" href="#worker-service"><h3 id="undefinedworker-service">Worker Service</h3>
+</a><p>The <code>workerService</code> may be used to run web workers defined via the
+<code>workers</code> extension category. It has the following method:</p>
+<ul>
+<li><code>run(key)</code>: Run the worker identified by the provided <code>key</code>. Returns
+a <code>Worker</code> (or <code>SharedWorker</code>, if the specified worker is defined
+as a shared worker); if the <code>key</code> is unknown, returns <code>undefined</code>.</li>
+</ul>
+<a name="models" href="#models"><h1 id="undefinedmodels">Models</h1>
+</a><p>Domain object models in Open MCT are JavaScript objects describing the 
+persistent state of the domain objects they describe. Their contents include a 
+mix of commonly understood metadata attributes; attributes which are recognized 
+by and/or determine the applicability of specific extensions; and properties 
+specific to given types. </p>
+<a name="general-metadata" href="#general-metadata"><h2 id="undefinedgeneral-metadata">General Metadata</h2>
+</a><p>Some properties of domain object models have a ubiquitous meaning through Open 
+MCT Web and can be utilized directly: </p>
+<ul>
+<li><code>name</code>: The human-readable name of the domain object.</li>
+</ul>
+<a name="extension-specific-properties" href="#extension-specific-properties"><h2 id="undefinedextension-specific-properties">Extension-specific Properties</h2>
+</a><p>Other properties of domain object models have specific meaning imposed by other 
+extensions within the Open MCT platform. </p>
+<a name="capability-specific-properties" href="#capability-specific-properties"><h3 id="undefinedcapability-specific-properties">Capability-specific Properties</h3>
+</a><p>Some properties either trigger the presence/absence of certain capabilities, or 
+are managed by specific capabilities:</p>
+<ul>
+<li><code>composition</code>: An array of domain object identifiers that represents the 
+contents of this domain object (e.g. as will appear in the tree hierarchy.) 
+Understood by the composition capability; the presence or absence of this 
+property determines the presence or absence of that capability. </li>
+<li><code>modified</code>: The timestamp (in milliseconds since the UNIX epoch) of the last 
+modification made to this domain object. Managed by the mutation capability. </li>
+<li><code>persisted</code>: The timestamp (in milliseconds since the UNIX epoch) of the last 
+time when changes to this domain object were persisted. Managed by the 
+persistence capability. </li>
+<li><code>relationships</code>: An object containing key-value pairs, where keys are symbolic 
+identifiers for relationship types, and values are arrays of domain object 
+identifiers. Used by the relationship capability; the presence or absence of 
+this property determines the presence or absence of that capability. </li>
+<li><code>telemetry</code>: An object which serves as a template for telemetry requests 
+associated with this domain object (e.g. specifying <code>source</code> and <code>key</code>; see 
+Telemetry Requests under Core API.) Used by the telemetry capability; the 
+presence or absence of this property determines the presence or absence of that 
+capability.</li>
+<li><code>type</code>: A string identifying the type of this domain object. Used by the <code>type</code> 
+capability. </li>
+</ul>
+<a name="view-configurations" href="#view-configurations"><h3 id="undefinedview-configurations">View Configurations</h3>
+</a><p>Persistent configurations for specific views of domain objects are stored in the 
+domain object model under the property configurations . This is an object 
+containing key-value pairs, where keys identify the view, and values are objects 
+containing view-specific (and view-managed) configuration properties. </p>
+<a name="modifying-models" href="#modifying-models"><h2 id="undefinedmodifying-models">Modifying Models</h2>
+</a><p>When interacting with a domain object&#39;s model, it is possible to make 
+modifications to it directly. <strong>Don&#39;t!</strong>  These changes may not be properly detected 
+by the platform, meaning that other representations of the domain object may not 
+be updated, changes may not be saved at the expected times, and generally, that 
+unexpected behavior may occur. Instead, use the <code>mutation</code> capability. </p>
+<a name="capabilities" href="#capabilities"><h1 id="undefinedcapabilities">Capabilities</h1>
+</a><p>Dynamic behavior associated with a domain object is expressed as capabilities. A 
+capability is a JavaScript object with an interface that is specific to the type 
+of capability in use. </p>
+<p>Often, there is a relationship between capabilities and services. For instance, 
+there is an action capability and an actionService , and there is a telemetry<br>capability as well as a <code>telemetryService</code>. Typically, the pattern here is that 
+the capability will utilize the service for the specific domain object.  </p>
+<p>When interacting with domain objects, it is generally preferable to use a 
+capability instead of a service when the option is available. Capability 
+interfaces are typically easier to use and/or more powerful in these situations. 
+Additionally, this usage provides a more robust substitutability mechanism; for 
+instance, one could configure a plugin such that it provided a totally new 
+implementation of a given capability which might not invoke the underlying 
+service, while user code which interacts with capabilities remains indifferent 
+to this detail. </p>
+<a name="action-capability" href="#action-capability"><h2 id="undefinedaction-capability">Action Capability</h2>
+</a><p>The <code>action</code> capability is present for all domain objects. It allows applicable 
+<code>Action</code> instances to be retrieved and performed for specific domain objects. </p>
+<p>For example: 
+    <code>domainObject.getCapability(&quot;action&quot;).perform(&quot;navigate&quot;);</code>
+    ...will initiate a navigate action upon the domain object, if an action with 
+    key &quot;navigate&quot; is defined. </p>
+<p>This capability has the following interface: </p>
+<ul>
+<li><code>getActions(context)</code>: Get the actions that are applicable in the specified 
+action <code>context</code>; the capability will fill in the <code>domainObject</code> field of this 
+context if necessary. If context is specified as a string, they will instead be 
+used as the <code>key</code> of the action context. Returns an array of <code>Action</code> instances.</li>
+<li><code>perform(context)</code>: Perform an action. This will find and perform the first 
+matching action available for the specified action context , filling in the 
+<code>domainObject</code> field as necessary. If <code>context</code> is specified as a string, they 
+will instead be used as the <code>key</code> of the action context. Returns a <code>Promise</code> for 
+the result of the action that was performed, or <code>undefined</code> if no matching action 
+was found. </li>
+</ul>
+<a name="composition-capability" href="#composition-capability"><h2 id="undefinedcomposition-capability">Composition Capability</h2>
+</a><p>The <code>composition</code> capability provides access to domain objects that are 
+contained by this domain object. While the <code>composition</code> property of a domain 
+object&#39;s model describes these contents (by their identifiers), the<br><code>composition</code> capability provides a means to load the corresponding 
+<code>DomainObject</code> instances in the same order. The absence of this property in the 
+model will result in the absence of this capability in the domain object. </p>
+<p>This capability has the following interface: </p>
+<ul>
+<li><code>invoke()</code>: Returns a <code>Promise</code> for an array of <code>DomainObject</code> instances.</li>
+</ul>
+<a name="delegation-capability" href="#delegation-capability"><h2 id="undefineddelegation-capability">Delegation Capability</h2>
+</a><p>The delegation capability is used to communicate the intent of a domain object 
+to delegate responsibilities, which would normally handled by other 
+capabilities, to the domain objects in its composition. </p>
+<p>This capability has the following interface: </p>
+<ul>
+<li><code>getDelegates(key)</code>: Returns a Promise for an array of DomainObject instances, 
+to which this domain object wishes to delegate the capability with the specified<br>key . </li>
+<li><code>invoke(key)</code>: Alias of getDelegates(key) . </li>
+<li><code>doesDelegate(key)</code>: Returns true if the domain object does delegate the 
+capability with the specified key .  </li>
+</ul>
+<p>The platform implementation of the delegation capability inspects the domain 
+object&#39;s type definition for a property delegates , whose value is an array of 
+strings describing which capabilities domain objects of that type wish to 
+delegate. If this property is not present, the delegation capability will not be 
+present in domain objects of that type.  </p>
+<a name="editor-capability" href="#editor-capability"><h2 id="undefinededitor-capability">Editor Capability</h2>
+</a><p>The editor capability is meant primarily for internal use by Edit mode, and 
+helps to manage the behavior associated with exiting <em>Edit</em> mode via <em>Save</em> or 
+<em>Cancel</em>. Its interface is not intended for general use. However, 
+<code>domainObject.hasCapability(editor)</code> is a useful way of determining whether or 
+not we are looking at an object in <em>Edit</em> mode.</p>
+<a name="mutation-capability" href="#mutation-capability"><h2 id="undefinedmutation-capability">Mutation Capability</h2>
+</a><p>The <code>mutation</code> capability provides a means by which the contents of a domain 
+object&#39;s model can be modified. This capability is provided by the platform for 
+all domain objects, and has the following interface:</p>
+<ul>
+<li><code>mutate(mutator, [timestamp])</code>: Modify the domain object&#39;s model using the 
+specified <code>mutator</code> function. After changes are made, the <code>modified</code> property of 
+the model will be updated with the specified <code>timestamp</code> if one was provided, 
+or with the current system time. </li>
+<li><code>invoke(...)</code>: Alias of <code>mutate</code>.</li>
+</ul>
+<p>Changes to domain object models should only be made via the <code>mutation</code> 
+capability; other platform behavior is likely to break (either by exhibiting 
+undesired behavior, or failing to exhibit desired behavior) if models are 
+modified by other means.</p>
+<a name="mutator-function" href="#mutator-function"><h3 id="undefinedmutator-function">Mutator Function</h3>
+</a><p>The mutator argument above is a function which will receive a cloned copy of the 
+domain object&#39;s model as a single argument. It may return: </p>
+<ul>
+<li>A <code>Promise</code> in which case the resolved value of the promise will be used to 
+determine which of the following forms is used. </li>
+<li>Boolean <code>false</code> in which case the mutation is cancelled. </li>
+<li>A JavaScript object, in which case this object will be used as the new model 
+for this domain object.</li>
+<li>No value (or, equivalently, <code>undefined</code>), in which case the cloned copy 
+(including any changes made in place by the mutator function) will be used as 
+the new domain object model. </li>
+</ul>
+<a name="persistence-capability" href="#persistence-capability"><h2 id="undefinedpersistence-capability">Persistence Capability</h2>
+</a><p>The persistence capability provides a mean for interacting with the underlying 
+persistence service which stores this domain object&#39;s model. It has the 
+following interface:</p>
+<ul>
+<li><code>persist()</code>: Store the local version of this domain object, including any 
+changes, to the persistence store. Returns a Promise for a boolean value, which 
+will be true when the object was successfully persisted.</li>
+<li><code>refresh()</code>: Replace this domain object&#39;s model with the most recent version 
+from persistence. Returns a Promise which will resolve when the change has 
+completed.</li>
+<li><code>getSpace()</code>: Return the string which identifies the persistence space which 
+stores this domain object.</li>
+</ul>
+<a name="relationship-capability" href="#relationship-capability"><h2 id="undefinedrelationship-capability">Relationship Capability</h2>
+</a><p>The relationship capability provides a means for accessing other domain objects 
+with which this domain object has some typed relationship. It has the following 
+interface:</p>
+<ul>
+<li><code>listRelationships()</code>: List all types of relationships exposed by this object. 
+Returns an array of strings identifying the types of relationships.</li>
+<li><code>getRelatedObjects(relationship)</code>: Get all domain objects to which this domain 
+object has the specified type of relationship, which is a string identifier 
+(as above.) Returns a <code>Promise</code> for an array of <code>DomainObject</code> instances.</li>
+</ul>
+<p>The platform implementation of the <code>relationship</code> capability is present for domain 
+objects which has a <code>relationships</code> property in their model, whose value is an 
+object containing key-value pairs, where keys are strings identifying 
+relationship types, and values are arrays of domain object identifiers.</p>
+<a name="status-capability" href="#status-capability"><h2 id="undefinedstatus-capability">Status Capability</h2>
+</a><p>The <code>status</code> capability provides a way to flag domain objects as possessing
+certain states, represented as simple strings. These states, in turn, are
+reflected on <code>mct-representation</code> elements as classes (prefixed with
+<code>s-status-</code>.) The <code>status</code> capability has the following interface:</p>
+<ul>
+<li><code>get()</code>: Returns an array of all status strings that currently apply
+to this object.</li>
+<li><code>set(status, state)</code>: Adds or removes a status flag to this domain object.
+The <code>status</code> argument is the string to set; <code>state</code> is a boolean
+indicating whether this status should be included (true) or removed (false).</li>
+<li><code>listen(callback)</code>: Listen for changes in status. The provided <code>callback</code>
+will be invoked with an array of all current status strings whenever status
+changes.</li>
+</ul>
+<p>Plug-ins may add and/or recognize arbitrary status flags. Flags defined
+and/or supported by the platform are:</p>
+<table>
+<thead>
+<tr>
+<th>Status</th>
+<th>CSS Class</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>editing</code></td>
+<td><code>s-status-editing</code></td>
+<td>Domain object is being edited.</td>
+</tr>
+<tr>
+<td><code>pending</code></td>
+<td><code>s-status-pending</code></td>
+<td>Domain object is partially loaded.</td>
+</tr>
+</tbody>
+</table>
+<a name="telemetry-capability" href="#telemetry-capability"><h2 id="undefinedtelemetry-capability">Telemetry Capability</h2>
+</a><p>The telemetry capability provides a means for accessing telemetry data 
+associated with a domain object. It has the following interface:</p>
+<ul>
+<li><code>requestData([request])</code>: Request telemetry data for this specific domain 
+object, using telemetry request parameters from the specified request if 
+provided. This capability will fill in telemetry request properties as-needed 
+for this domain object. Returns a <code>Promise</code> for a <code>TelemetrySeries</code>.</li>
+<li><code>subscribe(callback, [request])</code>:  Subscribe to telemetry data updates for 
+this specific domain object, using telemetry request parameters from the 
+specified request if provided. This capability will fill in telemetry request 
+properties as-needed for this domain object. The specified callback will be 
+invoked with TelemetrySeries instances as they arrive. Returns a function which 
+can be invoked to terminate the subscription, or undefined if no subscription 
+could be obtained.</li>
+<li><code>getMetadata()</code>: Get metadata associated with this domain object&#39;s telemetry.</li>
+</ul>
+<p>The platform implementation of the <code>telemetry</code> capability is present for domain 
+objects which has a <code>telemetry</code> property in their model and/or type definition; 
+this object will serve as a template for telemetry requests made using this 
+object, and will also be returned by <code>getMetadata()</code> above.</p>
+<a name="type-capability" href="#type-capability"><h2 id="undefinedtype-capability">Type Capability</h2>
+</a><p>The <code>type</code> capability exposes information about the domain object&#39;s type. It has 
+the same interface as <code>Type</code>; see Core API.</p>
+<a name="view-capability" href="#view-capability"><h2 id="undefinedview-capability">View Capability</h2>
+</a><p>The <code>view</code> capability exposes views which are applicable to a given domain 
+object. It has the following interface:</p>
+<ul>
+<li><code>invoke()</code>: Returns an array of extension definitions for views which are 
+applicable for this domain object.</li>
+</ul>
+<a name="actions" href="#actions"><h1 id="undefinedactions">Actions</h1>
+</a><p>Actions are reusable processes/behaviors performed by users within the system, 
+typically upon domain objects.</p>
+<a name="action-categories" href="#action-categories"><h2 id="undefinedaction-categories">Action Categories</h2>
+</a><p>The platform understands the following action categories (specifiable as the 
+<code>category</code> parameter of an action&#39;s extension definition.)</p>
+<ul>
+<li><code>contextual</code>: Appears in context menus.</li>
+<li><code>view-control</code>: Appears in top-right area of view (as buttons) in Browse mode</li>
+</ul>
+<a name="platform-actions" href="#platform-actions"><h2 id="undefinedplatform-actions">Platform Actions</h2>
+</a><p>The platform defines certain actions which can be utilized by way of a domain 
+object&#39;s <code>action</code> capability. Unless otherwise specified, these act upon (and 
+modify) the object described by the <code>domainObject</code> property of the action&#39;s 
+context.</p>
+<ul>
+<li><code>cancel</code>: Cancel the current editing action (invoked from Edit mode.)</li>
+<li><code>compose</code>: Place an object in another object&#39;s composition. The object to be 
+added should be provided as the <code>selectedObject</code> of the action context.</li>
+<li><code>edit</code>: Start editing an object (enter Edit mode.)</li>
+<li><code>fullscreen</code>: Enter full screen mode.</li>
+<li><code>navigate</code>: Make this object the focus of navigation (e.g. highlight it within 
+the tree, display a view of it to the right.)</li>
+<li><code>properties</code>: Show the &#39;Edit Properties&#39; dialog.</li>
+<li><code>remove</code>: Remove this domain object from its parent&#39;s composition. (The 
+parent, in this case, is whichever other domain object exposed this object by 
+way of its <code>composition</code> capability.)</li>
+<li><code>save</code>: Save changes (invoked from Edit mode.)</li>
+<li><code>window</code>: Open this object in a new window.</li>
+</ul>
+<a name="policies" href="#policies"><h1 id="undefinedpolicies">Policies</h1>
+</a><p>Policies are consulted to determine when certain behavior in Open MCT is 
+allowed. Policy questions are assigned to certain categories, which broadly 
+describe the type of decision being made; within each category, policies have a 
+candidate (the thing which may or may not be allowed) and, optionally, a context 
+(describing, generally, the context in which the decision is occurring.)</p>
+<p>The types of objects passed for &#39;candidate&#39; and &#39;context&#39; vary by category; 
+these types are documented below.</p>
+<a name="policy-categories" href="#policy-categories"><h2 id="undefinedpolicy-categories">Policy Categories</h2>
+</a><p>The platform understands the following policy categories (specifiable as the 
+<code>category</code> parameter of an policy&#39;s extension definition.)</p>
+<ul>
+<li><code>action</code>: Determines whether or not a given action is allowable. The candidate 
+argument here is an Action; the context is its action context object.</li>
+<li><code>composition</code>: Determines whether or not a given domain object(first argument, <code>parent</code>) can contain a candidate child object (second argument, <code>child</code>).</li>
+<li><code>view</code>: Determines whether or not a view is applicable for a domain object. 
+The candidate argument is the view&#39;s extension definition; the context argument 
+is the <code>DomainObject</code> to be viewed.</li>
+</ul>
+<a name="build-test-deploy" href="#build-test-deploy"><h1 id="undefinedbuild-test-deploy">Build-Test-Deploy</h1>
+</a><p>Open MCT is designed to support a broad variety of build and deployment 
+options. The sources can be deployed in the same directory structure used during 
+development. A few utilities are included to support development processes.</p>
+<a name="command-line-build" href="#command-line-build"><h2 id="undefinedcommand-line-build">Command-line Build</h2>
+</a><p>Open MCT is built using <a href="http://npmjs.com/"><code>npm</code></a>
+and <a href="http://gulpjs.com/"><code>gulp</code></a>.</p>
+<p>To install build dependencies (only needs to be run once):</p>
+<p><code>npm install</code></p>
+<p>To build:</p>
+<p><code>npm run prepare</code></p>
+<p>This will compile and minify JavaScript sources, as well as copy over assets.
+The contents of the <code>dist</code> folder will contain a runnable Open MCT
+instance (e.g. by starting an HTTP server in that directory), including:</p>
+<ul>
+<li>A <code>main.js</code> file containing Open MCT source code.</li>
+<li>Various assets in the <code>example</code> and <code>platform</code> directories.</li>
+<li>An <code>index.html</code> that runs Open MCT in its default configuration.</li>
+</ul>
+<p>Additional <code>gulp</code> tasks are defined in <a href="gulpfile.js">the gulpfile</a>.</p>
+<p>Note that an internet connection is required to run this build, in order to 
+download build dependencies.</p>
+<a name="test-suite" href="#test-suite"><h2 id="undefinedtest-suite">Test Suite</h2>
+</a><p>Open MCT uses <a href="http://jasmine.github.io/">Jasmine 1.3</a> and
+<a href="http://karma-runner.github.io">Karma</a> for automated testing.</p>
+<p>The test suite is configured to load any scripts ending with <code>Spec.js</code> found
+in the <code>src</code> hierarchy. Full configuration details are found in
+<code>karma.conf.js</code>. By convention, unit test scripts should be located
+alongside the units that they test; for example, <code>src/foo/Bar.js</code> would be
+tested by <code>src/foo/BarSpec.js</code>. (For legacy reasons, some existing tests may
+be located in separate <code>test</code> folders near the units they test, but the
+naming convention is otherwise the same.)</p>
+<p>Tests are written as AMD modules which depend (at minimum) upon the
+unit under test. For example, <code>src/foo/BarSpec.js</code> could look like:</p>
+<pre><code>/*global define,Promise,describe,it,expect,beforeEach*/
+
+define(
+    [&quot;./Bar&quot;],
+    function (Bar) {
+        &quot;use strict&quot;;
+
+        describe(&quot;Bar&quot;, function () {
+            it(&quot;does something&quot;, function () {
+                var bar = new Bar();
+                expect(controller.baz()).toEqual(&quot;foo&quot;);
+            });
+        });
+    }
+);
+</code></pre><a name="code-coverage" href="#code-coverage"><h2 id="undefinedcode-coverage">Code Coverage</h2>
+</a><p>In addition to running tests, the test runner will also capture code coverage 
+information using <a href="http://blanketjs.org/">Blanket.JS</a> and display this at the 
+bottom of the screen. Currently, only statement coverage is displayed.</p>
+<a name="deployment" href="#deployment"><h2 id="undefineddeployment">Deployment</h2>
+</a><p>Open MCT is built to be flexible in terms of the deployment strategies it 
+supports. In order to run in the browser, Open MCT needs:</p>
+<ol>
+<li>HTTP access to sources/resources for the framework, platform, and all active 
+bundles.</li>
+<li>Access to any external services utilized by active bundles. (This means that 
+external services need to support HTTP or some other web-accessible interface, 
+like WebSockets.)</li>
+</ol>
+<p>Any HTTP server capable of serving flat files is sufficient for the first point. 
+The command-line build also packages Open MCT into a <code>.war</code> file for easier 
+deployment on containers such as Apache Tomcat.</p>
+<p>The second point may be less flexible, as it depends upon the specific services 
+to be utilized by Open MCT. Because of this, it is often the set of external 
+services (and the manner in which they are exposed) that determine how to deploy 
+Open MCT.</p>
+<p>One important constraint to consider in this context is the browser&#39;s same 
+origin policy. If external services are not on the same apparent host and port 
+as the client (from the perspective of the browser) then access may be 
+disallowed. There are two workarounds if this occurs:</p>
+<ul>
+<li>Make the external service appear to be on the same host/port, either by 
+actually deploying it there, or by proxying requests to it.</li>
+<li>Enable CORS (cross-origin resource sharing) on the external service. This is 
+only possible if the external service can be configured to support CORS. Care 
+should be exercised if choosing this option to ensure that the chosen 
+configuration does not create a security vulnerability.</li>
+</ul>
+<p>Examples of deployment strategies (and the conditions under which they make the 
+most sense) include:</p>
+<ul>
+<li>If the external services that Open MCT will utilize are all running on 
+<a href="https://tomcat.apache.org/">Apache Tomcat</a>, then it makes sense to run Open 
+MCT Web from the same Tomcat instance as a separate web application. The 
+<code>.war</code> artifact produced by the command line build facilitates this deployment 
+option. (See <a href="https://tomcat.apache.org/tomcat-8.0-doc/deployer-howto.html">https://tomcat.apache.org/tomcat-8.0-doc/deployer-howto.html</a> for 
+general information on deploying in Tomcat.)</li>
+<li>If a variety of external services will be running from a variety of 
+hosts/ports, then it may make sense to use a web server that supports proxying, 
+such as the <a href="http://httpd.apache.org/">Apache HTTP Server</a>. In this 
+configuration, the HTTP server would be configured to proxy (or reverse proxy) 
+requests at specific paths to the various external services, while providing 
+Open MCT as flat files from a different path.</li>
+<li>If a single server component is being developed to handle all server-side 
+needs of an Open MCT instance, it can make sense to serve Open MCT (as 
+flat files) from the same component using an embedded HTTP server such as 
+<a href="http://nancyfx.org/">Nancy</a>.</li>
+<li>If no external services are needed (or if the &#39;external services&#39; will just 
+be generating flat files to read) it makes sense to utilize a lightweight flat 
+file HTTP server such as <a href="http://www.lighttpd.net/">Lighttpd</a>. In this 
+configuration, Open MCT sources/resources would be placed at one path, while 
+the files generated by the external service are placed at another path.</li>
+<li>If all external services support CORS, it may make sense to have an HTTP 
+server that is solely responsible for making Open MCT sources/resources 
+available, and to have Open MCT contact these external services directly. 
+Again, lightweight HTTP servers such as <a href="http://www.lighttpd.net/">Lighttpd</a> 
+are useful in this circumstance. The downside of this option is that additional 
+configuration effort is required, both to enable CORS on the external services, 
+and to ensure that Open MCT can correctly locate these services.</li>
+</ul>
+<p>Another important consideration is authentication. By design, Open MCT does 
+not handle user authentication. Instead, this should typically be treated as a 
+deployment-time concern, where authentication is handled by the HTTP server 
+which provides Open MCT, or an external access management system.</p>
+<a name="configuration" href="#configuration"><h3 id="undefinedconfiguration">Configuration</h3>
+</a><p>In most of the deployment options above, some level of configuration is likely 
+to be needed or desirable to make sure that bundles can reach the external 
+services they need to reach. Most commonly this means providing the path or URL 
+to an external service.</p>
+<p>Configurable parameters within Open MCT are specified via constants 
+(literally, as extensions of the <code>constants</code> category) and accessed via 
+dependency injection by the scripts which need them. Reasonable defaults for 
+these constants are provided in the bundle where they are used. Plugins are 
+encouraged to follow the same pattern.</p>
+<p>Constants may be specified in any bundle; if multiple constants are specified 
+with the same <code>key</code> the highest-priority one will be used. This allows default 
+values to be overridden by specifying constants with higher priority.</p>
+<p>This permits at least three configuration approaches:</p>
+<ul>
+<li>Modify the constants defined in their original bundles when deploying. This is 
+generally undesirable due to the amount of manual work required and potential 
+for error, but is viable if there are a small number of constants to change.</li>
+<li>Add a separate configuration bundle which overrides the values of these 
+constants. This is particularly appropriate when multiple configurations (e.g. 
+development, test, production) need to be managed easily; these can be swapped 
+quickly by changing the set of active bundles in bundles.json.</li>
+<li>Deploy Open MCT and its external services in such a fashion that the 
+default paths to reach external services are all correct.</li>
+</ul>
+<a name="configuration-constants" href="#configuration-constants"><h3 id="undefinedconfiguration-constants">Configuration Constants</h3>
+</a><p>The following constants have global significance:</p>
+<ul>
+<li><code>PERSISTENCE_SPACE</code>: The space in which domain objects should be persisted
+(or read from) when not otherwise specified. Typically this will not need
+to be overridden by other bundles, but persistence adapters may wish to
+consume this constant in order to provide persistence for that space.</li>
+</ul>
+<p>The following configuration constants are recognized by Open MCT bundles:</p>
+<ul>
+<li>Common UI elements - <code>platform/commonUI/general</code><ul>
+<li><code>THEME</code>: A string identifying the current theme symbolically. Individual
+stylesheets (the <code>stylesheets</code> extension category) may specify an optional
+<code>theme</code> property which will be matched against this before inclusion.</li>
+</ul>
+</li>
+<li>CouchDB adapter - <code>platform/persistence/couch</code><ul>
+<li><code>COUCHDB_PATH</code>: URL or path to the CouchDB database to be used for domain 
+object persistence. Should not include a trailing slash.</li>
+</ul>
+</li>
+<li>ElasticSearch adapter - <code>platform/persistence/elastic</code><ul>
+<li><code>ELASTIC_ROOT</code>: URL or path to the ElasticSearch instance to be used for 
+domain object persistence. Should not include a trailing slash.</li>
+<li><code>ELASTIC_PATH</code>: Path relative to the ElasticSearch instance where domain 
+object models should be persisted. Should take the form <code>&lt;index&gt;/&lt;type&gt;</code>.</li>
+</ul>
+</li>
+</ul>
+        <hr>
+    </body>
+</html>

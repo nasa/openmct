@@ -1,0 +1,165 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#version-guide">Version Guide</a><ul>
+<li><a href="#audience">Audience</a></li>
+<li><a href="#version-reporting">Version Reporting</a></li>
+<li><a href="#version-numbering">Version Numbering</a><ul>
+<li><a href="#scope-of-external-api">Scope of External API</a></li>
+</ul>
+</li>
+<li><a href="#incrementing-versions">Incrementing Versions</a></li>
+</ul>
+</li>
+</ul>
+<a name="version-guide" href="#version-guide"><h1 id="undefinedversion-guide">Version Guide</h1>
+</a><p>This document describes semantics and processes for providing version
+numbers for Open MCT, and additionally provides guidelines for dependent
+projects developed by the same team.</p>
+<p>Versions are incremented at specific points in Open MCT&#39;s
+<a href="cycle.html">Development Cycle</a>; see that document for a description of
+sprints and releases.</p>
+<a name="audience" href="#audience"><h2 id="undefinedaudience">Audience</h2>
+</a><p>Individuals interested in consuming version numbers can be categorized as
+follows:</p>
+<ul>
+<li><em>Users</em>: Generally disinterested, occasionally wish to identify version
+to cross-reference against documentation, or to report issues.</li>
+<li><em>Testers</em>: Want to identify which version of the software they are
+testing, e.g. to file issues for defects.</li>
+<li><em>Internal developers</em>: Often, inverse of testers; want to identify which
+version of software was/is in use when certain behavior is observed. Want
+to be able to correlate versions in use with “streams” of development
+(e.g. dev vs. prod), when possible.</li>
+<li><em>External developers</em>: Need to understand which version of software is
+in use when developing/maintaining plug-ins, in order to ensure
+compatibility of their software.</li>
+</ul>
+<a name="version-reporting" href="#version-reporting"><h2 id="undefinedversion-reporting">Version Reporting</h2>
+</a><p>Software versions should be reflected in the user interface of the
+application in three ways:</p>
+<ul>
+<li><em>Version number</em>: A semantic version (see below) which serves both to
+uniquely identify releases, as well as to inform plug-in developers
+about compatibility with previous releases.</li>
+<li><em>Revision identifier</em>: While using git, the commit hash. Supports
+internal developers and testers by uniquely identifying client
+software snapshots.</li>
+<li><em>Branding</em>: Identifies which variant is in use. (Typically, Open MCT
+is re-branded when deployed for a specific mission or center.)</li>
+</ul>
+<a name="version-numbering" href="#version-numbering"><h2 id="undefinedversion-numbering">Version Numbering</h2>
+</a><p>Open MCT shall provide version numbers consistent with
+<a href="http://semver.org/">Semantic Versioning 2.0.0</a>. In summary, versions
+are expressed in a &quot;major.minor.patch&quot; form, and incremented based on
+nature of changes to external API. Breaking changes require a &quot;major&quot;
+version increment; backwards-compatible changes require a &quot;minor&quot;
+version increment; neutral changes (such as bug fixes) require a &quot;patch&quot;
+version increment. A hyphen-separated suffix indicates a pre-release
+version, which may be unstable or may not fully meet compatibility
+requirements.</p>
+<p>Additionally, the following project-specific standards will be used:</p>
+<ul>
+<li>During development, a &quot;-SNAPSHOT&quot; suffix shall be appended to the
+version number. The version number before the suffix shall reflect
+the next expected version number for release.</li>
+<li>Prior to a 1.0.0 release, the <em>minor</em> version will be incremented
+on a per-release basis; the <em>patch</em> version will be incremented on a
+per-sprint basis.</li>
+<li>Starting at version 1.0.0, version numbers will be updated with each
+completed sprint. The version number for the sprint shall be
+determined relative to the previous released version; the decision
+to increment the <em>major</em>, <em>minor</em>, or <em>patch</em> version should be
+made based on the nature of changes during that release. (It is
+recommended that these numbers are incremented as changes are
+introduced, such that at end of release the version number may
+be chosen by simply removing the suffix.)</li>
+<li><p>The first three sprints in a release may be unstable; in these cases, a
+unique version identifier should still be generated, but a suffix
+should be included to indicate that the version is not necessarily
+production-ready. Recommended suffixes are:</p>
+<p>Sprint |  Suffix
+:------:|:--------:
+ 1    | <code>-alpha</code>
+ 2    | <code>-beta</code>
+ 3    | <code>-rc</code></p>
+</li>
+</ul>
+<a name="scope-of-external-api" href="#scope-of-external-api"><h3 id="undefinedscope-of-external-api">Scope of External API</h3>
+</a><p>&quot;External API&quot; refers to the API exposed to, documented for, and used by
+plug-in developers. Changes to interfaces used internally by Open MCT
+(or otherwise not documented for use externally) require only a <em>patch</em>
+version bump.</p>
+<a name="incrementing-versions" href="#incrementing-versions"><h2 id="undefinedincrementing-versions">Incrementing Versions</h2>
+</a><p>At the end of a sprint, the <a href="cycle.html#roles">project manager</a>
+should update (or delegate the task of updating) Open MCT version
+numbers by the following process:</p>
+<ol>
+<li>Update version number in <code>package.json</code><ol>
+<li>Remove <code>-SNAPSHOT</code> suffix.</li>
+<li>Verify that resulting version number meets semantic versioning
+requirements relative to previous stable version. Increment if
+necessary.</li>
+<li>If version is considered unstable (which may be the case during
+the first three sprints of a release), apply a new suffix per
+<a href="#version-numbering">Version Numbering</a> guidance above.</li>
+</ol>
+</li>
+<li>Tag the release.<ol>
+<li>Commit changes to <code>package.json</code> on the <code>master</code> branch.
+The commit message should reference the sprint being closed,
+preferably by a URL reference to the associated Milestone in
+GitHub.</li>
+<li>Verify that build still completes, that application passes
+smoke-testing, and that only differences from tested versions
+are the changes to version number above.</li>
+<li>Push the <code>master</code> branch.</li>
+<li>Tag this commit with the version number, prepending the letter &quot;v&quot;.
+(e.g. <code>git tag v0.9.3-alpha</code>)</li>
+<li>Push the tag to GitHub. (e.g. <code>git push origin v0.9.3-alpha</code>).</li>
+</ol>
+</li>
+<li>Upload a release archive.<ol>
+<li>Run <code>npm pack</code> to generate the archive.</li>
+<li>Use the <a href="https://github.com/nasa/openmct/releases">GitHub release interface</a>
+to draft a new release.</li>
+<li>Choose the existing tag for the new version (created and pushed above.)
+Enter the tag name as the release name as well; see existing releases
+for examples.</li>
+<li>Attach the release archive.</li>
+<li>Designate the release as a &quot;pre-release&quot; as appropriate (for instance,
+when the version number has been suffixed as unstable, or when
+the version number is below 1.0.0.)</li>
+</ol>
+</li>
+<li>Restore snapshot status in <code>package.json</code><ol>
+<li>Remove any suffix from the version number, or increment the
+<em>patch</em> version if there is no suffix.</li>
+<li>Append a <code>-SNAPSHOT</code> suffix.</li>
+<li>Commit changes to <code>package.json</code> on the <code>master</code> branch.
+The commit message should reference the sprint being opened,
+preferably by a URL reference to the associated Milestone in
+GitHub.</li>
+<li>Verify that build still completes, that application passes
+smoke-testing.</li>
+<li>Push the <code>master</code> branch.</li>
+</ol>
+</li>
+</ol>
+<p>Projects dependent on Open MCT being co-developed by the Open MCT
+team should follow a similar process, except that they should
+additionally update their dependency on Open MCT to point to the
+latest archive when removing their <code>-SNAPSHOT</code> status, and
+that they should be pointed back to the <code>master</code> branch after
+this has completed.</p>
+        <hr>
+    </body>
+</html>

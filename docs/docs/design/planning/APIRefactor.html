@@ -1,0 +1,261 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#api-refactoring">API Refactoring</a></li>
+<li><a href="#goals">Goals</a></li>
+<li><a href="#plan">Plan</a><ul>
+<li><a href="#step-1-imperative-bundle-registration">Step 1. Imperative bundle registration</a></li>
+<li><a href="#step-2-incorporate-a-build-step">Step 2. Incorporate a build step</a></li>
+<li><a href="#step-3-separate-repositories">Step 3. Separate repositories</a></li>
+<li><a href="#step-4-design-registration-api">Step 4. Design registration API</a></li>
+<li><a href="#step-5-imperative-extension-registration">Step 5. Imperative extension registration</a></li>
+<li><a href="#step-6-refactor-individual-extensions">Step 6. Refactor individual extensions</a></li>
+<li><a href="#step-7-remove-legacy-bundle-support">Step 7. Remove legacy bundle support</a></li>
+<li><a href="#step-8-release-candidacy">Step 8. Release candidacy</a></li>
+<li><a href="#step-9-release">Step 9. Release</a></li>
+</ul>
+</li>
+</ul>
+<a name="api-refactoring" href="#api-refactoring"><h1 id="undefinedapi-refactoring">API Refactoring</h1>
+</a><p>This document summarizes a path toward implementing API changes
+from the <a href="../proposals/APIRedesign.html">API Redesign</a> for Open MCT
+v1.0.0.</p>
+<a name="goals" href="#goals"><h1 id="undefinedgoals">Goals</h1>
+</a><p>These plans are intended to minimize:</p>
+<ul>
+<li>Waste; avoid allocating effort to temporary changes.</li>
+<li>Downtime; avoid making changes in large increments that blocks
+delivery of new features for substantial periods of time.</li>
+<li>Risk; ensure that changes can be validated quickly, avoid putting
+large effort into changes that have not been validated.</li>
+</ul>
+<a name="plan" href="#plan"><h1 id="undefinedplan">Plan</h1>
+</a><p><img src="APIRefactor-1.png" alt="Diagram 1"></p>
+<a name="step-1--imperative-bundle-registration" href="#step-1--imperative-bundle-registration"><h2 id="undefinedstep-1-imperative-bundle-registration">Step 1. Imperative bundle registration</h2>
+</a><p>Register whole bundles imperatively, using their current format.</p>
+<p>For example, in each bundle add a <code>bundle.js</code> file:</p>
+<pre><code class="lang-js">define([
+    &#39;mctRegistry&#39;,
+    &#39;json!bundle.json&#39;
+], function (mctRegistry, bundle) {
+    mctRegistry.install(bundle, &quot;path/to/bundle&quot;);
+});
+</code></pre>
+<p>Where <code>mctRegistry.install</code> is placeholder API that wires into the
+existing bundle registration mechanisms. The main point of entry
+would need to be adapted to clearly depend on these bundles
+(in the require sense of a dependency), and the framework layer
+would need to implement and integrate with this transitional
+API.</p>
+<p>Benefits:</p>
+<ul>
+<li>Achieves an API Redesign goal with minimal immediate effort.</li>
+<li>Conversion to an imperative syntax may be trivially automated.</li>
+<li>Minimal change; reuse existing bundle definitions, primarily.</li>
+<li>Allows early validation of switch to imperative; unforeseen
+consequences of the change may be detected at this point.</li>
+<li>Allows implementation effort to progress in parallel with decisions
+about API changes, including fundamental ones such as the role of
+Angular. May act in some sense as a prototype to inform those
+decisions.</li>
+<li>Creates a location (framework layer) where subsequent changes to
+the manner in which extensions are registered may be centralized.
+When there is a one-to-one correspondence between the existing
+form of an extension and its post-refactor form, adapters can be
+written here to defer the task of making changes ubiquitously
+throughout bundles, allowing for earlier validation and
+verification of those changes, and avoiding ubiquitous changes
+which might require us to go dark. (Mitigates
+<a href="http://stepaheadsoftware.blogspot.com/2012/09/greenfield-or-refactor-legacy-code-base.html">&quot;greenfield paradox&quot;</a>;
+want to add value with new API but don&#39;t want to discard value
+of tested/proven legacy codebase.)</li>
+</ul>
+<p>Detriments:</p>
+<ul>
+<li>Requires transitional API to be implemented/supported; this is
+waste. May mitigate this by time-bounding the effort put into
+this step to ensure that waste is minimal.</li>
+</ul>
+<p>Note that API changes at this point do not meaningfully reflect
+the desired 1.0.0 API, so no API reviews are necessary.</p>
+<a name="step-2--incorporate-a-build-step" href="#step-2--incorporate-a-build-step"><h2 id="undefinedstep-2-incorporate-a-build-step">Step 2. Incorporate a build step</h2>
+</a><p>After the previous step is completed, there should be a
+straightforward dependency graph among AMD modules, and an
+imperative (albeit transitional) API allowing for other plugins
+to register themselves. This should allow for a build step to
+be included in a straightforward fashion.</p>
+<p>Some goals for this build step:</p>
+<ul>
+<li>Compile (and, preferably, optimize/minify) Open MCT
+sources into a single <code>.js</code> file.<ul>
+<li>It is desirable to do the same for HTML sources, but
+may wish to defer this until a subsequent refactoring
+step if appropriate.</li>
+</ul>
+</li>
+<li>Provide non-code assets in a format that can be reused by
+derivative projects in a straightforward fashion.</li>
+</ul>
+<p>Should also consider which dependency/packaging manager should
+be used by dependent projects to obtain Open MCT. Approaches
+include:</p>
+<ol>
+<li>Plain <code>npm</code>. Dependents then declare their dependency with
+<code>npm</code> and utilize built sources and assets in a documented
+fashion. (Note that there are
+<a href="http://blog.npmjs.org/post/101775448305/npm-and-front-end-packaging">documented challenges</a>
+in using <code>npm</code> in this fashion.)</li>
+<li>Build with <code>npm</code>, but recommend dependents install using
+<code>bower</code>, as this is intended for front-end development. This may
+require checking in built products, however, which
+we wish to avoid (this could be solved by maintaining
+a separate repository for built products.)</li>
+</ol>
+<p>In all cases, there is a related question of which build system
+to use for asset generation/management and compilation/minification/etc.</p>
+<ol>
+<li><a href="https://webpack.github.io/"><code>webpack</code></a>
+is well-suited in principle, as it is specifically
+designed for modules with non-JS dependencies. However,
+there may be limitations and/or undesired behavior here
+(for instance, CSS dependencies get in-lined as style tags,
+removing our ability to control ordering) so it may</li>
+<li><code>gulp</code> or <code>grunt</code>. Commonplace, but both still require
+non-trivial coding and/or configuration in order to produce
+appropriate build artifacts.</li>
+<li><a href="http://blog.keithcirkel.co.uk/how-to-use-npm-as-a-build-tool/">Just <code>npm</code></a>.
+Reduces the amount of tooling being used, but may introduce
+some complexity (e.g. custom scripts) to the build process,
+and may reduce portability.</li>
+</ol>
+<a name="step-3--separate-repositories" href="#step-3--separate-repositories"><h2 id="undefinedstep-3-separate-repositories">Step 3. Separate repositories</h2>
+</a><p>Refactor existing applications built on Open MCT such that they
+are no longer forks, but instead separate projects with a dependency
+on the built artifacts from Step 2.</p>
+<p>Note that this is achievable already using <code>bower</code> (see <code>warp-bower</code>
+branch at <a href="http://developer.nasa.gov/mct/warp">http://developer.nasa.gov/mct/warp</a> for an example.)
+However, changes involved in switching to an imperative API and
+introducing a build process may change (and should simplify) the
+approach used to utilize Open MCT as a dependency, so these
+changes should be introduced first.</p>
+<a name="step-4--design-registration-api" href="#step-4--design-registration-api"><h2 id="undefinedstep-4-design-registration-api">Step 4. Design registration API</h2>
+</a><p>Design the registration API that will replace declarative extension
+categories and extensions (including Angular built-ins and composite
+services.)</p>
+<p>This may occur in parallel with implementation steps.</p>
+<p>It will be necessary
+to have a decision about the role of Angular at this point; are extensions
+registered via provider configuration (Angular), or directly in some
+exposed registry?</p>
+<p>Success criteria here should be based on peer review. Scope of peer
+review should be based on perceived risk/uncertainty surrounding
+proposed changes, to avoid waste; may wish to limit this review to
+the internal team. (The extent to which external
+feedback is available is limited, but there is an inherent timeliness
+to external review; need to balance this.)</p>
+<p>Benefits:</p>
+<ul>
+<li>Solves the &quot;general case&quot; early, allowing for early validation.</li>
+</ul>
+<p>Note that in specific cases, it may be desirable to refactor some
+current &quot;extension category&quot; in a manner that will not appear as
+registries, <em>or</em> to locate these in different
+namespaces, <em>or</em> to remove/replace certain categories entirely.
+This work is deferred intentionally to allow for a solution of the
+general case.</p>
+<a name="step-5--imperative-extension-registration" href="#step-5--imperative-extension-registration"><h2 id="undefinedstep-5-imperative-extension-registration">Step 5. Imperative extension registration</h2>
+</a><p>Register individual extensions imperatively, implementing API changes
+from the previous step. At this stage, <em>usage</em> of the API may be confined
+to a transitional adapter in the framework layer; bundles may continue
+to utilize the transitional API for registering extensions in the
+legacy format.</p>
+<p>An important, ongoing sub-task here will be to discover and define dependencies
+among bundles. Composite services and extension categories are presently
+&quot;implicit&quot;; after the API redesign, these will become &quot;explicit&quot;, insofar
+as some specific component will be responsible for creating any registries.
+As such, &quot;bundles&quot; which <em>use</em> specific registries will need to have an
+enforceable dependency (e.g. require) upon those &quot;bundles&quot; which
+<em>declare</em> those registries.</p>
+<a name="step-6--refactor-individual-extensions" href="#step-6--refactor-individual-extensions"><h2 id="undefinedstep-6-refactor-individual-extensions">Step 6. Refactor individual extensions</h2>
+</a><p>Refactor individual extension categories and/or services that have
+been identified as needing changes. This includes, but is not
+necessarily limited to:</p>
+<ul>
+<li>Views/Representations/Templates (refactored into &quot;components.&quot;)</li>
+<li>Capabilities (refactored into &quot;roles&quot;, potentially.)</li>
+<li>Telemetry (from <code>TelemetrySeries</code> to <code>TelemetryService</code>.)</li>
+</ul>
+<p>Changes should be made one category at a time (either serially
+or separately in parallel) and should involve a tight cycle of:</p>
+<ol>
+<li>Prioritization/reprioritization; highest-value API improvements
+should be done first.</li>
+<li>Design.</li>
+<li>Review. Refactoring individual extensions will require significant
+effort (likely the most significant effort in the process) so changes
+should be validated early to minimize risk/waste.</li>
+<li>Implementation. These changes will not have a one-to-one relationship
+with existing extensions, so changes cannot be centralized; usages
+will need to be updated across all &quot;bundles&quot; instead of centralized
+in a legacy adapter. If changes are of sufficient complexity, some
+planning should be done to spread out the changes incrementally.</li>
+</ol>
+<p>By necessity, these changes may break functionality in applications
+built using Open MCT. On a case-by-case basis, should consider
+providing temporary &quot;legacy support&quot; to allow downstream updates
+to occur as a separate task; the relevant trade here is between
+waste/effort required to maintain legacy support, versus the
+downtime which may be introduced by making these changes simultaneously
+across several repositories.</p>
+<a name="step-7--remove-legacy-bundle-support" href="#step-7--remove-legacy-bundle-support"><h2 id="undefinedstep-7-remove-legacy-bundle-support">Step 7. Remove legacy bundle support</h2>
+</a><p>Update bundles to remove any usages of legacy support for bundles
+(including that used by dependent projects.) Then, remove legacy
+support from Open MCT.</p>
+<a name="step-8--release-candidacy" href="#step-8--release-candidacy"><h2 id="undefinedstep-8-release-candidacy">Step 8. Release candidacy</h2>
+</a><p>Once API changes are complete, Open MCT should enter a release
+candidacy cycle. Important things to look at here:</p>
+<ul>
+<li>Are changes really complete?<ul>
+<li>Are they sufficiently documented?</li>
+<li>Are they sufficiently tested?</li>
+</ul>
+</li>
+<li>Are changes really sufficient?<ul>
+<li>Do reviewers think they are usable?</li>
+<li>Does the development team find them useful in practice? This
+will require calendar time to ascertain; should allocate time
+for this, particularly in alignment with the sprint/release
+cycle.</li>
+<li>Has learning curve been measurably decreased? Comparing a to-do
+list tutorial to [other examples(<a href="http://todomvc.com/">http://todomvc.com/</a>) could
+provide an empirical basis to this. How much code is required?
+How much explanation is required? How many dependencies must
+be installed before initial setup?</li>
+<li>Does the API offer sufficient power to implement the extensions we
+anticipate?</li>
+<li>Any open API-related issues which should block a 1.0.0 release?</li>
+</ul>
+</li>
+</ul>
+<p>Any problems identified during release candidacy will require
+subsequent design changes and planning.</p>
+<a name="step-9--release" href="#step-9--release"><h2 id="undefinedstep-9-release">Step 9. Release</h2>
+</a><p>Once API changes have been verified and validated, proceed
+with release, including:</p>
+<ul>
+<li>Tagging as version 1.0.0 (at an appropriate time in the
+sprint/release cycle.)</li>
+<li>Close any open issues which have been resolved (or made obsolete)
+by API changes.</li>
+</ul>
+        <hr>
+    </body>
+</html>

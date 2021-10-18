@@ -1,0 +1,73 @@
+<!--
+ Open MCT, Copyright (c) 2014-2016, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class="l-style-guide s-text">
+    <p class="doc-title">Open MCT Style Guide</p>
+    <h1>Introduction</h1>
+    <div class="l-section">
+    <p>Open MCT is a robust, extensible telemetry monitoring and situational awareness system that provides a framework supporting fast and efficient multi-mission deployment. This guide will explore the major concepts and design elements of Open MCT. Its overall goal is to guide you in creating new features and plugins that seamlessly integrate with the base application.</p>
+    </div>
+
+    <div class="l-section">
+        <h2>Everything Is An Object</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+            <p>First and foremost, Open MCT uses a “object-oriented” approach: everything in the system is an object. Objects come in different types, and some objects can contain other objects of given types. This is similar to how the file management system of all modern computers works: a folder object can contain any other type of object, a presentation file can contain an image. This is conceptually the same in Open MCT.</p>
+            <p>As you develop plugins for Open MCT, consider how a generalized component might be combined with others when designing to create a rich and powerful larger object, rather than adding a single monolithic, non-modular plugin. To solve a particular problem or allow a new feature in Open MCT, you may need to introduce more than just one new object type.</p>
+            </div>
+            <div class="col">
+                <img src="example/styleguide/res/images/diagram-objects.svg" />
+            </div>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Object Types</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+            <p>In the same way that different types of files might be opened and edited by different applications, objects in Open MCT also have different types. For example, a Display Layout provides a way that other objects that display information can be combined and laid out in a canvas area to create a recallable display that suits the needs of the user that created it. A Telemetry Panel allows a user to collect together Telemetry Points and visualize them as a plot or a table.</p>
+            <p>Object types provide a containment model that guides the user in their choices while creating a new object, and allows view normalization when flipping between different views. When a given object may only contain other objects of certain types, advantages emerge: the result of adding new objects is more predictable, more alternate views can be provided because the similarities between the contained objects is close, and we can provide more helpful and pointed guidance to the user because we know what types of objects they might be working with at a given time.</p>
+            <p>The types of objects that a container can hold should be based on the purpose of the container and the views that it affords. For example, a Folder’s purpose is to allow a user to conceptually organize objects of all other types; a Folder must therefore be able to contain an object of any type.</p>
+            </div>
+            <div class="col">
+                <img src="example/styleguide/res/images/diagram-containment.svg" />
+            </div>
+        </div>
+    </div>
+
+    <div class="l-section">
+        <h2>Object Views</h2>
+        <div class="cols cols1-1">
+            <div class="col">
+                <p>Views are simply different ways to view the content of a given object. For example, telemetry data could be viewed as a plot or a table. A clock can display its time in analog fashion or with digital numbers. In each view, all of the content is present; it’s just represented differently. When providing views for an object, all the content of the object should be present in each view.</p>
+            </div>
+            <div class="col">
+                <img src="example/styleguide/res/images/diagram-views.svg" />
+            </div>
+        </div>
+    </div>
+
+
+
+    <p></p>
+    <p></p>
+    <p></p>
+</div>

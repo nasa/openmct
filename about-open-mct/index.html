@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+    <title>About Open MCT — Open MCT</title>
+    <link rel="icon" type="image/png"
+          href="../static/res/images/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../static/res/images/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="../static/res/images/favicons/favicon-16x16.png" sizes="16x16">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="../static/res/css/normalize.min.css">
+    <link rel="stylesheet" href="../static/res/css/styles.css">
+    <link rel="shortcut icon" href="../static/res/images/favicons/favicon.ico">
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r;
+            i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+            a = s.createElement(o),
+                m = s.getElementsByTagName(o)[0];
+            a.async = 1;
+            a.src = g;
+            m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-76951009-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script>
+        (function () {
+            var loc = window.location;
+            if (!loc.host.match(/^localhost:[0-9]*$/) && !loc.host.match(/^127\.0\.0\.1:[0-9]*$/) &&
+                loc.protocol === 'http:') {
+                loc.protocol = 'https:'
+            }
+        })();
+    </script>
+    <script src="../static/res/scripts/jquery-3.1.1.min.js"></script>
+    <script src="../static/res/scripts/utils.js"></script>
+    
+</head>
+<body>
+<nav class="wo">
+    <div class="main-nav wi">
+        <a href="https://www.nasa.gov"
+           class="logo logo-bg logo-nasa"
+           target="_blank"
+           title="Link to NASA.com"
+           aria-label="NASA logo"></a>
+
+        <a href="../"
+           class="logo logo-bg logo-openmct"
+           aria-label="Open MCT logo"></a>
+
+        <div class="l-nav-links">
+            <a href="../"
+               class="nav-link mobile-sm-only">Home</a>
+            
+            <a href="../about-open-mct/" class="nav-link">About</a></li>
+            
+            <a href="../whos-using-open-mct/" class="nav-link">Who Is Using</a></li>
+            
+            <a href="../getting-started/" class="nav-link">Getting Started</a></li>
+            
+            <a href="../documentation/" class="nav-link">Documentation</a></li>
+            
+            <a href="../plugins/" class="nav-link">Plugins</a></li>
+            
+            <a href="https://github.com/nasa/openmct/discussions" class="nav-link"
+               target="_blank" rel="noreferrer" title="Open MCT Github Discussions">Discuss</a>
+            <a href="https://openmct-demo.herokuapp.com/" class="nav-link"
+               target="_blank" rel="noreferrer">Try it live</a>
+            <a href="https://github.com/nasa/openmct"
+               class="nav-link t-nav-link-github-repo mobile-sm-only"
+               target="_blank" rel="noreferrer">Github Repository</a>
+            <a href="https://github.com/nasa/openmct"
+               class="logo logo-github"
+               target="_blank"
+               aria-label="Link to Open MCT Github repository"
+               title="Link to Open MCT Github repository"></a>
+        </div>
+
+        <a class="icon-menu"
+           onclick="toggleClass('.l-nav-links','expanded')"
+           aria-label="Main navigation"></a>
+    </div>
+</nav>
+<div class="l-main wo">
+    
+<div class="p-body about-open-mct">
+    <div class="t-hero l-hero-holder">
+      <div class="l-hero-main wo">
+        <div class="l-hero-text cols cols-equal wi">
+          <div class="col">
+            <h1>About Open MCT</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="l-page-section  wo">
+    <div class="wi">
+        <h2>What is Open MCT?</h2>
+        
+        <div class="cols cols-1-2">
+            <div class="col col-left ">
+                <div class="c-wrap">
+                    
+                    <p>Open MCT (Mission Control Technologies) is a next-generation mission control framework for visualization of data on desktop and mobile devices. It is developed at NASA's <a href="https://www.nasa.gov/centers/ames/home/index.html">Ames Research Center</a> in collaboration with the <a href="http://www.jpl.nasa.gov/">Jet Propulsion Laboratory</a>, and is being used by NASA for data analysis of spacecraft missions, as well as planning and operation of experimental rover systems. As a generalizable and open source framework, Open MCT could be used as the basis for building applications for planning, operation, and analysis of any systems producing telemetry data.</p>
+<p>Open MCT is designed to meet the rapidly evolving needs of mission control systems. At NASA, the requirements for Open MCT are being driven by a need to support distributed operations, access to data anywhere, data visualization for spacecraft analysis that spans multiple data sources, and flexible reconfiguration to support multiple missions and operator use cases. Open MCT brings together many of the functions of mission operations, alleviating the need for operators to switch between different applications to view all necessary data.</p>
+<p>To find out how to start using and extending Open MCT, please see our <a href="../getting-started">getting started page</a>, and our <a href="../documentation">documentation</a>.</p>
+<p>If you have any questions, need technical support or want to see what's new, visit Open MCT Github <a href="https://github.com/nasa/openmct/discussions">Discussions</a>,  where we have a Q&amp;A, updates on releases and a forum to showcase projects the community has created. If you need to communicate with the Open MCT Team directly, <a href="mailto:arc-dl-openmct@mail.nasa.gov">contact us</a>.</p>
+
+                </div>
+                
+            </div>
+            <div class="col col-right ">
+                <div class="c-wrap">
+                    
+                    <p><img src="../static/res/images/Open-MCT.Browse.Layout-3.jpg" alt="Open MCT Layout"></p>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="l-page-section l-graphic-boxes wo">
+    <div class="wi">
+        
+        
+        <div class="cols cols-equal multi-col">
+            <div class="col ">
+                <div class="c-wrap">
+                <h3>Web-based, responsive design</h3>
+                <p>Open MCT is a responsive web-based application framework providing data visualization and mission control, from anywhere, on desktop or mobile platforms. Being web-based simplifies support, removing the need to deliver updates to multiple machines. Supporting mobile enables off-duty operators to remotely monitor system state, and shortens the handover period when they come on-duty by allowing them to quickly get up to speed.</p>
+
+                </div>
+                
+                <div class="c-wrap graphic">
+                    <img class="graphic" src="../static/res/images/graphic-mac-iphone-1.jpg"
+                         alt="A screen shot of Open MCT running on the iPhone" />
+                </div>
+                
+            </div>
+            <div class="col ">
+                <div class="c-wrap">
+                <h3>Object-oriented, user-composable</h3>
+                <p>Open MCT represents data and views as objects which can be composed in different ways. For example, activities can be composed to build timelines, telemetry points can be composed into plots, tables, and other views. Views themselves can be composed to create layouts of multiple display elements that are sized and placed by the user. Data can be displayed with rich graphical views such as plots and imagery. Composition uses direct and intuitive drag and drop operations.</p>
+
+                </div>
+                
+                <div class="c-wrap graphic">
+                    <img class="graphic" src="../static/res/images/graphic-tree-closeup-1.png"
+                         alt="A screen shot showing the Open MCT object tree" />
+                </div>
+                
+            </div>
+            <div class="col ">
+                <div class="c-wrap">
+                <h3>Extensible and Flexible Architecture</h3>
+                <p>The need to support multiple missions has driven a <a href="../docs/architecture/">software architecture</a> that emphasizes reusability, modularity, and extensibility. The core functionality of Open MCT can be customized with plugins to support the specific needs of missions, across multiple domains. In addition to the features provided by the Open MCT framework itself, Open MCT provides an extensible public API to enable the development of new visualizations, integration with telemetry sources, and other new features.
+<a name="how-nasa-using"></a></p>
+
+                </div>
+                
+                <div class="c-wrap graphic">
+                    <img class="graphic" src="../static/res/images/graphic-plugins-diagram.png"
+                         alt="A diagram showing that an application built on Open MCT is a collection of plugins that call the core API." />
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="l-page-section no-margin l-graphic-boxes wo">
+    <div class="wi">
+        <h2>How NASA is using Open MCT</h2>
+        <div class="t-intro"><p>Open MCT is currently used to support distributed spacecraft operations across multiple locations. NASA itself has many missions currently using Open MCT as well as "VISTA", which is a multi-mission operations system built with Open MCT.</p>
+</div>
+        <div class="cols cols-equal">
+            <div class="col col-left ">
+                <div class="c-wrap">
+                    
+                    <p><h3>Open MCT</h3>Open MCT is currently in use supporting multiple missions at NASA including <a target='_blank' href='https://www.jpl.nasa.gov/cubesat/missions/asteria.php'>ASTERIA</a>, the <a target='_blank' href='https://coldatomlab.jpl.nasa.gov/'>Cold Atom Laboratory</a> operating on the ISS, and <a target='_blank' href='https://www.jpl.nasa.gov/cubesat/missions/marco.php'>Mars Cube One</a>, which played an integral role supporting the InSight lander on Mars.</p>
+<p>Open MCT is also being used at NASA's Ames Research Center to support the development of lunar rover mission concepts. Open MCT provides integrated situational awareness, health monitoring and telemetry display to many segments of rover mission teams, including operators, instrument specialists and strategic planners.</p>
+<p><h3>VISTA</h3>VISualization for Telemetry Analysis is a multi-mission telemetry analysis tool developed in collaboration with the Jet Propulsion Laboratory, and built on Open MCT. It supports several JPL missions including <a target='_blank' href='https://mars.nasa.gov/mars2020/'>Mars 2020</a>, <a target='_blank' href='https://www.jpl.nasa.gov/missions/jason-3/'>Jason 3</a>, and others.<a name="possibilities"></a></p>
+
+                </div>
+                
+            </div>
+            <div class="col col-right ">
+                <div class="c-wrap">
+                    
+                    
+                </div>
+                
+                    <img class="graphic" src="fixed-rp-15-layout.png"
+                         alt="Screenshot of the WARP software showing a layout that includes plots, images, and other display elements"/>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="l-page-section  wo">
+    <div class="wi">
+        <h2>Open MCT Possibilities</h2>
+        
+        <div class="cols cols-equal">
+            <div class="col col-left ">
+                <div class="c-wrap">
+                    
+                    <p>Open MCT can be adapted for planning and operations of any system that produces telemetry. While the framework is developed to support space missions, its core concepts are not unique to that domain. It can display streaming and historical data, imagery, timelines, procedures, and other data visualizations in one place.</p>
+<p>To use Open MCT, see our <a href="../getting-started">getting started guide</a>. In order to integrate Open MCT with sources of telemetry data, please see <a href="../docs/tutorials/#telemetry-adapter">our tutorial</a> on creating a telemetry adaptor.</p>
+<p><a id="roadmap"></a></p>
+
+                </div>
+                
+            </div>
+            <div class="col col-right ">
+                <div class="c-wrap">
+                    
+                    <p>Open MCT could be adapted for applications as diverse as:</p>
+<ul>
+<li>Monitoring of IOT devices</li>
+<li>Drones</li>
+<li>Cubesats</li>
+<li>Robotics</li>
+<li>High altitude balloons</li>
+<li>Electronic health monitoring</li>
+<li>Computer and network performance monitoring</li>
+<li>Enterprise data visualization</li>
+<li>Process control monitoring</li>
+</ul>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</div>
+<div class="l-page-section t-footer wo">
+    <div class="t-footer-content wi">
+        <ul class="list-vertical no-bullets">
+            <li>Site Editor <b>Andrew Henry</b></li>
+            <li>NASA Official <b>Jay Trimble</b></li>
+        </ul>
+        <ul class="list-vertical no-bullets">
+            <li><a href="https://www.nasa.gov/about/highlights/HP_Privacy.html" target="_blank">Privacy Policy and
+                Important Notices</a></li>
+            <li><a href="https://www.usa.gov/" target="_blank">USA.gov</a></li>
+        </ul>
+    </div>
+
+</div>
+
+</div>
+</body>
+</html>

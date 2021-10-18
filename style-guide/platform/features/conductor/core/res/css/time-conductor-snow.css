@@ -1,0 +1,1573 @@
+@charset "UTF-8";
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/************************** FEATURES */
+/************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
+/************************** RATIOS */
+/************************** LAYOUT */
+/*************** Panes */
+/*************** Overlay */
+/*************** Progress Overlay */
+/*************** Items */
+/*************** Tree */
+/*************** Tabular */
+/*************** Imagery */
+/*************** Ticks */
+/*************** Plots */
+/* min plot height is based on user testing to find minimum useful height */
+/*************** Bubbles */
+/*************** Forms */
+/*************** Wait Spinner Defaults */
+/************************** CONTROLS */
+/************************** PATHS */
+/************************** TIMINGS */
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*********************************************** CONTROLS, FORM ELEMENTS */
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* REQUIRES /platform/commonUI/general/res/sass/_constants.scss */
+/************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
+/************************** MOBILE TREE MENU DIMENSIONS */
+/************************** DEVICE WIDTHS */
+/************************** MEDIA QUERIES: WINDOW CHECKS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
+/************************** MEDIA QUERIES: WINDOWS FOR SPECIFIC ORIENTATIONS FOR EACH DEVICE */
+/************************** DEVICE PARAMETERS FOR MENUS/REPRESENTATIONS */
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* REQUIRES /platform/commonUI/general/res/sass/mobile/_constants.scss */
+/************************** CHAR UNICODES */
+/************************** 16 PX CLASSES */
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-alert-rect:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-alert-triangle:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-down:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-left:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-right:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-double-up:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-tall-up:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-tall-down:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-double-down:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrow-up:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-asterisk:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-bell:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-box:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-box-with-arrow:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-check:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-connectivity:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-database-in-brackets:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-eye-open:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-gear:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-hourglass:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-info:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-link:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-lock:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-minus:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-people:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-person:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-plus:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-trash:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-x:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-brackets:before {
+  content: "";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrows-out:before {
+  content: "󡀀";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrows-right-left:before {
+  content: "󡀁";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-arrows-up-down:before {
+  content: "󡀂";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-bullet:before {
+  content: "󡀄";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-calendar:before {
+  content: "󡀅";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-chain-links:before {
+  content: "󡀆";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-collapse-pane-left:before {
+  content: "󡀇";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-collapse-pane-right:before {
+  content: "󡀈";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-download:before {
+  content: "󡀉";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-duplicate:before {
+  content: "󡀐";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-folder-new:before {
+  content: "󡀑";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-fullscreen-collapse:before {
+  content: "󡀒";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-fullscreen-expand:before {
+  content: "󡀓";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-layers:before {
+  content: "󡀔";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-line-horz:before {
+  content: "󡀕";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-magnify:before {
+  content: "󡀖";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-magnify-in:before {
+  content: "󡀗";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-magnify-out:before {
+  content: "󡀘";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-menu-hamburger:before {
+  content: "󡀙";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-move:before {
+  content: "󡀠";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-new-window:before {
+  content: "󡀡";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-paint-bucket:before {
+  content: "󡀢";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-pause:before {
+  content: "󡀣";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-pencil:before {
+  content: "󡀤";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-play:before {
+  content: "󡀥";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-plot-resource:before {
+  content: "󡀦";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-pointer-left:before {
+  content: "󡀧";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-pointer-right:before {
+  content: "󡀨";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-refresh:before {
+  content: "󡀩";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-save:before {
+  content: "󡀰";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-sine:before {
+  content: "󡀱";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-T:before {
+  content: "󡀲";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-thumbs-strip:before {
+  content: "󡀳";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-two-parts-both:before {
+  content: "󡀴";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-two-parts-one-only:before {
+  content: "󡀵";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-resync:before {
+  content: "󡀶";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-reset:before {
+  content: "󡀷";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-x-in-circle:before, mct-include.l-toi-holder .l-toi .t-button-unpin:before {
+  content: "󡀸";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-brightness:before {
+  content: "󡀹";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-contrast:before {
+  content: "󡁀";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-expand:before {
+  content: "󡁁";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-activity:before {
+  content: "󡄀";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-activity-mode:before {
+  content: "󡄁";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-autoflow-tabular:before {
+  content: "󡄂";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-clock:before, mct-include.l-toi-holder .l-toi .t-button-resync:before {
+  content: "󡄃";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-database:before {
+  content: "󡄄";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-database-query:before {
+  content: "󡄅";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-dataset:before {
+  content: "󡄆";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-datatable:before {
+  content: "󡄇";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-dictionary:before {
+  content: "󡄈";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-folder:before {
+  content: "󡄉";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-image:before {
+  content: "󡄐";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-layout:before {
+  content: "󡄑";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-object:before {
+  content: "󡄒";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-object-unknown:before {
+  content: "󡄓";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-packet:before {
+  content: "󡄔";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-page:before {
+  content: "󡄕";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-plot-overlay:before {
+  content: "󡄖";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-plot-stacked:before {
+  content: "󡄗";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-session:before {
+  content: "󡄘";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular:before {
+  content: "󡄙";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular-lad:before {
+  content: "󡄠";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular-lad-set:before {
+  content: "󡄡";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular-realtime:before {
+  content: "󡄢";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-tabular-scrolling:before {
+  content: "󡄣";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-telemetry:before {
+  content: "󡄤";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-telemetry-panel:before {
+  content: "󡄥";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-timeline:before {
+  content: "󡄦";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-timer:before {
+  content: "󡄧";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-topic:before {
+  content: "󡄨";
+  font-family: "symbolsfont"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-box-with-dashed-lines:before {
+  content: "󡄩";
+  font-family: "symbolsfont"; }
+
+/************************** 12 PX CLASSES */
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-eye-open-12px:before {
+  content: "";
+  font-family: "symbolsfont-12px"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-collapse-pane-left-12px:before {
+  content: "󡀇";
+  font-family: "symbolsfont-12px"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-collapse-pane-right-12px:before {
+  content: "󡀈";
+  font-family: "symbolsfont-12px"; }
+
+/* line 2, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_glyphs.scss */
+.icon-folder-12px:before {
+  content: "󡄉";
+  font-family: "symbolsfont-12px"; }
+
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 22, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.triangle {
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-left: 5px solid #0099cc;
+  border-bottom: 5px solid transparent; }
+  /* line 26, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+  .triangle.triangle-down {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-top: 5px solid #0099cc;
+    border-right: 5px solid transparent; }
+
+/* line 31, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.ui-symbol, .t-item-icon, .time-conductor-icon:before, .l-time-conductor .mode-selector .s-menu-button:before,
+.l-time-conductor .time-delta:before {
+  font-family: 'symbolsfont';
+  -webkit-font-smoothing: antialiased; }
+
+/* line 36, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.ui-symbol.icon, .t-item-icon, .icon.time-conductor-icon:before, .time-conductor-icon.t-item-icon:before, .l-time-conductor .mode-selector .icon.s-menu-button:before, .l-time-conductor .mode-selector .s-menu-button.t-item-icon:before,
+.l-time-conductor .icon.time-delta:before,
+.l-time-conductor .time-delta.t-item-icon:before {
+  color: #0099cc;
+  font-size: inherit; }
+  /* line 39, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+  .ui-symbol.icon.alert, .alert.t-item-icon, .icon.alert.time-conductor-icon:before, .alert.time-conductor-icon.t-item-icon:before, .l-time-conductor .mode-selector .icon.alert.s-menu-button:before, .l-time-conductor .mode-selector .alert.s-menu-button.t-item-icon:before,
+  .l-time-conductor .icon.alert.time-delta:before,
+  .l-time-conductor .alert.time-delta.t-item-icon:before {
+    color: #ff3c00; }
+    /* line 41, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+    .ui-symbol.icon.alert:hover, .alert.t-item-icon:hover, .icon.alert.time-conductor-icon:hover:before, .alert.time-conductor-icon.t-item-icon:hover:before, .l-time-conductor .mode-selector .icon.alert.s-menu-button:hover:before, .l-time-conductor .mode-selector .alert.s-menu-button.t-item-icon:hover:before,
+    .l-time-conductor .icon.alert.time-delta:hover:before,
+    .l-time-conductor .alert.time-delta.t-item-icon:hover:before {
+      color: #ff8a66; }
+
+/* line 47, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.bar .ui-symbol, .bar .t-item-icon, .bar .time-conductor-icon:before, .bar .l-time-conductor .mode-selector .s-menu-button:before, .l-time-conductor .mode-selector .bar .s-menu-button:before, .bar
+.l-time-conductor .time-delta:before,
+.l-time-conductor .bar .time-delta:before {
+  display: inline-block; }
+
+/* line 51, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.invoke-menu {
+  text-shadow: none;
+  display: inline-block; }
+
+/* line 56, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.s-menu-button .invoke-menu,
+.icon.major .invoke-menu, .major.t-item-icon .invoke-menu {
+  margin-left: 3px; }
+
+/* line 61, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.menu .type-icon,
+.tree-item .type-icon,
+.super-menu.menu .menu-item-a:before {
+  position: absolute; }
+
+/* line 67, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+.t-item-icon {
+  line-height: inherit;
+  position: relative; }
+  /* line 73, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+  .t-item-icon.l-icon-link {
+    /*        .t-item-icon-glyph {
+            &:after {
+                color: $colorIconLink;
+                content: '\e921'; //$glyph-icon-link;
+                height: auto; width: auto;
+                position: absolute;
+                left: 0; top: 0; right: 0; bottom: 20%;
+                @include transform-origin(bottom left);
+                @include transform(scale(0.3));
+                z-index: 2;
+            }
+        }*/ }
+    /* line 74, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_icons.scss */
+    .t-item-icon.l-icon-link:after {
+      color: #49dedb;
+      content: "";
+      height: auto;
+      width: auto;
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 20%;
+      -webkit-transform-origin: bottom left;
+      -moz-transform-origin: bottom left;
+      -ms-transform-origin: bottom left;
+      -o-transform-origin: bottom left;
+      transform-origin: bottom left;
+      -webkit-transform: scale(0.3);
+      -moz-transform: scale(0.3);
+      -ms-transform: scale(0.3);
+      -o-transform: scale(0.3);
+      transform: scale(0.3);
+      z-index: 2; }
+
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2015, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 29, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+.l-time-conductor-holder {
+  border-top: 1px solid rgba(102, 102, 102, 0.2);
+  min-width: 500px;
+  padding-top: 5px; }
+
+/* line 35, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+.time-conductor-icon {
+  height: 18px !important;
+  width: 18px;
+  position: relative; }
+  /* line 42, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .time-conductor-icon:before {
+    color: #b3b3b3;
+    content: "";
+    font-size: 18px;
+    line-height: normal;
+    display: block;
+    width: 100%;
+    height: 100%;
+    z-index: 1; }
+  /* line 55, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .time-conductor-icon div[class*="hand"] {
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    -webkit-animation-iteration-count: infinite;
+    -moz-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-timing-function: linear;
+    animation-timing-function: linear;
+    position: absolute;
+    height: 2px;
+    width: 2px;
+    left: 50%;
+    top: 50%;
+    z-index: 2; }
+    /* line 67, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .time-conductor-icon div[class*="hand"]:before {
+      background: #b3b3b3;
+      content: '';
+      display: block;
+      position: absolute;
+      width: 100%;
+      bottom: -1px; }
+    /* line 75, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .time-conductor-icon div[class*="hand"].hand-little {
+      z-index: 2;
+      -webkit-animation-duration: 12s;
+      -moz-animation-duration: 12s;
+      animation-duration: 12s; }
+      /* line 78, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .time-conductor-icon div[class*="hand"].hand-little:before {
+        height: 6px; }
+    /* line 82, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .time-conductor-icon div[class*="hand"].hand-big {
+      z-index: 1;
+      -webkit-animation-duration: 1s;
+      -moz-animation-duration: 1s;
+      animation-duration: 1s; }
+      /* line 85, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .time-conductor-icon div[class*="hand"].hand-big:before {
+        height: 7.2px; }
+
+/* line 92, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+.l-time-conductor {
+  position: relative; }
+  /* line 101, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor > .l-row-elem {
+    box-sizing: border-box;
+    width: 100%;
+    position: relative; }
+  /* line 116, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor .time-delta:before {
+    color: #6178dc; }
+  /* line 121, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor .l-time-conductor-inputs-holder,
+  .l-time-conductor .l-time-conductor-inputs-and-ticks,
+  .l-time-conductor .l-time-conductor-zoom-w {
+    font-size: 0.8rem; }
+  /* line 127, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor .l-time-conductor-inputs-holder {
+    height: 25px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none; }
+    /* line 139, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w {
+      height: 100%;
+      position: absolute; }
+      /* line 143, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w .title {
+        display: inline-block;
+        margin-right: 3px; }
+      /* line 147, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w.start-w {
+        background-image: -webkit-linear-gradient(-540deg, transparent, #fcfcfc 50px);
+        background-image: linear-gradient(270deg, transparent, #fcfcfc 50px);
+        padding-right: 50px; }
+        /* line 150, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+        .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w.start-w .title:before {
+          content: 'Start'; }
+      /* line 154, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w.end-w {
+        background-image: -webkit-linear-gradient(-360deg, transparent, #fcfcfc 50px);
+        background-image: linear-gradient(90deg, transparent, #fcfcfc 50px);
+        padding-left: 50px;
+        right: 0; }
+        /* line 158, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+        .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w.end-w .title:before {
+          content: 'End'; }
+      /* line 162, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w .l-time-conductor-inputs {
+        pointer-events: auto; }
+      /* line 165, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w input[type="text"] {
+        -webkit-transition-property: padding;
+        -moz-transition-property: padding;
+        transition-property: padding;
+        -webkit-transition-duration: 250ms;
+        -moz-transition-duration: 250ms;
+        transition-duration: 250ms;
+        -webkit-transition-timing-function: ease-in-out;
+        -moz-transition-timing-function: ease-in-out;
+        transition-timing-function: ease-in-out;
+        -webkit-transition-delay: 0;
+        -moz-transition-delay: 0;
+        transition-delay: 0; }
+      /* line 168, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w .time-range-input input[type="text"] {
+        width: 165px; }
+      /* line 171, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w .hrs-min-input input[type="text"] {
+        width: 60px; }
+      /* line 174, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-holder .l-time-range-w .icon-calendar {
+        margin-top: 4px; }
+  /* line 180, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor .l-time-conductor-inputs-and-ticks {
+    height: 25px; }
+    /* line 183, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-time-conductor-inputs-and-ticks mct-conductor-axis {
+      display: block;
+      position: relative;
+      width: 100%; }
+    /* line 188, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-time-conductor-inputs-and-ticks .l-axis-holder {
+      height: 25px;
+      position: absolute;
+      left: 10px;
+      right: 10px; }
+      /* line 193, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-and-ticks .l-axis-holder svg {
+        text-rendering: geometricPrecision;
+        width: 100%;
+        height: 100%; }
+        /* line 197, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+        .l-time-conductor .l-time-conductor-inputs-and-ticks .l-axis-holder svg > g {
+          font-size: 0.9em; }
+        /* line 200, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+        .l-time-conductor .l-time-conductor-inputs-and-ticks .l-axis-holder svg path {
+          display: none; }
+        /* line 204, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+        .l-time-conductor .l-time-conductor-inputs-and-ticks .l-axis-holder svg line {
+          stroke: #b0b0b0; }
+        /* line 208, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+        .l-time-conductor .l-time-conductor-inputs-and-ticks .l-axis-holder svg text {
+          fill: #b0b0b0; }
+  /* line 215, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor .l-data-visualization-holder {
+    height: 16px;
+    z-index: 2; }
+    /* line 219, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-data-visualization-holder .l-page-button,
+    .l-time-conductor .l-data-visualization-holder .l-data-visualization {
+      position: absolute;
+      top: 0;
+      bottom: 0; }
+    /* line 226, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-data-visualization-holder .l-page-button {
+      display: none; }
+    /* line 241, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-data-visualization-holder .l-data-visualization {
+      background: #e3e3e3;
+      left: 10px;
+      right: 10px; }
+      /* line 246, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-data-visualization-holder .l-data-visualization:hover .l-toi-holder.hover {
+        opacity: 1; }
+      /* line 249, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-data-visualization-holder .l-data-visualization:hover .l-toi-holder.pinned.active {
+        opacity: 0.4; }
+        /* line 251, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+        .l-time-conductor .l-data-visualization-holder .l-data-visualization:hover .l-toi-holder.pinned.active .l-toi-val {
+          pointer-events: none;
+          opacity: 0; }
+  /* line 260, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor .l-time-conductor-controls {
+    align-items: center;
+    margin-top: 5px; }
+    /* line 263, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-time-conductor-controls .l-time-conductor-zoom-w {
+      -webkit-box-pack: end;
+      -moz-box-pack: end;
+      box-pack: end;
+      -webkit-justify-content: flex-end;
+      -moz-justify-content: flex-end;
+      -ms-justify-content: flex-end;
+      -o-justify-content: flex-end;
+      justify-content: flex-end;
+      -ms-flex-pack: end; }
+      /* line 265, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-controls .l-time-conductor-zoom-w .time-conductor-zoom {
+        height: 20px;
+        min-width: 100px;
+        width: 20%; }
+      /* line 270, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-controls .l-time-conductor-zoom-w .time-conductor-zoom-current-range {
+        color: rgba(0, 0, 0, 0.2); }
+  /* line 280, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .time-conductor-icon:before, .l-time-conductor.lad-mode .time-conductor-icon:before {
+    color: #6178dc; }
+  /* line 283, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .time-conductor-icon div[class*="hand"], .l-time-conductor.lad-mode .time-conductor-icon div[class*="hand"] {
+    -webkit-animation-name: clock-hands;
+    -moz-animation-name: clock-hands;
+    animation-name: clock-hands; }
+    /* line 285, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.realtime-mode .time-conductor-icon div[class*="hand"]:before, .l-time-conductor.lad-mode .time-conductor-icon div[class*="hand"]:before {
+      background: #6178dc; }
+  /* line 293, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error), .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error) {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0; }
+    /* line 299, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error):hover, .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error):focus, .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error):hover, .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error):focus {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      -ms-appearance: none;
+      -o-appearance: none;
+      appearance: none;
+      border-radius: 4px;
+      box-sizing: border-box;
+      box-shadow: inset rgba(0, 0, 0, 0.6) 0 1px 3px;
+      background: #fff;
+      border: none;
+      color: #666;
+      outline: none;
+      padding: 3px 5px; }
+      /* line 328, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_mixins.scss */
+      .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error):hover.error, .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error):focus.error, .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error):hover.error, .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w input[type="text"]:not(.error):focus.error {
+        background-color: #990000;
+        color: rgba(255, 255, 255, 0.6); }
+  /* line 305, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w .icon-calendar, .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w .icon-calendar {
+    display: none; }
+  /* line 308, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w.start-date, .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w.start-date {
+    display: none; }
+  /* line 311, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w.end-date, .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w.end-date {
+    pointer-events: none; }
+    /* line 313, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-input-w.end-date input[type="text"], .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-input-w.end-date input[type="text"] {
+      color: #4c66d7;
+      margin-right: 5px;
+      tab-index: -1; }
+  /* line 322, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .l-data-visualization, .l-time-conductor.lad-mode .l-data-visualization {
+    background: #dee3f8 !important; }
+  /* line 326, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .mode-selector .s-menu-button, .l-time-conductor.lad-mode .mode-selector .s-menu-button {
+    background-color: #6178dc;
+    box-sizing: border-box;
+    color: #fff;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border-radius: 4px;
+    color: #fff;
+    text-shadow: none;
+    color: #fff !important; }
+    /* line 297, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_mixins.scss */
+    .l-time-conductor.realtime-mode .mode-selector .s-menu-button .icon, .l-time-conductor.realtime-mode .mode-selector .s-menu-button .t-item-icon, .l-time-conductor.realtime-mode .mode-selector .s-menu-button:before, .l-time-conductor.lad-mode .mode-selector .s-menu-button .icon, .l-time-conductor.lad-mode .mode-selector .s-menu-button .t-item-icon, .l-time-conductor.lad-mode .mode-selector .s-menu-button:before {
+      color: #eee; }
+    /* line 302, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_mixins.scss */
+    .l-time-conductor.realtime-mode .mode-selector .s-menu-button:not(.disabled):hover, .l-time-conductor.lad-mode .mode-selector .s-menu-button:not(.disabled):hover {
+      background: #2741b0;
+      color: #fff; }
+      /* line 305, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_mixins.scss */
+      .l-time-conductor.realtime-mode .mode-selector .s-menu-button:not(.disabled):hover > .icon, .l-time-conductor.realtime-mode .mode-selector .s-menu-button:not(.disabled):hover > .t-item-icon, .l-time-conductor.realtime-mode .mode-selector .s-menu-button:not(.disabled):hover:before, .l-time-conductor.lad-mode .mode-selector .s-menu-button:not(.disabled):hover > .icon, .l-time-conductor.lad-mode .mode-selector .s-menu-button:not(.disabled):hover > .t-item-icon, .l-time-conductor.lad-mode .mode-selector .s-menu-button:not(.disabled):hover:before {
+        color: #fff; }
+    /* line 329, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.realtime-mode .mode-selector .s-menu-button:before, .l-time-conductor.lad-mode .mode-selector .s-menu-button:before {
+      color: #fff !important; }
+  /* line 341, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.fixed-mode .time-conductor-icon div[class*="hand"].hand-little {
+    -webkit-transform: rotate(120deg);
+    -moz-transform: rotate(120deg);
+    -ms-transform: rotate(120deg);
+    -o-transform: rotate(120deg);
+    transform: rotate(120deg); }
+  /* line 345, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.fixed-mode .mode-selector .s-menu-button:before {
+    content: "󡀅"; }
+  /* line 348, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.fixed-mode .l-axis-holder {
+    cursor: grab;
+    cursor: -webkit-grab; }
+    /* line 370, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/commonUI/general/res/sass/_mixins.scss */
+    .l-time-conductor.fixed-mode .l-axis-holder:active {
+      cursor: grabbing;
+      cursor: -webkit-grabbing; }
+    /* line 355, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.fixed-mode .l-axis-holder svg {
+      background-image: -webkit-linear-gradient(-360deg, rgba(102, 102, 102, 0.2) 1px, transparent 1px, transparent 100%);
+      background-image: linear-gradient(90deg, rgba(102, 102, 102, 0.2) 1px, transparent 1px, transparent 100%);
+      background-position: center 0;
+      background-repeat: repeat-x;
+      background-size: 4px 3px; }
+    /* line 366, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.fixed-mode .l-axis-holder:hover {
+      background-image: -webkit-linear-gradient(rgba(102, 102, 102, 0.1) 70%, transparent 100%);
+      background-image: linear-gradient(rgba(102, 102, 102, 0.1) 70%, transparent 100%); }
+  /* line 377, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .time-conductor-icon div[class*="hand"] {
+    -webkit-animation-name: clock-hands;
+    -moz-animation-name: clock-hands;
+    animation-name: clock-hands; }
+  /* line 380, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .time-delta:before {
+    content: "󡄃"; }
+  /* line 383, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .l-time-conductor-inputs-holder .l-time-range-w.end-w .title:before {
+    content: 'Now'; }
+  /* line 386, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .mode-selector .s-menu-button:before {
+    content: "󡄃"; }
+  /* line 394, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.lad-mode .time-conductor-icon div[class*="hand"] {
+    -webkit-animation-name: clock-hands-sticky;
+    -moz-animation-name: clock-hands-sticky;
+    animation-name: clock-hands-sticky; }
+    /* line 396, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.lad-mode .time-conductor-icon div[class*="hand"].hand-big {
+      -webkit-animation-duration: 5s;
+      -moz-animation-duration: 5s;
+      animation-duration: 5s; }
+    /* line 399, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.lad-mode .time-conductor-icon div[class*="hand"].hand-little {
+      -webkit-animation-duration: 60s;
+      -moz-animation-duration: 60s;
+      animation-duration: 60s; }
+  /* line 403, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.lad-mode .time-delta:before {
+    content: "󡄄"; }
+  /* line 406, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.lad-mode .l-time-conductor-inputs-holder .l-time-range-w.end-w .title:before {
+    content: 'LAD'; }
+  /* line 409, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.lad-mode .mode-selector .s-menu-button:before {
+    content: "󡄄"; }
+
+/******************************************************************** MOBILE */
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px), only screen and (orientation: portrait) and (min-device-width: 768px) and (max-device-width: 1024px), only screen and (orientation: landscape) and (min-device-width: 768px) and (max-device-width: 1024px) {
+  /* line 418, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor-holder {
+    min-width: 0 !important; }
+  /* line 421, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .super-menu.mini {
+    width: 200px;
+    height: 100px; }
+    /* line 424, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .super-menu.mini .pane.menu-item-description {
+      display: none; } }
+
+@media only screen and (orientation: portrait) and (max-device-width: 767px), only screen and (orientation: landscape) and (max-device-width: 767px) {
+  /* line 431, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor {
+    min-width: 0; }
+    /* line 435, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-time-conductor-inputs-and-ticks .l-time-conductor-inputs-holder .l-time-range-w {
+      background-image: none !important; }
+    /* line 439, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-time-conductor-inputs-and-ticks mct-conductor-axis {
+      display: none; } }
+
+@media only screen and (orientation: portrait) and (max-device-width: 767px) {
+  /* line 448, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor .l-data-visualization,
+  .l-time-conductor .l-time-conductor-zoom-w,
+  .l-time-conductor .time-delta {
+    display: none; }
+  /* line 454, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor .l-time-conductor-inputs-and-ticks {
+    height: auto !important; }
+    /* line 456, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor .l-time-conductor-inputs-and-ticks .l-time-conductor-inputs-holder {
+      position: relative;
+      height: auto !important; }
+      /* line 460, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+      .l-time-conductor .l-time-conductor-inputs-and-ticks .l-time-conductor-inputs-holder .l-time-range-w {
+        background-image: none !important;
+        display: block;
+        height: auto !important;
+        padding: 0 !important;
+        position: relative;
+        text-align: left; }
+        /* line 467, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+        .l-time-conductor .l-time-conductor-inputs-and-ticks .l-time-conductor-inputs-holder .l-time-range-w:not(:first-child) {
+          margin-top: 5px; }
+  /* line 478, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.fixed-mode .l-time-conductor-inputs-and-ticks .l-time-range-w .title {
+    width: 30px; }
+  /* line 490, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .l-time-conductor-inputs-and-ticks .l-time-range-w.start-w, .l-time-conductor.lad-mode .l-time-conductor-inputs-and-ticks .l-time-range-w.start-w {
+    display: none; }
+  /* line 493, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+  .l-time-conductor.realtime-mode .l-time-conductor-inputs-and-ticks .l-time-range-w.end-w, .l-time-conductor.lad-mode .l-time-conductor-inputs-and-ticks .l-time-range-w.end-w {
+    margin-top: 0; }
+    /* line 495, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-conductor-base.scss */
+    .l-time-conductor.realtime-mode .l-time-conductor-inputs-and-ticks .l-time-range-w.end-w .end-date input[type="text"], .l-time-conductor.lad-mode .l-time-conductor-inputs-and-ticks .l-time-range-w.end-w .end-date input[type="text"] {
+      margin: 0;
+      text-align: left; } }
+
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 23, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+mct-include.l-toi-holder,
+.l-toi-holder:after,
+.l-toi-holder:before {
+  display: block;
+  position: absolute; }
+
+/* line 30, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+mct-include.l-toi-holder {
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  transform: translateX(-50%);
+  color: #6b93c6;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px; }
+  /* line 38, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  mct-include.l-toi-holder:not(.pinned) {
+    display: none; }
+  /* line 42, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  mct-include.l-toi-holder.pinned {
+    display: block; }
+  /* line 46, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  mct-include.l-toi-holder:before, mct-include.l-toi-holder:after {
+    border-left: 1px dashed #6b93c6;
+    box-sizing: border-box;
+    content: '';
+    display: block;
+    left: 50%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    z-index: 2; }
+  /* line 61, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  mct-include.l-toi-holder .l-toi {
+    background-image: -webkit-linear-gradient(-360deg, transparent, #fcfcfc 10%, #fcfcfc 90%, transparent 100%);
+    background-image: linear-gradient(90deg, transparent, #fcfcfc 10%, #fcfcfc 90%, transparent 100%);
+    position: absolute;
+    align-items: center;
+    box-sizing: content-box;
+    height: 12px;
+    left: -8px;
+    -webkit-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+    top: 50%;
+    padding: 4px;
+    z-index: 1; }
+    /* line 73, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    mct-include.l-toi-holder .l-toi .l-toi-buttons {
+      -webkit-transition-property: width, padding;
+      -moz-transition-property: width, padding;
+      transition-property: width, padding;
+      -webkit-transition-duration: 250ms;
+      -moz-transition-duration: 250ms;
+      transition-duration: 250ms;
+      -webkit-transition-timing-function: ease-in-out;
+      -moz-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -webkit-transition-delay: 0;
+      -moz-transition-delay: 0;
+      transition-delay: 0;
+      border-radius: 4px;
+      box-sizing: content-box;
+      font-size: 12px;
+      height: 100%;
+      line-height: 12px;
+      padding: 4px;
+      overflow: hidden;
+      white-space: nowrap;
+      justify-content: space-between;
+      width: 12px; }
+      /* line 86, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+      mct-include.l-toi-holder .l-toi .l-toi-buttons:hover {
+        background-color: #6b93c6;
+        cursor: pointer;
+        width: 30px; }
+        /* line 92, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+        mct-include.l-toi-holder .l-toi .l-toi-buttons:hover .icon-button {
+          color: rgba(255, 255, 255, 0.5);
+          opacity: 1; }
+          /* line 95, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+          mct-include.l-toi-holder .l-toi .l-toi-buttons:hover .icon-button:hover {
+            color: #fff; }
+        /* line 100, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+        mct-include.l-toi-holder .l-toi .l-toi-buttons:hover .t-button-resync {
+          order: 1; }
+          /* line 102, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+          mct-include.l-toi-holder .l-toi .l-toi-buttons:hover .t-button-resync:before {
+            content: "󡀶"; }
+        /* line 106, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+        mct-include.l-toi-holder .l-toi .l-toi-buttons:hover .t-button-unpin {
+          order: 2; }
+          /* line 108, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+          mct-include.l-toi-holder .l-toi .l-toi-buttons:hover .t-button-unpin:hover {
+            color: #ff9540; }
+        /* line 113, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+        mct-include.l-toi-holder .l-toi .l-toi-buttons:hover + .l-toi-val {
+          opacity: 0.5; }
+    /* line 120, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    mct-include.l-toi-holder .l-toi .icon-button {
+      color: #6b93c6; }
+    /* line 126, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    mct-include.l-toi-holder .l-toi .t-button-resync:hover {
+      color: #fff; }
+    /* line 129, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    mct-include.l-toi-holder .l-toi .t-button-unpin {
+      -webkit-transition-property: opacity;
+      -moz-transition-property: opacity;
+      transition-property: opacity;
+      -webkit-transition-duration: 150ms;
+      -moz-transition-duration: 150ms;
+      transition-duration: 150ms;
+      -webkit-transition-timing-function: ease-in-out;
+      -moz-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -webkit-transition-delay: 0;
+      -moz-transition-delay: 0;
+      transition-delay: 0;
+      float: right;
+      opacity: 0; }
+  /* line 137, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  mct-include.l-toi-holder .l-toi-val {
+    display: none; }
+  /* line 144, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  mct-include.l-toi-holder.show-val .l-toi .l-toi-buttons {
+    order: 1; }
+    /* line 146, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    mct-include.l-toi-holder.show-val .l-toi .l-toi-buttons:hover {
+      margin-right: 3px; }
+  /* line 150, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  mct-include.l-toi-holder.show-val .l-toi .l-toi-val {
+    -webkit-transition-property: opacity;
+    -moz-transition-property: opacity;
+    transition-property: opacity;
+    -webkit-transition-duration: 150ms;
+    -moz-transition-duration: 150ms;
+    transition-duration: 150ms;
+    -webkit-transition-timing-function: ease-in-out;
+    -moz-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -webkit-transition-delay: 0;
+    -moz-transition-delay: 0;
+    transition-delay: 0;
+    background-color: #6b93c6;
+    border-radius: 4px;
+    box-sizing: content-box;
+    color: #fff;
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 400;
+    height: 12px;
+    line-height: 12px;
+    order: 2;
+    padding: 1px 3px;
+    white-space: nowrap; }
+  /* line 168, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  mct-include.l-toi-holder.show-val.val-to-left .l-toi {
+    left: auto;
+    right: -8px; }
+    /* line 172, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    mct-include.l-toi-holder.show-val.val-to-left .l-toi .l-toi-buttons {
+      order: 2; }
+      /* line 174, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+      mct-include.l-toi-holder.show-val.val-to-left .l-toi .l-toi-buttons:hover {
+        margin-left: 3px; }
+        /* line 175, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+        mct-include.l-toi-holder.show-val.val-to-left .l-toi .l-toi-buttons:hover .t-button-resync {
+          order: 2; }
+        /* line 176, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+        mct-include.l-toi-holder.show-val.val-to-left .l-toi .l-toi-buttons:hover .t-button-unpin {
+          order: 1; }
+    /* line 181, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    mct-include.l-toi-holder.show-val.val-to-left .l-toi .l-toi-val {
+      order: 1; }
+
+/* line 195, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+.tabular tbody tr.l-toi-tablerow, .tabular tbody .tr.l-toi-tablerow, .tabular .tbody tr.l-toi-tablerow, .tabular .tbody .tr.l-toi-tablerow,
+table tbody tr.l-toi-tablerow,
+table tbody .tr.l-toi-tablerow,
+table .tbody tr.l-toi-tablerow,
+table .tbody .tr.l-toi-tablerow {
+  border-top: 1px dashed #6b93c6;
+  z-index: 1; }
+  /* line 199, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  .tabular tbody tr.l-toi-tablerow td .l-toi-holder, .tabular tbody tr.l-toi-tablerow .td .l-toi-holder, .tabular tbody .tr.l-toi-tablerow td .l-toi-holder, .tabular tbody .tr.l-toi-tablerow .td .l-toi-holder, .tabular .tbody tr.l-toi-tablerow td .l-toi-holder, .tabular .tbody tr.l-toi-tablerow .td .l-toi-holder, .tabular .tbody .tr.l-toi-tablerow td .l-toi-holder, .tabular .tbody .tr.l-toi-tablerow .td .l-toi-holder,
+  table tbody tr.l-toi-tablerow td .l-toi-holder,
+  table tbody tr.l-toi-tablerow .td .l-toi-holder,
+  table tbody .tr.l-toi-tablerow td .l-toi-holder,
+  table tbody .tr.l-toi-tablerow .td .l-toi-holder,
+  table .tbody tr.l-toi-tablerow td .l-toi-holder,
+  table .tbody tr.l-toi-tablerow .td .l-toi-holder,
+  table .tbody .tr.l-toi-tablerow td .l-toi-holder,
+  table .tbody .tr.l-toi-tablerow .td .l-toi-holder {
+    left: 50% !important; }
+    /* line 201, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    .tabular tbody tr.l-toi-tablerow td .l-toi-holder:before, .tabular tbody tr.l-toi-tablerow td .l-toi-holder:after, .tabular tbody tr.l-toi-tablerow .td .l-toi-holder:before, .tabular tbody tr.l-toi-tablerow .td .l-toi-holder:after, .tabular tbody .tr.l-toi-tablerow td .l-toi-holder:before, .tabular tbody .tr.l-toi-tablerow td .l-toi-holder:after, .tabular tbody .tr.l-toi-tablerow .td .l-toi-holder:before, .tabular tbody .tr.l-toi-tablerow .td .l-toi-holder:after, .tabular .tbody tr.l-toi-tablerow td .l-toi-holder:before, .tabular .tbody tr.l-toi-tablerow td .l-toi-holder:after, .tabular .tbody tr.l-toi-tablerow .td .l-toi-holder:before, .tabular .tbody tr.l-toi-tablerow .td .l-toi-holder:after, .tabular .tbody .tr.l-toi-tablerow td .l-toi-holder:before, .tabular .tbody .tr.l-toi-tablerow td .l-toi-holder:after, .tabular .tbody .tr.l-toi-tablerow .td .l-toi-holder:before, .tabular .tbody .tr.l-toi-tablerow .td .l-toi-holder:after,
+    table tbody tr.l-toi-tablerow td .l-toi-holder:before,
+    table tbody tr.l-toi-tablerow td .l-toi-holder:after,
+    table tbody tr.l-toi-tablerow .td .l-toi-holder:before,
+    table tbody tr.l-toi-tablerow .td .l-toi-holder:after,
+    table tbody .tr.l-toi-tablerow td .l-toi-holder:before,
+    table tbody .tr.l-toi-tablerow td .l-toi-holder:after,
+    table tbody .tr.l-toi-tablerow .td .l-toi-holder:before,
+    table tbody .tr.l-toi-tablerow .td .l-toi-holder:after,
+    table .tbody tr.l-toi-tablerow td .l-toi-holder:before,
+    table .tbody tr.l-toi-tablerow td .l-toi-holder:after,
+    table .tbody tr.l-toi-tablerow .td .l-toi-holder:before,
+    table .tbody tr.l-toi-tablerow .td .l-toi-holder:after,
+    table .tbody .tr.l-toi-tablerow td .l-toi-holder:before,
+    table .tbody .tr.l-toi-tablerow td .l-toi-holder:after,
+    table .tbody .tr.l-toi-tablerow .td .l-toi-holder:before,
+    table .tbody .tr.l-toi-tablerow .td .l-toi-holder:after {
+      display: none; }
+    /* line 205, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    .tabular tbody tr.l-toi-tablerow td .l-toi-holder .l-toi, .tabular tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi, .tabular tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi, .tabular tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi, .tabular .tbody tr.l-toi-tablerow td .l-toi-holder .l-toi, .tabular .tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi, .tabular .tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi, .tabular .tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi,
+    table tbody tr.l-toi-tablerow td .l-toi-holder .l-toi,
+    table tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi,
+    table tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi,
+    table tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi,
+    table .tbody tr.l-toi-tablerow td .l-toi-holder .l-toi,
+    table .tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi,
+    table .tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi,
+    table .tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi {
+      background: rgba(252, 252, 252, 0.9);
+      border-radius: 20%;
+      height: auto;
+      padding: 4px;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%);
+      left: 50%;
+      right: auto;
+      top: 0; }
+      /* line 212, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+      .tabular tbody tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons, .tabular tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons, .tabular tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons, .tabular tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons, .tabular .tbody tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons, .tabular .tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons, .tabular .tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons, .tabular .tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons,
+      table tbody tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons,
+      table tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons,
+      table tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons,
+      table tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons,
+      table .tbody tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons,
+      table .tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons,
+      table .tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons,
+      table .tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons {
+        padding: 1px; }
+        /* line 214, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+        .tabular tbody tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons:hover, .tabular tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons:hover, .tabular tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons:hover, .tabular tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons:hover, .tabular .tbody tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons:hover, .tabular .tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons:hover, .tabular .tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons:hover, .tabular .tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons:hover,
+        table tbody tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons:hover,
+        table tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons:hover,
+        table tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons:hover,
+        table tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons:hover,
+        table .tbody tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons:hover,
+        table .tbody tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons:hover,
+        table .tbody .tr.l-toi-tablerow td .l-toi-holder .l-toi .l-toi-buttons:hover,
+        table .tbody .tr.l-toi-tablerow .td .l-toi-holder .l-toi .l-toi-buttons:hover {
+          padding: 4px; }
+
+/* line 228, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+.gl-plot .gl-plot-wrapper-display-area-and-x-axis {
+  right: 10px; }
+  /* line 231, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+  .gl-plot .gl-plot-wrapper-display-area-and-x-axis .l-toi-holder {
+    bottom: 27px;
+    z-index: 3; }
+    /* line 235, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    .gl-plot .gl-plot-wrapper-display-area-and-x-axis .l-toi-holder .l-toi {
+      -webkit-transform: translateY(100%);
+      -moz-transform: translateY(100%);
+      -ms-transform: translateY(100%);
+      -o-transform: translateY(100%);
+      transform: translateY(100%); }
+    /* line 240, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+    .gl-plot .gl-plot-wrapper-display-area-and-x-axis .l-toi-holder .l-toi {
+      top: auto;
+      bottom: 4px; }
+
+/* line 252, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+.l-time-conductor .l-toi-holder:before, .l-time-conductor .l-toi-holder:after {
+  border-left-style: solid;
+  height: 4px; }
+
+/* line 259, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+.l-time-conductor .l-toi-holder:before {
+  -webkit-transform: translate(-50%, -2px);
+  -moz-transform: translate(-50%, -2px);
+  -ms-transform: translate(-50%, -2px);
+  -o-transform: translate(-50%, -2px);
+  transform: translate(-50%, -2px);
+  top: 0px;
+  bottom: auto; }
+
+/* line 265, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/conductor/core/res/sass/_time-of-interest.scss */
+.l-time-conductor .l-toi-holder:after {
+  -webkit-transform: translate(-50%, 2px);
+  -moz-transform: translate(-50%, 2px);
+  -ms-transform: translate(-50%, 2px);
+  -o-transform: translate(-50%, 2px);
+  transform: translate(-50%, 2px);
+  top: auto;
+  bottom: 0px; }
+
+/*# sourceMappingURL=time-conductor-snow.css.map */

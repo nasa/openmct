@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: api/composition/DefaultCompositionProvider.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: api/composition/DefaultCompositionProvider.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2018, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+define([
+    'lodash',
+    '../objects/object-utils'
+], function (
+    _,
+    objectUtils
+) {
+    /**
+     * A CompositionProvider provides the underlying implementation of
+     * composition-related behavior for certain types of domain object.
+     *
+     * By default, a composition provider will not support composition
+     * modification.  You can add support for mutation of composition by
+     * defining `add` and/or `remove` methods.
+     *
+     * If the composition of an object can change over time-- perhaps via
+     * server updates or mutation via the add/remove methods, then one must
+     * trigger events as necessary.
+     *
+     * @interface CompositionProvider
+     * @memberof module:openmct
+     */
+
+    function DefaultCompositionProvider(publicAPI) {
+        this.publicAPI = publicAPI;
+        this.listeningTo = {};
+    }
+
+    /**
+     * Check if this provider should be used to load composition for a
+     * particular domain object.
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        to check
+     * @returns {boolean} true if this provider can provide
+     *          composition for a given domain object
+     * @memberof module:openmct.CompositionProvider#
+     * @method appliesTo
+     */
+    DefaultCompositionProvider.prototype.appliesTo = function (domainObject) {
+        return !!domainObject.composition;
+    };
+
+    /**
+     * Load any domain objects contained in the composition of this domain
+     * object.
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        for which to load composition
+     * @returns {Promise.&lt;Array.&lt;module:openmct.Identifier>>} a promise for
+     *          the Identifiers in this composition
+     * @memberof module:openmct.CompositionProvider#
+     * @method load
+     */
+    DefaultCompositionProvider.prototype.load = function (domainObject) {
+        return Promise.all(domainObject.composition);
+    };
+
+    /**
+     * Attach listeners for changes to the composition of a given domain object.
+     * Supports `add` and `remove` events.
+     *
+     * @param {module:openmct.DomainObject} domainObject to listen to
+     * @param String event the event to bind to, either `add` or `remove`.
+     * @param Function callback callback to invoke when event is triggered.
+     * @param [context] context to use when invoking callback.
+     */
+    DefaultCompositionProvider.prototype.on = function (
+        domainObject,
+        event,
+        callback,
+        context
+    ) {
+        this.establishTopicListener();
+
+        var keyString = objectUtils.makeKeyString(domainObject.identifier);
+        var objectListeners = this.listeningTo[keyString];
+
+        if (!objectListeners) {
+            objectListeners = this.listeningTo[keyString] = {
+                add: [],
+                remove: [],
+                composition: [].slice.apply(domainObject.composition)
+            };
+        }
+
+        objectListeners[event].push({
+            callback: callback,
+            context: context
+        });
+    };
+
+    /**
+     * Remove a listener that was previously added for a given domain object.
+     * event name, callback, and context must be the same as when the listener
+     * was originally attached.
+     *
+     * @param {module:openmct.DomainObject} domainObject to remove listener for
+     * @param String event event to stop listening to: `add` or `remove`.
+     * @param Function callback callback to remove.
+     * @param [context] context of callback to remove.
+     */
+    DefaultCompositionProvider.prototype.off = function (
+        domainObject,
+        event,
+        callback,
+        context
+    ) {
+        var keyString = objectUtils.makeKeyString(domainObject.identifier);
+        var objectListeners = this.listeningTo[keyString];
+
+        var index = _.findIndex(objectListeners[event], function (l) {
+            return l.callback === callback &amp;&amp; l.context === context;
+        });
+
+        objectListeners[event].splice(index, 1);
+        if (!objectListeners.add.length &amp;&amp; !objectListeners.remove.length) {
+            delete this.listeningTo[keyString];
+        }
+    };
+
+    /**
+     * Remove a domain object from another domain object's composition.
+     *
+     * This method is optional; if not present, adding to a domain object's
+     * composition using this provider will be disallowed.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        which should have its composition modified
+     * @param {module:openmct.DomainObject} child the domain object to remove
+     * @memberof module:openmct.CompositionProvider#
+     * @method remove
+     */
+    DefaultCompositionProvider.prototype.remove = function (domainObject, childId) {
+        // TODO: this needs to be synchronized via mutation.
+        throw new Error('Default Provider does not implement removal.');
+    };
+
+    /**
+     * Add a domain object to another domain object's composition.
+     *
+     * This method is optional; if not present, adding to a domain object's
+     * composition using this provider will be disallowed.
+     *
+     * @param {module:openmct.DomainObject} domainObject the domain object
+     *        which should have its composition modified
+     * @param {module:openmct.DomainObject} child the domain object to add
+     * @memberof module:openmct.CompositionProvider#
+     * @method add
+     */
+    DefaultCompositionProvider.prototype.add = function (domainObject, child) {
+        throw new Error('Default Provider does not implement adding.');
+        // TODO: this needs to be synchronized via mutation
+    };
+
+    /**
+     * Listens on general mutation topic, using injector to fetch to avoid
+     * circular dependencies.
+     *
+     * @private
+     */
+    DefaultCompositionProvider.prototype.establishTopicListener = function () {
+        if (this.topicListener) {
+            return;
+        }
+        var topic = this.publicAPI.$injector.get('topic');
+        var mutation = topic('mutation');
+        this.topicListener = mutation.listen(this.onMutation.bind(this));
+    };
+
+    /**
+     * Handles mutation events.  If there are active listeners for the mutated
+     * object, detects changes to composition and triggers necessary events.
+     *
+     * @private
+     */
+    DefaultCompositionProvider.prototype.onMutation = function (oldDomainObject) {
+        var id = oldDomainObject.getId();
+        var listeners = this.listeningTo[id];
+
+        if (!listeners) {
+            return;
+        }
+
+        var oldComposition = listeners.composition.map(objectUtils.makeKeyString);
+        var newComposition = oldDomainObject.getModel().composition;
+
+        var added = _.difference(newComposition, oldComposition).map(objectUtils.parseKeyString);
+        var removed = _.difference(oldComposition, newComposition).map(objectUtils.parseKeyString);
+
+        function notify(value) {
+            return function (listener) {
+                if (listener.context) {
+                    listener.callback.call(listener.context, value);
+                } else {
+                    listener.callback(value);
+                }
+            };
+        }
+
+        listeners.composition = newComposition.map(objectUtils.parseKeyString);
+
+        added.forEach(function (addedChild) {
+            listeners.add.forEach(notify(addedChild));
+        });
+
+        removed.forEach(function (removedChild) {
+            listeners.remove.forEach(notify(removedChild));
+        });
+
+
+    };
+
+    return DefaultCompositionProvider;
+});
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="module-openmct.Dialog.html">Dialog</a></li><li><a href="module-openmct.MCT.html">MCT</a></li><li><a href="module-openmct.Type.html">Type</a></li><li><a href="platform_commonUI_formats.LocalTimeFormat.html">LocalTimeFormat</a></li><li><a href="platform_commonUI_regions.InspectorRegion.html">InspectorRegion</a></li><li><a href="platform_commonUI_regions.Region.html">Region</a></li><li><a href="platform_features_plot.PlotViewPolicy.html">PlotViewPolicy</a></li></ul><h3>Events</h3><ul><li><a href="module-openmct.MCT.html#~event:start">start</a></li><li><a href="module-openmct.TimeAPI.html#~event:bounds">bounds</a></li><li><a href="module-openmct.TimeAPI.html#~event:clock">clock</a></li><li><a href="module-openmct.TimeAPI.html#~event:clockOffsets">clockOffsets</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeOfInterest">timeOfInterest</a></li><li><a href="module-openmct.TimeAPI.html#~event:timeSystem">timeSystem</a></li></ul><h3>Interfaces</h3><ul><li><a href="module-openmct.CompositionAPI.html">CompositionAPI</a></li><li><a href="module-openmct.CompositionCollection.html">CompositionCollection</a></li><li><a href="module-openmct.CompositionProvider.html">CompositionProvider</a></li><li><a href="module-openmct.GestureAPI.html">GestureAPI</a></li><li><a href="module-openmct.InspectorViewProvider.html">InspectorViewProvider</a></li><li><a href="module-openmct.InspectorViewRegistry.html">InspectorViewRegistry</a></li><li><a href="module-openmct.ObjectAPI.html">ObjectAPI</a></li><li><a href="module-openmct.ObjectProvider.html">ObjectProvider</a></li><li><a href="module-openmct.TelemetryAPI.html">TelemetryAPI</a></li><li><a href="module-openmct.TelemetryAPI-LimitEvaluator.html">LimitEvaluator</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryFormatter.html">TelemetryFormatter</a></li><li><a href="module-openmct.TelemetryAPI-TelemetryProvider.html">TelemetryProvider</a></li><li><a href="module-openmct.TimeAPI.html">TimeAPI</a></li><li><a href="module-openmct.ToolbarProvider.html">ToolbarProvider</a></li><li><a href="module-openmct.ToolbarRegistry.html">ToolbarRegistry</a></li><li><a href="module-openmct.TypeRegistry.html">TypeRegistry</a></li><li><a href="module-openmct.View.html">View</a></li><li><a href="module-openmct.ViewProvider.html">ViewProvider</a></li><li><a href="module-openmct.ViewRegistry.html">ViewRegistry</a></li><li><a href="MutableObject.html">MutableObject</a></li></ul><h3>Global</h3><ul><li><a href="global.html#defaults">defaults</a></li><li><a href="global.html#fetch">fetch</a></li><li><a href="global.html#getDrawAPI">getDrawAPI</a></li><li><a href="global.html#getFallbackDrawAPI">getFallbackDrawAPI</a></li><li><a href="global.html#getPersistedSeriesConfig">getPersistedSeriesConfig</a></li><li><a href="global.html#initialize">initialize</a></li><li><a href="global.html#nearestPoint">nearestPoint</a></li><li><a href="global.html#onDestroy">onDestroy</a></li><li><a href="global.html#onXKeyChange">onXKeyChange</a></li><li><a href="global.html#onYKeyChange">onYKeyChange</a></li><li><a href="global.html#purgeRecordsOutsideRange">purgeRecordsOutsideRange</a></li><li><a href="global.html#reset">reset</a></li><li><a href="global.html#resetStats">resetStats</a></li><li><a href="global.html#setColor">setColor</a></li><li><a href="global.html#updateDomainObject">updateDomainObject</a></li><li><a href="global.html#updateFromSeries">updateFromSeries</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Fri Jul 20 2018 22:50:59 GMT+0000 (UTC)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

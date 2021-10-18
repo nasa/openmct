@@ -1,0 +1,1370 @@
+/********************************** PAGE COLORS */
+/************************** MOBILE BREAKPOINTS */
+/* line 1, /Users/akhenry/Code/website/styles/sass/_resets.scss */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 16px;
+  line-spacing: normal;
+  margin: 0;
+  padding: 0; }
+
+/* line 10, /Users/akhenry/Code/website/styles/sass/_resets.scss */
+div, li {
+  box-sizing: border-box; }
+
+/* line 14, /Users/akhenry/Code/website/styles/sass/_resets.scss */
+h1, h2, .h2, h3, .h3,
+.h1, .h2, .h3 {
+  line-height: 1;
+  margin-top: 1em;
+  margin-bottom: 0.3em; }
+
+/* line 21, /Users/akhenry/Code/website/styles/sass/_resets.scss */
+iframe {
+  border: none;
+  display: block; }
+
+/* line 26, /Users/akhenry/Code/website/styles/sass/_resets.scss */
+p, ol {
+  margin: 0 0 0.6em 0; }
+
+/* line 30, /Users/akhenry/Code/website/styles/sass/_resets.scss */
+ol, ul {
+  margin: 0; }
+
+/* line 34, /Users/akhenry/Code/website/styles/sass/_resets.scss */
+ul.no-bullets, ul.link-list {
+  margin: 0 !important;
+  padding: 0 !important; }
+  /* line 37, /Users/akhenry/Code/website/styles/sass/_resets.scss */
+  ul.no-bullets li, ul.link-list li {
+    list-style: none; }
+
+/* line 1, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.l-hero-holder {
+  position: relative; }
+  /* line 3, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .l-hero-holder .l-hero-main {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    line-height: 230%;
+    position: absolute; }
+    /* line 10, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+    .l-hero-holder .l-hero-main.trans-to-next {
+      -webkit-transition-property: opacity;
+      -moz-transition-property: opacity;
+      transition-property: opacity;
+      -webkit-transition-duration: 1s;
+      -moz-transition-duration: 1s;
+      transition-duration: 1s;
+      -webkit-transition-timing-function: ease-in-out;
+      -moz-transition-timing-function: ease-in-out;
+      transition-timing-function: ease-in-out;
+      -webkit-transition-delay: 0;
+      -moz-transition-delay: 0;
+      transition-delay: 0; }
+    /* line 14, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+    .l-hero-holder .l-hero-main .l-hero-text-bg-fade {
+      background-color: transparent;
+      background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.4) 50%);
+      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.4) 50%);
+      position: absolute;
+      top: auto;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      min-height: 45%; }
+    /* line 23, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+    .l-hero-holder .l-hero-main .l-hero-text {
+      -webkit-box-align: center;
+      -moz-box-align: center;
+      box-align: center;
+      -webkit-align-items: center;
+      -moz-align-items: center;
+      -ms-align-items: center;
+      -o-align-items: center;
+      align-items: center;
+      -ms-flex-align: center;
+      z-index: 2;
+      color: #ccc; }
+      /* line 27, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+      .l-hero-holder .l-hero-main .l-hero-text * :not(.btn) {
+        text-shadow: rgba(0, 0, 0, 0.6) 0 1px 10px; }
+      /* line 31, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+      .l-hero-holder .l-hero-main .l-hero-text a, .l-hero-holder .l-hero-main .l-hero-text b {
+        color: white; }
+
+/* line 38, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-home .l-hero-holder {
+  height: 540px; }
+  /* line 41, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-home .l-hero-holder .l-hero-main .cols {
+    padding: 0 64px; }
+
+/* line 46, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-body .l-hero-holder {
+  height: 200px;
+  text-transform: uppercase; }
+  /* line 50, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-body .l-hero-holder .l-hero-main:before {
+    background-color: #017ac6;
+    background-image: -webkit-linear-gradient(#017ac6 10%, rgba(1, 122, 198, 0.3));
+    background-image: linear-gradient(#017ac6 10%, rgba(1, 122, 198, 0.3));
+    background-color: transparent;
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1; }
+  /* line 58, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-body .l-hero-holder .l-hero-main .cols {
+    padding-top: 100px; }
+    /* line 60, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+    .p-body .l-hero-holder .l-hero-main .cols .col {
+      z-index: 1; }
+
+/******************************************** SPECIFIC HEROES */
+/* line 69, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-home .hero-overview {
+  background-image: url("../images/hero-rp-dot-1.jpg"); }
+  /* line 71, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-home .hero-overview .col-left {
+    font-size: 1.4em; }
+  /* line 74, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-home .hero-overview .col-right {
+    text-align: center;
+    text-transform: uppercase; }
+
+/* line 80, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-home .hero-intern2017 {
+  background-image: url("../images/hero-bg-apollo-moon-2.jpg"); }
+  /* line 82, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-home .hero-intern2017 .col-left {
+    min-width: 50%; }
+    /* line 84, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+    .p-home .hero-intern2017 .col-left img {
+      width: 100%; }
+  /* line 87, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-home .hero-intern2017 .l-hero-text-bg-fade {
+    background-color: transparent;
+    background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.3) 40%);
+    background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.3) 40%);
+    min-height: 75%; }
+
+/* line 93, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-home .hero-comiccon2017 {
+  background-image: url("../images/NASA_journeytomars2.jpg"); }
+  /* line 95, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-home .hero-comiccon2017 a.comiccon2017-logo {
+    display: inline-block;
+    min-width: 230px; }
+    /* line 98, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+    .p-home .hero-comiccon2017 a.comiccon2017-logo img {
+      display: inline-block;
+      vertical-align: middle; }
+      /* line 101, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+      .p-home .hero-comiccon2017 a.comiccon2017-logo img.logo_icon {
+        max-width: 70px;
+        max-height: 91px; }
+      /* line 105, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+      .p-home .hero-comiccon2017 a.comiccon2017-logo img.logo_type {
+        margin-left: 15px;
+        max-width: 135px;
+        max-height: 50px; }
+  /* line 112, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-home .hero-comiccon2017 .col-left {
+    min-width: 50%; }
+  /* line 116, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+  .p-home .hero-comiccon2017 .l-hero-text-bg-fade {
+    background-color: transparent;
+    background-image: -webkit-linear-gradient(transparent, rgba(0, 0, 0, 0.3) 40%);
+    background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.3) 40%);
+    min-height: 75%; }
+
+/* line 124, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-body.about-open-mct .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-packets-1.jpg"); }
+
+/* line 125, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-body.getting-started .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-panel-1.jpg"); }
+
+/* line 126, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-body.contributing .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-stacked-plot-1.jpg"); }
+
+/* line 127, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-body.documentation .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-timeline-1.jpg"); }
+
+/* line 128, /Users/akhenry/Code/website/styles/sass/_heroes.scss */
+.p-body.plugins .l-hero-holder .l-hero-main {
+  background-image: url("../images/hero-body-layout-traverse.jpg"); }
+
+/* line 3, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+.p-body .l-page-section:not(:first-child) .wi {
+  border-top: 1px solid rgba(0, 0, 0, 0.1); }
+
+/* line 6, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+.p-body .l-page-section.no-margin {
+  padding-top: 0.6em;
+  padding-bottom: 0.6em; }
+
+/* line 10, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+.p-body .l-page-section h2, .p-body .l-page-section .h2,
+.p-body .l-page-section .h2 {
+  font-size: 1.5em;
+  text-align: left; }
+
+/* line 15, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+.p-body .l-page-section h2:first-child, .p-body .l-page-section .h2:first-child,
+.p-body .l-page-section .h2:first-child {
+  margin-top: inherit; }
+
+/* line 22, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+img.img-medium {
+  width: 640px; }
+
+/* line 26, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+img.img-small {
+  width: 320px; }
+
+/* line 30, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+ul.t-list-steps {
+  padding: 0; }
+
+/* line 35, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+.l-page-section ul {
+  padding: 0 0 20px 40px; }
+
+/* line 39, /Users/akhenry/Code/website/styles/sass/_body-pages.scss */
+.l-page-section img {
+  max-width: 100%; }
+
+/* line 1, /Users/akhenry/Code/website/styles/sass/_jsdoc.scss */
+.jsdoc nav {
+  display: block;
+  float: right;
+  margin-top: 28px;
+  width: 30%;
+  box-sizing: border-box;
+  border-left: 1px solid #ccc;
+  padding-left: 16px; }
+  /* line 11, /Users/akhenry/Code/website/styles/sass/_jsdoc.scss */
+  .jsdoc nav ul {
+    font-size: 100%;
+    line-height: 17px;
+    padding: 0;
+    margin: 0;
+    list-style-type: none; }
+    /* line 18, /Users/akhenry/Code/website/styles/sass/_jsdoc.scss */
+    .jsdoc nav ul li {
+      list-style: none;
+      text-transform: none; }
+
+/* line 1, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+html, body {
+  background-color: #2e2e2e;
+  font-family: 'Helvetica Neue', sans-serif; }
+
+/* line 6, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+body {
+  min-width: 800px; }
+
+/* line 10, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+a {
+  color: #0057a3;
+  cursor: pointer;
+  text-decoration: none; }
+  /* line 14, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  a:hover {
+    color: #16a4fe; }
+    
+/* line 19, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.list-vertical {
+  margin-bottom: 1.2em !important; }
+
+/* line 24, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+nav,
+h1, h2, .h2, h3, .h3,
+a.arw,
+ul.link-list.arw li a, ul.link-list.arw li a, .l-hero-text, .t-footer, .t-list-steps:not(code) {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: normal;
+  letter-spacing: -0.03em; }
+
+/* line 32, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+nav,
+h2,
+.h2, h3, .h3,
+.t-footer {
+  text-transform: uppercase; }
+
+/* line 39, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+h2:first-child, .h2:first-child, h3:first-child, .h3:first-child {
+  margin-top: 0; }
+
+/* line 47, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.padX, .wi, .main-nav {
+  box-sizing: border-box;
+  padding: 0 32px; }
+
+/******************************************** SYMBOLS */
+@font-face {
+  font-family: 'omct-symbols';
+  src: url("../fonts/omct-symbols.eot?yyn1qj");
+  src: url("../fonts/omct-symbols.eot?yyn1qj#iefix") format("embedded-opentype"), url("../fonts/omct-symbols.ttf?yyn1qj") format("truetype"), url("../fonts/omct-symbols.woff?yyn1qj") format("woff"), url("../fonts/omct-symbols.svg?yyn1qj#omct-symbols") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+/******************************************** WRAPPERS */
+/* line 65, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.wo {
+  width: 100%; }
+
+/* line 70, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.wi {
+  max-width: 1024px;
+  margin: 0 auto; }
+
+/* line 77, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.w-image {
+  position: relative; }
+
+/******************************************** ARCHETYPES */
+/* line 84, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.btn {
+  white-space: nowrap; }
+  /* line 86, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .btn.major {
+    background-color: #0077d7;
+    background-image: -webkit-linear-gradient(#0199f9, #017ac6);
+    background-image: linear-gradient(#0199f9, #017ac6);
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0 2px 10px;
+    color: white;
+    display: inline-block;
+    line-height: normal;
+    padding: 10px 20px; }
+    /* line 95, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .btn.major:hover {
+      background-color: #48b8fe;
+      background-image: -webkit-linear-gradient(#48b8fe, #0199f9);
+      background-image: linear-gradient(#48b8fe, #0199f9); }
+    /* line 98, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .btn.major.overlaid {
+      font-size: 2.5rem;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -webkit-transform: translate(-50%, -50%);
+      -moz-transform: translate(-50%, -50%);
+      -ms-transform: translate(-50%, -50%);
+      -o-transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%); }
+
+/* line 109, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+a.arw, ul.link-list.arw li a {
+  text-transform: uppercase; }
+  /* line 111, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  a.arw:after, ul.link-list.arw li a:after {
+    content: ' \e900';
+    font-size: 0.8em; }
+
+/* line 127, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.hero-pager {
+  position: absolute;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  z-index: 5; }
+  /* line 135, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .hero-pager .pager-dot {
+    border-radius: 50%;
+    box-shadow: 0 2px 20px 5px black;
+    cursor: pointer;
+    display: inline-block;
+    background-color: #999;
+    height: 12px;
+    width: 12px; }
+    /* line 143, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .hero-pager .pager-dot:not(:first-child) {
+      margin-left: 0.6em; }
+    /* line 146, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .hero-pager .pager-dot.active, .hero-pager .pager-dot:hover {
+      background-color: #fff; }
+
+/******************************************** LOGOS */
+/* line 151, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.logo {
+  display: inline-block; }
+
+/* line 155, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.logo-bg, .logo-nasa, .t-footer .t-footer-content:before, .logo-openmct {
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain; }
+
+/******************************************** EFFECTS AND TRANSITIONS */
+/* line 162, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.hidden {
+  opacity: 0;
+  pointer-events: none; }
+
+/* line 167, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.trans-to-next {
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 500ms;
+  -moz-transition-duration: 500ms;
+  transition-duration: 500ms;
+  -webkit-transition-timing-function: ease-in-out;
+  -moz-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  transition-delay: 0; }
+
+/******************************************** LAYOUT */
+/* line 187, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.cols {
+  display: flex;
+  align-items: stretch;
+  align-contents: stretch; }
+  /* line 193, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols .col {
+    flex: 1 1 auto;
+    margin-left: 32px;
+    padding-left: 32px; }
+    /* line 197, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .cols .col:first-child {
+      margin-left: 0;
+      padding-left: 0; }
+    /* line 201, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .cols .col .c-wrap {
+      -webkit-box-flex: 1;
+      -moz-box-flex: 1;
+      box-flex: 1;
+      -webkit-flex: 1 1 auto;
+      -moz-flex: 1 1 auto;
+      -ms-flex: 1 1 auto;
+      flex: 1 1 auto; }
+    /* line 204, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .cols .col .c-wrap.graphic {
+      -webkit-box-flex: 0;
+      -moz-box-flex: 0;
+      box-flex: 0;
+      -webkit-flex: 0 1 auto;
+      -moz-flex: 0 1 auto;
+      -ms-flex: 0 1 auto;
+      flex: 0 1 auto;
+      margin-top: 0.6em;
+      display: block; }
+  /* line 211, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols-equal .col {
+    flex: 1 0 0px; }
+  /* line 179, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-1-2 .col.col-left {
+    width: 33.33333%; }
+  /* line 180, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-1-2 .col.col-right {
+    width: 66.66667%; }
+  /* line 179, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-1-3 .col.col-left {
+    width: 25%; }
+  /* line 180, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-1-3 .col.col-right {
+    width: 75%; }
+  /* line 179, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-1-4 .col.col-left {
+    width: 20%; }
+  /* line 180, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-1-4 .col.col-right {
+    width: 80%; }
+  /* line 179, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-1-5 .col.col-left {
+    width: 16.66667%; }
+  /* line 180, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-1-5 .col.col-right {
+    width: 83.33333%; }
+  /* line 182, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-2-1 .col.col-left {
+    width: 66.66667%; }
+  /* line 183, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-2-1 .col.col-right {
+    width: 33.33333%; }
+  /* line 182, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-3-1 .col.col-left {
+    width: 75%; }
+  /* line 183, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-3-1 .col.col-right {
+    width: 25%; }
+  /* line 182, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-4-1 .col.col-left {
+    width: 80%; }
+  /* line 183, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-4-1 .col.col-right {
+    width: 20%; }
+  /* line 182, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-5-1 .col.col-left {
+    width: 83.33333%; }
+  /* line 183, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols.cols-5-1 .col.col-right {
+    width: 16.66667%; }
+  /* line 226, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .cols--with-dividers .col + .col {
+    border-left: 1px solid #ccc; }
+
+/* line 234, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.t-list-steps b {
+  color: #767676;
+  display: inline-block;
+  width: 20px; }
+
+/* line 239, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.t-list-steps .code-wrapper {
+  background-color: #333;
+  border-radius: 5px;
+  border: none;
+  box-sizing: border-box;
+  color: #ccc;
+  display: block;
+  font-family: monospace;
+  padding: 10px 10px;
+  width: 100%; }
+  /* line 249, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .t-list-steps .code-wrapper:focus {
+    outline: none; }
+  /* line 252, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .t-list-steps .code-wrapper::selection {
+    background-color: #017ac6;
+    color: white; }
+  /* line 257, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .t-list-steps .code-wrapper::-moz-selection {
+    background-color: #017ac6;
+    color: white; }
+
+/* line 262, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.t-list-steps label {
+  opacity: 0;
+  pointer-events: none;
+  position: absolute; }
+
+/* line 267, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.t-list-steps li {
+  margin-bottom: 1.2em; }
+
+/* line 270, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.t-list-steps p {
+  font-size: 1.25em;
+  text-transform: uppercase; }
+
+/* line 276, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.icon, a.arw:after, ul.link-list.arw li a:after, .btn.download:after, .logo-github:before, .card-logo-github:before, .icon-menu:before {
+  font-family: 'omct-symbols' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1; }
+
+/* line 286, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.video-wrapper {
+  position: relative;
+  height: 0; }
+  /* line 289, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .video-wrapper.aspect16x9 {
+    padding-bottom: 56.25%; }
+  /* line 290, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .video-wrapper.aspect3x1 {
+    padding-bottom: 66.6%; }
+  /* line 291, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .video-wrapper.aspect4x3 {
+    padding-bottom: 75%; }
+  /* line 293, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .video-wrapper iframe.video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; }
+
+/* line 301, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.area-scrolling {
+  overflow: auto; }
+
+/******************************************** PAGE SECTIONS */
+/* line 306, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.l-page-section {
+  background-color: white;
+  color: #2e2e2e;
+  font-size: 0.9rem; }
+  /* line 311, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-page-section .wi {
+    padding-top: 32px;
+    padding-bottom: 32px; }
+  /* line 316, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-page-section h1, .l-page-section h1 a, .l-page-section h2, .l-page-section .h2, .l-page-section h2 a, .l-page-section .h2 a, .l-page-section h3, .l-page-section .h3 {
+    color: #424242; }
+  /* line 318, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-page-section h1 {
+    font-size: 2.25em;
+    text-align: center;
+    margin-bottom: 32px; }
+  /* line 324, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-page-section h2, .l-page-section .h2 {
+    font-size: 1.2em;
+    font-weight: 400;
+    margin-top: 0; }
+  /* line 330, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-page-section.c-ltgray {
+    background-color: #fbfbfb; }
+  /* line 334, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-page-section.t-feature {
+    background-color: #fff;
+    background-image: -webkit-linear-gradient(#fff 90%, #f6f6f6);
+    background-image: linear-gradient(#fff 90%, #f6f6f6); }
+  /* line 338, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-page-section .area-scrolling {
+    height: 200px;
+    margin-bottom: 1.2em;
+    width: 100%; }
+  /* line 344, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-page-section .t-intro {
+    margin-bottom: 32px; }
+
+/******************************************** NAV */
+/* line 352, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+nav {
+  background-color: #2e2e2e;
+  height: 65px;
+  position: fixed;
+  z-index: 2; }
+
+/* line 359, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.main-nav {
+  -webkit-box-align: center;
+  -moz-box-align: center;
+  box-align: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  -o-align-items: center;
+  align-items: center;
+  -ms-flex-align: center;
+  display: flex;
+  align-items: center;
+  flex-flow: row nowrap;
+  font-size: 0.8rem; }
+  /* line 368, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .main-nav a {
+    color: #ccc; }
+    /* line 371, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .main-nav a:hover {
+      color: #f2f2f2; }
+  /* line 375, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .main-nav .logo-bg, .main-nav .logo-nasa, .main-nav .t-footer .t-footer-content:before, .t-footer .main-nav .t-footer-content:before, .main-nav .logo-openmct {
+    flex-shrink: 0;
+    height: 65px; }
+
+/* line 381, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.l-nav-links {
+  -webkit-transition-property: height, min-height, padding-bottom, padding-top;
+  -moz-transition-property: height, min-height, padding-bottom, padding-top;
+  transition-property: height, min-height, padding-bottom, padding-top;
+  -webkit-transition-duration: 250ms;
+  -moz-transition-duration: 250ms;
+  transition-duration: 250ms;
+  -webkit-transition-timing-function: ease-in-out;
+  -moz-transition-timing-function: ease-in-out;
+  transition-timing-function: ease-in-out;
+  -webkit-transition-delay: 0;
+  -moz-transition-delay: 0;
+  transition-delay: 0;
+  display: flex;
+  align-items: center;
+  flex-flow: row nowrap;
+  flex: 2 1 auto;
+  justify-content: flex-end;
+  white-space: nowrap; }
+  /* line 389, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-nav-links .logo {
+    vertical-align: middle; }
+  /* line 392, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-nav-links .mobile-sm-only {
+    display: none; }
+
+/* line 397, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.nav-link {
+  display: inline-block;
+  vertical-align: middle; }
+  /* line 400, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .nav-link:not(:first-child) {
+    margin-left: 16px; }
+
+/******************************************** SPECIFIC ELEMENTS */
+/* line 404, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.l-main {
+  padding-top: 65px; }
+
+/* line 412, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.btn.download:after {
+  color: #62c2fe;
+  content: ' \e901';
+  font-size: .8em; }
+
+/* line 418, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.btn.download:hover:after {
+  color: #aedfff; }
+
+/* line 423, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.logo-nasa, .t-footer .t-footer-content:before {
+  background-image: url("../images/logo-nasa.svg");
+  width: 58.5px; }
+
+/* line 428, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.logo-openmct {
+  background-image: url("../images/logo-openmct.svg");
+  margin-left: 16px;
+  width: 132.275px; }
+
+/* line 435, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.logo-github, .card-logo-github {
+  margin-left: 16px; }
+  /* line 437, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .logo-github:before, .card-logo-github:before {
+    content: '\e950';
+    font-size: 1.5em; }
+
+/* line 444, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.icon-menu {
+  display: none; }
+  /* line 446, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .icon-menu:before {
+    content: '\e902';
+    font-size: 2em;
+    vertical-align: middle; }
+
+/* line 454, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.l-graphic-boxes {
+  -webkit-box-align: stretch;
+  -moz-box-align: stretch;
+  box-align: stretch;
+  -webkit-align-items: stretch;
+  -moz-align-items: stretch;
+  -ms-align-items: stretch;
+  -o-align-items: stretch;
+  align-items: stretch;
+  -ms-flex-align: stretch; }
+  /* line 456, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-graphic-boxes .col {
+    display: -webkit-box;
+    display: -moz-box;
+    display: box;
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    box-orient: vertical;
+    -webkit-box-direction: normal;
+    -moz-box-direction: normal;
+    box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    -webkit-box-lines: single;
+    -moz-box-lines: single;
+    box-lines: single;
+    -webkit-flex-wrap: nowrap;
+    -moz-flex-wrap: nowrap;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    position: relative; }
+  /* line 462, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .l-graphic-boxes.bg {
+    background-color: #ccc; }
+    /* line 464, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .l-graphic-boxes.bg .col:not(:first-child) {
+      border-left: 1px solid rgba(255, 255, 255, 0.5);
+      font-size: 0.9em; }
+
+/* line 472, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.t-list-steps .code-wrapper.dev-prereqs {
+  background-image: url("../images/logo-dev-prereqs.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 100px; }
+
+/* line 479, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.t-list-steps .code-wrapper .btn.major {
+  text-transform: uppercase; }
+
+/* line 484, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.t-footer {
+  background-color: rgba(0, 0, 0, 0.4);
+  background-image: -webkit-linear-gradient(rgba(0, 0, 0, 0.4), transparent 15px);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), transparent 15px);
+  color: #999;
+  padding-bottom: 200px;
+  line-height: 140%; }
+  /* line 491, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .t-footer b {
+    color: #cccccc; }
+  /* line 492, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .t-footer .t-footer-content {
+    font-size: 0.8em;
+    padding-left: 105px;
+    position: relative; }
+    /* line 496, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .t-footer .t-footer-content:before {
+      content: '';
+      display: block;
+      height: 65px;
+      position: absolute;
+      left: 32px; }
+  .t-footer a {
+    color: #0083f5;
+  }
+  .t-footer a:hover {
+    color: #16a4fe; }
+
+/* line 507, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+#lektor-edit-link {
+  font-size: 1em !important;
+  width: 20px !important; }
+
+/************************************************* DOCUMENTATION */
+/* line 513, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+code {
+  background-color: #eee;
+  border-radius: 2px;
+  display: inline-block;
+  padding: 1px 5px; }
+
+/* line 520, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.documentation-toc {
+  line-height: 100%; }
+  /* line 522, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .documentation-toc ul {
+    color: #7b7b7b;
+    list-style-type: none;
+    padding: 0; }
+    /* line 527, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .documentation-toc ul li a {
+      border-left: 3px solid transparent;
+      display: inline-block;
+      margin-bottom: 4px;
+      padding: 3px 5px 3px 5px; }
+      /* line 532, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+      .documentation-toc ul li a.current {
+        border-color: #00aa00;
+        font-weight: bold; }
+      /* line 536, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+      .documentation-toc ul li a:hover {
+        border-color: rgba(0, 0, 0, 0.05); }
+    /* line 540, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .documentation-toc ul ul {
+      padding: 0 0 0 15px; }
+
+/************************************************* WHO'S USING OPEN MCT */
+/* line 547, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.l-using-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: 280px;
+  grid-gap: 30px; }
+
+/* line 554, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.c-using-card {
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0 2px 10px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative; }
+  /* line 563, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .c-using-card__image {
+    flex: 0 0 auto;
+    height: 150px;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-clip: content-box; }
+  /* line 572, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .c-using-card__content {
+    padding: 1em; }
+    /* line 575, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .c-using-card__content > * + * {
+      margin-top: .5em; }
+  /* line 578, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .c-using-card__title, .c-using-card__center {
+    font-family: 'Montserrat', sans-serif; }
+  /* line 583, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .c-using-card__title {
+    font-size: 1.2em; }
+  /* line 587, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .c-using-card__center {
+    color: #666;
+    font-size: 0.9em;
+    text-transform: uppercase; }
+  /* line 593, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .c-using-card__description {
+    display: none; }
+
+/************************************************* PLUGINS */
+/* line 600, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-rows: auto;
+  grid-gap: 30px; }
+
+/* line 607, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card {
+  border-radius: 10px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0 2px 10px;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative; }
+
+/* line 616, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-icon {
+  padding-bottom: 50%;
+  background-size: cover;
+  background-position: center center;
+  border-radius: 10px 10px 0px 0px; }
+
+/* line 623, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-tag {
+  transform: translateY(-50%); }
+
+/* line 627, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-experimental {
+  background-color: orange;
+  color: white;
+  float: left;
+  padding: 0.5em 1em;
+  border-radius: 0px 5px 5px 0px;
+  font-size: 0.9em;
+  text-transform: uppercase;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: -0.03em; }
+
+/* line 639, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-stable {
+  float: left;
+  color: green;
+  background-color: #adebad;
+  padding: 0.5em 1em;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  border-radius: 0px 5px 5px 0px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: normal;
+  letter-spacing: -0.03em; }
+
+/* line 652, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-content {
+  padding: 0 1em 1em 1em;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; }
+  /* line 659, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .card-content > * + * {
+    margin-top: 5px; }
+  /* line 663, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .card-content p {
+    margin-block-end: 0; }
+
+/* line 668, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-description {
+  display: block;
+  flex: 1; }
+
+/* line 673, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.plugin-installation {
+  display: block;
+  margin: 15px 0 10px 0;
+  font-size: 0.9em;
+  word-break: break-all; }
+  /* line 679, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .plugin-installation code {
+    padding: 5px 8px;
+    -webkit-user-select: all;
+    /* Chrome 49+ */
+    -moz-user-select: all;
+    /* Firefox 43+ */
+    -ms-user-select: all;
+    /* No support yet */
+    user-select: all; }
+    /* line 686, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .plugin-installation code:hover {
+      box-shadow: inset rgba(0, 0, 0, 0.4) 0 1px 3px; }
+
+/* line 692, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-button {
+  font-size: 0.9em;
+  margin-left: auto;
+  margin-top: 20px;
+  display: flex; }
+  /* line 698, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .card-button .button-divider {
+    padding: 0px 5px; }
+
+/* line 703, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+a.card-link {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: normal;
+  letter-spacing: -0.03em;
+  display: flex; }
+
+/* line 710, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-logo-github {
+  content: '\e950';
+  font-size: 0.9em; }
+
+/* line 716, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.card-label {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-size: 0.8em;
+  color: #999;
+  text-transform: uppercase; }
+
+/* line 723, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.plugins-code-wrapper {
+  padding: 0.6em 0em; }
+
+/* line 727, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.plugins-code {
+  background-color: #333;
+  border-radius: 5px;
+  border: none;
+  box-sizing: border-box;
+  color: #ccc;
+  display: block;
+  font-family: monospace;
+  padding: 10px 10px;
+  width: 100%;
+  line-height: 1.5;
+  overflow: auto;
+  white-space: nowrap;
+  -webkit-user-select: all;
+  /* Chrome 49+ */
+  -moz-user-select: all;
+  /* Firefox 43+ */
+  -ms-user-select: all;
+  /* No support yet */
+  user-select: all; }
+  /* line 747, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .plugins-code:focus {
+    outline: none; }
+  /* line 750, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .plugins-code::selection {
+    background-color: #017ac6;
+    color: white; }
+  /* line 755, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .plugins-code::-moz-selection {
+    background-color: #017ac6;
+    color: white; }
+  /* line 761, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .plugins-code .plugins-code-comment {
+    color: #017ac6; }
+    /* line 764, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .plugins-code .plugins-code-comment:focus {
+      outline: none; }
+    /* line 767, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .plugins-code .plugins-code-comment::selection {
+      background-color: #017ac6;
+      color: white; }
+    /* line 772, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+    .plugins-code .plugins-code-comment::-moz-selection {
+      background-color: #017ac6;
+      color: white; }
+
+/* line 780, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+.plugins-inline-code {
+  background-color: #333;
+  border-radius: 5px;
+  border: none;
+  box-sizing: border-box;
+  color: #ccc;
+  display: inline-flex;
+  font-family: monospace;
+  font-size: 0.9em;
+  padding: 3px 5px;
+  margin: 2px 0px;
+  overflow: auto;
+  white-space: nowrap;
+  -webkit-user-select: all;
+  /* Chrome 49+ */
+  -moz-user-select: all;
+  /* Firefox 43+ */
+  -ms-user-select: all;
+  /* No support yet */
+  user-select: all; }
+  /* line 800, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .plugins-inline-code:focus {
+    outline: none; }
+  /* line 803, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .plugins-inline-code::selection {
+    background-color: #017ac6;
+    color: white; }
+  /* line 808, /Users/akhenry/Code/website/styles/sass/_styles-base.scss */
+  .plugins-inline-code::-moz-selection {
+    background-color: #017ac6;
+    color: white; }
+
+/* line 3, /Users/akhenry/Code/website/styles/sass/_special-content.scss */
+.c-developed-by .col {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center; }
+
+/* line 9, /Users/akhenry/Code/website/styles/sass/_special-content.scss */
+.c-developed-by h2, .c-developed-by .h2 {
+  display: flex;
+  margin-bottom: .7em; }
+
+/* line 14, /Users/akhenry/Code/website/styles/sass/_special-content.scss */
+.c-developed-by .c-wrap-graphic {
+  display: flex;
+  align-items: center;
+  flex: 1 1 auto; }
+  /* line 19, /Users/akhenry/Code/website/styles/sass/_special-content.scss */
+  .c-developed-by .c-wrap-graphic * + * {
+    margin-left: 3em; }
+
+/* line 24, /Users/akhenry/Code/website/styles/sass/_special-content.scss */
+.c-developed-by[class*='__logo'] {
+  background-repeat: no-repeat;
+  background-size: contain;
+  display: block; }
+
+@media only screen and (max-width: 700px) {
+  /* line 33, /Users/akhenry/Code/website/styles/sass/_special-content.scss */
+  .c-developed-by .col + .col {
+    margin-top: 3em !important; } }
+
+/************************** STYLES */
+@media only screen and (max-width: 868px) {
+  /* line 29, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  body {
+    min-width: inherit !important; }
+  /* line 33, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  nav {
+    height: auto !important;
+    position: relative; }
+  /* line 38, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .l-main {
+    padding-top: 0; }
+  /* line 40, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .main-nav {
+    flex-wrap: wrap; }
+  /* line 44, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .mobile-hide {
+    display: block; }
+  /* line 48, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .l-nav-links {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: flex-start;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    width: 100%; }
+  /* line 56, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .l-page-section {
+    max-width: inherit !important; }
+  /* line 60, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .cols:not(.cols--break-sm) {
+    flex-direction: column; }
+    /* line 3, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols:not(.cols--break-sm) .col {
+      margin: 0;
+      padding: 0;
+      width: 100% !important; }
+    /* line 10, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols:not(.cols--break-sm).cols-equal .col {
+      flex: 1 1 auto !important; }
+    /* line 14, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols:not(.cols--break-sm).cols-equal .col + .col {
+      margin-top: 1em; }
+    /* line 20, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols:not(.cols--break-sm).cols--with-dividers .col {
+      border-left: none !important; }
+    /* line 63, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols:not(.cols--break-sm) .col.documentation {
+      margin-top: 20px;
+      order: 2; }
+    /* line 68, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols:not(.cols--break-sm) .col.documentation-toc h2, .cols:not(.cols--break-sm) .col.documentation-toc .h2 {
+      margin-top: 0; }
+  /* line 76, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .l-graphic-boxes .cols .col {
+    border-left: none !important;
+    display: block;
+    padding: 32px 0;
+    margin-bottom: 32px 0; }
+    /* line 77, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .l-graphic-boxes .cols .col:not(:first-child) {
+      border-top: 1px solid rgba(255, 255, 255, 0.5); }
+    /* line 84, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .l-graphic-boxes .cols .col .c-wrap.graphic {
+      text-align: center; }
+      /* line 86, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+      .l-graphic-boxes .cols .col .c-wrap.graphic .graphic {
+        display: inline-block;
+        min-width: 220px;
+        width: 65%; }
+  /* line 97, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .toc-header:after {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+    -webkit-transition-property: rotate;
+    -moz-transition-property: rotate;
+    transition-property: rotate;
+    -webkit-transition-duration: 500ms;
+    -moz-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -webkit-transition-timing-function: ease-in-out;
+    -moz-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -webkit-transition-delay: 0;
+    -moz-transition-delay: 0;
+    transition-delay: 0;
+    display: inline-block;
+    font-family: 'omct-symbols' !important;
+    font-size: 0.7em;
+    content: '\e900';
+    line-height: 100%;
+    margin-left: 5px; }
+  /* line 107, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .toc-header.expanded:after {
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    transform: rotate(270deg); }
+  /* line 112, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .toc-content {
+    height: 0 !important;
+    max-height: 0;
+    overflow: hidden;
+    -webkit-transition-property: height, max-height;
+    -moz-transition-property: height, max-height;
+    transition-property: height, max-height;
+    -webkit-transition-duration: 500ms;
+    -moz-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -webkit-transition-timing-function: ease-in-out;
+    -moz-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -webkit-transition-delay: 0;
+    -moz-transition-delay: 0;
+    transition-delay: 0; }
+    /* line 115, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .toc-content.expanded {
+      height: auto !important;
+      max-height: 1000px;
+      overflow: visible; }
+  /************************** HEROES */
+  /* line 120, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .l-hero-holder .l-hero-main .cols {
+    padding: 32px !important; }
+  /************************** PLUGINS */
+  /* line 125, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .cards {
+    grid-gap: 60px; } }
+
+@media only screen and (max-width: 700px) {
+  /* line 131, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .cols--break-sm {
+    flex-direction: column; }
+    /* line 3, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols--break-sm .col {
+      margin: 0;
+      padding: 0;
+      width: 100% !important; }
+    /* line 10, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols--break-sm.cols-equal .col {
+      flex: 1 1 auto !important; }
+    /* line 14, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols--break-sm.cols-equal .col + .col {
+      margin-top: 1em; }
+    /* line 20, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .cols--break-sm.cols--with-dividers .col {
+      border-left: none !important; }
+  /* line 135, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .mobile-sm-only {
+    display: inherit; }
+  /* line 138, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .icon-menu {
+    display: inline-block; }
+  /* line 141, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .logo-github, .card-logo-github {
+    display: none; }
+  /* line 144, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .l-nav-links {
+    background-color: #484848;
+    box-sizing: border-box;
+    display: block;
+    line-height: 250%;
+    padding: 0 32px;
+    position: absolute;
+    text-align: left;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 0 !important;
+    max-height: 0;
+    overflow: hidden; }
+    /* line 154, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .l-nav-links .nav-link {
+      display: block;
+      margin: 0; }
+      /* line 155, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+      .l-nav-links .nav-link:not(:first-child) {
+        border-top: 1px solid rgba(255, 255, 255, 0.2); }
+    /* line 159, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+    .l-nav-links.expanded {
+      height: auto !important;
+      max-height: 1000px;
+      overflow: visible;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+      padding: 10px 32px; }
+  /* line 165, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .icon-menu {
+    flex-grow: 9;
+    text-align: right; }
+  /************************** HEROES */
+  /* line 170, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .l-hero-holder {
+    font-size: 0.8em; }
+  /************************** PLUGINS */
+  /* line 174, /Users/akhenry/Code/website/styles/sass/_responsive.scss */
+  .cards {
+    grid-gap: 40px; } }
+
+/*# sourceMappingURL=styles.css.map */

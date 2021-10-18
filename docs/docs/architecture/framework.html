@@ -1,0 +1,180 @@
+<html>
+    <head>
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/styles.css">
+        <link rel="stylesheet"
+              href="//nasa.github.io/openmct/static/res/css/documentation.css">
+    </head>
+    <body>
+
+<a name="table-of-contents" href="#table-of-contents"><h1 id="undefinedtable-of-contents">Table of Contents</h1>
+</a><ul>
+<li><a href="#overview">Overview</a><ul>
+<li><a href="#application-initialization">Application Initialization</a></li>
+<li><a href="#architectural-paradigm">Architectural Paradigm</a></li>
+<li><a href="#extension-categories">Extension Categories</a></li>
+<li><a href="#composite-services">Composite Services</a></li>
+</ul>
+</li>
+</ul>
+<a name="overview" href="#overview"><h1 id="undefinedoverview">Overview</h1>
+</a><p>The framework layer&#39;s most basic responsibility is allowing individual
+software components to communicate. The software components it recognizes
+are:</p>
+<ul>
+<li><em>Extensions</em>: Individual units of functionality that can be added to
+or removed from Open MCT. <em>Extension categories</em> distinguish what
+type of functionality is being added/removed.</li>
+<li><em>Bundles</em>: A grouping of related extensions
+(named after an analogous concept from <a href="http://www.osgi.org/">OSGi</a>)
+that may be added or removed as a group.</li>
+</ul>
+<p>The framework layer operates by taking a set of active bundles, and
+exposing extensions to one another as-needed, using
+<a href="https://en.wikipedia.org/wiki/Dependency_injection">dependency injection</a>.
+Extensions are responsible for declaring their dependencies in a
+manner which the framework layer can understand.</p>
+<p><img src="framework-1.png" alt="Diagram 1"></p>
+<p>The &quot;dependency injection framework&quot; in this case is
+<a href="https://angularjs.org/">AngularJS</a>. Open MCT&#39;s framework layer
+is really just a thin wrapper over Angular that recognizes the
+concepts of bundles and extensions (as declared in JSON files) and
+registering extensions with Angular. It additionally acts as a
+mediator between Angular and <a href="http://requirejs.org/">RequireJS</a>,
+which is used to load JavaScript sources which implement
+extensions.</p>
+<p><img src="framework-2.png" alt="Diagram 2"></p>
+<p>It is worth noting that <em>no other components</em> are &quot;aware&quot; of the
+framework component directly; Angular and Require are <em>used by</em> the
+framework components, and extensions in various bundles will have
+their dependencies satisfied by Angular as a consequence of registration
+activities which were performed by the framework component.</p>
+<a name="application-initialization" href="#application-initialization"><h2 id="undefinedapplication-initialization">Application Initialization</h2>
+</a><p>The framework component initializes an Open MCT application following
+a simple sequence of steps.</p>
+<p><img src="framework-3.png" alt="Diagram 3"></p>
+<ol>
+<li><strong>Loading bundles.json.</strong> A file named <code>bundles.json</code> is loaded to determine
+which bundles to load. Bundles are given in this file as relative paths
+which point to bundle directories.</li>
+<li><strong>Load bundle.json files.</strong> Individual bundle definitions are loaded; a
+<code>bundle.json</code> file is expected in each bundle directory.</li>
+<li><strong>Resolving implementations.</strong> Any scripts which provide implementations for
+extensions exposed by bundles are loaded, using RequireJS.</li>
+<li><strong>Register with Angular.</strong> Resolved extensions are registered with Angular,
+such that they can be used by the application at run-time. This stage
+includes both registration of Angular built-ins (directives, controllers,
+routes, constants, and services) as well as registration of non-Angular
+extensions.</li>
+<li><strong>Bootstrap application.</strong> Once all extensions have been registered,
+the Angular application
+<a href="https://docs.angularjs.org/guide/bootstrap">is bootstrapped</a>.</li>
+</ol>
+<a name="architectural-paradigm" href="#architectural-paradigm"><h2 id="undefinedarchitectural-paradigm">Architectural Paradigm</h2>
+</a><p><img src="framework-4.png" alt="Diagram 4"></p>
+<p>Open MCT&#39;s architecture relies on a simple premise: Individual units
+(extensions) only have access to the dependencies they declare that they
+need, and they acquire references to these dependencies via dependency
+injection. This has several desirable traits:</p>
+<ul>
+<li>Programming to an interface is enforced. Any given dependency can be
+swapped out for something which exposes an equivalent interface. This
+improves flexibility against refactoring, simplifies testing, and
+provides a common mechanism for extension and reconfiguration.</li>
+<li>The dependencies of a unit must be explicitly defined. This means that
+it can be easily determined what a given unit&#39;s role is within the
+larger system, in terms of what other components it will interact with.
+It also helps to enforce good separation of concerns: When a set of
+declared dependencies becomes long it is obvious, and this is usually
+a sign that a given unit is involved in too many concerns and should
+be refactored into smaller pieces.</li>
+<li>Individual units do not need to be aware of the framework; they need
+only be aware of the interfaces to the components they specifically
+use. This avoids introducing a ubiquitous dependency upon the framework
+layer itself; it is plausible to modify or replace the framework
+without making changes to individual software components which run upon
+the framework.</li>
+</ul>
+<p>A drawback to this approach is that it makes it difficult to define
+&quot;the architecture&quot; of Open MCT, in terms of describing the specific
+units that interact at run-time. The run-time architecture is determined
+by the framework as the consequence of wiring together dependencies.
+As such, the specific architecture of any given application built on
+Open MCT can look very different.</p>
+<p>Keeping that in mind, there are a few useful patterns supported by the
+framework that are useful to keep in mind.</p>
+<p>The specific service infrastructure provided by the platform is described
+in the <a href="Platform.html">Platform Architecture</a>.</p>
+<a name="extension-categories" href="#extension-categories"><h2 id="undefinedextension-categories">Extension Categories</h2>
+</a><p>One of the capabilities that the framework component layers on top of
+AngularJS is support for many-to-one dependencies. That is, a specific
+extension may declare a dependency to <em>all extensions of a specific
+category</em>, instead of being limited to declaring specific dependencies.</p>
+<p><img src="framework-5.png" alt="Diagram 5"></p>
+<p>This is useful for introducing specific extension points to an application.
+Some unit of software will depend upon all extensions of a given category
+and integrate their behavior into the system in some fashion; plugin authors
+can then add new extensions of that category to augment existing behaviors.</p>
+<p>Some developers may be familiar with the use of registries to achieve
+similar characteristics. This approach is similar, except that the registry
+is effectively implicit whenever a new extension category is used or
+depended-upon. This has some advantages over a more straightforward
+registry-based approach:</p>
+<ul>
+<li>These many-to-one relationships are expressed as dependencies; an
+extension category is registered as having dependencies on all individual
+extensions of this category. This avoids ordering issues that may occur
+with more conventional registries, which may be observed before all
+dependencies are resolved.</li>
+<li>The need for service registries of specific types is removed, reducing
+the number of interfaces to manage within the system. Groups of
+extensions are provided as arrays.</li>
+</ul>
+<a name="composite-services" href="#composite-services"><h2 id="undefinedcomposite-services">Composite Services</h2>
+</a><p>Composite services (registered via extension category <code>components</code>) are
+a pattern supported by the framework. These allow service instances to
+be built from multiple components at run-time; support for this pattern
+allows additional bundles to introduce or modify behavior associated
+with these services without modifying or replacing original service
+instances.</p>
+<p><img src="framework-6.png" alt="Diagram 6"></p>
+<p>In this pattern, components all implement an interface which is
+standardized for that service. Components additionally declare
+that they belong to one of three types:</p>
+<ul>
+<li><strong>Providers.</strong> A provider actually implements the behavior
+(satisfies the contract) for that kind of service. For instance,
+if a service is responsible for looking up documents by an identifier,
+one provider may do so by querying a database, while another may
+do so by reading a static JSON document. From the outside, either
+provider would look the same (they expose the same interface) and
+they could be swapped out easily.</li>
+<li><strong>Aggregator.</strong> An aggregator takes many providers and makes them
+behave as one. Again, this implements the same interface as an
+individual provider, so users of the service do not need to be
+concerned about the difference between consulting many providers
+and consulting one. Continuing with the example of a service that
+looks up documents by identifiers, an aggregator here might consult
+all providers, and return any document is found (perhaps picking one
+over the other or merging documents if there are multiple matches.)</li>
+<li><strong>Decorators.</strong> A decorator exposes the same interface as other
+components, but instead of fully implementing the behavior associated
+with that kind of service, it only acts as an intermediary, delegating
+the actual behavior to a different component. Decorators may transform
+inputs or outputs, or initiate some side effects associated with a
+service. This is useful if certain common behavior associated with a
+service (caching, for instance) may be useful across many different
+implementations of that same service.</li>
+</ul>
+<p>The framework will register extensions in this category such that an
+aggregator will depend on all of its providers, and decorators will
+depend upon on one another in a chain. The result of this compositing step
+(the last decorator, if any; otherwise the aggregator, if any;
+otherwise a single provider) will be exposed as a single service that
+other extensions can acquire through dependency injection. Because all
+components of the same type of service expose the same interface, users
+of that service do not need to be aware that they are talking to an
+aggregator or a provider, for instance.</p>
+        <hr>
+    </body>
+</html>

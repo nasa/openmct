@@ -1,0 +1,623 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/************************** FEATURES */
+/************************** VERY INFLUENTIAL GLOBAL DIMENSIONS */
+/************************** RATIOS */
+/************************** LAYOUT */
+/*************** Panes */
+/*************** Overlay */
+/*************** Progress Overlay */
+/*************** Items */
+/*************** Tree */
+/*************** Tabular */
+/*************** Imagery */
+/*************** Ticks */
+/*************** Plots */
+/* min plot height is based on user testing to find minimum useful height */
+/*************** Bubbles */
+/*************** Forms */
+/*************** Wait Spinner Defaults */
+/************************** CONTROLS */
+/************************** PATHS */
+/************************** TIMINGS */
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/*********************************************** CONTROLS, FORM ELEMENTS */
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 1, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+.l-timeline-gantt {
+  min-width: 2px;
+  overflow: hidden;
+  position: absolute;
+  top: 2px;
+  bottom: 2px; }
+  /* line 7, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+  .l-timeline-gantt .bar {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    height: 17px;
+    line-height: 17px;
+    padding: 0 5px; }
+    /* line 13, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+    .l-timeline-gantt .bar span {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      display: block; }
+      /* line 17, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+      .l-timeline-gantt .bar span.s-activity-type {
+        right: auto;
+        width: 20px;
+        text-align: center; }
+        /* line 21, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+        .l-timeline-gantt .bar span.s-activity-type.timeline:before {
+          content: "S"; }
+        /* line 26, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+        .l-timeline-gantt .bar span.s-activity-type.activity:before {
+          content: "A"; }
+      /* line 31, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+      .l-timeline-gantt .bar span.s-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        left: 20px; }
+      /* line 36, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+      .l-timeline-gantt .bar span.duration {
+        left: auto;
+        opacity: 0.75;
+        right: 0;
+        text-align: right;
+        width: 60px; }
+      /* line 43, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+      .l-timeline-gantt .bar span.handle {
+        top: 0;
+        bottom: 0;
+        height: auto;
+        width: 15px; }
+        /* line 48, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+        .l-timeline-gantt .bar span.handle.left {
+          right: auto; }
+        /* line 51, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+        .l-timeline-gantt .bar span.handle.middle {
+          right: 15px;
+          left: 15px;
+          width: auto; }
+        /* line 56, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+        .l-timeline-gantt .bar span.handle.right {
+          right: 0;
+          left: auto; }
+  /* line 63, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+  .l-timeline-gantt.sm .bar span {
+    display: none; }
+
+/* line 71, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+.edit-mode .s-timeline-gantt .handle,
+.s-status-editing .s-timeline-gantt .handle {
+  cursor: col-resize; }
+  /* line 73, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_activities.scss */
+  .edit-mode .s-timeline-gantt .handle.mid,
+  .s-status-editing .s-timeline-gantt .handle.mid {
+    cursor: ew-resize; }
+
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2017, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+/* line 23, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+.l-timeline-holder {
+  overflow: hidden;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: auto;
+  height: auto; }
+  /* line 27, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder.split-layout > .splitter {
+    top: 0; }
+  /* line 33, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .l-header {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: default; }
+  /* line 38, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .l-timeline-pane {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto; }
+    /* line 41, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane .l-width-control {
+      position: relative; }
+    /* line 45, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane .l-swimlanes-holder {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      top: 31px; }
+      /* line 48, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane .l-swimlanes-holder .l-col.l-plot-resource {
+        cursor: pointer; }
+    /* line 55, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto; }
+      /* line 58, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v.l-tabular-l {
+        right: auto;
+        width: 266px; }
+        /* line 62, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v.l-tabular-l .l-swimlanes-holder {
+          bottom: 10px; }
+      /* line 66, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v.l-tabular-r {
+        overflow-x: scroll;
+        overflow-y: hidden;
+        left: 266px; }
+        /* line 70, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.s-timeline-tabular .t-pane-v.l-tabular-r .l-width {
+          overflow: visible;
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          width: auto;
+          height: auto;
+          min-width: 590px;
+          width: 100%; }
+    /* line 78, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-gantt .l-swimlanes-holder {
+      overflow-x: hidden;
+      overflow-y: scroll;
+      bottom: 10px; }
+    /* line 83, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend {
+      box-sizing: border-box;
+      padding: 5px 0;
+      white-space: nowrap; }
+      /* line 88, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .l-legend-items {
+        overflow: hidden;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: auto;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: auto;
+        top: 25px; }
+      /* line 93, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .legend-item {
+        display: block;
+        margin-bottom: 3px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap; }
+        /* line 100, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .legend-item .color-swatch {
+          vertical-align: baseline; }
+        /* line 103, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-legend .legend-item .title-label {
+          vertical-align: baseline; }
+    /* line 112, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graphs-holder {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      bottom: 10px; }
+      /* line 116, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graphs-holder .l-graphs {
+        overflow: hidden;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: auto;
+        height: auto;
+        overflow-x: hidden;
+        overflow-y: scroll; }
+      /* line 121, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graphs-holder .l-graph-labels-holder {
+        overflow: hidden;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: auto;
+        height: auto;
+        overflow: hidden;
+        right: auto;
+        width: 400px; }
+    /* line 129, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-scroll-control {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      top: auto;
+      right: 10px;
+      height: 10px; }
+      /* line 135, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-scroll-control .l-width-control {
+        height: 10px; }
+    /* line 140, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph,
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-labels {
+      height: 80px;
+      margin-bottom: 3px;
+      position: relative; }
+    /* line 147, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      top: 5px;
+      left: 5px;
+      position: absolute; }
+    /* line 153, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph {
+      width: 100%; }
+      /* line 156, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph .l-graph-area canvas {
+        width: 100%;
+        height: 100%; }
+    /* line 163, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-labels {
+      z-index: 10; }
+    /* line 167, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-area {
+      overflow: hidden;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      bottom: 0px;
+      left: 0px;
+      width: auto;
+      height: auto;
+      top: 20px;
+      bottom: 5px; }
+      /* line 170, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-area .l-labels-holder {
+        overflow: hidden;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        bottom: 0px;
+        left: 0px;
+        width: auto;
+        height: auto;
+        -webkit-box-pack: justify;
+        -moz-box-pack: justify;
+        box-pack: justify;
+        -webkit-justify-content: space-between;
+        -moz-justify-content: space-between;
+        -ms-justify-content: space-between;
+        -o-justify-content: space-between;
+        justify-content: space-between;
+        -ms-flex-pack: justify;
+        left: 5px; }
+        /* line 174, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+        .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-area .l-labels-holder .t-resource-graph-tick-label {
+          font-size: 0.9em; }
+          /* line 176, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+          .l-timeline-holder .l-timeline-pane.t-pane-h.l-timeline-resource-graph .l-graph-area .l-labels-holder .t-resource-graph-tick-label.tick-label-y {
+            text-align: left; }
+    /* line 185, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.l-pane-l {
+      right: auto;
+      min-width: 50px;
+      max-width: 90%;
+      width: 30%; }
+    /* line 192, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.l-pane-r {
+      left: 0; }
+      /* line 195, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-timeline-pane.l-pane-r:hover .l-hover-btns-holder {
+        -webkit-transition-property: opacity, background-color, border-color, color;
+        -moz-transition-property: opacity, background-color, border-color, color;
+        transition-property: opacity, background-color, border-color, color;
+        -webkit-transition-duration: 100ms;
+        -moz-transition-duration: 100ms;
+        transition-duration: 100ms;
+        -webkit-transition-timing-function: ease-in-out;
+        -moz-transition-timing-function: ease-in-out;
+        transition-timing-function: ease-in-out;
+        -webkit-transition-delay: 0;
+        -moz-transition-delay: 0;
+        transition-delay: 0;
+        opacity: 1; }
+    /* line 202, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.l-pane-top {
+      bottom: 30%; }
+    /* line 205, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-timeline-pane.l-pane-btm {
+      top: auto;
+      min-height: 20px;
+      max-height: 80%;
+      height: 30%; }
+  /* line 213, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .l-swimlane {
+    height: 21px;
+    position: relative; }
+  /* line 219, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .s-timeline-tabular .l-header,
+  .l-timeline-holder .s-timeline-gantt .l-header {
+    overflow: visible;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    bottom: auto;
+    height: 30px; }
+    /* line 224, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .s-timeline-tabular .l-header .l-header-elem,
+    .l-timeline-holder .s-timeline-gantt .l-header .l-header-elem {
+      overflow: visible;
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      bottom: 5px;
+      left: 5px;
+      width: auto;
+      height: auto;
+      display: block; }
+      /* line 228, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .s-timeline-tabular .l-header .l-header-elem.l-labels .l-label,
+      .l-timeline-holder .s-timeline-gantt .l-header .l-header-elem.l-labels .l-label {
+        position: absolute;
+        width: 140px;
+        margin-left: -70px;
+        text-align: center; }
+  /* line 238, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .l-hover-btns-holder {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto;
+    box-sizing: border-box;
+    -webkit-transition-property: opacity, background-color, border-color, color;
+    -moz-transition-property: opacity, background-color, border-color, color;
+    transition-property: opacity, background-color, border-color, color;
+    -webkit-transition-duration: 500ms;
+    -moz-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -webkit-transition-timing-function: ease-in-out;
+    -moz-transition-timing-function: ease-in-out;
+    transition-timing-function: ease-in-out;
+    -webkit-transition-delay: 0;
+    -moz-transition-delay: 0;
+    transition-delay: 0;
+    opacity: 0;
+    height: 30px;
+    left: auto;
+    padding: 5px 5px 5px 50px;
+    text-align: right;
+    z-index: 10; }
+  /* line 251, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .l-cols {
+    overflow: visible;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    text-wrap: none;
+    white-space: nowrap; }
+    /* line 255, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+    .l-timeline-holder .l-cols .l-col {
+      box-sizing: border-box;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      height: 100%;
+      padding: 0 5px;
+      position: relative;
+      text-wrap: none;
+      white-space: nowrap; }
+      /* line 265, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-col-icon {
+        width: 16px;
+        text-align: center;
+        padding: 0; }
+      /* line 271, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-plot-resource {
+        border-left: none !important;
+        padding-left: 0; }
+      /* line 276, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-title {
+        width: 250px; }
+        /* line 278, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+        .l-timeline-holder .l-cols .l-col.l-title .rep-object-label {
+          border-radius: 3px;
+          display: inline-block;
+          padding: 0 5px; }
+      /* line 285, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-start, .l-timeline-holder .l-cols .l-col.l-end, .l-timeline-holder .l-cols .l-col.l-duration {
+        width: 110px; }
+      /* line 291, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+      .l-timeline-holder .l-cols .l-col.l-activity-modes {
+        display: none;
+        width: 250px; }
+  /* line 299, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .s-timeline-tabular .l-header .l-cols {
+    top: 5px;
+    bottom: 5px; }
+  /* line 305, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .s-timeline-tabular .l-pane-l .l-cols {
+    left: 5px; }
+  /* line 312, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .l-ticks,
+  .l-timeline-holder .l-subticks {
+    overflow: hidden;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: auto;
+    height: auto;
+    top: auto;
+    bottom: 3px; }
+  /* line 318, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .l-ticks {
+    height: 10px; }
+  /* line 322, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .l-timeline-holder .l-subticks {
+    height: 5px; }
+
+/* line 327, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+.s-status-editing .l-title .rep-object-label[draggable="true"] {
+  -webkit-transition: background-color, 0.25s;
+  -moz-transition: background-color, 0.25s;
+  transition: background-color, 0.25s;
+  cursor: pointer; }
+  /* line 330, /Users/vwoeltje/Projects/WTD/Repositories/openmct/platform/features/timeline/res/sass/_timelines.scss */
+  .s-status-editing .l-title .rep-object-label[draggable="true"]:hover {
+    background-color: pullForward(#333, 10%); }
+
+/*# sourceMappingURL=timeline.css.map */

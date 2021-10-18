@@ -1,0 +1,5 @@
+# circle.yml file specifically for the gh-pages branch
+general:
+  branches:
+    ignore:
+      - gh-pages
