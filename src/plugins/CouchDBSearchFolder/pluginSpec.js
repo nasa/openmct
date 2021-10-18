@@ -24,6 +24,8 @@ import {createOpenMct, resetApplicationState} from "utils/testing";
 import CouchDBSearchFolderPlugin from './plugin';
 
 describe('the plugin', function () {
+    const FOLDER_TYPE = 'folder';
+    const NONEDITABLE_FOLDER_TYPE = 'noneditable.folder';
     let identifier = {
         namespace: 'couch-search',
         key: "couch-search"
@@ -31,26 +33,14 @@ describe('the plugin', function () {
     let testPath = '/test/db';
     let openmct;
     let composition;
+    let couchPlugin;
 
-    beforeEach((done) => {
+    beforeEach(() => {
 
         openmct = createOpenMct();
 
-        let couchPlugin = openmct.plugins.CouchDB(testPath);
+        couchPlugin = openmct.plugins.CouchDB(testPath);
         openmct.install(couchPlugin);
-
-        openmct.install(new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
-            "selector": {
-                "model": {
-                    "type": "plan"
-                }
-            }
-        }));
-
-        openmct.on('start', done);
-        openmct.startHeadless();
-
-        composition = openmct.composition.get({identifier});
 
         spyOn(couchPlugin.couchProvider, 'getObjectsByFilter').and.returnValue(Promise.resolve([
             {
@@ -72,20 +62,68 @@ describe('the plugin', function () {
         return resetApplicationState(openmct);
     });
 
-    it('provides a folder to hold plans', () => {
-        return openmct.objects.get(identifier).then((object) => {
-            expect(object).toEqual({
-                identifier,
-                type: 'folder',
-                name: "CouchDB Documents"
+    describe('provides', () => {
+        const NAME = 'CouchDB Documents';
+
+        beforeEach((done) => {
+            openmct.install(new CouchDBSearchFolderPlugin(NAME, couchPlugin, {
+                "selector": {
+                    "model": {
+                        "type": "plan"
+                    }
+                }
+            }));
+
+            openmct.on('start', done);
+            openmct.startHeadless();
+
+            composition = openmct.composition.get({identifier});
+        });
+
+        it('a default non-editable folder to hold plans', () => {
+            return openmct.objects.get(identifier).then((object) => {
+                expect(object).toEqual({
+                    identifier,
+                    type: NONEDITABLE_FOLDER_TYPE,
+                    name: NAME,
+                    location: "ROOT"
+                });
+            });
+        });
+
+        it('composition for couch search folders', () => {
+            return composition.load().then((objects) => {
+                expect(objects.length).toEqual(2);
             });
         });
     });
 
-    it('provides composition for couch search folders', () => {
-        return composition.load().then((objects) => {
-            expect(objects.length).toEqual(2);
+    describe('optionally provides', () => {
+        const EDITABLE = true;
+        const NAME = 'Editable CouchDB Documents';
+
+        beforeEach((done) => {
+            openmct.install(new CouchDBSearchFolderPlugin(NAME, couchPlugin, {
+                "selector": {
+                    "model": {
+                        "type": "plan"
+                    }
+                }
+            }, EDITABLE));
+
+            openmct.on('start', done);
+            openmct.startHeadless();
+        });
+
+        it('an editable folder to hold plans', () => {
+            return openmct.objects.get(identifier).then((object) => {
+                expect(object).toEqual({
+                    identifier,
+                    type: FOLDER_TYPE,
+                    name: NAME,
+                    location: "ROOT"
+                });
+            });
         });
     });
-
 });
