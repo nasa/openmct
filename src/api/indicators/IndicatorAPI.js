@@ -64,7 +64,7 @@ define([
      */
     IndicatorAPI.prototype.add = function (indicator) {
         if (!indicator.priority) {
-            indicator.priority = -1;
+            indicator.priority = 20;
         }
 
         this.indicatorObjects.push(indicator);

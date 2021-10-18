@@ -64,7 +64,6 @@ describe("The Indicator API", () => {
         const testIndicator3 = generateIndicator('test-indicator-3', 'This is yet another test indicator', 3);
         openmct.indicators.add(testIndicator3);
 
-        expect(openmct.indicators.indicatorObjects).toBeDefined();
         expect(openmct.indicators.indicatorObjects.length).toBe(4);
         const indicatorObjectsByPriority = openmct.indicators.getIndicatorObjectsByPriority();
         expect(indicatorObjectsByPriority.length).toBe(4);
