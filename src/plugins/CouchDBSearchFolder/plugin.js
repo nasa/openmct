@@ -1,4 +1,4 @@
-export default function (folderName, couchPlugin, searchFilter) {
+export default function (folderName, couchPlugin, searchFilter, isEditable = false) {
     return function install(openmct) {
         const couchProvider = couchPlugin.couchProvider;
 
@@ -14,7 +14,7 @@ export default function (folderName, couchPlugin, searchFilter) {
                 } else {
                     return Promise.resolve({
                         identifier,
-                        type: 'folder',
+                        type: isEditable ? 'folder' : 'noneditable.folder',
                         name: folderName || "CouchDB Documents"
                     });
                 }
