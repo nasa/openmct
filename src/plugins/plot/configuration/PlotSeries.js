@@ -22,7 +22,7 @@
 import _ from 'lodash';
 import Model from "./Model";
 import { MARKER_SHAPES } from '../draw/MarkerShapes';
-import configStore from "../configuration/configStore";
+import configStore from "../configuration/ConfigStore";
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry

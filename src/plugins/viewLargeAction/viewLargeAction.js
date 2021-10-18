@@ -53,7 +53,7 @@ export default class ViewLargeAction {
         const parentElement = view.parentElement;
         const element = parentElement && parentElement.firstChild;
         const viewLargeAction = element && !element.classList.contains('js-main-container')
-            && !this._isNavigatedObject(objectPath);
+            && !this.openmct.router.isNavigatedObject(objectPath);
 
         return viewLargeAction;
     }
@@ -84,12 +84,5 @@ export default class ViewLargeAction {
         });
 
         return preview.$mount().$el;
-    }
-
-    _isNavigatedObject(objectPath) {
-        let targetObject = objectPath[0];
-        let navigatedObject = this.openmct.router.path[0];
-
-        return this.openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
 }
