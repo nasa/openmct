@@ -76,7 +76,7 @@ describe("the plugin", () => {
         expect(viewDatumAction).toBeDefined();
     });
 
-    xdescribe('when invoked', () => {
+    describe('when invoked', () => {
 
         beforeEach((done) => {
             openmct.overlays.overlay = function (options) {};

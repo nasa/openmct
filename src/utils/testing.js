@@ -25,7 +25,7 @@ import MCT from 'MCT';
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
 
-const TIME_SYSTEM_OPTIONS = {
+const DEFAULT_TIME_OPTIONS = {
     timeSystemKey: 'utc',
     bounds: {
         start: 0,
@@ -33,7 +33,7 @@ const TIME_SYSTEM_OPTIONS = {
     }
 };
 
-export function createOpenMct(timeSystemOptions = TIME_SYSTEM_OPTIONS) {
+export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
     const openmct = new MCT();
     openmct.install(openmct.plugins.LocalStorage());
     openmct.install(openmct.plugins.UTCTimeSystem());
