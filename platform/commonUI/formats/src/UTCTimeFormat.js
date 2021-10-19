@@ -25,15 +25,14 @@ define([
 ], function (
     moment
 ) {
-
-    var DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS",
-        DATE_FORMATS = [
-            DATE_FORMAT,
-            DATE_FORMAT + "Z",
-            "YYYY-MM-DD HH:mm:ss",
-            "YYYY-MM-DD HH:mm",
-            "YYYY-MM-DD"
-        ];
+    const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
+    const DATE_FORMATS = [
+        DATE_FORMAT,
+        DATE_FORMAT + "Z",
+        "YYYY-MM-DD HH:mm:ss",
+        "YYYY-MM-DD HH:mm",
+        "YYYY-MM-DD"
+    ];
 
     /**
      * @typedef Scale
@@ -54,14 +53,26 @@ define([
     }
 
     /**
+     * @param {string} formatString
+     * @returns the value of formatString if the value is a string type and exists in the DATE_FORMATS array; otherwise the DATE_FORMAT value.
+     */
+    function validateFormatString(formatString) {
+        return typeof formatString === 'string' && DATE_FORMATS.includes(formatString) ? formatString : DATE_FORMAT;
+    }
+
+    /**
      * @param {number} value The value to format.
-     * @returns {string} the formatted date(s). If multiple values were requested, then an array of
+     * @param {string} formatString The string format to format. Default "YYYY-MM-DD HH:mm:ss.SSS" + "Z"
+     * @returns {string} the formatted date(s) according to the proper parameter of formatString or the default value of "YYYY-MM-DD HH:mm:ss.SSS" + "Z".
+     * If multiple values were requested, then an array of
      * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
      * in the array.
      */
-    UTCTimeFormat.prototype.format = function (value) {
+    UTCTimeFormat.prototype.format = function (value, formatString) {
         if (value !== undefined) {
-            return moment.utc(value).format(DATE_FORMAT) + "Z";
+            const format = validateFormatString(formatString);
+
+            return moment.utc(value).format(format) + (formatString ? '' : 'Z');
         } else {
             return value;
         }

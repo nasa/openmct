@@ -39,10 +39,6 @@ export default function BarGraphCompositionPolicy(openmct) {
         return metadata.values().length > 0 && hasAggregateDomainAndRange(metadata);
     }
 
-    function hasNoChildren(parentObject) {
-        return parentObject.composition && parentObject.composition.length < 1;
-    }
-
     return {
         allow: function (parent, child) {
             if ((parent.type === BAR_GRAPH_KEY)
