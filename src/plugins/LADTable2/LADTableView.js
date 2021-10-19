@@ -31,7 +31,7 @@ export default class LADTableView {
         this.table = new LADTable(domainObject, openmct);
     }
 
-    show(element) {
+    show(element, editMode) {
         this.component = new Vue({
             el: element,
             components: {
@@ -45,6 +45,7 @@ export default class LADTableView {
             },
             data: () => {
                 return {
+                    isEditing: editMode,
                     domainObject: this.domainObject,
                     marking: {
                         disableMultiSelect: false,
@@ -55,8 +56,12 @@ export default class LADTableView {
                     }
                 };
             },
-            template: '<table-view ref="tableView" :allowFiltering=false :marking="marking" :domain-object="domainObject"></table-view>'
+            template: '<table-view ref="tableView" :is-editing="isEditing" :allowFiltering=false :marking="marking" :domain-object="domainObject"></table-view>'
         });
+    }
+
+    onEditModeChange(editMode) {
+        this.component.isEditing = editMode;
     }
 
     getViewContext() {
