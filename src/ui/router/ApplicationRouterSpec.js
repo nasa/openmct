@@ -1,5 +1,4 @@
 import { createOpenMct, resetApplicationState } from 'utils/testing';
-import { debounce } from 'lodash';
 
 let openmct;
 let element;
