@@ -67,7 +67,6 @@ export default class ExportAsJSONAction {
         this._write(this.root);
     }
 
-    // Private
     /**
      * @private
      * @param {object} domainObject

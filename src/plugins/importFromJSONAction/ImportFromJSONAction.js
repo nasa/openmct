@@ -69,7 +69,6 @@ export default class ImportAsJSONAction {
         this._importObjectTree(object, JSON.parse(objectTree));
     }
 
-    // Private
     /**
      * @private
      * @param {object} parent
