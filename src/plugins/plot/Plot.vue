@@ -104,6 +104,7 @@ export default {
     mounted() {
         eventHelpers.extend(this);
         this.imageExporter = new ImageExporter(this.openmct);
+        console.log('mounted', this.domainObject.name);
     },
     beforeDestroy() {
         this.destroy();
@@ -113,6 +114,7 @@ export default {
             this.loading = loading;
         },
         destroy() {
+            console.log('destroyed', this.domainObject.name);
             this.stopListening();
         },
 
