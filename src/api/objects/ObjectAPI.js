@@ -182,6 +182,12 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     let objectPromise = provider.get(identifier, abortSignal).then(result => {
         delete this.cache[keystring];
         result = this.applyGetInterceptors(identifier, result);
+        if (result.isMutable) {
+            result.$refresh(result);
+        } else {
+            let mutableDomainObject = this._toMutable(result);
+            mutableDomainObject.$refresh(result);
+        }
 
         return result;
     });
@@ -356,6 +362,20 @@ ObjectAPI.prototype.applyGetInterceptors = function (identifier, domainObject) {
     });
 
     return domainObject;
+};
+
+/**
+ * Return relative url path from a given object path
+ * eg: #/browse/mine/cb56f6bf-c900-43b7-b923-2e3b64b412db/6e89e858-77ce-46e4-a1ad-749240286497/....
+ * @param {Array} objectPath
+ * @returns {string} relative url for object
+ */
+ObjectAPI.prototype.getRelativePath = function (objectPath) {
+    return objectPath
+        .map(p => this.makeKeyString(p.identifier))
+        .reverse()
+        .join('/')
+    ;
 };
 
 /**

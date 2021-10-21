@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from '../timeline/TimelineViewProvider';
+import TimelineViewProvider from './TimelineViewProvider';
+import timelineInterceptor from "./timelineInterceptor";
 
 export default function () {
     return function install(openmct) {
@@ -32,8 +33,12 @@ export default function () {
             cssClass: 'icon-timeline',
             initialize: function (domainObject) {
                 domainObject.composition = [];
+                domainObject.configuration = {
+                    useIndependentTime: false
+                };
             }
         });
+        timelineInterceptor(openmct);
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
     };
 }

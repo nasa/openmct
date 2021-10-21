@@ -19,6 +19,9 @@
  this source code distribution or the Licensing information page available
  at runtime from the About dialog for additional information.
 -->
+
+<!-- eslint-disable vue/no-v-html -->
+
 <template>
 <div class="gl-plot-chart-area">
     <span v-html="canvasTemplate"></span>
@@ -38,7 +41,7 @@ import MCTChartLineStepAfter from './MCTChartLineStepAfter';
 import MCTChartPointSet from './MCTChartPointSet';
 import MCTChartAlarmPointSet from './MCTChartAlarmPointSet';
 import MCTChartAlarmLineSet from "./MCTChartAlarmLineSet";
-import configStore from "../configuration/configStore";
+import configStore from "../configuration/ConfigStore";
 import PlotConfigurationModel from "../configuration/PlotConfigurationModel";
 import LimitLine from "./LimitLine.vue";
 import LimitLabel from "./LimitLabel.vue";

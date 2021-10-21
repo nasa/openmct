@@ -40,13 +40,13 @@
             <div v-if="staticStyle"
                  class="c-inspect-styles__style"
             >
-                <style-editor class="c-inspect-styles__editor"
-                              :style-item="staticStyle"
-                              :is-editing="allowEditing"
-                              :mixed-styles="mixedStyles"
-                              :non-specific-font-properties="nonSpecificFontProperties"
-                              @persist="updateStaticStyle"
-                              @save-style="saveStyle"
+                <StyleEditor class="c-inspect-styles__editor"
+                             :style-item="staticStyle"
+                             :is-editing="allowEditing"
+                             :mixed-styles="mixedStyles"
+                             :non-specific-font-properties="nonSpecificFontProperties"
+                             @persist="updateStaticStyle"
+                             @save-style="saveStyle"
                 />
             </div>
             <button
@@ -108,12 +108,12 @@
                 <condition-description :show-label="true"
                                        :condition="getCondition(conditionStyle.conditionId)"
                 />
-                <style-editor class="c-inspect-styles__editor"
-                              :style-item="conditionStyle"
-                              :non-specific-font-properties="nonSpecificFontProperties"
-                              :is-editing="allowEditing"
-                              @persist="updateConditionalStyle"
-                              @save-style="saveStyle"
+                <StyleEditor class="c-inspect-styles__editor"
+                             :style-item="conditionStyle"
+                             :non-specific-font-properties="nonSpecificFontProperties"
+                             :is-editing="allowEditing"
+                             @persist="updateConditionalStyle"
+                             @save-style="saveStyle"
                 />
             </div>
         </div>
@@ -297,10 +297,7 @@ export default {
             this.openmct.objects.getOriginalPath(this.conditionSetDomainObject.identifier).then(
                 (objectPath) => {
                     this.objectPath = objectPath;
-                    this.navigateToPath = '#/browse/' + this.objectPath
-                        .map(o => o && this.openmct.objects.makeKeyString(o.identifier))
-                        .reverse()
-                        .join('/');
+                    this.navigateToPath = '#/browse/' + this.openmct.objects.getRelativePath(this.objectPath);
                 }
             );
         },
@@ -559,10 +556,10 @@ export default {
             }
 
             let vm = new Vue({
+                components: {ConditionSetSelectorDialog},
                 provide: {
                     openmct: this.openmct
                 },
-                components: {ConditionSetSelectorDialog},
                 data() {
                     return {
                         handleItemSelection
