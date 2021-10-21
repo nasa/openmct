@@ -152,11 +152,7 @@ export default {
     },
     methods: {
         addTabToLoaded(tab) {
-            if (this.internalDomainObject.keep_alive) {
-                this.loadedTabs[tab.keyString] = true;
-            } else {
-                this.loadedTabs = { [tab.keyString]: true };
-            }
+            this.loadedTabs[tab.keyString] = true;
         },
         setCurrentTabByIndex(index) {
             if (this.tabsList[index]) {
