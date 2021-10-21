@@ -220,7 +220,7 @@ describe("The Imagery View Layouts", () => {
         });
 
         spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
 
         originalRouterPath = openmct.router.path;
 
@@ -370,18 +370,15 @@ describe("The Imagery View Layouts", () => {
             });
         });
 
-        xit("should show that an image is not new", (done) => {
+        it("should show that an image is not new", (done) => {
             const target = imageTelemetry[2].url;
             parent.querySelectorAll(`img[src='${target}']`)[0].click();
 
             Vue.nextTick(() => {
-                // used in code, need to wait to the 500ms here too
-                setTimeout(() => {
-                    const imageIsNew = isNew(parent);
+                const imageIsNew = isNew(parent);
 
-                    expect(imageIsNew).toBeFalse();
-                    done();
-                }, REFRESH_CSS_MS);
+                expect(imageIsNew).toBeFalse();
+                done();
             });
         });
 
