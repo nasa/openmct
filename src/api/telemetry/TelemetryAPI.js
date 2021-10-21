@@ -146,6 +146,7 @@ define([
         this.valueFormatterCache = new WeakMap();
         this.formatters = new Map();
         this.requestAbortControllers = new Set();
+        this.hasRequestProvider = undefined;
     }
 
     TelemetryAPI.prototype.abortAllRequests = function () {
@@ -327,6 +328,17 @@ define([
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
             return Promise.reject('No provider found');
+        }
+
+        const hasRequestProvider = Object.hasOwn(provider, 'request');
+        if (this.hasRequestProvider === undefined && !hasRequestProvider) {
+            this.openmct.notifications.alert('Missing historical telemetry provider');
+            console.warn('Missing historical telemetry provider');
+        }
+
+        this.hasRequestProvider = hasRequestProvider;
+        if (!hasRequestProvider) {
+            return Promise.resolve([]);
         }
 
         return provider.request.apply(provider, arguments).catch((rejected) => {
