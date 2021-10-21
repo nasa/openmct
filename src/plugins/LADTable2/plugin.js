@@ -23,9 +23,15 @@
 import LADTableViewProvider from './LADTableViewProvider';
 import LADTableSetViewProvider from './LADTableSetViewProvider';
 import ladTableCompositionPolicy from './ladTableCompositionPolicy.js';
+import LADTableConfigurationViewProvider from './LADTableConfigurationViewProvider';
 
 export default function () {
     return function install(openmct) {
+        openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
+        openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
+        openmct.inspectorViews.addProvider(new LADTableConfigurationViewProvider(openmct));
+        openmct.composition.addPolicy(ladTableCompositionPolicy(openmct));
+
         openmct.types.addType('LadTable', {
             name: "LAD Table NEW",
             creatable: true,
@@ -51,13 +57,5 @@ export default function () {
             }
         });
 
-        // openmct.telemetry.addProvider(new LADTableProvider(openmct));
-        openmct.objectViews.addProvider(new LADTableViewProvider(openmct));
-        openmct.objectViews.addProvider(new LADTableSetViewProvider(openmct));
-
-        openmct.composition.addPolicy(ladTableCompositionPolicy(openmct));
-        // openmct.composition.addPolicy((parent, child) => {
-        //     return true;
-        // });
     };
 }
