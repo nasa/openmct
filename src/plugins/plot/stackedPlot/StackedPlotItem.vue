@@ -75,6 +75,11 @@ export default {
     mounted() {
         this.updateView();
     },
+    beforeDestroy() {
+        if (this.component) {
+            this.component.$destroy();
+        }
+    },
     methods: {
         updateComponentProp(prop, value) {
             if (this.component) {

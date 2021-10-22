@@ -222,9 +222,13 @@ describe("the plugin", () => {
             openmct.router.path = originalRouterPath;
         });
 
-        it("Renders a row for every telemetry datum returned", () => {
+        it("Renders a row for every telemetry datum returned", (done) => {
             let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
-            expect(rows.length).toBe(3);
+            Vue.nextTick(() => {
+                expect(rows.length).toBe(3);
+
+                done();
+            });
         });
 
         it("Renders a column for every item in telemetry metadata", () => {
