@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import {createMouseEvent, createOpenMct, resetApplicationState} from "utils/testing";
+import {millisecondsToDHMS, getPreciseDuration} from "../../utils/duration";
 import ConductorPlugin from "./plugin";
 import Vue from 'vue';
 
@@ -125,4 +126,20 @@ describe('time conductor', () => {
         });
     });
 
+});
+
+describe('duration functions', () => {
+    it('should transform milliseconds to DHMS', () => {
+        const functionResults = [millisecondsToDHMS(0), millisecondsToDHMS(86400000),
+            millisecondsToDHMS(129600000), millisecondsToDHMS(661824000)];
+        const validResults = [' ', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s'];
+        expect(validResults).toEqual(functionResults);
+    });
+
+    it('should get precise duration', () => {
+        const functionResults = [getPreciseDuration(0), getPreciseDuration(643680000),
+            getPreciseDuration(1605312000)];
+        const validResults = ['00:00:00:00', '07:10:48:00', '18:13:55:12'];
+        expect(validResults).toEqual(functionResults);
+    });
 });
