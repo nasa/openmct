@@ -37,7 +37,6 @@ describe("the plugin", function () {
     let openmct;
     let telemetryPromise;
     let telemetryPromiseResolve;
-    let cleanupFirst;
     let mockObjectPath;
     let telemetrylimitProvider;
 
@@ -77,7 +76,6 @@ describe("the plugin", function () {
                 'some-other-key': 'some-other-value 3'
             }
         ];
-        cleanupFirst = [];
 
         const timeSystem = {
             timeSystemKey: 'utc',
@@ -168,19 +166,13 @@ describe("the plugin", function () {
     });
 
     afterEach((done) => {
-        // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
-        // teardown, which causes problems
-        // This is hacky, we should find a better approach here.
-        setTimeout(() => {
-            //Cleanup code that needs to happen before dom elements start being destroyed
-            cleanupFirst.forEach(cleanup => cleanup());
-            cleanupFirst = [];
-            document.body.removeChild(element);
-
-            configStore.deleteAll();
-
-            resetApplicationState(openmct).then(done).catch(done);
+        openmct.time.timeSystem('utc', {
+            start: 0,
+            end: 1
         });
+
+        configStore.deleteAll();
+        resetApplicationState(openmct).then(done).catch(done);
     });
 
     describe("the plot views", () => {
@@ -392,10 +384,6 @@ describe("the plugin", function () {
             plotViewProvider = applicableViews.find((viewProvider) => viewProvider.key === "plot-single");
             plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             plotView.show(child, true);
-
-            cleanupFirst.push(() => {
-                plotView.destroy();
-            });
 
             return Vue.nextTick();
         });
@@ -757,11 +745,6 @@ describe("the plugin", function () {
                     path: [stackedPlotObject]
                 },
                 template: "<stacked-plot></stacked-plot>"
-            });
-
-            cleanupFirst.push(() => {
-                component.$destroy();
-                component = undefined;
             });
 
             return telemetryPromise

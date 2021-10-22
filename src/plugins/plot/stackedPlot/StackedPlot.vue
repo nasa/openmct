@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import eventHelpers from '../lib/eventHelpers';
+
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
 
@@ -104,8 +104,6 @@ export default {
         this.destroy();
     },
     mounted() {
-        eventHelpers.extend(this);
-
         this.imageExporter = new ImageExporter(this.openmct);
 
         this.tickWidthMap = {};
@@ -120,7 +118,6 @@ export default {
             this.loading = loaded;
         },
         destroy() {
-            this.stopListening();
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.composition.off('reorder', this.compositionReorder);
