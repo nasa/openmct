@@ -207,18 +207,19 @@ export default {
                 this.showGrid = value;
             }
         },
-        layoutItems:{
-            handler (value) {
+        layoutItems: {
+            handler(value) {
                 let wMax = this.$el.clientWidth / this.gridSize[0];
                 let hMax = this.$el.clientHeight / this.gridSize[1];
                 value.forEach(item => {
                     if (item.x + item.width > wMax) {
                         wMax = item.x + item.width + 2;
                     }
+
                     if (item.y + item.height > hMax) {
                         hMax = item.y + item.height + 2;
                     }
-                })
+                });
                 this.gridDimensions = [wMax * this.gridSize[0], hMax * this.gridSize[1]];
             },
             deep: true
@@ -231,7 +232,7 @@ export default {
         this.composition.on('add', this.addChild);
         this.composition.on('remove', this.removeChild);
         this.composition.load();
-        this.gridDimensions=[this.$el.offsetWidth, this.$el.scrollHeight];
+        this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
     },
     destroyed: function () {
         this.openmct.selection.off('change', this.setSelection);
