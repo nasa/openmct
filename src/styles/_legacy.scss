@@ -33,10 +33,6 @@
         align-items: center;
     }
 
-    &__value {
-        color: $colorBodyFgEm;
-    }
-
     .c-frame & {
         // When in a Display or Flexible Layout
         @include abs();
