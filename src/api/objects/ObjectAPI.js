@@ -304,10 +304,15 @@ ObjectAPI.prototype.save = function (domainObject) {
                 savedResolve = resolve;
             });
             domainObject.persisted = persistedTime;
-            provider.create(domainObject).then((response) => {
-                this.mutate(domainObject, 'persisted', persistedTime);
-                savedResolve(response);
-            });
+            const newObjectPromise = provider.create(domainObject);
+            if (newObjectPromise) {
+                newObjectPromise.then(response => {
+                    this.mutate(domainObject, 'persisted', persistedTime);
+                    savedResolve(response);
+                });
+            } else {
+                result = Promise.reject(`[ObjectAPI][save] Object provider returned ${newObjectPromise} when creating new object.`);
+            }
         } else {
             domainObject.persisted = persistedTime;
             this.mutate(domainObject, 'persisted', persistedTime);
