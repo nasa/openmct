@@ -64,7 +64,7 @@ define([
      */
     IndicatorAPI.prototype.add = function (indicator) {
         if (!indicator.priority) {
-            indicator.priority = 20;
+            indicator.priority = this.openmct.priority.DEFAULT;
         }
 
         this.indicatorObjects.push(indicator);
