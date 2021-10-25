@@ -30,33 +30,16 @@ define(
          * Once initiated, any persist operations will be queued pending a
          * subsequent call to [.save()](@link #save) or [.finish()](@link
          * #finish).
-         * @param transactionService
          * @param domainObject
          * @constructor
          */
         function EditorCapability(
-            transactionService,
             openmct,
             domainObject
         ) {
-            this.transactionService = transactionService;
             this.openmct = openmct;
             this.domainObject = domainObject;
         }
-
-        /**
-         * Initiate an editing session. This will start a transaction during
-         * which any persist operations will be deferred until either save()
-         * or finish() are called.
-         */
-        EditorCapability.prototype.edit = function () {
-            console.warn('DEPRECATED: cannot edit via edit capability, use openmct.editor instead.');
-
-            if (!this.openmct.editor.isEditing()) {
-                this.openmct.editor.edit();
-                this.domainObject.getCapability('status').set('editing', true);
-            }
-        };
 
         /**
          * Determines whether this object, or any of its ancestors are
@@ -74,38 +57,6 @@ define(
          */
         EditorCapability.prototype.isEditContextRoot = function () {
             return this.openmct.editor.isEditing();
-        };
-
-        /**
-         * Save any unsaved changes from this editing session. This will
-         * end the current transaction and continue with a new one.
-         * @returns {*}
-         */
-        EditorCapability.prototype.save = function () {
-            console.warn('DEPRECATED: cannot save via edit capability, use openmct.editor instead.');
-
-            return Promise.resolve();
-        };
-
-        EditorCapability.prototype.invoke = EditorCapability.prototype.edit;
-
-        /**
-         * Finish the current editing session. This will discard any pending
-         * persist operations
-         * @returns {*}
-         */
-        EditorCapability.prototype.finish = function () {
-            console.warn('DEPRECATED: cannot finish via edit capability, use openmct.editor instead.');
-
-            return Promise.resolve();
-        };
-
-        /**
-         * @returns {boolean} true if there have been any domain model
-         * modifications since the last persist, false otherwise.
-         */
-        EditorCapability.prototype.dirty = function () {
-            return this.transactionService.size() > 0;
         };
 
         return EditorCapability;

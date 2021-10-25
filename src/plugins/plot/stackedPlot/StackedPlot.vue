@@ -52,22 +52,24 @@
         >
         </button>
     </div>
-    <stacked-plot-item v-for="object in compositionObjects"
-                       :key="object.id"
-                       class="c-plot--stacked-container"
-                       :object="object"
-                       :options="options"
-                       :grid-lines="gridLines"
-                       :cursor-guide="cursorGuide"
-                       :plot-tick-width="maxTickWidth"
-                       @plotTickWidth="onTickWidthChange"
-                       @loadingUpdated="loadingUpdated"
-    />
+    <div class="l-view-section">
+        <stacked-plot-item v-for="object in compositionObjects"
+                           :key="object.id"
+                           class="c-plot--stacked-container"
+                           :object="object"
+                           :options="options"
+                           :grid-lines="gridLines"
+                           :cursor-guide="cursorGuide"
+                           :plot-tick-width="maxTickWidth"
+                           @plotTickWidth="onTickWidthChange"
+                           @loadingUpdated="loadingUpdated"
+        />
+    </div>
 </div>
 </template>
 
 <script>
-import eventHelpers from '../lib/eventHelpers';
+
 import StackedPlotItem from './StackedPlotItem.vue';
 import ImageExporter from '../../../exporters/ImageExporter';
 
@@ -102,8 +104,6 @@ export default {
         this.destroy();
     },
     mounted() {
-        eventHelpers.extend(this);
-
         this.imageExporter = new ImageExporter(this.openmct);
 
         this.tickWidthMap = {};
@@ -118,7 +118,6 @@ export default {
             this.loading = loaded;
         },
         destroy() {
-            this.stopListening();
             this.composition.off('add', this.addChild);
             this.composition.off('remove', this.removeChild);
             this.composition.off('reorder', this.compositionReorder);

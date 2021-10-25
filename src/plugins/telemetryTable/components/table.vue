@@ -528,7 +528,6 @@ export default {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-
                     let start = 0;
                     let end = VISIBLE_ROW_COUNT;
                     let tableRows = this.table.tableRows.getRows();

@@ -168,13 +168,16 @@ export default {
             }
         },
         zoom(bounds) {
-            this.isZooming = true;
-            this.formattedBounds.start = this.timeFormatter.format(bounds.start);
-            this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+            if (isNaN(bounds.start) || isNaN(bounds.end)) {
+                this.isZooming = false;
+            } else {
+                this.isZooming = true;
+                this.formattedBounds.start = this.timeFormatter.format(bounds.start);
+                this.formattedBounds.end = this.timeFormatter.format(bounds.end);
+            }
         },
         endZoom(bounds) {
             this.isZooming = false;
-
             if (bounds) {
                 this.openmct.time.bounds(bounds);
             } else {
