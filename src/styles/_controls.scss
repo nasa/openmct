@@ -453,12 +453,16 @@ select {
     }
 }
 
-.c-so-view--no-frame > .c-so-view__object-view > .c-hyperlink--button {
+.c-so-view--hyperlink.c-so-view--no-frame {
+  .c-hyperlink--button {
     @include abs();
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
+  }
+
+  .c-so-view__frame-controls { display: none; }
 }
 
 /******************************************************** MENUS */
@@ -1006,6 +1010,9 @@ input[type="range"] {
         transition: $transIn;
         opacity: 1;
         pointer-events: inherit;
+
+        &[disabled] { opacity: $controlDisabledOpacity; }
+
     }
 }
 

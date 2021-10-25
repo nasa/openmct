@@ -285,17 +285,17 @@
     }
 }
 
-.c-imagery__prev-next-buttons {
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    pointer-events: none;
+.c-imagery__prev-next-button {
+    pointer-events: all;
     position: absolute;
     top: 50%;
-    transform: translateY(-75%);
+    transform: translateY(-75%); // 75% due to transform: rotation approach to the button
 
-    .c-nav {
-        pointer-events: all;
+    &.c-nav {
+        position: absolute;
+
+        &--prev { left: 0; }
+        &--next { right: 0; }
     }
 
     .s-status-taking-snapshot & {

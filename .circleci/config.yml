@@ -42,6 +42,7 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
+      - run: npm run lint
       - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.always-pass>>
       - store_test_results:
           path: dist/reports/tests/

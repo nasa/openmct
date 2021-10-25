@@ -222,8 +222,8 @@ describe("The Imagery View Layouts", () => {
             disconnect() {}
         });
 
-        // spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
-        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve({}));
+        //spyOn(openmct.telemetry, 'request').and.returnValue(Promise.resolve([]));
+        spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(imageryObject));
 
         originalRouterPath = openmct.router.path;
 
@@ -381,18 +381,17 @@ describe("The Imagery View Layouts", () => {
             });
         });
 
-        xit("should show that an image is not new", (done) => {
-            const target = imageTelemetry[2].url;
-            parent.querySelectorAll(`img[src='${target}']`)[0].click();
-
+        it("should show that an image is not new", (done) => {
             Vue.nextTick(() => {
-                // used in code, need to wait to the 500ms here too
-                setTimeout(() => {
+                const target = imageTelemetry[2].url;
+                parent.querySelectorAll(`img[src='${target}']`)[0].click();
+
+                Vue.nextTick(() => {
                     const imageIsNew = isNew(parent);
 
                     expect(imageIsNew).toBeFalse();
                     done();
-                }, REFRESH_CSS_MS);
+                });
             });
         });
 

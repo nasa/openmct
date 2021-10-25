@@ -795,10 +795,10 @@ describe('the plugin', function () {
                 }
             };
             openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-            const mockTransactionService = jasmine.createSpyObj(
-                'transactionService',
-                ['commit']
-            );
+            // const mockTransactionService = jasmine.createSpyObj(
+            //     'transactionService',
+            //     ['commit']
+            // );
             openmct.telemetry = jasmine.createSpyObj('telemetry', ['isTelemetryObject', "subscribe", "getMetadata", "getValueFormatter", "request"]);
             openmct.telemetry.isTelemetryObject.and.returnValue(true);
             openmct.telemetry.subscribe.and.returnValue(function () {});
@@ -810,7 +810,7 @@ describe('the plugin', function () {
             openmct.telemetry.getMetadata.and.returnValue(testTelemetryObject.telemetry);
             openmct.telemetry.request.and.returnValue(Promise.resolve([]));
 
-            mockTransactionService.commit = async () => {};
+            // mockTransactionService.commit = async () => {};
             const mockIdentifierService = jasmine.createSpyObj(
                 'identifierService',
                 ['parse']
@@ -822,11 +822,12 @@ describe('the plugin', function () {
             });
 
             openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-            openmct.$injector.get.withArgs('identifierService').and.returnValue(mockIdentifierService)
-                .withArgs('transactionService').and.returnValue(mockTransactionService);
+            openmct.$injector.get.withArgs('identifierService').and.returnValue(mockIdentifierService);
+            // .withArgs('transactionService').and.returnValue(mockTransactionService);
 
             const styleRuleManger = new StyleRuleManager(stylesObject, openmct, null, true);
             spyOn(styleRuleManger, 'subscribeToConditionSet');
+            openmct.editor.edit();
             await openmct.editor.save();
             expect(styleRuleManger.subscribeToConditionSet).toHaveBeenCalledTimes(1);
         });

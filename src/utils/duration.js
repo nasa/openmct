@@ -20,7 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const ONE_MINUTE = 60 * 1000;
+const ONE_SECOND = 1000;
+const ONE_MINUTE = 60 * ONE_SECOND;
 const ONE_HOUR = ONE_MINUTE * 60;
 const ONE_DAY = ONE_HOUR * 24;
 
@@ -32,54 +33,33 @@ function normalizeAge(num) {
 }
 
 function toDoubleDigits(num) {
-    if (num >= 10) {
-        return num;
-    } else {
-        return `0${num}`;
-    }
+    return num >= 10 ? num : `0${num}`;
 }
 
-export function getDuration(numericDuration) {
-    let result;
-    let age;
-
-    if (numericDuration > ONE_DAY - 1) {
-        age = normalizeAge((numericDuration / ONE_DAY)).toFixed(2);
-        result = `+ ${age} day`;
-
-        if (age !== 1) {
-            result += 's';
-        }
-    } else if (numericDuration > ONE_HOUR - 1) {
-        age = normalizeAge((numericDuration / ONE_HOUR).toFixed(2));
-        result = `+ ${age} hour`;
-
-        if (age !== 1) {
-            result += 's';
-        }
-    } else {
-        age = normalizeAge((numericDuration / ONE_MINUTE).toFixed(2));
-        result = `+ ${age} min`;
-
-        if (age !== 1) {
-            result += 's';
-        }
-    }
-
-    return result;
+function addTimeSuffix(value, suffix) {
+    return typeof value === 'number' && value > 0 ? `${value + suffix}` : '';
 }
 
-export function getPreciseDuration(numericDuration) {
-    let result;
+export function millisecondsToDHMS(numericDuration) {
+    const ms = numericDuration || 0;
+    const dhms = [
+        addTimeSuffix(Math.floor(normalizeAge(ms / ONE_DAY)), 'd'),
+        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR)), 'h'),
+        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE)), 'm'),
+        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)), 's')
+    ].filter(Boolean).join(' ');
 
-    const days = toDoubleDigits(Math.floor((numericDuration) / (24 * 60 * 60 * 1000)));
-    let remaining = (numericDuration) % (24 * 60 * 60 * 1000);
-    const hours = toDoubleDigits(Math.floor((remaining) / (60 * 60 * 1000)));
-    remaining = (remaining) % (60 * 60 * 1000);
-    const minutes = toDoubleDigits(Math.floor((remaining) / (60 * 1000)));
-    remaining = (remaining) % (60 * 1000);
-    const seconds = toDoubleDigits(Math.floor((remaining) / (1000)));
-    result = `${days}:${hours}:${minutes}:${seconds}`;
+    return `${ dhms ? '+' : ''} ${dhms}`;
+}
 
-    return result;
+export function getPreciseDuration(value) {
+    const ms = value || 0;
+
+    return [
+        toDoubleDigits(Math.floor(normalizeAge(ms / ONE_DAY))),
+        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
+        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
+        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)))
+    ].join(":");
+
 }
