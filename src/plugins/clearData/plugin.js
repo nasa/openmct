@@ -49,7 +49,7 @@ define([
                 let indicator = {
                     element: component.$mount().$el,
                     key: 'clear-data-indicator',
-                    priority: 80
+                    priority: openmct.priority.DEFAULT
                 };
 
                 openmct.indicators.add(indicator);

@@ -115,7 +115,7 @@ export default function NotebookPlugin() {
         const indicator = {
             element: notebookSnapshotIndicator.$mount().$el,
             key: 'notebook-snapshot-indicator',
-            priority: 90
+            priority: openmct.priority.DEFAULT
         };
 
         openmct.indicators.add(indicator);
