@@ -26,6 +26,10 @@ describe("The Object API", () => {
 
         openmct.$injector.get.and.returnValue(mockIdentifierService);
         objectAPI = new ObjectAPI(typeRegistry, openmct);
+
+        openmct.editor = {};
+        openmct.editor.isEditing = () => false;
+
         mockDomainObject = {
             identifier: {
                 namespace: TEST_NAMESPACE,
