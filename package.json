@@ -1,8 +1,9 @@
 {
   "name": "openmct",
-  "version": "1.7.8-SNAPSHOT",
+  "version": "1.7.8",
   "description": "The Open MCT core platform",
   "devDependencies": {
+    "@braintree/sanitize-url": "^5.0.2",
     "angular": ">=1.8.0",
     "angular-route": "1.4.14",
     "babel-eslint": "10.0.3",

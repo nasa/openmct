@@ -73,8 +73,9 @@ export default {
         hasUnits() {
             let itemsWithUnits = this.items.filter((item) => {
                 let metadata = this.openmct.telemetry.getMetadata(item.domainObject);
+                const valueMetadatas = metadata ? metadata.valueMetadatas : [];
 
-                return this.metadataHasUnits(metadata.valueMetadatas);
+                return this.metadataHasUnits(valueMetadatas);
 
             });
 

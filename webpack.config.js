@@ -42,6 +42,8 @@ const webpackConfig = {
             "csv": "comma-separated-values",
             "EventEmitter": "eventemitter3",
             "bourbon": "bourbon.scss",
+            "plotly-basic": "plotly.js-basic-dist",
+            "plotly-gl2d": "plotly.js-gl2d-dist",
             "vue": vueFile,
             "d3-scale": path.join(__dirname, "node_modules/d3-scale/build/d3-scale.min.js"),
             "printj": path.join(__dirname, "node_modules/printj/dist/printj.min.js"),
