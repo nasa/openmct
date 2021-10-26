@@ -163,8 +163,6 @@ describe('the plugin', function () {
                 return Promise.resolve([telemetryItem1, telemetryItem2]);
             };
 
-            mockComposition._destroy = () => {};
-
             spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
             const applicableViews = openmct.objectViews.get(testViewObject, []);
