@@ -20,39 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/***************** PLOTLY OVERRIDES */
-.plot-container.plotly {
-    .bglayer .bg {
-        fill: $colorPlotBg !important;
-        fill-opacity: 1 !important;
-        stroke: $colorInteriorBorder;
-        stroke-width: 1 !important;
-    }
-
-    .cartesianlayer {
-        .gridlayer {
-            .x,
-            .y {
-                path {
-                    opacity: $opacityPlotHash;
-                    stroke: $colorPlotHash !important;
-                }
-            }
-        }
-
-        path.xy2-y {
-            stroke: $colorPlotHash !important; // Using this instead of $colorPlotAreaBorder because that is an rgba
-            opacity: $opacityPlotHash !important;
-        }
-    }
-
-    .xtick,
-    .ytick,
-    [class^="g-"] text[class*="title"] {
-        // Matches <g class="g-*"> <text class="*title">
-        text {
-            fill: $colorPlotFg !important;
-            font-size: 12px !important;
-        }
-    }
-}
+const PRIORITIES = Object.freeze({
+    HIGH: 1000,
+    DEFAULT: 0,
+    LOW: -1000
+});
+export default PRIORITIES;

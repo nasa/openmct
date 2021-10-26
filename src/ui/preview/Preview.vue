@@ -46,6 +46,14 @@ export default {
         'openmct',
         'objectPath'
     ],
+    props: {
+        viewOptions: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        }
+    },
     data() {
         let domainObject = this.objectPath[0];
 
@@ -109,7 +117,7 @@ export default {
             this.view = this.currentView.view(this.domainObject, this.objectPath);
 
             this.getActionsCollection();
-            this.view.show(this.viewContainer, false);
+            this.view.show(this.viewContainer, false, this.viewOptions);
             this.initObjectStyles();
         },
         getActionsCollection() {
