@@ -26,13 +26,12 @@
     class="js-lad-table__body__row"
     @contextmenu.prevent="showContextMenu"
 >
+    <td class="js-first-data">{{ telemetryObject.domainObject.name }}</td>
+    <td class="js-second-data">{{ timestamp }}</td>
     <td
-        v-for="(header, i) in headerKeys"
-        :key="i"
-        class="js-data"
-    >
-        {{ parseValue(header) }}
-    </td>
+        class="js-third-data"
+        :class="valueClass"
+    >{{ value }}</td>
 </tr>
 </template>
 
@@ -61,6 +60,9 @@ export default {
     },
     data() {
         return {
+            value: '---',
+            valueClass: '',
+            unit: ''
         };
     },
     computed: {
@@ -69,9 +71,26 @@ export default {
         },
         formattedTimestamp() {
             return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
+        },
+        timestamp() {
+            let datum = this.ladRow.datum;
+
+            return this.getFormattedTimestamp(datum) || '---';
         }
     },
     mounted() {
+        // console.log('telemetryObject', this.telemetryObject);
+        // console.log(this.ladRow);
+
+        // update parseValue with valueMetadata (check updateValues)
+        // use datum to get name value time and unit
+
+        // this.valueMetadata = this
+        //     .metadata
+        //     .valuesForHints(['range'])[0];
+
+        // this.valueKey = this.valueMetadata.key;
+
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
         this.timestampKey = this.openmct.time.timeSystem().key;
     },
@@ -80,12 +99,6 @@ export default {
     },
     methods: {
         parseValue(header) {
-            if (header === this.timestampKey) {
-                let time = this.getFormattedTimestamp(this.ladRow.datum[header]);
-
-                return time;
-            }
-
             if (this.ladRow.datum[header] === undefined) {
                 return '--';
             } else {
@@ -103,7 +116,7 @@ export default {
         },
         getParsedTimestamp(timestamp) {
             if (this.timeSystemFormat()) {
-                return this.formats[this.timestampKey].parse(timestamp);
+                return this.telemetryObject.formats[this.timestampKey].parse(timestamp);
             }
         },
         getFormattedTimestamp(timestamp) {
@@ -112,7 +125,6 @@ export default {
             }
         },
         timeSystemFormat() {
-            // .formats takes time to load
             if (this.telemetryObject.formats[this.timestampKey]) {
                 return true;
             } else {

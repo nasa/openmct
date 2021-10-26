@@ -24,11 +24,9 @@
 <table class="c-table c-lad-table">
     <thead>
         <tr>
-            <th v-for="header in headers"
-                :key="header"
-            >
-                {{ header }}
-            </th>
+            <th>Name</th>
+            <th>Timestamp</th>
+            <th>Value</th>
         </tr>
     </thead>
     <tbody>
