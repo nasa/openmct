@@ -94,7 +94,6 @@
     "test:coverage": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run",
     "test:coverage:firefox": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run --browsers=FirefoxHeadless",
     "test:e2e": "DEBUG=* npx playwright test --config=e2e/playwright.config.js",
-    "test:e2e2": "NODE_TLS_REJECT_UNAUTHORIZED=0 DEBUG=pw:api node ./e2e/perf/perf.remote.spec.js",
     "test:watch": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --no-single-run",
     "verify": "concurrently 'npm:test' 'npm:lint'",
     "jsdoc": "jsdoc -c jsdoc.json -R API.md -r -d dist/docs/api",
