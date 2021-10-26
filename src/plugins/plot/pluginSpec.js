@@ -37,7 +37,6 @@ describe("the plugin", function () {
     let openmct;
     let telemetryPromise;
     let telemetryPromiseResolve;
-    let cleanupFirst;
     let mockObjectPath;
     let telemetrylimitProvider;
 
@@ -77,9 +76,16 @@ describe("the plugin", function () {
                 'some-other-key': 'some-other-value 3'
             }
         ];
-        cleanupFirst = [];
 
-        openmct = createOpenMct();
+        const timeSystem = {
+            timeSystemKey: 'utc',
+            bounds: {
+                start: 0,
+                end: 4
+            }
+        };
+
+        openmct = createOpenMct(timeSystem);
 
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
@@ -146,11 +152,6 @@ describe("the plugin", function () {
             disconnect() {}
         });
 
-        openmct.time.timeSystem("utc", {
-            start: 0,
-            end: 4
-        });
-
         openmct.types.addType("test-object", {
             creatable: true
         });
@@ -170,19 +171,8 @@ describe("the plugin", function () {
             end: 1
         });
 
-        // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
-        // teardown, which causes problems
-        // This is hacky, we should find a better approach here.
-        setTimeout(() => {
-            //Cleanup code that needs to happen before dom elements start being destroyed
-            cleanupFirst.forEach(cleanup => cleanup());
-            cleanupFirst = [];
-            document.body.removeChild(element);
-
-            configStore.deleteAll();
-
-            resetApplicationState(openmct).then(done).catch(done);
-        });
+        configStore.deleteAll();
+        resetApplicationState(openmct).then(done).catch(done);
     });
 
     describe("the plot views", () => {
@@ -395,10 +385,6 @@ describe("the plugin", function () {
             plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             plotView.show(child, true);
 
-            cleanupFirst.push(() => {
-                plotView.destroy();
-            });
-
             return Vue.nextTick();
         });
 
@@ -418,12 +404,23 @@ describe("the plugin", function () {
             expect(legend.length).toBe(6);
         });
 
-        it("Renders X-axis ticks for the telemetry object", () => {
-            let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
-            expect(xAxisElement.length).toBe(1);
+        it("Renders X-axis ticks for the telemetry object", (done) => {
+            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+            const config = configStore.get(configId);
+            config.xAxis.set('displayRange', {
+                min: 0,
+                max: 4
+            });
 
-            let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-            expect(ticks.length).toBe(5);
+            Vue.nextTick(() => {
+                let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
+                expect(xAxisElement.length).toBe(1);
+
+                let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
+                expect(ticks.length).toBe(5);
+
+                done();
+            });
         });
 
         it("Renders Y-axis options for the telemetry object", () => {
@@ -750,11 +747,6 @@ describe("the plugin", function () {
                 template: "<stacked-plot></stacked-plot>"
             });
 
-            cleanupFirst.push(() => {
-                component.$destroy();
-                component = undefined;
-            });
-
             return telemetryPromise
                 .then(Vue.nextTick())
                 .then(() => {
@@ -780,12 +772,21 @@ describe("the plugin", function () {
             expect(legend.length).toBe(6);
         });
 
-        xit("Renders X-axis ticks for the telemetry object", () => {
+        it("Renders X-axis ticks for the telemetry object", (done) => {
             let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
             expect(xAxisElement.length).toBe(1);
 
-            let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-            expect(ticks.length).toBe(5);
+            config.xAxis.set('displayRange', {
+                min: 0,
+                max: 4
+            });
+
+            Vue.nextTick(() => {
+                let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
+                expect(ticks.length).toBe(5);
+
+                done();
+            });
         });
 
         it("Renders Y-axis ticks for the telemetry object", (done) => {

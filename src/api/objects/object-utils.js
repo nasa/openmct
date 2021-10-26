@@ -165,12 +165,19 @@ define([
         return identifierEquals(a.identifier, b.identifier);
     }
 
+    function refresh(oldObject, newObject) {
+        let deleted = _.difference(Object.keys(oldObject), Object.keys(newObject));
+        deleted.forEach((propertyName) => delete oldObject[propertyName]);
+        Object.assign(oldObject, newObject);
+    }
+
     return {
         toOldFormat: toOldFormat,
         toNewFormat: toNewFormat,
         makeKeyString: makeKeyString,
         parseKeyString: parseKeyString,
         equals: objectEquals,
-        identifierEquals: identifierEquals
+        identifierEquals: identifierEquals,
+        refresh: refresh
     };
 });
