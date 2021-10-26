@@ -60,7 +60,6 @@ export default {
     },
     data() {
         return {
-            valueClass: '',
             unit: ''
         };
     },
@@ -84,11 +83,25 @@ export default {
             } else {
                 return '---';
             }
+        },
+        valueClass() {
+            let datum = this.ladRow.datum;
+            let limit;
+            if (this.limitEvaluator) {
+                limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
+            }
+
+            if (limit) {
+                return limit.cssClass;
+            } else {
+                return '';
+            }
         }
     },
     mounted() {
-        // console.log(this.telemetryObject)
-
+        this.limitEvaluator = this.openmct
+            .telemetry
+            .limitEvaluator(this.telemetryObject.domainObject);
         this.valueMetadata = this
             .telemetryObject
             .metadata
