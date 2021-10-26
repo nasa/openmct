@@ -39,10 +39,13 @@ describe("The Compass component", () => {
             sunAngle: 30
         };
         let propsData = {
-            containerWidth: 600,
-            containerHeight: 600,
             naturalAspectRatio: 0.9,
-            image: imageDatum
+            image: imageDatum,
+            sizedImageDimensions: {
+                width: 100,
+                height: 100
+            },
+            compassRoseSizingClasses: '--rose-small --rose-min'
         };
 
         app = new Vue({
@@ -51,13 +54,13 @@ describe("The Compass component", () => {
                 return propsData;
             },
             template: `<Compass
-                :container-width="containerWidth"
-                :container-height="containerHeight"
+                :compass-rose-sizing-classes="compassRoseSizingClasses"
+                :image="image"
                 :natural-aspect-ratio="naturalAspectRatio"
-                :image="image" />`
+                :sized-image-dimensions="sizedImageDimensions"
+            />`
         });
         instance = app.$mount();
-
     });
 
     afterAll(() => {
