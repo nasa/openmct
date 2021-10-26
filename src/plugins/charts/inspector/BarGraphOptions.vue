@@ -20,7 +20,7 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<ul class="c-tree">
+<ul class="c-tree c-bar-graph-options">
     <h2 title="Display properties for this object">Bar Graph Series</h2>
     <li v-for="series in domainObject.composition"
         :key="series.key"

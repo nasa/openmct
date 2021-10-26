@@ -47,7 +47,6 @@ const CONTAINER_CLASS = 'c-imagery-tsv-container';
 const NO_ITEMS_CLASS = 'c-imagery-tsv__no-items';
 const IMAGE_WRAPPER_CLASS = 'c-imagery-tsv__image-wrapper';
 const ID_PREFIX = 'wrapper-';
-const IMAGE_ID_PREFIX = 'image-';
 
 export default {
     mixins: [imageryData],

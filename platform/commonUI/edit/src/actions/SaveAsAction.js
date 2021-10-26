@@ -155,8 +155,8 @@ function (
         }
 
         function undirtyOriginals(object) {
-            return Promise.all(toUndirty.map(undirty))
-                .then(() => {
+            return object.getCapability("persistence").persist()
+                .then(function () {
                     return object;
                 });
         }

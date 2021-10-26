@@ -25,7 +25,7 @@ export default {
     inject: ['openmct'],
 
     mounted() {
-        this.openmct.indicators.indicatorObjects.forEach((indicator) => {
+        this.openmct.indicators.getIndicatorObjectsByPriority().forEach((indicator) => {
             this.$el.appendChild(indicator.element);
         });
     }

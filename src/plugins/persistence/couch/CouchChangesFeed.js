@@ -35,6 +35,7 @@
 
                 do {
                     await self.listenForChanges(event.data.url, event.data.body, port);
+                    // eslint-disable-next-line no-unmodified-loop-condition
                 } while (connected);
             }
         };

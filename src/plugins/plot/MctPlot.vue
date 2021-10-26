@@ -338,6 +338,11 @@ export default {
         },
 
         loadSeriesData(series) {
+            //this check ensures that duplicate requests don't happen on load
+            if (!this.timeContext) {
+                return;
+            }
+
             if (this.$parent.$refs.plotWrapper.offsetWidth === 0) {
                 this.scheduleLoad(series);
 
@@ -347,9 +352,12 @@ export default {
             this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
             this.startLoading();
+            const bounds = this.timeContext.bounds();
             const options = {
                 size: this.$parent.$refs.plotWrapper.offsetWidth,
-                domain: this.config.xAxis.get('key')
+                domain: this.config.xAxis.get('key'),
+                start: bounds.start,
+                end: bounds.end
             };
 
             series.load(options)
@@ -358,9 +366,10 @@ export default {
 
         loadMoreData(range, purge) {
             this.config.series.forEach(plotSeries => {
+                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.startLoading();
                 plotSeries.load({
-                    size: this.$parent.$refs.plotWrapper.offsetWidth,
+                    size: this.offsetWidth,
                     start: range.min,
                     end: range.max,
                     domain: this.config.xAxis.get('key')
