@@ -430,9 +430,28 @@ export default {
 
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
+        sortNameDescending(a, b) {
+            if (a.name > b.name) {
+                return 1;
+            }
+
+            if (b.name > a.name) {
+                return -1;
+            }
+
+            return 0;
+        },
+
         async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
             let collection = this.openmct.composition.get(domainObject);
             let composition = await collection.load(abortSignal);
+            // determine if any part of the parent's path includes a key value of mine; aka My Items
+            const isNestedInMyItems = Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
+
+            if (isNestedInMyItems) {
+                const sortedComposition = composition.sort(this.sortNameDescending);
+                composition = sortedComposition;
+            }
 
             if (parentObjectPath.length) {
                 let navigationPath = this.buildNavigationPath(parentObjectPath);
@@ -450,7 +469,7 @@ export default {
                     this.compositionCollections[navigationPath].addHandler);
                 this.compositionCollections[navigationPath].collection.on('remove',
                     this.compositionCollections[navigationPath].removeHandler);
-            }
+}
 
             return composition.map((object) => {
                 return this.buildTreeItem(object, parentObjectPath);
