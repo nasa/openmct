@@ -74,16 +74,14 @@ describe('the plugin', function () {
         'identifier': {
             'namespace': '',
             'key': '55122607-e65e-44d5-9c9d-9c31a914ca89'
-        },
-        type: 'tabs.test'
+        }
     });
     let telemetryItem2 = Object.assign({}, telemetryItemTemplate, {
         'id': '55122607-e65e-44d5-9c9d-9c31a914ca90',
         'identifier': {
             'namespace': '',
             'key': '55122607-e65e-44d5-9c9d-9c31a914ca90'
-        },
-        type: 'tabs.test'
+        }
     });
 
     beforeEach((done) => {
@@ -152,7 +150,6 @@ describe('the plugin', function () {
         let tabsLayoutViewProvider;
         let mockComposition;
         let count = 0;
-        let view;
 
         beforeEach(() => {
             mockComposition = new EventEmitter();
@@ -172,7 +169,7 @@ describe('the plugin', function () {
 
             const applicableViews = openmct.objectViews.get(testViewObject, []);
             tabsLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'tabs');
-            view = tabsLayoutViewProvider.view(testViewObject, []);
+            let view = tabsLayoutViewProvider.view(testViewObject, []);
             view.show(child, true);
 
             return Vue.nextTick();
