@@ -81,7 +81,6 @@ define(
          * Update a domain object model based on the value of a form.
          */
         PropertiesDialog.prototype.updateModel = function (model, formValue) {
-
             // Update all properties
             this.properties.forEach(function (property, index) {
                 property.setValue(model, formValue[index]);
