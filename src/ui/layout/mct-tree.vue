@@ -469,7 +469,7 @@ export default {
                     this.compositionCollections[navigationPath].addHandler);
                 this.compositionCollections[navigationPath].collection.on('remove',
                     this.compositionCollections[navigationPath].removeHandler);
-}
+            }
 
             return composition.map((object) => {
                 return this.buildTreeItem(object, parentObjectPath);
