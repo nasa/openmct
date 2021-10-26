@@ -60,7 +60,6 @@ export default {
     },
     data() {
         return {
-            value: '---',
             valueClass: '',
             unit: ''
         };
@@ -76,20 +75,26 @@ export default {
             let datum = this.ladRow.datum;
 
             return this.getFormattedTimestamp(datum) || '---';
+        },
+        value() {
+            let datum = this.ladRow.datum;
+
+            if (this.telemetryObject.formats[this.valueKey]) {
+                return this.telemetryObject.formats[this.valueKey].format(datum);
+            } else {
+                return '---';
+            }
         }
     },
     mounted() {
-        // console.log('telemetryObject', this.telemetryObject);
-        // console.log(this.ladRow);
+        // console.log(this.telemetryObject)
 
-        // update parseValue with valueMetadata (check updateValues)
-        // use datum to get name value time and unit
+        this.valueMetadata = this
+            .telemetryObject
+            .metadata
+            .valuesForHints(['range'])[0];
 
-        // this.valueMetadata = this
-        //     .metadata
-        //     .valuesForHints(['range'])[0];
-
-        // this.valueKey = this.valueMetadata.key;
+        this.valueKey = this.valueMetadata.key;
 
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
         this.timestampKey = this.openmct.time.timeSystem().key;
