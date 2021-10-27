@@ -32,6 +32,12 @@
         class="js-third-data"
         :class="valueClass"
     >{{ value }}</td>
+    <td
+        v-if="hasUnits"
+        class="js-units"
+    >
+        {{ unit }}
+    </td>
 </tr>
 </template>
 
@@ -55,6 +61,10 @@ export default {
         pathToTable: {
             type: Array,
             required: true
+        },
+        hasUnits: {
+            type: Boolean,
+            require: true
         }
 
     },
@@ -77,9 +87,9 @@ export default {
         },
         value() {
             let datum = this.ladRow.datum;
-
-            if (this.telemetryObject.formats[this.valueKey]) {
-                return this.telemetryObject.formats[this.valueKey].format(datum);
+            let TelemetryFormats = this.telemetryObject.formats[this.telemetryObject.valueKey];
+            if (TelemetryFormats && TelemetryFormats.format(datum) !== 'nan') {
+                return TelemetryFormats.format(datum);
             } else {
                 return '---';
             }
@@ -87,8 +97,8 @@ export default {
         valueClass() {
             let datum = this.ladRow.datum;
             let limit;
-            if (this.limitEvaluator) {
-                limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
+            if (this.telemetryObject.limitEvaluator) {
+                limit = this.telemetryObject.limitEvaluator.evaluate(datum, this.telemetryObject.valueMetadata);
             }
 
             if (limit) {
@@ -96,19 +106,13 @@ export default {
             } else {
                 return '';
             }
+        },
+        unit() {
+
+            return this.telemetryObject.valueMetadata.unit || '';
         }
     },
     mounted() {
-        this.limitEvaluator = this.openmct
-            .telemetry
-            .limitEvaluator(this.telemetryObject.domainObject);
-        this.valueMetadata = this
-            .telemetryObject
-            .metadata
-            .valuesForHints(['range'])[0];
-
-        this.valueKey = this.valueMetadata.key;
-
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
         this.timestampKey = this.openmct.time.timeSystem().key;
     },

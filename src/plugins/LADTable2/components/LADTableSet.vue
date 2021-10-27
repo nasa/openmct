@@ -48,6 +48,7 @@
                 :lad-row="ladRow"
                 :telemetry-object="tableSet.telemetryObjects[ladRow.objectKeyString]"
                 :headers="headers"
+                :has-units="hasUnits"
                 :path-to-table="getObjectPath(ladTable)"
                 @rowContextClick="updateViewContext"
             />

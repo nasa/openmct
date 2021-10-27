@@ -66,12 +66,17 @@ export default class LADTableSet extends EventEmitter {
         for (let key in telemetryObjects) {
             if (telemetryObjects[key]) {
                 let telemetryObject = {};
-                let metadata = this.openmct.telemetry.getMetadata(telemetryObjects[key].telemetryObject);
-                let formats = this.openmct.telemetry.getFormatMap(metadata);
                 telemetryObject.key = this.openmct.objects.makeKeyString(telemetryObjects[key].telemetryObject.identifier);
                 telemetryObject.domainObject = telemetryObjects[key].telemetryObject;
-                telemetryObject.formats = formats;
-                telemetryObject.metadata = metadata;
+                telemetryObject.metadata = this.openmct.telemetry.getMetadata(telemetryObjects[key].telemetryObject);
+                telemetryObject.formats = this.openmct.telemetry.getFormatMap(telemetryObject.metadata);
+                telemetryObject.limitEvaluator = this.openmct
+                    .telemetry
+                    .limitEvaluator(telemetryObject.domainObject);
+                telemetryObject.valueMetadata = telemetryObject
+                    .metadata
+                    .valuesForHints(['range'])[0];
+                telemetryObject.valueKey = telemetryObject.valueMetadata.key;
                 this.telemetryObjects[telemetryObject.key] = telemetryObject;
                 this.emit('telemetry-object-added');
             }
