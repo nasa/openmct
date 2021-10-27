@@ -45,15 +45,19 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
-      - run: npm run lint
+      - when:
+          condition:
+            equal: [ "", <<parameters.browser>> ]
+          steps:
+            - run: npm run lint
       - when:
           condition: << parameters.browser >>
           steps:
             - run: npm run test:coverage -- --browsers=<<parameters.browser>>
-      - store_test_results:
-          path: dist/reports/tests/
-      - store_artifacts:
-          path: dist/reports/
+            - store_test_results:
+                path: dist/reports/tests/
+            - store_artifacts:
+                path: dist/reports/
 workflows:
   matrix-tests:
     jobs:
@@ -61,9 +65,7 @@ workflows:
           post-steps:
             - run:
                 command:
-                  curl -Os https://uploader.codecov.io/latest/linux/codecov
-                  chmod +x codecov
-                  ./codecov              
+                  curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov              
           name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
