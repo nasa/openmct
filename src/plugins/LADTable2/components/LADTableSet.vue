@@ -27,6 +27,7 @@
             <th>Name</th>
             <th>Timestamp</th>
             <th>Value</th>
+            <th v-if="hasUnits">Unit</th>
         </tr>
     </thead>
     <tbody>
@@ -75,7 +76,8 @@ export default {
             ladTableObjects: [],
             ladRows: {},
             compositions: [],
-            viewContext: {}
+            viewContext: {},
+            hasUnits: false
         };
     },
     computed: {
@@ -84,8 +86,8 @@ export default {
         this.tableSet.on('headers-added', this.updateHeaders);
         this.tableSet.on('table-added', this.addLadTable);
         this.tableSet.on('table-removed', this.removeLadTable);
+        this.tableSet.on('telemetry-object-added', this.checkUnit);
         this.tableSet.initialize();
-
     },
     destroyed() {
         this.tableSet.off('headers-added', this.updateHeaders);
@@ -120,6 +122,21 @@ export default {
             if (idx !== undefined) {
                 this.ladTableObjects.splice(idx, 1);
             }
+        },
+        checkUnit() {
+            let telemetryObjects = this.tableSet.telemetryObjects;
+            let metadata = Object.values(telemetryObjects).map(o => o.metadata.valueMetadatas);
+            for (let m of metadata) {
+                for (let metadatum of m) {
+                    if (metadatum.unit !== undefined) {
+                        this.hasUnits = true;
+
+                        return;
+                    }
+                }
+            }
+
+            return this.hasUnits = false;
         }
     }
 };

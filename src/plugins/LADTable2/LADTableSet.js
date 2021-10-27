@@ -73,6 +73,7 @@ export default class LADTableSet extends EventEmitter {
                 telemetryObject.formats = formats;
                 telemetryObject.metadata = metadata;
                 this.telemetryObjects[telemetryObject.key] = telemetryObject;
+                this.emit('telemetry-object-added');
             }
         }
     }
