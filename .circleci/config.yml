@@ -33,7 +33,7 @@ jobs:
           condition:
             equal: [ "Firefox", <<parameters.browser>> ]
           steps:
-            - browser-tools/install-firefox:
+            - browser-tools/install-firefox
       - when:
           condition:
             equal: [ "ChromeHeadless", <<parameters.browser>> ]
