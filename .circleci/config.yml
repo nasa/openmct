@@ -31,6 +31,11 @@ jobs:
                 version: "91.2.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
       - when:
           condition:
+            equal: [ "Firefox", <<parameters.browser>> ]
+          steps:
+            - browser-tools/install-firefox:
+      - when:
+          condition:
             equal: [ "ChromeHeadless", <<parameters.browser>> ]
           steps:
             - browser-tools/install-chrome:
@@ -43,10 +48,9 @@ jobs:
             - node_modules
       - run: npm run lint
       - when:
-          condition:
-            not: [ "skip", <<parameters.browser>> ]
+          condition: << parameters.browser >>
           steps:
-            - npm run test:coverage -- --browsers=<<parameters.browser>>
+            - run: npm run test:coverage -- --browsers=<<parameters.browser>>
             - codecov/upload
       - store_test_results:
           path: dist/reports/tests/
@@ -56,17 +60,17 @@ workflows:
   matrix-tests:
     jobs:
       - test:
-          name: node10-ChromeHeadless
+          name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
       - test:
           name: node12-build-only
           node-version: lts/erbium
-          browser: skip
+          browser: ""
       - test:
           name: node14-build-only
           node-version: lts/fermium
-          browser: skip
+          browser: ""
   nightly:
     jobs:
       - test:
@@ -78,9 +82,9 @@ workflows:
           node-version: lts/erbium
           browser: FirefoxESR
       - test:
-          name: node14-chrome-nightly
+          name: node14-firefox-nightly
           node-version: lts/fermium
-          browser: ChromeHeadless
+          browser: Firefox
     triggers:
       - schedule:
           cron: "0 0 * * *"
