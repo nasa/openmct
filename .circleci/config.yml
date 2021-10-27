@@ -6,7 +6,6 @@ executors:
 orbs:
   node: circleci/node@4.5.1
   browser-tools: circleci/browser-tools@1.1.3
-  codecov: codecov/codecov@3.1.1
 jobs:
   test:
     parameters:
@@ -51,7 +50,6 @@ jobs:
           condition: << parameters.browser >>
           steps:
             - run: npm run test:coverage -- --browsers=<<parameters.browser>>
-            - codecov/upload
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
@@ -60,6 +58,12 @@ workflows:
   matrix-tests:
     jobs:
       - test:
+          post-steps:
+            - run:
+                command:
+                  curl -Os https://uploader.codecov.io/latest/linux/codecov
+                  chmod +x codecov
+                  ./codecov              
           name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
@@ -67,10 +71,11 @@ workflows:
           name: node12-build-only
           node-version: lts/erbium
           browser: ""
-      - test:
+      - test: 
           name: node14-build-only
           node-version: lts/fermium
           browser: ""
+
   nightly:
     jobs:
       - test:
