@@ -2,6 +2,7 @@ import CopyToNotebookAction from './actions/CopyToNotebookAction';
 import Notebook from './components/Notebook.vue';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import SnapshotContainer from './snapshot-container';
+import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
 
 import { notebookImageMigration } from '../notebook/utils/notebook-migration';
 import { NOTEBOOK_TYPE } from './notebook-constants';
@@ -166,5 +167,7 @@ export default function NotebookPlugin() {
                 return domainObject;
             }
         });
+
+        monkeyPatchObjectAPIForNotebooks(openmct);
     };
 }

@@ -24,12 +24,10 @@ import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} f
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "./stackedPlot/StackedPlot.vue";
-// import SpectralPlot from "./spectralPlot/SpectralPlot.vue";
 import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
-import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './barGraph/BarGraphConstants';
 
 describe("the plugin", function () {
     let element;
@@ -149,6 +147,7 @@ describe("the plugin", function () {
 
         spyOn(window, 'ResizeObserver').and.returnValue({
             observe() {},
+            unobserve() {},
             disconnect() {}
         });
 
@@ -305,37 +304,6 @@ describe("the plugin", function () {
             expect(plotView).toBeDefined();
         });
 
-        it("provides a spectral plot view for objects with telemetry", () => {
-            const testTelemetryObject = {
-                id: "test-object",
-                type: "telemetry.plot.spectral",
-                telemetry: {
-                    values: [{
-                        key: "a-very-fine-key"
-                    }]
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-spectral");
-            expect(plotView).toBeDefined();
-        });
-
-        it("provides a spectral aggregate plot view for objects with telemetry", () => {
-            const testTelemetryObject = {
-                id: "test-object",
-                type: BAR_GRAPH_KEY,
-                telemetry: {
-                    values: [{
-                        key: "lots-of-aggregate-telemetry"
-                    }]
-                }
-            };
-
-            const applicableViews = openmct.objectViews.get(testTelemetryObject, mockObjectPath);
-            let plotView = applicableViews.find((viewProvider) => viewProvider.key === BAR_GRAPH_VIEW);
-            expect(plotView).toBeDefined();
-        });
     });
 
     describe("The single plot view", () => {
@@ -386,6 +354,10 @@ describe("the plugin", function () {
             plotView.show(child, true);
 
             return Vue.nextTick();
+        });
+
+        it("Makes only one request for telemetry on load", () => {
+            expect(openmct.telemetry.request).toHaveBeenCalledTimes(1);
         });
 
         it("Renders a collapsed legend for every telemetry", () => {
@@ -473,6 +445,64 @@ describe("the plugin", function () {
             });
         });
 
+        describe('resume actions on errant click', () => {
+            beforeEach(() => {
+                openmct.time.clock('local', {
+                    start: -1000,
+                    end: 100
+                });
+
+                return Vue.nextTick();
+            });
+
+            it("clicking the plot view without movement resumes the plot while active", async () => {
+
+                const pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
+                // if the pause button is present, the chart is running
+                expect(pauseEl.length).toBe(1);
+
+                // simulate an errant mouse click
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
+                await Vue.nextTick();
+
+                const pauseElAfterClick = element.querySelectorAll(".c-button-set .icon-pause");
+                console.log('pauseElAfterClick', pauseElAfterClick);
+                expect(pauseElAfterClick.length).toBe(1);
+
+            });
+
+            it("clicking the plot view without movement leaves the plot paused", async () => {
+
+                const pauseEl = element.querySelector(".c-button-set .icon-pause");
+                // pause the plot
+                pauseEl.dispatchEvent(createMouseEvent('click'));
+                await Vue.nextTick();
+
+                const playEl = element.querySelectorAll('.c-button-set .is-paused');
+                expect(playEl.length).toBe(1);
+
+                // simulate an errant mouse click
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
+                await Vue.nextTick();
+
+                const playElAfterChartClick = element.querySelectorAll(".c-button-set .is-paused");
+                expect(playElAfterChartClick.length).toBe(1);
+
+            });
+        });
+
         describe('controls in time strip view', () => {
 
             it('zoom controls are hidden', () => {
@@ -492,146 +522,6 @@ describe("the plugin", function () {
 
         });
     });
-
-    /*
-    * disabling this until we develop the plot view
-    describe("The spectral plot view", () => {
-        let testTelemetryObject;
-        // eslint-disable-next-line no-unused-vars
-        let testTelemetryObject2;
-        // eslint-disable-next-line no-unused-vars
-        let config;
-        let spectralPlotObject;
-        let component;
-        let mockComposition;
-        // eslint-disable-next-line no-unused-vars
-        let plotViewComponentObject;
-
-        beforeEach(() => {
-            const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, "get")
-                .withArgs("exportImageService").and.returnValue({
-                    exportPNG: () => {},
-                    exportJPG: () => {}
-                })
-                .and.callFake(getFunc);
-
-            spectralPlotObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-spectral-plot"
-                },
-                type: "telemetry.plot.spectral",
-                name: "Test Spectral Plot"
-            };
-
-            testTelemetryObject = {
-                identifier: {
-                    namespace: "",
-                    key: "test-object"
-                },
-                type: "test-object",
-                name: "Test Object",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "some-key",
-                        name: "Some attribute",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key",
-                        name: "Another attribute",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
-            };
-
-            testTelemetryObject2 = {
-                identifier: {
-                    namespace: "",
-                    key: "test-object2"
-                },
-                type: "test-object",
-                name: "Test Object2",
-                telemetry: {
-                    values: [{
-                        key: "utc",
-                        format: "utc",
-                        name: "Time",
-                        hints: {
-                            domain: 1
-                        }
-                    }, {
-                        key: "wavelength",
-                        name: "Wavelength",
-                        hints: {
-                            range: 1
-                        }
-                    }, {
-                        key: "some-other-key2",
-                        name: "Another attribute2",
-                        hints: {
-                            range: 2
-                        }
-                    }]
-                }
-            };
-
-            mockComposition = new EventEmitter();
-            mockComposition.load = () => {
-                mockComposition.emit('add', testTelemetryObject);
-
-                return [testTelemetryObject];
-            };
-
-            spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
-
-            let viewContainer = document.createElement("div");
-            child.append(viewContainer);
-            component = new Vue({
-                el: viewContainer,
-                components: {
-                    SpectralPlot
-                },
-                provide: {
-                    openmct: openmct,
-                    domainObject: spectralPlotObject,
-                    composition: openmct.composition.get(spectralPlotObject)
-                },
-                template: "<spectral-plot></spectral-plot>"
-            });
-
-            cleanupFirst.push(() => {
-                component.$destroy();
-                component = undefined;
-            });
-
-            return telemetryPromise
-                .then(Vue.nextTick())
-                .then(() => {
-                    plotViewComponentObject = component.$root.$children[0];
-                    const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
-                    config = configStore.get(configId);
-                });
-        });
-
-        it("Renders a collapsed legend for every telemetry", () => {
-            let legend = element.querySelectorAll(".plot-wrapper-collapsed-legend .plot-series-name");
-            expect(legend.length).toBe(1);
-            expect(legend[0].innerHTML).toEqual("Test Object");
-        });
-
-    }); */
 
     describe("The stacked plot view", () => {
         let testTelemetryObject;
@@ -1163,42 +1053,11 @@ describe("the plugin", function () {
                 const yAxisProperties = editOptionsEl.querySelectorAll("div.grid-properties:first-of-type .l-inspector-part");
                 expect(yAxisProperties.length).toEqual(3);
             });
-        });
-    });
 
-    describe("the spectral plot", () => {
-        const mockObject = {
-            name: 'A Very Nice Spectral Plot',
-            key: 'telemetry.plot.spectral',
-            creatable: true
-        };
-
-        it('defines a spectral plot object type with the correct key', () => {
-            const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
-            expect(objectDef.key).toEqual(mockObject.key);
-        });
-
-        xit('is creatable', () => {
-            const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
-            expect(objectDef.creatable).toEqual(mockObject.creatable);
-        });
-    });
-
-    describe("the aggregate spectral plot", () => {
-        const mockObject = {
-            name: 'An Even Nicer Aggregate Spectral Plot',
-            key: BAR_GRAPH_KEY,
-            creatable: true
-        };
-
-        it('defines a spectral plot object type with the correct key', () => {
-            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
-            expect(objectDef.key).toEqual(mockObject.key);
-        });
-
-        it('is creatable', () => {
-            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
-            expect(objectDef.creatable).toEqual(mockObject.creatable);
+            it('renders color palette options', () => {
+                const colorSwatch = editOptionsEl.querySelector(".c-click-swatch");
+                expect(colorSwatch).toBeDefined();
+            });
         });
     });
 });

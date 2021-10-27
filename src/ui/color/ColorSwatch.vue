@@ -21,72 +21,62 @@
 -->
 <template>
 <div class="u-contents">
-    <ul v-if="canEdit"
-        class="l-inspector-part"
+    <div v-if="canEdit"
+         class="grid-row"
     >
-        <h2 v-if="heading"
-            :title="heading"
-        >{{ heading }}</h2>
-        <li class="grid-row">
-            <div class="grid-cell label"
-                 :title="editTitle"
-            >{{ shortLabel }}</div>
-            <div class="grid-cell value">
-                <div class="c-click-swatch c-click-swatch--menu"
-                     @click="toggleSwatch()"
+        <div class="grid-cell label"
+             :title="editTitle"
+        >{{ shortLabel }}</div>
+        <div class="grid-cell value">
+            <div class="c-click-swatch c-click-swatch--menu"
+                 @click="toggleSwatch()"
+            >
+                <span class="c-color-swatch"
+                      :style="{ background: currentColor }"
                 >
-                    <span class="c-color-swatch"
-                          :style="{ background: currentColor }"
+                </span>
+            </div>
+            <div class="c-palette c-palette--color">
+                <div v-show="swatchActive"
+                     class="c-palette__items"
+                >
+                    <div v-for="group in colorPaletteGroups"
+                         :key="group.id"
+                         class="u-contents"
                     >
-                    </span>
-                </div>
-                <div class="c-palette c-palette--color">
-                    <div v-show="swatchActive"
-                         class="c-palette__items"
-                    >
-                        <div v-for="group in colorPaletteGroups"
-                             :key="group.id"
-                             class="u-contents"
+                        <div v-for="color in group"
+                             :key="color.id"
+                             class="c-palette__item"
+                             :class="{ 'selected': currentColor === color.hexString }"
+                             :style="{ background: color.hexString }"
+                             @click="setColor(color)"
                         >
-                            <div v-for="color in group"
-                                 :key="color.id"
-                                 class="c-palette__item"
-                                 :class="{ 'selected': currentColor === color.hexString }"
-                                 :style="{ background: color.hexString }"
-                                 @click="setColor(color)"
-                            >
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </li>
-    </ul>
-    <ul v-else
-        class="l-inspector-part"
+        </div>
+    </div>
+    <div v-else
+         class="grid-row"
     >
-        <h2 v-if="heading"
-            :title="heading"
-        >{{ heading }}</h2>
-        <li class="grid-row">
-            <div class="grid-cell label"
-                 :title="viewTitle"
-            >{{ shortLabel }}</div>
-            <div class="grid-cell value">
-                <span class="c-color-swatch"
-                      :style="{
-                          'background': currentColor
-                      }"
-                >
-                </span>
-            </div>
-        </li>
-    </ul>
+        <div class="grid-cell label"
+             :title="viewTitle"
+        >{{ shortLabel }}</div>
+        <div class="grid-cell value">
+            <span class="c-color-swatch"
+                  :style="{
+                      'background': currentColor
+                  }"
+            >
+            </span>
+        </div>
+    </div>
 </div>
 </template>
 
 <script>
-import ColorPalette from './lib/ColorPalette';
+import ColorPalette from './ColorPalette';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -113,12 +103,6 @@ export default {
             type: String,
             default() {
                 return 'Color';
-            }
-        },
-        heading: {
-            type: String,
-            default() {
-                return '';
             }
         }
     },
