@@ -25,33 +25,31 @@
           class="c-plot c-bar-chart-view"
           :data="trace"
           :plot-axis-title="plotAxisTitle"
+          @subscribe="subscribeToAll"
+          @unsubscribe="removeAllSubscriptions"
 />
 </template>
 
 <script>
-import * as SPECTRAL_AGGREGATE from './BarGraphConstants';
-import ColorPalette from '../lib/ColorPalette';
 import BarGraph from './BarGraphPlot.vue';
-import Color from "@/plugins/plot/lib/Color";
+import _ from 'lodash';
 
 export default {
     components: {
         BarGraph
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     data() {
+        this.telemetryObjects = {};
+        this.telemetryObjectFormats = {};
+        this.subscriptions = [];
+        this.composition = {};
+
         return {
-            composition: {},
-            currentDomainObject: this.domainObject,
-            subscriptions: [],
-            telemetryObjects: {},
             trace: []
         };
     },
     computed: {
-        activeClock() {
-            return this.openmct.time.activeClock;
-        },
         plotAxisTitle() {
             const { xAxisMetadata = {}, yAxisMetadata = {} } = this.trace[0] || {};
             const xAxisUnit = xAxisMetadata.units ? `(${xAxisMetadata.units})` : '';
@@ -64,24 +62,14 @@ export default {
         }
     },
     mounted() {
-        this.colorPalette = new ColorPalette();
         this.loadComposition();
 
         this.openmct.time.on('bounds', this.refreshData);
-        this.openmct.time.on('clock', this.clockChanged);
-
-        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.SUBSCRIBE, this.subscribeToAll);
-        this.$refs.barGraph.$on(SPECTRAL_AGGREGATE.UNSUBSCRIBE, this.removeAllSubscriptions);
-
-        this.unobserve = this.openmct.objects.observe(this.currentDomainObject, '*', this.updateDomainObject);
     },
     beforeDestroy() {
-        this.$refs.barGraph.$off();
         this.openmct.time.off('bounds', this.refreshData);
-        this.openmct.time.off('clock', this.clockChanged);
 
         this.removeAllSubscriptions();
-        this.unobserve();
 
         if (!this.composition) {
             return;
@@ -92,35 +80,34 @@ export default {
     },
     methods: {
         addTelemetryObject(telemetryObject) {
+            // grab information we need from the added telmetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            this.telemetryObjects[key] = telemetryObject;
+            const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
+            const telemetryObjectPath = [telemetryObject, ...this.path];
+            const telemetryIsAlias = this.openmct.objects.isObjectPathToALink(telemetryObject, telemetryObjectPath);
 
-            if (!this.domainObject.configuration.barStyles) {
-                this.domainObject.configuration.barStyles = {};
+            // make an update object that's a clone of the existing styles object so we preserve existing choices
+            let stylesUpdate = {};
+            if (this.domainObject.configuration.barStyles.series[key]) {
+                stylesUpdate = _.clone(this.domainObject.configuration.barStyles.series[key]);
             }
 
-            // check to see if we've set a bar color
-            if (!this.domainObject.configuration.barStyles[key] || !this.domainObject.configuration.barStyles[key].color) {
-                const color = this.colorPalette.getNextColor().asHexString();
-                this.domainObject.configuration.barStyles[key] = {
-                    name: telemetryObject.name,
-                    color
-                };
+            stylesUpdate.name = telemetryObject.name;
+            stylesUpdate.type = telemetryObject.type;
+            stylesUpdate.isAlias = telemetryIsAlias;
+
+            // if something has changed, mutate and notify listeners
+            if (!_.isEqual(stylesUpdate, this.domainObject.configuration.barStyles.series[key])) {
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles[${this.key}]`,
-                    this.domainObject.configuration.barStyles[key]
+                    `configuration.barStyles.series["${key}"]`,
+                    stylesUpdate
                 );
-            } else {
-                let color = this.domainObject.configuration.barStyles[key].color;
-                if (!(color instanceof Color)) {
-                    color = Color.fromHexString(color);
-                }
-
-                this.colorPalette.remove(color);
             }
 
-            this.telemetryObjects[key] = telemetryObject;
-
+            // ask for the current telemetry data, then subcribe for changes
             this.requestDataFor(telemetryObject);
             this.subscribeToObject(telemetryObject);
         },
@@ -144,12 +131,12 @@ export default {
 
             this.trace = isInTrace ? newTrace : newTrace.concat([trace]);
         },
-        clockChanged() {
-            this.removeAllSubscriptions();
-            this.subscribeToAll();
-        },
         getAxisMetadata(telemetryObject) {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            if (!metadata) {
+                return {};
+            }
+
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
             //Exclude 'name' and 'time' based metadata specifically, from the x-Axis values by using range hints only
             const xAxisMetadata = metadata.valuesForHints(['range']);
@@ -159,21 +146,19 @@ export default {
                 yAxisMetadata
             };
         },
-        getOptions(telemetryObject) {
+        getOptions() {
             const { start, end } = this.openmct.time.bounds();
 
             return {
                 end,
-                start,
-                startTime: null,
-                spectra: true
+                start
             };
         },
         loadComposition() {
-            this.composition = this.openmct.composition.get(this.currentDomainObject);
+            this.composition = this.openmct.composition.get(this.domainObject);
 
             if (!this.composition) {
-                this.addTelemetryObject(this.currentDomainObject);
+                this.addTelemetryObject(this.domainObject);
 
                 return;
             }
@@ -202,19 +187,32 @@ export default {
         removeTelemetryObject(identifier) {
             const key = this.openmct.objects.makeKeyString(identifier);
             delete this.telemetryObjects[key];
-            if (this.domainObject.configuration.barStyles[key]) {
-                delete this.domainObject.configuration.barStyles[key];
+            if (this.telemetryObjectFormats && this.telemetryObjectFormats[key]) {
+                delete this.telemetryObjectFormats[key];
+            }
+
+            if (this.domainObject.configuration.barStyles.series[key]) {
+                delete this.domainObject.configuration.barStyles.series[key];
+                this.openmct.objects.mutate(
+                    this.domainObject,
+                    `configuration.barStyles.series["${key}"]`,
+                    undefined
+                );
             }
 
             this.removeSubscription(key);
 
             this.trace = this.trace.filter(t => t.key !== key);
         },
-        processData(telemetryObject, data, axisMetadata) {
+        addDataToGraph(telemetryObject, data, axisMetadata) {
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
 
             if (data.message) {
                 this.openmct.notifications.alert(data.message);
+            }
+
+            if (!this.isDataInTimeRange(data, key)) {
+                return;
             }
 
             let xValues = [];
@@ -224,10 +222,10 @@ export default {
             axisMetadata.xAxisMetadata.forEach((metadata) => {
                 xValues.push(metadata.name);
                 if (data[metadata.key]) {
-                    //TODO: Format the data?
-                    yValues.push(data[metadata.key]);
+                    const formattedValue = this.format(key, metadata.key, data);
+                    yValues.push(formattedValue);
                 } else {
-                    yValues.push('');
+                    yValues.push(null);
                 }
             });
 
@@ -241,20 +239,43 @@ export default {
                 yAxisMetadata: axisMetadata.yAxisMetadata,
                 type: 'bar',
                 marker: {
-                    color: this.domainObject.configuration.barStyles[key].color
+                    color: this.domainObject.configuration.barStyles.series[key].color
                 },
                 hoverinfo: 'skip'
             };
 
             this.addTrace(trace, key);
         },
+        isDataInTimeRange(datum, key) {
+            const timeSystemKey = this.openmct.time.timeSystem().key;
+            let currentTimestamp = this.parse(key, timeSystemKey, datum);
+
+            return currentTimestamp && this.openmct.time.bounds().end >= currentTimestamp;
+        },
+        format(telemetryObjectKey, metadataKey, data) {
+            const formats = this.telemetryObjectFormats[telemetryObjectKey];
+
+            return formats[metadataKey].format(data);
+        },
+        parse(telemetryObjectKey, metadataKey, datum) {
+            if (!datum) {
+                return;
+            }
+
+            const formats = this.telemetryObjectFormats[telemetryObjectKey];
+
+            return formats[metadataKey].parse(datum);
+        },
         requestDataFor(telemetryObject) {
             const axisMetadata = this.getAxisMetadata(telemetryObject);
-            this.openmct.telemetry.request(telemetryObject, this.getOptions(telemetryObject))
+            this.openmct.telemetry.request(telemetryObject)
                 .then(data => {
                     data.forEach((datum) => {
-                        this.processData(telemetryObject, datum, axisMetadata);
+                        this.addDataToGraph(telemetryObject, datum, axisMetadata);
                     });
+                })
+                .catch((error) => {
+                    console.warn(`Error fetching data`, error);
                 });
         },
         subscribeToObject(telemetryObject) {
@@ -262,10 +283,10 @@ export default {
 
             this.removeSubscription(key);
 
-            const options = this.getOptions(telemetryObject);
+            const options = this.getOptions();
             const axisMetadata = this.getAxisMetadata(telemetryObject);
             const unsubscribe = this.openmct.telemetry.subscribe(telemetryObject,
-                data => this.processData(telemetryObject, data, axisMetadata)
+                data => this.addDataToGraph(telemetryObject, data, axisMetadata)
                 , options);
 
             this.subscriptions.push({
@@ -276,9 +297,6 @@ export default {
         subscribeToAll() {
             const telemetryObjects = Object.values(this.telemetryObjects);
             telemetryObjects.forEach(this.subscribeToObject);
-        },
-        updateDomainObject(newDomainObject) {
-            this.currentDomainObject = newDomainObject;
         }
     }
 };

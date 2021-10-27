@@ -125,7 +125,6 @@
     <div
         class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar u-style-receiver js-style-receiver"
         :class="{
-            'loading': loading,
             'is-paused' : paused
         }"
     >
@@ -362,7 +361,7 @@ export default {
             autoScroll: true,
             sortOptions: {},
             filters: {},
-            loading: true,
+            loading: false,
             scrollable: undefined,
             tableEl: undefined,
             headersHolderEl: undefined,
@@ -422,6 +421,14 @@ export default {
         }
     },
     watch: {
+        loading: {
+            handler(isLoading) {
+                if (this.viewActionsCollection) {
+                    let action = isLoading ? 'disable' : 'enable';
+                    this.viewActionsCollection[action](['export-csv-all']);
+                }
+            }
+        },
         markedRows: {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
@@ -1017,6 +1024,12 @@ export default {
                 this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
             } else if (this.markedRows.length === 0) {
                 this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+            }
+
+            if (this.loading) {
+                this.viewActionsCollection.disable(['export-csv-all']);
+            } else {
+                this.viewActionsCollection.enable(['export-csv-all']);
             }
 
             if (this.paused) {
