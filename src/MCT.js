@@ -251,6 +251,8 @@ define([
 
         this.status = new api.StatusAPI(this);
 
+        this.priority = api.PriorityAPI;
+
         this.router = new ApplicationRouter(this);
 
         this.branding = BrandingAPI.default;
@@ -261,6 +263,7 @@ define([
         // Plugins that are installed by default
 
         this.install(this.plugins.Plot());
+        this.install(this.plugins.Chart());
         this.install(this.plugins.TelemetryTable.default());
         this.install(PreviewPlugin.default());
         this.install(LegacyIndicatorsPlugin());
