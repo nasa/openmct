@@ -105,7 +105,8 @@ export default {
                 composition.load().then((domainObjects) => {
                     domainObjects.forEach(telemetryObject => {
                         let keyString = this.openmct.objects.makeKeyString(telemetryObject.identifier);
-                        let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+                        const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+                        let metadataValues = metadata ? metadata.values() : [];
                         let filters = this.filteredTelemetry[keyString];
 
                         if (filters !== undefined) {

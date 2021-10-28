@@ -44,6 +44,7 @@ const notebookDomainObject = {
         namespace: ''
     },
     type: 'notebook',
+    name: 'Test Notebook',
     configuration: {
         defaultSort: 'oldest',
         entries: notebookEntries,
@@ -118,6 +119,12 @@ describe('Notebook Entries:', () => {
             'create',
             'update'
         ]));
+        openmct.editor = {
+            isEditing: () => false
+        };
+        openmct.objects.isPersistable = () => true;
+        openmct.objects.save = () => Promise.resolve(true);
+
         window.localStorage.setItem('notebook-storage', null);
     });
 

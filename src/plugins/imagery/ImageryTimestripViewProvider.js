@@ -66,6 +66,10 @@ export default function ImageryTimestripViewProvider(openmct) {
                 destroy: function () {
                     component.$destroy();
                     component = undefined;
+                },
+
+                getComponent() {
+                    return component;
                 }
             };
         }

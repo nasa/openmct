@@ -26,8 +26,10 @@ export default {
     inject: ['openmct', 'domainObject', 'objectPath'],
     mounted() {
         // listen
-        this.openmct.time.on('bounds', this.boundsChange);
-        this.openmct.time.on('timeSystem', this.timeSystemChange);
+        this.boundsChange = this.boundsChange.bind(this);
+        this.timeSystemChange = this.timeSystemChange.bind(this);
+        this.setDataTimeContext = this.setDataTimeContext.bind(this);
+        this.setDataTimeContext();
 
         // set
         this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
@@ -51,10 +53,24 @@ export default {
             delete this.unsubscribe;
         }
 
-        this.openmct.time.off('bounds', this.boundsChange);
-        this.openmct.time.off('timeSystem', this.timeSystemChange);
+        this.stopFollowingDataTimeContext();
     },
     methods: {
+        setDataTimeContext() {
+            this.stopFollowingDataTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.timeContext.on('bounds', this.boundsChange);
+            this.boundsChange(this.timeContext.bounds());
+            this.timeContext.on('timeSystem', this.timeSystemChange);
+            this.timeContext.on("timeContext", this.setDataTimeContext);
+        },
+        stopFollowingDataTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off('bounds', this.boundsChange);
+                this.timeContext.off('timeSystem', this.timeSystemChange);
+                this.timeContext.off("timeContext", this.setDataTimeContext);
+            }
+        },
         datumIsNotValid(datum) {
             if (this.imageHistory.length === 0) {
                 return false;
@@ -111,7 +127,7 @@ export default {
             }
         },
         async requestHistory() {
-            let bounds = this.openmct.time.bounds();
+            let bounds = this.timeContext.bounds();
             this.requestCount++;
             const requestId = this.requestCount;
             this.imageHistory = [];
@@ -132,7 +148,7 @@ export default {
             }
         },
         timeSystemChange() {
-            this.timeSystem = this.openmct.time.timeSystem();
+            this.timeSystem = this.timeContext.timeSystem();
             this.timeKey = this.timeSystem.key;
             this.timeFormatter = this.getFormatter(this.timeKey);
             this.durationFormatter = this.getFormatter(this.timeSystem.durationFormat || DEFAULT_DURATION_FORMATTER);
@@ -141,7 +157,7 @@ export default {
             this.unsubscribe = this.openmct.telemetry
                 .subscribe(this.domainObject, (datum) => {
                     let parsedTimestamp = this.parseTime(datum);
-                    let bounds = this.openmct.time.bounds();
+                    let bounds = this.timeContext.bounds();
 
                     if (parsedTimestamp >= bounds.start && parsedTimestamp <= bounds.end) {
                         let image = this.normalizeDatum(datum);
@@ -159,7 +175,7 @@ export default {
             let image = { ...datum };
             image.formattedTime = this.formatTime(datum);
             image.url = this.formatImageUrl(datum);
-            image.time = datum[this.timeKey];
+            image.time = this.parseTime(image.formattedTime);
             image.imageDownloadName = this.getImageDownloadName(datum);
 
             return image;

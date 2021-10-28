@@ -477,6 +477,10 @@ define([
      * @returns {Object<String, {TelemetryValueFormatter}>}
      */
     TelemetryAPI.prototype.getFormatMap = function (metadata) {
+        if (!metadata) {
+            return {};
+        }
+
         if (!this.formatMapCache.has(metadata)) {
             const formatMap = metadata.values().reduce(function (map, valueMetadata) {
                 map[valueMetadata.key] = this.getValueFormatter(valueMetadata);
