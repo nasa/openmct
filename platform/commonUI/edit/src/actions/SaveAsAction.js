@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
+ define([
     '../creation/CreateWizard',
     './SaveInProgressDialog'
 ],
@@ -132,14 +132,11 @@ function (
             return fetchObject(object.getModel().location);
         }
 
-        function saveObject(object) {
-            //persist the object, which adds it to the transaction and then call editor.save
-            return object.getCapability("persistence").persist()
-                .then(() => {
-                    return self.openmct.editor.save().then(() => {
-                        return object;
-                    });
-                });
+        function saveObject(parent) {
+            return self.openmct.editor.save().then(() => {
+                // Force mutation for search indexing
+                return parent;
+            });
         }
 
         function addSavedObjectToParent(parent) {
@@ -150,6 +147,17 @@ function (
                         .then(function () {
                             return addedObject;
                         });
+                });
+        }
+
+        function undirty(object) {
+            return object.getCapability('persistence').refresh();
+        }
+
+        function undirtyOriginals(object) {
+            return object.getCapability("persistence").persist()
+                .then(function () {
+                    return object;
                 });
         }
 
@@ -179,9 +187,10 @@ function (
         return getParent(domainObject)
             .then(doWizardSave)
             .then(showBlockingDialog)
-            .then(saveObject)
             .then(getParent)
+            .then(saveObject)
             .then(addSavedObjectToParent)
+            .then(undirtyOriginals)
             .then((addedObject) => {
                 return fetchObject(addedObject.getId());
             })
