@@ -23,12 +23,13 @@ import TelemetryTableViewProvider from './TelemetryTableViewProvider';
 import TableConfigurationViewProvider from './TableConfigurationViewProvider';
 import TelemetryTableType from './TelemetryTableType';
 import TelemetryTableViewActions from './ViewActions';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function plugin() {
     return function install(openmct) {
         openmct.objectViews.addProvider(new TelemetryTableViewProvider(openmct));
         openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
-        openmct.types.addType('table', TelemetryTableType);
+        openmct.types.addType(TypeKeyConstants.TABLE, TelemetryTableType);
         openmct.composition.addPolicy((parent, child) => {
             if (parent.type === 'table') {
                 return Object.prototype.hasOwnProperty.call(child, 'telemetry');

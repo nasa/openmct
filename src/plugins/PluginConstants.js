@@ -20,27 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from './TimelineViewProvider';
-import timelineInterceptor from "./timelineInterceptor";
-import { TypeKeyConstants } from '../PluginConstants.js';
-
-export default function () {
-    return function install(openmct) {
-        openmct.types.addType(TypeKeyConstants.TIME_STRIP, {
-            name: 'Time Strip',
-            key: 'time-strip',
-            description: 'An activity timeline',
-            creatable: true,
-            cssClass: 'icon-timeline',
-            initialize: function (domainObject) {
-                domainObject.composition = [];
-                domainObject.configuration = {
-                    useIndependentTime: false
-                };
-            }
-        });
-        timelineInterceptor(openmct);
-        openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
-    };
-}
-
+export const TypeKeyConstants = {
+    CLOCK: 'clock',
+    CONDITION_SET: 'conditionSet',
+    CONDITION_WIDGET: 'conditionWidget',
+    FLEXIBLE_LAYOUT: 'flexible-layout',
+    FOLDER: 'folder',
+    HYPERLINK: 'hyperlink',
+    LAD_TABLE: 'LadTable',
+    LAD_TABLE_SET: 'LadTableSet',
+    LAYOUT: 'layout',
+    MOCK_TYPE: 'mock-type',
+    NONEDITABLE_FOLDER: 'noneditable.folder',
+    NOTEBOOK: 'notebook',
+    NOTEBOOK_SNAPSHOT_IMAGE: 'notebookSnapshotImage',
+    PLAN: 'plan',
+    SUMMARY_WIDGET: 'summary-widget',
+    TABLE: 'table',
+    TABS: 'tabs',
+    TELEMETRY_MEAN: 'telemetry-mean',
+    TELEMETRY_PLOT_OVERLAY: 'telemetry.plot.overlay',
+    TELEMETRY_PLOT_SPECTRAL: 'telemetry.plot.spectral',
+    TELEMETRY_PLOT_STACKED: 'telemetry.plot.stacked',
+    TEST_OBJECT: 'test-object',
+    TIME_STRIP: 'time-strip',
+    WEBPAGE: 'webpage'
+};

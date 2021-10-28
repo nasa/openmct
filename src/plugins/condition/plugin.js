@@ -24,13 +24,15 @@ import ConditionSetCompositionPolicy from "./ConditionSetCompositionPolicy";
 import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
 import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
 import ConditionSetViewPolicy from './ConditionSetViewPolicy';
+
+import { TypeKeyConstants } from '../PluginConstants.js';
 import uuid from "uuid";
 
 export default function ConditionPlugin() {
 
     return function install(openmct) {
 
-        openmct.types.addType('conditionSet', {
+        openmct.types.addType(TypeKeyConstants.CONDITION_SET, {
             name: 'Condition Set',
             key: 'conditionSet',
             description: 'Monitor and evaluate telemetry values in real-time with a wide variety of criteria. Use to control the styling of many objects in Open MCT.',

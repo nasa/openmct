@@ -22,11 +22,13 @@
 
 import ConditionWidgetViewProvider from './ConditionWidgetViewProvider.js';
 
+import { TypeKeyConstants } from '../PluginConstants.js';
+
 export default function plugin() {
     return function install(openmct) {
         openmct.objectViews.addProvider(new ConditionWidgetViewProvider(openmct));
 
-        openmct.types.addType('conditionWidget', {
+        openmct.types.addType(TypeKeyConstants.CONDITION_WIDGET, {
             name: "Condition Widget",
             description: "A button that can be used on its own, or dynamically styled with a Condition Set.",
             creatable: true,

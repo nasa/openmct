@@ -30,6 +30,7 @@ import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
 import { BAR_GRAPH_VIEW, BAR_GRAPH_KEY } from './barGraph/BarGraphConstants';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe("the plugin", function () {
     let element;
@@ -152,7 +153,7 @@ describe("the plugin", function () {
             disconnect() {}
         });
 
-        openmct.types.addType("test-object", {
+        openmct.types.addType(TypeKeyConstants.TEST_OBJECT, {
             creatable: true
         });
 

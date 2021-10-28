@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import TablePlugin from './plugin.js';
+import { TypeKeyConstants } from '../PluginConstants.js';
 import Vue from 'vue';
 import {
     createOpenMct,
@@ -76,7 +77,7 @@ describe("the plugin", () => {
             end: 4
         });
 
-        openmct.types.addType('test-object', {
+        openmct.types.addType(TypeKeyConstants.TEST_OBJECT, {
             creatable: true
         });
 

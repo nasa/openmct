@@ -5,6 +5,7 @@ import SnapshotContainer from './snapshot-container';
 
 import { notebookImageMigration } from '../notebook/utils/notebook-migration';
 import { NOTEBOOK_TYPE } from './notebook-constants';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 import Vue from 'vue';
 
@@ -99,7 +100,7 @@ export default function NotebookPlugin() {
                 };
             }
         };
-        openmct.types.addType('notebookSnapshotImage', notebookSnapshotImageType);
+        openmct.types.addType(TypeKeyConstants.NOTEBOOK_SNAPSHOT_IMAGE, notebookSnapshotImageType);
 
         const snapshotContainer = new SnapshotContainer(openmct);
         const notebookSnapshotIndicator = new Vue ({

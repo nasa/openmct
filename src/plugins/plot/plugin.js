@@ -31,11 +31,12 @@ import OverlayPlotCompositionPolicy from './overlayPlot/OverlayPlotCompositionPo
 import StackedPlotCompositionPolicy from './stackedPlot/StackedPlotCompositionPolicy';
 import SpectralPlotCompositionPolicy from './spectralPlot/SpectralPlotCompositionPolicy';
 import BarGraphCompositionPolicy from './barGraph/BarGraphCompositionPolicy';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function () {
     return function install(openmct) {
 
-        openmct.types.addType('telemetry.plot.overlay', {
+        openmct.types.addType(TypeKeyConstants.TELEMETRY_PLOT_OVERLAY, {
             key: "telemetry.plot.overlay",
             name: "Overlay Plot",
             cssClass: "icon-plot-overlay",
@@ -52,7 +53,7 @@ export default function () {
             priority: 891
         });
 
-        openmct.types.addType('telemetry.plot.stacked', {
+        openmct.types.addType(TypeKeyConstants.TELEMETRY_PLOT_STACKED, {
             key: "telemetry.plot.stacked",
             name: "Stacked Plot",
             cssClass: "icon-plot-stacked",
@@ -64,7 +65,7 @@ export default function () {
             },
             priority: 890
         });
-        openmct.types.addType('telemetry.plot.spectral', {
+        openmct.types.addType(TypeKeyConstants.TELEMETRY_PLOT_SPECTRAL, {
             key: "telemetry.plot.spectral",
             name: "Spectral Plot",
             cssClass: "icon-plot-stacked",

@@ -22,10 +22,11 @@
 
 import PlanViewProvider from './PlanViewProvider';
 import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function () {
     return function install(openmct) {
-        openmct.types.addType('plan', {
+        openmct.types.addType(TypeKeyConstants.PLAN, {
             name: 'Plan',
             key: 'plan',
             description: 'A plan',

@@ -21,6 +21,7 @@
  *****************************************************************************/
 import * as NotebookEntries from './notebook-entries';
 import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 const notebookStorage = {
     name: 'notebook',
@@ -111,7 +112,7 @@ describe('Notebook Entries:', () => {
         });
 
         openmct.$injector.get.and.returnValue(mockIdentifierService);
-        openmct.types.addType('notebook', {
+        openmct.types.addType(TypeKeyConstants.NOTEBOOK, {
             creatable: true
         });
         openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [

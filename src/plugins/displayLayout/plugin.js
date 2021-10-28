@@ -26,6 +26,7 @@ import DisplayLayout from './components/DisplayLayout.vue';
 import DisplayLayoutToolbar from './DisplayLayoutToolbar.js';
 import DisplayLayoutType from './DisplayLayoutType.js';
 
+import { TypeKeyConstants } from '../PluginConstants.js';
 import objectUtils from 'objectUtils';
 
 import Vue from 'vue';
@@ -115,7 +116,7 @@ export default function DisplayLayoutPlugin(options) {
                 return 100;
             }
         });
-        openmct.types.addType('layout', DisplayLayoutType());
+        openmct.types.addType(TypeKeyConstants.LAYOUT, DisplayLayoutType());
         openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct, options));
         openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
         openmct.composition.addPolicy((parent, child) => {

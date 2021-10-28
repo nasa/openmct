@@ -20,9 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import { TypeKeyConstants } from '../PluginConstants.js';
 export default function () {
     return function (openmct) {
-        openmct.types.addType("noneditable.folder", {
+        openmct.types.addType(TypeKeyConstants.NONEDITABLE_FOLDER, {
             name: "Non-Editable Folder",
             key: "noneditable.folder",
             description: "Create folders to organize other objects or links to objects without the ability to edit it's properties.",

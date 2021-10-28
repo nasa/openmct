@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import CouchPlugin from './plugin.js';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 import {
     createOpenMct,
     resetApplicationState, spyOnBuiltins
@@ -66,7 +67,7 @@ describe('the plugin', () => {
 
         openmct.install(new CouchPlugin(options));
 
-        openmct.types.addType('mock-type', {creatable: true});
+        openmct.types.addType(TypeKeyConstants.MOCK_TYPE, {creatable: true});
 
         openmct.on('start', done);
         openmct.startHeadless();

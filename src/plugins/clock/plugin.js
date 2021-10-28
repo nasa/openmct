@@ -23,6 +23,7 @@
 
 import ClockViewProvider from './ClockViewProvider';
 import ClockIndicator from './components/ClockIndicator.vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 import momentTimezone from 'moment-timezone';
 import Vue from 'vue';
@@ -30,7 +31,7 @@ import Vue from 'vue';
 export default function ClockPlugin(options) {
     return function install(openmct) {
         const CLOCK_INDICATOR_FORMAT = 'YYYY/MM/DD HH:mm:ss';
-        openmct.types.addType('clock', {
+        openmct.types.addType(TypeKeyConstants.CLOCK, {
             name: 'Clock',
             description: 'A UTC-based clock that supports a variety of display formats. Clocks can be added to Display Layouts.',
             creatable: true,

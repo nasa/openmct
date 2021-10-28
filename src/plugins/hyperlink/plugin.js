@@ -21,10 +21,11 @@
  *****************************************************************************/
 
 import HyperlinkProvider from './HyperlinkProvider';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function () {
     return function install(openmct) {
-        openmct.types.addType('hyperlink', {
+        openmct.types.addType(TypeKeyConstants.HYPERLINK, {
             name: 'Hyperlink',
             key: 'hyperlink',
             description: 'A hyperlink to redirect to a different link',

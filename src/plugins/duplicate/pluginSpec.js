@@ -22,6 +22,7 @@
 import DuplicateActionPlugin from './plugin.js';
 import DuplicateAction from './DuplicateAction.js';
 import DuplicateTask from './DuplicateTask.js';
+import { TypeKeyConstants } from '../PluginConstants.js';
 import {
     createOpenMct,
     resetApplicationState,
@@ -105,7 +106,7 @@ describe("The Duplicate Action plugin", () => {
 
         // already installed by default, but never hurts, just adds to context menu
         openmct.install(DuplicateActionPlugin());
-        openmct.types.addType('folder', {creatable: true});
+        openmct.types.addType(TypeKeyConstants.FOLDER, {creatable: true});
 
         openmct.on('start', done);
         openmct.startHeadless();

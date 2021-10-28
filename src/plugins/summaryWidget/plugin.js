@@ -1,3 +1,5 @@
+
+
 define([
     './SummaryWidgetsCompositionPolicy',
     './src/telemetry/SummaryWidgetMetadataProvider',
