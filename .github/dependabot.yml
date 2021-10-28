@@ -15,4 +15,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "daily"    
+    labels:
+      - "type:maintenance"
+      - "dependencies"
