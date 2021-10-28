@@ -2,6 +2,8 @@ import EventEmitter from 'EventEmitter';
 import LADTable from './LADTable';
 
 export default class LADTableSet extends EventEmitter {
+    // 1. change the structure of telemetryObjects to {tablekey: {teleKey: teleObj}}
+    // 2. when add lad table. add an event ladtable.on('object-removed', this.removeTelemetryObj);
     constructor(domainObject, openmct) {
         super();
         this.domainObject = domainObject;
@@ -77,7 +79,11 @@ export default class LADTableSet extends EventEmitter {
                     .metadata
                     .valuesForHints(['range'])[0];
                 telemetryObject.valueKey = telemetryObject.valueMetadata.key;
-                this.telemetryObjects[telemetryObject.key] = telemetryObject;
+                if (!this.telemetryObjects[ladTable.keyString]) {
+                    this.telemetryObjects[ladTable.keyString] = {};
+                }
+
+                this.telemetryObjects[ladTable.keyString][telemetryObject.key] = telemetryObject;
                 this.emit('telemetry-object-added');
             }
         }

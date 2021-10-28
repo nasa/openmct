@@ -46,7 +46,7 @@
                 v-for="ladRow in ladTable.tableRows.getRows()"
                 :key="ladRow.objectKeyString"
                 :lad-row="ladRow"
-                :telemetry-object="tableSet.telemetryObjects[ladRow.objectKeyString]"
+                :telemetry-object="tableSet.telemetryObjects[ladTable.keyString][ladRow.objectKeyString]"
                 :headers="headers"
                 :has-units="hasUnits"
                 :path-to-table="getObjectPath(ladTable)"
@@ -125,14 +125,22 @@ export default {
             }
         },
         checkUnit() {
-            let telemetryObjects = this.tableSet.telemetryObjects;
-            let metadata = Object.values(telemetryObjects).map(o => o.metadata.valueMetadatas);
-            for (let m of metadata) {
-                for (let metadatum of m) {
-                    if (metadatum.unit !== undefined) {
-                        this.hasUnits = true;
+            for (let ladKey in this.tableSet.telemetryObjects) {
+                if (ladKey) {
+                    let telemetryObjects = this.tableSet.telemetryObjects[ladKey];
+                    for (let teleKey in telemetryObjects) {
+                        if (teleKey) {
+                            let telemetryObject = telemetryObjects[teleKey];
+                            let valueMetadatas = telemetryObject.metadata.valueMetadatas;
+                            for (let metadatum of valueMetadatas) {
+                                if (metadatum.unit !== undefined) {
+                                    this.hasUnits = true;
 
-                        return;
+                                    return;
+                                }
+                            }
+
+                        }
                     }
                 }
             }
