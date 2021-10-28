@@ -35,12 +35,15 @@
                 :tick-width="tickWidth"
                 :single-series="seriesModels.length === 1"
                 :series-model="seriesModels[0]"
+                :style="{
+                    left: (plotWidth - tickWidth) + 'px'
+                }"
                 @yKeyChanged="setYAxisKey"
                 @tickWidthChanged="onTickWidthChange"
         />
         <div class="gl-plot-wrapper-display-area-and-x-axis"
              :style="{
-                 left: (tickWidth + 20) + 'px'
+                 left: (plotWidth + 20) + 'px'
              }"
         >
 
@@ -219,7 +222,8 @@ export default {
             isRealTime: this.openmct.time.clock() !== undefined,
             loaded: false,
             isTimeOutOfSync: false,
-            showLimitLineLabels: undefined
+            showLimitLineLabels: undefined,
+            isFrozenOnMouseDown: false
         };
     },
     computed: {
@@ -235,11 +239,9 @@ export default {
             } else {
                 return 'plot-legend-collapsed';
             }
-        }
-    },
-    watch: {
-        plotTickWidth(newTickWidth) {
-            this.onTickWidthChange(newTickWidth, true);
+        },
+        plotWidth() {
+            return this.plotTickWidth || this.tickWidth;
         }
     },
     mounted() {
@@ -336,6 +338,11 @@ export default {
         },
 
         loadSeriesData(series) {
+            //this check ensures that duplicate requests don't happen on load
+            if (!this.timeContext) {
+                return;
+            }
+
             if (this.$parent.$refs.plotWrapper.offsetWidth === 0) {
                 this.scheduleLoad(series);
 
@@ -345,9 +352,12 @@ export default {
             this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
             this.startLoading();
+            const bounds = this.timeContext.bounds();
             const options = {
                 size: this.$parent.$refs.plotWrapper.offsetWidth,
-                domain: this.config.xAxis.get('key')
+                domain: this.config.xAxis.get('key'),
+                start: bounds.start,
+                end: bounds.end
             };
 
             series.load(options)
@@ -356,9 +366,10 @@ export default {
 
         loadMoreData(range, purge) {
             this.config.series.forEach(plotSeries => {
+                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.startLoading();
                 plotSeries.load({
-                    size: this.$parent.$refs.plotWrapper.offsetWidth,
+                    size: this.offsetWidth,
                     start: range.min,
                     end: range.max,
                     domain: this.config.xAxis.get('key')
@@ -593,7 +604,8 @@ export default {
                 }
             }
 
-            this.$emit('plotTickWidth', this.tickWidth);
+            const id = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.$emit('plotTickWidth', this.tickWidth, id);
         },
 
         trackMousePosition(event) {
@@ -686,6 +698,11 @@ export default {
 
             this.listenTo(window, 'mouseup', this.onMouseUp, this);
             this.listenTo(window, 'mousemove', this.trackMousePosition, this);
+
+            // track frozen state on mouseDown to be read on mouseUp
+            const isFrozen = this.config.xAxis.get('frozen') === true && this.config.yAxis.get('frozen') === true;
+            this.isFrozenOnMouseDown = isFrozen;
+
             if (event.altKey) {
                 return this.startPan(event);
             } else {
@@ -706,7 +723,14 @@ export default {
             }
 
             if (this.marquee) {
-                return this.endMarquee(event);
+                this.endMarquee(event);
+            }
+
+            // resume the plot if no pan, zoom, or drag action is taken
+            // needs to follow endMarquee so that plotHistory is pruned
+            const isAction = Boolean(this.plotHistory.length);
+            if (!isAction && !this.isFrozenOnMouseDown) {
+                return this.play();
             }
         },
 

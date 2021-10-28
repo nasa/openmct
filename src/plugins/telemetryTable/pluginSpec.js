@@ -222,6 +222,24 @@ describe("the plugin", () => {
             openmct.router.path = originalRouterPath;
         });
 
+        it("Shows no progress bar initially", () => {
+            let progressBar = element.querySelector('.c-progress-bar');
+
+            expect(tableInstance.outstandingRequests).toBe(0);
+            expect(progressBar).toBeNull();
+        });
+
+        it("Shows a progress bar while making requests", async () => {
+            tableInstance.incrementOutstandingRequests();
+            await Vue.nextTick();
+
+            let progressBar = element.querySelector('.c-progress-bar');
+
+            expect(tableInstance.outstandingRequests).toBe(1);
+            expect(progressBar).not.toBeNull();
+
+        });
+
         it("Renders a row for every telemetry datum returned", (done) => {
             let rows = element.querySelectorAll('table.c-telemetry-table__body tr');
             Vue.nextTick(() => {
