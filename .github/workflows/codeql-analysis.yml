@@ -4,6 +4,12 @@ name: "CodeQL"
 on:
   push:
     branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    paths-ignore:
+      - '**/*Spec.js'
+      - '**/*.md'
+      - '**/*.txt'
   schedule:
     - cron: '28 21 * * 3'
 
