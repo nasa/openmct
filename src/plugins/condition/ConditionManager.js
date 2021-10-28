@@ -105,7 +105,14 @@ export default class ConditionManager extends EventEmitter {
     }
 
     updateConditionTelemetryObjects() {
-        this.conditions.forEach((condition) => condition.updateTelemetryObjects());
+        this.conditions.forEach((condition) => {
+            condition.updateTelemetryObjects();
+            let index = this.conditionSetDomainObject.configuration.conditionCollection.findIndex(item => item.id === condition.id);
+            if (index > -1) {
+                //Only assign the summary, don't mutate the domain object
+                this.conditionSetDomainObject.configuration.conditionCollection[index].summary = this.updateConditionDescription(condition);
+            }
+        });
     }
 
     removeConditionTelemetryObjects() {
@@ -139,10 +146,17 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
+    updateConditionDescription(condition) {
+        condition.updateDescription();
+
+        return condition.summary;
+    }
+
     updateCondition(conditionConfiguration) {
         let condition = this.findConditionById(conditionConfiguration.id);
         if (condition) {
             condition.update(conditionConfiguration);
+            conditionConfiguration.summary = this.updateConditionDescription(condition);
         }
 
         let index = this.conditionSetDomainObject.configuration.conditionCollection.findIndex(item => item.id === conditionConfiguration.id);
@@ -152,16 +166,10 @@ export default class ConditionManager extends EventEmitter {
         }
     }
 
-    updateConditionDescription(condition) {
-        const found = this.conditionSetDomainObject.configuration.conditionCollection.find(conditionConfiguration => (conditionConfiguration.id === condition.id));
-        if (found.summary !== condition.description) {
-            found.summary = condition.description;
-            this.persistConditions();
-        }
-    }
-
     initCondition(conditionConfiguration, index) {
         let condition = new Condition(conditionConfiguration, this.openmct, this);
+        conditionConfiguration.summary = this.updateConditionDescription(condition);
+
         if (index !== undefined) {
             this.conditions.splice(index + 1, 0, condition);
         } else {

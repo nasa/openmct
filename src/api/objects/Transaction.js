@@ -20,35 +20,52 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [
-        "../../src/capabilities/TransactionalPersistenceCapability",
-        "../../src/capabilities/TransactionCapabilityDecorator"
-    ],
-    function (TransactionalPersistenceCapability, TransactionCapabilityDecorator) {
+export default class Transaction {
+    constructor(objectAPI) {
+        this.dirtyObjects = new Set();
+        this.objectAPI = objectAPI;
+    }
 
-        describe("The transaction capability decorator", function () {
-            var mockQ,
-                mockTransactionService,
-                mockCapabilityService,
-                provider;
+    add(object) {
+        this.dirtyObjects.add(object);
+    }
 
-            beforeEach(function () {
-                mockQ = {};
-                mockTransactionService = {};
-                mockCapabilityService = jasmine.createSpyObj("capabilityService", ["getCapabilities"]);
-                mockCapabilityService.getCapabilities.and.returnValue({
-                    persistence: function () {}
+    cancel() {
+        return this._clear();
+    }
+
+    commit() {
+        const promiseArray = [];
+        const save = this.objectAPI.save.bind(this.objectAPI);
+        this.dirtyObjects.forEach(object => {
+            promiseArray.push(this.createDirtyObjectPromise(object, save));
+        });
+
+        return Promise.all(promiseArray);
+    }
+
+    createDirtyObjectPromise(object, action) {
+        return new Promise((resolve, reject) => {
+            action(object)
+                .then(resolve)
+                .catch(reject)
+                .finally(() => {
+                    this.dirtyObjects.delete(object);
                 });
-
-                provider = new TransactionCapabilityDecorator(mockQ, mockTransactionService, mockCapabilityService);
-
-            });
-            it("decorates the persistence capability", function () {
-                var capabilities = provider.getCapabilities();
-                expect(capabilities.persistence({}) instanceof TransactionalPersistenceCapability).toBe(true);
-            });
-
         });
     }
-);
+
+    start() {
+        this.dirtyObjects = new Set();
+    }
+
+    _clear() {
+        const promiseArray = [];
+        const refresh = this.objectAPI.refresh.bind(this.objectAPI);
+        this.dirtyObjects.forEach(object => {
+            promiseArray.push(this.createDirtyObjectPromise(object, refresh));
+        });
+
+        return Promise.all(promiseArray);
+    }
+}

@@ -30,6 +30,7 @@ describe('the plugin', function () {
     let child;
     let openmct;
     let appHolder;
+    let originalRouterPath;
 
     beforeEach((done) => {
         appHolder = document.createElement('div');
@@ -56,11 +57,16 @@ describe('the plugin', function () {
         child.style.width = '640px';
         child.style.height = '480px';
         element.appendChild(child);
+
+        originalRouterPath = openmct.router.path;
+
         openmct.on('start', done);
         openmct.start(appHolder);
     });
 
     afterEach(() => {
+        openmct.router.path = originalRouterPath;
+
         return resetApplicationState(openmct);
     });
 
@@ -84,8 +90,9 @@ describe('the plugin', function () {
                 id: "test-object",
                 type: "plan"
             };
+            openmct.router.path = [testViewObject];
 
-            const applicableViews = openmct.objectViews.get(testViewObject, []);
+            const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
             let planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
             expect(planView).toBeDefined();
         });
@@ -142,7 +149,9 @@ describe('the plugin', function () {
                 }
             };
 
-            const applicableViews = openmct.objectViews.get(planDomainObject, []);
+            openmct.router.path = [planDomainObject];
+
+            const applicableViews = openmct.objectViews.get(planDomainObject, [planDomainObject]);
             planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
             let view = planView.view(planDomainObject, mockObjectPath);
             view.show(child, true);
