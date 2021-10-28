@@ -8,7 +8,6 @@ updates:
       - "type:maintenance"
       - "dependencies"
     allow:
-      # Allow updates for Lodash
       - dependency-name: "^.*eslint.*$"
 
   - package-ecosystem: "github-actions"
