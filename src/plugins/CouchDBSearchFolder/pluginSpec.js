@@ -42,6 +42,14 @@ describe('the plugin', function () {
         couchPlugin = openmct.plugins.CouchDB(testPath);
         openmct.install(couchPlugin);
 
+        openmct.install(new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
+            "selector": {
+                "model": {
+                    "type": "plan"
+                }
+            }
+        }));
+
         spyOn(couchPlugin.couchProvider, 'getObjectsByFilter').and.returnValue(Promise.resolve([
             {
                 identifier: {
@@ -56,6 +64,19 @@ describe('the plugin', function () {
                 }
             }
         ]));
+
+        spyOn(couchPlugin.couchProvider, "get").and.callFake((id) => {
+            return Promise.resolve({
+                identifier: id
+            });
+        });
+
+        return new Promise((resolve) => {
+            openmct.once('start', resolve);
+            openmct.startHeadless();
+        }).then(() => {
+            composition = openmct.composition.get({identifier});
+        });
     });
 
     afterEach(() => {

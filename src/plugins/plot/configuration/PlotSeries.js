@@ -82,12 +82,17 @@ export default class PlotSeries extends Model {
             .openmct
             .telemetry
             .getMetadata(options.domainObject);
+
         this.formats = options
             .openmct
             .telemetry
             .getFormatMap(this.metadata);
 
-        const range = this.metadata.valuesForHints(['range'])[0];
+        //if the object is missing or doesn't have metadata for some reason
+        let range = {};
+        if (this.metadata) {
+            range = this.metadata.valuesForHints(['range'])[0];
+        }
 
         return {
             name: options.domainObject.name,
@@ -191,7 +196,10 @@ export default class PlotSeries extends Model {
                     .uniq(true, point => [this.getXVal(point), this.getYVal(point)].join())
                     .value();
                 this.reset(newPoints);
-            }.bind(this));
+            }.bind(this))
+            .catch((error) => {
+                console.warn('Error fetching data', error);
+            });
         /* eslint-enable you-dont-need-lodash-underscore/concat */
     }
     /**
@@ -199,7 +207,9 @@ export default class PlotSeries extends Model {
      */
     onXKeyChange(xKey) {
         const format = this.formats[xKey];
-        this.getXVal = format.parse.bind(format);
+        if (format) {
+            this.getXVal = format.parse.bind(format);
+        }
     }
     /**
      * Update y formatter on change, default to stepAfter interpolation if

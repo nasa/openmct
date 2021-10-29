@@ -110,7 +110,7 @@ class ActionsAPI extends EventEmitter {
         return actionsObject;
     }
 
-    _groupAndSortActions(actionsArray) {
+    _groupAndSortActions(actionsArray = []) {
         if (!Array.isArray(actionsArray) && typeof actionsArray === 'object') {
             actionsArray = Object.keys(actionsArray).map(key => actionsArray[key]);
         }

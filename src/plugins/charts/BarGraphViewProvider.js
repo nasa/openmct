@@ -20,24 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import SpectralView from './SpectralView.vue';
+import BarGraphView from './BarGraphView.vue';
+import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
 import Vue from 'vue';
 
-export default function SpectralPlotViewProvider(openmct) {
+export default function BarGraphViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+
+        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
     }
 
     return {
-        key: 'plot-spectral',
-        name: 'Spectral Plot',
+        key: BAR_GRAPH_VIEW,
+        name: 'Bar Graph',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === 'telemetry.plot.spectral';
+            return domainObject && domainObject.type === BAR_GRAPH_KEY;
         },
 
         canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === 'telemetry.plot.spectral';
+            return domainObject && domainObject.type === BAR_GRAPH_KEY;
         },
 
         view: function (domainObject, objectPath) {
@@ -49,11 +52,12 @@ export default function SpectralPlotViewProvider(openmct) {
                     component = new Vue({
                         el: element,
                         components: {
-                            SpectralView
+                            BarGraphView
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            domainObject,
+                            path: objectPath
                         },
                         data() {
                             return {
@@ -62,7 +66,7 @@ export default function SpectralPlotViewProvider(openmct) {
                                 }
                             };
                         },
-                        template: '<spectral-view :options="options"></spectral-view>'
+                        template: '<bar-graph-view :options="options"></bar-graph-view>'
                     });
                 },
                 destroy: function () {

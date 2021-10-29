@@ -23,7 +23,7 @@
 <template>
 <component :is="urlDefined ? 'a' : 'span'"
            class="c-condition-widget u-style-receiver js-style-receiver"
-           :href="urlDefined ? internalDomainObject.url : null"
+           :href="url"
 >
     <div class="c-condition-widget__label">
         {{ internalDomainObject.label }}
@@ -32,6 +32,8 @@
 </template>
 
 <script>
+const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
+
 export default {
     inject: ['openmct', 'domainObject'],
     data: function () {
@@ -42,6 +44,9 @@ export default {
     computed: {
         urlDefined() {
             return this.internalDomainObject.url && this.internalDomainObject.url.length > 0;
+        },
+        url() {
+            return this.urlDefined ? sanitizeUrl(this.internalDomainObject.url) : null;
         }
     },
     mounted() {
