@@ -72,11 +72,11 @@ workflows:
       - test:
           name: node12-build-only
           node-version: lts/erbium
-          browser: ""
+          browser: "" #Skip testing
       - test: 
           name: node14-build-only
           node-version: lts/fermium
-          browser: ""
+          browser: "" #Skip testing
 
   nightly:
     jobs:
