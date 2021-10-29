@@ -8,7 +8,8 @@
         :class="{
             'is-alias': isAlias,
             'is-navigated-object': navigated,
-            'is-context-clicked': contextClickActive
+            'is-context-clicked': contextClickActive,
+            'is-new': isNewItem
         }"
         @click.capture="handleClick"
         @contextmenu.capture="handleContextMenu"
@@ -59,6 +60,10 @@ export default {
             type: String,
             default: '0px'
         },
+        isNew: {
+            type: Boolean,
+            default: false
+        },
         itemIndex: {
             type: Number,
             required: false,
@@ -103,6 +108,9 @@ export default {
             let parentKeyString = this.openmct.objects.makeKeyString(parent.identifier);
 
             return parentKeyString !== this.node.object.location;
+        },
+        isNewItem() {
+            return this.isNew;
         },
         isLoading() {
             return Boolean(this.loadingItems[this.navigationPath]);
