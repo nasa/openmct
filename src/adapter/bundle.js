@@ -28,7 +28,6 @@ define([
     './capabilities/APICapabilityDecorator',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
-    './runs/TypeDeprecationChecker',
     './runs/LegacyTelemetryProvider',
     './runs/RegisterLegacyTypes',
     './services/LegacyObjectAPIInterceptor',
@@ -44,7 +43,6 @@ define([
     APICapabilityDecorator,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
-    TypeDeprecationChecker,
     LegacyTelemetryProvider,
     RegisterLegacyTypes,
     LegacyObjectAPIInterceptor,
@@ -127,10 +125,6 @@ define([
                     }
                 ],
                 runs: [
-                    {
-                        implementation: TypeDeprecationChecker,
-                        depends: ["types[]"]
-                    },
                     {
                         implementation: AlternateCompositionInitializer,
                         depends: ["openmct"]

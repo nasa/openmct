@@ -38,12 +38,16 @@ a.c-condition-widget {
 
 // Make Condition Widget expand when in a hidden frame Layout context
 // For both static and Flexible Layouts
-.c-so-view--no-frame > .c-so-view__object-view > .c-condition-widget {
-    @include abs();
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
+.c-so-view--conditionWidget.c-so-view--no-frame {
+    .c-condition-widget {
+        @include abs();
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .c-so-view__frame-controls { display: none; }
 }
 
 // Add some margin when a Condition Widget is in a Flexible Layout

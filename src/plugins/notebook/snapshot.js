@@ -110,8 +110,7 @@ export default class Snapshot {
         }
 
         return () => {
-            const path = window.location.href.split('#');
-            window.location.href = path[0] + url;
+            window.location.href = window.location.origin + url;
         };
     }
 }

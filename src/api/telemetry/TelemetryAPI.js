@@ -180,12 +180,6 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
-        console.warn(
-            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry '
-            + 'will not be supported in future versions of Open MCT.  Please '
-            + 'use openmct.telemetry.isTelemetryObject instead.'
-        );
-
         return Boolean(this.findSubscriptionProvider(domainObject))
                || Boolean(this.findRequestProvider(domainObject));
     };
@@ -483,6 +477,10 @@ define([
      * @returns {Object<String, {TelemetryValueFormatter}>}
      */
     TelemetryAPI.prototype.getFormatMap = function (metadata) {
+        if (!metadata) {
+            return {};
+        }
+
         if (!this.formatMapCache.has(metadata)) {
             const formatMap = metadata.values().reduce(function (map, valueMetadata) {
                 map[valueMetadata.key] = this.getValueFormatter(valueMetadata);

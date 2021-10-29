@@ -19,31 +19,33 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define(['./Transaction'], function (Transaction) {
-    /**
-     * A nested transaction is a transaction which takes place in the context
-     * of a larger parent transaction. It becomes part of the parent
-     * transaction when (and only when) committed.
-     * @param parent
-     * @constructor
-     * @extends {platform/commonUI/edit/services.Transaction}
-     * @memberof platform/commonUI/edit/services
-     */
-    function NestedTransaction(parent) {
-        this.parent = parent;
-        Transaction.call(this, parent.$log);
-    }
+import { BAR_GRAPH_KEY } from './BarGraphConstants';
+import BarGraphViewProvider from './BarGraphViewProvider';
+import BarGraphInspectorViewProvider from './inspector/BarGraphInspectorViewProvider';
+import BarGraphCompositionPolicy from './BarGraphCompositionPolicy';
 
-    NestedTransaction.prototype = Object.create(Transaction.prototype);
+export default function () {
+    return function install(openmct) {
+        openmct.types.addType(BAR_GRAPH_KEY, {
+            key: BAR_GRAPH_KEY,
+            name: "Bar Graph",
+            cssClass: "icon-bar-chart",
+            description: "View data as a bar graph. Can be added to Display Layouts.",
+            creatable: true,
+            initialize: function (domainObject) {
+                domainObject.composition = [];
+                domainObject.configuration = {
+                    barStyles: { series: {} }
+                };
+            },
+            priority: 891
+        });
 
-    NestedTransaction.prototype.commit = function () {
-        this.parent.add(
-            Transaction.prototype.commit.bind(this),
-            Transaction.prototype.cancel.bind(this)
-        );
+        openmct.objectViews.addProvider(new BarGraphViewProvider(openmct));
 
-        return Promise.resolve(true);
+        openmct.inspectorViews.addProvider(new BarGraphInspectorViewProvider(openmct));
+
+        openmct.composition.addPolicy(new BarGraphCompositionPolicy(openmct).allow);
     };
+}
 
-    return NestedTransaction;
-});
