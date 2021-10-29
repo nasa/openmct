@@ -47,7 +47,7 @@ jobs:
             - node_modules
       - when:
           condition:
-            equal: [ "", <<parameters.browser>> ]
+            equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
           steps:
             - run: npm run lint
       - when:
