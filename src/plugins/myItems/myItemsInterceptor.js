@@ -38,7 +38,7 @@ function myItemsInterceptor(identifierObject) {
             return identifier.key === MY_ITEMS_KEY;
         },
         invoke: (identifier, object) => {
-            if (object === undefined || object && object.name === MISSING_NAME) {
+            if (object.name === MISSING_NAME) {
                 return myItemsModel;
             }
 
