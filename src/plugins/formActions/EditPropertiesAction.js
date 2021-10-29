@@ -49,7 +49,7 @@ export default class EditPropertiesAction extends PropertiesAction {
     /**
      * @private
      */
-    async _onSave(domainObject, changes, parentDomainObject) {
+    async _onSave(changes) {
         Object.entries(changes).forEach(([key, value]) => {
             const properties = key.split('.');
             let object = this.domainObject;
@@ -96,11 +96,7 @@ export default class EditPropertiesAction extends PropertiesAction {
         const formStructure = createWizard.getFormStructure(false);
         formStructure.title = 'Edit ' + this.domainObject.name;
 
-        const options = {
-            domainObject: this.domainObject,
-            onSave: this._onSave.bind(this)
-        };
-
-        this.openmct.forms.showForm(formStructure, options);
+        this.openmct.forms.showForm(formStructure)
+            .then(this._onSave.bind(this));
     }
 }

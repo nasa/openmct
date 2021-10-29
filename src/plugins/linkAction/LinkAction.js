@@ -40,21 +40,26 @@ export default class LinkAction {
     }
 
     invoke(objectPath) {
-        this.showForm(objectPath[0], objectPath[1]);
+        this.object = objectPath[0];
+        this.parent = objectPath[1];
+        this.showForm(this.object, this.parent);
     }
 
-    inNavigationPath(object) {
+    inNavigationPath() {
         return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
     }
 
-    onSave(object, changes, parent) {
-        let inNavigationPath = this.inNavigationPath(object);
+    onSave(changes) {
+        let inNavigationPath = this.inNavigationPath();
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
-        this.linkInNewParent(object, parent);
+        const parentDomainObjectpath = changes.location || [this.parent];
+        const parent = parentDomainObjectpath[0];
+
+        this.linkInNewParent(this.object, parent);
     }
 
     linkInNewParent(child, newParent) {
@@ -81,11 +86,8 @@ export default class LinkAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure, {
-            domainObject,
-            parentDomainObject,
-            onSave: this.onSave.bind(this)
-        });
+        this.openmct.forms.showForm(formStructure)
+            .then(this.onSave.bind(this));
     }
 
     validate(currentParent) {

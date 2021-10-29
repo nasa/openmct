@@ -32,18 +32,18 @@ export default class MoveAction {
     }
 
     invoke(objectPath) {
-        let object = objectPath[0];
+        this.object = objectPath[0];
         this.oldParent = objectPath[1];
 
-        this.showForm(object, this.oldParent);
+        this.showForm(this.object, this.oldParent);
     }
 
-    inNavigationPath(object) {
+    inNavigationPath() {
         return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
     }
 
-    navigateTo(objectPath, parentDomainObjectpath) {
+    navigateTo(objectPath) {
         let urlPath = objectPath.reverse()
             .map(object => this.openmct.objects.makeKeyString(object.identifier))
             .join("/");
@@ -59,11 +59,14 @@ export default class MoveAction {
         compositionCollection.add(child);
     }
 
-    async onSave(object, changes, parent, parentDomainObjectpath) {
-        let inNavigationPath = this.inNavigationPath(object);
+    async onSave(changes) {
+        let inNavigationPath = this.inNavigationPath(this.object);
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
+
+        const parentDomainObjectpath = changes.location || [this.parent];
+        const parent = parentDomainObjectpath[0];
 
         if (this.openmct.objects.areIdsEqual(parent.identifier, this.oldParent.identifier)) {
             this.openmct.notifications.error(`Error: new location cant not be same as old`);
@@ -71,12 +74,12 @@ export default class MoveAction {
             return;
         }
 
-        if (changes.name && (changes.name !== object.name)) {
-            object.name = changes.name;
+        if (changes.name && (changes.name !== this.object.name)) {
+            this.object.name = changes.name;
         }
 
-        this.addToNewParent(object, parent);
-        this.removeFromOldParent(object);
+        this.addToNewParent(this.object, parent);
+        this.removeFromOldParent(this.object);
 
         if (!inNavigationPath) {
             return;
@@ -84,9 +87,9 @@ export default class MoveAction {
 
         let newObjectPath;
         if (parentDomainObjectpath) {
-            newObjectPath = parentDomainObjectpath && [object].concat(parentDomainObjectpath);
+            newObjectPath = parentDomainObjectpath && [this.object].concat(parentDomainObjectpath);
         } else {
-            newObjectPath = await this.openmct.objects.getOriginalPath(object.identifier);
+            newObjectPath = await this.openmct.objects.getOriginalPath(this.object.identifier);
             let root = await this.openmct.objects.getRoot();
             let rootChildCount = root.composition.length;
 
@@ -132,11 +135,8 @@ export default class MoveAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure, {
-            domainObject,
-            parentDomainObject,
-            onSave: this.onSave.bind(this)
-        });
+        this.openmct.forms.showForm(formStructure)
+            .then(this.onSave.bind(this));
     }
 
     validate(currentParent) {

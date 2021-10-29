@@ -42,18 +42,11 @@ export default {
             required: true
         }
     },
-    data() {
-        return {
-        };
-    },
-    destroyed() {
-    },
     methods: {
-        handleItemSelection({ item, parentObjectPath }) {
+        handleItemSelection({ parentObjectPath }) {
             const data = {
                 model: this.model,
-                value: item,
-                parentObjectPath
+                value: parentObjectPath
             };
 
             this.$emit('onChange', data);

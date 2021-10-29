@@ -100,8 +100,8 @@ export default class CreateWizard {
 
         // Ensure there is always a 'save in' section
         if (includeLocation) {
-            function validateLocation(object, data) {
-                return self.openmct.composition.checkPolicy(data.value, object);
+            function validateLocation(data) {
+                return self.openmct.composition.checkPolicy(data.value[0], domainObject);
             }
 
             sections.push({

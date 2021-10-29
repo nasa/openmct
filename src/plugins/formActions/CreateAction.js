@@ -40,8 +40,16 @@ export default class CreateAction extends PropertiesAction {
     /**
      * @private
      */
-    async _onSave(domainObject, changes, parentDomainObject, parentDomainObjectpath) {
+    async _onSave(changes) {
+        let parentDomainObjectPath;
+
         Object.entries(changes).forEach(([key, value]) => {
+            if (key === 'location') {
+                parentDomainObjectPath = value;
+
+                return;
+            }
+
             const properties = key.split('.');
             let object = this.domainObject;
             const propertiesLength = properties.length;
@@ -56,6 +64,8 @@ export default class CreateAction extends PropertiesAction {
 
             object = value;
         });
+
+        const parentDomainObject = parentDomainObjectPath[0];
 
         this.domainObject.modified = Date.now();
         this.domainObject.location = this.openmct.objects.makeKeyString(parentDomainObject.identifier);
@@ -74,7 +84,7 @@ export default class CreateAction extends PropertiesAction {
             const compositionCollection = await this.openmct.composition.get(parentDomainObject);
             compositionCollection.add(this.domainObject);
 
-            this._navigateAndEdit(this.domainObject, parentDomainObjectpath);
+            this._navigateAndEdit(this.domainObject, parentDomainObjectPath);
 
             this.openmct.notifications.info('Save successful');
         } else {
@@ -134,11 +144,7 @@ export default class CreateAction extends PropertiesAction {
         const formStructure = createWizard.getFormStructure(true);
         formStructure.title = 'Create a New ' + definition.name;
 
-        const options = {
-            domainObject,
-            onSave: this._onSave.bind(this)
-        };
-
-        this.openmct.forms.showForm(formStructure, options);
+        this.openmct.forms.showForm(formStructure)
+            .then(this._onSave.bind(this));
     }
 }

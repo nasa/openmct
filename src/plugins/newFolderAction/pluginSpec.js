@@ -65,11 +65,11 @@ describe("the plugin", () => {
             openmct.objects.save.and.callThrough();
 
             spyOn(openmct.forms, "showForm");
-            openmct.forms.showForm.and.callFake((formStructure, options) => {
-                options.onSave(options.domainObject, {
-                    name: options.domainObject.name,
+            openmct.forms.showForm.and.callFake(formStructure => {
+                return Promise.resolve({
+                    name: 'test',
                     location: parentObject
-                }, parentObject);
+                });
             });
 
             openmct.objects.observe(parentObject, '*', (newObject) => {

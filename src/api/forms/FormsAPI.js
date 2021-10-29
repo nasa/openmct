@@ -93,37 +93,36 @@ export default class FormsAPI {
      * @public
      * @param {Array<Section>} formStructure a form structure, array of section
      * @param {Object} options
-     *      @property {module:openmct.DomainObject} domainObject object to be used by form
      *      @property {HTMLElement} element Parent Element to render a Form
-     *      @property {module:openmct.DomainObject} parentDomainObject parent object to be used by form
      *      @property {function} onChange a callback function when any changes detected
      *      @property {function} onSave a callback function when form is submitted
      *      @property {function} onDismiss a callback function when form is dismissed
      */
     showForm(formStructure, {
-        domainObject,
         element,
-        parentDomainObject = {},
-        onChange,
-        onSave,
-        onDismiss
-    }) {
+        onChange
+    } = {}) {
         const changes = {};
         let overlay;
-        let parentDomainObjectPath;
+        let onDismiss;
+        let onSave;
+
+        const promise = new Promise((resolve, reject) => {
+            onSave = onFormSave(resolve);
+            onDismiss = onFormDismiss(reject);
+        });
 
         const vm = new Vue({
             components: { FormProperties },
             provide: {
-                openmct: this.openmct,
-                domainObject
+                openmct: this.openmct
             },
             data() {
                 return {
                     formStructure,
                     onChange: onFormPropertyChange,
-                    onDismiss: onFormDismiss,
-                    onSave: onFormSave
+                    onDismiss,
+                    onSave
                 };
             },
             template: '<FormProperties :model="formStructure" @onChange="onChange" @onDismiss="onDismiss" @onSave="onSave"></FormProperties>'
@@ -148,10 +147,6 @@ export default class FormsAPI {
             if (data.model) {
                 const property = data.model.property;
                 let key = data.model.key;
-                if (key === 'location') {
-                    parentDomainObject = data.value;
-                    parentDomainObjectPath = data.parentObjectPath;
-                }
 
                 if (property && property.length) {
                     key = property.join('.');
@@ -161,24 +156,30 @@ export default class FormsAPI {
             }
         }
 
-        function onFormDismiss() {
-            if (element) {
-                formElement.remove();
-            } else {
+        function onFormDismiss(dismiss) {
+            return () => {
+                if (element) {
+                    formElement.remove();
+                } else {
+                    overlay.dismiss();
+                }
+
+                if (dismiss) {
+                    dismiss();
+                }
+            };
+        }
+
+        function onFormSave(save) {
+            return () => {
                 overlay.dismiss();
-            }
 
-            if (onDismiss) {
-                onDismiss();
-            }
+                if (save) {
+                    save(changes);
+                }
+            };
         }
 
-        function onFormSave() {
-            overlay.dismiss();
-
-            if (onSave) {
-                onSave(domainObject, changes, parentDomainObject, parentDomainObjectPath);
-            }
-        }
+        return promise;
     }
 }

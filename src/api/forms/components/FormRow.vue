@@ -47,7 +47,7 @@ export default {
     name: 'FormRow',
     components: {
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     props: {
         cssClass: {
             type: String,
@@ -136,7 +136,7 @@ export default {
 
             const validate = data.model.validate;
             if (valid && validate) {
-                valid = validate(this.domainObject, data);
+                valid = validate(data);
             }
 
             return Boolean(valid);

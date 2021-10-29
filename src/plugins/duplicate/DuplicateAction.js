@@ -34,29 +34,32 @@ export default class DuplicateAction {
     }
 
     invoke(objectPath) {
-        let object = objectPath[0];
+        this.object = objectPath[0];
         this.parent = objectPath[1];
 
-        this.showForm(object, this.parent);
+        this.showForm(this.object, this.parent);
     }
 
-    inNavigationPath(object) {
+    inNavigationPath() {
         return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
     }
 
-    onSave(object, changes, parent) {
-        let inNavigationPath = this.inNavigationPath(object);
+    onSave(changes) {
+        let inNavigationPath = this.inNavigationPath();
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
         let duplicationTask = new DuplicateTask(this.openmct);
-        if (changes.name && (changes.name !== object.name)) {
+        if (changes.name && (changes.name !== this.object.name)) {
             duplicationTask.changeName(changes.name);
         }
 
-        return duplicationTask.duplicate(object, parent);
+        const parentDomainObjectpath = changes.location || [this.parent];
+        const parent = parentDomainObjectpath[0];
+
+        return duplicationTask.duplicate(this.object, parent);
     }
 
     showForm(domainObject, parentDomainObject) {
@@ -88,19 +91,18 @@ export default class DuplicateAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure, {
-            domainObject,
-            parentDomainObject,
-            onSave: this.onSave.bind(this)
-        });
+        this.openmct.forms.showForm(formStructure)
+            .then(this.onSave.bind(this));
     }
 
     validate(currentParent) {
-        return (object, data) => {
-            const parentCandidate = data.value;
+        return (data) => {
+            const parentCandidatePath = data.value;
+            const parentCandidate = parentCandidatePath[0];
+
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
-            let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
+            let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
@@ -115,7 +117,7 @@ export default class DuplicateAction {
                 return false;
             }
 
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, object);
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
         };
     }
 

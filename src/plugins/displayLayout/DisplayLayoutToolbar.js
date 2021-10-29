@@ -639,14 +639,11 @@ define(['lodash'], function (_) {
                         && !selectionPath[0].context.layoutItem;
                 }
 
-                function showForm(form, name, selectionPath) {
-                    const domainObject = selectionPath[0].context.item;
-                    openmct.forms.showForm(form, {
-                        domainObject,
-                        onSave: (object, changes) => {
+                function showForm(formStructure, name, selectionPath) {
+                    openmct.forms.showForm(formStructure)
+                        .then(changes => {
                             selectionPath[0].context.addElement(name, changes);
-                        }
-                    });
+                        });
                 }
 
                 if (isMainLayoutSelected(selectedObjects[0])) {

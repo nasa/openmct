@@ -80,7 +80,7 @@ export default {
     components: {
         FormRow
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct'],
     props: {
         model: {
             type: Object,

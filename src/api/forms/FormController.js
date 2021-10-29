@@ -71,7 +71,7 @@ export default class FormControl {
                 const rowComponent = new Vue({
                     el: element,
                     components: {
-                        MyComponent: DEFAULT_CONTROLS_MAP[control]
+                        FormControlComponent: DEFAULT_CONTROLS_MAP[control]
                     },
                     provide: {
                         openmct: self.openmct
@@ -82,7 +82,7 @@ export default class FormControl {
                             onChange
                         };
                     },
-                    template: `<MyComponent :model="model" @onChange="onChange"></MyComponent>`
+                    template: `<FormControlComponent :model="model" @onChange="onChange"></FormControlComponent>`
                 });
 
                 return rowComponent;
