@@ -51,7 +51,7 @@ jobs:
           steps:
             - run: npm run lint
       - when:
-          condition: << parameters.browser >>
+          condition: << parameters.browser >> #Truthy evaluation to only run when browser is specified
           steps:
             - run: npm run test:coverage -- --browsers=<<parameters.browser>>
             - store_test_results:
