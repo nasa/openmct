@@ -183,20 +183,24 @@ describe('the plugin', function () {
             expect(tabEls.length).toEqual(2);
         });
 
-        it ('set to true, will keep views loaded when hidden', () => {
-            let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
+        describe('with domainObject.keep_alive set to', () => {
 
-            expect(tabViewEls.length).toEqual(2);
-        });
+            it ('true, will keep all views loaded, regardless of current tab view', () => {
+                let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
 
-        it ('set to false, will NOT keep views loaded when hidden', async () => {
-            testViewObject.keep_alive = false;
+                expect(tabViewEls.length).toEqual(2);
+            });
 
-            await Vue.nextTick();
+            it ('false, will only keep the current tab view loaded', async () => {
+                testViewObject.keep_alive = false;
 
-            let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
+                await Vue.nextTick();
 
-            expect(tabViewEls.length).toEqual(1);
+                let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
+
+                expect(tabViewEls.length).toEqual(1);
+            });
+
         });
     });
 });
