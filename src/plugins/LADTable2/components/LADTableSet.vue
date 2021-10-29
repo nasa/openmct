@@ -47,7 +47,6 @@
                 :key="ladRow.objectKeyString"
                 :lad-row="ladRow"
                 :telemetry-object="tableSet.telemetryObjects[ladTable.keyString][ladRow.objectKeyString]"
-                :headers="headers"
                 :has-units="hasUnits"
                 :path-to-table="getObjectPath(ladTable)"
                 @rowContextClick="updateViewContext"
@@ -73,7 +72,6 @@ export default {
     },
     data() {
         return {
-            headers: {},
             ladTableObjects: [],
             ladRows: {},
             compositions: [],
@@ -84,16 +82,17 @@ export default {
     computed: {
     },
     mounted() {
-        this.tableSet.on('headers-added', this.updateHeaders);
+        // this.tableSet.on('headers-added', this.updateHeaders);
         this.tableSet.on('table-added', this.addLadTable);
         this.tableSet.on('table-removed', this.removeLadTable);
         this.tableSet.on('telemetry-object-added', this.checkUnit);
         this.tableSet.initialize();
     },
     destroyed() {
-        this.tableSet.off('headers-added', this.updateHeaders);
+        // this.tableSet.off('headers-added', this.updateHeaders);
         this.tableSet.off('table-added', this.addLadTable);
         this.tableSet.off('table-removed', this.removeLadTable);
+        this.tableSet.off('telemetry-object-added', this.checkUnit);
     },
     methods: {
         updateViewContext(rowContext) {

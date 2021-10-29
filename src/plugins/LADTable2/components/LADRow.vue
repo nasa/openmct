@@ -50,10 +50,6 @@ export default {
             type: Object,
             required: true
         },
-        headers: {
-            type: Object,
-            required: true
-        },
         telemetryObject: {
             type: Object,
             required: true
@@ -74,9 +70,9 @@ export default {
         };
     },
     computed: {
-        headerKeys() {
-            return Object.keys(this.headers);
-        },
+        // headerKeys() {
+        //     return Object.keys(this.headers);
+        // },
         formattedTimestamp() {
             return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
         },

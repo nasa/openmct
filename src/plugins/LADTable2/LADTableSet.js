@@ -10,10 +10,10 @@ export default class LADTableSet extends EventEmitter {
         this.openmct = openmct;
         this.updateFilters = this.updateFilters.bind(this);
         this.tables = {};
-        this.headers = {};
+        this.telemetryObjects = {};
+        // this.headers = {};
 
         this.composition = this.openmct.composition.get(this.domainObject);
-        this.telemetryObjects = {};
         //where do i remove events below?
         this.composition.on('add', this.addLADTable.bind(this));
         this.composition.on('remove', this.removeLADTable.bind(this));
@@ -52,7 +52,7 @@ export default class LADTableSet extends EventEmitter {
         this.tables[key] = new LADTable(domainObject, this.openmct);
 
         this.tables[key].once('loaded', () => {
-            this.addHeaders(this.tables[key]);
+            // this.addHeaders(this.tables[key]);
             this.addTelemetryObjects(this.tables[key]);
         });
         this.tables[key].initialize();
