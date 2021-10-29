@@ -74,6 +74,7 @@
                     :node="treeItem"
                     :active-search="activeSearch"
                     :left-offset="!activeSearch ? treeItem.leftOffset : '0px'"
+                    :is-new="treeItem.isNew"
                     :item-offset="itemOffset"
                     :item-index="index"
                     :item-height="itemHeight"
@@ -112,7 +113,8 @@ import search from '../components/search.vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
-const RETURN_ALL_DESCDNDANTS = true;
+const RETURN_ALL_DESCENDANTS = true;
+const SORT_MY_ITEMS_ALPH_ASC = true;
 const TREE_ITEM_INDENT_PX = 18;
 
 export default {
@@ -431,6 +433,18 @@ export default {
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
         sortNameDescending(a, b) {
+            // sorting tree children items
+            if (!(a.name && b.name)) {
+                if (a.object.name > b.object.name) {
+                    return 1;
+                }
+
+                if (b.object.name > a.object.name) {
+                    return -1;
+                }
+            }
+
+            // sorting compositon items
             if (a.name > b.name) {
                 return 1;
             }
@@ -448,7 +462,7 @@ export default {
             // determine if any part of the parent's path includes a key value of mine; aka My Items
             const isNestedInMyItems = Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
 
-            if (isNestedInMyItems) {
+            if (SORT_MY_ITEMS_ALPH_ASC && isNestedInMyItems) {
                 const sortedComposition = composition.sort(this.sortNameDescending);
                 composition = sortedComposition;
             }
@@ -475,7 +489,7 @@ export default {
                 return this.buildTreeItem(object, parentObjectPath);
             });
         },
-        buildTreeItem(domainObject, parentObjectPath) {
+        buildTreeItem(domainObject, parentObjectPath, isNew = false) {
             let objectPath = [domainObject].concat(parentObjectPath);
             let navigationPath = this.buildNavigationPath(objectPath);
 
@@ -483,6 +497,7 @@ export default {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
                 leftOffset: ((objectPath.length - 1) * TREE_ITEM_INDENT_PX) + 'px',
+                isNew,
                 objectPath,
                 navigationPath
             };
@@ -495,11 +510,16 @@ export default {
         compositionAddHandler(navigationPath) {
             return (domainObject) => {
                 let parentItem = this.getTreeItemByPath(navigationPath);
-                let newItem = this.buildTreeItem(domainObject, parentItem.objectPath);
-                let allDescendants = this.getChildrenInTreeFor(parentItem, RETURN_ALL_DESCDNDANTS);
+                let newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
+                let allDescendants = this.getChildrenInTreeFor(parentItem, RETURN_ALL_DESCENDANTS);
                 let afterItem = allDescendants.length ? allDescendants.pop() : parentItem;
 
                 this.addItemToTreeAfter(newItem, afterItem);
+                const isNestedInMyItems = Boolean(parentItem.objectPath && parentItem.objectPath.find(path => path.identifier.key === 'mine'));
+
+                if (SORT_MY_ITEMS_ALPH_ASC && isNestedInMyItems) {
+                    this.sortTreeComposition(this.sortNameDescending, navigationPath);
+                }
             };
         },
         compositionRemoveHandler(navigationPath) {
@@ -530,6 +550,14 @@ export default {
 
             const removeIndex = this.getTreeItemIndex(item.navigationPath);
             this.treeItems.splice(removeIndex, 1);
+        },
+        sortTreeComposition(algorithem, parentPath) {
+            const parentIndex = this.getTreeItemIndex(parentPath);
+            const parentItem = this.treeItems[parentIndex];
+
+            const allDescendants = this.getChildrenInTreeFor(parentItem);
+            const sortedChildren = allDescendants.sort(algorithem);
+            this.treeItems.splice(parentIndex + 1, allDescendants.length, ...sortedChildren);
         },
         addItemToTreeAfter(addItem, afterItem) {
             const addIndex = this.getTreeItemIndex(afterItem.navigationPath);
