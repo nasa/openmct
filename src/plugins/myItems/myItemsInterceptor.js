@@ -21,9 +21,8 @@
  *****************************************************************************/
 
 import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
-const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;
 
-function myItemsInterceptor(identifierObject) {
+function myItemsInterceptor(identifierObject, openmct) {
 
     const myItemsModel = {
         identifier: identifierObject,
@@ -38,7 +37,7 @@ function myItemsInterceptor(identifierObject) {
             return identifier.key === MY_ITEMS_KEY;
         },
         invoke: (identifier, object) => {
-            if (object.name === MISSING_NAME) {
+            if (openmct.objects.isMissing(object)) {
                 return myItemsModel;
             }
 

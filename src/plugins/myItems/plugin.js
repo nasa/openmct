@@ -27,7 +27,7 @@ export default function MyItemsPlugin(namespace = '') {
     return function install(openmct) {
         const identifier = createMyItemsIdentifier(namespace);
 
-        openmct.objects.addGetInterceptor(myItemsInterceptor(identifier));
+        openmct.objects.addGetInterceptor(myItemsInterceptor(identifier, openmct));
         openmct.objects.addRoot(identifier);
     };
 }
