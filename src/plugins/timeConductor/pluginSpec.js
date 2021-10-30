@@ -131,15 +131,15 @@ describe('time conductor', () => {
 describe('duration functions', () => {
     it('should transform milliseconds to DHMS', () => {
         const functionResults = [millisecondsToDHMS(0), millisecondsToDHMS(86400000),
-            millisecondsToDHMS(129600000), millisecondsToDHMS(661824000)];
-        const validResults = [' ', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s'];
+            millisecondsToDHMS(129600000), millisecondsToDHMS(661824000), millisecondsToDHMS(213927028)];
+        const validResults = [' ', '+ 1d', '+ 1d 12h', '+ 7d 15h 50m 24s', '+ 2d 11h 25m 27s 28ms'];
         expect(validResults).toEqual(functionResults);
     });
 
     it('should get precise duration', () => {
         const functionResults = [getPreciseDuration(0), getPreciseDuration(643680000),
-            getPreciseDuration(1605312000)];
-        const validResults = ['00:00:00:00', '07:10:48:00', '18:13:55:12'];
+            getPreciseDuration(1605312000), getPreciseDuration(213927028)];
+        const validResults = ['00:00:00:00:000', '07:10:48:00:000', '18:13:55:12:000', '02:11:25:27:028'];
         expect(validResults).toEqual(functionResults);
     });
 });

@@ -32,8 +32,16 @@ function normalizeAge(num) {
     return isWhole ? hundredtized / 100 : num;
 }
 
+function padLeadingZeros(num, numOfLeadingZeros) {
+    return num.toString().padStart(numOfLeadingZeros, '0');
+}
+
 function toDoubleDigits(num) {
-    return num >= 10 ? num : `0${num}`;
+    return padLeadingZeros(num, 2);
+}
+
+function toTripleDigits(num) {
+    return padLeadingZeros(num, 3);
 }
 
 function addTimeSuffix(value, suffix) {
@@ -46,7 +54,8 @@ export function millisecondsToDHMS(numericDuration) {
         addTimeSuffix(Math.floor(normalizeAge(ms / ONE_DAY)), 'd'),
         addTimeSuffix(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR)), 'h'),
         addTimeSuffix(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE)), 'm'),
-        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)), 's')
+        addTimeSuffix(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)), 's'),
+        addTimeSuffix(Math.floor(normalizeAge(ms % ONE_SECOND)), "ms")
     ].filter(Boolean).join(' ');
 
     return `${ dhms ? '+' : ''} ${dhms}`;
@@ -59,7 +68,8 @@ export function getPreciseDuration(value) {
         toDoubleDigits(Math.floor(normalizeAge(ms / ONE_DAY))),
         toDoubleDigits(Math.floor(normalizeAge((ms % ONE_DAY) / ONE_HOUR))),
         toDoubleDigits(Math.floor(normalizeAge((ms % ONE_HOUR) / ONE_MINUTE))),
-        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND)))
+        toDoubleDigits(Math.floor(normalizeAge((ms % ONE_MINUTE) / ONE_SECOND))),
+        toTripleDigits(Math.floor(normalizeAge(ms % ONE_SECOND)))
     ].join(":");
 
 }
