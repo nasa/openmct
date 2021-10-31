@@ -83,7 +83,7 @@
 import debounce from 'lodash/debounce';
 import search from '@/ui/components/search.vue';
 import ConditionSetDialogTreeItem from './ConditionSetDialogTreeItem.vue';
-import { TypeKeyConstants } from '@/plugin/PluginConstants.js';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 export default {
     name: 'ConditionSetSelectorDialog',

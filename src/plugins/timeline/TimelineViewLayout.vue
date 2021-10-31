@@ -67,7 +67,7 @@ import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedPlan } from "../plan/util";
-import { TypeKeyConstants } from '@/plugin/PluginConstants.js';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 const unknownObjectType = {
     definition: {

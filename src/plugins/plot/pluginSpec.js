@@ -697,7 +697,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-object2"
                 },
-                type: TypeKeyConstants.TEST_OBJECT
+                type: TypeKeyConstants.TEST_OBJECT,
                 name: "Test Object2",
                 telemetry: {
                     values: [{
