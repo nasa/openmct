@@ -98,13 +98,14 @@
 <script>
 import ObjectView from './ObjectView.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 const SIMPLE_CONTENT_TYPES = [
-    'clock',
-    'timer',
-    'summary-widget',
-    'hyperlink',
-    'conditionWidget'
+    TypeKeyConstants.CLOCK,
+    TypeKeyConstants.TIMER,
+    TypeKeyConstants.SUMMARY_WIDGET,
+    TypeKeyConstants.HYPERLINK,
+    TypeKeyConstants.CONDITION_WIDGET
 ];
 
 export default {
@@ -146,7 +147,7 @@ export default {
         return {
             cssClass,
             complexContent,
-            notebookEnabled: this.openmct.types.get('notebook'),
+            notebookEnabled: this.openmct.types.get(TypeKeyConstants.NOTEBOOK),
             statusBarItems: [],
             status: ''
         };

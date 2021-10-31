@@ -125,7 +125,7 @@ export default function ClockPlugin(options) {
 
         openmct.objects.addGetInterceptor({
             appliesTo: (identifier, domainObject) => {
-                return domainObject && domainObject.type === 'clock';
+                return domainObject && domainObject.type === TypeKeyConstants.CLOCK;
             },
             invoke: (identifier, domainObject) => {
                 if (domainObject.configuration) {

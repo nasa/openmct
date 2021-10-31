@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default class ConditionSetMetadataProvider {
     constructor(openmct) {
@@ -26,7 +27,7 @@ export default class ConditionSetMetadataProvider {
     }
 
     supportsMetadata(domainObject) {
-        return domainObject.type === 'conditionSet';
+        return domainObject.type === TypeKeyConstants.CONDITION_SET;
     }
 
     getDomains(domainObject) {

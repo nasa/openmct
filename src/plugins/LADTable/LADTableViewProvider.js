@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import LADTableView from './LADTableView';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default class LADTableViewProvider {
     constructor(openmct) {
@@ -31,11 +32,11 @@ export default class LADTableViewProvider {
     }
 
     canView(domainObject) {
-        return domainObject.type === 'LadTable';
+        return domainObject.type === TypeKeyConstants.LAD_TABLE;
     }
 
     canEdit(domainObject) {
-        return domainObject.type === 'LadTable';
+        return domainObject.type === TypeKeyConstants.LAD_TABLE;
     }
 
     view(domainObject, objectPath) {

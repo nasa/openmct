@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 function ToolbarProvider(openmct) {
 
@@ -30,7 +31,7 @@ function ToolbarProvider(openmct) {
             let context = selection[0][0].context;
 
             return (context && context.type
-                && (context.type === 'flexible-layout' || context.type === 'container' || context.type === 'frame'));
+                && (context.type === TypeKeyConstants.FLEXIBLE_LAYOUT || context.type === 'container' || context.type === 'frame'));
         },
         toolbar: function (selection) {
             let selectionPath = selection[0];
@@ -192,7 +193,7 @@ function ToolbarProvider(openmct) {
                     title: 'Add Container'
                 };
 
-            } else if (primary.context.type === 'flexible-layout') {
+            } else if (primary.context.type === TypeKeyConstants.FLEXIBLE_LAYOUT) {
                 if (primary.context.item.locked) {
                     return [];
                 }

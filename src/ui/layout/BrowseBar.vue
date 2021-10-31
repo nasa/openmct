@@ -121,6 +121,7 @@
 <script>
 import ViewSwitcher from './ViewSwitcher.vue';
 import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 const PLACEHOLDER_OBJECT = {};
 
@@ -146,7 +147,7 @@ export default {
             domainObject: PLACEHOLDER_OBJECT,
             viewKey: undefined,
             isEditing: this.openmct.editor.isEditing(),
-            notebookEnabled: this.openmct.types.get('notebook'),
+            notebookEnabled: this.openmct.types.get(TypeKeyConstants.NOTEBOOK),
             statusBarItems: [],
             status: ''
         };

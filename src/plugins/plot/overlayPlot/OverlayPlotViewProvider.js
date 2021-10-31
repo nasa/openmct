@@ -22,10 +22,11 @@
 
 import Plot from '../Plot.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 export default function OverlayPlotViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        return objectPath.find(object => object.type === TypeKeyConstants.TIME_STRIP);
     }
 
     return {
@@ -33,11 +34,11 @@ export default function OverlayPlotViewProvider(openmct) {
         name: 'Overlay Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.overlay';
+            return domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_OVERLAY;
         },
 
         canEdit(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.overlay';
+            return domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_OVERLAY;
         },
 
         view: function (domainObject, objectPath) {

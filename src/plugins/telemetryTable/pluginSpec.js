@@ -107,7 +107,7 @@ describe("the plugin", () => {
 
     describe("defines a table object", function () {
         it("that is creatable", () => {
-            let tableType = openmct.types.get('table');
+            let tableType = openmct.types.get(TypeKeyConstants.TABLE);
             expect(tableType.definition.creatable).toBe(true);
         });
     });
@@ -124,7 +124,7 @@ describe("the plugin", () => {
         };
 
         const applicableViews = openmct.objectViews.get(testTelemetryObject, []);
-        let tableView = applicableViews.find((viewProvider) => viewProvider.key === 'table');
+        let tableView = applicableViews.find((viewProvider) => viewProvider.key === TypeKeyConstants.TABLE);
         expect(tableView).toBeDefined();
     });
 

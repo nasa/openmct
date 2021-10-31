@@ -1,6 +1,7 @@
 
 import PlotOptions from "./PlotOptions.vue";
 import Vue from 'vue';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 export default function PlotsInspectorViewProvider(openmct) {
     return {
@@ -14,7 +15,7 @@ export default function PlotsInspectorViewProvider(openmct) {
             let object = selection[0][0].context.item;
 
             return object
-                && object.type === 'telemetry.plot.overlay';
+                && object.type === TypeKeyConstants.TELEMETRY_PLOT_OVERLAY;
         },
         view: function (selection) {
             let component;

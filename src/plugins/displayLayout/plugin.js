@@ -104,10 +104,10 @@ export default function DisplayLayoutPlugin(options) {
         openmct.objectViews.addProvider({
             key: 'layout.view',
             canView: function (domainObject) {
-                return domainObject.type === 'layout';
+                return domainObject.type === TypeKeyConstants.LAYOUT;
             },
             canEdit: function (domainObject) {
-                return domainObject.type === 'layout';
+                return domainObject.type === TypeKeyConstants.LAYOUT;
             },
             view: function (domainObject, objectPath) {
                 return new DisplayLayoutView(openmct, domainObject, objectPath, options);
@@ -120,7 +120,7 @@ export default function DisplayLayoutPlugin(options) {
         openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct, options));
         openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
         openmct.composition.addPolicy((parent, child) => {
-            if (parent.type === 'layout' && child.type === 'folder') {
+            if (parent.type === TypeKeyConstants.LAYOUT && child.type === TypeKeyConstants.FOLDER) {
                 return false;
             } else {
                 return true;

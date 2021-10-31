@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import FlexibleLayout from './plugin';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('the plugin', function () {
     let element;
@@ -30,7 +31,7 @@ describe('the plugin', function () {
     let flexibleLayoutDefinition;
     const testViewObject = {
         id: 'test-object',
-        type: 'flexible-layout',
+        type: TypeKeyConstants.FLEXIBLE_LAYOUT,
         configuration: {
             rowsLayout: false,
             containers: [
@@ -54,7 +55,7 @@ describe('the plugin', function () {
     beforeEach((done) => {
         openmct = createOpenMct();
         openmct.install(new FlexibleLayout());
-        flexibleLayoutDefinition = openmct.types.get('flexible-layout');
+        flexibleLayoutDefinition = openmct.types.get(TypeKeyConstants.FLEXIBLE_LAYOUT);
 
         element = document.createElement('div');
         child = document.createElement('div');
@@ -77,7 +78,7 @@ describe('the plugin', function () {
 
         beforeEach(() => {
             const applicableViews = openmct.objectViews.get(testViewObject, []);
-            flexibleLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'flexible-layout');
+            flexibleLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === TypeKeyConstants.FLEXIBLE_LAYOUT);
         });
 
         it('provides a view', () => {
@@ -94,7 +95,7 @@ describe('the plugin', function () {
         beforeEach(() => {
             flexibleLayoutItem = {
                 id: 'test-object',
-                type: 'flexible-layout',
+                type: TypeKeyConstants.FLEXIBLE_LAYOUT,
                 configuration: {
                     rowsLayout: true,
                     containers: [
@@ -181,7 +182,7 @@ describe('the plugin', function () {
                 {
                     context: {
                         item: flexibleLayoutItem,
-                        type: "flexible-layout"
+                        type: TypeKeyConstants.FLEXIBLE_LAYOUT
                     }
 
                 }]

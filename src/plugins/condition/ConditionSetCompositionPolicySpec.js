@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import ConditionSetCompositionPolicy from './ConditionSetCompositionPolicy';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('ConditionSetCompositionPolicy', () => {
 
@@ -35,7 +36,7 @@ describe('ConditionSetCompositionPolicy', () => {
                 namespace: "",
                 key: "test-object"
             },
-            type: "test-object",
+            type: TypeKeyConstants.TEST_OBJECT,
             name: "Test Object",
             telemetry: {
                 values: [{
@@ -68,13 +69,13 @@ describe('ConditionSetCompositionPolicy', () => {
     });
 
     it('returns false for object types that are not telemetry objects when parent is a conditionSet', function () {
-        parentDomainObject.type = 'conditionSet';
+        parentDomainObject.type = TypeKeyConstants.CONDITION_SET;
         openmct.telemetry.isTelemetryObject.and.returnValue(false);
         expect(policy.allow(parentDomainObject, {})).toBe(false);
     });
 
     it('returns true for object types that are telemetry objects when parent is a conditionSet', function () {
-        parentDomainObject.type = 'conditionSet';
+        parentDomainObject.type = TypeKeyConstants.CONDITION_SET;
         openmct.telemetry.isTelemetryObject.and.returnValue(true);
         expect(policy.allow(parentDomainObject, testTelemetryObject)).toBe(true);
     });

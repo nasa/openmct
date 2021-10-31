@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import ConditionManager from './ConditionManager';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default class ConditionSetTelemetryProvider {
     constructor(openmct) {
@@ -29,15 +30,15 @@ export default class ConditionSetTelemetryProvider {
     }
 
     isTelemetryObject(domainObject) {
-        return domainObject.type === 'conditionSet';
+        return domainObject.type === TypeKeyConstants.CONDITION_SET;
     }
 
     supportsRequest(domainObject) {
-        return domainObject.type === 'conditionSet';
+        return domainObject.type === TypeKeyConstants.CONDITION_SET;
     }
 
     supportsSubscribe(domainObject) {
-        return domainObject.type === 'conditionSet';
+        return domainObject.type === TypeKeyConstants.CONDITION_SET;
     }
 
     request(domainObject, options) {

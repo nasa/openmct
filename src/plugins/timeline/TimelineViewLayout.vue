@@ -67,6 +67,7 @@ import TimelineObjectView from './TimelineObjectView.vue';
 import TimelineAxis from '../../ui/components/TimeSystemAxis.vue';
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
 import { getValidatedPlan } from "../plan/util";
+import { TypeKeyConstants } from '@/plugin/PluginConstants.js';
 
 const unknownObjectType = {
     definition: {
@@ -114,11 +115,11 @@ export default {
             let keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
             let objectPath = [domainObject].concat(this.objectPath.slice());
             let rowCount = 0;
-            if (domainObject.type === 'plan') {
+            if (domainObject.type === TypeKeyConstants.PLAN) {
                 rowCount = Object.keys(getValidatedPlan(domainObject)).length;
             }
 
-            let height = domainObject.type === 'telemetry.plot.stacked' ? `${domainObject.composition.length * 100}px` : '100px';
+            let height = domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_STACKED ? `${domainObject.composition.length * 100}px` : '100px';
             let item = {
                 domainObject,
                 objectPath,

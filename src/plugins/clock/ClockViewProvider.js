@@ -22,6 +22,7 @@
 
 import Clock from './components/Clock.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function ClockViewProvider(openmct) {
     return {
@@ -29,7 +30,7 @@ export default function ClockViewProvider(openmct) {
         name: 'Clock',
         cssClass: 'icon-clock',
         canView(domainObject) {
-            return domainObject.type === 'clock';
+            return domainObject.type === TypeKeyConstants.CLOCK;
         },
 
         view: function (domainObject) {

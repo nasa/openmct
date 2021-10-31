@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import ImageryView from './ImageryView';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function ImageryViewProvider(openmct) {
     const type = 'example.imagery';
@@ -38,7 +39,7 @@ export default function ImageryViewProvider(openmct) {
         name: 'Imagery Layout',
         cssClass: 'icon-image',
         canView: function (domainObject, objectPath) {
-            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+            let isChildOfTimeStrip = objectPath.find(object => object.type === TypeKeyConstants.TIME_STRIP);
 
             return hasImageTelemetry(domainObject) && (!isChildOfTimeStrip || openmct.router.isNavigatedObject(objectPath));
         },

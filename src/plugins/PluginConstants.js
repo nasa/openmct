@@ -26,6 +26,7 @@ export const TypeKeyConstants = {
     CONDITION_WIDGET: 'conditionWidget',
     FLEXIBLE_LAYOUT: 'flexible-layout',
     FOLDER: 'folder',
+    HELLO_WORLD: 'hello-world',
     HYPERLINK: 'hyperlink',
     LAD_TABLE: 'LadTable',
     LAD_TABLE_SET: 'LadTableSet',
@@ -39,10 +40,12 @@ export const TypeKeyConstants = {
     TABLE: 'table',
     TABS: 'tabs',
     TELEMETRY_MEAN: 'telemetry-mean',
+    TELEMETRY_PLOT_BAR_GRAPH: 'telemetry.plot.bar-graph',
     TELEMETRY_PLOT_OVERLAY: 'telemetry.plot.overlay',
     TELEMETRY_PLOT_SPECTRAL: 'telemetry.plot.spectral',
     TELEMETRY_PLOT_STACKED: 'telemetry.plot.stacked',
     TEST_OBJECT: 'test-object',
     TIME_STRIP: 'time-strip',
+    TIMER: 'timer',
     WEBPAGE: 'webpage'
 };

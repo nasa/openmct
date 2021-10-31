@@ -42,7 +42,7 @@ describe('the plugin', () => {
                 namespace: '',
                 key: 'some-value'
             },
-            type: 'mock-type',
+            type: TypeKeyConstants.MOCK_TYPE,
             modified: 0
         };
         options = {

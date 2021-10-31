@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import LadTableSetView from './LadTableSetView';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function LADTableSetViewProvider(openmct) {
     return {
@@ -28,10 +29,10 @@ export default function LADTableSetViewProvider(openmct) {
         name: 'LAD Table Set',
         cssClass: 'icon-tabular-lad-set',
         canView: function (domainObject) {
-            return domainObject.type === 'LadTableSet';
+            return domainObject.type === TypeKeyConstants.LAD_TABLE_SET;
         },
         canEdit: function (domainObject) {
-            return domainObject.type === 'LadTableSet';
+            return domainObject.type === TypeKeyConstants.LAD_TABLE_SET;
         },
         view: function (domainObject, objectPath) {
             return new LadTableSetView(openmct, domainObject, objectPath);

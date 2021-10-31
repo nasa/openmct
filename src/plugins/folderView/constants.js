@@ -19,5 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TypeKeyConstants } from '../PluginConstants.js';
 
-export const ALLOWED_FOLDER_TYPES = ['folder', 'noneditable.folder'];
+export const ALLOWED_FOLDER_TYPES = [TypeKeyConstants.FOLDER, TypeKeyConstants.NONEDITABLE_FOLDER];

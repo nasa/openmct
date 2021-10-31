@@ -131,12 +131,13 @@ import ConditionSetSelectorDialog from "@/plugins/condition/components/inspector
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
 import Vue from 'vue';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 const NON_SPECIFIC = '??';
 const NON_STYLEABLE_CONTAINER_TYPES = [
-    'layout',
-    'flexible-layout',
-    'tabs'
+    TypeKeyConstants.LAYOUT,
+    TypeKeyConstants.FLEXIBLE_LAYOUT,
+    TypeKeyConstants.TABS
 ];
 const NON_STYLEABLE_LAYOUT_ITEM_TYPES = [
     'line-view',

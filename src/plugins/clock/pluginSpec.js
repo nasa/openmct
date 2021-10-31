@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import clockPlugin from './plugin';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 import Vue from 'vue';
 
@@ -57,7 +58,7 @@ describe("Clock plugin:", () => {
 
             openmct.install(clockPlugin({ enableClockIndicator }));
 
-            clockDefinition = openmct.types.get('clock').definition;
+            clockDefinition = openmct.types.get(TypeKeyConstants.CLOCK).definition;
             clockDefinition.initialize(clockDomainObject);
 
             openmct.on('start', resolve);

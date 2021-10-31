@@ -23,6 +23,7 @@
 import { createOpenMct, resetApplicationState } from "utils/testing";
 import TimelinePlugin from "./plugin";
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('the plugin', function () {
     let objectDef;
@@ -62,7 +63,7 @@ describe('the plugin', function () {
         openmct = createOpenMct(timeSystem);
         openmct.install(new TimelinePlugin());
 
-        objectDef = openmct.types.get('time-strip').definition;
+        objectDef = openmct.types.get(TypeKeyConstants.TIME_STRIP).definition;
 
         element = document.createElement('div');
         element.style.width = '640px';

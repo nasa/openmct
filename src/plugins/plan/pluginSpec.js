@@ -23,6 +23,7 @@
 import {createOpenMct, resetApplicationState} from "utils/testing";
 import PlanPlugin from "../plan/plugin";
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('the plugin', function () {
     let planDefinition;
@@ -47,7 +48,7 @@ describe('the plugin', function () {
         openmct = createOpenMct(timeSystemOptions);
         openmct.install(new PlanPlugin());
 
-        planDefinition = openmct.types.get('plan').definition;
+        planDefinition = openmct.types.get(TypeKeyConstants.PLAN).definition;
 
         element = document.createElement('div');
         element.style.width = '640px';
@@ -99,7 +100,7 @@ describe('the plugin', function () {
                     key: 'test',
                     namespace: ''
                 },
-                type: 'time-strip',
+                type: TypeKeyConstants.TIME_STRIP,
                 name: 'Test Parent Object'
             }
         ];
@@ -116,7 +117,7 @@ describe('the plugin', function () {
                     key: 'test-object',
                     namespace: ''
                 },
-                type: 'plan',
+                type: TypeKeyConstants.PLAN,
                 id: "test-object",
                 selectFile: {
                     body: JSON.stringify({

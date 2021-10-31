@@ -26,6 +26,7 @@ import SeriesCollection from "./SeriesCollection";
 import XAxisModel from "./XAxisModel";
 import YAxisModel from "./YAxisModel";
 import LegendModel from "./LegendModel";
+import { TypeKeyConstants } from '../../PluginConstants.js';
 /**
  * PlotConfiguration model stores the configuration of a plot and some
  * limited state.  The indiidual parts of the plot configuration model
@@ -61,7 +62,7 @@ export default class PlotConfigurationModel extends Model {
             openmct: options.openmct
         });
 
-        if (this.get('domainObject').type === 'telemetry.plot.overlay') {
+        if (this.get('domainObject').type === TypeKeyConstants.TELEMETRY_PLOT_OVERLAY) {
             this.removeMutationListener = this.openmct.objects.observe(
                 this.get('domainObject'),
                 '*',

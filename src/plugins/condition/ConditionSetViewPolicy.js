@@ -19,12 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 function ConditionSetViewPolicy() {
 }
 
 ConditionSetViewPolicy.prototype.allow = function (view, domainObject) {
-    if (domainObject.getModel().type === 'conditionSet') {
+    if (domainObject.getModel().type === TypeKeyConstants.CONDITION_SET) {
         return view.key === 'conditionSet.view';
     }
 

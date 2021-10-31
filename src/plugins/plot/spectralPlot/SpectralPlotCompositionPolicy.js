@@ -1,3 +1,5 @@
+import { TypeKeyConstants } from '../../PluginConstants.js';
+
 export default function SpectralPlotCompositionPolicy(openmct) {
     function hasSpectralDomainAndRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
@@ -24,8 +26,8 @@ export default function SpectralPlotCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
 
-            if ((parent.type === 'telemetry.plot.spectral')
-                && ((child.type !== 'telemetry.plot.overlay') && (hasSpectralTelemetry(child) === false))
+            if ((parent.type === TypeKeyConstants.TELEMETRY_PLOT_SPECTRAL)
+                && ((child.type !== TypeKeyConstants.TELEMETRY_PLOT_OVERLAY) && (hasSpectralTelemetry(child) === false))
             ) {
                 return false;
             }

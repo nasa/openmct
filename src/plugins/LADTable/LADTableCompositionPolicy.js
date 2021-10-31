@@ -19,13 +19,14 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function ladTableCompositionPolicy(openmct) {
     return function (parent, child) {
-        if (parent.type === 'LadTable') {
+        if (parent.type === TypeKeyConstants.LAD_TABLE) {
             return openmct.telemetry.isTelemetryObject(child);
-        } else if (parent.type === 'LadTableSet') {
-            return child.type === 'LadTable';
+        } else if (parent.type === TypeKeyConstants.LAD_TABLE_SET) {
+            return child.type === TypeKeyConstants.LAD_TABLE;
         }
 
         return true;

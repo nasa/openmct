@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 function inSelectionPath(openmct, domainObject) {
     const domainObjectIdentifier = domainObject.identifier;
@@ -72,7 +73,7 @@ export default class ClearDataAction {
             // if this it doesn't match up, check to see if we're in a composition (i.e., layout)
             const routerPath = this._openmct.router.path[0];
 
-            return routerPath.type === 'layout';
+            return routerPath.type === TypeKeyConstants.LAYOUT;
         }
     }
 }

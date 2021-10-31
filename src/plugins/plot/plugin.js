@@ -79,7 +79,7 @@ export default function () {
             priority: 890
         });
 
-        openmct.types.addType(BAR_GRAPH_KEY, {
+        openmct.types.addType(TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH, {
             key: BAR_GRAPH_KEY,
             name: "Bar Graph",
             cssClass: "icon-bar-chart",

@@ -1,9 +1,10 @@
 import Vue from 'vue';
 import HelloWorld from './HelloWorld.vue';
+ import { TypeKeyConstants } from '@/plugins/PluginConstants.js'
 
 function SimpleVuePlugin() {
     return function install(openmct) {
-        openmct.types.addType('hello-world', {
+        openmct.types.addType(TypeKeyConstants.HELLO_WORLD, {
             name: 'Hello World',
             description: 'An introduction object',
             creatable: true

@@ -24,6 +24,7 @@ import { createOpenMct, resetApplicationState } from 'utils/testing';
 import TabsLayout from './plugin';
 import Vue from "vue";
 import EventEmitter from "EventEmitter";
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('the plugin', function () {
     let element;
@@ -87,7 +88,7 @@ describe('the plugin', function () {
     beforeEach((done) => {
         openmct = createOpenMct();
         openmct.install(new TabsLayout());
-        tabsLayoutDefinition = openmct.types.get('tabs');
+        tabsLayoutDefinition = openmct.types.get(TypeKeyConstants.TABS);
 
         element = document.createElement('div');
         child = document.createElement('div');

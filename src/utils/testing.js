@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import MCT from 'MCT';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 let nativeFunctions = [];
 let mockObjects = setMockObjects();
@@ -292,7 +293,7 @@ function setMockObjects() {
                     key: "folder-object"
                 },
                 name: "Test Folder Object",
-                type: "folder",
+                type: TypeKeyConstants.FOLDER,
                 composition: [],
                 location: "mine"
             },
@@ -301,7 +302,7 @@ function setMockObjects() {
                     namespace: "",
                     key: "lad-object"
                 },
-                type: 'LadTable',
+                type: TypeKeyConstants.LAD_TABLE,
                 composition: []
             },
             ladTableSet: {
@@ -309,7 +310,7 @@ function setMockObjects() {
                     namespace: "",
                     key: "lad-set-object"
                 },
-                type: 'LadTableSet',
+                type: TypeKeyConstants.LAD_TABLE_SET,
                 composition: []
             },
             telemetry: {

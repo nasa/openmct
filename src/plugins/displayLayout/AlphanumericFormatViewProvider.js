@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import AlphanumericFormat from './components/AlphanumericFormat.vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 import Vue from 'vue';
 
@@ -69,7 +70,7 @@ export default function AlphanumericFormatViewProvider(openmct, options) {
         let selectedLayoutItem = selectionPath[0].context.layoutItem;
 
         return parentObject
-            && parentObject.type === 'layout'
+            && parentObject.type === TypeKeyConstants.LAYOUT
             && selectedObject
             && selectedLayoutItem
             && selectedLayoutItem.type === 'telemetry-view'

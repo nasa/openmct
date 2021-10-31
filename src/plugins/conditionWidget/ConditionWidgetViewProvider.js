@@ -22,6 +22,7 @@
 
 import ConditionWidgetComponent from './components/ConditionWidget.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function ConditionWidget(openmct) {
     return {
@@ -29,10 +30,10 @@ export default function ConditionWidget(openmct) {
         name: 'Condition Widget',
         cssClass: 'icon-condition-widget',
         canView: function (domainObject) {
-            return domainObject.type === 'conditionWidget';
+            return domainObject.type === TypeKeyConstants.CONDITION_WIDGET;
         },
         canEdit: function (domainObject) {
-            return domainObject.type === 'conditionWidget';
+            return domainObject.type === TypeKeyConstants.CONDITION_WIDGET;
         },
         view: function (domainObject) {
             let component;

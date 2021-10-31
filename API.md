@@ -207,7 +207,7 @@ registry.
 eg.
 ```javascript
 import { TypeKeyConstants } from '../PluginConstants.js';
-openmct.types.addType('TypeKeyConstants.MY_TYPE', {
+openmct.types.addType(TypeKeyConstants.MY_TYPE, {
     name: "My Type",
     description: "This is a type that I added!",
     creatable: true

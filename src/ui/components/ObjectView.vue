@@ -19,6 +19,7 @@ import _ from "lodash";
 import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 export default {
     components: {
@@ -66,7 +67,7 @@ export default {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         },
         objectViewStyle() {
-            if (this.domainObject && this.domainObject.type === 'time-strip') {
+            if (this.domainObject && this.domainObject.type === TypeKeyConstants.TIME_STRIP) {
                 return 'l-shell__main-object-view';
             } else {
                 return 'u-contents';

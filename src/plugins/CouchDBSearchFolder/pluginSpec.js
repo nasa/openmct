@@ -22,6 +22,7 @@
 
 import {createOpenMct, resetApplicationState} from "utils/testing";
 import CouchDBSearchFolderPlugin from './plugin';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('the plugin', function () {
     let identifier = {
@@ -42,7 +43,7 @@ describe('the plugin', function () {
         openmct.install(new CouchDBSearchFolderPlugin('CouchDB Documents', couchPlugin, {
             "selector": {
                 "model": {
-                    "type": "plan"
+                    "type": TypeKeyConstants.PLAN
                 }
             }
         }));
@@ -76,7 +77,7 @@ describe('the plugin', function () {
         return openmct.objects.get(identifier).then((object) => {
             expect(object).toEqual({
                 identifier,
-                type: 'folder',
+                type: TypeKeyConstants.FOLDER,
                 name: "CouchDB Documents"
             });
         });

@@ -26,6 +26,7 @@ import RootRegistry from './RootRegistry';
 import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -46,7 +47,7 @@ function ObjectAPI(typeRegistry, openmct) {
     this.cache = {};
     this.interceptorRegistry = new InterceptorRegistry();
 
-    this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
+    this.SYNCHRONIZED_OBJECT_TYPES = [TypeKeyConstants.NOTEBOOK, TypeKeyConstants.PLAN];
 }
 
 /**

@@ -22,6 +22,7 @@
 
 import ConditionSet from './components/ConditionSet.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 const DEFAULT_VIEW_PRIORITY = 100;
 
@@ -34,11 +35,11 @@ export default class ConditionSetViewProvider {
     }
 
     canView(domainObject) {
-        return domainObject.type === 'conditionSet';
+        return domainObject.type === TypeKeyConstants.CONDITION_SET;
     }
 
     canEdit(domainObject) {
-        return domainObject.type === 'conditionSet';
+        return domainObject.type === TypeKeyConstants.CONDITION_SET;
     }
 
     view(domainObject, objectPath) {
@@ -76,7 +77,7 @@ export default class ConditionSetViewProvider {
     }
 
     priority(domainObject) {
-        if (domainObject.type === 'conditionSet') {
+        if (domainObject.type === TypeKeyConstants.CONDITION_SET) {
             return Number.MAX_VALUE;
         } else {
             return DEFAULT_VIEW_PRIORITY;

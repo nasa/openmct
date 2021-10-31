@@ -22,10 +22,11 @@
 
 import StackedPlot from './StackedPlot.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 export default function StackedPlotViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        return objectPath.find(object => object.type === TypeKeyConstants.TIME_STRIP);
     }
 
     return {
@@ -33,11 +34,11 @@ export default function StackedPlotViewProvider(openmct) {
         name: 'Stacked Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.stacked';
+            return domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_STACKED;
         },
 
         canEdit(domainObject, objectPath) {
-            return domainObject.type === 'telemetry.plot.stacked';
+            return domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_STACKED;
         },
 
         view: function (domainObject, objectPath) {

@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 export const DEFAULT_SIZE = {
     width: 30,
@@ -10,7 +11,7 @@ export function createNotebookImageDomainObject(fullSizeImageURL) {
         key: uuid(),
         namespace: ''
     };
-    const viewType = 'notebookSnapshotImage';
+    const viewType = TypeKeyConstants.NOTEBOOK_SNAPSHOT_IMAGE;
 
     return {
         name: 'Notebook Snapshot Image',

@@ -21,12 +21,13 @@
  *****************************************************************************/
 
 import BarGraphView from './BarGraphView.vue';
-import { BAR_GRAPH_KEY, BAR_GRAPH_VIEW } from './BarGraphConstants';
+import { BAR_GRAPH_VIEW } from './BarGraphConstants';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 import Vue from 'vue';
 
 export default function BarGraphViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        return objectPath.find(object => object.type === TypeKeyConstants.TIME_STRIP);
     }
 
     return {
@@ -34,11 +35,11 @@ export default function BarGraphViewProvider(openmct) {
         name: 'Spectral Aggregate Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === BAR_GRAPH_KEY;
+            return domainObject && domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH;
         },
 
         canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === BAR_GRAPH_KEY;
+            return domainObject && domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH;
         },
 
         view: function (domainObject, objectPath) {

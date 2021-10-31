@@ -1,3 +1,5 @@
+import { TypeKeyConstants } from '../../PluginConstants.js';
+
 export default function StackedPlotCompositionPolicy(openmct) {
     function hasNumericTelemetry(domainObject) {
         const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
@@ -18,8 +20,8 @@ export default function StackedPlotCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
 
-            if ((parent.type === 'telemetry.plot.stacked')
-                && ((child.type !== 'telemetry.plot.overlay') && (hasNumericTelemetry(child) === false))
+            if ((parent.type === TypeKeyConstants.TELEMETRY_PLOT_STACKED)
+                && ((child.type !== TypeKeyConstants.TELEMETRY_PLOT_OVERLAY) && (hasNumericTelemetry(child) === false))
             ) {
                 return false;
             }

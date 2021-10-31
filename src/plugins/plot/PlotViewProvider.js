@@ -22,6 +22,7 @@
 
 import Plot from './Plot.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function PlotViewProvider(openmct) {
     function hasNumericTelemetry(domainObject) {
@@ -44,7 +45,7 @@ export default function PlotViewProvider(openmct) {
     }
 
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        return objectPath.find(object => object.type === TypeKeyConstants.TIME_STRIP);
     }
 
     return {

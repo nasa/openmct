@@ -26,6 +26,7 @@ import {
     resetApplicationState,
     simulateKeyEvent
 } from 'utils/testing';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
@@ -244,7 +245,7 @@ describe("The Imagery View Layouts", () => {
                 key: 'test-timestrip',
                 namespace: ''
             },
-            type: 'time-strip'
+            type: TypeKeyConstants.TIME_STRIP
         }];
 
         let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
@@ -252,7 +253,7 @@ describe("The Imagery View Layouts", () => {
                 key: 'test-timestrip',
                 namespace: ''
             },
-            type: 'time-strip'
+            type: TypeKeyConstants.TIME_STRIP
         }]);
         let imageryView = applicableViews.find(
             viewProvider => viewProvider.key === imageryForTimeStripKey
@@ -276,7 +277,7 @@ describe("The Imagery View Layouts", () => {
                 key: 'test-timestrip',
                 namespace: ''
             },
-            type: 'time-strip'
+            type: TypeKeyConstants.TIME_STRIP
         }];
 
         let applicableViews = openmct.objectViews.get(imageryObject, [imageryObject, {
@@ -284,7 +285,7 @@ describe("The Imagery View Layouts", () => {
                 key: 'test-timestrip',
                 namespace: ''
             },
-            type: 'time-strip'
+            type: TypeKeyConstants.TIME_STRIP
         }]);
         let imageryView = applicableViews.find(
             viewProvider => viewProvider.key === imageryKey
@@ -301,7 +302,7 @@ describe("The Imagery View Layouts", () => {
                 key: 'test-timestrip',
                 namespace: ''
             },
-            type: 'time-strip'
+            type: TypeKeyConstants.TIME_STRIP
         }]);
         let imageryView = applicableViews.find(
             viewProvider => viewProvider.key === imageryKey

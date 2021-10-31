@@ -21,6 +21,7 @@
  *****************************************************************************/
 import ImageryTimeView from './components/ImageryTimeView.vue';
 import Vue from "vue";
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function ImageryTimestripViewProvider(openmct) {
     const type = 'example.imagery.time-strip.view';
@@ -39,7 +40,7 @@ export default function ImageryTimestripViewProvider(openmct) {
         name: 'Imagery Timestrip View',
         cssClass: 'icon-image',
         canView: function (domainObject, objectPath) {
-            let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+            let isChildOfTimeStrip = objectPath.find(object => object.type === TypeKeyConstants.TIME_STRIP);
 
             return hasImageTelemetry(domainObject) && isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
         },

@@ -53,7 +53,7 @@ describe("the plugin", function () {
             },
             {
                 name: 'mock parent folder',
-                type: 'time-strip',
+                type: TypeKeyConstants.TIME_STRIP,
                 identifier: {
                     key: 'mock-parent-folder',
                     namespace: ''
@@ -181,7 +181,7 @@ describe("the plugin", function () {
         it("provides a plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
-                type: "test-object",
+                type: TypeKeyConstants.TEST_OBJECT,
                 telemetry: {
                     values: [{
                         key: "some-key",
@@ -214,7 +214,7 @@ describe("the plugin", function () {
         it("does not provide a plot view if the telemetry is entirely non numeric", () => {
             const testTelemetryObject = {
                 id: "test-object",
-                type: "test-object",
+                type: TypeKeyConstants.TEST_OBJECT,
                 telemetry: {
                     values: [{
                         key: "some-key",
@@ -248,7 +248,7 @@ describe("the plugin", function () {
         it("provides an overlay plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
-                type: "telemetry.plot.overlay",
+                type: TypeKeyConstants.TELEMETRY_PLOT_OVERLAY,
                 telemetry: {
                     values: [{
                         key: "some-key"
@@ -268,7 +268,7 @@ describe("the plugin", function () {
                         context: {
                             item: {
                                 id: "test-object",
-                                type: "telemetry.plot.overlay",
+                                type: TypeKeyConstants.TELEMETRY_PLOT_OVERLAY,
                                 telemetry: {
                                     values: [{
                                         key: "some-key"
@@ -280,7 +280,7 @@ describe("the plugin", function () {
                     {
                         context: {
                             item: {
-                                type: 'time-strip'
+                                type: TypeKeyConstants.TIME_STRIP
                             }
                         }
                     }
@@ -293,7 +293,7 @@ describe("the plugin", function () {
         it("provides a stacked plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
-                type: "telemetry.plot.stacked",
+                type: TypeKeyConstants.TELEMETRY_PLOT_STACKED,
                 telemetry: {
                     values: [{
                         key: "some-key"
@@ -309,7 +309,7 @@ describe("the plugin", function () {
         it("provides a spectral plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
-                type: "telemetry.plot.spectral",
+                type: TypeKeyConstants.TELEMETRY_PLOT_SPECTRAL,
                 telemetry: {
                     values: [{
                         key: "a-very-fine-key"
@@ -325,7 +325,7 @@ describe("the plugin", function () {
         it("provides a spectral aggregate plot view for objects with telemetry", () => {
             const testTelemetryObject = {
                 id: "test-object",
-                type: BAR_GRAPH_KEY,
+                type: TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH,
                 telemetry: {
                     values: [{
                         key: "lots-of-aggregate-telemetry"
@@ -355,7 +355,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-object"
                 },
-                type: "test-object",
+                type: TypeKeyConstants.TEST_OBJECT,
                 name: "Test Object",
                 telemetry: {
                     values: [{
@@ -522,7 +522,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-spectral-plot"
                 },
-                type: "telemetry.plot.spectral",
+                type: TypeKeyConstants.TELEMETRY_PLOT_SPECTRAL,
                 name: "Test Spectral Plot"
             };
 
@@ -531,7 +531,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-object"
                 },
-                type: "test-object",
+                type: TypeKeyConstants.TEST_OBJECT,
                 name: "Test Object",
                 telemetry: {
                     values: [{
@@ -562,7 +562,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-object2"
                 },
-                type: "test-object",
+                type: TypeKeyConstants.TEST_OBJECT,
                 name: "Test Object2",
                 telemetry: {
                     values: [{
@@ -657,7 +657,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-plot"
                 },
-                type: "telemetry.plot.stacked",
+                type: TypeKeyConstants.TELEMETRY_PLOT_STACKED,
                 name: "Test Stacked Plot"
             };
 
@@ -666,7 +666,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-object"
                 },
-                type: "test-object",
+                type: TypeKeyConstants.TEST_OBJECT,
                 name: "Test Object",
                 telemetry: {
                     values: [{
@@ -697,7 +697,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-object2"
                 },
-                type: "test-object",
+                type: TypeKeyConstants.TEST_OBJECT
                 name: "Test Object2",
                 telemetry: {
                     values: [{
@@ -966,7 +966,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-object"
                 },
-                type: "test-object",
+                type: TypeKeyConstants.TEST_OBJECT,
                 name: "Test Object",
                 telemetry: {
                     values: [{
@@ -1002,7 +1002,7 @@ describe("the plugin", function () {
                                     key: "test-object",
                                     namespace: ''
                                 },
-                                type: "telemetry.plot.overlay",
+                                type: TypeKeyConstants.TELEMETRY_PLOT_OVERLAY,
                                 configuration: {
                                     series: [
                                         {
@@ -1020,7 +1020,7 @@ describe("the plugin", function () {
                     {
                         context: {
                             item: {
-                                type: 'time-strip',
+                                type: TypeKeyConstants.TIME_STRIP,
                                 identifier: {
                                     key: 'some-other-key',
                                     namespace: ''
@@ -1175,12 +1175,12 @@ describe("the plugin", function () {
         };
 
         it('defines a spectral plot object type with the correct key', () => {
-            const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
+            const objectDef = openmct.types.get(TypeKeyConstants.TELEMETRY_PLOT_SPECTRAL).definition;
             expect(objectDef.key).toEqual(mockObject.key);
         });
 
         xit('is creatable', () => {
-            const objectDef = openmct.types.get('telemetry.plot.spectral').definition;
+            const objectDef = openmct.types.get(TypeKeyConstants.TELEMETRY_PLOT_SPECTRAL).definition;
             expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
     });
@@ -1193,12 +1193,12 @@ describe("the plugin", function () {
         };
 
         it('defines a spectral plot object type with the correct key', () => {
-            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
+            const objectDef = openmct.types.get(TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH).definition;
             expect(objectDef.key).toEqual(mockObject.key);
         });
 
         it('is creatable', () => {
-            const objectDef = openmct.types.get(BAR_GRAPH_KEY).definition;
+            const objectDef = openmct.types.get(TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH).definition;
             expect(objectDef.creatable).toEqual(mockObject.creatable);
         });
     });

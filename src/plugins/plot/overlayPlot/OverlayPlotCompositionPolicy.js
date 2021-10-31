@@ -1,3 +1,5 @@
+import { TypeKeyConstants } from '../../PluginConstants.js';
+
 export default function OverlayPlotCompositionPolicy(openmct) {
     function hasNumericTelemetry(domainObject) {
         const hasTelemetry = openmct.telemetry.isTelemetryObject(domainObject);
@@ -18,7 +20,7 @@ export default function OverlayPlotCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
 
-            if (parent.type === 'telemetry.plot.overlay'
+            if (parent.type === TypeKeyConstants.TELEMETRY_PLOT_OVERLAY
                 && (hasNumericTelemetry(child) === false)) {
                 return false;
             }

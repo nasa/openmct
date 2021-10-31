@@ -23,9 +23,9 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe("the plugin", () => {
-    const NON_EDITABLE_FOLDER_KEY = 'noneditable.folder';
     let openmct;
 
     beforeEach((done) => {
@@ -41,7 +41,7 @@ describe("the plugin", () => {
     });
 
     it('adds the new non-editable folder type', () => {
-        const type = openmct.types.get(NON_EDITABLE_FOLDER_KEY);
+        const type = openmct.types.get(TypeKeyConstants.NONEDITABLE_FOLDER);
 
         expect(type).toBeDefined();
         expect(type.definition.creatable).toBeFalse();

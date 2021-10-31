@@ -22,6 +22,7 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import DisplayLayoutPlugin from './plugin';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('the plugin', function () {
     let element;
@@ -34,7 +35,7 @@ describe('the plugin', function () {
         openmct.install(new DisplayLayoutPlugin({
             showAsView: []
         }));
-        displayLayoutDefinition = openmct.types.get('layout');
+        displayLayoutDefinition = openmct.types.get(TypeKeyConstants.LAYOUT);
 
         element = document.createElement('div');
         child = document.createElement('div');
@@ -55,7 +56,7 @@ describe('the plugin', function () {
     it('provides a view', () => {
         const testViewObject = {
             id: 'test-object',
-            type: 'layout',
+            type: TypeKeyConstants.LAYOUT,
             configuration: {
                 items: [
                     {
@@ -126,7 +127,7 @@ describe('the plugin', function () {
                     ]
                 },
                 'name': 'Display Layout',
-                'type': 'layout',
+                'type': TypeKeyConstants.LAYOUT,
                 'identifier': {
                     'namespace': '',
                     'key': 'c5e636c1-6771-4c9c-b933-8665cab189b3'
@@ -256,7 +257,7 @@ describe('the plugin', function () {
                     ]
                 },
                 'name': 'Display Layout',
-                'type': 'layout',
+                'type': TypeKeyConstants.LAYOUT,
                 'identifier': {
                     'namespace': '',
                     'key': 'c5e636c1-6771-4c9c-b933-8665cab189b3'
@@ -325,7 +326,7 @@ describe('the plugin', function () {
                                 }
                             },
                             'name': 'Unnamed Overlay Plot',
-                            'type': 'telemetry.plot.overlay',
+                            'type': TypeKeyConstants.TELEMETRY_PLOT_OVERLAY,
                             'modified': 1594142141929,
                             'location': 'mine',
                             'identifier': {

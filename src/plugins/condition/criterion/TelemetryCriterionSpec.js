@@ -22,6 +22,7 @@
 
 import TelemetryCriterion from "./TelemetryCriterion";
 import { getMockTelemetry } from "utils/testing";
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 let openmct = {};
 let mockListener;
@@ -38,7 +39,7 @@ describe("The telemetry criterion", function () {
                 namespace: "",
                 key: "test-object"
             },
-            type: "test-object",
+            type: TypeKeyConstants.TEST_OBJECT,
             name: "Test Object",
             telemetry: {
                 valueMetadatas: [{

@@ -1,4 +1,5 @@
-import { BAR_GRAPH_INSPECTOR_KEY, BAR_GRAPH_KEY } from '../BarGraphConstants';
+import { BAR_GRAPH_INSPECTOR_KEY } from '../BarGraphConstants';
+import { TypeKeyConstants } from '../../../PluginConstants.js';
 import Vue from 'vue';
 import Options from "./Options.vue";
 
@@ -14,7 +15,7 @@ export default function BarGraphInspectorViewProvider(openmct) {
             let object = selection[0][0].context.item;
 
             return object
-                && object.type === BAR_GRAPH_KEY;
+                && object.type === TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH;
         },
         view: function (selection) {
             let component;

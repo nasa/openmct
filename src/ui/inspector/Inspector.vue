@@ -88,6 +88,7 @@ import _ from "lodash";
 import stylesManager from '@/ui/inspector/styles/StylesManager';
 import StylesInspectorView from '@/ui/inspector/styles/StylesInspectorView.vue';
 import SavedStylesInspectorView from '@/ui/inspector/styles/SavedStylesInspectorView.vue';
+import { TypeKeyConstants } from '@/plugins/PluginConstants.js';
 
 export default {
     components: {
@@ -127,7 +128,7 @@ export default {
         };
     },
     mounted() {
-        this.excludeObjectTypes = ['folder', 'webPage', 'conditionSet', 'summary-widget', 'hyperlink'];
+        this.excludeObjectTypes = [TypeKeyConstants.FOLDER, TypeKeyConstants.WEBPAGE, TypeKeyConstants.CONDITION_SET, TypeKeyConstants.SUMMARY_WIDGET, TypeKeyConstants.HYPERLINK];
         this.openmct.selection.on('change', this.updateInspectorViews);
     },
     destroyed() {
@@ -137,7 +138,7 @@ export default {
         updateInspectorViews(selection) {
             this.refreshComposition(selection);
 
-            if (this.openmct.types.get('conditionSet')) {
+            if (this.openmct.types.get(TypeKeyConstants.CONDITION_SET)) {
                 this.refreshTabs(selection);
             }
 

@@ -83,6 +83,7 @@
 import debounce from 'lodash/debounce';
 import search from '@/ui/components/search.vue';
 import ConditionSetDialogTreeItem from './ConditionSetDialogTreeItem.vue';
+import { TypeKeyConstants } from '@/plugin/PluginConstants.js';
 
 export default {
     name: 'ConditionSetSelectorDialog',
@@ -178,7 +179,7 @@ export default {
             }
         },
         handleItemSelection(item, node) {
-            if (item && item.type === 'conditionSet') {
+            if (item && item.type === TypeKeyConstants.CONDITION_SET) {
                 const parentId = (node.objectPath && node.objectPath.length > 1) ? node.objectPath[1].identifier : undefined;
                 this.selectedItem = {
                     itemId: item.identifier,

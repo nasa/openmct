@@ -25,6 +25,7 @@ import PlotSeries from "./PlotSeries";
 import Collection from "./Collection";
 import Color from "../lib/Color";
 import ColorPalette from "../lib/ColorPalette";
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 export default class SeriesCollection extends Collection {
 
@@ -69,7 +70,7 @@ export default class SeriesCollection extends Collection {
                 identifier: domainObject.identifier
             };
 
-            if (plotObject.type === 'telemetry.plot.overlay') {
+            if (plotObject.type === TypeKeyConstants.TELEMETRY_PLOT_OVERLAY) {
                 this.openmct.objects.mutate(
                     plotObject,
                     'configuration.series[' + this.size() + ']',
@@ -95,7 +96,7 @@ export default class SeriesCollection extends Collection {
     }
     removeTelemetryObject(identifier) {
         const plotObject = this.plot.get('domainObject');
-        if (plotObject.type === 'telemetry.plot.overlay') {
+        if (plotObject.type === TypeKeyConstants.TELEMETRY_PLOT_OVERLAY) {
 
             const persistedIndex = plotObject.configuration.series.findIndex(s => {
                 return _.isEqual(identifier, s.identifier);

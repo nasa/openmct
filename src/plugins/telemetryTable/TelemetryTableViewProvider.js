@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import TelemetryTableView from './TelemetryTableView';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function TelemetryTableViewProvider(openmct) {
     function hasTelemetry(domainObject) {
@@ -38,11 +39,11 @@ export default function TelemetryTableViewProvider(openmct) {
         name: 'Telemetry Table',
         cssClass: 'icon-tabular-realtime',
         canView(domainObject) {
-            return domainObject.type === 'table'
+            return domainObject.type === TypeKeyConstants.TABLE
                 || hasTelemetry(domainObject);
         },
         canEdit(domainObject) {
-            return domainObject.type === 'table';
+            return domainObject.type === TypeKeyConstants.TABLE;
         },
         view(domainObject, objectPath) {
             return new TelemetryTableView(openmct, domainObject, objectPath);

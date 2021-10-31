@@ -22,6 +22,7 @@
 
 import BarGraphCompositionPolicy from "./BarGraphCompositionPolicy";
 import { createOpenMct } from "utils/testing";
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 describe("The bar graph composition policy", () => {
     let openmct;
@@ -174,7 +175,7 @@ describe("The bar graph composition policy", () => {
             "composition": [],
             "configuration": {},
             "name": "Some Bar Graph",
-            "type": "telemetry.plot.bar-graph",
+            "type": TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH,
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -225,7 +226,7 @@ describe("The bar graph composition policy", () => {
             "composition": [],
             "configuration": {},
             "name": "Some Bar Graph",
-            "type": "telemetry.plot.bar-graph",
+            "type": TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH,
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -276,7 +277,7 @@ describe("The bar graph composition policy", () => {
             "composition": [],
             "configuration": {},
             "name": "Some Bar Graph",
-            "type": "telemetry.plot.bar-graph",
+            "type": TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH,
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,
@@ -312,7 +313,7 @@ describe("The bar graph composition policy", () => {
             "composition": [],
             "configuration": {},
             "name": "Some Stacked Plot",
-            "type": "telemetry.plot.stacked",
+            "type": TypeKeyConstants.TELEMETRY_PLOT_STACKED,
             "location": "mine",
             "modified": 1631005183584,
             "persisted": 1631005183502,

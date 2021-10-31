@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { BAR_GRAPH_KEY } from './BarGraphConstants';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 export default function BarGraphCompositionPolicy(openmct) {
     function hasAggregateDomainAndRange(metadata) {
@@ -41,8 +41,8 @@ export default function BarGraphCompositionPolicy(openmct) {
 
     return {
         allow: function (parent, child) {
-            if ((parent.type === BAR_GRAPH_KEY)
-                && ((child.type !== 'telemetry.plot.overlay') && (hasBarGraphTelemetry(child) === false))
+            if ((parent.type === TypeKeyConstants.TELEMETRY_PLOT_BAR_GRAPH)
+                && ((child.type !== TypeKeyConstants.TELEMETRY_PLOT_OVERLAY) && (hasBarGraphTelemetry(child) === false))
             ) {
                 return false;
             }

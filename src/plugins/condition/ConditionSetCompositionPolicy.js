@@ -19,11 +19,12 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function ConditionSetCompositionPolicy(openmct) {
     return {
         allow: function (parent, child) {
-            if (parent.type === 'conditionSet' && !openmct.telemetry.isTelemetryObject(child)) {
+            if (parent.type === TypeKeyConstants.CONDITION_SET && !openmct.telemetry.isTelemetryObject(child)) {
                 return false;
             }
 

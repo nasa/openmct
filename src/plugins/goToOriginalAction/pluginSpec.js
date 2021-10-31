@@ -23,6 +23,7 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe("the goToOriginalAction plugin", () => {
     let openmct;
@@ -137,7 +138,7 @@ describe("the goToOriginalAction plugin", () => {
                     }
                 ],
                 "name": "root",
-                "type": "folder",
+                "type": TypeKeyConstants.FOLDER,
                 "id": "mock-root",
                 "location": "ROOT",
                 "identifier": {
@@ -157,7 +158,7 @@ describe("the goToOriginalAction plugin", () => {
                     }
                 ],
                 "name": "sub",
-                "type": "folder",
+                "type": TypeKeyConstants.FOLDER,
                 "location": "mock-root",
                 "identifier": {
                     "namespace": "",
@@ -171,7 +172,7 @@ describe("the goToOriginalAction plugin", () => {
                     "hiddenColumns": {}
                 },
                 "name": "table",
-                "type": "table",
+                "type": TypeKeyConstants.TABLE,
                 "location": "mock-root",
                 "identifier": {
                     "namespace": "",
@@ -186,7 +187,7 @@ describe("the goToOriginalAction plugin", () => {
                     }
                 ],
                 "name": "sub sub",
-                "type": "folder",
+                "type": TypeKeyConstants.FOLDER,
                 "location": "mock-sub",
                 "identifier": {
                     "namespace": "",

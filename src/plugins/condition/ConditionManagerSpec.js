@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import ConditionManager from './ConditionManager';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('ConditionManager', () => {
 
@@ -58,7 +59,7 @@ describe('ConditionManager', () => {
             namespace: "",
             key: "600a7372-8d48-4dc4-98b6-548611b1ff7e"
         },
-        type: "conditionSet",
+        type: TypeKeyConstants.CONDITION_SET,
         location: "mine",
         configuration: {
             conditionCollection: [

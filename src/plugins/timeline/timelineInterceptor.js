@@ -19,12 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function timelineInterceptor(openmct) {
 
     openmct.objects.addGetInterceptor({
         appliesTo: (identifier, domainObject) => {
-            return domainObject && domainObject.type === 'time-strip';
+            return domainObject && domainObject.type === TypeKeyConstants.TIME_STRIP;
         },
         invoke: (identifier, object) => {
 

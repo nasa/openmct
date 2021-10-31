@@ -23,6 +23,7 @@
 import Condition from "./Condition";
 import {TRIGGER} from "./utils/constants";
 import TelemetryCriterion from "./criterion/TelemetryCriterion";
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 let openmct = {};
 let testConditionDefinition;
@@ -47,7 +48,7 @@ describe("The condition", function () {
                 namespace: "",
                 key: "test-object"
             },
-            type: "test-object",
+            type: TypeKeyConstants.TEST_OBJECT,
             name: "Test Object",
             telemetry: {
                 valueMetadatas: [{

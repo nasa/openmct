@@ -22,10 +22,11 @@
 
 import SpectralView from './SpectralView.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 export default function SpectralPlotViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        return objectPath.find(object => object.type === TypeKeyConstants.TIME_STRIP);
     }
 
     return {
@@ -33,11 +34,11 @@ export default function SpectralPlotViewProvider(openmct) {
         name: 'Spectral Plot',
         cssClass: 'icon-telemetry',
         canView(domainObject, objectPath) {
-            return domainObject && domainObject.type === 'telemetry.plot.spectral';
+            return domainObject && domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_SPECTRAL;
         },
 
         canEdit(domainObject, objectPath) {
-            return domainObject && domainObject.type === 'telemetry.plot.spectral';
+            return domainObject && domainObject.type === TypeKeyConstants.TELEMETRY_PLOT_SPECTRAL;
         },
 
         view: function (domainObject, objectPath) {

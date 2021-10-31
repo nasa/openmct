@@ -23,6 +23,7 @@
 import { createOpenMct, createMouseEvent, resetApplicationState } from 'utils/testing';
 import notebookPlugin from './plugin';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe("Notebook plugin:", () => {
     let openmct;
@@ -56,7 +57,7 @@ describe("Notebook plugin:", () => {
 
         openmct.install(notebookPlugin());
 
-        notebookDefinition = openmct.types.get('notebook').definition;
+        notebookDefinition = openmct.types.get(TypeKeyConstants.NOTEBOOK).definition;
         notebookDefinition.initialize(notebookDomainObject);
 
         openmct.on('start', done);

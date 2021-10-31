@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 import uuid from 'uuid';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default class NewFolderAction {
     constructor(openmct) {
@@ -55,7 +56,7 @@ export default class NewFolderAction {
         let parentKeystring = this._openmct.objects.makeKeyString(domainObject.identifier);
         let composition = this._openmct.composition.get(domainObject);
         let dialogService = this._openmct.$injector.get('dialogService');
-        let folderType = this._openmct.types.get('folder');
+        let folderType = this._openmct.types.get(TypeKeyConstants.FOLDER);
 
         dialogService.getUserInput(this._dialogForm, {name: 'Unnamed Folder'}).then((userInput) => {
             let name = userInput.name;

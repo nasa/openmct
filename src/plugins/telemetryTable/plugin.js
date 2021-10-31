@@ -31,7 +31,7 @@ export default function plugin() {
         openmct.inspectorViews.addProvider(new TableConfigurationViewProvider(openmct));
         openmct.types.addType(TypeKeyConstants.TABLE, TelemetryTableType);
         openmct.composition.addPolicy((parent, child) => {
-            if (parent.type === 'table') {
+            if (parent.type === TypeKeyConstants.TABLE) {
                 return Object.prototype.hasOwnProperty.call(child, 'telemetry');
             } else {
                 return true;

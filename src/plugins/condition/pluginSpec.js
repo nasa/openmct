@@ -27,6 +27,7 @@ import StylesView from "./components/inspector/StylesView.vue";
 import Vue from 'vue';
 import {getApplicableStylesForItem} from "./utils/styleUtils";
 import ConditionManager from "@/plugins/condition/ConditionManager";
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 describe('the plugin', function () {
     let conditionSetDefinition;
@@ -43,7 +44,7 @@ describe('the plugin', function () {
                 namespace: "",
                 key: "test-object"
             },
-            type: "test-object",
+            type: TypeKeyConstants.TEST_OBJECT,
             name: "Test Object",
             telemetry: {
                 values: [{
@@ -80,7 +81,7 @@ describe('the plugin', function () {
         openmct = createOpenMct();
         openmct.install(new ConditionPlugin());
 
-        conditionSetDefinition = openmct.types.get('conditionSet').definition;
+        conditionSetDefinition = openmct.types.get(TypeKeyConstants.CONDITION_SET).definition;
 
         element = document.createElement('div');
         child = document.createElement('div');
@@ -91,7 +92,7 @@ describe('the plugin', function () {
                 key: 'testConditionSetKey',
                 namespace: ''
             },
-            type: 'conditionSet'
+            type: TypeKeyConstants.CONDITION_SET
         };
 
         mockListener = jasmine.createSpy('mockListener');
@@ -130,7 +131,7 @@ describe('the plugin', function () {
         it('provides a view', () => {
             const testViewObject = {
                 id: "test-object",
-                type: "conditionSet",
+                type: TypeKeyConstants.CONDITION_SET,
                 configuration: {
                     conditionCollection: []
                 }
@@ -221,7 +222,7 @@ describe('the plugin', function () {
             "telemetry": {
             },
             "name": "Condition Set",
-            "type": "conditionSet",
+            "type": TypeKeyConstants.CONDITION_SET,
             "identifier": {
                 "namespace": "",
                 "key": "863012c1-f6ca-4ab0-aed7-fd43d5e4cd12"
@@ -298,7 +299,7 @@ describe('the plugin', function () {
                     ]
                 },
                 "name": "Display Layout",
-                "type": "layout",
+                "type": TypeKeyConstants.LAYOUT,
                 "identifier": {
                     "namespace": "",
                     "key": "c5e636c1-6771-4c9c-b933-8665cab189b3"
@@ -543,7 +544,7 @@ describe('the plugin', function () {
                 "telemetry": {
                 },
                 "name": "Condition Set",
-                "type": "conditionSet",
+                "type": TypeKeyConstants.CONDITION_SET,
                 "identifier": {
                     "namespace": "",
                     "key": "cf4456a9-296a-4e6b-b182-62ed29cd15b9"
@@ -697,7 +698,7 @@ describe('the plugin', function () {
                 "telemetry": {
                 },
                 "name": "Condition Set",
-                "type": "conditionSet",
+                "type": TypeKeyConstants.CONDITION_SET,
                 "identifier": {
                     "namespace": "",
                     "key": "cf4456a9-296a-4e6b-b182-62ed29cd15b9"

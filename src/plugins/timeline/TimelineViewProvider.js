@@ -22,6 +22,7 @@
 
 import TimelineViewLayout from './TimelineViewLayout.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function TimelineViewProvider(openmct) {
 
@@ -30,11 +31,11 @@ export default function TimelineViewProvider(openmct) {
         name: 'TimeStrip',
         cssClass: 'icon-clock',
         canView(domainObject) {
-            return domainObject.type === 'time-strip';
+            return domainObject.type === TypeKeyConstants.TIME_STRIP;
         },
 
         canEdit(domainObject) {
-            return domainObject.type === 'time-strip';
+            return domainObject.type === TypeKeyConstants.TIME_STRIP;
         },
 
         view: function (domainObject, objectPath) {

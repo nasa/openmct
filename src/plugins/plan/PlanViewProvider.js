@@ -22,10 +22,11 @@
 
 import Plan from './Plan.vue';
 import Vue from 'vue';
+import { TypeKeyConstants } from '../PluginConstants.js';
 
 export default function PlanViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip') !== undefined;
+        return objectPath.find(object => object.type === TypeKeyConstants.TIME_STRIP) !== undefined;
     }
 
     return {
@@ -33,11 +34,11 @@ export default function PlanViewProvider(openmct) {
         name: 'Plan',
         cssClass: 'icon-calendar',
         canView(domainObject) {
-            return domainObject.type === 'plan';
+            return domainObject.type === TypeKeyConstants.PLAN;
         },
 
         canEdit(domainObject) {
-            return domainObject.type === 'plan';
+            return domainObject.type === TypeKeyConstants.PLAN;
         },
 
         view: function (domainObject, objectPath) {

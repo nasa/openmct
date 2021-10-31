@@ -83,6 +83,7 @@ import ImageView from './ImageView.vue';
 import EditMarquee from './EditMarquee.vue';
 import DisplayLayoutGrid from './DisplayLayoutGrid.vue';
 import _ from 'lodash';
+import { TypeKeyConstants } from '../../PluginConstants.js';
 
 const TELEMETRY_IDENTIFIER_FUNCTIONS = {
     'table': (domainObject) => {
@@ -97,7 +98,7 @@ const TELEMETRY_IDENTIFIER_FUNCTIONS = {
         return composition.load().then((objects) => {
             let identifiers = [];
             objects.forEach(object => {
-                if (object.type === 'telemetry.plot.overlay') {
+                if (object.type === TypeKeyConstants.TELEMETRY_PLOT_OVERLAY) {
                     identifiers.push(...object.composition);
                 } else {
                     identifiers.push(object.identifier);

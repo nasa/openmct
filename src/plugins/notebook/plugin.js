@@ -4,7 +4,6 @@ import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vu
 import SnapshotContainer from './snapshot-container';
 
 import { notebookImageMigration } from '../notebook/utils/notebook-migration';
-import { NOTEBOOK_TYPE } from './notebook-constants';
 import { TypeKeyConstants } from '../PluginConstants.js';
 
 import Vue from 'vue';
@@ -87,7 +86,7 @@ export default function NotebookPlugin() {
                 }
             ]
         };
-        openmct.types.addType(NOTEBOOK_TYPE, notebookType);
+        openmct.types.addType(TypeKeyConstants.NOTEBOOK, notebookType);
 
         const notebookSnapshotImageType = {
             name: 'Notebook Snapshot Image Storage',
