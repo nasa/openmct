@@ -91,7 +91,7 @@ workflows:
       - test:
           name: node14-firefox-nightly
           node-version: lts/fermium
-          browser: Firefox
+          browser: FirefoxHeadless
     triggers:
       - schedule:
           cron: "0 0 * * *"
