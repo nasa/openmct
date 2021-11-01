@@ -177,7 +177,7 @@ export default class AllTelemetryCriterion extends TelemetryCriterion {
                 const timeSystem = this.openmct.time.timeSystem();
 
                 telemetryRequestsResults.forEach((results, index) => {
-                    const latestDatum = results.length ? results[results.length - 1] : {};
+                    const latestDatum = (Array.isArray(results) && results.length) ? results[results.length - 1] : {};
                     const datumId = keys[index];
                     const normalizedDatum = this.createNormalizedDatum(latestDatum, telemetryObjects[datumId]);
 

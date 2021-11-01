@@ -231,8 +231,8 @@ export default {
             const panStart = bounds.start - percX * deltaTime;
 
             return {
-                start: panStart,
-                end: panStart + deltaTime
+                start: parseInt(panStart, 10),
+                end: parseInt(panStart + deltaTime, 10)
             };
         },
         startZoom() {
@@ -296,7 +296,7 @@ export default {
             const valueDelta = value - this.left;
             const offset = valueDelta / this.width * timeDelta;
 
-            return bounds.start + offset;
+            return parseInt(bounds.start + offset, 10);
         },
         isChangingViewBounds() {
             return this.dragStartX && this.dragX && this.dragStartX !== this.dragX;
