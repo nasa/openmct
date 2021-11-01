@@ -30,7 +30,7 @@
 
 <script>
 import moment from 'moment';
-import ticker from '../../../utils/clock/Ticker';
+import ticker from 'utils/clock/Ticker';
 
 export default {
     inject: ['openmct'],

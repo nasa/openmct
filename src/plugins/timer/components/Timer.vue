@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import ticker from '../../../utils/clock/Ticker';
+import ticker from 'utils/clock/Ticker';
 
 const moment = require("moment-timezone");
 const momentDurationFormatSetup = require("moment-duration-format");
@@ -59,12 +59,13 @@ export default {
     props: {
         domainObject: {
             type: Object,
-            default: () => ({})
+            default: () => ({}),
+            required: true
         }
     },
     data() {
         return {
-            lastTimestamp: null,
+            lastTimestamp: undefined,
             active: true
         };
     },

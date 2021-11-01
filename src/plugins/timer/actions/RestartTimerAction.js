@@ -34,7 +34,7 @@ export default class RestartTimerAction {
     invoke(objectPath) {
         const domainObject = objectPath[0];
         if (!domainObject || !domainObject.configuration) {
-            return;
+            return new Error('Unable to run restart timer action. No domainObject provided.');
         }
 
         const newConfiguration = { ...domainObject.configuration };

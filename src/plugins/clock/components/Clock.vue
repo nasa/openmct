@@ -41,7 +41,7 @@
 <script>
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
-import ticker from '../../../utils/clock/Ticker';
+import ticker from 'utils/clock/Ticker';
 
 export default {
     inject: ['openmct', 'domainObject'],

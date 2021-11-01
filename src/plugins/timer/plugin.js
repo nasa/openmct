@@ -111,8 +111,6 @@ export default function TimerPlugin() {
 
                 openmct.objects.mutate(domainObject, 'configuration', configuration);
 
-                console.log(domainObject);
-
                 return domainObject;
             }
         });

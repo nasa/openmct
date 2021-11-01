@@ -151,6 +151,37 @@ describe("Timer plugin:", () => {
             expect(hasMajorElements).toBe(true);
         });
 
+        it("gets errors from actions if configuration is not passed", async () => {
+            await Vue.nextTick();
+
+            const objectPath = [...timerObjectPath];
+            delete objectPath[0].configuration;
+
+            let action = openmct.actions.getAction('timer.start');
+            let actionResults = action.invoke(objectPath);
+
+            let actionError = new Error('Unable to run start timer action. No domainObject provided.');
+            expect(actionResults).toEqual(actionError);
+
+            action = openmct.actions.getAction('timer.stop');
+            actionResults = action.invoke(objectPath);
+
+            actionError = new Error('Unable to run stop timer action. No domainObject provided.');
+            expect(actionResults).toEqual(actionError);
+
+            action = openmct.actions.getAction('timer.pause');
+            actionResults = action.invoke(objectPath);
+
+            actionError = new Error('Unable to run pause timer action. No domainObject provided.');
+            expect(actionResults).toEqual(actionError);
+
+            action = openmct.actions.getAction('timer.restart');
+            actionResults = action.invoke(objectPath);
+
+            actionError = new Error('Unable to run restart timer action. No domainObject provided.');
+            expect(actionResults).toEqual(actionError);
+        });
+
         it("displays a started timer ticking down to a future date", async () => {
             const newBaseTime = 1634774400000; // Oct 21 2021, 12:00 AM
             openmct.objects.mutate(timerViewObject, 'configuration.timestamp', newBaseTime);

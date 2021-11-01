@@ -36,7 +36,7 @@ export default class StartTimerAction {
     invoke(objectPath) {
         const domainObject = objectPath[0];
         if (!domainObject || !domainObject.configuration) {
-            return;
+            return new Error('Unable to run start timer action. No domainObject provided.');
         }
 
         let { pausedTime, timestamp } = domainObject.configuration;

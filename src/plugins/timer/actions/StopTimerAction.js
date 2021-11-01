@@ -34,7 +34,7 @@ export default class StopTimerAction {
     invoke(objectPath) {
         const domainObject = objectPath[0];
         if (!domainObject || !domainObject.configuration) {
-            return;
+            return new Error('Unable to run stop timer action. No domainObject provided.');
         }
 
         const newConfiguration = { ...domainObject.configuration };
