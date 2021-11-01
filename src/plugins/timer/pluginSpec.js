@@ -220,7 +220,7 @@ describe("Timer plugin:", () => {
             jasmine.clock().tick(5000);
             await Vue.nextTick();
 
-            const action = openmct.actions.getAction('timer.pause');
+            let action = openmct.actions.getAction('timer.pause');
             if (action) {
                 action.invoke(timerObjectPath, timerView);
             }
@@ -228,7 +228,7 @@ describe("Timer plugin:", () => {
             await Vue.nextTick();
             const timerElement = element.querySelector('.c-timer');
             const timerPausePlayButton = timerElement.querySelector('.c-timer__ctrl-pause-play');
-            const timerValue = timerElement.querySelector('.c-timer__value').innerText;
+            let timerValue = timerElement.querySelector('.c-timer__value').innerText;
 
             expect(timerPausePlayButton.classList.contains('icon-play')).toBe(true);
             expect(timerValue).toBe('0D 23:59:55');
@@ -236,6 +236,21 @@ describe("Timer plugin:", () => {
             jasmine.clock().tick(5000);
             await Vue.nextTick();
             expect(timerValue).toBe('0D 23:59:55');
+
+            action = openmct.actions.getAction('timer.start');
+            if (action) {
+                action.invoke(timerObjectPath, timerView);
+            }
+
+            await Vue.nextTick();
+            action = openmct.actions.getAction('timer.pause');
+            if (action) {
+                action.invoke(timerObjectPath, timerView);
+            }
+
+            await Vue.nextTick();
+            timerValue = timerElement.querySelector('.c-timer__value').innerText;
+            expect(timerValue).toBe('1D 00:00:00');
         });
 
         it("displays a stopped timer correctly in the DOM", async () => {
