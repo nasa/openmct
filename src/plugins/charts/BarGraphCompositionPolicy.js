@@ -23,26 +23,26 @@
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
 
 export default function BarGraphCompositionPolicy(openmct) {
-    function hasAggregateDomainAndRange(metadata) {
+    function hasRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
 
         return rangeValues.length > 0;
     }
 
     function hasBarGraphTelemetry(domainObject) {
-        if (!Object.prototype.hasOwnProperty.call(domainObject, 'telemetry')) {
+        if (!openmct.telemetry.isTelemetryObject(domainObject)) {
             return false;
         }
 
         let metadata = openmct.telemetry.getMetadata(domainObject);
 
-        return metadata.values().length > 0 && hasAggregateDomainAndRange(metadata);
+        return metadata.values().length > 0 && hasRange(metadata);
     }
 
     return {
         allow: function (parent, child) {
             if ((parent.type === BAR_GRAPH_KEY)
-                && ((child.type !== 'telemetry.plot.overlay') && (hasBarGraphTelemetry(child) === false))
+                && (hasBarGraphTelemetry(child) === false)
             ) {
                 return false;
             }
