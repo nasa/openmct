@@ -19,9 +19,9 @@ jobs:
       - restore_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
+          install-npm: false
           node-version: << parameters.node-version >>
-      - node/install-packages:
-          override-ci-command: npm install
+      - run: npm install
       - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
