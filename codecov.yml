@@ -1,5 +1,5 @@
 codecov:
-  require_ci_to_pass: false
+  require_ci_to_pass: false #This setting will update the bot regardless of whether or not tests pass
 
 coverage:
   status:
