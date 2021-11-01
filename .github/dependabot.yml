@@ -10,7 +10,9 @@ updates:
       - "type:maintenance"
       - "dependencies"
     allow:
-      - dependency-name: "^.*eslint.*$"
+      - dependency-name: "eslint*"
+      - dependency-name: "karma*"
+      - dependency-name: "jasmine*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
