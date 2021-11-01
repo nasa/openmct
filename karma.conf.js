@@ -93,7 +93,7 @@ module.exports = (config) => {
             dir: process.env.CIRCLE_ARTIFACTS
                 ? process.env.CIRCLE_ARTIFACTS + '/coverage'
                 : "dist/reports/coverage",
-            reports: ['html', 'lcovonly', 'text-summary'],
+            reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
                     lines: 66
