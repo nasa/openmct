@@ -30,7 +30,7 @@ jobs:
                 version: "91.2.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
       - when:
           condition:
-            equal: [ "Firefox", <<parameters.browser>> ]
+            equal: [ "FirefoxHeadless", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox
       - when:
@@ -70,13 +70,13 @@ workflows:
           node-version: lts/dubnium
           browser: ChromeHeadless
       - test:
-          name: node12-build-only
+          name: node12-build-lint
           node-version: lts/erbium
-          browser: "" #Skip testing
+          browser: "" #Skip unit tests
       - test: 
-          name: node14-build-only
+          name: node14-build-lint
           node-version: lts/fermium
-          browser: "" #Skip testing
+          browser: "" #Skip unit tests
 
   nightly:
     jobs:
@@ -91,7 +91,7 @@ workflows:
       - test:
           name: node14-firefox-nightly
           node-version: lts/fermium
-          browser: Firefox
+          browser: FirefoxHeadless
     triggers:
       - schedule:
           cron: "0 0 * * *"
