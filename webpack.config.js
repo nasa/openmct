@@ -32,7 +32,8 @@ const webpackConfig = {
         filename: '[name].js',
         library: '[name]',
         libraryTarget: 'umd',
-        publicPath: 'auto'
+        publicPath: '',
+        clean: true
     },
     resolve: {
         alias: {
@@ -91,8 +92,11 @@ const webpackConfig = {
                 test: /\.(sc|sa|c)ss$/,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'fast-sass-loader'
+                    {
+                        loader: 'css-loader'
+                    },
+                    'resolve-url-loader',
+                    'sass-loader'
                 ]
             },
             {
@@ -107,7 +111,7 @@ const webpackConfig = {
                 ]
             },
             {
-                test: /\.(jpg|jpeg|png|svg|ico|woff2?|eot|ttf)$/,
+                test: /\.(jpg|jpeg|png|svg|ico|woff|woff2?|eot|ttf)$/,
                 loader: 'file-loader',
                 options: {
                     name: '[name].[ext]',
@@ -120,7 +124,7 @@ const webpackConfig = {
                             return `icons/${url}`;
                         }
 
-                        if (/\.(woff2?|eot|ttf)$/.test(url)) {
+                        if (/\.(woff|woff2?|eot|ttf)$/.test(url)) {
                             return `fonts/${url}`;
                         } else {
                             return `${url}`;
