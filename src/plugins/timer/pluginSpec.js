@@ -159,27 +159,35 @@ describe("Timer plugin:", () => {
 
             let action = openmct.actions.getAction('timer.start');
             let actionResults = action.invoke(objectPath);
+            let actionApplication = action.appliesTo(objectPath);
 
             let actionError = new Error('Unable to run start timer action. No domainObject provided.');
             expect(actionResults).toEqual(actionError);
+            expect(actionApplication).toBe(undefined);
 
             action = openmct.actions.getAction('timer.stop');
             actionResults = action.invoke(objectPath);
+            actionApplication = action.appliesTo(objectPath);
 
             actionError = new Error('Unable to run stop timer action. No domainObject provided.');
             expect(actionResults).toEqual(actionError);
+            expect(actionApplication).toBe(undefined);
 
             action = openmct.actions.getAction('timer.pause');
             actionResults = action.invoke(objectPath);
+            actionApplication = action.appliesTo(objectPath);
 
             actionError = new Error('Unable to run pause timer action. No domainObject provided.');
             expect(actionResults).toEqual(actionError);
+            expect(actionApplication).toBe(undefined);
 
             action = openmct.actions.getAction('timer.restart');
             actionResults = action.invoke(objectPath);
+            actionApplication = action.appliesTo(objectPath);
 
             actionError = new Error('Unable to run restart timer action. No domainObject provided.');
             expect(actionResults).toEqual(actionError);
+            expect(actionApplication).toBe(undefined);
         });
 
         it("displays a started timer ticking down to a future date", async () => {
