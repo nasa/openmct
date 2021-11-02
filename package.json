@@ -38,7 +38,6 @@
     "karma-coverage": "2.0.3",
     "karma-coverage-istanbul-reporter": "3.0.3",
     "karma-firefox-launcher": "2.1.1",
-    "karma-html-reporter": "0.2.7",
     "karma-jasmine": "4.0.1",
     "karma-junit-reporter": "2.0.1",
     "karma-sourcemap-loader": "0.3.8",
