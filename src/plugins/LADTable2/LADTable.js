@@ -40,21 +40,7 @@ export default class LADTable extends TelemetryTable {
             this.addTelemetryObject(this.domainObject);
         }
     }
-    loadComposition() {
-        this.tableComposition = this.openmct.composition.get(this.domainObject);
 
-        if (this.tableComposition !== undefined) {
-            this.tableComposition.load().then((composition) => {
-
-                composition = composition.filter(this.isTelemetryObject);
-                composition.forEach(this.addTelemetryObject);
-
-                this.tableComposition.on('add', this.addTelemetryObject);
-                this.tableComposition.on('remove', this.removeTelemetryObject);
-                this.emit('loaded');
-            });
-        }
-    }
     addTelemetryObject(telemetryObject) {
         super.addTelemetryObject(telemetryObject);
         this.addDummyRowForObject(telemetryObject);

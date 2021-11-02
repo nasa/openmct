@@ -128,6 +128,8 @@ define([
 
                     this.tableComposition.on('add', this.addTelemetryObject);
                     this.tableComposition.on('remove', this.removeTelemetryObject);
+
+                    this.emit('loaded');
                 });
             }
         }
