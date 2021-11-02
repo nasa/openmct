@@ -153,41 +153,52 @@ describe("Timer plugin:", () => {
 
         it("gets errors from actions if configuration is not passed", async () => {
             await Vue.nextTick();
-
-            const objectPath = [...timerObjectPath];
+            const objectPath = _.cloneDeep(timerObjectPath);
             delete objectPath[0].configuration;
 
             let action = openmct.actions.getAction('timer.start');
             let actionResults = action.invoke(objectPath);
-            let actionApplication = action.appliesTo(objectPath);
+            let actionFilterWithoutConfig = action.appliesTo(objectPath);
+            await openmct.objects.mutate(timerObjectPath[0], 'configuration', { timerState: 'started' });
+            let actionFilterWithConfig = action.appliesTo(timerObjectPath);
 
             let actionError = new Error('Unable to run start timer action. No domainObject provided.');
             expect(actionResults).toEqual(actionError);
-            expect(actionApplication).toBe(undefined);
+            expect(actionFilterWithoutConfig).toBe(undefined);
+            expect(actionFilterWithConfig).toBe(false);
 
             action = openmct.actions.getAction('timer.stop');
             actionResults = action.invoke(objectPath);
-            actionApplication = action.appliesTo(objectPath);
+            actionFilterWithoutConfig = action.appliesTo(objectPath);
+            await openmct.objects.mutate(timerObjectPath[0], 'configuration', { timerState: 'stopped' });
+            actionFilterWithConfig = action.appliesTo(timerObjectPath);
 
             actionError = new Error('Unable to run stop timer action. No domainObject provided.');
             expect(actionResults).toEqual(actionError);
-            expect(actionApplication).toBe(undefined);
+            expect(actionFilterWithoutConfig).toBe(undefined);
+            expect(actionFilterWithConfig).toBe(false);
 
             action = openmct.actions.getAction('timer.pause');
             actionResults = action.invoke(objectPath);
-            actionApplication = action.appliesTo(objectPath);
+            actionFilterWithoutConfig = action.appliesTo(objectPath);
+            await openmct.objects.mutate(timerObjectPath[0], 'configuration', { timerState: 'paused' });
+            actionFilterWithConfig = action.appliesTo(timerObjectPath);
 
             actionError = new Error('Unable to run pause timer action. No domainObject provided.');
             expect(actionResults).toEqual(actionError);
-            expect(actionApplication).toBe(undefined);
+            expect(actionFilterWithoutConfig).toBe(undefined);
+            expect(actionFilterWithConfig).toBe(false);
 
             action = openmct.actions.getAction('timer.restart');
             actionResults = action.invoke(objectPath);
-            actionApplication = action.appliesTo(objectPath);
+            actionFilterWithoutConfig = action.appliesTo(objectPath);
+            await openmct.objects.mutate(timerObjectPath[0], 'configuration', { timerState: 'stopped' });
+            actionFilterWithConfig = action.appliesTo(timerObjectPath);
 
             actionError = new Error('Unable to run restart timer action. No domainObject provided.');
             expect(actionResults).toEqual(actionError);
-            expect(actionApplication).toBe(undefined);
+            expect(actionFilterWithoutConfig).toBe(undefined);
+            expect(actionFilterWithConfig).toBe(false);
         });
 
         it("displays a started timer ticking down to a future date", async () => {
