@@ -68,7 +68,8 @@ describe("the plugin", () => {
             openmct.forms.showForm.and.callFake(formStructure => {
                 return Promise.resolve({
                     name: 'test',
-                    location: parentObject
+                    notes: 'test notes',
+                    location: parentObjectPath
                 });
             });
 

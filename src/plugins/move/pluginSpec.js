@@ -91,11 +91,26 @@ describe("The Move Action plugin", () => {
     });
 
     describe("when moving an object to a new parent and removing from the old parent", () => {
-        beforeEach(() => {
+        beforeEach((done) => {
             openmct.router.path = [];
-            moveAction.oldParent = parentObject;
 
-            moveAction.onSave(childObject, {}, anotherParentObject);
+            spyOn(openmct.objects, "save");
+            openmct.objects.save.and.callThrough();
+            spyOn(openmct.forms, "showForm");
+            openmct.forms.showForm.and.callFake(formStructure => {
+                return Promise.resolve({
+                    name: 'test',
+                    location: [anotherParentObject]
+                });
+            });
+
+            openmct.objects.observe(parentObject, '*', (newObject) => {
+                done();
+            });
+
+            moveAction.inNavigationPath = () => false;
+
+            moveAction.invoke([childObject, parentObject]);
         });
 
         it("the child object's identifier should be in the new parent's composition", () => {
@@ -108,5 +123,4 @@ describe("The Move Action plugin", () => {
             expect(oldParentComposition.length).toEqual(0);
         });
     });
-
 });
