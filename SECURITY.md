@@ -1,6 +1,8 @@
 # Security Policy
 
-## Reporting a Vulnerability
+The Open MCT team secures our code base using a combination of code review, dependency review, and periodic security reviews. Static analysis performed during automated verification additionally safeguards against common coding errors which may result in vulnerabilities.
+
+### Reporting a Vulnerability
 
 For general defects, please for a [Bug Report](https://github.com/nasa/openmct/issues/new/choose)
 
@@ -16,7 +18,13 @@ CodeQL is ran for every pull-request in GitHub Actions.
 
 The project is also monitored by [LGTM](https://lgtm.com/projects/g/nasa/openmct/) and is available to public.
 
-## General Support
+### ESLint
+
+Static analysis is run for every push on the master branch and every pull request on all branches in Github Actions. 
+
+For more information about ESLint, visit https://eslint.org/.
+
+### General Support
 
 For additional support, please open a [Github Discussion](https://github.com/nasa/openmct/discussions). 
 
