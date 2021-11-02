@@ -15,7 +15,7 @@
 
         port.onmessage = function (event) {
             if (event.data.request === 'close') {
-                console.log('Closing couch connection');
+                console.debug('🚪 Closing couch connection 🚪');
                 connections.splice(event.data.connectionId - 1, 1);
                 if (connections.length <= 0) {
                     // abort any outstanding requests if there's nobody listening to it.
@@ -25,7 +25,7 @@
                 connected = false;
                 // stop listening for events
                 couchEventSource.removeEventListener('message', self.sourceListener);
-                console.log('🚪 Closed couch connection 🚪');
+                console.debug('🚪 Closed couch connection 🚪');
 
                 return;
             }

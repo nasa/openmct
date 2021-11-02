@@ -426,14 +426,14 @@ class CouchObjectProvider {
         }
     }
 
-    onError(error) {
+    onEventError(error) {
         console.error('Error on feed', error);
         if (Object.keys(this.observers).length > 0) {
             this.observeObjectChanges();
         }
     }
 
-    onmessage(event) {
+    onEventMessage(event) {
         const object = JSON.parse(event.data);
         object.identifier = {
             namespace: this.namespace,
@@ -468,10 +468,10 @@ class CouchObjectProvider {
         console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
         couchEventSource = new EventSource(url, { withCredentials: false });
-        couchEventSource.onerror = this.onError.bind(this);
+        couchEventSource.onerror = this.onEventError.bind(this);
 
         // start listening for events
-        couchEventSource.onmessage = this.onmessage.bind(this);
+        couchEventSource.onmessage = this.onEventMessage.bind(this);
         console.debug('⇿ Opened connection ⇿');
     }
 
