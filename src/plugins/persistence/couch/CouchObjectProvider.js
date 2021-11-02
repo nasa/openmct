@@ -390,8 +390,7 @@ class CouchObjectProvider {
      * @private
      */
     observeObjectChanges() {
-        const prefix = 'http://localhost:5984/openmct';
-        const sseURL = new URL(`${prefix}/_changes`);
+        const sseURL = new URL(`${this.url}/_changes`);
         sseURL.searchParams.append('feed', 'eventsource');
         sseURL.searchParams.append('style', 'main_only');
         sseURL.searchParams.append('heartbeat', HEARTBEAT);
