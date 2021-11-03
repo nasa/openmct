@@ -85,7 +85,7 @@ define(
             var domainObject = (context || {}).domainObject,
                 type = domainObject && domainObject.getCapability('type'),
                 creatable = type && type.hasFeature('creation'),
-                persistable = domainObject && openmct.objects.isPersistable(domainObject.useCapability('adapter'));
+                persistable = domainObject ? openmct.objects.isPersistable(domainObject.useCapability('adapter')) : false;
 
             if (domainObject && domainObject.model && domainObject.model.locked) {
                 return false;
