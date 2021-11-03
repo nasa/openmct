@@ -195,7 +195,7 @@ export default {
             return objectType.definition;
         },
         isPersistable() {
-            let persistable = this.openmct.objects.isPersistable(this.domainObject);
+            let persistable = this.openmct.objects.isPersistable(this.domainObject.identifier);
 
             return persistable;
         },

@@ -90,7 +90,7 @@ define(
 
             let type = domainObject.getCapability('type');
             let creatable = type && type.hasFeature('creation');
-            let persistable = openmct.objects.isPersistable(domainObject.useCapability('adapter'));
+            let persistable = openmct.objects.isPersistable(domainObject.id);
             console.log(persistable);
             // Only allow creatable types to be edited
             return domainObject && creatable && persistable;
