@@ -20,8 +20,8 @@
             </div>
             <span
                 class="l-browse-bar__object-name c-object-label__name"
-                :class="{ 'c-input-inline' : type.creatable}"
-                :contenteditable="type.creatable"
+                :class="{ 'c-input-inline' : isPersistable}"
+                :contenteditable="isPersistable"
                 @blur="updateName"
                 @keydown.enter.prevent
                 @keyup.enter.prevent="updateNameOnEnterKeyPress"
@@ -185,6 +185,14 @@ export default {
             const hash = this.openmct.router.getCurrentLocation().path;
 
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
+        },
+        type() {
+            const objectType = this.openmct.types.get(this.domainObject.type);
+            if (!objectType) {
+                return {};
+            }
+
+            return objectType.definition;
         },
         isPersistable() {
             return this.openmct.objects.isPersistable(this.domainObject);

@@ -40,9 +40,8 @@ define(
          * @implements {Action}
          * @constructor
          */
-        function PropertiesAction(dialogService, openmct, context) {
+        function PropertiesAction(dialogService, context) {
             this.domainObject = (context || {}).domainObject;
-            this.openmct = openmct;
             this.dialogService = dialogService;
         }
 
