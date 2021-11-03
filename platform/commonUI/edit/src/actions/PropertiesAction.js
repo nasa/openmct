@@ -82,16 +82,16 @@ define(
          */
         PropertiesAction.appliesTo = function (context, view, openmct) {
 
-            var domainObject = (context || {}).domainObject,
-                type = domainObject && domainObject.getCapability('type'),
-                creatable = type && type.hasFeature('creation'),
-                persistable = domainObject && domainObject.useCapability
-                    ? openmct.objects.isPersistable(domainObject.useCapability('adapter')) : false;
+            let domainObject = (context || {}).domainObject;
 
-            if (domainObject && domainObject.model && domainObject.model.locked) {
+            if (!domainObject || (domainObject.model && domainObject.model.locked)) {
                 return false;
             }
 
+            let type = domainObject.getCapability('type');
+            let creatable = type && type.hasFeature('creation');
+            let persistable = openmct.objects.isPersistable(domainObject.useCapability('adapter'));
+            console.log(persistable);
             // Only allow creatable types to be edited
             return domainObject && creatable && persistable;
         };
