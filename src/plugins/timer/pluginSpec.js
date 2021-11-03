@@ -65,6 +65,52 @@ describe("Timer plugin:", () => {
         });
     }
 
+    describe("should still work if it's in the old format", () => {
+        let timerViewProvider;
+        let timerView;
+        let timerViewObject;
+        let mutableTimerObject;
+        let timerObjectPath;
+        const relativeTimestamp = 1634774400000; // Oct 21 2021, 12:00 AM
+
+        beforeEach(async () => {
+            await setupTimer();
+
+            timerViewObject = {
+                identifier: {
+                    key: 'timer',
+                    namespace: 'test-namespace'
+                },
+                type: 'timer',
+                id: "test-object",
+                name: 'Timer',
+                timerFormat: 'short',
+                timestamp: relativeTimestamp,
+                timerState: 'paused',
+                pausedTime: relativeTimestamp
+            };
+
+            const applicableViews = openmct.objectViews.get(timerViewObject, [timerViewObject]);
+            timerViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'timer.view');
+
+            mutableTimerObject = await openmct.objects.getMutable(timerViewObject.identifier);
+
+            timerObjectPath = [mutableTimerObject];
+            timerView = timerViewProvider.view(mutableTimerObject, timerObjectPath);
+            timerView.show(child);
+
+            await Vue.nextTick();
+        });
+
+        it("should migrate old object properties to the configuration section", () => {
+            openmct.objects.applyGetInterceptors(timerViewObject.identifier, timerViewObject);
+            expect(timerViewObject.configuration.timerFormat).toBe('short');
+            expect(timerViewObject.configuration.timestamp).toBe(relativeTimestamp);
+            expect(timerViewObject.configuration.timerState).toBe('paused');
+            expect(timerViewObject.configuration.pausedTime).toBe(relativeTimestamp);
+        });
+    });
+
     describe("Timer view:", () => {
         let timerViewProvider;
         let timerView;
