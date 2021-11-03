@@ -135,7 +135,7 @@ define(
                 });
 
                 context.domainObject = compDomainObject;
-                ImportAsJSONAction.appliesTo(context, undefined, openmct)
+                ImportAsJSONAction.appliesTo(context, undefined, openmct);
 
                 expect(openmct.objects.isPersistable).toHaveBeenCalled();
             });
