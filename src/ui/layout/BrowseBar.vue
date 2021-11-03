@@ -186,13 +186,8 @@ export default {
 
             return hash.slice(0, hash.lastIndexOf('/' + objectKeyString));
         },
-        type() {
-            const objectType = this.openmct.types.get(this.domainObject.type);
-            if (!objectType) {
-                return {};
-            }
-
-            return objectType.definition;
+        isPersistable() {
+            return this.openmct.objects.isPersistable(this.domainObject);
         },
         isViewEditable() {
             let currentViewKey = this.currentView.key;

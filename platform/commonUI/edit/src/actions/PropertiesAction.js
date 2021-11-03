@@ -81,12 +81,12 @@ define(
          * This will ensure that a domain object is present in the
          * context.
          */
-        PropertiesAction.prototype.appliesTo = function (context) {
+        PropertiesAction.appliesTo = function (context, view, openmct) {
 
             var domainObject = (context || {}).domainObject,
                 type = domainObject && domainObject.getCapability('type'),
                 creatable = type && type.hasFeature('creation'),
-                persistable = domainObject && this.openmct.objects.isPersistable(domainObject.useCapability('adapter'));
+                persistable = domainObject && openmct.objects.isPersistable(domainObject.useCapability('adapter'));
 
             if (domainObject && domainObject.model && domainObject.model.locked) {
                 return false;

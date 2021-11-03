@@ -97,7 +97,7 @@ class ActionsAPI extends EventEmitter {
             if (actionDefinition.appliesTo === undefined) {
                 return true;
             } else {
-                return actionDefinition.appliesTo(objectPath, view);
+                return actionDefinition.appliesTo(objectPath, view, this.openmct);
             }
         });
 
