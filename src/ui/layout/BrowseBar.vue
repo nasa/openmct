@@ -195,7 +195,9 @@ export default {
             return objectType.definition;
         },
         isPersistable() {
-            return this.openmct.objects.isPersistable(this.domainObject);
+            let persistable = this.openmct.objects.isPersistable(this.domainObject);
+
+            return persistable;
         },
         isViewEditable() {
             let currentViewKey = this.currentView.key;
