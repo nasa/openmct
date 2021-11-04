@@ -87,7 +87,7 @@
             </template>
         </div>
 
-        <div v-if="isConditionWidget"
+        <div v-if="isConditionWidget && allowEditing"
              class="c-inspect-styles__elem c-inspect-styles__output-label-toggle"
         >
             <label class="c-toggle-switch">
@@ -99,6 +99,13 @@
                 <span class="c-toggle-switch__slider"></span>
                 <span class="c-toggle-switch__label">Use Condition Set output as label</span>
             </label>
+        </div>
+        <div v-if="isConditionWidget && !allowEditing"
+             class="c-inspect-styles__elem"
+        >
+            <span class="c-toggle-switch__label">Condition Set output as label:
+                <span v-if="useConditionSetOutputAsLabel"> Yes</span><span v-else> No</span>
+            </span>
         </div>
 
         <FontStyleEditor
@@ -203,7 +210,9 @@ export default {
             return this.isEditing && !this.locked;
         },
         isConditionWidget() {
-            return this.domainObject && this.domainObject.type === 'conditionWidget' && this.allowEditing;
+            const hasConditionWidgetObjects = this.domainObjectsById && Object.values(this.domainObjectsById).some((object) => object.type === 'conditionWidget');
+
+            return (hasConditionWidgetObjects || (this.domainObject && this.domainObject.type === 'conditionWidget'));
         },
         styleableFontItems() {
             return this.selection.filter(selectionPath => {
@@ -243,7 +252,7 @@ export default {
         this.previewAction = new PreviewAction(this.openmct);
         this.isMultipleSelection = this.selection.length > 1;
         this.getObjectsAndItemsFromSelection();
-        this.useConditionSetOutputAsLabel = this.domainObject && this.domainObject.configuration.useConditionSetOutputAsLabel;
+        this.useConditionSetOutputAsLabel = this.getConfigurationForLabel();
 
         if (!this.isMultipleSelection) {
             let objectStyles = this.getObjectStyles();
@@ -262,6 +271,12 @@ export default {
         this.stylesManager.on('styleSelected', this.applyStyleToSelection);
     },
     methods: {
+        getConfigurationForLabel() {
+            const childObjectUsesLabels = Object.values(this.domainObjectsById || {}).some((object) => object.configuration && object.configuration.useConditionSetOutputAsLabel);
+            const domainObjectUsesLabels = this.domainObject && this.domainObject.configuration && this.domainObject.configuration.useConditionSetOutputAsLabel;
+
+            return childObjectUsesLabels || domainObjectUsesLabels;
+        },
         getObjectStyles() {
             let objectStyles;
             if (this.domainObjectsById) {
@@ -715,7 +730,7 @@ export default {
                     } else {
                         objectStyle.styles.forEach((conditionalStyle, index) => {
                             let style = {};
-                            if (this.useConditionSetOutputAsLabel) {
+                            if (domainObject.configuration.useConditionSetOutputAsLabel) {
                                 style.output = conditionalStyle.style.output;
                             } else {
                                 style.output = '';
@@ -737,7 +752,7 @@ export default {
                     }
                 });
             } else {
-                if (this.useConditionSetOutputAsLabel === false) {
+                if (domainObject.configuration.useConditionSetOutputAsLabel !== true) {
                     let objectConditionStyle = JSON.parse(JSON.stringify(objectStyle));
                     objectConditionStyle.styles.forEach((conditionalStyle) => {
                         conditionalStyle.style.output = '';
@@ -760,8 +775,15 @@ export default {
             this.selectedConditionId = conditionId;
             this.getAndPersistStyles();
         },
-        persistLabelConfiguration(domainObject) {
-            this.openmct.objects.mutate(domainObject, 'configuration.useConditionSetOutputAsLabel', this.useConditionSetOutputAsLabel);
+        persistLabelConfiguration() {
+            if (this.domainObjectsById) {
+                Object.values(this.domainObjectsById).forEach((object) => {
+                    this.openmct.objects.mutate(object, 'configuration.useConditionSetOutputAsLabel', this.useConditionSetOutputAsLabel);
+                });
+            } else {
+                this.openmct.objects.mutate(this.domainObject, 'configuration.useConditionSetOutputAsLabel', this.useConditionSetOutputAsLabel);
+            }
+
             this.getAndPersistStyles();
         },
         persist(domainObject, style) {
@@ -887,7 +909,7 @@ export default {
         },
         updateConditionSetOutputLabel(event) {
             this.useConditionSetOutputAsLabel = event.target.checked === true;
-            this.persistLabelConfiguration(this.domainObject);
+            this.persistLabelConfiguration();
         }
     }
 };
