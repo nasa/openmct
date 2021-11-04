@@ -66,6 +66,7 @@ describe('the plugin', () => {
         openmct.install(new CouchPlugin(options));
 
         openmct.types.addType('notebook', {creatable: true});
+        openmct.setAssetPath('/base');
 
         openmct.on('start', done);
         openmct.startHeadless();
