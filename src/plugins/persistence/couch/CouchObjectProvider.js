@@ -390,7 +390,8 @@ class CouchObjectProvider {
      * @private
      */
     observeObjectChanges() {
-        const sseURL = new URL(`${this.url}/_changes`);
+        const sseChangesPath = `${this.url}/_changes`;
+        const sseURL = new URL(sseChangesPath);
         sseURL.searchParams.append('feed', 'eventsource');
         sseURL.searchParams.append('style', 'main_only');
         sseURL.searchParams.append('heartbeat', HEARTBEAT);
