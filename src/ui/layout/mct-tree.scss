@@ -107,8 +107,8 @@
         }
         &.is-new {
             animation-name: animTemporaryHighlight;
-            animation-timing-function: ease-in-out;
-            animation-duration: 5s;
+            animation-timing-function: ease-out;
+            animation-duration: 3s;
             animation-iteration-count: 1;
         }
         &.is-context-clicked {
@@ -307,6 +307,6 @@
 
 @keyframes animTemporaryHighlight {
     from { background: transparent; }
-    50% { background: #f2e68e; }
+    30% { background: $colorItemTreeNewNode; }
     100% { background: transparent; }
-  }
+}
