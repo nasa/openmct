@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import ColorSwatch from "@/plugins/plot/ColorSwatch.vue";
+import ColorSwatch from '@/ui/color/ColorSwatch.vue';
 
 export default {
     components: {
