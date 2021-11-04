@@ -65,7 +65,7 @@ export default class Condition extends EventEmitter {
         }
 
         this.trigger = conditionConfiguration.configuration.trigger;
-        this.description = '';
+        this.summary = '';
     }
 
     updateResult(datum) {
@@ -134,7 +134,6 @@ export default class Condition extends EventEmitter {
         criterionConfigurations.forEach((criterionConfiguration) => {
             this.addCriterion(criterionConfiguration);
         });
-        this.updateDescription();
     }
 
     updateCriteria(criterionConfigurations) {
@@ -146,7 +145,6 @@ export default class Condition extends EventEmitter {
         this.criteria.forEach((criterion) => {
             criterion.updateTelemetryObjects(this.conditionManager.telemetryObjects);
         });
-        this.updateDescription();
     }
 
     /**
@@ -200,7 +198,6 @@ export default class Condition extends EventEmitter {
             criterion.off('criterionUpdated', (obj) => this.handleCriterionUpdated(obj));
             criterion.off('telemetryIsStale', (obj) => this.handleStaleCriterion(obj));
             this.criteria.splice(found.index, 1, newCriterion);
-            this.updateDescription();
         }
     }
 
@@ -216,7 +213,6 @@ export default class Condition extends EventEmitter {
             });
             criterion.destroy();
             this.criteria.splice(found.index, 1);
-            this.updateDescription();
 
             return true;
         }
@@ -228,7 +224,6 @@ export default class Condition extends EventEmitter {
         let found = this.findCriterion(criterion.id);
         if (found) {
             this.criteria[found.index] = criterion.data;
-            this.updateDescription();
         }
     }
 
@@ -254,8 +249,7 @@ export default class Condition extends EventEmitter {
 
             description = `${description} ${criterion.getDescription()} ${(index < this.criteria.length - 1) ? triggerDescription.conjunction : ''}`;
         });
-        this.description = description;
-        this.conditionManager.updateConditionDescription(this);
+        this.summary = description;
     }
 
     getTriggerDescription() {

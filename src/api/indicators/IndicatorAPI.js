@@ -31,14 +31,22 @@ define([
         this.indicatorObjects = [];
     }
 
+    IndicatorAPI.prototype.getIndicatorObjectsByPriority = function () {
+        const sortedIndicators = this.indicatorObjects.sort((a, b) => b.priority - a.priority);
+
+        return sortedIndicators;
+    };
+
     IndicatorAPI.prototype.simpleIndicator = function () {
         return new SimpleIndicator(this.openmct);
     };
 
     /**
      * Accepts an indicator object, which is a simple object
-     * with a single attribute, 'element' which has an HTMLElement
-     * as its value.
+     * with a two attributes: 'element' which has an HTMLElement
+     * as its value, and 'priority' with an integer that specifies its order in the layout.
+     * The lower the priority, the further to the right the element is placed.
+     * If undefined, the priority will be assigned -1.
      *
      * We provide .simpleIndicator() as a convenience function
      * which will create a default Open MCT indicator that can
@@ -47,7 +55,7 @@ define([
      * and dynamic behavior.
      *
      * Eg.
-     * var myIndicator = openmct.indicators.simpleIndicator();
+     * const myIndicator = openmct.indicators.simpleIndicator();
      * openmct.indicators.add(myIndicator);
      *
      * myIndicator.text("Hello World!");
@@ -55,6 +63,10 @@ define([
      *
      */
     IndicatorAPI.prototype.add = function (indicator) {
+        if (!indicator.priority) {
+            indicator.priority = this.openmct.priority.DEFAULT;
+        }
+
         this.indicatorObjects.push(indicator);
     };
 

@@ -25,7 +25,7 @@
 const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['progress', 'html', 'junit'];
+const reporters = ['spec', 'junit'];
 
 if (coverageEnabled) {
     reporters.push('coverage-istanbul');
@@ -60,7 +60,7 @@ module.exports = (config) => {
         client: {
             jasmine: {
                 random: false,
-                timeoutInterval: 30000
+                timeoutInterval: 5000
             }
         },
         customLaunchers: {
@@ -78,32 +78,36 @@ module.exports = (config) => {
         logLevel: config.LOG_INFO,
         autoWatch: true,
         // HTML test reporting.
-        htmlReporter: {
-            outputDir: "dist/reports/tests",
-            preserveDescribeNesting: true,
-            foldAll: false
-        },
+        // htmlReporter: {
+        //    outputDir: "dist/reports/tests",
+        //    preserveDescribeNesting: true,
+        //    foldAll: false
+        // },
         junitReporter: {
             outputDir: "dist/reports/tests",
             outputFile: "test-results.xml",
             useBrowserName: false
-        },
-        browserConsoleLogOptions: {
-            level: "error",
-            format: "%b %T: %m",
-            terminal: true
         },
         coverageIstanbulReporter: {
             fixWebpackSourcePaths: true,
             dir: process.env.CIRCLE_ARTIFACTS
                 ? process.env.CIRCLE_ARTIFACTS + '/coverage'
                 : "dist/reports/coverage",
-            reports: ['html', 'lcovonly', 'text-summary'],
+            reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
                     lines: 66
                 }
             }
+        },
+        specReporter: {
+            maxLogLines: 5,
+            suppressErrorSummary: true,
+            suppressFailed: false,
+            suppressPassed: false,
+            suppressSkipped: true,
+            showSpecTiming: true,
+            failFast: false
         },
         preprocessors: {
             'indexTest.js': ['webpack', 'sourcemap']

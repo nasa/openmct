@@ -81,14 +81,8 @@ define([
                     return models;
                 }
 
-                return this.apiFetch(missingIds)
-                    .then(function (apiResults) {
-                        Object.keys(apiResults).forEach(function (k) {
-                            models[k] = apiResults[k];
-                        });
-
-                        return models;
-                    });
+                //Temporary fix for missing models - don't retry using this.apiFetch
+                return models;
             }.bind(this));
     };
 

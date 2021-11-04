@@ -148,12 +148,18 @@ describe("Notebook plugin:", () => {
                 'observe'
             ]);
 
+            openmct.editor = {};
+            openmct.editor.isEditing = () => false;
+
             const applicableViews = openmct.objectViews.get(notebookViewObject, [notebookViewObject]);
             notebookViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'notebook-vue');
 
             testObjectProvider.get.and.returnValue(Promise.resolve(notebookViewObject));
+            testObjectProvider.create.and.returnValue(Promise.resolve(notebookViewObject));
             openmct.objects.addProvider('test-namespace', testObjectProvider);
             testObjectProvider.observe.and.returnValue(() => {});
+            testObjectProvider.create.and.returnValue(Promise.resolve(true));
+            testObjectProvider.update.and.returnValue(Promise.resolve(true));
 
             return openmct.objects.getMutable(notebookViewObject.identifier).then((mutableObject) => {
                 mutableNotebookObject = mutableObject;

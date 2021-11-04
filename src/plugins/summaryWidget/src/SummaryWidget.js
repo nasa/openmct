@@ -7,7 +7,8 @@ define([
     './eventHelpers',
     'objectUtils',
     'lodash',
-    'zepto'
+    'zepto',
+    '@braintree/sanitize-url'
 ], function (
     widgetTemplate,
     Rule,
@@ -17,7 +18,8 @@ define([
     eventHelpers,
     objectUtils,
     _,
-    $
+    $,
+    urlSanitizeLib
 ) {
 
     //default css configuration for new rules
@@ -114,7 +116,7 @@ define([
      */
     SummaryWidget.prototype.addHyperlink = function (url, openNewTab) {
         if (url) {
-            this.widgetButton.attr('href', url);
+            this.widgetButton.attr('href', urlSanitizeLib.sanitizeUrl(url));
         } else {
             this.widgetButton.removeAttr('href');
         }
