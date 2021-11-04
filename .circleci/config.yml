@@ -13,24 +13,27 @@ jobs:
         type: string
       browser:
         type: string
-      always-pass:
-        type: boolean  
     executor: linux
     steps:
       - checkout
       - restore_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
+          install-npm: false
           node-version: << parameters.node-version >>
-      - node/install-packages:
-          override-ci-command: npm install
-      - when: # Just to save time until caching saves the browser bin
+      - run: npm install
+      - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
-                version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
-      - when: # Just to save time until caching saves the browser bin
+                version: "91.2.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
+      - when:
+          condition:
+            equal: [ "FirefoxHeadless", <<parameters.browser>> ]
+          steps:
+            - browser-tools/install-firefox
+      - when:
           condition:
             equal: [ "ChromeHeadless", <<parameters.browser>> ]
           steps:
@@ -42,46 +45,53 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.always-pass>>
-      - store_test_results:
-          path: dist/reports/tests/
-      - store_artifacts:
-          path: dist/reports/
+      - when:
+          condition:
+            equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
+          steps:
+            - run: npm run lint
+      - when:
+          condition: << parameters.browser >> #Truthy evaluation to only run when browser is specified
+          steps:
+            - run: npm run test:coverage -- --browsers=<<parameters.browser>>
+            - store_test_results:
+                path: dist/reports/tests/
+            - store_artifacts:
+                path: dist/reports/
 workflows:
   matrix-tests:
     jobs:
       - test:
+          post-steps:
+            - run:
+                command:
+                  curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov              
           name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
-          always-pass: false
       - test:
-          name: node12-firefoxESR-build-only
+          name: node12-build-lint
           node-version: lts/erbium
-          browser: FirefoxESR
-          always-pass: true
-      - test:
-          name: node14-chrome-build-only
+          browser: "" #Skip unit tests
+      - test: 
+          name: node14-build-lint
           node-version: lts/fermium
-          browser: ChromeHeadless
-          always-pass: true
+          browser: "" #Skip unit tests
+
   nightly:
     jobs:
       - test:
           name: node10-chrome-nightly
           node-version: lts/dubnium
           browser: ChromeHeadless
-          always-pass: false
       - test:
           name: node12-firefoxESR-nightly
           node-version: lts/erbium
           browser: FirefoxESR
-          always-pass: false
       - test:
-          name: node14-chrome-nightly
+          name: node14-firefox-nightly
           node-version: lts/fermium
-          browser: ChromeHeadless
-          always-pass: false
+          browser: FirefoxHeadless
     triggers:
       - schedule:
           cron: "0 0 * * *"

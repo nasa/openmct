@@ -57,7 +57,7 @@
         </div>
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused,'stale':false }"
+             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false }"
              @click="expand"
         >
             <div class="image-wrapper"
@@ -84,18 +84,18 @@
                 />
             </div>
         </div>
-        <div class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-buttons">
-            <button class="c-nav c-nav--prev"
-                    title="Previous image"
-                    :disabled="isPrevDisabled"
-                    @click="prevImage()"
-            ></button>
-            <button class="c-nav c-nav--next"
-                    title="Next image"
-                    :disabled="isNextDisabled"
-                    @click="nextImage()"
-            ></button>
-        </div>
+
+        <button class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--prev"
+                title="Previous image"
+                :disabled="isPrevDisabled"
+                @click="prevImage()"
+        ></button>
+
+        <button class="c-local-controls c-local-controls--show-on-hover c-imagery__prev-next-button c-nav c-nav--next"
+                title="Next image"
+                :disabled="isNextDisabled"
+                @click="nextImage()"
+        ></button>
 
         <div class="c-imagery__control-bar">
             <div class="c-imagery__time">
@@ -122,6 +122,7 @@
             </div>
             <div class="h-local-controls">
                 <button
+                    v-if="!isFixed"
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': isPaused}"
                     @click="paused(!isPaused, 'button')"
@@ -131,7 +132,7 @@
     </div>
     <div class="c-imagery__thumbs-wrapper"
          :class="[
-             { 'is-paused': isPaused },
+             { 'is-paused': isPaused && !isFixed },
              { 'is-autoscroll-off': !resizingWindow && !autoScroll && !isPaused }
          ]"
     >
@@ -199,6 +200,14 @@ export default {
     },
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
+    props: {
+        indexForFocusedImage: {
+            type: Number,
+            default() {
+                return undefined;
+            }
+        }
+    },
     data() {
         let timeSystem = this.openmct.time.timeSystem();
         this.metadata = {};
@@ -226,7 +235,8 @@ export default {
             imageContainerWidth: undefined,
             imageContainerHeight: undefined,
             lockCompass: true,
-            resizingWindow: false
+            resizingWindow: false,
+            timeContext: undefined
         };
     },
     computed: {
@@ -258,7 +268,14 @@ export default {
             return age < cutoff && !this.refreshCSS;
         },
         canTrackDuration() {
-            return this.openmct.time.clock() && this.timeSystem.isUTCBased;
+            let hasClock;
+            if (this.timeContext) {
+                hasClock = this.timeContext.clock();
+            } else {
+                hasClock = this.openmct.time.clock();
+            }
+
+            return hasClock && this.timeSystem.isUTCBased;
         },
         isNextDisabled() {
             let disabled = false;
@@ -379,11 +396,28 @@ export default {
             }
 
             return sizedImageDimensions;
+        },
+        isFixed() {
+            let clock;
+            if (this.timeContext) {
+                clock = this.timeContext.clock();
+            } else {
+                clock = this.openmct.time.clock();
+            }
+
+            return clock === undefined;
         }
     },
     watch: {
         imageHistorySize(newSize, oldSize) {
-            this.setFocusedImage(newSize - 1, false);
+            let imageIndex;
+            if (this.indexForFocusedImage !== undefined) {
+                imageIndex = this.initFocusedImageIndex;
+            } else {
+                imageIndex = newSize - 1;
+            }
+
+            this.setFocusedImage(imageIndex, false);
             this.scrollToRight();
         },
         focusedImageIndex() {
@@ -394,9 +428,14 @@ export default {
         }
     },
     async mounted() {
-        //listen
-        this.openmct.time.on('timeSystem', this.trackDuration);
-        this.openmct.time.on('clock', this.trackDuration);
+        //We only need to use this till the user focuses an image manually
+        if (this.indexForFocusedImage !== undefined) {
+            this.initFocusedImageIndex = this.indexForFocusedImage;
+            this.isPaused = true;
+        }
+
+        this.setTimeContext = this.setTimeContext.bind(this);
+        this.setTimeContext();
 
         // related telemetry keys
         this.spacecraftPositionKeys = ['positionX', 'positionY', 'positionZ'];
@@ -432,8 +471,7 @@ export default {
 
     },
     beforeDestroy() {
-        this.openmct.time.off('timeSystem', this.trackDuration);
-        this.openmct.time.off('clock', this.trackDuration);
+        this.stopFollowingTimeContext();
 
         if (this.thumbWrapperResizeObserver) {
             this.thumbWrapperResizeObserver.disconnect();
@@ -457,6 +495,21 @@ export default {
         }
     },
     methods: {
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            //listen
+            this.timeContext.on('timeSystem', this.trackDuration);
+            this.timeContext.on('clock', this.trackDuration);
+            this.timeContext.on("timeContext", this.setTimeContext);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off("timeSystem", this.trackDuration);
+                this.timeContext.off("clock", this.trackDuration);
+                this.timeContext.off("timeContext", this.setTimeContext);
+            }
+        },
         expand() {
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
@@ -618,7 +671,12 @@ export default {
             });
         },
         setFocusedImage(index, thumbnailClick = false) {
-            if (this.isPaused && !thumbnailClick) {
+            if (thumbnailClick) {
+                //We use the props till the user changes what they want to see
+                this.initFocusedImageIndex = undefined;
+            }
+
+            if (this.isPaused && !thumbnailClick && this.initFocusedImageIndex === undefined) {
                 this.nextImageIndex = index;
                 //this could happen if bounds changes
                 if (this.focusedImageIndex > this.imageHistory.length - 1) {
@@ -649,8 +707,12 @@ export default {
             window.clearInterval(this.durationTracker);
         },
         updateDuration() {
-            let currentTime = this.openmct.time.clock() && this.openmct.time.clock().currentValue();
-            this.numericDuration = currentTime - this.parsedSelectedTime;
+            let currentTime = this.timeContext.clock() && this.timeContext.clock().currentValue();
+            if (currentTime === undefined) {
+                this.numericDuration = currentTime;
+            } else {
+                this.numericDuration = currentTime - this.parsedSelectedTime;
+            }
         },
         resetAgeCSS() {
             this.refreshCSS = true;

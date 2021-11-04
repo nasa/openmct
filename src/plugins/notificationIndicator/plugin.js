@@ -36,7 +36,8 @@ export default function plugin() {
 
         let indicator = {
             key: 'notifications-indicator',
-            element: component.$mount().$el
+            element: component.$mount().$el,
+            priority: openmct.priority.DEFAULT
         };
 
         openmct.indicators.add(indicator);

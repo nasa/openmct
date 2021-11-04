@@ -192,7 +192,11 @@ export default {
             this.telemetry.forEach((telemetryObject) => {
                 const id = this.openmct.objects.makeKeyString(telemetryObject.identifier);
                 let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
+                if (telemetryMetadata) {
+                    this.telemetryMetadataOptions[id] = telemetryMetadata.values().slice();
+                } else {
+                    this.telemetryMetadataOptions[id] = [];
+                }
             });
         },
         addTestInput(testInput) {

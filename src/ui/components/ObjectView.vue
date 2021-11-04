@@ -126,6 +126,11 @@ export default {
                     this.releaseEditModeHandler();
                     delete this.releaseEditModeHandler;
                 }
+
+                if (this.styleRuleManager) {
+                    this.styleRuleManager.destroy();
+                    delete this.styleRuleManager;
+                }
             }
 
             delete this.viewContainer;
