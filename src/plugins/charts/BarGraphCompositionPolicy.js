@@ -23,10 +23,10 @@
 import { BAR_GRAPH_KEY } from './BarGraphConstants';
 
 export default function BarGraphCompositionPolicy(openmct) {
-    function hasRange(metadata) {
+    function hasNonEnumRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
 
-        return rangeValues.length > 0;
+        return rangeValues && rangeValues.length > 0 && rangeValues[0].format !== 'enum';
     }
 
     function hasBarGraphTelemetry(domainObject) {
@@ -36,7 +36,7 @@ export default function BarGraphCompositionPolicy(openmct) {
 
         let metadata = openmct.telemetry.getMetadata(domainObject);
 
-        return metadata.values().length > 0 && hasRange(metadata);
+        return metadata.values().length > 0 && hasNonEnumRange(metadata);
     }
 
     return {
