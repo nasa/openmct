@@ -10,13 +10,14 @@ export default class LADTableSet extends EventEmitter {
         this.openmct = openmct;
         this.tables = {};
         this.headers = {};
-
         this.composition = undefined;
         this.telemetryObjects = {};
+
+        this.unloadComposition = undefined;
     }
 
     initialize() {
-        this.loadComposition();
+        this.unloadComposition = this.loadComposition();
     }
 
     loadComposition() {
@@ -31,26 +32,39 @@ export default class LADTableSet extends EventEmitter {
 
                 this.emit('loaded');
             });
+
+            return function unloadComposition() {
+                if (this.composition !== undefined) {
+                    this.composition.off('add', this.addLADTable);
+                    this.composition.off('remove', this.removeLADTable);
+                    delete this.composition;
+                }
+            }.bind(this);
         }
     }
 
     addLADTable(domainObject) {
         const keyString = this.openmct.objects.makeKeyString(domainObject.identifier);
+
         this.tables[keyString] = new LADTable(domainObject, this.openmct);
 
         this.tables[keyString].once('loaded', () => {
             this.addHeaders(this.tables[keyString]);
             this.addTelemetryObjects(this.tables[keyString]);
+
         });
 
-        this.tables[keyString].initialize();
         this.emit('table-added', this.tables[keyString]);
     }
+
     removeLADTable(identifier) {
-        let key = identifier.key;
-        delete this.tables[key];
+        const keyString = this.openmct.objects.makeKeyString(identifier);
+
+        delete this.tables[keyString];
+
         this.emit('table-removed', identifier);
     }
+
     addTelemetryObjects(ladTable) {
         let telemetryObjects = ladTable.telemetryObjects;
         for (let key in telemetryObjects) {
@@ -76,9 +90,14 @@ export default class LADTableSet extends EventEmitter {
             }
         }
     }
+
     addHeaders(ladTable) {
         let headers = ladTable.headers;
         Object.assign(this.headers, headers);
         this.emit('headers-added');
+    }
+
+    destroy() {
+        this.unloadComposition();
     }
 }

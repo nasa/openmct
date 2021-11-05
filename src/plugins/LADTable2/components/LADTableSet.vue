@@ -32,24 +32,23 @@
     </thead>
     <tbody>
         <template
-            v-for="ladTable in ladTableObjects"
+            v-for="tableKey in tables"
         >
             <tr
-                :key="ladTable.keyString"
+                :key="tableKey"
                 class="c-table__group-header js-lad-table-set__table-headers"
             >
                 <td colspan="10">
-                    {{ ladTable.domainObject.name }}
+                    {{ getTableName(tableKey) }}
                 </td>
             </tr>
-            <lad-row
-                v-for="ladRow in ladTable.tableRows.getRows()"
-                :key="ladRow.objectKeyString"
-                :lad-row="ladRow"
-                :telemetry-object="tableSet.telemetryObjects[ladTable.keyString][ladRow.objectKeyString]"
+            <LadRow
+                v-for="row in telemetry[tableKey]"
+                :key="`${tableKey}${row}`"
+                :lad-row="ladRowData[row]"
                 :headers="headers"
                 :has-units="hasUnits"
-                :path-to-table="getObjectPath(ladTable)"
+                :path-to-table="getObjectPath(tableKey)"
                 @rowContextClick="updateViewContext"
             />
         </template>
@@ -73,27 +72,38 @@ export default {
     },
     data() {
         return {
+            updatingView: false,
             headers: {},
-            ladTableObjects: [],
+            ladTables: [],
+            ladTableTelemetry: {},
             ladRows: {},
             compositions: [],
             viewContext: {},
-            hasUnits: false
+            hasUnits: false,
+            tables: [],
+            telemetry: {},
+            ladRowData: {}
         };
     },
     computed: {
     },
     mounted() {
+        setInterval(() => {
+            this.updateVisibleRows();
+        }, 5000);
+        this.listeners = {};
+
         this.tableSet.on('headers-added', this.updateHeaders);
-        this.tableSet.on('table-added', this.addLadTable);
-        this.tableSet.on('table-removed', this.removeLadTable);
-        this.tableSet.on('telemetry-object-added', this.checkUnit);
+        this.tableSet.on('table-added', this.addTable);
+        this.tableSet.on('table-removed', this.removeTable);
+
+        // this.tableSet.on('telemetry-object-added', this.checkUnit);
         this.tableSet.initialize();
     },
     destroyed() {
         this.tableSet.off('headers-added', this.updateHeaders);
-        this.tableSet.off('table-added', this.addLadTable);
-        this.tableSet.off('table-removed', this.removeLadTable);
+        this.tableSet.off('table-added', this.addTable);
+        this.tableSet.off('table-removed', this.removeTable);
     },
     methods: {
         updateViewContext(rowContext) {
@@ -105,13 +115,33 @@ export default {
         updateHeaders() {
             this.headers = this.tableSet.headers;
         },
-        getObjectPath(ladTable) {
-            return [ladTable.domainObject, ...this.objectPath];
+        getObjectPath(key) {
+            const table = this.tableSet.tables[key];
+
+            return [table.domainObject, ...this.objectPath];
         },
-        addLadTable(ladTable) {
-            this.ladTableObjects.push(ladTable);
+        getTelemetryObject(ladTableKey, telemetryKey) {
+            const ladTable = this.tableSet.tables[ladTableKey];
+            const telemetry = ladTable.telemetryObjects[telemetryKey];
+
+            return telemetry;
         },
-        removeLadTable(identifier) {
+        getTableName(key) {
+            return this.tableSet.tables[key].domainObject.name;
+        },
+        addTable(ladTable) {
+            // const ladTableObject = {
+            //     key: ladTable.keyString,
+            //     name: ladTable.domainObject.name
+            // };
+
+            ladTable.on('lad-object-added', this.addTelemetry.bind(this, ladTable.keyString));
+            ladTable.tableRows.on('add', this.addRow);
+            ladTable.initialize();
+            // this.ladTables.push(ladTable.keyString);
+            this.tables.push(ladTable.keyString);
+        },
+        removeTable(identifier) {
             let idx;
             for (let i in this.ladTableObjects) {
                 if (this.ladTableObjects[i].keyString === identifier.key) {
@@ -146,6 +176,32 @@ export default {
             }
 
             return this.hasUnits = false;
+        },
+        addTelemetry(tableKey, telemetryObject) {
+            const telemetryKey = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+
+            if (this.telemetry[tableKey] === undefined) {
+                this.$set(this.telemetry, tableKey, []);
+            }
+
+            this.telemetry[tableKey].push(telemetryKey);
+        },
+        addRow(telemetry) {
+            this.$set(this.ladRowData, telemetry.objectKeyString, telemetry);
+        },
+        updateVisibleRows() {
+            if (!this.updatingView) {
+                this.updatingView = true;
+                requestAnimationFrame(() => {
+                    Object.entries(this.tableSet.tables).forEach(([key, table]) => {
+                        const rows = table.tableRows.getRows();
+
+                        this.$set(this.ladTableTelemetry, key, rows);
+                    });
+
+                    this.updatingView = false;
+                });
+            }
         }
     }
 };

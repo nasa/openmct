@@ -44,7 +44,9 @@ export default class LADTable extends TelemetryTable {
     addTelemetryObject(telemetryObject) {
         super.addTelemetryObject(telemetryObject);
         this.addDummyRowForObject(telemetryObject);
+        this.emit('lad-object-added', telemetryObject);
     }
+
     addDummyRowForObject(object) {
         let objectKeyString = this.openmct.objects.makeKeyString(object.identifier);
         let columns = this.getColumnMapForObject(objectKeyString);
@@ -52,6 +54,7 @@ export default class LADTable extends TelemetryTable {
         this.tableRows.addOne(dummyRow);
         this.headers = this.configuration.getVisibleHeaders();
     }
+
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
         return (telemetry) => {
             //Check that telemetry object has not been removed since telemetry was requested.
@@ -70,6 +73,7 @@ export default class LADTable extends TelemetryTable {
             }
         };
     }
+
     buildOptionsFromConfiguration(telemetryObject) {
         let LADOptions = {
             strategy: 'latest',
@@ -79,6 +83,7 @@ export default class LADTable extends TelemetryTable {
 
         return options;
     }
+
     createTableRowCollections() {
         // need change: can this part be refactored by using super?
         // split the original method
