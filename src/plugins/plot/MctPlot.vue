@@ -558,6 +558,7 @@ export default {
             this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
             this.plotContainerResizeObserver = new ResizeObserver(this.handleWindowResize);
             this.plotContainerResizeObserver.observe(this.$parent.$refs.plotWrapper);
+            // this.plotContainerResizeObserver.observe(this.$refs.chartContainer);
 
             // Setup canvas etc.
             this.xScale = new LinearScale(this.config.xAxis.get('displayRange'));
@@ -1074,6 +1075,7 @@ export default {
         handleWindowResize() {
             if (this.$parent.$refs.plotWrapper
                 && (this.offsetWidth !== this.$parent.$refs.plotWrapper.offsetWidth)) {
+                console.log(this.offsetWidth, this.$parent.$refs.plotWrapper.offsetWidth);
                 this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.config.series.models.forEach(this.loadSeriesData, this);
             }
