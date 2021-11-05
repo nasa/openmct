@@ -1,10 +1,7 @@
 .c-timeline-holder {
-    @include abs();
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
+    //TODO: Charles please add a fix for scroll here
+}
 
-    > * + * {
-        margin-top: $interiorMargin;
-    }
+.c-timeline__objects {
+    display: contents;
 }
