@@ -51,7 +51,6 @@ export default class LADTableSet extends EventEmitter {
         this.tables[keyString].once('loaded', () => {
             this.addHeaders(this.tables[keyString]);
             this.addTelemetryObjects(this.tables[keyString]);
-
         });
 
         this.emit('table-added', this.tables[keyString]);

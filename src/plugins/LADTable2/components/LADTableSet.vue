@@ -43,9 +43,10 @@
                 </td>
             </tr>
             <LadRow
-                v-for="row in telemetry[tableKey]"
-                :key="`${tableKey}${row}`"
-                :lad-row="ladRowData[row]"
+                v-for="telemetryKey in telemetry[tableKey]"
+                :key="`${tableKey}${telemetryKey}`"
+                :row="ladRowData[telemetryKey]"
+                :telemetry-object="getTelemetryObject(tableKey, telemetryKey)"
                 :headers="headers"
                 :has-units="hasUnits"
                 :path-to-table="getObjectPath(tableKey)"
@@ -187,7 +188,9 @@ export default {
             this.telemetry[tableKey].push(telemetryKey);
         },
         addRow(telemetry) {
-            this.$set(this.ladRowData, telemetry.objectKeyString, telemetry);
+            const ladTelemetry = telemetry[0];
+
+            this.$set(this.ladRowData, ladTelemetry.objectKeyString, ladTelemetry);
         },
         updateVisibleRows() {
             if (!this.updatingView) {
