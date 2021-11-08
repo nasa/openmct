@@ -160,7 +160,9 @@ export default {
         this.status = this.openmct.status.get(this.domainObject.identifier);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         const provider = this.openmct.objectViews.get(this.domainObject, this.objectPath)[0];
-        this.$refs.objectView.show(this.domainObject, provider.key, false, this.objectPath);
+        if (provider) {
+            this.$refs.objectView.show(this.domainObject, provider.key, false, this.objectPath);
+        }
     },
     beforeDestroy() {
         this.removeStatusListener();
@@ -193,8 +195,10 @@ export default {
         },
         showMenuItems(event) {
             const sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
-            const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, this.actionCollection.objectPath, this.actionCollection.view);
-            this.openmct.menus.showMenu(event.x, event.y, menuItems);
+            if (sortedActions.length) {
+                const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, this.actionCollection.objectPath, this.actionCollection.view);
+                this.openmct.menus.showMenu(event.x, event.y, menuItems);
+            }
         },
         setStatus(status) {
             this.status = status;

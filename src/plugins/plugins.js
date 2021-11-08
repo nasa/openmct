@@ -26,6 +26,7 @@ define([
     './remoteClock/plugin',
     './localTimeSystem/plugin',
     './ISOTimeFormat/plugin',
+    './myItems/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -36,6 +37,7 @@ define([
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
     './plot/plugin',
+    './charts/plugin',
     './telemetryTable/plugin',
     './staticRootPlugin/plugin',
     './notebook/plugin',
@@ -77,6 +79,7 @@ define([
     RemoteClock,
     LocalTimeSystem,
     ISOTimeFormat,
+    MyItems,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -87,6 +90,7 @@ define([
     URLIndicatorPlugin,
     TelemetryMean,
     PlotPlugin,
+    ChartPlugin,
     TelemetryTablePlugin,
     StaticRootPlugin,
     Notebook,
@@ -125,7 +129,6 @@ define([
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
-        MyItems: 'platform/features/my-items',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -140,6 +143,8 @@ define([
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
+
+    plugins.MyItems = MyItems.default;
 
     plugins.ImportExport = ImportExport;
 
@@ -186,9 +191,10 @@ define([
         return GeneratorPlugin;
     };
 
-    plugins.ExampleImagery = ExampleImagery;
+    plugins.ExampleImagery = ExampleImagery.default;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
+    plugins.Chart = ChartPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
 
     plugins.SummaryWidget = SummaryWidget;

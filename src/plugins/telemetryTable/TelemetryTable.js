@@ -60,18 +60,17 @@ define([
             this.addTelemetryObject = this.addTelemetryObject.bind(this);
             this.removeTelemetryObject = this.removeTelemetryObject.bind(this);
             this.removeTelemetryCollection = this.removeTelemetryCollection.bind(this);
+            this.incrementOutstandingRequests = this.incrementOutstandingRequests.bind(this);
+            this.decrementOutstandingRequests = this.decrementOutstandingRequests.bind(this);
             this.resetRowsFromAllData = this.resetRowsFromAllData.bind(this);
             this.isTelemetryObject = this.isTelemetryObject.bind(this);
-            this.refreshData = this.refreshData.bind(this);
             this.updateFilters = this.updateFilters.bind(this);
+            this.clearData = this.clearData.bind(this);
             this.buildOptionsFromConfiguration = this.buildOptionsFromConfiguration.bind(this);
 
             this.filterObserver = undefined;
 
             this.createTableRowCollections();
-
-            openmct.time.on('bounds', this.refreshData);
-            openmct.time.on('timeSystem', this.refreshData);
         }
 
         /**
@@ -141,8 +140,6 @@ define([
             let columnMap = this.getColumnMapForObject(keyString);
             let limitEvaluator = this.openmct.telemetry.limitEvaluator(telemetryObject);
 
-            this.incrementOutstandingRequests();
-
             const telemetryProcessor = this.getTelemetryProcessor(keyString, columnMap, limitEvaluator);
             const telemetryRemover = this.getTelemetryRemover();
 
@@ -151,12 +148,12 @@ define([
             this.telemetryCollections[keyString] = this.openmct.telemetry
                 .requestCollection(telemetryObject, requestOptions);
 
+            this.telemetryCollections[keyString].on('requestStarted', this.incrementOutstandingRequests);
+            this.telemetryCollections[keyString].on('requestEnded', this.decrementOutstandingRequests);
             this.telemetryCollections[keyString].on('remove', telemetryRemover);
             this.telemetryCollections[keyString].on('add', telemetryProcessor);
-            this.telemetryCollections[keyString].on('clear', this.tableRows.clear);
+            this.telemetryCollections[keyString].on('clear', this.clearData);
             this.telemetryCollections[keyString].load();
-
-            this.decrementOutstandingRequests();
 
             this.telemetryObjects[keyString] = {
                 telemetryObject,
@@ -268,17 +265,6 @@ define([
             this.emit('object-removed', objectIdentifier);
         }
 
-        refreshData(bounds, isTick) {
-            if (!isTick && this.tableRows.outstandingRequests === 0) {
-                this.tableRows.clear();
-                this.tableRows.sortBy({
-                    key: this.openmct.time.timeSystem().key,
-                    direction: 'asc'
-                });
-                this.tableRows.resubscribe();
-            }
-        }
-
         clearData() {
             this.tableRows.clear();
             this.emit('refresh');
@@ -377,9 +363,6 @@ define([
 
             let keystrings = Object.keys(this.telemetryCollections);
             keystrings.forEach(this.removeTelemetryCollection);
-
-            this.openmct.time.off('bounds', this.refreshData);
-            this.openmct.time.off('timeSystem', this.refreshData);
 
             if (this.filterObserver) {
                 this.filterObserver();

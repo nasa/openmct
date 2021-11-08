@@ -131,7 +131,8 @@ export default {
             objects.forEach(object => this.addColumnsForObject(object, false));
         },
         addColumnsForObject(telemetryObject) {
-            let metadataValues = this.openmct.telemetry.getMetadata(telemetryObject).values();
+            const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
+            let metadataValues = metadata ? metadata.values() : [];
             metadataValues.forEach(metadatum => {
                 let column = new TelemetryTableColumn(this.openmct, metadatum);
                 this.tableConfiguration.addSingleColumnForObject(telemetryObject, column);

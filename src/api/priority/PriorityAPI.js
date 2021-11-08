@@ -20,30 +20,9 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([], function () {
-    return {
-        name: "platform/features/my-items",
-        definition: {
-            "name": "My Items",
-            "description": "Defines a root named My Items",
-            "extensions": {
-                "roots": [
-                    {
-                        "id": "mine"
-                    }
-                ],
-                "models": [
-                    {
-                        "id": "mine",
-                        "model": {
-                            "name": "My Items",
-                            "type": "folder",
-                            "composition": [],
-                            "location": "ROOT"
-                        }
-                    }
-                ]
-            }
-        }
-    };
+const PRIORITIES = Object.freeze({
+    HIGH: 1000,
+    DEFAULT: 0,
+    LOW: -1000
 });
+export default PRIORITIES;
