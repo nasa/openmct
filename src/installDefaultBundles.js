@@ -76,7 +76,6 @@ define([
     '../platform/entanglement/bundle',
     '../platform/execution/bundle',
     '../platform/exporters/bundle',
-    '../platform/features/my-items/bundle',
     '../platform/features/static-markup/bundle',
     '../platform/forms/bundle',
     '../platform/framework/bundle',
