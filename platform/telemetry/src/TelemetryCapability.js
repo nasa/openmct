@@ -256,7 +256,7 @@ define(
                 // getTelemetryService() should reject, and this should
                 // bubble through subsequent then calls.
                 if (!telemetryService) {
-                    return Promise.reject();
+                    return Promise.reject(new Error('TelemetryService is not available'));
                 }
 
                 return requestTelemetryFromService().then(getRelevantResponse);

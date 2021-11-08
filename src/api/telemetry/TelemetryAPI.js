@@ -327,17 +327,11 @@ define([
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
-            return Promise.reject('No provider found');
+            return Promise.reject([]);
         }
 
-        const hasRequestProvider = Object.hasOwn(provider, 'request');
-        if (this.hasRequestProvider === undefined && !hasRequestProvider) {
-            this.openmct.notifications.alert('Missing historical telemetry provider');
-            console.warn('Missing historical telemetry provider');
-        }
-
-        this.hasRequestProvider = hasRequestProvider;
-        if (!hasRequestProvider) {
+        this.hasRequestProvider = Object.hasOwn(provider, 'request');
+        if (!this.hasRequestProvider) {
             return Promise.resolve([]);
         }
 
