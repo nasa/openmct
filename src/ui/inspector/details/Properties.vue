@@ -164,6 +164,10 @@ export default {
                         path = [path];
                     }
 
+                    if (field.control === 'file-input') {
+                        path = [...path, 'name'];
+                    }
+
                     return {
                         name: field.name,
                         path
