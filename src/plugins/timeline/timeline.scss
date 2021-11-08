@@ -1,5 +1,10 @@
 .c-timeline-holder {
-    //TODO: Charles please add a fix for scroll here
+    overflow: hidden;
+}
+
+.c-plan.c-timeline-holder {
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .c-timeline__objects {

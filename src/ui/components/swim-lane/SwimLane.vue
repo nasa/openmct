@@ -1,6 +1,9 @@
 <template>
 <div class="u-contents"
-     :class="{'c-swimlane': !isNested}"
+     :class="[
+         {'c-swimlane': !isNested},
+         statusClass
+     ]"
 >
 
     <div v-if="hideLabel === false"
