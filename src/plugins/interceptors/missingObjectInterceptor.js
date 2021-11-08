@@ -23,7 +23,7 @@
 export default function MissingObjectInterceptor(openmct) {
     openmct.objects.addGetInterceptor({
         appliesTo: (identifier, domainObject) => {
-            return identifier.key !== 'mine';
+            return true;
         },
         invoke: (identifier, object) => {
             if (object === undefined) {
