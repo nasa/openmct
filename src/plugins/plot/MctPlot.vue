@@ -349,7 +349,7 @@ export default {
                 return;
             }
 
-            this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+            // this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
 
             this.startLoading();
             const bounds = this.timeContext.bounds();
@@ -366,7 +366,7 @@ export default {
 
         loadMoreData(range, purge) {
             this.config.series.forEach(plotSeries => {
-                this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
+                // this.offsetWidth = this.$parent.$refs.plotWrapper.offsetWidth;
                 this.startLoading();
                 plotSeries.load({
                     size: this.offsetWidth,
