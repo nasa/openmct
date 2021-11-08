@@ -59,7 +59,6 @@ export default {
     props: {
         domainObject: {
             type: Object,
-            default: () => ({}),
             required: true
         }
     },
