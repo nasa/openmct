@@ -19,21 +19,29 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import LinkActionPlugin from './plugin.js';
+import LinkAction from './LinkAction.js';
 import {
     createOpenMct,
     resetApplicationState,
     getMockObjects
 } from 'utils/testing';
 
-describe("The Move Action plugin", () => {
+describe("The Link Action plugin", () => {
     let openmct;
-    let moveAction;
+    let linkAction;
     let childObject;
     let parentObject;
     let anotherParentObject;
+    const ORIGINAL_PARENT_ID = 'original-parent-object';
+    const LINK_ACITON_KEY = 'link';
+    const LINK_ACITON_NAME = 'Create Link';
 
-    // this setups up the app
     beforeEach((done) => {
+        const appHolder = document.createElement('div');
+        appHolder.style.width = '640px';
+        appHolder.style.height = '480px';
+
         openmct = createOpenMct();
 
         childObject = getMockObjects({
@@ -41,6 +49,7 @@ describe("The Move Action plugin", () => {
             overwrite: {
                 folder: {
                     name: "Child Folder",
+                    location: ORIGINAL_PARENT_ID,
                     identifier: {
                         namespace: "",
                         key: "child-folder-object"
@@ -54,11 +63,11 @@ describe("The Move Action plugin", () => {
             overwrite: {
                 folder: {
                     name: "Parent Folder",
-                    composition: [childObject.identifier],
                     identifier: {
                         namespace: "",
-                        key: "parent-folder-object"
-                    }
+                        key: "original-parent-object"
+                    },
+                    composition: [childObject.identifier]
                 }
             }
         }).folder;
@@ -67,60 +76,50 @@ describe("The Move Action plugin", () => {
             objectKeyStrings: ['folder'],
             overwrite: {
                 folder: {
-                    name: "Another Parent Folder",
-                    identifier: {
-                        namespace: "",
-                        key: "another-parent-folder-object"
-                    }
+                    name: "Another Parent Folder"
                 }
             }
         }).folder;
 
-        openmct.on('start', done);
-        openmct.startHeadless();
+        openmct.router.path = [childObject]; // preview action uses this in it's applyTo method
 
-        moveAction = openmct.actions._allActions.move;
+        openmct.install(LinkActionPlugin());
+
+        openmct.on('start', done);
+        openmct.startHeadless(appHolder);
     });
 
     afterEach(() => {
-        return resetApplicationState(openmct);
+        resetApplicationState(openmct);
     });
 
     it("should be defined", () => {
-        expect(moveAction).toBeDefined();
+        expect(LinkActionPlugin).toBeDefined();
     });
 
-    describe("when moving an object to a new parent and removing from the old parent", () => {
-        beforeEach((done) => {
-            openmct.router.path = [];
+    it("should make the link action available for an appropriate domainObject", () => {
+        const actionCollection = openmct.actions.getActionsCollection([childObject]);
+        const visibleActions = actionCollection.getVisibleActions();
+        linkAction = visibleActions.find(a => a.key === LINK_ACITON_KEY);
 
-            spyOn(openmct.objects, "save");
-            openmct.objects.save.and.callThrough();
-            spyOn(openmct.forms, "showForm");
-            openmct.forms.showForm.and.callFake(formStructure => {
-                return Promise.resolve({
-                    name: 'test',
-                    location: [anotherParentObject]
-                });
-            });
+        expect(linkAction.name).toEqual(LINK_ACITON_NAME);
+    });
 
-            openmct.objects.observe(parentObject, '*', (newObject) => {
-                done();
-            });
-
-            moveAction.inNavigationPath = () => false;
-
-            moveAction.invoke([childObject, parentObject]);
+    describe("when linking an object in a new parent", () => {
+        beforeEach(() => {
+            linkAction = new LinkAction(openmct);
+            linkAction.linkInNewParent(childObject, anotherParentObject);
         });
 
-        it("the child object's identifier should be in the new parent's composition", () => {
+        it("the child object's identifier should be in the new parent's composition and location set to original parent", () => {
             let newParentChild = anotherParentObject.composition[0];
             expect(newParentChild).toEqual(childObject.identifier);
+            expect(childObject.location).toEqual(ORIGINAL_PARENT_ID);
         });
 
-        it("the child object's identifier should be removed from the old parent's composition", () => {
-            let oldParentComposition = parentObject.composition;
-            expect(oldParentComposition.length).toEqual(0);
+        it("the child object's identifier should remain in the original parent's composition", () => {
+            let oldParentCompositionChild = parentObject.composition[0];
+            expect(oldParentCompositionChild).toEqual(childObject.identifier);
         });
     });
 });

@@ -42,6 +42,7 @@ define([
     './staticRootPlugin/plugin',
     './notebook/plugin',
     './displayLayout/plugin',
+    './formActions/plugin',
     './folderView/plugin',
     './flexibleLayout/plugin',
     './tabs/plugin',
@@ -97,6 +98,7 @@ define([
     StaticRootPlugin,
     Notebook,
     DisplayLayoutPlugin,
+    FormActions,
     FolderView,
     FlexibleLayout,
     Tabs,
@@ -206,6 +208,7 @@ define([
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;

@@ -19,36 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import LinkAction from "./LinkAction";
 
-import PlanViewProvider from './PlanViewProvider';
-import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
-
-export default function (configuration) {
-    return function install(openmct) {
-        openmct.types.addType('plan', {
-            name: 'Plan',
-            key: 'plan',
-            description: 'A configurable timeline-like view for a compatible mission plan file.',
-            creatable: true,
-            cssClass: 'icon-plan',
-            form: [
-                {
-                    name: 'Upload Plan (JSON File)',
-                    key: 'selectFile',
-                    control: 'file-input',
-                    required: true,
-                    text: 'Select File...',
-                    type: 'application/json',
-                    property: [
-                        "selectFile"
-                    ]
-                }
-            ],
-            initialize: function (domainObject) {
-            }
-        });
-        openmct.objectViews.addProvider(new PlanViewProvider(openmct));
-        openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
+export default function () {
+    return function (openmct) {
+        openmct.actions.register(new LinkAction(openmct));
     };
 }
-

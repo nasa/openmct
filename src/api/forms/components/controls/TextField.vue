@@ -4,12 +4,12 @@
  * Administration. All rights reserved.
  *
  * Open MCT is licensed under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
+ * 'License'); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * distributed under the License is distributed on an 'AS IS' BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
  * License for the specific language governing permissions and limitations
  * under the License.
@@ -19,31 +19,43 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import CreateAction from '@/plugins/formActions/CreateAction';
 
-export default class NewFolderAction {
-    constructor(openmct) {
-        this.type = 'folder';
-        this.name = 'Add New Folder';
-        this.key = 'newFolder';
-        this.description = 'Create a new folder';
-        this.cssClass = 'icon-folder-new';
-        this.group = "action";
-        this.priority = 9;
+<template>
+<span class="form-control shell">
+    <span class="field control"
+          :class="model.cssClass"
+    >
+        <input v-model="field"
+               type="text"
+               :size="model.size"
+               @blur="blur()"
+        >
+    </span>
+</span>
+</template>
 
-        this._openmct = openmct;
+<script>
+export default {
+    props: {
+        model: {
+            type: Object,
+            required: true
+        }
+    },
+    data() {
+        return {
+            field: this.model.value
+        };
+    },
+    methods: {
+        blur() {
+            const data = {
+                model: this.model,
+                value: this.field
+            };
+
+            this.$emit('onChange', data);
+        }
     }
-
-    invoke(objectPath) {
-        const parentDomainObject = objectPath[0];
-        const createAction = new CreateAction(this._openmct, this.type, parentDomainObject);
-        createAction.invoke();
-    }
-
-    appliesTo(objectPath) {
-        let domainObject = objectPath[0];
-        let isPersistable = this._openmct.objects.isPersistable(domainObject.identifier);
-
-        return domainObject.type === this.type  && isPersistable;
-    }
-}
+};
+</script>
