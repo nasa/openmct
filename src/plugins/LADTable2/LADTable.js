@@ -44,7 +44,6 @@ export default class LADTable extends TelemetryTable {
     addTelemetryObject(telemetryObject) {
         super.addTelemetryObject(telemetryObject);
         this.addDummyRowForObject(telemetryObject);
-        this.emit('lad-object-added', telemetryObject);
     }
 
     addDummyRowForObject(object) {

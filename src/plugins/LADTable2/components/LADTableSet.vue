@@ -131,15 +131,9 @@ export default {
             return this.tableSet.tables[key].domainObject.name;
         },
         addTable(ladTable) {
-            // const ladTableObject = {
-            //     key: ladTable.keyString,
-            //     name: ladTable.domainObject.name
-            // };
-
-            ladTable.on('lad-object-added', this.addTelemetry.bind(this, ladTable.keyString));
+            ladTable.on('object-added', this.addTelemetry.bind(this, ladTable.keyString));
             ladTable.tableRows.on('add', this.addRow);
             ladTable.initialize();
-            // this.ladTables.push(ladTable.keyString);
             this.tables.push(ladTable.keyString);
         },
         removeTable(identifier) {
