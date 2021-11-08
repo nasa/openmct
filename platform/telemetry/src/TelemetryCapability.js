@@ -255,8 +255,11 @@ define(
                 // If a telemetryService is not available,
                 // getTelemetryService() should reject, and this should
                 // bubble through subsequent then calls.
-                return telemetryService
-                    && requestTelemetryFromService().then(getRelevantResponse);
+                if (!telemetryService) {
+                    return Promise.reject();
+                }
+
+                return requestTelemetryFromService().then(getRelevantResponse);
             } else {
                 return telemetryAPI.request(domainObject, fullRequest).then(function (telemetry) {
                     return asSeries(telemetry, defaultDomain, defaultRange, sourceMap);
