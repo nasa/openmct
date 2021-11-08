@@ -26,6 +26,7 @@ define([
     './remoteClock/plugin',
     './localTimeSystem/plugin',
     './ISOTimeFormat/plugin',
+    './myItems/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -78,6 +79,7 @@ define([
     RemoteClock,
     LocalTimeSystem,
     ISOTimeFormat,
+    MyItems,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -127,7 +129,6 @@ define([
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
-        MyItems: 'platform/features/my-items',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -142,6 +143,8 @@ define([
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
+
+    plugins.MyItems = MyItems.default;
 
     plugins.ImportExport = ImportExport;
 
@@ -188,7 +191,7 @@ define([
         return GeneratorPlugin;
     };
 
-    plugins.ExampleImagery = ExampleImagery;
+    plugins.ExampleImagery = ExampleImagery.default;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
     plugins.Chart = ChartPlugin.default;
