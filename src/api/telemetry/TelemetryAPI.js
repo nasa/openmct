@@ -327,7 +327,13 @@ define([
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
-            return Promise.reject([]);
+            this.openmct.notifications.error('Missing request provider, see console for details');
+
+            const { name, identifier } = domainObject;
+            const msg = `Missing request provider for domainObject, name: ${name}, identifier: ${JSON.stringify(identifier)}`;
+            console.error(msg);
+
+            return Promise.resolve([]);
         }
 
         this.hasRequestProvider = Object.hasOwn(provider, 'request');
