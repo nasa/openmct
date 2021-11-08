@@ -27,6 +27,7 @@ export default function plugin() {
         openmct.objectViews.addProvider(new ConditionWidgetViewProvider(openmct));
 
         openmct.types.addType('conditionWidget', {
+            key: 'conditionWidget',
             name: "Condition Widget",
             description: "A button that can be used on its own, or dynamically styled with a Condition Set.",
             creatable: true,
