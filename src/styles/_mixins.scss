@@ -385,11 +385,11 @@
     }
 }
 
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0 2px) {
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: inset rgba(black, 0.5) 0 0 2px 1px) {
     @include input-base();
     background: $bg;
     color: $fg;
-    box-shadow: inset $shdw;
+    box-shadow: $shdw;
 }
 
 @mixin reactive-input($bg: $colorInputBg, $fg: $colorInputFg) {
@@ -685,7 +685,7 @@
 @mixin wrappedInput() {
     // An input that is wrapped. Optionally includes a __label or icon element.
     // Based on .c-search.
-    @include nice-input();
+    @include nice-input($shdw: $shdwInput);
     display: flex;
     align-items: center;
     padding-left: 4px;

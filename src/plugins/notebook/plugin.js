@@ -69,6 +69,7 @@ export default function NotebookPlugin() {
                     name: 'Section Title',
                     control: 'textfield',
                     cssClass: 'l-inline',
+                    required: true,
                     property: [
                         "configuration",
                         "sectionTitle"
@@ -79,6 +80,7 @@ export default function NotebookPlugin() {
                     name: 'Page Title',
                     control: 'textfield',
                     cssClass: 'l-inline',
+                    required: true,
                     property: [
                         "configuration",
                         "pageTitle"
