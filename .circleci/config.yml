@@ -7,6 +7,15 @@ orbs:
   node: circleci/node@4.5.1
   browser-tools: circleci/browser-tools@1.1.3
 jobs:
+  npm-audit:
+    executor: linux
+    steps:
+      - checkout
+      - node/install:
+          install-npm: true
+          node-version: lts/fermium
+      - run: npm install
+      - run: npm audit --audit-level=low
   test:
     parameters:
       node-version:
@@ -30,7 +39,7 @@ jobs:
                 version: "91.2.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
       - when:
           condition:
-            equal: [ "Firefox", <<parameters.browser>> ]
+            equal: [ "FirefoxHeadless", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox
       - when:
@@ -70,13 +79,13 @@ workflows:
           node-version: lts/dubnium
           browser: ChromeHeadless
       - test:
-          name: node12-build-only
+          name: node12-build-lint
           node-version: lts/erbium
-          browser: "" #Skip testing
+          browser: "" #Skip unit tests
       - test: 
-          name: node14-build-only
+          name: node14-build-lint
           node-version: lts/fermium
-          browser: "" #Skip testing
+          browser: "" #Skip unit tests
 
   nightly:
     jobs:
@@ -91,7 +100,8 @@ workflows:
       - test:
           name: node14-firefox-nightly
           node-version: lts/fermium
-          browser: Firefox
+          browser: FirefoxHeadless
+      - npm-audit
     triggers:
       - schedule:
           cron: "0 0 * * *"

@@ -392,7 +392,7 @@ export default {
             } else {
                 // container is taller than image
                 sizedImageDimensions.width = this.imageContainerWidth;
-                sizedImageDimensions.height = this.imageContainerWidth * this.focusedImageNaturalAspectRatio;
+                sizedImageDimensions.height = this.imageContainerWidth / this.focusedImageNaturalAspectRatio;
             }
 
             return sizedImageDimensions;
