@@ -43,10 +43,10 @@
     };
 
     self.onerror = function (error) {
-        console.error('Error on feed', error);
+        console.error('🚨 Error on CouchDB feed 🚨', error);
     };
 
-    self.onmessage = function (event) {
+    self.onCouchMessage = function (event) {
         const objectChanges = JSON.parse(event.data);
         connections.forEach(function (connection) {
             connection.postMessage({
@@ -62,7 +62,7 @@
         couchEventSource.onerror = self.onerror;
 
         // start listening for events
-        couchEventSource.onmessage = self.onmessage;
+        couchEventSource.addEventListener('message', self.onCouchMessage);
         connected = true;
         console.debug('⇿ Opened connection ⇿');
     };

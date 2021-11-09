@@ -471,7 +471,7 @@ class CouchObjectProvider {
         couchEventSource.onerror = this.onEventError.bind(this);
 
         // start listening for events
-        couchEventSource.onmessage = this.onEventMessage.bind(this);
+        couchEventSource.addEventListener('message', this.onEventMessage.bind(this));
         console.debug('⇿ Opened connection ⇿');
     }
 
