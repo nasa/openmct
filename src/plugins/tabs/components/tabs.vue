@@ -149,6 +149,8 @@ export default {
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.onReorder);
 
+        this.tabsViewResizeObserver.disconnect();
+
         this.tabsList.forEach(tab => {
             tab.statusUnsubscribe();
         });
