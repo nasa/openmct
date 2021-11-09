@@ -37,10 +37,8 @@ export default function ClockViewProvider(openmct) {
 
             return {
                 show: function (element) {
-                    const parent = document.getElementsByClassName('js-main-container')[0].__vue__;
                     component = new Vue({
                         el: element,
-                        parent,
                         components: {
                             Clock
                         },
