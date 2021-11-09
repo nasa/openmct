@@ -692,13 +692,11 @@ export default {
             }
         },
         getDomainObjectStyle(domainObject, property, items, defaultConditionId) {
-
             let objectStyle = {
                 styles: this.conditionalStyles,
                 staticStyle: this.staticStyle,
                 selectedConditionId: this.selectedConditionId
             };
-
             if (defaultConditionId) {
                 objectStyle.defaultConditionId = defaultConditionId;
             }

@@ -133,6 +133,168 @@ describe('the plugin', function () {
         });
     });
 
+    describe('the condition set usage for condition widgets', () => {
+        let conditionWidgetItem;
+        let selection;
+        let component;
+        let styleViewComponentObject;
+        const conditionSetDomainObject = {
+            "configuration": {
+                "conditionTestData": [
+                    {
+                        "telemetry": "",
+                        "metadata": "",
+                        "input": ""
+                    }
+                ],
+                "conditionCollection": [
+                    {
+                        "id": "39584410-cbf9-499e-96dc-76f27e69885d",
+                        "configuration": {
+                            "name": "Unnamed Condition",
+                            "output": "Sine > 0",
+                            "trigger": "all",
+                            "criteria": [
+                                {
+                                    "id": "85fbb2f7-7595-42bd-9767-a932266c5225",
+                                    "telemetry": {
+                                        "namespace": "",
+                                        "key": "be0ba97f-b510-4f40-a18d-4ff121d5ea1a"
+                                    },
+                                    "operation": "greaterThan",
+                                    "input": [
+                                        "0"
+                                    ],
+                                    "metadata": "sin"
+                                },
+                                {
+                                    "id": "35400132-63b0-425c-ac30-8197df7d5862",
+                                    "telemetry": "any",
+                                    "operation": "enumValueIs",
+                                    "input": [
+                                        "0"
+                                    ],
+                                    "metadata": "state"
+                                }
+                            ]
+                        },
+                        "summary": "Match if all criteria are met: Sine Wave Generator Sine > 0 and any telemetry State is OFF "
+                    },
+                    {
+                        "isDefault": true,
+                        "id": "2532d90a-e0d6-4935-b546-3123522da2de",
+                        "configuration": {
+                            "name": "Default",
+                            "output": "Default",
+                            "trigger": "all",
+                            "criteria": [
+                            ]
+                        },
+                        "summary": ""
+                    }
+                ]
+            },
+            "composition": [
+                {
+                    "namespace": "",
+                    "key": "be0ba97f-b510-4f40-a18d-4ff121d5ea1a"
+                },
+                {
+                    "namespace": "",
+                    "key": "077ffa67-e78f-4e99-80e0-522ac33a3888"
+                }
+            ],
+            "telemetry": {
+            },
+            "name": "Condition Set",
+            "type": "conditionSet",
+            "identifier": {
+                "namespace": "",
+                "key": "863012c1-f6ca-4ab0-aed7-fd43d5e4cd12"
+            }
+
+        };
+
+        beforeEach(() => {
+            conditionWidgetItem = {
+                "label": "Condition Widget",
+                "conditionalLabel": "",
+                "configuration": {
+                },
+                "name": "Condition Widget",
+                "type": "conditionWidget",
+                "identifier": {
+                    "namespace": "",
+                    "key": "c5e636c1-6771-4c9c-b933-8665cab189b3"
+                }
+            };
+            selection = [
+                [{
+                    context: {
+                        "item": conditionWidgetItem,
+                        "supportsMultiSelect": false
+                    }
+                }]
+            ];
+            let viewContainer = document.createElement('div');
+            child.append(viewContainer);
+            component = new Vue({
+                el: viewContainer,
+                components: {
+                    StylesView
+                },
+                provide: {
+                    openmct: openmct,
+                    selection: selection,
+                    stylesManager
+                },
+                template: '<styles-view/>'
+            });
+
+            return Vue.nextTick().then(() => {
+                styleViewComponentObject = component.$root.$children[0];
+                styleViewComponentObject.setEditState(true);
+            });
+        });
+
+        afterEach(() => {
+            component.$destroy();
+        });
+
+        it('does not include the output label when the flag is disabled', () => {
+            styleViewComponentObject.conditionSetDomainObject = conditionSetDomainObject;
+            styleViewComponentObject.conditionalStyles = [];
+            styleViewComponentObject.initializeConditionalStyles();
+            expect(styleViewComponentObject.conditionalStyles.length).toBe(2);
+
+            return Vue.nextTick().then(() => {
+                const hasNoOutput = styleViewComponentObject.domainObject.configuration.objectStyles.styles.every((style) => {
+                    return style.style.output === '' || style.style.output === undefined;
+                });
+
+                expect(hasNoOutput).toBeTrue();
+            });
+        });
+
+        it('includes the output label when the flag is enabled', () => {
+            styleViewComponentObject.conditionSetDomainObject = conditionSetDomainObject;
+            styleViewComponentObject.conditionalStyles = [];
+            styleViewComponentObject.initializeConditionalStyles();
+            expect(styleViewComponentObject.conditionalStyles.length).toBe(2);
+
+            styleViewComponentObject.useConditionSetOutputAsLabel = true;
+            styleViewComponentObject.persistLabelConfiguration();
+
+            return Vue.nextTick().then(() => {
+                const outputs = styleViewComponentObject.domainObject.configuration.objectStyles.styles.map((style) => {
+                    return style.style.output;
+                });
+                expect(outputs.join(',')).toEqual('Sine > 0,Default');
+            });
+        });
+
+    });
+
     describe('the condition set usage for multiple display layout items', () => {
         let displayLayoutItem;
         let lineLayoutItem;
@@ -449,6 +611,10 @@ describe('the plugin', function () {
                     const applicableStyles = getApplicableStylesForItem(styleViewComponentObject.domainObject, item);
                     const applicableStylesKeys = Object.keys(applicableStyles).concat(['isStyleInvisible']);
                     Object.keys(foundStyle.style).forEach((key) => {
+                        if (key === 'output') {
+                            return;
+                        }
+
                         expect(applicableStylesKeys.indexOf(key)).toBeGreaterThan(-1);
                         expect(foundStyle.style[key]).toEqual(conditionalStyle.style[key]);
                     });

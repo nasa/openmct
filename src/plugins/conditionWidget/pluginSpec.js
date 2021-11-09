@@ -65,7 +65,6 @@ describe('the plugin', function () {
     };
 
     it('defines a conditionWidget object type with the correct key', () => {
-        console.log(objectDef.definition);
         expect(objectDef.key).toEqual(mockObject.key);
     });
 
