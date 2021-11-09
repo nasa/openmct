@@ -19,30 +19,10 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import CreateAction from '@/plugins/formActions/CreateAction';
+import LinkAction from "./LinkAction";
 
-export default class NewFolderAction {
-    constructor(openmct) {
-        this.type = 'folder';
-        this.name = 'Add New Folder';
-        this.key = 'newFolder';
-        this.description = 'Create a new folder';
-        this.cssClass = 'icon-folder-new';
-        this.group = "action";
-        this.priority = 9;
-
-        this._openmct = openmct;
-    }
-
-    invoke(objectPath) {
-        const parentDomainObject = objectPath[0];
-        const createAction = new CreateAction(this._openmct, this.type, parentDomainObject);
-        createAction.invoke();
-    }
-
-    appliesTo(objectPath) {
-        let domainObject = objectPath[0];
-
-        return domainObject.type === this.type;
-    }
+export default function () {
+    return function (openmct) {
+        openmct.actions.register(new LinkAction(openmct));
+    };
 }

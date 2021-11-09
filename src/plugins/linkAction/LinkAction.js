@@ -19,24 +19,29 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import DuplicateTask from './DuplicateTask';
 
-export default class DuplicateAction {
+export default class LinkAction {
     constructor(openmct) {
-        this.name = 'Duplicate';
-        this.key = 'duplicate';
-        this.description = 'Duplicate this object.';
-        this.cssClass = "icon-duplicate";
+        this.name = 'Create Link';
+        this.key = 'link';
+        this.description = 'Create Link to object in another location.';
+        this.cssClass = "icon-link";
         this.group = "action";
         this.priority = 7;
 
         this.openmct = openmct;
     }
 
+    appliesTo(objectPath) {
+        let domainObject = objectPath[0];
+        let type = domainObject && this.openmct.types.get(domainObject.type);
+
+        return type && type.definition.creatable;
+    }
+
     invoke(objectPath) {
         this.object = objectPath[0];
         this.parent = objectPath[1];
-
         this.showForm(this.object, this.parent);
     }
 
@@ -51,38 +56,28 @@ export default class DuplicateAction {
             this.openmct.editor.save();
         }
 
-        let duplicationTask = new DuplicateTask(this.openmct);
-        if (changes.name && (changes.name !== this.object.name)) {
-            duplicationTask.changeName(changes.name);
-        }
-
         const parentDomainObjectpath = changes.location || [this.parent];
         const parent = parentDomainObjectpath[0];
 
-        return duplicationTask.duplicate(this.object, parent);
+        this.linkInNewParent(this.object, parent);
+    }
+
+    linkInNewParent(child, newParent) {
+        let compositionCollection = this.openmct.composition.get(newParent);
+
+        compositionCollection.add(child);
     }
 
     showForm(domainObject, parentDomainObject) {
         const formStructure = {
-            title: "Duplicate Item",
+            title: `Link "${domainObject.name}" to a New Location`,
             sections: [
                 {
                     rows: [
                         {
-                            key: "name",
-                            control: "textfield",
-                            name: "Title",
-                            pattern: "\\S+",
-                            required: true,
-                            cssClass: "l-input-lg",
-                            value: domainObject.name
-                        },
-                        {
-                            name: "Location",
-                            cssClass: "grows",
+                            name: "location",
                             control: "locator",
                             required: true,
-                            parent: parentDomainObject,
                             validate: this.validate(parentDomainObject),
                             key: 'location'
                         }
@@ -96,15 +91,17 @@ export default class DuplicateAction {
     }
 
     validate(currentParent) {
-        return (data) => {
-            const parentCandidatePath = data.value;
-            const parentCandidate = parentCandidatePath[0];
-
-            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
-            let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+        return (object, data) => {
+            const parentCandidate = data.value;
+            const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
+            const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
+            const objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
+                return false;
+            }
+
+            if (parentCandidateKeystring === currentParentKeystring) {
                 return false;
             }
 
@@ -117,25 +114,7 @@ export default class DuplicateAction {
                 return false;
             }
 
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, object);
         };
-    }
-
-    appliesTo(objectPath) {
-        let parent = objectPath[1];
-        let parentType = parent && this.openmct.types.get(parent.type);
-        let child = objectPath[0];
-        let childType = child && this.openmct.types.get(child.type);
-        let locked = child.locked ? child.locked : parent && parent.locked;
-
-        if (locked) {
-            return false;
-        }
-
-        return childType
-            && childType.definition.creatable
-            && parentType
-            && parentType.definition.creatable
-            && Array.isArray(parent.composition);
     }
 }
