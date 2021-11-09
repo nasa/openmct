@@ -47,6 +47,7 @@
     };
 
     self.onCouchMessage = function (event) {
+        console.debug('📩 Received message from CouchDB 📩');
         const objectChanges = JSON.parse(event.data);
         connections.forEach(function (connection) {
             connection.postMessage({

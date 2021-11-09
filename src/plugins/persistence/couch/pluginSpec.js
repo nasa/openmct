@@ -119,6 +119,18 @@ describe('the plugin', () => {
             expect(updatedResult).toBeTrue();
             expect(provider.update).toHaveBeenCalled();
         });
+
+        it('works without Shared Workers', async () => {
+            window.SharedWorker = undefined;
+            const result = await openmct.objects.save(mockDomainObject);
+            expect(result).toBeTrue();
+            expect(provider.create).toHaveBeenCalled();
+            //Set modified timestamp it detects a change and persists the updated model.
+            mockDomainObject.modified = Date.now();
+            const updatedResult = await openmct.objects.save(mockDomainObject);
+            expect(updatedResult).toBeTrue();
+            expect(provider.update).toHaveBeenCalled();
+        });
     });
     describe('batches requests', () => {
         let mockPromise;
@@ -210,6 +222,5 @@ describe('the plugin', () => {
             expect(requestPayload).toBeDefined();
             expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
         });
-
     });
 });

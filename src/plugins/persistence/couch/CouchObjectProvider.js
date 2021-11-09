@@ -70,7 +70,15 @@ class CouchObjectProvider {
         console.log('Error', event);
     }
 
+    isSynchronizedObject(object) {
+        return (object && object.type
+            && this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES
+            && this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.includes(object.type));
+
+    }
+
     onSharedWorkerMessage(event) {
+        console.debug('📨 Received message from Shared Worker 📨');
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else {
@@ -86,7 +94,9 @@ class CouchObjectProvider {
             if (observersForObject) {
                 observersForObject.forEach(async (observer) => {
                     const updatedObject = await this.get(objectChanges.identifier);
-                    observer(updatedObject);
+                    if (this.isSynchronizedObject(updatedObject)) {
+                        observer(updatedObject);
+                    }
                 });
             }
         }
@@ -434,6 +444,7 @@ class CouchObjectProvider {
     }
 
     onEventMessage(event) {
+        console.debug('📩 Received message from CouchDB 📩');
         const object = JSON.parse(event.data);
         object.identifier = {
             namespace: this.namespace,
@@ -445,7 +456,9 @@ class CouchObjectProvider {
         if (observersForObject) {
             observersForObject.forEach(async (observer) => {
                 const updatedObject = await this.get(object.identifier);
-                observer(updatedObject);
+                if (this.isSynchronizedObject(updatedObject)) {
+                    observer(updatedObject);
+                }
             });
         }
     }
