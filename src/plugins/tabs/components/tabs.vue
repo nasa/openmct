@@ -343,8 +343,10 @@ export default {
             let tabsViewEl = document.getElementsByClassName('c-tabs-view')[0];
             let tabsLabelsEl = document.getElementsByClassName('c-tabs-view__tabs-holder')[0];
 
-            this.tabHeight = tabsViewEl.offsetHeight - tabsLabelsEl.offsetHeight + 'px';
-            this.tabWidth = tabsViewEl.offsetWidth + 'px';
+            if (tabsViewEl) {
+                this.tabHeight = tabsViewEl.offsetHeight - tabsLabelsEl.offsetHeight + 'px';
+                this.tabWidth = tabsViewEl.offsetWidth + 'px';
+            }
         }
     }
 };
