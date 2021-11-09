@@ -1,5 +1,8 @@
 <template>
-<div class="c-tabs-view">
+<div
+    ref="tabs"
+    class="c-tabs-view"
+>
     <div
         class="c-tabs-view__tabs-holder c-tabs"
         :class="{
@@ -49,7 +52,7 @@
     <div
         v-for="tab in tabsList"
         :key="tab.keyString"
-        :style="!isCurrent(tab) ? getTabsViewHeightAndWidth() : {}"
+        :style="!isCurrent(tab) ? { height: tabHeight, width: tabWidth } : {}"
         class="c-tabs-view__object-holder"
         :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
     >
@@ -66,6 +69,7 @@
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
+import _ from 'lodash';
 
 const unknownObjectType = {
     definition: {
@@ -89,6 +93,8 @@ export default {
         let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
         return {
+            tabWidth: 0,
+            tabHeight: 0,
             internalDomainObject: this.domainObject,
             currentTab: {},
             currentTabIndex: undefined,
@@ -123,6 +129,10 @@ export default {
             });
         }
 
+        this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
+        this.tabsViewResizeObserver = new ResizeObserver(this.handleWindowResize);
+        this.tabsViewResizeObserver.observe(this.$refs.tabsView);
+
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
         this.openmct.router.on('change:params', this.updateCurrentTab.bind(this));
@@ -152,15 +162,6 @@ export default {
         document.removeEventListener('dragend', this.dragend);
     },
     methods: {
-        getTabsViewHeightAndWidth() {
-            let tabsViewEl = document.getElementsByClassName('c-tabs-view')[0];
-            let tabsLabelsEl = document.getElementsByClassName('c-tabs-view__tabs-holder')[0];
-
-            return {
-                height: tabsViewEl.offsetHeight - tabsLabelsEl.offsetHeight + 'px',
-                width: tabsViewEl.offsetWidth + 'px'
-            };
-        },
         addTabToLoaded(tab) {
             if (!this.internalDomainObject.keep_alive) {
                 this.loadedTabs = {};
@@ -335,6 +336,13 @@ export default {
 
             this.currentTabIndex = tabIndex;
             this.currentTab = this.tabsList[tabIndex];
+        },
+        handleWindowResize() {
+            let tabsViewEl = document.getElementsByClassName('c-tabs-view')[0];
+            let tabsLabelsEl = document.getElementsByClassName('c-tabs-view__tabs-holder')[0];
+
+            this.tabHeight = tabsViewEl.offsetHeight - tabsLabelsEl.offsetHeight + 'px';
+            this.tabWidth = tabsViewEl.offsetWidth + 'px';
         }
     }
 };
