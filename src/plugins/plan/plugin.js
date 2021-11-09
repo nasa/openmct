@@ -45,6 +45,7 @@ export default function (configuration) {
             initialize: function (domainObject) {
             }
         });
+        //TODO: Do not merge if this is here. Need to remove this interceptor from this repo - it is for Charles' testing only.
         planInterceptor(openmct, configuration);
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
         openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
