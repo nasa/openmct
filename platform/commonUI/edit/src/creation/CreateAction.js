@@ -96,11 +96,9 @@ define(
                     if (isFirstViewEditable(object.useCapability('adapter'), path)) {
                         openmct.editor.edit();
                     }
-
-                    openmct.router.off('assigned:path', editObject);
                 }
 
-                openmct.router.on('assigned:path', editObject);
+                openmct.router.once('afterNavigation', editObject);
 
                 openmct.router.navigate(url);
             }
