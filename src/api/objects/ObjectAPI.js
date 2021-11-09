@@ -302,6 +302,13 @@ ObjectAPI.prototype.isPersistable = function (idOrKeyString) {
         && provider.update !== undefined;
 };
 
+ObjectAPI.prototype.isMissing = function (domainObject) {
+    let identifier = utils.makeKeyString(domainObject.identifier);
+    let missingName = 'Missing: ' + identifier;
+
+    return domainObject.name === missingName;
+};
+
 /**
  * Save this domain object in its current state. EXPERIMENTAL
  *
