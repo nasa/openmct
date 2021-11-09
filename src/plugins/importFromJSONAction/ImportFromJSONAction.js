@@ -22,7 +22,6 @@
 
 import objectUtils from 'objectUtils';
 import uuid from "uuid";
-import CreateWizard from '/src/plugins/formActions/CreateWizard';
 
 export default class ImportAsJSONAction {
     constructor(openmct) {
