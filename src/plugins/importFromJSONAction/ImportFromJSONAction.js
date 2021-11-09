@@ -22,6 +22,7 @@
 
 import objectUtils from 'objectUtils';
 import uuid from "uuid";
+import CreateWizard from '/src/plugins/formActions/CreateWizard';
 
 export default class ImportAsJSONAction {
     constructor(openmct) {
@@ -55,15 +56,14 @@ export default class ImportAsJSONAction {
      * @param {object} objectPath
      */
     invoke(objectPath) {
-        this._showForm(objectPath[0], objectPath[1]);
+        this._showForm(objectPath[0]);
     }
     /**
      *
      * @param {object} object
      * @param {object} changes
-     * @param {object} parent
      */
-    onSave(object, changes, parent) {
+    onSave(object, changes) {
         const selectFile = changes.selectFile;
         const objectTree = selectFile.body;
         this._importObjectTree(object, JSON.parse(objectTree));
@@ -194,9 +194,8 @@ export default class ImportAsJSONAction {
     /**
      * @private
      * @param {object} domainObject
-     * @param {object} parentDomainObject
      */
-    _showForm(domainObject, parentDomainObject) {
+    _showForm(domainObject) {
         const formStructure = {
             title: this.name,
             sections: [
@@ -216,19 +215,18 @@ export default class ImportAsJSONAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure, {
-            domainObject,
-            parentDomainObject,
-            onSave: this.onSave.bind(this)
-        });
+        this.openmct.forms.showForm(formStructure).
+            then(changes => {
+                let onSave = this.onSave.bind(this);
+                onSave(domainObject, changes);
+            });
     }
     /**
      * @private
-     * @param {object} domainObject
      * @param {object} data
      * @returns {boolean}
      */
-    _validateJSON(domainObject, data) {
+    _validateJSON(data) {
         const value = data.value;
         const objectTree = value && value.body;
         let json;
