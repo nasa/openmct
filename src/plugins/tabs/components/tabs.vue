@@ -131,7 +131,7 @@ export default {
 
         this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
         this.tabsViewResizeObserver = new ResizeObserver(this.handleWindowResize);
-        this.tabsViewResizeObserver.observe(this.$refs.tabsView);
+        this.tabsViewResizeObserver.observe(this.$refs.tabs);
 
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
