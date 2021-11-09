@@ -49,6 +49,7 @@
     <div
         v-for="tab in tabsList"
         :key="tab.keyString"
+        :style="!isCurrent(tab) ? getTabsViewHeightAndWidth() : {}"
         class="c-tabs-view__object-holder"
         :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
     >
@@ -151,6 +152,15 @@ export default {
         document.removeEventListener('dragend', this.dragend);
     },
     methods: {
+        getTabsViewHeightAndWidth() {
+            let tabsViewEl = document.getElementsByClassName('c-tabs-view')[0];
+            let tabsLabelsEl = document.getElementsByClassName('c-tabs-view__tabs-holder')[0];
+
+            return {
+                height: tabsViewEl.offsetHeight - tabsLabelsEl.offsetHeight + 'px',
+                width: tabsViewEl.offsetWidth + 'px'
+            };
+        },
         addTabToLoaded(tab) {
             if (!this.internalDomainObject.keep_alive) {
                 this.loadedTabs = {};
