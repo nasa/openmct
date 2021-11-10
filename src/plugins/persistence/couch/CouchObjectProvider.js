@@ -480,7 +480,7 @@ class CouchObjectProvider {
 
         console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
-        couchEventSource = new EventSource(url, { withCredentials: false });
+        couchEventSource = new EventSource(url);
         couchEventSource.onerror = this.onEventError.bind(this);
 
         // start listening for events

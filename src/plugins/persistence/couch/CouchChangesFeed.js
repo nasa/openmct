@@ -59,7 +59,7 @@
     self.listenForChanges = function (url) {
         console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
-        couchEventSource = new EventSource(url, { withCredentials: false });
+        couchEventSource = new EventSource(url);
         couchEventSource.onerror = self.onerror;
 
         // start listening for events
