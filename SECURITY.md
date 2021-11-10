@@ -14,7 +14,7 @@ See our [top-level security policy](https://github.com/nasa/openmct/security/pol
 
 The [CodeQL GitHub Actions workflow](https://github.com/nasa/openmct/blob/master/.github/workflows/codeql-analysis.yml) is available to the public. To review the results, fork the repository and run the CodeQL workflow. 
 
-CodeQL is ran for every pull-request in GitHub Actions.
+CodeQL is run for every pull-request in GitHub Actions.
 
 The project is also monitored by [LGTM](https://lgtm.com/projects/g/nasa/openmct/) and is available to public.
 
