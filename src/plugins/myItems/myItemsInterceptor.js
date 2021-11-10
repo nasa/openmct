@@ -20,43 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
 
-        /**
-         * Adds placeholder domain object models for any models which
-         * fail to load from the underlying model service.
-         * @constructor
-         * @memberof platform/core
-         * @param {ModelService} modelService this service to decorate
-         * @implements {ModelService}
-         */
-        function MissingModelDecorator(modelService) {
-            this.modelService = modelService;
-        }
+function myItemsInterceptor(identifierObject, openmct) {
 
-        function missingModel(id) {
-            return {
-                type: "unknown",
-                name: "Missing: " + id
-            };
-        }
+    const myItemsModel = {
+        identifier: identifierObject,
+        "name": "My Items",
+        "type": "folder",
+        "composition": [],
+        "location": "ROOT"
+    };
 
-        MissingModelDecorator.prototype.getModels = function (ids) {
-            function addMissingModels(models) {
-                var result = {};
-                ids.forEach(function (id) {
-                    result[id] = models[id] || missingModel(id);
-                });
-
-                return result;
+    return {
+        appliesTo: (identifier) => {
+            return identifier.key === MY_ITEMS_KEY;
+        },
+        invoke: (identifier, object) => {
+            if (openmct.objects.isMissing(object)) {
+                return myItemsModel;
             }
 
-            return this.modelService.getModels(ids).then(addMissingModels);
-        };
+            return object;
+        }
+    };
+}
 
-        return MissingModelDecorator;
-    }
-);
-
+export default myItemsInterceptor;
