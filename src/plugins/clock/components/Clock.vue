@@ -41,6 +41,7 @@
 <script>
 import moment from 'moment';
 import momentTimezone from 'moment-timezone';
+import ticker from 'utils/clock/Ticker';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -82,8 +83,7 @@ export default {
         }
     },
     mounted() {
-        const TickerService = this.openmct.$injector.get('tickerService');
-        this.unlisten = TickerService.listen(this.tick);
+        this.unlisten = ticker.listen(this.tick);
     },
     beforeDestroy() {
         if (this.unlisten) {
