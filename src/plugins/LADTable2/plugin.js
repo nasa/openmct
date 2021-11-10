@@ -49,7 +49,7 @@ export default function () {
         openmct.types.addType('LadTableSet', {
             name: "LAD Table Set NEW",
             creatable: true,
-            description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+            description: "A collection of LAD tables.",
             cssClass: 'icon-tabular-lad-set',
             initialize(domainObject) {
                 domainObject.composition = [];

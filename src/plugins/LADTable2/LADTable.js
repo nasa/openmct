@@ -40,25 +40,12 @@ export default class LADTable extends TelemetryTable {
             this.addTelemetryObject(this.domainObject);
         }
     }
-    loadComposition() {
-        this.tableComposition = this.openmct.composition.get(this.domainObject);
 
-        if (this.tableComposition !== undefined) {
-            this.tableComposition.load().then((composition) => {
-
-                composition = composition.filter(this.isTelemetryObject);
-                composition.forEach(this.addTelemetryObject);
-
-                this.tableComposition.on('add', this.addTelemetryObject);
-                this.tableComposition.on('remove', this.removeTelemetryObject);
-                this.emit('loaded');
-            });
-        }
-    }
     addTelemetryObject(telemetryObject) {
         super.addTelemetryObject(telemetryObject);
         this.addDummyRowForObject(telemetryObject);
     }
+
     addDummyRowForObject(object) {
         let objectKeyString = this.openmct.objects.makeKeyString(object.identifier);
         let columns = this.getColumnMapForObject(objectKeyString);
@@ -66,6 +53,7 @@ export default class LADTable extends TelemetryTable {
         this.tableRows.addOne(dummyRow);
         this.headers = this.configuration.getVisibleHeaders();
     }
+
     getTelemetryProcessor(keyString, columnMap, limitEvaluator) {
         return (telemetry) => {
             //Check that telemetry object has not been removed since telemetry was requested.
@@ -84,6 +72,7 @@ export default class LADTable extends TelemetryTable {
             }
         };
     }
+
     buildOptionsFromConfiguration(telemetryObject) {
         let LADOptions = {
             strategy: 'latest',
@@ -93,6 +82,7 @@ export default class LADTable extends TelemetryTable {
 
         return options;
     }
+
     createTableRowCollections() {
         // need change: can this part be refactored by using super?
         // split the original method

@@ -30,11 +30,13 @@ export default class LADTableRowCollection extends TableRowCollection {
         this.ladMap = new Map();
         this.timeColumn = openmct.time.timeSystem().key;
     }
+    // TODO i think this breaks filters
+    // this also breaks the parent's contract
     addOne(item) {
         if (item.isDummyRow) {
             this.ladMap.set(item.objectKeyString, this.rows.length);
             this.rows.push(item);
-            this.emit('add', item);
+            this.emit('add', [item]);
 
             return true;
         }
