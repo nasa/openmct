@@ -3,6 +3,3 @@ contact_links:
   - name: Discussions
     url: https://github.com/nasa/openmct/discussions
     about: Have a question about the project?
-  - name: Security
-    url: https://github.com/nasa/openmct/security/policy
-    about: Report a Security Vulnerability
