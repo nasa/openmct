@@ -23,6 +23,7 @@ import JSONExporter from '/src/exporters/JSONExporter.js';
 
 import _ from 'lodash';
 import { saveAs } from 'saveAs';
+import uuid from "uuid";
 
 export default class ExportAsJSONAction {
     constructor(openmct) {
@@ -114,7 +115,7 @@ export default class ExportAsJSONAction {
             return _.isEqual(child.identifier, id);
         });
         const copyOfChild = JSON.parse(JSON.stringify(child));
-        copyOfChild.identifier.key = this.identifierService.generate();
+        copyOfChild.identifier.key = uuid();
         const newIdString = this._getId(copyOfChild);
         const parentId = this._getId(parent);
 
