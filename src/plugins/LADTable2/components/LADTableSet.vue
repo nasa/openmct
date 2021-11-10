@@ -89,9 +89,6 @@ export default {
     computed: {
     },
     mounted() {
-        setInterval(() => {
-            this.updateVisibleRows();
-        }, 5000);
         this.listeners = {};
 
         this.tableSet.on('headers-added', this.updateHeaders);
@@ -182,23 +179,9 @@ export default {
             this.telemetry[tableKey].push(telemetryKey);
         },
         addRow(telemetry) {
-            const ladTelemetry = telemetry[0];
+            const ladTelemetry = telemetry[telemetry.length - 1];
 
             this.$set(this.ladRowData, ladTelemetry.objectKeyString, ladTelemetry);
-        },
-        updateVisibleRows() {
-            if (!this.updatingView) {
-                this.updatingView = true;
-                requestAnimationFrame(() => {
-                    Object.entries(this.tableSet.tables).forEach(([key, table]) => {
-                        const rows = table.tableRows.getRows();
-
-                        this.$set(this.ladTableTelemetry, key, rows);
-                    });
-
-                    this.updatingView = false;
-                });
-            }
         }
     }
 };
