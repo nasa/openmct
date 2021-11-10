@@ -42,12 +42,14 @@ define(
                 var key = worker.key;
                 if (!workerUrls[key]) {
                     if (worker.scriptUrl) {
+                        console.log('add worker.scriptUrl', worker.scriptUrl);
                         workerUrls[key] = [
                             worker.bundle.path,
                             worker.bundle.sources,
                             worker.scriptUrl
                         ].join("/");
                     } else if (worker.scriptText) {
+                        console.log('add worker.scriptText', worker.scriptText);
                         var blob = new Blob(
                             [worker.scriptText],
                             {type: 'application/javascript'}
@@ -79,9 +81,15 @@ define(
          * @returns {Worker | SharedWorker} the running Worker
          */
         WorkerService.prototype.run = function (key) {
+            console.log('workerservice.run', key);
+
             var scriptUrl = this.workerUrls[key],
                 Worker = this.sharedWorkers[key]
                     ? this.SharedWorker : this.Worker;
+
+            console.log('scripturl', scriptUrl);
+            console.log('worker', Worker);
+            console.log('window worker?', Worker === window.Worker);
 
             return scriptUrl && Worker && new Worker(scriptUrl);
         };
