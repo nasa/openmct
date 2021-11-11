@@ -4,18 +4,17 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
     use: {
-        httpCredentials: {
-            username: process.env.USERNAME,
-            password: process.env.PASSWORD
-        },
         browserName: "chromium",
-        baseURL: 'https://browserless.io',
-        headless: false,
+        baseURL: 'http://localhost:8080/',
+        headless: true,
         ignoreHTTPSErrors: true,
-        trace: 'on',
-        video: 'on'
+        screenshot: 'on',
+        trace: 'on'
     },
-    reporter: [['junit', { outputFile: 'test-results/results.xml' }]]
+    reporter: [
+        ['list'],
+        ['junit', { outputFile: 'test-results/results.xml' }]
+    ]
 };
 
 module.exports = config;
