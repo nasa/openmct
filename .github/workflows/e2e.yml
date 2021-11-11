@@ -1,0 +1,19 @@
+name: "e2e"
+on:
+  workflow_dispatch:
+    inputs: 
+      version:
+        description: 'Which branch do you want to test?' # Limited to branch for now
+        required: false
+        default: 'master' 
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - name: Run the e2e tests
+        run: npm run test:e2e:smoke
