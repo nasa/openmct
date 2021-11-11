@@ -13,6 +13,7 @@ updates:
       - dependency-name: "eslint*"
       - dependency-name: "karma*"
       - dependency-name: "jasmine*"
+      - dependency-name: "playwright*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
