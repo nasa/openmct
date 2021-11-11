@@ -16,10 +16,6 @@ jobs:
           node-version: lts/fermium
       - run: npm install
       - run: npm audit --audit-level=low
-      - store_test_results:
-          path: test-results/results.xml
-      - store_artifacts:
-          path: test-results/
   test:
     parameters:
       node-version:
@@ -80,6 +76,10 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run test:e2e:smoke
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results/
 
 workflows:
   matrix-tests:
