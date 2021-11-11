@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 
-test('Verify that a Folder Object can be created and once created in edit mode', async ({ page }) => {
+test('Verify that a Folder Object can be created and navigates to edit mode', async ({ page }) => {
     //Go to base URL
     await page.goto('/', { waitUntil: 'networkidle' });
 
