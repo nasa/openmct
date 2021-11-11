@@ -12,8 +12,7 @@ module.exports = {
     "extends": [
         "eslint:recommended",
         "plugin:vue/recommended",
-        "plugin:you-dont-need-lodash-underscore/compatible",
-        "plugin:playwright/playwright-test"
+        "plugin:you-dont-need-lodash-underscore/compatible"
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {
