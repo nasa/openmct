@@ -67,6 +67,16 @@ jobs:
                 path: dist/reports/tests/
             - store_artifacts:
                 path: dist/reports/
+  e2e-smoke:
+    docker:
+      - image: mcr.microsoft.com/playwright:focal
+    environment:
+      NODE_ENV: development # Needed if playwright is in `devDependencies`
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run test:e2e:smoke
+
 workflows:
   matrix-tests:
     jobs:
@@ -86,6 +96,7 @@ workflows:
           name: node14-build-lint
           node-version: lts/fermium
           browser: "" #Skip unit tests
+      - e2e-smoke
 
   nightly:
     jobs:
