@@ -4,7 +4,8 @@
         <div
             class="l-browse-bar__object-name--w c-object-label"
         >
-            <div class="c-object-label__type-icon"
+            <div v-if="type"
+                 class="c-object-label__type-icon"
                  :class="type.definition.cssClass"
             ></div>
             <span class="l-browse-bar__object-name c-object-label__name">
@@ -17,6 +18,12 @@
             :v-if="!hideViewSwitcher"
             :views="views"
             :current-view="currentView"
+        />
+        <NotebookMenuSwitcher :domain-object="domainObject"
+                              :object-path="objectPath"
+                              :is-preview="true"
+                              :current-view="currentView"
+                              class="c-notebook-snapshot-menubutton"
         />
         <div class="l-browse-bar__actions">
             <button
@@ -38,7 +45,9 @@
 </template>
 
 <script>
+import NotebookMenuSwitcher from '@/plugins/notebook/components/NotebookMenuSwitcher.vue';
 import ViewSwitcher from '../../ui/layout/ViewSwitcher.vue';
+
 const HIDDEN_ACTIONS = [
     'remove',
     'move',
@@ -48,10 +57,12 @@ const HIDDEN_ACTIONS = [
 
 export default {
     components: {
+        NotebookMenuSwitcher,
         ViewSwitcher
     },
     inject: [
-        'openmct'
+        'openmct',
+        'objectPath'
     ],
     props: {
         currentView: {
@@ -143,6 +154,7 @@ export default {
         showMenuItems(event) {
             let sortedActions = this.openmct.actions._groupAndSortActions(this.menuActionItems);
             const menuItems = this.openmct.menus.actionsToMenuItems(sortedActions, this.actionCollection.objectPath, this.actionCollection.view);
+
             const visibleMenuItems = this.filterHiddenItems(menuItems);
             this.openmct.menus.showMenu(event.x, event.y, visibleMenuItems);
         }

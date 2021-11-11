@@ -1,4 +1,4 @@
-import ImageryViewLayout from './components/ImageryViewLayout.vue';
+import ImageryViewComponent from './components/ImageryView.vue';
 
 import Vue from 'vue';
 
@@ -10,19 +10,32 @@ export default class ImageryView {
         this.component = undefined;
     }
 
-    show(element) {
+    show(element, isEditing, viewOptions) {
+        let alternateObjectPath;
+        let indexForFocusedImage;
+        if (viewOptions) {
+            indexForFocusedImage = viewOptions.indexForFocusedImage;
+            alternateObjectPath = viewOptions.objectPath;
+        }
+
         this.component = new Vue({
             el: element,
             components: {
-                ImageryViewLayout
+                'imagery-view': ImageryViewComponent
             },
             provide: {
                 openmct: this.openmct,
                 domainObject: this.domainObject,
-                objectPath: this.objectPath,
+                objectPath: alternateObjectPath || this.objectPath,
                 currentView: this
             },
-            template: '<imagery-view-layout ref="ImageryLayout"></imagery-view-layout>'
+            data() {
+                return {
+                    indexForFocusedImage
+                };
+            },
+            template: '<imagery-view :index-for-focused-image="indexForFocusedImage" ref="ImageryContainer"></imagery-view>'
+
         });
     }
 

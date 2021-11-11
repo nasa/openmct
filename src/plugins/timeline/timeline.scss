@@ -1,4 +1,10 @@
 .c-timeline-holder {
     @include abs();
+    display: flex;
+    flex-direction: column;
     overflow-x: hidden;
+
+    > * + * {
+        margin-top: $interiorMargin;
+    }
 }

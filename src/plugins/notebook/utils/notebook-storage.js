@@ -71,11 +71,7 @@ export async function getDefaultNotebookLink(openmct, domainObject = null) {
     }
 
     const path = await openmct.objects.getOriginalPath(domainObject.identifier)
-        .then(objectPath => objectPath
-            .map(o => o && openmct.objects.makeKeyString(o.identifier))
-            .reverse()
-            .join('/')
-        );
+        .then(openmct.objects.getRelativePath);
     const { defaultPageId, defaultSectionId } = getDefaultNotebook();
 
     return `#/browse/${path}?sectionId=${defaultSectionId}&pageId=${defaultPageId}`;
@@ -100,13 +96,19 @@ export function setDefaultNotebookPageId(pageId) {
 
 export function validateNotebookStorageObject() {
     const notebookStorage = getDefaultNotebook();
+    if (!notebookStorage) {
+        return true;
+    }
 
     let valid = false;
     if (notebookStorage) {
-        Object.entries(notebookStorage).forEach(([key, value]) => {
+        const oldInvalidKeys = ['notebookMeta', 'page', 'section'];
+        valid = Object.entries(notebookStorage).every(([key, value]) => {
             const validKey = key !== undefined && key !== null;
             const validValue = value !== undefined && value !== null;
-            valid = validKey && validValue;
+            const hasOldInvalidKeys = oldInvalidKeys.includes(key);
+
+            return validKey && validValue && !hasOldInvalidKeys;
         });
     }
 

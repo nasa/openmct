@@ -34,6 +34,7 @@
         class="u-contents"
         :default-object="item.domainObject"
         :object-path="item.objectPath"
+        @change-action-collection="setActionCollection"
     />
 </swim-lane>
 </template>
@@ -87,7 +88,7 @@ export default {
             this.mutablePromise.then(() => {
                 this.openmct.objects.destroyMutable(this.domainObject);
             });
-        } else {
+        } else if (this.domainObject.isMutable) {
             this.openmct.objects.destroyMutable(this.domainObject);
         }
     },
@@ -106,6 +107,9 @@ export default {
                         this.$el, this.context);
                 }
             });
+        },
+        setActionCollection(actionCollection) {
+            this.openmct.menus.actionsToMenuItems(actionCollection.getVisibleActions(), actionCollection.objectPath, actionCollection.view);
         }
     }
 };

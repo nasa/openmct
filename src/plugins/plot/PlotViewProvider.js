@@ -44,7 +44,9 @@ export default function PlotViewProvider(openmct) {
     }
 
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+
+        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
     }
 
     return {
@@ -68,7 +70,8 @@ export default function PlotViewProvider(openmct) {
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            domainObject,
+                            path: objectPath
                         },
                         data() {
                             return {

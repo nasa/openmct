@@ -54,7 +54,7 @@
 <script>
 import MctTicks from "../MctTicks.vue";
 import eventHelpers from '../lib/eventHelpers';
-import configStore from "../configuration/configStore";
+import configStore from "../configuration/ConfigStore";
 
 export default {
     components: {

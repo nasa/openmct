@@ -44,7 +44,7 @@ export default class PreviewAction {
         }
     }
 
-    invoke(objectPath) {
+    invoke(objectPath, viewOptions) {
         let preview = new Vue({
             components: {
                 Preview
@@ -53,13 +53,19 @@ export default class PreviewAction {
                 openmct: this._openmct,
                 objectPath: objectPath
             },
-            template: '<Preview></Preview>'
+            data() {
+                return {
+                    viewOptions
+                };
+            },
+            template: '<Preview :view-options="viewOptions"></Preview>'
         });
         preview.$mount();
 
         let overlay = this._openmct.overlays.overlay({
             element: preview.$el,
             size: 'large',
+            autoHide: false,
             buttons: [
                 {
                     label: 'Done',
@@ -80,15 +86,8 @@ export default class PreviewAction {
         const isObjectView = parentElement && parentElement.classList.contains('js-object-view');
 
         return !PreviewAction.isVisible
-            && !this._isNavigatedObject(objectPath)
+            && !this._openmct.router.isNavigatedObject(objectPath)
             && !isObjectView;
-    }
-
-    _isNavigatedObject(objectPath) {
-        let targetObject = objectPath[0];
-        let navigatedObject = this._openmct.router.path[0];
-
-        return this._openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
 
     _preventPreview(objectPath) {

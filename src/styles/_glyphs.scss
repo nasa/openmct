@@ -85,6 +85,7 @@
 .icon-eye-disabled {  @include glyphBefore($glyph-icon-eye-disabled); }
 .icon-notebook-page {  @include glyphBefore($glyph-icon-notebook-page); }
 .icon-unlocked {  @include glyphBefore($glyph-icon-unlocked); }
+.icon-circle {  @include glyphBefore($glyph-icon-circle); }
 .icon-arrows-right-left {  @include glyphBefore($glyph-icon-arrows-right-left); }
 .icon-arrows-up-down {  @include glyphBefore($glyph-icon-arrows-up-down); }
 .icon-bullet {  @include glyphBefore($glyph-icon-bullet); }
@@ -188,6 +189,9 @@
 .icon-condition-widget {  @include glyphBefore($glyph-icon-condition-widget); }
 .icon-alphanumeric {  @include glyphBefore($glyph-icon-alphanumeric); }
 .icon-image-telemetry {  @include glyphBefore($glyph-icon-image-telemetry); }
+.icon-telemetry-aggregate {  @include glyphBefore($glyph-icon-telemetry-aggregate); }
+.icon-bar-chart {  @include glyphBefore($glyph-icon-bar-chart); }
+.icon-map {  @include glyphBefore($glyph-icon-map); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
@@ -247,3 +251,5 @@
 .bg-icon-command { @include glyphBg($bg-icon-command); }
 .bg-icon-conditional { @include glyphBg($bg-icon-conditional); }
 .bg-icon-condition-widget { @include glyphBg($bg-icon-condition-widget); }
+.bg-icon-bar-chart { @include glyphBg($bg-icon-bar-chart); }
+.bg-icon-map { @include glyphBg($bg-icon-map); }

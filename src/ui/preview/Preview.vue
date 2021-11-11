@@ -46,6 +46,14 @@ export default {
         'openmct',
         'objectPath'
     ],
+    props: {
+        viewOptions: {
+            type: Object,
+            default() {
+                return undefined;
+            }
+        }
+    },
     data() {
         let domainObject = this.objectPath[0];
 
@@ -59,12 +67,13 @@ export default {
     },
     mounted() {
         this.views = this.openmct.objectViews.get(this.domainObject, this.objectPath).map((view) => {
-            view.callBack = () => {
+            view.onItemClicked = () => {
                 return this.setView(view);
             };
 
             return view;
         });
+
         this.setView(this.views[0]);
     },
     beforeDestroy() {
@@ -108,7 +117,7 @@ export default {
             this.view = this.currentView.view(this.domainObject, this.objectPath);
 
             this.getActionsCollection();
-            this.view.show(this.viewContainer, false);
+            this.view.show(this.viewContainer, false, this.viewOptions);
             this.initObjectStyles();
         },
         getActionsCollection() {

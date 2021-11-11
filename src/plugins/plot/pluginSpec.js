@@ -24,7 +24,7 @@ import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} f
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "./stackedPlot/StackedPlot.vue";
-import configStore from "./configuration/configStore";
+import configStore from "./configuration/ConfigStore";
 import EventEmitter from "EventEmitter";
 import PlotOptions from "./inspector/PlotOptions.vue";
 import PlotConfigurationModel from "./configuration/PlotConfigurationModel";
@@ -35,7 +35,6 @@ describe("the plugin", function () {
     let openmct;
     let telemetryPromise;
     let telemetryPromiseResolve;
-    let cleanupFirst;
     let mockObjectPath;
     let telemetrylimitProvider;
 
@@ -75,9 +74,16 @@ describe("the plugin", function () {
                 'some-other-key': 'some-other-value 3'
             }
         ];
-        cleanupFirst = [];
 
-        openmct = createOpenMct();
+        const timeSystem = {
+            timeSystemKey: 'utc',
+            bounds: {
+                start: 0,
+                end: 4
+            }
+        };
+
+        openmct = createOpenMct(timeSystem);
 
         telemetryPromise = new Promise((resolve) => {
             telemetryPromiseResolve = resolve;
@@ -141,12 +147,8 @@ describe("the plugin", function () {
 
         spyOn(window, 'ResizeObserver').and.returnValue({
             observe() {},
+            unobserve() {},
             disconnect() {}
-        });
-
-        openmct.time.timeSystem("utc", {
-            start: 0,
-            end: 4
         });
 
         openmct.types.addType("test-object", {
@@ -168,19 +170,8 @@ describe("the plugin", function () {
             end: 1
         });
 
-        // Needs to be in a timeout because plots use a bunch of setTimeouts, some of which can resolve during or after
-        // teardown, which causes problems
-        // This is hacky, we should find a better approach here.
-        setTimeout(() => {
-            //Cleanup code that needs to happen before dom elements start being destroyed
-            cleanupFirst.forEach(cleanup => cleanup());
-            cleanupFirst = [];
-            document.body.removeChild(element);
-
-            configStore.deleteAll();
-
-            resetApplicationState(openmct).then(done).catch(done);
-        });
+        configStore.deleteAll();
+        resetApplicationState(openmct).then(done).catch(done);
     });
 
     describe("the plot views", () => {
@@ -312,6 +303,7 @@ describe("the plugin", function () {
             let plotView = applicableViews.find((viewProvider) => viewProvider.key === "plot-stacked");
             expect(plotView).toBeDefined();
         });
+
     });
 
     describe("The single plot view", () => {
@@ -361,11 +353,11 @@ describe("the plugin", function () {
             plotView = plotViewProvider.view(testTelemetryObject, [testTelemetryObject]);
             plotView.show(child, true);
 
-            cleanupFirst.push(() => {
-                plotView.destroy();
-            });
-
             return Vue.nextTick();
+        });
+
+        it("Makes only one request for telemetry on load", () => {
+            expect(openmct.telemetry.request).toHaveBeenCalledTimes(1);
         });
 
         it("Renders a collapsed legend for every telemetry", () => {
@@ -384,12 +376,23 @@ describe("the plugin", function () {
             expect(legend.length).toBe(6);
         });
 
-        it("Renders X-axis ticks for the telemetry object", () => {
-            let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
-            expect(xAxisElement.length).toBe(1);
+        it("Renders X-axis ticks for the telemetry object", (done) => {
+            const configId = openmct.objects.makeKeyString(testTelemetryObject.identifier);
+            const config = configStore.get(configId);
+            config.xAxis.set('displayRange', {
+                min: 0,
+                max: 4
+            });
 
-            let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-            expect(ticks.length).toBe(5);
+            Vue.nextTick(() => {
+                let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
+                expect(xAxisElement.length).toBe(1);
+
+                let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
+                expect(ticks.length).toBe(5);
+
+                done();
+            });
         });
 
         it("Renders Y-axis options for the telemetry object", () => {
@@ -438,6 +441,64 @@ describe("the plugin", function () {
                     expect(playEl.length).toBe(1);
                     done();
                 });
+
+            });
+        });
+
+        describe('resume actions on errant click', () => {
+            beforeEach(() => {
+                openmct.time.clock('local', {
+                    start: -1000,
+                    end: 100
+                });
+
+                return Vue.nextTick();
+            });
+
+            it("clicking the plot view without movement resumes the plot while active", async () => {
+
+                const pauseEl = element.querySelectorAll(".c-button-set .icon-pause");
+                // if the pause button is present, the chart is running
+                expect(pauseEl.length).toBe(1);
+
+                // simulate an errant mouse click
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
+                await Vue.nextTick();
+
+                const pauseElAfterClick = element.querySelectorAll(".c-button-set .icon-pause");
+                console.log('pauseElAfterClick', pauseElAfterClick);
+                expect(pauseElAfterClick.length).toBe(1);
+
+            });
+
+            it("clicking the plot view without movement leaves the plot paused", async () => {
+
+                const pauseEl = element.querySelector(".c-button-set .icon-pause");
+                // pause the plot
+                pauseEl.dispatchEvent(createMouseEvent('click'));
+                await Vue.nextTick();
+
+                const playEl = element.querySelectorAll('.c-button-set .is-paused');
+                expect(playEl.length).toBe(1);
+
+                // simulate an errant mouse click
+                // the second item is the canvas we need to use
+                const canvas = element.querySelectorAll("canvas")[1];
+                const mouseDownEvent = new MouseEvent('mousedown');
+                const mouseUpEvent = new MouseEvent('mouseup');
+                canvas.dispatchEvent(mouseDownEvent);
+                // mouseup event is bound to the window
+                window.dispatchEvent(mouseUpEvent);
+                await Vue.nextTick();
+
+                const playElAfterChartClick = element.querySelectorAll(".c-button-set .is-paused");
+                expect(playElAfterChartClick.length).toBe(1);
 
             });
         });
@@ -570,14 +631,10 @@ describe("the plugin", function () {
                 provide: {
                     openmct: openmct,
                     domainObject: stackedPlotObject,
-                    composition: openmct.composition.get(stackedPlotObject)
+                    composition: openmct.composition.get(stackedPlotObject),
+                    path: [stackedPlotObject]
                 },
                 template: "<stacked-plot></stacked-plot>"
-            });
-
-            cleanupFirst.push(() => {
-                component.$destroy();
-                component = undefined;
             });
 
             return telemetryPromise
@@ -605,12 +662,21 @@ describe("the plugin", function () {
             expect(legend.length).toBe(6);
         });
 
-        xit("Renders X-axis ticks for the telemetry object", () => {
+        it("Renders X-axis ticks for the telemetry object", (done) => {
             let xAxisElement = element.querySelectorAll(".gl-plot-axis-area.gl-plot-x .gl-plot-tick-wrapper");
             expect(xAxisElement.length).toBe(1);
 
-            let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
-            expect(ticks.length).toBe(5);
+            config.xAxis.set('displayRange', {
+                min: 0,
+                max: 4
+            });
+
+            Vue.nextTick(() => {
+                let ticks = xAxisElement[0].querySelectorAll(".gl-plot-tick");
+                expect(ticks.length).toBe(5);
+
+                done();
+            });
         });
 
         it("Renders Y-axis ticks for the telemetry object", (done) => {
@@ -962,7 +1028,7 @@ describe("the plugin", function () {
                 expandControl.dispatchEvent(clickEvent);
 
                 const plotOptionsProperties = editOptionsEl.querySelectorAll(".js-plot-options-edit-properties .grid-row");
-                expect(plotOptionsProperties.length).toEqual(7);
+                expect(plotOptionsProperties.length).toEqual(8);
             });
 
             it('shows yKeyOptions', () => {
@@ -987,7 +1053,11 @@ describe("the plugin", function () {
                 const yAxisProperties = editOptionsEl.querySelectorAll("div.grid-properties:first-of-type .l-inspector-part");
                 expect(yAxisProperties.length).toEqual(3);
             });
+
+            it('renders color palette options', () => {
+                const colorSwatch = editOptionsEl.querySelector(".c-click-swatch");
+                expect(colorSwatch).toBeDefined();
+            });
         });
     });
-
 });

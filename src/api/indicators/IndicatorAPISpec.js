@@ -19,97 +19,64 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import SimpleIndicator from './SimpleIndicator';
 
-define(
-    [
-        "../../MCT",
-        "../../../platform/commonUI/general/src/directives/MCTIndicators"
-    ],
-    function (
-        MCT,
-        MCTIndicators
-    ) {
-        xdescribe("The Indicator API", function () {
-            let openmct;
-            let directive;
-            let holderElement;
+describe("The Indicator API", () => {
+    let openmct;
 
-            beforeEach(function () {
-                openmct = new MCT();
-                directive = new MCTIndicators(openmct);
-                holderElement = document.createElement('div');
-            });
-
-            describe("The simple indicator", function () {
-                let simpleIndicator;
-
-                beforeEach(function () {
-                    simpleIndicator = openmct.indicators.simpleIndicator();
-                    openmct.indicators.add(simpleIndicator);
-                    renderIndicators();
-                });
-
-                it("applies the set icon class", function () {
-                    simpleIndicator.iconClass('testIconClass');
-
-                    expect(getIconElement().classList.contains('testIconClass')).toBe(true);
-
-                    simpleIndicator.iconClass('anotherIconClass');
-                    expect(getIconElement().classList.contains('testIconClass')).toBe(false);
-                    expect(getIconElement().classList.contains('anotherIconClass')).toBe(true);
-                });
-
-                it("applies the set status class", function () {
-                    simpleIndicator.statusClass('testStatusClass');
-
-                    expect(getIconElement().classList.contains('testStatusClass')).toBe(true);
-                    simpleIndicator.statusClass('anotherStatusClass');
-                    expect(getIconElement().classList.contains('testStatusClass')).toBe(false);
-                    expect(getIconElement().classList.contains('anotherStatusClass')).toBe(true);
-                });
-
-                it("displays the set text", function () {
-                    simpleIndicator.text('some test text');
-                    expect(getTextElement().textContent.trim()).toEqual('some test text');
-                });
-
-                it("sets the indicator's title", function () {
-                    simpleIndicator.description('a test description');
-                    expect(getIndicatorElement().getAttribute('title')).toEqual('a test description');
-                });
-
-                it("Hides indicator icon if no text is set", function () {
-                    simpleIndicator.text('');
-                    expect(getIndicatorElement().classList.contains('hidden')).toBe(true);
-                });
-
-                function getIconElement() {
-                    return holderElement.querySelector('.ls-indicator');
-                }
-
-                function getIndicatorElement() {
-                    return holderElement.querySelector('.ls-indicator');
-                }
-
-                function getTextElement() {
-                    return holderElement.querySelector('.indicator-text');
-                }
-            });
-
-            it("Supports registration of a completely custom indicator", function () {
-                const customIndicator = document.createElement('div');
-                customIndicator.classList.add('customIndicator');
-                customIndicator.textContent = 'A custom indicator';
-
-                openmct.indicators.add({element: customIndicator});
-                renderIndicators();
-
-                expect(holderElement.querySelector('.customIndicator').textContent.trim()).toEqual('A custom indicator');
-            });
-
-            function renderIndicators() {
-                directive.link({}, holderElement);
-            }
-
-        });
+    beforeEach(() => {
+        openmct = createOpenMct();
     });
+
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
+
+    function generateIndicator(className, label, priority) {
+        const element = document.createElement('div');
+        element.classList.add(className);
+        const textNode = document.createTextNode(label);
+        element.appendChild(textNode);
+        const testIndicator = {
+            element,
+            priority
+        };
+
+        return testIndicator;
+    }
+
+    it("can register an indicator", () => {
+        const testIndicator = generateIndicator('test-indicator', 'This is a test indicator', 2);
+        openmct.indicators.add(testIndicator);
+        expect(openmct.indicators.indicatorObjects).toBeDefined();
+        // notifier indicator is installed by default
+        expect(openmct.indicators.indicatorObjects.length).toBe(2);
+    });
+
+    it("can order indicators based on priority", () => {
+        const testIndicator1 = generateIndicator('test-indicator-1', 'This is a test indicator', openmct.priority.LOW);
+        openmct.indicators.add(testIndicator1);
+
+        const testIndicator2 = generateIndicator('test-indicator-2', 'This is another test indicator', openmct.priority.DEFAULT);
+        openmct.indicators.add(testIndicator2);
+
+        const testIndicator3 = generateIndicator('test-indicator-3', 'This is yet another test indicator', openmct.priority.LOW);
+        openmct.indicators.add(testIndicator3);
+
+        const testIndicator4 = generateIndicator('test-indicator-4', 'This is yet another test indicator', openmct.priority.HIGH);
+        openmct.indicators.add(testIndicator4);
+
+        expect(openmct.indicators.indicatorObjects.length).toBe(5);
+        const indicatorObjectsByPriority = openmct.indicators.getIndicatorObjectsByPriority();
+        expect(indicatorObjectsByPriority.length).toBe(5);
+        expect(indicatorObjectsByPriority[2].priority).toBe(openmct.priority.DEFAULT);
+    });
+
+    it("the simple indicator can be added", () => {
+        const simpleIndicator = new SimpleIndicator(openmct);
+        openmct.indicators.add(simpleIndicator);
+
+        expect(openmct.indicators.indicatorObjects.length).toBe(2);
+    });
+});

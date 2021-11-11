@@ -25,7 +25,9 @@ import Vue from 'vue';
 
 export default function StackedPlotViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip');
+        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+
+        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
     }
 
     return {
@@ -55,7 +57,8 @@ export default function StackedPlotViewProvider(openmct) {
                         provide: {
                             openmct,
                             domainObject,
-                            composition: openmct.composition.get(domainObject)
+                            composition: openmct.composition.get(domainObject),
+                            path: objectPath
                         },
                         data() {
                             return {

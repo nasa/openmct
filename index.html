@@ -195,6 +195,8 @@
             ['table', 'telemetry.plot.overlay', 'telemetry.plot.stacked'],
             {indicator: true}
         ));
+        openmct.install(openmct.plugins.Clock({ enableClockIndicator: true }));
+        openmct.install(openmct.plugins.Timer());
         openmct.start();
     </script>
 </html>

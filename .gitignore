@@ -47,3 +47,6 @@ report.*.json
 test-results
 
 package-lock.json
+
+#codecov artifacts
+codecov
