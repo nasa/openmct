@@ -75,6 +75,7 @@ jobs:
     steps:
       - checkout
       - run: npm install
+      - run: npm run build:dev
       - run: npm run test:e2e:smoke
       - store_test_results:
           path: test-results/results.xml
