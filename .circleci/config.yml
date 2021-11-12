@@ -79,7 +79,7 @@ jobs:
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
-          path: test-results/
+          path: test-results
 
 workflows:
   matrix-tests:
