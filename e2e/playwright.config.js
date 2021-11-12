@@ -3,6 +3,7 @@
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
+    retries: 3,
     testDir: 'tests',
     timeout: 60 * 1000,
     webServer: {
@@ -17,8 +18,8 @@ const config = {
         headless: true,
         ignoreHTTPSErrors: true,
         screenshot: 'on',
-        trace: 'on',
-        video: 'on'
+        trace: 'on-first-retry',
+        video: 'on-first-retry'
     },
     reporter: [
         ['list'],
