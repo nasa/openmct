@@ -296,6 +296,11 @@ export default {
             return disabled;
         },
         focusedImage() {
+            console.assert(this.imageHistory.length > this.focusedImageIndex, {
+                imageHistoryLength: this.imageHistory.length,
+                focusedImageIndex: this.focusedImageIndex
+            });
+
             return this.imageHistory[this.focusedImageIndex];
         },
         parsedSelectedTime() {
@@ -412,11 +417,20 @@ export default {
         imageHistorySize(newSize, oldSize) {
             let imageIndex;
             if (this.indexForFocusedImage !== undefined) {
+                console.log('setting to initFocusedImageIndex', this.initFocusedImageIndex)
                 imageIndex = this.initFocusedImageIndex;
             } else {
-                imageIndex = newSize - 1;
+                imageIndex = newSize > 0 ? newSize -1 : undefined;
             }
-
+            console.table({
+                newSize,
+                oldSize,
+                imageIndex,
+                imageHistoryLength: this.imageHistory.length,
+                indexForFocusedImage: this.indexForFocusedImage,
+                initFocusedImageIndex: this.initFocusedImageIndex
+                });
+            console.assert(imageIndex > -1, "The imageIndex value of %s fails", imageIndex);
             this.setFocusedImage(imageIndex, false);
             this.scrollToRight();
         },
@@ -502,6 +516,7 @@ export default {
             this.timeContext.on('timeSystem', this.trackDuration);
             this.timeContext.on('clock', this.trackDuration);
             this.timeContext.on("timeContext", this.setTimeContext);
+            // this.timeContext.on('bounds', this.handleNewBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
@@ -510,6 +525,32 @@ export default {
                 this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
+        // handleNewBounds(bounds) {
+        //     // console.trace();
+        //     console.group('handleBounds');
+        //     console.log('handleBounds: image history length', this.imageHistory.length, Array.isArray(this.imageHistory))
+        //     console.log('handleBounds: focusedImage', this.focusedImage, this.focusedImageIndex);
+
+        //     // if the focused image is no longer in bounds;
+        //     // if (this.focusedImage && (bounds.start > this.focusedImage.time || bounds.end < this.focusedImage.time) 
+            
+        //     // // || (!this.focusedImage && this.focusedImageIndex > -1)
+            
+        //     // ) {
+        //     //     console.log('handleBounds: not in bounds');
+        //     //     this.isPaused = false;
+        //     // } else {
+        //     //     console.log('handleBounds: is in bounds');
+        //     // }
+        //     console.groupEnd();
+        //     // setTimeout(() => {
+
+        //     //     console.log('imagery history length after timeout', this.imageHistory.length, typeof this.imageHistory, this.imageHistory[this.imageHistory.length - 1], Array.isArray(this.imageHistory));
+        //     // // this.setFocusedImage(this.imageHistory.length - 2, false);
+        //     // }, 2000)
+        //     // console.log('ImageryVue end')
+
+        // },
         expand() {
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
@@ -671,12 +712,15 @@ export default {
             });
         },
         setFocusedImage(index, thumbnailClick = false) {
+            console.assert(index > -1, {index})
+            console.log('setFocusedImageIndex', 'from', this.focusedImageIndex, "to", index)
             if (thumbnailClick) {
                 //We use the props till the user changes what they want to see
                 this.initFocusedImageIndex = undefined;
             }
 
             if (this.isPaused && !thumbnailClick && this.initFocusedImageIndex === undefined) {
+                console.log('setFocusedImage is paused and not thumnail click', index);
                 this.nextImageIndex = index;
                 //this could happen if bounds changes
                 if (this.focusedImageIndex > this.imageHistory.length - 1) {
