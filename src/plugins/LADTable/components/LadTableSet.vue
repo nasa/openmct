@@ -62,7 +62,7 @@ export default {
     components: {
         LadRow
     },
-    inject: ['openmct', 'objectPath', 'currentView'],
+    inject: ['openmct', 'objectPath', 'currentView', 'tableSet'],
     props: {
         domainObject: {
             type: Object,
@@ -95,20 +95,21 @@ export default {
         }
     },
     mounted() {
-        this.composition = this.openmct.composition.get(this.domainObject);
-        this.composition.on('add', this.addLadTable);
-        this.composition.on('remove', this.removeLadTable);
-        this.composition.on('reorder', this.reorderLadTables);
-        this.composition.load();
+        this.tableSet.initialize();
+        // this.composition = this.openmct.composition.get(this.domainObject);
+        // this.composition.on('add', this.addLadTable);
+        // this.composition.on('remove', this.removeLadTable);
+        // this.composition.on('reorder', this.reorderLadTables);
+        // this.composition.load();
     },
     destroyed() {
-        this.composition.off('add', this.addLadTable);
-        this.composition.off('remove', this.removeLadTable);
-        this.composition.off('reorder', this.reorderLadTables);
-        this.compositions.forEach(c => {
-            c.composition.off('add', c.addCallback);
-            c.composition.off('remove', c.removeCallback);
-        });
+        // this.composition.off('add', this.addLadTable);
+        // this.composition.off('remove', this.removeLadTable);
+        // this.composition.off('reorder', this.reorderLadTables);
+        // this.compositions.forEach(c => {
+        //     c.composition.off('add', c.addCallback);
+        //     c.composition.off('remove', c.removeCallback);
+        // });
     },
     methods: {
         addLadTable(domainObject) {

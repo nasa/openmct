@@ -26,8 +26,8 @@
     class="js-lad-table__body__row"
     @contextmenu.prevent="showContextMenu"
 >
-    <td class="js-first-data">{{ telemetryObject.domainObject.name }}</td>
-    <td class="js-second-data">{{ timestamp }}</td>
+    <td class="js-first-data">{{ telemetryObject.telemetryObject.name }}</td>
+    <td class="js-second-data">{{ formattedTimestamp }}</td>
     <td
         class="js-third-data"
         :class="valueClass"
@@ -46,11 +46,15 @@
 export default {
     inject: ['openmct', 'currentView'],
     props: {
-        ladRow: {
+        row: {
             type: Object,
             required: true
         },
         telemetryObject: {
+            type: Object,
+            required: true
+        },
+        headers: {
             type: Object,
             required: true
         },
@@ -62,39 +66,56 @@ export default {
             type: Boolean,
             require: true
         }
-
     },
     data() {
         return {
-
+            rowClass: this.row.getRowClass()
         };
     },
     computed: {
-        // headerKeys() {
-        //     return Object.keys(this.headers);
-        // },
-        formattedTimestamp() {
-            return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
+        domainObject() {
+            return this.telemetryObject.telemetryObject;
         },
-        timestamp() {
-            let datum = this.ladRow.datum;
-
-            return this.getFormattedTimestamp(datum) || '---';
+        metadata() {
+            return this.openmct.telemetry.getMetadata(this.domainObject);
+        },
+        formats() {
+            return this.openmct.telemetry.getFormatMap(this.metadata);
+        },
+        limitEvaluator() {
+            return this.openmct.telemetry.limitEvaluator(this.domainObject);
+        },
+        valueMetadata() {
+            return this.metadata
+                ? this.metadata.valuesForHints(['range'])[0]
+                : undefined;
+        },
+        valueKey() {
+            return this.valueMetadata
+                ? this.valueMetadata.key
+                : undefined;
         },
         value() {
-            let datum = this.ladRow.datum;
-            let TelemetryFormats = this.telemetryObject.formats[this.telemetryObject.valueKey];
-            if (TelemetryFormats && TelemetryFormats.format(datum) !== 'nan') {
-                return TelemetryFormats.format(datum);
+            let formatter = this.formats && this.formats[this.valueKey];
+            if (formatter && formatter.format(this.row.datum) !== 'nan') {
+                return formatter.format(this.row.datum);
             } else {
                 return '---';
             }
         },
+        headerKeys() {
+            return Object.keys(this.headers);
+        },
+        formattedTimestamp() {
+            return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
+        },
+        timestamp() {
+            return this.row.datum[this.timeSystemKey];
+        },
         valueClass() {
-            let datum = this.ladRow.datum;
             let limit;
-            if (this.telemetryObject.limitEvaluator) {
-                limit = this.telemetryObject.limitEvaluator.evaluate(datum, this.telemetryObject.valueMetadata);
+            if (this.limitEvaluator) {
+                limit = this.limitEvaluator.evaluate(this.row, this.valueMetadata);
             }
 
             if (limit) {
@@ -104,23 +125,22 @@ export default {
             }
         },
         unit() {
-
-            return this.telemetryObject.valueMetadata.unit || '';
+            return this.valueMetadata.unit || '';
         }
     },
     mounted() {
         this.openmct.time.on('timeSystem', this.updateTimeSystem);
-        this.timestampKey = this.openmct.time.timeSystem().key;
+        this.timeSystemKey = this.openmct.time.timeSystem().key;
     },
     destroyed() {
         this.openmct.time.off('timeSystem', this.updateTimeSystem);
     },
     methods: {
         parseValue(header) {
-            if (this.ladRow.datum[header] === undefined) {
+            if (this.row[header] === undefined) {
                 return '--';
             } else {
-                return this.ladRow.datum[header];
+                return this.row[header];
             }
         },
         updateViewContext() {
@@ -134,25 +154,25 @@ export default {
         },
         getParsedTimestamp(timestamp) {
             if (this.timeSystemFormat()) {
-                return this.telemetryObject.formats[this.timestampKey].parse(timestamp);
+                return this.formats[this.timeSystemKey].parse(timestamp);
             }
         },
         getFormattedTimestamp(timestamp) {
             if (this.timeSystemFormat()) {
-                return this.telemetryObject.formats[this.timestampKey].format(timestamp);
+                return this.formats[this.timeSystemKey].format(timestamp);
             }
         },
         timeSystemFormat() {
-            if (this.telemetryObject.formats[this.timestampKey]) {
+            if (this.formats && this.formats[this.timeSystemKey]) {
                 return true;
             } else {
-                console.warn(`No formatter for ${this.timestampKey} time system for ${this.telemetryObject.domainObject.name}.`);
+                console.warn(`No formatter for ${this.timeSystemKey} time system for ${this.domainObject.name}.`);
 
                 return false;
             }
         },
         updateTimeSystem(timeSystem) {
-            this.timestampKey = timeSystem.key;
+            this.timeSystemKey = timeSystem.key;
         }
     }
 };

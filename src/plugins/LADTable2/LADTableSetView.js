@@ -1,13 +1,14 @@
 import TableSetView from './components/LADTableSet.vue';
 import LADTableSet from './LADTableSet';
 import Vue from 'vue';
+
 export default class LadTableSetView {
     constructor(openmct, domainObject, objectPath) {
         this.openmct = openmct;
         this.domainObject = domainObject;
         this.objectPath = objectPath;
         this.component = undefined;
-        this.tableSet = new LADTableSet(this.domainObject, this.openmct);
+        this.tableSet = new LADTableSet(domainObject, openmct);
     }
 
     show(element) {
