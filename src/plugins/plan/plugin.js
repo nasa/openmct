@@ -23,7 +23,7 @@
 import PlanViewProvider from './PlanViewProvider';
 import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
 
-export default function (configuration) {
+export default function () {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',

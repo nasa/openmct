@@ -86,6 +86,8 @@
         openmct.install(openmct.plugins.MyItems());
         openmct.install(openmct.plugins.Generator());
         openmct.install(openmct.plugins.ExampleImagery());
+        //TODO: Do not merge if this is here. Need to remove this getState configuration from this repo - it is for Charles' testing only.
+        openmct.install(openmct.plugins.PlanLayout());
         openmct.install(openmct.plugins.Timeline());
         openmct.install(openmct.plugins.Hyperlink());
         openmct.install(openmct.plugins.UTCTimeSystem());
