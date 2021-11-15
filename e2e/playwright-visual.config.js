@@ -1,16 +1,17 @@
+/* eslint-disable no-undef */
 // playwright.config.js
 // @ts-check
 
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
-    retries: 2,
+    retries: 0,
     testDir: 'tests',
-    timeout: 60 * 1000,
+    timeout: 90 * 1000,
     webServer: {
         command: 'npm run start',
         port: 8080,
-        timeout: 240 * 1000,
-        reuseExistingServer: !process.env.CI,
+        timeout: 200 * 1000,
+        reuseExistingServer: !process.env.CI
     },
     use: {
         browserName: "chromium",
@@ -18,8 +19,8 @@ const config = {
         headless: true,
         ignoreHTTPSErrors: true,
         screenshot: 'on',
-        trace: 'on-first-retry',
-        video: 'on-first-retry'
+        trace: 'off',
+        video: 'on'
     },
     reporter: [
         ['list'],

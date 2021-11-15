@@ -20,16 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/* 
+/*
 This test suite is dedicated to tests which can quickly verify that any openmct installation is
-operable and that any type of testing can proceed. 
+operable and that any type of testing can proceed.
 
 Ideally, smoke tests should make zero assumptions about how and where they are run. This makes them
 more resilient to change and therefor a better indicator of failure. Smoke tests will also run quickly
 as they cover a very "thin surface" of functionality.
 
-When deciding between authoring new smoke tests or functional tests, ask yourself "would I feel 
-comfortable running this test during a live mission?" Avoid creating or deleting Domain Objects. 
+When deciding between authoring new smoke tests or functional tests, ask yourself "would I feel
+comfortable running this test during a live mission?" Avoid creating or deleting Domain Objects.
 Make no assumptions about the order that elements appear in the DOM.
 */
 
@@ -37,7 +37,7 @@ const { test, expect } = require('@playwright/test');
 
 test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({ page }) => {
 
-    //Go to base URL
+    //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
     //Click the Create button

@@ -20,34 +20,53 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/* 
-
+/*
+Collection of Visual Tests set to run in a default context. These should only use functional
+expect statements to verify assumptions about the state in a test and not for functional
+verification of correctness.
+Note: Larger suites are OK due to the setup time associated with these tests.
 */
 
 const { test, expect } = require('@playwright/test');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
+const sinon = require('sinon');
 
+const VISUAL_GRACE_PERIOD = 5 * 1000; //Let's the application "simmer" before the snapshot is taken
+
+// Snippet from https://github.com/microsoft/playwright/issues/6347#issuecomment-965887758
+// Will replace with cy.clock() equivalent
 test.beforeEach(async ({ context }) => {
-    // Install Sinon in all the pages in the context
     await context.addInitScript({
-      path: path.join(__dirname, '..', './node_modules/sinon/pkg/sinon.js'),
+        // eslint-disable-next-line no-undef
+        path: path.join(__dirname, '../../..', './node_modules/sinon/pkg/sinon.js')
     });
-    // Auto-enable sinon right away
     await context.addInitScript(() => {
-      window.__clock = sinon.useFakeTimers();
+        window.__clock = sinon.useFakeTimers(); //Set browser clock to UNIX Epoch
     });
-  });
-  
+});
 
-test('Visual - Dashboard', async ({ page }) => {
-
-    //Go to base URL
+test('Visual - Root and About', async ({ page }) => {
+    // Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
     // Verify that Create button is actionable
-    const locator = page.locator('button:has-text("Create")');
-    await expect(locator).toBeEnabled();
+    const createButtonLocator = page.locator('button:has-text("Create")');
+    await expect(createButtonLocator).toBeEnabled();
 
-    await percySnapshot(page, 'Dashboard');
+    // Take a snapshot of the Dashboard
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Root');
+
+    // Click About button
+    await page.click('.l-shell__app-logo');
+
+    // Modify the Build information in 'about'
+    const versionInformationLocator = page.locator('ul.t-info.l-info.s-info');
+    await expect(versionInformationLocator).toBeEnabled();
+    await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
+
+    // Take a snapshot of the About modal
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'About');
 });
