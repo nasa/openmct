@@ -41,13 +41,12 @@ describe('the plugin', () => {
                 namespace: '',
                 key: 'some-value'
             },
-            type: 'mock-type',
+            type: 'notebook',
             modified: 0
         };
         options = {
             url: testPath,
-            filter: {},
-            disableObserve: true
+            filter: {}
         };
         openmct = createOpenMct();
 
@@ -66,7 +65,7 @@ describe('the plugin', () => {
 
         openmct.install(new CouchPlugin(options));
 
-        openmct.types.addType('mock-type', {creatable: true});
+        openmct.types.addType('notebook', {creatable: true});
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -98,33 +97,26 @@ describe('the plugin', () => {
             fetch.and.returnValue(mockPromise);
         });
 
-        it('gets an object', () => {
-            return openmct.objects.get(mockDomainObject.identifier).then((result) => {
-                expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
-            });
+        it('gets an object', async () => {
+            const result = await openmct.objects.get(mockDomainObject.identifier);
+            expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
         });
 
-        it('creates an object', () => {
-            return openmct.objects.save(mockDomainObject).then((result) => {
-                expect(provider.create).toHaveBeenCalled();
-                expect(result).toBeTrue();
-            });
+        it('creates an object', async () => {
+            const result = await openmct.objects.save(mockDomainObject);
+            expect(provider.create).toHaveBeenCalled();
+            expect(result).toBeTrue();
         });
 
-        it('updates an object', (done) => {
-            return openmct.objects.save(mockDomainObject).then((result) => {
-                expect(result).toBeTrue();
-                expect(provider.create).toHaveBeenCalled();
-
-                //Set modified timestamp it detects a change and persists the updated model.
-                mockDomainObject.modified = Date.now();
-
-                return openmct.objects.save(mockDomainObject).then((updatedResult) => {
-                    expect(updatedResult).toBeTrue();
-                    expect(provider.update).toHaveBeenCalled();
-                    done();
-                });
-            });
+        it('updates an object', async () => {
+            const result = await openmct.objects.save(mockDomainObject);
+            expect(result).toBeTrue();
+            expect(provider.create).toHaveBeenCalled();
+            //Set modified timestamp it detects a change and persists the updated model.
+            mockDomainObject.modified = Date.now();
+            const updatedResult = await openmct.objects.save(mockDomainObject);
+            expect(updatedResult).toBeTrue();
+            expect(provider.update).toHaveBeenCalled();
         });
     });
     describe('batches requests', () => {
@@ -140,7 +132,7 @@ describe('the plugin', () => {
             });
             fetch.and.returnValue(mockPromise);
         });
-        it('for multiple simultaneous gets', () => {
+        it('for multiple simultaneous gets', async () => {
             const objectIds = [
                 {
                     namespace: '',
@@ -154,37 +146,32 @@ describe('the plugin', () => {
                 }
             ];
 
-            const getAllObjects = Promise.all(
+            await Promise.all(
                 objectIds.map((identifier) =>
                     openmct.objects.get(identifier)
-                ));
+                )
+            );
 
-            return getAllObjects.then(() => {
-                const requestUrl = fetch.calls.mostRecent().args[0];
-                const requestMethod = fetch.calls.mostRecent().args[1].method;
-
-                expect(fetch).toHaveBeenCalledTimes(1);
-                expect(requestUrl.includes('_all_docs')).toBeTrue();
-                expect(requestMethod).toEqual('POST');
-            });
+            const requestUrl = fetch.calls.mostRecent().args[0];
+            const requestMethod = fetch.calls.mostRecent().args[1].method;
+            expect(fetch).toHaveBeenCalledTimes(1);
+            expect(requestUrl.includes('_all_docs')).toBeTrue();
+            expect(requestMethod).toEqual('POST');
         });
 
-        it('but not for single gets', () => {
+        it('but not for single gets', async () => {
             const objectId = {
                 namespace: '',
                 key: 'object-1'
             };
 
-            const getObject = openmct.objects.get(objectId);
+            await openmct.objects.get(objectId);
+            const requestUrl = fetch.calls.mostRecent().args[0];
+            const requestMethod = fetch.calls.mostRecent().args[1].method;
 
-            return getObject.then(() => {
-                const requestUrl = fetch.calls.mostRecent().args[0];
-                const requestMethod = fetch.calls.mostRecent().args[1].method;
-
-                expect(fetch).toHaveBeenCalledTimes(1);
-                expect(requestUrl.endsWith(`${objectId.key}`)).toBeTrue();
-                expect(requestMethod).toEqual('GET');
-            });
+            expect(fetch).toHaveBeenCalledTimes(1);
+            expect(requestUrl.endsWith(`${objectId.key}`)).toBeTrue();
+            expect(requestMethod).toEqual('GET');
         });
     });
     describe('implements server-side search', () => {
@@ -207,22 +194,20 @@ describe('the plugin', () => {
             fetch.and.returnValue(mockPromise);
         });
 
-        it("using Couch's 'find' endpoint", () => {
-            return Promise.all(openmct.objects.search('test')).then(() => {
-                const requestUrl = fetch.calls.mostRecent().args[0];
+        it("using Couch's 'find' endpoint", async () => {
+            await Promise.all(openmct.objects.search('test'));
+            const requestUrl = fetch.calls.mostRecent().args[0];
 
-                expect(fetch).toHaveBeenCalled();
-                expect(requestUrl.endsWith('_find')).toBeTrue();
-            });
+            expect(fetch).toHaveBeenCalled();
+            expect(requestUrl.endsWith('_find')).toBeTrue();
         });
 
-        it("and supports search by object name", () => {
-            return Promise.all(openmct.objects.search('test')).then(() => {
-                const requestPayload = JSON.parse(fetch.calls.mostRecent().args[1].body);
+        it("and supports search by object name", async () => {
+            await Promise.all(openmct.objects.search('test'));
+            const requestPayload = JSON.parse(fetch.calls.mostRecent().args[1].body);
 
-                expect(requestPayload).toBeDefined();
-                expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
-            });
+            expect(requestPayload).toBeDefined();
+            expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
         });
 
     });
