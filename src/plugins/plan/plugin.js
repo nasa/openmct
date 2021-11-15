@@ -22,9 +22,8 @@
 
 import PlanViewProvider from './PlanViewProvider';
 import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
-import planInterceptor from "@/plugins/plan/planInterceptor";
 
-export default function (configuration) {
+export default function () {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',
@@ -45,7 +44,6 @@ export default function (configuration) {
             initialize: function (domainObject) {
             }
         });
-        planInterceptor(openmct, configuration);
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
         openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
     };
