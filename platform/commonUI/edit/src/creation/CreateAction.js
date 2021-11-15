@@ -88,8 +88,7 @@ define(
 
                 function editObject() {
                     const path = objectPath.slice(-1).map(obj => {
-                        const objNew = obj.getCapability('adapter');
-                        objNew.identifier = openmct.objects.parseKeyString(obj.getId());
+                        const objNew = obj.getCapability('adapter').invoke();
 
                         return objNew;
                     });
