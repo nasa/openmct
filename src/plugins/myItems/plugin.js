@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2009-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,36 +20,14 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+import { createMyItemsIdentifier } from "./createMyItemsIdentifier";
+import myItemsInterceptor from "./myItemsInterceptor";
 
-        /**
-         * Continually refreshes the represented domain object.
-         *
-         * This is a short-term workaround to assure Timer views stay
-         * up-to-date; should be replaced by a global auto-refresh.
-         *
-         * @constructor
-         * @memberof platform/features/clock
-         * @param {angular.Scope} $scope the Angular scope
-         * @param {platform/features/clock.TickerService} tickerService
-         *        a service used to align behavior with clock ticks
-         */
-        function RefreshingController($scope, tickerService) {
-            var unlisten;
+export default function MyItemsPlugin(namespace = '') {
+    return function install(openmct) {
+        const identifier = createMyItemsIdentifier(namespace);
 
-            function triggerRefresh() {
-                var persistence = $scope.domainObject
-                    && $scope.domainObject.getCapability('persistence');
-
-                return persistence && persistence.refresh();
-            }
-
-            unlisten = tickerService.listen(triggerRefresh);
-            $scope.$on('$destroy', unlisten);
-        }
-
-        return RefreshingController;
-    }
-);
+        openmct.objects.addGetInterceptor(myItemsInterceptor(identifier, openmct));
+        openmct.objects.addRoot(identifier);
+    };
+}
