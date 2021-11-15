@@ -105,8 +105,10 @@ define([
             worker;
 
         if (this.USE_LEGACY_INDEXER) {
+            console.log('running genericSearchWorker');
             worker = workerService.run('genericSearchWorker');
         } else {
+            console.log('running bareBonesSearchWorker');
             worker = workerService.run('bareBonesSearchWorker');
         }
 
