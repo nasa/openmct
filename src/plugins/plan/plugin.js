@@ -23,7 +23,7 @@
 import PlanViewProvider from './PlanViewProvider';
 import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
 
-export default function () {
+export default function (configuration) {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',
@@ -42,6 +42,19 @@ export default function () {
                 }
             ],
             initialize: function (domainObject) {
+            }
+        });
+        openmct.objects.addGetInterceptor({
+            appliesTo: (identifier, domainObject) => {
+                return domainObject && domainObject.type === 'plan';
+            },
+            invoke: (identifier, object) => {
+
+                if (object && configuration !== undefined && configuration.getState) {
+                    openmct.status.set(identifier, configuration.getState(object));
+                }
+
+                return object;
             }
         });
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
