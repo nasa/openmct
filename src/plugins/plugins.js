@@ -72,6 +72,7 @@ define([
     './timeline/plugin',
     './hyperlink/plugin',
     './clock/plugin',
+    './timer/plugin',
     './DeviceClassifier/plugin'
 ], function (
     _,
@@ -125,6 +126,7 @@ define([
     Timeline,
     Hyperlink,
     Clock,
+    Timer,
     DeviceClassifier
 ) {
     const bundleMap = {
@@ -232,6 +234,7 @@ define([
     plugins.Timeline = Timeline.default;
     plugins.Hyperlink = Hyperlink.default;
     plugins.Clock = Clock.default;
+    plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
 
     return plugins;
