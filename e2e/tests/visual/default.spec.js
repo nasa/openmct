@@ -24,7 +24,8 @@
 Collection of Visual Tests set to run in a default context. These should only use functional
 expect statements to verify assumptions about the state in a test and not for functional
 verification of correctness.
-Note: Larger suites are OK due to the setup time associated with these tests.
+Note: Larger testsuite sizes are OK due to the setup time associated with these tests. Visual
+tests are not supposed to "fail" on assertions.
 */
 
 const { test, expect } = require('@playwright/test');
@@ -32,7 +33,7 @@ const percySnapshot = require('@percy/playwright');
 const path = require('path');
 const sinon = require('sinon');
 
-const VISUAL_GRACE_PERIOD = 5 * 1000; //Let's the application "simmer" before the snapshot is taken
+const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
 
 // Snippet from https://github.com/microsoft/playwright/issues/6347#issuecomment-965887758
 // Will replace with cy.clock() equivalent
@@ -61,7 +62,7 @@ test('Visual - Root and About', async ({ page }) => {
     // Click About button
     await page.click('.l-shell__app-logo');
 
-    // Modify the Build information in 'about'
+    // Modify the Build information in 'about' to be consistent run-over-run
     const versionInformationLocator = page.locator('ul.t-info.l-info.s-info');
     await expect(versionInformationLocator).toBeEnabled();
     await versionInformationLocator.evaluate(node => node.innerHTML = '<li>Version: visual-snapshot</li> <li>Build Date: Mon Nov 15 2021 08:07:51 GMT-0800 (Pacific Standard Time)</li> <li>Revision: 93049cdbc6c047697ca204893db9603b864b8c9f</li> <li>Branch: master</li>');
