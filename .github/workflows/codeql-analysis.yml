@@ -10,6 +10,8 @@ on:
       - '**/*Spec.js'
       - '**/*.md'
       - '**/*.txt'
+      - '**/*.yml'
+      - '**/*.yaml'
   schedule:
     - cron: '28 21 * * 3'
 
