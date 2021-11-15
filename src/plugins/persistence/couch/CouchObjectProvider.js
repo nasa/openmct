@@ -38,6 +38,8 @@ class CouchObjectProvider {
         this.objectQueue = {};
         this.observers = {};
         this.batchIds = [];
+        this.onEventMessage = this.onEventMessage.bind(this);
+        this.onEventError = this.onEventError.bind(this);
     }
 
     /**
@@ -78,7 +80,6 @@ class CouchObjectProvider {
     }
 
     onSharedWorkerMessage(event) {
-        console.debug('📨 Received message from Shared Worker 📨');
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else {
@@ -444,7 +445,6 @@ class CouchObjectProvider {
     }
 
     onEventMessage(event) {
-        console.debug('📩 Received message from CouchDB 📩');
         const object = JSON.parse(event.data);
         object.identifier = {
             namespace: this.namespace,
@@ -466,7 +466,6 @@ class CouchObjectProvider {
     fetchChanges(url) {
         const controller = new AbortController();
         let couchEventSource;
-        let sourceListener;
 
         if (this.isObservingObjectChanges()) {
             this.stopObservingObjectChanges();
@@ -474,17 +473,17 @@ class CouchObjectProvider {
 
         this.stopObservingObjectChanges = () => {
             controller.abort();
-            couchEventSource.removeEventListener('message', sourceListener);
+            couchEventSource.removeEventListener('message', this.onEventMessage);
             delete this.stopObservingObjectChanges;
         };
 
         console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
         couchEventSource = new EventSource(url);
-        couchEventSource.onerror = this.onEventError.bind(this);
+        couchEventSource.onerror = this.onEventError;
 
         // start listening for events
-        couchEventSource.addEventListener('message', this.onEventMessage.bind(this));
+        couchEventSource.addEventListener('message', this.onEventMessage);
         console.debug('⇿ Opened connection ⇿');
     }
 
