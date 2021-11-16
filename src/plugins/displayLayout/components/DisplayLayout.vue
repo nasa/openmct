@@ -223,7 +223,7 @@ export default {
         this.composition.load();
         this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
 
-        this.watchDisplayResize()
+        this.watchDisplayResize();
     },
     destroyed: function () {
         this.openmct.selection.off('change', this.setSelection);
@@ -247,7 +247,7 @@ export default {
         },
         watchDisplayResize() {
             const self = this;
-            const resizeObserver = new ResizeObserver(function() {
+            const resizeObserver = new ResizeObserver(function () {
                 self.updateGrid();
             });
 
@@ -417,7 +417,7 @@ export default {
             }
         },
         containsObject(identifier) {
-            return _.get(this.domainObject, 'composition')
+            return this.domainObject.composition
                 .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
         },
         handleDragOver($event) {
@@ -507,7 +507,7 @@ export default {
             }
         },
         removeFromComposition(keyString) {
-            let composition = _.get(this.domainObject, 'composition');
+            let composition = this.domainObject.composition;
             composition = composition.filter(identifier => {
                 return this.openmct.objects.makeKeyString(identifier) !== keyString;
             });
