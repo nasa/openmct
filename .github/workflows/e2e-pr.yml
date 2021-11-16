@@ -14,7 +14,6 @@ jobs:
         with:
           node-version: '14'
       - run: npm install
-      - name: Run all e2e tests
       - run: npm run test:e2e:full
       - uses: actions/github-script@v5
         with:
