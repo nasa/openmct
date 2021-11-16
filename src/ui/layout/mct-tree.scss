@@ -105,7 +105,12 @@
                 color: $colorItemTreeSelectedFg;
             }
         }
-
+        &.is-new {
+            animation-name: animTemporaryHighlight;
+            animation-timing-function: ease-out;
+            animation-duration: 3s;
+            animation-iteration-count: 1;
+        }
         &.is-context-clicked {
             box-shadow: inset $colorItemTreeSelectedBg 0 0 0 1px;
         }
@@ -289,13 +294,19 @@
 }
 
 @keyframes animSlideLeft {
-    0% {opactiy: 0; transform: translateX(100%);}
+    0% {opacity: 0; transform: translateX(100%);}
     10% {opacity: 1;}
     100% {transform: translateX(0);}
 }
 
 @keyframes animSlideRight {
-    0% {opactiy: 0; transform: translateX(-100%);}
+    0% {opacity: 0; transform: translateX(-100%);}
     10% {opacity: 1;}
     100% {transform: translateX(0);}
+}
+
+@keyframes animTemporaryHighlight {
+    from { background: transparent; }
+    30% { background: $colorItemTreeNewNode; }
+    100% { background: transparent; }
 }

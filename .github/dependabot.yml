@@ -1,0 +1,23 @@
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"  
+    open-pull-requests-limit: 2
+    labels:
+      - "type:maintenance"
+      - "dependencies"
+    allow:
+      - dependency-name: "eslint*"
+      - dependency-name: "karma*"
+      - dependency-name: "jasmine*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"    
+    labels:
+      - "type:maintenance"
+      - "dependencies"
