@@ -209,18 +209,7 @@ export default {
         },
         layoutItems: {
             handler(value) {
-                let wMax = this.$el.clientWidth / this.gridSize[0];
-                let hMax = this.$el.clientHeight / this.gridSize[1];
-                value.forEach(item => {
-                    if (item.x + item.width > wMax) {
-                        wMax = item.x + item.width + 2;
-                    }
-
-                    if (item.y + item.height > hMax) {
-                        hMax = item.y + item.height + 2;
-                    }
-                });
-                this.gridDimensions = [wMax * this.gridSize[0], hMax * this.gridSize[1]];
+                this.updateGrid();
             },
             deep: true
         }
@@ -233,6 +222,8 @@ export default {
         this.composition.on('remove', this.removeChild);
         this.composition.load();
         this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
+
+        this.watchDisplayResize()
     },
     destroyed: function () {
         this.openmct.selection.off('change', this.setSelection);
@@ -240,6 +231,28 @@ export default {
         this.composition.off('remove', this.removeChild);
     },
     methods: {
+        updateGrid() {
+            let wMax = this.$el.clientWidth / this.gridSize[0];
+            let hMax = this.$el.clientHeight / this.gridSize[1];
+            this.layoutItems.forEach(item => {
+                if (item.x + item.width > wMax) {
+                    wMax = item.x + item.width + 2;
+                }
+
+                if (item.y + item.height > hMax) {
+                    hMax = item.y + item.height + 2;
+                }
+            });
+            this.gridDimensions = [wMax * this.gridSize[0], hMax * this.gridSize[1]];
+        },
+        watchDisplayResize() {
+            const self = this;
+            const resizeObserver = new ResizeObserver(function() {
+                self.updateGrid();
+            });
+
+            resizeObserver.observe(this.$el);
+        },
         addElement(itemType, element) {
             this.addItem(itemType + '-view', element);
         },
