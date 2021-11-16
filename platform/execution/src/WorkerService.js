@@ -54,7 +54,9 @@ define(
                             [worker.scriptText],
                             {type: 'application/javascript'}
                         );
-                        workerUrls[key] = URL.createObjectURL(blob);
+                        const objectUrl = URL.createObjectURL(blob);
+                        console.log('objectUrl', objectUrl);
+                        workerUrls[key] = objectUrl;
                     }
 
                     sharedWorkers[key] = worker.shared;

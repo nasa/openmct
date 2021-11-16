@@ -27,6 +27,7 @@ define([
     './installDefaultBundles',
     './api/api',
     './api/overlays/OverlayAPI',
+    './api/workers/WorkerAPI',
     './selection/Selection',
     'objectUtils',
     './plugins/plugins',
@@ -56,6 +57,7 @@ define([
     installDefaultBundles,
     api,
     OverlayAPI,
+    WorkerAPI,
     Selection,
     objectUtils,
     plugins,
@@ -246,6 +248,8 @@ define([
         this.editor = new api.EditorAPI.default(this);
 
         this.overlays = new OverlayAPI.default();
+
+        this.workers = new WorkerAPI.default();
 
         this.menus = new api.MenuAPI(this);
 
