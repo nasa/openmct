@@ -8,6 +8,7 @@ on:
         default: 'master'
   schedule:
     - cron: '28 21 * * 3'
+
 jobs:
   e2e-visual:
     runs-on: ubuntu-latest
