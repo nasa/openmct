@@ -82,8 +82,8 @@
             display: block;
 
             &:before {
-                color: $colorFilter;
-                content: $glyph-icon-hourglass;
+                color: $colorStatusAlert;
+                content: $glyph-icon-draft;
                 font-family: symbolsfont;
             }
         }
