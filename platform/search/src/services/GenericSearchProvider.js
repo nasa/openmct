@@ -39,11 +39,10 @@ define([
      * @param $q Angular's $q, for promise consolidation.
      * @param $log Anglar's $log, for logging.
      * @param {ObjectService} objectService the object service.
-     * @param {WorkerService} workerService the workerService.
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($q, $log, objectService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
+    function GenericSearchProvider($q, $log, objectService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
         var provider = this;
         this.$q = $q;
         this.$log = $log;
@@ -59,7 +58,7 @@ define([
 
         this.USE_LEGACY_INDEXER = USE_LEGACY_INDEXER;
 
-        this.worker = this.startWorker(workerService);
+        this.worker = this.startWorker();
         this.indexOnMutation(topic);
 
         ROOTS.forEach(function indexRoot(rootId) {
@@ -97,19 +96,18 @@ define([
      * Creates a search worker and attaches handlers.
      *
      * @private
-     * @param workerService
      * @returns worker the created search worker.
      */
-    GenericSearchProvider.prototype.startWorker = function (workerService) {
+    GenericSearchProvider.prototype.startWorker = function () {
         var provider = this,
             worker;
 
         if (this.USE_LEGACY_INDEXER) {
             console.log('running genericSearchWorker');
-            worker = workerService.run('genericSearchWorker');
+            worker = this.openmct.workers.run('genericSearchWorker');
         } else {
             console.log('running bareBonesSearchWorker');
-            worker = workerService.run('bareBonesSearchWorker');
+            worker = this.openmct.workers.run('bareBonesSearchWorker');
         }
 
         worker.addEventListener('message', function (messageEvent) {

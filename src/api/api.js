@@ -32,7 +32,8 @@ define([
     './menu/MenuAPI',
     './actions/ActionsAPI',
     './status/StatusAPI',
-    './priority/PriorityAPI'
+    './priority/PriorityAPI',
+    './workers/WorkerAPI'
 ], function (
     TimeAPI,
     ObjectAPI,
@@ -45,7 +46,8 @@ define([
     MenuAPI,
     ActionsAPI,
     StatusAPI,
-    PriorityAPI
+    PriorityAPI,
+    WorkerAPI
 ) {
     return {
         TimeAPI: TimeAPI.default,
@@ -59,6 +61,7 @@ define([
         MenuAPI: MenuAPI.default,
         ActionsAPI: ActionsAPI.default,
         StatusAPI: StatusAPI.default,
-        PriorityAPI: PriorityAPI.default
+        PriorityAPI: PriorityAPI.default,
+        WorkerAPI: WorkerAPI.default
     };
 });

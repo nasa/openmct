@@ -144,6 +144,7 @@ define([
     };
 
     ObjectServiceProvider.prototype.superSecretFallbackSearch = function (query, abortSignal) {
+        console.log('super secret fallback search');
         const searchService = this.$injector.get('searchService');
 
         // need to pass the abortSignal down, so need to

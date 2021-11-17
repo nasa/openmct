@@ -1,9 +1,22 @@
+import GenericSearchWorkerText from 'raw-loader!/platform/search/src/services/GenericSearchWorker.js';
+import BareBonesSearchWorkerText from 'raw-loader!/platform/search/src/services/BareBonesSearchWorker.js';
+
+const workers = [
+    {
+        "key": "bareBonesSearchWorker",
+        "scriptText": BareBonesSearchWorkerText
+    },
+    {
+        "key": "genericSearchWorker",
+        "scriptText": GenericSearchWorkerText
+    }
+];
 export default class WorkerService {
-    contructor(workers) {
+    constructor() {
         this.workerUrls = {};
         this.sharedWorkers = {};
 
-        (workers || []).forEach(this.addWorker);
+        workers.forEach(this.addWorker.bind(this));
     }
 
     addWorker(worker) {

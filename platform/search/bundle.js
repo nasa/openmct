@@ -62,6 +62,7 @@ define([
                         "priority": 2
                     }
                 ],
+                // TODO REMOVE CONTROLLERS
                 "controllers": [
                     {
                         "key": "SearchController",
@@ -105,7 +106,6 @@ define([
                             "$q",
                             "$log",
                             "objectService",
-                            "workerService",
                             "topic",
                             "GENERIC_SEARCH_ROOTS",
                             "USE_LEGACY_INDEXER",
