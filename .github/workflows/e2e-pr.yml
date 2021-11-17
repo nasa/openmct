@@ -22,9 +22,10 @@ jobs:
       - uses: actions/github-script@v5
         with:
           script: |
+            console.log(context)
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `Finished! Build artifacts are here: https://api.github.com/repos/nasa/openmct/actions/runs/${{ github.event.workflow_run.id }}/artifacts`
+              body: `Finished! Build artifacts are here: https://github.com/repos/nasa/openmct/actions/runs/' + `${{ context.workflow_run.id }}` + /artifacts`
             })
