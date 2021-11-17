@@ -566,14 +566,6 @@ export default {
             const removeIndex = this.getTreeItemIndex(item.navigationPath);
             this.treeItems.splice(removeIndex, 1);
         },
-        sortTreeComposition(algorithem, parentPath) {
-            const parentIndex = this.getTreeItemIndex(parentPath);
-            const parentItem = this.treeItems[parentIndex];
-
-            const allDescendants = this.getChildrenInTreeFor(parentItem);
-            const sortedChildren = allDescendants.sort(algorithem);
-            this.treeItems.splice(parentIndex + 1, allDescendants.length, ...sortedChildren);
-        },
         addItemToTreeAfter(addItem, afterItem) {
             const addIndex = this.getTreeItemIndex(afterItem.navigationPath);
             this.treeItems.splice(addIndex + 1, 0, addItem);
