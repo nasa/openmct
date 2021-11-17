@@ -464,7 +464,7 @@ export default {
             let composition = await collection.load(abortSignal);
 
             if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
-                const sortedComposition = composition.sort(this.sortNameDescending);
+                const sortedComposition = composition.slice().sort(this.sortNameDescending);
                 composition = sortedComposition;
             }
 
