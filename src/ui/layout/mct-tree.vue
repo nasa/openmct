@@ -432,7 +432,7 @@ export default {
 
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
-        sortNameDescending(a, b) {
+        sortNameAscending(a, b) {
             // sorting tree children items
             if (!(a.name && b.name)) {
                 if (a.object.name > b.object.name) {
@@ -443,16 +443,15 @@ export default {
                     return -1;
                 }
             }
-
+            
             // sorting compositon items
             if (a.name > b.name) {
-                return 1;
+            return 1;
             }
 
             if (b.name > a.name) {
                 return -1;
             }
-
             return 0;
         },
 
@@ -463,7 +462,7 @@ export default {
             const isNestedInMyItems = Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
 
             if (SORT_MY_ITEMS_ALPH_ASC && isNestedInMyItems) {
-                const sortedComposition = composition.sort(this.sortNameDescending);
+                const sortedComposition = composition.sort(this.sortNameAscending);
                 composition = sortedComposition;
             }
 
@@ -518,7 +517,7 @@ export default {
                 const isNestedInMyItems = Boolean(parentItem.objectPath && parentItem.objectPath.find(path => path.identifier.key === 'mine'));
 
                 if (SORT_MY_ITEMS_ALPH_ASC && isNestedInMyItems) {
-                    this.sortTreeComposition(this.sortNameDescending, navigationPath);
+                    this.sortTreeComposition(this.sortNameAscending, navigationPath);
                 }
             };
         },
@@ -557,7 +556,7 @@ export default {
 
             const allDescendants = this.getChildrenInTreeFor(parentItem);
             const sortedChildren = allDescendants.sort(algorithem);
-            this.treeItems.splice(parentIndex + 1, allDescendants.length, ...sortedChildren);
+            this.treeItems.splice(parentIndex + 1, sortedChildren.length, ...sortedChildren);
         },
         addItemToTreeAfter(addItem, afterItem) {
             const addIndex = this.getTreeItemIndex(afterItem.navigationPath);
