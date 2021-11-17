@@ -443,10 +443,10 @@ export default {
                     return -1;
                 }
             }
-            
+
             // sorting compositon items
             if (a.name > b.name) {
-            return 1;
+                return 1;
             }
 
             if (b.name > a.name) {
