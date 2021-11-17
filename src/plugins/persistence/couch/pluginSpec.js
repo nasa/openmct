@@ -76,8 +76,8 @@ describe('the plugin', () => {
         spyOn(provider, 'update').and.callThrough();
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    afterEach(async () => {
+        await resetApplicationState(openmct);
     });
 
     describe('the provider', () => {
@@ -108,12 +108,12 @@ describe('the plugin', () => {
             expect(result).toBeTrue();
         });
 
-        xit('updates an object', async () => {
+        it('updates an object', async () => {
             const result = await openmct.objects.save(mockDomainObject);
             expect(result).toBeTrue();
             expect(provider.create).toHaveBeenCalled();
             //Set modified timestamp it detects a change and persists the updated model.
-            mockDomainObject.modified = Date.now();
+            mockDomainObject.modified = Date.now() + 1000;
             const updatedResult = await openmct.objects.save(mockDomainObject);
             expect(updatedResult).toBeTrue();
             expect(provider.update).toHaveBeenCalled();
