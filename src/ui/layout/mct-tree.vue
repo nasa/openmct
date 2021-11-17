@@ -113,7 +113,6 @@ import search from '../components/search.vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
-const RETURN_ALL_DESCENDANTS = true;
 const SORT_MY_ITEMS_ALPH_ASC = true;
 const TREE_ITEM_INDENT_PX = 18;
 
