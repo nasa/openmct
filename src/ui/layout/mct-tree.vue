@@ -511,21 +511,27 @@ export default {
         compositionAddHandler(navigationPath) {
             return (domainObject) => {
                 let afterItem;
-                let parentItem = this.getTreeItemByPath(navigationPath);
-                let newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
-                let allDescendants = this.getChildrenInTreeFor(parentItem, RETURN_ALL_DESCENDANTS);
+                const parentItem = this.getTreeItemByPath(navigationPath);
+                const newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
+                const directDescendants = this.getChildrenInTreeFor(parentItem);
 
-                if (allDescendants.length === 0) {
+                if (directDescendants.length === 0) {
                     afterItem = parentItem;
                 } else if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentItem.objectPath)) {
-                    const sortedChildren = [...allDescendants, newItem]
-                        .sort(this.sortNameDescending);
+                    const newItemIndex = directDescendants
+                        .findIndex(descendant => this.sortNameDescending(descendant, newItem) > 0);
+                    const shouldInsertFirst = newItemIndex === 0;
+                    const shouldInsertLast = newItemIndex === -1;
 
-                    const newItemIndex = sortedChildren.indexOf(newItem);
-
-                    afterItem = sortedChildren[newItemIndex - 1];
+                    if (shouldInsertFirst) {
+                        afterItem = parentItem;
+                    } else if (shouldInsertLast) {
+                        afterItem = directDescendants.pop();
+                    } else {
+                        afterItem = directDescendants[newItemIndex - 1];
+                    }
                 } else {
-                    afterItem = allDescendants.pop();
+                    afterItem = directDescendants.pop();
                 }
 
                 this.addItemToTreeAfter(newItem, afterItem);
