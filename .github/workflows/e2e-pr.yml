@@ -15,6 +15,10 @@ jobs:
           node-version: '14'
       - run: npm install
       - run: npm run test:e2e:full
+      - name: Archive test results
+        uses: actions/upload-artifact@v2
+        with:
+          path: test-results
       - uses: actions/github-script@v5
         with:
           script: |
@@ -22,5 +26,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Finished!'
+              body: `Finished! Build artifacts are here: https://api.github.com/repos/nasa/openmct/actions/runs/${{ github.event.workflow_run.id }}/artifacts`
             })
