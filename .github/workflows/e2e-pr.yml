@@ -28,7 +28,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Success ✅ ! Build artifacts are here: https://github.com/repos/nasa/openmct/actions/runs/' + context.runId + '/artifacts'
+              body: 'Success ✅ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId'
             })
       - name: Test failure
         if: ${{ failure() }}
@@ -39,5 +39,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Failure ❌ ! Build artifacts are here: https://github.com/repos/nasa/openmct/actions/runs/' + context.runId + '/artifacts'
+              body: 'Failure ❌ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId'
             })
