@@ -52,12 +52,12 @@
     <div
         v-for="tab in tabsList"
         :key="tab.keyString"
-        :style="!isCurrent(tab) ? { height: tabHeight, width: tabWidth } : {}"
+        :style="getTabStyles(tab)"
         class="c-tabs-view__object-holder"
         :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
     >
         <object-view
-            v-if="isTabLoaded(tab)"
+            v-if="shouldShowTab(tab)"
             class="c-tabs-view__object"
             :default-object="tab.domainObject"
             :object-path="tab.objectPath"
@@ -93,8 +93,8 @@ export default {
         let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
         return {
-            tabWidth: 0,
-            tabHeight: 0,
+            tabWidth: undefined,
+            tabHeight: undefined,
             internalDomainObject: this.domainObject,
             currentTab: {},
             currentTabIndex: undefined,
@@ -171,6 +171,24 @@ export default {
 
             this.loadedTabs[tab.keyString] = true;
         },
+        getTabStyles(tab) {
+            let styles = {};
+
+            if (!this.isCurrent(tab)) {
+                styles = { height: this.tabHeight, width: this.tabWidth };
+            }
+
+            return styles;
+        },
+        getTabWidthAndHeight() {
+            const tabsViewEl = document.getElementsByClassName('c-tabs-view')[0];
+            const tabsLabelsEl = document.getElementsByClassName('c-tabs-view__tabs-holder')[0];
+
+            return {
+                width: tabsViewEl.offsetWidth + 'px',
+                height: tabsViewEl.offsetHeight - tabsLabelsEl.offsetHeight + 'px'
+            };
+        },
         setCurrentTabByIndex(index) {
             if (this.tabsList[index]) {
                 this.showTab(this.tabsList[index]);
@@ -183,6 +201,13 @@ export default {
 
             this.currentTab = tab;
             this.addTabToLoaded(tab);
+        },
+        shouldShowTab(tab) {
+            const isLoadedAndCurrent = this.isTabLoaded(tab) && this.isCurrent(tab);
+            const isLoadedAndHidden = this.isTabLoaded(tab) && !this.isCurrent(tab);
+            const tabElLoaded = Boolean(this.tabWidth && this.tabHeight);
+
+            return isLoadedAndCurrent || (isLoadedAndHidden && tabElLoaded);
         },
         showRemoveDialog(index) {
             if (!this.tabsList[index]) {
@@ -340,13 +365,10 @@ export default {
             this.currentTab = this.tabsList[tabIndex];
         },
         handleWindowResize() {
-            let tabsViewEl = document.getElementsByClassName('c-tabs-view')[0];
-            let tabsLabelsEl = document.getElementsByClassName('c-tabs-view__tabs-holder')[0];
+            const styles = this.getTabWidthAndHeight();
 
-            if (tabsViewEl) {
-                this.tabHeight = tabsViewEl.offsetHeight - tabsLabelsEl.offsetHeight + 'px';
-                this.tabWidth = tabsViewEl.offsetWidth + 'px';
-            }
+            this.tabWidth = styles.width;
+            this.tabHeight = styles.height;
         }
     }
 };
