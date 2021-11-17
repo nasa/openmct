@@ -23,7 +23,8 @@ const config = {
         video: 'on'
     },
     reporter: [
-        ['list']
+        ['list'],
+        ['allure-playwright']
     ]
 };
 

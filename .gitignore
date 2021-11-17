@@ -45,6 +45,7 @@ report.*.json
 
 # e2e test artifacts
 test-results
+allure-results
 
 package-lock.json
 
