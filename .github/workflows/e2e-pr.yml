@@ -18,8 +18,8 @@ jobs:
       - uses: actions/github-script@v5
         with:
           script: |
-            github.rest.pulls.createComment({
-              pull_number: context.pulls.number,
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: 'Finished!'
