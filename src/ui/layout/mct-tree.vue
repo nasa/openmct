@@ -452,6 +452,7 @@ export default {
             if (b.name > a.name) {
                 return -1;
             }
+
             return 0;
         },
 
