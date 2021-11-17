@@ -19,13 +19,25 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           path: test-results
-      - uses: actions/github-script@v5
+      - name: Test success
+        if: ${{ success() }}
+        uses: actions/github-script@v5
         with:
           script: |
-            console.log(context)
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Finished! Build artifacts are here: https://github.com/repos/nasa/openmct/actions/runs/' + context.repo.repo + '/artifacts'
+              body: 'Success ✅ ! Build artifacts are here: https://github.com/repos/nasa/openmct/actions/runs/' + context.runId + '/artifacts'
+            })
+      - name: Test failure
+        if: ${{ failure() }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Failure ❌ ! Build artifacts are here: https://github.com/repos/nasa/openmct/actions/runs/' + context.runId + '/artifacts'
             })
