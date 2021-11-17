@@ -455,14 +455,15 @@ export default {
 
             return 0;
         },
-
+        isSortable(parentObjectPath) {
+            // determine if any part of the parent's path includes a key value of mine; aka My Items
+            return Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
+        },
         async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
             let collection = this.openmct.composition.get(domainObject);
             let composition = await collection.load(abortSignal);
-            // determine if any part of the parent's path includes a key value of mine; aka My Items
-            const isNestedInMyItems = Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
 
-            if (SORT_MY_ITEMS_ALPH_ASC && isNestedInMyItems) {
+            if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
                 const sortedComposition = composition.sort(this.sortNameDescending);
                 composition = sortedComposition;
             }
@@ -509,17 +510,25 @@ export default {
         },
         compositionAddHandler(navigationPath) {
             return (domainObject) => {
+                let afterItem;
                 let parentItem = this.getTreeItemByPath(navigationPath);
                 let newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
                 let allDescendants = this.getChildrenInTreeFor(parentItem, RETURN_ALL_DESCENDANTS);
-                let afterItem = allDescendants.length ? allDescendants.pop() : parentItem;
+
+                if (allDescendants.length === 0) {
+                    afterItem = parentItem;
+                } else if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentItem.objectPath)) {
+                    const sortedChildren = [...allDescendants, newItem]
+                        .sort(this.sortNameDescending);
+
+                    const newItemIndex = sortedChildren.indexOf(newItem);
+
+                    afterItem = sortedChildren[newItemIndex - 1];
+                } else {
+                    afterItem = allDescendants.pop();
+                }
 
                 this.addItemToTreeAfter(newItem, afterItem);
-                const isNestedInMyItems = Boolean(parentItem.objectPath && parentItem.objectPath.find(path => path.identifier.key === 'mine'));
-
-                if (SORT_MY_ITEMS_ALPH_ASC && isNestedInMyItems) {
-                    this.sortTreeComposition(this.sortNameDescending, navigationPath);
-                }
             };
         },
         compositionRemoveHandler(navigationPath) {
