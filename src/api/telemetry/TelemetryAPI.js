@@ -144,7 +144,14 @@ define([
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
+        this.requestAbortControllers = new Set();
     }
+
+    TelemetryAPI.prototype.abortAllRequests = function () {
+        console.log(this.requestAbortControllers);
+        this.requestAbortControllers.forEach((controller) => controller.abort());
+        this.requestAbortControllers.clear();
+    };
 
     /**
      * Return Custom String Formatter
@@ -312,6 +319,10 @@ define([
             arguments[1] = {};
         }
 
+        const abortController = new AbortController();
+        arguments[1].signal = abortController.signal;
+        this.requestAbortControllers.add(abortController);
+
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
@@ -323,6 +334,8 @@ define([
             console.error(rejected);
 
             return Promise.reject(rejected);
+        }).finally(() => {
+            this.requestAbortControllers.delete(abortController);
         });
     };
 
