@@ -25,10 +25,14 @@
  */
 define([
     'objectUtils',
-    'lodash'
+    'lodash',
+    'raw-loader!./GenericSearchWorker.js',
+    'raw-loader!./BareBonesSearchWorker.js'
 ], function (
     objectUtils,
-    _
+    _,
+    GenericSearchWorkerText,
+    BareBonesSearchWorkerText
 ) {
 
     /**
@@ -42,6 +46,18 @@ define([
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
+
+    const workers = [
+        {
+            "key": "bareBonesSearchWorker",
+            "scriptText": BareBonesSearchWorkerText
+        },
+        {
+            "key": "genericSearchWorker",
+            "scriptText": GenericSearchWorkerText
+        }
+    ];
+
     function GenericSearchProvider($q, $log, objectService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
         var provider = this;
         this.$q = $q;
@@ -58,7 +74,7 @@ define([
 
         this.USE_LEGACY_INDEXER = USE_LEGACY_INDEXER;
 
-        this.worker = this.startWorker();
+        this.worker = this.startWorker(workers);
         this.indexOnMutation(topic);
 
         ROOTS.forEach(function indexRoot(rootId) {
@@ -98,23 +114,27 @@ define([
      * @private
      * @returns worker the created search worker.
      */
-    GenericSearchProvider.prototype.startWorker = function () {
-        var provider = this,
-            worker;
+    GenericSearchProvider.prototype.startWorker = function (workers) {
+        let provider = this;
+        let searchWorker;
+
+        workers.forEach(worker => {
+            this.openmct.workers.addWorker(worker);
+        });
 
         if (this.USE_LEGACY_INDEXER) {
             console.log('running genericSearchWorker');
-            worker = this.openmct.workers.run('genericSearchWorker');
+            searchWorker = this.openmct.workers.run('genericSearchWorker');
         } else {
             console.log('running bareBonesSearchWorker');
-            worker = this.openmct.workers.run('bareBonesSearchWorker');
+            searchWorker = this.openmct.workers.run('bareBonesSearchWorker');
         }
 
-        worker.addEventListener('message', function (messageEvent) {
+        searchWorker.addEventListener('message', function (messageEvent) {
             provider.onWorkerMessage(messageEvent);
         });
 
-        return worker;
+        return searchWorker;
     };
 
     /**

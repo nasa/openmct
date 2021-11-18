@@ -62,41 +62,6 @@ define([
                         "priority": 2
                     }
                 ],
-                // TODO REMOVE CONTROLLERS
-                "controllers": [
-                    {
-                        "key": "SearchController",
-                        "implementation": SearchController,
-                        "depends": [
-                            "$scope",
-                            "searchService"
-                        ]
-                    },
-                    {
-                        "key": "SearchMenuController",
-                        "implementation": SearchMenuController,
-                        "depends": [
-                            "$scope",
-                            "types[]"
-                        ]
-                    }
-                ],
-                "representations": [
-                    {
-                        "key": "search-item",
-                        "template": searchItemTemplate
-                    }
-                ],
-                "templates": [
-                    {
-                        "key": "search",
-                        "template": searchTemplate
-                    },
-                    {
-                        "key": "search-menu",
-                        "template": searchMenuTemplate
-                    }
-                ],
                 "components": [
                     {
                         "provides": "searchService",
@@ -120,16 +85,6 @@ define([
                             "$q",
                             "objectService"
                         ]
-                    }
-                ],
-                "workers": [
-                    {
-                        "key": "bareBonesSearchWorker",
-                        "scriptText": BareBonesSearchWorkerText
-                    },
-                    {
-                        "key": "genericSearchWorker",
-                        "scriptText": searchWorkerText
                     }
                 ]
             }

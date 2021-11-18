@@ -1,22 +1,29 @@
-import GenericSearchWorkerText from 'raw-loader!/platform/search/src/services/GenericSearchWorker.js';
-import BareBonesSearchWorkerText from 'raw-loader!/platform/search/src/services/BareBonesSearchWorker.js';
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 
-const workers = [
-    {
-        "key": "bareBonesSearchWorker",
-        "scriptText": BareBonesSearchWorkerText
-    },
-    {
-        "key": "genericSearchWorker",
-        "scriptText": GenericSearchWorkerText
-    }
-];
-export default class WorkerService {
+export default class WorkerAPI {
     constructor() {
         this.workerUrls = {};
         this.sharedWorkers = {};
-
-        workers.forEach(this.addWorker.bind(this));
     }
 
     addWorker(worker) {
@@ -48,7 +55,7 @@ export default class WorkerService {
     }
 
     run(key) {
-        console.log('workerservice.run', key);
+        console.log('worker api.run', key);
 
         const scriptUrl = this.workerUrls[key];
         const Worker = this.sharedWorkers[key]
