@@ -4,6 +4,7 @@
     class="c-tabs-view"
 >
     <div
+        ref="tabsHolder"
         class="c-tabs-view__tabs-holder c-tabs"
         :class="{
             'is-dragging': isDragging && allowEditing,
@@ -31,8 +32,10 @@
             }"
             @click="showTab(tab, index)"
         >
-            <div class="c-tabs-view__tab__label c-object-label"
-                 :class="[tab.status ? `is-status--${tab.status}` : '']"
+            <div
+                ref="tabsLabel" 
+                class="c-tabs-view__tab__label c-object-label"
+                :class="[tab.status ? `is-status--${tab.status}` : '']"
             >
                 <div class="c-object-label__type-icon"
                      :class="tab.type.definition.cssClass"
@@ -184,12 +187,9 @@ export default {
             return styles;
         },
         getTabWidthAndHeight() {
-            const tabsViewEl = document.getElementsByClassName('c-tabs-view')[0];
-            const tabsLabelsEl = document.getElementsByClassName('c-tabs-view__tabs-holder')[0];
-
             return {
-                width: tabsViewEl.offsetWidth + 'px',
-                height: tabsViewEl.offsetHeight - tabsLabelsEl.offsetHeight + 'px'
+                width: this.$refs.tabs.offsetWidth + 'px',
+                height: this.$refs.tabsHolder.offsetHeight - this.$refs.tabs.offsetHeight + 'px'
             };
         },
         setCurrentTabByIndex(index) {
@@ -208,7 +208,7 @@ export default {
         shouldLoadTab(tab) {
             const isLoadedAndCurrent = this.isTabLoaded(tab) && this.isCurrent(tab);
             const isLoadedAndHidden = this.isTabLoaded(tab) && !this.isCurrent(tab);
-            const tabElLoaded = Boolean(this.tabWidth && this.tabHeight);
+            const tabElLoaded = this.tabWidth !== undefined && this.tabHeight !== undefined;
 
             return isLoadedAndCurrent || (isLoadedAndHidden && tabElLoaded);
         },
@@ -368,6 +368,7 @@ export default {
             this.currentTab = this.tabsList[tabIndex];
         },
         handleWindowResize() {
+            console.log('resize')
             const styles = this.getTabWidthAndHeight();
 
             this.tabWidth = styles.width;
