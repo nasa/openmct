@@ -431,7 +431,7 @@ export default {
 
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
-        sortNameDescending(a, b) {
+        sortNameAscending(a, b) {
             // sorting tree children items
             if (!(a.name && b.name)) {
                 if (a.object.name > b.object.name) {
@@ -463,7 +463,7 @@ export default {
             let composition = await collection.load(abortSignal);
 
             if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
-                const sortedComposition = composition.slice().sort(this.sortNameDescending);
+                const sortedComposition = composition.slice().sort(this.sortNameAscending);
                 composition = sortedComposition;
             }
 
@@ -522,7 +522,7 @@ export default {
 
                 if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentItem.objectPath)) {
                     const newItemIndex = directDescendants
-                        .findIndex(descendant => this.sortNameDescending(descendant, newItem) > 0);
+                        .findIndex(descendant => this.sortNameAscending(descendant, newItem) > 0);
                     const shouldInsertFirst = newItemIndex === 0;
                     const shouldInsertLast = newItemIndex === -1;
 
