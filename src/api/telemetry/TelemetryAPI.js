@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+const { reject } = require("lodash");
 const { TelemetryCollection } = require("./TelemetryCollection");
 
 define([
@@ -330,8 +331,10 @@ define([
         }
 
         return provider.request.apply(provider, arguments).catch((rejected) => {
-            this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-            console.error(rejected);
+            if (rejected.name !== 'AbortError') {
+                this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+                console.error(rejected);
+            }
 
             return Promise.reject(rejected);
         }).finally(() => {
