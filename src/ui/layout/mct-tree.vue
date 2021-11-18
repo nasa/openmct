@@ -509,31 +509,35 @@ export default {
         },
         compositionAddHandler(navigationPath) {
             return (domainObject) => {
-                let afterItem;
                 const parentItem = this.getTreeItemByPath(navigationPath);
                 const newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
+                const descendants = this.getChildrenInTreeFor(parentItem, true);
                 const directDescendants = this.getChildrenInTreeFor(parentItem);
 
                 if (directDescendants.length === 0) {
-                    afterItem = parentItem;
-                } else if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentItem.objectPath)) {
+                    this.addItemToTreeAfter(newItem, parentItem);
+
+                    return;
+                }
+
+                if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentItem.objectPath)) {
                     const newItemIndex = directDescendants
                         .findIndex(descendant => this.sortNameDescending(descendant, newItem) > 0);
                     const shouldInsertFirst = newItemIndex === 0;
                     const shouldInsertLast = newItemIndex === -1;
 
                     if (shouldInsertFirst) {
-                        afterItem = parentItem;
+                        this.addItemToTreeAfter(newItem, parentItem);
                     } else if (shouldInsertLast) {
-                        afterItem = directDescendants.pop();
+                        this.addItemToTreeAfter(newItem, descendants.pop());
                     } else {
-                        afterItem = directDescendants[newItemIndex - 1];
+                        this.addItemToTreeBefore(newItem, directDescendants[newItemIndex]);
                     }
-                } else {
-                    afterItem = directDescendants.pop();
+
+                    return;
                 }
 
-                this.addItemToTreeAfter(newItem, afterItem);
+                this.addItemToTreeAfter(newItem, descendants.pop());
             };
         },
         compositionRemoveHandler(navigationPath) {
@@ -565,9 +569,18 @@ export default {
             const removeIndex = this.getTreeItemIndex(item.navigationPath);
             this.treeItems.splice(removeIndex, 1);
         },
+        addItemToTreeBefore(addItem, beforeItem) {
+            const addIndex = this.getTreeItemIndex(beforeItem.navigationPath);
+
+            this.addItemToTree(addItem, addIndex);
+        },
         addItemToTreeAfter(addItem, afterItem) {
             const addIndex = this.getTreeItemIndex(afterItem.navigationPath);
-            this.treeItems.splice(addIndex + 1, 0, addItem);
+
+            this.addItemToTree(addItem, addIndex + 1);
+        },
+        addItemToTree(addItem, index) {
+            this.treeItems.splice(index, 0, addItem);
 
             if (this.isTreeItemOpen(addItem)) {
                 this.openTreeItem(addItem);
