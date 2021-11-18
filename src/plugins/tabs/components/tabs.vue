@@ -198,6 +198,7 @@ export default {
             }
         },
         showTab(tab, index) {
+            console.log('showTab?', tab.domainObject.name);
             if (index !== undefined) {
                 this.storeCurrentTabIndexInURL(index);
             }
@@ -206,11 +207,11 @@ export default {
             this.addTabToLoaded(tab);
         },
         shouldLoadTab(tab) {
-            const isLoadedAndCurrent = this.isTabLoaded(tab) && this.isCurrent(tab);
-            const isLoadedAndHidden = this.isTabLoaded(tab) && !this.isCurrent(tab);
+            const isLoaded = this.isTabLoaded(tab);
+            const isCurrent = this.isCurrent(tab);
             const tabElLoaded = this.tabWidth !== undefined && this.tabHeight !== undefined;
 
-            return isLoadedAndCurrent || (isLoadedAndHidden && tabElLoaded);
+            return (isLoaded && isCurrent) || ((isLoaded && !isCurrent) && tabElLoaded);
         },
         showRemoveDialog(index) {
             if (!this.tabsList[index]) {
