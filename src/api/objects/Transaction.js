@@ -55,17 +55,6 @@ export default class Transaction {
         });
     }
 
-    getDirtyObject(keystring) {
-        let dirtyObject;
-        this.dirtyObjects.forEach(object => {
-            if (this.objectAPI.makeKeyString(object.identifier) === keystring) {
-                dirtyObject = object;
-            }
-        });
-
-        return dirtyObject;
-    }
-
     start() {
         this.dirtyObjects = new Set();
     }

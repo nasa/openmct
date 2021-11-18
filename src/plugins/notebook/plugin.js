@@ -4,7 +4,7 @@ import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vu
 import SnapshotContainer from './snapshot-container';
 import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
 
-import { notebookImageMigration, IMAGE_MIGRATION_VER } from '../notebook/utils/notebook-migration';
+import { notebookImageMigration } from '../notebook/utils/notebook-migration';
 import { NOTEBOOK_TYPE } from './notebook-constants';
 
 import Vue from 'vue';
@@ -28,7 +28,6 @@ export default function NotebookPlugin() {
                 domainObject.configuration = {
                     defaultSort: 'oldest',
                     entries: {},
-                    imageMigrationVer: IMAGE_MIGRATION_VER,
                     pageTitle: 'Page',
                     sections: [],
                     sectionTitle: 'Section',

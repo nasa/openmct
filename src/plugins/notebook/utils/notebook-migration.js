@@ -1,7 +1,7 @@
 import { createNotebookImageDomainObject, getThumbnailURLFromimageUrl, saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from './notebook-image';
 import { mutateObject } from './notebook-entries';
 
-export const IMAGE_MIGRATION_VER = "v1";
+const IMAGE_MIGRATION_VER = "v1";
 
 export function notebookImageMigration(openmct, domainObject) {
     const configuration = domainObject.configuration;

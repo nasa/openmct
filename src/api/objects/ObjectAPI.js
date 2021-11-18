@@ -184,15 +184,6 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     }
 
     identifier = utils.parseKeyString(identifier);
-    let dirtyObject;
-    if (this.isTransactionActive()) {
-        dirtyObject = this.transaction.getDirtyObject(keystring);
-    }
-
-    if (dirtyObject) {
-        return Promise.resolve(dirtyObject);
-    }
-
     const provider = this.getProvider(identifier);
 
     if (!provider) {
