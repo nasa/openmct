@@ -57,7 +57,7 @@
         :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
     >
         <object-view
-            v-if="shouldShowTab(tab)"
+            v-if="shouldLoadTab(tab)"
             class="c-tabs-view__object"
             :default-object="tab.domainObject"
             :object-path="tab.objectPath"
@@ -202,7 +202,7 @@ export default {
             this.currentTab = tab;
             this.addTabToLoaded(tab);
         },
-        shouldShowTab(tab) {
+        shouldLoadTab(tab) {
             const isLoadedAndCurrent = this.isTabLoaded(tab) && this.isCurrent(tab);
             const isLoadedAndHidden = this.isTabLoaded(tab) && !this.isCurrent(tab);
             const tabElLoaded = Boolean(this.tabWidth && this.tabHeight);
