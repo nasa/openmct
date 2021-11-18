@@ -175,7 +175,10 @@ export default {
             let styles = {};
 
             if (!this.isCurrent(tab)) {
-                styles = { height: this.tabHeight, width: this.tabWidth };
+                styles = {
+                    height: this.tabHeight,
+                    width: this.tabWidth
+                };
             }
 
             return styles;
