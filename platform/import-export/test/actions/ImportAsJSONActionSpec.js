@@ -77,6 +77,10 @@ define(
                             config.capabilities.composition = compCapability;
                         }
 
+                        config.capabilities.adapter = {
+                            invoke: () => model
+                        };
+
                         newObjects.push(domainObjectFactory(config));
 
                         return domainObjectFactory(config);

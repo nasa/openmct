@@ -68,16 +68,16 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
         var rootModel = tree.openmct[rootId];
         delete rootModel.persisted;
 
-        rootModel.location = parent.getId();
         var rootObj = this.instantiate(rootModel, rootId);
         var newStyleParent = parent.useCapability('adapter');
         var newStyleRootObj = rootObj.useCapability('adapter');
+        newStyleRootObj.location = parent.getId();
 
         if (this.openmct.composition.checkPolicy(newStyleParent, newStyleRootObj)) {
             // Instantiate all objects in tree with their newly generated ids,
             // adding each to its rightful parent's composition
             this.deepInstantiate(rootObj, tree.openmct, []);
-            this.openmct.objects.save(rootModel);
+            this.openmct.objects.save(newStyleRootObj);
             const compositionCollection = this.openmct.composition.get(newStyleParent);
             compositionCollection.add(newStyleRootObj);
         } else {
