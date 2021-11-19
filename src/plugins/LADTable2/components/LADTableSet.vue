@@ -128,23 +128,27 @@ export default {
             return this.tableSet.tables[key].domainObject.name;
         },
         addTable(ladTable) {
-            ladTable.on('object-added', this.addTelemetry.bind(this, ladTable.keyString));
+            let key = this.openmct.objects.makeKeyString(ladTable.domainObject.identifier);
+            ladTable.on('object-added', this.addTelemetry.bind(this, key));
             ladTable.tableRows.on('add', this.addRow);
             ladTable.initialize();
-            this.tables.push(ladTable.keyString);
+            this.tables.push(key);
         },
         removeTable(identifier) {
             let idx;
-            for (let i in this.ladTableObjects) {
-                if (this.ladTableObjects[i].keyString === identifier.key) {
+            let key = this.openmct.objects.makeKeyString(identifier);
+            for (let i in this.tables) {
+                if (this.tables[i] === key) {
                     idx = i;
                     break;
                 }
             }
 
             if (idx !== undefined) {
-                this.ladTableObjects.splice(idx, 1);
+                this.tables.splice(idx, 1);
+                this.removeTelemetry(key);
             }
+
         },
         checkUnit() {
             for (let ladKey in this.tableSet.telemetryObjects) {
@@ -177,6 +181,9 @@ export default {
             }
 
             this.telemetry[tableKey].push(telemetryKey);
+        },
+        removeTelemetry(tableKey) {
+            this.$delete(this.telemetry, tableKey);
         },
         addRow(telemetry) {
             const ladTelemetry = telemetry[telemetry.length - 1];

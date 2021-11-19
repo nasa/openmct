@@ -27,8 +27,8 @@ export default class LADTableSet extends EventEmitter {
             this.composition.load().then((composition) => {
                 composition.forEach(this.addLADTable.bind(this));
 
-                this.composition.on('add', this.addLADTable);
-                this.composition.on('remove', this.removeLADTable);
+                this.composition.on('add', this.addLADTable.bind(this));
+                this.composition.on('remove', this.removeLADTable.bind(this));
 
                 this.emit('loaded');
             });
