@@ -47,7 +47,7 @@ define([
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
 
-    const workers = [
+    const searchWorkers = [
         {
             "key": "bareBonesSearchWorker",
             "scriptText": BareBonesSearchWorkerText
@@ -74,7 +74,7 @@ define([
 
         this.USE_LEGACY_INDEXER = USE_LEGACY_INDEXER;
 
-        this.worker = this.startWorker(workers);
+        this.worker = this.startWorker(searchWorkers);
         this.indexOnMutation(topic);
 
         ROOTS.forEach(function indexRoot(rootId) {
