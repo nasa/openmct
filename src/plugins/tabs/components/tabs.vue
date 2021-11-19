@@ -186,19 +186,16 @@ export default {
 
             return styles;
         },
-        getTabWidthAndHeight() {
-            return {
-                width: this.$refs.tabs.offsetWidth + 'px',
-                height: this.$refs.tabsHolder.offsetHeight - this.$refs.tabs.offsetHeight + 'px'
-            };
-        },
         setCurrentTabByIndex(index) {
             if (this.tabsList[index]) {
                 this.showTab(this.tabsList[index]);
             }
         },
         showTab(tab, index) {
-            console.log('showTab?', tab.domainObject.name);
+            if (!tab) {
+                return;
+            }
+            
             if (index !== undefined) {
                 this.storeCurrentTabIndexInURL(index);
             }
@@ -369,11 +366,12 @@ export default {
             this.currentTab = this.tabsList[tabIndex];
         },
         handleWindowResize() {
-            console.log('resize')
-            const styles = this.getTabWidthAndHeight();
+            if (!this.$refs.tabs || !this.$refs.tabsHolder) {
+                return;
+            }
 
-            this.tabWidth = styles.width;
-            this.tabHeight = styles.height;
+            this.tabWidth = this.$refs.tabs.offsetWidth + 'px';
+            this.tabHeight = this.$refs.tabsHolder.offsetHeight - this.$refs.tabs.offsetHeight + 'px';
         }
     }
 };
