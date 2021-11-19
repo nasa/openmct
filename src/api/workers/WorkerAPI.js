@@ -24,6 +24,24 @@
  * Provides a service
  * to manage instances of Worker and SharedWorker
  * to run background threads
+ *
+
+ * Example worker definitions
+ * {
+ *     key: 'a-worker',
+ *     scriptText: '(() => {}());'
+ * }
+ *
+ * {
+ *     key: 'a-shared-worker',
+ *     shared: true,
+ *     scriptUrl: 'c.js',
+ *     bundle: {
+ *         path: 'a',
+ *         sources: 'b'
+ *     }
+ * }
+ *
 **/
 export default class WorkerAPI {
     constructor() {
