@@ -33,7 +33,7 @@
             @click="showTab(tab, index)"
         >
             <div
-                ref="tabsLabel" 
+                ref="tabsLabel"
                 class="c-tabs-view__tab__label c-object-label"
                 :class="[tab.status ? `is-status--${tab.status}` : '']"
             >
@@ -195,7 +195,7 @@ export default {
             if (!tab) {
                 return;
             }
-            
+
             if (index !== undefined) {
                 this.storeCurrentTabIndexInURL(index);
             }
