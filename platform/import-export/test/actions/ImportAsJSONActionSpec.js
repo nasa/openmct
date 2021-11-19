@@ -42,15 +42,21 @@ define(
                 newObjects;
 
             beforeEach(function () {
-
                 uniqueId = 0;
                 newObjects = [];
                 openmct = {
                     $injector: jasmine.createSpyObj('$injector', ['get']),
                     objects: {
-                        makeKeyString: function (identifier) {
-                            return identifier.key;
-                        }
+                        makeKeyString: identifier => identifier.key,
+                        save: o => true
+                    },
+                    composition: {
+                        get: (o) => {
+                            return {
+                                add: v => {}
+                            };
+                        },
+                        checkPolicy: (a, b) => true
                     }
                 };
                 mockInstantiate = jasmine.createSpy('instantiate').and.callFake(
@@ -60,14 +66,6 @@ define(
                             "id": id,
                             "capabilities": {}
                         };
-                        var locationCapability = {
-                            setPrimaryLocation: jasmine.createSpy('setPrimaryLocation')
-                                .and
-                                .callFake(function (newLocation) {
-                                    config.model.location = newLocation;
-                                })
-                        };
-                        config.capabilities.location = locationCapability;
                         if (model.composition) {
                             var compCapability =
                                 jasmine.createSpy('compCapability')
@@ -146,14 +144,33 @@ define(
                 });
             });
 
-            xit("can import self-containing objects", function () {
+            it("can import self-containing objects", function () {
                 var compDomainObject = domainObjectFactory({
                     name: 'compObject',
                     model: { name: 'compObject'},
-                    capabilities: {"composition": compositionCapability}
+                    capabilities: {
+                        "composition": compositionCapability,
+                        'adapter': {
+                            invoke: () => {
+                                return {
+                                    name: 'parent',
+                                    composition: [],
+                                    id: "mine",
+                                    identifier: {
+                                        namespace: '',
+                                        key: 'mine'
+                                    },
+                                    location: "ROOT",
+                                    modified: 1637287323760,
+                                    persisted: 1637287323760,
+                                    type: "folder"
+                                };
+                            }
+                        }
+                    }
                 });
-                context.domainObject = compDomainObject;
 
+                context.domainObject = compDomainObject;
                 dialogService.getUserInput.and.returnValue(Promise.resolve(
                     {
                         selectFile: {
@@ -161,10 +178,14 @@ define(
                                 "openmct": {
                                     "infiniteParent": {
                                         "composition": [{
-                                            key: "infinteChild",
-                                            namespace: ""
+                                            "key": "infinteChild",
+                                            "namespace": ""
                                         }],
-                                        "name": "1",
+                                        "identifier": {
+                                            "key": "infiniteParent",
+                                            "namespace": ""
+                                        },
+                                        "name": "parent",
                                         "type": "folder",
                                         "modified": 1503598129176,
                                         "location": "mine",
@@ -172,10 +193,14 @@ define(
                                     },
                                     "infinteChild": {
                                         "composition": [{
-                                            key: "infinteParent",
-                                            namespace: ""
+                                            "key": "infiniteParent",
+                                            "namespace": ""
                                         }],
-                                        "name": "2",
+                                        "identifier": {
+                                            "key": "infinteChild",
+                                            "namespace": ""
+                                        },
+                                        "name": "child",
                                         "type": "folder",
                                         "modified": 1503598132428,
                                         "location": "infiniteParent",
@@ -198,7 +223,7 @@ define(
                 });
             });
 
-            xit("assigns new ids to each imported object", function () {
+            it("assigns new ids to each imported object", function () {
                 dialogService.getUserInput.and.returnValue(Promise.resolve(
                     {
                         selectFile: {
@@ -229,7 +254,6 @@ define(
                     expect(newObjects[0].getId()).toBe('1');
                 });
             });
-
         });
     }
 );
