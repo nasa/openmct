@@ -247,6 +247,13 @@ define([
 
         this.overlays = new OverlayAPI.default();
 
+        /**
+         * An interface for running background threads using Worker and SharedWorker.
+         *
+         * @type {module:openmct.WorkerAPI}
+         * @memberof module:openmct.MCT#
+         * @name workers
+        **/
         this.workers = new api.WorkerAPI();
 
         this.menus = new api.MenuAPI(this);

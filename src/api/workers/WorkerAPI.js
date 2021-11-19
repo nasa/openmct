@@ -20,32 +20,42 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+/**
+ * Provides a service
+ * to manage instances of Worker and SharedWorker
+ * to run background threads
+**/
 export default class WorkerAPI {
     constructor() {
         this.workerUrls = {};
         this.sharedWorkers = {};
     }
 
+    /**
+     * Add and register a worker.
+     *
+     * This will return either a Worker or a SharedWorker,
+     * depending on whether a `shared` flag has been specified
+     * in the definition for the referenced worker.
+     *
+     * @param {Object} worker definition object for the worker
+    **/
     addWorker(worker) {
         const key = worker.key;
 
         if (!this.workerUrls[key]) {
             if (worker.scriptUrl) {
-                console.log('add worker.scriptUrl', worker.scriptUrl);
                 this.workerUrls[key] = [
                     worker.bundle.path,
                     worker.bundle.sources,
                     worker.scriptUrl
                 ].join("/");
             } else if (worker.scriptText) {
-                console.log('add worker.scriptText', worker.scriptText);
                 const blob = new Blob(
                     [worker.scriptText],
                     {type: 'application/javascript'}
                 );
                 const objectUrl = URL.createObjectURL(blob);
-
-                console.log('objectUrl', objectUrl);
 
                 this.workerUrls[key] = objectUrl;
             }
@@ -54,17 +64,22 @@ export default class WorkerAPI {
         }
     }
 
+    /**
+     * Start running a new web worker. This will run a worker
+     * that has been added using @method addWorker.
+     *
+     * This will return either a Worker or a SharedWorker,
+     * depending on whether a `shared` flag has been specified
+     * in the definition for the referenced worker.
+     *
+     * @param {string} key symbolic identifier for the worker
+     * @returns {Worker | SharedWorker} the running Worker
+    **/
     run(key) {
-        console.log('worker api.run', key);
-
         const scriptUrl = this.workerUrls[key];
         const Worker = this.sharedWorkers[key]
             ? window.SharedWorker
             : window.Worker;
-
-        console.log('scripturl', scriptUrl);
-        console.log('worker', Worker);
-        console.log('window worker?', Worker === window.Worker);
 
         return scriptUrl && Worker && new Worker(scriptUrl);
     }

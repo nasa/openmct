@@ -123,10 +123,8 @@ define([
         });
 
         if (this.USE_LEGACY_INDEXER) {
-            console.log('running genericSearchWorker');
             searchWorker = this.openmct.workers.run('genericSearchWorker');
         } else {
-            console.log('running bareBonesSearchWorker');
             searchWorker = this.openmct.workers.run('bareBonesSearchWorker');
         }
 

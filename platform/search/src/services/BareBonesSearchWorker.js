@@ -30,7 +30,6 @@
     var indexedItems = [];
 
     function indexItem(id, model) {
-        console.log('bare indexing');
         indexedItems.push({
             id: id,
             name: model.name.toLowerCase(),
@@ -48,7 +47,6 @@
      *           * queryId: an id identifying this query, will be returned.
      */
     function search(data) {
-        console.log('using barebones search');
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
         var results,
@@ -72,7 +70,6 @@
     }
 
     self.onmessage = function (event) {
-        console.log('onmessage', event);
         if (event.data.request === 'index') {
             indexItem(event.data.id, event.data.model);
         } else if (event.data.request === 'search') {
