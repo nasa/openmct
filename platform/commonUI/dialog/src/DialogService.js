@@ -65,7 +65,8 @@ define(
             var deferred = this.$q.defer(),
                 self = this,
                 overlay,
-                handleEscKeydown;
+                handleEscKeydown,
+                handleEnterKeydown;
 
             // Confirm function; this will be passed in to the
             // overlay-dialog template and associated with a
@@ -90,12 +91,18 @@ define(
                     cancel();
                 }
             };
+            handleEnterKeydown = function (event) {
+                if (event.keyCode === 13 && self.isValid(model)) {
+                    confirm();
+                }
+            };
 
             // Add confirm/cancel callbacks
             model.confirm = confirm;
             model.cancel = cancel;
 
             this.findBody().on('keydown', handleEscKeydown);
+            this.findBody().on('keydown', handleEnterKeydown);
 
             if (this.canShowDialog(model)) {
                 // Add the overlay using the OverlayService, which
@@ -142,6 +149,22 @@ define(
                 overlayModel,
                 resultGetter
             );
+        };
+
+        /**
+         * Checks that input is valid
+         *
+         * @param dialogModel a description of the dialog to show
+         * @return {boolean} true if valid
+         */
+        DialogService.prototype.isValid = function (dialogModel) {
+            let valid = true;
+            dialogModel.structure.sections[0].rows.forEach(function (row) {
+                if(row.required){
+                    valid &= (dialogModel.value[row.key] != undefined);
+                }
+            });
+            return valid;
         };
 
         /**
