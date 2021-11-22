@@ -68,15 +68,13 @@ export default {
     data() {
         return {
             timestamp: undefined,
+            formattedTimestamp: undefined,
             value: '---',
             valueClass: '',
             unit: ''
         };
     },
     computed: {
-        formattedTimestamp() {
-            return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
-        },
         objectPath() {
             return [this.domainObject, ...this.pathToTable];
         }
@@ -104,7 +102,7 @@ export default {
 
         this.unsubscribe = this.openmct
             .telemetry
-            .subscribe(this.domainObject, this.updateValues);
+            .subscribe(this.domainObject, this.setLatestValues);
 
         this.requestHistory();
 
@@ -118,20 +116,25 @@ export default {
         this.openmct.time.off('bounds', this.updateBounds);
     },
     methods: {
-        updateValues(datum) {
+        updateView() {
+            requestAnimationFrame(() => {
+                this.formattedTimestamp = this.latestFormattedTimestamp;
+                this.value = this.latestValue;
+                this.valueClass = this.latestValueClass;
+            });
+        },
+        setLatestValues(datum) {
             let newTimestamp = this.getParsedTimestamp(datum);
-            let limit;
 
             if (this.shouldUpdate(newTimestamp)) {
+                let limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
                 this.datum = datum;
                 this.timestamp = newTimestamp;
-                this.value = this.formats[this.valueKey].format(datum);
-                limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
-                if (limit) {
-                    this.valueClass = limit.cssClass;
-                } else {
-                    this.valueClass = '';
-                }
+                this.latestFormattedTimestamp = this.getFormattedTimestamp();
+                this.latestValue = this.formats[this.valueKey].format(datum);
+                this.latestValueClass = limit ? limit.cssClass : '';
+
+                this.updateView();
             }
         },
         shouldUpdate(newTimestamp) {
@@ -151,7 +154,7 @@ export default {
                     size: 1,
                     strategy: 'latest'
                 })
-                .then((array) => this.updateValues(array[array.length - 1]))
+                .then((array) => this.setLatestValues(array[array.length - 1]))
                 .catch((error) => {
                     console.warn('Error fetching data', error);
                 });
@@ -198,10 +201,14 @@ export default {
                 return this.formats[this.timestampKey].parse(timestamp);
             }
         },
-        getFormattedTimestamp(timestamp) {
+        getFormattedTimestamp() {
+            let timestamp = '---';
+
             if (this.timeSystemFormat()) {
-                return this.formats[this.timestampKey].format(timestamp);
+                timestamp = this.formats[this.timestampKey].format(this.timestamp);
             }
+
+            return timestamp;
         },
         timeSystemFormat() {
             if (this.formats[this.timestampKey]) {
