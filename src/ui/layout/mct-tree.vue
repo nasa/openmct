@@ -432,24 +432,31 @@ export default {
 
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
+        safeLowerCaseString(str) {
+            return String(str).toLowerCase();
+        },
         sortNameDescending(a, b) {
             // sorting tree children items
             if (!(a.name && b.name)) {
-                if (a.object.name > b.object.name) {
+                if (this.safeLowerCaseString(a.object.name)
+                    > this.safeLowerCaseString(b.object.name)) {
                     return 1;
                 }
 
-                if (b.object.name > a.object.name) {
+                if (this.safeLowerCaseString(b.object.name)
+                    > this.safeLowerCaseString(a.object.name)) {
                     return -1;
                 }
             }
 
-            // sorting compositon items
-            if (a.name > b.name) {
+            // sorting composition items
+            if (this.safeLowerCaseString(a.name)
+                > this.safeLowerCaseString(b.name)) {
                 return 1;
             }
 
-            if (b.name > a.name) {
+            if (this.safeLowerCaseString(b.name)
+                > this.safeLowerCaseString(a.name)) {
                 return -1;
             }
 
