@@ -149,7 +149,6 @@ define([
     }
 
     TelemetryAPI.prototype.abortAllRequests = function () {
-        console.log(this.requestAbortControllers);
         this.requestAbortControllers.forEach((controller) => controller.abort());
         this.requestAbortControllers.clear();
     };
