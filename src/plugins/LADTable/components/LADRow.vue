@@ -68,6 +68,7 @@ export default {
     data() {
         return {
             timestamp: undefined,
+            timestampKey: undefined,
             formattedTimestamp: undefined,
             value: '---',
             valueClass: '',
@@ -75,6 +76,13 @@ export default {
         };
     },
     computed: {
+        timeSystemFormat() {
+            if (!this.formats[this.timestampKey]) {
+                console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
+            }
+
+            return this.formats[this.timestampKey];
+        },
         objectPath() {
             return [this.domainObject, ...this.pathToTable];
         }
@@ -117,11 +125,15 @@ export default {
     },
     methods: {
         updateView() {
-            requestAnimationFrame(() => {
-                this.formattedTimestamp = this.latestFormattedTimestamp;
-                this.value = this.latestValue;
-                this.valueClass = this.latestValueClass;
-            });
+            if (!this.updatingView) {
+                this.updatingView = true;
+                requestAnimationFrame(() => {
+                    this.formattedTimestamp = this.latestFormattedTimestamp;
+                    this.value = this.latestValue;
+                    this.valueClass = this.latestValueClass;
+                    this.updatingView = false;
+                });
+            }
         },
         setLatestValues(datum) {
             let newTimestamp = this.getParsedTimestamp(datum);
@@ -192,32 +204,26 @@ export default {
             }
         },
         resetValues() {
-            this.value = '---';
             this.timestamp = undefined;
-            this.valueClass = '';
+            this.latestFormattedTimestamp = undefined;
+            this.latestValue = '---';
+            this.latestValueClass = '';
+
+            this.updateView();
         },
         getParsedTimestamp(timestamp) {
-            if (this.timeSystemFormat()) {
-                return this.formats[this.timestampKey].parse(timestamp);
+            if (this.timeSystemFormat) {
+                return this.timeSystemFormat.parse(timestamp);
             }
         },
         getFormattedTimestamp() {
             let timestamp = '---';
 
-            if (this.timeSystemFormat()) {
-                timestamp = this.formats[this.timestampKey].format(this.timestamp);
+            if (this.timeSystemFormat) {
+                timestamp = this.timeSystemFormat.format(this.timestamp);
             }
 
             return timestamp;
-        },
-        timeSystemFormat() {
-            if (this.formats[this.timestampKey]) {
-                return true;
-            } else {
-                console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
-
-                return false;
-            }
         },
         setUnit() {
             this.unit = this.valueMetadata.unit || '';
