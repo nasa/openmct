@@ -48,6 +48,7 @@ const CONTEXT_MENU_ACTIONS = [
     'viewHistoricalData',
     'remove'
 ];
+const BLANK_VALUE = '---';
 
 export default {
     inject: ['openmct', 'currentView'],
@@ -70,7 +71,7 @@ export default {
             timestamp: undefined,
             timestampKey: undefined,
             formattedTimestamp: undefined,
-            value: '---',
+            value: BLANK_VALUE,
             valueClass: '',
             unit: ''
         };
@@ -206,7 +207,7 @@ export default {
         resetValues() {
             this.timestamp = undefined;
             this.latestFormattedTimestamp = undefined;
-            this.latestValue = '---';
+            this.latestValue = BLANK_VALUE;
             this.latestValueClass = '';
 
             this.updateView();
@@ -217,13 +218,11 @@ export default {
             }
         },
         getFormattedTimestamp() {
-            let timestamp = '---';
-
             if (this.timeSystemFormat) {
-                timestamp = this.timeSystemFormat.format(this.timestamp);
+                return this.timeSystemFormat.format(this.timestamp);
             }
 
-            return timestamp;
+            return BLANK_VALUE;
         },
         setUnit() {
             this.unit = this.valueMetadata.unit || '';
