@@ -296,10 +296,10 @@ export default {
             return disabled;
         },
         focusedImage() {
-            console.assert(this.imageHistory.length > this.focusedImageIndex, {
-                imageHistoryLength: this.imageHistory.length,
-                focusedImageIndex: this.focusedImageIndex
-            });
+            // console.assert(this.imageHistory.length > this.focusedImageIndex, {
+            //     imageHistoryLength: this.imageHistory.length,
+            //     focusedImageIndex: this.focusedImageIndex
+            // });
 
             return this.imageHistory[this.focusedImageIndex];
         },
@@ -422,15 +422,15 @@ export default {
             } else {
                 imageIndex = newSize > 0 ? newSize -1 : undefined;
             }
-            console.table({
-                newSize,
-                oldSize,
-                imageIndex,
-                imageHistoryLength: this.imageHistory.length,
-                indexForFocusedImage: this.indexForFocusedImage,
-                initFocusedImageIndex: this.initFocusedImageIndex
-                });
-            console.assert(imageIndex > -1, "The imageIndex value of %s fails", imageIndex);
+            // console.table({
+            //     newSize,
+            //     oldSize,
+            //     imageIndex,
+            //     imageHistoryLength: this.imageHistory.length,
+            //     indexForFocusedImage: this.indexForFocusedImage,
+            //     initFocusedImageIndex: this.initFocusedImageIndex
+            //     });
+            // console.assert(imageIndex > -1, "The imageIndex value of %s fails", imageIndex);
             this.setFocusedImage(imageIndex, false);
             this.scrollToRight();
         },
@@ -523,6 +523,12 @@ export default {
                 this.timeContext.off("timeSystem", this.trackDuration);
                 this.timeContext.off("clock", this.trackDuration);
                 this.timeContext.off("timeContext", this.setTimeContext);
+            }
+        },
+        boundsChange(bounds, isTick) {
+            if (!isTick) {
+                this.previousFocusedImage = this.focusedImage ? JSON.parse(JSON.stringify(this.focusedImage)) : undefined;
+                this.requestHistory().then(() => { console.log('done in imageryview', this.imageHistory)});
             }
         },
         // handleNewBounds(bounds) {
@@ -712,7 +718,12 @@ export default {
             });
         },
         setFocusedImage(index, thumbnailClick = false) {
-            console.assert(index > -1, {index})
+            if (!index) {
+                return;
+            }
+
+            console.log('previous?', this.previousFocusedImage);
+            // console.assert(index > -1, {index})
             console.log('setFocusedImageIndex', 'from', this.focusedImageIndex, "to", index)
             if (thumbnailClick) {
                 //We use the props till the user changes what they want to see

@@ -144,8 +144,10 @@ export default {
                     }
                 });
                 //this is to optimize anything that reacts to imageHistory length
+                console.log(imagery, 'set to imageHistory');
                 this.imageHistory = imagery;
             }
+            console.log('end of requestHistory');
         },
         timeSystemChange() {
             this.timeSystem = this.timeContext.timeSystem();
