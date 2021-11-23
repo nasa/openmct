@@ -217,10 +217,8 @@ export default {
             }
         },
         resetValues() {
-            this.latestTimestamp = undefined;
-            this.latestDatum = undefined;
-
-            this.updateView();
+            this.timestamp = undefined;
+            this.datum = undefined;
         },
         getParsedTimestamp(timestamp) {
             if (this.timeSystemFormat) {
