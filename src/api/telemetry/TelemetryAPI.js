@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-const { reject } = require("lodash");
 const { TelemetryCollection } = require("./TelemetryCollection");
 
 define([
@@ -328,6 +327,8 @@ define([
         if (!provider) {
             return Promise.reject('No provider found');
         }
+
+        console.log(arguments);
 
         return provider.request.apply(provider, arguments).catch((rejected) => {
             if (rejected.name !== 'AbortError') {
