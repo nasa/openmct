@@ -68,15 +68,37 @@ export default {
     },
     data() {
         return {
+            datum: undefined,
             timestamp: undefined,
             timestampKey: undefined,
-            formattedTimestamp: undefined,
-            value: BLANK_VALUE,
-            valueClass: '',
             unit: ''
         };
     },
     computed: {
+        value() {
+            if (!this.datum) {
+                return BLANK_VALUE;
+            }
+
+            return this.formats[this.valueKey].format(this.datum);
+        },
+        valueClass() {
+            if (!this.datum) {
+                return '';
+            }
+
+            const limit = this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+
+            return limit ? limit.cssClass : '';
+
+        },
+        formattedTimestamp() {
+            if (!this.timestamp) {
+                return BLANK_VALUE;
+            }
+
+            return this.timeSystemFormat.format(this.timestamp);
+        },
         timeSystemFormat() {
             if (!this.formats[this.timestampKey]) {
                 console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
@@ -129,34 +151,24 @@ export default {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    this.formattedTimestamp = this.latestFormattedTimestamp;
-                    this.value = this.latestValue;
-                    this.valueClass = this.latestValueClass;
+                    if (this.shouldUpdate()) {
+                        this.timestamp = this.latestTimestamp;
+                        this.datum = this.latestDatum;
+                    }
+
                     this.updatingView = false;
                 });
             }
         },
         setLatestValues(datum) {
-            let newTimestamp = this.getParsedTimestamp(datum);
+            this.latestDatum = datum;
+            this.latestTimestamp = this.getParsedTimestamp(datum);
 
-            if (this.shouldUpdate(newTimestamp)) {
-                let limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
-                this.datum = datum;
-                this.timestamp = newTimestamp;
-                this.latestFormattedTimestamp = this.getFormattedTimestamp();
-                this.latestValue = this.formats[this.valueKey].format(datum);
-                this.latestValueClass = limit ? limit.cssClass : '';
-
-                this.updateView();
-            }
+            this.updateView();
         },
-        shouldUpdate(newTimestamp) {
-            let newTimestampInBounds = this.inBounds(newTimestamp);
-            let noExistingTimestamp = this.timestamp === undefined;
-            let newTimestampIsLatest = newTimestamp > this.timestamp;
-
-            return newTimestampInBounds
-                && (noExistingTimestamp || newTimestampIsLatest);
+        shouldUpdate() {
+            return this.inBounds(this.latestTimestamp)
+                && (this.timestamp === undefined || this.latestTimestamp > this.timestamp);
         },
         requestHistory() {
             this.openmct
@@ -205,10 +217,8 @@ export default {
             }
         },
         resetValues() {
-            this.timestamp = undefined;
-            this.latestFormattedTimestamp = undefined;
-            this.latestValue = BLANK_VALUE;
-            this.latestValueClass = '';
+            this.latestTimestamp = undefined;
+            this.latestDatum = undefined;
 
             this.updateView();
         },
@@ -217,13 +227,13 @@ export default {
                 return this.timeSystemFormat.parse(timestamp);
             }
         },
-        getFormattedTimestamp() {
-            if (this.timeSystemFormat) {
-                return this.timeSystemFormat.format(this.timestamp);
-            }
+        // getFormattedTimestamp() {
+        //     if (this.timeSystemFormat) {
+        //         return this.timeSystemFormat.format(this.timestamp);
+        //     }
 
-            return BLANK_VALUE;
-        },
+        //     return BLANK_VALUE;
+        // },
         setUnit() {
             this.unit = this.valueMetadata.unit || '';
         }
