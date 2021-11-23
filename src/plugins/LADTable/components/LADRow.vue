@@ -227,13 +227,6 @@ export default {
                 return this.timeSystemFormat.parse(timestamp);
             }
         },
-        // getFormattedTimestamp() {
-        //     if (this.timeSystemFormat) {
-        //         return this.timeSystemFormat.format(this.timestamp);
-        //     }
-
-        //     return BLANK_VALUE;
-        // },
         setUnit() {
             this.unit = this.valueMetadata.unit || '';
         }
