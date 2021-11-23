@@ -223,7 +223,7 @@ class InMemorySearchProvider {
             return;
         }
 
-        const children = composition.load(domainObject);
+        const children = await composition.load(domainObject);
         children.forEach(function (child) {
             provider.scheduleForIndexing(provider.openmct.objects.makeKeyString(child));
         });
