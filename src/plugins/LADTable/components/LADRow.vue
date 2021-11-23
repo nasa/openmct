@@ -151,8 +151,10 @@ export default {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-                    if (this.shouldUpdate()) {
-                        this.timestamp = this.latestTimestamp;
+                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
+
+                    if (this.shouldUpdate(newTimestamp)) {
+                        this.timestamp = newTimestamp;
                         this.datum = this.latestDatum;
                     }
 
@@ -162,13 +164,12 @@ export default {
         },
         setLatestValues(datum) {
             this.latestDatum = datum;
-            this.latestTimestamp = this.getParsedTimestamp(datum);
 
             this.updateView();
         },
-        shouldUpdate() {
-            return this.inBounds(this.latestTimestamp)
-                && (this.timestamp === undefined || this.latestTimestamp > this.timestamp);
+        shouldUpdate(newTimestamp) {
+            return this.inBounds(newTimestamp)
+                && (this.timestamp === undefined || newTimestamp > this.timestamp);
         },
         requestHistory() {
             this.openmct
