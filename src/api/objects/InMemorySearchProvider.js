@@ -27,7 +27,6 @@ class InMemorySearchProvider {
      *
      * @constructor
      * @param {ObjectService} objectService the object service.
-     * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
     constructor(openmct) {
         /**
@@ -125,7 +124,7 @@ class InMemorySearchProvider {
      * @private
      */
     startSharedWorker() {
-        let provider = this;
+        const provider = this;
         let sharedWorker;
 
         // eslint-disable-next-line no-undef
@@ -204,8 +203,8 @@ class InMemorySearchProvider {
      * @param id a model id
      * @param model a model
      */
-    index(id, model) {
-        let provider = this;
+    async index(id, model) {
+        const provider = this;
 
         if (id !== 'ROOT') {
             this.worker.postMessage({
@@ -224,12 +223,10 @@ class InMemorySearchProvider {
             return;
         }
 
-        composition.load(domainObject)
-            .then(function (children) {
-                children.forEach(function (child) {
-                    provider.scheduleForIndexing(provider.openmct.objects.makeKeyString(child));
-                });
-            });
+        const children = composition.load(domainObject);
+        children.forEach(function (child) {
+            provider.scheduleForIndexing(provider.openmct.objects.makeKeyString(child));
+        });
     }
 
     /**
@@ -239,28 +236,25 @@ class InMemorySearchProvider {
      *
      * @private
      */
-    beginIndexRequest() {
-        let idToIndex = this.idsToIndex.shift();
-        let provider = this;
+    async beginIndexRequest() {
+        const idToIndex = this.idsToIndex.shift();
+        const provider = this;
 
         this.pendingRequests += 1;
-        this.openmct.objects.get(idToIndex)
-            .then(function (object) {
-                delete provider.pendingIndex[idToIndex];
-                if (object) {
-                    provider.index(idToIndex, object.model);
-                }
-            }, function () {
-                provider
-                    .$log
-                    .warn('Failed to index domain object ' + idToIndex);
-            })
-            .then(function () {
-                setTimeout(function () {
-                    provider.pendingRequests -= 1;
-                    provider.keepIndexing();
-                }, 0);
-            });
+        const object = await this.openmct.objects.get(idToIndex);
+        delete provider.pendingIndex[idToIndex];
+        try {
+            if (object) {
+                await provider.index(idToIndex, object.model);
+            }
+        } catch (error) {
+            console.warn('Failed to index domain object ' + idToIndex, error);
+        }
+
+        setTimeout(function () {
+            provider.pendingRequests -= 1;
+            provider.keepIndexing();
+        }, 0);
     }
 
     /**
