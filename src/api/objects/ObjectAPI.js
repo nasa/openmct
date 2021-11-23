@@ -28,6 +28,7 @@ import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
 import Transaction from './Transaction';
 import ConflictError from './ConflictError';
+import InMemorySearchProvider from './InMemorySearchProvider';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -41,6 +42,7 @@ function ObjectAPI(typeRegistry, openmct) {
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
+    this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
     this.injectIdentifierService = function () {
         this.identifierService = this.openmct.$injector.get("identifierService");
     };
@@ -55,14 +57,6 @@ function ObjectAPI(typeRegistry, openmct) {
         Conflict: ConflictError
     };
 }
-
-/**
- * Set fallback provider, this is an internal API for legacy reasons.
- * @private
- */
-ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
-    this.fallbackProvider = p;
-};
 
 /**
  * @private
@@ -246,19 +240,18 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
  *          an array of promises returned from each object provider's search function
  *          each resolving to domain objects matching provided search query and options.
  */
-ObjectAPI.prototype.search = function (query, abortSignal) {
+ObjectAPI.prototype.search = async function (query, abortSignal) {
     const searchPromises = Object.values(this.providers)
         .filter(provider => provider.search !== undefined)
         .map(provider => provider.search(query, abortSignal));
 
-    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, abortSignal)
-        .then(results => results.hits
-            .map(hit => {
-                let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
-                domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
+    const results = await searchPromises.push(this.inMemorySearchProvider.search(query, abortSignal));
+    results.hits.map(hit => {
+        let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
+        domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
 
-                return domainObject;
-            })));
+        return domainObject;
+    });
 
     return searchPromises;
 };

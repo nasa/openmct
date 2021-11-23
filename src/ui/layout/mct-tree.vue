@@ -239,7 +239,6 @@ export default {
     methods: {
         async initialize() {
             this.isLoading = true;
-            this.openmct.$injector.get('searchService');
             this.getSavedOpenItems();
             this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
             this.treeResizeObserver.observe(this.$el);

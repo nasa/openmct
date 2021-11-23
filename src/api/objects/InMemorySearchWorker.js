@@ -27,7 +27,7 @@
 
     // An array of objects composed of domain object IDs and names
     // {id: domainObject's ID, name: domainObject's name}
-    var indexedItems = [];
+    const indexedItems = [];
 
     function indexItem(id, model) {
         indexedItems.push({
@@ -49,14 +49,14 @@
     function search(data) {
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
-        var results,
-            input = data.input.trim().toLowerCase(),
-            message = {
-                request: 'search',
-                results: {},
-                total: 0,
-                queryId: data.queryId
-            };
+        let results;
+        let input = data.input.trim().toLowerCase();
+        let message = {
+            request: 'search',
+            results: {},
+            total: 0,
+            queryId: data.queryId
+        };
 
         results = indexedItems.filter((indexedItem) => {
             return indexedItem.name.includes(input);
