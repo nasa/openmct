@@ -677,7 +677,8 @@ export default {
             });
         },
         matchIndexOfPreviousImage(previous, imageHistory) {
-            // match logic uses a composite of url and time to account for example imagery not having fully unique urls
+            // match logic uses a composite of url and time to account
+            // for example imagery not having fully unique urls
             return imageHistory.findIndex((x) => (
                 x.url === previous.url
                 && x.time === previous.time
@@ -691,21 +692,14 @@ export default {
 
             if (this.previousFocusedImage) {
                 // determine if the previous image exists in the new bounds of imageHistory
-                const matchIndex = this.matchIndexOfPreviousImage(this.previousFocusedImage, this.imageHistory);
-
-                if (matchIndex > -1) {
-                    focusedIndex = matchIndex;
-                } else {
-                    // when the previous image is no longer present, set focused image to last item and unpause
-                    focusedIndex = this.imageHistory.length - 1;
-                    // this.paused(false);
-                }
+                const matchIndex = this.matchIndexOfPreviousImage(
+                    this.previousFocusedImage,
+                    this.imageHistory
+                );
+                focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
 
                 delete this.previousFocusedImage;
             }
-
-            console.log('setFocusedImageIndex', 'from', this.focusedImageIndex, "to", focusedIndex);
-            this.focusedImageIndex = focusedIndex;
 
             if (thumbnailClick) {
                 //We use the props till the user changes what they want to see
@@ -722,6 +716,7 @@ export default {
                 return;
             }
 
+            this.focusedImageIndex = focusedIndex;
 
             if (thumbnailClick && !this.isPaused) {
                 this.paused(true);
