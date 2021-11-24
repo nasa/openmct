@@ -1,6 +1,10 @@
 <template>
-<div class="c-tabs-view">
+<div
+    ref="tabs"
+    class="c-tabs-view"
+>
     <div
+        ref="tabsHolder"
         class="c-tabs-view__tabs-holder c-tabs"
         :class="{
             'is-dragging': isDragging && allowEditing,
@@ -28,8 +32,10 @@
             }"
             @click="showTab(tab, index)"
         >
-            <div class="c-tabs-view__tab__label c-object-label"
-                 :class="[tab.status ? `is-status--${tab.status}` : '']"
+            <div
+                ref="tabsLabel"
+                class="c-tabs-view__tab__label c-object-label"
+                :class="[tab.status ? `is-status--${tab.status}` : '']"
             >
                 <div class="c-object-label__type-icon"
                      :class="tab.type.definition.cssClass"
@@ -49,11 +55,12 @@
     <div
         v-for="tab in tabsList"
         :key="tab.keyString"
+        :style="getTabStyles(tab)"
         class="c-tabs-view__object-holder"
         :class="{'c-tabs-view__object-holder--hidden': !isCurrent(tab)}"
     >
         <object-view
-            v-if="isTabLoaded(tab)"
+            v-if="shouldLoadTab(tab)"
             class="c-tabs-view__object"
             :default-object="tab.domainObject"
             :object-path="tab.objectPath"
@@ -65,6 +72,7 @@
 <script>
 import ObjectView from '../../../ui/components/ObjectView.vue';
 import RemoveAction from '../../remove/RemoveAction.js';
+import _ from 'lodash';
 
 const unknownObjectType = {
     definition: {
@@ -88,6 +96,8 @@ export default {
         let keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
 
         return {
+            tabWidth: undefined,
+            tabHeight: undefined,
             internalDomainObject: this.domainObject,
             currentTab: {},
             currentTabIndex: undefined,
@@ -122,6 +132,10 @@ export default {
             });
         }
 
+        this.handleWindowResize = _.debounce(this.handleWindowResize, 500);
+        this.tabsViewResizeObserver = new ResizeObserver(this.handleWindowResize);
+        this.tabsViewResizeObserver.observe(this.$refs.tabs);
+
         this.unsubscribe = this.openmct.objects.observe(this.internalDomainObject, '*', this.updateInternalDomainObject);
 
         this.openmct.router.on('change:params', this.updateCurrentTab.bind(this));
@@ -137,6 +151,8 @@ export default {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.onReorder);
+
+        this.tabsViewResizeObserver.disconnect();
 
         this.tabsList.forEach(tab => {
             tab.statusUnsubscribe();
@@ -158,18 +174,41 @@ export default {
 
             this.loadedTabs[tab.keyString] = true;
         },
+        getTabStyles(tab) {
+            let styles = {};
+
+            if (!this.isCurrent(tab)) {
+                styles = {
+                    height: this.tabHeight,
+                    width: this.tabWidth
+                };
+            }
+
+            return styles;
+        },
         setCurrentTabByIndex(index) {
             if (this.tabsList[index]) {
                 this.showTab(this.tabsList[index]);
             }
         },
         showTab(tab, index) {
+            if (!tab) {
+                return;
+            }
+
             if (index !== undefined) {
                 this.storeCurrentTabIndexInURL(index);
             }
 
             this.currentTab = tab;
             this.addTabToLoaded(tab);
+        },
+        shouldLoadTab(tab) {
+            const isLoaded = this.isTabLoaded(tab);
+            const isCurrent = this.isCurrent(tab);
+            const tabElLoaded = this.tabWidth !== undefined && this.tabHeight !== undefined;
+
+            return (isLoaded && isCurrent) || ((isLoaded && !isCurrent) && tabElLoaded);
         },
         showRemoveDialog(index) {
             if (!this.tabsList[index]) {
@@ -325,6 +364,14 @@ export default {
 
             this.currentTabIndex = tabIndex;
             this.currentTab = this.tabsList[tabIndex];
+        },
+        handleWindowResize() {
+            if (!this.$refs.tabs || !this.$refs.tabsHolder) {
+                return;
+            }
+
+            this.tabWidth = this.$refs.tabs.offsetWidth + 'px';
+            this.tabHeight = this.$refs.tabsHolder.offsetHeight - this.$refs.tabs.offsetHeight + 'px';
         }
     }
 };
