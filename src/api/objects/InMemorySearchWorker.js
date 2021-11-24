@@ -30,6 +30,7 @@
     const indexedItems = [];
 
     function indexItem(id, model) {
+        console.debug(`🖲 Worker is adding ${id} to index 🖲`);
         indexedItems.push({
             id: id,
             name: model.name.toLowerCase(),

@@ -50,6 +50,8 @@ class InMemorySearchProvider {
     }
 
     startIndexing() {
+        console.debug('🖲 Starting indexing for search 🖲');
+        // Need to check here if object provider supports search or not
         const rootObject = this.openmct.objects.rootProvider.rootObject;
         this.scheduleForIndexing(rootObject.identifier.key);
         this.worker = this.startSharedWorker();
@@ -131,7 +133,7 @@ class InMemorySearchProvider {
         let sharedWorker;
 
         // eslint-disable-next-line no-undef
-        const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}InMemorySearchWorker.js`;
+        const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}inMemorySearchWorker.js`;
 
         sharedWorker = new SharedWorker(sharedWorkerURL);
         sharedWorker.port.onmessage = this.onWorkerMessage;
@@ -208,16 +210,22 @@ class InMemorySearchProvider {
      */
     async index(id, model) {
         const provider = this;
+        console.debug(`🖲 Telling worker to add ${id.key ? id.key : id} to index 🖲`);
 
         if (id !== 'ROOT') {
-            this.worker.postMessage({
+            this.worker.port.postMessage({
                 request: 'index',
                 model: model,
                 id: id
             });
         }
 
-        let domainObject = this.openmct.objects.get(id);
+        let domainObject = await this.openmct.objects.get(id);
+        this.openmct.objects.observe(domainObject, `*`, () => {
+            // is this going to cause a memory leak?
+            const id = domainObject.identifier.key;
+            provider.scheduleForIndexing(id);
+        });
         let composition = this.openmct.composition.registry.find(p => {
             return p.appliesTo(domainObject);
         });
