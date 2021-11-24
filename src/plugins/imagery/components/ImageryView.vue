@@ -296,11 +296,6 @@ export default {
             return disabled;
         },
         focusedImage() {
-            // console.assert(this.imageHistory.length > this.focusedImageIndex, {
-            //     imageHistoryLength: this.imageHistory.length,
-            //     focusedImageIndex: this.focusedImageIndex
-            // });
-
             return this.imageHistory[this.focusedImageIndex];
         },
         parsedSelectedTime() {
@@ -417,20 +412,11 @@ export default {
         imageHistorySize(newSize, oldSize) {
             let imageIndex;
             if (this.indexForFocusedImage !== undefined) {
-                console.log('setting to initFocusedImageIndex', this.initFocusedImageIndex)
                 imageIndex = this.initFocusedImageIndex;
             } else {
-                imageIndex = newSize > 0 ? newSize -1 : undefined;
+                imageIndex = newSize > 0 ? newSize - 1 : undefined;
             }
-            // console.table({
-            //     newSize,
-            //     oldSize,
-            //     imageIndex,
-            //     imageHistoryLength: this.imageHistory.length,
-            //     indexForFocusedImage: this.indexForFocusedImage,
-            //     initFocusedImageIndex: this.initFocusedImageIndex
-            //     });
-            // console.assert(imageIndex > -1, "The imageIndex value of %s fails", imageIndex);
+
             this.setFocusedImage(imageIndex, false);
             this.scrollToRight();
         },
@@ -516,7 +502,6 @@ export default {
             this.timeContext.on('timeSystem', this.trackDuration);
             this.timeContext.on('clock', this.trackDuration);
             this.timeContext.on("timeContext", this.setTimeContext);
-            // this.timeContext.on('bounds', this.handleNewBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
@@ -719,7 +704,7 @@ export default {
                 delete this.previousFocusedImage;
             }
 
-            console.log('setFocusedImageIndex', 'from', this.focusedImageIndex, "to", focusedIndex)
+            console.log('setFocusedImageIndex', 'from', this.focusedImageIndex, "to", focusedIndex);
             this.focusedImageIndex = focusedIndex;
 
             if (thumbnailClick) {
@@ -728,7 +713,6 @@ export default {
             }
 
             if (this.isPaused && !thumbnailClick && this.initFocusedImageIndex === undefined) {
-                console.log('setFocusedImage is paused and not thumnail click', index);
                 this.nextImageIndex = focusedIndex;
                 //this could happen if bounds changes
                 if (this.focusedImageIndex > this.imageHistory.length - 1) {
