@@ -161,6 +161,11 @@ describe("The LAD Table", () => {
                 anotherTelemetryObjectResolve = resolve;
             });
 
+            spyOnBuiltins(['requestAnimationFrame']);
+            window.requestAnimationFrame.and.callFake((callBack) => {
+                callBack();
+            });
+
             openmct.telemetry.request.and.callFake(() => {
                 telemetryRequestResolve(mockTelemetry);
 
@@ -261,11 +266,6 @@ describe("The LAD Table Set", () => {
 
         ladPlugin = new LadPlugin();
         openmct.install(ladPlugin);
-
-        spyOnBuiltins(['requestAnimationFrame']);
-        window.requestAnimationFrame.and.callFake((callBack) => {
-            callBack();
-        });
 
         openmct.time.bounds({
             start: bounds.start,
