@@ -622,18 +622,13 @@ describe('Telemetry API', function () {
 
 describe('Telemetery', () => {
     let openmct;
-    let appHolder;
     let telemetryProvider;
     let telemetryAPI;
     let watchedSignal;
 
     beforeEach(() => {
-        appHolder = document.createElement('div');
         openmct = createOpenMct();
         openmct.install(openmct.plugins.MyItems());
-
-        openmct.start(appHolder);
-        document.body.append(appHolder);
 
         telemetryAPI = openmct.telemetry;
 
@@ -648,8 +643,6 @@ describe('Telemetery', () => {
     });
 
     afterEach(() => {
-        appHolder.remove();
-
         return resetApplicationState(openmct);
     });
 
