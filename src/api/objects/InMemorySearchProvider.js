@@ -42,13 +42,16 @@ class InMemorySearchProvider {
         this.pendingRequests = 0;
 
         this.pendingQueries = {};
+        this.onWorkerMessage = this.onWorkerMessage.bind(this);
+        this.onWorkerMessageError = this.onWorkerMessageError.bind(this);
+        this.startIndexing = this.startIndexing.bind(this);
 
         openmct.on('start', this.startIndexing);
     }
 
     startIndexing() {
         const rootObject = this.openmct.objects.rootProvider.rootObject;
-        this.scheduleForIndexing(rootObject);
+        this.scheduleForIndexing(rootObject.identifier.key);
         this.worker = this.startSharedWorker();
     }
 
@@ -125,15 +128,14 @@ class InMemorySearchProvider {
      * @private
      */
     startSharedWorker() {
-        const provider = this;
         let sharedWorker;
 
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}InMemorySearchWorker.js`;
 
         sharedWorker = new SharedWorker(sharedWorkerURL);
-        sharedWorker.port.onmessage = provider.onWorkerMessage.bind(this);
-        sharedWorker.port.onmessageerror = provider.onWorkerMessageError.bind(this);
+        sharedWorker.port.onmessage = this.onWorkerMessage;
+        sharedWorker.port.onmessageerror = this.onWorkerMessageError;
         sharedWorker.port.start();
 
         return sharedWorker;
@@ -215,7 +217,7 @@ class InMemorySearchProvider {
             });
         }
 
-        let domainObject = this.openmct.objects.toNewFormat(model, id);
+        let domainObject = this.openmct.objects.get(id);
         let composition = this.openmct.composition.registry.find(p => {
             return p.appliesTo(domainObject);
         });
