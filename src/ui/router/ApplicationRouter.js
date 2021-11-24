@@ -147,6 +147,10 @@ class ApplicationRouter extends EventEmitter {
         let targetObject = objectPath[0];
         let navigatedObject = this.path[0];
 
+        if (!targetObject.identifier) {
+            return false;
+        }
+
         return this.openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
 
