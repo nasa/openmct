@@ -44,19 +44,6 @@ export default function (configuration) {
             initialize: function (domainObject) {
             }
         });
-        openmct.objects.addGetInterceptor({
-            appliesTo: (identifier, domainObject) => {
-                return domainObject && domainObject.type === 'plan';
-            },
-            invoke: (identifier, object) => {
-
-                if (object && configuration !== undefined && configuration.getState) {
-                    openmct.status.set(identifier, configuration.getState(object));
-                }
-
-                return object;
-            }
-        });
         openmct.objectViews.addProvider(new PlanViewProvider(openmct));
         openmct.inspectorViews.addProvider(new PlanInspectorViewProvider(openmct));
     };
