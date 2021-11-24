@@ -20,8 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import RootRegistry from './RootRegistry';
-
 class InMemorySearchProvider {
     /**
      * A search service which searches through domain objects in
@@ -45,15 +43,12 @@ class InMemorySearchProvider {
 
         this.pendingQueries = {};
 
-        openmct.on('start', this.startIndexing());
-        /*
-        ROOTS.forEach(function indexRoot(rootId) {
-            provider.scheduleForIndexing(rootId);
-        }); */
-
+        openmct.on('start', this.startIndexing);
     }
 
     startIndexing() {
+        const rootObject = this.openmct.objects.rootProvider.rootObject;
+        this.scheduleForIndexing(rootObject);
         this.worker = this.startSharedWorker();
     }
 
