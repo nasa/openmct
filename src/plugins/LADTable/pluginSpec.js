@@ -26,6 +26,7 @@ import {
     getMockObjects,
     getMockTelemetry,
     getLatestTelemetry,
+    spyOnBuiltins,
     resetApplicationState
 } from 'utils/testing';
 
@@ -260,6 +261,11 @@ describe("The LAD Table Set", () => {
 
         ladPlugin = new LadPlugin();
         openmct.install(ladPlugin);
+
+        spyOnBuiltins(['requestAnimationFrame']);
+        window.requestAnimationFrame.and.callFake((callBack) => {
+            callBack();
+        });
 
         openmct.time.bounds({
             start: bounds.start,
