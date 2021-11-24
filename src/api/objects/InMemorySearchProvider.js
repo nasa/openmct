@@ -223,8 +223,8 @@ class InMemorySearchProvider {
         let domainObject = await this.openmct.objects.get(id);
         this.openmct.objects.observe(domainObject, `*`, () => {
             // is this going to cause a memory leak?
-            const id = domainObject.identifier.key;
-            provider.scheduleForIndexing(id);
+            const domainObjectId = domainObject.identifier.key;
+            provider.scheduleForIndexing(domainObjectId);
         });
         let composition = this.openmct.composition.registry.find(p => {
             return p.appliesTo(domainObject);
@@ -290,7 +290,7 @@ class InMemorySearchProvider {
     dispatchSearch(searchInput, maxResults) {
         const queryId = this.makeQueryId();
 
-        this.worker.postMessage({
+        this.worker.port.postMessage({
             request: 'search',
             input: searchInput,
             maxResults: maxResults,
