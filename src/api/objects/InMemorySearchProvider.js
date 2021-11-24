@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+import uuid from 'uuid';
+
 class InMemorySearchProvider {
     /**
      * A search service which searches through domain objects in
@@ -66,11 +68,11 @@ class InMemorySearchProvider {
      */
     query(input, maxResults) {
         const queryId = this.dispatchSearch(input, maxResults);
-        const pendingQuery = this.$q.defer();
+        const pendingQuery = new Promise.resolve();
 
         this.pendingQueries[queryId] = pendingQuery;
 
-        return pendingQuery.promise;
+        return pendingQuery;
     }
 
     /**
@@ -84,35 +86,15 @@ class InMemorySearchProvider {
             return;
         }
 
-        let pendingQuery;
-        let modelResults;
-
-        if (this.USE_LEGACY_INDEXER) {
-            pendingQuery = this.pendingQueries[event.data.queryId];
-            modelResults = {
-                total: event.data.total
+        const pendingQuery = this.pendingQueries[event.data.queryId];
+        const modelResults = {
+            total: event.data.total
+        };
+        modelResults.hits = event.data.results.map(function (hit) {
+            return {
+                id: hit.id
             };
-
-            modelResults.hits = event.data.results.map(function (hit) {
-                return {
-                    id: hit.item.id,
-                    model: hit.item.model,
-                    type: hit.item.type,
-                    score: hit.matchCount
-                };
-            });
-        } else {
-            pendingQuery = this.pendingQueries[event.data.queryId];
-            modelResults = {
-                total: event.data.total
-            };
-
-            modelResults.hits = event.data.results.map(function (hit) {
-                return {
-                    id: hit.id
-                };
-            });
-        }
+        });
 
         pendingQuery.resolve(modelResults);
         delete this.pendingQueries[event.data.queryId];
@@ -141,27 +123,6 @@ class InMemorySearchProvider {
         sharedWorker.port.start();
 
         return sharedWorker;
-    }
-
-    /**
-     * Listen to the mutation topic and re-index objects when they are
-     * mutated.
-     *
-     * @private
-     * @param topic the topicService.
-     */
-    indexOnMutation(topic) {
-        let mutationTopic = topic('mutation');
-
-        mutationTopic.listen(mutatedObject => {
-            let editor = mutatedObject.getCapability('editor');
-            if (!editor || !editor.inEditContext()) {
-                this.index(
-                    mutatedObject.getId(),
-                    mutatedObject.getModel()
-                );
-            }
-        });
     }
 
     /**
@@ -269,26 +230,13 @@ class InMemorySearchProvider {
     }
 
     /**
-     * @private
-     * @returns {Number} a unique, unused query Id.
-     */
-    makeQueryId() {
-        let queryId = Math.ceil(Math.random() * 100000);
-        while (this.pendingQueries[queryId]) {
-            queryId = Math.ceil(Math.random() * 100000);
-        }
-
-        return queryId;
-    }
-
-    /**
      * Dispatch a search query to the worker and return a queryId.
      *
      * @private
-     * @returns {Number} a unique query Id for the query.
+     * @returns {String} a unique query Id for the query.
      */
     dispatchSearch(searchInput, maxResults) {
-        const queryId = this.makeQueryId();
+        const queryId = uuid();
 
         this.worker.port.postMessage({
             request: 'search',

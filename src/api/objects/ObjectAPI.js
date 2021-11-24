@@ -253,7 +253,7 @@ ObjectAPI.prototype.search = async function (query, abortSignal) {
         .filter(provider => provider.search !== undefined)
         .map(provider => provider.search(query, abortSignal));
 
-    const results = await searchPromises.push(this.inMemorySearchProvider.query(query, abortSignal));
+    const results = await searchPromises.push(this.inMemorySearchProvider.query(query, null, null, abortSignal));
     results.hits.map(hit => {
         let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
         domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
