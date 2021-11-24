@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import TelemetryAPI from './TelemetryAPI';
 const { TelemetryCollection } = require("./TelemetryCollection");
 
@@ -619,3 +620,55 @@ describe('Telemetry API', function () {
     });
 });
 
+describe('Telemetery', () => {
+    let openmct;
+    let appHolder;
+    let telemetryProvider;
+    let telemetryAPI;
+    let watchedSignal;
+
+    beforeEach(() => {
+        appHolder = document.createElement('div');
+        openmct = createOpenMct();
+        openmct.install(openmct.plugins.MyItems());
+
+        openmct.start(appHolder);
+        document.body.append(appHolder);
+
+        telemetryAPI = openmct.telemetry;
+
+        telemetryProvider = {
+            request: (obj, options) => {
+                watchedSignal = options.signal;
+
+                return Promise.resolve();
+            }
+        };
+        spyOn(telemetryAPI, 'findRequestProvider').and.returnValue(telemetryProvider);
+    });
+
+    afterEach(() => {
+        appHolder.remove();
+
+        return resetApplicationState(openmct);
+    });
+
+    it('should not abort request without navigation', function (done) {
+        telemetryAPI.addProvider(telemetryProvider);
+
+        telemetryAPI.request({}).finally(() => {
+            expect(watchedSignal.aborted).toBe(false);
+            done();
+        });
+    });
+
+    it('should abort request on navigation', function (done) {
+        telemetryAPI.addProvider(telemetryProvider);
+
+        telemetryAPI.request({}).finally(() => {
+            expect(watchedSignal.aborted).toBe(true);
+            done();
+        });
+        openmct.router.doPathChange('newPath', 'oldPath');
+    });
+});
