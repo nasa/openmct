@@ -59,6 +59,14 @@ function ObjectAPI(typeRegistry, openmct) {
 }
 
 /**
+ * Set fallback provider, this is an internal API for legacy reasons.
+ * @private
+ */
+ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
+    this.fallbackProvider = p;
+};
+
+/**
  * @private
  */
 ObjectAPI.prototype.getIdentifierService = function () {
