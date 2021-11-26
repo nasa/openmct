@@ -96,8 +96,7 @@ function (
     SaveAsAction.prototype.save = function () {
         var self = this,
             domainObject = this.domainObject,
-            dialog = new SaveInProgressDialog(this.dialogService),
-            toUndirty = [];
+            dialog = new SaveInProgressDialog(this.dialogService);
 
         function doWizardSave(parent) {
             var wizard = self.createWizard(parent);
