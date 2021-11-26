@@ -86,11 +86,20 @@ define(
                         })
                         .join('/');
 
-                openmct.router.navigate(url);
+                function editObject() {
+                    const path = objectPath.slice(-1).map(obj => {
+                        const objNew = obj.getCapability('adapter').invoke();
 
-                if (isFirstViewEditable(object.useCapability('adapter'), objectPath)) {
-                    openmct.editor.edit();
+                        return objNew;
+                    });
+                    if (isFirstViewEditable(object.useCapability('adapter'), path)) {
+                        openmct.editor.edit();
+                    }
                 }
+
+                openmct.router.once('afterNavigation', editObject);
+
+                openmct.router.navigate(url);
             }
 
             newModel.type = this.type.getKey();

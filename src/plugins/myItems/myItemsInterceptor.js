@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2009-2016, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,36 +20,32 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
 
-        /**
-         * Continually refreshes the represented domain object.
-         *
-         * This is a short-term workaround to assure Timer views stay
-         * up-to-date; should be replaced by a global auto-refresh.
-         *
-         * @constructor
-         * @memberof platform/features/clock
-         * @param {angular.Scope} $scope the Angular scope
-         * @param {platform/features/clock.TickerService} tickerService
-         *        a service used to align behavior with clock ticks
-         */
-        function RefreshingController($scope, tickerService) {
-            var unlisten;
+function myItemsInterceptor(identifierObject, openmct) {
 
-            function triggerRefresh() {
-                var persistence = $scope.domainObject
-                    && $scope.domainObject.getCapability('persistence');
+    const myItemsModel = {
+        identifier: identifierObject,
+        "name": "My Items",
+        "type": "folder",
+        "composition": [],
+        "location": "ROOT"
+    };
 
-                return persistence && persistence.refresh();
+    return {
+        appliesTo: (identifier) => {
+            return identifier.key === MY_ITEMS_KEY;
+        },
+        invoke: (identifier, object) => {
+            if (openmct.objects.isMissing(object)) {
+                openmct.objects.save(myItemsModel);
+
+                return myItemsModel;
             }
 
-            unlisten = tickerService.listen(triggerRefresh);
-            $scope.$on('$destroy', unlisten);
+            return object;
         }
+    };
+}
 
-        return RefreshingController;
-    }
-);
+export default myItemsInterceptor;
