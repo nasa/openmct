@@ -105,7 +105,7 @@ workflows:
           name: node14-build-lint
           node-version: lts/fermium
           browser: "" #Skip unit tests
-      - e2e-smoke
+      - e2e-smoke:
           node-version: lts/fermium
 
   nightly:
