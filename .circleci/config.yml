@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
@@ -49,11 +49,12 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
             - node_modules
+            - ~/Library/Caches/ms-playwright
       - when:
           condition:
             equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
@@ -67,9 +68,11 @@ jobs:
                 path: dist/reports/tests/
             - store_artifacts:
                 path: dist/reports/
-  e2e-smoke:
+  e2e:
     parameters:
       node-version:
+        type: string
+      suite:
         type: string
     docker:
       - image: mcr.microsoft.com/playwright:focal
@@ -78,12 +81,19 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
       - run: npm install
-      - run: npm run test:e2e:ci
+      - save_cache:
+          key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+            - node_modules
+            - ~/Library/Caches/ms-playwright
+      - run: npm run test:e2e:<<parameters.suite>>
       - store_test_results:
           path: test-results/results.xml
       - store_artifacts:
@@ -108,8 +118,10 @@ workflows:
           name: node14-build-lint
           node-version: lts/fermium
           browser: "" #Skip unit tests
-      - e2e-smoke:
+      - e2e:
+          name: e2e-smoke
           node-version: lts/fermium
+          suite: ci
 
   nightly:
     jobs:
@@ -126,6 +138,10 @@ workflows:
           node-version: lts/fermium
           browser: FirefoxHeadless
       - npm-audit
+      - e2e:
+          name: e2e-full
+          node-version: lts/fermium
+          suite: full
     triggers:
       - schedule:
           cron: "0 0 * * *"
