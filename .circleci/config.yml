@@ -40,7 +40,7 @@ jobs:
           condition:
             equal: [ "FirefoxHeadless", <<parameters.browser>> ]
           steps:
-            - browser-tools/install-firefox
+            - browser-tools/install-firefox:
                 replace-existing: false
       - when:
           condition:
