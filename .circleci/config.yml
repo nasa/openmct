@@ -1,8 +1,7 @@
 version: 2.1
 executors:
-  linux:
-    docker:
-      - image: cimg/base:stable
+  docker:
+    - image: mcr.microsoft.com/playwright:focal
 orbs:
   node: circleci/node@4.5.1
   browser-tools: circleci/browser-tools@1.1.3
@@ -42,6 +41,7 @@ jobs:
             equal: [ "FirefoxHeadless", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox
+                replace-existing: false
       - when:
           condition:
             equal: [ "ChromeHeadless", <<parameters.browser>> ]
@@ -69,11 +69,16 @@ jobs:
                 path: dist/reports/
   e2e-smoke:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.16.3-focal
+      - image: mcr.microsoft.com/playwright:focal
     environment:
       NODE_ENV: development # Needed if playwright is in `devDependencies`
     steps:
       - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+      - node/install:
+          install-npm: false
+          node-version: << parameters.node-version >>
       - run: npm install
       - run: npm run test:e2e:ci
       - store_test_results:
@@ -101,6 +106,7 @@ workflows:
           node-version: lts/fermium
           browser: "" #Skip unit tests
       - e2e-smoke
+          node-version: lts/fermium
 
   nightly:
     jobs:
