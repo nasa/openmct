@@ -52,6 +52,7 @@ jobs:
           key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
           paths:
             - ~/.npm
+            - ~/.cache
             - node_modules
       - when:
           condition:
@@ -88,6 +89,7 @@ jobs:
           key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
           paths:
             - ~/.npm
+            - ~/.cache
             - node_modules
       - run: npm run test:e2e:<<parameters.suite>>
       - store_test_results:
