@@ -68,7 +68,6 @@ export default class UTCTimeFormat {
             const utc = moment.utc(value);
 
             return utc.format(format) + (formatString ? '' : 'Z');
-            // return moment.utc(value).format(format) + (formatString ? '' : 'Z');
         } else {
             return value;
         }
