@@ -9,6 +9,16 @@ jobs:
     if: ${{ github.event.label.name == 'pr:e2e' }}
     runs-on: ubuntu-latest
     steps:
+      - name: Trigger Success
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Started e2e Run. Follow along: https://github.com/nasa/openmct/actions/runs/' + context.runId
+            })
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
