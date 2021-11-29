@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: unit-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
@@ -49,12 +49,11 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: unit-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
             - node_modules
-            - ~/Library/Caches/ms-playwright
       - when:
           condition:
             equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
