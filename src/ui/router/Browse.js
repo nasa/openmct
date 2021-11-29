@@ -68,6 +68,7 @@ define([
                 objects = objects.reverse();
 
                 openmct.router.path = objects;
+                openmct.router.emit('afterNavigation');
                 browseObject = objects[0];
 
                 openmct.layout.$refs.browseBar.domainObject = browseObject;
