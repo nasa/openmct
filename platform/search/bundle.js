@@ -27,9 +27,7 @@ define([
     "./src/services/SearchAggregator",
     "./res/templates/search-item.html",
     "./res/templates/search.html",
-    "./res/templates/search-menu.html",
-    "raw-loader!./src/services/GenericSearchWorker.js",
-    "raw-loader!./src/services/BareBonesSearchWorker.js"
+    "./res/templates/search-menu.html"
 ], function (
     SearchController,
     SearchMenuController,
@@ -37,9 +35,7 @@ define([
     SearchAggregator,
     searchItemTemplate,
     searchTemplate,
-    searchMenuTemplate,
-    searchWorkerText,
-    BareBonesSearchWorkerText
+    searchMenuTemplate
 ) {
 
     return {
