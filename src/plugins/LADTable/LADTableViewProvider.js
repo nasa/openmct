@@ -47,6 +47,6 @@ export default class LADTableViewProvider {
     }
 
     priority(domainObject) {
-        return 1;
+        return this.openmct.priority.high;
     }
 }
