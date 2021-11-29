@@ -125,9 +125,13 @@ export default {
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
-        this.valueMetadata = this.metadata ? this
-            .metadata
-            .valuesForHints(['range'])[0] : undefined;
+        this.valueMetadata = undefined;
+
+        if (this.metadata) {
+            this.valueMetadata = this
+                .metadata
+                .valuesForHints(['range'])[0] || this.firstNonDomainAttribute(this.metadata);
+        }
 
         this.valueKey = this.valueMetadata ? this.valueMetadata.key : undefined;
 
@@ -228,6 +232,11 @@ export default {
         },
         setUnit() {
             this.unit = this.valueMetadata.unit || '';
+        },
+        firstNonDomainAttribute(metadata) {
+            return metadata
+                .values()
+                .find(metadatum => metadatum.hints.domain === undefined && metadatum.key !== 'name');
         }
     }
 };
