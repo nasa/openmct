@@ -55,11 +55,6 @@ define([
                             "ROOT"
                         ],
                         "priority": "fallback"
-                    },
-                    {
-                        "key": "USE_LEGACY_INDEXER",
-                        "value": false,
-                        "priority": 2
                     }
                 ],
                 "components": [
@@ -73,7 +68,6 @@ define([
                             "objectService",
                             "topic",
                             "GENERIC_SEARCH_ROOTS",
-                            "USE_LEGACY_INDEXER",
                             "openmct"
                         ]
                     },
