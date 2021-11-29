@@ -35,6 +35,10 @@ class InMemorySearchProvider {
          * Maximum number of concurrent index requests to allow.
          */
         this.MAX_CONCURRENT_REQUESTS = 100;
+        /**
+        * If max results is not specified in query, use this as default.
+        */
+        this.DEFAULT_MAX_RESULTS = 100;
 
         this.openmct = openmct;
 
@@ -46,6 +50,7 @@ class InMemorySearchProvider {
         this.pendingQueries = {};
         this.onWorkerMessage = this.onWorkerMessage.bind(this);
         this.onWorkerMessageError = this.onWorkerMessageError.bind(this);
+        this.onerror = this.onWorkerError.bind(this);
         this.startIndexing = this.startIndexing.bind(this);
 
         openmct.on('start', this.startIndexing);
@@ -67,9 +72,16 @@ class InMemorySearchProvider {
      * @returns {Promise} a promise for a modelResults object.
      */
     query(input, maxResults) {
-        const queryId = this.dispatchSearch(input, maxResults);
-        const pendingQuery = new Promise.resolve();
+        if (!maxResults) {
+            maxResults = this.DEFAULT_MAX_RESULTS;
+        }
 
+        const queryId = this.dispatchSearch(input, maxResults);
+        const pendingQuery = new Promise((modelResults) => {
+            console.debug(`🍒 got results 🍒`, modelResults);
+
+            return modelResults;
+        });
         this.pendingQueries[queryId] = pendingQuery;
 
         return pendingQuery;
@@ -82,6 +94,7 @@ class InMemorySearchProvider {
      * @private
      */
     onWorkerMessage(event) {
+        console.debug(`🖲 Received event from search worker 🖲`, event);
         if (event.data.request !== 'search') {
             return;
         }
@@ -97,15 +110,24 @@ class InMemorySearchProvider {
         });
 
         pendingQuery.resolve(modelResults);
+        console.debug(`🖲 Returning model results 🖲`, modelResults);
         delete this.pendingQueries[event.data.queryId];
+    }
+
+    /**
+     * Handle error messages from the worker.
+     * @private
+     */
+    onWorkerMessageError(event) {
+        console.error('⚙️ Error message from InMemorySearch worker ⚙️', event);
     }
 
     /**
      * Handle errors from the worker.
      * @private
      */
-    onWorkerMessageError(event) {
-        console.error('⚙️ Error with InMemorySearch worker', event);
+    onWorkerError(event) {
+        console.error('⚙️ Error with InMemorySearch worker ⚙️', event);
     }
 
     /**
@@ -117,7 +139,8 @@ class InMemorySearchProvider {
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}inMemorySearchWorker.js`;
 
-        sharedWorker = new SharedWorker(sharedWorkerURL);
+        sharedWorker = new SharedWorker(sharedWorkerURL, 'InMemorySearch Shared Worker');
+        sharedWorker.onerror = this.onWorkerError;
         sharedWorker.port.onmessage = this.onWorkerMessage;
         sharedWorker.port.onmessageerror = this.onWorkerMessageError;
         sharedWorker.port.start();
@@ -169,19 +192,18 @@ class InMemorySearchProvider {
      * @param id a model id
      * @param model a model
      */
-    async index(id, model) {
+    async index(id, domainObject) {
         const provider = this;
-        console.debug(`🖲 Telling worker to add ${id.key ? id.key : id} to index 🖲`);
+        console.debug(`🖲 Telling worker to add ${id.key ? id.key : id} to index 🖲`, domainObject);
 
         if (id !== 'ROOT') {
             this.worker.port.postMessage({
                 request: 'index',
-                model: model,
+                model: domainObject,
                 id: id
             });
         }
 
-        let domainObject = await this.openmct.objects.get(id);
         this.openmct.objects.observe(domainObject, `*`, () => {
             // is this going to cause a memory leak?
             const domainObjectId = domainObject.identifier.key;
@@ -213,11 +235,11 @@ class InMemorySearchProvider {
         const provider = this;
 
         this.pendingRequests += 1;
-        const object = await this.openmct.objects.get(idToIndex);
+        const domainObject = await this.openmct.objects.get(idToIndex);
         delete provider.pendingIndex[idToIndex];
         try {
-            if (object) {
-                await provider.index(idToIndex, object.model);
+            if (domainObject) {
+                await provider.index(idToIndex, domainObject);
             }
         } catch (error) {
             console.warn('Failed to index domain object ' + idToIndex, error);
@@ -237,6 +259,7 @@ class InMemorySearchProvider {
      */
     dispatchSearch(searchInput, maxResults) {
         const queryId = uuid();
+        console.debug(`🍉 Sending to worker to search 🍉`, searchInput);
 
         this.worker.port.postMessage({
             request: 'search',

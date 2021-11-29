@@ -21,16 +21,36 @@
  *****************************************************************************/
 
 /**
- * Module defining BareBonesSearchWorker. Created by deeptailor on 10/03/2019.
+ * Module defining InMemorySearchWorker. Created by deeptailor on 10/03/2019.
  */
 (function () {
-
     // An array of objects composed of domain object IDs and names
     // {id: domainObject's ID, name: domainObject's name}
     const indexedItems = [];
 
+    self.onconnect = function (e) {
+        const port = e.ports[0];
+
+        port.onmessage = function (event) {
+            console.debug(`🍉 Received event from search provider 🍉`, event);
+            if (event.data.request === 'index') {
+                indexItem(event.data.id, event.data.model);
+            } else if (event.data.request === 'search') {
+                port.postMessage(search(event.data));
+            }
+        };
+
+        port.start();
+
+    };
+
+    self.onerror = function () {
+        //do nothing
+        console.log('Error on feed');
+    };
+
     function indexItem(id, model) {
-        console.debug(`🖲 Worker is adding ${id} to index 🖲`);
+        console.debug(`🖲 Worker is adding ${id} to index 🖲`, model);
         indexedItems.push({
             id: id,
             name: model.name.toLowerCase(),
@@ -50,9 +70,10 @@
     function search(data) {
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
+        console.debug(`🍉 Querying for 🍉`, data);
         let results;
-        let input = data.input.trim().toLowerCase();
-        let message = {
+        const input = data.input.trim().toLowerCase();
+        const message = {
             request: 'search',
             results: {},
             total: 0,
@@ -66,15 +87,8 @@
         message.total = results.length;
         message.results = results
             .slice(0, data.maxResults);
+        console.debug(`🍉 Found ${message.total} results 🍉`, message.results);
 
         return message;
     }
-
-    self.onmessage = function (event) {
-        if (event.data.request === 'index') {
-            indexItem(event.data.id, event.data.model);
-        } else if (event.data.request === 'search') {
-            self.postMessage(search(event.data));
-        }
-    };
 }());
