@@ -54,6 +54,7 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
+            - ~/Library/Caches/ms-playwright
       - when:
           condition:
             equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
@@ -73,8 +74,7 @@ jobs:
         type: string
       suite:
         type: string
-    docker:
-      - image: mcr.microsoft.com/playwright:focal
+    executor: linux
     environment:
       NODE_ENV: development # Needed if playwright is in `devDependencies`
     steps:
