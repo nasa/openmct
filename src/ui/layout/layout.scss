@@ -234,17 +234,20 @@
     &__main-container {
         // Wrapper for main views
         //display: flex; NEEDS REGRESSION TESTING!!!
+        display: flex;
+        flex-direction: column;
         flex: 1 1 auto !important;
         height: 100%; // Chrome 73 overflow bug fix
         overflow: auto;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
     }
 
     &__main-object-view {
-        height: 100%;
-    }
-
-    &__main-independent-time-conductor {
-        margin-bottom: 5px;
+        flex: 1 1 auto;
+        overflow: auto;
     }
 
     &__tree {

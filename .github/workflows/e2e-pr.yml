@@ -1,0 +1,53 @@
+name: "e2e-pr"
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [ labeled ]
+
+jobs:
+  e2e-full:
+    if: ${{ github.event.label.name == 'pr:e2e' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Success
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Started e2e Run. Follow along: https://github.com/nasa/openmct/actions/runs/' + context.runId
+            })
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - run: npm run test:e2e:full
+      - name: Archive test results
+        uses: actions/upload-artifact@v2
+        with:
+          path: test-results
+      - name: Test success
+        if: ${{ success() }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Success ✅ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
+            })
+      - name: Test failure
+        if: ${{ failure() }}
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Failure ❌ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
+            })
