@@ -75,9 +75,6 @@ export default {
         return {
             updatingView: false,
             headers: {},
-            ladTables: [],
-            ladTableTelemetry: {},
-            ladRows: {},
             compositions: [],
             viewContext: {},
             hasUnits: false,
@@ -95,7 +92,7 @@ export default {
         this.tableSet.on('table-added', this.addTable);
         this.tableSet.on('table-removed', this.removeTable);
 
-        // this.tableSet.on('telemetry-object-added', this.checkUnit);
+        this.tableSet.on('telemetry-object-added', this.checkUnit);
         this.tableSet.initialize();
     },
     destroyed() {
@@ -130,6 +127,8 @@ export default {
         addTable(ladTable) {
             let key = this.openmct.objects.makeKeyString(ladTable.domainObject.identifier);
             ladTable.on('object-added', this.addTelemetry.bind(this, key));
+            ladTable.on('object-removed',
+                (identifier) => this.removeTelemetry(identifier, ladTable.keyString));
             ladTable.tableRows.on('add', this.addRow);
             ladTable.initialize();
             this.tables.push(key);
@@ -146,7 +145,7 @@ export default {
 
             if (idx !== undefined) {
                 this.tables.splice(idx, 1);
-                this.removeTelemetry(key);
+                this.removeTelemetryObjects(key);
             }
 
         },
@@ -182,7 +181,14 @@ export default {
 
             this.telemetry[tableKey].push(telemetryKey);
         },
-        removeTelemetry(tableKey) {
+        removeTelemetry(objectIdentifier, ladKey) {
+            let key = this.openmct.objects.makeKeyString(objectIdentifier);
+            let filtered = this.telemetry[ladKey].filter(telemetry => {
+                return telemetry !== key;
+            });
+            this.telemetry[ladKey] = filtered;
+        },
+        removeLocalTelemetryObjects(tableKey) {
             this.$delete(this.telemetry, tableKey);
         },
         addRow(telemetry) {

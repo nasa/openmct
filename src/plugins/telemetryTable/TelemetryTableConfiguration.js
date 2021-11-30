@@ -82,8 +82,10 @@ define([
             columnsToRemove.forEach((column) => {
                 //There may be more than one column with the same key (eg. time system columns)
                 if (!this.hasColumnWithKey(column.getKey())) {
-                    delete configuration.hiddenColumns[column.getKey()];
-                    configurationChanged = true;
+                    if (configuration.hiddenColumns[column.getKey()]) {
+                        delete configuration.hiddenColumns[column.getKey()];
+                        configurationChanged = true;
+                    }
                 }
             });
             if (configurationChanged) {
