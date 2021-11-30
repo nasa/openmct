@@ -232,34 +232,19 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     return objectPromise;
 };
 
-/**
- * Search for domain objects.
- *
- * Object providersSearches and combines results of each object provider search.
- * Objects without search provided will have been indexed
- * and will be searched using the fallback indexed search.
- * Search results are asynchronous and resolve in parallel.
- *
- * @method search
- * @memberof module:openmct.ObjectAPI#
- * @param {string} query the term to search for
- * @param {AbortController.signal} abortSignal (optional) signal to cancel downstream fetch requests
- * @returns {Array.<Promise.<module:openmct.DomainObject>>}
- *          an array of promises returned from each object provider's search function
- *          each resolving to domain objects matching provided search query and options.
- */
-ObjectAPI.prototype.search = async function (query, abortSignal) {
+ObjectAPI.prototype.search = function (query, abortSignal) {
     const searchPromises = Object.values(this.providers)
         .filter(provider => provider.search !== undefined)
         .map(provider => provider.search(query, abortSignal));
+    // abortSignal doesn't seem to be used in generic search?
+    searchPromises.push(this.inMemorySearchProvider.query(query, null)
+        .then(results => results.hits
+            .map(hit => {
+                let domainObject = hit.model;
+                domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
 
-    const results = await searchPromises.push(this.inMemorySearchProvider.query(query, null, null, abortSignal));
-    results.hits.map(hit => {
-        let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
-        domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
-
-        return domainObject;
-    });
+                return domainObject;
+            })));
 
     return searchPromises;
 };

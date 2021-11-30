@@ -24,9 +24,9 @@
  * Module defining InMemorySearchWorker. Created by deeptailor on 10/03/2019.
  */
 (function () {
-    // An array of objects composed of domain object IDs and names
+    // An object composed of domain object IDs and models
     // {id: domainObject's ID, name: domainObject's name}
-    const indexedItems = [];
+    const indexedItems = {};
 
     self.onconnect = function (e) {
         const port = e.ports[0];
@@ -51,11 +51,7 @@
 
     function indexItem(id, model) {
         console.debug(`🖲 Worker is adding ${id} to index 🖲`, model);
-        indexedItems.push({
-            id: id,
-            name: model.name.toLowerCase(),
-            type: model.type
-        });
+        indexedItems[id] = model;
     }
 
     /**
@@ -80,8 +76,8 @@
             queryId: data.queryId
         };
 
-        results = indexedItems.filter((indexedItem) => {
-            return indexedItem.name.includes(input);
+        results = Object.values(indexedItems).filter((indexedItem) => {
+            return indexedItem.name.toLowerCase().includes(input);
         });
 
         message.total = results.length;

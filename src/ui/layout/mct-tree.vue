@@ -591,12 +591,12 @@ export default {
             // to cancel an active searches if necessary
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
+            const searchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
 
-            const promises = this.openmct.objects.search(this.searchValue, abortSignal)
-                .map(promise => promise
-                    .then(results => this.aggregateSearchResults(results, abortSignal)));
+            searchPromises.map(promise => promise
+                .then(results => this.aggregateSearchResults(results, abortSignal)));
 
-            Promise.all(promises).catch(reason => {
+            Promise.all(searchPromises).catch(reason => {
                 // search aborted
             }).finally(() => {
                 this.searchLoading = false;

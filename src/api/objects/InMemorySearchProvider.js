@@ -65,6 +65,19 @@ class InMemorySearchProvider {
     }
 
     /**
+     * @private
+     */
+    getIntermediateResponse() {
+        let intermediateResponse = {};
+        intermediateResponse.promise = new Promise(function (resolve, reject) {
+            intermediateResponse.resolve = resolve;
+            intermediateResponse.reject = reject;
+        });
+
+        return intermediateResponse;
+    }
+
+    /**
      * Query the search provider for results.
      *
      * @param {String} input the string to search by.
@@ -77,14 +90,10 @@ class InMemorySearchProvider {
         }
 
         const queryId = this.dispatchSearch(input, maxResults);
-        const pendingQuery = new Promise((modelResults) => {
-            console.debug(`🍒 got results 🍒`, modelResults);
-
-            return modelResults;
-        });
+        const pendingQuery = this.getIntermediateResponse();
         this.pendingQueries[queryId] = pendingQuery;
 
-        return pendingQuery;
+        return pendingQuery.promise;
     }
 
     /**
@@ -105,7 +114,7 @@ class InMemorySearchProvider {
         };
         modelResults.hits = event.data.results.map(function (hit) {
             return {
-                id: hit.id
+                model: hit
             };
         });
 
@@ -194,33 +203,31 @@ class InMemorySearchProvider {
      */
     async index(id, domainObject) {
         const provider = this;
-        console.debug(`🖲 Telling worker to add ${id.key ? id.key : id} to index 🖲`, domainObject);
+        console.debug(`🖲 Telling worker to index ${id.key ? id.key : id} 🖲`, domainObject);
 
-        if (id !== 'ROOT') {
+        if ((id !== 'ROOT') && (id !== 'mine')) {
             this.worker.port.postMessage({
                 request: 'index',
                 model: domainObject,
                 id: id
             });
+            this.openmct.objects.observe(domainObject, `*`, () => {
+            // is this going to cause a memory leak?
+                const domainObjectId = domainObject.identifier.key;
+                provider.index(domainObjectId, domainObject);
+            });
         }
 
-        this.openmct.objects.observe(domainObject, `*`, () => {
-            // is this going to cause a memory leak?
-            const domainObjectId = domainObject.identifier.key;
-            provider.scheduleForIndexing(domainObjectId);
-        });
-        let composition = this.openmct.composition.registry.find(p => {
+        const composition = this.openmct.composition.registry.find(p => {
             return p.appliesTo(domainObject);
         });
 
-        if (!composition) {
-            return;
+        if (composition) {
+            const children = await composition.load(domainObject);
+            children.forEach(function (child) {
+                provider.scheduleForIndexing(provider.openmct.objects.makeKeyString(child));
+            });
         }
-
-        const children = await composition.load(domainObject);
-        children.forEach(function (child) {
-            provider.scheduleForIndexing(provider.openmct.objects.makeKeyString(child));
-        });
     }
 
     /**
