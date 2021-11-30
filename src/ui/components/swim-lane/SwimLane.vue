@@ -1,17 +1,24 @@
 <template>
 <div class="u-contents"
-     :class="{'c-swimlane': !isNested}"
+     :class="[
+         {'c-swimlane': !isNested},
+         statusClass
+     ]"
 >
 
     <div v-if="hideLabel === false"
          class="c-swimlane__lane-label c-object-label"
-         :class="{'c-swimlane__lane-label--span-cols': (!spanRowsCount && !isNested)}"
+         :class="[swimlaneClass, statusClass]"
          :style="gridRowSpan"
     >
         <div v-if="iconClass"
              class="c-object-label__type-icon"
              :class="iconClass"
         >
+            <span v-if="status"
+                  class="is-status__indicator"
+                  :title="`This item is ${status}`"
+            ></span>
         </div>
 
         <div class="c-object-label__name">
@@ -33,6 +40,12 @@
 export default {
     props: {
         iconClass: {
+            type: String,
+            default() {
+                return '';
+            }
+        },
+        status: {
             type: String,
             default() {
                 return '';
@@ -76,6 +89,18 @@ export default {
             } else {
                 return '';
             }
+        },
+
+        swimlaneClass() {
+            if (!this.spanRowsCount && !this.isNested) {
+                return 'c-swimlane__lane-label--span-cols';
+            }
+
+            return '';
+        },
+
+        statusClass() {
+            return (this.status) ? `is-status--${this.status}` : '';
         }
     }
 };
