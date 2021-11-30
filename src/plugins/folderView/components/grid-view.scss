@@ -65,6 +65,30 @@
         }
     }
 
+    &.is-status--current {
+        .is-status__indicator {
+            display: block;
+
+            &:before {
+                color: $colorFilter;
+                content: $glyph-icon-asterisk;
+                font-family: symbolsfont;
+            }
+        }
+    }
+
+    &.is-status--draft {
+        .is-status__indicator {
+            display: block;
+
+            &:before {
+                color: $colorStatusAlert;
+                content: $glyph-icon-draft;
+                font-family: symbolsfont;
+            }
+        }
+    }
+
     &[class*='is-status--missing'],
     &[class*='is-status--suspect']{
         [class*='__type-icon'],

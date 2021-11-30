@@ -2,7 +2,7 @@ version: 2.1
 executors:
   linux:
     docker:
-      - image: cimg/base:stable
+      - image: mcr.microsoft.com/playwright:focal
 orbs:
   node: circleci/node@4.5.1
   browser-tools: circleci/browser-tools@1.1.3
@@ -54,6 +54,7 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
+            - ~/Library/Caches/ms-playwright
       - when:
           condition:
             equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
@@ -67,6 +68,35 @@ jobs:
                 path: dist/reports/tests/
             - store_artifacts:
                 path: dist/reports/
+  e2e:
+    parameters:
+      node-version:
+        type: string
+      suite:
+        type: string
+    executor: linux
+    environment:
+      NODE_ENV: development # Needed if playwright is in `devDependencies`
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+      - node/install:
+          install-npm: false
+          node-version: << parameters.node-version >>
+      - run: npm install
+      - save_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+            - node_modules
+            - ~/Library/Caches/ms-playwright
+      - run: npm run test:e2e:<<parameters.suite>>
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
 workflows:
   matrix-tests:
     jobs:
@@ -86,7 +116,10 @@ workflows:
           name: node14-build-lint
           node-version: lts/fermium
           browser: "" #Skip unit tests
-
+      - e2e:
+          name: e2e-smoke
+          node-version: lts/fermium
+          suite: ci
   nightly:
     jobs:
       - test:
@@ -102,12 +135,14 @@ workflows:
           node-version: lts/fermium
           browser: FirefoxHeadless
       - npm-audit
+      - e2e:
+          name: e2e-full
+          node-version: lts/fermium
+          suite: full
     triggers:
       - schedule:
           cron: "0 0 * * *"
           filters:
             branches:
               only:
-                - master      
-
-
+                - master
