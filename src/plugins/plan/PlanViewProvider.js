@@ -25,13 +25,15 @@ import Vue from 'vue';
 
 export default function PlanViewProvider(openmct) {
     function isCompactView(objectPath) {
-        return objectPath.find(object => object.type === 'time-strip') !== undefined;
+        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+
+        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
     }
 
     return {
         key: 'plan.view',
         name: 'Plan',
-        cssClass: 'icon-calendar',
+        cssClass: 'icon-plan',
         canView(domainObject) {
             return domainObject.type === 'plan';
         },

@@ -27,7 +27,7 @@
        'c-hyperlink--button' : isButton
    }"
    :target="domainObject.linkTarget"
-   :href="domainObject.url"
+   :href="url"
 >
     <span class="c-hyperlink__label">{{ domainObject.displayText }}</span>
 </a>
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+const sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 
 export default {
     inject: ['domainObject'],
@@ -45,6 +46,9 @@ export default {
             }
 
             return true;
+        },
+        url() {
+            return sanitizeUrl(this.domainObject.url);
         }
     }
 };

@@ -33,8 +33,10 @@ export default class ConditionSetViewProvider {
         this.cssClass = 'icon-conditional';
     }
 
-    canView(domainObject) {
-        return domainObject.type === 'conditionSet';
+    canView(domainObject, objectPath) {
+        const isConditionSet = domainObject.type === 'conditionSet';
+
+        return isConditionSet && this.openmct.router.isNavigatedObject(objectPath);
     }
 
     canEdit(domainObject) {

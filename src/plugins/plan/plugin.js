@@ -23,14 +23,14 @@
 import PlanViewProvider from './PlanViewProvider';
 import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
 
-export default function () {
+export default function (configuration) {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',
             key: 'plan',
-            description: 'A plan',
+            description: 'A configurable timeline-like view for a compatible mission plan file.',
             creatable: true,
-            cssClass: 'icon-calendar',
+            cssClass: 'icon-plan',
             form: [
                 {
                     name: 'Upload Plan (JSON File)',

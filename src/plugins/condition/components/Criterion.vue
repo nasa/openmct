@@ -244,7 +244,7 @@ export default {
                 this.telemetryMetadataOptions = [];
                 telemetryObjects.forEach(telemetryObject => {
                     let telemetryMetadata = this.openmct.telemetry.getMetadata(telemetryObject);
-                    this.addMetaDataOptions(telemetryMetadata.values());
+                    this.addMetaDataOptions(telemetryMetadata ? telemetryMetadata.values() : []);
                 });
                 this.updateOperations();
             }
