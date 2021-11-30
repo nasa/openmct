@@ -6,6 +6,10 @@
     margin-bottom: 1px;
     width: 100%;
 
+    &.is-status--draft {
+        background: rgba($colorAlert, 0.2);
+    }
+
     [class*='__lane-label'] {
         background: rgba($colorBodyFg, 0.2);
         color: $colorBodyFg;
