@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: unit-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
@@ -49,7 +49,7 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: unit-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
@@ -80,13 +80,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
       - run: npm install
       - save_cache:
-          key: pw-deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
