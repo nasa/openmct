@@ -79,19 +79,10 @@ jobs:
       NODE_ENV: development # Needed if playwright is in `devDependencies`
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
       - run: npm install
-      - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
-            - node_modules
-            - ~/Library/Caches/ms-playwright
       - run: npm run test:e2e:<<parameters.suite>>
       - store_test_results:
           path: test-results/results.xml
