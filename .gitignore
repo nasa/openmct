@@ -43,6 +43,10 @@ report.*.json
 # Lighthouse reports
 .lighthouseci
 
+# e2e test artifacts
+test-results
+allure-results
+
 package-lock.json
 
 #codecov artifacts
