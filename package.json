@@ -4,6 +4,10 @@
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@braintree/sanitize-url": "^5.0.2",
+    "@percy/cli": "^1.0.0-beta.70",
+    "@percy/playwright": "^1.0.1",
+    "@playwright/test": "^1.16.3",
+    "allure-playwright": "^2.0.0-beta.14",
     "angular": ">=1.8.0",
     "angular-route": "1.4.14",
     "babel-eslint": "10.0.3",
@@ -16,6 +20,7 @@
     "d3-scale": "1.0.x",
     "d3-selection": "1.3.x",
     "eslint": "7.0.0",
+    "eslint-plugin-playwright": "0.6.0",
     "eslint-plugin-vue": "^7.5.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.10.0",
     "eventemitter3": "^1.2.0",
@@ -55,11 +60,13 @@
     "node-bourbon": "^4.2.3",
     "node-sass": "^4.14.1",
     "painterro": "^1.2.56",
+    "playwright": "^1.16.3",
     "plotly.js-basic-dist": "^2.5.0",
     "plotly.js-gl2d-dist": "^2.5.0",
     "printj": "^1.2.1",
     "raw-loader": "^0.5.1",
     "request": "^2.69.0",
+    "sinon": "^12.0.1",
     "split": "^1.0.0",
     "style-loader": "^1.0.1",
     "uuid": "^3.3.3",
@@ -87,6 +94,10 @@
     "test:debug": "cross-env NODE_ENV=debug karma start --no-single-run",
     "test:coverage": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run",
     "test:coverage:firefox": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run --browsers=FirefoxHeadless",
+    "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js smoke",
+    "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js",
+    "test:e2e:visual": "percy exec -- npx playwright test --config=e2e/playwright-visual.config.js default",
+    "test:e2e:full": "npx playwright test --config=e2e/playwright-ci.config.js",
     "test:watch": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --no-single-run",
     "verify": "concurrently 'npm:test' 'npm:lint'",
     "jsdoc": "jsdoc -c jsdoc.json -R API.md -r -d dist/docs/api",
@@ -99,7 +110,7 @@
     "url": "https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=10.10.2 <16.0.0"
+    "node": ">=10.12.2 <16.0.0"
   },
   "author": "",
   "license": "Apache-2.0",
