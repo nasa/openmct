@@ -9,6 +9,17 @@
 
     > * + * { margin-left: $interiorMargin; }
 
+    &.is-status--draft {
+        .c-object-label__type-icon {
+            &:after {
+                color: $colorStatusAlert;
+                font-family: symbolsfont;
+                content: $glyph-icon-draft;
+                margin-left: $interiorMarginSm;
+            }
+        }
+    }
+
     &__name {
         @include ellipsize();
         display: inline;
@@ -46,6 +57,15 @@
             margin-left: $interiorMargin;
         }
     }
+
+    &.is-status--current {
+        &:after {
+            content: $glyph-icon-asterisk;
+            display: block;
+            margin-left: $interiorMargin;
+            font-family: symbolsfont;
+        }
+    }
 }
 
 .c-tree .c-object-label {
@@ -64,6 +84,6 @@
         font-size: 1.25em;
         margin-right: $interiorMarginSm;
         opacity: 1;
-        width: $treeTypeIconW;
+        min-width: $treeTypeIconW;
     }
 }
