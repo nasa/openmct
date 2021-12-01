@@ -16,7 +16,8 @@ module.exports = {
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {
-        "parser": "babel-eslint",
+        "parser": "@babel/eslint-parser",
+        "requireConfigFile": false,
         "allowImportExportEverywhere": true,
         "ecmaVersion": 2015,
         "ecmaFeatures": {
@@ -35,7 +36,6 @@ module.exports = {
         "no-inner-declarations": "off",
         "no-use-before-define": ["error", "nofunc"],
         "no-caller": "error",
-        "no-sequences": "error",
         "no-irregular-whitespace": "error",
         "no-new": "error",
         "no-shadow": "error",
@@ -239,10 +239,7 @@ module.exports = {
         ],
         "vue/max-attributes-per-line": ["error", {
             "singleline": 1,
-            "multiline": {
-                "max": 1,
-                "allowFirstLine": true
-            }
+            "multiline": 1,
         }],
         "vue/multiline-html-element-content-newline": "off",
         "vue/singleline-html-element-content-newline": "off",
