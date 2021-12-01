@@ -47,18 +47,19 @@ export default class Transaction {
     createDirtyObjectPromise(object, action) {
         return new Promise((resolve, reject) => {
             action(object)
-                .then(resolve)
-                .catch(reject)
-                .finally(() => {
+                .then((success) => {
                     this.dirtyObjects.delete(object);
-                });
+                    resolve(success);
+                })
+                .catch(reject);
         });
     }
 
-    getDirtyObject(keystring) {
+    getDirtyObject(identifier) {
         let dirtyObject;
         this.dirtyObjects.forEach(object => {
-            if (this.objectAPI.makeKeyString(object.identifier) === keystring) {
+            const isEqual = this.objectAPI.makeKeyString(object.identifier) === this.objectAPI.makeKeyString(identifier);
+            if (isEqual) {
                 dirtyObject = object;
             }
         });
