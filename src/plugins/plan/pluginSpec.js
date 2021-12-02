@@ -186,5 +186,18 @@ describe('the plugin', function () {
                 done();
             });
         });
+
+        it ('shows the status indicator when available', (done) => {
+            openmct.status.set({
+                key: "test-object",
+                namespace: ''
+            }, 'draft');
+
+            Vue.nextTick(() => {
+                const statusEl = element.querySelector('.c-plan__contents .is-status--draft');
+                expect(statusEl).toBeDefined();
+                done();
+            });
+        });
     });
 });
