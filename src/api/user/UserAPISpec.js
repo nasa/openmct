@@ -1,0 +1,117 @@
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
+
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import {
+    MULTIPLE_PROVIDER_ERROR,
+    NO_LOGIN_LOGOUT
+} from './constants';
+import ExampleUserProvider from '../../plugins/exampleUser/ExampleUserProvider';
+
+const LOGIN_RESPONSE = 'login';
+
+fdescribe("The User API", () => {
+    let openmct;
+
+    beforeEach(() => {
+        openmct = createOpenMct();
+    });
+
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
+
+    describe('with regard to user providers', () => {
+
+        it('allows you to specify a user provider', () => {
+            openmct.user.setProvider(new ExampleUserProvider());
+
+            expect(openmct.user._provider).toBeInstanceOf(ExampleUserProvider);
+        });
+
+        it('prevents more than one user provider from being set', () => {
+            openmct.user.setProvider(new ExampleUserProvider());
+
+            expect(() => {
+                openmct.user.setProvider({});
+            }).toThrow(new Error(MULTIPLE_PROVIDER_ERROR));
+        });
+
+        it('provides a check for an existing user provider', () => {
+            expect(openmct.user.hasProvider()).toBeFalse();
+
+            openmct.user.setProvider(new ExampleUserProvider());
+
+            expect(openmct.user.hasProvider()).toBeTrue();
+        });
+    });
+
+    describe('provides the ability', () => {
+        let provider;
+
+        beforeEach(() => {
+            provider = new ExampleUserProvider();
+            openmct.user.setProvider(provider);
+        });
+
+        it('to check if a user (not specific) is loged in', (done) => {
+            expect(openmct.user.isLoggedIn()).toBeFalse();
+
+            openmct.user.login().then(() => {
+                expect(openmct.user.isLoggedIn()).toBeTrue();
+            }).finally(done);
+        });
+
+        it('to get the current user', (done) => {
+            openmct.user.login().then(() => {
+                openmct.user.getCurrentUser().then((apiUser) => {
+                    return provider.getCurrentUser().then((providerUser) => {
+                        expect(apiUser).toEqual(providerUser);
+                    });
+                });
+            }).finally(done);
+        });
+
+        it('to check if a user has a specific role (by id)', (done) => {
+            let junkIdCheckPromise = openmct.user.hasRole('junk-id').then((hasRole) => {
+                expect(hasRole).toBeFalse();
+            });
+            let realIdCheckPromise = openmct.user.hasRole('example-role').then((hasRole) => {
+                expect(hasRole).toBeTrue();
+            });
+
+            Promise.all([junkIdCheckPromise, realIdCheckPromise]).finally(done);
+        });
+
+        it('to login/logout if the user provider supports it', (done) => {
+            openmct.user.login().then((response) => {
+                expect(response).toBe(LOGIN_RESPONSE);
+                provider.supportsLoginLogout = false;
+
+                return expect(() => {
+                    openmct.user.login();
+                }).toThrow(new Error(NO_LOGIN_LOGOUT));
+
+            }).finally(done);
+        });
+    });
+});

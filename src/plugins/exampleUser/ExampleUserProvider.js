@@ -20,48 +20,49 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI',
-    './notifications/NotificationAPI',
-    './Editor',
-    './menu/MenuAPI',
-    './actions/ActionsAPI',
-    './status/StatusAPI',
-    './priority/PriorityAPI',
-    './user/UserAPI'
-], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    TelemetryAPI,
-    IndicatorAPI,
-    NotificationAPI,
-    EditorAPI,
-    MenuAPI,
-    ActionsAPI,
-    StatusAPI,
-    PriorityAPI,
-    UserAPI
-) {
-    return {
-        TimeAPI: TimeAPI.default,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        TypeRegistry: TypeRegistry,
-        TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI,
-        NotificationAPI: NotificationAPI.default,
-        EditorAPI: EditorAPI,
-        MenuAPI: MenuAPI.default,
-        ActionsAPI: ActionsAPI.default,
-        StatusAPI: StatusAPI.default,
-        PriorityAPI: PriorityAPI.default,
-        UserAPI: UserAPI.default
-    };
-});
+import EventEmitter from 'EventEmitter';
+import uuid from 'uuid';
+
+export default class ExampleUserProvider extends EventEmitter {
+    constructor() {
+        super();
+
+        let existing = {};
+
+        this.id = existing.id || uuid();
+        this.fullName = existing.fullName || '';
+        this.homeUrl = existing.homeUrl || '';
+        this.roles = existing.roles ? existing.roles.push('example-role') : ['example-role'];
+        this.supportsLoginLogout = true;
+        this.loggedIn = false;
+    }
+
+    isLoggedIn() {
+        return this.loggedIn;
+    }
+
+    getCurrentUser() {
+        return Promise.resolve({
+            id: this.id,
+            fullName: this.fullName,
+            homeUrl: this.homeUrl,
+            roles: this.roles
+        });
+    }
+
+    hasRole(roleId) {
+        return Promise.resolve(this.roles.includes(roleId));
+    }
+
+    login() {
+        this.loggedIn = true;
+
+        return Promise.resolve('login');
+    }
+
+    logout() {
+        this.loggedIn = false;
+
+        return Promise.resolve('logout');
+    }
+}

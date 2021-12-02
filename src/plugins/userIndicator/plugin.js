@@ -20,48 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI',
-    './notifications/NotificationAPI',
-    './Editor',
-    './menu/MenuAPI',
-    './actions/ActionsAPI',
-    './status/StatusAPI',
-    './priority/PriorityAPI',
-    './user/UserAPI'
-], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    TelemetryAPI,
-    IndicatorAPI,
-    NotificationAPI,
-    EditorAPI,
-    MenuAPI,
-    ActionsAPI,
-    StatusAPI,
-    PriorityAPI,
-    UserAPI
-) {
-    return {
-        TimeAPI: TimeAPI.default,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        TypeRegistry: TypeRegistry,
-        TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI,
-        NotificationAPI: NotificationAPI.default,
-        EditorAPI: EditorAPI,
-        MenuAPI: MenuAPI.default,
-        ActionsAPI: ActionsAPI.default,
-        StatusAPI: StatusAPI.default,
-        PriorityAPI: PriorityAPI.default,
-        UserAPI: UserAPI.default
+import UserIndicator from './components/UserIndicator.vue';
+import Vue from 'vue';
+
+export default function UserIndicatorPlugin() {
+
+    function addIndicator(openmct) {
+        const userIndicator = new Vue ({
+            components: {
+                UserIndicator
+            },
+            provide: {
+                openmct: openmct
+            },
+            template: '<UserIndicator />'
+        });
+
+        openmct.indicators.add({
+            key: 'user-indicator',
+            element: userIndicator.$mount().$el,
+            priority: openmct.priority.HIGH
+        });
+    }
+
+    return function install(openmct) {
+        if (openmct.user.hasProvider()) {
+            addIndicator(openmct);
+        } else {
+            // back up if user provider added after indicator installed
+            openmct.user.on('providerAdded', () => {
+                addIndicator(openmct);
+            });
+        }
     };
-});
+}

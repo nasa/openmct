@@ -20,48 +20,21 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI',
-    './notifications/NotificationAPI',
-    './Editor',
-    './menu/MenuAPI',
-    './actions/ActionsAPI',
-    './status/StatusAPI',
-    './priority/PriorityAPI',
-    './user/UserAPI'
-], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    TelemetryAPI,
-    IndicatorAPI,
-    NotificationAPI,
-    EditorAPI,
-    MenuAPI,
-    ActionsAPI,
-    StatusAPI,
-    PriorityAPI,
-    UserAPI
-) {
-    return {
-        TimeAPI: TimeAPI.default,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        TypeRegistry: TypeRegistry,
-        TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI,
-        NotificationAPI: NotificationAPI.default,
-        EditorAPI: EditorAPI,
-        MenuAPI: MenuAPI.default,
-        ActionsAPI: ActionsAPI.default,
-        StatusAPI: StatusAPI.default,
-        PriorityAPI: PriorityAPI.default,
-        UserAPI: UserAPI.default
+import ExampleUserProvider from './ExampleUserProvider';
+
+export default function ExampleUserPlugin() {
+    return function install(openmct) {
+
+        openmct.user.setProvider(new ExampleUserProvider());
+
+        // openmct.types.addType('LadTable', {
+        //     name: "LAD Table",
+        //     creatable: true,
+        //     description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
+        //     cssClass: 'icon-tabular-lad',
+        //     initialize(domainObject) {
+        //         domainObject.composition = [];
+        //     }
+        // });
     };
-});
+}

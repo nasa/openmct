@@ -20,48 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI',
-    './notifications/NotificationAPI',
-    './Editor',
-    './menu/MenuAPI',
-    './actions/ActionsAPI',
-    './status/StatusAPI',
-    './priority/PriorityAPI',
-    './user/UserAPI'
-], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    TelemetryAPI,
-    IndicatorAPI,
-    NotificationAPI,
-    EditorAPI,
-    MenuAPI,
-    ActionsAPI,
-    StatusAPI,
-    PriorityAPI,
-    UserAPI
-) {
-    return {
-        TimeAPI: TimeAPI.default,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        TypeRegistry: TypeRegistry,
-        TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI,
-        NotificationAPI: NotificationAPI.default,
-        EditorAPI: EditorAPI,
-        MenuAPI: MenuAPI.default,
-        ActionsAPI: ActionsAPI.default,
-        StatusAPI: StatusAPI.default,
-        PriorityAPI: PriorityAPI.default,
-        UserAPI: UserAPI.default
-    };
-});
+export const MULTIPLE_PROVIDER_ERROR = 'Only one user provider may be set at a time.';
+export const NO_PROVIDER_ERROR = 'No user provider has been set.';
+export const NO_LOGIN_LOGOUT = 'User provider does not support login/logout.';
