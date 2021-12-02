@@ -20,3 +20,5 @@ jobs:
       - run: npm install
       - name: Run the e2e visual tests
         run: npm run test:e2e:visual
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
