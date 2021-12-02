@@ -34,7 +34,7 @@
         port.onmessage = function (event) {
             console.debug(`🍉 Received event from search provider 🍉`, event);
             if (event.data.request === 'index') {
-                indexItem(event.data.id, event.data.model);
+                indexItem(event.data.keyString, event.data.model);
             } else if (event.data.request === 'search') {
                 port.postMessage(search(event.data));
             }
@@ -49,9 +49,13 @@
         console.log('Error on feed');
     };
 
-    function indexItem(id, model) {
-        console.debug(`🖲 Worker is adding ${id} to index 🖲`, model);
-        indexedItems[id] = model;
+    function indexItem(keyString, model) {
+        console.debug(`🖲 Worker is adding ${keyString} to index 🖲`, model);
+        indexedItems[keyString] = {
+            type: model.type,
+            name: model.name,
+            keyString
+        };
     }
 
     /**

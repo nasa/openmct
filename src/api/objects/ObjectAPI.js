@@ -240,10 +240,7 @@ ObjectAPI.prototype.search = function (query, abortSignal) {
     searchPromises.push(this.inMemorySearchProvider.query(query, null)
         .then(results => results.hits
             .map(hit => {
-                let domainObject = hit.model;
-                domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
-
-                return domainObject;
+                return hit;
             })));
 
     return searchPromises;

@@ -60,7 +60,7 @@ class InMemorySearchProvider {
         console.debug('🖲 Starting indexing for search 🖲');
         // Need to check here if object provider supports search or not
         const rootObject = this.openmct.objects.rootProvider.rootObject;
-        this.scheduleForIndexing(rootObject.identifier.key);
+        this.scheduleForIndexing(rootObject.identifier);
         this.worker = this.startSharedWorker();
     }
 
@@ -102,7 +102,7 @@ class InMemorySearchProvider {
      * is used to resolve the corresponding promise.
      * @private
      */
-    onWorkerMessage(event) {
+    async onWorkerMessage(event) {
         console.debug(`🖲 Received event from search worker 🖲`, event);
         if (event.data.request !== 'search') {
             return;
@@ -112,11 +112,12 @@ class InMemorySearchProvider {
         const modelResults = {
             total: event.data.total
         };
-        modelResults.hits = event.data.results.map(function (hit) {
-            return {
-                model: hit
-            };
-        });
+        modelResults.hits = await Promise.all(event.data.results.map(async (hit) => {
+            const identifier = this.openmct.objects.parseKeyString(hit.keyString);
+            const domainObject = await this.openmct.objects.get(identifier.key);
+
+            return domainObject;
+        }));
 
         pendingQuery.resolve(modelResults);
         console.debug(`🖲 Returning model results 🖲`, modelResults);
@@ -162,17 +163,17 @@ class InMemorySearchProvider {
      * pending requests then allowed, will kick off an indexing request.
      *
      * @private
-     * @param {String} id to be indexed.
+     * @param {identifier} id to be indexed.
      */
-    scheduleForIndexing(id) {
-        const identifier = this.openmct.objects.parseKeyString(id);
-        const objectProvider = this.openmct.objects.getProvider(identifier);
+    scheduleForIndexing(identifier) {
+        const keyString = this.openmct.objects.makeKeyString(identifier);
+        const objectProvider = this.openmct.objects.getProvider(identifier.key);
 
         if (objectProvider === undefined || objectProvider.search === undefined) {
-            if (!this.indexedIds[id] && !this.pendingIndex[id]) {
-                this.indexedIds[id] = true;
-                this.pendingIndex[id] = true;
-                this.idsToIndex.push(id);
+            if (!this.indexedIds[keyString] && !this.pendingIndex[keyString]) {
+                this.indexedIds[keyString] = true;
+                this.pendingIndex[keyString] = true;
+                this.idsToIndex.push(keyString);
             }
         }
 
@@ -203,18 +204,18 @@ class InMemorySearchProvider {
      */
     async index(id, domainObject) {
         const provider = this;
-        console.debug(`🖲 Telling worker to index ${id.key ? id.key : id} 🖲`, domainObject);
+        const keyString = this.openmct.objects.makeKeyString(id);
+        console.debug(`🖲 Telling worker to index ${keyString} 🖲`, domainObject);
 
-        if ((id !== 'ROOT') && (id !== 'mine')) {
+        if ((id.key !== 'ROOT') && (id.key !== 'mine')) {
             this.worker.port.postMessage({
                 request: 'index',
                 model: domainObject,
-                id: id
+                keyString
             });
             this.openmct.objects.observe(domainObject, `*`, () => {
             // is this going to cause a memory leak?
-                const domainObjectId = domainObject.identifier.key;
-                provider.index(domainObjectId, domainObject);
+                provider.index(domainObject.identifier, domainObject);
             });
         }
 
@@ -223,9 +224,9 @@ class InMemorySearchProvider {
         });
 
         if (composition) {
-            const children = await composition.load(domainObject);
-            children.forEach(function (child) {
-                provider.scheduleForIndexing(provider.openmct.objects.makeKeyString(child));
+            const childIdentifiers = await composition.load(domainObject);
+            childIdentifiers.forEach(function (childIdentifier) {
+                provider.scheduleForIndexing(childIdentifier);
             });
         }
     }
@@ -238,18 +239,19 @@ class InMemorySearchProvider {
      * @private
      */
     async beginIndexRequest() {
-        const idToIndex = this.idsToIndex.shift();
+        const keyString = this.idsToIndex.shift();
         const provider = this;
 
         this.pendingRequests += 1;
-        const domainObject = await this.openmct.objects.get(idToIndex);
-        delete provider.pendingIndex[idToIndex];
+        const identifier = await this.openmct.objects.parseKeyString(keyString);
+        const domainObject = await this.openmct.objects.get(identifier.key);
+        delete provider.pendingIndex[keyString];
         try {
             if (domainObject) {
-                await provider.index(idToIndex, domainObject);
+                await provider.index(identifier, domainObject);
             }
         } catch (error) {
-            console.warn('Failed to index domain object ' + idToIndex, error);
+            console.warn('Failed to index domain object ' + keyString, error);
         }
 
         setTimeout(function () {

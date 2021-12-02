@@ -594,7 +594,10 @@ export default {
             const searchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
 
             searchPromises.map(promise => promise
-                .then(results => this.aggregateSearchResults(results, abortSignal)));
+                .then(results => {
+                    this.aggregateSearchResults(results, abortSignal);
+                }
+                ));
 
             Promise.all(searchPromises).catch(reason => {
                 // search aborted
