@@ -51,12 +51,12 @@ export default {
             this.setUserInfo();
         }
 
-        this.openmct.user.on('logIn', this.setUserInfo);
-        this.openmct.user.on('logOut', this.setUserInfo);
+        this.openmct.user.on('login', this.setUserInfo);
+        this.openmct.user.on('logout', this.setUserInfo);
     },
     beforeDestroy() {
-        this.openmct.user.off('logIn', this.setUserInfo);
-        this.openmct.user.off('logOut', this.setUserInfo);
+        this.openmct.user.off('login', this.setUserInfo);
+        this.openmct.user.off('logout', this.setUserInfo);
     },
     methods: {
         setUserInfo() {

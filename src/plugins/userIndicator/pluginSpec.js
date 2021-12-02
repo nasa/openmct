@@ -22,54 +22,11 @@
 
 import { createOpenMct, resetApplicationState } from 'utils/testing';
 import Vue from 'vue';
-import EventEmitter from 'EventEmitter';
+import ExampleUserProvider from '../exampleUser/ExampleUserProvider';
 
-const USER_ID = 'some-user-id';
-const USER_NAME = 'Soma Userton';
-const USER_HOME = 'mine';
-const ROLE_ID = 'role-id';
+const USER_NAME = 'Coach McGuirk';
 
-class UserProvider extends EventEmitter {
-    constructor() {
-        super();
-
-        this.id = USER_ID;
-        this.fullName = USER_NAME;
-        this.homeUrl = USER_HOME;
-        this.roles = [ROLE_ID];
-        this.supportsloginlogout = true;
-        this.loggedIn = true;
-    }
-
-    isLoggedIn() {
-        return this.loggedIn;
-    }
-
-    getCurrentUser() {
-        return Promise.resolve({
-            id: this.id,
-            fullName: this.fullName,
-            homeUrl: this.homeUrl,
-            roles: this.roles
-        });
-    }
-
-    hasRole(roleId) {
-        return Promise.resolve(this.roles.includes(roleId));
-    }
-
-    login() {
-        this.loggedIn = true;
-        this.emit('login');
-    }
-
-    logout() {
-        this.loggedIn = false;
-        this.emit('logout');
-    }
-}
-
-describe('The User Indicator plugin', () => {
+fdescribe('The User Indicator plugin', () => {
     let openmct;
     let element;
     let child;
@@ -105,25 +62,16 @@ describe('The User Indicator plugin', () => {
     });
 
     describe('with a user provider installed', () => {
-        let loginPromiseResolve;
 
         beforeEach(() => {
-            let loginPromise = new Promise((resolve, reject) => {
-                loginPromiseResolve = resolve;
-            });
-
-            openmct.user.on('login', loginPromiseResolve);
-
-            provider = new UserProvider();
+            provider = new ExampleUserProvider();
+            provider.fullName = USER_NAME;
 
             openmct.user.setProvider(provider);
-            provider.login();
 
-            return loginPromise;
-        });
+            let loginPromise = openmct.user.login();
 
-        afterEach(() => {
-            openmct.user.off('login', loginPromiseResolve);
+            return Promise.all([loginPromise, Vue.nextTick()]);
         });
 
         it('exists', () => {
@@ -134,15 +82,18 @@ describe('The User Indicator plugin', () => {
             expect(hasClockIndicator).toBe(true);
         });
 
-        it('contains the logged in user name', async () => {
-            await Vue.nextTick();
+        it('contains the logged in user name', (done) => {
+            openmct.user.getCurrentUser().then(async (user) => {
+                await Vue.nextTick();
 
-            userIndicator = openmct.indicators.indicatorObjects
-                .find(indicator => indicator.key === 'user-indicator').element;
+                userIndicator = openmct.indicators.indicatorObjects
+                    .find(indicator => indicator.key === 'user-indicator').element;
 
-            const userName = userIndicator.textContent.trim();
+                const userName = userIndicator.textContent.trim();
 
-            expect(userName).toContain(USER_NAME);
+                expect(user.fullName).toEqual(USER_NAME);
+                expect(userName).toContain(USER_NAME);
+            }).finally(done);
         });
 
     });

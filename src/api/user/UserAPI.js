@@ -71,7 +71,17 @@ export default class UserAPI extends EventEmitter {
             return Promise.resolve();
         }
 
-        return this._provider.login();
+        const loginPromise = this._provider.login();
+
+        loginPromise.then(() => {
+            this.getCurrentUser().then((user) => {
+                if (user) {
+                    this.emit('login');
+                }
+            });
+        });
+
+        return loginPromise;
     }
 
     logout() {
@@ -83,7 +93,17 @@ export default class UserAPI extends EventEmitter {
             return Promise.resolve();
         }
 
-        return this._provider.logout();
+        const logoutPromise = this._provider.logout();
+
+        logoutPromise.then(() => {
+            this.getCurrentUser().then((user) => {
+                if (!user) {
+                    this.emit('logout');
+                }
+            });
+        });
+
+        return logoutPromise;
     }
 
     isLoggedIn() {
