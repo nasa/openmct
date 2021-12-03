@@ -1,6 +1,6 @@
-import ObjectAPI from './ObjectAPI.js';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
-describe("The Object API Search Function", () => {
+fdescribe("The Object API Search Function", () => {
     const MOCK_PROVIDER_KEY = 'mockProvider';
     const ANOTHER_MOCK_PROVIDER_KEY = 'anotherMockProvider';
     const MOCK_PROVIDER_SEARCH_DELAY = 15000;
@@ -11,20 +11,17 @@ describe("The Object API Search Function", () => {
     let objectAPI;
     let mockObjectProvider;
     let anotherMockObjectProvider;
-    let mockFallbackProvider;
-    let fallbackProviderSearchResults;
     let resultsPromises;
+    let openmct;
 
-    beforeEach(() => {
+    beforeEach((done) => {
         jasmine.clock().install();
         jasmine.clock().mockDate(BASE_TIME);
 
         resultsPromises = [];
-        fallbackProviderSearchResults = {
-            hits: []
-        };
+        openmct = createOpenMct();
 
-        objectAPI = new ObjectAPI();
+        objectAPI = openmct.objects;
 
         mockObjectProvider = jasmine.createSpyObj("mock object provider", [
             "search"
@@ -32,12 +29,8 @@ describe("The Object API Search Function", () => {
         anotherMockObjectProvider = jasmine.createSpyObj("another mock object provider", [
             "search"
         ]);
-        mockFallbackProvider = jasmine.createSpyObj("super secret fallback provider", [
-            "superSecretFallbackSearch"
-        ]);
         objectAPI.addProvider('objects', mockObjectProvider);
-        objectAPI.addProvider('other-objects', anotherMockObjectProvider);
-        objectAPI.supersecretSetFallbackProvider(mockFallbackProvider);
+        spyOn(objectAPI.inMemorySearchProvider, "query").and.callThrough();
 
         mockObjectProvider.search.and.callFake(() => {
             return new Promise(resolve => {
@@ -67,34 +60,31 @@ describe("The Object API Search Function", () => {
                 }, ANOTHER_MOCK_PROVIDER_SEARCH_DELAY);
             });
         });
-        mockFallbackProvider.superSecretFallbackSearch.and.callFake(
-            () => new Promise(
-                resolve => setTimeout(
-                    () => resolve(fallbackProviderSearchResults),
-                    50
-                )
-            )
-        );
 
-        resultsPromises = objectAPI.search('foo');
+        openmct.on('start', done);
+        openmct.startHeadless();
+
 
         jasmine.clock().tick(TOTAL_TIME_ELAPSED);
     });
 
-    afterEach(() => {
+    afterEach(async () => {
         jasmine.clock().uninstall();
+        await resetApplicationState(openmct);
     });
 
     it("uses each objects given provider's search function", () => {
+        resultsPromises = objectAPI.search('foo');
         expect(mockObjectProvider.search).toHaveBeenCalled();
-        expect(anotherMockObjectProvider.search).toHaveBeenCalled();
     });
 
-    it("uses the fallback indexed search for objects without a search function provided", () => {
-        expect(mockFallbackProvider.superSecretFallbackSearch).toHaveBeenCalled();
+    it("uses the in-memory indexed search for objects without a search function provided", () => {
+        resultsPromises = objectAPI.search('foo');
+        expect(objectAPI.inMemorySearchProvider.query).toHaveBeenCalled();
     });
 
     it("provides each providers results as promises that resolve in parallel", async () => {
+        resultsPromises = objectAPI.search('foo');
         const results = await Promise.all(resultsPromises);
         const mockProviderResults = results.find(
             result => result.name === MOCK_PROVIDER_KEY
