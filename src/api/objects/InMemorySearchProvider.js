@@ -28,7 +28,7 @@ class InMemorySearchProvider {
      * the filetree without using external search implementations.
      *
      * @constructor
-     * @param {ObjectService} objectService the object service.
+     * @param {Object} openmct
      */
     constructor(openmct) {
         /**
@@ -145,12 +145,10 @@ class InMemorySearchProvider {
      * @private
      */
     startSharedWorker() {
-        let sharedWorker;
-
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}inMemorySearchWorker.js`;
 
-        sharedWorker = new SharedWorker(sharedWorkerURL, 'InMemorySearch Shared Worker');
+        const sharedWorker = new SharedWorker(sharedWorkerURL, 'InMemorySearch Shared Worker');
         sharedWorker.onerror = this.onWorkerError;
         sharedWorker.port.onmessage = this.onWorkerMessage;
         sharedWorker.port.onmessageerror = this.onWorkerMessageError;
