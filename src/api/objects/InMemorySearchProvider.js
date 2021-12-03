@@ -52,6 +52,7 @@ class InMemorySearchProvider {
         this.onWorkerMessageError = this.onWorkerMessageError.bind(this);
         this.onerror = this.onWorkerError.bind(this);
         this.startIndexing = this.startIndexing.bind(this);
+        this.onMutationOfIndexedObject = this.onMutationOfIndexedObject.bind(this);
 
         openmct.on('start', this.startIndexing);
     }
@@ -194,6 +195,11 @@ class InMemorySearchProvider {
         }
     }
 
+    onMutationOfIndexedObject(domainObject) {
+        const provider = this;
+        provider.index(domainObject.identifier, domainObject);
+    }
+
     /**
      * Pass an id and model to the worker to be indexed.  If the model has
      * composition, schedule those ids for later indexing.
@@ -213,14 +219,11 @@ class InMemorySearchProvider {
                 model: domainObject,
                 keyString
             });
-            this.openmct.objects.observe(domainObject, `*`, () => {
-            // is this going to cause a memory leak?
-                provider.index(domainObject.identifier, domainObject);
-            });
+            this.openmct.objects.observe(domainObject, `*`, this.onMutationOfIndexedObject);
         }
 
-        const composition = this.openmct.composition.registry.find(p => {
-            return p.appliesTo(domainObject);
+        const composition = this.openmct.composition.registry.find(foundComposition => {
+            return foundComposition.appliesTo(domainObject);
         });
 
         if (composition) {
