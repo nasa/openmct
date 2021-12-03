@@ -142,7 +142,7 @@ define([
         };
     });
 
-    plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
 
