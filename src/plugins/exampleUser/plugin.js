@@ -25,8 +25,7 @@ import ExampleUserProvider from './ExampleUserProvider';
 export default function ExampleUserPlugin() {
     return function install(openmct) {
 
-        openmct.user.setProvider(new ExampleUserProvider());
-
+        openmct.user.setProvider(new ExampleUserProvider(openmct));
         // openmct.types.addType('LadTable', {
         //     name: "LAD Table",
         //     creatable: true,

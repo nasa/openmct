@@ -21,9 +21,16 @@
 -->
 
 <template>
-<div class="c-indicator t-indicator-user icon-person no-minify c-indicator--not-clickable">
+<div class="c-indicator icon-person no-minify c-indicator--clickable">
     <span class="label c-indicator__label">
         {{ fullName }}
+        <button
+            v-if="supportsLogin"
+            class="c-button c-button--major"
+            @click="loginHandler()"
+        >
+            {{ buttonLabel }}
+        </button>
     </span>
 </div>
 </template>
@@ -33,17 +40,24 @@
 export default {
     inject: ['openmct'],
     data() {
+        let supportsLogin = this.openmct.user.supportsLoginLogout;
+
         return {
-            userInfo: undefined
+            userInfo: undefined,
+            loggedIn: false,
+            supportsLogin
         };
     },
     computed: {
+        buttonLabel() {
+            return this.loggedIn ? 'Logout' : 'Login';
+        },
         fullName() {
             if (this.userInfo) {
                 return this.userInfo.fullName;
             }
 
-            return 'none';
+            return '';
         }
     },
     mounted() {
@@ -59,9 +73,17 @@ export default {
         this.openmct.user.off('logout', this.setUserInfo);
     },
     methods: {
+        loginHandler() {
+            if (this.loggedIn) {
+                this.openmct.user.logout();
+            } else {
+                this.openmct.user.login();
+            }
+        },
         setUserInfo() {
             this.openmct.user.getCurrentUser().then((user) => {
                 this.userInfo = user;
+                this.loggedIn = this.openmct.user.isLoggedIn();
             });
         }
     }

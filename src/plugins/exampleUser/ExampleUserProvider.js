@@ -24,11 +24,12 @@ import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
 
 export default class ExampleUserProvider extends EventEmitter {
-    constructor() {
+    constructor(openmct) {
         super();
 
         let existing = {};
 
+        this.openmct = openmct;
         this.id = existing.id || uuid();
         this.fullName = existing.fullName || '';
         this.homeUrl = existing.homeUrl || '';
@@ -45,8 +46,7 @@ export default class ExampleUserProvider extends EventEmitter {
         return Promise.resolve({
             id: this.id,
             fullName: this.fullName,
-            homeUrl: this.homeUrl,
-            roles: this.roles
+            homeUrl: this.homeUrl
         });
     }
 
@@ -55,14 +55,66 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     login() {
-        this.loggedIn = true;
+        const loginPromise = new Promise((resolve, reject) => {
+            let overlay = this.openmct.overlays.overlay({
+                element: this._getLoginForm(),
+                size: 'small',
+                buttons: [
+                    {
+                        label: 'Login',
+                        emphasis: 'true',
+                        callback: () => {
+                            let username = document.getElementById('example-user-form-username').value;
 
-        return Promise.resolve('login');
+                            if (username !== '') {
+                                this.fullName = username;
+                                this.loggedIn = true;
+                                resolve();
+                                overlay.dismiss();
+                            } else {
+                                this.openmct.notifications.info('Please enter a username and password.');
+                            }
+                        }
+                    },
+                    {
+                        label: 'Cancel',
+                        callback: () => {
+                            reject();
+                            overlay.dismiss();
+                        }
+                    }
+                ],
+                onDestroy: () => this.loginForm = undefined
+            });
+        });
+
+        return loginPromise;
     }
 
     logout() {
         this.loggedIn = false;
 
         return Promise.resolve('logout');
+    }
+
+    _getLoginForm() {
+        let div = document.createElement('div');
+        div.innerHTML = `
+            <div id="loginForm" class="form">
+                <div class="c-overlay__dialog-title">
+                    Please enter your username and password.
+                </div>
+                <div class="form-row">
+                    <div class="c-form__row__label">Username</div>
+                    <input id="example-user-form-username" class="c-form__row__controls" type="text" />
+                <div class="form-row">
+                    <div class="c-form__row__label">Password</div>
+                    <input class="c-form__row__controls" type="password" />
+                </div>
+                </div>
+            </div>
+        `.trim();
+
+        return div.firstChild;
     }
 }

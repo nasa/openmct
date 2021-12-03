@@ -49,6 +49,12 @@ export default class UserAPI extends EventEmitter {
         return this._provider !== undefined;
     }
 
+    supportsLoginLogout() {
+        this._noProviderCheck();
+
+        return this._provider.supportsLoginLogout;
+    }
+
     // returns a copy of the user information provided
     getCurrentUser() {
         this._noProviderCheck();
@@ -121,7 +127,7 @@ export default class UserAPI extends EventEmitter {
     _supportsLoginLogoutCheck() {
         this._noProviderCheck();
 
-        if (!this._provider.supportsLoginLogout) {
+        if (!this.supportsLoginLogout()) {
             this._error(NO_LOGIN_LOGOUT);
         }
     }
