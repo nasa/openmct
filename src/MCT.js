@@ -48,6 +48,8 @@ define([
     './plugins/move/plugin',
     './plugins/linkAction/plugin',
     './plugins/duplicate/plugin',
+    './plugins/importFromJSONAction/plugin',
+    './plugins/exportAsJSONAction/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -77,6 +79,8 @@ define([
     MoveActionPlugin,
     LinkActionPlugin,
     DuplicateActionPlugin,
+    ImportFromJSONAction,
+    ExportAsJSONAction,
     Vue
 ) {
     /**
@@ -275,6 +279,8 @@ define([
         this.install(MoveActionPlugin.default());
         this.install(LinkActionPlugin.default());
         this.install(DuplicateActionPlugin.default());
+        this.install(ExportAsJSONAction.default());
+        this.install(ImportFromJSONAction.default());
         this.install(this.plugins.FormActions.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
@@ -282,7 +288,6 @@ define([
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
         this.install(this.plugins.OpenInNewTabAction());
-        this.install(this.plugins.ImportExport());
         this.install(this.plugins.WebPage());
         this.install(this.plugins.Condition());
         this.install(this.plugins.ConditionWidget());

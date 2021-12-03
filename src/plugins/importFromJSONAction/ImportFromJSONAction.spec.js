@@ -29,17 +29,17 @@ define(
 
         describe("The import JSON action", function () {
 
-            var context = {};
-            var action,
-                exportService,
-                identifierService,
-                dialogService,
-                openmct,
-                mockDialog,
-                compositionCapability,
-                mockInstantiate,
-                uniqueId,
-                newObjects;
+            let context = {};
+            let action;
+            let exportService;
+            let identifierService;
+            let dialogService;
+            let openmct;
+            let mockDialog;
+            let compositionCapability;
+            let mockInstantiate;
+            let uniqueId;
+            let newObjects;
 
             beforeEach(function () {
                 uniqueId = 0;
@@ -56,12 +56,12 @@ define(
                 openmct.objects.isPersistable.and.returnValue(true);
                 mockInstantiate = jasmine.createSpy('instantiate').and.callFake(
                     function (model, id) {
-                        var config = {
+                        let config = {
                             "model": model,
                             "id": id,
                             "capabilities": {}
                         };
-                        var locationCapability = {
+                        let locationCapability = {
                             setPrimaryLocation: jasmine.createSpy('setPrimaryLocation')
                                 .and
                                 .callFake(function (newLocation) {
@@ -70,7 +70,7 @@ define(
                         };
                         config.capabilities.location = locationCapability;
                         if (model.composition) {
-                            var compCapability =
+                            let compCapability =
                                 jasmine.createSpy('compCapability')
                                     .and.returnValue(model.composition);
                             compCapability.add = jasmine.createSpy('add')
@@ -114,12 +114,12 @@ define(
             });
 
             it("only applies to objects with composition capability", function () {
-                var compDomainObject = domainObjectFactory({
+                let compDomainObject = domainObjectFactory({
                     name: 'compObject',
                     model: { name: 'compObject'},
                     capabilities: {"composition": compositionCapability}
                 });
-                var noCompDomainObject = domainObjectFactory();
+                let noCompDomainObject = domainObjectFactory();
 
                 context.domainObject = compDomainObject;
                 expect(ImportAsJSONAction.appliesTo(context, undefined, openmct)).toBe(true);
@@ -161,7 +161,7 @@ define(
             });
 
             xit("can import self-containing objects", function () {
-                var compDomainObject = domainObjectFactory({
+                let compDomainObject = domainObjectFactory({
                     name: 'compObject',
                     model: { name: 'compObject'},
                     capabilities: {"composition": compositionCapability}

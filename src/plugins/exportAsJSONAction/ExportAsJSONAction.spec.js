@@ -31,16 +31,16 @@ define(
 
         describe("The export JSON action", function () {
 
-            var context,
-                action,
-                exportService,
-                identifierService,
-                typeService,
-                openmct,
-                policyService,
-                mockType,
-                mockObjectProvider,
-                exportedTree;
+            let context;
+            let action;
+            let exportService;
+            let identifierService;
+            let typeService;
+            let openmct;
+            let policyService;
+            let mockType;
+            let mockObjectProvider;
+            let exportedTree;
 
             beforeEach(function () {
                 openmct = new MCT();
@@ -93,7 +93,7 @@ define(
             });
 
             function invokeAdapter() {
-                var newStyleObject = new AdapterCapability(context.domainObject).invoke();
+                let newStyleObject = new AdapterCapability(context.domainObject).invoke();
 
                 return newStyleObject;
             }
@@ -103,7 +103,7 @@ define(
             });
 
             xit("doesn't export non-creatable objects in tree", function () {
-                var nonCreatableType = {
+                let nonCreatableType = {
                     hasFeature:
                         function (feature) {
                             return feature !== 'creation';
@@ -112,7 +112,7 @@ define(
 
                 typeService.getType.and.returnValue(nonCreatableType);
 
-                var parent = domainObjectFactory({
+                let parent = domainObjectFactory({
                     name: 'parent',
                     model: {
                         name: 'parent',
@@ -127,7 +127,7 @@ define(
                     }
                 });
 
-                var child = {
+                let child = {
                     identifier: {
                         namespace: '',
                         key: 'childId'
@@ -150,7 +150,7 @@ define(
             });
 
             xit("can export self-containing objects", function () {
-                var parent = domainObjectFactory({
+                let parent = domainObjectFactory({
                     name: 'parent',
                     model: {
                         name: 'parent',
@@ -165,7 +165,7 @@ define(
                     }
                 });
 
-                var child = {
+                let child = {
                     identifier: {
                         namespace: '',
                         key: 'infiniteChildId'
@@ -192,7 +192,7 @@ define(
             });
 
             xit("exports links to external objects as new objects", function () {
-                var parent = domainObjectFactory({
+                let parent = domainObjectFactory({
                     name: 'parent',
                     model: {
                         name: 'parent',
@@ -207,7 +207,7 @@ define(
                     }
                 });
 
-                var externalObject = {
+                let externalObject = {
                     name: 'external',
                     location: 'outsideOfTree',
                     identifier: {
