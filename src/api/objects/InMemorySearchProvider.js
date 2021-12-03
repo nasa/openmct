@@ -170,7 +170,7 @@ class InMemorySearchProvider {
 
         if (objectProvider === undefined || objectProvider.search === undefined) {
             if (!this.indexedIds[keyString] && !this.pendingIndex[keyString]) {
-                this.indexedIds[keyString] = true;
+                console.debug(`🖲Scheduling ${keyString} for indexing 🖲`);
                 this.pendingIndex[keyString] = true;
                 this.idsToIndex.push(keyString);
             }
@@ -209,15 +209,21 @@ class InMemorySearchProvider {
     async index(id, domainObject) {
         const provider = this;
         const keyString = this.openmct.objects.makeKeyString(id);
-        console.debug(`🖲 Telling worker to index ${keyString} 🖲`, domainObject);
+        if (!this.indexedIds[keyString]) {
+            console.debug(`🖲 Newly indexed object, so registering observer for ${keyString} 🖲`, domainObject);
+            this.openmct.objects.observe(domainObject, `*`, this.onMutationOfIndexedObject);
+        }
 
-        if ((id.key !== 'ROOT') && (id.key !== 'mine')) {
+        this.indexedIds[keyString] = true;
+
+        if ((id.key !== 'ROOT')) {
+
+            console.debug(`🖲 Telling worker to index ${keyString} 🖲`, domainObject);
             this.worker.port.postMessage({
                 request: 'index',
                 model: domainObject,
                 keyString
             });
-            this.openmct.objects.observe(domainObject, `*`, this.onMutationOfIndexedObject);
         }
 
         const composition = this.openmct.composition.registry.find(foundComposition => {
