@@ -31,6 +31,9 @@
             &.unnsynced{
                 @include sUnsynced();
             }
+            &.selectable {
+                cursor: crosshair;
+            }
         }
 
         &__image {

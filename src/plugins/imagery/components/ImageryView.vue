@@ -57,7 +57,7 @@
         </div>
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false }"
+             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false,'selectable': isSelectable }"
              @click="expand"
         >
             <div class="image-wrapper"
@@ -67,8 +67,9 @@
                  }"
             >
                 <img ref="focusedImage"
-                     class="c-imagery__main-image__image js-imageryView-image"
+                     class="c-imagery__main-image__image js-imageryView-image "
                      :src="imageUrl"
+                     :draggable="!isSelectable"
                      :style="{
                          'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
                      }"
@@ -403,6 +404,10 @@ export default {
             }
 
             return clock === undefined;
+        },
+        isSelectable() {
+            return true;
+
         }
     },
     watch: {
