@@ -27,7 +27,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 
-fdescribe("The UTC Time System", () => {
+describe("The UTC Time System", () => {
     const UTC_SYSTEM_AND_FORMAT_KEY = 'utc';
     const DURATION_FORMAT_KEY = 'duration';
     let openmct;
