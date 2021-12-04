@@ -49,6 +49,7 @@ define([
      * @memberof platform/commonUI/formats
      */
     function LocalTimeFormat() {
+        this.key = 'local-format';
     }
 
     /**
