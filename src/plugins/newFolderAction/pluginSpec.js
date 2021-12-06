@@ -93,6 +93,17 @@ describe("the plugin", () => {
         });
 
         it('checks if the domainObject is persistable', () => {
+            const mockObjectPath = [{
+                name: 'mock folder',
+                type: 'folder',
+                identifier: {
+                    key: 'mock-folder',
+                    namespace: ''
+                }
+            }];
+
+            spyOn(openmct.objects, 'isPersistable').and.returnValue(true);
+
             newFolderAction.appliesTo(mockObjectPath);
 
             expect(openmct.objects.isPersistable).toHaveBeenCalled();

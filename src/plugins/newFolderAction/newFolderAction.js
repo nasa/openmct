@@ -44,6 +44,6 @@ export default class NewFolderAction {
         let domainObject = objectPath[0];
         let isPersistable = this._openmct.objects.isPersistable(domainObject.identifier);
 
-        return domainObject.type === this.type  && isPersistable;
+        return domainObject.type === this.type && isPersistable;
     }
 }

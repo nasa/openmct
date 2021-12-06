@@ -128,7 +128,7 @@ define(
             });
 
             it("checks object persistability", function () {
-                var compDomainObject = domainObjectFactory({
+                const compDomainObject = domainObjectFactory({
                     name: 'compObject',
                     model: { name: 'compObject'},
                     capabilities: {"composition": compositionCapability}
