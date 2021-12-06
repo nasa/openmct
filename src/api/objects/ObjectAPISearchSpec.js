@@ -1,6 +1,6 @@
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
-fdescribe("The Object API Search Function", () => {
+describe("The Object API Search Function", () => {
     const MOCK_PROVIDER_KEY = 'mockProvider';
     const ANOTHER_MOCK_PROVIDER_KEY = 'anotherMockProvider';
     const MOCK_PROVIDER_SEARCH_DELAY = 15000;
@@ -28,6 +28,7 @@ fdescribe("The Object API Search Function", () => {
             "search"
         ]);
         objectAPI.addProvider('objects', mockObjectProvider);
+        objectAPI.addProvider('other-objects', anotherMockObjectProvider);
         spyOn(objectAPI.inMemorySearchProvider, "query").and.callThrough();
 
         mockObjectProvider.search.and.callFake(() => {
