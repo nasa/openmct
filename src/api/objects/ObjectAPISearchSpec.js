@@ -17,6 +17,7 @@ fdescribe("The Object API Search Function", () => {
     beforeEach((done) => {
         resultsPromises = [];
         openmct = createOpenMct();
+        openmct.setAssetPath('/base');
 
         objectAPI = openmct.objects;
 
