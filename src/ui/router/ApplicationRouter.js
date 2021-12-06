@@ -147,6 +147,10 @@ class ApplicationRouter extends EventEmitter {
         let targetObject = objectPath[0];
         let navigatedObject = this.path[0];
 
+        if (!targetObject.identifier) {
+            return false;
+        }
+
         return this.openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
 
@@ -313,6 +317,8 @@ class ApplicationRouter extends EventEmitter {
         if (route) {
             route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
         }
+
+        this.openmct.telemetry.abortAllRequests();
 
         this.emit('change:path', newPath, oldPath);
     }

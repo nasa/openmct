@@ -26,6 +26,7 @@ define([
     './remoteClock/plugin',
     './localTimeSystem/plugin',
     './ISOTimeFormat/plugin',
+    './myItems/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
@@ -71,13 +72,16 @@ define([
     './timeline/plugin',
     './hyperlink/plugin',
     './clock/plugin',
-    './DeviceClassifier/plugin'
+    './DeviceClassifier/plugin',
+    './UTCTimeFormat/plugin',
+    './timer/plugin'
 ], function (
     _,
     UTCTimeSystem,
     RemoteClock,
     LocalTimeSystem,
     ISOTimeFormat,
+    MyItems,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
@@ -123,11 +127,12 @@ define([
     Timeline,
     Hyperlink,
     Clock,
-    DeviceClassifier
+    DeviceClassifier,
+    UTCTimeFormat,
+    Timer
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
-        MyItems: 'platform/features/my-items',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -142,6 +147,8 @@ define([
     plugins.UTCTimeSystem = UTCTimeSystem;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
+
+    plugins.MyItems = MyItems.default;
 
     plugins.ImportExport = ImportExport;
 
@@ -188,7 +195,7 @@ define([
         return GeneratorPlugin;
     };
 
-    plugins.ExampleImagery = ExampleImagery;
+    plugins.ExampleImagery = ExampleImagery.default;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
     plugins.Chart = ChartPlugin.default;
@@ -229,7 +236,9 @@ define([
     plugins.Timeline = Timeline.default;
     plugins.Hyperlink = Hyperlink.default;
     plugins.Clock = Clock.default;
+    plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
+    plugins.UTCTimeFormat = UTCTimeFormat.default;
 
     return plugins;
 });
