@@ -22,14 +22,11 @@
 
 define([
     "./src/FormatProvider",
-    "./src/UTCTimeFormat",
     "./src/DurationFormat"
 ], function (
     FormatProvider,
-    UTCTimeFormat,
     DurationFormat
 ) {
-
     return {
         name: "platform/commonUI/formats",
         definition: {
@@ -47,10 +44,6 @@ define([
                     }
                 ],
                 "formats": [
-                    {
-                        "key": "utc",
-                        "implementation": UTCTimeFormat
-                    },
                     {
                         "key": "duration",
                         "implementation": DurationFormat
