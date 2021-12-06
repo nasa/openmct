@@ -47,10 +47,16 @@ define(
             );
         };
 
-        SetPrimaryLocationAction.appliesTo = function (context) {
-            var domainObject = context.domainObject;
+        SetPrimaryLocationAction.appliesTo = function (context, view, openmct) {
+            let domainObject = (context || {}).domainObject;
 
-            return domainObject && domainObject.hasCapability("location")
+            if (!domainObject || (domainObject.model && domainObject.model.locked)) {
+                return false;
+            }
+
+            let isPersistable = openmct.objects.isPersistable(domainObject.id);
+
+            return isPersistable && domainObject.hasCapability("location")
                 && (domainObject.getModel().location === undefined);
         };
 
