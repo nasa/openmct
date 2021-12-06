@@ -521,6 +521,7 @@ ObjectAPI.prototype._toMutable = function (object) {
                 if (updatedModel.persisted > mutableObject.modified) {
                     //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                     //in rapid succession and intermediate persistence states are returned by the observe function.
+                    updatedModel = this.applyGetInterceptors(identifier, updatedModel);
                     mutableObject.$refresh(updatedModel);
                 }
             });
