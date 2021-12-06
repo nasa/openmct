@@ -31,7 +31,11 @@ export default class LADTableViewProvider {
     }
 
     canView(domainObject) {
-        return domainObject.type === 'LadTable';
+        const supportsComposition = this.openmct.composition.get(domainObject) !== undefined;
+        const providesTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
+
+        return domainObject.type === 'LadTable'
+            || (providesTelemetry && supportsComposition);
     }
 
     canEdit(domainObject) {
@@ -43,6 +47,6 @@ export default class LADTableViewProvider {
     }
 
     priority(domainObject) {
-        return 1;
+        return this.openmct.priority.HIGH;
     }
 }
