@@ -41,7 +41,12 @@ import _ from "lodash";
 
 const PADDING = 1;
 const ROW_HEIGHT = 100;
-const IMAGE_WIDTH_THRESHOLD = 40;
+const IMAGE_SIZE = 85;
+const IMAGE_WIDTH_THRESHOLD = 25;
+const CONTAINER_CLASS = 'c-imagery-tsv-container';
+const NO_ITEMS_CLASS = 'c-imagery-tsv__no-items';
+const IMAGE_WRAPPER_CLASS = 'c-imagery-tsv__image-wrapper';
+const ID_PREFIX = 'wrapper-';
 
 export default {
     mixins: [imageryData],
@@ -78,10 +83,12 @@ export default {
         this.canvasContext = this.canvas.getContext('2d');
         this.setDimensions();
 
-        this.updateViewBounds();
+        this.setScaleAndPlotImagery = this.setScaleAndPlotImagery.bind(this);
+        this.updateViewBounds = this.updateViewBounds.bind(this);
+        this.setTimeContext = this.setTimeContext.bind(this);
+        this.setTimeContext();
 
-        this.openmct.time.on("timeSystem", this.setScaleAndPlotImagery);
-        this.openmct.time.on("bounds", this.updateViewBounds);
+        this.updateViewBounds();
 
         this.resize = _.debounce(this.resize, 400);
         this.imageryStripResizeObserver = new ResizeObserver(this.resize);
@@ -90,25 +97,36 @@ export default {
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
     },
     beforeDestroy() {
-        if (this.unsubscribe) {
-            this.unsubscribe();
-            delete this.unsubscribe;
-        }
-
         if (this.imageryStripResizeObserver) {
             this.imageryStripResizeObserver.disconnect();
         }
 
-        this.openmct.time.off("timeSystem", this.setScaleAndPlotImagery);
-        this.openmct.time.off("bounds", this.updateViewBounds);
+        this.stopFollowingTimeContext();
         if (this.unlisten) {
             this.unlisten();
         }
     },
     methods: {
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.timeContext.on("timeSystem", this.setScaleAndPlotImagery);
+            this.timeContext.on("bounds", this.updateViewBounds);
+            this.timeContext.on("timeContext", this.setTimeContext);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off("timeSystem", this.setScaleAndPlotImagery);
+                this.timeContext.off("bounds", this.updateViewBounds);
+                this.timeContext.off("timeContext", this.setTimeContext);
+            }
+        },
         expand(index) {
             const path = this.objectPath[0];
-            this.previewAction.invoke([path]);
+            this.previewAction.invoke([path], {
+                indexForFocusedImage: index,
+                objectPath: this.objectPath
+            });
         },
         observeForChanges(mutatedObject) {
             this.updateViewBounds();
@@ -134,14 +152,10 @@ export default {
             return clientWidth;
         },
         updateViewBounds(bounds, isTick) {
-            this.viewBounds = this.openmct.time.bounds();
-            //Add a 50% padding to the end bounds to look ahead
-            let timespan = (this.viewBounds.end - this.viewBounds.start);
-            let padding = timespan / 2;
-            this.viewBounds.end = this.viewBounds.end + padding;
+            this.viewBounds = this.timeContext.bounds();
 
             if (this.timeSystem === undefined) {
-                this.timeSystem = this.openmct.time.timeSystem();
+                this.timeSystem = this.timeContext.timeSystem();
             }
 
             this.setScaleAndPlotImagery(this.timeSystem, !isTick);
@@ -172,18 +186,18 @@ export default {
         },
         clearPreviousImagery(clearAllImagery) {
             //TODO: Only clear items that are out of bounds
-            let noItemsEl = this.$el.querySelectorAll(".c-imagery-tsv__no-items");
+            let noItemsEl = this.$el.querySelectorAll(`.${NO_ITEMS_CLASS}`);
             noItemsEl.forEach(item => {
                 item.remove();
             });
-            let imagery = this.$el.querySelectorAll(".c-imagery-tsv__image-wrapper");
+            let imagery = this.$el.querySelectorAll(`.${IMAGE_WRAPPER_CLASS}`);
             imagery.forEach(item => {
                 if (clearAllImagery) {
                     item.remove();
                 } else {
-                    const id = this.getNSAttributesForElement(item, 'id');
+                    const id = item.getAttributeNS(null, 'id');
                     if (id) {
-                        const timestamp = id.replace('id-', '');
+                        const timestamp = id.replace(ID_PREFIX, '');
                         if (!this.isImageryInBounds({
                             time: timestamp
                         })) {
@@ -205,7 +219,7 @@ export default {
             }
 
             if (timeSystem === undefined) {
-                timeSystem = this.openmct.time.timeSystem();
+                timeSystem = this.timeContext.timeSystem();
             }
 
             if (timeSystem.isUTCBased) {
@@ -223,19 +237,17 @@ export default {
             this.xScale.range([PADDING, this.width - PADDING * 2]);
         },
         isImageryInBounds(imageObj) {
-            return (imageObj.time < this.viewBounds.end) && (imageObj.time > this.viewBounds.start);
+            return (imageObj.time <= this.viewBounds.end) && (imageObj.time >= this.viewBounds.start);
         },
         getImageryContainer() {
-            let svgHeight = 100;
-            let svgWidth = this.imageHistory.length ? this.width : 200;
-            let groupSVG;
+            let containerHeight = 100;
+            let containerWidth = this.imageHistory.length ? this.width : 200;
+            let imageryContainer;
 
-            let existingSVG = this.$el.querySelector(".c-imagery-tsv__contents svg");
-            if (existingSVG) {
-                groupSVG = existingSVG;
-                this.setNSAttributesForElement(groupSVG, {
-                    width: svgWidth
-                });
+            let existingContainer = this.$el.querySelector(`.${CONTAINER_CLASS}`);
+            if (existingContainer) {
+                imageryContainer = existingContainer;
+                imageryContainer.style.maxWidth = `${containerWidth}px`;
             } else {
                 let component = new Vue({
                     components: {
@@ -246,26 +258,20 @@ export default {
                     },
                     data() {
                         return {
-                            isNested: true,
-                            height: svgHeight,
-                            width: svgWidth
+                            isNested: true
                         };
                     },
-                    template: `<swim-lane :is-nested="isNested" :hide-label="true"><template slot="object"><svg class="c-imagery-tsv-container" :height="height" :width="width"></svg></template></swim-lane>`
+                    template: `<swim-lane :is-nested="isNested" :hide-label="true"><template slot="object"><div class="c-imagery-tsv-container"></div></template></swim-lane>`
                 });
 
                 this.$refs.imageryHolder.appendChild(component.$mount().$el);
 
-                groupSVG = component.$el.querySelector('svg');
-
-                groupSVG.addEventListener('mouseout', (event) => {
-                    if (event.target.nodeName === 'svg' || event.target.nodeName === 'use') {
-                        this.removeFromForeground();
-                    }
-                });
+                imageryContainer = component.$el.querySelector(`.${CONTAINER_CLASS}`);
+                imageryContainer.style.maxWidth = `${containerWidth}px`;
+                imageryContainer.style.height = `${containerHeight}px`;
             }
 
-            return groupSVG;
+            return imageryContainer;
         },
         isImageryWidthAcceptable() {
             // We're calculating if there is enough space between images to show the thumbnails.
@@ -281,194 +287,123 @@ export default {
             return imageContainerWidth < IMAGE_WIDTH_THRESHOLD;
         },
         drawImagery() {
-            let groupSVG = this.getImageryContainer();
+            let imageryContainer = this.getImageryContainer();
             const showImagePlaceholders = this.isImageryWidthAcceptable();
-
+            let index = 0;
             if (this.imageHistory.length) {
-                this.imageHistory.forEach((currentImageObject, index) => {
+                this.imageHistory.forEach((currentImageObject) => {
                     if (this.isImageryInBounds(currentImageObject)) {
-                        this.plotImagery(currentImageObject, showImagePlaceholders, groupSVG, index);
+                        this.plotImagery(currentImageObject, showImagePlaceholders, imageryContainer, index);
+                        index = index + 1;
                     }
                 });
             } else {
-                this.plotNoItems(groupSVG);
+                this.plotNoItems(imageryContainer);
             }
         },
-        plotNoItems(svgElement) {
-            let textElement = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            this.setNSAttributesForElement(textElement, {
-                x: "10",
-                y: "20",
-                class: "c-imagery-tsv__no-items"
-            });
+        plotNoItems(containerElement) {
+            let textElement = document.createElement('text');
+            textElement.classList.add(NO_ITEMS_CLASS);
             textElement.innerHTML = 'No images within timeframe';
 
-            svgElement.appendChild(textElement);
+            containerElement.appendChild(textElement);
         },
         setNSAttributesForElement(element, attributes) {
-            Object.keys(attributes).forEach((key) => {
-                if (key === 'url') {
-                    element.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attributes[key]);
-                } else {
-                    element.setAttributeNS(null, key, attributes[key]);
-                }
-            });
-        },
-        getNSAttributesForElement(element, attribute) {
-            return element.getAttributeNS(null, attribute);
-        },
-        getImageWrapper(item) {
-            const id = `id-${item.time}`;
-
-            return this.$el.querySelector(`.c-imagery-tsv__contents g[id=${id}]`);
-        },
-        plotImagery(item, showImagePlaceholders, svgElement, index) {
-            //TODO: Placeholder image
-            let existingImageWrapper = this.getImageWrapper(item);
-            //imageWrapper wraps the vertical tick rect and the image
-            if (existingImageWrapper) {
-                this.updateExistingImageWrapper(existingImageWrapper, item, showImagePlaceholders);
-            } else {
-                let imageWrapper = this.createImageWrapper(index, item, showImagePlaceholders, svgElement);
-                svgElement.appendChild(imageWrapper);
-            }
-        },
-        updateExistingImageWrapper(existingImageWrapper, item, showImagePlaceholders) {
-            //Update the x co-ordinates of the handle and image elements and the url of image
-            //this is to avoid tearing down all elements completely and re-drawing them
-            this.setNSAttributesForElement(existingImageWrapper, {
-                showImagePlaceholders
-            });
-            let imageTickElement = existingImageWrapper.querySelector('rect.c-imagery-tsv__image-handle');
-            this.setNSAttributesForElement(imageTickElement, {
-                x: this.xScale(item.time)
-            });
-
-            let imageRect = existingImageWrapper.querySelector('rect.c-imagery-tsv__image-placeholder');
-            this.setNSAttributesForElement(imageRect, {
-                x: this.xScale(item.time) + 2
-            });
-
-            let imageElement = existingImageWrapper.querySelector('image');
-            const selector = `href*=${existingImageWrapper.id}`;
-            let hoverEl = this.$el.querySelector(`.c-imagery-tsv__contents use[${selector}]`);
-            const hideImageUrl = (showImagePlaceholders && !hoverEl);
-            this.setNSAttributesForElement(imageElement, {
-                x: this.xScale(item.time) + 2,
-                url: hideImageUrl ? '' : item.url
-            });
-        },
-        createImageWrapper(index, item, showImagePlaceholders, svgElement) {
-            const id = `id-${item.time}`;
-            const imgSize = String(ROW_HEIGHT - 15);
-            let imageWrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            this.setNSAttributesForElement(imageWrapper, {
-                id,
-                class: 'c-imagery-tsv__image-wrapper',
-                showImagePlaceholders
-            });
-            //create image tick indicator
-            let imageTickElement = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            this.setNSAttributesForElement(imageTickElement, {
-                class: 'c-imagery-tsv__image-handle',
-                x: this.xScale(item.time),
-                y: 5,
-                rx: 0,
-                width: 2,
-                height: String(ROW_HEIGHT - 10)
-            });
-            imageWrapper.appendChild(imageTickElement);
-
-            let imageRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            this.setNSAttributesForElement(imageRect, {
-                class: 'c-imagery-tsv__image-placeholder',
-                x: this.xScale(item.time) + 2,
-                y: 10,
-                rx: 0,
-                width: imgSize,
-                height: imgSize,
-                mask: `#image-${item.time}`
-            });
-            imageWrapper.appendChild(imageRect);
-
-            let imageElement = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-            this.setNSAttributesForElement(imageElement, {
-                id: `image-${item.time}`,
-                x: this.xScale(item.time) + 2,
-                y: 10,
-                rx: 0,
-                width: imgSize,
-                height: imgSize,
-                url: showImagePlaceholders ? '' : item.url
-            });
-            imageWrapper.appendChild(imageElement);
-
-            //TODO: Don't add the hover listener if the width is too small
-            imageWrapper.addEventListener('mouseover', this.bringToForeground.bind(this, svgElement, imageWrapper, index, item.url));
-
-            return imageWrapper;
-        },
-        bringToForeground(svgElement, imageWrapper, index, url, event) {
-            const selector = `href*=${imageWrapper.id}`;
-            let hoverEls = this.$el.querySelectorAll(`.c-imagery-tsv__contents use:not([${selector}])`);
-            if (hoverEls.length > 0) {
-                this.removeFromForeground(hoverEls);
-            }
-
-            hoverEls = this.$el.querySelectorAll(`.c-imagery-tsv__contents use[${selector}]`);
-            if (hoverEls.length) {
-
+            if (!element) {
                 return;
             }
 
-            let imageElement = imageWrapper.querySelector('image');
+            Object.keys(attributes).forEach((key) => {
+                element.setAttributeNS(null, key, attributes[key]);
+            });
+        },
+        setStyles(element, styles) {
+            if (!element) {
+                return;
+            }
+
+            Object.keys(styles).forEach((key) => {
+                element.style[key] = styles[key];
+            });
+        },
+        getImageWrapper(item) {
+            const id = `${ID_PREFIX}${item.time}`;
+
+            return this.$el.querySelector(`.c-imagery-tsv__contents div[id=${id}]`);
+        },
+        plotImagery(item, showImagePlaceholders, containerElement, index) {
+            let existingImageWrapper = this.getImageWrapper(item);
+            //imageWrapper wraps the vertical tick and the image
+            if (existingImageWrapper) {
+                this.updateExistingImageWrapper(existingImageWrapper, item, showImagePlaceholders);
+            } else {
+                let imageWrapper = this.createImageWrapper(index, item, showImagePlaceholders);
+                containerElement.appendChild(imageWrapper);
+            }
+        },
+        setImageDisplay(imageElement, showImagePlaceholders) {
+            if (showImagePlaceholders) {
+                imageElement.style.display = 'none';
+            } else {
+                imageElement.style.display = 'block';
+            }
+        },
+        updateExistingImageWrapper(existingImageWrapper, item, showImagePlaceholders) {
+            //Update the x co-ordinates of the image wrapper and the url of image
+            //this is to avoid tearing down all elements completely and re-drawing them
+            this.setNSAttributesForElement(existingImageWrapper, {
+                'data-show-image-placeholders': showImagePlaceholders
+            });
+            existingImageWrapper.style.left = `${this.xScale(item.time)}px`;
+
+            let imageElement = existingImageWrapper.querySelector('img');
             this.setNSAttributesForElement(imageElement, {
-                url: url,
-                fill: 'none'
+                src: item.url
             });
-            let hoverElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-            this.setNSAttributesForElement(hoverElement, {
-                class: 'image-highlight',
-                x: 0,
-                href: `#${imageWrapper.id}`
-            });
+            this.setImageDisplay(imageElement, showImagePlaceholders);
+        },
+        createImageWrapper(index, item, showImagePlaceholders) {
+            const id = `${ID_PREFIX}${item.time}`;
+            let imageWrapper = document.createElement('div');
+            imageWrapper.classList.add(IMAGE_WRAPPER_CLASS);
+            imageWrapper.style.left = `${this.xScale(item.time)}px`;
             this.setNSAttributesForElement(imageWrapper, {
-                class: 'c-imagery-tsv__image-wrapper is-hovered'
+                id,
+                'data-show-image-placeholders': showImagePlaceholders
             });
-            // We're using mousedown here and not 'click' because 'click' doesn't seem to be triggered reliably
-            hoverElement.addEventListener('mousedown', (e) => {
+            //create image vertical tick indicator
+            let imageTickElement = document.createElement('div');
+            imageTickElement.classList.add('c-imagery-tsv__image-handle');
+            imageTickElement.style.width = '2px';
+            imageTickElement.style.height = `${String(ROW_HEIGHT - 10)}px`;
+            imageWrapper.appendChild(imageTickElement);
+
+            //create placeholder - this will also hold the actual image
+            let imagePlaceholder = document.createElement('div');
+            imagePlaceholder.classList.add('c-imagery-tsv__image-placeholder');
+            imagePlaceholder.style.width = `${IMAGE_SIZE}px`;
+            imagePlaceholder.style.height = `${IMAGE_SIZE}px`;
+            imageWrapper.appendChild(imagePlaceholder);
+
+            //create image element
+            let imageElement = document.createElement('img');
+            this.setNSAttributesForElement(imageElement, {
+                src: item.url
+            });
+            imageElement.style.width = `${IMAGE_SIZE}px`;
+            imageElement.style.height = `${IMAGE_SIZE}px`;
+            this.setImageDisplay(imageElement, showImagePlaceholders);
+
+            //handle mousedown event to show the image in a large view
+            imageWrapper.addEventListener('mousedown', (e) => {
                 if (e.button === 0) {
                     this.expand(index);
                 }
             });
 
-            svgElement.appendChild(hoverElement);
+            imagePlaceholder.appendChild(imageElement);
 
-        },
-        removeFromForeground(items) {
-            let hoverEls;
-            if (items) {
-                hoverEls = items;
-            } else {
-                hoverEls = this.$el.querySelectorAll(".c-imagery-tsv__contents use");
-            }
-
-            hoverEls.forEach(item => {
-                let selector = `id*=${this.getNSAttributesForElement(item, 'href').replace('#', '')}`;
-                let imageWrapper = this.$el.querySelector(`.c-imagery-tsv__contents g[${selector}]`);
-                this.setNSAttributesForElement(imageWrapper, {
-                    class: 'c-imagery-tsv__image-wrapper'
-                });
-                let showImagePlaceholders = this.getNSAttributesForElement(imageWrapper, 'showImagePlaceholders');
-                if (showImagePlaceholders === 'true') {
-                    let imageElement = imageWrapper.querySelector('image');
-                    this.setNSAttributesForElement(imageElement, {
-                        url: ''
-                    });
-                }
-
-                item.remove();
-            });
+            return imageWrapper;
         }
     }
 };

@@ -41,6 +41,9 @@ describe('When the Clear Data Plugin is installed,', () => {
     const openmct = {
         objectViews: mockObjectViews,
         indicators: mockIndicatorProvider,
+        priority: {
+            DEFAULT: 0
+        },
         actions: mockActionsProvider,
         install: function (plugin) {
             plugin(this);
@@ -69,13 +72,13 @@ describe('When the Clear Data Plugin is installed,', () => {
     ];
 
     it('Global Clear Indicator is installed', () => {
-        openmct.install(ClearDataActionPlugin([]));
+        openmct.install(ClearDataActionPlugin(openmct, {indicator: true}));
 
         expect(mockIndicatorProvider.add).toHaveBeenCalled();
     });
 
     it('Clear Data context menu action is installed', () => {
-        openmct.install(ClearDataActionPlugin([]));
+        openmct.install(ClearDataActionPlugin(openmct, []));
 
         expect(mockActionsProvider.register).toHaveBeenCalled();
     });

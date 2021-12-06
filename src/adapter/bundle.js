@@ -25,11 +25,9 @@ define([
     './capabilities/AdapterCapability',
     './directives/MCTView',
     './services/Instantiate',
-    './services/MissingModelCompatibilityDecorator',
     './capabilities/APICapabilityDecorator',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
-    './runs/TypeDeprecationChecker',
     './runs/LegacyTelemetryProvider',
     './runs/RegisterLegacyTypes',
     './services/LegacyObjectAPIInterceptor',
@@ -42,11 +40,9 @@ define([
     AdapterCapability,
     MCTView,
     Instantiate,
-    MissingModelCompatibilityDecorator,
     APICapabilityDecorator,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
-    TypeDeprecationChecker,
     LegacyTelemetryProvider,
     RegisterLegacyTypes,
     LegacyObjectAPIInterceptor,
@@ -100,12 +96,6 @@ define([
                         depends: ["openmct"]
                     },
                     {
-                        type: "decorator",
-                        provides: "modelService",
-                        implementation: MissingModelCompatibilityDecorator,
-                        depends: ["openmct"]
-                    },
-                    {
                         provides: "objectService",
                         type: "decorator",
                         priority: "mandatory",
@@ -135,10 +125,6 @@ define([
                     }
                 ],
                 runs: [
-                    {
-                        implementation: TypeDeprecationChecker,
-                        depends: ["types[]"]
-                    },
                     {
                         implementation: AlternateCompositionInitializer,
                         depends: ["openmct"]

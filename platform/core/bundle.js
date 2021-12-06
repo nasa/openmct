@@ -28,7 +28,6 @@ define([
     "./src/models/ModelCacheService",
     "./src/models/PersistedModelProvider",
     "./src/models/CachingModelDecorator",
-    "./src/models/MissingModelDecorator",
     "./src/types/TypeProvider",
     "./src/actions/ActionProvider",
     "./src/actions/ActionAggregator",
@@ -45,7 +44,6 @@ define([
     "./src/capabilities/MutationCapability",
     "./src/capabilities/DelegationCapability",
     "./src/capabilities/InstantiationCapability",
-    "./src/runs/TransactingMutationListener",
     "./src/services/Now",
     "./src/services/Throttle",
     "./src/services/Topic",
@@ -58,7 +56,6 @@ define([
     ModelCacheService,
     PersistedModelProvider,
     CachingModelDecorator,
-    MissingModelDecorator,
     TypeProvider,
     ActionProvider,
     ActionAggregator,
@@ -75,7 +72,6 @@ define([
     MutationCapability,
     DelegationCapability,
     InstantiationCapability,
-    TransactingMutationListener,
     Now,
     Throttle,
     Topic,
@@ -149,12 +145,6 @@ define([
                         "depends": [
                             "cacheService"
                         ]
-                    },
-                    {
-                        "provides": "modelService",
-                        "type": "decorator",
-                        "priority": "fallback",
-                        "implementation": MissingModelDecorator
                     },
                     {
                         "provides": "typeService",
@@ -361,12 +351,6 @@ define([
                             "identifierService",
                             "cacheService"
                         ]
-                    }
-                ],
-                "runs": [
-                    {
-                        "implementation": TransactingMutationListener,
-                        "depends": ["topic", "transactionService", "cacheService"]
                     }
                 ],
                 "constants": [
