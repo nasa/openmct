@@ -20,30 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ['../src/LicenseController'],
-    function (LicenseController) {
+/*
+This test suite is dedicated to tests which can quickly verify that any openmct installation is
+operable and that any type of testing can proceed.
 
-        describe("The License controller", function () {
-            var testLicenses,
-                controller;
+Ideally, smoke tests should make zero assumptions about how and where they are run. This makes them
+more resilient to change and therefor a better indicator of failure. Smoke tests will also run quickly
+as they cover a very "thin surface" of functionality.
 
-            beforeEach(function () {
-                testLicenses = [
-                    { name: "A" },
-                    { name: "B" },
-                    { name: "C" }
-                ];
-                controller = new LicenseController(testLicenses);
-            });
+When deciding between authoring new smoke tests or functional tests, ask yourself "would I feel
+comfortable running this test during a live mission?" Avoid creating or deleting Domain Objects.
+Make no assumptions about the order that elements appear in the DOM.
+*/
 
-            it("exposes license information", function () {
-                // LicenseController is just there to pass licenses[]
-                // extensions down to the template.
-                expect(controller.licenses()).toEqual(testLicenses);
-            });
+const { test, expect } = require('@playwright/test');
 
-        });
+test('Verify that the create button appears and that the Folder Domain Object is available for selection', async ({ page }) => {
 
-    }
-);
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Verify that Create Folder appears in the dropdown
+    const locator = page.locator(':nth-match(:text("Folder"), 2)');
+    await expect(locator).toBeEnabled();
+});

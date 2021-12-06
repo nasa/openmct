@@ -12,6 +12,8 @@ on:
       - '**/*.txt'
       - '**/*.yml'
       - '**/*.yaml'
+      - '**/*.spec.js'
+      - '**/*.config.js'
   schedule:
     - cron: '28 21 * * 3'
 
