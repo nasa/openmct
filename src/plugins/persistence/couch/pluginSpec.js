@@ -102,21 +102,26 @@ describe('the plugin', () => {
             expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
         });
 
-        it('creates an object', async () => {
-            const result = await openmct.objects.save(mockDomainObject);
-            expect(provider.create).toHaveBeenCalled();
-            expect(result).toBeTrue();
+        it('creates an object', (done) => {
+            openmct.objects.save(mockDomainObject).then((result) => {
+                expect(provider.create).toHaveBeenCalled();
+                expect(result).toBeTrue();
+                done();
+            });
         });
 
-        xit('updates an object', async () => {
-            const result = await openmct.objects.save(mockDomainObject);
-            expect(result).toBeTrue();
-            expect(provider.create).toHaveBeenCalled();
-            //Set modified timestamp it detects a change and persists the updated model.
-            mockDomainObject.modified = Date.now();
-            const updatedResult = await openmct.objects.save(mockDomainObject);
-            expect(updatedResult).toBeTrue();
-            expect(provider.update).toHaveBeenCalled();
+        it('updates an object', (done) => {
+            openmct.objects.save(mockDomainObject).then((result) => {
+                expect(result).toBeTrue();
+                expect(provider.create).toHaveBeenCalled();
+                //Set modified timestamp it detects a change and persists the updated model.
+                mockDomainObject.modified = mockDomainObject.persisted + 1;
+                openmct.objects.save(mockDomainObject).then((updatedResult) => {
+                    expect(updatedResult).toBeTrue();
+                    expect(provider.update).toHaveBeenCalled();
+                    done();
+                });
+            });
         });
     });
     describe('batches requests', () => {
