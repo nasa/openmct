@@ -15,9 +15,6 @@ fdescribe("The Object API Search Function", () => {
     let openmct;
 
     beforeEach((done) => {
-        jasmine.clock().install();
-        jasmine.clock().mockDate(BASE_TIME);
-
         resultsPromises = [];
         openmct = createOpenMct();
 
@@ -61,15 +58,23 @@ fdescribe("The Object API Search Function", () => {
             });
         });
 
-        openmct.on('start', done);
+        openmct.on('start', () => {
+            const identifier = {
+                key: 'some-object',
+                namespace: 'some-namespace'
+            };
+            const domainObject = {
+                type: 'clock',
+                name: 'fooRabbit',
+                identifier
+            };
+            objectAPI.inMemorySearchProvider.index(identifier, domainObject);
+            done();
+        });
         openmct.startHeadless();
-
-
-        jasmine.clock().tick(TOTAL_TIME_ELAPSED);
     });
 
     afterEach(async () => {
-        jasmine.clock().uninstall();
         await resetApplicationState(openmct);
     });
 
@@ -84,7 +89,10 @@ fdescribe("The Object API Search Function", () => {
     });
 
     it("provides each providers results as promises that resolve in parallel", async () => {
+        jasmine.clock().install();
+        jasmine.clock().mockDate(BASE_TIME);
         resultsPromises = objectAPI.search('foo');
+        jasmine.clock().tick(TOTAL_TIME_ELAPSED);
         const results = await Promise.all(resultsPromises);
         const mockProviderResults = results.find(
             result => result.name === MOCK_PROVIDER_KEY
@@ -105,5 +113,7 @@ fdescribe("The Object API Search Function", () => {
             MOCK_PROVIDER_SEARCH_DELAY
             + ANOTHER_MOCK_PROVIDER_SEARCH_DELAY
         );
+
+        jasmine.clock().uninstall();
     });
 });
