@@ -20,27 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    "./src/WorkerService"
-], function (
-    WorkerService
-) {
+import UTCTimeFormat from './UTCTimeFormat';
 
-    return {
-        name: "platform/execution",
-        definition: {
-            "extensions": {
-                "services": [
-                    {
-                        "key": "workerService",
-                        "implementation": WorkerService,
-                        "depends": [
-                            "$window",
-                            "workers[]"
-                        ]
-                    }
-                ]
-            }
-        }
+export default function () {
+    return function install(openmct) {
+        openmct.telemetry.addFormat(new UTCTimeFormat());
     };
-});
+}

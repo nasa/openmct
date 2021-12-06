@@ -60,9 +60,10 @@ export default class LegacyContextMenuAction {
 
     appliesTo(objectPath) {
         let legacyObject = this.openmct.legacyObject(objectPath);
+        let view;
 
         return (this.LegacyAction.appliesTo === undefined
-                || this.LegacyAction.appliesTo({domainObject: legacyObject}))
+                || this.LegacyAction.appliesTo({domainObject: legacyObject}, view, this.openmct))
                 && !this.isBlacklisted(objectPath);
     }
 

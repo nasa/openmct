@@ -25,7 +25,7 @@ define(
     function (PropertiesAction) {
 
         describe("Properties action", function () {
-            var capabilities, model, object, context, input, dialogService, action;
+            var capabilities, model, object, context, input, dialogService, action, openmct;
 
             function mockPromise(value) {
                 return {
@@ -36,6 +36,11 @@ define(
             }
 
             beforeEach(function () {
+                openmct = {
+                    objects: {
+                        isPersistable: jasmine.createSpy('isPersistable')
+                    }
+                };
                 capabilities = {
                     type: {
                         getProperties: function () {
@@ -77,6 +82,8 @@ define(
                 capabilities.type.hasFeature.and.returnValue(true);
                 capabilities.mutation.and.returnValue(true);
 
+                openmct.objects.isPersistable.and.returnValue(true);
+
                 action = new PropertiesAction(dialogService, context);
             });
 
@@ -93,11 +100,11 @@ define(
             });
 
             it("is only applicable when a domain object is in context", function () {
-                expect(PropertiesAction.appliesTo(context)).toBeTruthy();
-                expect(PropertiesAction.appliesTo({})).toBeFalsy();
-                // Make sure it checked for creatability
-                expect(capabilities.type.hasFeature).toHaveBeenCalledWith('creation');
+                expect(PropertiesAction.appliesTo(context, undefined, openmct)).toBeTruthy();
+                expect(PropertiesAction.appliesTo({}, undefined, openmct)).toBeFalsy();
+                expect(openmct.objects.isPersistable).toHaveBeenCalled();
             });
+
         });
     }
 );

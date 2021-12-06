@@ -26,7 +26,7 @@ export default function BarGraphCompositionPolicy(openmct) {
     function hasRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
 
-        return rangeValues.length > 0;
+        return rangeValues && rangeValues.length > 0;
     }
 
     function hasBarGraphTelemetry(domainObject) {
@@ -41,8 +41,12 @@ export default function BarGraphCompositionPolicy(openmct) {
 
     return {
         allow: function (parent, child) {
+            if (child.type === 'conditionSet') {
+                return false;
+            }
+
             if ((parent.type === BAR_GRAPH_KEY)
-                && (hasBarGraphTelemetry(child) === false)
+                && (!hasBarGraphTelemetry(child))
             ) {
                 return false;
             }
