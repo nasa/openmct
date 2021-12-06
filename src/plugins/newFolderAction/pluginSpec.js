@@ -78,6 +78,7 @@ describe("the plugin", () => {
             spyOn(openmct.$injector, 'get').and.returnValue(mockDialogService);
             spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
             spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
+            spyOn(openmct.objects, 'isPersistable').and.returnValue(true);
 
             return newFolderAction.invoke(mockObjectPath);
         });
@@ -92,6 +93,12 @@ describe("the plugin", () => {
 
         it('adds new folder object to parent composition', () => {
             expect(mockComposition.add).toHaveBeenCalled();
+        });
+
+        it('checks if the domainObject is persistable', () => {
+            newFolderAction.appliesTo(mockObjectPath);
+
+            expect(openmct.objects.isPersistable).toHaveBeenCalled();
         });
     });
 });
