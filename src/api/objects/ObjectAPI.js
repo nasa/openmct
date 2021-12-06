@@ -27,6 +27,7 @@ import RootObjectProvider from './RootObjectProvider';
 import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
 import Transaction from './Transaction';
+import ConflictError from './ConflictError';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -36,7 +37,6 @@ import Transaction from './Transaction';
 
 function ObjectAPI(typeRegistry, openmct) {
     this.openmct = openmct;
-
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
@@ -50,6 +50,10 @@ function ObjectAPI(typeRegistry, openmct) {
     this.interceptorRegistry = new InterceptorRegistry();
 
     this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
+
+    this.errors = {
+        Conflict: ConflictError
+    };
 }
 
 /**
@@ -180,6 +184,15 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     }
 
     identifier = utils.parseKeyString(identifier);
+    let dirtyObject;
+    if (this.isTransactionActive()) {
+        dirtyObject = this.transaction.getDirtyObject(keystring);
+    }
+
+    if (dirtyObject) {
+        return Promise.resolve(dirtyObject);
+    }
+
     const provider = this.getProvider(identifier);
 
     if (!provider) {
@@ -192,6 +205,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
 
     let objectPromise = provider.get(identifier, abortSignal).then(result => {
         delete this.cache[keystring];
+
         result = this.applyGetInterceptors(identifier, result);
         if (result.isMutable) {
             result.$refresh(result);
@@ -199,6 +213,14 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
             let mutableDomainObject = this._toMutable(result);
             mutableDomainObject.$refresh(result);
         }
+
+        return result;
+    }).catch((result) => {
+        console.warn(`Failed to retrieve ${keystring}:`, result);
+
+        delete this.cache[keystring];
+
+        result = this.applyGetInterceptors(identifier);
 
         return result;
     });
@@ -289,6 +311,13 @@ ObjectAPI.prototype.isPersistable = function (idOrKeyString) {
         && provider.update !== undefined;
 };
 
+ObjectAPI.prototype.isMissing = function (domainObject) {
+    let identifier = utils.makeKeyString(domainObject.identifier);
+    let missingName = 'Missing: ' + identifier;
+
+    return domainObject.name === missingName;
+};
+
 /**
  * Save this domain object in its current state. EXPERIMENTAL
  *
@@ -302,6 +331,7 @@ ObjectAPI.prototype.isPersistable = function (idOrKeyString) {
 ObjectAPI.prototype.save = function (domainObject) {
     let provider = this.getProvider(domainObject.identifier);
     let savedResolve;
+    let savedReject;
     let result;
 
     if (!this.isPersistable(domainObject.identifier)) {
@@ -311,8 +341,9 @@ ObjectAPI.prototype.save = function (domainObject) {
     } else {
         const persistedTime = Date.now();
         if (domainObject.persisted === undefined) {
-            result = new Promise((resolve) => {
+            result = new Promise((resolve, reject) => {
                 savedResolve = resolve;
+                savedReject = reject;
             });
             domainObject.persisted = persistedTime;
             const newObjectPromise = provider.create(domainObject);
@@ -320,6 +351,8 @@ ObjectAPI.prototype.save = function (domainObject) {
                 newObjectPromise.then(response => {
                     this.mutate(domainObject, 'persisted', persistedTime);
                     savedResolve(response);
+                }).catch((error) => {
+                    savedReject(error);
                 });
             } else {
                 result = Promise.reject(`[ObjectAPI][save] Object provider returned ${newObjectPromise} when creating new object.`);
@@ -450,6 +483,23 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
 };
 
 /**
+ * Updates a domain object based on its latest persisted state. Note that this will mutate the provided object.
+ * @param {module:openmct.DomainObject} domainObject an object to refresh from its persistence store
+ * @returns {Promise} the provided object, updated to reflect the latest persisted state of the object.
+ */
+ObjectAPI.prototype.refresh = async function (domainObject) {
+    const refreshedObject = await this.get(domainObject.identifier);
+
+    if (domainObject.isMutable) {
+        domainObject.$refresh(refreshedObject);
+    } else {
+        utils.refresh(domainObject, refreshedObject);
+    }
+
+    return domainObject;
+};
+
+/**
  * @private
  */
 ObjectAPI.prototype._toMutable = function (object) {
@@ -471,6 +521,7 @@ ObjectAPI.prototype._toMutable = function (object) {
                 if (updatedModel.persisted > mutableObject.modified) {
                     //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                     //in rapid succession and intermediate persistence states are returned by the observe function.
+                    updatedModel = this.applyGetInterceptors(identifier, updatedModel);
                     mutableObject.$refresh(updatedModel);
                 }
             });

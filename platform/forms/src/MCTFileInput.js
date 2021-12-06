@@ -44,9 +44,11 @@ define(
                         setText(result.name);
                         scope.ngModel[scope.field] = result;
                         control.$setValidity("file-input", true);
+                        scope.$digest();
                     }, function () {
                         setText('Select File');
                         control.$setValidity("file-input", false);
+                        scope.$digest();
                     });
                 }
 

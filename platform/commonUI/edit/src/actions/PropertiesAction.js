@@ -80,18 +80,15 @@ define(
          * This will ensure that a domain object is present in the
          * context.
          */
-        PropertiesAction.appliesTo = function (context) {
+        PropertiesAction.appliesTo = function (context, view, openmct) {
 
-            var domainObject = (context || {}).domainObject,
-                type = domainObject && domainObject.getCapability('type'),
-                creatable = type && type.hasFeature('creation');
+            let domainObject = (context || {}).domainObject;
 
-            if (domainObject && domainObject.model && domainObject.model.locked) {
+            if (!domainObject || (domainObject.model && domainObject.model.locked)) {
                 return false;
             }
 
-            // Only allow creatable types to be edited
-            return domainObject && creatable;
+            return openmct.objects.isPersistable(domainObject.id);
         };
 
         return PropertiesAction;
