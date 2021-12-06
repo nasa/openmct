@@ -42,7 +42,6 @@ define(
                 newObjects;
 
             beforeEach(function () {
-
                 uniqueId = 0;
                 newObjects = [];
                 openmct = {
@@ -50,9 +49,11 @@ define(
                     objects: {
                         makeKeyString: function (identifier) {
                             return identifier.key;
-                        }
+                        },
+                        isPersistable: jasmine.createSpy('isPersistable')
                     }
                 };
+                openmct.objects.isPersistable.and.returnValue(true);
                 mockInstantiate = jasmine.createSpy('instantiate').and.callFake(
                     function (model, id) {
                         var config = {
@@ -121,9 +122,22 @@ define(
                 var noCompDomainObject = domainObjectFactory();
 
                 context.domainObject = compDomainObject;
-                expect(ImportAsJSONAction.appliesTo(context)).toBe(true);
+                expect(ImportAsJSONAction.appliesTo(context, undefined, openmct)).toBe(true);
                 context.domainObject = noCompDomainObject;
-                expect(ImportAsJSONAction.appliesTo(context)).toBe(false);
+                expect(ImportAsJSONAction.appliesTo(context, undefined, openmct)).toBe(false);
+            });
+
+            it("checks object persistability", function () {
+                var compDomainObject = domainObjectFactory({
+                    name: 'compObject',
+                    model: { name: 'compObject'},
+                    capabilities: {"composition": compositionCapability}
+                });
+
+                context.domainObject = compDomainObject;
+                ImportAsJSONAction.appliesTo(context, undefined, openmct);
+
+                expect(openmct.objects.isPersistable).toHaveBeenCalled();
             });
 
             it("displays error dialog on invalid file choice", function () {

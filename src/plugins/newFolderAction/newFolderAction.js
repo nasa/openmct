@@ -83,7 +83,8 @@ export default class NewFolderAction {
     }
     appliesTo(objectPath) {
         let domainObject = objectPath[0];
+        let isPersistable = this._openmct.objects.isPersistable(domainObject.identifier);
 
-        return domainObject.type === 'folder';
+        return domainObject.type === 'folder' && isPersistable;
     }
 }
