@@ -25,10 +25,12 @@
  */
 define([
     'objectUtils',
-    'lodash'
+    'lodash',
+    'raw-loader!./BareBonesSearchWorker.js'
 ], function (
     objectUtils,
-    _
+    _,
+    BareBonesSearchWorkerText
 ) {
 
     /**
@@ -39,12 +41,13 @@ define([
      * @param $q Angular's $q, for promise consolidation.
      * @param $log Anglar's $log, for logging.
      * @param {ObjectService} objectService the object service.
-     * @param {WorkerService} workerService the workerService.
      * @param {TopicService} topic the topic service.
      * @param {Array} ROOTS An array of object Ids to begin indexing.
      */
-    function GenericSearchProvider($q, $log, objectService, workerService, topic, ROOTS, USE_LEGACY_INDEXER, openmct) {
-        var provider = this;
+
+    function GenericSearchProvider($q, $log, objectService, topic, ROOTS, openmct) {
+        let provider = this;
+
         this.$q = $q;
         this.$log = $log;
         this.objectService = objectService;
@@ -57,9 +60,7 @@ define([
 
         this.pendingQueries = {};
 
-        this.USE_LEGACY_INDEXER = USE_LEGACY_INDEXER;
-
-        this.worker = this.startWorker(workerService);
+        this.worker = this.startWorker();
         this.indexOnMutation(topic);
 
         ROOTS.forEach(function indexRoot(rootId) {
@@ -97,24 +98,23 @@ define([
      * Creates a search worker and attaches handlers.
      *
      * @private
-     * @param workerService
      * @returns worker the created search worker.
      */
-    GenericSearchProvider.prototype.startWorker = function (workerService) {
-        var provider = this,
-            worker;
+    GenericSearchProvider.prototype.startWorker = function () {
+        let provider = this;
 
-        if (this.USE_LEGACY_INDEXER) {
-            worker = workerService.run('genericSearchWorker');
-        } else {
-            worker = workerService.run('bareBonesSearchWorker');
-        }
+        const blob = new Blob(
+            [BareBonesSearchWorkerText],
+            {type: 'application/javascript'}
+        );
+        const objectUrl = URL.createObjectURL(blob);
+        const searchWorker = new Worker(objectUrl);
 
-        worker.addEventListener('message', function (messageEvent) {
+        searchWorker.addEventListener('message', function (messageEvent) {
             provider.onWorkerMessage(messageEvent);
         });
 
-        return worker;
+        return searchWorker;
     };
 
     /**
