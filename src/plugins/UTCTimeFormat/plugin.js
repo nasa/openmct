@@ -20,30 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    ['../src/LicenseController'],
-    function (LicenseController) {
+import UTCTimeFormat from './UTCTimeFormat';
 
-        describe("The License controller", function () {
-            var testLicenses,
-                controller;
-
-            beforeEach(function () {
-                testLicenses = [
-                    { name: "A" },
-                    { name: "B" },
-                    { name: "C" }
-                ];
-                controller = new LicenseController(testLicenses);
-            });
-
-            it("exposes license information", function () {
-                // LicenseController is just there to pass licenses[]
-                // extensions down to the template.
-                expect(controller.licenses()).toEqual(testLicenses);
-            });
-
-        });
-
-    }
-);
+export default function () {
+    return function install(openmct) {
+        openmct.telemetry.addFormat(new UTCTimeFormat());
+    };
+}
