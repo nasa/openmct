@@ -28,7 +28,7 @@ import {
 describe('the plugin', () => {
     let openmct;
     let provider;
-    let testPath = '/test/db';
+    let testPath = 'http://localhost:9990/openmct';
     let options;
     let mockIdentifierService;
     let mockDomainObject;
@@ -66,6 +66,7 @@ describe('the plugin', () => {
         openmct.install(new CouchPlugin(options));
 
         openmct.types.addType('notebook', {creatable: true});
+        openmct.setAssetPath('/base');
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -74,6 +75,10 @@ describe('the plugin', () => {
         spyOn(provider, 'get').and.callThrough();
         spyOn(provider, 'create').and.callThrough();
         spyOn(provider, 'update').and.callThrough();
+        spyOn(provider, 'startSharedWorker').and.callThrough();
+        spyOn(provider, 'fetchChanges').and.callThrough();
+        spyOn(provider, 'onSharedWorkerMessage').and.callThrough();
+        spyOn(provider, 'onEventMessage').and.callThrough();
     });
 
     afterEach(() => {
@@ -102,12 +107,11 @@ describe('the plugin', () => {
             expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
         });
 
-        it('creates an object', (done) => {
-            openmct.objects.save(mockDomainObject).then((result) => {
-                expect(provider.create).toHaveBeenCalled();
-                expect(result).toBeTrue();
-                done();
-            });
+        it('creates an object and starts shared worker', async () => {
+            const result = await openmct.objects.save(mockDomainObject);
+            expect(provider.create).toHaveBeenCalled();
+            expect(provider.startSharedWorker).toHaveBeenCalled();
+            expect(result).toBeTrue();
         });
 
         it('updates an object', (done) => {
@@ -122,6 +126,53 @@ describe('the plugin', () => {
                     done();
                 });
             });
+        });
+
+        it('works without Shared Workers', async () => {
+            let sharedWorkerCallback;
+            window.SharedWorker = undefined;
+            const mockEventSource = {
+                addEventListener: (topic, addedListener) => {
+                    sharedWorkerCallback = addedListener;
+                },
+                removeEventListener: () => {
+                    sharedWorkerCallback = null;
+                }
+            };
+            window.EventSource = function (url) {
+                return mockEventSource;
+            };
+
+            mockDomainObject.id = mockDomainObject.identifier.key;
+
+            const fakeUpdateEvent = {
+                data: JSON.stringify(mockDomainObject)
+            };
+
+            // eslint-disable-next-line require-await
+            provider.request = async function (subPath, method, body, signal) {
+                return {
+                    body: fakeUpdateEvent,
+                    ok: true,
+                    id: mockDomainObject.id,
+                    rev: 5
+                };
+            };
+
+            const result = await openmct.objects.save(mockDomainObject);
+            expect(result).toBeTrue();
+            expect(provider.create).toHaveBeenCalled();
+            expect(provider.startSharedWorker).not.toHaveBeenCalled();
+            //Set modified timestamp it detects a change and persists the updated model.
+            mockDomainObject.modified = Date.now();
+            const updatedResult = await openmct.objects.save(mockDomainObject);
+            openmct.objects.observe(mockDomainObject, '*', (updatedObject) => {
+            });
+            expect(updatedResult).toBeTrue();
+            expect(provider.update).toHaveBeenCalled();
+            expect(provider.fetchChanges).toHaveBeenCalled();
+            sharedWorkerCallback(fakeUpdateEvent);
+            expect(provider.onEventMessage).toHaveBeenCalled();
         });
     });
     describe('batches requests', () => {
@@ -214,6 +265,5 @@ describe('the plugin', () => {
             expect(requestPayload).toBeDefined();
             expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
         });
-
     });
 });
