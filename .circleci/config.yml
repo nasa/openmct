@@ -54,7 +54,6 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
-            - ~/Library/Caches/ms-playwright
       - when:
           condition:
             equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
@@ -91,7 +90,7 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
-            - ~/Library/Caches/ms-playwright
+      - run: npx playwright install
       - run: npm run test:e2e:<<parameters.suite>>
       - store_test_results:
           path: test-results/results.xml
