@@ -27,9 +27,7 @@ define([
     "./src/services/SearchAggregator",
     "./res/templates/search-item.html",
     "./res/templates/search.html",
-    "./res/templates/search-menu.html",
-    "raw-loader!./src/services/GenericSearchWorker.js",
-    "raw-loader!./src/services/BareBonesSearchWorker.js"
+    "./res/templates/search-menu.html"
 ], function (
     SearchController,
     SearchMenuController,
@@ -37,9 +35,7 @@ define([
     SearchAggregator,
     searchItemTemplate,
     searchTemplate,
-    searchMenuTemplate,
-    searchWorkerText,
-    BareBonesSearchWorkerText
+    searchMenuTemplate
 ) {
 
     return {
@@ -55,45 +51,6 @@ define([
                             "ROOT"
                         ],
                         "priority": "fallback"
-                    },
-                    {
-                        "key": "USE_LEGACY_INDEXER",
-                        "value": false,
-                        "priority": 2
-                    }
-                ],
-                "controllers": [
-                    {
-                        "key": "SearchController",
-                        "implementation": SearchController,
-                        "depends": [
-                            "$scope",
-                            "searchService"
-                        ]
-                    },
-                    {
-                        "key": "SearchMenuController",
-                        "implementation": SearchMenuController,
-                        "depends": [
-                            "$scope",
-                            "types[]"
-                        ]
-                    }
-                ],
-                "representations": [
-                    {
-                        "key": "search-item",
-                        "template": searchItemTemplate
-                    }
-                ],
-                "templates": [
-                    {
-                        "key": "search",
-                        "template": searchTemplate
-                    },
-                    {
-                        "key": "search-menu",
-                        "template": searchMenuTemplate
                     }
                 ],
                 "components": [
@@ -105,10 +62,8 @@ define([
                             "$q",
                             "$log",
                             "objectService",
-                            "workerService",
                             "topic",
                             "GENERIC_SEARCH_ROOTS",
-                            "USE_LEGACY_INDEXER",
                             "openmct"
                         ]
                     },
@@ -120,16 +75,6 @@ define([
                             "$q",
                             "objectService"
                         ]
-                    }
-                ],
-                "workers": [
-                    {
-                        "key": "bareBonesSearchWorker",
-                        "scriptText": BareBonesSearchWorkerText
-                    },
-                    {
-                        "key": "genericSearchWorker",
-                        "scriptText": searchWorkerText
                     }
                 ]
             }
