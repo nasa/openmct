@@ -21,6 +21,7 @@
 *****************************************************************************/
 <template>
 <swim-lane :icon-class="item.type.definition.cssClass"
+           :status="status"
            :min-height="item.height"
            :show-ucontents="item.domainObject.type === 'plan'"
            :span-rows-count="item.rowCount"
@@ -58,7 +59,8 @@ export default {
     data() {
         return {
             domainObject: undefined,
-            mutablePromise: undefined
+            mutablePromise: undefined,
+            status: ''
         };
     },
     watch: {
@@ -103,13 +105,27 @@ export default {
                     let childContext = this.$refs.objectView.getSelectionContext();
                     childContext.item = domainObject;
                     this.context = childContext;
+                    if (this.removeSelectable) {
+                        this.removeSelectable();
+                    }
+
                     this.removeSelectable = this.openmct.selection.selectable(
                         this.$el, this.context);
                 }
+
+                if (this.removeStatusListener) {
+                    this.removeStatusListener();
+                }
+
+                this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+                this.status = this.openmct.status.get(this.domainObject.identifier);
             });
         },
         setActionCollection(actionCollection) {
             this.openmct.menus.actionsToMenuItems(actionCollection.getVisibleActions(), actionCollection.objectPath, actionCollection.view);
+        },
+        setStatus(status) {
+            this.status = status;
         }
     }
 };
