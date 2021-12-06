@@ -289,6 +289,7 @@ define([
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
         this.install(this.plugins.DeviceClassifier());
+        this.install(this.plugins.UTCTimeFormat());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
