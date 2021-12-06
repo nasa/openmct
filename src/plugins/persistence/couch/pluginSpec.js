@@ -107,20 +107,11 @@ describe('the plugin', () => {
             expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
         });
 
-<<<<<<< HEAD
         it('creates an object and starts shared worker', async () => {
             const result = await openmct.objects.save(mockDomainObject);
             expect(provider.create).toHaveBeenCalled();
             expect(provider.startSharedWorker).toHaveBeenCalled();
             expect(result).toBeTrue();
-=======
-        it('creates an object', (done) => {
-            openmct.objects.save(mockDomainObject).then((result) => {
-                expect(provider.create).toHaveBeenCalled();
-                expect(result).toBeTrue();
-                done();
-            });
->>>>>>> origin/master
         });
 
         it('updates an object', (done) => {
