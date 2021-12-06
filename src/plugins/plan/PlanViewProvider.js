@@ -33,7 +33,7 @@ export default function PlanViewProvider(openmct) {
     return {
         key: 'plan.view',
         name: 'Plan',
-        cssClass: 'icon-calendar',
+        cssClass: 'icon-plan',
         canView(domainObject) {
             return domainObject.type === 'plan';
         },
