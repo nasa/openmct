@@ -364,7 +364,7 @@ describe("the plugin", function () {
             }).toThrow();
             expect(parent.composition.length).toBe(0);
         });
-        it("disallows composition for telemetry that contain enumerations", () => {
+        it("disallows composition for condition sets", () => {
             const parent = {
                 "composition": [],
                 "configuration": {},
@@ -383,7 +383,7 @@ describe("the plugin", function () {
                     namespace: "",
                     key: "test-object"
                 },
-                type: "test-object",
+                type: "conditionSet",
                 name: "Test Object",
                 telemetry: {
                     values: [{
