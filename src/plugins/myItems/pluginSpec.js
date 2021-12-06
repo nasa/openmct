@@ -71,7 +71,9 @@ describe("the plugin", () => {
 
         beforeEach(async () => {
             mockMissingProvider = {
-                get: () => Promise.resolve(missingObj)
+                get: () => Promise.resolve(missingObj),
+                create: () => Promise.resolve(missingObj),
+                update: () => Promise.resolve(missingObj)
             };
 
             activeProvider = mockMissingProvider;
