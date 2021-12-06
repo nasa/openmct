@@ -23,7 +23,7 @@
 import UTCTimeFormat from './UTCTimeFormat.js';
 
 describe('the plugin', () => {
-    const ISO_KEY = 'utc';
+    const UTC_KEY = 'utc';
     const JUNK = 'junk';
     const MOON_LANDING_TIMESTAMP = -14256000000;
     const MOON_LANDING_DEFAULT_FORMAT = '1969-07-20 00:00:00.000Z';
@@ -43,7 +43,7 @@ describe('the plugin', () => {
 
     describe('creates a new UTC based formatter', function () {
         it("with the key 'utc'", () => {
-            expect(utcFormatter.key).toBe(ISO_KEY);
+            expect(utcFormatter.key).toBe(UTC_KEY);
         });
 
         it('that will format a timestamp in UTC Standard Date', () => {
