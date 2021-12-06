@@ -129,6 +129,7 @@ describe('the plugin', () => {
 
         it('works without Shared Workers', async () => {
             let sharedWorkerCallback;
+            const restoreSharedWorker = window.SharedWorker;
             window.SharedWorker = undefined;
             const mockEventSource = {
                 addEventListener: (topic, addedListener) => {
@@ -172,6 +173,7 @@ describe('the plugin', () => {
             expect(provider.fetchChanges).toHaveBeenCalled();
             sharedWorkerCallback(fakeUpdateEvent);
             expect(provider.onEventMessage).toHaveBeenCalled();
+            window.SharedWorker = restoreSharedWorker;
         });
     });
     describe('batches requests', () => {
