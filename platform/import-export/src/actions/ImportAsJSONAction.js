@@ -221,15 +221,17 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
         dialog = this.dialogService.showBlockingMessage(model);
     };
 
-    ImportAsJSONAction.appliesTo = function (context) {
-        let domainObject = context.domainObject;
+    ImportAsJSONAction.appliesTo = function (context, view, openmct) {
+        let domainObject = (context || {}).domainObject;
 
-        if (domainObject && domainObject.model.locked) {
+        if (!domainObject || (domainObject.model && domainObject.model.locked)) {
             return false;
         }
 
-        return domainObject !== undefined
-            && domainObject.hasCapability("composition");
+        let isPersistable = openmct.objects.isPersistable(domainObject.id);
+        let hasComposition = domainObject.hasCapability('composition');
+
+        return hasComposition && isPersistable;
     };
 
     return ImportAsJSONAction;
