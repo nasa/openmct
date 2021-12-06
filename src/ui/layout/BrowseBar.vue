@@ -20,8 +20,8 @@
             </div>
             <span
                 class="l-browse-bar__object-name c-object-label__name"
-                :class="{ 'c-input-inline' : type.creatable}"
-                :contenteditable="type.creatable"
+                :class="{ 'c-input-inline' : isPersistable}"
+                :contenteditable="isPersistable"
                 @blur="updateName"
                 @keydown.enter.prevent
                 @keyup.enter.prevent="updateNameOnEnterKeyPress"
@@ -193,6 +193,11 @@ export default {
             }
 
             return objectType.definition;
+        },
+        isPersistable() {
+            let persistable = this.openmct.objects.isPersistable(this.domainObject.identifier);
+
+            return persistable;
         },
         isViewEditable() {
             let currentViewKey = this.currentView.key;

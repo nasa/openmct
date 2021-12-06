@@ -20,34 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './plugin'
-], function (plugin) {
-    describe("The buildInfo plugin", function () {
-        let mockmct;
-        let testInfo;
+import UTCTimeFormat from './UTCTimeFormat';
 
-        beforeEach(function () {
-            mockmct = jasmine.createSpyObj('openmct', ['legacyExtension']);
-            testInfo = {
-                foo: 123,
-                bar: "baz"
-            };
-            plugin(testInfo)(mockmct);
-        });
-
-        it("registers versions extensions", function () {
-            Object.keys(testInfo).forEach(function (key) {
-                expect(mockmct.legacyExtension).toHaveBeenCalledWith(
-                    "versions",
-                    {
-                        key: key,
-                        name: jasmine.any(String),
-                        value: testInfo[key],
-                        description: undefined
-                    }
-                );
-            });
-        });
-    });
-});
+export default function () {
+    return function install(openmct) {
+        openmct.telemetry.addFormat(new UTCTimeFormat());
+    };
+}

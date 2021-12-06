@@ -184,6 +184,15 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     }
 
     identifier = utils.parseKeyString(identifier);
+    let dirtyObject;
+    if (this.isTransactionActive()) {
+        dirtyObject = this.transaction.getDirtyObject(keystring);
+    }
+
+    if (dirtyObject) {
+        return Promise.resolve(dirtyObject);
+    }
+
     const provider = this.getProvider(identifier);
 
     if (!provider) {
@@ -512,6 +521,7 @@ ObjectAPI.prototype._toMutable = function (object) {
                 if (updatedModel.persisted > mutableObject.modified) {
                     //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                     //in rapid succession and intermediate persistence states are returned by the observe function.
+                    updatedModel = this.applyGetInterceptors(identifier, updatedModel);
                     mutableObject.$refresh(updatedModel);
                 }
             });

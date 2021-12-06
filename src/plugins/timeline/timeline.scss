@@ -1,10 +1,12 @@
 .c-timeline-holder {
-    @include abs();
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
+    overflow: hidden;
+}
 
-    > * + * {
-        margin-top: $interiorMargin;
-    }
+.c-plan.c-timeline-holder {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.c-timeline__objects {
+    display: contents;
 }
