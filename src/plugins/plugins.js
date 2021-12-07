@@ -75,7 +75,7 @@ define([
     './DeviceClassifier/plugin',
     './UTCTimeFormat/plugin',
     './timer/plugin',
-    './UserIndicator/plugin',
+    './userIndicator/plugin',
     './exampleUser/plugin'
 ], function (
     _,
