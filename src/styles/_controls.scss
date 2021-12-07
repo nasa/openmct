@@ -271,6 +271,7 @@ input, textarea {
 input[type=text],
 input[type=search],
 input[type=number],
+input[type=date],
 textarea {
     @include reactive-input();
     padding: $inputTextP;
