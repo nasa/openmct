@@ -58,7 +58,7 @@ class InMemorySearchProvider {
     }
 
     startIndexing() {
-        console.debug('🖲 Starting indexing for search 🖲');
+        // console.debug('🖲 Starting indexing for search 🖲');
         // Need to check here if object provider supports search or not
         const rootObject = this.openmct.objects.rootProvider.rootObject;
         this.scheduleForIndexing(rootObject.identifier);
@@ -104,7 +104,7 @@ class InMemorySearchProvider {
      * @private
      */
     async onWorkerMessage(event) {
-        console.debug(`🖲 Received event from search worker 🖲`, event);
+        // (`🖲 Received event from search worker 🖲`, event);
         if (event.data.request !== 'search') {
             return;
         }
@@ -121,7 +121,7 @@ class InMemorySearchProvider {
         }));
 
         pendingQuery.resolve(modelResults);
-        console.debug(`🖲 Returning model results 🖲`, modelResults);
+        // console.debug(`🖲 Returning model results 🖲`, modelResults);
         delete this.pendingQueries[event.data.queryId];
     }
 
@@ -170,7 +170,7 @@ class InMemorySearchProvider {
 
         if (objectProvider === undefined || objectProvider.search === undefined) {
             if (!this.indexedIds[keyString] && !this.pendingIndex[keyString]) {
-                console.debug(`🖲Scheduling ${keyString} for indexing 🖲`);
+                // console.debug(`🖲Scheduling ${keyString} for indexing 🖲`);
                 this.pendingIndex[keyString] = true;
                 this.idsToIndex.push(keyString);
             }
@@ -210,15 +210,14 @@ class InMemorySearchProvider {
         const provider = this;
         const keyString = this.openmct.objects.makeKeyString(id);
         if (!this.indexedIds[keyString]) {
-            console.debug(`🖲 Newly indexed object, so registering observer for ${keyString} 🖲`, domainObject);
+            // console.debug(`🖲 Newly indexed object, so registering observer for ${keyString} 🖲`, domainObject);
             this.openmct.objects.observe(domainObject, `*`, this.onMutationOfIndexedObject);
         }
 
         this.indexedIds[keyString] = true;
 
         if ((id.key !== 'ROOT')) {
-
-            console.debug(`🖲 Telling worker to index ${keyString} 🖲`, domainObject);
+            // console.debug(`🖲 Telling worker to index ${keyString} 🖲`, domainObject);
             this.worker.port.postMessage({
                 request: 'index',
                 model: domainObject,
@@ -275,7 +274,7 @@ class InMemorySearchProvider {
      */
     dispatchSearch(searchInput, maxResults) {
         const queryId = uuid();
-        console.debug(`🍉 Sending to worker to search 🍉`, searchInput);
+        // console.debug(`🍉 Sending to worker to search 🍉`, searchInput);
 
         this.worker.port.postMessage({
             request: 'search',
