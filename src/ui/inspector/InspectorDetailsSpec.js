@@ -43,6 +43,7 @@ describe('the inspector', () => {
                 namespace: '',
                 key: 'mock-folder-key'
             },
+            notes: 'This object should have some notes',
             created: 1592851063871
         };
 
@@ -73,6 +74,7 @@ describe('the inspector', () => {
         const [
             title,
             type,
+            notes,
             timestamp
         ] = details;
 
@@ -85,6 +87,8 @@ describe('the inspector', () => {
             .toEqual('Type');
         expect(type.value.toLowerCase())
             .toEqual(folderItem.type);
+        expect(notes.value)
+            .toEqual('This object should have some notes');
 
         expect(timestamp.name)
             .toEqual('Created');

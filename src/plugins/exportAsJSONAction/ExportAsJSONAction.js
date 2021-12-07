@@ -68,10 +68,6 @@ export default class ExportAsJSONAction {
         this._write(this.root);
     }
 
-<<<<<<< HEAD
-    // Private
-=======
->>>>>>> cc463654c827bd89bc1cc90bd713ace37b9caccd
     /**
      * @private
      * @param {object} domainObject
@@ -119,11 +115,9 @@ export default class ExportAsJSONAction {
             return _.isEqual(child.identifier, id);
         });
         const copyOfChild = JSON.parse(JSON.stringify(child));
-<<<<<<< HEAD
-        copyOfChild.identifier.key = this.identifierService.generate();
-=======
+
         copyOfChild.identifier.key = uuid();
->>>>>>> cc463654c827bd89bc1cc90bd713ace37b9caccd
+
         const newIdString = this._getId(copyOfChild);
         const parentId = this._getId(parent);
 
