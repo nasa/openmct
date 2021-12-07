@@ -19,33 +19,234 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-import { createOpenMct, getMockObjects } from 'utils/testing';
-import ExportAsJSONAction from '/ExportAsJSONAction';
 
-describe("The export JSON action", function () {
+define(
+    [
+        "../../src/actions/ExportAsJSONAction",
+        "../../../entanglement/test/DomainObjectFactory",
+        "../../../../src/MCT",
+        '../../../../src/adapter/capabilities/AdapterCapability'
+    ],
+    function (ExportAsJSONAction, domainObjectFactory, MCT, AdapterCapability) {
 
-    let openmct;
+        describe("The export JSON action", function () {
 
-    beforeEach(function () {
-        openmct = createOpenMct();
-    });
+            let context;
+            let action;
+            let exportService;
+            let identifierService;
+            let typeService;
+            let openmct;
+            let policyService;
+            let mockType;
+            let mockObjectProvider;
+            let exportedTree;
 
-    it("initializes happily", function () {
+            beforeEach(function () {
+                openmct = new MCT();
+                mockObjectProvider = {
+                    objects: {},
+                    get: function (id) {
+                        return Promise.resolve(mockObjectProvider.objects[id.key]);
+                    }
+                };
+                openmct.objects.addProvider('', mockObjectProvider);
 
-    });
+                exportService = jasmine.createSpyObj('exportService',
+                    ['exportJSON']);
+                identifierService = jasmine.createSpyObj('identifierService',
+                    ['generate']);
+                policyService = jasmine.createSpyObj('policyService',
+                    ['allow']);
+                mockType = jasmine.createSpyObj('type', ['hasFeature']);
+                typeService = jasmine.createSpyObj('typeService', [
+                    'getType'
+                ]);
 
-    xit("doesn't export non-creatable objects in tree", function () {
-    });
+                mockType.hasFeature.and.callFake(function (feature) {
+                    return feature === 'creation';
+                });
 
-    xit("can export self-containing objects", function () {
+                typeService.getType.and.returnValue(mockType);
 
-    });
+                context = {};
+                context.domainObject = domainObjectFactory(
+                    {
+                        name: 'test',
+                        id: 'someID',
+                        capabilities: {
+                            'adapter': {
+                                invoke: invokeAdapter
+                            }
+                        }
+                    });
+                identifierService.generate.and.returnValue('brandNewId');
+                exportService.exportJSON.and.callFake(function (tree, options) {
+                    exportedTree = tree;
+                });
+                policyService.allow.and.callFake(function (capability, type) {
+                    return type.hasFeature(capability);
+                });
 
-    xit("exports links to external objects as new objects", function () {
-    });
+                action = new ExportAsJSONAction(openmct, exportService, policyService,
+                    identifierService, typeService, context);
+            });
 
-    it("exports object tree in the correct format", function () {
+            function invokeAdapter() {
+                let newStyleObject = new AdapterCapability(context.domainObject).invoke();
 
-    });
+                return newStyleObject;
+            }
 
-});
+            it("initializes happily", function () {
+                expect(action).toBeDefined();
+            });
+
+            xit("doesn't export non-creatable objects in tree", function () {
+                let nonCreatableType = {
+                    hasFeature:
+                        function (feature) {
+                            return feature !== 'creation';
+                        }
+                };
+
+                typeService.getType.and.returnValue(nonCreatableType);
+
+                let parent = domainObjectFactory({
+                    name: 'parent',
+                    model: {
+                        name: 'parent',
+                        location: 'ROOT',
+                        composition: ['childId']
+                    },
+                    id: 'parentId',
+                    capabilities: {
+                        'adapter': {
+                            invoke: invokeAdapter
+                        }
+                    }
+                });
+
+                let child = {
+                    identifier: {
+                        namespace: '',
+                        key: 'childId'
+                    },
+                    name: 'child',
+                    location: 'parentId'
+                };
+                context.domainObject = parent;
+                addChild(child);
+
+                action.perform();
+
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
+                    expect(Object.keys(action.tree).length).toBe(1);
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "parentId"))
+                        .toBeTruthy();
+                });
+            });
+
+            xit("can export self-containing objects", function () {
+                let parent = domainObjectFactory({
+                    name: 'parent',
+                    model: {
+                        name: 'parent',
+                        location: 'ROOT',
+                        composition: ['infiniteChildId']
+                    },
+                    id: 'infiniteParentId',
+                    capabilities: {
+                        'adapter': {
+                            invoke: invokeAdapter
+                        }
+                    }
+                });
+
+                let child = {
+                    identifier: {
+                        namespace: '',
+                        key: 'infiniteChildId'
+                    },
+                    name: 'child',
+                    location: 'infiniteParentId',
+                    composition: ['infiniteParentId']
+                };
+                addChild(child);
+
+                context.domainObject = parent;
+
+                action.perform();
+
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
+                    expect(Object.keys(action.tree).length).toBe(2);
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "infiniteParentId"))
+                        .toBeTruthy();
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "infiniteChildId"))
+                        .toBeTruthy();
+                });
+            });
+
+            xit("exports links to external objects as new objects", function () {
+                let parent = domainObjectFactory({
+                    name: 'parent',
+                    model: {
+                        name: 'parent',
+                        composition: ['externalId'],
+                        location: 'ROOT'
+                    },
+                    id: 'parentId',
+                    capabilities: {
+                        'adapter': {
+                            invoke: invokeAdapter
+                        }
+                    }
+                });
+
+                let externalObject = {
+                    name: 'external',
+                    location: 'outsideOfTree',
+                    identifier: {
+                        namespace: '',
+                        key: 'externalId'
+                    }
+                };
+                addChild(externalObject);
+
+                context.domainObject = parent;
+
+                return new Promise (function (resolve) {
+                    action.perform();
+                    setTimeout(resolve, 100);
+                }).then(function () {
+                    expect(Object.keys(action.tree).length).toBe(2);
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "parentId"))
+                        .toBeTruthy();
+                    expect(Object.prototype.hasOwnProperty.call(action.tree, "brandNewId"))
+                        .toBeTruthy();
+                    expect(action.tree.brandNewId.location).toBe('parentId');
+                });
+            });
+
+            it("exports object tree in the correct format", function () {
+                action.perform();
+
+                return new Promise(function (resolve, reject) {
+                    setTimeout(resolve, 100);
+                }).then(function () {
+                    expect(Object.keys(exportedTree).length).toBe(2);
+                    expect(Object.prototype.hasOwnProperty.call(exportedTree, "openmct")).toBeTruthy();
+                    expect(Object.prototype.hasOwnProperty.call(exportedTree, "rootId")).toBeTruthy();
+                });
+            });
+
+            function addChild(object) {
+                mockObjectProvider.objects[object.identifier.key] = object;
+            }
+        });
+    }
+);

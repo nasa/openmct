@@ -425,14 +425,14 @@ tests, as well as a file named `suite.json` describing which files to test.
 Should have the same folder structure as the `src` directory; see the section on 
 automated testing for more information. 
  
-For example, the directory structure for bundle `platform/commonUI/about`  looks 
+For example, the directory structure for bundle `platform/commonUI/dialog`  looks 
 like: 
 
     Platform
       |
       |-commonUI
       |
-      +-about
+      +-dialog
         |
         |-res
         |

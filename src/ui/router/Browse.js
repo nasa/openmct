@@ -44,6 +44,12 @@ define([
             openmct.layout.$refs.browseBar.viewKey = viewProvider.key;
         }
 
+        function updateDocumentTitleOnNameMutation(domainObject) {
+            if (typeof domainObject.name === 'string' && domainObject.name !== document.title) {
+                document.title = domainObject.name;
+            }
+        }
+
         function navigateToPath(path, currentViewKey) {
             navigateCall++;
             let currentNavigation = navigateCall;
@@ -68,10 +74,10 @@ define([
                 objects = objects.reverse();
 
                 openmct.router.path = objects;
+                openmct.router.emit('afterNavigation');
                 browseObject = objects[0];
 
                 openmct.layout.$refs.browseBar.domainObject = browseObject;
-
                 if (!browseObject) {
                     openmct.layout.$refs.browseObject.clear();
 
@@ -81,8 +87,9 @@ define([
                 let currentProvider = openmct
                     .objectViews
                     .getByProviderKey(currentViewKey);
-
                 document.title = browseObject.name; //change document title to current object in main view
+                // assign listener to global for later clearing
+                unobserve = openmct.objects.observe(browseObject, '*', updateDocumentTitleOnNameMutation);
 
                 if (currentProvider && currentProvider.canView(browseObject, openmct.router.path)) {
                     viewObject(browseObject, currentProvider);
@@ -107,7 +114,6 @@ define([
         function pathToObjects(path) {
             return Promise.all(path.map((keyString) => {
                 let identifier = openmct.objects.parseKeyString(keyString);
-
                 if (openmct.objects.supportsMutation(identifier)) {
                     return openmct.objects.getMutable(identifier);
                 } else {
@@ -119,11 +125,16 @@ define([
         function navigateToFirstChildOfRoot() {
             openmct.objects.get('ROOT')
                 .then(rootObject => {
-                    openmct.composition.get(rootObject).load()
+                    const composition = openmct.composition.get(rootObject);
+                    if (!composition) {
+                        return;
+                    }
+
+                    composition.load()
                         .then(children => {
                             let lastChild = children[children.length - 1];
                             if (!lastChild) {
-                                console.error('Unable to navigate to anything. No root objects found.');
+                                console.debug('Unable to navigate to anything. No root objects found.');
                             } else {
                                 let lastChildId = openmct.objects.makeKeyString(lastChild.identifier);
                                 openmct.router.setPath(`#/browse/${lastChildId}`);

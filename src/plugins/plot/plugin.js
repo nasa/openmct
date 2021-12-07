@@ -19,7 +19,6 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 import PlotViewProvider from './PlotViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
@@ -63,7 +62,9 @@ export default function () {
         openmct.objectViews.addProvider(new StackedPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));
+
         openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
+
         openmct.composition.addPolicy(new OverlayPlotCompositionPolicy(openmct).allow);
         openmct.composition.addPolicy(new StackedPlotCompositionPolicy(openmct).allow);
     };

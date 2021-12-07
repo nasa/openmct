@@ -224,7 +224,6 @@
         flex: 1 1 auto;
         flex-wrap: wrap;
         justify-content: flex-end;
-        [class*='indicator-clock'] { order: 90; }
 
         .c-indicator .label {
             font-size: 0.9em;
@@ -235,8 +234,19 @@
     &__main-container {
         // Wrapper for main views
         //display: flex; NEEDS REGRESSION TESTING!!!
+        display: flex;
+        flex-direction: column;
         flex: 1 1 auto !important;
         height: 100%; // Chrome 73 overflow bug fix
+        overflow: auto;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+    }
+
+    &__main-object-view {
+        flex: 1 1 auto;
         overflow: auto;
     }
 
@@ -247,7 +257,13 @@
 
     &__time-conductor {
         border-top: 1px solid $colorInteriorBorder;
+        display: flex;
+        flex-direction: column;
         padding-top: $interiorMargin;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
     }
 
     &__main {

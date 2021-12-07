@@ -24,40 +24,31 @@
 <div ref="timelineHolder"
      class="c-timeline-holder"
 >
-    <div class="c-timeline">
-        <div v-for="timeSystemItem in timeSystems"
-             :key="timeSystemItem.timeSystem.key"
-             class="u-contents"
-        >
-            <swim-lane>
-                <template slot="label">
-                    {{ timeSystemItem.timeSystem.name }}
-                </template>
-                <template slot="object">
-                    <timeline-axis :bounds="timeSystemItem.bounds"
-                                   :time-system="timeSystemItem.timeSystem"
-                                   :content-height="height"
-                                   :rendering-engine="'svg'"
-                    />
-                </template>
+    <swim-lane v-for="timeSystemItem in timeSystems"
+               :key="timeSystemItem.timeSystem.key"
+    >
+        <template slot="label">
+            {{ timeSystemItem.timeSystem.name }}
+        </template>
+        <template slot="object">
+            <timeline-axis :bounds="timeSystemItem.bounds"
+                           :time-system="timeSystemItem.timeSystem"
+                           :content-height="height"
+                           :rendering-engine="'svg'"
+            />
+        </template>
 
-            </swim-lane>
-        </div>
+    </swim-lane>
 
-        <div ref="contentHolder"
-             class="u-contents c-timeline__objects c-timeline__content-holder"
-        >
-            <div
-                v-for="item in items"
-                :key="item.keyString"
-                class="u-contents c-timeline__content"
-            >
-                <timeline-object-view
-                    class="u-contents"
-                    :item="item"
-                />
-            </div>
-        </div>
+    <div ref="contentHolder"
+         class="c-timeline__objects"
+    >
+        <timeline-object-view
+            v-for="item in items"
+            :key="item.keyString"
+            class="c-timeline__content"
+            :item="item"
+        />
     </div>
 </div>
 </template>
@@ -86,15 +77,16 @@ export default {
         return {
             items: [],
             timeSystems: [],
-            height: 0
+            height: 0,
+            useIndependentTime: this.domainObject.configuration.useIndependentTime === true,
+            timeOptions: this.domainObject.configuration.timeOptions
         };
     },
     beforeDestroy() {
         this.composition.off('add', this.addItem);
         this.composition.off('remove', this.removeItem);
         this.composition.off('reorder', this.reorder);
-        this.openmct.time.off("bounds", this.updateViewBounds);
-
+        this.stopFollowingTimeContext();
     },
     mounted() {
         if (this.composition) {
@@ -104,8 +96,8 @@ export default {
             this.composition.load();
         }
 
+        this.setTimeContext();
         this.getTimeSystems();
-        this.openmct.time.on("bounds", this.updateViewBounds);
     },
     methods: {
         addItem(domainObject) {
@@ -132,8 +124,8 @@ export default {
         },
         removeItem(identifier) {
             let index = this.items.findIndex(item => this.openmct.objects.areIdsEqual(identifier, item.domainObject.identifier));
-            this.removeSelectable(this.items[index]);
             this.items.splice(index, 1);
+            this.updateContentHeight();
         },
         reorder(reorderPlan) {
             let oldItems = this.items.slice();
@@ -154,7 +146,7 @@ export default {
             });
         },
         getBoundsForTimeSystem(timeSystem) {
-            const currentBounds = this.openmct.time.bounds();
+            const currentBounds = this.timeContext.bounds();
 
             //TODO: Some kind of translation via an offset? of current bounds to target timeSystem
             return currentBounds;
@@ -163,6 +155,20 @@ export default {
             let currentTimeSystem = this.timeSystems.find(item => item.timeSystem.key === this.openmct.time.timeSystem().key);
             if (currentTimeSystem) {
                 currentTimeSystem.bounds = bounds;
+            }
+        },
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+
+            this.timeContext = this.openmct.time.getContextForView(this.objectPath);
+            this.timeContext.on('timeContext', this.setTimeContext);
+            this.updateViewBounds(this.timeContext.bounds());
+            this.timeContext.on('bounds', this.updateViewBounds);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off('bounds', this.updateViewBounds);
+                this.timeContext.off('timeContext', this.setTimeContext);
             }
         }
     }

@@ -20,20 +20,25 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimelineViewProvider from '../timeline/TimelineViewProvider';
+import TimelineViewProvider from './TimelineViewProvider';
+import timelineInterceptor from "./timelineInterceptor";
 
 export default function () {
     return function install(openmct) {
         openmct.types.addType('time-strip', {
             name: 'Time Strip',
             key: 'time-strip',
-            description: 'An activity timeline',
+            description: 'Compose and display time-based telemetry and other object types in a timeline-like view.',
             creatable: true,
             cssClass: 'icon-timeline',
             initialize: function (domainObject) {
                 domainObject.composition = [];
+                domainObject.configuration = {
+                    useIndependentTime: false
+                };
             }
         });
+        timelineInterceptor(openmct);
         openmct.objectViews.addProvider(new TimelineViewProvider(openmct));
     };
 }

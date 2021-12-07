@@ -144,7 +144,13 @@ define([
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
+        this.requestAbortControllers = new Set();
     }
+
+    TelemetryAPI.prototype.abortAllRequests = function () {
+        this.requestAbortControllers.forEach((controller) => controller.abort());
+        this.requestAbortControllers.clear();
+    };
 
     /**
      * Return Custom String Formatter
@@ -180,12 +186,6 @@ define([
      * @memberof module:openmct.TelemetryAPI~TelemetryProvider#
      */
     TelemetryAPI.prototype.canProvideTelemetry = function (domainObject) {
-        console.warn(
-            'DEPRECATION WARNING: openmct.telemetry.canProvideTelemetry '
-            + 'will not be supported in future versions of Open MCT.  Please '
-            + 'use openmct.telemetry.isTelemetryObject instead.'
-        );
-
         return Boolean(this.findSubscriptionProvider(domainObject))
                || Boolean(this.findRequestProvider(domainObject));
     };
@@ -318,6 +318,10 @@ define([
             arguments[1] = {};
         }
 
+        const abortController = new AbortController();
+        arguments[1].signal = abortController.signal;
+        this.requestAbortControllers.add(abortController);
+
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
@@ -325,10 +329,14 @@ define([
         }
 
         return provider.request.apply(provider, arguments).catch((rejected) => {
-            this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-            console.error(rejected);
+            if (rejected.name !== 'AbortError') {
+                this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+                console.error(rejected);
+            }
 
             return Promise.reject(rejected);
+        }).finally(() => {
+            this.requestAbortControllers.delete(abortController);
         });
     };
 
@@ -483,6 +491,10 @@ define([
      * @returns {Object<String, {TelemetryValueFormatter}>}
      */
     TelemetryAPI.prototype.getFormatMap = function (metadata) {
+        if (!metadata) {
+            return {};
+        }
+
         if (!this.formatMapCache.has(metadata)) {
             const formatMap = metadata.values().reduce(function (map, valueMetadata) {
                 map[valueMetadata.key] = this.getValueFormatter(valueMetadata);

@@ -125,7 +125,6 @@
     <div
         class="c-table c-telemetry-table c-table--filterable c-table--sortable has-control-bar u-style-receiver js-style-receiver"
         :class="{
-            'loading': loading,
             'is-paused' : paused
         }"
     >
@@ -138,6 +137,13 @@
             class="c-telemetry-table__drop-target"
             :style="dropTargetStyle"
         ></div>
+
+        <progress-bar
+            v-if="loading"
+            class="c-telemetry-table__progress-bar"
+            :model="progressLoad"
+        />
+
         <!-- Headers table -->
         <div
             v-show="!hideHeaders"
@@ -285,6 +291,7 @@ import CSVExporter from '../../../exporters/CSVExporter.js';
 import _ from 'lodash';
 import ToggleSwitch from '../../../ui/components/ToggleSwitch.vue';
 import SizingRow from './sizing-row.vue';
+import ProgressBar from "../../../ui/components/ProgressBar.vue";
 
 const VISIBLE_ROW_COUNT = 100;
 const ROW_HEIGHT = 17;
@@ -298,7 +305,8 @@ export default {
         search,
         TableFooterIndicator,
         ToggleSwitch,
-        SizingRow
+        SizingRow,
+        ProgressBar
     },
     inject: ['openmct', 'objectPath', 'table', 'currentView'],
     props: {
@@ -374,6 +382,11 @@ export default {
         };
     },
     computed: {
+        progressLoad() {
+            return {
+                progressPerc: undefined
+            };
+        },
         dropTargetStyle() {
             return {
                 top: this.$refs.headersTable.offsetTop + 'px',
@@ -408,6 +421,14 @@ export default {
         }
     },
     watch: {
+        loading: {
+            handler(isLoading) {
+                if (this.viewActionsCollection) {
+                    let action = isLoading ? 'disable' : 'enable';
+                    this.viewActionsCollection[action](['export-csv-all']);
+                }
+            }
+        },
         markedRows: {
             handler(newVal, oldVal) {
                 this.$emit('marked-rows-updated', newVal, oldVal);
@@ -514,7 +535,6 @@ export default {
             if (!this.updatingView) {
                 this.updatingView = true;
                 requestAnimationFrame(() => {
-
                     let start = 0;
                     let end = VISIBLE_ROW_COUNT;
                     let tableRows = this.table.tableRows.getRows();
@@ -1004,6 +1024,12 @@ export default {
                 this.viewActionsCollection.enable(['export-csv-marked', 'unmark-all-rows']);
             } else if (this.markedRows.length === 0) {
                 this.viewActionsCollection.disable(['export-csv-marked', 'unmark-all-rows']);
+            }
+
+            if (this.loading) {
+                this.viewActionsCollection.disable(['export-csv-all']);
+            } else {
+                this.viewActionsCollection.enable(['export-csv-all']);
             }
 
             if (this.paused) {

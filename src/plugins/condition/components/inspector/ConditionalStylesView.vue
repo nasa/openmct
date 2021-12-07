@@ -30,10 +30,10 @@
             <div v-if="staticStyle"
                  class="c-inspect-styles__style"
             >
-                <style-editor class="c-inspect-styles__editor"
-                              :style-item="staticStyle"
-                              :is-editing="isEditing"
-                              @persist="updateStaticStyle"
+                <StyleEditor class="c-inspect-styles__editor"
+                             :style-item="staticStyle"
+                             :is-editing="isEditing"
+                             @persist="updateStaticStyle"
                 />
             </div>
             <button
@@ -87,10 +87,10 @@
                 <condition-description :show-label="true"
                                        :condition="getCondition(conditionStyle.conditionId)"
                 />
-                <style-editor class="c-inspect-styles__editor"
-                              :style-item="conditionStyle"
-                              :is-editing="isEditing"
-                              @persist="updateConditionalStyle"
+                <StyleEditor class="c-inspect-styles__editor"
+                             :style-item="conditionStyle"
+                             :is-editing="isEditing"
+                             @persist="updateConditionalStyle"
                 />
             </div>
         </div>
@@ -101,12 +101,12 @@
 <script>
 
 import StyleEditor from "./StyleEditor.vue";
-import ConditionSetSelectorDialog from "./ConditionSetSelectorDialog.vue";
+import SelectorDialogTree from '@/ui/components/SelectorDialogTree.vue';
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import Vue from 'vue';
 import PreviewAction from "@/ui/preview/PreviewAction.js";
-import {getApplicableStylesForItem} from "@/plugins/condition/utils/styleUtils";
+import { getApplicableStylesForItem } from "@/plugins/condition/utils/styleUtils";
 import isEmpty from 'lodash/isEmpty';
 
 export default {
@@ -224,7 +224,7 @@ export default {
             let conditionSetDomainObject;
             let self = this;
 
-            function handleItemSelection(item) {
+            function handleItemSelection({ item }) {
                 if (item) {
                     conditionSetDomainObject = item;
                 }
@@ -240,16 +240,17 @@ export default {
             }
 
             let vm = new Vue({
+                components: { SelectorDialogTree },
                 provide: {
                     openmct: this.openmct
                 },
-                components: {ConditionSetSelectorDialog},
                 data() {
                     return {
-                        handleItemSelection
+                        handleItemSelection,
+                        title: 'Select Condition Set'
                     };
                 },
-                template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
+                template: '<selector-dialog-tree :title="title" @treeItemSelected="handleItemSelection"></selector-dialog-tree>'
             }).$mount();
 
             let overlay = this.openmct.overlays.overlay({
