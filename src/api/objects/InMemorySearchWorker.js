@@ -32,7 +32,7 @@
         const port = e.ports[0];
 
         port.onmessage = function (event) {
-            console.debug(`🍉 Received event from search provider 🍉`, event);
+            // console.debug(`🍉 Received event from search provider 🍉`, event);
             if (event.data.request === 'index') {
                 indexItem(event.data.keyString, event.data.model);
             } else if (event.data.request === 'search') {
@@ -50,7 +50,7 @@
     };
 
     function indexItem(keyString, model) {
-        console.debug(`🖲 Worker is adding ${keyString} to index 🖲`, model);
+        // console.debug(`🖲 Worker is adding ${keyString} to index 🖲`, model);
         indexedItems[keyString] = {
             type: model.type,
             name: model.name,
@@ -70,7 +70,7 @@
     function search(data) {
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
-        console.debug(`🍉 Querying for 🍉`, data);
+        // console.debug(`🍉 Querying for 🍉`, data);
         let results;
         const input = data.input.trim().toLowerCase();
         const message = {
@@ -87,7 +87,7 @@
         message.total = results.length;
         message.results = results
             .slice(0, data.maxResults);
-        console.debug(`🍉 Found ${message.total} results 🍉`, message.results);
+        // console.debug(`🍉 Found ${message.total} results 🍉`, message.results);
 
         return message;
     }
