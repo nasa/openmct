@@ -19,8 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-
 define(['./Type'], function (Type) {
+    const UNKNOWN_TYPE = new Type({
+        key: "unknown",
+        name: "Unknown Type",
+        cssClass: "icon-object-unknown"
+    });
+
     /**
      * @typedef TypeDefinition
      * @memberof module:openmct.TypeRegistry~
@@ -89,7 +94,7 @@ define(['./Type'], function (Type) {
      * @returns {module:openmct.Type} the registered type
      */
     TypeRegistry.prototype.get = function (typeKey) {
-        return this.types[typeKey];
+        return this.types[typeKey] || UNKNOWN_TYPE;
     };
 
     TypeRegistry.prototype.importLegacyTypes = function (types) {

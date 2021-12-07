@@ -220,15 +220,6 @@ define([
                         "key": "root",
                         "name": "Root",
                         "cssClass": "icon-folder"
-                    },
-                    {
-                        "key": "unknown",
-                        "name": "Unknown Type",
-                        "cssClass": "icon-object-unknown"
-                    },
-                    {
-                        "name": "Unknown Type",
-                        "cssClass": "icon-object-unknown"
                     }
                 ],
                 "capabilities": [
