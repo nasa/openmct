@@ -31,7 +31,6 @@ define([
     'objectUtils',
     './plugins/plugins',
     './adapter/indicators/legacy-indicators-plugin',
-    './plugins/buildInfo/plugin',
     './ui/registries/ViewRegistry',
     './plugins/imagery/plugin',
     './ui/registries/InspectorViewRegistry',
@@ -60,7 +59,6 @@ define([
     objectUtils,
     plugins,
     LegacyIndicatorsPlugin,
-    buildInfoPlugin,
     ViewRegistry,
     ImageryPlugin,
     InspectorViewRegistry,
@@ -301,6 +299,7 @@ define([
         this.install(this.plugins.NonEditableFolder());
         this.install(this.plugins.DeviceClassifier());
         this.install(this.plugins.UserIndicator());
+        this.install(this.plugins.UTCTimeFormat());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);

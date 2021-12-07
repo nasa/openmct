@@ -72,8 +72,9 @@ define([
     './timeline/plugin',
     './hyperlink/plugin',
     './clock/plugin',
-    './timer/plugin',
     './DeviceClassifier/plugin',
+    './UTCTimeFormat/plugin',
+    './timer/plugin',
     './UserIndicator/plugin',
     './exampleUser/plugin'
 ], function (
@@ -128,8 +129,9 @@ define([
     Timeline,
     Hyperlink,
     Clock,
-    Timer,
     DeviceClassifier,
+    UTCTimeFormat,
+    Timer,
     UserIndicator,
     ExampleUser
 ) {
@@ -240,6 +242,7 @@ define([
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
+    plugins.UTCTimeFormat = UTCTimeFormat.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.ExampleUser = ExampleUser.default;
 
