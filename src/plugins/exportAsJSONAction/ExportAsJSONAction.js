@@ -67,7 +67,6 @@ export default class ExportAsJSONAction {
 
         this._write(this.root);
     }
-
     /**
      * @private
      * @param {object} domainObject
@@ -117,7 +116,6 @@ export default class ExportAsJSONAction {
         const copyOfChild = JSON.parse(JSON.stringify(child));
 
         copyOfChild.identifier.key = uuid();
-
         const newIdString = this._getId(copyOfChild);
         const parentId = this._getId(parent);
 

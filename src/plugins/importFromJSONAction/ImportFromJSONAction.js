@@ -62,20 +62,13 @@ export default class ImportAsJSONAction {
      * @param {object} object
      * @param {object} changes
      */
-<<<<<<< HEAD
 
-=======
->>>>>>> 159563ce5ccfea6622f958cd87fd76337f44ee0d
     onSave(object, changes) {
         const selectFile = changes.selectFile;
         const objectTree = selectFile.body;
         this._importObjectTree(object, JSON.parse(objectTree));
     }
 
-<<<<<<< HEAD
-    // Private
-=======
->>>>>>> 159563ce5ccfea6622f958cd87fd76337f44ee0d
     /**
      * @private
      * @param {object} parent
