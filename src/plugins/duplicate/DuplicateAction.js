@@ -33,96 +33,78 @@ export default class DuplicateAction {
         this.openmct = openmct;
     }
 
-    async invoke(objectPath) {
-        let duplicationTask = new DuplicateTask(this.openmct);
-        let originalObject = objectPath[0];
-        let parent = objectPath[1];
-        let userInput;
+    invoke(objectPath) {
+        this.object = objectPath[0];
+        this.parent = objectPath[1];
 
-        try {
-            userInput = await this.getUserInput(originalObject, parent);
-        } catch (error) {
-            // user most likely canceled
-            return;
-        }
+        this.showForm(this.object, this.parent);
+    }
 
-        let newParent = userInput.location;
-        let inNavigationPath = this.inNavigationPath(originalObject);
+    inNavigationPath() {
+        return this.openmct.router.path
+            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
+    }
 
-        // legacy check
-        if (this.isLegacyDomainObject(newParent)) {
-            newParent = await this.convertFromLegacy(newParent);
-        }
-
-        // if editing, save
+    onSave(changes) {
+        let inNavigationPath = this.inNavigationPath();
         if (inNavigationPath && this.openmct.editor.isEditing()) {
             this.openmct.editor.save();
         }
 
-        // duplicate
-        let newObject = await duplicationTask.duplicate(originalObject, newParent);
-        this.updateNameCheck(newObject, userInput.name);
-
-        return;
-    }
-
-    async getUserInput(originalObject, parent) {
-        let dialogService = this.openmct.$injector.get('dialogService');
-        let dialogForm = this.getDialogForm(originalObject, parent);
-        let formState = {
-            name: originalObject.name
-        };
-        let userInput = await dialogService.getUserInput(dialogForm, formState);
-
-        return userInput;
-    }
-
-    updateNameCheck(object, name) {
-        if (object.name !== name) {
-            object.name = name;
-            this.openmct.objects.save(object);
+        let duplicationTask = new DuplicateTask(this.openmct);
+        if (changes.name && (changes.name !== this.object.name)) {
+            duplicationTask.changeName(changes.name);
         }
+
+        const parentDomainObjectpath = changes.location || [this.parent];
+        const parent = parentDomainObjectpath[0];
+
+        return duplicationTask.duplicate(this.object, parent);
     }
 
-    inNavigationPath(object) {
-        return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
-    }
-
-    getDialogForm(object, parent) {
-        return {
-            name: "Duplicate Item",
+    showForm(domainObject, parentDomainObject) {
+        const formStructure = {
+            title: "Duplicate Item",
             sections: [
                 {
                     rows: [
                         {
                             key: "name",
                             control: "textfield",
-                            name: "Name",
+                            name: "Title",
                             pattern: "\\S+",
                             required: true,
-                            cssClass: "l-input-lg"
+                            cssClass: "l-input-lg",
+                            value: domainObject.name
                         },
                         {
                             name: "Location",
                             cssClass: "grows",
                             control: "locator",
-                            validate: this.validate(object, parent),
+                            required: true,
+                            parent: parentDomainObject,
+                            validate: this.validate(parentDomainObject),
                             key: 'location'
                         }
                     ]
                 }
             ]
         };
+
+        this.openmct.forms.showForm(formStructure)
+            .then(this.onSave.bind(this));
     }
 
-    validate(object, currentParent) {
-        return (parentCandidate) => {
-            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.getId());
-            let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
+    validate(currentParent) {
+        return (data) => {
+            const parentCandidatePath = data.value;
+            const parentCandidate = parentCandidatePath[0];
 
-            if (!parentCandidate || !currentParentKeystring) {
+            let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
+            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
+            let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
+
+            if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
             }
 
@@ -130,22 +112,13 @@ export default class DuplicateAction {
                 return false;
             }
 
-            return this.openmct.composition.checkPolicy(
-                parentCandidate.useCapability('adapter'),
-                object
-            );
+            const parentCandidateComposition = parentCandidate.composition;
+            if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
+                return false;
+            }
+
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
         };
-    }
-
-    isLegacyDomainObject(domainObject) {
-        return domainObject.getCapability !== undefined;
-    }
-
-    async convertFromLegacy(legacyDomainObject) {
-        let objectContext = legacyDomainObject.getCapability('context');
-        let domainObject = await this.openmct.objects.get(objectContext.domainObject.id);
-
-        return domainObject;
     }
 
     appliesTo(objectPath) {
