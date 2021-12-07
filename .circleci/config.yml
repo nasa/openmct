@@ -30,7 +30,8 @@ jobs:
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
-      - clean: npm run clean
+      - clean:
+            - run: npm run clean-dist
       - run: npm install
       - when:
           condition:
