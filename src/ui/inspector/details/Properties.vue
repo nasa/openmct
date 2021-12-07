@@ -94,6 +94,7 @@ export default {
             const typeName = this.type ? this.type.definition.name : `Unknown: ${this.domainObject.type}`;
             const timestampLabel = this.domainObject.modified ? 'Modified' : 'Created';
             const timestamp = this.domainObject.modified ? this.domainObject.modified : this.domainObject.created;
+            const notes = this.domainObject.notes;
 
             const details = [
                 {
@@ -105,6 +106,13 @@ export default {
                     value: typeName
                 }
             ];
+
+            if (notes) {
+                details.push({
+                    name: 'Notes',
+                    value: notes
+                });
+            }
 
             if (timestamp !== undefined) {
                 const formattedTimestamp = Moment.utc(timestamp)
