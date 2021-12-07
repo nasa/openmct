@@ -20,95 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import {
+    createOpenMct,
+    resetApplicationState
+} from '../../utils/testing';
+import ExampleUserProvider from './ExampleUserProvider';
 
-fdescribe("The Example User Plugin", () => {
+describe("The Example User Plugin", () => {
     let openmct;
 
     beforeEach(() => {
         openmct = createOpenMct();
-        // provider = new UserProvider();
     });
 
     afterEach(() => {
         return resetApplicationState(openmct);
     });
 
-    // adds an example user provider
+    it('is not installed by default', () => {
+        expect(openmct.user.hasProvider()).toBeFalse();
+    });
 
-    // provides a way to login
+    it('can be installed', () => {
+        openmct.user.on('providerAdded', (provider) => {
+            expect(provider).toBeInstanceOf(ExampleUserProvider);
+        });
+        openmct.install(openmct.plugins.ExampleUser());
+    });
 
-    // describe('with regard to user providers', () => {
-
-    //     it('allows you to specify a user provider', () => {
-    //         openmct.user.setUserProvider(provider);
-
-    //         expect(openmct.user._provider).toBe(provider);
-    //     });
-
-    //     it('prevents more than one user provider from being set', () => {
-    //         openmct.user.setUserProvider(provider);
-
-    //         expect(() => {
-    //             openmct.user.setUserProvider(provider);
-    //         }).toThrow(new Error(MULTIPLE_PROVIDER_ERROR));
-    //     });
-
-    //     it('provides a check for an existing user provider', () => {
-    //         expect(openmct.user.hasProvider()).toBeFalse();
-
-    //         openmct.user.setUserProvider(provider);
-
-    //         expect(openmct.user.hasProvider()).toBeTrue();
-    //     });
-    // });
-
-    // describe('provides the ability', () => {
-    //     let logoutPromise;
-    //     let logoutPromiseResolve;
-
-    //     beforeEach(() => {
-    //         logoutPromise = new Promise((resolve, reject) => {
-    //             logoutPromiseResolve = resolve;
-    //         });
-
-    //         openmct.user.on('logOut', logoutPromiseResolve);
-
-    //         openmct.user.setUserProvider(provider);
-    //     });
-
-    //     afterEach(() => {
-    //         openmct.user.off('logOut', logoutPromiseResolve);
-    //     });
-
-    //     it('to check if a user (not specific) is loged in', (done) => {
-    //         expect(openmct.user.isLoggedIn()).toBeTrue();
-
-    //         logoutPromise.then(() => {
-    //             expect(openmct.user.isLoggedIn()).toBeFalse();
-    //         }).finally(done);
-
-    //         provider.logOut();
-    //     });
-
-    //     it('to get the current user', (done) => {
-    //         openmct.user.getCurrentUser().then((apiUser) => {
-    //             return provider.getCurrentUser().then((providerUser) => {
-    //                 expect(apiUser).toEqual(providerUser);
-    //             });
-    //         }).finally(done);
-    //     });
-
-    //     it('to check if a user has a specific role (by id)', (done) => {
-    //         let junkIdCheckPromise = openmct.user.hasRole('junk-id').then((hasRole) => {
-    //             expect(hasRole).toBeFalse();
-    //         });
-    //         let realIdCheckPromise = openmct.user.hasRole(ROLE_ID).then((hasRole) => {
-    //             expect(hasRole).toBeTrue();
-    //         });
-
-    //         Promise.all([junkIdCheckPromise, realIdCheckPromise]).finally(done);
-    //     });
-    // });
+    // The rest of the functionality of the ExampleUser Plugin is
+    // tested in both the UserAPISpec.js and in the UserIndicatorPlugin spec.
+    // If that changes, those tests can be moved here.
 
 });

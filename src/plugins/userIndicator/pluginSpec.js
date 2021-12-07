@@ -20,13 +20,16 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import {
+    createOpenMct,
+    resetApplicationState
+} from 'utils/testing';
 import Vue from 'vue';
 import ExampleUserProvider from '../exampleUser/ExampleUserProvider';
 
 const USER_NAME = 'Coach McGuirk';
 
-fdescribe('The User Indicator plugin', () => {
+describe('The User Indicator plugin', () => {
     let openmct;
     let element;
     let child;
@@ -64,7 +67,13 @@ fdescribe('The User Indicator plugin', () => {
     describe('with a user provider installed', () => {
 
         beforeEach(() => {
-            provider = new ExampleUserProvider();
+            provider = new ExampleUserProvider(openmct);
+            spyOn(provider, 'login');
+            provider.login.and.callFake(() => {
+                provider.loggedIn = true;
+
+                return Promise.resolve();
+            });
             provider.fullName = USER_NAME;
 
             openmct.user.setProvider(provider);

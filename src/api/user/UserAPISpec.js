@@ -20,16 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import {
+    createOpenMct,
+    resetApplicationState
+} from '../../utils/testing';
 import {
     MULTIPLE_PROVIDER_ERROR,
     NO_LOGIN_LOGOUT
 } from './constants';
 import ExampleUserProvider from '../../plugins/exampleUser/ExampleUserProvider';
 
-const LOGIN_RESPONSE = 'login';
-
-fdescribe("The User API", () => {
+describe("The User API", () => {
     let openmct;
 
     beforeEach(() => {
@@ -43,13 +44,13 @@ fdescribe("The User API", () => {
     describe('with regard to user providers', () => {
 
         it('allows you to specify a user provider', () => {
-            openmct.user.setProvider(new ExampleUserProvider());
+            openmct.user.setProvider(new ExampleUserProvider(openmct));
 
             expect(openmct.user._provider).toBeInstanceOf(ExampleUserProvider);
         });
 
         it('prevents more than one user provider from being set', () => {
-            openmct.user.setProvider(new ExampleUserProvider());
+            openmct.user.setProvider(new ExampleUserProvider(openmct));
 
             expect(() => {
                 openmct.user.setProvider({});
@@ -59,7 +60,7 @@ fdescribe("The User API", () => {
         it('provides a check for an existing user provider', () => {
             expect(openmct.user.hasProvider()).toBeFalse();
 
-            openmct.user.setProvider(new ExampleUserProvider());
+            openmct.user.setProvider(new ExampleUserProvider(openmct));
 
             expect(openmct.user.hasProvider()).toBeTrue();
         });
@@ -69,7 +70,14 @@ fdescribe("The User API", () => {
         let provider;
 
         beforeEach(() => {
-            provider = new ExampleUserProvider();
+            provider = new ExampleUserProvider(openmct);
+            spyOn(provider, 'login');
+            provider.login.and.callFake(() => {
+                provider.loggedIn = true;
+
+                return Promise.resolve();
+            });
+
             openmct.user.setProvider(provider);
         });
 
@@ -82,11 +90,12 @@ fdescribe("The User API", () => {
         });
 
         it('to get the current user', (done) => {
+            const USERNAME = 'Test User';
+            provider.fullName = USERNAME;
+
             openmct.user.login().then(() => {
                 openmct.user.getCurrentUser().then((apiUser) => {
-                    return provider.getCurrentUser().then((providerUser) => {
-                        expect(apiUser).toEqual(providerUser);
-                    });
+                    expect(apiUser.fullName).toEqual(USERNAME);
                 });
             }).finally(done);
         });
@@ -103,8 +112,8 @@ fdescribe("The User API", () => {
         });
 
         it('to login/logout if the user provider supports it', (done) => {
-            openmct.user.login().then((response) => {
-                expect(response).toBe(LOGIN_RESPONSE);
+            openmct.user.login().then(() => {
+                expect(provider.login).toHaveBeenCalled();
                 provider.supportsLoginLogout = false;
 
                 return expect(() => {

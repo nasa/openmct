@@ -24,16 +24,6 @@ import ExampleUserProvider from './ExampleUserProvider';
 
 export default function ExampleUserPlugin() {
     return function install(openmct) {
-
         openmct.user.setProvider(new ExampleUserProvider(openmct));
-        // openmct.types.addType('LadTable', {
-        //     name: "LAD Table",
-        //     creatable: true,
-        //     description: "A Latest Available Data tabular view in which each row displays the values for one or more contained telemetry objects.",
-        //     cssClass: 'icon-tabular-lad',
-        //     initialize(domainObject) {
-        //         domainObject.composition = [];
-        //     }
-        // });
     };
 }
