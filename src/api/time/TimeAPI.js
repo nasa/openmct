@@ -133,24 +133,26 @@ class TimeAPI extends GlobalTimeContext {
      * @method addIndependentTimeContext
      */
     addIndependentContext(key, value, clockKey) {
-        let timeContext = this.independentContexts.get(key);
+        let timeContext = this.getIndependentContext(key);
         if (!timeContext) {
-            timeContext = new IndependentTimeContext(this, key);
-            this.independentContexts.set(key, timeContext);
+            return;
         }
+
+        //stop following upstream time context since the view has it's own
+        timeContext.stopFollowingTimeContext();
 
         if (clockKey) {
             timeContext.clock(clockKey, value);
         } else {
             timeContext.stopClock();
-            timeContext.bounds(value);
+            if (value) {
+                timeContext.bounds(value);
+            }
         }
 
-        this.emit('timeContext', key);
-
         return () => {
-            this.independentContexts.delete(key);
-            timeContext.emit('timeContext', key);
+            //follow any upstream time context
+            this.emit('refreshContext');
         };
     }
 
@@ -173,16 +175,24 @@ class TimeAPI extends GlobalTimeContext {
      * @method getContextForView
      */
     getContextForView(objectPath = []) {
-        let timeContext = this;
+        const viewKey = objectPath.length && this.openmct.objects.makeKeyString(objectPath[0].identifier);
 
-        objectPath.forEach(item => {
-            const key = this.openmct.objects.makeKeyString(item.identifier);
-            if (this.independentContexts.get(key)) {
-                timeContext = this.independentContexts.get(key);
+        if (viewKey) {
+            let viewTimeContext = this.getIndependentContext(viewKey);
+            if (viewTimeContext) {
+                this.independentContexts.delete(viewKey);
+            } else {
+                viewTimeContext = new IndependentTimeContext(this, objectPath);
             }
-        });
 
-        return timeContext;
+            // return a new IndependentContext in case the objectPath is different
+            this.independentContexts.set(viewKey, viewTimeContext);
+
+            return viewTimeContext;
+        }
+
+        // always follow the global time context
+        return this;
     }
 
 }

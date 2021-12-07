@@ -22,6 +22,13 @@
 
 import EventEmitter from 'EventEmitter';
 
+export const TIME_CONTEXT_EVENTS = [
+    'bounds',
+    'clock',
+    'timeSystem',
+    'clockOffsets'
+];
+
 class TimeContext extends EventEmitter {
     constructor() {
         super();

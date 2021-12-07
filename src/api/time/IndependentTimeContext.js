@@ -20,18 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimeContext from "./TimeContext";
+import TimeContext, { TIME_CONTEXT_EVENTS } from "./TimeContext";
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.
  * Views will use the GlobalTimeContext unless they specify an alternate/independent time context here.
  */
 class IndependentTimeContext extends TimeContext {
-    constructor(globalTimeContext, key) {
+    constructor(globalTimeContext, objectPath) {
         super();
-        this.key = key;
-
+        this.unlisteners = [];
         this.globalTimeContext = globalTimeContext;
+        this.objectPath = objectPath;
+        this.refreshContext = this.refreshContext.bind(this);
+
+        this.refreshContext();
+
+        this.globalTimeContext.on('refreshContext', this.refreshContext);
     }
 
     /**
@@ -88,6 +93,53 @@ class IndependentTimeContext extends TimeContext {
         }
 
         return this.activeClock;
+    }
+
+    /**
+     * Causes this time context to follow another time context (either the global context, or another upstream time context)
+     * This allows views to have their own time context which points to the appropriate upstream context as necessary, achieving nesting.
+     * @param {*} upstreamTimeContext
+     */
+    followTimeContext(upstreamTimeContext) {
+        this.stopFollowingTimeContext();
+        TIME_CONTEXT_EVENTS.forEach((eventName) => {
+            const thisTimeContext = this;
+            upstreamTimeContext.on(eventName, passthrough);
+            this.unlisteners.push(() => upstreamTimeContext.off(eventName, passthrough));
+            function passthrough() {
+                thisTimeContext.emit(eventName, ...arguments);
+            }
+        });
+    }
+
+    /**
+     * Stops following any upstream time context
+     */
+    stopFollowingTimeContext() {
+        this.unlisteners.forEach(unlisten => unlisten());
+    }
+
+    /**
+     * Refresh the time context, following any upstream time contexts as necessary
+     */
+    refreshContext() {
+        const timeContext = this.getUpstreamContext();
+        this.followTimeContext(timeContext);
+    }
+
+    getUpstreamContext() {
+        let timeContext = this.globalTimeContext;
+
+        this.objectPath.forEach((item, index) => {
+            const key = this.openmct.objects.makeKeyString(item.identifier);
+            //first index is the view object itself
+            if (index > 0 && this.globalTimeContext.independentContexts.get(key)) {
+                //upstream time context
+                timeContext = this.globalTimeContext.independentContexts.get(key);
+            }
+        });
+
+        return timeContext;
     }
 }
 
