@@ -83,7 +83,6 @@
   },
   "scripts": {
     "clean": "rm -rf ./dist /node_modules; rm package-lock.json",
-    "clean-dist": "rm -rf ./dist",
     "clean-test-lint": "npm run clean; npm install ; npm run test; npm run lint",
     "start": "node app.js",
     "lint": "eslint platform example src --ext .js,.vue openmct.js",

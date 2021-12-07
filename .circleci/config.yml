@@ -26,11 +26,10 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}--{ checksum "karma.conf.js" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
-      - run: npm run clean-dist
       - run: npm install
       - when:
           condition:
@@ -50,7 +49,7 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}--{ checksum "karma.conf.js" }}
           paths:
             - ~/.npm
             - ~/.cache
