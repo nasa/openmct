@@ -221,7 +221,7 @@ export default class UserAPI extends EventEmitter {
      *
      * @private
      * @param {string} error description of error
-     * @throws error passed in
+     * @throws Will throw error passed in
      */
     _error(error) {
         throw new Error(error);
