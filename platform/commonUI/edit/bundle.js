@@ -26,22 +26,12 @@ define([
     "./src/controllers/EditObjectController",
     "./src/actions/EditAndComposeAction",
     "./src/actions/EditAction",
-    "./src/actions/PropertiesAction",
     "./src/actions/SaveAction",
     "./src/actions/SaveAndStopEditingAction",
-    "./src/actions/SaveAsAction",
     "./src/actions/CancelAction",
     "./src/policies/EditPersistableObjectsPolicy",
     "./src/representers/EditRepresenter",
     "./src/capabilities/EditorCapability",
-    "./src/creation/CreateMenuController",
-    "./src/creation/LocatorController",
-    "./src/creation/CreationPolicy",
-    "./src/creation/CreateActionProvider",
-    "./src/creation/CreationService",
-    "./res/templates/create/locator.html",
-    "./res/templates/create/create-button.html",
-    "./res/templates/create/create-menu.html",
     "./res/templates/library.html",
     "./res/templates/edit-object.html",
     "./res/templates/edit-action-buttons.html",
@@ -52,22 +42,12 @@ define([
     EditObjectController,
     EditAndComposeAction,
     EditAction,
-    PropertiesAction,
     SaveAction,
     SaveAndStopEditingAction,
-    SaveAsAction,
     CancelAction,
     EditPersistableObjectsPolicy,
     EditRepresenter,
     EditorCapability,
-    CreateMenuController,
-    LocatorController,
-    CreationPolicy,
-    CreateActionProvider,
-    CreationService,
-    locatorTemplate,
-    createButtonTemplate,
-    createMenuTemplate,
     libraryTemplate,
     editObjectTemplate,
     editActionButtonsTemplate,
@@ -100,22 +80,6 @@ define([
                             "$location",
                             "navigationService"
                         ]
-                    },
-                    {
-                        "key": "CreateMenuController",
-                        "implementation": CreateMenuController,
-                        "depends": [
-                            "$scope"
-                        ]
-                    },
-                    {
-                        "key": "LocatorController",
-                        "implementation": LocatorController,
-                        "depends": [
-                            "$scope",
-                            "$timeout",
-                            "objectService"
-                        ]
                     }
                 ],
                 "actions": [
@@ -136,22 +100,6 @@ define([
                         "cssClass": "major icon-pencil",
                         "group": "action",
                         "priority": 10
-                    },
-                    {
-                        "key": "properties",
-                        "category": [
-                            "contextual",
-                            "view-control"
-                        ],
-                        "implementation": PropertiesAction,
-                        "cssClass": "major icon-pencil",
-                        "name": "Edit Properties...",
-                        "group": "action",
-                        "priority": 10,
-                        "description": "Edit properties of this object.",
-                        "depends": [
-                            "dialogService"
-                        ]
                     },
                     {
                         "key": "save-and-stop-editing",
@@ -178,22 +126,6 @@ define([
                         ]
                     },
                     {
-                        "key": "save-as",
-                        "category": "save",
-                        "implementation": SaveAsAction,
-                        "name": "Save As...",
-                        "cssClass": "icon-save labeled",
-                        "description": "Save changes made to these objects.",
-                        "depends": [
-                            "$injector",
-                            "dialogService",
-                            "copyService",
-                            "notificationService",
-                            "openmct"
-                        ],
-                        "priority": "mandatory"
-                    },
-                    {
                         "key": "cancel",
                         "category": "conclude-editing",
                         "implementation": CancelAction,
@@ -210,10 +142,6 @@ define([
                         "category": "action",
                         "implementation": EditPersistableObjectsPolicy,
                         "depends": ["openmct"]
-                    },
-                    {
-                        "implementation": CreationPolicy,
-                        "category": "creation"
                     }
                 ],
                 "templates": [
@@ -243,41 +171,7 @@ define([
                     {
                         "key": "topbar-edit",
                         "template": topbarEditTemplate
-                    },
-                    {
-                        "key": "create-button",
-                        "template": createButtonTemplate
-                    },
-                    {
-                        "key": "create-menu",
-                        "template": createMenuTemplate,
-                        "uses": [
-                            "action"
-                        ]
                     }
-                ],
-                "components": [
-                    {
-                        "key": "CreateActionProvider",
-                        "provides": "actionService",
-                        "type": "provider",
-                        "implementation": CreateActionProvider,
-                        "depends": [
-                            "typeService",
-                            "policyService"
-                        ]
-                    },
-                    {
-                        "key": "CreationService",
-                        "provides": "creationService",
-                        "type": "provider",
-                        "implementation": CreationService,
-                        "depends": [
-                            "$q",
-                            "$log"
-                        ]
-                    }
-
                 ],
                 "representers": [
                     {
@@ -296,12 +190,6 @@ define([
                         "depends": [
                             "openmct"
                         ]
-                    }
-                ],
-                "controls": [
-                    {
-                        "key": "locator",
-                        "template": locatorTemplate
                     }
                 ],
                 "runs": [
