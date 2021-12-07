@@ -26,11 +26,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}--{{ checksum "karma.conf.js" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
       - run: npm install
+      - run: npm prepare
+      - run: ls -la
       - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
@@ -49,7 +51,7 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}--{{ checksum "karma.conf.js" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
