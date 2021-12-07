@@ -32,7 +32,6 @@ jobs:
           node-version: << parameters.node-version >>
       - run: npm install
       - run: npm run prepare
-      - run: ls -la
       - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
