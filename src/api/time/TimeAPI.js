@@ -139,15 +139,13 @@ class TimeAPI extends GlobalTimeContext {
         }
 
         //stop following upstream time context since the view has it's own
-        timeContext.stopFollowingTimeContext();
+        timeContext.resetContext();
 
         if (clockKey) {
             timeContext.clock(clockKey, value);
         } else {
             timeContext.stopClock();
-            if (value) {
-                timeContext.bounds(value);
-            }
+            timeContext.bounds(value);
         }
 
         return () => {

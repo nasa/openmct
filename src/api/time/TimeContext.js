@@ -29,6 +29,14 @@ export const TIME_CONTEXT_EVENTS = [
     'clockOffsets'
 ];
 
+export const TIME_CONTEXT_METHODS = [
+    'bounds',
+    'clock',
+    'tick',
+    'timeSystem',
+    'tick'
+];
+
 class TimeContext extends EventEmitter {
     constructor() {
         super();

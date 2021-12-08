@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimeContext, { TIME_CONTEXT_EVENTS } from "./TimeContext";
+import TimeContext, { TIME_CONTEXT_EVENTS, TIME_CONTEXT_METHODS } from "./TimeContext";
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.
@@ -34,9 +34,29 @@ class IndependentTimeContext extends TimeContext {
         this.objectPath = objectPath;
         this.refreshContext = this.refreshContext.bind(this);
 
+        TIME_CONTEXT_METHODS.forEach((functionName) => {
+            const wrappedFunction = this[functionName].bind(this);
+            this[functionName] = this.handleTimeContextMethods.bind(this, functionName, wrappedFunction);
+        });
+
         this.refreshContext();
 
         this.globalTimeContext.on('refreshContext', this.refreshContext);
+    }
+
+    /**
+     * Causes this time context to call methods on another time context (either the global context, or another upstream time context)
+     * This allows views to have their own time context which points to the appropriate upstream context as necessary, achieving nesting.
+     * @param {*} functionName name of the time context class method
+     * @param {*} wrappedFunction the original class method on this (to prevent recursion)
+     * @param {*} args any arguments passed to the called class method
+     */
+    handleTimeContextMethods(functionName, wrappedFunction, ...args) {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext[functionName](...args);
+        } else {
+            return wrappedFunction(...args);
+        }
     }
 
     /**
@@ -100,16 +120,19 @@ class IndependentTimeContext extends TimeContext {
      * This allows views to have their own time context which points to the appropriate upstream context as necessary, achieving nesting.
      * @param {*} upstreamTimeContext
      */
-    followTimeContext(upstreamTimeContext) {
+    followTimeContext() {
         this.stopFollowingTimeContext();
-        TIME_CONTEXT_EVENTS.forEach((eventName) => {
-            const thisTimeContext = this;
-            upstreamTimeContext.on(eventName, passthrough);
-            this.unlisteners.push(() => upstreamTimeContext.off(eventName, passthrough));
-            function passthrough() {
-                thisTimeContext.emit(eventName, ...arguments);
-            }
-        });
+        if (this.upstreamTimeContext) {
+            TIME_CONTEXT_EVENTS.forEach((eventName) => {
+                const thisTimeContext = this;
+                this.upstreamTimeContext.on(eventName, passthrough);
+                this.unlisteners.push(() => this.upstreamTimeContext.off(eventName, passthrough));
+                function passthrough() {
+                    thisTimeContext.emit(eventName, ...arguments);
+                }
+            });
+
+        }
     }
 
     /**
@@ -119,19 +142,30 @@ class IndependentTimeContext extends TimeContext {
         this.unlisteners.forEach(unlisten => unlisten());
     }
 
+    resetContext() {
+        if (this.upstreamTimeContext) {
+            this.stopFollowingTimeContext();
+            this.upstreamTimeContext = undefined;
+        }
+    }
+
     /**
      * Refresh the time context, following any upstream time contexts as necessary
      */
     refreshContext() {
-        const timeContext = this.getUpstreamContext();
-        this.followTimeContext(timeContext);
+        this.upstreamTimeContext = this.getUpstreamContext();
+        this.followTimeContext();
+    }
+
+    hasOwnContext() {
+        return this.upstreamTimeContext === undefined;
     }
 
     getUpstreamContext() {
         let timeContext = this.globalTimeContext;
 
         this.objectPath.forEach((item, index) => {
-            const key = this.openmct.objects.makeKeyString(item.identifier);
+            const key = this.globalTimeContext.openmct.objects.makeKeyString(item.identifier);
             //first index is the view object itself
             if (index > 0 && this.globalTimeContext.independentContexts.get(key)) {
                 //upstream time context
