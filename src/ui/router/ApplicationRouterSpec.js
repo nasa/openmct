@@ -77,4 +77,10 @@ describe('Application router utility functions', () => {
         expect(searchParams.get('testParam2')).toBe('updatedtestValue2');
         expect(searchParams.get('newTestParam3')).toBe('newTestValue3');
     });
+
+    it('The doPathChange function triggers aborting all requests when doing a path change', () => {
+        const abortSpy = spyOn(openmct.telemetry, 'abortAllRequests');
+        openmct.router.doPathChange('newPath', 'oldPath');
+        expect(abortSpy).toHaveBeenCalledTimes(1);
+    });
 });
