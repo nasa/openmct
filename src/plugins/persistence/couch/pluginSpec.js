@@ -164,7 +164,7 @@ describe('the plugin', () => {
             expect(provider.create).toHaveBeenCalled();
             expect(provider.startSharedWorker).not.toHaveBeenCalled();
             //Set modified timestamp it detects a change and persists the updated model.
-            mockDomainObject.modified = Date.now();
+            mockDomainObject.modified = mockDomainObject.persisted + 1;
             const updatedResult = await openmct.objects.save(mockDomainObject);
             openmct.objects.observe(mockDomainObject, '*', (updatedObject) => {
             });
