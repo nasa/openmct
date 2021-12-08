@@ -40,11 +40,6 @@
             }
         }
 
-        .zerolinelayer {
-            // Hide unneeded plotly-styled horizontal line
-            display: none;
-        }
-
         path.xy2-y {
             stroke: $colorPlotHash !important; // Using this instead of $colorPlotAreaBorder because that is an rgba
             opacity: $opacityPlotHash !important;

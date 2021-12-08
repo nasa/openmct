@@ -42,7 +42,7 @@ define(['lodash'], function (_) {
             toolbar: function (selectedObjects) {
                 const DIALOG_FORM = {
                     'text': {
-                        name: "Text Element Properties",
+                        title: "Text Element Properties",
                         sections: [
                             {
                                 rows: [
@@ -50,14 +50,15 @@ define(['lodash'], function (_) {
                                         key: "text",
                                         control: "textfield",
                                         name: "Text",
-                                        required: true
+                                        required: true,
+                                        cssClass: "l-input-lg"
                                     }
                                 ]
                             }
                         ]
                     },
                     'image': {
-                        name: "Image Properties",
+                        title: "Image Properties",
                         sections: [
                             {
                                 rows: [
@@ -65,7 +66,7 @@ define(['lodash'], function (_) {
                                         key: "url",
                                         control: "textfield",
                                         name: "Image URL",
-                                        "cssClass": "l-input-lg",
+                                        cssClass: "l-input-lg",
                                         required: true
                                     }
                                 ]
@@ -126,10 +127,6 @@ define(['lodash'], function (_) {
                     ]
                 };
 
-                function getUserInput(form) {
-                    return openmct.$injector.get('dialogService').getUserInput(form, {});
-                }
-
                 function getPath(selectionPath) {
                     return `configuration.items[${selectionPath[0].context.index}]`;
                 }
@@ -167,8 +164,7 @@ define(['lodash'], function (_) {
                                 let name = option.name.toLowerCase();
                                 let form = DIALOG_FORM[name];
                                 if (form) {
-                                    getUserInput(form)
-                                        .then(element => selectionPath[0].context.addElement(name, element));
+                                    showForm(form, name, selectionPath);
                                 } else {
                                     selectionPath[0].context.addElement(name);
                                 }
@@ -643,10 +639,18 @@ define(['lodash'], function (_) {
                         && !selectionPath[0].context.layoutItem;
                 }
 
+                function showForm(formStructure, name, selectionPath) {
+                    openmct.forms.showForm(formStructure)
+                        .then(changes => {
+                            selectionPath[0].context.addElement(name, changes);
+                        });
+                }
+
                 if (isMainLayoutSelected(selectedObjects[0])) {
                     return [
                         getToggleGridButton(selectedObjects),
-                        getAddButton(selectedObjects)];
+                        getAddButton(selectedObjects)
+                    ];
                 }
 
                 let toolbar = {

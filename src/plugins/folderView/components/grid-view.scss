@@ -3,6 +3,7 @@
     display: flex;
     flex-flow: column nowrap;
     overflow: auto;
+    height: 100%;
 
     &__item {
         flex: 0 0 auto;
@@ -59,6 +60,30 @@
             &:before {
                 color: $colorFilter;
                 content: $glyph-icon-notebook-page;
+                font-family: symbolsfont;
+            }
+        }
+    }
+
+    &.is-status--current {
+        .is-status__indicator {
+            display: block;
+
+            &:before {
+                color: $colorFilter;
+                content: $glyph-icon-asterisk;
+                font-family: symbolsfont;
+            }
+        }
+    }
+
+    &.is-status--draft {
+        .is-status__indicator {
+            display: block;
+
+            &:before {
+                color: $colorStatusAlert;
+                content: $glyph-icon-draft;
                 font-family: symbolsfont;
             }
         }
