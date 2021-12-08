@@ -318,6 +318,8 @@ class ApplicationRouter extends EventEmitter {
             route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
         }
 
+        this.openmct.telemetry.abortAllRequests();
+
         this.emit('change:path', newPath, oldPath);
     }
 

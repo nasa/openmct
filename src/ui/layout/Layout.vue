@@ -121,7 +121,6 @@
 import Inspector from '../inspector/Inspector.vue';
 import MctTree from './mct-tree.vue';
 import ObjectView from '../components/ObjectView.vue';
-import MctTemplate from '../legacy/mct-template.vue';
 import CreateButton from './CreateButton.vue';
 import multipane from './multipane.vue';
 import pane from './pane.vue';
@@ -136,7 +135,6 @@ export default {
         Inspector,
         MctTree,
         ObjectView,
-        'mct-template': MctTemplate,
         CreateButton,
         multipane,
         pane,
