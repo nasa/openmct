@@ -102,7 +102,7 @@ define([
     DefaultMetadataProvider.prototype.getMetadata = function (domainObject) {
         const metadata = domainObject.telemetry || {};
         if (this.typeHasTelemetry(domainObject)) {
-            const typeMetadata = this.openmct.type.get(domainObject.type).typeDef.telemetry;
+            const typeMetadata = this.openmct.type.get(domainObject.type).definition.telemetry;
 
             Object.assign(metadata, typeMetadata);
 
