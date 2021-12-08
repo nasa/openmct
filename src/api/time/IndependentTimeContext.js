@@ -33,6 +33,7 @@ class IndependentTimeContext extends TimeContext {
         this.globalTimeContext = globalTimeContext;
         this.objectPath = objectPath;
         this.refreshContext = this.refreshContext.bind(this);
+        this.resetContext = this.resetContext.bind(this);
 
         TIME_CONTEXT_METHODS.forEach((functionName) => {
             const wrappedFunction = this[functionName].bind(this);
@@ -155,6 +156,10 @@ class IndependentTimeContext extends TimeContext {
     refreshContext() {
         this.upstreamTimeContext = this.getUpstreamContext();
         this.followTimeContext();
+
+        // Emit bounds so that views that are changing context get the upstream bounds
+        // TODO: Is there a way around having to emit this?
+        this.emit('bounds', this.upstreamTimeContext.bounds());
     }
 
     hasOwnContext() {
@@ -164,13 +169,18 @@ class IndependentTimeContext extends TimeContext {
     getUpstreamContext() {
         let timeContext = this.globalTimeContext;
 
-        this.objectPath.forEach((item, index) => {
+        this.objectPath.some((item, index) => {
             const key = this.globalTimeContext.openmct.objects.makeKeyString(item.identifier);
-            //first index is the view object itself
-            if (index > 0 && this.globalTimeContext.independentContexts.get(key)) {
+            //last index is the view object itself
+            const itemContext = this.globalTimeContext.independentContexts.get(key);
+            if (index > 0 && itemContext && itemContext.hasOwnContext()) {
                 //upstream time context
-                timeContext = this.globalTimeContext.independentContexts.get(key);
+                timeContext = itemContext;
+
+                return true;
             }
+
+            return false;
         });
 
         return timeContext;
