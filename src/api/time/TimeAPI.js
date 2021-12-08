@@ -148,6 +148,9 @@ class TimeAPI extends GlobalTimeContext {
             timeContext.bounds(value);
         }
 
+        // Notify any nested views to update, pass in the viewKey so that particular view can skip getting an upstream context
+        this.emit('refreshContext', key);
+
         return () => {
             //follow any upstream time context
             this.emit('refreshContext');

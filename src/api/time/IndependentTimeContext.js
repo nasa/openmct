@@ -153,7 +153,13 @@ class IndependentTimeContext extends TimeContext {
     /**
      * Refresh the time context, following any upstream time contexts as necessary
      */
-    refreshContext() {
+    refreshContext(viewKey) {
+        //TODO: find a better way to skip upstream context for the view that just got an independent time context
+        const key = this.globalTimeContext.openmct.objects.makeKeyString(this.objectPath[0].identifier);
+        if (viewKey && key === viewKey) {
+            return;
+        }
+
         this.upstreamTimeContext = this.getUpstreamContext();
         this.followTimeContext();
 
