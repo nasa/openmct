@@ -85,10 +85,6 @@ describe("the plugin", () => {
 
             viewDatumAction.invoke(mockObjectPath, mockView);
 
-            done();
-        });
-
-        it('uses an overlay to show user datum values', () => {
             expect(openmct.overlays.overlay).toHaveBeenCalled();
         });
     });
