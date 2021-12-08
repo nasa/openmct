@@ -32,7 +32,6 @@ define([
     './timeConductor/plugin',
     '../../example/imagery/plugin',
     './imagery/plugin',
-    '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
@@ -42,6 +41,7 @@ define([
     './staticRootPlugin/plugin',
     './notebook/plugin',
     './displayLayout/plugin',
+    './formActions/plugin',
     './folderView/plugin',
     './flexibleLayout/plugin',
     './tabs/plugin',
@@ -87,7 +87,6 @@ define([
     TimeConductorPlugin,
     ExampleImagery,
     ImageryPlugin,
-    ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
@@ -97,6 +96,7 @@ define([
     StaticRootPlugin,
     Notebook,
     DisplayLayoutPlugin,
+    FormActions,
     FolderView,
     FlexibleLayout,
     Tabs,
@@ -149,8 +149,6 @@ define([
     plugins.RemoteClock = RemoteClock.default;
 
     plugins.MyItems = MyItems.default;
-
-    plugins.ImportExport = ImportExport;
 
     plugins.StaticRootPlugin = StaticRootPlugin;
 
@@ -206,6 +204,7 @@ define([
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;

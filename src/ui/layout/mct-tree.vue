@@ -435,21 +435,25 @@ export default {
         sortNameDescending(a, b) {
             // sorting tree children items
             if (!(a.name && b.name)) {
-                if (a.object.name > b.object.name) {
+                if (a.object.name.toLowerCase()
+                    > b.object.name.toLowerCase()) {
                     return 1;
                 }
 
-                if (b.object.name > a.object.name) {
+                if (b.object.name.toLowerCase()
+                    > a.object.name.toLowerCase()) {
                     return -1;
                 }
             }
 
-            // sorting compositon items
-            if (a.name > b.name) {
+            // sorting composition items
+            if (a.name.toLowerCase()
+                > b.name.toLowerCase()) {
                 return 1;
             }
 
-            if (b.name > a.name) {
+            if (b.name.toLowerCase()
+                > a.name.toLowerCase()) {
                 return -1;
             }
 

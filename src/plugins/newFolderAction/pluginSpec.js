@@ -26,13 +26,7 @@ import {
 
 describe("the plugin", () => {
     let openmct;
-    let compositionAPI;
     let newFolderAction;
-    let mockObjectPath;
-    let mockDialogService;
-    let mockComposition;
-    let mockPromise;
-    let newFolderName = 'New Folder';
 
     beforeEach((done) => {
         openmct = createOpenMct();
@@ -52,39 +46,40 @@ describe("the plugin", () => {
     });
 
     describe('when invoked', () => {
-
+        let parentObject;
+        let parentObjectPath;
+        let changedParentObject;
         beforeEach((done) => {
-            compositionAPI = openmct.composition;
-            mockObjectPath = [{
+            parentObject = {
                 name: 'mock folder',
                 type: 'folder',
                 identifier: {
                     key: 'mock-folder',
                     namespace: ''
-                }
-            }];
-            mockPromise = {
-                then: (callback) => {
-                    callback({name: newFolderName});
-                    done();
-                }
+                },
+                composition: []
             };
+            parentObjectPath = [parentObject];
 
-            mockDialogService = jasmine.createSpyObj('dialogService', ['getUserInput']);
-            mockComposition = jasmine.createSpyObj('composition', ['add']);
+            spyOn(openmct.objects, "save");
+            openmct.objects.save.and.callThrough();
 
-            mockDialogService.getUserInput.and.returnValue(mockPromise);
+            spyOn(openmct.forms, "showForm");
+            openmct.forms.showForm.and.callFake(formStructure => {
+                return Promise.resolve({
+                    name: 'test',
+                    notes: 'test notes',
+                    location: parentObjectPath
+                });
+            });
 
-            spyOn(openmct.$injector, 'get').and.returnValue(mockDialogService);
-            spyOn(compositionAPI, 'get').and.returnValue(mockComposition);
-            spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
-            spyOn(openmct.objects, 'isPersistable').and.returnValue(true);
+            openmct.objects.observe(parentObject, '*', (newObject) => {
+                changedParentObject = newObject;
 
-            return newFolderAction.invoke(mockObjectPath);
-        });
+                done();
+            });
 
-        it('gets user input for folder name', () => {
-            expect(mockDialogService.getUserInput).toHaveBeenCalled();
+            newFolderAction.invoke(parentObjectPath);
         });
 
         it('creates a new folder object', () => {
@@ -92,10 +87,23 @@ describe("the plugin", () => {
         });
 
         it('adds new folder object to parent composition', () => {
-            expect(mockComposition.add).toHaveBeenCalled();
+            const composition = changedParentObject.composition;
+
+            expect(composition.length).toBe(1);
         });
 
         it('checks if the domainObject is persistable', () => {
+            const mockObjectPath = [{
+                name: 'mock folder',
+                type: 'folder',
+                identifier: {
+                    key: 'mock-folder',
+                    namespace: ''
+                }
+            }];
+
+            spyOn(openmct.objects, 'isPersistable').and.returnValue(true);
+
             newFolderAction.appliesTo(mockObjectPath);
 
             expect(openmct.objects.isPersistable).toHaveBeenCalled();

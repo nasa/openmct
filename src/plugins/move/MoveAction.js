@@ -31,53 +31,16 @@ export default class MoveAction {
         this.openmct = openmct;
     }
 
-    async invoke(objectPath) {
-        let object = objectPath[0];
-        let inNavigationPath = this.inNavigationPath(object);
-        let oldParent = objectPath[1];
-        let dialogService = this.openmct.$injector.get('dialogService');
-        let dialogForm = this.getDialogForm(object, oldParent);
-        let userInput;
+    invoke(objectPath) {
+        this.object = objectPath[0];
+        this.oldParent = objectPath[1];
 
-        try {
-            userInput = await dialogService.getUserInput(dialogForm, { name: object.name });
-        } catch (err) {
-            // user canceled, most likely
-            return;
-        }
-
-        // if we need to update name
-        if (object.name !== userInput.name) {
-            this.openmct.objects.mutate(object, 'name', userInput.name);
-        }
-
-        let parentContext = userInput.location.getCapability('context');
-        let newParent = await this.openmct.objects.get(parentContext.domainObject.id);
-
-        if (inNavigationPath && this.openmct.editor.isEditing()) {
-            this.openmct.editor.save();
-        }
-
-        this.addToNewParent(object, newParent);
-        this.removeFromOldParent(oldParent, object);
-
-        if (inNavigationPath) {
-            let newObjectPath = await this.openmct.objects.getOriginalPath(object.identifier);
-            let root = await this.openmct.objects.getRoot();
-            let rootChildCount = root.composition.length;
-
-            // if not multiple root children, remove root from path
-            if (rootChildCount < 2) {
-                newObjectPath.pop(); // remove ROOT
-            }
-
-            this.navigateTo(newObjectPath);
-        }
+        this.showForm(this.object, this.oldParent);
     }
 
-    inNavigationPath(object) {
+    inNavigationPath() {
         return this.openmct.router.path
-            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, object.identifier));
+            .some(objectInPath => this.openmct.objects.areIdsEqual(objectInPath.identifier, this.object.identifier));
     }
 
     navigateTo(objectPath) {
@@ -85,7 +48,7 @@ export default class MoveAction {
             .map(object => this.openmct.objects.makeKeyString(object.identifier))
             .join("/");
 
-        window.location.href = '#/browse/' + urlPath;
+        this.openmct.router.navigate('#/browse/' + urlPath);
     }
 
     addToNewParent(child, newParent) {
@@ -96,42 +59,91 @@ export default class MoveAction {
         compositionCollection.add(child);
     }
 
-    removeFromOldParent(parent, child) {
-        let compositionCollection = this.openmct.composition.get(parent);
+    async onSave(changes) {
+        let inNavigationPath = this.inNavigationPath(this.object);
+        if (inNavigationPath && this.openmct.editor.isEditing()) {
+            this.openmct.editor.save();
+        }
+
+        const parentDomainObjectpath = changes.location || [this.parent];
+        const parent = parentDomainObjectpath[0];
+
+        if (this.openmct.objects.areIdsEqual(parent.identifier, this.oldParent.identifier)) {
+            this.openmct.notifications.error(`Error: new location cant not be same as old`);
+
+            return;
+        }
+
+        if (changes.name && (changes.name !== this.object.name)) {
+            this.object.name = changes.name;
+        }
+
+        this.addToNewParent(this.object, parent);
+        this.removeFromOldParent(this.object);
+
+        if (!inNavigationPath) {
+            return;
+        }
+
+        let newObjectPath;
+        if (parentDomainObjectpath) {
+            newObjectPath = parentDomainObjectpath && [this.object].concat(parentDomainObjectpath);
+        } else {
+            newObjectPath = await this.openmct.objects.getOriginalPath(this.object.identifier);
+            let root = await this.openmct.objects.getRoot();
+            let rootChildCount = root.composition.length;
+
+            // if not multiple root children, remove root from path
+            if (rootChildCount < 2) {
+                newObjectPath.pop(); // remove ROOT
+            }
+        }
+
+        this.navigateTo(newObjectPath);
+    }
+
+    removeFromOldParent(child) {
+        let compositionCollection = this.openmct.composition.get(this.oldParent);
 
         compositionCollection.remove(child);
     }
 
-    getDialogForm(object, parent) {
-        return {
-            name: "Move Item",
+    showForm(domainObject, parentDomainObject) {
+        const formStructure = {
+            title: "Move Item",
             sections: [
                 {
                     rows: [
                         {
                             key: "name",
                             control: "textfield",
-                            name: "Name",
+                            name: "Title",
                             pattern: "\\S+",
                             required: true,
-                            cssClass: "l-input-lg"
+                            cssClass: "l-input-lg",
+                            value: domainObject.name
                         },
                         {
                             name: "Location",
                             control: "locator",
-                            validate: this.validate(object, parent),
+                            required: true,
+                            validate: this.validate(parentDomainObject),
                             key: 'location'
                         }
                     ]
                 }
             ]
         };
+
+        this.openmct.forms.showForm(formStructure)
+            .then(this.onSave.bind(this));
     }
 
-    validate(object, currentParent) {
-        return (parentCandidate) => {
+    validate(currentParent) {
+        return (object, data) => {
+            const parentCandidate = data.value;
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
-            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.getId());
+            let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
             let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
@@ -146,14 +158,12 @@ export default class MoveAction {
                 return false;
             }
 
-            if (parentCandidate.getModel().composition.indexOf(objectKeystring) !== -1) {
+            const parentCandidateComposition = parentCandidate.composition;
+            if (parentCandidateComposition && parentCandidateComposition.indexOf(objectKeystring) !== -1) {
                 return false;
             }
 
-            return this.openmct.composition.checkPolicy(
-                parentCandidate.useCapability('adapter'),
-                object
-            );
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, object);
         };
     }
 
