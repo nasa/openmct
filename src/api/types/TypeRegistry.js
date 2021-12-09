@@ -98,7 +98,7 @@ define(['./Type'], function (Type) {
     };
 
     TypeRegistry.prototype.importLegacyTypes = function (types) {
-        types.filter((t) => !this.get(t.key))
+        types.filter((t) => this.get(t.key) === UNKNOWN_TYPE)
             .forEach((type) => {
                 let def = Type.definitionFromLegacyDefinition(type);
                 this.addType(type.key, def);
