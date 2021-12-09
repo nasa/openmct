@@ -25,38 +25,31 @@
  * Created by chacskaylo on 06/18/2015.
  * Modified by shale on 06/23/2015.
  */
-define(
-    ['../data/transcript.json'],
-    function (messages) {
-        "use strict";
 
-        var firstObservedTime = Date.now();
-
-        function EventTelemetry(request, interval) {
-
-            var latestObservedTime = Date.now(),
-                count = Math.floor((latestObservedTime - firstObservedTime) / interval),
-                generatorData = {};
-
-            generatorData.getPointCount = function () {
-                return count;
-            };
-
-            generatorData.getDomainValue = function (i, domain) {
-                return i * interval
-                        + (domain !== 'delta' ? firstObservedTime : 0);
-            };
-
-            generatorData.getRangeValue = function (i, range) {
-                var domainDelta = this.getDomainValue(i) - firstObservedTime,
-                    ind = i % messages.length;
-
-                return messages[ind] + " - [" + domainDelta.toString() + "]";
-            };
-
-            return generatorData;
-        }
-
-        return EventTelemetry;
+class EventTelemetry {
+    constructor(interval) {
+        this.interval = interval;
+        this.firstObservedTime = Date.now();
+        this.latestObservedTime = Date.now();
+        this.count = Math.floor((this.latestObservedTime - this.firstObservedTime) / this.interval);
+        this.generatorData = {};
     }
-);
+
+    getPointCount() {
+        return this.count;
+    }
+
+    getDomainValue(i, domain) {
+        return i * this.interval
+            + (domain !== 'delta' ? this.firstObservedTime : 0);
+    }
+
+    getRangeValue(i, range) {
+        var domainDelta = this.getDomainValue(i) - this.firstObservedTime,
+            ind = i % this.messages.length;
+
+        return this.messages[ind] + " - [" + domainDelta.toString() + "]";
+    }
+}
+export default EventTelemetry;
+
