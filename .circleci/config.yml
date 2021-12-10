@@ -108,12 +108,12 @@ workflows:
             - run:
                 command:
                   curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov              
-          name: node10-chrome
-          node-version: lts/dubnium
+          name: node12-chrome
+          node-version: lts/erbium
           browser: ChromeHeadless
       - test:
-          name: node12-build-lint
-          node-version: lts/erbium
+          name: node10-build-lint
+          node-version: lts/dubnium
           browser: "" #Skip unit tests
       - test: 
           name: node14-build-lint
