@@ -24,16 +24,15 @@ jobs:
         type: string
     executor: linux
     environment:
-      NODE_ENV: development # Needed for dist
+      NODE_ENV: development # Needed for dist folder
     steps:
       - checkout
       - restore_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}--{{ checksum "karma.conf.js" }}
       - node/install:
-          install-npm: true
+          install-npm: false #Node 10 cannot function with `install-npm`
           node-version: << parameters.node-version >>
       - run: npm install
-      - run: ls -latr
       - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
