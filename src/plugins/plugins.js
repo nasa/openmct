@@ -32,7 +32,6 @@ define([
     './timeConductor/plugin',
     '../../example/imagery/plugin',
     './imagery/plugin',
-    '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
@@ -42,6 +41,7 @@ define([
     './staticRootPlugin/plugin',
     './notebook/plugin',
     './displayLayout/plugin',
+    './formActions/plugin',
     './folderView/plugin',
     './flexibleLayout/plugin',
     './tabs/plugin',
@@ -72,8 +72,9 @@ define([
     './timeline/plugin',
     './hyperlink/plugin',
     './clock/plugin',
-    './timer/plugin',
-    './DeviceClassifier/plugin'
+    './DeviceClassifier/plugin',
+    './UTCTimeFormat/plugin',
+    './timer/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -86,7 +87,6 @@ define([
     TimeConductorPlugin,
     ExampleImagery,
     ImageryPlugin,
-    ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
@@ -96,6 +96,7 @@ define([
     StaticRootPlugin,
     Notebook,
     DisplayLayoutPlugin,
+    FormActions,
     FolderView,
     FlexibleLayout,
     Tabs,
@@ -126,8 +127,9 @@ define([
     Timeline,
     Hyperlink,
     Clock,
-    Timer,
-    DeviceClassifier
+    DeviceClassifier,
+    UTCTimeFormat,
+    Timer
 ) {
     const bundleMap = {
         LocalStorage: 'platform/persistence/local',
@@ -147,8 +149,6 @@ define([
     plugins.RemoteClock = RemoteClock.default;
 
     plugins.MyItems = MyItems.default;
-
-    plugins.ImportExport = ImportExport;
 
     plugins.StaticRootPlugin = StaticRootPlugin;
 
@@ -204,6 +204,7 @@ define([
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
@@ -236,6 +237,7 @@ define([
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
+    plugins.UTCTimeFormat = UTCTimeFormat.default;
 
     return plugins;
 });

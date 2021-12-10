@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import DuplicateActionPlugin from './plugin.js';
-import DuplicateAction from './DuplicateAction.js';
 import DuplicateTask from './DuplicateTask.js';
 import {
     createOpenMct,
@@ -29,7 +28,6 @@ import {
 } from 'utils/testing';
 
 describe("The Duplicate Action plugin", () => {
-
     let openmct;
     let duplicateTask;
     let childObject;
@@ -52,6 +50,7 @@ describe("The Duplicate Action plugin", () => {
                 }
             }
         }).folder;
+
         parentObject = getMockObjects({
             objectKeyStrings: ['folder'],
             overwrite: {
@@ -62,6 +61,7 @@ describe("The Duplicate Action plugin", () => {
                 }
             }
         }).folder;
+
         anotherParentObject = getMockObjects({
             objectKeyStrings: ['folder'],
             overwrite: {
@@ -120,7 +120,6 @@ describe("The Duplicate Action plugin", () => {
     });
 
     describe("when moving an object to a new parent", () => {
-
         beforeEach(async () => {
             duplicateTask = new DuplicateTask(openmct);
             await duplicateTask.duplicate(parentObject, anotherParentObject);
@@ -142,16 +141,14 @@ describe("The Duplicate Action plugin", () => {
     });
 
     describe("when a new name is provided for the duplicated object", () => {
-        it("the name is updated", () => {
+        it("the name is updated", async () => {
             const NEW_NAME = 'New Name';
-            let childName;
 
-            duplicateTask = new DuplicateAction(openmct);
-            duplicateTask.updateNameCheck(parentObject, NEW_NAME);
+            duplicateTask = new DuplicateTask(openmct);
+            duplicateTask.changeName(NEW_NAME);
+            const child = await duplicateTask.duplicate(childObject, anotherParentObject);
 
-            childName = parentObject.name;
-
-            expect(childName).toEqual(NEW_NAME);
+            expect(child.name).toEqual(NEW_NAME);
         });
     });
 
