@@ -23,15 +23,17 @@ jobs:
       browser:
         type: string
     executor: linux
+    environment:
+      NODE_ENV: development # Needed for dist
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}--{{ checksum "karma.conf.js" }}
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
       - run: npm install
-      - run: npm run prepare
+      - run: ls -latr
       - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
@@ -50,11 +52,12 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}--{{ checksum "karma.conf.js" }}
           paths:
             - ~/.npm
             - ~/.cache
             - node_modules
+            - dist
       - when:
           condition:
             equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
