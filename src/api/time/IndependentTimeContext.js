@@ -27,36 +27,66 @@ import TimeContext, { TIME_CONTEXT_EVENTS, TIME_CONTEXT_METHODS } from "./TimeCo
  * Views will use the GlobalTimeContext unless they specify an alternate/independent time context here.
  */
 class IndependentTimeContext extends TimeContext {
-    constructor(globalTimeContext, objectPath) {
+    constructor(openmct, globalTimeContext, objectPath) {
         super();
         this.unlisteners = [];
         this.globalTimeContext = globalTimeContext;
+        this.upstreamTimeContext = undefined;
         this.objectPath = objectPath;
         this.refreshContext = this.refreshContext.bind(this);
         this.resetContext = this.resetContext.bind(this);
-
-        TIME_CONTEXT_METHODS.forEach((functionName) => {
-            const wrappedFunction = this[functionName].bind(this);
-            this[functionName] = this.handleTimeContextMethods.bind(this, functionName, wrappedFunction);
-        });
 
         this.refreshContext();
 
         this.globalTimeContext.on('refreshContext', this.refreshContext);
     }
 
-    /**
-     * Causes this time context to call methods on another time context (either the global context, or another upstream time context)
-     * This allows views to have their own time context which points to the appropriate upstream context as necessary, achieving nesting.
-     * @param {*} functionName name of the time context class method
-     * @param {*} wrappedFunction the original class method on this (to prevent recursion)
-     * @param {*} args any arguments passed to the called class method
-     */
-    handleTimeContextMethods(functionName, wrappedFunction, ...args) {
+    bounds(newBounds) {
         if (this.upstreamTimeContext) {
-            return this.upstreamTimeContext[functionName](...args);
+            return this.upstreamTimeContext.clock(...arguments);
         } else {
-            return wrappedFunction(...args);
+            return super.bounds(...arguments);
+        }
+    }
+
+    tick(timestamp) {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext.tick(...arguments);
+        } else {
+            return super.tick(...arguments);
+        }
+    }
+
+    clockOffsets(offsets) {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext.clockOffsets(...arguments);
+        } else {
+            return super.clockOffsets(...arguments);
+        }
+    }
+
+    stopClock() {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext.stopClock(...arguments);
+        } else {
+            super.stopClock(...arguments);
+        }
+    }
+
+    timeOfInterest(newTOI) {
+        if (this.upstreamTimeContext) {
+            this.upstreamTimeContext.timeOfInterest(...arguments);
+        } else {
+            this.globalTimeContext.timeOfInterest(...arguments);
+        }
+    }
+
+    timeSystem(timeSystemOrKey, bounds) {
+        if (this.upstreamTimeContext) {
+            this.upstreamTimeContext.timeSystem(...arguments);
+        } else {
+            //we can have only one timeSystem for openmct
+            this.globalTimeContext.timeSystem(...arguments);
         }
     }
 
@@ -73,6 +103,10 @@ class IndependentTimeContext extends TimeContext {
      * @return {Clock} the currently active clock;
      */
     clock(keyOrClock, offsets) {
+        if (this.upstreamTimeContext) {
+            return this.upstreamTimeContext.clock(...arguments);
+        }
+
         if (arguments.length === 2) {
             let clock;
 
@@ -155,7 +189,7 @@ class IndependentTimeContext extends TimeContext {
      */
     refreshContext(viewKey) {
         //TODO: find a better way to skip upstream context for the view that just got an independent time context
-        const key = this.globalTimeContext.openmct.objects.makeKeyString(this.objectPath[0].identifier);
+        const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
         if (viewKey && key === viewKey) {
             return;
         }
@@ -164,7 +198,6 @@ class IndependentTimeContext extends TimeContext {
         this.followTimeContext();
 
         // Emit bounds so that views that are changing context get the upstream bounds
-        // TODO: Is there a way around having to emit this?
         this.emit('bounds', this.upstreamTimeContext.bounds());
     }
 
@@ -176,7 +209,7 @@ class IndependentTimeContext extends TimeContext {
         let timeContext = this.globalTimeContext;
 
         this.objectPath.some((item, index) => {
-            const key = this.globalTimeContext.openmct.objects.makeKeyString(item.identifier);
+            const key = this.openmct.objects.makeKeyString(item.identifier);
             //last index is the view object itself
             const itemContext = this.globalTimeContext.independentContexts.get(key);
             if (index > 0 && itemContext && itemContext.hasOwnContext()) {

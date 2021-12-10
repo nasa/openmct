@@ -134,10 +134,6 @@ class TimeAPI extends GlobalTimeContext {
      */
     addIndependentContext(key, value, clockKey) {
         let timeContext = this.getIndependentContext(key);
-        if (!timeContext) {
-            return;
-        }
-
         //stop following upstream time context since the view has it's own
         timeContext.resetContext();
 
@@ -183,7 +179,7 @@ class TimeAPI extends GlobalTimeContext {
             if (viewTimeContext) {
                 this.independentContexts.delete(viewKey);
             } else {
-                viewTimeContext = new IndependentTimeContext(this, objectPath);
+                viewTimeContext = new IndependentTimeContext(this.openmct, this, objectPath);
             }
 
             // return a new IndependentContext in case the objectPath is different

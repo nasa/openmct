@@ -30,11 +30,8 @@ export const TIME_CONTEXT_EVENTS = [
 ];
 
 export const TIME_CONTEXT_METHODS = [
-    'bounds',
-    'clock',
     'tick',
-    'timeSystem',
-    'tick'
+    'timeSystem'
 ];
 
 class TimeContext extends EventEmitter {
