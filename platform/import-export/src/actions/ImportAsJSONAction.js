@@ -71,13 +71,15 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
         var rootObj = this.instantiate(rootModel, rootId);
         var newStyleParent = parent.useCapability('adapter');
         var newStyleRootObj = rootObj.useCapability('adapter');
+        newStyleRootObj.location = parent.getId();
 
         if (this.openmct.composition.checkPolicy(newStyleParent, newStyleRootObj)) {
             // Instantiate all objects in tree with their newly generated ids,
             // adding each to its rightful parent's composition
-            rootObj.getCapability("location").setPrimaryLocation(parent.getId());
             this.deepInstantiate(rootObj, tree.openmct, []);
-            parent.getCapability("composition").add(rootObj);
+            this.openmct.objects.save(newStyleRootObj);
+            const compositionCollection = this.openmct.composition.get(newStyleParent);
+            compositionCollection.add(newStyleRootObj);
         } else {
             var dialog = this.openmct.overlays.dialog({
                 iconClass: 'alert',
@@ -103,7 +105,6 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
             var newObj;
 
             seen.push(parent.getId());
-
             parentModel.composition.forEach(function (childId) {
                 let keystring = this.openmct.objects.makeKeyString(childId);
 
@@ -115,8 +116,7 @@ define(['zepto', 'objectUtils'], function ($, objectUtils) {
                 delete newModel.persisted;
 
                 newObj = this.instantiate(newModel, keystring);
-                newObj.getCapability("location")
-                    .setPrimaryLocation(tree[keystring].location);
+                this.openmct.objects.save(newModel);
                 this.deepInstantiate(newObj, tree, seen);
             }, this);
         }
