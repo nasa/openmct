@@ -30,7 +30,7 @@ jobs:
       - restore_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}--{{ checksum "karma.conf.js" }}
       - node/install:
-          install-npm: false
+          install-npm: true
           node-version: << parameters.node-version >>
       - run: npm install
       - run: ls -latr
