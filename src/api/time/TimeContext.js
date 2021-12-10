@@ -29,11 +29,6 @@ export const TIME_CONTEXT_EVENTS = [
     'clockOffsets'
 ];
 
-export const TIME_CONTEXT_METHODS = [
-    'tick',
-    'timeSystem'
-];
-
 class TimeContext extends EventEmitter {
     constructor() {
         super();
@@ -58,7 +53,7 @@ class TimeContext extends EventEmitter {
 
     /**
      * Get or set the time system of the TimeAPI.
-     * @param {TimeSystem | string} timeSystem
+     * @param {TimeSystem | string} timeSystemOrKey
      * @param {module:openmct.TimeAPI~TimeConductorBounds} bounds
      * @fires module:openmct.TimeAPI~timeSystem
      * @returns {TimeSystem} The currently applied time system

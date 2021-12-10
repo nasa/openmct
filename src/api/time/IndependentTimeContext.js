@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import TimeContext, { TIME_CONTEXT_EVENTS, TIME_CONTEXT_METHODS } from "./TimeContext";
+import TimeContext, { TIME_CONTEXT_EVENTS } from "./TimeContext";
 
 /**
  * The IndependentTimeContext handles getting and setting time of the openmct application in general.
@@ -29,6 +29,7 @@ import TimeContext, { TIME_CONTEXT_EVENTS, TIME_CONTEXT_METHODS } from "./TimeCo
 class IndependentTimeContext extends TimeContext {
     constructor(openmct, globalTimeContext, objectPath) {
         super();
+        this.openmct = openmct;
         this.unlisteners = [];
         this.globalTimeContext = globalTimeContext;
         this.upstreamTimeContext = undefined;
@@ -43,7 +44,7 @@ class IndependentTimeContext extends TimeContext {
 
     bounds(newBounds) {
         if (this.upstreamTimeContext) {
-            return this.upstreamTimeContext.clock(...arguments);
+            return this.upstreamTimeContext.bounds(...arguments);
         } else {
             return super.bounds(...arguments);
         }
@@ -67,26 +68,26 @@ class IndependentTimeContext extends TimeContext {
 
     stopClock() {
         if (this.upstreamTimeContext) {
-            return this.upstreamTimeContext.stopClock(...arguments);
+            this.upstreamTimeContext.stopClock();
         } else {
-            super.stopClock(...arguments);
+            super.stopClock();
         }
     }
 
     timeOfInterest(newTOI) {
         if (this.upstreamTimeContext) {
-            this.upstreamTimeContext.timeOfInterest(...arguments);
+            return this.upstreamTimeContext.timeOfInterest(...arguments);
         } else {
-            this.globalTimeContext.timeOfInterest(...arguments);
+            return this.globalTimeContext.timeOfInterest(...arguments);
         }
     }
 
     timeSystem(timeSystemOrKey, bounds) {
         if (this.upstreamTimeContext) {
-            this.upstreamTimeContext.timeSystem(...arguments);
+            return this.upstreamTimeContext.timeSystem(...arguments);
         } else {
             //we can have only one timeSystem for openmct
-            this.globalTimeContext.timeSystem(...arguments);
+            return this.globalTimeContext.timeSystem(...arguments);
         }
     }
 
