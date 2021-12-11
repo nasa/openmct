@@ -45,7 +45,7 @@ jobs:
     executor: linux
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created
-      NODE_PARAM_NPM_VERSION: latest
+      NODE_PARAM_NPM_VERSION: v6.14.12
     steps:
       - checkout
       - restore_cache:
@@ -140,28 +140,28 @@ workflows:
   nightly:
     jobs:
       - test:
-          name: node10-chrome
+          name: node10-chrome-nightly
           node-version: lts/dubnium
           browser: ChromeHeadless
       - test:
-          name: node12-firefoxESR
+          name: node12-firefoxESR-nightly
           node-version: lts/erbium
           browser: FirefoxESR
       - test:
-          name: node12-chrome
+          name: node12-chrome-nightly
           node-version: lts/erbium
           browser: ChromeHeadless
       - test:
-          name: node14-firefox
+          name: node14-firefox-nightly
           node-version: lts/fermium
           browser: FirefoxHeadless
       - test: 
-          name: node14-chrome
+          name: node14-chrome-nightly
           node-version: lts/fermium
           browser: ChromeHeadless
       - npm-audit
       - e2e:
-          name: e2e-full
+          name: e2e-full-nightly
           node-version: lts/fermium
           suite: full
     triggers:
