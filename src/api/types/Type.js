@@ -110,7 +110,7 @@ define(function () {
 
         if (legacyDefinition.model) {
             definition.initialize = function (model) {
-                for (let [k, v] of Object.entries(legacyDefinition.model || {})) {
+                for (let [k, v] of Object.entries(legacyDefinition.model)) {
                     model[k] = JSON.parse(JSON.stringify(v));
                 }
             };
