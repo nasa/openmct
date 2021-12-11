@@ -9,6 +9,8 @@ orbs:
 jobs:
   npm-audit:
     executor: linux
+    environment:
+      NODE_ENV: development
     steps:
       - checkout
       - node/install:
@@ -17,26 +19,15 @@ jobs:
       - run: npm install
       - run: npm audit --audit-level=low
   npm-lint:
-    parameters:
-      node-version:
-        type: string
     executor: linux
     environment:
       NODE_ENV: development
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
-          install-npm: false
-          node-version: << parameters.node-version >>
+          install-npm: true
+          node-version: lts/fermium
       - run: npm install
-      - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
-            - node_modules
       - run: npm run lint
   test:
     parameters:
@@ -66,12 +57,12 @@ jobs:
             equal: [ "FirefoxHeadless", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox
-      - when:
-          condition:
-            equal: [ "ChromeHeadless", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-chrome:
-                replace-existing: false
+      - save_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+            - node_modules
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
@@ -109,9 +100,7 @@ jobs:
 workflows:
   matrix-tests:
     jobs:
-      - npm-lint:             
-          name: node10-build-lint
-          node-version: lts/dubnium
+      - npm-lint
       - test:
           name: node12-chrome
           node-version: lts/erbium
