@@ -30,6 +30,8 @@ jobs:
           install-npm: false #Cannot install latest npm version with node10.
           node-version: lts/dubnium
       - run: npm install
+      - restore_cache:
+          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
       - run: npm run lint
   test:
     parameters:
@@ -65,7 +67,6 @@ jobs:
           steps:
             - browser-tools/install-chrome:
                 replace-existing: false
-      - run: ls -latR
       - save_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
