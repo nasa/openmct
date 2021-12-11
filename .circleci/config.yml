@@ -30,6 +30,7 @@ jobs:
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
+      - run: npm -v
       - run: npm install
       - save_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
@@ -47,7 +48,6 @@ jobs:
     executor: linux
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created
-      NODE_PARAM_NPM_VERSION: 6.14.12
     steps:
       - checkout
       - restore_cache:
@@ -56,6 +56,7 @@ jobs:
           install-npm: false
           node-version: << parameters.node-version >>
           #NODE_PARAM_NPM_VERSION: v6.14.12
+      - run: npm -v
       - run: npm install
       - when:
           condition:
