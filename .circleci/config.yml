@@ -45,7 +45,7 @@ jobs:
     executor: linux
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created
-      NODE_PARAM_NPM_VERSION: v6.14.12
+      NODE_PARAM_NPM_VERSION: 6.14.12
     steps:
       - checkout
       - restore_cache:
