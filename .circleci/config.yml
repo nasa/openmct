@@ -53,6 +53,7 @@ jobs:
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
+          npm-version: v6.14.12
           #NODE_PARAM_NPM_VERSION: v6.14.12
       - run: npm install
       - when:
