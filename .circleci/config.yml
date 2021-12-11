@@ -71,7 +71,7 @@ jobs:
           paths:
             - ~/.npm
             - node_modules
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>>,<<parameters.browser>>,<<parameters.browser>>
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
