@@ -16,6 +16,26 @@ jobs:
           node-version: lts/fermium
       - run: npm install
       - run: npm audit --audit-level=low
+  lint:
+    parameters:
+      node-version:
+        type: string
+    executor: linux
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+      - node/install:
+          install-npm: true
+          node-version: << parameters.node-version >>
+      - run: npm install
+      - save_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+            - node_modules
+      - run: npm run lint
   test:
     parameters:
       node-version:
@@ -25,6 +45,7 @@ jobs:
     executor: linux
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created
+      NODE_PARAM_NPM_VERSION: latest
     steps:
       - checkout
       - restore_cache:
@@ -32,6 +53,7 @@ jobs:
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
+          #NODE_PARAM_NPM_VERSION: v6.14.12
       - run: npm install
       - when:
           condition:
@@ -56,11 +78,6 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
-      - when:
-          condition:
-            equal: [ "", <<parameters.browser>> ] #Only run linting when browsers are not running to save time
-          steps:
-            - run: npm run lint
       - when:
           condition: << parameters.browser >> #Truthy evaluation to only run when browser is specified
           steps:
@@ -101,12 +118,9 @@ jobs:
 workflows:
   matrix-tests:
     jobs:
-      - test:             
+      - lint:             
           name: node10-build-lint
           node-version: lts/dubnium
-          browser: "" #Skip unit tests
-          environment:
-            NODE_PARAM_NPM_VERSION: v6.14.12
       - test:
           name: node12-chrome
           node-version: lts/erbium
@@ -129,8 +143,6 @@ workflows:
           name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
-          environment:
-            NODE_PARAM_NPM_VERSION: v6.14.12
       - test:
           name: node12-firefoxESR
           node-version: lts/erbium
@@ -143,7 +155,7 @@ workflows:
           name: node14-firefox
           node-version: lts/fermium
           browser: FirefoxHeadless
-       - test: 
+      - test: 
           name: node14-chrome
           node-version: lts/fermium
           browser: ChromeHeadless
