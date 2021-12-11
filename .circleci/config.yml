@@ -18,15 +18,15 @@ jobs:
           node-version: lts/fermium
       - run: npm install
       - run: npm audit --audit-level=low
-  npm-lint:
+  node10-lint:
     executor: linux
     environment:
       NODE_ENV: development
     steps:
       - checkout
       - node/install:
-          install-npm: true
-          node-version: lts/fermium
+          install-npm: false
+          node-version: lts/dubnium
       - run: npm install
       - run: npm run lint
   test:
@@ -41,7 +41,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-2
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-3
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
@@ -64,11 +64,12 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-2
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-3
           paths:
             - ~/.npm
             - ~/.cache
             - node_modules
+            - dist
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
@@ -91,12 +92,6 @@ jobs:
           install-npm: true
           node-version: << parameters.node-version >>
       - run: npm install
-      - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
-            - node_modules
       - run: npx playwright install
       - run: npm run test:e2e:<<parameters.suite>>
       - store_test_results:
@@ -106,7 +101,7 @@ jobs:
 workflows:
   matrix-tests:
     jobs:
-      - npm-lint
+      - node10-lint
       - test:
           name: node12-chrome
           node-version: lts/erbium
