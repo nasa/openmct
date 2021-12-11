@@ -71,6 +71,7 @@ jobs:
             - ~/.npm
             - ~/.cache
             - node_modules
+      - run: ls -latr
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
