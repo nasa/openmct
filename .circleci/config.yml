@@ -41,7 +41,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-2
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
@@ -57,8 +57,14 @@ jobs:
             equal: [ "FirefoxHeadless", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox
+      - when:
+          condition:
+            equal: [ "ChromeHeadless", <<parameters.browser>> ]
+          steps:
+            - browser-tools/install-chrome:
+                replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-2
           paths:
             - ~/.npm
             - ~/.cache
