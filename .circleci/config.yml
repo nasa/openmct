@@ -16,7 +16,7 @@ jobs:
           node-version: lts/fermium
       - run: npm install
       - run: npm audit --audit-level=low
-  lint:
+  npm-lint:
     parameters:
       node-version:
         type: string
@@ -30,7 +30,6 @@ jobs:
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
-      - run: npm -v
       - run: npm install
       - save_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
@@ -55,8 +54,6 @@ jobs:
       - node/install:
           install-npm: false
           node-version: << parameters.node-version >>
-          #NODE_PARAM_NPM_VERSION: v6.14.12
-      - run: npm -v
       - run: npm install
       - when:
           condition:
@@ -75,20 +72,11 @@ jobs:
           steps:
             - browser-tools/install-chrome:
                 replace-existing: false
-      - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
-            - node_modules
-      - when:
-          condition: << parameters.browser >> #Truthy evaluation to only run when browser is specified
-          steps:
-            - run: npm run test:coverage -- --browsers=<<parameters.browser>>
-            - store_test_results:
-                path: dist/reports/tests/
-            - store_artifacts:
-                path: dist/reports/
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
+      - store_test_results:
+          path: dist/reports/tests/
+      - store_artifacts:
+          path: dist/reports/
   e2e:
     parameters:
       node-version:
@@ -121,7 +109,7 @@ jobs:
 workflows:
   matrix-tests:
     jobs:
-      - lint:             
+      - npm-lint:             
           name: node10-build-lint
           node-version: lts/dubnium
       - test:
