@@ -4,8 +4,8 @@ executors:
     docker:
       - image: mcr.microsoft.com/playwright:focal
 orbs:
-  node: circleci/node@4.5.1
-  browser-tools: circleci/browser-tools@1.1.3
+  node: circleci/node@4.9.0
+  browser-tools: circleci/browser-tools@1.2.3
 jobs:
   npm-audit:
     executor: linux
@@ -23,12 +23,14 @@ jobs:
       browser:
         type: string
     executor: linux
+    environment:
+      NODE_ENV: development # Needed to ensure 'dist' folder created
     steps:
       - checkout
       - restore_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
-          install-npm: false
+          install-npm: true
           node-version: << parameters.node-version >>
       - run: npm install
       - when:
@@ -81,7 +83,7 @@ jobs:
       - restore_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
       - node/install:
-          install-npm: false
+          install-npm: true
           node-version: << parameters.node-version >>
       - run: npm install
       - save_cache:
@@ -99,22 +101,24 @@ jobs:
 workflows:
   matrix-tests:
     jobs:
+      - test:             
+          name: node10-build-lint
+          node-version: lts/dubnium
+          browser: "" #Skip unit tests
+          environment:
+            NODE_PARAM_NPM_VERSION: v6.14.12
       - test:
+          name: node12-chrome
+          node-version: lts/erbium
+          browser: ChromeHeadless
+      - test: 
+          name: node14-chrome
+          node-version: lts/fermium
+          browser: ChromeHeadless
           post-steps:
             - run:
                 command:
-                  curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov              
-          name: node10-chrome
-          node-version: lts/dubnium
-          browser: ChromeHeadless
-      - test:
-          name: node12-build-lint
-          node-version: lts/erbium
-          browser: "" #Skip unit tests
-      - test: 
-          name: node14-build-lint
-          node-version: lts/fermium
-          browser: "" #Skip unit tests
+                  curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
       - e2e:
           name: e2e-smoke
           node-version: lts/fermium
@@ -122,17 +126,27 @@ workflows:
   nightly:
     jobs:
       - test:
-          name: node10-chrome-nightly
+          name: node10-chrome
           node-version: lts/dubnium
           browser: ChromeHeadless
+          environment:
+            NODE_PARAM_NPM_VERSION: v6.14.12
       - test:
-          name: node12-firefoxESR-nightly
+          name: node12-firefoxESR
           node-version: lts/erbium
           browser: FirefoxESR
       - test:
-          name: node14-firefox-nightly
+          name: node12-chrome
+          node-version: lts/erbium
+          browser: ChromeHeadless
+      - test:
+          name: node14-firefox
           node-version: lts/fermium
           browser: FirefoxHeadless
+       - test: 
+          name: node14-chrome
+          node-version: lts/fermium
+          browser: ChromeHeadless
       - npm-audit
       - e2e:
           name: e2e-full
