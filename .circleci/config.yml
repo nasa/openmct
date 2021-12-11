@@ -21,6 +21,9 @@ jobs:
       node-version:
         type: string
     executor: linux
+    environment:
+      NODE_ENV: development
+      NODE_PARAM_NPM_VERSION: 6.14.12
     steps:
       - checkout
       - restore_cache:
