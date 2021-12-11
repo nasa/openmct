@@ -24,8 +24,10 @@ jobs:
       NODE_ENV: development
     steps:
       - checkout
+      #- restore_cache:
+      #    key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circle.yml" }}
       - node/install:
-          install-npm: false
+          install-npm: false #Cannot install latest npm version with node10.
           node-version: lts/dubnium
       - run: npm install
       - run: npm run lint
@@ -41,7 +43,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-4
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circle.yml" }}
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
@@ -64,16 +66,11 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-4
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circle.yml" }}
           paths:
             - ~/.npm
             - ~/.cache
             - node_modules
-            - dist
-            - ./node_modules
-            - ./dist
-            - ~/node_modules
-            - ~/dist
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
@@ -91,7 +88,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circle.yml" }}
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
