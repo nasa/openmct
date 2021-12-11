@@ -24,8 +24,8 @@ jobs:
       NODE_ENV: development
     steps:
       - checkout
-      #- restore_cache:
-      #    key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circle.yml" }}
+      - restore_cache:
+          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
       - node/install:
           install-npm: false #Cannot install latest npm version with node10.
           node-version: lts/dubnium
@@ -53,7 +53,7 @@ jobs:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
-                version: "91.2.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
+                version: "91.4.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
       - when:
           condition:
             equal: [ "FirefoxHeadless", <<parameters.browser>> ]
@@ -65,15 +65,13 @@ jobs:
           steps:
             - browser-tools/install-chrome:
                 replace-existing: false
+      - run: ls -latR
       - save_cache:
           key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - ~/.npm
-            - ~/.cache
             - node_modules
-      - run: ls -latr
-      - run: echo $NODE_ENV
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>>,<<parameters.browser>>,<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
