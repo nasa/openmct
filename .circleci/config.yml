@@ -41,7 +41,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-3
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-4
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
@@ -64,12 +64,16 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-3
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-4
           paths:
             - ~/.npm
             - ~/.cache
             - node_modules
             - dist
+            - ./node_modules
+            - ./dist
+            - ~/node_modules
+            - ~/dist
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
