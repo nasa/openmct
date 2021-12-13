@@ -126,36 +126,4 @@ describe("The import JSON action", function () {
 
         expect(openmct.forms.showForm).toHaveBeenCalled();
     });
-
-    // TODO: works with fdescribe
-    xit('saves imported file', function (done) {
-        const domainObject = {
-            composition: [],
-            name: "Unnamed Folder",
-            type: "folder",
-            location: "ROOT",
-            modified: 1637021471624,
-            persisted: 1637021471624,
-            id: "parent-id",
-            identifier: {
-                namespace: "",
-                key: "parent-id"
-            }
-        };
-
-        const changes = {
-            selectFile: {
-                body: '{"openmct":{"infiniteParent":{"composition":[{"key":"infinteChild","namespace":""}],"identifier":{"key":"infiniteParent","namespace":""},"name":"parent","type":"folder","modified":1503598129176,"location":"mine","persisted":1503598129176},"infinteChild":{"composition":[{"key":"infiniteParent","namespace":""}],"identifier":{"key":"infinteChild","namespace":""},"name":"child","type":"folder","modified":1503598132428,"location":"infiniteParent","persisted":1503598132428}},"rootId":"infiniteParent"}'
-            }
-        };
-
-        importFromJSONAction.onSave(domainObject, changes);
-        const compositionCollection = openmct.composition.get(domainObject);
-        compositionCollection.on('add', (child) => {
-            console.log('child', child);
-            expect(child.location).toEqual(domainObject.identifier.key);
-
-            done();
-        });
-    });
 });
