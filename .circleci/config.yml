@@ -1,16 +1,35 @@
 version: 2.1
 executors:
-  linux:
+  pw-focal-development:
     docker:
       - image: mcr.microsoft.com/playwright:focal
+    environment:
+      NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
+      BUSTED_CACHE: "false"
+parameters:
+  bust_cache:
+    default: "false"
+    type: string
+commands:
+  bust_cache:
+    steps:
+      - run: echo $BUSTED
+      - run: export BUSTED_CACHE={{ epoch }}
+  generate_and_store_version_artifacts: #Used to track the packages and files. The importance of this step will be lost to time.
+    steps:
+      - run: mkdir /tmp/artifacts
+      - run: printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
+      - run: npm -v >> /tmp/artifacts/npm-version.txt
+      - run: node -v >> /tmp/artifacts/node-version.txt
+      - run: ls -latR >> /tmp/artifacts/dir.txt
+      - store_artifacts:
+          path: /tmp/artifacts/
 orbs:
   node: circleci/node@4.9.0
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
   npm-audit:
-    executor: linux
-    environment:
-      NODE_ENV: development
+    executor: pw-focal-development
     steps:
       - checkout
       - node/install:
@@ -18,34 +37,32 @@ jobs:
           node-version: lts/fermium
       - run: npm install
       - run: npm audit --audit-level=low
+      - generate_and_store_version_artifacts
   node10-lint:
-    executor: linux
-    environment:
-      NODE_ENV: development
+    executor: pw-focal-development
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
       - node/install:
           install-npm: false #Cannot install latest npm version with node10.
           node-version: lts/dubnium
       - run: npm install
       - restore_cache:
-          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
       - run: npm run lint
+      - generate_and_store_version_artifacts
   test:
     parameters:
       node-version:
         type: string
       browser:
         type: string
-    executor: linux
-    environment:
-      NODE_ENV: development # Needed to ensure 'dist' folder created
+    executor: pw-focal-development
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
@@ -68,7 +85,7 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
           paths:
             - ~/.npm
             - node_modules
@@ -77,19 +94,18 @@ jobs:
           path: dist/reports/tests/
       - store_artifacts:
           path: dist/reports/
+      - generate_and_store_version_artifacts
   e2e:
     parameters:
       node-version:
         type: string
       suite:
         type: string
-    executor: linux
-    environment:
-      NODE_ENV: development # Needed if playwright is in `devDependencies`
+    executor: pw-focal-development
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
@@ -100,6 +116,7 @@ jobs:
           path: test-results/results.xml
       - store_artifacts:
           path: test-results
+      - generate_and_store_version_artifacts
 workflows:
   matrix-tests:
     jobs:
