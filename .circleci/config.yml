@@ -13,7 +13,7 @@ parameters:
 commands:
   bust_cache:
     steps:
-      - run: echo $BUSTED
+      - run: echo $BUSTED_CACHE
       - run: export BUSTED_CACHE={{ epoch }}
   generate_and_store_version_artifacts: #Used to track the packages and files. The importance of this step will be lost to time.
     steps:
