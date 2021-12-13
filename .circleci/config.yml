@@ -33,6 +33,8 @@ jobs:
           install-npm: false #Node 10 cannot function with `install-npm`
           node-version: << parameters.node-version >>
       - run: npm install
+      - run: ls -la
+      - run: npm run prepare
       - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
