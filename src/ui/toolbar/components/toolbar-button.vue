@@ -58,8 +58,6 @@ export default {
             }
 
             Object.entries(this.options.value).forEach(([key, value]) => {
-                console.log(key, value);
-
                 this.options.dialog.sections.forEach(section => {
                     section.rows.forEach(row => {
                         if (row.key === key) {
