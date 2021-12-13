@@ -47,6 +47,11 @@ class InMemorySearchProvider {
         this.pendingIndex = {};
         this.pendingRequests = 0;
 
+        /**
+         * If we don't have SharedWorkers available (e.g., iOS)
+         */
+        this.localIndexedItems = {};
+
         this.pendingQueries = {};
         this.onWorkerMessage = this.onWorkerMessage.bind(this);
         this.onWorkerMessageError = this.onWorkerMessageError.bind(this);
@@ -58,11 +63,17 @@ class InMemorySearchProvider {
     }
 
     startIndexing() {
-        // console.debug('🖲 Starting indexing for search 🖲');
-        // Need to check here if object provider supports search or not
+        console.debug('🖲 Starting indexing for search 🖲');
         const rootObject = this.openmct.objects.rootProvider.rootObject;
         this.scheduleForIndexing(rootObject.identifier);
-        this.worker = this.startSharedWorker();
+
+        if (typeof SharedWorker !== 'undefined') {
+            console.debug('🖲 Starting Shared Worker 🖲');
+            this.worker = this.startSharedWorker();
+        } else {
+            // we must be on iOS
+            console.debug('🖲 Doing this locally 🖲');
+        }
     }
 
     /**
@@ -90,9 +101,17 @@ class InMemorySearchProvider {
             maxResults = this.DEFAULT_MAX_RESULTS;
         }
 
-        const queryId = this.dispatchSearch(input, maxResults);
+        const queryId = uuid();
         const pendingQuery = this.getIntermediateResponse();
         this.pendingQueries[queryId] = pendingQuery;
+
+        if (this.worker) {
+            console.debug('🖲 Searching with worker 🖲');
+            this.dispatchSearch(queryId, input, maxResults);
+        } else {
+            console.debug('🖲 Searching locally 🖲');
+            this.localSearch(queryId, input, maxResults);
+        }
 
         return pendingQuery.promise;
     }
@@ -104,7 +123,7 @@ class InMemorySearchProvider {
      * @private
      */
     async onWorkerMessage(event) {
-        // (`🖲 Received event from search worker 🖲`, event);
+        console.debug(`🖲 Received event from search worker 🖲`, event);
         if (event.data.request !== 'search') {
             return;
         }
@@ -121,7 +140,7 @@ class InMemorySearchProvider {
         }));
 
         pendingQuery.resolve(modelResults);
-        // console.debug(`🖲 Returning model results 🖲`, modelResults);
+        console.debug(`🖲 Returning model results 🖲`, modelResults);
         delete this.pendingQueries[event.data.queryId];
     }
 
@@ -153,6 +172,8 @@ class InMemorySearchProvider {
         sharedWorker.port.onmessage = this.onWorkerMessage;
         sharedWorker.port.onmessageerror = this.onWorkerMessageError;
         sharedWorker.port.start();
+
+        console.debug('🖲 Shared worker started 🖲');
 
         return sharedWorker;
     }
@@ -217,12 +238,17 @@ class InMemorySearchProvider {
         this.indexedIds[keyString] = true;
 
         if ((id.key !== 'ROOT')) {
-            // console.debug(`🖲 Telling worker to index ${keyString} 🖲`, domainObject);
-            this.worker.port.postMessage({
-                request: 'index',
-                model: domainObject,
-                keyString
-            });
+            if (this.worker) {
+                console.debug(`🖲 Telling worker to index ${keyString} 🖲`, domainObject);
+                this.worker.port.postMessage({
+                    request: 'index',
+                    model: domainObject,
+                    keyString
+                });
+            } else {
+                console.debug(`🖲 Indexing locally ${keyString} 🖲`, domainObject);
+                this.localIndexItem(keyString, domainObject);
+            }
         }
 
         const composition = this.openmct.composition.registry.find(foundComposition => {
@@ -272,18 +298,62 @@ class InMemorySearchProvider {
      * @private
      * @returns {String} a unique query Id for the query.
      */
-    dispatchSearch(searchInput, maxResults) {
-        const queryId = uuid();
-        // console.debug(`🍉 Sending to worker to search 🍉`, searchInput);
-
-        this.worker.port.postMessage({
+    dispatchSearch(queryId, searchInput, maxResults) {
+        console.debug(`🍉 Sending to worker to search 🍉`, searchInput);
+        const message = {
             request: 'search',
             input: searchInput,
-            maxResults: maxResults,
-            queryId: queryId
+            maxResults,
+            queryId
+        };
+        this.worker.port.postMessage(message);
+    }
+
+    /**
+    * A local version of the same SharedWorker function
+    * if we don't have SharedWorkers available (e.g., iOS)
+    */
+    localIndexItem(keyString, model) {
+        console.debug(`🖲 Locally indexing ${keyString} 🖲`, model);
+        this.localIndexedItems[keyString] = {
+            type: model.type,
+            name: model.name,
+            keyString
+        };
+    }
+
+    /**
+     * A local version of the same SharedWorker function
+     * if we don't have SharedWorkers available (e.g., iOS)
+     *
+     * Gets search results from the indexedItems based on provided search
+     * input. Returns matching results from indexedItems
+     */
+    localSearch(queryId, searchInput, maxResults) {
+        // This results dictionary will have domain object ID keys which
+        // point to the value the domain object's score.
+        console.debug(`🍉 Local querying for 🍉`, searchInput);
+        let results;
+        const input = searchInput.trim().toLowerCase();
+        const message = {
+            request: 'search',
+            results: {},
+            total: 0,
+            queryId
+        };
+
+        results = Object.values(this.localIndexedItems).filter((indexedItem) => {
+            return indexedItem.name.toLowerCase().includes(input);
         });
 
-        return queryId;
+        message.total = results.length;
+        message.results = results
+            .slice(0, maxResults);
+        console.debug(`🍉 Locally found ${message.total} results 🍉`, message.results);
+        const eventToReturn = {
+            data: message
+        };
+        this.onWorkerMessage(eventToReturn);
     }
 }
 
