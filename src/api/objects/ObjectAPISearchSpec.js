@@ -179,7 +179,7 @@ describe("The Object API Search Function", () => {
                 await openmct.objects.inMemorySearchProvider.index(mockIdentifier2, mockDomainObject2);
                 await openmct.objects.inMemorySearchProvider.index(mockIdentifier3, mockDomainObject3);
             });
-            it("calls local search", async () => {
+            it("calls local search", () => {
                 openmct.objects.search('foo');
                 expect(openmct.objects.inMemorySearchProvider.localSearch).toHaveBeenCalled();
             });
