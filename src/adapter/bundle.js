@@ -21,7 +21,6 @@
  *****************************************************************************/
 
 define([
-    './actions/ActionDialogDecorator',
     './capabilities/AdapterCapability',
     './directives/MCTView',
     './services/Instantiate',
@@ -36,7 +35,6 @@ define([
     './actions/LegacyActionAdapter',
     './services/LegacyPersistenceAdapter'
 ], function (
-    ActionDialogDecorator,
     AdapterCapability,
     MCTView,
     Instantiate,
@@ -88,12 +86,6 @@ define([
                         depends: [
                             "$injector"
                         ]
-                    },
-                    {
-                        type: "decorator",
-                        provides: "actionService",
-                        implementation: ActionDialogDecorator,
-                        depends: ["openmct"]
                     },
                     {
                         provides: "objectService",
