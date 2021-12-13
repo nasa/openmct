@@ -39,6 +39,7 @@ describe("The Object API", () => {
             type: "test-type"
         };
     });
+
     describe("The save function", () => {
         it("Rejects if no provider available", () => {
             let rejected = false;
@@ -330,6 +331,48 @@ describe("The Object API", () => {
                     listeners.forEach(listener => listener());
                 });
             });
+        });
+    });
+
+    describe("transactions", () => {
+        beforeEach(() => {
+            spyOn(openmct.editor, 'isEditing').and.returnValue(true);
+        });
+
+        it('there is no active transaction', () => {
+            expect(objectAPI.isTransactionActive()).toBe(false);
+        });
+
+        it('start a transaction', () => {
+            objectAPI.startTransaction();
+            expect(objectAPI.isTransactionActive()).toBe(true);
+        });
+
+        it('has active transaction', () => {
+            objectAPI.startTransaction();
+            const activeTransaction = objectAPI.getActiveTransaction();
+            expect(activeTransaction).not.toBe(null);
+        });
+
+        it('end a transaction', () => {
+            objectAPI.endTransaction();
+            expect(objectAPI.isTransactionActive()).toBe(false);
+        });
+
+        it('returns dirty object on get', (done) => {
+            spyOn(objectAPI, 'supportsMutation').and.returnValue(true);
+
+            objectAPI.startTransaction();
+            objectAPI.mutate(mockDomainObject, 'name', 'dirty object');
+
+            const dirtyObject = objectAPI.transaction.getDirtyObject(mockDomainObject.identifier);
+
+            objectAPI.get(mockDomainObject.identifier)
+                .then(object => {
+                    const areEqual = JSON.stringify(object) === JSON.stringify(dirtyObject);
+                    expect(areEqual).toBe(true);
+                })
+                .finally(done);
         });
     });
 });

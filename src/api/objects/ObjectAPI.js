@@ -186,7 +186,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     identifier = utils.parseKeyString(identifier);
     let dirtyObject;
     if (this.isTransactionActive()) {
-        dirtyObject = this.transaction.getDirtyObject(keystring);
+        dirtyObject = this.transaction.getDirtyObject(identifier);
     }
 
     if (dirtyObject) {
