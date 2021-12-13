@@ -75,20 +75,11 @@ class IndependentTimeContext extends TimeContext {
     }
 
     timeOfInterest(newTOI) {
-        if (this.upstreamTimeContext) {
-            return this.upstreamTimeContext.timeOfInterest(...arguments);
-        } else {
-            return this.globalTimeContext.timeOfInterest(...arguments);
-        }
+        return this.globalTimeContext.timeOfInterest(...arguments);
     }
 
     timeSystem(timeSystemOrKey, bounds) {
-        if (this.upstreamTimeContext) {
-            return this.upstreamTimeContext.timeSystem(...arguments);
-        } else {
-            //we can have only one timeSystem for openmct
-            return this.globalTimeContext.timeSystem(...arguments);
-        }
+        return this.globalTimeContext.timeSystem(...arguments);
     }
 
     /**
