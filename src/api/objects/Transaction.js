@@ -58,8 +58,8 @@ export default class Transaction {
     getDirtyObject(identifier) {
         let dirtyObject;
         this.dirtyObjects.forEach(object => {
-            const isEqual = this.objectAPI.makeKeyString(object.identifier) === this.objectAPI.makeKeyString(identifier);
-            if (isEqual) {
+            const areIdsEqual = this.objectAPI.areIdsEqual(object.identifier, identifier);
+            if (areIdsEqual) {
                 dirtyObject = object;
             }
         });
