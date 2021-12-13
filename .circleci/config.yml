@@ -12,16 +12,19 @@ parameters:
     type: string
 commands:
   bust_cache:
+    description: "Send this command with the 'Trigger Build' option in the CircleCI UI"
     steps:
       - run: echo $BUSTED_CACHE
       - run: export BUSTED_CACHE={{ epoch }}
-  generate_and_store_version_artifacts: #Used to track the packages and files. The importance of this step will be lost to time.
+  generate_and_store_version_artifacts:
+    description: "Used to track the packages and files"
     steps:
-      - run: mkdir /tmp/artifacts
-      - run: printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
-      - run: npm -v >> /tmp/artifacts/npm-version.txt
-      - run: node -v >> /tmp/artifacts/node-version.txt
-      - run: ls -latR >> /tmp/artifacts/dir.txt
+      - run: |
+          mkdir /tmp/artifacts
+          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
+          npm -v >> /tmp/artifacts/npm-version.txt
+          node -v >> /tmp/artifacts/node-version.txt
+          ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
           path: /tmp/artifacts/
 orbs:
@@ -43,13 +46,13 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
       - node/install:
           install-npm: false #Cannot install latest npm version with node10.
           node-version: lts/dubnium
       - run: npm install
       - restore_cache:
-          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
       - run: npm run lint
       - generate_and_store_version_artifacts
   test:
@@ -62,7 +65,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
@@ -85,7 +88,7 @@ jobs:
             - browser-tools/install-chrome:
                 replace-existing: false
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
           paths:
             - ~/.npm
             - node_modules
@@ -105,7 +108,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
