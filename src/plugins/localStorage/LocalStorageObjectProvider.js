@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 export default class LocalStorageObjectProvider {
-    constructor({spaceKey = 'mct'}) {
+    constructor(spaceKey = 'mct') {
         this.localStorage = window.localStorage;
         this.spaceKey = spaceKey;
         this.initializeSpace(spaceKey);
@@ -64,6 +64,13 @@ export default class LocalStorageObjectProvider {
     /**
      * @private
      */
+    persistSpace(space) {
+        this.localStorage[this.spaceKey] = JSON.stringify(space);
+    }
+
+    /**
+     * @private
+     */
     getSpace() {
         return this.localStorage[this.spaceKey];
     }
@@ -82,13 +89,6 @@ export default class LocalStorageObjectProvider {
         if (this.isEmpty()) {
             this.localStorage[this.spaceKey] = JSON.stringify({});
         }
-    }
-
-    /**
-     * @private
-     */
-    persistSpace(space) {
-        this.localStorage[this.spaceKey] = JSON.stringify(space);
     }
 
     /**
