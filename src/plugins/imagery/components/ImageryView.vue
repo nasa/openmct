@@ -417,6 +417,8 @@ export default {
                 imageIndex = newSize > 0 ? newSize - 1 : undefined;
             }
 
+            // preserve previous image if a subscription updates history size 
+            this.previousFocusedImage = this.focusedImage ? JSON.parse(JSON.stringify(this.focusedImage)) : undefined;
             this.setFocusedImage(imageIndex, false);
             this.scrollToRight();
         },
@@ -506,12 +508,6 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.trackDuration);
                 this.timeContext.off("clock", this.trackDuration);
-            }
-        },
-        boundsChange(bounds, isTick) {
-            if (!isTick) {
-                this.previousFocusedImage = this.focusedImage ? JSON.parse(JSON.stringify(this.focusedImage)) : undefined;
-                this.requestHistory();
             }
         },
         expand() {
@@ -674,14 +670,6 @@ export default {
                 this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
             });
         },
-        matchIndexOfPreviousImage(previous, imageHistory) {
-            // match logic uses a composite of url and time to account
-            // for example imagery not having fully unique urls
-            return imageHistory.findIndex((x) => (
-                x.url === previous.url
-                && x.time === previous.time
-            ));
-        },
         setFocusedImage(index, thumbnailClick = false) {
             let focusedIndex = index;
             if (!(Number.isInteger(index) && index > -1)) {
@@ -695,14 +683,15 @@ export default {
                     this.imageHistory
                 );
                 focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
-
-                delete this.previousFocusedImage;
             }
 
             if (thumbnailClick) {
                 //We use the props till the user changes what they want to see
                 this.initFocusedImageIndex = undefined;
             }
+
+            this.focusedImageIndex = focusedIndex;
+            delete this.previousFocusedImage;
 
             if (this.isPaused && !thumbnailClick && this.initFocusedImageIndex === undefined) {
                 this.nextImageIndex = focusedIndex;
@@ -713,8 +702,6 @@ export default {
 
                 return;
             }
-
-            this.focusedImageIndex = focusedIndex;
 
             if (thumbnailClick && !this.isPaused) {
                 this.paused(true);
