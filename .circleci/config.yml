@@ -6,7 +6,8 @@ executors:
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
 parameters:
-  BUST:
+  BUST_CACHE:
+    description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache"
     default: false
     type: boolean
 commands:
@@ -18,9 +19,8 @@ commands:
     steps:
       - when:
           condition: 
-            equal: [false, << pipeline.parameters.BUST >> ]
+            equal: [false, << pipeline.parameters.BUST_CACHE >> ]
           steps:
-            - run: echo $BUST
             - restore_cache:
                 key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
   save_cache_cmd:
@@ -30,16 +30,12 @@ commands:
         type: string
     steps:    
       - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
           paths:
             - ~/.npm
             - node_modules
-  bust_cache_command:
-    steps:
-      - run: echo $BUST
-      - run: export BUST={{ epoch }}
-  generate_and_store_version_artifacts:
-    description: "Used to track the packages and files"
+  generate_and_store_version_and_filesystem_artifacts:
+    description: "Track important packages and files"
     steps:
       - run: |
           mkdir /tmp/artifacts
@@ -57,12 +53,14 @@ jobs:
     executor: pw-focal-development
     steps:
       - checkout
+      - restore_cache_cmd:
+          node-version: << parameters.node-version >>
       - node/install:
           install-npm: true
           node-version: lts/fermium
       - run: npm install
       - run: npm audit --audit-level=low
-      - generate_and_store_version_artifacts
+      - generate_and_store_version_and_filesystem_artifacts
   node10-lint:
     executor: pw-focal-development
     steps:
@@ -72,7 +70,7 @@ jobs:
           node-version: lts/dubnium
       - run: npm install
       - run: npm run lint
-      - generate_and_store_version_artifacts
+      - generate_and_store_version_and_filesystem_artifacts
   unit-test:
     parameters:
       node-version:
@@ -112,7 +110,7 @@ jobs:
           path: dist/reports/tests/
       - store_artifacts:
           path: dist/reports/
-      - generate_and_store_version_artifacts
+      - generate_and_store_version_and_filesystem_artifacts
   e2e-test:
     parameters:
       node-version:
@@ -134,9 +132,9 @@ jobs:
           path: test-results/results.xml
       - store_artifacts:
           path: test-results
-      - generate_and_store_version_artifacts
+      - generate_and_store_version_and_filesystem_artifacts
 workflows:
-  matrix-tests:
+  circleci-job-matrix:
     jobs:
       - node10-lint
       - unit-test:
