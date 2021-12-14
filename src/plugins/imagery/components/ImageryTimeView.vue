@@ -112,13 +112,11 @@ export default {
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
             this.timeContext.on("timeSystem", this.setScaleAndPlotImagery);
             this.timeContext.on("bounds", this.updateViewBounds);
-            this.timeContext.on("timeContext", this.setTimeContext);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.setScaleAndPlotImagery);
                 this.timeContext.off("bounds", this.updateViewBounds);
-                this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
         expand(index) {
