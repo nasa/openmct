@@ -58,26 +58,31 @@ describe("The Independent Time API", function () {
     });
 
     it("Creates an independent time context", () => {
+        let timeContext = api.getContextForView([{
+            identifier: {
+                namespace: '',
+                key: domainObjectKey
+            }
+        }]);
         let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
-        let timeContext = api.getIndependentContext(domainObjectKey);
         expect(timeContext.bounds()).toEqual(independentBounds);
         destroyTimeContext();
     });
 
     it("Gets an independent time context given the objectPath", () => {
+        let timeContext = api.getContextForView([{ identifier: domainObjectKey },
+            {
+                identifier: {
+                    namespace: '',
+                    key: 'blah'
+                }
+            }]);
         let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
-        let timeContext = api.getContextForView([{
-            identifier: {
-                namespace: '',
-                key: 'blah'
-            }
-        }, { identifier: domainObjectKey }]);
         expect(timeContext.bounds()).toEqual(independentBounds);
         destroyTimeContext();
     });
 
     it("defaults to the global time context given the objectPath", () => {
-        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         let timeContext = api.getContextForView([{
             identifier: {
                 namespace: '',
@@ -85,7 +90,24 @@ describe("The Independent Time API", function () {
             }
         }]);
         expect(timeContext.bounds()).toEqual(bounds);
+    });
+
+    it("follows a parent time context given the objectPath", () => {
+        let timeContext = api.getContextForView([{
+            identifier: {
+                namespace: '',
+                key: 'blah'
+            }
+        }, {
+            identifier: {
+                namespace: '',
+                key: domainObjectKey
+            }
+        }]);
+        let destroyTimeContext = api.addIndependentContext('blah', independentBounds);
+        expect(timeContext.bounds()).toEqual(independentBounds);
         destroyTimeContext();
+        expect(timeContext.bounds()).toEqual(bounds);
     });
 
     it("Allows setting of valid bounds", function () {
@@ -93,8 +115,8 @@ describe("The Independent Time API", function () {
             start: 0,
             end: 1
         };
-        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         let timeContext = api.getContextForView([{identifier: domainObjectKey}]);
+        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         expect(timeContext.bounds()).not.toEqual(bounds);
         timeContext.bounds(bounds);
         expect(timeContext.bounds()).toEqual(bounds);
@@ -107,8 +129,8 @@ describe("The Independent Time API", function () {
             end: 0
         };
 
-        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         let timeContext = api.getContextForView([{identifier: domainObjectKey}]);
+        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         expect(timeContext.bounds()).not.toBe(bounds);
 
         expect(timeContext.bounds.bind(timeContext, bounds)).toThrow();
@@ -122,13 +144,21 @@ describe("The Independent Time API", function () {
     });
 
     it("Emits an event when bounds change", function () {
-        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         let timeContext = api.getContextForView([{identifier: domainObjectKey}]);
+        let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
         expect(eventListener).not.toHaveBeenCalled();
         timeContext.on('bounds', eventListener);
         timeContext.bounds(bounds);
         expect(eventListener).toHaveBeenCalledWith(bounds, false);
         destroyTimeContext();
+    });
+
+    it("Emits an event when bounds change on the global context", function () {
+        let timeContext = api.getContextForView([{identifier: domainObjectKey}]);
+        expect(eventListener).not.toHaveBeenCalled();
+        timeContext.on('bounds', eventListener);
+        timeContext.bounds(bounds);
+        expect(eventListener).toHaveBeenCalledWith(bounds, false);
     });
 
     describe(" when using real time clock", function () {
@@ -138,8 +168,8 @@ describe("The Independent Time API", function () {
         };
 
         it("Emits an event when bounds change based on current value", function () {
-            let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
             let timeContext = api.getContextForView([{identifier: domainObjectKey}]);
+            let destroyTimeContext = api.addIndependentContext(domainObjectKey, independentBounds);
             expect(eventListener).not.toHaveBeenCalled();
             timeContext.clock('someClockKey', mockOffsets);
             timeContext.on('bounds', eventListener);
