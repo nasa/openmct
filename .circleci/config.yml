@@ -7,7 +7,7 @@ executors:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
       BUSTED_CACHE: "false"
 parameters:
-  bust_cache:
+  bust:
     default: "false"
     type: string
 commands:
@@ -46,7 +46,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
+          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
       - node/install:
           install-npm: false #Cannot install latest npm version with node10.
           node-version: lts/dubnium
