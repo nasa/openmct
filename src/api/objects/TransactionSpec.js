@@ -9,13 +9,14 @@ describe("Transaction Class", () => {
     beforeEach(() => {
         objectAPI = {
             makeKeyString: (identifier) => utils.makeKeyString(identifier),
-            save: (object) => object,
+            save: (object) => Promise.resolve(true),
             mutate: (object, prop, value) => {
                 object[prop] = value;
 
                 return object;
             },
-            refresh: (object) => Promise.resolve(object)
+            refresh: (object) => Promise.resolve(object),
+            areIdsEqual: () => true
         };
 
         transaction = new Transaction(objectAPI);
