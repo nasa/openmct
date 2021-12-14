@@ -37,10 +37,10 @@ commands:
     description: "Used to track the packages and files"
     steps:
       - run: |
-          mkdir /tmp/artifacts \
-          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt \
-          npm -v >> /tmp/artifacts/npm-version.txt \
-          node -v >> /tmp/artifacts/node-version.txt \
+          mkdir /tmp/artifacts
+          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
+          npm -v >> /tmp/artifacts/npm-version.txt
+          node -v >> /tmp/artifacts/node-version.txt
           ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
           path: /tmp/artifacts/
