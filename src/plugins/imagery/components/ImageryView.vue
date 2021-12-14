@@ -420,8 +420,11 @@ export default {
                 imageIndex = newSize > 0 ? newSize - 1 : undefined;
             }
 
-            // preserve previous image if a subscription updates history size 
-            this.previousFocusedImage = this.focusedImage ? JSON.parse(JSON.stringify(this.focusedImage)) : undefined;
+            // preserve previous image if a subscription updates history size
+            if (this.isPaused) {
+                this.previousFocusedImage = this.focusedImage ? JSON.parse(JSON.stringify(this.focusedImage)) : undefined;
+            }
+
             this.setFocusedImage(imageIndex, false);
             this.scrollToRight();
         },
