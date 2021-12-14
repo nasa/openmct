@@ -63,16 +63,13 @@ class InMemorySearchProvider {
     }
 
     startIndexing() {
-        console.debug('🖲 Starting indexing for search 🖲');
         const rootObject = this.openmct.objects.rootProvider.rootObject;
         this.scheduleForIndexing(rootObject.identifier);
 
         if (typeof SharedWorker !== 'undefined') {
-            console.debug('🖲 Starting Shared Worker 🖲');
             this.worker = this.startSharedWorker();
         } else {
             // we must be on iOS
-            console.debug('🖲 Doing this locally 🖲');
         }
     }
 
@@ -106,10 +103,8 @@ class InMemorySearchProvider {
         this.pendingQueries[queryId] = pendingQuery;
 
         if (this.worker) {
-            console.debug('🖲 Searching with worker 🖲');
             this.dispatchSearch(queryId, input, maxResults);
         } else {
-            console.debug('🖲 Searching locally 🖲');
             this.localSearch(queryId, input, maxResults);
         }
 
@@ -123,7 +118,6 @@ class InMemorySearchProvider {
      * @private
      */
     async onWorkerMessage(event) {
-        console.debug(`🖲 Received event from search worker 🖲`, event);
         if (event.data.request !== 'search') {
             return;
         }
@@ -140,7 +134,6 @@ class InMemorySearchProvider {
         }));
 
         pendingQuery.resolve(modelResults);
-        console.debug(`🖲 Returning model results 🖲`, modelResults);
         delete this.pendingQueries[event.data.queryId];
     }
 
@@ -173,8 +166,6 @@ class InMemorySearchProvider {
         sharedWorker.port.onmessageerror = this.onWorkerMessageError;
         sharedWorker.port.start();
 
-        console.debug('🖲 Shared worker started 🖲');
-
         return sharedWorker;
     }
 
@@ -191,7 +182,6 @@ class InMemorySearchProvider {
 
         if (objectProvider === undefined || objectProvider.search === undefined) {
             if (!this.indexedIds[keyString] && !this.pendingIndex[keyString]) {
-                // console.debug(`🖲Scheduling ${keyString} for indexing 🖲`);
                 this.pendingIndex[keyString] = true;
                 this.idsToIndex.push(keyString);
             }
@@ -231,7 +221,6 @@ class InMemorySearchProvider {
         const provider = this;
         const keyString = this.openmct.objects.makeKeyString(id);
         if (!this.indexedIds[keyString]) {
-            // console.debug(`🖲 Newly indexed object, so registering observer for ${keyString} 🖲`, domainObject);
             this.openmct.objects.observe(domainObject, `*`, this.onMutationOfIndexedObject);
         }
 
@@ -239,14 +228,12 @@ class InMemorySearchProvider {
 
         if ((id.key !== 'ROOT')) {
             if (this.worker) {
-                console.debug(`🖲 Telling worker to index ${keyString} 🖲`, domainObject);
                 this.worker.port.postMessage({
                     request: 'index',
                     model: domainObject,
                     keyString
                 });
             } else {
-                console.debug(`🖲 Indexing locally ${keyString} 🖲`, domainObject);
                 this.localIndexItem(keyString, domainObject);
             }
         }
@@ -299,7 +286,6 @@ class InMemorySearchProvider {
      * @returns {String} a unique query Id for the query.
      */
     dispatchSearch(queryId, searchInput, maxResults) {
-        console.debug(`🍉 Sending to worker to search 🍉`, searchInput);
         const message = {
             request: 'search',
             input: searchInput,
@@ -314,7 +300,6 @@ class InMemorySearchProvider {
     * if we don't have SharedWorkers available (e.g., iOS)
     */
     localIndexItem(keyString, model) {
-        console.debug(`🖲 Locally indexing ${keyString} 🖲`, model);
         this.localIndexedItems[keyString] = {
             type: model.type,
             name: model.name,
@@ -332,7 +317,6 @@ class InMemorySearchProvider {
     localSearch(queryId, searchInput, maxResults) {
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
-        console.debug(`🍉 Local querying for 🍉`, searchInput);
         let results;
         const input = searchInput.trim().toLowerCase();
         const message = {
@@ -349,7 +333,6 @@ class InMemorySearchProvider {
         message.total = results.length;
         message.results = results
             .slice(0, maxResults);
-        console.debug(`🍉 Locally found ${message.total} results 🍉`, message.results);
         const eventToReturn = {
             data: message
         };
