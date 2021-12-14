@@ -11,6 +11,19 @@ parameters:
     default: false
     type: boolean
 commands:
+  build_and_install:
+    description: "All steps used to build and install. Will not work on node10"
+    parameters:
+      node-version:
+        type: string
+    steps:
+      - checkout
+      - restore_cache_cmd:
+          node-version: << parameters.node-version >>
+      - node/install:
+          install-npm: true
+          node-version: lts/fermium
+      - run: npm install
   restore_cache_cmd:
     description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
     parameters:
@@ -59,13 +72,8 @@ jobs:
         type: string
     executor: pw-focal-development
     steps:
-      - checkout
-      - restore_cache_cmd:
-          node-version: << parameters.node-version >>
-      - node/install:
-          install-npm: true
-          node-version: lts/fermium
-      - run: npm install
+      - build_and_install:
+          node-version: <<parameters.node-version>>
       - run: npm audit --audit-level=low
       - generate_and_store_version_and_filesystem_artifacts
   node10-lint:
@@ -86,13 +94,8 @@ jobs:
         type: string
     executor: pw-focal-development
     steps:
-      - checkout
-      - restore_cache_cmd:
+      - build_and_install:
           node-version: <<parameters.node-version>>
-      - node/install:
-          install-npm: true
-          node-version: << parameters.node-version >>
-      - run: npm install
       - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
@@ -126,13 +129,8 @@ jobs:
         type: string
     executor: pw-focal-development
     steps:
-      - checkout
-      - restore_cache_cmd:
-          node-version: << parameters.node-version >>
-      - node/install:
-          install-npm: true
-          node-version: << parameters.node-version >>
-      - run: npm install
+      - build_and_install:
+          node-version: <<parameters.node-version>>
       - run: npx playwright install
       - run: npm run test:e2e:<<parameters.suite>>
       - store_test_results:
@@ -158,7 +156,7 @@ workflows:
           name: e2e-smoke
           node-version: lts/fermium
           suite: ci
-  nightly: #These jobs do not run on PRs, but against master at night
+  the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
           name: node10-chrome-nightly
