@@ -28,5 +28,6 @@ export default function CouchPlugin(options) {
     return function install(openmct) {
         install.couchProvider = new CouchObjectProvider(openmct, options, NAMESPACE);
         openmct.objects.addProvider(PERSISTENCE_SPACE, install.couchProvider);
+        openmct.objects.addProvider(NAMESPACE, install.couchProvider);
     };
 }
