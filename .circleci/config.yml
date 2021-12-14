@@ -7,12 +7,12 @@ executors:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
 parameters:
   BUST_CACHE:
-    description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache"
+    description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
     default: false
     type: boolean
 commands:
   restore_cache_cmd:
-    description: "Custom command for restoring cache with the ability to bust cache"
+    description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
     parameters:
       node-version:
         type: string
@@ -24,7 +24,7 @@ commands:
             - restore_cache:
                 key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
   save_cache_cmd:
-    description: "Custom command for saving cache with the ability to bust cache"
+    description: "Custom command for saving cache."
     parameters:
       node-version:
         type: string
