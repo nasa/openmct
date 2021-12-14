@@ -5,25 +5,42 @@ executors:
       - image: mcr.microsoft.com/playwright:focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
-      BUSTED_CACHE: "false"
 parameters:
-  bust:
-    default: "false"
-    type: string
+  BUST:
+    default: false
+    type: boolean
 commands:
-  bust_cache:
-    description: "Send this command with the 'Trigger Build' option in the CircleCI UI"
+  restore_cache_cmd:
+    description: "Custom command for restoring cache with the ability to bust cache"
+    parameters:
+      node-version:
+        type: string
     steps:
-      - run: echo $BUSTED_CACHE
-      - run: export BUSTED_CACHE={{ epoch }}
+      - restore_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+  save_cache_cmd:
+    description: "Custom command for saving cache with the ability to bust cache"
+    parameters:
+      node-version:
+        type: string
+    steps:    
+      - save_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+          paths:
+            - ~/.npm
+            - node_modules
+  bust_cache_command:
+    steps:
+      - run: echo $BUST
+      - run: export BUST={{ epoch }}
   generate_and_store_version_artifacts:
     description: "Used to track the packages and files"
     steps:
       - run: |
-          mkdir /tmp/artifacts
-          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
-          npm -v >> /tmp/artifacts/npm-version.txt
-          node -v >> /tmp/artifacts/node-version.txt
+          mkdir /tmp/artifacts \
+          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt \
+          npm -v >> /tmp/artifacts/npm-version.txt \
+          node -v >> /tmp/artifacts/node-version.txt \
           ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
           path: /tmp/artifacts/
@@ -45,14 +62,10 @@ jobs:
     executor: pw-focal-development
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
       - node/install:
           install-npm: false #Cannot install latest npm version with node10.
           node-version: lts/dubnium
       - run: npm install
-      - restore_cache:
-          key: deps-{{ .Branch }}--lts/dubnium--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
       - run: npm run lint
       - generate_and_store_version_artifacts
   test:
@@ -64,8 +77,8 @@ jobs:
     executor: pw-focal-development
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
+      - restore_cache_cmd:
+          node-version: <<parameters.node-version>>
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
@@ -87,12 +100,9 @@ jobs:
           steps:
             - browser-tools/install-chrome:
                 replace-existing: false
-      - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
-          paths:
-            - ~/.npm
-            - node_modules
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
+      - save_cache_cmd:
+          node-version: <<parameters.node-version>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
@@ -107,8 +117,8 @@ jobs:
     executor: pw-focal-development
     steps:
       - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ env.BUSTED_CACHE }}
+      - restore_cache_cmd:
+          node-version: << parameters.node-version >>
       - node/install:
           install-npm: true
           node-version: << parameters.node-version >>
