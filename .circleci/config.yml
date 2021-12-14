@@ -16,8 +16,13 @@ commands:
       node-version:
         type: string
     steps:
-      - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}--{{ .Environment.BUSTED_CACHE }}
+      - when:
+          condition: 
+            equal: [false, << pipeline.parameters.BUST >> ]
+          steps:
+            - run: echo $BUST
+            - restore_cache:
+                key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
   save_cache_cmd:
     description: "Custom command for saving cache with the ability to bust cache"
     parameters:
@@ -68,7 +73,7 @@ jobs:
       - run: npm install
       - run: npm run lint
       - generate_and_store_version_artifacts
-  test:
+  unit-test:
     parameters:
       node-version:
         type: string
@@ -108,7 +113,7 @@ jobs:
       - store_artifacts:
           path: dist/reports/
       - generate_and_store_version_artifacts
-  e2e:
+  e2e-test:
     parameters:
       node-version:
         type: string
@@ -134,11 +139,11 @@ workflows:
   matrix-tests:
     jobs:
       - node10-lint
-      - test:
+      - unit-test:
           name: node12-chrome
           node-version: lts/erbium
           browser: ChromeHeadless
-      - test: 
+      - unit-test: 
           name: node14-chrome
           node-version: lts/fermium
           browser: ChromeHeadless
@@ -146,34 +151,34 @@ workflows:
             - run:
                 command:
                   curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
-      - e2e:
+      - e2e-test:
           name: e2e-smoke
           node-version: lts/fermium
           suite: ci
   nightly:
     jobs:
-      - test:
+      - unit-test:
           name: node10-chrome-nightly
           node-version: lts/dubnium
           browser: ChromeHeadless
-      - test:
+      - unit-test:
           name: node12-firefoxESR-nightly
           node-version: lts/erbium
           browser: FirefoxESR
-      - test:
+      - unit-test:
           name: node12-chrome-nightly
           node-version: lts/erbium
           browser: ChromeHeadless
-      - test:
+      - unit-test:
           name: node14-firefox-nightly
           node-version: lts/fermium
           browser: FirefoxHeadless
-      - test: 
+      - unit-test:
           name: node14-chrome-nightly
           node-version: lts/fermium
           browser: ChromeHeadless
       - npm-audit
-      - e2e:
+      - e2e-test:
           name: e2e-full-nightly
           node-version: lts/fermium
           suite: full
