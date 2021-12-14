@@ -50,6 +50,9 @@ orbs:
   browser-tools: circleci/browser-tools@1.2.3
 jobs:
   npm-audit:
+    parameters:
+      node-version:
+        type: string
     executor: pw-focal-development
     steps:
       - checkout
@@ -175,7 +178,8 @@ workflows:
           name: node14-chrome-nightly
           node-version: lts/fermium
           browser: ChromeHeadless
-      - npm-audit
+      - npm-audit:
+          node-version: lts/fermium
       - e2e-test:
           name: e2e-full-nightly
           node-version: lts/fermium
