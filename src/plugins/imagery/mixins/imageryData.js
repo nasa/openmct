@@ -122,14 +122,46 @@ export default {
             return this.timeFormatter.parse(datum);
         },
         boundsChange(bounds, isTick) {
-            if (!isTick) {
-                this.requestHistory();
+            if (isTick) {
+                return;
             }
+
+            // the focusedImageIndex is calculated twice; once before and after request history arrives
+            const focusedImage = this.imageHistory[this.focusedImageIndex];
+            const previousFocusedImage = focusedImage ? JSON.parse(JSON.stringify(focusedImage)) : undefined;
+            this.updateFocusedImageIndex(previousFocusedImage, this.imageHistory);
+
+            return this.requestHistory();
+        },
+        matchIndexOfPreviousImage(previous, imageHistory) {
+            // match logic uses a composite of url and time to account
+            // for example imagery not having fully unique urls
+            return imageHistory.findIndex((x) => (
+                x.url === previous.url
+                && x.time === previous.time
+                && x.utc === previous.utc
+            ));
+        },
+        updateFocusedImageIndex(previous, imageHistory) {
+            if (!previous) {
+                return;
+            }
+
+            const matchIndex = this.matchIndexOfPreviousImage(
+                previous,
+                imageHistory
+            );
+            this.focusedImageIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
+
         },
         async requestHistory() {
             let bounds = this.timeContext.bounds();
             this.requestCount++;
             const requestId = this.requestCount;
+
+            // maintain previous focused image value to discern new index
+            const focusedImage = this.imageHistory[this.focusedImageIndex];
+            const previousFocusedImage = focusedImage ? JSON.parse(JSON.stringify(focusedImage)) : undefined;
             this.imageHistory = [];
 
             let data = await this.openmct.telemetry
@@ -143,7 +175,8 @@ export default {
                         imagery.push(image);
                     }
                 });
-                //this is to optimize anything that reacts to imageHistory length
+                this.updateFocusedImageIndex(previousFocusedImage, imagery);
+
                 this.imageHistory = imagery;
             }
         },
