@@ -45,6 +45,10 @@ commands:
           ls -latR >> /tmp/artifacts/dir.txt
       - store_artifacts:
           path: /tmp/artifacts/
+  upload_code_covio:
+    description: "Command to upload code coverage reports to codecov.io"
+    steps:
+        - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
 orbs:
   node: circleci/node@4.9.0
   browser-tools: circleci/browser-tools@1.2.3
@@ -137,7 +141,7 @@ jobs:
           path: test-results
       - generate_and_store_version_and_filesystem_artifacts
 workflows:
-  circleci-job-matrix:
+  overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - node10-lint
       - unit-test:
@@ -149,14 +153,12 @@ workflows:
           node-version: lts/fermium
           browser: ChromeHeadless
           post-steps:
-            - run:
-                command:
-                  curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
+            - upload_code_covio               
       - e2e-test:
           name: e2e-smoke
           node-version: lts/fermium
           suite: ci
-  nightly:
+  nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
           name: node10-chrome-nightly
