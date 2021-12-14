@@ -46,6 +46,7 @@ class InMemorySearchProvider {
         this.idsToIndex = [];
         this.pendingIndex = {};
         this.pendingRequests = 0;
+        this.worker = null;
 
         /**
          * If we don't have SharedWorkers available (e.g., iOS)
@@ -59,7 +60,15 @@ class InMemorySearchProvider {
         this.startIndexing = this.startIndexing.bind(this);
         this.onMutationOfIndexedObject = this.onMutationOfIndexedObject.bind(this);
 
-        openmct.on('start', this.startIndexing);
+        this.openmct.on('start', this.startIndexing);
+        this.openmct.on('destroy', () => {
+            if (this.worker && this.worker.port) {
+                this.worker.onerror = null;
+                this.worker.port.onmessage = null;
+                this.worker.port.onmessageerror = null;
+                this.worker.port.close();
+            }
+        });
     }
 
     startIndexing() {
