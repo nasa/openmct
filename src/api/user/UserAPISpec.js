@@ -25,10 +25,12 @@ import {
     resetApplicationState
 } from '../../utils/testing';
 import {
-    MULTIPLE_PROVIDER_ERROR,
-    NO_LOGIN_LOGOUT
+    MULTIPLE_PROVIDER_ERROR
 } from './constants';
 import ExampleUserProvider from '../../plugins/exampleUser/ExampleUserProvider';
+
+const USERNAME = 'Test User';
+const EXAMPLE_ROLE = 'example-role';
 
 describe("The User API", () => {
     let openmct;
@@ -71,36 +73,37 @@ describe("The User API", () => {
 
         beforeEach(() => {
             provider = new ExampleUserProvider(openmct);
-            spyOn(provider, 'login');
-            provider.login.and.callFake(() => {
+            spyOn(provider, '_login');
+            provider._login.and.callFake(() => {
+                provider.user = new provider.ExampleUser('id', USERNAME, [EXAMPLE_ROLE]);
                 provider.loggedIn = true;
 
                 return Promise.resolve();
             });
-
-            openmct.user.setProvider(provider);
         });
 
         it('to check if a user (not specific) is loged in', (done) => {
             expect(openmct.user.isLoggedIn()).toBeFalse();
 
-            openmct.user.login().then(() => {
+            openmct.user.on('providerAdded', () => {
                 expect(openmct.user.isLoggedIn()).toBeTrue();
-            }).finally(done);
+                done();
+            });
+
+            // this will trigger the user indicator plugin,
+            // which will in turn login the user
+            openmct.user.setProvider(provider);
         });
 
         it('to get the current user', (done) => {
-            const USERNAME = 'Test User';
-            provider.fullName = USERNAME;
-
-            openmct.user.login().then(() => {
-                openmct.user.getCurrentUser().then((apiUser) => {
-                    expect(apiUser.fullName).toEqual(USERNAME);
-                });
+            openmct.user.setProvider(provider);
+            openmct.user.getCurrentUser().then((apiUser) => {
+                expect(apiUser.name).toEqual(USERNAME);
             }).finally(done);
         });
 
         it('to check if a user has a specific role (by id)', (done) => {
+            openmct.user.setProvider(provider);
             let junkIdCheckPromise = openmct.user.hasRole('junk-id').then((hasRole) => {
                 expect(hasRole).toBeFalse();
             });
@@ -109,18 +112,6 @@ describe("The User API", () => {
             });
 
             Promise.all([junkIdCheckPromise, realIdCheckPromise]).finally(done);
-        });
-
-        it('to login/logout if the user provider supports it', (done) => {
-            openmct.user.login().then(() => {
-                expect(provider.login).toHaveBeenCalled();
-                provider.supportsLoginLogout = false;
-
-                return expect(() => {
-                    openmct.user.login();
-                }).toThrow(new Error(NO_LOGIN_LOGOUT));
-
-            }).finally(done);
         });
     });
 });

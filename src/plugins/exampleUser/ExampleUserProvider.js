@@ -22,20 +22,17 @@
 
 import EventEmitter from 'EventEmitter';
 import uuid from 'uuid';
+import createExampleUser from './exampleUserCreator';
 
 export default class ExampleUserProvider extends EventEmitter {
     constructor(openmct) {
         super();
 
-        let existing = {};
-
         this.openmct = openmct;
-        this.id = existing.id || uuid();
-        this.fullName = existing.fullName || '';
-        this.homeUrl = existing.homeUrl || '';
-        this.roles = existing.roles ? existing.roles.push('example-role') : ['example-role'];
-        this.supportsLoginLogout = true;
+        this.user = undefined;
         this.loggedIn = false;
+
+        this.ExampleUser = createExampleUser(this.openmct.user.User);
     }
 
     isLoggedIn() {
@@ -43,21 +40,27 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     getCurrentUser() {
-        return Promise.resolve({
-            id: this.id,
-            fullName: this.fullName,
-            homeUrl: this.homeUrl
-        });
+        if (this.loggedIn) {
+            return Promise.resolve(this.user.getUserInfo());
+        }
+
+        return this._login().then(() => this.user.getUserInfo());
     }
 
     hasRole(roleId) {
-        return Promise.resolve(this.roles.includes(roleId));
+        if (!this.loggedIn) {
+            Promise.resolve(undefined);
+        }
+
+        return Promise.resolve(this.user.getRoles().includes(roleId));
     }
 
-    login() {
+    _login() {
+        const id = uuid();
         const loginPromise = new Promise((resolve, reject) => {
             let overlay = this.openmct.overlays.overlay({
                 element: this._getLoginForm(),
+                dismissable: false,
                 size: 'small',
                 buttons: [
                     {
@@ -67,20 +70,13 @@ export default class ExampleUserProvider extends EventEmitter {
                             let username = document.getElementById('example-user-form-username').value;
 
                             if (username !== '') {
-                                this.fullName = username;
+                                this.user = new this.ExampleUser(id, username, ['example-role']);
                                 this.loggedIn = true;
                                 resolve();
                                 overlay.dismiss();
                             } else {
-                                this.openmct.notifications.info('Please enter a username and password.');
+                                this.openmct.notifications.info('Please enter a username.');
                             }
-                        }
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: () => {
-                            reject();
-                            overlay.dismiss();
                         }
                     }
                 ],
@@ -107,10 +103,6 @@ export default class ExampleUserProvider extends EventEmitter {
                 <div class="form-row">
                     <div class="c-form__row__label">Username</div>
                     <input id="example-user-form-username" class="c-form__row__controls" type="text" />
-                <div class="form-row">
-                    <div class="c-form__row__label">Password</div>
-                    <input class="c-form__row__controls" type="password" />
-                </div>
                 </div>
             </div>
         `.trim();

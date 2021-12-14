@@ -27,7 +27,8 @@ import {
 import Vue from 'vue';
 import ExampleUserProvider from '../exampleUser/ExampleUserProvider';
 
-const USER_NAME = 'Coach McGuirk';
+const USERNAME = 'Coach McGuirk';
+const EXAMPLE_ROLE = 'example-role';
 
 describe('The User Indicator plugin', () => {
     let openmct;
@@ -68,19 +69,17 @@ describe('The User Indicator plugin', () => {
 
         beforeEach(() => {
             provider = new ExampleUserProvider(openmct);
-            spyOn(provider, 'login');
-            provider.login.and.callFake(() => {
+            spyOn(provider, '_login');
+            provider._login.and.callFake(() => {
+                provider.user = new provider.ExampleUser('id', USERNAME, [EXAMPLE_ROLE]);
                 provider.loggedIn = true;
 
                 return Promise.resolve();
             });
-            provider.fullName = USER_NAME;
 
             openmct.user.setProvider(provider);
 
-            let loginPromise = openmct.user.login();
-
-            return Promise.all([loginPromise, Vue.nextTick()]);
+            return Vue.nextTick();
         });
 
         it('exists', () => {
@@ -100,8 +99,8 @@ describe('The User Indicator plugin', () => {
 
                 const userName = userIndicator.textContent.trim();
 
-                expect(user.fullName).toEqual(USER_NAME);
-                expect(userName).toContain(USER_NAME);
+                expect(user.name).toEqual(USERNAME);
+                expect(userName).toContain(USERNAME);
             }).finally(done);
         });
 

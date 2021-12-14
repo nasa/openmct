@@ -23,16 +23,18 @@
 import EventEmitter from 'EventEmitter';
 import {
     MULTIPLE_PROVIDER_ERROR,
-    NO_PROVIDER_ERROR,
-    NO_LOGIN_LOGOUT
+    NO_PROVIDER_ERROR
 } from './constants';
+import User from './User';
 
-export default class UserAPI extends EventEmitter {
+class UserAPI extends EventEmitter {
     constructor(openmct) {
         super();
 
         this._openmct = openmct;
         this._provider = undefined;
+
+        this.User = User;
     }
 
     /**
@@ -64,99 +66,19 @@ export default class UserAPI extends EventEmitter {
     }
 
     /**
-     * If a user provider is set, it will return true
-     * if the user provider has set a 'supportsLoginLogout' value.
-     *
-     * @memberof module:openmct.UserAPI#
-     * @returns {boolean} true if the user provider exists
-     * @throws Will throw an error if no user provider is set
-     */
-    supportsLoginLogout() {
-        this._noProviderCheck();
-
-        return this._provider.supportsLoginLogout;
-    }
-
-    /**
      * If a user provider is set, it will return a copy of a user object from
      * the provider. If the user is not logged in, it will return undefined;
      *
      * @memberof module:openmct.UserAPI#
-     * @returns {Promise} Promise object represents user information
+     * @returns {Function|Promise} user provider 'getCurrentUser' method
      * @throws Will throw an error if no user provider is set
      */
     getCurrentUser() {
         this._noProviderCheck();
 
-        if (!this.isLoggedIn()) {
-            return Promise.resolve(undefined);
-        } else {
-            return this._provider.getCurrentUser().then((userInfo) => {
-                return JSON.parse(JSON.stringify(userInfo));
-            });
-        }
-    }
-
-    /**
-     * Calls the the set user provider's login method. If already logged in
-     * will just return a resolved Promise and trigger a notification.
-     *
-     * @memberof module:openmct.UserAPI#
-     * @returns {Promise} Promise object represents user provider login
-     * @throws Will throw an error if no user provider is set
-     * @throws Will throw an error set user provider does not support login/logout
-     */
-    login() {
-        this._supportsLoginLogoutCheck();
-
-        if (this._provider.isLoggedIn()) {
-            this._openmct.notifications.info('A user is already logged in.');
-
-            return Promise.resolve();
-        }
-
-        const loginPromise = this._provider.login();
-
-        loginPromise.then(() => {
-            this.getCurrentUser().then((user) => {
-                if (user) {
-                    this.emit('login');
-                }
-            });
+        return this._provider.getCurrentUser().then((userInfo) => {
+            return JSON.parse(JSON.stringify(userInfo));
         });
-
-        return loginPromise;
-    }
-
-    /**
-     * Calls the the set user provider's logout method. If already logged out
-     * will just return a resolved Promise and trigger a notification.
-     *
-     * @memberof module:openmct.UserAPI#
-     * @returns {Promise} Promise object represents user provider logout
-     * @throws Will throw an error if no user provider is set
-     * @throws Will throw an error set user provider does not support login/logout
-     */
-    logout() {
-        this._supportsLoginLogoutCheck();
-
-        if (!this._provider.isLoggedIn()) {
-            this._openmct.notifications.info('No current logged in user.');
-
-            return Promise.resolve();
-        }
-
-        const logoutPromise = this._provider.logout();
-
-        logoutPromise.then(() => {
-            this.getCurrentUser().then((user) => {
-                if (!user) {
-                    this.emit('logout');
-                }
-            });
-        });
-
-        return logoutPromise;
     }
 
     /**
@@ -168,7 +90,9 @@ export default class UserAPI extends EventEmitter {
      * @throws Will throw an error if no user provider is set
      */
     isLoggedIn() {
-        this._noProviderCheck();
+        if (!this.hasProvider()) {
+            return false;
+        }
 
         return this._provider.isLoggedIn();
     }
@@ -186,22 +110,6 @@ export default class UserAPI extends EventEmitter {
         this._noProviderCheck();
 
         return this._provider.hasRole(roleId);
-    }
-
-    /**
-     * Checks if a provider is set and if the provider supports login/logout
-     * if not, will throw errors
-     *
-     * @private
-     * @throws Will throw an error if no user provider is set
-     * @throws Will throw an error set user provider does not support login/logout
-     */
-    _supportsLoginLogoutCheck() {
-        this._noProviderCheck();
-
-        if (!this.supportsLoginLogout()) {
-            this._error(NO_LOGIN_LOGOUT);
-        }
     }
 
     /**
@@ -227,3 +135,5 @@ export default class UserAPI extends EventEmitter {
         throw new Error(error);
     }
 }
+
+export default UserAPI;

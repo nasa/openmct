@@ -20,5 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-export const MULTIPLE_PROVIDER_ERROR = 'Only one user provider may be set at a time.';
-export const NO_PROVIDER_ERROR = 'No user provider has been set.';
+export default class User {
+    constructor(userId, name) {
+        this.userId = userId;
+        this.name = name;
+
+        this.getUserInfo = this.getUserInfo.bind(this);
+        this.getUserId = this.getUserId.bind(this);
+        this.getName = this.getName.bind(this);
+    }
+
+    getUserInfo() {
+        return {
+            id: this.getUserId(),
+            name: this.getName()
+        };
+    }
+
+    getUserId() {
+        return this.userId;
+    }
+
+    getName() {
+        return this.name;
+    }
+}
