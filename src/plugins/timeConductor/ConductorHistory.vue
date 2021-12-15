@@ -41,7 +41,7 @@ const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 
 import { millisecondsToDHMS } from "utils/duration";
-import UTCTimeFormat from "../UTCTimeSystem/UTCTimeFormat";
+import UTCTimeFormat from "../UTCTimeSystem/UTCTimeFormat.js";
 
 export default {
     inject: ['openmct', 'configuration'],
