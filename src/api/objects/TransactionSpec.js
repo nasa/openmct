@@ -15,7 +15,15 @@ describe("Transaction Class", () => {
 
                 return object;
             },
-            refresh: (object) => Promise.resolve(object)
+            refresh: (object) => Promise.resolve(object),
+            areIdsEqual: (...identifiers) => {
+                return identifiers.map(utils.parseKeyString)
+                    .every(identifier => {
+                        return identifier === identifiers[0]
+                            || (identifier.namespace === identifiers[0].namespace
+                                && identifier.key === identifiers[0].key);
+                    });
+            }
         };
 
         transaction = new Transaction(objectAPI);
