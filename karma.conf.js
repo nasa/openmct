@@ -52,7 +52,11 @@ module.exports = (config) => {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'indexTest.js'
+            'indexTest.js',
+            {
+                pattern: 'dist/couchDBChangesFeed.js',
+                included: false
+            }
         ],
         port: 9876,
         reporters: reporters,
@@ -102,7 +106,7 @@ module.exports = (config) => {
         },
         specReporter: {
             maxLogLines: 5,
-            suppressErrorSummary: true,
+            suppressErrorSummary: false,
             suppressFailed: false,
             suppressPassed: false,
             suppressSkipped: true,

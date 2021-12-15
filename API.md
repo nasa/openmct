@@ -481,6 +481,8 @@ In this case, the `domain` is the currently selected time-system, and the start 
 
 A telemetry provider's `request` method should return a promise for an array of telemetry datums.  These datums must be sorted by `domain` in ascending order.
 
+The telemetry provider's `request` method will also return an object `signal` with an `aborted` property with a value `true` if the request has been aborted by user navigation. This can be used to trigger actions when a request has been aborted.
+
 #### Request Strategies **draft**
 
 To improve performance views may request a certain strategy for data reduction.  These are intended to improve visualization performance by reducing the amount of data needed to be sent to the client.  These strategies will be indicated by additional parameters in the request options.  You may choose to handle them or ignore them.  

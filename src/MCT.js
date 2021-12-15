@@ -31,7 +31,6 @@ define([
     'objectUtils',
     './plugins/plugins',
     './adapter/indicators/legacy-indicators-plugin',
-    './plugins/buildInfo/plugin',
     './ui/registries/ViewRegistry',
     './plugins/imagery/plugin',
     './ui/registries/InspectorViewRegistry',
@@ -47,7 +46,10 @@ define([
     './plugins/licenses/plugin',
     './plugins/remove/plugin',
     './plugins/move/plugin',
+    './plugins/linkAction/plugin',
     './plugins/duplicate/plugin',
+    './plugins/importFromJSONAction/plugin',
+    './plugins/exportAsJSONAction/plugin',
     'vue'
 ], function (
     EventEmitter,
@@ -60,7 +62,6 @@ define([
     objectUtils,
     plugins,
     LegacyIndicatorsPlugin,
-    buildInfoPlugin,
     ViewRegistry,
     ImageryPlugin,
     InspectorViewRegistry,
@@ -76,7 +77,10 @@ define([
     LicensesPlugin,
     RemoveActionPlugin,
     MoveActionPlugin,
+    LinkActionPlugin,
     DuplicateActionPlugin,
+    ImportFromJSONAction,
+    ExportAsJSONAction,
     Vue
 ) {
     /**
@@ -256,6 +260,7 @@ define([
         this.priority = api.PriorityAPI;
 
         this.router = new ApplicationRouter(this);
+        this.forms = new api.FormsAPI.default(this);
 
         this.branding = BrandingAPI.default;
 
@@ -272,14 +277,17 @@ define([
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
         this.install(MoveActionPlugin.default());
+        this.install(LinkActionPlugin.default());
         this.install(DuplicateActionPlugin.default());
+        this.install(ExportAsJSONAction.default());
+        this.install(ImportFromJSONAction.default());
+        this.install(this.plugins.FormActions.default());
         this.install(this.plugins.FolderView());
         this.install(this.plugins.Tabs());
         this.install(ImageryPlugin.default());
         this.install(this.plugins.FlexibleLayout());
         this.install(this.plugins.GoToOriginalAction());
         this.install(this.plugins.OpenInNewTabAction());
-        this.install(this.plugins.ImportExport());
         this.install(this.plugins.WebPage());
         this.install(this.plugins.Condition());
         this.install(this.plugins.ConditionWidget());

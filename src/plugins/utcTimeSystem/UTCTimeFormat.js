@@ -22,21 +22,6 @@
 
 import moment from 'moment';
 
-const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss.SSS";
-const DATE_FORMATS = [
-    DATE_FORMAT,
-    DATE_FORMAT + "Z",
-    "YYYY-MM-DD HH:mm:ss",
-    "YYYY-MM-DD HH:mm",
-    "YYYY-MM-DD"
-];
-
-/**
- * @typedef Scale
- * @property {number} min the minimum scale value, in ms
- * @property {number} max the maximum scale value, in ms
- */
-
 /**
  * Formatter for UTC timestamps. Interprets numeric values as
  * milliseconds since the start of 1970.
@@ -45,9 +30,25 @@ const DATE_FORMATS = [
  * @constructor
  * @memberof platform/commonUI/formats
  */
-class UTCTimeFormat {
+export default class UTCTimeFormat {
     constructor() {
-        this.key = "utc";
+        this.key = 'utc';
+        this.DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSS';
+        this.DATE_FORMATS = {
+            PRECISION_DEFAULT: this.DATE_FORMAT,
+            PRECISION_DEFAULT_WITH_ZULU: this.DATE_FORMAT + 'Z',
+            PRECISION_SECONDS: 'YYYY-MM-DD HH:mm:ss',
+            PRECISION_MINUTES: 'YYYY-MM-DD HH:mm',
+            PRECISION_DAYS: 'YYYY-MM-DD'
+        };
+    }
+
+    /**
+     * @param {string} formatString
+     * @returns the value of formatString if the value is a string type and exists in the DATE_FORMATS array; otherwise the DATE_FORMAT value.
+     */
+    isValidFormatString(formatString) {
+        return Object.values(this.DATE_FORMATS).includes(formatString);
     }
 
     /**
@@ -56,9 +57,17 @@ class UTCTimeFormat {
      * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
      * in the array.
      */
-    format(value) {
+    format(value, formatString) {
         if (value !== undefined) {
-            return moment.utc(value).format(DATE_FORMAT) + "Z";
+            const utc = moment.utc(value);
+
+            if (formatString !== undefined && !this.isValidFormatString(formatString)) {
+                throw "Invalid format requested from UTC Time Formatter ";
+            }
+
+            let format = formatString || this.DATE_FORMATS.PRECISION_DEFAULT;
+
+            return utc.format(format) + (formatString ? '' : 'Z');
         } else {
             return value;
         }
@@ -69,13 +78,11 @@ class UTCTimeFormat {
             return text;
         }
 
-        return moment.utc(text, DATE_FORMATS).valueOf();
+        return moment.utc(text, Object.values(this.DATE_FORMATS)).valueOf();
     }
 
     validate(text) {
-        return moment.utc(text, DATE_FORMATS, true).isValid();
+        return moment.utc(text, Object.values(this.DATE_FORMATS), true).isValid();
     }
 
 }
-
-export default UTCTimeFormat;
