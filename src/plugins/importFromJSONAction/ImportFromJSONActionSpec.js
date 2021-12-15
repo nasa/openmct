@@ -97,6 +97,7 @@ describe("The import JSON action", function () {
             domainObject
         ];
 
+        spyOn(openmct.types, 'get').and.returnValue({});
         spyOn(openmct.composition, 'get').and.returnValue(false);
 
         expect(importFromJSONAction.appliesTo(objectPath)).toBe(false);

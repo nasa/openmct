@@ -45,8 +45,9 @@ export default class ImportAsJSONAction {
         const domainObject = objectPath[0];
         const locked = domainObject && domainObject.locked;
         const persistable = this.openmct.objects.isPersistable(domainObject.identifier);
-        const TypeDefinition = this.openmct.types.get(domainObject.type).definition;
-        const creatable = TypeDefinition && TypeDefinition.creatable;
+        const TypeDefinition = this.openmct.types.get(domainObject.type);
+        const definition = TypeDefinition.definition;
+        const creatable = definition && definition.creatable;
 
         if (locked || !persistable || !creatable) {
             return false;
