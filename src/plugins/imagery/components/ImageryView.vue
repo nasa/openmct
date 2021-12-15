@@ -501,13 +501,11 @@ export default {
             //listen
             this.timeContext.on('timeSystem', this.trackDuration);
             this.timeContext.on('clock', this.trackDuration);
-            this.timeContext.on("timeContext", this.setTimeContext);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.trackDuration);
                 this.timeContext.off("clock", this.trackDuration);
-                this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
         boundsChange(bounds, isTick) {
