@@ -1,15 +1,18 @@
+
 define([
     './SummaryWidgetsCompositionPolicy',
     './src/telemetry/SummaryWidgetMetadataProvider',
     './src/telemetry/SummaryWidgetTelemetryProvider',
     './src/views/SummaryWidgetViewProvider',
-    './SummaryWidgetViewPolicy'
+    './SummaryWidgetViewPolicy',
+    './SummaryWidgetInterceptor'
 ], function (
     SummaryWidgetsCompositionPolicy,
     SummaryWidgetMetadataProvider,
     SummaryWidgetTelemetryProvider,
     SummaryWidgetViewProvider,
-    SummaryWidgetViewPolicy
+    SummaryWidgetViewPolicy,
+    SummaryWidgetInterceptor
 ) {
 
     function plugin() {
@@ -95,6 +98,9 @@ define([
                 implementation: SummaryWidgetViewPolicy,
                 depends: ['openmct']
             });
+            // migrate summary widgets to condition widgets
+            SummaryWidgetInterceptor(openmct);
+
             openmct.telemetry.addProvider(new SummaryWidgetMetadataProvider(openmct));
             openmct.telemetry.addProvider(new SummaryWidgetTelemetryProvider(openmct));
             openmct.objectViews.addProvider(new SummaryWidgetViewProvider(openmct));
