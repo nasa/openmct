@@ -332,27 +332,9 @@ define([
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
-            this.noRequestProviderForAllObjects = this.requestProviders.every(requestProvider => {
-                const supportsRequest = requestProvider.supportsRequest.apply(requestProvider, arguments);
-                const hasRequestProvider = Object.hasOwn(requestProvider, 'request');
+            this.requestAbortControllers.delete(abortController);
 
-                return supportsRequest && hasRequestProvider;
-            });
-            let message = '';
-            let detailMessage = '';
-            if (this.noRequestProviderForAllObjects) {
-                message = 'Missing request providers, see console for details';
-                detailMessage = 'Missing request provider for all request providers';
-            } else {
-                message = 'Missing request provider, see console for details';
-                const { name, identifier } = domainObject;
-                detailMessage = `Missing request provider for domainObject, name: ${name}, identifier: ${JSON.stringify(identifier)}`;
-            }
-
-            this.openmct.notifications.error(message);
-            console.error(detailMessage);
-
-            return Promise.resolve([]);
+            return this.handleMissingRequestProvider(domainObject);
         }
 
         return provider.request.apply(provider, arguments)
@@ -520,6 +502,36 @@ define([
         }
 
         return this.formatMapCache.get(metadata);
+    };
+
+    /**
+     * Error Handling: Missing Request provider
+     *
+     * @returns Promise
+     */
+    TelemetryAPI.prototype.handleMissingRequestProvider = function (domainObject) {
+        this.noRequestProviderForAllObjects = this.requestProviders.every(requestProvider => {
+            const supportsRequest = requestProvider.supportsRequest.apply(requestProvider, arguments);
+            const hasRequestProvider = Object.hasOwn(requestProvider, 'request');
+
+            return supportsRequest && hasRequestProvider;
+        });
+
+        let message = '';
+        let detailMessage = '';
+        if (this.noRequestProviderForAllObjects) {
+            message = 'Missing request providers, see console for details';
+            detailMessage = 'Missing request provider for all request providers';
+        } else {
+            message = 'Missing request provider, see console for details';
+            const { name, identifier } = domainObject;
+            detailMessage = `Missing request provider for domainObject, name: ${name}, identifier: ${JSON.stringify(identifier)}`;
+        }
+
+        this.openmct.notifications.error(message);
+        console.error(detailMessage);
+
+        return Promise.resolve([]);
     };
 
     /**
