@@ -10,7 +10,7 @@
         ></div>
         <div class="c-about__text__element">
             <h1 class="l-title s-title">
-                Open MCT
+                openmct
             </h1>
             <div class="l-description s-description">
                 <p>Open MCT, Copyright &copy; 2014-2021, United States Government as represented by the Administrator of the National Aeronautics and Space Administration. All rights reserved.</p>
@@ -29,7 +29,6 @@
                 <li>Build Date: {{ buildInfo.buildDate || 'Unknown' }}</li>
                 <li>Revision: {{ buildInfo.revision || 'Unknown' }}</li>
                 <li>Branch: {{ buildInfo.branch || 'Unknown' }}</li>
-                <li>Branc333h: {{ buildInfo.branch33 || 'Unknown' }}</li>
             </ul>
         </div>
     </div>
