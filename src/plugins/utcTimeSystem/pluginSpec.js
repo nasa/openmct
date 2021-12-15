@@ -26,6 +26,7 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
+import UTCTimeFormat from './UTCTimeFormat.js';
 
 describe("The UTC Time System", () => {
     const UTC_SYSTEM_AND_FORMAT_KEY = 'utc';
@@ -120,6 +121,23 @@ describe("The UTC Time System", () => {
             const formattedTime = utcTimeFormatter.format(TIME_IN_MS);
             expect(formattedTime).toEqual(TIME_AS_STRING);
 
+        });
+
+        it("formats from ms since Unix epoch into terse UTC formats", () => {
+            const utcTimeFormatterInstance = new UTCTimeFormat();
+
+            const TIME_IN_MS = 1638574560945;
+            const EXPECTED_FORMATS = {
+                PRECISION_DEFAULT: "2021-12-03 23:36:00.945",
+                PRECISION_SECONDS: "2021-12-03 23:36:00",
+                PRECISION_MINUTES: "2021-12-03 23:36",
+                PRECISION_DAYS: "2021-12-03"
+            };
+
+            Object.keys(EXPECTED_FORMATS).forEach((formatKey) => {
+                const formattedTime = utcTimeFormatterInstance.format(TIME_IN_MS, utcTimeFormatterInstance.DATE_FORMATS[formatKey]);
+                expect(formattedTime).toEqual(EXPECTED_FORMATS[formatKey]);
+            });
         });
 
         it("parses from Open MCT UTC time format to ms since Unix epoch.", () => {
