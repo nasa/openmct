@@ -122,6 +122,7 @@ describe("The import JSON action", function () {
         ];
 
         spyOn(openmct.forms, 'showForm').and.returnValue(Promise.resolve({}));
+        spyOn(importFromJSONAction, 'onSave').and.returnValue(Promise.resolve({}));
         importFromJSONAction.invoke(objectPath);
 
         expect(openmct.forms.showForm).toHaveBeenCalled();
