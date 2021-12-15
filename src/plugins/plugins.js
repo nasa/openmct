@@ -22,7 +22,7 @@
 
 define([
     'lodash',
-    './UTCTimeSystem/plugin',
+    './utcTimeSystem/plugin',
     './remoteClock/plugin',
     './localTimeSystem/plugin',
     './ISOTimeFormat/plugin',
