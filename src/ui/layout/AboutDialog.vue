@@ -29,6 +29,7 @@
                 <li>Build Date: {{ buildInfo.buildDate || 'Unknown' }}</li>
                 <li>Revision: {{ buildInfo.revision || 'Unknown' }}</li>
                 <li>Branch: {{ buildInfo.branch || 'Unknown' }}</li>
+                <li>Branc333h: {{ buildInfo.branch33 || 'Unknown' }}</li>
             </ul>
         </div>
     </div>
