@@ -143,6 +143,11 @@ export default {
             time: undefined
         };
     },
+    watch: {
+        defaultDateTime() {
+            this.updateFromModel(this.defaultDateTime);
+        }
+    },
     mounted: function () {
         this.updateFromModel(this.defaultDateTime);
         this.updateViewForMonth();
