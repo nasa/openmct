@@ -85,7 +85,6 @@ describe('The Clear Data Plugin:', () => {
 
         it('is applicable on applicable objects', () => {
             const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
-
             expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
         });
 
@@ -114,11 +113,8 @@ describe('The Clear Data Plugin:', () => {
                     }
                 }
             ];
-
             openmct.selection.select(selection);
-
             const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
-
             expect(gatheredActions.applicableActions['clear-data-action']).toBeUndefined();
         });
 
@@ -137,11 +133,8 @@ describe('The Clear Data Plugin:', () => {
                     }
                 }
             ];
-
             openmct.selection.select(selection);
-
             const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
-
             expect(gatheredActions.applicableActions['clear-data-action']).toBeUndefined();
         });
 
@@ -171,9 +164,7 @@ describe('The Clear Data Plugin:', () => {
                 type: "layout"
             }];
             openmct.router.path = testViewObject;
-
             const gatheredActions = openmct.actions.getActionsCollection(mockObjectPath);
-
             expect(gatheredActions.applicableActions['clear-data-action']).toBeDefined();
         });
 
