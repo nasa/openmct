@@ -34,9 +34,6 @@ describe('Telemetry API', function () {
                 'timeSystem',
                 'bounds'
             ]),
-            $injector: jasmine.createSpyObj('injector', [
-                'get'
-            ]),
             types: jasmine.createSpyObj('typeRegistry', [
                 'get'
             ])
