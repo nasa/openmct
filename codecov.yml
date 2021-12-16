@@ -14,8 +14,8 @@ coverage:
   range: "66...100"
 
 ignore:
-  - */*Spec.js
-  - e2e
+  - "**/*Spec.js"
+  - "e2e"
 
 parsers:
   gcov:
