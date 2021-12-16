@@ -1,44 +1,30 @@
-*.scssc
-*.zip
-*.gzip
-*.tgz
-*.DS_Store
+# Specificty of the following rules matters. If more specific rules comes first,
+# less specific rules can not override them.
+# For example, the following won't work as you may assume:
+# /**/* <-- ignore everything
+# !/src/**/* <-- don't ignore src/
+# But still ignore test files in src/:
+# /**/*.test.* <-- HERE: This won't work, is not as specific as `!/dist/**/*`, so test files inside dist or src will NOT be ignored.
+# /src/**/*.test.* <-- But this will work, because it is more specific.
 
-*.sass-cache
-*COMPILE.css
+# NOTE! Although we ignored everything by default, NPM will not ignore special files like
+# LICENSE.md, README.md, package.json, etc.
 
-# Intellij project configuration files
-*.idea
-*.iml
+# Ignore everything,
+/**/*
 
-# External dependencies
+# ...but include these folders...
+!/dist/**/*
+!/src/**/*
+!/platform/**/*
 
-# Build output
-target
+# ...except for these files in the above folders (these rules are more specific, so they will work).
+/src/**/*Spec.js
+/src/test/**/*
 
-# Mac OS X Finder
-.DS_Store
-
-# Closed source libraries
-closed-lib
-
-# Node, Bower dependencies
-node_modules
-bower_components
-
-Procfile
-
-# Protractor logs
-protractor/logs
-
-# npm-debug log
-npm-debug.log
-
-# Infra and tests
-.circleci
-.github
-e2e
-codecov.yml
-lighthouserc.yml
-*.Spec.js
-karma.conf.js
+# Also include these top-level files.
+copyright-notice.js
+copyright-notice.html
+index.html
+openmct.js
+SECURITY.md
