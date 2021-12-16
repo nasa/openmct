@@ -72,7 +72,7 @@ function generateTelemetry(start, count) {
     return telemetry;
 }
 
-describe("The Imagery View Layouts", () => {
+fdescribe("The Imagery View Layouts", () => {
     const imageryKey = 'example.imagery';
     const imageryForTimeStripKey = 'example.imagery.time-strip.view';
     const START = Date.now();
@@ -528,10 +528,11 @@ describe("The Imagery View Layouts", () => {
                 const mouseDownEvent = createMouseEvent("mousedown");
                 let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
                 imageWrapper[2].dispatchEvent(mouseDownEvent);
-
+                console.log(componentView.imageHistory.map(image => image.time));
                 Vue.nextTick(() => {
+                    const timestamp = imageWrapper[2].id.replace('wrapper-', '');
                     expect(componentView.previewAction.invoke).toHaveBeenCalledWith([componentView.objectPath[0]], {
-                        indexForFocusedImage: 2,
+                        timestamp: Number(timestamp),
                         objectPath: componentView.objectPath
                     });
                     done();
