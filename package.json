@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "1.8.1-SNAPSHOT",
+  "version": "1.8.1",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@braintree/sanitize-url": "^5.0.2",
@@ -38,7 +38,7 @@
     "karma": "6.3.9",
     "karma-chrome-launcher": "3.1.0",
     "karma-cli": "2.0.0",
-    "karma-coverage": "2.0.3",
+    "karma-coverage": "2.1.0",
     "karma-coverage-istanbul-reporter": "3.0.3",
     "karma-firefox-launcher": "2.1.2",
     "karma-jasmine": "4.0.1",

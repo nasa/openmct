@@ -36,15 +36,36 @@ export default {
     },
     methods: {
         onClick(event) {
-            if ((this.options.isEditing === undefined || this.options.isEditing) && this.options.dialog) {
-                this.openmct.$injector.get('dialogService')
-                    .getUserInput(this.options.dialog, this.options.value)
-                    .then(value => {
-                        this.$emit('change', {...value}, this.options);
+            const self = this;
+
+            if ((self.options.isEditing === undefined || self.options.isEditing) && self.options.dialog) {
+                this.updateFormStructure();
+
+                self.openmct.forms.showForm(self.options.dialog)
+                    .then(changes => {
+                        self.$emit('change', {...changes}, self.options);
+                    })
+                    .catch(e => {
+                        // canceled, do nothing
                     });
             }
 
-            this.$emit('click', this.options);
+            self.$emit('click', self.options);
+        },
+        updateFormStructure() {
+            if (!this.options.value) {
+                return;
+            }
+
+            Object.entries(this.options.value).forEach(([key, value]) => {
+                this.options.dialog.sections.forEach(section => {
+                    section.rows.forEach(row => {
+                        if (row.key === key) {
+                            row.value = value;
+                        }
+                    });
+                });
+            });
         }
     }
 };

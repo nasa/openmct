@@ -33,3 +33,12 @@ protractor/logs
 
 # npm-debug log
 npm-debug.log
+
+# Infra and tests
+.circleci
+.github
+e2e
+codecov.yml
+lighthouserc.yml
+*.Spec.js
+karma.conf.js

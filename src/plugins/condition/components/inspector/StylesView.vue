@@ -127,7 +127,7 @@ import FontStyleEditor from '@/ui/inspector/styles/FontStyleEditor.vue';
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionSetIdentifierForItem } from "@/plugins/condition/utils/styleUtils";
-import ConditionSetSelectorDialog from "@/plugins/condition/components/inspector/ConditionSetSelectorDialog.vue";
+import SelectorDialogTree from '@/ui/components/SelectorDialogTree.vue';
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
 import Vue from 'vue';
@@ -539,7 +539,7 @@ export default {
         addConditionSet() {
             let conditionSetDomainObject;
             let self = this;
-            function handleItemSelection(item) {
+            function handleItemSelection({ item }) {
                 if (item) {
                     conditionSetDomainObject = item;
                 }
@@ -556,16 +556,17 @@ export default {
             }
 
             let vm = new Vue({
-                components: {ConditionSetSelectorDialog},
+                components: { SelectorDialogTree },
                 provide: {
                     openmct: this.openmct
                 },
                 data() {
                     return {
-                        handleItemSelection
+                        handleItemSelection,
+                        title: 'Select Condition Set'
                     };
                 },
-                template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
+                template: '<SelectorDialogTree :title="title" @treeItemSelected="handleItemSelection"></SelectorDialogTree>'
             }).$mount();
 
             let overlay = this.openmct.overlays.overlay({

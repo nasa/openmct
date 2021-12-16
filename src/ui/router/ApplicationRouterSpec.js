@@ -49,9 +49,10 @@ describe('Application router utility functions', () => {
     });
 
     it('The setSearchParam function sets an individual search parameter in the window location hash', () => {
-        openmct.router.setSearchParam('testParam', 'testValue');
+        openmct.router.setSearchParam('testParam1', 'testValue1');
+
         const searchParams = openmct.router.getAllSearchParams();
-        expect(searchParams.get('testParam')).toBe('testValue');
+        expect(searchParams.get('testParam1')).toBe('testValue1');
     });
 
     it('The deleteSearchParam function deletes an individual search paramater in the window location hash', () => {
@@ -76,5 +77,11 @@ describe('Application router utility functions', () => {
         const searchParams = openmct.router.getAllSearchParams();
         expect(searchParams.get('testParam2')).toBe('updatedtestValue2');
         expect(searchParams.get('newTestParam3')).toBe('newTestValue3');
+    });
+
+    it('The doPathChange function triggers aborting all requests when doing a path change', () => {
+        const abortSpy = spyOn(openmct.telemetry, 'abortAllRequests');
+        openmct.router.doPathChange('newPath', 'oldPath');
+        expect(abortSpy).toHaveBeenCalledTimes(1);
     });
 });
