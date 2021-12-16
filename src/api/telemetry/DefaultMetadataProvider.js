@@ -102,8 +102,10 @@ define([
     DefaultMetadataProvider.prototype.getMetadata = function (domainObject) {
         const metadata = domainObject.telemetry || {};
         if (this.typeHasTelemetry(domainObject)) {
-            const typeMetadata = this.typeService.getType(domainObject.type).typeDef.telemetry;
+            const typeMetadata = this.openmct.types.get(domainObject.type).definition.telemetry;
+
             Object.assign(metadata, typeMetadata);
+
             if (!metadata.values) {
                 metadata.values = valueMetadatasFromOldFormat(metadata);
             }
@@ -116,11 +118,9 @@ define([
      * @private
      */
     DefaultMetadataProvider.prototype.typeHasTelemetry = function (domainObject) {
-        if (!this.typeService) {
-            this.typeService = this.openmct.$injector.get('typeService');
-        }
+        const type = this.openmct.types.get(domainObject.type);
 
-        return Boolean(this.typeService.getType(domainObject.type).typeDef.telemetry);
+        return Boolean(type.definition.telemetry);
     };
 
     return DefaultMetadataProvider;

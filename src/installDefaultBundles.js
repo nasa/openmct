@@ -35,12 +35,10 @@ const DEFAULTS = [
     'platform/containment',
     'platform/exporters',
     'platform/telemetry',
-    'platform/forms',
     'platform/identity',
     'platform/persistence/aggregator',
     'platform/policy',
     'platform/entanglement',
-    'platform/search',
     'platform/status',
     'platform/commonUI/regions'
 ];
@@ -73,7 +71,6 @@ define([
     '../platform/entanglement/bundle',
     '../platform/exporters/bundle',
     '../platform/features/static-markup/bundle',
-    '../platform/forms/bundle',
     '../platform/framework/bundle',
     '../platform/framework/src/load/Bundle',
     '../platform/identity/bundle',
@@ -83,7 +80,6 @@ define([
     '../platform/persistence/queue/bundle',
     '../platform/policy/bundle',
     '../platform/representation/bundle',
-    '../platform/search/bundle',
     '../platform/status/bundle',
     '../platform/telemetry/bundle'
 ], function () {

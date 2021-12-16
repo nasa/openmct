@@ -31,8 +31,6 @@
         flex-direction: column;
 
         &--hidden {
-            height: 1000px;
-            width: 1000px;
             position: absolute;
             left: -9999px;
             top: -9999px;
