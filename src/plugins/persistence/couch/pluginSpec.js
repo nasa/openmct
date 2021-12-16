@@ -66,7 +66,6 @@ describe('the plugin', () => {
         openmct.install(new CouchPlugin(options));
 
         openmct.types.addType('notebook', {creatable: true});
-        openmct.setAssetPath('/base');
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -130,6 +129,7 @@ describe('the plugin', () => {
 
         it('works without Shared Workers', async () => {
             let sharedWorkerCallback;
+            const restoreSharedWorker = window.SharedWorker;
             window.SharedWorker = undefined;
             const mockEventSource = {
                 addEventListener: (topic, addedListener) => {
@@ -164,7 +164,7 @@ describe('the plugin', () => {
             expect(provider.create).toHaveBeenCalled();
             expect(provider.startSharedWorker).not.toHaveBeenCalled();
             //Set modified timestamp it detects a change and persists the updated model.
-            mockDomainObject.modified = Date.now();
+            mockDomainObject.modified = mockDomainObject.persisted + 1;
             const updatedResult = await openmct.objects.save(mockDomainObject);
             openmct.objects.observe(mockDomainObject, '*', (updatedObject) => {
             });
@@ -173,6 +173,7 @@ describe('the plugin', () => {
             expect(provider.fetchChanges).toHaveBeenCalled();
             sharedWorkerCallback(fakeUpdateEvent);
             expect(provider.onEventMessage).toHaveBeenCalled();
+            window.SharedWorker = restoreSharedWorker;
         });
     });
     describe('batches requests', () => {
