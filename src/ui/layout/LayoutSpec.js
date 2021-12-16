@@ -23,7 +23,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 import Vue from 'vue';
 import Layout from './Layout.vue';
 

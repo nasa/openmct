@@ -1,4 +1,4 @@
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'test/utils';
 
 let openmct;
 let element;

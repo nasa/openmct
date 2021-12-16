@@ -25,7 +25,7 @@ import {
     createOpenMct,
     resetApplicationState,
     getMockObjects
-} from 'utils/testing';
+} from 'test/utils';
 
 describe("The Link Action plugin", () => {
     let openmct;

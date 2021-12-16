@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ActionsAPI from './ActionsAPI';
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../test/utils';
 import ActionCollection from './ActionCollection';
 
 describe('The Actions API', () => {

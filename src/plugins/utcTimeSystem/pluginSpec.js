@@ -25,7 +25,7 @@ import UTCTimeSystem from './UTCTimeSystem';
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 describe("The UTC Time System", () => {
     const UTC_SYSTEM_AND_FORMAT_KEY = 'utc';

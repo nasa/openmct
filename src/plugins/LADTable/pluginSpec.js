@@ -28,7 +28,7 @@ import {
     getLatestTelemetry,
     spyOnBuiltins,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 const TABLE_BODY_ROWS = '.js-lad-table__body__row';
 const TABLE_BODY_FIRST_ROW = TABLE_BODY_ROWS + ':first-child';

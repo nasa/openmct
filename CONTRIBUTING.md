@@ -253,7 +253,7 @@ Examples of useful tests:
     * Use your best judgement when deciding on appropriate scope.
 * Automated tests for plugins should start by actually installing the plugin being tested, and then test that installing the plugin adds the desired features and behavior to Open MCT, observing the above rules.
 * All variables used in a test spec, including any instances of the Open MCT API should be declared inside of an appropriate block scope (not at the root level of the source file), and should be initialized in the relevant beforeEach block. `beforeEach` is preferable to `beforeAll` to avoid leaking of state between tests.
-* A `afterEach` or `afterAll` should be used to do any clean up necessary to prevent leakage of state between test specs. This can happen when functions on `window` are wrapped, or when the URL is changed. [A convenience function](https://github.com/nasa/openmct/blob/master/src/utils/testing.js#L59) is provided for resetting the URL and clearing builtin spies between tests.
+* A `afterEach` or `afterAll` should be used to do any clean up necessary to prevent leakage of state between test specs. This can happen when functions on `window` are wrapped, or when the URL is changed. [A convenience function](https://github.com/nasa/openmct/blob/master/src/test/utils.js#L59) is provided for resetting the URL and clearing builtin spies between tests.
 * If writing unit tests for legacy Angular code be sure to follow [best practices in order to avoid memory leaks](https://www.thecodecampus.de/blog/avoid-memory-leaks-angularjs-unit-tests/).
 
 #### Examples

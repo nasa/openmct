@@ -1,5 +1,5 @@
 import CustomStringFormatter from './CustomStringFormatter';
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'test/utils';
 
 const CUSTOM_FORMATS = [
     {

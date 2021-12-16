@@ -22,7 +22,7 @@
 
 define(
     [
-        "utils/testing",
+        "test/utils",
         "./URLIndicator",
         "./URLIndicatorPlugin",
         "../../MCT",

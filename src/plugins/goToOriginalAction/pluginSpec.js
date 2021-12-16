@@ -22,7 +22,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 describe("the goToOriginalAction plugin", () => {
     let openmct;

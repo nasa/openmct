@@ -27,7 +27,7 @@ import {
     createOpenMct,
     resetApplicationState,
     spyOnBuiltins
-} from 'utils/testing';
+} from 'test/utils';
 import Vue from 'vue';
 
 // TODO lots of its without expects

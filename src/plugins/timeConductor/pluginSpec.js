@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createMouseEvent, createOpenMct, resetApplicationState} from "utils/testing";
+import {createMouseEvent, createOpenMct, resetApplicationState} from "test/utils";
 import {millisecondsToDHMS, getPreciseDuration} from "../../utils/duration";
 import ConductorPlugin from "./plugin";
 import Vue from 'vue';

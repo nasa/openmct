@@ -24,7 +24,7 @@ import {
     createOpenMct,
     resetApplicationState,
     spyOnBuiltins
-} from 'utils/testing';
+} from 'test/utils';
 import TabsLayout from './plugin';
 import Vue from "vue";
 import EventEmitter from "EventEmitter";

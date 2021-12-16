@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "utils/testing";
+import {createMouseEvent, createOpenMct, resetApplicationState, spyOnBuiltins} from "test/utils";
 import PlotVuePlugin from "./plugin";
 import Vue from "vue";
 import StackedPlot from "./stackedPlot/StackedPlot.vue";

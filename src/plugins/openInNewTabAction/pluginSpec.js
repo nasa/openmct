@@ -23,7 +23,7 @@ import {
     createOpenMct,
     resetApplicationState,
     spyOnBuiltins
-} from 'utils/testing';
+} from 'test/utils';
 
 describe("the plugin", () => {
     let openmct;

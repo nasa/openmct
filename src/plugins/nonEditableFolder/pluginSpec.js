@@ -22,7 +22,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 describe("the plugin", () => {
     const NON_EDITABLE_FOLDER_KEY = 'noneditable.folder';

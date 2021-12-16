@@ -25,7 +25,7 @@ import ImportFromJSONAction from './ImportFromJSONAction';
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 let openmct;
 let importFromJSONAction;

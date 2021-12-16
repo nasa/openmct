@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, spyOnBuiltins, resetApplicationState } from 'utils/testing';
+import { createOpenMct, spyOnBuiltins, resetApplicationState } from 'test/utils';
 import timerPlugin from './plugin';
 
 import Vue from 'vue';

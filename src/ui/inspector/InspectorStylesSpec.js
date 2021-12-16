@@ -23,10 +23,10 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 import {
     mockLocalStorage
-} from 'utils/testing/mockLocalStorage';
+} from 'test/utils/mockLocalStorage';
 import {
     mockTelemetryTableSelection,
     mockMultiSelectionSameStyles,

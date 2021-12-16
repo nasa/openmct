@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'test/utils';
 import DisplayLayoutPlugin from './plugin';
 
 describe('the plugin', function () {

@@ -23,7 +23,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 import Vue from 'vue';
 
 const INSPECTOR_SELECTOR_PREFIX = '.c-inspect-properties__';

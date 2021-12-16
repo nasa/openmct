@@ -22,7 +22,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 const OLD_ROOT_NAME = 'Open MCT';
 const NEW_ROOT_NAME = 'not_a_root';

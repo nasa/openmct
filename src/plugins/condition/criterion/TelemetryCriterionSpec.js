@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import TelemetryCriterion from "./TelemetryCriterion";
-import { getMockTelemetry } from "utils/testing";
+import { getMockTelemetry } from "test/utils";
 
 let openmct = {};
 let mockListener;

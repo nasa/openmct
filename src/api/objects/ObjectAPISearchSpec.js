@@ -1,4 +1,4 @@
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../test/utils';
 
 describe("The Object API Search Function", () => {
     describe("The infrastructure", () => {

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import ImageExporter from './ImageExporter';
-import { createOpenMct, resetApplicationState } from '../utils/testing';
+import { createOpenMct, resetApplicationState } from '../test/utils';
 
 describe('The Image Exporter', () => {
     let openmct;

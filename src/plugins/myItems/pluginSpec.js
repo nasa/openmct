@@ -23,7 +23,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 import {
     createMyItemsIdentifier,
     MY_ITEMS_KEY

@@ -1,5 +1,5 @@
 import ObjectAPI from './ObjectAPI.js';
-import { createOpenMct, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, resetApplicationState } from '../../test/utils';
 
 describe("The Object API", () => {
     let objectAPI;

@@ -23,7 +23,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 describe("The local time", () => {
     const LOCAL_FORMAT_KEY = 'local-format';

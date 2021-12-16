@@ -23,7 +23,7 @@ import PerformancePlugin from './plugin.js';
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 describe('the plugin', () => {
     let openmct;

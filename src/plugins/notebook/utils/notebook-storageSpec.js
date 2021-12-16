@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import * as NotebookStorage from './notebook-storage';
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import { createOpenMct, resetApplicationState } from 'test/utils';
 
 const notebookSection = {
     id: 'temp-section',

@@ -21,7 +21,7 @@
  *****************************************************************************/
 
 import TimeAPI from "./TimeAPI";
-import {createOpenMct} from "utils/testing";
+import {createOpenMct} from "test/utils";
 describe("The Independent Time API", function () {
     let api;
     let domainObjectKey;

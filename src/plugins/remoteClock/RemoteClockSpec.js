@@ -23,7 +23,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 const REMOTE_CLOCK_KEY = 'remote-clock';
 const TIME_TELEMETRY_ID = {

@@ -22,7 +22,7 @@
 
 import MenuAPI from './MenuAPI';
 import Menu from './menu';
-import { createOpenMct, createMouseEvent, resetApplicationState } from '../../utils/testing';
+import { createOpenMct, createMouseEvent, resetApplicationState } from '../../test/utils';
 
 describe ('The Menu API', () => {
     let openmct;

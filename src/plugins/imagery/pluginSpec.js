@@ -26,7 +26,7 @@ import {
     createOpenMct,
     resetApplicationState,
     simulateKeyEvent
-} from 'utils/testing';
+} from 'test/utils';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;

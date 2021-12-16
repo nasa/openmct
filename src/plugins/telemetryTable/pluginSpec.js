@@ -26,7 +26,7 @@ import {
     createMouseEvent,
     spyOnBuiltins,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 class MockDataTransfer {
     constructor() {

@@ -24,7 +24,7 @@ import Vue from 'vue';
 import {
     createOpenMct,
     resetApplicationState
-} from 'utils/testing';
+} from 'test/utils';
 
 describe("The folder plugin", () => {
     let openmct;
