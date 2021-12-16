@@ -1,0 +1,78 @@
+<!--
+ Open MCT, Copyright (c) 2014-2021, United States Government
+ as represented by the Administrator of the National Aeronautics and Space
+ Administration. All rights reserved.
+
+ Open MCT is licensed under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ http://www.apache.org/licenses/LICENSE-2.0.
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ Open MCT includes source code licensed under additional open source
+ licenses. See the Open Source Licenses file (LICENSES.md) included with
+ this source code distribution or the Licensing information page available
+ at runtime from the About dialog for additional information.
+-->
+<div class="angular-w l-flex-col flex-elem grows holder" ng-controller="SearchController as controller">
+    <div class="l-flex-col flex-elem grows holder holder-search" ng-controller="SearchMenuController as menuController">
+        <div class="c-search-btn-wrapper"
+             ng-controller="ToggleController as toggle"
+             ng-class="{ holder: !(ngModel.input === '' || ngModel.input === undefined) }">
+            <div class="c-search">
+                <input class="c-search__search-input"
+                       type="text" tabindex="10000"
+                       ng-model="ngModel.input"
+                       ng-keyup="controller.search()"/>
+                <button class="c-search__clear-input clear-icon icon-x-in-circle"
+                   ng-class="{show: !(ngModel.input === '' || ngModel.input === undefined)}"
+                   ng-click="ngModel.input = ''; controller.search()"></button>
+                <!-- To prevent double triggering of clicks on click away, render
+                   non-clickable version of the button when menu active-->
+                <a ng-if="!toggle.isActive()" class="menu-icon context-available"
+                   ng-click="toggle.toggle()"></a>
+                <a ng-if="toggle.isActive()" class="menu-icon context-available"></a>
+                <mct-include key="'search-menu'"
+                             class="menu-element c-search__search-menu-holder"
+                             ng-class="{invisible: !toggle.isActive()}"
+                             ng-model="ngModel"
+                             parameters="{menuVisible: toggle.setState}">
+                </mct-include>
+            </div>
+
+            <button class="c-button c-search__btn-cancel"
+               ng-show="!(ngModel.input === '' || ngModel.input === undefined)"
+               ng-click="ngModel.input = ''; ngModel.checkAll = true; menuController.checkAll(); controller.search()">
+                Cancel</button>
+        </div>
+
+        <div class="active-filter-display flex-elem holder"
+             ng-class="{invisible: ngModel.filtersString === '' || ngModel.filtersString === undefined || !ngModel.search}">
+            <button class="clear-filters icon-x-in-circle s-icon-button"
+               ng-click="ngModel.checkAll = true; menuController.checkAll()"></button>Filtered by: {{ ngModel.filtersString }}
+        </div>
+
+        <div class="flex-elem holder results-msg" ng-model="ngModel" ng-show="!loading && ngModel.search">
+            {{
+                !results.length > 0? 'No results found':
+                    results.length + ' result' + (results.length > 1? 's':'') + ' found'
+            }}
+        </div>
+
+        <div class="search-results flex-elem holder grows vscroll"
+             ng-class="{invisible: !(loading || results.length > 0), loading: loading}">
+            <mct-representation key="'search-item'"
+                                ng-repeat="result in results"
+                                mct-object="result.object"
+                                ng-model="ngModel"
+                                class="l-flex-row flex-elem grows">
+            </mct-representation>
+            <button class="load-more-button s-button vsm" ng-if="controller.areMore()" ng-click="controller.loadMore()">More Results</button>
+        </div>
+    </div>
+</div>

@@ -37,7 +37,6 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
     const openmct = new MCT();
     openmct.install(openmct.plugins.LocalStorage());
     openmct.install(openmct.plugins.UTCTimeSystem());
-    openmct.setAssetPath('/base');
 
     const timeSystemKey = timeSystemOptions.timeSystemKey;
     const start = timeSystemOptions.bounds.start;

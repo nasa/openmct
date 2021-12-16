@@ -54,11 +54,7 @@ module.exports = (config) => {
         files: [
             'indexTest.js',
             {
-                pattern: 'dist/couchDBChangesFeed.js*',
-                included: false
-            },
-            {
-                pattern: 'dist/inMemorySearchWorker.js*',
+                pattern: 'dist/couchDBChangesFeed.js',
                 included: false
             }
         ],

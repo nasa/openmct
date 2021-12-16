@@ -28,7 +28,6 @@ import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
 import Transaction from './Transaction';
 import ConflictError from './ConflictError';
-import InMemorySearchProvider from './InMemorySearchProvider';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -42,7 +41,6 @@ function ObjectAPI(typeRegistry, openmct) {
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
-    this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
     this.injectIdentifierService = function () {
         this.identifierService = this.openmct.$injector.get("identifierService");
     };
@@ -237,7 +235,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
  *
  * Object providersSearches and combines results of each object provider search.
  * Objects without search provided will have been indexed
- * and will be searched using the fallback in-memory search.
+ * and will be searched using the fallback indexed search.
  * Search results are asynchronous and resolve in parallel.
  *
  * @method search
@@ -252,11 +250,14 @@ ObjectAPI.prototype.search = function (query, abortSignal) {
     const searchPromises = Object.values(this.providers)
         .filter(provider => provider.search !== undefined)
         .map(provider => provider.search(query, abortSignal));
-    // abortSignal doesn't seem to be used in generic search?
-    searchPromises.push(this.inMemorySearchProvider.query(query, null)
+
+    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, abortSignal)
         .then(results => results.hits
             .map(hit => {
-                return hit;
+                let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
+                domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
+
+                return domainObject;
             })));
 
     return searchPromises;
