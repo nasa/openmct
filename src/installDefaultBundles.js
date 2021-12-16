@@ -38,7 +38,6 @@ const DEFAULTS = [
     'platform/persistence/aggregator',
     'platform/policy',
     'platform/entanglement',
-    'platform/search',
     'platform/status',
     'platform/commonUI/regions'
 ];
@@ -79,7 +78,6 @@ define([
     '../platform/persistence/queue/bundle',
     '../platform/policy/bundle',
     '../platform/representation/bundle',
-    '../platform/search/bundle',
     '../platform/status/bundle',
     '../platform/telemetry/bundle'
 ], function () {
