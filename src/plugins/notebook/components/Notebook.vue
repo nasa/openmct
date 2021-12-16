@@ -632,7 +632,7 @@ export default {
             const defaultNotebook = getDefaultNotebook();
             const defaultNotebookIdentifier = defaultNotebook && defaultNotebook.identifier;
             const isSameNotebook = defaultNotebookIdentifier
-                && objectUtils.makeKeyString(defaultNotebookIdentifier) === objectUtils.makeKeyString(notebookStorage.identifier);
+                && this.openmct.objects.areIdsEqual(defaultNotebookIdentifier, notebookStorage.identifier);
             if (!isSameNotebook) {
                 this.removeDefaultClass(defaultNotebookIdentifier);
             }

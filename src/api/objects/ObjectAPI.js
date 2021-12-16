@@ -46,7 +46,6 @@ function ObjectAPI(typeRegistry, openmct) {
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
-    this.isSavingInprogress = false;
     this.interceptorRegistry = new InterceptorRegistry();
 
     this.SYNCHRONIZED_OBJECT_TYPES = ['notebook', 'plan'];
@@ -310,7 +309,6 @@ ObjectAPI.prototype.isMissing = function (domainObject) {
  *          has been saved, or be rejected if it cannot be saved
  */
 ObjectAPI.prototype.save = function (domainObject) {
-    this.isSavingInprogress = true;
     let provider = this.getProvider(domainObject.identifier);
     let savedResolve;
     let savedReject;
@@ -345,8 +343,6 @@ ObjectAPI.prototype.save = function (domainObject) {
             result = provider.update(domainObject);
         }
     }
-
-    this.isSavingInprogress = false;
 
     return result;
 };
@@ -461,7 +457,7 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
 
     if (this.isTransactionActive()) {
         this.transaction.add(domainObject);
-    } else if (!this.isSavingInprogress) {
+    } else {
         this.save(domainObject);
     }
 };
