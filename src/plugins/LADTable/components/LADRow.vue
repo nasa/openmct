@@ -48,6 +48,7 @@ const CONTEXT_MENU_ACTIONS = [
     'viewHistoricalData',
     'remove'
 ];
+const BLANK_VALUE = '---';
 
 export default {
     inject: ['openmct', 'currentView'],
@@ -67,15 +68,43 @@ export default {
     },
     data() {
         return {
+            datum: undefined,
             timestamp: undefined,
-            value: '---',
-            valueClass: '',
+            timestampKey: undefined,
             unit: ''
         };
     },
     computed: {
+        value() {
+            if (!this.datum) {
+                return BLANK_VALUE;
+            }
+
+            return this.formats[this.valueKey].format(this.datum);
+        },
+        valueClass() {
+            if (!this.datum) {
+                return '';
+            }
+
+            const limit = this.limitEvaluator.evaluate(this.datum, this.valueMetadata);
+
+            return limit ? limit.cssClass : '';
+
+        },
         formattedTimestamp() {
-            return this.timestamp !== undefined ? this.getFormattedTimestamp(this.timestamp) : '---';
+            if (!this.timestamp) {
+                return BLANK_VALUE;
+            }
+
+            return this.timeSystemFormat.format(this.timestamp);
+        },
+        timeSystemFormat() {
+            if (!this.formats[this.timestampKey]) {
+                console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
+            }
+
+            return this.formats[this.timestampKey];
         },
         objectPath() {
             return [this.domainObject, ...this.pathToTable];
@@ -96,15 +125,19 @@ export default {
 
         this.timestampKey = this.openmct.time.timeSystem().key;
 
-        this.valueMetadata = this.metadata ? this
-            .metadata
-            .valuesForHints(['range'])[0] : undefined;
+        this.valueMetadata = undefined;
+
+        if (this.metadata) {
+            this.valueMetadata = this
+                .metadata
+                .valuesForHints(['range'])[0] || this.firstNonDomainAttribute(this.metadata);
+        }
 
         this.valueKey = this.valueMetadata ? this.valueMetadata.key : undefined;
 
         this.unsubscribe = this.openmct
             .telemetry
-            .subscribe(this.domainObject, this.updateValues);
+            .subscribe(this.domainObject, this.setLatestValues);
 
         this.requestHistory();
 
@@ -118,29 +151,29 @@ export default {
         this.openmct.time.off('bounds', this.updateBounds);
     },
     methods: {
-        updateValues(datum) {
-            let newTimestamp = this.getParsedTimestamp(datum);
-            let limit;
+        updateView() {
+            if (!this.updatingView) {
+                this.updatingView = true;
+                requestAnimationFrame(() => {
+                    let newTimestamp = this.getParsedTimestamp(this.latestDatum);
 
-            if (this.shouldUpdate(newTimestamp)) {
-                this.datum = datum;
-                this.timestamp = newTimestamp;
-                this.value = this.formats[this.valueKey].format(datum);
-                limit = this.limitEvaluator.evaluate(datum, this.valueMetadata);
-                if (limit) {
-                    this.valueClass = limit.cssClass;
-                } else {
-                    this.valueClass = '';
-                }
+                    if (this.shouldUpdate(newTimestamp)) {
+                        this.timestamp = newTimestamp;
+                        this.datum = this.latestDatum;
+                    }
+
+                    this.updatingView = false;
+                });
             }
         },
-        shouldUpdate(newTimestamp) {
-            let newTimestampInBounds = this.inBounds(newTimestamp);
-            let noExistingTimestamp = this.timestamp === undefined;
-            let newTimestampIsLatest = newTimestamp > this.timestamp;
+        setLatestValues(datum) {
+            this.latestDatum = datum;
 
-            return newTimestampInBounds
-                && (noExistingTimestamp || newTimestampIsLatest);
+            this.updateView();
+        },
+        shouldUpdate(newTimestamp) {
+            return this.inBounds(newTimestamp)
+                && (this.timestamp === undefined || newTimestamp > this.timestamp);
         },
         requestHistory() {
             this.openmct
@@ -151,7 +184,7 @@ export default {
                     size: 1,
                     strategy: 'latest'
                 })
-                .then((array) => this.updateValues(array[array.length - 1]))
+                .then((array) => this.setLatestValues(array[array.length - 1]))
                 .catch((error) => {
                     console.warn('Error fetching data', error);
                 });
@@ -189,31 +222,21 @@ export default {
             }
         },
         resetValues() {
-            this.value = '---';
             this.timestamp = undefined;
-            this.valueClass = '';
+            this.datum = undefined;
         },
         getParsedTimestamp(timestamp) {
-            if (this.timeSystemFormat()) {
-                return this.formats[this.timestampKey].parse(timestamp);
-            }
-        },
-        getFormattedTimestamp(timestamp) {
-            if (this.timeSystemFormat()) {
-                return this.formats[this.timestampKey].format(timestamp);
-            }
-        },
-        timeSystemFormat() {
-            if (this.formats[this.timestampKey]) {
-                return true;
-            } else {
-                console.warn(`No formatter for ${this.timestampKey} time system for ${this.domainObject.name}.`);
-
-                return false;
+            if (this.timeSystemFormat) {
+                return this.timeSystemFormat.parse(timestamp);
             }
         },
         setUnit() {
             this.unit = this.valueMetadata.unit || '';
+        },
+        firstNonDomainAttribute(metadata) {
+            return metadata
+                .values()
+                .find(metadatum => metadatum.hints.domain === undefined && metadatum.key !== 'name');
         }
     }
 };

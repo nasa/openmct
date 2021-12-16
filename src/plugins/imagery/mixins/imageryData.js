@@ -62,13 +62,11 @@ export default {
             this.timeContext.on('bounds', this.boundsChange);
             this.boundsChange(this.timeContext.bounds());
             this.timeContext.on('timeSystem', this.timeSystemChange);
-            this.timeContext.on("timeContext", this.setDataTimeContext);
         },
         stopFollowingDataTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.boundsChange);
                 this.timeContext.off('timeSystem', this.timeSystemChange);
-                this.timeContext.off("timeContext", this.setDataTimeContext);
             }
         },
         datumIsNotValid(datum) {
