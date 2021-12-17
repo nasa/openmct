@@ -424,35 +424,27 @@ define([
          * @event start
          * @memberof module:openmct.MCT~
          */
-        const startPromise = new Main();
-        startPromise.run(this)
-            .then(function (angular) {
-                this.$angular = angular;
-                // OpenMCT Object provider doesn't operate properly unless
-                // something has depended upon objectService.  Cool, right?
-                this.$injector.get('objectService');
 
-                if (!isHeadlessMode) {
-                    const appLayout = new Vue({
-                        components: {
-                            'Layout': Layout.default
-                        },
-                        provide: {
-                            openmct: this
-                        },
-                        template: '<Layout ref="layout"></Layout>'
-                    });
-                    domElement.appendChild(appLayout.$mount().$el);
+        if (!isHeadlessMode) {
+            const appLayout = new Vue({
+                components: {
+                    'Layout': Layout.default
+                },
+                provide: {
+                    openmct: this
+                },
+                template: '<Layout ref="layout"></Layout>'
+            });
+            domElement.appendChild(appLayout.$mount().$el);
 
-                    this.layout = appLayout.$refs.layout;
-                    Browse(this);
-                }
+            this.layout = appLayout.$refs.layout;
+            Browse(this);
+        }
 
-                window.addEventListener('beforeunload', this.destroy);
+        window.addEventListener('beforeunload', this.destroy);
 
-                this.router.start();
-                this.emit('start');
-            }.bind(this));
+        this.router.start();
+        this.emit('start');
     };
 
     MCT.prototype.startHeadless = function () {
