@@ -74,7 +74,6 @@ define([
     '../platform/identity/bundle',
     '../platform/persistence/aggregator/bundle',
     '../platform/persistence/elastic/bundle',
-    '../platform/persistence/local/bundle',
     '../platform/persistence/queue/bundle',
     '../platform/policy/bundle',
     '../platform/representation/bundle',
