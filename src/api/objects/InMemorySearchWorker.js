@@ -21,20 +21,39 @@
  *****************************************************************************/
 
 /**
- * Module defining BareBonesSearchWorker. Created by deeptailor on 10/03/2019.
+ * Module defining InMemorySearchWorker. Created by deeptailor on 10/03/2019.
  */
 (function () {
-
-    // An array of objects composed of domain object IDs and names
+    // An object composed of domain object IDs and models
     // {id: domainObject's ID, name: domainObject's name}
-    var indexedItems = [];
+    const indexedItems = {};
 
-    function indexItem(id, model) {
-        indexedItems.push({
-            id: id,
-            name: model.name.toLowerCase(),
-            type: model.type
-        });
+    self.onconnect = function (e) {
+        const port = e.ports[0];
+
+        port.onmessage = function (event) {
+            if (event.data.request === 'index') {
+                indexItem(event.data.keyString, event.data.model);
+            } else if (event.data.request === 'search') {
+                port.postMessage(search(event.data));
+            }
+        };
+
+        port.start();
+
+    };
+
+    self.onerror = function (error) {
+        //do nothing
+        console.error('Error on feed', error);
+    };
+
+    function indexItem(keyString, model) {
+        indexedItems[keyString] = {
+            type: model.type,
+            name: model.name,
+            keyString
+        };
     }
 
     /**
@@ -49,17 +68,17 @@
     function search(data) {
         // This results dictionary will have domain object ID keys which
         // point to the value the domain object's score.
-        var results,
-            input = data.input.trim().toLowerCase(),
-            message = {
-                request: 'search',
-                results: {},
-                total: 0,
-                queryId: data.queryId
-            };
+        let results;
+        const input = data.input.trim().toLowerCase();
+        const message = {
+            request: 'search',
+            results: {},
+            total: 0,
+            queryId: data.queryId
+        };
 
-        results = indexedItems.filter((indexedItem) => {
-            return indexedItem.name.includes(input);
+        results = Object.values(indexedItems).filter((indexedItem) => {
+            return indexedItem.name.toLowerCase().includes(input);
         });
 
         message.total = results.length;
@@ -68,12 +87,4 @@
 
         return message;
     }
-
-    self.onmessage = function (event) {
-        if (event.data.request === 'index') {
-            indexItem(event.data.id, event.data.model);
-        } else if (event.data.request === 'search') {
-            self.postMessage(search(event.data));
-        }
-    };
 }());
