@@ -20,156 +20,219 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
+const DEFAULT_IMAGE_SAMPLES = [
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18731.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18732.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18733.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18734.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18735.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18736.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18737.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18738.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18739.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18740.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18741.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18742.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18743.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18744.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18745.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18746.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg",
+    "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
+];
+const DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS = 20000;
+const MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS = 5000;
 
-], function (
+let openmctInstance;
 
-) {
-    function ImageryPlugin() {
-
-        const IMAGE_SAMPLES = [
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18731.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18732.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18733.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18734.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18735.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18736.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18737.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18738.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18739.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18740.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18741.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18742.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18743.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18744.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18745.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18746.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18747.jpg",
-            "https://www.hq.nasa.gov/alsj/a16/AS16-117-18748.jpg"
-        ];
-        const IMAGE_DELAY = 20000;
-
-        function getCompassValues(min, max) {
-            return min + Math.random() * (max - min);
-        }
-
-        function pointForTimestamp(timestamp, name) {
-            const url = IMAGE_SAMPLES[Math.floor(timestamp / IMAGE_DELAY) % IMAGE_SAMPLES.length];
-            const urlItems = url.split('/');
-            const imageDownloadName = `example.imagery.${urlItems[urlItems.length - 1]}`;
-
-            return {
-                name,
-                utc: Math.floor(timestamp / IMAGE_DELAY) * IMAGE_DELAY,
-                local: Math.floor(timestamp / IMAGE_DELAY) * IMAGE_DELAY,
-                url,
-                sunOrientation: getCompassValues(0, 360),
-                cameraPan: getCompassValues(0, 360),
-                heading: getCompassValues(0, 360),
-                imageDownloadName
-            };
-        }
-
-        var realtimeProvider = {
-            supportsSubscribe: function (domainObject) {
-                return domainObject.type === 'example.imagery';
-            },
-            subscribe: function (domainObject, callback) {
-                var interval = setInterval(function () {
-                    callback(pointForTimestamp(Date.now(), domainObject.name));
-                }, IMAGE_DELAY);
-
-                return function () {
-                    clearInterval(interval);
+export default function () {
+    return function install(openmct) {
+        openmctInstance = openmct;
+        openmct.types.addType('example.imagery', {
+            key: 'example.imagery',
+            name: 'Example Imagery',
+            cssClass: 'icon-image',
+            description: 'For development use. Creates example imagery '
+                + 'data that mimics a live imagery stream.',
+            creatable: true,
+            initialize: (object) => {
+                object.configuration = {
+                    imageLocation: '',
+                    imageLoadDelayInMilliSeconds: DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS,
+                    imageSamples: []
                 };
-            }
-        };
 
-        var historicalProvider = {
-            supportsRequest: function (domainObject, options) {
-                return domainObject.type === 'example.imagery'
-                    && options.strategy !== 'latest';
-            },
-            request: function (domainObject, options) {
-                var start = options.start;
-                var end = Math.min(options.end, Date.now());
-                var data = [];
-                while (start <= end && data.length < IMAGE_DELAY) {
-                    data.push(pointForTimestamp(start, domainObject.name));
-                    start += IMAGE_DELAY;
-                }
-
-                return Promise.resolve(data);
-            }
-        };
-
-        var ladProvider = {
-            supportsRequest: function (domainObject, options) {
-                return domainObject.type === 'example.imagery'
-                    && options.strategy === 'latest';
-            },
-            request: function (domainObject, options) {
-                return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name)]);
-            }
-        };
-
-        return function install(openmct) {
-            openmct.types.addType('example.imagery', {
-                key: 'example.imagery',
-                name: 'Example Imagery',
-                cssClass: 'icon-image',
-                description: 'For development use. Creates example imagery '
-                    + 'data that mimics a live imagery stream.',
-                creatable: true,
-                initialize: function (object) {
-                    object.telemetry = {
-                        values: [
-                            {
-                                name: 'Name',
-                                key: 'name'
-                            },
-                            {
-                                name: 'Time',
-                                key: 'utc',
-                                format: 'utc',
-                                hints: {
-                                    domain: 2
-                                }
-                            },
-                            {
-                                name: 'Local Time',
-                                key: 'local',
-                                format: 'local-format',
-                                hints: {
-                                    domain: 1
-                                }
-                            },
-                            {
-                                name: 'Image',
-                                key: 'url',
-                                format: 'image',
-                                hints: {
-                                    image: 1
-                                }
-                            },
-                            {
-                                name: 'Image Download Name',
-                                key: 'imageDownloadName',
-                                format: 'imageDownloadName',
-                                hints: {
-                                    imageDownloadName: 1
-                                }
+                object.telemetry = {
+                    values: [
+                        {
+                            name: 'Name',
+                            key: 'name'
+                        },
+                        {
+                            name: 'Time',
+                            key: 'utc',
+                            format: 'utc',
+                            hints: {
+                                domain: 2
                             }
-                        ]
-                    };
+                        },
+                        {
+                            name: 'Local Time',
+                            key: 'local',
+                            format: 'local-format',
+                            hints: {
+                                domain: 1
+                            }
+                        },
+                        {
+                            name: 'Image',
+                            key: 'url',
+                            format: 'image',
+                            hints: {
+                                image: 1
+                            }
+                        },
+                        {
+                            name: 'Image Download Name',
+                            key: 'imageDownloadName',
+                            format: 'imageDownloadName',
+                            hints: {
+                                imageDownloadName: 1
+                            }
+                        }
+                    ]
+                };
+            },
+            form: [
+                {
+                    key: 'imageLocation',
+                    name: 'Images url list (comma separated)',
+                    control: 'textarea',
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "imageLocation"
+                    ]
+                },
+                {
+                    key: 'imageLoadDelayInMilliSeconds',
+                    name: 'Image load delay (milliseconds)',
+                    control: 'numberfield',
+                    required: true,
+                    cssClass: 'l-inline',
+                    property: [
+                        "configuration",
+                        "imageLoadDelayInMilliSeconds"
+                    ]
                 }
-            });
+            ]
+        });
 
-            openmct.telemetry.addProvider(realtimeProvider);
-            openmct.telemetry.addProvider(historicalProvider);
-            openmct.telemetry.addProvider(ladProvider);
-        };
+        openmct.telemetry.addProvider(getRealtimeProvider());
+        openmct.telemetry.addProvider(getHistoricalProvider());
+        openmct.telemetry.addProvider(getLadProvider());
+    };
+}
+
+function getCompassValues(min, max) {
+    return min + Math.random() * (max - min);
+}
+
+function getImageSamples(configuration) {
+    let imageSamples = DEFAULT_IMAGE_SAMPLES;
+
+    if (configuration.imageLocation && configuration.imageLocation.length) {
+        imageSamples = getImageUrlListFromConfig(configuration);
     }
 
-    return ImageryPlugin;
-});
+    return imageSamples;
+}
+
+function getImageUrlListFromConfig(configuration) {
+    return configuration.imageLocation.split(',');
+}
+
+function getImageLoadDelay(domainObject) {
+    const imageLoadDelay = domainObject.configuration.imageLoadDelayInMilliSeconds;
+    if (!imageLoadDelay) {
+        openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS);
+
+        return DEFAULT_IMAGE_LOAD_DELAY_IN_MILISECONDS;
+    }
+
+    if (imageLoadDelay < MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS) {
+        openmctInstance.objects.mutate(domainObject, 'configuration.imageLoadDelayInMilliSeconds', MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS);
+
+        return MIN_IMAGE_LOAD_DELAY_IN_MILISECONDS;
+    }
+
+    return imageLoadDelay;
+}
+
+function getRealtimeProvider() {
+    return {
+        supportsSubscribe: domainObject => domainObject.type === 'example.imagery',
+        subscribe: (domainObject, callback) => {
+            const delay = getImageLoadDelay(domainObject);
+            const interval = setInterval(() => {
+                callback(pointForTimestamp(Date.now(), domainObject.name, getImageSamples(domainObject.configuration), delay));
+            }, delay);
+
+            return () => {
+                clearInterval(interval);
+            };
+        }
+    };
+}
+
+function getHistoricalProvider() {
+    return {
+        supportsRequest: (domainObject, options) => {
+            return domainObject.type === 'example.imagery'
+                && options.strategy !== 'latest';
+        },
+        request: (domainObject, options) => {
+            const delay = getImageLoadDelay(domainObject);
+            let start = options.start;
+            const end = Math.min(options.end, Date.now());
+            const data = [];
+            while (start <= end && data.length < delay) {
+                data.push(pointForTimestamp(start, domainObject.name, getImageSamples(domainObject.configuration), delay));
+                start += delay;
+            }
+
+            return Promise.resolve(data);
+        }
+    };
+}
+
+function getLadProvider() {
+    return {
+        supportsRequest: (domainObject, options) => {
+            return domainObject.type === 'example.imagery'
+                && options.strategy === 'latest';
+        },
+        request: (domainObject, options) => {
+            const delay = getImageLoadDelay(domainObject);
+
+            return Promise.resolve([pointForTimestamp(Date.now(), domainObject.name, delay)]);
+        }
+    };
+}
+
+function pointForTimestamp(timestamp, name, imageSamples, delay) {
+    const url = imageSamples[Math.floor(timestamp / delay) % imageSamples.length];
+    const urlItems = url.split('/');
+    const imageDownloadName = `example.imagery.${urlItems[urlItems.length - 1]}`;
+
+    return {
+        name,
+        utc: Math.floor(timestamp / delay) * delay,
+        local: Math.floor(timestamp / delay) * delay,
+        url,
+        sunOrientation: getCompassValues(0, 360),
+        cameraPan: getCompassValues(0, 360),
+        heading: getCompassValues(0, 360),
+        imageDownloadName
+    };
+}

@@ -126,7 +126,7 @@ class ApplicationRouter extends EventEmitter {
     }
 
     /**
-     * Navgate to given hash and update current location object and notify listeners about location change
+     * Navigate to given hash and update current location object and notify listeners about location change
      *
      * @param {string} paramName name of searchParam to get from current url searchParams
      *
@@ -136,9 +136,20 @@ class ApplicationRouter extends EventEmitter {
         this.handleLocationChange(hash.substring(1));
     }
 
+    /**
+     * Check if a given object and current location object are same
+     *
+     * @param {Array<Object>} objectPath Object path of a given Domain Object
+     *
+     * @returns {Boolean}
+     */
     isNavigatedObject(objectPath) {
         let targetObject = objectPath[0];
         let navigatedObject = this.path[0];
+
+        if (!targetObject.identifier) {
+            return false;
+        }
 
         return this.openmct.objects.areIdsEqual(targetObject.identifier, navigatedObject.identifier);
     }
@@ -306,6 +317,8 @@ class ApplicationRouter extends EventEmitter {
         if (route) {
             route.callback(newPath, route.matcher.exec(newPath), this.currentLocation.params);
         }
+
+        this.openmct.telemetry.abortAllRequests();
 
         this.emit('change:path', newPath, oldPath);
     }

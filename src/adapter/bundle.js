@@ -21,11 +21,9 @@
  *****************************************************************************/
 
 define([
-    './actions/ActionDialogDecorator',
     './capabilities/AdapterCapability',
     './directives/MCTView',
     './services/Instantiate',
-    './services/MissingModelCompatibilityDecorator',
     './capabilities/APICapabilityDecorator',
     './policies/AdaptedViewPolicy',
     './runs/AlternateCompositionInitializer',
@@ -37,11 +35,9 @@ define([
     './actions/LegacyActionAdapter',
     './services/LegacyPersistenceAdapter'
 ], function (
-    ActionDialogDecorator,
     AdapterCapability,
     MCTView,
     Instantiate,
-    MissingModelCompatibilityDecorator,
     APICapabilityDecorator,
     AdaptedViewPolicy,
     AlternateCompositionInitializer,
@@ -90,18 +86,6 @@ define([
                         depends: [
                             "$injector"
                         ]
-                    },
-                    {
-                        type: "decorator",
-                        provides: "actionService",
-                        implementation: ActionDialogDecorator,
-                        depends: ["openmct"]
-                    },
-                    {
-                        type: "decorator",
-                        provides: "modelService",
-                        implementation: MissingModelCompatibilityDecorator,
-                        depends: ["openmct"]
                     },
                     {
                         provides: "objectService",

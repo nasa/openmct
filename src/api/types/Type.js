@@ -82,6 +82,32 @@ define(function () {
         definition.cssClass = legacyDefinition.cssClass;
         definition.description = legacyDefinition.description;
         definition.form = legacyDefinition.properties;
+        if (legacyDefinition.telemetry !== undefined) {
+            let telemetry = {
+                values: []
+            };
+
+            if (legacyDefinition.telemetry.domains !== undefined) {
+                legacyDefinition.telemetry.domains.forEach((domain, index) => {
+                    domain.hints = {
+                        domain: index
+                    };
+                    telemetry.values.push(domain);
+                });
+            }
+
+            if (legacyDefinition.telemetry.ranges !== undefined) {
+                legacyDefinition.telemetry.ranges.forEach((range, index) => {
+                    range.hints = {
+                        range: index
+                    };
+                    telemetry.values.push(range);
+                });
+            }
+
+            definition.telemetry = telemetry;
+        }
+
         if (legacyDefinition.model) {
             definition.initialize = function (model) {
                 for (let [k, v] of Object.entries(legacyDefinition.model)) {

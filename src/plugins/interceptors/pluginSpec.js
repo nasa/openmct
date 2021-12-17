@@ -75,22 +75,5 @@ describe('the plugin', function () {
             });
         });
 
-        it('returns the My items object if not found', () => {
-            const identifier = {
-                namespace: TEST_NAMESPACE,
-                key: 'mine'
-            };
-
-            return openmct.objects.get(identifier).then((testObject) => {
-                expect(testObject).toEqual({
-                    identifier,
-                    "name": "My Items",
-                    "type": "folder",
-                    "composition": [],
-                    "location": "ROOT"
-                });
-            });
-        });
-
     });
 });

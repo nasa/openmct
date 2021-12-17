@@ -144,7 +144,14 @@ define([
         this.metadataCache = new WeakMap();
         this.formatMapCache = new WeakMap();
         this.valueFormatterCache = new WeakMap();
+        this.formatters = new Map();
+        this.requestAbortControllers = new Set();
     }
+
+    TelemetryAPI.prototype.abortAllRequests = function () {
+        this.requestAbortControllers.forEach((controller) => controller.abort());
+        this.requestAbortControllers.clear();
+    };
 
     /**
      * Return Custom String Formatter
@@ -312,6 +319,10 @@ define([
             arguments[1] = {};
         }
 
+        const abortController = new AbortController();
+        arguments[1].signal = abortController.signal;
+        this.requestAbortControllers.add(abortController);
+
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
@@ -319,10 +330,14 @@ define([
         }
 
         return provider.request.apply(provider, arguments).catch((rejected) => {
-            this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-            console.error(rejected);
+            if (rejected.name !== 'AbortError') {
+                this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+                console.error(rejected);
+            }
 
             return Promise.reject(rejected);
+        }).finally(() => {
+            this.requestAbortControllers.delete(abortController);
         });
     };
 
@@ -432,17 +447,6 @@ define([
     };
 
     /**
-     * @private
-     */
-    TelemetryAPI.prototype.getFormatService = function () {
-        if (!this.formatService) {
-            this.formatService = this.openmct.$injector.get('formatService');
-        }
-
-        return this.formatService;
-    };
-
-    /**
      * Get a value formatter for a given valueMetadata.
      *
      * @returns {TelemetryValueFormatter}
@@ -451,7 +455,7 @@ define([
         if (!this.valueFormatterCache.has(valueMetadata)) {
             this.valueFormatterCache.set(
                 valueMetadata,
-                new TelemetryValueFormatter(valueMetadata, this.getFormatService())
+                new TelemetryValueFormatter(valueMetadata, this.formatters)
             );
         }
 
@@ -465,9 +469,7 @@ define([
      * @returns {Format}
      */
     TelemetryAPI.prototype.getFormatter = function (key) {
-        const formatMap = this.getFormatService().formatMap;
-
-        return formatMap[key];
+        return this.formatters.get(key);
     };
 
     /**
@@ -477,6 +479,10 @@ define([
      * @returns {Object<String, {TelemetryValueFormatter}>}
      */
     TelemetryAPI.prototype.getFormatMap = function (metadata) {
+        if (!metadata) {
+            return {};
+        }
+
         if (!this.formatMapCache.has(metadata)) {
             const formatMap = metadata.values().reduce(function (map, valueMetadata) {
                 map[valueMetadata.key] = this.getValueFormatter(valueMetadata);
@@ -494,12 +500,7 @@ define([
      * @param {Format} format the
      */
     TelemetryAPI.prototype.addFormat = function (format) {
-        this.openmct.legacyExtension('formats', {
-            key: format.key,
-            implementation: function () {
-                return format;
-            }
-        });
+        this.formatters.set(format.key, format);
     };
 
     /**
