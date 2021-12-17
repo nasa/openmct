@@ -1,4 +1,5 @@
 import ObjectAPI from './ObjectAPI.js';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
 describe("The Object API", () => {
     let objectAPI;
@@ -8,11 +9,12 @@ describe("The Object API", () => {
     const TEST_NAMESPACE = "test-namespace";
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
-    beforeEach(() => {
+    beforeEach((done) => {
         typeRegistry = jasmine.createSpyObj('typeRegistry', [
             'get'
         ]);
-        objectAPI = new ObjectAPI(typeRegistry, openmct);
+        openmct = createOpenMct();
+        objectAPI = openmct.objects;
 
         openmct.editor = {};
         openmct.editor.isEditing = () => false;
@@ -25,15 +27,29 @@ describe("The Object API", () => {
             name: "test object",
             type: "test-type"
         };
+        openmct.on('start', () => {
+            done();
+        });
+        openmct.startHeadless();
+    });
+
+    afterEach(async () => {
+        await resetApplicationState(openmct);
     });
 
     describe("The save function", () => {
-        it("Rejects if no provider available", () => {
+        it("Rejects if no provider available", async () => {
             let rejected = false;
+            objectAPI.providers = {};
+            objectAPI.fallbackProvider = null;
 
-            return objectAPI.save(mockDomainObject)
-                .catch(() => rejected = true)
-                .then(() => expect(rejected).toBe(true));
+            try {
+                await objectAPI.save(mockDomainObject);
+            } catch (error) {
+                rejected = true;
+            }
+
+            expect(rejected).toBe(true);
         });
         describe("when a provider is available", () => {
             let mockProvider;

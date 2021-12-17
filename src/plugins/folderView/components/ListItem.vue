@@ -1,6 +1,6 @@
 <template>
 <tr
-    class="c-list-item"
+    class="c-list-item js-folder-child"
     :class="{
         'is-alias': item.isAlias === true
     }"
