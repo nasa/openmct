@@ -246,10 +246,7 @@ export default {
             this.gridDimensions = [wMax * this.gridSize[0], hMax * this.gridSize[1]];
         },
         watchDisplayResize() {
-            const self = this;
-            const resizeObserver = new ResizeObserver(function () {
-                self.updateGrid();
-            });
+            const resizeObserver = new ResizeObserver(() => this.updateGrid());
 
             resizeObserver.observe(this.$el);
         },
@@ -417,8 +414,11 @@ export default {
             }
         },
         containsObject(identifier) {
-            return this.domainObject.composition
-                .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
+            if('composition' in this.domainObject) {
+                return this.domainObject.composition
+                    .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
+            }
+            return false;
         },
         handleDragOver($event) {
             if (this.domainObject.locked) {
