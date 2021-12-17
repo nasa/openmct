@@ -1,11 +1,5 @@
-define([
+function RegisterLegacyTypes(types, openmct) {
+    openmct.types.importLegacyTypes(types);
+}
 
-], function (
-
-) {
-    function RegisterLegacyTypes(types, openmct) {
-        openmct.types.importLegacyTypes(types);
-    }
-
-    return RegisterLegacyTypes;
-});
+export default RegisterLegacyTypes;

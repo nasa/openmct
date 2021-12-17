@@ -20,29 +20,24 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+/**
+ * Loads all templates when the application is started.
+ * @param {platform/representation.TemplateLinker} templateLinker
+ *        the `templateLinker` service, used to load and cache
+ *        template extensions
+ * @param {...Array.<{templateUrl: string}>} extensions arrays
+ *        of template or template-like extensions
+ */
+function TemplatePrefetcher(templateLinker) {
+    Array.prototype.slice.apply(arguments, [1])
+        .reduce(function (a, b) {
+            return a.concat(b);
+        }, [])
+        .forEach(function (ext) {
+            if (ext.templateUrl) {
+                templateLinker.load(templateLinker.getPath(ext));
+            }
+        });
+}
 
-        /**
-         * Loads all templates when the application is started.
-         * @param {platform/representation.TemplateLinker} templateLinker
-         *        the `templateLinker` service, used to load and cache
-         *        template extensions
-         * @param {...Array.<{templateUrl: string}>} extensions arrays
-         *        of template or template-like extensions
-         */
-        function TemplatePrefetcher(templateLinker) {
-            Array.prototype.slice.apply(arguments, [1])
-                .reduce(function (a, b) {
-                    return a.concat(b);
-                }, [])
-                .forEach(function (ext) {
-                    if (ext.templateUrl) {
-                        templateLinker.load(templateLinker.getPath(ext));
-                    }
-                });
-        }
-
-        return TemplatePrefetcher;
-    }
-);
+export default TemplatePrefetcher;

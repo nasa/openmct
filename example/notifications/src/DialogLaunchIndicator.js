@@ -20,36 +20,53 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
-        "use strict";
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 
-        /**
-         * A tool for manually invoking dialogs. When included this
-         * indicator will allow for dialogs of different types to be
-         * launched for demonstration and testing purposes.
-         * @constructor
-         */
+"use strict";
 
-        function DialogLaunchIndicator() {
+/**
+ * A tool for manually invoking dialogs. When included this
+ * indicator will allow for dialogs of different types to be
+ * launched for demonstration and testing purposes.
+ * @constructor
+ */
 
-        }
+function DialogLaunchIndicator() {
 
-        DialogLaunchIndicator.template = 'dialogLaunchTemplate';
+}
 
-        DialogLaunchIndicator.prototype.getGlyphClass = function () {
-            return 'ok';
-        };
+DialogLaunchIndicator.template = 'dialogLaunchTemplate';
 
-        DialogLaunchIndicator.prototype.getText = function () {
-            return "Launch test dialog";
-        };
+DialogLaunchIndicator.prototype.getGlyphClass = function () {
+    return 'ok';
+};
 
-        DialogLaunchIndicator.prototype.getDescription = function () {
-            return "Launch test dialog";
-        };
+DialogLaunchIndicator.prototype.getText = function () {
+    return "Launch test dialog";
+};
 
-        return DialogLaunchIndicator;
-    }
-);
+DialogLaunchIndicator.prototype.getDescription = function () {
+    return "Launch test dialog";
+};
+
+export default DialogLaunchIndicator;

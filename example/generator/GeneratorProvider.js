@@ -20,81 +20,98 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    './WorkerInterface'
-], function (
-    WorkerInterface
-) {
+/*****************************************************************************
+ * Open MCT, Copyright (c) 2014-2021, United States Government
+ * as represented by the Administrator of the National Aeronautics and Space
+ * Administration. All rights reserved.
+ *
+ * Open MCT is licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0.
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * Open MCT includes source code licensed under additional open source
+ * licenses. See the Open Source Licenses file (LICENSES.md) included with
+ * this source code distribution or the Licensing information page available
+ * at runtime from the About dialog for additional information.
+ *****************************************************************************/
 
-    var REQUEST_DEFAULTS = {
-        amplitude: 1,
-        period: 10,
-        offset: 0,
-        dataRateInHz: 1,
-        randomness: 0,
-        phase: 0
-    };
+import WorkerInterface from './WorkerInterface';
 
-    function GeneratorProvider() {
-        this.workerInterface = new WorkerInterface();
-    }
+var REQUEST_DEFAULTS = {
+    amplitude: 1,
+    period: 10,
+    offset: 0,
+    dataRateInHz: 1,
+    randomness: 0,
+    phase: 0
+};
 
-    GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
-        return domainObject.type === 'generator';
-    };
+function GeneratorProvider() {
+    this.workerInterface = new WorkerInterface();
+}
 
-    GeneratorProvider.prototype.supportsRequest =
-        GeneratorProvider.prototype.supportsSubscribe =
-            GeneratorProvider.prototype.canProvideTelemetry;
+GeneratorProvider.prototype.canProvideTelemetry = function (domainObject) {
+    return domainObject.type === 'generator';
+};
 
-    GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
-        var props = [
-            'amplitude',
-            'period',
-            'offset',
-            'dataRateInHz',
-            'phase',
-            'randomness'
-        ];
+GeneratorProvider.prototype.supportsRequest =
+    GeneratorProvider.prototype.supportsSubscribe =
+        GeneratorProvider.prototype.canProvideTelemetry;
 
-        request = request || {};
+GeneratorProvider.prototype.makeWorkerRequest = function (domainObject, request) {
+    var props = [
+        'amplitude',
+        'period',
+        'offset',
+        'dataRateInHz',
+        'phase',
+        'randomness'
+    ];
 
-        var workerRequest = {};
+    request = request || {};
 
-        props.forEach(function (prop) {
-            if (domainObject.telemetry && Object.prototype.hasOwnProperty.call(domainObject.telemetry, prop)) {
-                workerRequest[prop] = domainObject.telemetry[prop];
-            }
+    var workerRequest = {};
 
-            if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
-                workerRequest[prop] = request[prop];
-            }
+    props.forEach(function (prop) {
+        if (domainObject.telemetry && Object.prototype.hasOwnProperty.call(domainObject.telemetry, prop)) {
+            workerRequest[prop] = domainObject.telemetry[prop];
+        }
 
-            if (!Object.prototype.hasOwnProperty.call(workerRequest, prop)) {
-                workerRequest[prop] = REQUEST_DEFAULTS[prop];
-            }
+        if (request && Object.prototype.hasOwnProperty.call(request, prop)) {
+            workerRequest[prop] = request[prop];
+        }
 
-            workerRequest[prop] = Number(workerRequest[prop]);
-        });
+        if (!Object.prototype.hasOwnProperty.call(workerRequest, prop)) {
+            workerRequest[prop] = REQUEST_DEFAULTS[prop];
+        }
 
-        workerRequest.name = domainObject.name;
+        workerRequest[prop] = Number(workerRequest[prop]);
+    });
 
-        return workerRequest;
-    };
+    workerRequest.name = domainObject.name;
 
-    GeneratorProvider.prototype.request = function (domainObject, request) {
-        var workerRequest = this.makeWorkerRequest(domainObject, request);
-        workerRequest.start = request.start;
-        workerRequest.end = request.end;
+    return workerRequest;
+};
 
-        return this.workerInterface.request(workerRequest);
-    };
+GeneratorProvider.prototype.request = function (domainObject, request) {
+    var workerRequest = this.makeWorkerRequest(domainObject, request);
+    workerRequest.start = request.start;
+    workerRequest.end = request.end;
 
-    GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
-        var workerRequest = this.makeWorkerRequest(domainObject, {});
+    return this.workerInterface.request(workerRequest);
+};
 
-        return this.workerInterface.subscribe(workerRequest, callback);
-    };
+GeneratorProvider.prototype.subscribe = function (domainObject, callback) {
+    var workerRequest = this.makeWorkerRequest(domainObject, {});
 
-    return GeneratorProvider;
-});
+    return this.workerInterface.subscribe(workerRequest, callback);
+};
+
+export default GeneratorProvider;

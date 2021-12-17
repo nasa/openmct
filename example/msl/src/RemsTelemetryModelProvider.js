@@ -20,77 +20,73 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
-        "use strict";
+"use strict";
 
-        var PREFIX = "msl_tlm:",
-            FORMAT_MAPPINGS = {
-                float: "number",
-                integer: "number",
-                string: "string"
-            };
+var PREFIX = "msl_tlm:",
+    FORMAT_MAPPINGS = {
+        float: "number",
+        integer: "number",
+        string: "string"
+    };
 
-        function RemsTelemetryModelProvider(adapter) {
+function RemsTelemetryModelProvider(adapter) {
 
-            function isRelevant(id) {
-                return id.indexOf(PREFIX) === 0;
-            }
+    function isRelevant(id) {
+        return id.indexOf(PREFIX) === 0;
+    }
 
-            function makeId(element) {
-                return PREFIX + element.identifier;
-            }
+    function makeId(element) {
+        return PREFIX + element.identifier;
+    }
 
-            function buildTaxonomy(dictionary) {
-                var models = {};
+    function buildTaxonomy(dictionary) {
+        var models = {};
 
-                function addMeasurement(measurement, parent) {
-                    var format = FORMAT_MAPPINGS[measurement.type];
-                    models[makeId(measurement)] = {
-                        type: "msl.measurement",
-                        name: measurement.name,
-                        location: parent,
-                        telemetry: {
-                            key: measurement.identifier,
-                            ranges: [{
-                                key: "value",
-                                name: measurement.units,
-                                units: measurement.units,
-                                format: format
-                            }]
-                        }
-                    };
-                }
-
-                function addInstrument(subsystem, spacecraftId) {
-                    var measurements = (subsystem.measurements || []),
-                        instrumentId = makeId(subsystem);
-
-                    models[instrumentId] = {
-                        type: "msl.instrument",
-                        name: subsystem.name,
-                        location: spacecraftId,
-                        composition: measurements.map(makeId)
-                    };
-                    measurements.forEach(function (measurement) {
-                        addMeasurement(measurement, instrumentId);
-                    });
-                }
-
-                (dictionary.instruments || []).forEach(function (instrument) {
-                    addInstrument(instrument, "msl:curiosity");
-                });
-
-                return models;
-            }
-
-            return {
-                getModels: function (ids) {
-                    return ids.some(isRelevant) ? buildTaxonomy(adapter.dictionary) : {};
+        function addMeasurement(measurement, parent) {
+            var format = FORMAT_MAPPINGS[measurement.type];
+            models[makeId(measurement)] = {
+                type: "msl.measurement",
+                name: measurement.name,
+                location: parent,
+                telemetry: {
+                    key: measurement.identifier,
+                    ranges: [{
+                        key: "value",
+                        name: measurement.units,
+                        units: measurement.units,
+                        format: format
+                    }]
                 }
             };
         }
 
-        return RemsTelemetryModelProvider;
+        function addInstrument(subsystem, spacecraftId) {
+            var measurements = (subsystem.measurements || []),
+                instrumentId = makeId(subsystem);
+
+            models[instrumentId] = {
+                type: "msl.instrument",
+                name: subsystem.name,
+                location: spacecraftId,
+                composition: measurements.map(makeId)
+            };
+            measurements.forEach(function (measurement) {
+                addMeasurement(measurement, instrumentId);
+            });
+        }
+
+        (dictionary.instruments || []).forEach(function (instrument) {
+            addInstrument(instrument, "msl:curiosity");
+        });
+
+        return models;
     }
-);
+
+    return {
+        getModels: function (ids) {
+            return ids.some(isRelevant) ? buildTaxonomy(adapter.dictionary) : {};
+        }
+    };
+}
+
+export default RemsTelemetryModelProvider;

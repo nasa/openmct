@@ -20,59 +20,56 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
+function BundleRegistry() {
+    this.bundles = {};
+    this.knownBundles = {};
+}
 
-    function BundleRegistry() {
-        this.bundles = {};
-        this.knownBundles = {};
+BundleRegistry.prototype.register = function (path, definition) {
+    if (Object.prototype.hasOwnProperty.call(this.knownBundles, path)) {
+        throw new Error('Cannot register bundle with duplicate path', path);
     }
 
-    BundleRegistry.prototype.register = function (path, definition) {
-        if (Object.prototype.hasOwnProperty.call(this.knownBundles, path)) {
-            throw new Error('Cannot register bundle with duplicate path', path);
-        }
+    this.knownBundles[path] = definition;
+};
 
-        this.knownBundles[path] = definition;
-    };
+BundleRegistry.prototype.enable = function (path) {
+    if (!this.knownBundles[path]) {
+        throw new Error('Unknown bundle ' + path);
+    }
 
-    BundleRegistry.prototype.enable = function (path) {
-        if (!this.knownBundles[path]) {
-            throw new Error('Unknown bundle ' + path);
-        }
+    this.bundles[path] = this.knownBundles[path];
+};
 
-        this.bundles[path] = this.knownBundles[path];
-    };
+BundleRegistry.prototype.disable = function (path) {
+    if (!this.bundles[path]) {
+        throw new Error('Tried to disable inactive bundle ' + path);
+    }
 
-    BundleRegistry.prototype.disable = function (path) {
-        if (!this.bundles[path]) {
-            throw new Error('Tried to disable inactive bundle ' + path);
-        }
+    delete this.bundles[path];
+};
 
-        delete this.bundles[path];
-    };
+BundleRegistry.prototype.contains = function (path) {
+    return Boolean(this.bundles[path]);
+};
 
-    BundleRegistry.prototype.contains = function (path) {
-        return Boolean(this.bundles[path]);
-    };
+BundleRegistry.prototype.get = function (path) {
+    return this.bundles[path];
+};
 
-    BundleRegistry.prototype.get = function (path) {
-        return this.bundles[path];
-    };
+BundleRegistry.prototype.list = function () {
+    return Object.keys(this.bundles);
+};
 
-    BundleRegistry.prototype.list = function () {
-        return Object.keys(this.bundles);
-    };
+BundleRegistry.prototype.remove = BundleRegistry.prototype.disable;
 
-    BundleRegistry.prototype.remove = BundleRegistry.prototype.disable;
+BundleRegistry.prototype.delete = function (path) {
+    if (!this.knownBundles[path]) {
+        throw new Error('Cannot remove Unknown Bundle ' + path);
+    }
 
-    BundleRegistry.prototype.delete = function (path) {
-        if (!this.knownBundles[path]) {
-            throw new Error('Cannot remove Unknown Bundle ' + path);
-        }
+    delete this.bundles[path];
+    delete this.knownBundles[path];
+};
 
-        delete this.bundles[path];
-        delete this.knownBundles[path];
-    };
-
-    return BundleRegistry;
-});
+export default BundleRegistry;

@@ -20,53 +20,48 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+var TEMPLATE = "<div></div>";
 
-        var TEMPLATE = "<div></div>";
+/**
+ * The `mct-popup` directive may be used to display elements
+ * which "pop up" over other parts of the page. Typically, this is
+ * done in conjunction with an `ng-if` to control the visibility
+ * of the popup.
+ *
+ * Example of usage:
+ *
+ *     <mct-popup ng-if="someExpr">
+ *         <span>These are the contents of the popup!</span>
+ *     </mct-popup>
+ *
+ * @constructor
+ * @memberof platform/commonUI/general
+ * @param $compile Angular's $compile service
+ * @param {platform/commonUI/general.PopupService} popupService
+ */
+function MCTPopup($compile, popupService) {
+    function link(scope, element, attrs, ctrl, transclude) {
+        var div = $compile(TEMPLATE)(scope),
+            rect = element.parent()[0].getBoundingClientRect(),
+            position = [rect.left, rect.top],
+            popup = popupService.display(div, position);
 
-        /**
-         * The `mct-popup` directive may be used to display elements
-         * which "pop up" over other parts of the page. Typically, this is
-         * done in conjunction with an `ng-if` to control the visibility
-         * of the popup.
-         *
-         * Example of usage:
-         *
-         *     <mct-popup ng-if="someExpr">
-         *         <span>These are the contents of the popup!</span>
-         *     </mct-popup>
-         *
-         * @constructor
-         * @memberof platform/commonUI/general
-         * @param $compile Angular's $compile service
-         * @param {platform/commonUI/general.PopupService} popupService
-         */
-        function MCTPopup($compile, popupService) {
-            function link(scope, element, attrs, ctrl, transclude) {
-                var div = $compile(TEMPLATE)(scope),
-                    rect = element.parent()[0].getBoundingClientRect(),
-                    position = [rect.left, rect.top],
-                    popup = popupService.display(div, position);
+        div.addClass('t-popup');
+        transclude(function (clone) {
+            div.append(clone);
+        });
 
-                div.addClass('t-popup');
-                transclude(function (clone) {
-                    div.append(clone);
-                });
-
-                scope.$on('$destroy', function () {
-                    popup.dismiss();
-                });
-            }
-
-            return {
-                restrict: "E",
-                transclude: true,
-                link: link,
-                scope: {}
-            };
-        }
-
-        return MCTPopup;
+        scope.$on('$destroy', function () {
+            popup.dismiss();
+        });
     }
-);
+
+    return {
+        restrict: "E",
+        transclude: true,
+        link: link,
+        scope: {}
+    };
+}
+
+export default MCTPopup;

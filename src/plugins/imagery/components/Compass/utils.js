@@ -7,6 +7,15 @@
  * @param  {...number} rotations in degrees
  * @returns {number} normalized sum of all rotations - [0, 360) degrees
  */
+/**
+ *
+ * sums an arbitrary number of absolute rotations
+ * (meaning rotations relative to one common direction 0)
+ * normalizes the rotation to the range [0, 360)
+ *
+ * @param  {...number} rotations in degrees
+ * @returns {number} normalized sum of all rotations - [0, 360) degrees
+ */
 export function rotate(...rotations) {
     const rotation = rotations.reduce((a, b) => a + b, 0);
 

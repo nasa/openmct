@@ -20,71 +20,66 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+/**
+ * The "Cancel" action; the action triggered by clicking Cancel from
+ * Edit Mode. Exits the editing user interface and invokes object
+ * capabilities to persist the changes that have been made.
+ * @constructor
+ * @memberof platform/commonUI/edit
+ * @implements {Action}
+ */
+function CancelAction(context) {
+    this.domainObject = context.domainObject;
+}
 
-        /**
-         * The "Cancel" action; the action triggered by clicking Cancel from
-         * Edit Mode. Exits the editing user interface and invokes object
-         * capabilities to persist the changes that have been made.
-         * @constructor
-         * @memberof platform/commonUI/edit
-         * @implements {Action}
-         */
-        function CancelAction(context) {
-            this.domainObject = context.domainObject;
+/**
+ * Cancel editing.
+ *
+ * @returns {Promise} a promise that will be fulfilled when
+ *          cancellation has completed
+ */
+CancelAction.prototype.perform = function () {
+    var domainObject = this.domainObject;
+
+    function returnToBrowse() {
+        var parent;
+
+        //If the object existed already, navigate to refresh view
+        // with previous object state.
+        if (domainObject.getModel().persisted) {
+            return domainObject.getCapability("action").perform("navigate");
+        } else {
+            //If the object was new, and user has cancelled, then
+            //navigate back to parent because nothing to show.
+            return domainObject.getCapability("location").getOriginal().then(function (original) {
+                parent = original.getCapability("context").getParent();
+
+                return parent.getCapability("action").perform("navigate");
+            });
         }
-
-        /**
-         * Cancel editing.
-         *
-         * @returns {Promise} a promise that will be fulfilled when
-         *          cancellation has completed
-         */
-        CancelAction.prototype.perform = function () {
-            var domainObject = this.domainObject;
-
-            function returnToBrowse() {
-                var parent;
-
-                //If the object existed already, navigate to refresh view
-                // with previous object state.
-                if (domainObject.getModel().persisted) {
-                    return domainObject.getCapability("action").perform("navigate");
-                } else {
-                    //If the object was new, and user has cancelled, then
-                    //navigate back to parent because nothing to show.
-                    return domainObject.getCapability("location").getOriginal().then(function (original) {
-                        parent = original.getCapability("context").getParent();
-
-                        return parent.getCapability("action").perform("navigate");
-                    });
-                }
-            }
-
-            function cancel() {
-                return domainObject.getCapability("editor").finish();
-            }
-
-            //Do navigation first in order to trigger unsaved changes dialog
-            return returnToBrowse()
-                .then(cancel);
-        };
-
-        /**
-         * Check if this action is applicable in a given context.
-         * This will ensure that a domain object is present in the context,
-         * and that this domain object is in Edit mode.
-         * @returns {boolean} true if applicable
-         */
-        CancelAction.appliesTo = function (context) {
-            var domainObject = (context || {}).domainObject;
-
-            return domainObject !== undefined
-                && domainObject.hasCapability('editor')
-                && domainObject.getCapability('editor').isEditContextRoot();
-        };
-
-        return CancelAction;
     }
-);
+
+    function cancel() {
+        return domainObject.getCapability("editor").finish();
+    }
+
+    //Do navigation first in order to trigger unsaved changes dialog
+    return returnToBrowse()
+        .then(cancel);
+};
+
+/**
+ * Check if this action is applicable in a given context.
+ * This will ensure that a domain object is present in the context,
+ * and that this domain object is in Edit mode.
+ * @returns {boolean} true if applicable
+ */
+CancelAction.appliesTo = function (context) {
+    var domainObject = (context || {}).domainObject;
+
+    return domainObject !== undefined
+        && domainObject.hasCapability('editor')
+        && domainObject.getCapability('editor').isEditContextRoot();
+};
+
+export default CancelAction;

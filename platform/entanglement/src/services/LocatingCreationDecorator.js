@@ -20,28 +20,22 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+/**
+ * Adds a `location` property to newly-created domain objects.
+ * @constructor
+ * @augments {platform/commonUI/browse.CreationService}
+ * @memberof platform/entanglement
+ */
+function LocatingCreationDecorator(creationService) {
+    this.creationService = creationService;
+}
 
-        /**
-         * Adds a `location` property to newly-created domain objects.
-         * @constructor
-         * @augments {platform/commonUI/browse.CreationService}
-         * @memberof platform/entanglement
-         */
-        function LocatingCreationDecorator(creationService) {
-            this.creationService = creationService;
-        }
-
-        LocatingCreationDecorator.prototype.createObject = function (model, parent) {
-            if (parent && parent.getId) {
-                model.location = parent.getId();
-            }
-
-            return this.creationService.createObject(model, parent);
-        };
-
-        return LocatingCreationDecorator;
+LocatingCreationDecorator.prototype.createObject = function (model, parent) {
+    if (parent && parent.getId) {
+        model.location = parent.getId();
     }
-);
 
+    return this.creationService.createObject(model, parent);
+};
+
+export default LocatingCreationDecorator;

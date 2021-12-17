@@ -25,27 +25,22 @@
  * a user's identity.
  * @namespace platform/identity
  */
-define(
-    function () {
+/**
+ * Default implementation of an identity service. Provides an
+ * unknown user as an `undefined` value; this is present simply
+ * to ensure that there is always an `identityService` available
+ * for platform components to use.
+ *
+ * @constructor
+ * @implements {IdentityService}
+ * @memberof platform/identity
+ */
+function IdentityProvider($q) {
+    this.userPromise = $q.when(undefined);
+}
 
-        /**
-         * Default implementation of an identity service. Provides an
-         * unknown user as an `undefined` value; this is present simply
-         * to ensure that there is always an `identityService` available
-         * for platform components to use.
-         *
-         * @constructor
-         * @implements {IdentityService}
-         * @memberof platform/identity
-         */
-        function IdentityProvider($q) {
-            this.userPromise = $q.when(undefined);
-        }
+IdentityProvider.prototype.getUser = function () {
+    return this.userPromise;
+};
 
-        IdentityProvider.prototype.getUser = function () {
-            return this.userPromise;
-        };
-
-        return IdentityProvider;
-    }
-);
+export default IdentityProvider;

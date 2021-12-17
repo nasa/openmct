@@ -20,47 +20,41 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+/**
+ * Implements the "Set Primary Location" action, which sets a
+ * location property for objects to match their contextual
+ * location.
+ *
+ * @implements {Action}
+ * @constructor
+ * @private
+ * @memberof platform/entanglement
+ * @param {ActionContext} context the context in which the action
+ *        will be performed
+ */
+function SetPrimaryLocationAction(context) {
+    this.domainObject = context.domainObject;
+}
 
-        /**
-         * Implements the "Set Primary Location" action, which sets a
-         * location property for objects to match their contextual
-         * location.
-         *
-         * @implements {Action}
-         * @constructor
-         * @private
-         * @memberof platform/entanglement
-         * @param {ActionContext} context the context in which the action
-         *        will be performed
-         */
-        function SetPrimaryLocationAction(context) {
-            this.domainObject = context.domainObject;
-        }
+SetPrimaryLocationAction.prototype.perform = function () {
+    var location = this.domainObject.getCapability('location');
 
-        SetPrimaryLocationAction.prototype.perform = function () {
-            var location = this.domainObject.getCapability('location');
+    return location.setPrimaryLocation(
+        location.getContextualLocation()
+    );
+};
 
-            return location.setPrimaryLocation(
-                location.getContextualLocation()
-            );
-        };
+SetPrimaryLocationAction.appliesTo = function (context, view, openmct) {
+    let domainObject = (context || {}).domainObject;
 
-        SetPrimaryLocationAction.appliesTo = function (context, view, openmct) {
-            let domainObject = (context || {}).domainObject;
-
-            if (!domainObject || (domainObject.model && domainObject.model.locked)) {
-                return false;
-            }
-
-            let isPersistable = openmct.objects.isPersistable(domainObject.id);
-
-            return isPersistable && domainObject.hasCapability("location")
-                && (domainObject.getModel().location === undefined);
-        };
-
-        return SetPrimaryLocationAction;
+    if (!domainObject || (domainObject.model && domainObject.model.locked)) {
+        return false;
     }
-);
 
+    let isPersistable = openmct.objects.isPersistable(domainObject.id);
+
+    return isPersistable && domainObject.hasCapability("location")
+        && (domainObject.getModel().location === undefined);
+};
+
+export default SetPrimaryLocationAction;

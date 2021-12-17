@@ -20,59 +20,45 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    /**
-     * A data dictionary describes the telemetry available from a data
-     * source and its data types. The data dictionary will be parsed by a custom
-     * server provider for this data source (in this case
-     * {@link RemsTelemetryServerAdapter}).
-     *
-     * Typically a data dictionary would be made available alongside the
-     * telemetry data source itself.
-     */
-    function () {
-        return {
-            "name": "Mars Science Laboratory",
-            "identifier": "msl",
-            "instruments": [
+export default {
+    "name": "Mars Science Laboratory",
+    "identifier": "msl",
+    "instruments": [
+        {
+            "name": "rems",
+            "identifier": "rems",
+            "measurements": [
                 {
-                    "name": "rems",
-                    "identifier": "rems",
-                    "measurements": [
-                        {
-                            "name": "Min. Air Temperature",
-                            "identifier": "min_temp",
-                            "units": "Degrees (C)",
-                            "type": "float"
-                        },
-                        {
-                            "name": "Max. Air Temperature",
-                            "identifier": "max_temp",
-                            "units": "Degrees (C)",
-                            "type": "float"
-                        },
-                        {
-                            "name": "Atmospheric Pressure",
-                            "identifier": "pressure",
-                            "units": "Millibars",
-                            "type": "float"
-                        },
-                        {
-                            "name": "Min. Ground Temperature",
-                            "identifier": "min_gts_temp",
-                            "units": "Degrees (C)",
-                            "type": "float"
-                        },
-                        {
-                            "name": "Max. Ground Temperature",
-                            "identifier": "max_gts_temp",
-                            "units": "Degrees (C)",
-                            "type": "float"
-                        }
-                    ]
+                    "name": "Min. Air Temperature",
+                    "identifier": "min_temp",
+                    "units": "Degrees (C)",
+                    "type": "float"
+                },
+                {
+                    "name": "Max. Air Temperature",
+                    "identifier": "max_temp",
+                    "units": "Degrees (C)",
+                    "type": "float"
+                },
+                {
+                    "name": "Atmospheric Pressure",
+                    "identifier": "pressure",
+                    "units": "Millibars",
+                    "type": "float"
+                },
+                {
+                    "name": "Min. Ground Temperature",
+                    "identifier": "min_gts_temp",
+                    "units": "Degrees (C)",
+                    "type": "float"
+                },
+                {
+                    "name": "Max. Ground Temperature",
+                    "identifier": "max_gts_temp",
+                    "units": "Degrees (C)",
+                    "type": "float"
                 }
             ]
-        };
-    }
-);
+        }
+    ]
+};

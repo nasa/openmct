@@ -20,77 +20,72 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+/**
+ * MockCopyService provides the same interface as the copyService,
+ * returning promises where it would normally do so.  At it's core,
+ * it is a jasmine spy object, but it also tracks the promises it
+ * returns and provides shortcut methods for resolving those promises
+ * synchronously.
+ *
+ * Usage:
+ *
+ * ```javascript
+ * var copyService = new MockCopyService();
+ *
+ * // validate is a standard jasmine spy.
+ * copyService.validate.and.returnValue(true);
+ * var isValid = copyService.validate(object, parentCandidate);
+ * expect(isValid).toBe(true);
+ *
+ * // perform returns promises and tracks them.
+ * var whenCopied = jasmine.createSpy('whenCopied');
+ * copyService.perform(object, parentObject).then(whenCopied);
+ * expect(whenCopied).not.toHaveBeenCalled();
+ * copyService.perform.calls.mostRecent().resolve('someArg');
+ * expect(whenCopied).toHaveBeenCalledWith('someArg');
+ * ```
+ */
+function MockCopyService() {
+    // track most recent call of a function,
+    // perform automatically returns
+    var mockCopyService = jasmine.createSpyObj(
+        'MockCopyService',
+        [
+            'validate',
+            'perform'
+        ]
+    );
 
-        /**
-         * MockCopyService provides the same interface as the copyService,
-         * returning promises where it would normally do so.  At it's core,
-         * it is a jasmine spy object, but it also tracks the promises it
-         * returns and provides shortcut methods for resolving those promises
-         * synchronously.
-         *
-         * Usage:
-         *
-         * ```javascript
-         * var copyService = new MockCopyService();
-         *
-         * // validate is a standard jasmine spy.
-         * copyService.validate.and.returnValue(true);
-         * var isValid = copyService.validate(object, parentCandidate);
-         * expect(isValid).toBe(true);
-         *
-         * // perform returns promises and tracks them.
-         * var whenCopied = jasmine.createSpy('whenCopied');
-         * copyService.perform(object, parentObject).then(whenCopied);
-         * expect(whenCopied).not.toHaveBeenCalled();
-         * copyService.perform.calls.mostRecent().resolve('someArg');
-         * expect(whenCopied).toHaveBeenCalledWith('someArg');
-         * ```
-         */
-        function MockCopyService() {
-            // track most recent call of a function,
-            // perform automatically returns
-            var mockCopyService = jasmine.createSpyObj(
-                'MockCopyService',
-                [
-                    'validate',
-                    'perform'
-                ]
-            );
+    mockCopyService.perform.and.callFake(() => {
+        var performPromise,
+            callExtensions,
+            spy;
 
-            mockCopyService.perform.and.callFake(() => {
-                var performPromise,
-                    callExtensions,
-                    spy;
+        performPromise = jasmine.createSpyObj(
+            'performPromise',
+            ['then']
+        );
 
-                performPromise = jasmine.createSpyObj(
-                    'performPromise',
-                    ['then']
-                );
-
-                callExtensions = {
-                    promise: performPromise,
-                    resolve: function (resolveWith) {
-                        performPromise.then.calls.all().forEach(function (call) {
-                            call.args[0](resolveWith);
-                        });
-                    }
-                };
-
-                spy = mockCopyService.perform;
-
-                Object.keys(callExtensions).forEach(function (key) {
-                    spy.calls.mostRecent()[key] = callExtensions[key];
-                    spy.calls.all()[spy.calls.count() - 1][key] = callExtensions[key];
+        callExtensions = {
+            promise: performPromise,
+            resolve: function (resolveWith) {
+                performPromise.then.calls.all().forEach(function (call) {
+                    call.args[0](resolveWith);
                 });
+            }
+        };
 
-                return performPromise;
-            });
+        spy = mockCopyService.perform;
 
-            return mockCopyService;
-        }
+        Object.keys(callExtensions).forEach(function (key) {
+            spy.calls.mostRecent()[key] = callExtensions[key];
+            spy.calls.all()[spy.calls.count() - 1][key] = callExtensions[key];
+        });
 
-        return MockCopyService;
-    }
-);
+        return performPromise;
+    });
+
+    return mockCopyService;
+}
+
+export default MockCopyService;

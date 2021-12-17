@@ -20,75 +20,71 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
-        "use strict";
+"use strict";
 
-        var DEFAULT_IDENTITY = {
-                key: "user",
-                name: "Example User"
-            },
-            DIALOG_STRUCTURE = {
-                name: "Identify Yourself",
-                sections: [{
-                    rows: [
-                        {
-                            name: "User ID",
-                            control: "textfield",
-                            key: "key",
-                            required: true
-                        },
-                        {
-                            name: "Human name",
-                            control: "textfield",
-                            key: "name",
-                            required: true
-                        }
-                    ]
-                }]
-            };
+var DEFAULT_IDENTITY = {
+        key: "user",
+        name: "Example User"
+    },
+    DIALOG_STRUCTURE = {
+        name: "Identify Yourself",
+        sections: [{
+            rows: [
+                {
+                    name: "User ID",
+                    control: "textfield",
+                    key: "key",
+                    required: true
+                },
+                {
+                    name: "Human name",
+                    control: "textfield",
+                    key: "name",
+                    required: true
+                }
+            ]
+        }]
+    };
 
-        /**
-         * Example implementation of an identity service. This prompts the
-         * user to enter a name and user ID; in a more realistic
-         * implementation, this would be read from a server, possibly
-         * prompting for a user name and password (or similar) as
-         * appropriate.
-         *
-         * @implements {IdentityService}
-         * @memberof platform/identity
-         */
-        function ExampleIdentityProvider(dialogService, $q) {
-            this.dialogService = dialogService;
-            this.$q = $q;
+/**
+ * Example implementation of an identity service. This prompts the
+ * user to enter a name and user ID; in a more realistic
+ * implementation, this would be read from a server, possibly
+ * prompting for a user name and password (or similar) as
+ * appropriate.
+ *
+ * @implements {IdentityService}
+ * @memberof platform/identity
+ */
+function ExampleIdentityProvider(dialogService, $q) {
+    this.dialogService = dialogService;
+    this.$q = $q;
 
-            this.returnUser = this.returnUser.bind(this);
-            this.returnUndefined = this.returnUndefined.bind(this);
-        }
+    this.returnUser = this.returnUser.bind(this);
+    this.returnUndefined = this.returnUndefined.bind(this);
+}
 
-        ExampleIdentityProvider.prototype.getUser = function () {
-            if (this.user) {
-                return this.$q.when(this.user);
-            } else {
-                return this.dialogService.getUserInput(DIALOG_STRUCTURE, DEFAULT_IDENTITY)
-                    .then(this.returnUser, this.returnUndefined);
-            }
-        };
-
-        /**
-         * @private
-         */
-        ExampleIdentityProvider.prototype.returnUser = function (user) {
-            return this.user = user;
-        };
-
-        /**
-         * @private
-         */
-        ExampleIdentityProvider.prototype.returnUndefined = function () {
-            return undefined;
-        };
-
-        return ExampleIdentityProvider;
+ExampleIdentityProvider.prototype.getUser = function () {
+    if (this.user) {
+        return this.$q.when(this.user);
+    } else {
+        return this.dialogService.getUserInput(DIALOG_STRUCTURE, DEFAULT_IDENTITY)
+            .then(this.returnUser, this.returnUndefined);
     }
-);
+};
+
+/**
+ * @private
+ */
+ExampleIdentityProvider.prototype.returnUser = function (user) {
+    return this.user = user;
+};
+
+/**
+ * @private
+ */
+ExampleIdentityProvider.prototype.returnUndefined = function () {
+    return undefined;
+};
+
+export default ExampleIdentityProvider;

@@ -20,34 +20,28 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    function () {
+/**
+ * Adds a `creator` property to newly-created domain objects.
+ * @constructor
+ * @augments {platform/commonUI/browse.CreationService}
+ * @memberof platform/entanglement
+ */
+function IdentityCreationDecorator(identityService, creationService) {
+    this.identityService = identityService;
+    this.creationService = creationService;
+}
 
-        /**
-         * Adds a `creator` property to newly-created domain objects.
-         * @constructor
-         * @augments {platform/commonUI/browse.CreationService}
-         * @memberof platform/entanglement
-         */
-        function IdentityCreationDecorator(identityService, creationService) {
-            this.identityService = identityService;
-            this.creationService = creationService;
+IdentityCreationDecorator.prototype.createObject = function (model, parent) {
+    var creationService = this.creationService,
+        identityService = this.identityService;
+
+    return identityService.getUser().then(function (user) {
+        if (user && user.key) {
+            model.creator = user.key;
         }
 
-        IdentityCreationDecorator.prototype.createObject = function (model, parent) {
-            var creationService = this.creationService,
-                identityService = this.identityService;
+        return creationService.createObject(model, parent);
+    });
+};
 
-            return identityService.getUser().then(function (user) {
-                if (user && user.key) {
-                    model.creator = user.key;
-                }
-
-                return creationService.createObject(model, parent);
-            });
-        };
-
-        return IdentityCreationDecorator;
-    }
-);
-
+export default IdentityCreationDecorator;

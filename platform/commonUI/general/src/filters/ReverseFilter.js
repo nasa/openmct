@@ -20,23 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(function () {
+/**
+ * Implements the `reverse` filter, which reverses text strings.
+ * Useful in cases where text should be reversed for presentational
+ * reasons (e.g. in conjunction with CSS tricks involving text direction),
+ * allowing such behavior to be handled independently from the controller
+ * layer.
+ *
+ * @constructor
+ * @memberof platform/commonUI/general
+ */
+function ReverseFilter() {
+    return function reverse(value) {
+        return value && value.toString().split('').reverse().join('');
+    };
+}
 
-    /**
-     * Implements the `reverse` filter, which reverses text strings.
-     * Useful in cases where text should be reversed for presentational
-     * reasons (e.g. in conjunction with CSS tricks involving text direction),
-     * allowing such behavior to be handled independently from the controller
-     * layer.
-     *
-     * @constructor
-     * @memberof platform/commonUI/general
-     */
-    function ReverseFilter() {
-        return function reverse(value) {
-            return value && value.toString().split('').reverse().join('');
-        };
-    }
-
-    return ReverseFilter;
-});
+export default ReverseFilter;
