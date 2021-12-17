@@ -26,9 +26,11 @@ import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
+import UTCTimeFormat from './UTCTimeFormat.js';
 
 describe("The UTC Time System", () => {
     const UTC_SYSTEM_AND_FORMAT_KEY = 'utc';
+    const DURATION_FORMAT_KEY = 'duration';
     let openmct;
     let utcTimeSystem;
     let mockTimeout;
@@ -98,6 +100,95 @@ describe("The UTC Time System", () => {
             clock.on('tick', mockListener);
             clock.tick();
             expect(mockListener).toHaveBeenCalledWith(jasmine.any(Number));
+        });
+    });
+
+    describe("UTC Time Format", () => {
+        let utcTimeFormatter;
+
+        beforeEach(() => {
+            utcTimeFormatter = openmct.telemetry.getFormatter(UTC_SYSTEM_AND_FORMAT_KEY);
+        });
+
+        it("is installed by the plugin", () => {
+            expect(utcTimeFormatter).toBeDefined();
+        });
+
+        it("formats from ms since Unix epoch into Open MCT UTC time format", () => {
+            const TIME_IN_MS = 1638574560945;
+            const TIME_AS_STRING = "2021-12-03 23:36:00.945Z";
+
+            const formattedTime = utcTimeFormatter.format(TIME_IN_MS);
+            expect(formattedTime).toEqual(TIME_AS_STRING);
+
+        });
+
+        it("formats from ms since Unix epoch into terse UTC formats", () => {
+            const utcTimeFormatterInstance = new UTCTimeFormat();
+
+            const TIME_IN_MS = 1638574560945;
+            const EXPECTED_FORMATS = {
+                PRECISION_DEFAULT: "2021-12-03 23:36:00.945",
+                PRECISION_SECONDS: "2021-12-03 23:36:00",
+                PRECISION_MINUTES: "2021-12-03 23:36",
+                PRECISION_DAYS: "2021-12-03"
+            };
+
+            Object.keys(EXPECTED_FORMATS).forEach((formatKey) => {
+                const formattedTime = utcTimeFormatterInstance.format(TIME_IN_MS, utcTimeFormatterInstance.DATE_FORMATS[formatKey]);
+                expect(formattedTime).toEqual(EXPECTED_FORMATS[formatKey]);
+            });
+        });
+
+        it("parses from Open MCT UTC time format to ms since Unix epoch.", () => {
+            const TIME_IN_MS = 1638574560945;
+            const TIME_AS_STRING = "2021-12-03 23:36:00.945Z";
+
+            const parsedTime = utcTimeFormatter.parse(TIME_AS_STRING);
+            expect(parsedTime).toEqual(TIME_IN_MS);
+        });
+
+        it("validates correctly formatted Open MCT UTC times.", () => {
+            const TIME_AS_STRING = "2021-12-03 23:36:00.945Z";
+
+            const isValid = utcTimeFormatter.validate(TIME_AS_STRING);
+            expect(isValid).toBeTrue();
+        });
+    });
+
+    describe("Duration Format", () => {
+        let durationTimeFormatter;
+
+        beforeEach(() => {
+            durationTimeFormatter = openmct.telemetry.getFormatter(DURATION_FORMAT_KEY);
+        });
+
+        it("is installed by the plugin", () => {
+            expect(durationTimeFormatter).toBeDefined();
+        });
+
+        it("formats from ms into Open MCT duration format", () => {
+            const TIME_IN_MS = 2000;
+            const TIME_AS_STRING = "00:00:02";
+
+            const formattedTime = durationTimeFormatter.format(TIME_IN_MS);
+            expect(formattedTime).toEqual(TIME_AS_STRING);
+
+        });
+
+        it("parses from Open MCT duration format to ms", () => {
+            const TIME_IN_MS = 2000;
+            const TIME_AS_STRING = "00:00:02";
+
+            const parsedTime = durationTimeFormatter.parse(TIME_AS_STRING);
+            expect(parsedTime).toEqual(TIME_IN_MS);
+        });
+
+        it("validates correctly formatted Open MCT duration strings.", () => {
+            const TIME_AS_STRING = "00:00:02";
+
+            const isValid = durationTimeFormatter.validate(TIME_AS_STRING);
+            expect(isValid).toBeTrue();
         });
     });
 });
