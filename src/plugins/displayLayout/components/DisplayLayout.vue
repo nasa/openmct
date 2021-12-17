@@ -414,10 +414,11 @@ export default {
             }
         },
         containsObject(identifier) {
-            if('composition' in this.domainObject) {
+            if ('composition' in this.domainObject) {
                 return this.domainObject.composition
                     .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
             }
+
             return false;
         },
         handleDragOver($event) {
