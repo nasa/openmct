@@ -27,7 +27,6 @@ describe('Telemetry API', function () {
     const NO_PROVIDER = 'No provider found';
     let openmct;
     let telemetryAPI;
-    let mockTypeService;
 
     beforeEach(function () {
         openmct = {
@@ -35,14 +34,11 @@ describe('Telemetry API', function () {
                 'timeSystem',
                 'bounds'
             ]),
-            $injector: jasmine.createSpyObj('injector', [
+            types: jasmine.createSpyObj('typeRegistry', [
                 'get'
             ])
         };
-        mockTypeService = jasmine.createSpyObj('typeService', [
-            'getType'
-        ]);
-        openmct.$injector.get.and.returnValue(mockTypeService);
+
         openmct.time.timeSystem.and.returnValue({key: 'system'});
         openmct.time.bounds.and.returnValue({
             start: 0,
@@ -356,7 +352,7 @@ describe('Telemetry API', function () {
     describe('metadata', function () {
         let mockMetadata = {};
         let mockObjectType = {
-            typeDef: {}
+            definition: {}
         };
         beforeEach(function () {
             telemetryAPI.addProvider({
@@ -368,7 +364,7 @@ describe('Telemetry API', function () {
                     return mockMetadata;
                 }
             });
-            mockTypeService.getType.and.returnValue(mockObjectType);
+            openmct.types.get.and.returnValue(mockObjectType);
         });
 
         it('respects explicit priority', function () {
@@ -587,7 +583,7 @@ describe('Telemetry API', function () {
         let domainObject;
         let mockMetadata = {};
         let mockObjectType = {
-            typeDef: {}
+            definition: {}
         };
 
         beforeEach(function () {
@@ -601,7 +597,7 @@ describe('Telemetry API', function () {
                     return mockMetadata;
                 }
             });
-            mockTypeService.getType.and.returnValue(mockObjectType);
+            openmct.types.get.and.returnValue(mockObjectType);
             domainObject = {
                 identifier: {
                     key: 'a',

@@ -28,6 +28,7 @@ import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
 import Transaction from './Transaction';
 import ConflictError from './ConflictError';
+import InMemorySearchProvider from './InMemorySearchProvider';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -41,9 +42,7 @@ function ObjectAPI(typeRegistry, openmct) {
     this.eventEmitter = new EventEmitter();
     this.providers = {};
     this.rootRegistry = new RootRegistry();
-    this.injectIdentifierService = function () {
-        this.identifierService = this.openmct.$injector.get("identifierService");
-    };
+    this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
@@ -65,32 +64,16 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
 };
 
 /**
- * @private
- */
-ObjectAPI.prototype.getIdentifierService = function () {
-    // Lazily acquire identifier service
-    if (!this.identifierService) {
-        this.injectIdentifierService();
-    }
-
-    return this.identifierService;
-};
-
-/**
  * Retrieve the provider for a given identifier.
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
-    //handles the '' vs 'mct' namespace issue
-    const keyString = utils.makeKeyString(identifier);
-    const identifierService = this.getIdentifierService();
-    const namespace = identifierService.parse(keyString).getSpace();
 
     if (identifier.key === 'ROOT') {
         return this.rootProvider;
     }
 
-    return this.providers[namespace] || this.fallbackProvider;
+    return this.providers[identifier.namespace] || this.fallbackProvider;
 };
 
 /**
@@ -235,7 +218,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
  *
  * Object providersSearches and combines results of each object provider search.
  * Objects without search provided will have been indexed
- * and will be searched using the fallback indexed search.
+ * and will be searched using the fallback in-memory search.
  * Search results are asynchronous and resolve in parallel.
  *
  * @method search
@@ -250,14 +233,11 @@ ObjectAPI.prototype.search = function (query, abortSignal) {
     const searchPromises = Object.values(this.providers)
         .filter(provider => provider.search !== undefined)
         .map(provider => provider.search(query, abortSignal));
-
-    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, abortSignal)
+    // abortSignal doesn't seem to be used in generic search?
+    searchPromises.push(this.inMemorySearchProvider.query(query, null)
         .then(results => results.hits
             .map(hit => {
-                let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
-                domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
-
-                return domainObject;
+                return hit;
             })));
 
     return searchPromises;

@@ -30,11 +30,7 @@ define([
     return function () {
         return function (openmct) {
             openmct.time.addTimeSystem(new LocalTimeSystem());
-
-            openmct.legacyExtension('formats', {
-                key: 'local-format',
-                implementation: LocalTimeFormat
-            });
+            openmct.telemetry.addFormat(new LocalTimeFormat());
         };
     };
 });
