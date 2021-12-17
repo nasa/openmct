@@ -24,86 +24,37 @@
  * Module defining EventTelemetryProvider. Created by chacskaylo on 06/18/2015.
  */
 
-import EventTelemetry from "./EventTelemetry";
+import messages from './transcript.json';
 
 class EventTelemetryProvider {
-    constructor() {
-        this.subscriptions = [];
-        this.genInterval = 1000;
-        this.generating = false;
-    }
-
-    matchesSource(request) {
-        return request.source === "eventGenerator";
-    }
-
-    // Used internally; this will be repacked by doPackage
-    generateData(request) {
+    generateData(timestamp, duration, name) {
         return {
             key: request.key,
             telemetry: new EventTelemetry(this.genInterval)
         };
     }
 
-    //
-    doPackage(results) {
-        var packaged = {};
-        results.forEach(function (result) {
-            packaged[result.key] = result.telemetry;
-        });
-
-        // Format as expected (sources -> keys -> telemetry)
-        return { eventGenerator: packaged };
+    supportsRequest(domainObject) {
+        return domainObject.type === 'example.eventGenerator';
     }
 
-    delay(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
+    supportsSubscribe(domainObject) {
+        return domainObject.type === 'example.eventGenerator';
     }
 
-    async requestTelemetry(requests) {
-        await this.delay(0);
+    subscribe(domainObject, callback) {
+        const duration = domainObject.telemetry.duration * 1000;
 
-        return requests.filter(this.matchesSource).map(this.generateData);
-    }
+        const interval = setInterval(() => {
+            var now = Date.now();
+            var datum = generateData(now, duration, domainObject.name);
+            datum.value = String(datum.value);
+            callback(datum);
+        }, duration);
 
-    handleSubscriptions() {
-        const provider = this;
-        provider.subscriptions.forEach(function (subscription) {
-            var requests = subscription.requests;
-            subscription.callback(requests.filter(provider.matchesSource).map(provider.generateData)
-            );
-        });
-    }
-
-    async startGenerating() {
-        this.generating = true;
-        await this.delay(this.genInterval);
-        this.handleSubscriptions();
-        if (this.generating && this.subscriptions.length > 0) {
-            this.startGenerating();
-        } else {
-            this.generating = false;
-        }
-    }
-
-    subscribe(callback, requests) {
-        const subscription = {
-            callback: callback,
-            requests: requests
+        return function () {
+            clearInterval(interval);
         };
-        const provider = this;
-        function unsubscribe() {
-            provider.subscriptions = provider.subscriptions.filter(function (s) {
-                return s !== subscription;
-            });
-        }
-
-        this.subscriptions.push(subscription);
-        if (!provider.generating) {
-            provider.startGenerating();
-        }
-
-        return unsubscribe;
     }
 }
 

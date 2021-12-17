@@ -25,6 +25,7 @@
  * Created by chacskaylo on 06/18/2015.
  * Modified by shale on 06/23/2015.
  */
+import messages from './transcript.json';
 
 class EventTelemetry {
     constructor(interval) {
@@ -32,7 +33,6 @@ class EventTelemetry {
         this.firstObservedTime = Date.now();
         this.latestObservedTime = Date.now();
         this.count = Math.floor((this.latestObservedTime - this.firstObservedTime) / this.interval);
-        this.generatorData = {};
     }
 
     getPointCount() {
@@ -46,9 +46,9 @@ class EventTelemetry {
 
     getRangeValue(i, range) {
         var domainDelta = this.getDomainValue(i) - this.firstObservedTime,
-            ind = i % this.messages.length;
+            ind = i % messages.length;
 
-        return this.messages[ind] + " - [" + domainDelta.toString() + "]";
+        return messages[ind] + " - [" + domainDelta.toString() + "]";
     }
 }
 export default EventTelemetry;
