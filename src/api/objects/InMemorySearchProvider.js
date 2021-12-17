@@ -187,7 +187,7 @@ class InMemorySearchProvider {
      */
     scheduleForIndexing(identifier) {
         const keyString = this.openmct.objects.makeKeyString(identifier);
-        const objectProvider = this.openmct.objects.getProvider(identifier.key);
+        const objectProvider = this.openmct.objects.getProvider(identifier);
 
         if (objectProvider === undefined || objectProvider.search === undefined) {
             if (!this.indexedIds[keyString] && !this.pendingIndex[keyString]) {

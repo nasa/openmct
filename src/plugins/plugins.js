@@ -73,7 +73,8 @@ define([
     './hyperlink/plugin',
     './clock/plugin',
     './DeviceClassifier/plugin',
-    './timer/plugin'
+    './timer/plugin',
+    './localStorage/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -127,10 +128,10 @@ define([
     Hyperlink,
     Clock,
     DeviceClassifier,
-    Timer
+    Timer,
+    LocalStorage
 ) {
     const bundleMap = {
-        LocalStorage: 'platform/persistence/local',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -235,6 +236,7 @@ define([
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
+    plugins.LocalStorage = LocalStorage.default;
 
     return plugins;
 });
