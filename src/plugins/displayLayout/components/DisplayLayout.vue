@@ -507,7 +507,7 @@ export default {
             }
         },
         removeFromComposition(keyString) {
-            let composition = this.domainObject.composition;
+            let composition = this.domainObject.composition ? this.domainObject.composition : [];
             composition = composition.filter(identifier => {
                 return this.openmct.objects.makeKeyString(identifier) !== keyString;
             });
