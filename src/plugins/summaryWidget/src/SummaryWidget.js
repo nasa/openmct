@@ -105,8 +105,6 @@ define([
 
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
 
-        openmct.$injector.get('objectService')
-            .getObjects([id]);
     }
 
     /**
