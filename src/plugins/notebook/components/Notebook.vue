@@ -142,7 +142,6 @@ import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaul
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
-import objectUtils from 'objectUtils';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
