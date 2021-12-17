@@ -22,10 +22,10 @@
 
 define(
     [
-        "../../src/actions/ExportAsJSONAction",
-        "../../../entanglement/test/DomainObjectFactory",
-        "../../../../src/MCT",
-        '../../../../src/adapter/capabilities/AdapterCapability'
+        "./ExportAsJSONAction",
+        "../../../platform/entanglement/test/DomainObjectFactory",
+        "../../MCT",
+        '../../adapter/capabilities/AdapterCapability'
     ],
     function (ExportAsJSONAction, domainObjectFactory, MCT, AdapterCapability) {
 
