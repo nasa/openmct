@@ -9,7 +9,7 @@ describe("Transaction Class", () => {
     beforeEach(() => {
         objectAPI = {
             makeKeyString: (identifier) => utils.makeKeyString(identifier),
-            save: (object) => object,
+            save: (object) => Promise.resolve(object),
             mutate: (object, prop, value) => {
                 object[prop] = value;
 
@@ -60,7 +60,7 @@ describe("Transaction Class", () => {
         mockDomainObjects.forEach(transaction.add.bind(transaction));
 
         expect(transaction.dirtyObjects.size).toEqual(3);
-        spyOn(objectAPI, 'save');
+        spyOn(objectAPI, 'save').and.callThrough();
         transaction.commit()
             .then(success => {
                 expect(transaction.dirtyObjects.size).toEqual(0);
