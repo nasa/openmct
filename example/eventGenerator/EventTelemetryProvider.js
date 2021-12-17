@@ -56,10 +56,14 @@ class EventTelemetryProvider {
         return { eventGenerator: packaged };
     }
 
-    requestTelemetry(requests) {
-        return setTimeout(() => {
-            requests.filter(this.matchesSource).map(this.generateData);
-        }, 0);
+    delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async requestTelemetry(requests) {
+        await this.delay(0);
+
+        return requests.filter(this.matchesSource).map(this.generateData);
     }
 
     handleSubscriptions() {
@@ -71,17 +75,15 @@ class EventTelemetryProvider {
         });
     }
 
-    startGenerating() {
-        const provider = this;
-        provider.generating = true;
-        setTimeout(function () {
-            provider.handleSubscriptions();
-            if (provider.generating && provider.subscriptions.length > 0) {
-                provider.startGenerating();
-            } else {
-                provider.generating = false;
-            }
-        }, provider.genInterval);
+    async startGenerating() {
+        this.generating = true;
+        await this.delay(this.genInterval);
+        this.handleSubscriptions();
+        if (this.generating && this.subscriptions.length > 0) {
+            this.startGenerating();
+        } else {
+            this.generating = false;
+        }
     }
 
     subscribe(callback, requests) {
