@@ -27,7 +27,7 @@
       - [Request Strategies **draft**](#request-strategies-draft)
         - [`latest` request strategy](#latest-request-strategy)
         - [`minmax` request strategy](#minmax-request-strategy)
-      - [Telemetry Formats **draft**](#telemetry-formats-draft)
+      - [Telemetry Formats](#telemetry-formats)
         - [Registering Formats](#registering-formats)
       - [Telemetry Data](#telemetry-data)
         - [Telemetry Datums](#telemetry-datums)
@@ -525,7 +525,7 @@ example:
 
 MinMax queries are issued by plots, and may be issued by other types as well.  The aim is to reduce the amount of data returned but still faithfully represent the full extent of the data.  In order to do this, the view calculates the maximum data resolution it can display (i.e. the number of horizontal pixels in a plot) and sends that as the `size`.  The response should include at least one minimum and one maximum value per point of resolution.
 
-#### Telemetry Formats **draft**
+#### Telemetry Formats
 
 Telemetry format objects define how to interpret and display telemetry data. 
 They have a simple structure:

@@ -215,8 +215,8 @@ export default class ImportAsJSONAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure).
-            then(changes => {
+        this.openmct.forms.showForm(formStructure)
+            .then(changes => {
                 let onSave = this.onSave.bind(this);
                 onSave(domainObject, changes);
             });
