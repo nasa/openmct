@@ -50,9 +50,6 @@ describe('CustomStringFormatter', function () {
         openmct.on('start', done);
         openmct.startHeadless();
 
-        /*spyOn(openmct.telemetry, 'getFormatter');
-        openmct.telemetry.getFormatter.and.callFake((key) => CUSTOM_FORMATS.find(d => d.key === key));*/
-
         customStringFormatter = new CustomStringFormatter(openmct, valueMetadata);
     });
 
