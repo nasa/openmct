@@ -29,7 +29,7 @@ define([
 ) {
 
     // TODO: needs reference to formatService;
-    function TelemetryValueFormatter(valueMetadata, formatService) {
+    function TelemetryValueFormatter(valueMetadata, formatMap) {
         const numberFormatter = {
             parse: function (x) {
                 return Number(x);
@@ -43,13 +43,7 @@ define([
         };
 
         this.valueMetadata = valueMetadata;
-        try {
-            this.formatter = formatService
-                .getFormat(valueMetadata.format, valueMetadata);
-        } catch (e) {
-            // TODO: Better formatting
-            this.formatter = numberFormatter;
-        }
+        this.formatter = formatMap.get(valueMetadata.format) || numberFormatter;
 
         if (valueMetadata.format === 'enum') {
             this.formatter = {};
