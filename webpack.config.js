@@ -52,6 +52,7 @@ const webpackConfig = {
             "MCT": path.join(__dirname, "src/MCT"),
             "testUtils": path.join(__dirname, "src/utils/testUtils.js"),
             "objectUtils": path.join(__dirname, "src/api/objects/object-utils.js"),
+            "test": path.join(__dirname, "src/test"),
             "utils": path.join(__dirname, "src/utils")
         }
     },
