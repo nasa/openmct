@@ -27,7 +27,6 @@ const DEFAULTS = [
     'platform/commonUI/browse',
     'platform/commonUI/edit',
     'platform/commonUI/dialog',
-    'platform/commonUI/formats',
     'platform/commonUI/general',
     'platform/commonUI/inspect',
     'platform/commonUI/mobile',
@@ -39,7 +38,6 @@ const DEFAULTS = [
     'platform/persistence/aggregator',
     'platform/policy',
     'platform/entanglement',
-    'platform/search',
     'platform/status',
     'platform/commonUI/regions'
 ];
@@ -61,7 +59,6 @@ define([
     '../platform/commonUI/browse/bundle',
     '../platform/commonUI/dialog/bundle',
     '../platform/commonUI/edit/bundle',
-    '../platform/commonUI/formats/bundle',
     '../platform/commonUI/general/bundle',
     '../platform/commonUI/inspect/bundle',
     '../platform/commonUI/mobile/bundle',
@@ -77,11 +74,9 @@ define([
     '../platform/identity/bundle',
     '../platform/persistence/aggregator/bundle',
     '../platform/persistence/elastic/bundle',
-    '../platform/persistence/local/bundle',
     '../platform/persistence/queue/bundle',
     '../platform/policy/bundle',
     '../platform/representation/bundle',
-    '../platform/search/bundle',
     '../platform/status/bundle',
     '../platform/telemetry/bundle'
 ], function () {

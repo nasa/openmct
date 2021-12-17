@@ -9,13 +9,21 @@ describe("Transaction Class", () => {
     beforeEach(() => {
         objectAPI = {
             makeKeyString: (identifier) => utils.makeKeyString(identifier),
-            save: (object) => object,
+            save: () => Promise.resolve(true),
             mutate: (object, prop, value) => {
                 object[prop] = value;
 
                 return object;
             },
-            refresh: (object) => Promise.resolve(object)
+            refresh: (object) => Promise.resolve(object),
+            areIdsEqual: (...identifiers) => {
+                return identifiers.map(utils.parseKeyString)
+                    .every(identifier => {
+                        return identifier === identifiers[0]
+                            || (identifier.namespace === identifiers[0].namespace
+                                && identifier.key === identifiers[0].key);
+                    });
+            }
         };
 
         transaction = new Transaction(objectAPI);
@@ -52,7 +60,8 @@ describe("Transaction Class", () => {
         mockDomainObjects.forEach(transaction.add.bind(transaction));
 
         expect(transaction.dirtyObjects.size).toEqual(3);
-        spyOn(objectAPI, 'save');
+        spyOn(objectAPI, 'save').and.callThrough();
+
         transaction.commit()
             .then(success => {
                 expect(transaction.dirtyObjects.size).toEqual(0);
