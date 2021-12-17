@@ -20,12 +20,18 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+// TODO delete me!
+class ImplementationLoader {
+    load() {
+        return Promise.resolve({});
+    }
+}
+
 define([
     './Constants',
     './FrameworkInitializer',
     './LogLevel',
     './load/BundleLoader',
-    './resolve/ImplementationLoader',
     './resolve/ExtensionResolver',
     './resolve/BundleResolver',
     './register/CustomRegistrars',
@@ -37,7 +43,6 @@ define([
     FrameworkInitializer,
     LogLevel,
     BundleLoader,
-    ImplementationLoader,
     ExtensionResolver,
     BundleResolver,
     CustomRegistrars,
@@ -62,7 +67,7 @@ define([
             loader = new BundleLoader($http, $log, openmct.legacyRegistry),
             resolver = new BundleResolver(
                 new ExtensionResolver(
-                    new ImplementationLoader({}),
+                    new ImplementationLoader(),
                     $log
                 ),
                 $log
