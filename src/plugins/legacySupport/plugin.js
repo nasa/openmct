@@ -97,17 +97,11 @@ export default function CouchPlugin(options) {
             openmct.legacyRegistry.register('adapter', openmct.legacyBundle);
             openmct.legacyRegistry.enable('adapter');
 
-            const main = new Main();
-            const angularInstance = await main.run(openmct);
-
-            openmct.$angular = angularInstance;
-            openmct.$injector.get('objectService');
-
             openmct.legacyExtension('runs', {
                 depends: ['navigationService'],
                 implementation: function (navigationService) {
                     navigationService
-                        .addListener(this.emit.bind(openmct, 'navigation'));
+                        .addListener(openmct.emit.bind(openmct, 'navigation'));
                 }
             });
 
@@ -118,6 +112,12 @@ export default function CouchPlugin(options) {
                 legacyDefinition.key = typeKey;
                 openmct.legacyExtension('types', legacyDefinition);
             });
+
+            const main = new Main();
+            const angularInstance = await main.run(openmct);
+
+            openmct.$angular = angularInstance;
+            openmct.$injector.get('objectService');
 
             return patchedStart();
         };
