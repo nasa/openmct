@@ -22,25 +22,17 @@
 
 define([
     'EventEmitter',
-    'uuid',
-    './BundleRegistry',
-    './installDefaultBundles',
     './api/api',
     './api/overlays/OverlayAPI',
     './selection/Selection',
-    'objectUtils',
     './plugins/plugins',
-    './adapter/indicators/legacy-indicators-plugin',
     './ui/registries/ViewRegistry',
     './plugins/imagery/plugin',
     './ui/registries/InspectorViewRegistry',
     './ui/registries/ToolbarRegistry',
     './ui/router/ApplicationRouter',
     './ui/router/Browse',
-    '../platform/framework/src/Main',
     './ui/layout/Layout.vue',
-    '../platform/core/src/objects/DomainObjectImpl',
-    '../platform/core/src/capabilities/ContextualDomainObject',
     './ui/preview/plugin',
     './api/Branding',
     './plugins/licenses/plugin',
@@ -53,25 +45,17 @@ define([
     'vue'
 ], function (
     EventEmitter,
-    uuid,
-    BundleRegistry,
-    installDefaultBundles,
     api,
     OverlayAPI,
     Selection,
-    objectUtils,
     plugins,
-    LegacyIndicatorsPlugin,
     ViewRegistry,
     ImageryPlugin,
     InspectorViewRegistry,
     ToolbarRegistry,
     ApplicationRouter,
     Browse,
-    Main,
     Layout,
-    DomainObjectImpl,
-    ContextualDomainObject,
     PreviewPlugin,
     BrandingAPI,
     LicensesPlugin,
@@ -107,23 +91,6 @@ define([
             buildDate: __OPENMCT_BUILD_DATE__,
             revision: __OPENMCT_REVISION__,
             branch: __OPENMCT_BUILD_BRANCH__
-        };
-        /* eslint-enable no-undef */
-
-        this.legacyBundle = {
-            extensions: {
-                services: [
-                    {
-                        key: "openmct",
-                        implementation: function ($injector) {
-                            this.$injector = $injector;
-
-                            return this;
-                        }.bind(this),
-                        depends: ['$injector']
-                    }
-                ]
-            }
         };
 
         this.destroy = this.destroy.bind(this);
@@ -264,16 +231,12 @@ define([
 
         this.branding = BrandingAPI.default;
 
-        this.legacyRegistry = new BundleRegistry();
-        installDefaultBundles(this.legacyRegistry);
-
         // Plugins that are installed by default
 
         this.install(this.plugins.Plot());
         this.install(this.plugins.Chart());
         this.install(this.plugins.TelemetryTable.default());
         this.install(PreviewPlugin.default());
-        this.install(LegacyIndicatorsPlugin());
         this.install(LicensesPlugin.default());
         this.install(RemoveActionPlugin.default());
         this.install(MoveActionPlugin.default());
@@ -304,51 +267,6 @@ define([
     MCT.prototype = Object.create(EventEmitter.prototype);
 
     MCT.prototype.MCT = MCT;
-
-    MCT.prototype.legacyExtension = function (category, extension) {
-        this.legacyBundle.extensions[category] =
-            this.legacyBundle.extensions[category] || [];
-        this.legacyBundle.extensions[category].push(extension);
-    };
-
-    /**
-     * Return a legacy object, for compatibility purposes only.  This method
-     * will be deprecated and removed in the future.
-     * @private
-     */
-    MCT.prototype.legacyObject = function (domainObject) {
-        let capabilityService = this.$injector.get('capabilityService');
-
-        function instantiate(model, keyString) {
-            const capabilities = capabilityService.getCapabilities(model, keyString);
-            model.id = keyString;
-
-            return new DomainObjectImpl(keyString, model, capabilities);
-        }
-
-        if (Array.isArray(domainObject)) {
-            // an array of domain objects. [object, ...ancestors] representing
-            // a single object with a given chain of ancestors.  We instantiate
-            // as a single contextual domain object.
-            return domainObject
-                .map((o) => {
-                    let keyString = objectUtils.makeKeyString(o.identifier);
-                    let oldModel = objectUtils.toOldFormat(o);
-
-                    return instantiate(oldModel, keyString);
-                })
-                .reverse()
-                .reduce((parent, child) => {
-                    return new ContextualDomainObject(child, parent);
-                });
-
-        } else {
-            let keyString = objectUtils.makeKeyString(domainObject.identifier);
-            let oldModel = objectUtils.toOldFormat(domainObject);
-
-            return instantiate(oldModel, keyString);
-        }
-    };
 
     /**
      * Set path to where assets are hosted.  This should be the path to main.js.
@@ -394,25 +312,6 @@ define([
         }
 
         this.element = domElement;
-
-        this.legacyExtension('runs', {
-            depends: ['navigationService'],
-            implementation: function (navigationService) {
-                navigationService
-                    .addListener(this.emit.bind(this, 'navigation'));
-            }.bind(this)
-        });
-
-        // TODO: remove with legacy types.
-        this.types.listKeys().forEach(function (typeKey) {
-            const type = this.types.get(typeKey);
-            const legacyDefinition = type.toLegacyDefinition();
-            legacyDefinition.key = typeKey;
-            this.legacyExtension('types', legacyDefinition);
-        }.bind(this));
-
-        this.legacyRegistry.register('adapter', this.legacyBundle);
-        this.legacyRegistry.enable('adapter');
 
         this.router.route(/^\/$/, () => {
             this.router.setPath('/browse/');
