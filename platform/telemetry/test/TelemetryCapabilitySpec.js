@@ -41,6 +41,9 @@ define(
                 return {
                     then: function (callback) {
                         return mockPromise(callback(value));
+                    },
+                    catch: (rejected) => {
+                        return Promise.reject(rejected);
                     }
                 };
             }
@@ -223,19 +226,6 @@ define(
                         key: 'defaultrange'
                     }]
                 });
-            });
-
-            it("warns if no telemetry service can be injected", function () {
-                mockInjector.get.and.callFake(function () {
-                    throw "";
-                });
-
-                // Verify precondition
-                expect(mockLog.warn).not.toHaveBeenCalled();
-
-                telemetry.requestData();
-
-                expect(mockLog.info).toHaveBeenCalled();
             });
 
             it("if a new style telemetry source is available, use it", function () {
