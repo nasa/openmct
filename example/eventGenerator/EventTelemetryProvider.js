@@ -27,10 +27,22 @@
 import messages from './transcript.json';
 
 class EventTelemetryProvider {
+    constructor() {
+        this.firstObservedTime = Date.now();
+        this.latestObservedTime = Date.now();
+        this.count = Math.floor((this.latestObservedTime - this.firstObservedTime) / this.interval);
+    }
+
     generateData(timestamp, duration, name) {
+        const utc = Math.floor(timestamp / duration) * duration;
+        const domainDelta = utc - this.firstObservedTime;
+        const ind = this.count % messages.length;
+        const value = messages[ind] + " - [" + domainDelta.toString() + "]";
+
         return {
-            key: request.key,
-            telemetry: new EventTelemetry(this.genInterval)
+            name,
+            utc,
+            value
         };
     }
 
@@ -47,7 +59,7 @@ class EventTelemetryProvider {
 
         const interval = setInterval(() => {
             var now = Date.now();
-            var datum = generateData(now, duration, domainObject.name);
+            var datum = this.generateData(now, duration, domainObject.name);
             datum.value = String(datum.value);
             callback(datum);
         }, duration);
@@ -56,6 +68,23 @@ class EventTelemetryProvider {
             clearInterval(interval);
         };
     }
+
+    request(domainObject, options) {
+        var start = options.start;
+        var end = Math.min(Date.now(), options.end); // no future values
+        var duration = domainObject.telemetry.duration * 1000;
+        if (options.strategy === 'latest' || options.size === 1) {
+            start = end;
+        }
+
+        var data = [];
+        while (start <= end && data.length < 5000) {
+            data.push(this.generateData(start, duration, domainObject.name));
+            start += duration;
+        }
+
+        return Promise.resolve(data);
+    };
 }
 
 export default EventTelemetryProvider;

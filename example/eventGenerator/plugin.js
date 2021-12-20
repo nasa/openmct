@@ -27,9 +27,36 @@ export default function EventGeneratorPlugin(options) {
             name: "Event Message Generator",
             description: "For development use. Creates sample event message data that mimics a live data stream.",
             cssClass: "icon-generator-events",
-            creatable: true
+            creatable: true,
+            initialize: function (object) {
+                object.telemetry = {
+                    duration: 5
+                };
+            }
         });
-        openmct.telemetry.addProvider(new EventTelmetryProvider());
+        // openmct.telemetry.addProvider(new EventTelmetryProvider());
+        const provider = {
+            supportsSubscribe: function (domainObject) {
+                return domainObject.type === 'eexample.eventGenerator';
+            },
+            subscribe: function (domainObject, callback) {
+                const interval = setInterval(() => {
+                    var datum = {
+                        name: `foo-bar ${Date.now()}`,
+                        utc: Date.now(),
+                        value: Math.floor(Math.random() * 100)
+                    };
+                    datum.value = String(datum.value);
+                    callback(datum);
+                }, 1000);
+
+                return function () {
+                    clearInterval(interval);
+                };
+            }
+        };
+
+        openmct.telemetry.addProvider(provider);
 
     };
 }
