@@ -60,6 +60,7 @@ export default class ExportAsJSONAction {
      * @param {object} objectpath
      */
     invoke(objectpath) {
+        this.tree = {};
         const root = objectpath[0];
         this.root = JSON.parse(JSON.stringify(root));
         const rootId = this._getId(this.root);
