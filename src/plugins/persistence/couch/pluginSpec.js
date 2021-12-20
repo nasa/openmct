@@ -66,7 +66,6 @@ describe('the plugin', () => {
         openmct.install(new CouchPlugin(options));
 
         openmct.types.addType('notebook', {creatable: true});
-        openmct.setAssetPath('/base');
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -130,7 +129,9 @@ describe('the plugin', () => {
 
         it('works without Shared Workers', async () => {
             let sharedWorkerCallback;
+            const cachedSharedWorker = window.SharedWorker;
             window.SharedWorker = undefined;
+
             const mockEventSource = {
                 addEventListener: (topic, addedListener) => {
                     sharedWorkerCallback = addedListener;
@@ -139,6 +140,8 @@ describe('the plugin', () => {
                     sharedWorkerCallback = null;
                 }
             };
+            const cachedEventSource = window.EventSource;
+
             window.EventSource = function (url) {
                 return mockEventSource;
             };
@@ -163,16 +166,21 @@ describe('the plugin', () => {
             expect(result).toBeTrue();
             expect(provider.create).toHaveBeenCalled();
             expect(provider.startSharedWorker).not.toHaveBeenCalled();
+
             //Set modified timestamp it detects a change and persists the updated model.
-            mockDomainObject.modified = Date.now();
+            mockDomainObject.modified = mockDomainObject.persisted + 1;
             const updatedResult = await openmct.objects.save(mockDomainObject);
             openmct.objects.observe(mockDomainObject, '*', (updatedObject) => {
             });
+
             expect(updatedResult).toBeTrue();
             expect(provider.update).toHaveBeenCalled();
             expect(provider.fetchChanges).toHaveBeenCalled();
             sharedWorkerCallback(fakeUpdateEvent);
             expect(provider.onEventMessage).toHaveBeenCalled();
+
+            window.SharedWorker = cachedSharedWorker;
+            window.EventSource = cachedEventSource;
         });
     });
     describe('batches requests', () => {

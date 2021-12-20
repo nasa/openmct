@@ -201,7 +201,7 @@ export default {
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
     props: {
-        indexForFocusedImage: {
+        focusedImageTimestamp: {
             type: Number,
             default() {
                 return undefined;
@@ -411,10 +411,13 @@ export default {
     watch: {
         imageHistorySize(newSize, oldSize) {
             let imageIndex;
-            if (this.indexForFocusedImage !== undefined) {
-                imageIndex = this.initFocusedImageIndex;
+            if (this.focusedImageTimestamp !== undefined) {
+                const foundImageIndex = this.imageHistory.findIndex(image => {
+                    return image.time === this.focusedImageTimestamp;
+                });
+                imageIndex = foundImageIndex > -1 ? foundImageIndex : newSize - 1;
             } else {
-                imageIndex = newSize - 1;
+                imageIndex = newSize > 0 ? newSize - 1 : undefined;
             }
 
             this.setFocusedImage(imageIndex, false);
@@ -429,8 +432,7 @@ export default {
     },
     async mounted() {
         //We only need to use this till the user focuses an image manually
-        if (this.indexForFocusedImage !== undefined) {
-            this.initFocusedImageIndex = this.indexForFocusedImage;
+        if (this.focusedImageTimestamp !== undefined) {
             this.isPaused = true;
         }
 
@@ -501,13 +503,17 @@ export default {
             //listen
             this.timeContext.on('timeSystem', this.trackDuration);
             this.timeContext.on('clock', this.trackDuration);
-            this.timeContext.on("timeContext", this.setTimeContext);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.trackDuration);
                 this.timeContext.off("clock", this.trackDuration);
-                this.timeContext.off("timeContext", this.setTimeContext);
+            }
+        },
+        boundsChange(bounds, isTick) {
+            if (!isTick) {
+                this.previousFocusedImage = this.focusedImage ? JSON.parse(JSON.stringify(this.focusedImage)) : undefined;
+                this.requestHistory();
             }
         },
         expand() {
@@ -670,23 +676,47 @@ export default {
                 this.$refs.thumbsWrapper.scrollLeft = scrollWidth;
             });
         },
+        matchIndexOfPreviousImage(previous, imageHistory) {
+            // match logic uses a composite of url and time to account
+            // for example imagery not having fully unique urls
+            return imageHistory.findIndex((x) => (
+                x.url === previous.url
+                && x.time === previous.time
+            ));
+        },
         setFocusedImage(index, thumbnailClick = false) {
-            if (thumbnailClick) {
-                //We use the props till the user changes what they want to see
-                this.initFocusedImageIndex = undefined;
+            let focusedIndex = index;
+            if (!(Number.isInteger(index) && index > -1)) {
+                return;
             }
 
-            if (this.isPaused && !thumbnailClick && this.initFocusedImageIndex === undefined) {
-                this.nextImageIndex = index;
+            if (this.previousFocusedImage) {
+                // determine if the previous image exists in the new bounds of imageHistory
+                const matchIndex = this.matchIndexOfPreviousImage(
+                    this.previousFocusedImage,
+                    this.imageHistory
+                );
+                focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
+
+                delete this.previousFocusedImage;
+            }
+
+            if (thumbnailClick) {
+                //We use the props till the user changes what they want to see
+                this.focusedImageTimestamp = undefined;
+            }
+
+            if (this.isPaused && !thumbnailClick && this.focusedImageTimestamp === undefined) {
+                this.nextImageIndex = focusedIndex;
                 //this could happen if bounds changes
                 if (this.focusedImageIndex > this.imageHistory.length - 1) {
-                    this.focusedImageIndex = index;
+                    this.focusedImageIndex = focusedIndex;
                 }
 
                 return;
             }
 
-            this.focusedImageIndex = index;
+            this.focusedImageIndex = focusedIndex;
 
             if (thumbnailClick && !this.isPaused) {
                 this.paused(true);

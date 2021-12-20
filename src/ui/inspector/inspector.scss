@@ -162,7 +162,6 @@
 
     &__value {
         color: $colorInspectorPropVal;
-        word-break: break-all;
         &:first-child {
             // If there is no preceding .label element, make value span columns
             grid-column: 1 / 3;

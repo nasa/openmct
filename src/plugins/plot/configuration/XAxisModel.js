@@ -71,8 +71,7 @@ export default class XAxisModel extends Model {
     defaults(options) {
         const bounds = options.openmct.time.bounds();
         const timeSystem = options.openmct.time.timeSystem();
-        const format = options.openmct.$injector.get('formatService')
-            .getFormat(timeSystem.timeFormat);
+        const format = options.openmct.telemetry.getFormatter(timeSystem.timeFormat);
 
         return {
             name: timeSystem.name,

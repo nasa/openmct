@@ -54,7 +54,11 @@ module.exports = (config) => {
         files: [
             'indexTest.js',
             {
-                pattern: 'dist/couchDBChangesFeed.js',
+                pattern: 'dist/couchDBChangesFeed.js*',
+                included: false
+            },
+            {
+                pattern: 'dist/inMemorySearchWorker.js*',
                 included: false
             }
         ],
@@ -106,7 +110,7 @@ module.exports = (config) => {
         },
         specReporter: {
             maxLogLines: 5,
-            suppressErrorSummary: true,
+            suppressErrorSummary: false,
             suppressFailed: false,
             suppressPassed: false,
             suppressSkipped: true,
