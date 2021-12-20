@@ -58,9 +58,8 @@ class EventTelemetryProvider {
         const duration = domainObject.telemetry.duration * 1000;
 
         const interval = setInterval(() => {
-            var now = Date.now();
-            var datum = this.generateData(now, duration, domainObject.name);
-            datum.value = String(datum.value);
+            const now = Date.now();
+            const datum = this.generateData(now, duration, domainObject.name);
             callback(datum);
         }, duration);
 
@@ -70,14 +69,14 @@ class EventTelemetryProvider {
     }
 
     request(domainObject, options) {
-        var start = options.start;
-        var end = Math.min(Date.now(), options.end); // no future values
-        var duration = domainObject.telemetry.duration * 1000;
+        const start = options.start;
+        const end = Math.min(Date.now(), options.end); // no future values
+        const duration = domainObject.telemetry.duration * 1000;
         if (options.strategy === 'latest' || options.size === 1) {
             start = end;
         }
 
-        var data = [];
+        const data = [];
         while (start <= end && data.length < 5000) {
             data.push(this.generateData(start, duration, domainObject.name));
             start += duration;
