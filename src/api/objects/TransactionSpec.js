@@ -9,7 +9,7 @@ describe("Transaction Class", () => {
     beforeEach(() => {
         objectAPI = {
             makeKeyString: (identifier) => utils.makeKeyString(identifier),
-            save: (object) => Promise.resolve(object),
+            save: () => Promise.resolve(true),
             mutate: (object, prop, value) => {
                 object[prop] = value;
 
@@ -61,6 +61,7 @@ describe("Transaction Class", () => {
 
         expect(transaction.dirtyObjects.size).toEqual(3);
         spyOn(objectAPI, 'save').and.callThrough();
+
         transaction.commit()
             .then(success => {
                 expect(transaction.dirtyObjects.size).toEqual(0);
