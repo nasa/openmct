@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import EventTelmetryProvider from './EventTelemetryProvider';
+import EventMetadataProvider from './EventMetadataProvider';
 
 export default function EventGeneratorPlugin(options) {
     return function install(openmct) {
@@ -34,29 +35,8 @@ export default function EventGeneratorPlugin(options) {
                 };
             }
         });
-        // openmct.telemetry.addProvider(new EventTelmetryProvider());
-        const provider = {
-            supportsSubscribe: function (domainObject) {
-                return domainObject.type === 'eexample.eventGenerator';
-            },
-            subscribe: function (domainObject, callback) {
-                const interval = setInterval(() => {
-                    var datum = {
-                        name: `foo-bar ${Date.now()}`,
-                        utc: Date.now(),
-                        value: Math.floor(Math.random() * 100)
-                    };
-                    datum.value = String(datum.value);
-                    callback(datum);
-                }, 1000);
-
-                return function () {
-                    clearInterval(interval);
-                };
-            }
-        };
-
-        openmct.telemetry.addProvider(provider);
+        openmct.telemetry.addProvider(new EventTelmetryProvider());
+        openmct.telemetry.addProvider(new EventMetadataProvider());
 
     };
 }

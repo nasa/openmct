@@ -69,7 +69,7 @@ class EventTelemetryProvider {
     }
 
     request(domainObject, options) {
-        const start = options.start;
+        let start = options.start;
         const end = Math.min(Date.now(), options.end); // no future values
         const duration = domainObject.telemetry.duration * 1000;
         if (options.strategy === 'latest' || options.size === 1) {
@@ -83,7 +83,7 @@ class EventTelemetryProvider {
         }
 
         return Promise.resolve(data);
-    };
+    }
 }
 
 export default EventTelemetryProvider;
