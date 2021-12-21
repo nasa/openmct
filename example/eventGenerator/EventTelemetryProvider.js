@@ -29,20 +29,21 @@ import messages from './transcript.json';
 class EventTelemetryProvider {
     constructor() {
         this.firstObservedTime = Date.now();
-        this.latestObservedTime = Date.now();
-        this.count = Math.floor((this.latestObservedTime - this.firstObservedTime) / this.interval);
+        this.count = 0;
+        this.defaultSize = 25;
     }
 
-    generateData(timestamp, duration, name) {
-        const utc = Math.floor(timestamp / duration) * duration;
-        const domainDelta = utc - this.firstObservedTime;
+    generateData(startTime, duration, name) {
+        const millisecondsSinceStart = startTime - this.firstObservedTime;
+        const utc = Math.floor(startTime / duration) * duration;
         const ind = this.count % messages.length;
-        const value = messages[ind] + " - [" + domainDelta.toString() + "]";
+        const message = messages[ind] + " - [" + millisecondsSinceStart + "]";
+        this.count += 1;
 
         return {
             name,
             utc,
-            value
+            message
         };
     }
 
@@ -58,8 +59,8 @@ class EventTelemetryProvider {
         const duration = domainObject.telemetry.duration * 1000;
 
         const interval = setInterval(() => {
-            const now = Date.now();
-            const datum = this.generateData(now, duration, domainObject.name);
+            const startTime = Date.now();
+            const datum = this.generateData(startTime, duration, domainObject.name);
             callback(datum);
         }, duration);
 
@@ -72,13 +73,16 @@ class EventTelemetryProvider {
         let start = options.start;
         const end = Math.min(Date.now(), options.end); // no future values
         const duration = domainObject.telemetry.duration * 1000;
+        const size = options.size ? options.size : this.defaultSize;
+        const data = [];
+
         if (options.strategy === 'latest' || options.size === 1) {
             start = end;
         }
 
-        const data = [];
-        while (start <= end && data.length < 5000) {
-            data.push(this.generateData(start, duration, domainObject.name));
+        while (start <= end && data.length < size) {
+            const startTime = Date.now() + this.count;
+            data.push(this.generateData(startTime, duration, domainObject.name));
             start += duration;
         }
 
