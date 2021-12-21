@@ -46,8 +46,8 @@ describe('the plugin', () => {
         openmct.startHeadless();
     });
 
-    afterEach(() => {
-        return resetApplicationState(openmct);
+    afterEach(async () => {
+        await resetApplicationState(openmct);
     });
 
     describe('the plugin', () => {
