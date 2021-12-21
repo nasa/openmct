@@ -76,7 +76,8 @@ define([
     './UTCTimeFormat/plugin',
     './timer/plugin',
     './userIndicator/plugin',
-    './exampleUser/plugin'
+    './exampleUser/plugin',
+    './localStorage/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -133,10 +134,10 @@ define([
     UTCTimeFormat,
     Timer,
     UserIndicator,
-    ExampleUser
+    ExampleUser,
+    LocalStorage
 ) {
     const bundleMap = {
-        LocalStorage: 'platform/persistence/local',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -148,7 +149,7 @@ define([
         };
     });
 
-    plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
 
@@ -244,6 +245,7 @@ define([
     plugins.UTCTimeFormat = UTCTimeFormat.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.ExampleUser = ExampleUser.default;
+    plugins.LocalStorage = LocalStorage.default;
 
     return plugins;
 });

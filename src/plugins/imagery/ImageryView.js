@@ -12,9 +12,9 @@ export default class ImageryView {
 
     show(element, isEditing, viewOptions) {
         let alternateObjectPath;
-        let indexForFocusedImage;
+        let focusedImageTimestamp;
         if (viewOptions) {
-            indexForFocusedImage = viewOptions.indexForFocusedImage;
+            focusedImageTimestamp = viewOptions.timestamp;
             alternateObjectPath = viewOptions.objectPath;
         }
 
@@ -31,10 +31,10 @@ export default class ImageryView {
             },
             data() {
                 return {
-                    indexForFocusedImage
+                    focusedImageTimestamp
                 };
             },
-            template: '<imagery-view :index-for-focused-image="indexForFocusedImage" ref="ImageryContainer"></imagery-view>'
+            template: '<imagery-view :focused-image-timestamp="focusedImageTimestamp" ref="ImageryContainer"></imagery-view>'
 
         });
     }

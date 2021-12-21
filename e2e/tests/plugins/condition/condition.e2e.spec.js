@@ -20,42 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+/*
+This test suite is dedicated to tests which verify the basic operations surrounding conditionSets.
+*/
 
-        var LOCAL_STORAGE_WARNING = [
-            "Using browser local storage for persistence.",
-            "Anything you create or change will only be saved",
-            "in this browser on this machine."
-        ].join(' ');
+const { test, expect } = require('@playwright/test');
 
-        /**
-         * Indicator for local storage persistence. Provides a minimum
-         * level of feedback indicating that local storage is in use.
-         * @constructor
-         * @memberof platform/persistence/local
-         * @implements {Indicator}
-         */
-        function LocalStorageIndicator() {
-        }
+test.describe('condition set', () => {
+    test('create new button `condition set` creates new condition object', async ({ page }) => {
+        //Go to baseURL
+        await page.goto('/', { waitUntil: 'networkidle' });
 
-        LocalStorageIndicator.prototype.getCssClass = function () {
-            return "c-indicator--clickable icon-suitcase s-status-caution";
-        };
+        //Click the Create button
+        await page.click('button:has-text("Create")');
 
-        LocalStorageIndicator.prototype.getGlyphClass = function () {
-            return 'caution';
-        };
+        // Click text=Condition Set
+        await page.click('text=Condition Set');
 
-        LocalStorageIndicator.prototype.getText = function () {
-            return "Off-line storage";
-        };
+        // Click text=OK
+        await Promise.all([
+            page.waitForNavigation(/*{ url: 'http://localhost:8080/#/browse/mine/dab945d4-5a84-480e-8180-222b4aa730fa?tc.mode=fixed&tc.startBound=1639696164435&tc.endBound=1639697964435&tc.timeSystem=utc&view=conditionSet.view' }*/),
+            page.click('text=OK')
+        ]);
 
-        LocalStorageIndicator.prototype.getDescription = function () {
-            return LOCAL_STORAGE_WARNING;
-        };
-
-        return LocalStorageIndicator;
-    }
-);
+        await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Condition Set');
+    });
+});
