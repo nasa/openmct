@@ -145,7 +145,6 @@ class IndependentTimeContext extends TimeContext {
     /**
      * Causes this time context to follow another time context (either the global context, or another upstream time context)
      * This allows views to have their own time context which points to the appropriate upstream context as necessary, achieving nesting.
-     * @param {*} upstreamTimeContext
      */
     followTimeContext() {
         this.stopFollowingTimeContext();
@@ -153,7 +152,9 @@ class IndependentTimeContext extends TimeContext {
             TIME_CONTEXT_EVENTS.forEach((eventName) => {
                 const thisTimeContext = this;
                 this.upstreamTimeContext.on(eventName, passthrough);
-                this.unlisteners.push(() => this.upstreamTimeContext.off(eventName, passthrough));
+                this.unlisteners.push(() => {
+                    thisTimeContext.upstreamTimeContext.off(eventName, passthrough);
+                });
                 function passthrough() {
                     thisTimeContext.emit(eventName, ...arguments);
                 }
@@ -167,6 +168,7 @@ class IndependentTimeContext extends TimeContext {
      */
     stopFollowingTimeContext() {
         this.unlisteners.forEach(unlisten => unlisten());
+        this.unlisteners = [];
     }
 
     resetContext() {
@@ -180,17 +182,19 @@ class IndependentTimeContext extends TimeContext {
      * Refresh the time context, following any upstream time contexts as necessary
      */
     refreshContext(viewKey) {
-        //TODO: find a better way to skip upstream context for the view that just got an independent time context
         const key = this.openmct.objects.makeKeyString(this.objectPath[0].identifier);
         if (viewKey && key === viewKey) {
             return;
         }
 
+        //this is necessary as the upstream context gets reassigned after this
+        this.stopFollowingTimeContext();
+
         this.upstreamTimeContext = this.getUpstreamContext();
         this.followTimeContext();
 
         // Emit bounds so that views that are changing context get the upstream bounds
-        this.emit('bounds', this.upstreamTimeContext.bounds());
+        this.emit('bounds', this.bounds());
     }
 
     hasOwnContext() {

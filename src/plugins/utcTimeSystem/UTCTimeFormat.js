@@ -34,38 +34,38 @@ export default class UTCTimeFormat {
     constructor() {
         this.key = 'utc';
         this.DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSS';
-        this.DATE_FORMATS = [
-            this.DATE_FORMAT,
-            this.DATE_FORMAT + 'Z',
-            'YYYY-MM-DD HH:mm:ss',
-            'YYYY-MM-DD HH:mm',
-            'YYYY-MM-DD'
-        ];
+        this.DATE_FORMATS = {
+            PRECISION_DEFAULT: this.DATE_FORMAT,
+            PRECISION_DEFAULT_WITH_ZULU: this.DATE_FORMAT + 'Z',
+            PRECISION_SECONDS: 'YYYY-MM-DD HH:mm:ss',
+            PRECISION_MINUTES: 'YYYY-MM-DD HH:mm',
+            PRECISION_DAYS: 'YYYY-MM-DD'
+        };
     }
 
     /**
      * @param {string} formatString
      * @returns the value of formatString if the value is a string type and exists in the DATE_FORMATS array; otherwise the DATE_FORMAT value.
      */
-    validateFormatString(formatString) {
-        return typeof formatString === 'string'
-        && this.DATE_FORMATS.includes(formatString)
-            ? formatString
-            : this.DATE_FORMAT;
+    isValidFormatString(formatString) {
+        return Object.values(this.DATE_FORMATS).includes(formatString);
     }
 
     /**
      * @param {number} value The value to format.
-     * @param {string} formatString The string format to format. Default "YYYY-MM-DD HH:mm:ss.SSS" + "Z"
-     * @returns {string} the formatted date(s) according to the proper parameter of formatString or the default value of "YYYY-MM-DD HH:mm:ss.SSS" + "Z".
-     * If multiple values were requested, then an array of
+     * @returns {string} the formatted date(s). If multiple values were requested, then an array of
      * formatted values will be returned. Where a value could not be formatted, `undefined` will be returned at its position
      * in the array.
      */
     format(value, formatString) {
         if (value !== undefined) {
-            const format = this.validateFormatString(formatString);
             const utc = moment.utc(value);
+
+            if (formatString !== undefined && !this.isValidFormatString(formatString)) {
+                throw "Invalid format requested from UTC Time Formatter ";
+            }
+
+            let format = formatString || this.DATE_FORMATS.PRECISION_DEFAULT;
 
             return utc.format(format) + (formatString ? '' : 'Z');
         } else {
@@ -78,10 +78,11 @@ export default class UTCTimeFormat {
             return text;
         }
 
-        return moment.utc(text, this.DATE_FORMATS).valueOf();
+        return moment.utc(text, Object.values(this.DATE_FORMATS)).valueOf();
     }
 
     validate(text) {
-        return moment.utc(text, this.DATE_FORMATS, true).isValid();
+        return moment.utc(text, Object.values(this.DATE_FORMATS), true).isValid();
     }
+
 }
