@@ -7,7 +7,6 @@
  * node app.js [options]
  */
 
-
 const options = require('minimist')(process.argv.slice(2));
 const express = require('express');
 const app = express();
@@ -50,7 +49,7 @@ class WatchRunPlugin {
 }
 
 const webpack = require('webpack');
-const webpackConfig = require('./webpack.config.js');
+const webpackConfig = require('./webpack.dev.js');
 webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
 webpackConfig.plugins.push(new WatchRunPlugin());
 
@@ -71,9 +70,7 @@ app.use(require('webpack-dev-middleware')(
 
 app.use(require('webpack-hot-middleware')(
     compiler,
-    {
-
-    }
+    {}
 ));
 
 // Expose index.html for development users.
@@ -83,5 +80,5 @@ app.get('/', function (req, res) {
 
 // Finally, open the HTTP server and log the instance to the console
 app.listen(options.port, options.host, function() {
-    console.log('Open MCT application running at %s:%s', options.host, options.port)
+    console.log('Open MCT application running at %s:%s', options.host, options.port);
 });
