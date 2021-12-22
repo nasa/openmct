@@ -71,3 +71,20 @@ test('Visual - Root and About', async ({ page }) => {
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'About');
 });
+
+test('create new button `condition set` creates new condition object', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click text=Condition Set
+    await page.click('text=Condition Set');
+
+    // Click text=OK
+    await page.click('text=OK');
+
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Condition Set');
+});
