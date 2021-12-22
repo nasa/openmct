@@ -47,13 +47,12 @@ test.beforeEach(async ({ context }) => {
     });
 });
 
-test('Visual - Root and About', async ({ page }) => {
+test.skip('Visual - Root and About', async ({ page }) => {
     // Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
     // Verify that Create button is actionable
-    const createButtonLocator = page.locator('button:has-text("Create")');
-    await expect(createButtonLocator).toBeEnabled();
+    await expect(page.locator('button:has-text("Create")')).toBeEnabled();
 
     // Take a snapshot of the Dashboard
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
@@ -70,4 +69,34 @@ test('Visual - Root and About', async ({ page }) => {
     // Take a snapshot of the About modal
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'About');
+});
+
+test('Visual - Timer', async ({ page }) => {
+    // Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    // Click text=Start End >> a
+    await page.click('text=Start End >> a');
+    // Take a snapshot of the Dashboard
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Time Conductor - Fixed Start Time');
+
+    // Click button:has-text("Fixed Timespan")
+    await page.click('button:has-text("Fixed Timespan")');
+    // Take a snapshot of the Dashboard
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Root');
+
+    // Click text=Local Clock
+    await page.click('text=Local Clock');
+
+    // Click text=00:30:00
+    await page.click('text=00:30:00');
+
+    // Click text=Hrs
+    await page.click('text=Hrs');
+
+    // Take a snapshot of the Dashboard
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Root');
 });
