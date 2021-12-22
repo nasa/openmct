@@ -44,6 +44,7 @@ const notebookDomainObject = {
         namespace: ''
     },
     type: 'notebook',
+    name: 'Test Notebook',
     configuration: {
         defaultSort: 'oldest',
         entries: notebookEntries,
@@ -94,23 +95,10 @@ const selectedPage = {
 };
 
 let openmct;
-let mockIdentifierService;
 
 describe('Notebook Entries:', () => {
     beforeEach(() => {
         openmct = createOpenMct();
-        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-        mockIdentifierService = jasmine.createSpyObj(
-            'identifierService',
-            ['parse']
-        );
-        mockIdentifierService.parse.and.returnValue({
-            getSpace: () => {
-                return '';
-            }
-        });
-
-        openmct.$injector.get.and.returnValue(mockIdentifierService);
         openmct.types.addType('notebook', {
             creatable: true
         });
@@ -118,6 +106,12 @@ describe('Notebook Entries:', () => {
             'create',
             'update'
         ]));
+        openmct.editor = {
+            isEditing: () => false
+        };
+        openmct.objects.isPersistable = () => true;
+        openmct.objects.save = () => Promise.resolve(true);
+
         window.localStorage.setItem('notebook-storage', null);
     });
 

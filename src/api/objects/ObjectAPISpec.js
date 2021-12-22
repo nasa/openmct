@@ -1,31 +1,24 @@
 import ObjectAPI from './ObjectAPI.js';
+import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
 describe("The Object API", () => {
     let objectAPI;
     let typeRegistry;
     let openmct = {};
-    let mockIdentifierService;
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
-    beforeEach(() => {
+    beforeEach((done) => {
         typeRegistry = jasmine.createSpyObj('typeRegistry', [
             'get'
         ]);
-        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-        mockIdentifierService = jasmine.createSpyObj(
-            'identifierService',
-            ['parse']
-        );
-        mockIdentifierService.parse.and.returnValue({
-            getSpace: () => {
-                return TEST_NAMESPACE;
-            }
-        });
+        openmct = createOpenMct();
+        objectAPI = openmct.objects;
 
-        openmct.$injector.get.and.returnValue(mockIdentifierService);
-        objectAPI = new ObjectAPI(typeRegistry, openmct);
+        openmct.editor = {};
+        openmct.editor.isEditing = () => false;
+
         mockDomainObject = {
             identifier: {
                 namespace: TEST_NAMESPACE,
@@ -34,14 +27,29 @@ describe("The Object API", () => {
             name: "test object",
             type: "test-type"
         };
+        openmct.on('start', () => {
+            done();
+        });
+        openmct.startHeadless();
     });
-    describe("The save function", () => {
-        it("Rejects if no provider available", () => {
-            let rejected = false;
 
-            return objectAPI.save(mockDomainObject)
-                .catch(() => rejected = true)
-                .then(() => expect(rejected).toBe(true));
+    afterEach(async () => {
+        await resetApplicationState(openmct);
+    });
+
+    describe("The save function", () => {
+        it("Rejects if no provider available", async () => {
+            let rejected = false;
+            objectAPI.providers = {};
+            objectAPI.fallbackProvider = null;
+
+            try {
+                await objectAPI.save(mockDomainObject);
+            } catch (error) {
+                rejected = true;
+            }
+
+            expect(rejected).toBe(true);
         });
         describe("when a provider is available", () => {
             let mockProvider;
@@ -223,6 +231,28 @@ describe("The Object API", () => {
             expect(testObject.name).toBe(MUTATED_NAME);
         });
 
+        it('Provides a way of refreshing an object from the persistence store', () => {
+            const modifiedTestObject = JSON.parse(JSON.stringify(testObject));
+            const OTHER_ATTRIBUTE_VALUE = 'Modified value';
+            const NEW_ATTRIBUTE_VALUE = 'A new attribute';
+            modifiedTestObject.otherAttribute = OTHER_ATTRIBUTE_VALUE;
+            modifiedTestObject.newAttribute = NEW_ATTRIBUTE_VALUE;
+            delete modifiedTestObject.objectAttribute;
+
+            spyOn(objectAPI, 'get');
+            objectAPI.get.and.returnValue(Promise.resolve(modifiedTestObject));
+
+            expect(objectAPI.get).not.toHaveBeenCalled();
+
+            return objectAPI.refresh(testObject).then(() => {
+                expect(objectAPI.get).toHaveBeenCalledWith(testObject.identifier);
+
+                expect(testObject.otherAttribute).toEqual(OTHER_ATTRIBUTE_VALUE);
+                expect(testObject.newAttribute).toEqual(NEW_ATTRIBUTE_VALUE);
+                expect(testObject.objectAttribute).not.toBeDefined();
+            });
+        });
+
         describe ('uses a MutableDomainObject', () => {
             it('and retains properties of original object ', function () {
                 expect(hasOwnProperty(mutable, 'identifier')).toBe(true);
@@ -304,6 +334,48 @@ describe("The Object API", () => {
                     listeners.forEach(listener => listener());
                 });
             });
+        });
+    });
+
+    describe("transactions", () => {
+        beforeEach(() => {
+            spyOn(openmct.editor, 'isEditing').and.returnValue(true);
+        });
+
+        it('there is no active transaction', () => {
+            expect(objectAPI.isTransactionActive()).toBe(false);
+        });
+
+        it('start a transaction', () => {
+            objectAPI.startTransaction();
+            expect(objectAPI.isTransactionActive()).toBe(true);
+        });
+
+        it('has active transaction', () => {
+            objectAPI.startTransaction();
+            const activeTransaction = objectAPI.getActiveTransaction();
+            expect(activeTransaction).not.toBe(null);
+        });
+
+        it('end a transaction', () => {
+            objectAPI.endTransaction();
+            expect(objectAPI.isTransactionActive()).toBe(false);
+        });
+
+        it('returns dirty object on get', (done) => {
+            spyOn(objectAPI, 'supportsMutation').and.returnValue(true);
+
+            objectAPI.startTransaction();
+            objectAPI.mutate(mockDomainObject, 'name', 'dirty object');
+
+            const dirtyObject = objectAPI.transaction.getDirtyObject(mockDomainObject.identifier);
+
+            objectAPI.get(mockDomainObject.identifier)
+                .then(object => {
+                    const areEqual = JSON.stringify(object) === JSON.stringify(dirtyObject);
+                    expect(areEqual).toBe(true);
+                })
+                .finally(done);
         });
     });
 });

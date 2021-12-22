@@ -26,6 +26,7 @@ import {
     getMockObjects,
     getMockTelemetry,
     getLatestTelemetry,
+    spyOnBuiltins,
     resetApplicationState
 } from 'utils/testing';
 
@@ -158,6 +159,11 @@ describe("The LAD Table", () => {
             });
             let anotherTelemetryObjectPromise = new Promise((resolve) => {
                 anotherTelemetryObjectResolve = resolve;
+            });
+
+            spyOnBuiltins(['requestAnimationFrame']);
+            window.requestAnimationFrame.and.callFake((callBack) => {
+                callBack();
             });
 
             openmct.telemetry.request.and.callFake(() => {

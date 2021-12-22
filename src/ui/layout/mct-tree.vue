@@ -74,6 +74,7 @@
                     :node="treeItem"
                     :active-search="activeSearch"
                     :left-offset="!activeSearch ? treeItem.leftOffset : '0px'"
+                    :is-new="treeItem.isNew"
                     :item-offset="itemOffset"
                     :item-index="index"
                     :item-height="itemHeight"
@@ -112,7 +113,7 @@ import search from '../components/search.vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
-const RETURN_ALL_DESCDNDANTS = true;
+const SORT_MY_ITEMS_ALPH_ASC = true;
 const TREE_ITEM_INDENT_PX = 18;
 
 export default {
@@ -237,7 +238,6 @@ export default {
     methods: {
         async initialize() {
             this.isLoading = true;
-            this.openmct.$injector.get('searchService');
             this.getSavedOpenItems();
             this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
             this.treeResizeObserver.observe(this.$el);
@@ -430,9 +430,45 @@ export default {
 
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
+        sortNameAscending(a, b) {
+            // sorting tree children items
+            if (!(a.name && b.name)) {
+                if (a.object.name.toLowerCase()
+                    > b.object.name.toLowerCase()) {
+                    return 1;
+                }
+
+                if (b.object.name.toLowerCase()
+                    > a.object.name.toLowerCase()) {
+                    return -1;
+                }
+            }
+
+            // sorting composition items
+            if (a.name.toLowerCase()
+                > b.name.toLowerCase()) {
+                return 1;
+            }
+
+            if (b.name.toLowerCase()
+                > a.name.toLowerCase()) {
+                return -1;
+            }
+
+            return 0;
+        },
+        isSortable(parentObjectPath) {
+            // determine if any part of the parent's path includes a key value of mine; aka My Items
+            return Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
+        },
         async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
             let collection = this.openmct.composition.get(domainObject);
             let composition = await collection.load(abortSignal);
+
+            if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
+                const sortedComposition = composition.slice().sort(this.sortNameAscending);
+                composition = sortedComposition;
+            }
 
             if (parentObjectPath.length) {
                 let navigationPath = this.buildNavigationPath(parentObjectPath);
@@ -456,7 +492,7 @@ export default {
                 return this.buildTreeItem(object, parentObjectPath);
             });
         },
-        buildTreeItem(domainObject, parentObjectPath) {
+        buildTreeItem(domainObject, parentObjectPath, isNew = false) {
             let objectPath = [domainObject].concat(parentObjectPath);
             let navigationPath = this.buildNavigationPath(objectPath);
 
@@ -464,6 +500,7 @@ export default {
                 id: this.openmct.objects.makeKeyString(domainObject.identifier),
                 object: domainObject,
                 leftOffset: ((objectPath.length - 1) * TREE_ITEM_INDENT_PX) + 'px',
+                isNew,
                 objectPath,
                 navigationPath
             };
@@ -475,12 +512,35 @@ export default {
         },
         compositionAddHandler(navigationPath) {
             return (domainObject) => {
-                let parentItem = this.getTreeItemByPath(navigationPath);
-                let newItem = this.buildTreeItem(domainObject, parentItem.objectPath);
-                let allDescendants = this.getChildrenInTreeFor(parentItem, RETURN_ALL_DESCDNDANTS);
-                let afterItem = allDescendants.length ? allDescendants.pop() : parentItem;
+                const parentItem = this.getTreeItemByPath(navigationPath);
+                const newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
+                const descendants = this.getChildrenInTreeFor(parentItem, true);
+                const directDescendants = this.getChildrenInTreeFor(parentItem);
 
-                this.addItemToTreeAfter(newItem, afterItem);
+                if (directDescendants.length === 0) {
+                    this.addItemToTreeAfter(newItem, parentItem);
+
+                    return;
+                }
+
+                if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentItem.objectPath)) {
+                    const newItemIndex = directDescendants
+                        .findIndex(descendant => this.sortNameAscending(descendant, newItem) > 0);
+                    const shouldInsertFirst = newItemIndex === 0;
+                    const shouldInsertLast = newItemIndex === -1;
+
+                    if (shouldInsertFirst) {
+                        this.addItemToTreeAfter(newItem, parentItem);
+                    } else if (shouldInsertLast) {
+                        this.addItemToTreeAfter(newItem, descendants.pop());
+                    } else {
+                        this.addItemToTreeBefore(newItem, directDescendants[newItemIndex]);
+                    }
+
+                    return;
+                }
+
+                this.addItemToTreeAfter(newItem, descendants.pop());
             };
         },
         compositionRemoveHandler(navigationPath) {
@@ -512,9 +572,18 @@ export default {
             const removeIndex = this.getTreeItemIndex(item.navigationPath);
             this.treeItems.splice(removeIndex, 1);
         },
+        addItemToTreeBefore(addItem, beforeItem) {
+            const addIndex = this.getTreeItemIndex(beforeItem.navigationPath);
+
+            this.addItemToTree(addItem, addIndex);
+        },
         addItemToTreeAfter(addItem, afterItem) {
             const addIndex = this.getTreeItemIndex(afterItem.navigationPath);
-            this.treeItems.splice(addIndex + 1, 0, addItem);
+
+            this.addItemToTree(addItem, addIndex + 1);
+        },
+        addItemToTree(addItem, index) {
+            this.treeItems.splice(index, 0, addItem);
 
             if (this.isTreeItemOpen(addItem)) {
                 this.openTreeItem(addItem);
@@ -545,12 +614,15 @@ export default {
             // to cancel an active searches if necessary
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
+            const searchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
 
-            const promises = this.openmct.objects.search(this.searchValue, abortSignal)
-                .map(promise => promise
-                    .then(results => this.aggregateSearchResults(results, abortSignal)));
+            searchPromises.map(promise => promise
+                .then(results => {
+                    this.aggregateSearchResults(results, abortSignal);
+                }
+                ));
 
-            Promise.all(promises).catch(reason => {
+            Promise.all(searchPromises).catch(reason => {
                 // search aborted
             }).finally(() => {
                 this.searchLoading = false;

@@ -2,8 +2,9 @@ import CopyToNotebookAction from './actions/CopyToNotebookAction';
 import Notebook from './components/Notebook.vue';
 import NotebookSnapshotIndicator from './components/NotebookSnapshotIndicator.vue';
 import SnapshotContainer from './snapshot-container';
+import monkeyPatchObjectAPIForNotebooks from './monkeyPatchObjectAPIForNotebooks.js';
 
-import { notebookImageMigration } from '../notebook/utils/notebook-migration';
+import { notebookImageMigration, IMAGE_MIGRATION_VER } from '../notebook/utils/notebook-migration';
 import { NOTEBOOK_TYPE } from './notebook-constants';
 
 import Vue from 'vue';
@@ -27,6 +28,7 @@ export default function NotebookPlugin() {
                 domainObject.configuration = {
                     defaultSort: 'oldest',
                     entries: {},
+                    imageMigrationVer: IMAGE_MIGRATION_VER,
                     pageTitle: 'Page',
                     sections: [],
                     sectionTitle: 'Section',
@@ -69,6 +71,7 @@ export default function NotebookPlugin() {
                     name: 'Section Title',
                     control: 'textfield',
                     cssClass: 'l-inline',
+                    required: true,
                     property: [
                         "configuration",
                         "sectionTitle"
@@ -79,6 +82,7 @@ export default function NotebookPlugin() {
                     name: 'Page Title',
                     control: 'textfield',
                     cssClass: 'l-inline',
+                    required: true,
                     property: [
                         "configuration",
                         "pageTitle"
@@ -114,7 +118,8 @@ export default function NotebookPlugin() {
         });
         const indicator = {
             element: notebookSnapshotIndicator.$mount().$el,
-            key: 'notebook-snapshot-indicator'
+            key: 'notebook-snapshot-indicator',
+            priority: openmct.priority.DEFAULT
         };
 
         openmct.indicators.add(indicator);
@@ -165,5 +170,7 @@ export default function NotebookPlugin() {
                 return domainObject;
             }
         });
+
+        monkeyPatchObjectAPIForNotebooks(openmct);
     };
 }

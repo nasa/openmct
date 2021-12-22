@@ -1,6 +1,6 @@
 <template>
 <a
-    class="l-grid-view__item c-grid-item"
+    class="l-grid-view__item c-grid-item js-folder-child"
     :class="[{
         'is-alias': item.isAlias === true,
         'c-grid-item--unknown': item.type.cssClass === undefined || item.type.cssClass.indexOf('unknown') !== -1

@@ -150,30 +150,21 @@ export default {
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView([this.domainObject]);
-            this.timeContext.on('timeContext', this.setTimeContext);
-            this.timeContext.on('clock', this.setViewFromClock);
+            this.timeContext.on('clock', this.setTimeOptions);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
-                this.timeContext.off('timeContext', this.setTimeContext);
-                this.timeContext.off('clock', this.setViewFromClock);
+                this.timeContext.off('clock', this.setTimeOptions);
             }
         },
-        setViewFromClock(clock) {
-            if (!this.timeOptions.mode) {
-                this.setTimeOptions(clock);
-            }
-        },
-        setTimeOptions() {
-            if (!this.timeOptions || !this.timeOptions.mode) {
-                this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: Object.create(this.timeContext.clock()).key};
-                this.timeOptions = {
-                    clockOffsets: this.timeContext.clockOffsets(),
-                    fixedOffsets: this.timeContext.bounds()
-                };
-            }
+        setTimeOptions(clock) {
+            this.timeOptions.clockOffsets = this.timeOptions.clockOffsets || this.timeContext.clockOffsets();
+            this.timeOptions.fixedOffsets = this.timeOptions.fixedOffsets || this.timeContext.bounds();
 
-            this.registerIndependentTimeOffsets();
+            if (!this.timeOptions.mode) {
+                this.mode = this.timeContext.clock() === undefined ? {key: 'fixed'} : {key: Object.create(this.timeContext.clock()).key};
+                this.registerIndependentTimeOffsets();
+            }
         },
         saveFixedOffsets(offsets) {
             const newOptions = Object.assign({}, this.timeOptions, {
@@ -219,7 +210,17 @@ export default {
             }
 
             const key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            this.unregisterIndependentTime = this.openmct.time.addIndependentContext(key, offsets, this.isFixed ? undefined : this.mode.key);
+            const timeContext = this.openmct.time.getIndependentContext(key);
+            if (!timeContext.hasOwnContext()) {
+                this.unregisterIndependentTime = this.openmct.time.addIndependentContext(key, offsets, this.isFixed ? undefined : this.mode.key);
+            } else {
+                if (this.isFixed) {
+                    timeContext.stopClock();
+                    timeContext.bounds(offsets);
+                } else {
+                    timeContext.clock(this.mode.key, offsets);
+                }
+            }
         },
         destroyIndependentTime() {
             if (this.unregisterIndependentTime) {

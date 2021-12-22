@@ -44,12 +44,11 @@ describe('CustomStringFormatter', function () {
         element = document.createElement('div');
         child = document.createElement('div');
         element.appendChild(child);
-        CUSTOM_FORMATS.forEach(openmct.telemetry.addFormat.bind({openmct}));
+        CUSTOM_FORMATS.forEach((formatter) => {
+            openmct.telemetry.addFormat(formatter);
+        });
         openmct.on('start', done);
         openmct.startHeadless();
-
-        spyOn(openmct.telemetry, 'getFormatter');
-        openmct.telemetry.getFormatter.and.callFake((key) => CUSTOM_FORMATS.find(d => d.key === key));
 
         customStringFormatter = new CustomStringFormatter(openmct, valueMetadata);
     });

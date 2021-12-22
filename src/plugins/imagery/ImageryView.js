@@ -10,7 +10,14 @@ export default class ImageryView {
         this.component = undefined;
     }
 
-    show(element) {
+    show(element, isEditing, viewOptions) {
+        let alternateObjectPath;
+        let focusedImageTimestamp;
+        if (viewOptions) {
+            focusedImageTimestamp = viewOptions.timestamp;
+            alternateObjectPath = viewOptions.objectPath;
+        }
+
         this.component = new Vue({
             el: element,
             components: {
@@ -19,10 +26,15 @@ export default class ImageryView {
             provide: {
                 openmct: this.openmct,
                 domainObject: this.domainObject,
-                objectPath: this.objectPath,
+                objectPath: alternateObjectPath || this.objectPath,
                 currentView: this
             },
-            template: '<imagery-view ref="ImageryContainer"></imagery-view>'
+            data() {
+                return {
+                    focusedImageTimestamp
+                };
+            },
+            template: '<imagery-view :focused-image-timestamp="focusedImageTimestamp" ref="ImageryContainer"></imagery-view>'
 
         });
     }
