@@ -73,7 +73,6 @@ define([
     './hyperlink/plugin',
     './clock/plugin',
     './DeviceClassifier/plugin',
-    './UTCTimeFormat/plugin',
     './timer/plugin',
     './userIndicator/plugin',
     './exampleUser/plugin',
@@ -131,7 +130,6 @@ define([
     Hyperlink,
     Clock,
     DeviceClassifier,
-    UTCTimeFormat,
     Timer,
     UserIndicator,
     ExampleUser,
@@ -242,7 +240,6 @@ define([
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
-    plugins.UTCTimeFormat = UTCTimeFormat.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.ExampleUser = ExampleUser.default;
     plugins.LocalStorage = LocalStorage.default;
