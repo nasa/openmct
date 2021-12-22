@@ -21,11 +21,15 @@
  *****************************************************************************/
 
 /*
-Collection of Visual Tests set to run in a default context. These should only use functional
-expect statements to verify assumptions about the state in a test and not for functional
-verification of correctness.
-Note: Larger testsuite sizes are OK due to the setup time associated with these tests. Visual
-tests are not supposed to "fail" on assertions.
+Collection of Visual Tests set to run in a default context. The tests within this suite
+are only meant to run against openmct's app.js started by `npm run start` within the 
+`./e2e/playwright-visual.config.js` file.
+
+These should only use functional expect statements to verify assumptions about the state 
+in a test and not for functional verification of correctness. Visual tests are not supposed
+to "fail" on assertions. Instead, they should be used to detect changes between builds or branches.
+
+Note: Larger testsuite sizes are OK due to the setup time associated with these tests. 
 */
 
 const { test, expect } = require('@playwright/test');
@@ -70,4 +74,22 @@ test('Visual - Root and About', async ({ page }) => {
     // Take a snapshot of the About modal
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'About');
+});
+
+test('Visual - Default Condition Set', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click text=Condition Set
+    await page.click('text=Condition Set');
+
+    // Click text=OK
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Condition Set object
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Condition Set');
 });
