@@ -22,7 +22,8 @@
 
 /*
 Collection of Visual Tests set to run in a default context. The tests within this suite
-are only meant to run against openmct's app.js started by `npm run start` within 
+are only meant to run against openmct's app.js started by `npm run start` within the 
+`./e2e/playwright-visual.config.js` file.
 
 These should only use functional expect statements to verify assumptions about the state 
 in a test and not for functional verification of correctness. Visual tests are not supposed
