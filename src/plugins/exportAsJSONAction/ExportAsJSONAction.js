@@ -22,7 +22,6 @@
 import JSONExporter from '/src/exporters/JSONExporter.js';
 
 import _ from 'lodash';
-import { saveAs } from 'saveAs';
 import uuid from "uuid";
 
 export default class ExportAsJSONAction {
@@ -41,7 +40,7 @@ export default class ExportAsJSONAction {
         this.calls = 0;
         this.idMap = {};
 
-        this.JSONExportService = new JSONExporter(saveAs);
+        this.JSONExportService = new JSONExporter();
     }
 
     // Public
