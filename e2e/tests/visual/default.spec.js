@@ -21,11 +21,15 @@
  *****************************************************************************/
 
 /*
-Collection of Visual Tests set to run in a default context. These should only use functional
-expect statements to verify assumptions about the state in a test and not for functional
-verification of correctness.
-Note: Larger testsuite sizes are OK due to the setup time associated with these tests. Visual
-tests are not supposed to "fail" on assertions.
+Collection of Visual Tests set to run in a default context. The tests within this suite
+are only meant to run against openmct's app.js started by `npm run start` within the 
+`./e2e/playwright-visual.config.js` file.
+
+These should only use functional expect statements to verify assumptions about the state 
+in a test and not for functional verification of correctness. Visual tests are not supposed
+to "fail" on assertions. Instead, they should be used to detect changes between builds or branches.
+
+Note: Larger testsuite sizes are OK due to the setup time associated with these tests. 
 */
 
 const { test, expect } = require('@playwright/test');
@@ -71,32 +75,38 @@ test.skip('Visual - Root and About', async ({ page }) => {
     await percySnapshot(page, 'About');
 });
 
-test('Visual - Timer', async ({ page }) => {
-    // Go to baseURL
+test('Visual - Default Condition Set', async ({ page }) => {
+    //Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
-    // Click text=Start End >> a
-    await page.click('text=Start End >> a');
-    // Take a snapshot of the Dashboard
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click text=Condition Set
+    await page.click('text=Condition Set');
+
+    // Click text=OK
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Condition Set object
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Time Conductor - Fixed Start Time');
+    await percySnapshot(page, 'Default Condition Set');
+});
 
-    // Click button:has-text("Fixed Timespan")
-    await page.click('button:has-text("Fixed Timespan")');
-    // Take a snapshot of the Dashboard
+test('Visual - Default Condition Widget', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click text=Condition Widget
+    await page.click('text=Condition Widget');
+
+    // Click text=OK
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Condition Widget object
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Root');
-
-    // Click text=Local Clock
-    await page.click('text=Local Clock');
-
-    // Click text=00:30:00
-    await page.click('text=00:30:00');
-
-    // Click text=Hrs
-    await page.click('text=Hrs');
-
-    // Take a snapshot of the Dashboard
-    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
-    await percySnapshot(page, 'Root');
+    await percySnapshot(page, 'Default Condition Widget');
 });
