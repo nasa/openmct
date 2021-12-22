@@ -34,7 +34,7 @@ const DEFAULT_NAME = 'My Items';
 const FANCY_NAME = 'Fancy Items';
 const myItemsIdentifier = createMyItemsIdentifier();
 
-fdescribe("the plugin", () => {
+describe("the plugin", () => {
     let openmct;
     let missingObj = {
         identifier: myItemsIdentifier,
