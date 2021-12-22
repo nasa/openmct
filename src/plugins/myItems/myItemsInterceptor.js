@@ -22,11 +22,11 @@
 
 import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
 
-function myItemsInterceptor(identifierObject, openmct) {
+function myItemsInterceptor(identifierObject, name, openmct) {
 
     const myItemsModel = {
         identifier: identifierObject,
-        "name": "My Items",
+        name,
         "type": "folder",
         "composition": [],
         "location": "ROOT"
