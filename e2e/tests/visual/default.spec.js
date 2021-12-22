@@ -51,7 +51,7 @@ test.beforeEach(async ({ context }) => {
     });
 });
 
-test.skip('Visual - Root and About', async ({ page }) => {
+test('Visual - Root and About', async ({ page }) => {
     // Go to baseURL
     await page.goto('/', { waitUntil: 'networkidle' });
 
