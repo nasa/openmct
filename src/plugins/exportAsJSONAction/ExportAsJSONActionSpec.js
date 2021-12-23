@@ -1,19 +1,17 @@
-import ExportAsJSONActionPlugin from './plugin';
-
 import {
     createOpenMct,
     resetApplicationState
 } from 'utils/testing';
 
-const ACTION_KEY = 'export.JSON';
-let openmct;
-let domainObject;
-let exportAsJSONAction;
-
 describe('Export as JSON plugin', () => {
+    const ACTION_KEY = 'export.JSON';
+
+    let openmct;
+    let domainObject;
+    let exportAsJSONAction;
+
     beforeEach((done) => {
         openmct = createOpenMct();
-        openmct.install(ExportAsJSONActionPlugin());
 
         openmct.on('start', done);
         openmct.startHeadless();
@@ -21,9 +19,7 @@ describe('Export as JSON plugin', () => {
         exportAsJSONAction = openmct.actions.getAction(ACTION_KEY);
     });
 
-    afterEach(() => {
-        resetApplicationState(openmct);
-    });
+    afterEach(() => resetApplicationState(openmct));
 
     it('Export as JSON action exist', () => {
         expect(exportAsJSONAction.key).toEqual(ACTION_KEY);
@@ -292,7 +288,6 @@ describe('Export as JSON plugin', () => {
         });
 
         spyOn(exportAsJSONAction, '_saveAs').and.callFake(completedTree => {
-            console.log(completedTree);
             expect(Object.keys(completedTree).length).toBe(2);
             expect(Object.prototype.hasOwnProperty.call(completedTree, 'openmct')).toBeTruthy();
             expect(Object.prototype.hasOwnProperty.call(completedTree, 'rootId')).toBeTruthy();
