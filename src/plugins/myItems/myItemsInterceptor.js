@@ -27,9 +27,9 @@ function myItemsInterceptor(identifierObject, name, openmct) {
     const myItemsModel = {
         identifier: identifierObject,
         name,
-        "type": "folder",
-        "composition": [],
-        "location": "ROOT"
+        type: "folder",
+        composition: [],
+        location: "ROOT"
     };
 
     return {
