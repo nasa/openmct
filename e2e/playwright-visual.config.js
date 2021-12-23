@@ -26,7 +26,6 @@ const config = {
     reporter: [
         ['list'],
         ['junit', { outputFile: 'test-results/results.xml' }],
-        ['allure-playwright']
     ]
 };
 
