@@ -64,7 +64,7 @@ describe('Export as JSON plugin', () => {
         expect(exportAsJSONAction.appliesTo([domainObject])).toEqual(true);
     });
 
-    it('ExportAsJSONAction applies does not applies to non-creatable objects', function () {
+    it('ExportAsJSONAction applies does not applies to non-creatable objects', () => {
         domainObject = {
             composition: [],
             location: 'mine',
@@ -77,7 +77,7 @@ describe('Export as JSON plugin', () => {
         expect(exportAsJSONAction.appliesTo([domainObject])).toEqual(false);
     });
 
-    it('ExportAsJSONAction exports object from tree', function (done) {
+    it('ExportAsJSONAction exports object from tree', (done) => {
         const parent = {
             composition: [{
                 key: 'child',
@@ -132,7 +132,7 @@ describe('Export as JSON plugin', () => {
         exportAsJSONAction.invoke([parent]);
     });
 
-    it('ExportAsJSONAction skips non-creatable objects from tree', function (done) {
+    it('ExportAsJSONAction skips non-creatable objects from tree', (done) => {
         const parent = {
             composition: [{
                 key: 'child',
@@ -187,7 +187,7 @@ describe('Export as JSON plugin', () => {
         exportAsJSONAction.invoke([parent]);
     });
 
-    it('can export self-containing objects', function (done) {
+    it('can export self-containing objects', (done) => {
         const parent = {
             composition: [{
                 key: 'infinteChild',
