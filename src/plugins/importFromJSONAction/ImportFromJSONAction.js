@@ -68,6 +68,7 @@ export default class ImportAsJSONAction {
      * @param {object} object
      * @param {object} changes
      */
+
     onSave(object, changes) {
         const selectFile = changes.selectFile;
         const objectTree = selectFile.body;
