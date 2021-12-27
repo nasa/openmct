@@ -36,12 +36,13 @@ const { test, expect } = require('@playwright/test');
 const percySnapshot = require('@percy/playwright');
 const path = require('path');
 const sinon = require('sinon');
+const fs = require('fs');
 
-const VISUAL_GRACE_PERIOD = 5 * 1000; //Lets the application "simmer" before the snapshot is taken
+const VISUAL_GRACE_PERIOD = 1 * 1000; //Lets the application "simmer" before the snapshot is taken
 
 // Snippet from https://github.com/microsoft/playwright/issues/6347#issuecomment-965887758
 // Will replace with cy.clock() equivalent
-test.beforeEach(async ({ context }) => {
+test.beforeEach(async ({ context,page }) => {
     await context.addInitScript({
         // eslint-disable-next-line no-undef
         path: path.join(__dirname, '../../..', './node_modules/sinon/pkg/sinon.js')
@@ -49,11 +50,10 @@ test.beforeEach(async ({ context }) => {
     await context.addInitScript(() => {
         window.__clock = sinon.useFakeTimers(); //Set browser clock to UNIX Epoch
     });
+    await page.goto('/', { waitUntil: 'networkidle' });
 });
 
 test('Visual - Root and About', async ({ page }) => {
-    // Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
 
     // Verify that Create button is actionable
     const createButtonLocator = page.locator('button:has-text("Create")');
@@ -77,8 +77,6 @@ test('Visual - Root and About', async ({ page }) => {
 });
 
 test('Visual - Default Condition Set', async ({ page }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -95,8 +93,6 @@ test('Visual - Default Condition Set', async ({ page }) => {
 });
 
 test('Visual - Default Condition Widget', async ({ page }) => {
-    //Go to baseURL
-    await page.goto('/', { waitUntil: 'networkidle' });
 
     //Click the Create button
     await page.click('button:has-text("Create")');
@@ -110,4 +106,36 @@ test('Visual - Default Condition Widget', async ({ page }) => {
     // Take a snapshot of the newly created Condition Widget object
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'Default Condition Widget');
+});
+
+test('Visual - Default Timer', async ({ page }) => {
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click text=Timer
+    await page.click('text=Timer');
+
+    // Click text=OK
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Condition Widget object
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Timer');
+});
+
+test('Visual - Default Display Layout', async ({ page }) => {
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click text=Timer
+    await page.click('text=Display Layout');
+
+    // Click text=OK
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Condition Widget object
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Display Layout');
 });

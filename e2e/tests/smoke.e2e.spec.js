@@ -44,6 +44,5 @@ test('Verify that the create button appears and that the Folder Domain Object is
     await page.click('button:has-text("Create")');
 
     // Verify that Create Folder appears in the dropdown
-    const locator = page.locator(':nth-match(:text("Folder"), 2)');
-    await expect(locator).toBeEnabled();
+    await expect(page.locator(':nth-match(:text("Folder"), 2)')).toBeEnabled();
 });
