@@ -5,7 +5,7 @@
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
     retries: 0,
-    testDir: 'tests',
+    testDir: 'tests/visual',
     timeout: 90 * 1000,
     workers: 1,
     webServer: {
