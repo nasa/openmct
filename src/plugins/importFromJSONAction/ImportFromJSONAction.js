@@ -43,7 +43,13 @@ export default class ImportAsJSONAction {
      */
     appliesTo(objectPath) {
         const domainObject = objectPath[0];
-        if (domainObject && domainObject.locked) {
+        const locked = domainObject && domainObject.locked;
+        const persistable = this.openmct.objects.isPersistable(domainObject.identifier);
+        const TypeDefinition = this.openmct.types.get(domainObject.type);
+        const definition = TypeDefinition.definition;
+        const creatable = definition && definition.creatable;
+
+        if (locked || !persistable || !creatable) {
             return false;
         }
 
@@ -62,6 +68,7 @@ export default class ImportAsJSONAction {
      * @param {object} object
      * @param {object} changes
      */
+
     onSave(object, changes) {
         const selectFile = changes.selectFile;
         const objectTree = selectFile.body;
@@ -214,8 +221,8 @@ export default class ImportAsJSONAction {
             ]
         };
 
-        this.openmct.forms.showForm(formStructure).
-            then(changes => {
+        this.openmct.forms.showForm(formStructure)
+            .then(changes => {
                 let onSave = this.onSave.bind(this);
                 onSave(domainObject, changes);
             });

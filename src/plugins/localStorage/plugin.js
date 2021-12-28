@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,43 +20,10 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'moment'
-], function (
-    moment
-) {
+import LocalStorageObjectProvider from './LocalStorageObjectProvider';
 
-    var DATE_FORMAT = "HH:mm:ss",
-        DATE_FORMATS = [
-            DATE_FORMAT
-        ];
-
-    /**
-     * Formatter for duration. Uses moment to produce a date from a given
-     * value, but output is formatted to display only time. Can be used for
-     * specifying a time duration. For specifying duration, it's best to
-     * specify a date of January 1, 1970, as the ms offset will equal the
-     * duration represented by the time.
-     *
-     * @implements {Format}
-     * @constructor
-     * @memberof platform/commonUI/formats
-     */
-    function DurationFormat() {
-        this.key = "duration";
-    }
-
-    DurationFormat.prototype.format = function (value) {
-        return moment.utc(value).format(DATE_FORMAT);
+export default function (namespace = '', storageSpace = 'mct') {
+    return function (openmct) {
+        openmct.objects.addProvider(namespace, new LocalStorageObjectProvider(storageSpace));
     };
-
-    DurationFormat.prototype.parse = function (text) {
-        return moment.duration(text).asMilliseconds();
-    };
-
-    DurationFormat.prototype.validate = function (text) {
-        return moment.utc(text, DATE_FORMATS, true).isValid();
-    };
-
-    return DurationFormat;
-});
+}

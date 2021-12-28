@@ -41,14 +41,10 @@ export default function BarGraphCompositionPolicy(openmct) {
 
     return {
         allow: function (parent, child) {
-            if (child.type === 'conditionSet') {
-                return false;
-            }
-
-            if ((parent.type === BAR_GRAPH_KEY)
-                && (!hasBarGraphTelemetry(child))
-            ) {
-                return false;
+            if (parent.type === BAR_GRAPH_KEY) {
+                if ((child.type === 'conditionSet') || (!hasBarGraphTelemetry(child))) {
+                    return false;
+                }
             }
 
             return true;
