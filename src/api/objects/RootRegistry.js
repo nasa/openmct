@@ -20,39 +20,35 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define([
-    'lodash'
-], function (
-    _
-) {
+import _ from 'lodash';
 
-    function RootRegistry() {
+export default class RootRegistry {
+
+    constructor(openmct) {
         this.providers = [];
+        this._openmct = openmct;
     }
 
-    RootRegistry.prototype.getRoots = function () {
+    getRoots() {
         const promises = this.providers.map(function (provider) {
             return provider();
         });
 
         return Promise.all(promises)
             .then(_.flatten);
-    };
+    }
 
-    function isKey(key) {
+    isKey(key) {
         return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
     }
 
-    RootRegistry.prototype.addRoot = function (key) {
-        if (isKey(key) || (Array.isArray(key) && key.every(isKey))) {
+    addRoot(key) {
+        if (this.isKey(key) || (Array.isArray(key) && key.every(this.isKey))) {
             this.providers.push(function () {
                 return key;
             });
         } else if (typeof key === "function") {
             this.providers.push(key);
         }
-    };
-
-    return RootRegistry;
-
-});
+    }
+}

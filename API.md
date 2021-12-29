@@ -52,6 +52,8 @@
     - [The URL Status Indicator](#the-url-status-indicator)
     - [Creating a Simple Indicator](#creating-a-simple-indicator)
     - [Custom Indicators](#custom-indicators)
+  - [Priority API](#priority-api)
+    - [Priority Types](#priority-types)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -252,11 +254,11 @@ openmct.objects.addRoot({
     });
 ```
 
-The `addRoot` function takes a single [object identifier](#domain-objects-and-identifiers) 
-as an argument. 
+The `addRoot` function takes a two arguments, an [object identifier](#domain-objects-and-identifiers) and a [priority](#priority-api) or numeric value.
 
-Root objects are loaded just like any other objects, i.e. via an object
-provider.
+When using the `getAll` method of the object API, they will be returned in order of priority.
+
+Root objects are loaded just like any other objects, i.e. via an object provider.
 
 ## Object Providers
 
@@ -1050,4 +1052,26 @@ A completely custom indicator can be added by simply providing a DOM element to 
     openmct.indicators.add({
         element: domNode
     });
+```
+
+## Priority API
+
+Open MCT provides some built-in priority values that can be used in the application for view providers, indicators, root object order, and more.
+
+### Priority Types
+
+Currently, the Open MCT Priority API provides (type: numeric value):
+- HIGH: 1000
+- Default: 0
+- LOW: -1000
+
+View provider Example:
+
+``` javascript
+  class ViewProvider {
+    ...
+    priority() {
+        return openmct.priority.HIGH;
+    }
+}
 ```
