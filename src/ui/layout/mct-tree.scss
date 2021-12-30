@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 .c-tree-and-search {
     display: flex;
     flex-direction: column;
@@ -136,7 +138,7 @@
         }
 
         > * + * {
-            margin-left: ceil($interiorMarginSm / 2);
+            margin-left: ceil(math.div($interiorMarginSm, 2));
         }
 
         @include hover {
