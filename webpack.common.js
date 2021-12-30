@@ -127,5 +127,5 @@ module.exports = {
             }
         ]
     },
-    stats: 'detailed'
+    stats: 'errors-warnings'
 };
