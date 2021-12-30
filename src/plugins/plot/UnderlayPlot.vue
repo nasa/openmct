@@ -20,8 +20,12 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<div ref="plotWrapper">
-    <div ref="underlay"></div>
+<div ref="plotWrapper"
+     class="c-plot"
+>
+    <div ref="underlay"
+         class="c-bar-chart"
+    ></div>
 </div>
 </template>
 
@@ -29,32 +33,8 @@
 import Plotly from 'plotly-basic';
 import {getValidatedData} from "@/plugins/plan/util";
 
-const shapeLabelsBlue = {
-    x: [5, 7, 9, 12, 15],
-    y: [8, 12, 14, 16, 16]
-};
-
-const shapeLabelsRed = {
-    x: [7, 7, 8],
-    y: [10, 12, 14]
-};
-
 const PATH_COLORS = ['blue', 'red', 'green'];
-
-const shapesData = [
-    // {
-    //     x: [15, 10, 10, 11, 11],
-    //     y: [14, 17, 14, 12, 16],
-    //     mode: "markers",
-    //     name: "trace",
-    //     marker: {
-    //         size: 12,
-    //         color: "lightgreen"
-    //     }
-    // },
-    shapeLabelsBlue,
-    shapeLabelsRed
-];
+const MARKER_COLOR = 'white';
 
 export default {
     inject: ['openmct', 'domainObject'],
@@ -89,8 +69,7 @@ export default {
     },
     methods: {
         getPlotData(domainObject) {
-            // this.shapesData = getValidatedData(domainObject);
-            this.shapesData = shapesData;
+            this.shapesData = getValidatedData(domainObject);
         },
         observeForChanges(mutatedObject) {
             this.getPlotData(mutatedObject);
@@ -111,6 +90,10 @@ export default {
             }
         },
         getShapes(data) {
+            let markerData = {
+                x: [],
+                y: []
+            };
             const shapes = data.map((shapeData, index1) => {
                 if (!shapeData.x || !shapeData.y
                 || !shapeData.x.length || !shapeData.y.length
@@ -122,6 +105,9 @@ export default {
                 shapeData.x.forEach((point) => {
                     text.push(`${parseFloat(point).toPrecision(2)}`);
                 });
+
+                markerData.x = markerData.x.concat(shapeData.x);
+                markerData.y = markerData.y.concat(shapeData.y);
 
                 return {
                     x: shapeData.x,
@@ -135,6 +121,16 @@ export default {
                     },
                     opacity: 0.5
                 };
+            });
+
+            shapes.push({
+                x: markerData.x,
+                y: markerData.y,
+                mode: "markers",
+                marker: {
+                    size: 6,
+                    color: MARKER_COLOR
+                }
             });
 
             return shapes;
@@ -166,10 +162,28 @@ export default {
 
             return {
                 shapes,
+                layer: 'below',
                 paper_bgcolor: 'transparent',
                 plot_bgcolor: 'transparent',
                 showlegend: false,
-                autosize: true
+                autosize: true,
+                //TODO: Revisit rangemode here
+                yaxis: {
+                    automargin: true,
+                    fixedrange: true,
+                    rangemode: 'tozero'
+                },
+                xaxis: {
+                    automargin: true,
+                    fixedrange: true,
+                    rangemode: 'tozero'
+                },
+                margin: {
+                    l: 5,
+                    r: 5,
+                    t: 5,
+                    b: 0
+                }
             };
         },
         updatePlot() {
