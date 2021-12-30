@@ -41,7 +41,7 @@ function ObjectAPI(typeRegistry, openmct) {
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
-    this.rootRegistry = new RootRegistry();
+    this.rootRegistry = new RootRegistry(openmct);
     this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
@@ -367,14 +367,17 @@ ObjectAPI.prototype.endTransaction = function () {
 
 /**
  * Add a root-level object.
- * @param {module:openmct.ObjectAPI~Identifier|function} an array of
+ * @param {module:openmct.ObjectAPI~Identifier} identifier an Open MCT identifier object
+ *        Deprecated: {module:openmct.ObjectAPI~Identifier|function} an array of
  *        identifiers for root level objects, or a function that returns a
  *        promise for an identifier or an array of root level objects.
+ * @param {module:openmct.PriorityAPI~priority|Number} priority a number representing
+ *        this items position in the root objects (example: order in object tree)
  * @method addRoot
  * @memberof module:openmct.ObjectAPI#
  */
-ObjectAPI.prototype.addRoot = function (key) {
-    this.rootRegistry.addRoot(key);
+ObjectAPI.prototype.addRoot = function (identifier, priority) {
+    this.rootRegistry.addRoot(identifier, priority);
 };
 
 /**

@@ -20,35 +20,47 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import _ from 'lodash';
+import utils from './object-utils';
 
 export default class RootRegistry {
 
     constructor(openmct) {
-        this.providers = [];
+        this._rootItems = [];
         this._openmct = openmct;
     }
 
     getRoots() {
-        const promises = this.providers.map(function (provider) {
-            return provider();
-        });
+        const sortedItems = this._rootItems.sort((a, b) => a.priority - b.priority);
+        const promises = sortedItems.map((rootItem) => rootItem.provider());
 
-        return Promise.all(promises)
-            .then(_.flatten);
+        return Promise.all(promises);
     }
 
-    isKey(key) {
-        return _.isObject(key) && _.has(key, 'key') && _.has(key, 'namespace');
-    }
+    // will support older array|function options, as well as new priority argument
+    addRoot(rootItem, priority) {
 
-    addRoot(key) {
-        if (this.isKey(key) || (Array.isArray(key) && key.every(this.isKey))) {
-            this.providers.push(function () {
-                return key;
+        if (utils.isIdentifier(rootItem)) {
+            this._storeRootItem(rootItem, priority || this._openmct.priority.DEFAULT);
+        } else if (Array.isArray(rootItem)) {
+            rootItem.forEach(item => {
+                if (utils.isIdentifier(item)) {
+                    this._storeRootItem(item, this._openmct.priority.DEFAULT);
+                }
             });
-        } else if (typeof key === "function") {
-            this.providers.push(key);
+        } else if (typeof rootItem === 'function') {
+            rootItem().then(result => {
+                // mmm dogfood
+                this.addRoot(result);
+            });
         }
+    }
+
+    _storeRootItem(identifier, priority) {
+        this._rootItems.push({
+            priority,
+            provider: () => {
+                return identifier;
+            }
+        });
     }
 }
