@@ -93,3 +93,21 @@ test('Visual - Default Condition Set', async ({ page }) => {
     await page.waitForTimeout(VISUAL_GRACE_PERIOD);
     await percySnapshot(page, 'Default Condition Set');
 });
+
+test('Visual - Default Condition Widget', async ({ page }) => {
+    //Go to baseURL
+    await page.goto('/', { waitUntil: 'networkidle' });
+
+    //Click the Create button
+    await page.click('button:has-text("Create")');
+
+    // Click text=Condition Widget
+    await page.click('text=Condition Widget');
+
+    // Click text=OK
+    await page.click('text=OK');
+
+    // Take a snapshot of the newly created Condition Widget object
+    await page.waitForTimeout(VISUAL_GRACE_PERIOD);
+    await percySnapshot(page, 'Default Condition Widget');
+});
