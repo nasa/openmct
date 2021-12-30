@@ -7,7 +7,6 @@
  * node app.js [options]
  */
 
-
 const options = require('minimist')(process.argv.slice(2));
 const express = require('express');
 const app = express();
@@ -40,10 +39,19 @@ app.use('/proxyUrl', function proxyRequest(req, res, next) {
     }).on('error', next)).pipe(res);
 });
 
+class WatchRunPlugin {
+    apply(compiler) {
+        compiler.hooks.emit.tapAsync('WatchRunPlugin', (compilation, callback) => {
+            console.log('Begin compile at ' + new Date());
+            callback();
+        });
+    }
+}
+
 const webpack = require('webpack');
-const webpackConfig = require('./webpack.config.js');
+const webpackConfig = require('./webpack.dev.js');
 webpackConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
-webpackConfig.plugins.push(function() { this.plugin('watch-run', function(watching, callback) { console.log('Begin compile at ' + new Date()); callback(); }) });
+webpackConfig.plugins.push(new WatchRunPlugin());
 
 webpackConfig.entry.openmct = [
     'webpack-hot-middleware/client?reload=true',
@@ -62,9 +70,7 @@ app.use(require('webpack-dev-middleware')(
 
 app.use(require('webpack-hot-middleware')(
     compiler,
-    {
-
-    }
+    {}
 ));
 
 // Expose index.html for development users.
@@ -74,5 +80,5 @@ app.get('/', function (req, res) {
 
 // Finally, open the HTTP server and log the instance to the console
 app.listen(options.port, options.host, function() {
-    console.log('Open MCT application running at %s:%s', options.host, options.port)
+    console.log('Open MCT application running at %s:%s', options.host, options.port);
 });

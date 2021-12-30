@@ -22,7 +22,6 @@
 
 define([
     'EventEmitter',
-    'uuid',
     './BundleRegistry',
     './installDefaultBundles',
     './api/api',
@@ -53,7 +52,6 @@ define([
     'vue'
 ], function (
     EventEmitter,
-    uuid,
     BundleRegistry,
     installDefaultBundles,
     api,
