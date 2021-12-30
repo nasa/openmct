@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div v-if="domainObject && domainObject.type === 'time-strip'"
+    <div v-if="supportsIndependentTime"
          class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
     >
         <independent-time-conductor :domain-object="domainObject"
@@ -20,6 +20,11 @@ import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
+const SupportedViewTypes = [
+    'plot-stacked',
+    'plot-overlay',
+    'time-strip.view'
+];
 export default {
     components: {
         IndependentTimeConductor
@@ -71,6 +76,11 @@ export default {
             } else {
                 return 'u-contents';
             }
+        },
+        supportsIndependentTime() {
+            const viewKey = this.getViewKey();
+
+            return this.domainObject && SupportedViewTypes.includes(viewKey);
         }
     },
     destroyed() {
