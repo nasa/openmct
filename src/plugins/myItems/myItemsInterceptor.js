@@ -22,7 +22,7 @@
 
 import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
 
-function myItemsInterceptor(identifierObject, name, openmct) {
+function myItemsInterceptor(identifierObject, openmct, name) {
 
     const myItemsModel = {
         identifier: identifierObject,
