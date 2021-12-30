@@ -1,7 +1,9 @@
+@use 'sass:math';
+
 .c-toggle-switch {
     $d: 12px;
     $m: 2px;
-    $br: $d/1.5;
+    $br: math.div($d, 1.5);
     cursor: pointer;
     display: inline-flex;
     align-items: center;
