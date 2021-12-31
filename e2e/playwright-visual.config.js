@@ -7,6 +7,7 @@ const config = {
     retries: 0,
     testDir: 'tests',
     timeout: 90 * 1000,
+    workers: 1,
     webServer: {
         command: 'npm run start',
         port: 8080,
