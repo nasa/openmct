@@ -84,7 +84,8 @@ define([
 
         return function install(openmct) {
             openmct.types.addType('summary-widget', widgetType);
-            openmct.composition.addPolicy(new SummaryWidgetsCompositionPolicy(openmct).allow);
+            let compositionPolicy = new SummaryWidgetsCompositionPolicy(openmct);
+            openmct.composition.addPolicy(compositionPolicy.allow.bind(compositionPolicy));
             openmct.telemetry.addProvider(new SummaryWidgetMetadataProvider(openmct));
             openmct.telemetry.addProvider(new SummaryWidgetTelemetryProvider(openmct));
             openmct.objectViews.addProvider(new SummaryWidgetViewProvider(openmct));
