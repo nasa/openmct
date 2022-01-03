@@ -20,6 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+@use 'sass:math';
+
 /******************************************************** BUTTONS */
 // Optionally can include icon in :before via markup
 button {
@@ -785,7 +787,7 @@ select {
         }
 
         &--swatched {
-            padding-bottom: floor($pTB / 2);
+            padding-bottom: floor(math.div($pTB, 2));
             width: 2em; // Standardize the width
         }
 
@@ -935,7 +937,7 @@ select {
 
 @mixin sliderTrack($bg: $scrollbarTrackColorBg, $knobH: 12px, $trackH: 3px) {
     border-radius: 2px;
-    $breakPointPx: floor(($knobH - $trackH) / 2);
+    $breakPointPx: floor(math.div($knobH - $trackH, 2));
     $bp1: $breakPointPx;
     $bp2: $breakPointPx + $trackH;
     box-sizing: border-box;
