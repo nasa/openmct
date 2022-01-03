@@ -30,6 +30,8 @@ import {
 } from './createMyItemsIdentifier';
 
 const MISSING_NAME = `Missing: ${MY_ITEMS_KEY}`;
+const DEFAULT_NAME = 'My Items';
+const FANCY_NAME = 'Fancy Items';
 const myItemsIdentifier = createMyItemsIdentifier();
 
 describe("the plugin", () => {
@@ -40,53 +42,82 @@ describe("the plugin", () => {
         name: MISSING_NAME
     };
 
-    beforeEach((done) => {
-        openmct = createOpenMct();
+    describe('with no arguments passed in', () => {
 
-        openmct.install(openmct.plugins.MyItems());
+        beforeEach((done) => {
+            openmct = createOpenMct();
+            openmct.install(openmct.plugins.MyItems());
 
-        openmct.on('start', done);
-        openmct.startHeadless();
-    });
-
-    afterEach(() => {
-        return resetApplicationState(openmct);
-    });
-
-    it('when installed, adds "My Items" to the root', async () => {
-        const root = await openmct.objects.get('ROOT');
-        const rootCompostionCollection = openmct.composition.get(root);
-        const rootCompostion = await rootCompostionCollection.load();
-        let myItems = rootCompostion.filter((domainObject) => {
-            return openmct.objects.areIdsEqual(domainObject.identifier, myItemsIdentifier);
-        })[0];
-
-        expect(myItems).toBeDefined();
-    });
-
-    describe('adds an interceptor that returns a "My Items" model for', () => {
-        let myItemsMissing;
-        let mockMissingProvider;
-        let activeProvider;
-
-        beforeEach(async () => {
-            mockMissingProvider = {
-                get: () => Promise.resolve(missingObj),
-                create: () => Promise.resolve(missingObj),
-                update: () => Promise.resolve(missingObj)
-            };
-
-            activeProvider = mockMissingProvider;
-            spyOn(openmct.objects, 'getProvider').and.returnValue(activeProvider);
-            myItemsMissing = await openmct.objects.get(myItemsIdentifier);
+            openmct.on('start', done);
+            openmct.startHeadless();
         });
 
-        it('missing objects', () => {
-            let idsMatchMissing = openmct.objects.areIdsEqual(myItemsMissing.identifier, myItemsIdentifier);
-
-            expect(myItemsMissing).toBeDefined();
-            expect(idsMatchMissing).toBeTrue();
+        afterEach(() => {
+            return resetApplicationState(openmct);
         });
+
+        it('when installed, adds "My Items" to the root', async () => {
+            const root = await openmct.objects.get('ROOT');
+            const rootCompostionCollection = openmct.composition.get(root);
+            const rootCompostion = await rootCompostionCollection.load();
+            let myItems = rootCompostion.filter((domainObject) => {
+                return openmct.objects.areIdsEqual(domainObject.identifier, myItemsIdentifier);
+            })[0];
+
+            expect(myItems.name).toBe(DEFAULT_NAME);
+            expect(myItems).toBeDefined();
+        });
+
+        describe('adds an interceptor that returns a "My Items" model for', () => {
+            let myItemsMissing;
+            let mockMissingProvider;
+            let activeProvider;
+
+            beforeEach(async () => {
+                mockMissingProvider = {
+                    get: () => Promise.resolve(missingObj),
+                    create: () => Promise.resolve(missingObj),
+                    update: () => Promise.resolve(missingObj)
+                };
+
+                activeProvider = mockMissingProvider;
+                spyOn(openmct.objects, 'getProvider').and.returnValue(activeProvider);
+                myItemsMissing = await openmct.objects.get(myItemsIdentifier);
+            });
+
+            it('missing objects', () => {
+                let idsMatchMissing = openmct.objects.areIdsEqual(myItemsMissing.identifier, myItemsIdentifier);
+
+                expect(myItemsMissing).toBeDefined();
+                expect(idsMatchMissing).toBeTrue();
+            });
+        });
+
+    });
+
+    describe('with a name argument passed in', () => {
+
+        beforeEach((done) => {
+            openmct = createOpenMct();
+            openmct.install(openmct.plugins.MyItems(FANCY_NAME));
+
+            spyOn(openmct.objects, 'isMissing').and.returnValue(true);
+
+            openmct.on('start', done);
+            openmct.startHeadless();
+        });
+
+        afterEach(() => {
+            return resetApplicationState(openmct);
+        });
+
+        it('when installed, uses the passed in name', async () => {
+            let myItems = await openmct.objects.get(myItemsIdentifier);
+
+            expect(myItems.name).toBe(FANCY_NAME);
+            expect(myItems).toBeDefined();
+        });
+
     });
 
 });

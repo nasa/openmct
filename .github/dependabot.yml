@@ -16,6 +16,7 @@ updates:
       - dependency-name: "*jasmine*"
       - dependency-name: "*playwright*"
       - dependency-name: "*percy*"
+      - dependency-name: "*vue-loader*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
