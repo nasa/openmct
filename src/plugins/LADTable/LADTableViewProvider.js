@@ -31,7 +31,7 @@ export default class LADTableViewProvider {
     }
 
     canView(domainObject) {
-        const supportsComposition = this.openmct.composition.get(domainObject) !== undefined;
+        const supportsComposition = this.openmct.composition.supportsComposition(domainObject);
         const providesTelemetry = this.openmct.telemetry.isTelemetryObject(domainObject);
 
         return domainObject.type === 'LadTable'
