@@ -26,7 +26,7 @@ import objectUtils from '../../api/objects/object-utils';
 import DomainObjectImpl from '../../../platform/core/src/objects/DomainObjectImpl';
 import ContextualDomainObject from '../../../platform/core/src/capabilities/ContextualDomainObject';
 
-export default function CouchPlugin(options) {
+export default function LegacySupportPlugin() {
     return function install(openmct) {
         openmct.legacyBundle = {
             extensions: {
