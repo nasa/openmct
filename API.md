@@ -249,14 +249,22 @@ To do so, use the `addRoot` method of the object API.
 eg.
 ```javascript
 openmct.objects.addRoot({
-        namespace: "example.namespace",
-        key: "my-key"
-    });
+    namespace: "example.namespace",
+    key: "my-key"
+},
+openmct.priority.HIGH);
 ```
 
-The `addRoot` function takes a two arguments, an [object identifier](#domain-objects-and-identifiers) and a [priority](#priority-api) or numeric value.
+The `addRoot` function takes a two arguments, the first can be an [object identifier](#domain-objects-and-identifiers) for a root level object, or an array of identifiers for root 
+level objects, or a function that returns a promise for an identifier or an array of root level objects, the second is a [priority](#priority-api) or numeric value.
 
 When using the `getAll` method of the object API, they will be returned in order of priority.
+
+eg.
+```javascript
+openmct.objects.addRoot(identifier, openmct.priority.LOW); // low = -1000, will appear last in composition or tree
+openmct.objects.addRoot(otherIdentifier, openmct.priority.HIGH); // high = 1000, will appear first in composition or tree
+```
 
 Root objects are loaded just like any other objects, i.e. via an object provider.
 

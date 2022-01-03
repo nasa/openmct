@@ -367,12 +367,12 @@ ObjectAPI.prototype.endTransaction = function () {
 
 /**
  * Add a root-level object.
- * @param {module:openmct.ObjectAPI~Identifier} identifier an Open MCT identifier object
- *        Deprecated: {module:openmct.ObjectAPI~Identifier|function} an array of
- *        identifiers for root level objects, or a function that returns a
+ * @param {module:openmct.ObjectAPI~Identifier|array|function} identifier an identifier or
+ *        an array of identifiers for root level objects, or a function that returns a
  *        promise for an identifier or an array of root level objects.
  * @param {module:openmct.PriorityAPI~priority|Number} priority a number representing
- *        this items position in the root objects (example: order in object tree)
+ *        this item(s) position in the root object's composition (example: order in object tree).
+ *        For arrays, they are treated as blocks.
  * @method addRoot
  * @memberof module:openmct.ObjectAPI#
  */
