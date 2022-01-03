@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 /**************************** BASE - MOBILE AND DESKTOP */
 .l-multipane {
     display: flex;
@@ -234,7 +236,7 @@
 
                 > .l-pane__handle {
                     left: 0;
-                    transform: translateX(floor($splitterHandleD / -2)); // Center over the pane edge
+                    transform: translateX(floor(math.div($splitterHandleD, -2))); // Center over the pane edge
                 }
 
                 [class*="expand-button"] {
@@ -251,7 +253,7 @@
 
                 > .l-pane__handle {
                     right: 0;
-                    transform: translateX(floor($splitterHandleD / 2));
+                    transform: translateX(floor(math.div($splitterHandleD, 2)));
                 }
 
                 [class*="expand-button"] {
@@ -287,7 +289,7 @@
                 padding-top: $m;
                 > .l-pane__handle {
                     top: 0;
-                    transform: translateY(floor($splitterHandleD / -1));
+                    transform: translateY(floor(math.div($splitterHandleD, -1)));
                 }
 
                 .l-pane__collapse-button:before {
@@ -306,7 +308,7 @@
             &[class*="-after"] {
                 > .l-pane__handle {
                     bottom: 0;
-                    transform: translateY(floor($splitterHandleD / 1));
+                    transform: translateY(floor(math.div($splitterHandleD, 1)));
                 }
 
                 &:not(.l-pane--collapsed) > .l-pane__collapse-button {
