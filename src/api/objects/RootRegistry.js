@@ -30,13 +30,12 @@ export default class RootRegistry {
     }
 
     getRoots() {
-        const sortedItems = this._rootItems.sort((a, b) => a.priority - b.priority);
-        const promises = sortedItems.map((rootItem) => rootItem.provider()).flat();
+        const sortedItems = this._rootItems.sort((a, b) => b.priority - a.priority);
+        const promises = sortedItems.map((rootItem) => rootItem.provider());
 
-        return Promise.all(promises);
+        return Promise.all(promises).then(rootItems => rootItems.flat());
     }
 
-    // will support older array|function options, as well as new priority argument
     addRoot(rootItem, priority) {
 
         if (!this._isValid(rootItem)) {
