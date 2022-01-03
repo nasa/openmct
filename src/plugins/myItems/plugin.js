@@ -23,11 +23,13 @@
 import { createMyItemsIdentifier } from "./createMyItemsIdentifier";
 import myItemsInterceptor from "./myItemsInterceptor";
 
-export default function MyItemsPlugin(namespace = '') {
+const MY_ITEMS_DEFAULT_NAME = 'My Items';
+
+export default function MyItemsPlugin(name = MY_ITEMS_DEFAULT_NAME, namespace = '') {
     return function install(openmct) {
         const identifier = createMyItemsIdentifier(namespace);
 
-        openmct.objects.addGetInterceptor(myItemsInterceptor(identifier, openmct));
+        openmct.objects.addGetInterceptor(myItemsInterceptor(openmct, identifier, name));
         openmct.objects.addRoot(identifier);
     };
 }
