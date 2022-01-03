@@ -34,7 +34,7 @@
     "html2canvas": "^1.0.0-rc.7",
     "imports-loader": "^0.8.0",
     "istanbul-instrumenter-loader": "^3.0.1",
-    "jasmine-core": "^3.7.1",
+    "jasmine-core": "^4.0.0",
     "jsdoc": "^3.3.2",
     "karma": "6.3.9",
     "karma-chrome-launcher": "3.1.0",
