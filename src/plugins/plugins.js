@@ -242,7 +242,7 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.LocalStorage = LocalStorage.default;
     plugins.LegacySupport = LegacySupportPlugin.default;
-    plugins.LegacyIndicators = LegacyIndicatorsPlugin.default;
+    plugins.LegacyIndicators = LegacyIndicatorsPlugin;
 
     return plugins;
 });
