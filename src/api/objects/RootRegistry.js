@@ -31,7 +31,7 @@ export default class RootRegistry {
 
     getRoots() {
         const sortedItems = this._rootItems.sort((a, b) => a.priority - b.priority);
-        const promises = sortedItems.map((rootItem) => rootItem.provider());
+        const promises = sortedItems.map((rootItem) => rootItem.provider()).flat();
 
         return Promise.all(promises);
     }
@@ -39,28 +39,25 @@ export default class RootRegistry {
     // will support older array|function options, as well as new priority argument
     addRoot(rootItem, priority) {
 
-        if (utils.isIdentifier(rootItem)) {
-            this._storeRootItem(rootItem, priority || this._openmct.priority.DEFAULT);
-        } else if (Array.isArray(rootItem)) {
-            rootItem.forEach(item => {
-                if (utils.isIdentifier(item)) {
-                    this._storeRootItem(item, this._openmct.priority.DEFAULT);
-                }
-            });
-        } else if (typeof rootItem === 'function') {
-            rootItem().then(result => {
-                // mmm dogfood
-                this.addRoot(result);
-            });
+        if (!this._isValid(rootItem)) {
+            return;
         }
+
+        this._rootItems.push({
+            priority: priority || this._openmct.priority.DEFAULT,
+            provider: typeof rootItem === 'function' ? rootItem : () => rootItem
+        });
     }
 
-    _storeRootItem(identifier, priority) {
-        this._rootItems.push({
-            priority,
-            provider: () => {
-                return identifier;
-            }
-        });
+    _isValid(rootItem) {
+        if (utils.isIdentifier(rootItem) || typeof rootItem === 'function') {
+            return true;
+        }
+
+        if (Array.isArray(rootItem)) {
+            return rootItem.every(utils.isIdentifier);
+        }
+
+        return false;
     }
 }
