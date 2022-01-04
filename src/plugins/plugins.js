@@ -26,12 +26,12 @@ define([
     './remoteClock/plugin',
     './localTimeSystem/plugin',
     './ISOTimeFormat/plugin',
+    './myItems/plugin',
     '../../example/generator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
     './imagery/plugin',
-    '../../platform/import-export/bundle',
     './summaryWidget/plugin',
     './URLIndicatorPlugin/URLIndicatorPlugin',
     './telemetryMean/plugin',
@@ -41,6 +41,7 @@ define([
     './staticRootPlugin/plugin',
     './notebook/plugin',
     './displayLayout/plugin',
+    './formActions/plugin',
     './folderView/plugin',
     './flexibleLayout/plugin',
     './tabs/plugin',
@@ -71,19 +72,23 @@ define([
     './timeline/plugin',
     './hyperlink/plugin',
     './clock/plugin',
-    './DeviceClassifier/plugin'
+    './DeviceClassifier/plugin',
+    './timer/plugin',
+    './localStorage/plugin',
+    './legacySupport/plugin.js',
+    '../adapter/indicators/legacy-indicators-plugin'
 ], function (
     _,
     UTCTimeSystem,
     RemoteClock,
     LocalTimeSystem,
     ISOTimeFormat,
+    MyItems,
     GeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
     ImageryPlugin,
-    ImportExport,
     SummaryWidget,
     URLIndicatorPlugin,
     TelemetryMean,
@@ -93,6 +98,7 @@ define([
     StaticRootPlugin,
     Notebook,
     DisplayLayoutPlugin,
+    FormActions,
     FolderView,
     FlexibleLayout,
     Tabs,
@@ -123,11 +129,13 @@ define([
     Timeline,
     Hyperlink,
     Clock,
-    DeviceClassifier
+    DeviceClassifier,
+    Timer,
+    LocalStorage,
+    LegacySupportPlugin,
+    LegacyIndicatorsPlugin
 ) {
     const bundleMap = {
-        LocalStorage: 'platform/persistence/local',
-        MyItems: 'platform/features/my-items',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -139,11 +147,11 @@ define([
         };
     });
 
-    plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
 
-    plugins.ImportExport = ImportExport;
+    plugins.MyItems = MyItems.default;
 
     plugins.StaticRootPlugin = StaticRootPlugin;
 
@@ -188,7 +196,7 @@ define([
         return GeneratorPlugin;
     };
 
-    plugins.ExampleImagery = ExampleImagery;
+    plugins.ExampleImagery = ExampleImagery.default;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
     plugins.Chart = ChartPlugin.default;
@@ -199,6 +207,7 @@ define([
     plugins.URLIndicator = URLIndicatorPlugin;
     plugins.Notebook = Notebook.default;
     plugins.DisplayLayout = DisplayLayoutPlugin.default;
+    plugins.FormActions = FormActions;
     plugins.FolderView = FolderView;
     plugins.Tabs = Tabs;
     plugins.FlexibleLayout = FlexibleLayout;
@@ -229,7 +238,11 @@ define([
     plugins.Timeline = Timeline.default;
     plugins.Hyperlink = Hyperlink.default;
     plugins.Clock = Clock.default;
+    plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
+    plugins.LocalStorage = LocalStorage.default;
+    plugins.LegacySupport = LegacySupportPlugin.default;
+    plugins.LegacyIndicators = LegacyIndicatorsPlugin;
 
     return plugins;
 });

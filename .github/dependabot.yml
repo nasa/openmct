@@ -1,0 +1,27 @@
+
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"  
+    open-pull-requests-limit: 4
+    labels:
+      - "type:maintenance"
+      - "dependencies"
+      - "pr:e2e"
+    allow:
+      - dependency-name: "*eslint*"
+      - dependency-name: "*karma*"
+      - dependency-name: "*jasmine*"
+      - dependency-name: "*playwright*"
+      - dependency-name: "*percy*"
+      - dependency-name: "*vue-loader*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"    
+    labels:
+      - "type:maintenance"
+      - "dependencies"

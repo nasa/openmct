@@ -263,7 +263,8 @@ export default {
             this.openmct.telemetry.request(this.domainObject, options)
                 .then(data => {
                     if (data.length > 0) {
-                        this.updateView(data[data.length - 1]);
+                        this.latestDatum = data[data.length - 1];
+                        this.updateView();
                     }
                 });
         },
@@ -275,12 +276,19 @@ export default {
                     || (datumTimeStamp
                         && (this.openmct.time.bounds().end >= datumTimeStamp))
                 ) {
-                    this.updateView(datum);
+                    this.latestDatum = datum;
+                    this.updateView();
                 }
             }.bind(this));
         },
-        updateView(datum) {
-            this.datum = datum;
+        updateView() {
+            if (!this.updatingView) {
+                this.updatingView = true;
+                requestAnimationFrame(() => {
+                    this.datum = this.latestDatum;
+                    this.updatingView = false;
+                });
+            }
         },
         removeSubscription() {
             if (this.subscription) {
@@ -290,7 +298,8 @@ export default {
         },
         refreshData(bounds, isTick) {
             if (!isTick) {
-                this.datum = undefined;
+                this.latestDatum = undefined;
+                this.updateView();
                 this.requestHistoricalData(this.domainObject);
             }
         },

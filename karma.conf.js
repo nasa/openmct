@@ -22,20 +22,19 @@
 
 /*global module,process*/
 
-const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
-const reporters = ['spec', 'html', 'junit'];
+const reporters = ['spec', 'junit'];
 
 if (coverageEnabled) {
     reporters.push('coverage-istanbul');
 }
 
 module.exports = (config) => {
-    const webpackConfig = require('./webpack.config.js');
+    const webpackConfig = require('./webpack.dev.js');
     delete webpackConfig.output;
 
-    if (!devMode || coverageEnabled) {
+    if (coverageEnabled) {
         webpackConfig.module.rules.push({
             test: /\.js$/,
             exclude: /node_modules|example|lib|dist/,
@@ -52,7 +51,15 @@ module.exports = (config) => {
         basePath: '',
         frameworks: ['jasmine'],
         files: [
-            'indexTest.js'
+            'indexTest.js',
+            {
+                pattern: 'dist/couchDBChangesFeed.js*',
+                included: false
+            },
+            {
+                pattern: 'dist/inMemorySearchWorker.js*',
+                included: false
+            }
         ],
         port: 9876,
         reporters: reporters,
@@ -78,11 +85,11 @@ module.exports = (config) => {
         logLevel: config.LOG_INFO,
         autoWatch: true,
         // HTML test reporting.
-        htmlReporter: {
-            outputDir: "dist/reports/tests",
-            preserveDescribeNesting: true,
-            foldAll: false
-        },
+        // htmlReporter: {
+        //    outputDir: "dist/reports/tests",
+        //    preserveDescribeNesting: true,
+        //    foldAll: false
+        // },
         junitReporter: {
             outputDir: "dist/reports/tests",
             outputFile: "test-results.xml",
@@ -93,7 +100,7 @@ module.exports = (config) => {
             dir: process.env.CIRCLE_ARTIFACTS
                 ? process.env.CIRCLE_ARTIFACTS + '/coverage'
                 : "dist/reports/coverage",
-            reports: ['html', 'lcovonly', 'text-summary'],
+            reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
                     lines: 66
@@ -102,7 +109,7 @@ module.exports = (config) => {
         },
         specReporter: {
             maxLogLines: 5,
-            suppressErrorSummary: true,
+            suppressErrorSummary: false,
             suppressFailed: false,
             suppressPassed: false,
             suppressSkipped: true,

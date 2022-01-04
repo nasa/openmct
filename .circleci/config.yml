@@ -1,94 +1,193 @@
 version: 2.1
 executors:
-  linux:
+  pw-focal-development:
     docker:
-      - image: cimg/base:stable
+      - image: mcr.microsoft.com/playwright:focal
+    environment:
+      NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
+parameters:
+  BUST_CACHE:
+    description: "Set this with the CircleCI UI Trigger Workflow button (boolean = true) to bust the cache!"
+    default: false
+    type: boolean
+commands:
+  build_and_install:
+    description: "All steps used to build and install. Will not work on node10"
+    parameters:
+      node-version:
+        type: string
+    steps:
+      - checkout
+      - restore_cache_cmd:
+          node-version: << parameters.node-version >>
+      - node/install:
+          install-npm: true
+          node-version: << parameters.node-version >>
+      - run: npm install
+  restore_cache_cmd:
+    description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
+    parameters:
+      node-version:
+        type: string
+    steps:
+      - when:
+          condition: 
+            equal: [false, << pipeline.parameters.BUST_CACHE >> ]
+          steps:
+            - restore_cache:
+                key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+  save_cache_cmd:
+    description: "Custom command for saving cache."
+    parameters:
+      node-version:
+        type: string
+    steps:    
+      - save_cache:
+          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}
+          paths:
+            - ~/.npm
+            - node_modules
+  generate_and_store_version_and_filesystem_artifacts:
+    description: "Track important packages and files"
+    steps:
+      - run: |
+          mkdir /tmp/artifacts
+          printenv NODE_ENV >> /tmp/artifacts/NODE_ENV.txt
+          npm -v >> /tmp/artifacts/npm-version.txt
+          node -v >> /tmp/artifacts/node-version.txt
+          ls -latR >> /tmp/artifacts/dir.txt
+      - store_artifacts:
+          path: /tmp/artifacts/
+  upload_code_covio:
+    description: "Command to upload code coverage reports to codecov.io"
+    steps:
+        - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
 orbs:
-  node: circleci/node@4.5.1
-  browser-tools: circleci/browser-tools@1.1.3
+  node: circleci/node@4.9.0
+  browser-tools: circleci/browser-tools@1.2.3
 jobs:
-  test:
+  npm-audit:
+    parameters:
+      node-version:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: npm audit --audit-level=low
+      - generate_and_store_version_and_filesystem_artifacts
+  node10-lint:
+    executor: pw-focal-development
+    steps:
+      - checkout
+      - node/install:
+          install-npm: false #Cannot install latest npm version with node10.
+          node-version: lts/dubnium
+      - run: npm install
+      - run: npm run lint
+      - generate_and_store_version_and_filesystem_artifacts
+  unit-test:
     parameters:
       node-version:
         type: string
       browser:
         type: string
-      always-pass:
-        type: boolean  
-    executor: linux
+    executor: pw-focal-development
     steps:
-      - checkout
-      - restore_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
-      - node/install:
-          node-version: << parameters.node-version >>
-      - node/install-packages:
-          override-ci-command: npm install
-      - when: # Just to save time until caching saves the browser bin
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - when:
           condition:
             equal: [ "FirefoxESR", <<parameters.browser>> ]
           steps:
             - browser-tools/install-firefox:
-                version: "78.11.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
-      - when: # Just to save time until caching saves the browser bin
+                version: "91.4.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
+      - when:
+          condition:
+            equal: [ "FirefoxHeadless", <<parameters.browser>> ]
+          steps:
+            - browser-tools/install-firefox
+      - when:
           condition:
             equal: [ "ChromeHeadless", <<parameters.browser>> ]
           steps:
             - browser-tools/install-chrome:
                 replace-existing: false
-      - save_cache:
-          key: deps-{{ .Branch }}--<< parameters.node-version >>--{{ checksum "package.json" }}
-          paths:
-            - ~/.npm
-            - ~/.cache
-            - node_modules
-      - run: npm run lint
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>> || <<parameters.always-pass>>
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
+      - save_cache_cmd:
+          node-version: <<parameters.node-version>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
           path: dist/reports/
+      - generate_and_store_version_and_filesystem_artifacts
+  e2e-test:
+    parameters:
+      node-version:
+        type: string
+      suite:
+        type: string
+    executor: pw-focal-development
+    steps:
+      - build_and_install:
+          node-version: <<parameters.node-version>>
+      - run: npx playwright install
+      - run: npm run test:e2e:<<parameters.suite>>
+      - store_test_results:
+          path: test-results/results.xml
+      - store_artifacts:
+          path: test-results
+      - generate_and_store_version_and_filesystem_artifacts
 workflows:
-  matrix-tests:
+  overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - test:
-          name: node10-chrome
-          node-version: lts/dubnium
-          browser: ChromeHeadless
-          always-pass: false
-      - test:
-          name: node12-firefoxESR-build-only
+      - node10-lint
+      - unit-test:
+          name: node12-chrome
           node-version: lts/erbium
-          browser: FirefoxESR
-          always-pass: true
-      - test:
-          name: node14-chrome-build-only
+          browser: ChromeHeadless
+      - unit-test: 
+          name: node14-chrome
           node-version: lts/fermium
           browser: ChromeHeadless
-          always-pass: true
-  nightly:
+          post-steps:
+            - upload_code_covio               
+      - e2e-test:
+          name: e2e-smoke
+          node-version: lts/fermium
+          suite: ci
+  the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
-      - test:
+      - unit-test:
           name: node10-chrome-nightly
           node-version: lts/dubnium
           browser: ChromeHeadless
-          always-pass: false
-      - test:
+      - unit-test:
           name: node12-firefoxESR-nightly
           node-version: lts/erbium
           browser: FirefoxESR
-          always-pass: false
-      - test:
+      - unit-test:
+          name: node12-chrome-nightly
+          node-version: lts/erbium
+          browser: ChromeHeadless
+      - unit-test:
+          name: node14-firefox-nightly
+          node-version: lts/fermium
+          browser: FirefoxHeadless
+      - unit-test:
           name: node14-chrome-nightly
           node-version: lts/fermium
           browser: ChromeHeadless
-          always-pass: false
+      - npm-audit:
+          node-version: lts/fermium
+      - e2e-test:
+          name: e2e-full-nightly
+          node-version: lts/fermium
+          suite: full
     triggers:
       - schedule:
           cron: "0 0 * * *"
           filters:
             branches:
               only:
-                - master      
-
-
+                - master

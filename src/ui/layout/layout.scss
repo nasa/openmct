@@ -233,18 +233,20 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
-        //display: flex; NEEDS REGRESSION TESTING!!!
+        display: flex;
+        flex-direction: column;
         flex: 1 1 auto !important;
         height: 100%; // Chrome 73 overflow bug fix
         overflow: auto;
-    }
 
-    &__main-object-view {
-        height: 100%;
-    }
+        > * + * {
+            margin-top: $interiorMargin;
+        }
 
-    &__main-independent-time-conductor {
-        margin-bottom: 5px;
+        > .c-object-view {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
     }
 
     &__tree {
@@ -312,6 +314,12 @@
             pointer-events: none;
         }
     }
+}
+
+.c-object-view {
+    display: block;
+    height: 100%;
+    overflow: auto;
 }
 
 .is-editing {

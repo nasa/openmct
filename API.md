@@ -27,7 +27,7 @@
       - [Request Strategies **draft**](#request-strategies-draft)
         - [`latest` request strategy](#latest-request-strategy)
         - [`minmax` request strategy](#minmax-request-strategy)
-      - [Telemetry Formats **draft**](#telemetry-formats-draft)
+      - [Telemetry Formats](#telemetry-formats)
         - [Registering Formats](#registering-formats)
       - [Telemetry Data](#telemetry-data)
         - [Telemetry Datums](#telemetry-datums)
@@ -481,6 +481,8 @@ In this case, the `domain` is the currently selected time-system, and the start 
 
 A telemetry provider's `request` method should return a promise for an array of telemetry datums.  These datums must be sorted by `domain` in ascending order.
 
+The telemetry provider's `request` method will also return an object `signal` with an `aborted` property with a value `true` if the request has been aborted by user navigation. This can be used to trigger actions when a request has been aborted.
+
 #### Request Strategies **draft**
 
 To improve performance views may request a certain strategy for data reduction.  These are intended to improve visualization performance by reducing the amount of data needed to be sent to the client.  These strategies will be indicated by additional parameters in the request options.  You may choose to handle them or ignore them.  
@@ -523,7 +525,7 @@ example:
 
 MinMax queries are issued by plots, and may be issued by other types as well.  The aim is to reduce the amount of data returned but still faithfully represent the full extent of the data.  In order to do this, the view calculates the maximum data resolution it can display (i.e. the number of horizontal pixels in a plot) and sends that as the `size`.  The response should include at least one minimum and one maximum value per point of resolution.
 
-#### Telemetry Formats **draft**
+#### Telemetry Formats
 
 Telemetry format objects define how to interpret and display telemetry data. 
 They have a simple structure:

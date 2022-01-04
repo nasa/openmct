@@ -20,7 +20,11 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import { createOpenMct, resetApplicationState } from 'utils/testing';
+import {
+    createOpenMct,
+    resetApplicationState,
+    spyOnBuiltins
+} from 'utils/testing';
 import TabsLayout from './plugin';
 import Vue from "vue";
 import EventEmitter from "EventEmitter";
@@ -63,13 +67,13 @@ describe('the plugin', function () {
             'phase': 5,
             'randomness': 0
         },
-        'name': 'Sine Wave Generator',
         'type': 'generator',
         'modified': 1592851063871,
         'location': 'mine',
         'persisted': 1592851063871
     };
     let telemetryItem1 = Object.assign({}, telemetryItemTemplate, {
+        'name': 'Sine Wave Generator 1',
         'id': '55122607-e65e-44d5-9c9d-9c31a914ca89',
         'identifier': {
             'namespace': '',
@@ -77,6 +81,7 @@ describe('the plugin', function () {
         }
     });
     let telemetryItem2 = Object.assign({}, telemetryItemTemplate, {
+        'name': 'Sine Wave Generator 2',
         'id': '55122607-e65e-44d5-9c9d-9c31a914ca90',
         'identifier': {
             'namespace': '',
@@ -91,6 +96,9 @@ describe('the plugin', function () {
 
         element = document.createElement('div');
         child = document.createElement('div');
+        child.style.display = 'block';
+        child.style.width = '1920px';
+        child.style.height = '1080px';
         element.appendChild(child);
 
         openmct.on('start', done);
@@ -150,8 +158,17 @@ describe('the plugin', function () {
         let tabsLayoutViewProvider;
         let mockComposition;
         let count = 0;
+        let resizeCallback;
 
         beforeEach(() => {
+            class mockResizeObserver {
+                constructor(cb) {
+                    resizeCallback = cb;
+                }
+                observe() { }
+                disconnect() { }
+            }
+
             mockComposition = new EventEmitter();
             mockComposition.load = () => {
                 if (count === 0) {
@@ -165,6 +182,9 @@ describe('the plugin', function () {
 
             spyOn(openmct.composition, 'get').and.returnValue(mockComposition);
 
+            spyOnBuiltins(['ResizeObserver']);
+            window.ResizeObserver.and.callFake(mockResizeObserver);
+
             const applicableViews = openmct.objectViews.get(testViewObject, []);
             tabsLayoutViewProvider = applicableViews.find((viewProvider) => viewProvider.key === 'tabs');
             let view = tabsLayoutViewProvider.view(testViewObject, []);
@@ -173,9 +193,47 @@ describe('the plugin', function () {
             return Vue.nextTick();
         });
 
+        afterEach(() => {
+            count = 0;
+            testViewObject.keep_alive = true;
+        });
+
         it ('renders a tab for each item', () => {
             let tabEls = element.querySelectorAll('.js-tab');
+
             expect(tabEls.length).toEqual(2);
+        });
+
+        describe('with domainObject.keep_alive set to', () => {
+
+            it ('true, will keep all views loaded, regardless of current tab view', (done) => {
+                resizeCallback();
+
+                // the function called by the resize observer is debounced 500ms,
+                // this is to account for that
+                let promise = new Promise((resolve, reject) => {
+                    setTimeout(resolve, 501);
+                });
+
+                Promise.all([Vue.nextTick(), promise]).then(() => {
+                    let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
+
+                    expect(tabViewEls.length).toEqual(2);
+                }).finally(() => {
+                    done();
+                });
+            });
+
+            it ('false, will only keep the current tab view loaded', async () => {
+                testViewObject.keep_alive = false;
+
+                await Vue.nextTick();
+
+                let tabViewEls = element.querySelectorAll('.c-tabs-view__object');
+
+                expect(tabViewEls.length).toEqual(1);
+            });
+
         });
     });
 });

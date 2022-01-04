@@ -1,7 +1,9 @@
+@use 'sass:math';
+
 @mixin containerGrippy($headerSize, $dir) {
     position: absolute;
     $h: 6px;
-    $minorOffset: ($headerSize - $h) / 2;
+    $minorOffset: math.div($headerSize - $h, 2);
     $majorOffset: 35%;
     content: '';
     display: block;
