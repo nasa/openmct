@@ -87,6 +87,7 @@ describe("Clock plugin:", () => {
 
             spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(clockViewObject));
             spyOn(openmct.objects, 'save').and.returnValue(Promise.resolve(true));
+            spyOn(openmct.objects, 'supportsMutation').and.returnValue(true);
 
             const applicableViews = openmct.objectViews.get(clockViewObject, [clockViewObject]);
             clockViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'clock.view');
