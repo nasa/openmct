@@ -21,11 +21,10 @@
 # ...except for these files in the above folders (these rules are more specific, so they will apply).
 /src/**/*Spec.js
 /src/**/test/
+# TODO move test utils into test/ folders
 /src/utils/testing.js
 /platform/**/*Spec.js
 /platform/**/test/
-# temporary: there's one .spec.js file not being executed, but should not be included.
-/src/**/*.spec.js
 
 # Also include these top-level files.
 !copyright-notice.js
