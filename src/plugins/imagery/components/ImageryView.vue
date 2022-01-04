@@ -201,7 +201,7 @@ export default {
     mixins: [imageryData],
     inject: ['openmct', 'domainObject', 'objectPath', 'currentView'],
     props: {
-        indexForFocusedImage: {
+        focusedImageTimestamp: {
             type: Number,
             default() {
                 return undefined;
@@ -411,8 +411,11 @@ export default {
     watch: {
         imageHistorySize(newSize, oldSize) {
             let imageIndex;
-            if (this.indexForFocusedImage !== undefined) {
-                imageIndex = this.initFocusedImageIndex;
+            if (this.focusedImageTimestamp !== undefined) {
+                const foundImageIndex = this.imageHistory.findIndex(image => {
+                    return image.time === this.focusedImageTimestamp;
+                });
+                imageIndex = foundImageIndex > -1 ? foundImageIndex : newSize - 1;
             } else {
                 imageIndex = newSize > 0 ? newSize - 1 : undefined;
             }
@@ -434,8 +437,7 @@ export default {
     },
     async mounted() {
         //We only need to use this till the user focuses an image manually
-        if (this.indexForFocusedImage !== undefined) {
-            this.initFocusedImageIndex = this.indexForFocusedImage;
+        if (this.focusedImageTimestamp !== undefined) {
             this.isPaused = true;
         }
 
@@ -690,13 +692,13 @@ export default {
 
             if (thumbnailClick) {
                 //We use the props till the user changes what they want to see
-                this.initFocusedImageIndex = undefined;
+                this.focusedImageTimestamp = undefined;
             }
 
             this.focusedImageIndex = focusedIndex;
             delete this.previousFocusedImage;
 
-            if (this.isPaused && !thumbnailClick && this.initFocusedImageIndex === undefined) {
+            if (this.isPaused && !thumbnailClick && this.focusedImageTimestamp === undefined) {
                 this.nextImageIndex = focusedIndex;
                 //this could happen if bounds changes
                 if (this.focusedImageIndex > this.imageHistory.length - 1) {

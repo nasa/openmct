@@ -73,8 +73,10 @@ define([
     './hyperlink/plugin',
     './clock/plugin',
     './DeviceClassifier/plugin',
-    './UTCTimeFormat/plugin',
-    './timer/plugin'
+    './timer/plugin',
+    './localStorage/plugin',
+    './legacySupport/plugin.js',
+    '../adapter/indicators/legacy-indicators-plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -128,11 +130,12 @@ define([
     Hyperlink,
     Clock,
     DeviceClassifier,
-    UTCTimeFormat,
-    Timer
+    Timer,
+    LocalStorage,
+    LegacySupportPlugin,
+    LegacyIndicatorsPlugin
 ) {
     const bundleMap = {
-        LocalStorage: 'platform/persistence/local',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -144,7 +147,7 @@ define([
         };
     });
 
-    plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
 
@@ -237,7 +240,9 @@ define([
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
-    plugins.UTCTimeFormat = UTCTimeFormat.default;
+    plugins.LocalStorage = LocalStorage.default;
+    plugins.LegacySupport = LegacySupportPlugin.default;
+    plugins.LegacyIndicators = LegacyIndicatorsPlugin;
 
     return plugins;
 });
