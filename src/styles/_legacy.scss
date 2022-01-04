@@ -19,6 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+@use 'sass:math';
+
 /*********************************************************************** CLOCKS AND TIMERS */
 .c-clock,
 .c-timer {
@@ -788,7 +791,7 @@ body.desktop {
                 //width: $splitterHandleD;
             }
             &.flush-right {
-                width: ceil($splitterHandleD / 2);
+                width: ceil(math.div($splitterHandleD, 2));
                 &:after {
                     width: $splitterHandleD;
                     left: auto; right: 0;

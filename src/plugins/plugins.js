@@ -74,7 +74,9 @@ define([
     './clock/plugin',
     './DeviceClassifier/plugin',
     './timer/plugin',
-    './localStorage/plugin'
+    './localStorage/plugin',
+    './legacySupport/plugin.js',
+    '../adapter/indicators/legacy-indicators-plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -129,7 +131,9 @@ define([
     Clock,
     DeviceClassifier,
     Timer,
-    LocalStorage
+    LocalStorage,
+    LegacySupportPlugin,
+    LegacyIndicatorsPlugin
 ) {
     const bundleMap = {
         Elasticsearch: 'platform/persistence/elastic'
@@ -237,6 +241,8 @@ define([
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.LocalStorage = LocalStorage.default;
+    plugins.LegacySupport = LegacySupportPlugin.default;
+    plugins.LegacyIndicators = LegacyIndicatorsPlugin;
 
     return plugins;
 });
