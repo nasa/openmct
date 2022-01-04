@@ -75,13 +75,6 @@
         const TWO_HOURS = ONE_HOUR * 2;
         const ONE_DAY = ONE_HOUR * 24;
 
-        openmct.install(openmct.plugins.LegacySupport());
-
-        [
-            'example/eventGenerator'
-        ].forEach(
-            openmct.legacyRegistry.enable.bind(openmct.legacyRegistry)
-        );
 
         openmct.install(openmct.plugins.LocalStorage());
 
