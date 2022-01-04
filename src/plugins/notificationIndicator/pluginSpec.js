@@ -30,7 +30,6 @@ import {
 describe('the plugin', () => {
     let notificationIndicatorPlugin;
     let openmct;
-    let indicatorObject;
     let indicatorElement;
     let parentElement;
     let mockMessages = ['error', 'test', 'notifications'];
@@ -43,9 +42,6 @@ describe('the plugin', () => {
 
         parentElement = document.createElement('div');
 
-        indicatorObject = openmct.indicators.indicatorObjects.find(indicator => indicator.key === 'notifications-indicator');
-        indicatorElement = indicatorObject.element;
-
         openmct.on('start', () => {
             mockMessages.forEach(message => {
                 openmct.notifications.error(message);
@@ -53,7 +49,7 @@ describe('the plugin', () => {
             done();
         });
 
-        openmct.startHeadless();
+        openmct.start();
     });
 
     afterEach(() => {
@@ -68,7 +64,7 @@ describe('the plugin', () => {
         });
 
         it('notifies the user of the number of notifications', () => {
-            let notificationCountElement = parentElement.querySelector('.c-indicator__count');
+            let notificationCountElement = document.querySelector('.c-indicator__count');
 
             expect(notificationCountElement.innerText).toEqual(mockMessages.length.toString());
         });

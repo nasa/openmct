@@ -23,7 +23,6 @@ import ConditionSetViewProvider from './ConditionSetViewProvider.js';
 import ConditionSetCompositionPolicy from "./ConditionSetCompositionPolicy";
 import ConditionSetMetadataProvider from './ConditionSetMetadataProvider';
 import ConditionSetTelemetryProvider from './ConditionSetTelemetryProvider';
-import ConditionSetViewPolicy from './ConditionSetViewPolicy';
 import uuid from "uuid";
 
 export default function ConditionPlugin() {
@@ -55,11 +54,8 @@ export default function ConditionPlugin() {
                 domainObject.telemetry = {};
             }
         });
-        openmct.legacyExtension('policies', {
-            category: 'view',
-            implementation: ConditionSetViewPolicy
-        });
-        openmct.composition.addPolicy(new ConditionSetCompositionPolicy(openmct).allow);
+        let compositionPolicy = new ConditionSetCompositionPolicy(openmct);
+        openmct.composition.addPolicy(compositionPolicy.allow.bind(compositionPolicy));
         openmct.telemetry.addProvider(new ConditionSetMetadataProvider(openmct));
         openmct.telemetry.addProvider(new ConditionSetTelemetryProvider(openmct));
         openmct.objectViews.addProvider(new ConditionSetViewProvider(openmct));
