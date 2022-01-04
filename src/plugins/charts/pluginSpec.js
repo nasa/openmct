@@ -130,14 +130,6 @@ describe("the plugin", function () {
         let mockComposition;
 
         beforeEach(async () => {
-            const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, "get")
-                .withArgs("exportImageService").and.returnValue({
-                    exportPNG: () => {},
-                    exportJPG: () => {}
-                })
-                .and.callFake(getFunc);
-
             barGraphObject = {
                 identifier: {
                     namespace: "",
