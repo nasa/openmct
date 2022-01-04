@@ -119,10 +119,10 @@ export default {
                 this.timeContext.off("bounds", this.updateViewBounds);
             }
         },
-        expand(index) {
+        expand(imageTimestamp) {
             const path = this.objectPath[0];
             this.previewAction.invoke([path], {
-                indexForFocusedImage: index,
+                timestamp: imageTimestamp,
                 objectPath: this.objectPath
             });
         },
@@ -395,7 +395,7 @@ export default {
             //handle mousedown event to show the image in a large view
             imageWrapper.addEventListener('mousedown', (e) => {
                 if (e.button === 0) {
-                    this.expand(index);
+                    this.expand(item.time);
                 }
             });
 

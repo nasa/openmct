@@ -133,5 +133,9 @@ define([
         });
     };
 
+    CompositionAPI.prototype.supportsComposition = function (domainObject) {
+        return this.get(domainObject) !== undefined;
+    };
+
     return CompositionAPI;
 });

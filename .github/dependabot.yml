@@ -11,11 +11,12 @@ updates:
       - "dependencies"
       - "pr:e2e"
     allow:
-      - dependency-name: "eslint*"
-      - dependency-name: "karma*"
-      - dependency-name: "jasmine*"
-      - dependency-name: "playwright*"
-      - dependency-name: "percy*"
+      - dependency-name: "*eslint*"
+      - dependency-name: "*karma*"
+      - dependency-name: "*jasmine*"
+      - dependency-name: "*playwright*"
+      - dependency-name: "*percy*"
+      - dependency-name: "*vue-loader*"
 
   - package-ecosystem: "github-actions"
     directory: "/"

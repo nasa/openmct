@@ -49,8 +49,10 @@ define([
         this.onMutation = this.onMutation.bind(this);
 
         this.cannotContainItself = this.cannotContainItself.bind(this);
+        this.supportsComposition = this.supportsComposition.bind(this);
 
         compositionAPI.addPolicy(this.cannotContainItself);
+        compositionAPI.addPolicy(this.supportsComposition);
     }
 
     /**
@@ -59,6 +61,13 @@ define([
     DefaultCompositionProvider.prototype.cannotContainItself = function (parent, child) {
         return !(parent.identifier.namespace === child.identifier.namespace
             && parent.identifier.key === child.identifier.key);
+    };
+
+    /**
+     * @private
+     */
+    DefaultCompositionProvider.prototype.supportsComposition = function (parent, child) {
+        return this.publicAPI.composition.supportsComposition(parent);
     };
 
     /**
