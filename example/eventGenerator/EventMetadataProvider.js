@@ -23,7 +23,7 @@
 class EventMetadataProvider {
     constructor() {
         this.METADATA_BY_TYPE = {
-            'example.eventGenerator': {
+            'eventGenerator': {
                 values: [
                     {
                         key: "name",

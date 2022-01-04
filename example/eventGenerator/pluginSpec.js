@@ -35,7 +35,7 @@ describe('the plugin', () => {
         telemetry: {
             duration: 0
         },
-        type: 'example.eventGenerator'
+        type: 'eventGenerator'
     };
 
     beforeEach((done) => {

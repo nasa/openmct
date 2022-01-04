@@ -24,7 +24,7 @@ import EventMetadataProvider from './EventMetadataProvider';
 
 export default function EventGeneratorPlugin(options) {
     return function install(openmct) {
-        openmct.types.addType("example.eventGenerator", {
+        openmct.types.addType("eventGenerator", {
             name: "Event Message Generator",
             description: "For development use. Creates sample event message data that mimics a live data stream.",
             cssClass: "icon-generator-events",

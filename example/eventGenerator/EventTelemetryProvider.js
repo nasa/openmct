@@ -48,11 +48,11 @@ class EventTelemetryProvider {
     }
 
     supportsRequest(domainObject) {
-        return domainObject.type === 'example.eventGenerator';
+        return domainObject.type === 'eventGenerator';
     }
 
     supportsSubscribe(domainObject) {
-        return domainObject.type === 'example.eventGenerator';
+        return domainObject.type === 'eventGenerator';
     }
 
     subscribe(domainObject, callback) {
