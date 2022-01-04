@@ -245,6 +245,7 @@ export default {
                 element: this.snapshot.$el,
                 onDestroy: () => this.snapshot.$destroy(true),
                 size: 'large',
+                autoHide: false,
                 dismissable: true,
                 buttons: [
                     {
