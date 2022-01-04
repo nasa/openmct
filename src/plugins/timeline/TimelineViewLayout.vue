@@ -161,14 +161,12 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-            this.timeContext.on('timeContext', this.setTimeContext);
             this.updateViewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.updateViewBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.updateViewBounds);
-                this.timeContext.off('timeContext', this.setTimeContext);
             }
         }
     }

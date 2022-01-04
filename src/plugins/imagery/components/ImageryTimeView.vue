@@ -112,19 +112,17 @@ export default {
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
             this.timeContext.on("timeSystem", this.setScaleAndPlotImagery);
             this.timeContext.on("bounds", this.updateViewBounds);
-            this.timeContext.on("timeContext", this.setTimeContext);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.setScaleAndPlotImagery);
                 this.timeContext.off("bounds", this.updateViewBounds);
-                this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
-        expand(index) {
+        expand(imageTimestamp) {
             const path = this.objectPath[0];
             this.previewAction.invoke([path], {
-                indexForFocusedImage: index,
+                timestamp: imageTimestamp,
                 objectPath: this.objectPath
             });
         },
@@ -397,7 +395,7 @@ export default {
             //handle mousedown event to show the image in a large view
             imageWrapper.addEventListener('mousedown', (e) => {
                 if (e.button === 0) {
-                    this.expand(index);
+                    this.expand(item.time);
                 }
             });
 

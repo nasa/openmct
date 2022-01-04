@@ -109,11 +109,11 @@ export default {
         showModesMenu() {
             const elementBoundingClientRect = this.$refs.modeMenuButton.getBoundingClientRect();
             const x = elementBoundingClientRect.x;
-            const y = elementBoundingClientRect.y;
+            const y = elementBoundingClientRect.y + elementBoundingClientRect.height;
 
             const menuOptions = {
                 menuClass: 'c-conductor__mode-menu',
-                placement: this.openmct.menus.menuPlacement.TOP_RIGHT
+                placement: this.openmct.menus.menuPlacement.BOTTOM_RIGHT
             };
             this.openmct.menus.showSuperMenu(x, y, this.modes, menuOptions);
         },

@@ -17,7 +17,6 @@ define([
         const widgetType = {
             name: 'Summary Widget',
             description: 'A compact status update for collections of telemetry-producing items',
-            creatable: true,
             cssClass: 'icon-summary-widget',
             initialize: function (domainObject) {
                 domainObject.composition = [];
@@ -85,16 +84,8 @@ define([
 
         return function install(openmct) {
             openmct.types.addType('summary-widget', widgetType);
-            openmct.legacyExtension('policies', {
-                category: 'composition',
-                implementation: SummaryWidgetsCompositionPolicy,
-                depends: ['openmct']
-            });
-            openmct.legacyExtension('policies', {
-                category: 'view',
-                implementation: SummaryWidgetViewPolicy,
-                depends: ['openmct']
-            });
+            let compositionPolicy = new SummaryWidgetsCompositionPolicy(openmct);
+            openmct.composition.addPolicy(compositionPolicy.allow.bind(compositionPolicy));
             openmct.telemetry.addProvider(new SummaryWidgetMetadataProvider(openmct));
             openmct.telemetry.addProvider(new SummaryWidgetTelemetryProvider(openmct));
             openmct.objectViews.addProvider(new SummaryWidgetViewProvider(openmct));

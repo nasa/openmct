@@ -220,26 +220,6 @@ define([
                         "key": "root",
                         "name": "Root",
                         "cssClass": "icon-folder"
-                    },
-                    {
-                        "key": "folder",
-                        "name": "Folder",
-                        "cssClass": "icon-folder",
-                        "features": "creation",
-                        "description": "Create folders to organize other objects or links to objects.",
-                        "priority": 1000,
-                        "model": {
-                            "composition": []
-                        }
-                    },
-                    {
-                        "key": "unknown",
-                        "name": "Unknown Type",
-                        "cssClass": "icon-object-unknown"
-                    },
-                    {
-                        "name": "Unknown Type",
-                        "cssClass": "icon-object-unknown"
                     }
                 ],
                 "capabilities": [
