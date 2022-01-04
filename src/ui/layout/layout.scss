@@ -233,7 +233,6 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
-        //display: flex; NEEDS REGRESSION TESTING!!!
         display: flex;
         flex-direction: column;
         flex: 1 1 auto !important;
@@ -243,11 +242,11 @@
         > * + * {
             margin-top: $interiorMargin;
         }
-    }
 
-    &__main-object-view {
-        flex: 1 1 auto;
-        overflow: auto;
+        > .c-object-view {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
     }
 
     &__tree {
@@ -315,6 +314,12 @@
             pointer-events: none;
         }
     }
+}
+
+.c-object-view {
+    display: block;
+    height: 100%;
+    overflow: auto;
 }
 
 .is-editing {
