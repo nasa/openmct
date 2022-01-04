@@ -129,6 +129,11 @@ export default {
             const previousFocusedImage = focusedImage ? JSON.parse(JSON.stringify(focusedImage)) : undefined;
             this.updateFocusedImageIndex(previousFocusedImage, this.imageHistory);
 
+            // forcibly recalculate the imageContainer size to prevent an aspect ratio distortion
+            delete this.imageContainerWidth;
+            delete this.imageContainerHeight;
+            this.resizeImageContainer();
+
             return this.requestHistory();
         },
         matchIndexOfPreviousImage(previous, imageHistory) {
