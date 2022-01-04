@@ -21,14 +21,15 @@
  *****************************************************************************/
 
 /* REQUIRES /platform/commonUI/general/res/sass/_constants.scss */
+@use 'sass:math';
 
 /************************** MOBILE REPRESENTATION ITEMS DIMENSIONS */
 $mobileListIconSize: 30px;
 $mobileTitleDescH: 35px;
 $mobileOverlayMargin: 20px;
 $mobileMenuIconD: 25px;
-$phoneItemH: floor($gridItemMobile / 4);
-$tabletItemH: floor($gridItemMobile / 3);
+$phoneItemH: floor(math.div($gridItemMobile, 4));
+$tabletItemH: floor(math.div($gridItemMobile, 3));
 
 /************************** MOBILE TREE MENU DIMENSIONS */
 $mobileTreeItemH: 35px;

@@ -22,7 +22,6 @@
 
 /*global module,process*/
 
-const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
 const reporters = ['spec', 'junit'];
@@ -32,10 +31,10 @@ if (coverageEnabled) {
 }
 
 module.exports = (config) => {
-    const webpackConfig = require('./webpack.config.js');
+    const webpackConfig = require('./webpack.dev.js');
     delete webpackConfig.output;
 
-    if (!devMode || coverageEnabled) {
+    if (coverageEnabled) {
         webpackConfig.module.rules.push({
             test: /\.js$/,
             exclude: /node_modules|example|lib|dist/,

@@ -191,7 +191,7 @@ export default {
             });
         });
     },
-    destroyed() {
+    beforeDestroy() {
         this.active = false;
         if (this.unlisten) {
             this.unlisten();
