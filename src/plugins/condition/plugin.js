@@ -54,10 +54,6 @@ export default function ConditionPlugin() {
                 domainObject.telemetry = {};
             }
         });
-        openmct.legacyExtension('policies', {
-            category: 'view',
-            implementation: ConditionSetViewPolicy
-        });
         let compositionPolicy = new ConditionSetCompositionPolicy(openmct);
         openmct.composition.addPolicy(compositionPolicy.allow.bind(compositionPolicy));
         openmct.telemetry.addProvider(new ConditionSetMetadataProvider(openmct));
