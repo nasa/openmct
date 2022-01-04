@@ -528,10 +528,10 @@ describe("The Imagery View Layouts", () => {
                 const mouseDownEvent = createMouseEvent("mousedown");
                 let imageWrapper = parent.querySelectorAll(`.c-imagery-tsv__image-wrapper`);
                 imageWrapper[2].dispatchEvent(mouseDownEvent);
-
                 Vue.nextTick(() => {
+                    const timestamp = imageWrapper[2].id.replace('wrapper-', '');
                     expect(componentView.previewAction.invoke).toHaveBeenCalledWith([componentView.objectPath[0]], {
-                        indexForFocusedImage: 2,
+                        timestamp: Number(timestamp),
                         objectPath: componentView.objectPath
                     });
                     done();
