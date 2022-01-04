@@ -80,7 +80,6 @@ define([
         this.addHyperlink(domainObject.url, domainObject.openNewTab);
         this.watchForChanges(openmct, domainObject);
 
-        const id = objectUtils.makeKeyString(this.domainObject.identifier);
         const self = this;
 
         /**
@@ -105,8 +104,6 @@ define([
 
         this.listenTo(this.toggleRulesControl, 'click', toggleRules);
 
-        openmct.$injector.get('objectService')
-            .getObjects([id]);
     }
 
     /**
