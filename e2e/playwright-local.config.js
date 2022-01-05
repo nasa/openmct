@@ -7,6 +7,7 @@ const config = {
     retries: 0,
     testDir: 'tests',
     timeout: 30 * 1000,
+    workers: 2, //Limit to 2 for CircleCI Agent
     webServer: {
         command: 'npm run start',
         port: 8080,
