@@ -71,9 +71,9 @@ export default {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         },
         supportsIndependentTime() {
-          const viewKey = this.getViewKey();
+            const viewKey = this.getViewKey();
 
-          return this.domainObject && SupportedViewTypes.includes(viewKey);
+            return this.domainObject && SupportedViewTypes.includes(viewKey);
         }
     },
     destroyed() {
