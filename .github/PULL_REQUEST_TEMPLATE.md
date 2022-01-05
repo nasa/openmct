@@ -1,3 +1,6 @@
+<!--- Note: Please open the PR in draft form until you are ready for unit test results. -->
+Closes: <!--- Insert Issue Number(s) this PR addresses. Typing # will open a dropdown of recent issues. -->
+
 ### All Submissions:
 
 * [ ] Have you followed the guidelines in our [Contributing document](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md)?
@@ -11,3 +14,13 @@
 * [ ] Command line build passes?
 * [ ] Has this been smoke tested?
 * [ ] Testing instructions included in associated issue?
+
+### Reviewer Checklist
+* [ ] Changes appear to address issue?
+* [ ] Changes appear not to be breaking changes?
+* [ ] Appropriate unit tests included?
+* [ ] Code style and in-line documentation are appropriate?
+* [ ] Commit messages meet standards?
+* [ ] Has associated issue been labelled unverified? (only applicable if this PR closes the issue)
+* [ ] Has associated issue been labelled bug? (only applicable if this PR is for a bug fix)
+* [ ] List of Acceptance Tests Performed. These will be turned into e2e tests.
