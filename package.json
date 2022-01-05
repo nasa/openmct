@@ -96,7 +96,7 @@
     "test:debug": "cross-env NODE_ENV=debug karma start --no-single-run",
     "test:coverage": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run",
     "test:coverage:firefox": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run --browsers=FirefoxHeadless",
-    "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js smoke",
+    "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js smoke default condition.e2e",
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js",
     "test:e2e:visual": "percy exec -- npx playwright test --config=e2e/playwright-visual.config.js default",
     "test:e2e:full": "npx playwright test --config=e2e/playwright-ci.config.js",
