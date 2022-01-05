@@ -1,4 +1,4 @@
-<!--- Note: Please open the PR in draft form until you are ready for unit test results. -->
+<!--- Note: Please open the PR in draft form until you are ready for active review. -->
 Closes: <!--- Insert Issue Number(s) this PR addresses. Typing # will open a dropdown of recent issues. -->
 
 ### All Submissions:
