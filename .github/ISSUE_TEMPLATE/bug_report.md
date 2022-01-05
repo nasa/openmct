@@ -24,7 +24,7 @@ assignees: ''
 - [ ] Regression? Did this used to work or has it always been broken?
 - [ ] Is there a workaround available?
 - [ ] Does this impact a critical component?
-- [ ] Is this just a visual bug?
+- [ ] Is this just a visual bug with no functional impact?
 
 #### Steps to Reproduce
 <!--- Provide a link to a live example, or an unambiguous set of steps to -->

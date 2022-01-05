@@ -22,7 +22,7 @@ commands:
           node-version: << parameters.node-version >>
       - node/install:
           install-npm: true
-          node-version: lts/fermium
+          node-version: << parameters.node-version >>
       - run: npm install
   restore_cache_cmd:
     description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"

@@ -533,13 +533,6 @@ describe("the plugin", function () {
         let plotViewComponentObject;
 
         beforeEach(() => {
-            const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, "get")
-                .withArgs("exportImageService").and.returnValue({
-                    exportPNG: () => {},
-                    exportJPG: () => {}
-                })
-                .and.callFake(getFunc);
 
             stackedPlotObject = {
                 identifier: {

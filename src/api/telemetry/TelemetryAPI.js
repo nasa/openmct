@@ -137,15 +137,17 @@ define([
      */
     function TelemetryAPI(openmct) {
         this.openmct = openmct;
-        this.requestProviders = [];
-        this.subscriptionProviders = [];
-        this.metadataProviders = [new DefaultMetadataProvider(this.openmct)];
+
+        this.formatMapCache = new WeakMap();
+        this.formatters = new Map();
         this.limitProviders = [];
         this.metadataCache = new WeakMap();
-        this.formatMapCache = new WeakMap();
-        this.valueFormatterCache = new WeakMap();
-        this.formatters = new Map();
+        this.metadataProviders = [new DefaultMetadataProvider(this.openmct)];
+        this.noRequestProviderForAllObjects = false;
         this.requestAbortControllers = new Set();
+        this.requestProviders = [];
+        this.subscriptionProviders = [];
+        this.valueFormatterCache = new WeakMap();
     }
 
     TelemetryAPI.prototype.abortAllRequests = function () {
@@ -314,6 +316,10 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.request = function (domainObject) {
+        if (this.noRequestProviderForAllObjects) {
+            return Promise.resolve([]);
+        }
+
         if (arguments.length === 1) {
             arguments.length = 2;
             arguments[1] = {};
@@ -326,19 +332,22 @@ define([
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
-            return Promise.reject('No provider found');
+            this.requestAbortControllers.delete(abortController);
+
+            return this.handleMissingRequestProvider(domainObject);
         }
 
-        return provider.request.apply(provider, arguments).catch((rejected) => {
-            if (rejected.name !== 'AbortError') {
-                this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-                console.error(rejected);
-            }
+        return provider.request.apply(provider, arguments)
+            .catch((rejected) => {
+                if (rejected.name !== 'AbortError') {
+                    this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+                    console.error(rejected);
+                }
 
-            return Promise.reject(rejected);
-        }).finally(() => {
-            this.requestAbortControllers.delete(abortController);
-        });
+                return Promise.reject(rejected);
+            }).finally(() => {
+                this.requestAbortControllers.delete(abortController);
+            });
     };
 
     /**
@@ -493,6 +502,36 @@ define([
         }
 
         return this.formatMapCache.get(metadata);
+    };
+
+    /**
+     * Error Handling: Missing Request provider
+     *
+     * @returns Promise
+     */
+    TelemetryAPI.prototype.handleMissingRequestProvider = function (domainObject) {
+        this.noRequestProviderForAllObjects = this.requestProviders.every(requestProvider => {
+            const supportsRequest = requestProvider.supportsRequest.apply(requestProvider, arguments);
+            const hasRequestProvider = Object.hasOwn(requestProvider, 'request');
+
+            return supportsRequest && hasRequestProvider;
+        });
+
+        let message = '';
+        let detailMessage = '';
+        if (this.noRequestProviderForAllObjects) {
+            message = 'Missing request providers, see console for details';
+            detailMessage = 'Missing request provider for all request providers';
+        } else {
+            message = 'Missing request provider, see console for details';
+            const { name, identifier } = domainObject;
+            detailMessage = `Missing request provider for domainObject, name: ${name}, identifier: ${JSON.stringify(identifier)}`;
+        }
+
+        this.openmct.notifications.error(message);
+        console.error(detailMessage);
+
+        return Promise.resolve([]);
     };
 
     /**
