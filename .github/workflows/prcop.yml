@@ -20,3 +20,5 @@ jobs:
         uses: makaroni4/prcop@v1.0.31
         with:
           config-file: ".github/workflows/prcop-config.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
