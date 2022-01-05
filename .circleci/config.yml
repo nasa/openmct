@@ -82,7 +82,7 @@ jobs:
       - checkout
       - node/install:
           install-npm: false #Cannot install latest npm version with node10.
-          node-version: lts/dubnium
+          node-version: "17"
       - run: npm install
       - run: npm run lint
       - generate_and_store_version_and_filesystem_artifacts
