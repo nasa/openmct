@@ -19,5 +19,4 @@ jobs:
       - name: Linting Pull Request
         uses: makaroni4/prcop@v1.0.31
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           config-file: ".github/workflows/prcop-config.json"
