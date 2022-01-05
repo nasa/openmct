@@ -5,7 +5,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = merge(common, {
-    mode: 'production',
+    mode: 'development',
     resolve: {
         alias: {
             "vue": path.join(__dirname, "node_modules/vue/dist/vue.min.js")
