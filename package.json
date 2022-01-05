@@ -51,7 +51,7 @@
     "lodash": "^4.17.12",
     "markdown-toc": "^0.11.7",
     "marked": "^0.3.5",
-    "mini-css-extract-plugin": "^1.6.0",
+    "mini-css-extract-plugin": "2.4.5",
     "minimist": "^1.2.5",
     "moment": "2.25.3",
     "moment-duration-format": "^2.2.2",
