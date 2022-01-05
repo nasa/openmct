@@ -1,6 +1,8 @@
+@use 'sass:math';
+
 .c-conductor-axis {
     $h: 18px;
-    $tickYPos: ($h / 2) + 12px;
+    $tickYPos: math.div($h, 2) + 12px;
 
     @include userSelectNone();
     @include bgTicks($c: rgba($colorBodyFg, 0.4));

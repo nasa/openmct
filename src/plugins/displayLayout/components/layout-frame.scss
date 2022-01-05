@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 /******************* FRAME */
 .c-frame {
     display: flex;
@@ -89,7 +91,7 @@
                         &:before {
                             // Grippy
                             $h: 4px;
-                            $tbOffset: ($editFrameMovebarH - $h) / 2;
+                            $tbOffset: math.div($editFrameMovebarH - $h, 2);
                             $lrOffset: 25%;
                             @include grippy($editFrameMovebarColorFg);
                             content: '';

@@ -5,7 +5,6 @@ describe("The Object API", () => {
     let objectAPI;
     let typeRegistry;
     let openmct = {};
-    let mockIdentifierService;
     let mockDomainObject;
     const TEST_NAMESPACE = "test-namespace";
     const FIFTEEN_MINUTES = 15 * 60 * 1000;
@@ -15,18 +14,6 @@ describe("The Object API", () => {
             'get'
         ]);
         openmct = createOpenMct();
-        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-        mockIdentifierService = jasmine.createSpyObj(
-            'identifierService',
-            ['parse']
-        );
-        mockIdentifierService.parse.and.returnValue({
-            getSpace: () => {
-                return TEST_NAMESPACE;
-            }
-        });
-
-        openmct.$injector.get.and.returnValue(mockIdentifierService);
         objectAPI = openmct.objects;
 
         openmct.editor = {};
