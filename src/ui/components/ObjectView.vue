@@ -71,9 +71,9 @@ export default {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         },
         supportsIndependentTime() {
-          const viewKey = this.getViewKey();
+            const viewKey = this.getViewKey();
 
-          return this.domainObject && SupportedViewTypes.includes(viewKey);
+            return this.domainObject && SupportedViewTypes.includes(viewKey);
         }
     },
     destroyed() {
@@ -201,6 +201,12 @@ export default {
                     }
                 }
             });
+
+            if (this.domainObject && this.domainObject.type === 'conditionWidget' && keys.includes('output')) {
+                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', styleObj.output);
+            } else {
+                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', '');
+            }
         },
         updateView(immediatelySelect) {
             this.clear();
