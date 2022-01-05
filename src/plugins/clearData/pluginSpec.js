@@ -75,9 +75,10 @@ describe('The Clear Data Plugin:', () => {
             openmct.startHeadless();
         });
 
-        afterEach(async () => {
+        afterEach(() => {
             openmct.router.path = null;
-            await resetApplicationState(openmct);
+
+            return resetApplicationState(openmct);
         });
         it('is installed', () => {
             expect(clearDataAction).toBeDefined();
