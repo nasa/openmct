@@ -156,6 +156,10 @@ workflows:
           name: e2e-ci
           node-version: lts/fermium
           suite: ci
+      - e2e-test:
+          name: e2e-full
+          node-version: lts/fermium
+          suite: full
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
