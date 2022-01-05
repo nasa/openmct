@@ -1,16 +1,5 @@
-# Specificty of the following rules matters. If more specific rules comes first,
-# less specific rules can not override them.
-# For example, the following won't work as you may assume:
-# /**/* <-- ignore everything
-# !/src/**/* <-- don't ignore src/
-# But still ignore test files in src/:
-# /**/*.test.* <-- HERE: This won't work, is not as specific as `!/dist/**/*`, so test files inside dist or src will NOT be ignored.
-# /src/**/*.test.* <-- But this will work, because it is more specific.
-
-# NOTE! Although we ignored everything by default, NPM will not ignore special files like
-# LICENSE.md, README.md, and package.json.
-
-# Ignore everything,
+# Ignore everything first (will not ignore special files like LICENSE.md,
+# README.md, and package.json)...
 /**/*
 
 # ...but include these folders...
@@ -18,7 +7,7 @@
 !/src/**/*
 !/platform/**/*
 
-# ...except for these files in the above folders (these rules are more specific, so they will apply).
+# ...except for these files in the above folders.
 /src/**/*Spec.js
 /src/**/test/
 # TODO move test utils into test/ folders
@@ -26,7 +15,7 @@
 /platform/**/*Spec.js
 /platform/**/test/
 
-# Also include these top-level files.
+# Also include these special top-level files.
 !copyright-notice.js
 !copyright-notice.html
 !index.html
