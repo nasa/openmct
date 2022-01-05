@@ -29,10 +29,7 @@ define(
         }
 
         SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            const parentType = parent.getCapability('type');
-            const newStyleChild = child.useCapability('adapter');
-
-            if (parentType.instanceOf('summary-widget') && !this.openmct.telemetry.isTelemetryObject(newStyleChild)) {
+            if (parent.type === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
                 return false;
             }
 
