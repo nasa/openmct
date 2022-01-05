@@ -26,7 +26,7 @@
            :href="url"
 >
     <div class="c-condition-widget__label">
-        {{ internalDomainObject.label }}
+        {{ internalDomainObject.conditionalLabel || internalDomainObject.label }}
     </div>
 </component>
 </template>

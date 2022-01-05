@@ -153,7 +153,7 @@ workflows:
           post-steps:
             - upload_code_covio               
       - e2e-test:
-          name: e2e-smoke
+          name: e2e-ci
           node-version: lts/fermium
           suite: ci
   the-nightly: #These jobs do not run on PRs, but against master at night
