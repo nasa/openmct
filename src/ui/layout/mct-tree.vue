@@ -430,28 +430,36 @@ export default {
 
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
+        getLowercaseObjectName(domainObject) {
+            let objectName;
+            if (!domainObject) {
+                return objectName;
+            }
+
+            if (domainObject.name) {
+                objectName = domainObject.name.toLowerCase();
+            }
+
+            if (domainObject.object && domainObject.object.name) {
+                objectName = domainObject.object.name.toLowerCase();
+            }
+
+            return objectName;
+        },
         sortNameAscending(a, b) {
             // sorting tree children items
-            if (!(a.name && b.name)) {
-                if (a.object.name.toLowerCase()
-                    > b.object.name.toLowerCase()) {
-                    return 1;
-                }
-
-                if (b.object.name.toLowerCase()
-                    > a.object.name.toLowerCase()) {
-                    return -1;
-                }
+            let objectAName = this.getLowercaseObjectName(a);
+            let objectBName = this.getLowercaseObjectName(b);
+            if (!objectAName || !objectBName) {
+                return 0;
             }
 
             // sorting composition items
-            if (a.name.toLowerCase()
-                > b.name.toLowerCase()) {
+            if (objectAName > objectBName) {
                 return 1;
             }
 
-            if (b.name.toLowerCase()
-                > a.name.toLowerCase()) {
+            if (objectBName > objectAName) {
                 return -1;
             }
 
