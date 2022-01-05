@@ -38,9 +38,13 @@ export default {
         this.objectStyle = this.getObjectStyleForItem(this.parentDomainObject.configuration.objectStyles);
         this.initObjectStyles();
     },
-    destroyed() {
+    beforeDestroy() {
         if (this.stopListeningObjectStyles) {
             this.stopListeningObjectStyles();
+        }
+
+        if (this.styleRuleManager) {
+            this.styleRuleManager.destroy();
         }
     },
     methods: {
