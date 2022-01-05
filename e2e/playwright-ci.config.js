@@ -13,6 +13,7 @@ const config = {
         timeout: 200 * 1000,
         reuseExistingServer: !process.env.CI
     },
+    workers: 2, //Limit to 2 for CircleCI Agent
     use: {
         browserName: "chromium",
         baseURL: 'http://localhost:8080/',
