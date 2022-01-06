@@ -48,7 +48,7 @@ define([
         });
 
         it("exposes plugins", function () {
-            expect(openmct.plugins).toEqual(plugins);
+            expect(openmct.plugins).not.toEqual(plugins);
         });
 
         it("does not issue a start event before started", function () {
