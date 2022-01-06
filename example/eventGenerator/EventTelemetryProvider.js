@@ -28,17 +28,14 @@ import messages from './transcript.json';
 
 class EventTelemetryProvider {
     constructor() {
-        this.firstObservedTime = Date.now();
-        this.count = 0;
         this.defaultSize = 25;
     }
 
-    generateData(startTime, duration, name) {
-        const millisecondsSinceStart = startTime - this.firstObservedTime;
+    generateData(firstObservedTime, count, startTime, duration, name) {
+        const millisecondsSinceStart = startTime - firstObservedTime;
         const utc = Math.floor(startTime / duration) * duration;
-        const ind = this.count % messages.length;
+        const ind = count % messages.length;
         const message = messages[ind] + " - [" + millisecondsSinceStart + "]";
-        this.count += 1;
 
         return {
             name,
@@ -57,10 +54,13 @@ class EventTelemetryProvider {
 
     subscribe(domainObject, callback) {
         const duration = domainObject.telemetry.duration * 1000;
+        const firstObservedTime = Date.now();
+        let count = 0;
 
         const interval = setInterval(() => {
             const startTime = Date.now();
-            const datum = this.generateData(startTime, duration, domainObject.name);
+            const datum = this.generateData(firstObservedTime, count, startTime, duration, domainObject.name);
+            count += 1;
             callback(datum);
         }, duration);
 
@@ -75,15 +75,18 @@ class EventTelemetryProvider {
         const duration = domainObject.telemetry.duration * 1000;
         const size = options.size ? options.size : this.defaultSize;
         const data = [];
+        const firstObservedTime = Date.now();
+        let count = 0;
 
         if (options.strategy === 'latest' || options.size === 1) {
             start = end;
         }
 
         while (start <= end && data.length < size) {
-            const startTime = Date.now() + this.count;
-            data.push(this.generateData(startTime, duration, domainObject.name));
+            const startTime = Date.now() + count;
+            data.push(this.generateData(firstObservedTime, count, startTime, duration, domainObject.name));
             start += duration;
+            count += 1;
         }
 
         return Promise.resolve(data);
