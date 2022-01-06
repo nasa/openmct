@@ -161,7 +161,7 @@ workflows:
     jobs:
       - unit-test:
           name: node15-chrome-nightly
-          node-version: lts/gallium
+          node-version: 15
           browser: ChromeHeadless
       - unit-test:
           name: node12-firefoxESR-nightly
