@@ -308,6 +308,8 @@ class CouchObjectProvider {
                 }
             }
         };
+        console.debug(`🍇 Seaching for ${query} in CouchDB`);
+        console.trace();
 
         return this.getObjectsByFilter(filter, abortSignal);
     }

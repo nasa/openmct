@@ -345,6 +345,7 @@ class InMemorySearchProvider {
         const eventToReturn = {
             data: message
         };
+        console.debug(`🖲 Found ${message.total} results from local search`);
         this.onWorkerMessage(eventToReturn);
     }
 }
