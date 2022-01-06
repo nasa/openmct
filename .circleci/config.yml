@@ -142,7 +142,7 @@ workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
       - node15-lint:
-          node-version: 15
+          node-version: "15"
       - unit-test:
           name: node12-chrome
           node-version: lts/erbium
@@ -161,7 +161,7 @@ workflows:
     jobs:
       - unit-test:
           name: node15-chrome-nightly
-          node-version: 15
+          node-version: "15"
           browser: ChromeHeadless
       - unit-test:
           name: node12-firefoxESR-nightly
