@@ -141,11 +141,15 @@ export default {
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         getStyleReceiver() {
-            let styleReceiver = this.$refs.objectViewWrapper.querySelector('.js-style-receiver')
-                || this.$refs.objectViewWrapper.querySelector(':first-child');
+            let styleReceiver;
 
-            if (styleReceiver === null) {
-                styleReceiver = undefined;
+            if (this.$refs.objectViewWrapper !== undefined) {
+                styleReceiver = this.$refs.objectViewWrapper.querySelector('.js-style-receiver')
+                  || this.$refs.objectViewWrapper.querySelector(':first-child');
+
+                if (styleReceiver === null) {
+                    styleReceiver = undefined;
+                }
             }
 
             return styleReceiver;
