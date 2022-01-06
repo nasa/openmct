@@ -76,7 +76,7 @@ jobs:
           node-version: <<parameters.node-version>>
       - run: npm audit --audit-level=low
       - generate_and_store_version_and_filesystem_artifacts
-  node16-lint:
+  node15-lint:
     parameters:
       node-version:
         type: string
@@ -141,8 +141,8 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - node16-lint:
-          node-version: lts/gallium
+      - node15-lint:
+          node-version: 15
       - unit-test:
           name: node12-chrome
           node-version: lts/erbium
@@ -160,7 +160,7 @@ workflows:
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
       - unit-test:
-          name: node16-chrome-nightly
+          name: node15-chrome-nightly
           node-version: lts/gallium
           browser: ChromeHeadless
       - unit-test:
