@@ -141,8 +141,8 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - node15-lint:
-          node-version: "15"
+      - node14-lint:
+          node-version: lts/fermium
       - unit-test:
           name: node12-chrome
           node-version: lts/erbium
@@ -159,10 +159,6 @@ workflows:
           suite: ci
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
-      - unit-test:
-          name: node15-chrome-nightly
-          node-version: "15"
-          browser: ChromeHeadless
       - unit-test:
           name: node12-firefoxESR-nightly
           node-version: lts/erbium
