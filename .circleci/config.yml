@@ -76,7 +76,7 @@ jobs:
           node-version: <<parameters.node-version>>
       - run: npm audit --audit-level=low
       - generate_and_store_version_and_filesystem_artifacts
-  node15-lint:
+  node14-lint:
     parameters:
       node-version:
         type: string
