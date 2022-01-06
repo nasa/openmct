@@ -23,6 +23,7 @@ import IndependentTimeConductor from '@/plugins/timeConductor/independent/Indepe
 const SupportedViewTypes = [
     'plot-stacked',
     'plot-overlay',
+    'bar-graph.view',
     'time-strip.view'
 ];
 export default {
