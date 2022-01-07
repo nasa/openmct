@@ -109,7 +109,7 @@ export default class StyleRuleManager extends EventEmitter {
         if (!styleConfiguration || !styleConfiguration.conditionSetIdentifier) {
             this.initialize(styleConfiguration || {});
             this.applyStaticStyle();
-            this.destroy();
+            this.destroy(true);
         } else {
             let isNewConditionSet = !this.conditionSetIdentifier
                                     || !this.openmct.objects.areIdsEqual(this.conditionSetIdentifier, styleConfiguration.conditionSetIdentifier);
@@ -180,15 +180,17 @@ export default class StyleRuleManager extends EventEmitter {
         this.updateDomainObjectStyle();
     }
 
-    destroy() {
+    destroy(skipEventListeners) {
         if (this.stopProvidingTelemetry) {
 
             this.stopProvidingTelemetry();
             delete this.stopProvidingTelemetry;
         }
 
-        this.openmct.time.off("bounds", this.refreshData);
-        this.openmct.editor.off('isEditing', this.toggleSubscription);
+        if (!skipEventListeners) {
+            this.openmct.time.off("bounds", this.refreshData);
+            this.openmct.editor.off('isEditing', this.toggleSubscription);
+        }
 
         this.conditionSetIdentifier = undefined;
     }
