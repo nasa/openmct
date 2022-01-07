@@ -186,6 +186,10 @@ export default {
                     return {
                         name: field.name,
                         value: field.path.reduce((object, key) => {
+                            if (object === undefined) {
+                                return object;
+                            }
+
                             return object[key];
                         }, this.domainObject)
                     };
