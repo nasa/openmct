@@ -262,7 +262,9 @@ describe('the plugin', () => {
             await Promise.all(openmct.objects.search('test'));
             const requestUrl = fetch.calls.mostRecent().args[0];
 
-            expect(fetch).toHaveBeenCalled();
+            // we only want one call to fetch, not 2!
+            // see https://github.com/nasa/openmct/issues/4667
+            expect(fetch).toHaveBeenCalledTimes(1);
             expect(requestUrl.endsWith('_find')).toBeTrue();
         });
 
