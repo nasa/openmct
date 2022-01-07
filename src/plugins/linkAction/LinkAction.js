@@ -91,11 +91,11 @@ export default class LinkAction {
     }
 
     validate(currentParent) {
-        return (object, data) => {
-            const parentCandidate = data.value;
+        return (data) => {
+            const parentCandidate = data.value[0];
             const currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             const parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
-            const objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
+            const objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
@@ -114,7 +114,7 @@ export default class LinkAction {
                 return false;
             }
 
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, object);
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
         };
     }
 }
