@@ -20,20 +20,23 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchObjectProvider from './CouchObjectProvider';
-import CouchSearchProvider from './CouchSearchProvider';
-const NAMESPACE = '';
-const LEGACY_SPACE = 'mct';
-const COUCH_SEARCH_ONLY_NAMESPACE = `COUCH_SEARCH_${Date.now()}`;
+class CouchSearchProvider {
+    constructor(couchObjectProvider) {
+        this.couchObjectProvider = couchObjectProvider;
+    }
 
-export default function CouchPlugin(options) {
-    return function install(openmct) {
-        install.couchProvider = new CouchObjectProvider(openmct, options, NAMESPACE);
+    search(query, abortSignal) {
+        const filter = {
+            "selector": {
+                "model": {
+                    "name": {
+                        "$regex": `(?i)${query}`
+                    }
+                }
+            }
+        };
 
-        // Unfortunately, for historical reasons, Couch DB produces objects with a mix of namepaces (alternately "mct", and "")
-        // Installing the same provider under both namespaces means that it can respond to object gets for both namespaces.
-        openmct.objects.addProvider(LEGACY_SPACE, install.couchProvider);
-        openmct.objects.addProvider(NAMESPACE, install.couchProvider);
-        openmct.objects.addProvider(COUCH_SEARCH_ONLY_NAMESPACE, new CouchSearchProvider(install.couchProvider));
-    };
+        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    }
 }
+export default CouchSearchProvider;

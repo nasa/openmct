@@ -25,7 +25,7 @@ import {
     resetApplicationState, spyOnBuiltins
 } from 'utils/testing';
 
-describe('the plugin', () => {
+fdescribe('the plugin', () => {
     let openmct;
     let provider;
     let testPath = 'http://localhost:9990/openmct';
