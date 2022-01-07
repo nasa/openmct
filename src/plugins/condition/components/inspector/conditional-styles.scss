@@ -39,12 +39,15 @@
         flex-direction: column;
     }
 
+    &__elem {
+        border-bottom: 1px solid $colorInteriorBorder;
+        padding-bottom: $interiorMargin;
+    }
+
     &__condition-set {
         align-items: baseline;
-        border-bottom: 1px solid $colorInteriorBorder;
         display: flex;
         flex-direction: row;
-        padding-bottom: $interiorMargin;
 
         .c-object-label {
             flex: 1 1 auto;
