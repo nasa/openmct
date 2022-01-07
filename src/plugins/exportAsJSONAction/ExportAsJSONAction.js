@@ -22,7 +22,6 @@
 import JSONExporter from '/src/exporters/JSONExporter.js';
 
 import _ from 'lodash';
-import { saveAs } from 'saveAs';
 import uuid from "uuid";
 
 export default class ExportAsJSONAction {
@@ -41,7 +40,7 @@ export default class ExportAsJSONAction {
         this.calls = 0;
         this.idMap = {};
 
-        this.JSONExportService = new JSONExporter(saveAs);
+        this.JSONExportService = new JSONExporter();
     }
 
     // Public
@@ -60,6 +59,7 @@ export default class ExportAsJSONAction {
      * @param {object} objectpath
      */
     invoke(objectpath) {
+        this.tree = {};
         const root = objectpath[0];
         this.root = JSON.parse(JSON.stringify(root));
         const rootId = this._getId(this.root);
@@ -67,7 +67,6 @@ export default class ExportAsJSONAction {
 
         this._write(this.root);
     }
-
     /**
      * @private
      * @param {object} domainObject
@@ -115,6 +114,7 @@ export default class ExportAsJSONAction {
             return _.isEqual(child.identifier, id);
         });
         const copyOfChild = JSON.parse(JSON.stringify(child));
+
         copyOfChild.identifier.key = uuid();
         const newIdString = this._getId(copyOfChild);
         const parentId = this._getId(parent);

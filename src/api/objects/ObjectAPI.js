@@ -41,11 +41,8 @@ function ObjectAPI(typeRegistry, openmct) {
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
-    this.rootRegistry = new RootRegistry();
+    this.rootRegistry = new RootRegistry(openmct);
     this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
-    this.injectIdentifierService = function () {
-        this.identifierService = this.openmct.$injector.get("identifierService");
-    };
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
@@ -67,32 +64,16 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
 };
 
 /**
- * @private
- */
-ObjectAPI.prototype.getIdentifierService = function () {
-    // Lazily acquire identifier service
-    if (!this.identifierService) {
-        this.injectIdentifierService();
-    }
-
-    return this.identifierService;
-};
-
-/**
  * Retrieve the provider for a given identifier.
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
-    //handles the '' vs 'mct' namespace issue
-    const keyString = utils.makeKeyString(identifier);
-    const identifierService = this.getIdentifierService();
-    const namespace = identifierService.parse(keyString).getSpace();
 
     if (identifier.key === 'ROOT') {
         return this.rootProvider;
     }
 
-    return this.providers[namespace] || this.fallbackProvider;
+    return this.providers[identifier.namespace] || this.fallbackProvider;
 };
 
 /**
@@ -386,14 +367,17 @@ ObjectAPI.prototype.endTransaction = function () {
 
 /**
  * Add a root-level object.
- * @param {module:openmct.ObjectAPI~Identifier|function} an array of
- *        identifiers for root level objects, or a function that returns a
+ * @param {module:openmct.ObjectAPI~Identifier|array|function} identifier an identifier or
+ *        an array of identifiers for root level objects, or a function that returns a
  *        promise for an identifier or an array of root level objects.
+ * @param {module:openmct.PriorityAPI~priority|Number} priority a number representing
+ *        this item(s) position in the root object's composition (example: order in object tree).
+ *        For arrays, they are treated as blocks.
  * @method addRoot
  * @memberof module:openmct.ObjectAPI#
  */
-ObjectAPI.prototype.addRoot = function (key) {
-    this.rootRegistry.addRoot(key);
+ObjectAPI.prototype.addRoot = function (identifier, priority) {
+    this.rootRegistry.addRoot(identifier, priority);
 };
 
 /**

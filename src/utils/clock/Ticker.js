@@ -24,8 +24,6 @@ class Ticker {
     constructor() {
         this.callbacks = [];
         this.last = new Date() - 1000;
-
-        this.tick();
     }
 
     /**
@@ -47,7 +45,7 @@ class Ticker {
         }
 
         // Try to update at exactly the next second
-        setTimeout(() => {
+        this.timeoutHandle = setTimeout(() => {
             this.tick();
         }, 1000 - millis, true);
     }
@@ -62,6 +60,10 @@ class Ticker {
      * @returns {Function} a function to unregister this listener
      */
     listen(callback) {
+        if (this.callbacks.length === 0) {
+            this.tick();
+        }
+
         this.callbacks.push(callback);
 
         // Provide immediate feedback
@@ -72,6 +74,10 @@ class Ticker {
             this.callbacks = this.callbacks.filter(function (cb) {
                 return cb !== callback;
             });
+
+            if (this.callbacks.length === 0) {
+                clearTimeout(this.timeoutHandle);
+            }
         };
     }
 }

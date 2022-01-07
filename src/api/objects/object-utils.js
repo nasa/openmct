@@ -172,6 +172,7 @@ define([
     }
 
     return {
+        isIdentifier: isIdentifier,
         toOldFormat: toOldFormat,
         toNewFormat: toNewFormat,
         makeKeyString: makeKeyString,
