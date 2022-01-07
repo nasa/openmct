@@ -62,12 +62,14 @@ export default {
         }
     },
     mounted() {
+        this.refreshData = this.refreshData.bind(this);
+        this.setTimeContext();
+
         this.loadComposition();
 
-        this.openmct.time.on('bounds', this.refreshData);
     },
     beforeDestroy() {
-        this.openmct.time.off('bounds', this.refreshData);
+        this.stopFollowingTimeContext();
 
         this.removeAllSubscriptions();
 
@@ -79,6 +81,21 @@ export default {
         this.composition.off('remove', this.removeTelemetryObject);
     },
     methods: {
+        setTimeContext() {
+            this.stopFollowingTimeContext();
+
+            this.timeContext = this.openmct.time.getContextForView(this.path);
+            this.followTimeContext();
+
+        },
+        followTimeContext() {
+            this.timeContext.on('bounds', this.refreshData);
+        },
+        stopFollowingTimeContext() {
+            if (this.timeContext) {
+                this.timeContext.off('bounds', this.refreshData);
+            }
+        },
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
@@ -147,7 +164,7 @@ export default {
             };
         },
         getOptions() {
-            const { start, end } = this.openmct.time.bounds();
+            const { start, end } = this.timeContext.bounds();
 
             return {
                 end,
@@ -247,10 +264,10 @@ export default {
             this.addTrace(trace, key);
         },
         isDataInTimeRange(datum, key) {
-            const timeSystemKey = this.openmct.time.timeSystem().key;
+            const timeSystemKey = this.timeContext.timeSystem().key;
             let currentTimestamp = this.parse(key, timeSystemKey, datum);
 
-            return currentTimestamp && this.openmct.time.bounds().end >= currentTimestamp;
+            return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
         },
         format(telemetryObjectKey, metadataKey, data) {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];
