@@ -19,6 +19,7 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
 import uuid from 'uuid';
 
 class InMemorySearchProvider {
@@ -74,11 +75,11 @@ class InMemorySearchProvider {
         const rootObject = this.openmct.objects.rootProvider.rootObject;
         this.scheduleForIndexing(rootObject.identifier);
 
-        // if (typeof SharedWorker !== 'undefined') {
-        //     this.worker = this.startSharedWorker();
-        // } else {
-        //     // we must be on iOS
-        // }
+        if (typeof SharedWorker !== 'undefined') {
+            this.worker = this.startSharedWorker();
+        } else {
+            // we must be on iOS
+        }
     }
 
     /**
@@ -189,7 +190,6 @@ class InMemorySearchProvider {
         const objectProvider = this.openmct.objects.getProvider(identifier);
 
         if (objectProvider === undefined || objectProvider.search === undefined) {
-            console.debug(`🖲 scheduling ${identifier.key} for in-memory indexing`);
             if (!this.indexedIds[keyString] && !this.pendingIndex[keyString]) {
                 this.pendingIndex[keyString] = true;
                 this.idsToIndex.push(keyString);
@@ -345,7 +345,6 @@ class InMemorySearchProvider {
         const eventToReturn = {
             data: message
         };
-        console.debug(`🖲 Found ${message.total} results from local search`);
         this.onWorkerMessage(eventToReturn);
     }
 }

@@ -20,6 +20,13 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
+// This provider exists because due to legacy reasons, we need to install
+// two plugins for two namespaces for CouchDB: one for "mct", and one for "".
+// Because of this, we need to separate out the search provider from the object
+// provider so we don't return two results for each found object.
+// If the above namespace is ever resolved, we can fold this search provider
+// back into the object provider.
+
 class CouchSearchProvider {
     constructor(couchObjectProvider) {
         this.couchObjectProvider = couchObjectProvider;
