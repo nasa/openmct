@@ -702,7 +702,7 @@ export default {
                     focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
                 }
 
-                if (!(this.paused || thumbnailClick)
+                if (!(this.isPaused || thumbnailClick)
                     || focusedIndex === this.imageHistory.length - 1) {
                     delete this.previousFocusedImage;
                 }
