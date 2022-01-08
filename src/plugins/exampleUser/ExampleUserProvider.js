@@ -61,7 +61,7 @@ export default class ExampleUserProvider extends EventEmitter {
             let overlay = this.openmct.overlays.overlay({
                 element: this._getLoginForm(),
                 dismissable: false,
-                size: 'small',
+                size: 'fit',
                 buttons: [
                     {
                         label: 'Login',
@@ -96,14 +96,21 @@ export default class ExampleUserProvider extends EventEmitter {
     _getLoginForm() {
         let div = document.createElement('div');
         div.innerHTML = `
-            <div id="loginForm" class="form">
+            <div id="loginForm" class="c-form">
                 <div class="c-overlay__dialog-title">
-                    Please enter your username and password.
+                    Enter username and password
                 </div>
-                <div class="form-row">
-                    <div class="c-form__row__label">Username</div>
-                    <input id="example-user-form-username" class="c-form__row__controls" type="text" />
+                <div class="c-overlay__dialog-hint hint">
+                    All fields are required.
                 </div>
+                <div class="c-form__row first">
+                    <div class="c-form-row__label">Username</div>
+                    <input id="example-user-form-username" class="c-form-row__controls" type="text" />
+                </div>
+<!--                <div class="c-form__row">-->
+<!--                    <div class="c-form-row__label">Password</div>-->
+<!--                    <input id="example-user-form-username" class="c-form-row__controls" type="password" />-->
+<!--                </div>-->
             </div>
         `.trim();
 
