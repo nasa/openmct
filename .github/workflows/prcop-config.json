@@ -10,7 +10,7 @@
     {
       "name": "descriptionMinWords",
       "config": {
-        "minWordsCount": 10,
+        "minWordsCount": 160,
         "errorMessage": ":police_officer: Please, be sure to use existing PR template."
       }
     }
