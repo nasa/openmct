@@ -21,7 +21,7 @@
 -->
 
 <template>
-<div class="c-indicator icon-person no-minify c-indicator--clickable">
+<div class="c-indicator icon-person c-indicator--clickable">
     <span class="label c-indicator__label">
         {{ name }}
     </span>
