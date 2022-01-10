@@ -175,7 +175,7 @@ export default {
             focusEntryId: null,
             search: '',
             searchResults: [],
-            showTime: 0,
+            showTime: this.domainObject.configuration.showTime || 0,
             showNav: false,
             sidebarCoversEntries: false
         };
@@ -239,6 +239,12 @@ export default {
     watch: {
         search() {
             this.getSearchResults();
+        },
+        defaultSort() {
+            mutateObject(this.openmct, this.domainObject, 'configuration.defaultSort', this.defaultSort);
+        },
+        showTime() {
+            mutateObject(this.openmct, this.domainObject, 'configuration.showTime', this.showTime);
         }
     },
     beforeMount() {
