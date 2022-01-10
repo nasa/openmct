@@ -120,9 +120,15 @@ export default {
             return this.timeFormatter.parse(datum);
         },
         boundsChange(bounds, isTick) {
-            if (!isTick) {
-                this.requestHistory();
+            if (isTick) {
+                return;
             }
+
+            // forcibly reset the imageContainer size to prevent an aspect ratio distortion
+            delete this.imageContainerWidth;
+            delete this.imageContainerHeight;
+
+            return this.requestHistory();
         },
         async requestHistory() {
             let bounds = this.timeContext.bounds();
