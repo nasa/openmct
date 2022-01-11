@@ -65,7 +65,6 @@ commands:
         - run: curl -Os https://uploader.codecov.io/latest/linux/codecov;chmod +x codecov;./codecov 
 orbs:
   node: circleci/node@4.9.0
-  browser-tools: circleci/browser-tools@1.2.3
 jobs:
   npm-audit:
     parameters:
@@ -97,9 +96,9 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - save_cache_cmd:
           node-version: <<parameters.node-version>>
+      - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - store_test_results:
           path: dist/reports/tests/
       - store_artifacts:
