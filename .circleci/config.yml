@@ -151,9 +151,13 @@ workflows:
           node-version: lts/fermium
           browser: PlaywrightFirefox
       - unit-test:
-          name: node14-chrome-nightly
+          name: node14-chrome-canary-nightly
           node-version: lts/fermium
-          browser: PlaywrightChrome
+          browser: PlaywrightChromeCanary
+      - unit-test:
+          name: node14-safari-nightly
+          node-version: lts/fermium
+          browser: PlaywrightSafari
       - npm-audit:
           node-version: lts/fermium
       - e2e-test:

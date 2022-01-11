@@ -83,8 +83,18 @@ module.exports = (config) => {
             PlaywrightChrome: {
                 base: 'ChromiumHeadless'
             },
+            PlaywrightSafari: {
+                base: 'WebKitHeadless'
+            },
+            PlaywrightChromeCanary: {
+                base: 'ChromiumHeadless',
+                launchOptions: {
+                    channel: 'chrome-canary'
+                }
+            },
             PlaywrightFirefox: {
-                base: 'FirefoxHeadless'
+                base: 'FirefoxHeadless',
+                debug: true
             }
         },
         colors: true,

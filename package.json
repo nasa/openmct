@@ -97,6 +97,8 @@
     "test:debug": "cross-env NODE_ENV=debug karma start --no-single-run",
     "test:coverage": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run",
     "test:coverage:pw": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run --browsers=PlaywrightChrome",
+    "test:coverage:pwsafari": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run --browsers=PlaywrightSafari",
+    "test:coverage:pwcanary": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run --browsers=PlaywrightChromeCanary",
     "test:coverage:pwfirefox": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run --browsers=PlaywrightFirefox",
     "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js smoke default condition.e2e",
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js",
