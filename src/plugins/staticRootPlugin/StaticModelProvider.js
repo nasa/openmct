@@ -1,7 +1,9 @@
 define([
-    'objectUtils'
+    'objectUtils',
+    'uuid'
 ], function (
-    objectUtils
+    objectUtils,
+    uuid
 ) {
     /**
      * Transforms an import json blob into a object map that can be used to
@@ -10,18 +12,30 @@ define([
      * exist in the same namespace as the rootIdentifier.
      */
     function rewriteObjectIdentifiers(importData, rootIdentifier) {
+        console.log('rewriteObjectIdentifiers');
+        console.log(importData.openmct);
         const rootId = importData.rootId;
-        let objectString = JSON.stringify(importData.openmct);
 
+        let objectString = JSON.stringify(importData.openmct);
         Object.keys(importData.openmct).forEach(function (originalId, i) {
-            let newId;
+            let combinedId;
             if (originalId === rootId) {
-                newId = objectUtils.makeKeyString(rootIdentifier);
+                combinedId = objectUtils.makeKeyString(rootIdentifier);
             } else {
-                newId = objectUtils.makeKeyString({
+                combinedId = objectUtils.makeKeyString({
                     namespace: rootIdentifier.namespace,
                     key: i
                 });
+            }
+
+            importData.openmct[combinedId] = importData.openmct[originalId];
+            delete importData.openmct[originalId];
+
+            let newId;
+            if (originalId === rootId) {
+                newId = rootIdentifier.key;
+            } else {
+                newId = i;
             }
 
             while (objectString.indexOf(originalId) !== -1) {
@@ -30,9 +44,53 @@ define([
                     '"' + newId + '"'
                 );
             }
+
+            while (objectString.indexOf('"namespace":""') !== -1) {
+                objectString = objectString.replace('"namespace":""', `"namespace":"${rootIdentifier.namespace}"`);
+            }
         });
 
-        return JSON.parse(objectString);
+        console.log(objectString);
+        console.log(JSON.parse(objectString));
+        console.log(generateNewIdentifiers(importData, rootIdentifier.namespace));
+
+        return {};
+    }
+
+    function rewriteId(oldId, newId, tree) {
+        let newIdKeyString = objectUtils.makeKeyString(newId);
+        let oldIdKeyString = objectUtils.makeKeyString(oldId);
+        tree = JSON.stringify(tree).replace(new RegExp(oldIdKeyString, 'g'), newIdKeyString);
+
+        return JSON.parse(tree, (key, value) => {
+            if (value !== undefined
+                && value !== null
+                && Object.prototype.hasOwnProperty.call(value, 'key')
+                && Object.prototype.hasOwnProperty.call(value, 'namespace')
+                && value.key === oldId.key
+                && value.namespace === oldId.namespace) {
+                return newId;
+            } else {
+                return value;
+            }
+        });
+    }
+
+    function generateNewIdentifiers(tree, namespace) {
+        // For each domain object in the file, generate new ID, replace in tree
+        debugger;
+        Object.keys(tree.openmct).forEach(domainObjectId => {
+            const newId = {
+                namespace,
+                key: uuid()
+            };
+
+            const oldId = objectUtils.parseKeyString(domainObjectId);
+
+            tree = rewriteId(oldId, newId, tree);
+        }, this);
+
+        return tree;
     }
 
     /**
