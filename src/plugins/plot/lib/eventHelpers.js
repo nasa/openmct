@@ -90,3 +90,10 @@ const helperFunctions = {
 };
 
 export default helperFunctions;
+
+/**
+@typedef {{
+    listenTo: (object: any, event: any, callback: any, context: any) => void
+    stopListening: (object: any, event: any, callback: any, context: any) => void
+}} EventHelpers
+*/

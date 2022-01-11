@@ -20,11 +20,29 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import EventEmitter from 'EventEmitter';
+import EventEmitter from 'eventemitter3';
 import eventHelpers from "../lib/eventHelpers";
 import _ from 'lodash';
 
+/** @typedef {any} TODO */
+
+/** @typedef {TODO} OpenMCT */
+
+/**
+@template {object} T
+@typedef {{
+    model: T
+    openmct: OpenMCT
+}} ModelOptions
+*/
+
+/**
+ * @template {object} T
+ */
 export default class Model extends EventEmitter {
+    /**
+     * @param {ModelOptions<T>} options
+     */
     constructor(options) {
         super();
 
@@ -36,6 +54,7 @@ export default class Model extends EventEmitter {
         }
 
         this.id = options.id;
+        /** @type {T} */
         this.model = options.model;
         this.collection = options.collection;
         const defaults = this.defaults(options);
@@ -46,14 +65,22 @@ export default class Model extends EventEmitter {
         }
 
         this.initialize(options);
+
+        /** @type {"id"} */
         this.idAttr = 'id';
     }
 
+    /**
+     * @param {ModelOptions<T>} options
+     */
     defaults(options) {
         return {};
     }
 
-    initialize(model) {
+    /**
+     * @param {ModelOptions<T>} options
+     */
+    initialize(options) {
 
     }
 
@@ -69,6 +96,11 @@ export default class Model extends EventEmitter {
         return this.get(this.idAttr);
     }
 
+    /**
+     * @template {keyof T} K
+     * @param {K} attribute
+     * @returns {T[K]}
+     */
     get(attribute) {
         return this.model[attribute];
     }
@@ -77,6 +109,11 @@ export default class Model extends EventEmitter {
         return _.has(this.model, attribute);
     }
 
+    /**
+     * @template {keyof T} K
+     * @param {K} attribute
+     * @param {T[K]} value
+     */
     set(attribute, value) {
         const oldValue = this.model[attribute];
         this.model[attribute] = value;
@@ -84,6 +121,10 @@ export default class Model extends EventEmitter {
         this.emit('change:' + attribute, value, oldValue, this);
     }
 
+    /**
+     * @template {keyof T} K
+     * @param {K} attribute
+     */
     unset(attribute) {
         const oldValue = this.model[attribute];
         delete this.model[attribute];

@@ -20,22 +20,26 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import Model from "./Model";
+
 /**
-     * TODO: doc strings.
-     */
+ * @extends {Model<XAxisModelType>}
+ */
 export default class XAxisModel extends Model {
+    /**
+     * @param {XAxisModelOptions} options
+     */
     initialize(options) {
         this.plot = options.plot;
         this.set('label', options.model.name || '');
-        this.on('change:range', function (newValue, oldValue, model) {
-            if (!model.get('frozen')) {
-                model.set('displayRange', newValue);
+        this.on('change:range', (newValue) => {
+            if (!this.get('frozen')) {
+                this.set('displayRange', newValue);
             }
         });
 
-        this.on('change:frozen', ((frozen, oldValue, model) => {
+        this.on('change:frozen', ((frozen) => {
             if (!frozen) {
-                model.set('range', this.get('range'));
+                this.set('range', this.get('range'));
             }
         }));
 
@@ -45,6 +49,10 @@ export default class XAxisModel extends Model {
 
         this.listenTo(this, 'change:key', this.changeKey, this);
     }
+
+    /**
+     * @param {string} newKey
+     */
     changeKey(newKey) {
         const series = this.plot.series.first();
         if (series) {
@@ -68,12 +76,16 @@ export default class XAxisModel extends Model {
             plotSeries.reset();
         });
     }
+    /**
+     * @param {XAxisModelOptions} options
+     */
     defaults(options) {
         const bounds = options.openmct.time.bounds();
         const timeSystem = options.openmct.time.timeSystem();
         const format = options.openmct.telemetry.getFormatter(timeSystem.timeFormat);
 
-        return {
+        /** @type {XAxisModelType} */
+        const defaultModel = {
             name: timeSystem.name,
             key: timeSystem.key,
             format: format.format.bind(format),
@@ -83,5 +95,36 @@ export default class XAxisModel extends Model {
             },
             frozen: false
         };
+
+        return defaultModel;
     }
 }
+
+/** @typedef {any} TODO */
+
+/** @typedef {TODO} OpenMCT */
+
+/**
+@typedef {{
+    min: number
+    max: number
+}} Range
+*/
+
+/**
+@typedef {{
+    name: string
+    key: string
+    range: Range
+    displayRange: Range
+    frozen: boolean
+    label: string
+    format: (n: TODO) => string
+}} XAxisModelType
+*/
+
+/**
+@typedef {import('./Model').ModelOptions<XAxisModelType> & {
+    plot: import('./PlotConfigurationModel').default
+}} XAxisModelOptions
+*/
