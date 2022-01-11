@@ -19,83 +19,113 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-define([
-    '../RootRegistry'
-], function (
-    RootRegistry
-) {
-    describe('RootRegistry', function () {
-        let idA;
-        let idB;
-        let idC;
-        let registry;
 
-        beforeEach(function () {
-            idA = {
-                key: 'keyA',
-                namespace: 'something'
-            };
-            idB = {
-                key: 'keyB',
-                namespace: 'something'
-            };
-            idC = {
-                key: 'keyC',
-                namespace: 'something'
-            };
-            registry = new RootRegistry();
-        });
+import { createOpenMct, resetApplicationState } from '../../../utils/testing';
 
-        it('can register a root by key', function () {
-            registry.addRoot(idA);
+describe('RootRegistry', () => {
+    let openmct;
+    let idA;
+    let idB;
+    let idC;
+    let idD;
 
-            return registry.getRoots()
-                .then(function (roots) {
-                    expect(roots).toEqual([idA]);
-                });
-        });
+    beforeEach((done) => {
+        openmct = createOpenMct();
+        idA = {
+            key: 'keyA',
+            namespace: 'something'
+        };
+        idB = {
+            key: 'keyB',
+            namespace: 'something'
+        };
+        idC = {
+            key: 'keyC',
+            namespace: 'something'
+        };
+        idD = {
+            key: 'keyD',
+            namespace: 'something'
+        };
 
-        it('can register multiple roots by key', function () {
-            registry.addRoot([idA, idB]);
+        openmct.on('start', done);
+        openmct.startHeadless();
+    });
 
-            return registry.getRoots()
-                .then(function (roots) {
-                    expect(roots).toEqual([idA, idB]);
-                });
-        });
+    afterEach(async () => {
+        await resetApplicationState(openmct);
+    });
 
-        it('can register an asynchronous root ', function () {
-            registry.addRoot(function () {
-                return Promise.resolve(idA);
+    it('can register a root by identifier', () => {
+        openmct.objects.addRoot(idA);
+
+        return openmct.objects.getRoot()
+            .then((rootObject) => {
+                expect(rootObject.composition).toEqual([idA]);
             });
+    });
 
-            return registry.getRoots()
-                .then(function (roots) {
-                    expect(roots).toEqual([idA]);
-                });
-        });
+    it('can register multiple roots by identifier', () => {
+        openmct.objects.addRoot([idA, idB]);
 
-        it('can register multiple asynchronous roots', function () {
-            registry.addRoot(function () {
-                return Promise.resolve([idA, idB]);
+        return openmct.objects.getRoot()
+            .then((rootObject) => {
+                expect(rootObject.composition).toEqual([idA, idB]);
             });
+    });
 
-            return registry.getRoots()
-                .then(function (roots) {
-                    expect(roots).toEqual([idA, idB]);
-                });
-        });
+    it('can register an asynchronous root ', () => {
+        openmct.objects.addRoot(() => Promise.resolve(idA));
 
-        it('can combine different types of registration', function () {
-            registry.addRoot([idA, idB]);
-            registry.addRoot(function () {
-                return Promise.resolve([idC]);
+        return openmct.objects.getRoot()
+            .then((rootObject) => {
+                expect(rootObject.composition).toEqual([idA]);
             });
+    });
 
-            return registry.getRoots()
-                .then(function (roots) {
-                    expect(roots).toEqual([idA, idB, idC]);
-                });
-        });
+    it('can register multiple asynchronous roots', () => {
+        openmct.objects.addRoot(() => Promise.resolve([idA, idB]));
+
+        return openmct.objects.getRoot()
+            .then((rootObject) => {
+                expect(rootObject.composition).toEqual([idA, idB]);
+            });
+    });
+
+    it('can combine different types of registration', () => {
+        openmct.objects.addRoot([idA, idB]);
+        openmct.objects.addRoot(() => Promise.resolve([idC]));
+
+        return openmct.objects.getRoot()
+            .then((rootObject) => {
+                expect(rootObject.composition).toEqual([idA, idB, idC]);
+            });
+    });
+
+    it('supports priority ordering for identifiers', () => {
+        openmct.objects.addRoot(idA, openmct.priority.LOW);
+        openmct.objects.addRoot(idB, openmct.priority.HIGH);
+        openmct.objects.addRoot(idC); // DEFAULT
+
+        return openmct.objects.getRoot()
+            .then((rootObject) => {
+                expect(rootObject.composition[0]).toEqual(idB);
+                expect(rootObject.composition[1]).toEqual(idC);
+                expect(rootObject.composition[2]).toEqual(idA);
+            });
+    });
+
+    it('supports priority ordering for different types of registration', () => {
+        openmct.objects.addRoot(() => Promise.resolve([idC]), openmct.priority.LOW);
+        openmct.objects.addRoot(idB, openmct.priority.HIGH);
+        openmct.objects.addRoot([idA, idD]); // default
+
+        return openmct.objects.getRoot()
+            .then((rootObject) => {
+                expect(rootObject.composition[0]).toEqual(idB);
+                expect(rootObject.composition[1]).toEqual(idA);
+                expect(rootObject.composition[2]).toEqual(idD);
+                expect(rootObject.composition[3]).toEqual(idC);
+            });
     });
 });

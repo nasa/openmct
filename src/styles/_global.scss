@@ -229,7 +229,7 @@ body.desktop .has-local-controls {
     @include abs();
 }
 
-.c-grid {
+.c-grid .c-grid {
     pointer-events: none;
 
     &__x  { @include bgTicks($editUIGridColorFg, 'x'); }

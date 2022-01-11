@@ -1,3 +1,5 @@
+/* global __dirname */
+
 const path = require('path');
 const packageDefinition = require('./package.json');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -12,7 +14,8 @@ const gitBranch = require('child_process')
     .execSync('git rev-parse --abbrev-ref HEAD')
     .toString().trim();
 
-module.exports = {
+/** @type {import('webpack').Configuration} */
+const config = {
     entry: {
         openmct: './openmct.js',
         couchDBChangesFeed: './src/plugins/persistence/couch/CouchChangesFeed.js',
@@ -27,6 +30,7 @@ module.exports = {
         library: '[name]',
         libraryTarget: 'umd',
         publicPath: '',
+        hashFunction: 'xxhash64',
         clean: true
     },
     resolve: {
@@ -129,3 +133,5 @@ module.exports = {
     },
     stats: 'errors-warnings'
 };
+
+module.exports = config;
