@@ -21,7 +21,7 @@ commands:
       - restore_cache_cmd:
           node-version: << parameters.node-version >>
       - node/install:
-          install-npm: true
+          install-npm: false
           node-version: << parameters.node-version >>
       - run: npm install
   restore_cache_cmd:
@@ -146,15 +146,15 @@ workflows:
       - unit-test:
           name: node12-chrome-nightly
           node-version: lts/erbium
-          browser: ChromeHeadless
+          browser: PlaywrightChrome
       - unit-test:
           name: node14-firefox-nightly
           node-version: lts/fermium
-          browser: FirefoxHeadless
+          browser: PlaywrightFirefox
       - unit-test:
           name: node14-chrome-nightly
           node-version: lts/fermium
-          browser: ChromeHeadless
+          browser: PlaywrightChrome
       - npm-audit:
           node-version: lts/fermium
       - e2e-test:
