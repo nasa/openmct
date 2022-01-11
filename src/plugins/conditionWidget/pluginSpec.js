@@ -165,9 +165,9 @@ describe('the plugin', function () {
     });
 
     it("should render a view with a URL and label", async () => {
-        const parent = document.createElement('div');
-        const child = document.createElement('div');
-        parent.appendChild(child);
+        const urlParent = document.createElement('div');
+        const urlChild = document.createElement('div');
+        urlParent.appendChild(urlChild);
 
         const applicableViews = openmct.objectViews.get(mockConditionObject[CONDITION_WIDGET_KEY], []);
 
@@ -176,14 +176,14 @@ describe('the plugin', function () {
         );
 
         const conditionWidgetView = conditionWidgetViewProvider.view(mockConditionObject[CONDITION_WIDGET_KEY], [mockConditionObject[CONDITION_WIDGET_KEY]]);
-        conditionWidgetView.show(child);
+        conditionWidgetView.show(urlChild);
 
         await Vue.nextTick();
 
         const domainUrl = mockConditionObject[CONDITION_WIDGET_KEY].url;
-        expect(parent.innerHTML).toContain(`<a href="${domainUrl}"`);
+        expect(urlParent.innerHTML).toContain(`<a href="${domainUrl}"`);
 
-        const conditionWidgetRender = parent.querySelector('.c-condition-widget');
+        const conditionWidgetRender = urlParent.querySelector('.c-condition-widget');
         expect(conditionWidgetRender).toBeDefined();
         expect(conditionWidgetRender.innerHTML).toContain('<div class="c-condition-widget__label">');
 
