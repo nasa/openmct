@@ -32,7 +32,7 @@
           @click="arrowClicked()"
     ></span>
     <div class="autocompleteOptions"
-         @blur="hideOptions = false"
+         @blur="hideOptions = true"
     >
         <ul v-if="!hideOptions">
             <li v-for="opt in filteredOptions"
@@ -64,7 +64,7 @@ export default {
     },
     data() {
         return {
-            hideOptions: false,
+            hideOptions: true,
             showFilteredOptions: false,
             optionIndex: 0,
             field: this.model.value
