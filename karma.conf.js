@@ -79,17 +79,17 @@ module.exports = (config) => {
             FirefoxESR: {
                 base: 'FirefoxHeadless',
                 name: 'FirefoxESR'
+            },
+            PlaywrightChrome: {
+                base: 'ChromiumHeadless'
+            },
+            PlaywrightFirefox: {
+                base: 'FirefoxHeadless'
             }
         },
         colors: true,
         logLevel: config.LOG_INFO,
         autoWatch: true,
-        // HTML test reporting.
-        // htmlReporter: {
-        //    outputDir: "dist/reports/tests",
-        //    preserveDescribeNesting: true,
-        //    foldAll: false
-        // },
         junitReporter: {
             outputDir: "dist/reports/tests",
             outputFile: "test-results.xml",
@@ -116,6 +116,10 @@ module.exports = (config) => {
             showSpecTiming: true,
             failFast: false
         },
+        plugins: [
+            'karma-*',
+            '@onslip/karma-playwright-launcher'
+        ],
         preprocessors: {
             'indexTest.js': ['webpack', 'sourcemap']
         },

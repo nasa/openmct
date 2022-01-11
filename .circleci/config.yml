@@ -47,6 +47,7 @@ commands:
           paths:
             - ~/.npm
             - node_modules
+            - ~/.cache/ms-playwright
   generate_and_store_version_and_filesystem_artifacts:
     description: "Track important packages and files"
     steps:
@@ -96,23 +97,6 @@ jobs:
     steps:
       - build_and_install:
           node-version: <<parameters.node-version>>
-      - when:
-          condition:
-            equal: [ "FirefoxESR", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-firefox:
-                version: "91.4.0esr" #https://archive.mozilla.org/pub/firefox/releases/          
-      - when:
-          condition:
-            equal: [ "FirefoxHeadless", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-firefox
-      - when:
-          condition:
-            equal: [ "ChromeHeadless", <<parameters.browser>> ]
-          steps:
-            - browser-tools/install-chrome:
-                replace-existing: false
       - run: npm run test:coverage -- --browsers=<<parameters.browser>>
       - save_cache_cmd:
           node-version: <<parameters.node-version>>
@@ -146,23 +130,19 @@ workflows:
       - unit-test:
           name: node12-chrome
           node-version: lts/erbium
-          browser: ChromeHeadless
+          browser: PlaywrightChrome
       - unit-test: 
           name: node14-chrome
           node-version: lts/fermium
-          browser: ChromeHeadless
+          browser: PlaywrightChrome
           post-steps:
             - upload_code_covio               
       - e2e-test:
           name: e2e-ci
           node-version: lts/fermium
           suite: ci
-  the-nightly: #These jobs do not run on PRs, but against master at night
+  the-nightly: #These jobs do not run on PRs, but against master each night
     jobs:
-      - unit-test:
-          name: node12-firefoxESR-nightly
-          node-version: lts/erbium
-          browser: FirefoxESR
       - unit-test:
           name: node12-chrome-nightly
           node-version: lts/erbium

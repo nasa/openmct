@@ -4,6 +4,7 @@
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@braintree/sanitize-url": "^5.0.2",
+    "@onslip/karma-playwright-launcher": "0.2.1",
     "@percy/cli": "^1.0.0-beta.70",
     "@percy/playwright": "^1.0.1",
     "@playwright/test": "^1.16.3",
@@ -95,7 +96,8 @@
     "test": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run",
     "test:debug": "cross-env NODE_ENV=debug karma start --no-single-run",
     "test:coverage": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run",
-    "test:coverage:firefox": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run --browsers=FirefoxHeadless",
+    "test:coverage:pw": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run --browsers=PlaywrightChrome",
+    "test:coverage:pwfirefox": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run --browsers=PlaywrightFirefox",
     "test:e2e:ci": "npx playwright test --config=e2e/playwright-ci.config.js smoke default condition.e2e",
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js",
     "test:e2e:visual": "percy exec -- npx playwright test --config=e2e/playwright-visual.config.js default",
