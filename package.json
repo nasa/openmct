@@ -11,7 +11,6 @@
     "angular": ">=1.8.0",
     "angular-route": "1.4.14",
     "babel-eslint": "10.1.0",
-    "colors": "1.4.0",
     "comma-separated-values": "^3.6.4",
     "concurrently": "^3.6.1",
     "copy-webpack-plugin": "^10.2.0",
