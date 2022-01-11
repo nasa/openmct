@@ -64,7 +64,7 @@ export default {
     },
     data() {
         return {
-            hideOptions: true,
+            hideOptions: false,
             showFilteredOptions: false,
             optionIndex: 0,
             field: this.model.value
@@ -168,8 +168,8 @@ export default {
             this.showOptions();
         },
         arrowClicked() {
-            this.autocompleteInputElement.select();
             this.showFilteredOptions = false;
+            this.autocompleteInputElement.select();
             this.showOptions();
         },
         optionMouseover(optionId) {
