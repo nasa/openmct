@@ -22,7 +22,7 @@ commands:
           node-version: << parameters.node-version >>
       - node/install:
           install-npm: true
-          node-version: lts/fermium
+          node-version: << parameters.node-version >>
       - run: npm install
   restore_cache_cmd:
     description: "Custom command for restoring cache with the ability to bust cache. When BUST_CACHE is set to true, jobs will not restore cache"
@@ -76,14 +76,14 @@ jobs:
           node-version: <<parameters.node-version>>
       - run: npm audit --audit-level=low
       - generate_and_store_version_and_filesystem_artifacts
-  node10-lint:
+  node14-lint:
+    parameters:
+      node-version:
+        type: string
     executor: pw-focal-development
     steps:
-      - checkout
-      - node/install:
-          install-npm: false #Cannot install latest npm version with node10.
-          node-version: lts/dubnium
-      - run: npm install
+      - build_and_install:
+          node-version: <<parameters.node-version>>
       - run: npm run lint
       - generate_and_store_version_and_filesystem_artifacts
   unit-test:
@@ -141,7 +141,8 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - node10-lint
+      - node14-lint:
+          node-version: lts/fermium
       - unit-test:
           name: node12-chrome
           node-version: lts/erbium
@@ -153,15 +154,11 @@ workflows:
           post-steps:
             - upload_code_covio               
       - e2e-test:
-          name: e2e-smoke
+          name: e2e-ci
           node-version: lts/fermium
           suite: ci
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
-      - unit-test:
-          name: node10-chrome-nightly
-          node-version: lts/dubnium
-          browser: ChromeHeadless
       - unit-test:
           name: node12-firefoxESR-nightly
           node-version: lts/erbium

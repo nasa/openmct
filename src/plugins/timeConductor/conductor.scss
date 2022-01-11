@@ -185,6 +185,11 @@
         &__inputs,
         &__time-bounds {
             display: flex;
+
+            .c-toggle-switch {
+                // Used in independent Time Conductor
+                flex: 0 0 auto;
+            }
         }
 
         &__inputs {
