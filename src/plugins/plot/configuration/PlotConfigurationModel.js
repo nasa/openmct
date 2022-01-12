@@ -26,19 +26,29 @@ import SeriesCollection from "./SeriesCollection";
 import XAxisModel from "./XAxisModel";
 import YAxisModel from "./YAxisModel";
 import LegendModel from "./LegendModel";
+
 /**
  * PlotConfiguration model stores the configuration of a plot and some
  * limited state.  The indiidual parts of the plot configuration model
  * handle setting defaults and updating in response to various changes.
  *
+ * @extends {Model<PlotConfigurationModelType>}
  */
 export default class PlotConfigurationModel extends Model {
     /**
      * Initializes all sub models and then passes references to submodels
      * to those that need it.
+     *
+     * @override
+     * @param {PlotConfigModelOptions} options
      */
     initialize(options) {
         this.openmct = options.openmct;
+
+        // This is a type assertion for TypeScript, this error is never thrown in practice.
+        if (!options.model) {
+            throw new Error('Not a collection model.');
+        }
 
         this.xAxis = new XAxisModel({
             model: options.model.xAxis,
@@ -130,8 +140,26 @@ export default class PlotConfigurationModel extends Model {
             domainObject: options.domainObject,
             xAxis: {
             },
-            yAxis: _.cloneDeep(_.get(options.domainObject, 'configuration.yAxis', {})),
-            legend: _.cloneDeep(_.get(options.domainObject, 'configuration.legend', {}))
+            yAxis: _.cloneDeep(options.domainObject.configuration?.yAxis ?? {}),
+            legend: _.cloneDeep(options.domainObject.configuration?.legend ?? {})
         };
     }
 }
+
+/** @typedef {any} TODO */
+
+/**
+@typedef {import('./Model').ModelType & {
+    xAxis: import('./XAxisModel').XAxisModelType
+    yAxis: import('./XAxisModel').XAxisModelType
+    legend: TODO
+    series: TODO[]
+    domainObject: TODO
+}} PlotConfigurationModelType
+*/
+
+/**
+@typedef {import('./Model').ModelOptions<PlotConfigurationModelType> & {
+    plot: import('./PlotConfigurationModel').default
+}} PlotConfigModelOptions
+*/

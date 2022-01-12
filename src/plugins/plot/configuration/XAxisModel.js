@@ -26,11 +26,19 @@ import Model from "./Model";
  */
 export default class XAxisModel extends Model {
     /**
+     * @override
      * @param {XAxisModelOptions} options
      */
     initialize(options) {
         this.plot = options.plot;
+
+        // This is a type assertion for TypeScript, this error is not thrown in practice.
+        if (!options.model) {
+            throw new Error('Not a collection model.');
+        }
+
         this.set('label', options.model.name || '');
+
         this.on('change:range', (newValue) => {
             if (!this.get('frozen')) {
                 this.set('displayRange', newValue);
@@ -108,18 +116,23 @@ export default class XAxisModel extends Model {
 @typedef {{
     min: number
     max: number
-}} Range
+}} NumberRange
 */
 
 /**
-@typedef {{
-    name: string
-    key: string
-    range: Range
-    displayRange: Range
+@typedef {import("./Model").ModelType & {
+    range: NumberRange
+    displayRange: NumberRange
     frozen: boolean
     label: string
-    format: (n: TODO) => string
+    format: (n: number) => string
+}} AxisModelType
+*/
+
+/**
+@typedef {AxisModelType & {
+    name: string
+    key: string
 }} XAxisModelType
 */
 

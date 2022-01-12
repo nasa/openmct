@@ -24,20 +24,8 @@ import EventEmitter from 'eventemitter3';
 import eventHelpers from "../lib/eventHelpers";
 import _ from 'lodash';
 
-/** @typedef {any} TODO */
-
-/** @typedef {TODO} OpenMCT */
-
 /**
-@template {object} T
-@typedef {{
-    model: T
-    openmct: OpenMCT
-}} ModelOptions
-*/
-
-/**
- * @template {object} T
+ * @template {ModelType} T
  */
 export default class Model extends EventEmitter {
     /**
@@ -53,7 +41,10 @@ export default class Model extends EventEmitter {
             options = {};
         }
 
+        // FIXME: this.id is defined as a method further below, but here it is
+        // assigned a possibly-undefined value. Is this code unused?
         this.id = options.id;
+
         /** @type {T} */
         this.model = options.model;
         this.collection = options.collection;
@@ -66,12 +57,13 @@ export default class Model extends EventEmitter {
 
         this.initialize(options);
 
-        /** @type {"id"} */
+        /** @type {keyof T} */
         this.idAttr = 'id';
     }
 
     /**
      * @param {ModelOptions<T>} options
+     * @returns {T}
      */
     defaults(options) {
         return {};
@@ -105,6 +97,11 @@ export default class Model extends EventEmitter {
         return this.model[attribute];
     }
 
+    /**
+     * @template {keyof T} K
+     * @param {K} attribute
+     * @returns boolean
+     */
     has(attribute) {
         return _.has(this.model, attribute);
     }
@@ -132,3 +129,22 @@ export default class Model extends EventEmitter {
         this.emit('change:' + attribute, undefined, oldValue, this);
     }
 }
+
+/** @typedef {any} TODO */
+
+/** @typedef {TODO} OpenMCT */
+
+/**
+@typedef {{id?: string}} ModelType
+*/
+
+/**
+@template {object} T
+@typedef {{
+    model?: T
+    models?: T[]
+    openmct: OpenMCT
+    id?: string
+    [k: string]: unknown
+}} ModelOptions
+*/

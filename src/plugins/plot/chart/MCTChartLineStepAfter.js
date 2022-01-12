@@ -23,7 +23,7 @@
 import MCTChartSeriesElement from './MCTChartSeriesElement';
 
 export default class MCTChartLineStepAfter extends MCTChartSeriesElement {
-    removePoint(point, index, count) {
+    removePoint(index) {
         if (index > 0 && index / 2 < this.count) {
             this.buffer[index + 1] = this.buffer[index - 1];
         }
@@ -45,7 +45,7 @@ export default class MCTChartLineStepAfter extends MCTChartSeriesElement {
         return 2 + ((index - 1) * 4);
     }
 
-    addPoint(point, start, count) {
+    addPoint(point, start) {
         if (start === 0 && this.count === 0) {
             // First point is easy.
             this.buffer[start] = point.x;

@@ -21,6 +21,11 @@
  *****************************************************************************/
 import Model from './Model';
 
+/** @typedef {any} TODO */
+
+/**
+ * @extends {Model<TODO>}
+ */
 export default class Collection extends Model {
 
     initialize(options) {

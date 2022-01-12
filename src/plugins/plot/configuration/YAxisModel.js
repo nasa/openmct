@@ -23,27 +23,32 @@ import _ from 'lodash';
 import Model from './Model';
 
 /**
-     * YAxis model
-      *
-     * TODO: docstrings.
-     *
-     * has the following Model properties:
-     *
-     * `autoscale`: boolean, whether or not to autoscale.
-     * `autoscalePadding`: float, percent of padding to display in plots.
-     * `displayRange`: the current display range for the x Axis.
-     * `format`: the formatter for the axis.
-     * `frozen`: boolean, if true, displayRange will not be updated automatically.
-     *           Used to temporarily disable automatic updates during user interaction.
-     * `label`: label to display on axis.
-     * `stats`: Min and Max Values of data, automatically updated by observing
-     *          plot series.
-     * `values`: for enumerated types, an array of possible display values.
-     * `range`: the user-configured range to use for display, when autoscale is
-     *         disabled.
-     *
-     */
+ * YAxis model
+ *
+ * TODO: docstrings.
+ *
+ * has the following Model properties:
+ *
+ * `autoscale`: boolean, whether or not to autoscale.
+ * `autoscalePadding`: float, percent of padding to display in plots.
+ * `displayRange`: the current display range for the x Axis.
+ * `format`: the formatter for the axis.
+ * `frozen`: boolean, if true, displayRange will not be updated automatically.
+ *           Used to temporarily disable automatic updates during user interaction.
+ * `label`: label to display on axis.
+ * `stats`: Min and Max Values of data, automatically updated by observing
+ *          plot series.
+ * `values`: for enumerated types, an array of possible display values.
+ * `range`: the user-configured range to use for display, when autoscale is
+ *         disabled.
+ *
+ * @extends {Model<YAxisModelType>}
+ */
 export default class YAxisModel extends Model {
+    /**
+     * @override
+     * @param {YAxisModelOptions} options
+     */
     initialize(options) {
         this.plot = options.plot;
         this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
@@ -224,7 +229,13 @@ export default class YAxisModel extends Model {
             }
         }
     }
+    /**
+     * @override
+     * @param {YAxisModelOptions} options
+     * @returns {YAxisModelType}
+     */
     defaults(options) {
+        // @ts-ignore incomplete YAxisModelType object used for default value.
         return {
             frozen: false,
             autoscale: true,
@@ -232,3 +243,20 @@ export default class YAxisModel extends Model {
         };
     }
 }
+
+/** @typedef {any} TODO */
+
+/**
+@typedef {import('./XAxisModel').AxisModelType & {
+    autoscale: boolean
+    autoscalePadding: number
+    stats: import('./XAxisModel').NumberRange
+    values: Array<TODO>
+}} YAxisModelType
+*/
+
+/**
+@typedef {import('./Model').ModelOptions<YAxisModelType> & {
+    plot: import('./PlotConfigurationModel').default
+}} YAxisModelOptions
+*/
