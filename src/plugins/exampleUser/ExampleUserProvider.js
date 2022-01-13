@@ -31,12 +31,17 @@ export default class ExampleUserProvider extends EventEmitter {
         this.openmct = openmct;
         this.user = undefined;
         this.loggedIn = false;
+        this.autoLoginUser = undefined;
 
         this.ExampleUser = createExampleUser(this.openmct.user.User);
     }
 
     isLoggedIn() {
         return this.loggedIn;
+    }
+
+    autoLogin(username) {
+        this.autoLoginUser = username;
     }
 
     getCurrentUser() {
@@ -56,6 +61,17 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     _login() {
+        const id = uuid();
+
+        // for testing purposes, this will skip the form, this wouldn't be used in
+        // a normal authentication process
+        if (this.autoLoginUser) {
+            this.user = new this.ExampleUser(id, this.autoLoginUser, ['example-role']);
+            this.loggedIn = true;
+
+            return Promise.resolve();
+        }
+
         const formStructure = {
             title: "Login",
             sections: [
@@ -79,7 +95,6 @@ export default class ExampleUserProvider extends EventEmitter {
                 }
             }
         };
-        const id = uuid();
 
         return this.openmct.forms.showForm(formStructure).then(
             (info) => {

@@ -28,7 +28,6 @@ import Vue from 'vue';
 import ExampleUserProvider from '../exampleUser/ExampleUserProvider';
 
 const USERNAME = 'Coach McGuirk';
-const EXAMPLE_ROLE = 'example-role';
 
 describe('The User Indicator plugin', () => {
     let openmct;
@@ -61,21 +60,14 @@ describe('The User Indicator plugin', () => {
         userIndicator = openmct.indicators.indicatorObjects
             .find(indicator => indicator.key === 'user-indicator');
 
-        const userIndicatorMissing = userIndicator === null || userIndicator === undefined;
-        expect(userIndicatorMissing).toBe(true);
+        expect(userIndicator).toBe(undefined);
     });
 
     describe('with a user provider installed', () => {
 
         beforeEach(() => {
             provider = new ExampleUserProvider(openmct);
-            spyOn(provider, '_login');
-            provider._login.and.callFake(() => {
-                provider.user = new provider.ExampleUser('id', USERNAME, [EXAMPLE_ROLE]);
-                provider.loggedIn = true;
-
-                return Promise.resolve();
-            });
+            provider.autoLogin(USERNAME);
 
             openmct.user.setProvider(provider);
 
