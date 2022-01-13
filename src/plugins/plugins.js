@@ -75,7 +75,7 @@ define([
     './DeviceClassifier/plugin',
     './timer/plugin',
     './userIndicator/plugin',
-    './exampleUser/plugin',
+    '../../example/exampleUser/plugin',
     './localStorage/plugin',
     './legacySupport/plugin.js',
     '../adapter/indicators/legacy-indicators-plugin'
@@ -153,6 +153,8 @@ define([
 
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
+    plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.Generator = GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
@@ -199,12 +201,6 @@ define([
         };
     };
 
-    plugins.Generator = function () {
-        return GeneratorPlugin;
-    };
-
-    plugins.ExampleImagery = ExampleImagery.default;
-    plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
     plugins.Chart = ChartPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
