@@ -56,64 +56,40 @@ export default class ExampleUserProvider extends EventEmitter {
     }
 
     _login() {
-        const id = uuid();
-        const loginPromise = new Promise((resolve, reject) => {
-            let overlay = this.openmct.overlays.overlay({
-                element: this._getLoginForm(),
-                dismissable: false,
-                size: 'fit',
-                buttons: [
-                    {
-                        label: 'Login',
-                        emphasis: 'true',
-                        callback: () => {
-                            let username = document.getElementById('example-user-form-username').value;
-
-                            if (username !== '') {
-                                this.user = new this.ExampleUser(id, username, ['example-role']);
-                                this.loggedIn = true;
-                                resolve();
-                                overlay.dismiss();
-                            } else {
-                                this.openmct.notifications.info('Please enter a username.');
-                            }
+        const formStructure = {
+            title: "Login",
+            sections: [
+                {
+                    rows: [
+                        {
+                            key: "username",
+                            control: "textfield",
+                            name: "Username",
+                            pattern: "\\S+",
+                            required: true,
+                            cssClass: "l-input-lg",
+                            value: ''
                         }
-                    }
-                ],
-                onDestroy: () => this.loginForm = undefined
-            });
-        });
+                    ]
+                }
+            ],
+            buttons: {
+                submit: {
+                    label: 'Login'
+                }
+            }
+        };
+        const id = uuid();
 
-        return loginPromise;
-    }
-
-    logout() {
-        this.loggedIn = false;
-
-        return Promise.resolve('logout');
-    }
-
-    _getLoginForm() {
-        let div = document.createElement('div');
-        div.innerHTML = `
-            <div id="loginForm" class="c-form">
-                <div class="c-overlay__dialog-title">
-                    Enter username and password
-                </div>
-                <div class="c-overlay__dialog-hint hint">
-                    All fields are required.
-                </div>
-                <div class="c-form__row first">
-                    <div class="c-form-row__label">Username</div>
-                    <input id="example-user-form-username" class="c-form-row__controls" type="text" />
-                </div>
-<!--                <div class="c-form__row">-->
-<!--                    <div class="c-form-row__label">Password</div>-->
-<!--                    <input id="example-user-form-username" class="c-form-row__controls" type="password" />-->
-<!--                </div>-->
-            </div>
-        `.trim();
-
-        return div.firstChild;
+        return this.openmct.forms.showForm(formStructure).then(
+            (info) => {
+                this.user = new this.ExampleUser(id, info.username, ['example-role']);
+                this.loggedIn = true;
+            },
+            () => { // user canceled, setting a default username
+                this.user = new this.ExampleUser(id, 'Pat', ['example-role']);
+                this.loggedIn = true;
+            }
+        );
     }
 }

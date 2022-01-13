@@ -24,8 +24,6 @@
 <div class="c-indicator icon-person c-indicator--clickable">
     <span class="label c-indicator__label">
         {{ name }}
-        <button v-if="userInfo">Logout</button>
-        <button v-else>Login</button>
     </span>
 </div>
 </template>
@@ -35,12 +33,9 @@
 export default {
     inject: ['openmct'],
     data() {
-        let supportsLogin = this.openmct.user.supportsLoginLogout;
-
         return {
             userInfo: undefined,
-            loggedIn: false,
-            supportsLogin
+            loggedIn: false
         };
     },
     computed: {
