@@ -102,7 +102,7 @@ describe("The User API", () => {
             let junkIdCheckPromise = openmct.user.hasRole('junk-id').then((hasRole) => {
                 expect(hasRole).toBeFalse();
             });
-            let realIdCheckPromise = openmct.user.hasRole('example-role').then((hasRole) => {
+            let realIdCheckPromise = openmct.user.hasRole(EXAMPLE_ROLE).then((hasRole) => {
                 expect(hasRole).toBeTrue();
             });
 
