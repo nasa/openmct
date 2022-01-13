@@ -1,7 +1,7 @@
 import { createOpenMct, resetApplicationState } from "../utils/testing";
 import {paramsToArray, identifierToString, default as objectPathToUrl} from "./url";
 
-fdescribe('the url tool', function () {
+describe('the url tool', function () {
     let openmct;
     let mockObjectPath;
 
