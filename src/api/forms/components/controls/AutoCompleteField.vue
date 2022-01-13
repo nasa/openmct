@@ -168,6 +168,8 @@ export default {
             this.showOptions();
         },
         arrowClicked() {
+            // if the user clicked the arrow, we want
+            // to show them all the options
             this.showFilteredOptions = false;
             this.autocompleteInputElement.select();
             this.showOptions();
