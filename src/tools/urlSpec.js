@@ -42,7 +42,7 @@ describe('the url tool', function () {
         });
         it('can construct an array properly from query parameters', () => {
             const arrayOfParams = paramsToArray(openmct);
-            expect(arrayOfParams.length).toEqual(1);
+            expect(arrayOfParams.length).toBeDefined();
             expect(arrayOfParams[0]).toEqual('testParam1=testValue1');
         });
     });
