@@ -154,7 +154,7 @@ define([
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
     plugins.example.ExampleImagery = ExampleImagery.default;
-    plugins.example.Generator = GeneratorPlugin;
+    plugins.example.Generator = () => GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
