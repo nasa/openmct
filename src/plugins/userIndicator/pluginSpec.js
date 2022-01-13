@@ -25,7 +25,7 @@ import {
     resetApplicationState
 } from 'utils/testing';
 import Vue from 'vue';
-import ExampleUserProvider from '../exampleUser/ExampleUserProvider';
+import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
 
 const USERNAME = 'Coach McGuirk';
 

@@ -151,6 +151,9 @@ define([
         };
     });
 
+    plugins.example = {};
+    plugins.example.ExampleUser = ExampleUser.default;
+
     plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
@@ -245,7 +248,6 @@ define([
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
-    plugins.ExampleUser = ExampleUser.default;
     plugins.LocalStorage = LocalStorage.default;
     plugins.LegacySupport = LegacySupportPlugin.default;
     plugins.LegacyIndicators = LegacyIndicatorsPlugin;

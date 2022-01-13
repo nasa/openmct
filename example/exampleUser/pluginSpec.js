@@ -23,7 +23,7 @@
 import {
     createOpenMct,
     resetApplicationState
-} from '../../utils/testing';
+} from '../../src/utils/testing';
 import ExampleUserProvider from './ExampleUserProvider';
 
 describe("The Example User Plugin", () => {
@@ -45,7 +45,7 @@ describe("The Example User Plugin", () => {
         openmct.user.on('providerAdded', (provider) => {
             expect(provider).toBeInstanceOf(ExampleUserProvider);
         });
-        openmct.install(openmct.plugins.ExampleUser());
+        openmct.install(openmct.plugins.example.ExampleUser());
     });
 
     // The rest of the functionality of the ExampleUser Plugin is

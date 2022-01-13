@@ -27,7 +27,7 @@ import {
 import {
     MULTIPLE_PROVIDER_ERROR
 } from './constants';
-import ExampleUserProvider from '../../plugins/exampleUser/ExampleUserProvider';
+import ExampleUserProvider from '../../../example/exampleUser/ExampleUserProvider';
 
 const USERNAME = 'Test User';
 const EXAMPLE_ROLE = 'example-role';
