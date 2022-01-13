@@ -46,9 +46,10 @@ describe("The User API", () => {
     describe('with regard to user providers', () => {
 
         it('allows you to specify a user provider', () => {
+            openmct.user.on('providerAdded', (provider) => {
+                expect(provider).toBeInstanceOf(ExampleUserProvider);
+            });
             openmct.user.setProvider(new ExampleUserProvider(openmct));
-
-            expect(openmct.user._provider).toBeInstanceOf(ExampleUserProvider);
         });
 
         it('prevents more than one user provider from being set', () => {
