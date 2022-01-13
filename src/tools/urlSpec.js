@@ -64,8 +64,7 @@ describe('the url tool', function () {
         });
         it('can construct URL properly from a path', () => {
             const constructedURL = objectPathToUrl(openmct, mockObjectPath);
-            expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder?');
-            expect(constructedURL).toContain('testParam1=testValue1');
+            expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder');
         });
     });
 });
