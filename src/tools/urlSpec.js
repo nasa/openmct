@@ -33,17 +33,6 @@ describe('the url tool', function () {
         return resetApplicationState(openmct);
     });
 
-    describe('paramsToArray', () => {
-        it('exists', () => {
-            expect(paramsToArray).toBeDefined();
-        });
-        it('can construct an array properly from query parameters', () => {
-            const arrayOfParams = paramsToArray(openmct);
-            expect(arrayOfParams.length).toBeDefined();
-            expect(arrayOfParams).toContain('tc.mode=fixed');
-        });
-    });
-
     describe('identifierToString', () => {
         it('exists', () => {
             expect(identifierToString).toBeDefined();
@@ -61,8 +50,7 @@ describe('the url tool', function () {
         });
         it('can construct URL properly from a path', () => {
             const constructedURL = objectPathToUrl(openmct, mockObjectPath);
-            expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder?');
-            expect(constructedURL).toContain('tc.mode=fixed');
+            expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder');
         });
     });
 });
