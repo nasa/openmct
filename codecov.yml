@@ -14,7 +14,6 @@ coverage:
   range: "66...100"
 
 ignore:
-  - "e2e"
 
 parsers:
   gcov:
