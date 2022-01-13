@@ -25,10 +25,7 @@ describe('the url tool', function () {
             }
         ];
         openmct = createOpenMct();
-        openmct.on('start', () => {
-            openmct.router.setPath(' http://localhost:8020/foobar?testParam1=testValue1');
-            done();
-        });
+        openmct.on('start', (done));
         openmct.startHeadless();
     });
 
@@ -43,7 +40,7 @@ describe('the url tool', function () {
         it('can construct an array properly from query parameters', () => {
             const arrayOfParams = paramsToArray(openmct);
             expect(arrayOfParams.length).toBeDefined();
-            expect(arrayOfParams[0]).toEqual('testParam1=testValue1');
+            expect(arrayOfParams).toContain('tc.mode=fixed');
         });
     });
 
@@ -64,7 +61,8 @@ describe('the url tool', function () {
         });
         it('can construct URL properly from a path', () => {
             const constructedURL = objectPathToUrl(openmct, mockObjectPath);
-            expect(constructedURL).toEqual('#/browse/mock-parent-folder/mock-folder?testParam1=testValue1');
+            expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder?');
+            expect(constructedURL).toContain('tc.mode=fixed');
         });
     });
 });
