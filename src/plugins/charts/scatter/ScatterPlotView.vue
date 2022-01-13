@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import BarGraph from './BarGraphPlot.vue';
+import BarGraph from '../BarGraphPlot.vue';
 import _ from 'lodash';
 
 export default {
@@ -39,14 +39,6 @@ export default {
         BarGraph
     },
     inject: ['openmct', 'domainObject', 'path'],
-    props: {
-        options: {
-            type: Object,
-            default() {
-                return {};
-            }
-        }
-    },
     data() {
         this.telemetryObjects = {};
         this.telemetryObjectFormats = {};
@@ -70,6 +62,10 @@ export default {
         }
     },
     mounted() {
+        this.traceData = {
+            xValues: [],
+            yValues: []
+        };
         this.refreshData = this.refreshData.bind(this);
         this.setTimeContext();
 
@@ -107,6 +103,12 @@ export default {
         addTelemetryObject(telemetryObject) {
             // grab information we need from the added telmetry object
             const key = this.openmct.objects.makeKeyString(telemetryObject.identifier);
+            if (!this.domainObject.configuration.xKey) {
+                this.domainObject.configuration.xKey = key;
+            } else if (!this.domainObject.configuration.yKey && this.domainObject.configuration.xKey !== key) {
+                this.domainObject.configuration.yKey = key;
+            }
+
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
@@ -163,8 +165,7 @@ export default {
             }
 
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
-            //Exclude 'name' and 'time' based metadata specifically, from the x-Axis values by using range hints only
-            const xAxisMetadata = metadata.valuesForHints(['range']);
+            const xAxisMetadata = metadata.valuesForHints(['range'])[0];
 
             return {
                 xAxisMetadata,
@@ -240,19 +241,31 @@ export default {
                 return;
             }
 
-            let xValues = [];
-            let yValues = [];
+            if (!this.domainObject.configuration.xKey || !this.domainObject.configuration.yKey) {
+                return;
+            }
 
-            //populate X and Y values for plotly
-            axisMetadata.xAxisMetadata.forEach((metadata) => {
-                xValues.push(metadata.name);
-                if (data[metadata.key]) {
-                    const formattedValue = this.format(key, metadata.key, data);
+            let xValues = this.traceData.xValues;
+            let yValues = this.traceData.yValues;
+
+            if (this.domainObject.configuration.xKey === key) {
+                //populate x values
+                const metadataKey = axisMetadata.xAxisMetadata.key;
+                if (data[metadataKey]) {
+                    const formattedValue = this.format(key, metadataKey, data);
+                    xValues.push(formattedValue);
+                } else {
+                    xValues.push(null);
+                }
+            } else if (this.domainObject.configuration.yKey === key) {
+                const metadataKey = axisMetadata.yAxisMetadata.key;
+                if (data[metadataKey]) {
+                    const formattedValue = this.format(key, metadataKey, data);
                     yValues.push(formattedValue);
                 } else {
                     yValues.push(null);
                 }
-            });
+            }
 
             let trace = {
                 key,
@@ -262,16 +275,26 @@ export default {
                 text: yValues.map(String),
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: this.options.type ? this.options.type : 'bar',
+                type: 'scatter',
+                mode: 'markers',
                 marker: {
                     color: this.domainObject.configuration.barStyles.series[key].color
                 },
-                hoverinfo: 'skip'
+                hoverinfo: 'x+y'
             };
 
-            if (this.options.type) {
-                trace.mode = 'markers';
-                trace.hoverinfo = 'x+y';
+            if (this.domainObject.configuration.domainMin !== undefined && this.domainObject.configuration.domainMax !== undefined) {
+                trace.xaxis = {
+                    min: this.domainObject.configuration.domainMin,
+                    max: this.domainObject.configuration.domainMax
+                };
+            }
+
+            if (this.domainObject.configuration.rangeMin !== undefined && this.domainObject.configuration.rangeMax !== undefined) {
+                trace.yaxis = {
+                    min: this.domainObject.configuration.rangeMin,
+                    max: this.domainObject.configuration.rangeMax
+                };
             }
 
             this.addTrace(trace, key);

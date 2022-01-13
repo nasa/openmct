@@ -20,7 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import PlotViewProvider from './PlotViewProvider';
-import UnderlayPlotViewProvider from './UnderlayPlotViewProvider';
 import OverlayPlotViewProvider from './overlayPlot/OverlayPlotViewProvider';
 import StackedPlotViewProvider from './stackedPlot/StackedPlotViewProvider';
 import PlotsInspectorViewProvider from './inspector/PlotsInspectorViewProvider';
@@ -60,33 +59,9 @@ export default function () {
             priority: 890
         });
 
-        openmct.types.addType('telemetry.plot.underlay', {
-            name: 'Underlay Plot',
-            key: 'telemetry.plot.underlay',
-            description: 'A plot view for a compatible underlay plot file.',
-            creatable: true,
-            cssClass: 'icon-telemetry',
-            form: [
-                {
-                    name: 'Upload Telemetry (JSON File)',
-                    key: 'selectFile',
-                    control: 'file-input',
-                    required: true,
-                    text: 'Select File...',
-                    type: 'application/json',
-                    property: [
-                        "selectFile"
-                    ]
-                }
-            ],
-            initialize: function (domainObject) {
-            }
-        });
-
         openmct.objectViews.addProvider(new StackedPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new OverlayPlotViewProvider(openmct));
         openmct.objectViews.addProvider(new PlotViewProvider(openmct));
-        openmct.objectViews.addProvider(new UnderlayPlotViewProvider(openmct));
 
         openmct.inspectorViews.addProvider(new PlotsInspectorViewProvider(openmct));
 

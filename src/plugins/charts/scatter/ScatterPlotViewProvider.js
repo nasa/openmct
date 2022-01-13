@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,21 +20,27 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import UnderlayPlot from './UnderlayPlot.vue';
+import ScatterPlotView from './ScatterPlotView.vue';
+import { SCATTER_PLOT_KEY, SCATTER_PLOT_VIEW } from './ScatterPlotConstants.js';
 import Vue from 'vue';
 
-export default function UnderlayPlotViewProvider(openmct) {
+export default function ScatterPlotViewProvider(openmct) {
+    function isCompactView(objectPath) {
+        let isChildOfTimeStrip = objectPath.find(object => object.type === 'time-strip');
+
+        return isChildOfTimeStrip && !openmct.router.isNavigatedObject(objectPath);
+    }
 
     return {
-        key: 'plot-underlay',
-        name: 'Underlay Plot',
+        key: SCATTER_PLOT_VIEW,
+        name: 'Scatter Plot',
         cssClass: 'icon-telemetry',
-        canView(domainObject) {
-            return domainObject.type === 'telemetry.plot.underlay';
+        canView(domainObject, objectPath) {
+            return domainObject && domainObject.type === SCATTER_PLOT_KEY;
         },
 
-        canEdit(domainObject) {
-            return domainObject.type === 'telemetry.plot.underlay';
+        canEdit(domainObject, objectPath) {
+            return domainObject && domainObject.type === SCATTER_PLOT_KEY;
         },
 
         view: function (domainObject, objectPath) {
@@ -42,16 +48,25 @@ export default function UnderlayPlotViewProvider(openmct) {
 
             return {
                 show: function (element) {
+                    let isCompact = isCompactView(objectPath);
                     component = new Vue({
                         el: element,
                         components: {
-                            UnderlayPlot
+                            ScatterPlotView
                         },
                         provide: {
                             openmct,
-                            domainObject
+                            domainObject,
+                            path: objectPath
                         },
-                        template: '<underlay-plot></underlay-plot>'
+                        data() {
+                            return {
+                                options: {
+                                    compact: isCompact
+                                }
+                            };
+                        },
+                        template: '<scatter-plot-view :options="options"></scatter-plot-view>'
                     });
                 },
                 destroy: function () {

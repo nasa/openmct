@@ -36,6 +36,11 @@ const MULTI_AXES_X_PADDING_PERCENT = {
     RIGHT: 94
 };
 
+import {getValidatedData} from "@/plugins/plan/util";
+
+const PATH_COLORS = ['blue', 'red', 'green'];
+const MARKER_COLOR = 'white';
+
 export default {
     inject: ['openmct', 'domainObject'],
     props: {
@@ -72,7 +77,10 @@ export default {
         }
     },
     mounted() {
-        Plotly.newPlot(this.$refs.plot, Array.from(this.data), this.getLayout(), {
+        this.getAxisMinMax();
+        this.getUnderlayPlotData();
+
+        Plotly.newPlot(this.$refs.plot, Array.from(this.data.concat(this.getShapes(this.shapesData))), this.getLayout(), {
             responsive: true,
             displayModeBar: false
         });
@@ -87,25 +95,57 @@ export default {
         if (this.removeBarColorListener) {
             this.removeBarColorListener();
         }
+
+        if (this.unlistenUnderlay) {
+            this.unlistenUnderlay();
+        }
     },
     methods: {
-        getAxisMinMax(axis) {
-            const min = axis.autoSize
-                ? ''
-                : axis.min;
-            const max = axis.autoSize
-                ? ''
-                : axis.max;
+        getUnderlayPlotData() {
+            this.shapesData = getValidatedData(this.domainObject);
+        },
+        observeForUnderlayPlotChanges() {
+            this.getUnderlayPlotData();
+        },
+        getAxisMinMax() {
+            if (!this.data.length) {
+                return;
+            }
 
-            return {
-                min,
-                max
-            };
+            if (this.data[0].xaxis) {
+                this.xAxisRange = this.data[0].xaxis;
+            } else if (this.data[0].yaxis) {
+                this.primaryYAxisRange = this.data[0].yaxis;
+            }
         },
         getLayout() {
             const yAxesMeta = this.getYAxisMeta();
             const primaryYaxis = this.getYaxisLayout(yAxesMeta['1']);
             const xAxisDomain = this.getXAxisDomain(yAxesMeta);
+
+            const shapes = this.shapesData.map((shapeData, index1) => {
+                if (!shapeData.x || !shapeData.y
+                || !shapeData.x.length || !shapeData.y.length
+                || shapeData.x.length !== shapeData.y.length) {
+                    return "";
+                }
+
+                let path = `M ${shapeData.x[0]},${shapeData.y[0]}`;
+                shapeData.x.forEach((point, index) => {
+                    if (index > 0) {
+                        path = `${path} L${point},${shapeData.y[index]}`;
+                    }
+                });
+
+                return {
+                    path,
+                    type: 'path',
+                    line: {
+                        color: PATH_COLORS[index1]
+                    },
+                    opacity: 0.5
+                };
+            });
 
             return {
                 autosize: true,
@@ -131,7 +171,9 @@ export default {
                     b: 0
                 },
                 paper_bgcolor: 'transparent',
-                plot_bgcolor: 'transparent'
+                plot_bgcolor: 'transparent',
+                shapes,
+                layer: 'below'
             };
         },
         getYAxisMeta() {
@@ -201,6 +243,7 @@ export default {
             return yaxis;
         },
         registerListeners() {
+            this.unlistenUnderlay = this.openmct.objects.observe(this.domainObject, 'selectFile', this.observeForUnderlayPlotChanges);
             this.removeBarColorListener = this.openmct.objects.observe(
                 this.domainObject,
                 'configuration.barStyles',
@@ -267,7 +310,7 @@ export default {
                 return;
             }
 
-            Plotly.react(this.$refs.plot, Array.from(this.data), this.getLayout());
+            Plotly.react(this.$refs.plot, Array.from(this.data.concat(this.getShapes(this.shapesData))), this.getLayout());
         },
         zoom(eventData) {
             const autorange = eventData['xaxis.autorange'];
@@ -282,6 +325,52 @@ export default {
 
             this.isZoomed = true;
             this.$emit('unsubscribe');
+        },
+        getShapes() {
+            let markerData = {
+                x: [],
+                y: []
+            };
+            const shapes = this.shapesData.map((shapeData, index1) => {
+                if (!shapeData.x || !shapeData.y
+              || !shapeData.x.length || !shapeData.y.length
+              || shapeData.x.length !== shapeData.y.length) {
+                    return "";
+                }
+
+                let text = [];
+                shapeData.x.forEach((point) => {
+                    text.push(`${parseFloat(point).toPrecision(2)}`);
+                });
+
+                markerData.x = markerData.x.concat(shapeData.x);
+                markerData.y = markerData.y.concat(shapeData.y);
+
+                return {
+                    x: shapeData.x,
+                    y: shapeData.y,
+                    mode: 'text',
+                    text,
+                    textfont: {
+                        family: 'Helvetica Neue, Helvetica, Arial, sans-serif',
+                        size: '12px',
+                        color: PATH_COLORS[index1]
+                    },
+                    opacity: 0.5
+                };
+            });
+
+            shapes.push({
+                x: markerData.x,
+                y: markerData.y,
+                mode: "markers",
+                marker: {
+                    size: 6,
+                    color: MARKER_COLOR
+                }
+            });
+
+            return shapes;
         }
     }
 };
