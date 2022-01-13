@@ -21,12 +21,12 @@
  *****************************************************************************/
 //SPLIT
 const { resolve } = require('path');
-const { readdir, readFile} = require('fs').promises;
+const { readdir, readFile, writeFile} = require('fs').promises;
 const path = require('path');
 
 async function getCopyrightString() {
     // eslint-disable-next-line no-undef
-    const copyrightFile = await (await readFile(__filename, 'UTF-8')).toString();
+    const copyrightFile = (await readFile(__filename, 'UTF-8')).toString();
     const justTheNotice = copyrightFile.split('//SPLIT')[0];
 
     return justTheNotice;
@@ -47,8 +47,17 @@ async function* getFilesRecursively(directoryToSearch, directoriesToSkip, extens
     }
 }
 
-function replaceCopyrightInSingleFile(file, copyrightNotice) {
-    console.debug(`🖲 replacing ${file}`);
+async function replaceCopyrightInSingleFile(file, copyrightNotice) {
+    // eslint-disable-next-line no-undef
+    const fileAsString = (await readFile(file)).toString();
+    const splitWithCopyright = fileAsString.split(copyrightNotice);
+    if (splitWithCopyright.length === 2) {
+        console.debug(`🖲 found copyright, replacing ${file}`);
+        const newFile = copyrightNotice.concat(splitWithCopyright[1]);
+        await writeFile(file, newFile);
+    } else {
+        console.debug(`❓ no copyright found in ${file}`);
+    }
 }
 
 async function replaceAllCopyrightWithCurrentYear(directoryToStartIn, directoriesToSkip, extensionsToInclude) {
