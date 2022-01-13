@@ -47,7 +47,7 @@
 import * as d3Scale from 'd3-scale';
 import TimelineAxis from "../../ui/components/TimeSystemAxis.vue";
 import SwimLane from "@/ui/components/swim-lane/SwimLane.vue";
-import { getValidatedPlan } from "./util";
+import { getValidatedData } from "./util";
 import Vue from "vue";
 
 const PADDING = 1;
@@ -159,7 +159,7 @@ export default {
             return clientWidth - 200;
         },
         getPlanData(domainObject) {
-            this.planData = getValidatedPlan(domainObject);
+            this.planData = getValidatedData(domainObject);
         },
         updateViewBounds(bounds) {
             if (bounds) {
