@@ -1,5 +1,5 @@
 import { createOpenMct, resetApplicationState } from "../utils/testing";
-import {identifierToString, default as objectPathToUrl} from "./url";
+import {paramsToArray, identifierToString, default as objectPathToUrl} from "./url";
 
 describe('the url tool', function () {
     let openmct;
@@ -25,12 +25,26 @@ describe('the url tool', function () {
             }
         ];
         openmct = createOpenMct();
-        openmct.on('start', (done));
+        openmct.on('start', () => {
+            openmct.router.setPath(' http://localhost:8020/foobar?testParam1=testValue1');
+            done();
+        });
         openmct.startHeadless();
     });
 
     afterEach(() => {
         return resetApplicationState(openmct);
+    });
+
+    describe('paramsToArray', () => {
+        it('exists', () => {
+            expect(paramsToArray).toBeDefined();
+        });
+        it('can construct an array properly from query parameters', () => {
+            const arrayOfParams = paramsToArray(openmct);
+            expect(arrayOfParams.length).toBeDefined();
+            expect(arrayOfParams.length).toBeGreaterThan(0);
+        });
     });
 
     describe('identifierToString', () => {
@@ -50,7 +64,8 @@ describe('the url tool', function () {
         });
         it('can construct URL properly from a path', () => {
             const constructedURL = objectPathToUrl(openmct, mockObjectPath);
-            expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder');
+            expect(constructedURL).toContain('#/browse/mock-parent-folder/mock-folder?');
+            expect(constructedURL).toContain('testParam1=testValue1');
         });
     });
 });
