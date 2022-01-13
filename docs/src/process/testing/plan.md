@@ -28,8 +28,10 @@ components. Tests are subject to code review along with the actual
 implementation, to ensure that tests are applicable and useful.
 
 Unit tests should meet
-[test standards](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#test-standards)
+[test standards](CONTRIBUTING.md#test-standards)
 as described in the contributing guide.
+
+More about unit testing
 
 ### User Testing
 
@@ -93,7 +95,7 @@ Before changes are merged, the author of the changes must perform:
 
 Changes are not merged until the author has affirmed that both
 forms of testing have been performed successfully; this is documented
-by the [Author Checklist](https://github.com/nasa/openmctweb/blob/master/CONTRIBUTING.md#author-checklist).
+by the [Author Checklist](CONTRIBUTING.md#author-checklist).
 
 ### Per-sprint Testing
 
@@ -135,7 +137,7 @@ For per-sprint testing, a testathon is typically performed at the beginning of t
 #### Process
 
 1. Prior to the scheduled testathon, a list will be compiled of all issues that are closed and unverified.
-2. For each issue, testers should review the associated PR for testing instructions. See the contributing guide for instructions on [pull requests](https://github.com/nasa/openmct/blob/master/CONTRIBUTING.md#merging).
+2. For each issue, testers should review the associated PR for testing instructions. See the contributing guide for instructions on [pull requests](CONTRIBUTING.md#merging).
 3. As each issue is verified via testing, any team members testing it should leave a comment on that issue indicating that it has been verified fixed.
 4. If a bug is found that relates to an issue being tested, notes should be included on the associated issue, and the issue should be reopened. Bug notes should include reproduction steps.
 5. For any bugs that are not obviously related to any of the issues under test, a new issue should be created with details about the bug, including reproduction steps. If unsure about whether a bug relates to an issue being tested, just create a new issue.
