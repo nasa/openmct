@@ -74,13 +74,7 @@ describe("The User API", () => {
 
         beforeEach(() => {
             provider = new ExampleUserProvider(openmct);
-            spyOn(provider, '_login');
-            provider._login.and.callFake(() => {
-                provider.user = new provider.ExampleUser('id', USERNAME, [EXAMPLE_ROLE]);
-                provider.loggedIn = true;
-
-                return Promise.resolve();
-            });
+            provider.autoLogin(USERNAME);
         });
 
         it('to check if a user (not specific) is loged in', (done) => {

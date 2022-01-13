@@ -201,6 +201,7 @@ define([
         };
     };
 
+    plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
     plugins.Chart = ChartPlugin.default;
     plugins.TelemetryTable = TelemetryTablePlugin;
