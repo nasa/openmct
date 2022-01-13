@@ -21,7 +21,11 @@ const config = {
         ignoreHTTPSErrors: true,
         screenshot: 'on',
         trace: 'on',
-        video: 'on'
+        video: 'on',
+        viewport: {
+            width: 2560,
+            height: 1440
+        }
     },
     reporter: [
         ['list'],

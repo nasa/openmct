@@ -1,0 +1,4 @@
+version: 2
+snapshot:
+  widths: [1440, 2048]
+  min-height: 2560 # px
