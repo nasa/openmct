@@ -116,5 +116,8 @@
   },
   "author": "",
   "license": "Apache-2.0",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "openmct-legacy-support": "github:akhenry/openmct-legacy-support"
+  }
 }

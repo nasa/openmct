@@ -74,9 +74,7 @@ define([
     './clock/plugin',
     './DeviceClassifier/plugin',
     './timer/plugin',
-    './localStorage/plugin',
-    './legacySupport/plugin.js',
-    '../adapter/indicators/legacy-indicators-plugin'
+    './localStorage/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -131,21 +129,9 @@ define([
     Clock,
     DeviceClassifier,
     Timer,
-    LocalStorage,
-    LegacySupportPlugin,
-    LegacyIndicatorsPlugin
+    LocalStorage
 ) {
-    const bundleMap = {
-        Elasticsearch: 'platform/persistence/elastic'
-    };
-
-    const plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
-        return function pluginConstructor() {
-            return function (openmct) {
-                openmct.legacyRegistry.enable(bundleName);
-            };
-        };
-    });
+    const plugins = {};
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
@@ -169,28 +155,6 @@ define([
     plugins.Conductor = TimeConductorPlugin.default;
 
     plugins.CouchDB = CouchDBPlugin.default;
-
-    plugins.Elasticsearch = function (url) {
-        return function (openmct) {
-            if (url) {
-                const bundleName = "config/elastic";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "ELASTIC_ROOT",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
-
-            openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
-        };
-    };
 
     plugins.Generator = function () {
         return GeneratorPlugin;
@@ -241,8 +205,6 @@ define([
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.LocalStorage = LocalStorage.default;
-    plugins.LegacySupport = LegacySupportPlugin.default;
-    plugins.LegacyIndicators = LegacyIndicatorsPlugin;
 
     return plugins;
 });
