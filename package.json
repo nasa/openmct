@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "1.8.3-SNAPSHOT",
+  "version": "1.8.4-SNAPSHOT",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@braintree/sanitize-url": "^5.0.2",
