@@ -102,7 +102,12 @@ export default {
     },
     methods: {
         getUnderlayPlotData() {
-            this.shapesData = getValidatedData(this.domainObject);
+            if (this.domainObject.selectFile) {
+                this.shapesData = getValidatedData(this.domainObject);
+            } else {
+                this.shapesData = [];
+            }
+
         },
         observeForUnderlayPlotChanges() {
             this.getUnderlayPlotData();
