@@ -75,8 +75,36 @@
         const TWO_HOURS = ONE_HOUR * 2;
         const ONE_DAY = ONE_HOUR * 24;
 
-
         openmct.install(openmct.plugins.LocalStorage());
+        openmct.install(openmct.plugins.LocalStorage('namespace1', 'namespace1'));
+        openmct.install(openmct.plugins.LocalStorage('namespace2', 'namespace2'));
+        openmct.install((openmct) => {
+            openmct.objects.addRoot({
+                namespace: 'namespace1',
+                key: 'root'
+            });
+            openmct.objects.addRoot({
+                namespace: 'namespace2',
+                key: 'root'
+            });
+            openmct.objects.addGetInterceptor({
+                appliesTo: (identifier, object) => {
+                    return (identifier.namespace === 'namespace1' 
+                        || identifier.namespace === 'namespace2')
+                        && identifier.key === 'root'
+                        && (object === undefined || object.type === 'missing');
+                },
+                invoke: (identifier, domainObject) => {
+                    return {
+                        identifier: identifier,
+                        type: 'folder',
+                        location: 'mine',
+                        name: identifier.namespace,
+                        composition: []
+                    }
+                }
+            });
+        });
 
         openmct.install(openmct.plugins.Espresso());
         openmct.install(openmct.plugins.MyItems());
