@@ -13,6 +13,7 @@ const config = {
         timeout: 120 * 1000,
         reuseExistingServer: !process.env.CI
     },
+    workers: 1,
     use: {
         browserName: "chromium",
         baseURL: 'http://localhost:8080/',
