@@ -25,7 +25,7 @@
  */
 
 export function paramsToArray(openmct) {
-    // parse urParams from an object to an array.
+    // parse urlParams from an object to an array.
     let urlParams = openmct.router.getParams();
     let newTabParams = [];
     for (let key in urlParams) {
