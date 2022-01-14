@@ -66,7 +66,7 @@ export default class CreateAction extends PropertiesAction {
         });
 
         const parentDomainObject = parentDomainObjectPath[0];
-        const namespace = parentDomainObject.identifier.namespace || parentDomainObject.key;
+        const namespace = parentDomainObject.identifier.namespace || parentDomainObject.key || '';
 
         this.domainObject.modified = Date.now();
         this.domainObject.location = this.openmct.objects.makeKeyString(parentDomainObject.identifier);
