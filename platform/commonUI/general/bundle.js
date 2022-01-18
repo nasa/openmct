@@ -508,7 +508,7 @@ define([
                         "description": "Browser style normalization",
                         "author": "Nicolas Gallagher, Jonathan Neal",
                         "website": "http://necolas.github.io/normalize.css/",
-                        "copyright": "Copyright (c) Nicolas Gallagher and Jonathan Neal",
+                        "copyright": "Copyright(c) Nicolas Gallagher and Jonathan Neal",
                         "license": "license-mit",
                         "link": "https://github.com/necolas/normalize.css/blob/v1.1.2/LICENSE.md"
                     },
@@ -518,7 +518,7 @@ define([
                         "description": "DOM manipulation",
                         "author": "Thomas Fuchs",
                         "website": "http://zeptojs.com/",
-                        "copyright": "Copyright(c) 2014-2016 Thomas Fuchs",
+                        "copyright": "Copyright(c) 2010-2016 Thomas Fuchs",
                         "license": "license-mit",
                         "link": "https://github.com/madrobby/zepto/blob/master/MIT-LICENSE"
                     }
