@@ -518,7 +518,7 @@ define([
                         "description": "DOM manipulation",
                         "author": "Thomas Fuchs",
                         "website": "http://zeptojs.com/",
-                        "copyright": "Copyright (c) 2010-2016 Thomas Fuchs",
+                        "copyright": "Copyright (c) 2014-2022 Thomas Fuchs",
                         "license": "license-mit",
                         "link": "https://github.com/madrobby/zepto/blob/master/MIT-LICENSE"
                     }

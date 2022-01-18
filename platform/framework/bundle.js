@@ -56,7 +56,7 @@ define([], function () {
                         "description": "Unit testing",
                         "author": "Pivotal Labs",
                         "website": "http://jasmine.github.io/",
-                        "copyright": "Copyright (c) 2008-2011 Pivotal Labs",
+                        "copyright": "Copyright (c) 2014-2022 Pivotal Labs",
                         "license": "license-mit",
                         "link": "http://opensource.org/licenses/MIT"
                     },
@@ -66,7 +66,7 @@ define([], function () {
                         "description": "Script loader",
                         "author": "The Dojo Foundation",
                         "website": "http://requirejs.org/",
-                        "copyright": "Copyright (c) 2010-2015, The Dojo Foundation",
+                        "copyright": "Copyright (c) 2014-2022, The Dojo Foundation",
                         "license": "license-mit",
                         "link": "https://github.com/jrburke/requirejs/blob/master/LICENSE"
                     },
@@ -76,7 +76,7 @@ define([], function () {
                         "description": "Client-side web application framework",
                         "author": "Google",
                         "website": "http://angularjs.org/",
-                        "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                        "copyright": "Copyright (c) 2014-2022 Google, Inc. http://angularjs.org",
                         "license": "license-mit",
                         "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
                     },
@@ -86,7 +86,7 @@ define([], function () {
                         "description": "Client-side view routing",
                         "author": "Google",
                         "website": "http://angularjs.org/",
-                        "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                        "copyright": "Copyright (c) 2014-2022 Google, Inc. http://angularjs.org",
                         "license": "license-mit",
                         "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
                     },
