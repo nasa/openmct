@@ -105,7 +105,11 @@ export default {
     watch: {
         domainObject: {
             handler(domainObject) {
+                this.independentTCEnabled = domainObject.configuration.useIndependentTime === true;
+
                 if (!domainObject.configuration.timeOptions || !this.independentTCEnabled) {
+                    this.destroyIndependentTime();
+
                     return;
                 }
 
