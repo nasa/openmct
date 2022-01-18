@@ -16,6 +16,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+      - run: npx playwright install-deps
       - run: npm install
       - name: Run the e2e visual tests
         run: npm run test:e2e:visual
