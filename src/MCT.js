@@ -42,7 +42,7 @@ define([
     './plugins/duplicate/plugin',
     './plugins/importFromJSONAction/plugin',
     './plugins/exportAsJSONAction/plugin',
-    'openmct-legacy-support',
+    //'openmct-legacy-support',
     'vue'
 ], function (
     EventEmitter,
@@ -66,7 +66,7 @@ define([
     DuplicateActionPlugin,
     ImportFromJSONAction,
     ExportAsJSONAction,
-    OpenMCTLegacySupport,
+    //OpenMCTLegacySupport,
     Vue
 ) {
     /**
@@ -264,14 +264,14 @@ define([
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
         this.install(this.plugins.DeviceClassifier());
-        this.install(OpenMCTLegacySupport.default());
+        // this.install(OpenMCTLegacySupport.default());
 
-        [
-            'example/eventGenerator',
-            'example/export'
-        ].forEach(
-            this.legacyRegistry.enable.bind(this.legacyRegistry)
-        );
+        // // [
+        // //     'example/eventGenerator',
+        // //     'example/export'
+        // // ].forEach(
+        // //     this.legacyRegistry.enable.bind(this.legacyRegistry)
+        // // );
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
