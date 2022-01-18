@@ -2,6 +2,8 @@
 // playwright.config.js
 // @ts-check
 
+const { devices } = require('@playwright/test');
+
 /** @type {import('@playwright/test').PlaywrightTestConfig} */
 const config = {
     retries: 2,
@@ -15,7 +17,6 @@ const config = {
     },
     workers: 2, //Limit to 2 for CircleCI Agent
     use: {
-        browserName: "chromium",
         baseURL: 'http://localhost:8080/',
         headless: true,
         ignoreHTTPSErrors: true,
@@ -23,10 +24,37 @@ const config = {
         trace: 'on',
         video: 'on'
     },
+    projects: [
+        {
+            name: 'chrome',
+            use: {
+                browserName: 'chromium',
+                ...devices['Desktop Chrome']
+            }
+        },
+        {
+            name: 'MMOC',
+            use: {
+                browserName: 'chromium',
+                viewport: {
+                    width: 2560,
+                    height: 1440
+                }
+            }
+        },
+        {
+            name: 'ipad',
+            use: {
+                browserName: 'webkit',
+                ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
+            }
+        }
+    ],
     reporter: [
         ['list'],
         ['junit', { outputFile: 'test-results/results.xml' }],
-        ['allure-playwright']
+        ['allure-playwright'],
+        ['github']
     ]
 };
 

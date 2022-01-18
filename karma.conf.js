@@ -33,11 +33,10 @@ if (coverageEnabled) {
 module.exports = (config) => {
     const webpackConfig = require('./webpack.dev.js');
     delete webpackConfig.output;
-
     if (coverageEnabled) {
         webpackConfig.module.rules.push({
             test: /\.js$/,
-            exclude: /node_modules|example|lib|dist/,
+            exclude: /node_modules|e2e|example|lib|dist|\.*.*Spec\.js/,
             use: {
                 loader: 'istanbul-instrumenter-loader',
                 options: {
@@ -103,7 +102,7 @@ module.exports = (config) => {
             reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    lines: 66
+                    lines: 55
                 }
             }
         },
