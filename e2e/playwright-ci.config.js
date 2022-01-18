@@ -41,14 +41,14 @@ const config = {
                     height: 1440
                 }
             }
-        },
-        {
+        }
+        /*{
             name: 'ipad',
             use: {
                 browserName: 'webkit',
                 ...devices['iPad (gen 7) landscape'] // Complete List https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
             }
-        }
+        }*/
     ],
     reporter: [
         ['list'],
