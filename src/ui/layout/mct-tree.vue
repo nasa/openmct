@@ -1,6 +1,10 @@
 <template>
 <div
+    ref="treeContainer"
     class="c-tree-and-search"
+    :class="{
+        'c-selector': isSelectorTree
+    }"
     :style="treeHeight"
 >
     <div
@@ -763,18 +767,26 @@ export default {
 
                 let checkHeights = () => {
                     let treeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+                    let paddingOffset = 0;
+
                     if (
                         this.$el
                         && this.$refs.search
                         && this.$refs.mainTree
+                        && this.$refs.treeContainer
                         && this.$refs.dummyItem
                         && this.$el.offsetHeight !== 0
                         && treeTopMargin > 0
                     ) {
+                        if (this.isSelectorTree) {
+                            paddingOffset = this.getElementStyleValue(this.$refs.treeContainer, 'padding');
+                        }
+
                         this.mainTreeTopMargin = treeTopMargin;
                         this.mainTreeHeight = this.$el.offsetHeight
                             - this.$refs.search.offsetHeight
-                            - this.mainTreeTopMargin;
+                            - this.mainTreeTopMargin
+                            - (paddingOffset * 2);
                         this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
 
                         resolve();
