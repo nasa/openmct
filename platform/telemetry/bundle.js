@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -119,7 +119,7 @@ define([
                         "author": "Tim Wood, Iskren Chernev, Moment.js contributors",
                         "description": "Time/date parsing/formatting",
                         "website": "http://momentjs.com",
-                        "copyright": "Copyright (c) 2011-2014 Tim Wood, Iskren Chernev, Moment.js contributors",
+                        "copyright": "Copyright (c)2011-2014 Tim Wood, Iskren Chernev, Moment.js contributors",
                         "license": "license-mit",
                         "link": "https://raw.githubusercontent.com/moment/moment/develop/LICENSE"
                     }
