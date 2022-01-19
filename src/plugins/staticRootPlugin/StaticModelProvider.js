@@ -14,8 +14,6 @@ define([
     function rewriteObjectIdentifiers(importData, rootIdentifier) {
         const namespace = rootIdentifier.namespace;
         const idMap = new Map();
-        console.log(importData);
-        debugger;
 
         Object.keys(importData.openmct).forEach((originalId) => {
             if (originalId === importData.rootId) {
@@ -54,8 +52,6 @@ define([
             importData.openmct[objectId] = importData.openmct[originalId];
             delete importData.openmct[originalId];
         });
-
-        console.log(importData);
 
         return importData.openmct;
     }
