@@ -32,7 +32,10 @@
                 @include sUnsynced();
             }
             &.selectable {
-                cursor: crosshair;
+                cursor: zoom-in;
+            }
+            &.alt-pressed {
+                cursor: zoom-out;
             }
         }
 
