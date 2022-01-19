@@ -1,6 +1,8 @@
 <template>
-<div class="c-tree-and-search">
-
+<div
+    class="c-tree-and-search"
+    :style="treeHeight"
+>
     <div
         ref="search"
         class="c-tree-and-search__search"
@@ -72,6 +74,8 @@
                     v-for="(treeItem, index) in visibleItems"
                     :key="treeItem.navigationPath"
                     :node="treeItem"
+                    :is-selector-tree="isSelectorTree"
+                    :selected-item="selectedItem"
                     :active-search="activeSearch"
                     :left-offset="!activeSearch ? treeItem.leftOffset : '0px'"
                     :is-new="treeItem.isNew"
@@ -82,7 +86,8 @@
                     :loading-items="treeItemLoading"
                     @tree-item-mounted="scrollToCheck($event)"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
-                    @navigation-click="treeItemAction(treeItem, $event)"
+                    @tree-item-action="treeItemAction(treeItem, $event)"
+                    @tree-item-selection="treeItemSelection(treeItem)"
                 />
                 <!-- main loading -->
                 <div
@@ -115,6 +120,7 @@ const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
 const SORT_MY_ITEMS_ALPH_ASC = true;
 const TREE_ITEM_INDENT_PX = 18;
+const LOCATOR_ITEM_COUNT_HEIGHT = 10; // how many tree items to make the locator selection box show
 
 export default {
     name: 'MctTree',
@@ -124,13 +130,27 @@ export default {
     },
     inject: ['openmct'],
     props: {
+        isSelectorTree: {
+            type: Boolean,
+            required: false,
+            default() {
+                return false;
+            }
+        },
+        initialSelection: {
+            type: Object,
+            required: false,
+            default() {
+                return {};
+            }
+        },
         syncTreeNavigation: {
             type: Boolean,
-            required: true
+            required: false
         },
         resetTreeNavigation: {
             type: Boolean,
-            required: true
+            required: false
         }
     },
     data() {
@@ -149,7 +169,8 @@ export default {
             itemHeight: 27,
             itemOffset: 0,
             activeSearch: false,
-            mainTreeTopMargin: undefined
+            mainTreeTopMargin: undefined,
+            selectedItem: {}
         };
     },
     computed: {
@@ -179,6 +200,13 @@ export default {
         },
         showNoSearchResults() {
             return this.searchValue && this.searchResultItems.length === 0 && !this.searchLoading;
+        },
+        treeHeight() {
+            if (!this.isSelectorTree) {
+                return {};
+            } else {
+                return { height: this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
+            }
         }
     },
     watch: {
@@ -223,7 +251,14 @@ export default {
         await this.loadRoot();
         this.isLoading = false;
 
-        await this.syncTreeOpenItems();
+        if (!this.isSelectorTree) {
+            await this.syncTreeOpenItems();
+        } else {
+            const objectPath = await this.openmct.objects.getOriginalPath(this.initialSelection.identifier);
+            const navigationPath = this.buildNavigationPath(objectPath);
+
+            this.openAndScrollTo(navigationPath);
+        }
     },
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
@@ -264,6 +299,10 @@ export default {
             } else {
                 this.openTreeItem(parentItem);
             }
+        },
+        treeItemSelection(item) {
+            this.selectedItem = item;
+            this.$emit('tree-item-selection', item);
         },
         async openTreeItem(parentItem) {
             let parentPath = parentItem.navigationPath;
@@ -358,6 +397,10 @@ export default {
             }
         },
         openAndScrollTo(navigationPath) {
+            if (navigationPath.includes('/ROOT')) {
+                navigationPath = navigationPath.split('/ROOT').join('');
+            }
+
             let idArray = navigationPath.split('/');
             let fullPathArray = [];
             let pathsToOpen;
@@ -367,7 +410,6 @@ export default {
             // skip root
             idArray.splice(0, 2);
             idArray[0] = 'browse/' + idArray[0];
-
             idArray.reduce((parentPath, childPath) => {
                 let fullPath = [parentPath, childPath].join('/');
 
@@ -383,7 +425,11 @@ export default {
 
                 return this.openTreeItem(this.getTreeItemByPath(childPath));
 
-            }, Promise.resolve());
+            }, Promise.resolve()).then(() => {
+                if (this.isSelectorTree) {
+                    this.treeItemSelection(this.getTreeItemByPath(navigationPath));
+                }
+            });
         },
         scrollToCheck(navigationPath) {
             if (this.scrollToPath && this.scrollToPath === navigationPath) {
@@ -779,10 +825,18 @@ export default {
             return Number(styleString.slice(0, index));
         },
         getSavedOpenItems() {
+            if (this.isSelectorTree) {
+                return;
+            }
+
             let openItems = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
             this.openTreeItems = openItems ? JSON.parse(openItems) : [];
         },
         setSavedOpenItems() {
+            if (this.isSelectorTree) {
+                return;
+            }
+
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.openTreeItems));
         },
         handleTreeResize() {
