@@ -916,30 +916,32 @@ export default {
                 return this.resetImage();
             }
 
+            // store previous values before calculating
             const previousZoomFactor = this.zoomFactor;
-            const scaleDiff = ((scale - previousZoomFactor) / previousZoomFactor);
-            // const scaleDiff = this.zoomFactor/previousZoomFactor;
-            // console.log('scaleDiff', scaleDiff);
-            const imageRect = this.focusedImageWrapper.getBoundingClientRect();
             const previousTranslateX = this.imageTranslateX;
             const previousTranslateY = this.imageTranslateY;
 
-            // console.log('focusedImage', this.sizedImageDimensions.width, this.sizedImageDimensions.height)
+            const scaleProportion = (scale - previousZoomFactor) / previousZoomFactor;
+            console.log('scaleProportion', scaleProportion);
+            const imageRect = this.focusedImageWrapper.getBoundingClientRect();
+
+
             // this.imageTranslateX = (imageRect.left +
-            //         (previousTranslateX + this.sizedImageDimensions.width/2) - e.pageX) *scaleDiff;
+            //         (previousTranslateX + this.sizedImageDimensions.width/2) - e.pageX) *scaleProportion;
             // this.imageTranslateY = (imageRect.top +
-            //     (previousTranslateY + this.sizedImageDimensions.height/2) - e.pageY) * scaleDiff;
+            //     (previousTranslateY + this.sizedImageDimensions.height/2) - e.pageY) * scaleProportion;
             // set the scale to zoom factor
-            this.zoomFactor = scale;
             if (userCoordX && userCoordY) {
                 this.imageTranslateX = (
-                    (imageRect.left + previousTranslateX + this.sizedImageDimensions.width / 2 - userCoordX) * scaleDiff
+                    ((imageRect.left + previousTranslateX * (1 - scaleProportion) + this.sizedImageDimensions.width / 2 - userCoordX))
                 );
                 this.imageTranslateY = (
-                    (imageRect.top + previousTranslateY + this.sizedImageDimensions.height / 2 - userCoordY) * scaleDiff
+                    ((imageRect.top + previousTranslateY * (1 - scaleProportion) + this.sizedImageDimensions.height / 2 - userCoordY)) 
                 );
+
             }
-            // console.table({imageRectLR: [imageRect.left, imageRect.top], pageXY: [userCoordX, userCoordY], translateXY:[ this.imageTranslateX, this.imageTranslateY]})
+            this.zoomFactor = scale;
+            console.table({imageRectLR: [imageRect.left, imageRect.top], pageXY: [userCoordX, userCoordY], sizedImage: [this.sizedImageDimensions.width/2, this.sizedImageDimensions.height/2] ,  translateXY:[ this.imageTranslateX, this.imageTranslateY]})
 
         },
         // handleGesture(e) {
@@ -1064,7 +1066,7 @@ export default {
             e.preventDefault();
             this.paused(true);
             this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
-        },
+        }
         // createImage(imageUrl) {
         //     return new Promise (function (resolve, reject) {
         //         if (!imageUrl) {
