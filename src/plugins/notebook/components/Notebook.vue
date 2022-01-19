@@ -323,7 +323,7 @@ export default {
         cleanupDefaultNotebook() {
             this.defaultPageId = undefined;
             this.defaultSectionId = undefined;
-            this.removeDefaultClass(this.domainObject);
+            this.removeDefaultClass(this.domainObject.identifier);
             clearDefaultNotebook();
         },
         setSectionAndPageFromUrl() {
@@ -625,12 +625,8 @@ export default {
 
             this.sectionsChanged({ sections });
         },
-        removeDefaultClass(domainObject) {
-            if (!domainObject) {
-                return;
-            }
-
-            this.openmct.status.delete(domainObject.identifier);
+        removeDefaultClass(identifier) {
+            this.openmct.status.delete(identifier);
         },
         resetSearch() {
             this.search = '';
@@ -639,26 +635,24 @@ export default {
         toggleNav() {
             this.showNav = !this.showNav;
         },
-        async updateDefaultNotebook(notebookStorage) {
-            const defaultNotebookObject = await this.getDefaultNotebookObject();
-            const isSameNotebook = defaultNotebookObject
-                && objectUtils.makeKeyString(defaultNotebookObject.identifier) === objectUtils.makeKeyString(notebookStorage.identifier);
-            if (!isSameNotebook) {
-                this.removeDefaultClass(defaultNotebookObject);
+        updateDefaultNotebook(updatedNotebookStorageObject) {
+            if (!this.isDefaultNotebook()) {
+                const persistedNotebookStorageObject = getDefaultNotebook();
+                if (persistedNotebookStorageObject.identifier !== undefined) {
+                    this.removeDefaultClass(persistedNotebookStorageObject.identifier);
+                }
+
+                setDefaultNotebook(this.openmct, updatedNotebookStorageObject, this.domainObject);
             }
 
-            if (!defaultNotebookObject || !isSameNotebook) {
-                setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
+            if (this.defaultSectionId !== updatedNotebookStorageObject.defaultSectionId) {
+                setDefaultNotebookSectionId(updatedNotebookStorageObject.defaultSectionId);
+                this.defaultSectionId = updatedNotebookStorageObject.defaultSectionId;
             }
 
-            if (this.defaultSectionId !== notebookStorage.defaultSectionId) {
-                setDefaultNotebookSectionId(notebookStorage.defaultSectionId);
-                this.defaultSectionId = notebookStorage.defaultSectionId;
-            }
-
-            if (this.defaultPageId !== notebookStorage.defaultPageId) {
-                setDefaultNotebookPageId(notebookStorage.defaultPageId);
-                this.defaultPageId = notebookStorage.defaultPageId;
+            if (this.defaultPageId !== updatedNotebookStorageObject.defaultPageId) {
+                setDefaultNotebookPageId(updatedNotebookStorageObject.defaultPageId);
+                this.defaultPageId = updatedNotebookStorageObject.defaultPageId;
             }
         },
         updateDefaultNotebookSection(sections, id) {
@@ -676,7 +670,7 @@ export default {
             if (defaultNotebookSectionId === id) {
                 const section = sections.find(s => s.id === id);
                 if (!section) {
-                    this.removeDefaultClass(this.domainObject);
+                    this.removeDefaultClass(this.domainObject.identifier);
                     clearDefaultNotebook();
 
                     return;
