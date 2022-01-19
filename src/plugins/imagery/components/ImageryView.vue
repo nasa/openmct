@@ -54,16 +54,38 @@
                    @click="filters={brightness: 100, contrast: 100}"
                 ></a>
             </span>
+
+        </div>
+        <!-- TODO: structure this element -->
+        <div style="position: absolute; top: 60px; left: 20px; z-index: 5">
+         <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-out">
+                <a class="s-icon-button icon-minus t-btn-zoom-out"
+                   @click="handleZoomButton(-1)"
+                ></a>
+            </span>
+            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-in">
+                <a class="s-icon-button icon-plus t-btn-zoom-in"
+                   @click="handleZoomButton(1)"
+                ></a>
+            </span>
+            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-reset">
+            <a class="s-icon-button icon-reset t-btn-zoom-reset"
+                @click="resetImage"
+            ></a>
+            </span>
+            <span v-if="zoomFactor > 1">x{{Number.parseFloat(zoomFactor).toPrecision(3)}}</span>
         </div>
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false,'selectable': isSelectable }"
+             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false,'selectable': isSelectable, 'alt-pressed': altPressed}"
              @click="expand"
         >
-            <div class="image-wrapper"
+            <div ref="focusedImageWrapper"
+                 class="image-wrapper"
                  :style="{
                      'width': `${sizedImageDimensions.width}px`,
-                     'height': `${sizedImageDimensions.height}px`
+                     'height': `${sizedImageDimensions.height}px`,
+                     'overflow': 'hidden'
                  }"
             >
                 <img ref="focusedImage"
@@ -71,11 +93,48 @@
                      :src="imageUrl"
                      :draggable="!isSelectable"
                      :style="{
-                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
+                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
+                         'visibility': 'hidden',
+                         'display': 'contents'
                      }"
                      :data-openmct-image-timestamp="time"
                      :data-openmct-object-keystring="keyString"
                 >
+                <!-- <canvas
+                    ref="focusedImageCanvas"
+                    :style="{
+                        'z-index': 10,
+                        'width': `${sizedImageDimensions.width} px`,
+                        'height': `${sizedImageDimensions.height} px`,
+                        'visibility': 'hidden'
+                    }">
+                </canvas> -->
+                <div
+                    ref="focusedImageElement"
+                    class="c-imagery_main-image_background-image"
+                    :style="{
+                        'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
+                        'background-image':
+                            `url(${imageUrl}),
+                            repeating-linear-gradient(
+                                45deg,
+                                transparent,
+                                transparent 4px,
+                                rgba(125,125,125,.2) 4px,
+                                rgba(125,125,125,.2) 8px
+                            )`,
+                        'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
+                        'background-position': 'center',
+                        'background-repeat': 'no-repeat',
+                        'background-position': 'contain',
+
+                        'transition': 'transform 250ms ease-in',
+                        'width': `${sizedImageDimensions.width}px`,
+                        'height': `${sizedImageDimensions.height}px`,
+
+                    }"
+                    @click="handleZoomClick"
+                ></div>
                 <Compass
                     v-if="shouldDisplayCompass"
                     :compass-rose-sizing-classes="compassRoseSizingClasses"
@@ -170,6 +229,7 @@
 </template>
 
 <script>
+import eventHelpers from '../lib/eventHelpers';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -237,7 +297,12 @@ export default {
             imageContainerHeight: undefined,
             lockCompass: true,
             resizingWindow: false,
-            timeContext: undefined
+            timeContext: undefined,
+            altPressed: false,
+            // rectangles: [],
+            zoomFactor: 1,
+            imageTranslateX: 0,
+            imageTranslateY: 0
         };
     },
     computed: {
@@ -322,7 +387,8 @@ export default {
             return this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
-                && this.imageContainerHeight !== undefined;
+                && this.imageContainerHeight !== undefined
+                && this.zoomFactor === 1;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;
@@ -414,6 +480,12 @@ export default {
         }
     },
     watch: {
+        imageUrl(newUrl, oldUrl) {
+            if (newUrl) {
+                // this.drawCanvas(newUrl)
+                this.resetImage();
+            }
+        },
         imageHistorySize(newSize, oldSize) {
             let imageIndex;
             if (this.indexForFocusedImage !== undefined) {
@@ -432,7 +504,16 @@ export default {
             this.getImageNaturalDimensions();
         }
     },
+
     async mounted() {
+        eventHelpers.extend(this);
+        this.focusedImageWrapper = this.$refs.focusedImageWrapper;
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
+        // this.canvas = this.$refs.focusedImageCanvas;
+        // this.context = this.canvas.getContext('2d');
+        // this.context.imageSmoothingEnabled = false;
+
         //We only need to use this till the user focuses an image manually
         if (this.indexForFocusedImage !== undefined) {
             this.initFocusedImageIndex = this.indexForFocusedImage;
@@ -474,6 +555,15 @@ export default {
             this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
         }
 
+        // initialize pan/zoom features
+        // this.listenTo(imageElement, 'mousemove', this.trackMousePosition, this);
+        // this.listenTo(imageElement, 'mouseleave', this.untrackMousePosition, this);
+        // this.listenTo(imageElement, 'mousedown', this.onMouseDown, this);
+        // this.listenTo(this.focusedImageWrapper, 'gesturechange', this.handleGesture, this);
+        this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+        // this.marquee = undefined;
+        // this.drawCanvas()
+
     },
     beforeDestroy() {
         this.stopFollowingTimeContext();
@@ -498,8 +588,19 @@ export default {
                 }
             }
         }
+
+        // remove mouse listeners for pan/zoom functionality
+        // this.stopListening(this.imageElement, 'mousemove', this.trackMousePosition, this);
+        // this.stopListening(this.imageElement, 'mouseleave', this.untrackMousePosition, this);
+        // this.stopListening(this.imageElement, 'mousedown', this.onMouseDown, this)
+        // this.stopListening(this.focusedImageWrapper, 'gesturechange', this.handleGesture, this);
+        this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
     },
     methods: {
+
+
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -620,6 +721,16 @@ export default {
         },
         focusElement() {
             this.$el.focus();
+        },
+        handleKeyDown(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = true;
+            }
+        },
+        handleKeyUp(event) {
+            if (event.key === 'Alt') {
+                this.altPressed = false;
+            }
         },
         handleScroll() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
@@ -751,6 +862,68 @@ export default {
                 this.setFocusedImage(--index, THUMBNAIL_CLICKED);
             }
         },
+        resetImage() {
+            const defaultScale = 1;
+            this.zoomFactor = defaultScale;
+            this.imageTranslateX = 0;
+            this.imageTranslateY = 0;
+        },
+        zoomImage(scale, userCoordX, userCoordY) {
+            const zoomLimits = {
+                max: 20,
+                min: 1 
+            };
+            this.paused(true);
+            if (scale > zoomLimits.max) {
+                scale = zoomLimits.max;
+            }
+
+
+            if (scale <= 0 || scale < zoomLimits.min) {
+                return this.resetImage();
+            }
+
+            const previousZoomFactor = this.zoomFactor;
+            const scaleDiff = ((scale - previousZoomFactor) / previousZoomFactor);
+            // const scaleDiff = this.zoomFactor/previousZoomFactor;
+            // console.log('scaleDiff', scaleDiff);
+            const imageRect = this.focusedImageWrapper.getBoundingClientRect();
+            const previousTranslateX = this.imageTranslateX;
+            const previousTranslateY = this.imageTranslateY;
+
+            // console.log('focusedImage', this.sizedImageDimensions.width, this.sizedImageDimensions.height)
+            // this.imageTranslateX = (imageRect.left +
+            //         (previousTranslateX + this.sizedImageDimensions.width/2) - e.pageX) *scaleDiff;
+            // this.imageTranslateY = (imageRect.top +
+            //     (previousTranslateY + this.sizedImageDimensions.height/2) - e.pageY) * scaleDiff;
+            // set the scale to zoom factor
+            this.zoomFactor = scale;
+            if (userCoordX && userCoordY) {
+                this.imageTranslateX = (
+                    (imageRect.left + previousTranslateX + this.sizedImageDimensions.width / 2 - userCoordX) * scaleDiff
+                );
+                this.imageTranslateY = (
+                    (imageRect.top + previousTranslateY + this.sizedImageDimensions.height / 2 - userCoordY) * scaleDiff
+                );
+            }
+            // console.table({imageRectLR: [imageRect.left, imageRect.top], pageXY: [userCoordX, userCoordY], translateXY:[ this.imageTranslateX, this.imageTranslateY]})
+
+        },
+        // handleGesture(e) {
+        //     if (e.scale < 1) {
+        //         console.log('zoom out')
+        //     } else if (e.scale > 1) {
+        //         console.log('zoom in')
+        //     }
+        // },
+        handleZoomButton(stepValue) {
+            this.incrementZoomFactor(stepValue);
+        },
+        handleZoomClick(e) {
+            const step = 1;
+            const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
+            this.zoomImage(zoomFactor, e.pageX, e.pageY);
+        },
         startDrag(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -849,7 +1022,186 @@ export default {
             this.$nextTick(() => {
                 this.resizingWindow = false;
             });
-        }
+        },
+        incrementZoomFactor(increment, userCoordX, userCoordY) {
+            const newFactor = this.zoomFactor + increment;
+            this.zoomImage(newFactor, userCoordX, userCoordY);
+        },
+        wheelZoom(e) {
+            e.preventDefault();
+            this.paused(true);
+            this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
+        },
+        // createImage(imageUrl) {
+        //     return new Promise (function (resolve, reject) {
+        //         if (!imageUrl) {
+        //             return reject('No image url provided');
+        //         }
+
+        //         let loadingImage = new Image();
+        //         loadingImage.onload = () => resolve(loadingImage);
+        //         loadingImage.src = imageUrl;
+        //     });
+        // },
+        // clearCanvas() {
+        //     console.log('clear canvas');
+        //     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        // },
+
+        // drawMarquee() {
+        //     this.context.beginPath();
+        //     this.context.fillStyle = 'rgba(255,255,255,0.4)';
+        //     this.context.lineWidth = 1;
+        //     this.context.fillRect(50, 5, 100, 100);
+        //     this.context.stroke();
+        // },
+        // drawImage(image, centerX, centerY, zoomFactor = 10) {
+        //     const canvas = this.canvas;
+        //     this.context.imageSmoothingEnabled = false;
+
+        //     console.log('drawImage canvas',canvas)
+        //     const positionX = centerX || canvas.width / 2;
+        //     const positionY = centerY || canvas.height / 2;
+        //     const width = canvas.width + (zoomFactor * (canvas.width / canvas.height));
+        //     const height = canvas.height + zoomFactor;
+        //     const params = {
+        //         dx: 0 - (positionX / canvas.width) * (width - canvas.width),
+        //         dy: 0 - (positionY / canvas.height) * (height - canvas.height),
+        //         dWidth: canvas.width + (zoomFactor * (canvas.width / canvas.height)),
+        //         dHeight: canvas.height + zoomFactor
+        //     };
+        //     console.log(params, this.sizedImageDimensions)
+        //     const {dx, dy, dWidth, dHeight} = params;
+
+        //     this.context.drawImage(image, dx, dy, dWidth, dHeight);
+        //     // this.context.drawImage(image, 0, 10, 1000, 1500, 0 - 150, 0 - 130, 800, 400);
+
+        // },
+
+        // async drawCanvas(imageUrl) {
+        //     this.clearCanvas();
+        //     const focusedImage = await this.createImage(imageUrl);
+        //     this.drawImage(focusedImage);
+        //     // this.drawMarquee()
+        //     // this.context.stroke();
+        //     // focusedImage.addEventListener('load',, false);
+        //     // this.context.beginPath();
+        //     // this.context.drawImage(focusedImage, 250, 250);
+        //     // this.context.stroke();
+        //     // console.log({canvas: this.context, img})
+        // },
+        // onMouseDown(event) {
+        //     console.log('mousedown');
+        //     // do not monitor drag events on browser context click
+        //     if (event.ctrlKey) {
+        //         return;
+        //     }
+
+
+        //     this.listenTo(window, 'mouseup', this.onMouseUp, this);
+        //     this.listenTo(window, 'mousemove', this.trackMousePosition, this);
+        //     if (event.altKey) {
+        //         return this.startPan(event);
+        //     } else {
+        //         return this.startMarquee(event);
+        //     }
+
+        // },
+        // onMouseUp(event) {
+        //     this.stopListening(window, 'mouseup', this.onMouseUp, this);
+        //     this.stopListening(window, 'mousemove', this.trackMousePosition, this);
+        //     // if (this.isMouseClick()) {
+        //     //     this.lockHighlightPoint = !this.lockHighlightPoint;
+        //     // }
+        //     if (this.pan) {
+        //         return this.endPan(event);
+        //     }
+
+        //     if (this.marquee) {
+        //         this.endMarquee(event);
+        //     }
+        // },
+        //  trackMousePosition(event) {
+        //     console.log('mousemove');
+        //     // this.positionOverElement = {
+        //     //     x: event.clientX - this.chartElementBounds.left,
+        //     //     y: this.chartElementBounds.height
+        //     //   - (event.clientY - this.chartElementBounds.top)
+        //     // };
+        //     this.positionOverElement = {
+        //         x: event.clientX,
+        //         y: event.clientY
+        //     };
+        //     this.positionOverPlot = {
+        //         x: -this.positionOverElement.x,
+        //         y: -this.positionOverElement.y
+        //     }
+
+
+        //     this.updateMarquee();
+        //     // this.updatePan();
+        //     event.preventDefault();
+
+        // },
+        // marquee handlers
+        // startMarquee(event) {
+        //     console.log('startMarquee')
+        //     this.canvas.classList.remove('plot-drag');
+        //     this.canvas.classList.add('plot-marquee');
+
+        //     this.trackMousePosition(event);
+        //     // if (this.positionOverPlot) {
+        //         // this.freeze();
+        //         this.marquee = {
+        //             startPixels: this.positionOverElement,
+        //             endPixels: this.positionOverElement,
+        //             start: this.positionOverPlot,
+        //             end: this.positionOverPlot,
+        //             color: [1, 1, 1, 0.5]
+        //         };
+        //         this.rectangles.push(this.marquee);
+        //         this.trackHistory();
+        //     // }
+        // },
+        // endMarquee() {
+        //     const startPixels = this.marquee.startPixels;
+        //     const endPixels = this.marquee.endPixels;
+        //     console.log('endMarquee', {startPixels, endPixels})
+        //     const marqueeDistance = Math.sqrt(
+        //         Math.pow(startPixels.x - endPixels.x, 2)
+        //     + Math.pow(startPixels.y - endPixels.y, 2)
+        //     );
+        //     // Don't zoom if mouse moved less than 7.5 pixels.
+        //     if (marqueeDistance > 7.5) {
+        //         // this.config.xAxis.set('displayRange', {
+        //         //     min: Math.min(this.marquee.start.x, this.marquee.end.x),
+        //         //     max: Math.max(this.marquee.start.x, this.marquee.end.x)
+        //         // });
+        //         // this.config.yAxis.set('displayRange', {
+        //         //     min: Math.min(this.marquee.start.y, this.marquee.end.y),
+        //         //     max: Math.max(this.marquee.start.y, this.marquee.end.y)
+        //         // });
+        //         // this.userViewportChangeEnd();
+        //         console.log('time to do something')
+        //     } else {
+        //         // A history entry is created by startMarquee, need to remove
+        //         // if marquee zoom doesn't occur.
+        //         this.plotHistory.pop();
+        //     }
+
+        //     this.rectangles = [];
+        //     this.marquee = undefined;
+        // },
+        // updateMarquee() {
+        //     // console.log('update marquee')
+        //     if (!this.marquee) {
+        //         return;
+        //     }
+
+        //     this.marquee.end = this.positionOverPlot;
+        //     this.marquee.endPixels = this.positionOverElement;
+        // },
+
     }
 };
 </script>
