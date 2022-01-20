@@ -445,6 +445,10 @@ export default {
             }
 
             // sorting composition items
+            if (!a.name || !b.name) {
+                return 0;
+            }
+
             if (a.name.toLowerCase()
                 > b.name.toLowerCase()) {
                 return 1;
