@@ -107,14 +107,22 @@ export default {
                 });
         },
         submitLabel() {
-            if (this.model.buttons && this.model.buttons.submit && this.model.buttons.submit.label) {
+            if (
+                this.model.buttons
+                && this.model.buttons.submit
+                && this.model.buttons.submit.label
+            ) {
                 return this.model.buttons.submit.label;
             }
 
             return 'OK';
         },
         cancelLabel() {
-            if (this.model.buttons && this.model.buttons.cancel && this.model.buttons.cancel.label) {
+            if (
+                this.model.buttons
+                && this.model.buttons.cancel
+                && this.model.buttons.cancel.label
+            ) {
                 return this.model.buttons.submit.label;
             }
 
