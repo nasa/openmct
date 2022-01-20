@@ -212,6 +212,15 @@ define([
          */
         this.indicators = new api.IndicatorAPI(this);
 
+        /**
+         * MCT's user awareness management, to enable user and
+         * role specific functionality.
+         * @type {module:openmct.UserAPI}
+         * @memberof module:openmct.MCT#
+         * @name user
+         */
+        this.user = new api.UserAPI(this);
+
         this.notifications = new api.NotificationAPI();
 
         this.editor = new api.EditorAPI.default(this);
@@ -262,6 +271,7 @@ define([
         this.install(this.plugins.ObjectInterceptors());
         this.install(this.plugins.NonEditableFolder());
         this.install(this.plugins.DeviceClassifier());
+        this.install(this.plugins.UserIndicator());
     }
 
     MCT.prototype = Object.create(EventEmitter.prototype);
