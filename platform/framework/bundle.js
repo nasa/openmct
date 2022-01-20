@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -46,7 +46,7 @@ define([], function () {
                         "description": "Code coverage measurement and reporting",
                         "author": "Alex Seville",
                         "website": "http://blanketjs.org/",
-                        "copyright": "Copyright (c) 2013 Alex Seville",
+                        "copyright": "Copyright(c) 2013 Alex Seville",
                         "license": "license-mit",
                         "link": "http://opensource.org/licenses/MIT"
                     },
@@ -56,7 +56,7 @@ define([], function () {
                         "description": "Unit testing",
                         "author": "Pivotal Labs",
                         "website": "http://jasmine.github.io/",
-                        "copyright": "Copyright (c) 2008-2011 Pivotal Labs",
+                        "copyright": "Copyright(c) 2008-2011 Pivotal Labs",
                         "license": "license-mit",
                         "link": "http://opensource.org/licenses/MIT"
                     },
@@ -66,7 +66,7 @@ define([], function () {
                         "description": "Script loader",
                         "author": "The Dojo Foundation",
                         "website": "http://requirejs.org/",
-                        "copyright": "Copyright (c) 2010-2015, The Dojo Foundation",
+                        "copyright": "Copyright(c) 2010-2015, The Dojo Foundation",
                         "license": "license-mit",
                         "link": "https://github.com/jrburke/requirejs/blob/master/LICENSE"
                     },
@@ -76,7 +76,7 @@ define([], function () {
                         "description": "Client-side web application framework",
                         "author": "Google",
                         "website": "http://angularjs.org/",
-                        "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                        "copyright": "Copyright(c) 2010-2015 Google, Inc. http://angularjs.org",
                         "license": "license-mit",
                         "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
                     },
@@ -86,7 +86,7 @@ define([], function () {
                         "description": "Client-side view routing",
                         "author": "Google",
                         "website": "http://angularjs.org/",
-                        "copyright": "Copyright (c) 2010-2015 Google, Inc. http://angularjs.org",
+                        "copyright": "Copyright(c) 2010-2015 Google, Inc. http://angularjs.org",
                         "license": "license-mit",
                         "link": "https://github.com/angular/angular.js/blob/v1.4.4/LICENSE"
                     },
@@ -96,7 +96,7 @@ define([], function () {
                         "description": "Promise polyfill for pre-ECMAScript 6 browsers",
                         "author": "Yehuda Katz, Tom Dale, Stefan Penner and contributors",
                         "website": "https://github.com/jakearchibald/es6-promise",
-                        "copyright": "Copyright (c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors",
+                        "copyright": "Copyright(c) 2014 Yehuda Katz, Tom Dale, Stefan Penner and contributors",
                         "license": "license-mit",
                         "link": "https://github.com/jakearchibald/es6-promise/blob/master/LICENSE"
                     }

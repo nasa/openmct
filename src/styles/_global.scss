@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -229,7 +229,7 @@ body.desktop .has-local-controls {
     @include abs();
 }
 
-.c-grid {
+.c-grid .c-grid {
     pointer-events: none;
 
     &__x  { @include bgTicks($editUIGridColorFg, 'x'); }

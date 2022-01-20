@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -25,11 +25,15 @@ import myItemsInterceptor from "./myItemsInterceptor";
 
 const MY_ITEMS_DEFAULT_NAME = 'My Items';
 
-export default function MyItemsPlugin(name = MY_ITEMS_DEFAULT_NAME, namespace = '') {
+export default function MyItemsPlugin(name = MY_ITEMS_DEFAULT_NAME, namespace = '', priority = undefined) {
     return function install(openmct) {
         const identifier = createMyItemsIdentifier(namespace);
 
+        if (priority === undefined) {
+            priority = openmct.priority.LOW;
+        }
+
         openmct.objects.addGetInterceptor(myItemsInterceptor(openmct, identifier, name));
-        openmct.objects.addRoot(identifier);
+        openmct.objects.addRoot(identifier, priority);
     };
 }
