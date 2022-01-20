@@ -21,11 +21,18 @@
 *****************************************************************************/
 
 <template>
-<mct-tree
-    :is-selector-tree="true"
-    :initial-selection="model.parent"
-    @tree-item-selection="handleItemSelection"
-/>
+<div>
+    <span
+        v-if="canAddFolder"
+        :class="newFolderAction.cssClass"
+        @click="addNewFolder"
+    >Add New Folder</span>
+    <mct-tree
+        :is-selector-tree="true"
+        :initial-selection="model.parent"
+        @tree-item-selection="handleItemSelection"
+    />
+</div>
 </template>
 
 <script>
@@ -42,11 +49,24 @@ export default {
             required: true
         }
     },
+    data() {
+        return {
+            selectedItem: {},
+            canAddFolder: false,
+            newFolderAction: this.openmct.actions.getAction('newFolder')
+        };
+    },
     methods: {
+        addNewFolder() {
+            this.newFolderAction.invoke(this.selectedItem.objectPath);
+        },
         handleItemSelection(item) {
+            this.selectedItem = item;
+            this.canAddFolder = this.newFolderAction.appliesTo(this.selectedItem.objectPath);
+            console.log('can add folder', this.canAddFolder);
             const data = {
                 model: this.model,
-                value: item.objectPath
+                value: this.selectedItem.objectPath
             };
 
             this.$emit('onChange', data);
