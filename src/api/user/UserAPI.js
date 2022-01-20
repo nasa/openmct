@@ -76,9 +76,7 @@ class UserAPI extends EventEmitter {
     getCurrentUser() {
         this._noProviderCheck();
 
-        return this._provider.getCurrentUser().then((userInfo) => {
-            return JSON.parse(JSON.stringify(userInfo));
-        });
+        return this._provider.getCurrentUser();
     }
 
     /**

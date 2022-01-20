@@ -21,24 +21,16 @@
  *****************************************************************************/
 
 export default class User {
-    constructor(userId, name) {
-        this.userId = userId;
+    constructor(id, name) {
+        this.id = id;
         this.name = name;
 
-        this.getUserInfo = this.getUserInfo.bind(this);
-        this.getUserId = this.getUserId.bind(this);
+        this.getId = this.getId.bind(this);
         this.getName = this.getName.bind(this);
     }
 
-    getUserInfo() {
-        return {
-            id: this.getUserId(),
-            name: this.getName()
-        };
-    }
-
-    getUserId() {
-        return this.userId;
+    getId() {
+        return this.id;
     }
 
     getName() {

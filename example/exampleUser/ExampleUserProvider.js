@@ -46,10 +46,10 @@ export default class ExampleUserProvider extends EventEmitter {
 
     getCurrentUser() {
         if (this.loggedIn) {
-            return Promise.resolve(this.user.getUserInfo());
+            return Promise.resolve(this.user);
         }
 
-        return this._login().then(() => this.user.getUserInfo());
+        return this._login().then(() => this.user);
     }
 
     hasRole(roleId) {
