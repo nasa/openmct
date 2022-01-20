@@ -20,24 +20,45 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
-
-        function SummaryWidgetsCompositionPolicy(openmct) {
-            this.openmct = openmct;
-        }
-
-        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            const parentType = parent.type;
-
-            if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
-                return false;
+class EventMetadataProvider {
+    constructor() {
+        this.METADATA_BY_TYPE = {
+            'eventGenerator': {
+                values: [
+                    {
+                        key: "name",
+                        name: "Name",
+                        format: "string"
+                    },
+                    {
+                        key: "utc",
+                        name: "Time",
+                        format: "utc",
+                        hints: {
+                            domain: 1
+                        }
+                    },
+                    {
+                        key: "message",
+                        name: "Message",
+                        format: "string"
+                    }
+                ]
             }
-
-            return true;
         };
-
-        return SummaryWidgetsCompositionPolicy;
     }
-);
+
+    supportsMetadata(domainObject) {
+        return Object.prototype.hasOwnProperty.call(this.METADATA_BY_TYPE, domainObject.type);
+    }
+
+    getMetadata(domainObject) {
+        return Object.assign(
+            {},
+            domainObject.telemetry,
+            this.METADATA_BY_TYPE[domainObject.type]
+        );
+    }
+}
+
+export default EventMetadataProvider;
