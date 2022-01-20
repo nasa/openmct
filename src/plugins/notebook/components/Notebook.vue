@@ -142,7 +142,6 @@ import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaul
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
-import objectUtils from 'objectUtils';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
@@ -461,11 +460,6 @@ export default {
                 ? getDefaultNotebook().defaultSectionId
                 : undefined;
         },
-        getDefaultNotebookObject() {
-            const defaultNotebook = getDefaultNotebook();
-
-            return defaultNotebook && this.openmct.objects.get(defaultNotebook.identifier);
-        },
         getLinktoNotebook() {
             const objectPath = this.openmct.router.path;
             const link = objectLink.computed.objectLink.call({
@@ -625,12 +619,12 @@ export default {
 
             this.sectionsChanged({ sections });
         },
-        removeDefaultClass(domainObject) {
-            if (!domainObject) {
+        removeDefaultClass(defaultNotebookIdentifier) {
+            if (!defaultNotebookIdentifier) {
                 return;
             }
 
-            this.openmct.status.delete(domainObject.identifier);
+            this.openmct.status.delete(defaultNotebookIdentifier);
         },
         resetSearch() {
             this.search = '';
@@ -639,15 +633,16 @@ export default {
         toggleNav() {
             this.showNav = !this.showNav;
         },
-        async updateDefaultNotebook(notebookStorage) {
-            const defaultNotebookObject = await this.getDefaultNotebookObject();
-            const isSameNotebook = defaultNotebookObject
-                && objectUtils.makeKeyString(defaultNotebookObject.identifier) === objectUtils.makeKeyString(notebookStorage.identifier);
+        updateDefaultNotebook(notebookStorage) {
+            const defaultNotebook = getDefaultNotebook();
+            const defaultNotebookIdentifier = defaultNotebook && defaultNotebook.identifier;
+            const isSameNotebook = defaultNotebookIdentifier
+                && this.openmct.objects.areIdsEqual(defaultNotebookIdentifier, notebookStorage.identifier);
             if (!isSameNotebook) {
-                this.removeDefaultClass(defaultNotebookObject);
+                this.removeDefaultClass(defaultNotebookIdentifier);
             }
 
-            if (!defaultNotebookObject || !isSameNotebook) {
+            if (!defaultNotebookIdentifier || !isSameNotebook) {
                 setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
             }
 
