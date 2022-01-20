@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -142,7 +142,6 @@ import { clearDefaultNotebook, getDefaultNotebook, setDefaultNotebook, setDefaul
 import { addNotebookEntry, createNewEmbed, getEntryPosById, getNotebookEntries, mutateObject } from '../utils/notebook-entries';
 import { saveNotebookImageDomainObject, updateNamespaceOfDomainObject } from '../utils/notebook-image';
 import { NOTEBOOK_VIEW_TYPE } from '../notebook-constants';
-import objectUtils from 'objectUtils';
 
 import { debounce } from 'lodash';
 import objectLink from '../../../ui/mixins/object-link';
@@ -175,7 +174,7 @@ export default {
             focusEntryId: null,
             search: '',
             searchResults: [],
-            showTime: 0,
+            showTime: this.domainObject.configuration.showTime || 0,
             showNav: false,
             sidebarCoversEntries: false
         };
@@ -239,6 +238,12 @@ export default {
     watch: {
         search() {
             this.getSearchResults();
+        },
+        defaultSort() {
+            mutateObject(this.openmct, this.domainObject, 'configuration.defaultSort', this.defaultSort);
+        },
+        showTime() {
+            mutateObject(this.openmct, this.domainObject, 'configuration.showTime', this.showTime);
         }
     },
     beforeMount() {
@@ -455,11 +460,6 @@ export default {
                 ? getDefaultNotebook().defaultSectionId
                 : undefined;
         },
-        getDefaultNotebookObject() {
-            const defaultNotebook = getDefaultNotebook();
-
-            return defaultNotebook && this.openmct.objects.get(defaultNotebook.identifier);
-        },
         getLinktoNotebook() {
             const objectPath = this.openmct.router.path;
             const link = objectLink.computed.objectLink.call({
@@ -619,12 +619,12 @@ export default {
 
             this.sectionsChanged({ sections });
         },
-        removeDefaultClass(domainObject) {
-            if (!domainObject) {
+        removeDefaultClass(defaultNotebookIdentifier) {
+            if (!defaultNotebookIdentifier) {
                 return;
             }
 
-            this.openmct.status.delete(domainObject.identifier);
+            this.openmct.status.delete(defaultNotebookIdentifier);
         },
         resetSearch() {
             this.search = '';
@@ -633,15 +633,16 @@ export default {
         toggleNav() {
             this.showNav = !this.showNav;
         },
-        async updateDefaultNotebook(notebookStorage) {
-            const defaultNotebookObject = await this.getDefaultNotebookObject();
-            const isSameNotebook = defaultNotebookObject
-                && objectUtils.makeKeyString(defaultNotebookObject.identifier) === objectUtils.makeKeyString(notebookStorage.identifier);
+        updateDefaultNotebook(notebookStorage) {
+            const defaultNotebook = getDefaultNotebook();
+            const defaultNotebookIdentifier = defaultNotebook && defaultNotebook.identifier;
+            const isSameNotebook = defaultNotebookIdentifier
+                && this.openmct.objects.areIdsEqual(defaultNotebookIdentifier, notebookStorage.identifier);
             if (!isSameNotebook) {
-                this.removeDefaultClass(defaultNotebookObject);
+                this.removeDefaultClass(defaultNotebookIdentifier);
             }
 
-            if (!defaultNotebookObject || !isSameNotebook) {
+            if (!defaultNotebookIdentifier || !isSameNotebook) {
                 setDefaultNotebook(this.openmct, notebookStorage, this.domainObject);
             }
 
