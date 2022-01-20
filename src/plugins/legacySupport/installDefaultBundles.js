@@ -44,7 +44,6 @@ const DEFAULTS = [
 
 define([
     '../../adapter/bundle',
-    '../../../example/eventGenerator/bundle',
     '../../../example/export/bundle',
     '../../../example/forms/bundle',
     '../../../example/identity/bundle',
