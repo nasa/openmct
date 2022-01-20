@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,7 @@ define([
     './ISOTimeFormat/plugin',
     './myItems/plugin',
     '../../example/generator/plugin',
+    '../../example/eventGenerator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
@@ -87,6 +88,7 @@ define([
     ISOTimeFormat,
     MyItems,
     GeneratorPlugin,
+    EventGeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
@@ -154,6 +156,7 @@ define([
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
     plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
     plugins.example.Generator = () => GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
