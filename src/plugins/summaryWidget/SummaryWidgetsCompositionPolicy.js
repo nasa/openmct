@@ -29,7 +29,9 @@ define(
         }
 
         SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            if (parent.type === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
+            const parentType = parent.type;
+
+            if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
                 return false;
             }
 
