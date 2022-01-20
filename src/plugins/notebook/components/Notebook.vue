@@ -460,11 +460,6 @@ export default {
                 ? getDefaultNotebook().defaultSectionId
                 : undefined;
         },
-        getDefaultNotebookObject() {
-            const defaultNotebook = getDefaultNotebook();
-
-            return defaultNotebook && this.openmct.objects.get(defaultNotebook.identifier);
-        },
         getLinktoNotebook() {
             const objectPath = this.openmct.router.path;
             const link = objectLink.computed.objectLink.call({

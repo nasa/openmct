@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,24 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+import UserIndicator from './components/UserIndicator.vue';
+import Vue from 'vue';
 
-        function SummaryWidgetsCompositionPolicy(openmct) {
-            this.openmct = openmct;
-        }
+export default function UserIndicatorPlugin() {
 
-        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            const parentType = parent.type;
+    function addIndicator(openmct) {
+        const userIndicator = new Vue ({
+            components: {
+                UserIndicator
+            },
+            provide: {
+                openmct: openmct
+            },
+            template: '<UserIndicator />'
+        });
 
-            if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
-                return false;
-            }
-
-            return true;
-        };
-
-        return SummaryWidgetsCompositionPolicy;
+        openmct.indicators.add({
+            key: 'user-indicator',
+            element: userIndicator.$mount().$el,
+            priority: openmct.priority.HIGH
+        });
     }
-);
+
+    return function install(openmct) {
+        if (openmct.user.hasProvider()) {
+            addIndicator(openmct);
+        } else {
+            // back up if user provider added after indicator installed
+            openmct.user.on('providerAdded', () => {
+                addIndicator(openmct);
+            });
+        }
+    };
+}

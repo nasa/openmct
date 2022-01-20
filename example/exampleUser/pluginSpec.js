@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,24 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+import {
+    createOpenMct,
+    resetApplicationState
+} from '../../src/utils/testing';
+import ExampleUserProvider from './ExampleUserProvider';
 
-        function SummaryWidgetsCompositionPolicy(openmct) {
-            this.openmct = openmct;
-        }
+describe("The Example User Plugin", () => {
+    let openmct;
 
-        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            const parentType = parent.type;
+    beforeEach(() => {
+        openmct = createOpenMct();
+    });
 
-            if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
-                return false;
-            }
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
 
-            return true;
-        };
+    it('is not installed by default', () => {
+        expect(openmct.user.hasProvider()).toBeFalse();
+    });
 
-        return SummaryWidgetsCompositionPolicy;
-    }
-);
+    it('can be installed', () => {
+        openmct.user.on('providerAdded', (provider) => {
+            expect(provider).toBeInstanceOf(ExampleUserProvider);
+        });
+        openmct.install(openmct.plugins.example.ExampleUser());
+    });
+
+    // The rest of the functionality of the ExampleUser Plugin is
+    // tested in both the UserAPISpec.js and in the UserIndicatorPlugin spec.
+    // If that changes, those tests can be moved here.
+
+});
