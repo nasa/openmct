@@ -77,7 +77,8 @@ define([
     './timer/plugin',
     './localStorage/plugin',
     './legacySupport/plugin.js',
-    '../adapter/indicators/legacy-indicators-plugin'
+    '../adapter/indicators/legacy-indicators-plugin',
+    './timelist/plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -135,7 +136,8 @@ define([
     Timer,
     LocalStorage,
     LegacySupportPlugin,
-    LegacyIndicatorsPlugin
+    LegacyIndicatorsPlugin,
+    TimeList
 ) {
     const bundleMap = {
         Elasticsearch: 'platform/persistence/elastic'
@@ -246,6 +248,7 @@ define([
     plugins.LocalStorage = LocalStorage.default;
     plugins.LegacySupport = LegacySupportPlugin.default;
     plugins.LegacyIndicators = LegacyIndicatorsPlugin;
+    plugins.Timelist = TimeList.default;
 
     return plugins;
 });
