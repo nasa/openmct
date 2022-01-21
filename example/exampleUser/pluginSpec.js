@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,20 +20,36 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchObjectProvider from './CouchObjectProvider';
-import CouchSearchProvider from './CouchSearchProvider';
-const NAMESPACE = '';
-const LEGACY_SPACE = 'mct';
-const COUCH_SEARCH_ONLY_NAMESPACE = `COUCH_SEARCH_${Date.now()}`;
+import {
+    createOpenMct,
+    resetApplicationState
+} from '../../src/utils/testing';
+import ExampleUserProvider from './ExampleUserProvider';
 
-export default function CouchPlugin(options) {
-    return function install(openmct) {
-        install.couchProvider = new CouchObjectProvider(openmct, options, NAMESPACE);
+describe("The Example User Plugin", () => {
+    let openmct;
 
-        // Unfortunately, for historical reasons, Couch DB produces objects with a mix of namepaces (alternately "mct", and "")
-        // Installing the same provider under both namespaces means that it can respond to object gets for both namespaces.
-        openmct.objects.addProvider(LEGACY_SPACE, install.couchProvider);
-        openmct.objects.addProvider(NAMESPACE, install.couchProvider);
-        openmct.objects.addProvider(COUCH_SEARCH_ONLY_NAMESPACE, new CouchSearchProvider(install.couchProvider));
-    };
-}
+    beforeEach(() => {
+        openmct = createOpenMct();
+    });
+
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
+
+    it('is not installed by default', () => {
+        expect(openmct.user.hasProvider()).toBeFalse();
+    });
+
+    it('can be installed', () => {
+        openmct.user.on('providerAdded', (provider) => {
+            expect(provider).toBeInstanceOf(ExampleUserProvider);
+        });
+        openmct.install(openmct.plugins.example.ExampleUser());
+    });
+
+    // The rest of the functionality of the ExampleUser Plugin is
+    // tested in both the UserAPISpec.js and in the UserIndicatorPlugin spec.
+    // If that changes, those tests can be moved here.
+
+});
