@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,20 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-import CouchObjectProvider from './CouchObjectProvider';
-import CouchSearchProvider from './CouchSearchProvider';
-const NAMESPACE = '';
-const LEGACY_SPACE = 'mct';
-const COUCH_SEARCH_ONLY_NAMESPACE = `COUCH_SEARCH_${Date.now()}`;
+// This provider exists because due to legacy reasons, we need to install
+// two plugins for two namespaces for CouchDB: one for "mct", and one for "".
+// Because of this, we need to separate out the search provider from the object
+// provider so we don't return two results for each found object.
+// If the above namespace is ever resolved, we can fold this search provider
+// back into the object provider.
 
-export default function CouchPlugin(options) {
-    return function install(openmct) {
-        install.couchProvider = new CouchObjectProvider(openmct, options, NAMESPACE);
+class CouchSearchProvider {
+    constructor(couchObjectProvider) {
+        this.couchObjectProvider = couchObjectProvider;
+    }
 
-        // Unfortunately, for historical reasons, Couch DB produces objects with a mix of namepaces (alternately "mct", and "")
-        // Installing the same provider under both namespaces means that it can respond to object gets for both namespaces.
-        openmct.objects.addProvider(LEGACY_SPACE, install.couchProvider);
-        openmct.objects.addProvider(NAMESPACE, install.couchProvider);
-        openmct.objects.addProvider(COUCH_SEARCH_ONLY_NAMESPACE, new CouchSearchProvider(install.couchProvider));
-    };
+    search(query, abortSignal) {
+        const filter = {
+            "selector": {
+                "model": {
+                    "name": {
+                        "$regex": `(?i)${query}`
+                    }
+                }
+            }
+        };
+
+        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
+    }
 }
+export default CouchSearchProvider;

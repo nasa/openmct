@@ -75,6 +75,8 @@ define([
     './clock/plugin',
     './DeviceClassifier/plugin',
     './timer/plugin',
+    './userIndicator/plugin',
+    '../../example/exampleUser/plugin',
     './localStorage/plugin',
     './legacySupport/plugin.js',
     '../adapter/indicators/legacy-indicators-plugin',
@@ -134,6 +136,8 @@ define([
     Clock,
     DeviceClassifier,
     Timer,
+    UserIndicator,
+    ExampleUser,
     LocalStorage,
     LegacySupportPlugin,
     LegacyIndicatorsPlugin,
@@ -150,6 +154,12 @@ define([
             };
         };
     });
+
+    plugins.example = {};
+    plugins.example.ExampleUser = ExampleUser.default;
+    plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
+    plugins.example.Generator = () => GeneratorPlugin;
 
     plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
@@ -196,12 +206,6 @@ define([
         };
     };
 
-    plugins.Generator = function () {
-        return GeneratorPlugin;
-    };
-
-    plugins.EventGeneratorPlugin = EventGeneratorPlugin.default;
-    plugins.ExampleImagery = ExampleImagery.default;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
     plugins.Chart = ChartPlugin.default;
@@ -245,6 +249,7 @@ define([
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
+    plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
     plugins.LegacySupport = LegacySupportPlugin.default;
     plugins.LegacyIndicators = LegacyIndicatorsPlugin;
