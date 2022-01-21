@@ -58,20 +58,20 @@
         </div>
         <!-- TODO: structure this element -->
         <div style="position: absolute; top: 60px; left: 20px; z-index: 5">
-         <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-out">
+            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-out">
                 <a class="s-icon-button icon-minus t-btn-zoom-out"
-                   @click="handleZoomButton(-1)"
+                   @click="incrementZoomFactor(-1)"
                 ></a>
             </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-in">
                 <a class="s-icon-button icon-plus t-btn-zoom-in"
-                   @click="handleZoomButton(1)"
+                   @click="incrementZoomFactor(1)"
                 ></a>
             </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-reset">
-            <a class="s-icon-button icon-reset t-btn-zoom-reset"
-                @click="resetImage"
-            ></a>
+                <a class="s-icon-button icon-reset t-btn-zoom-reset"
+                   @click="resetImage"
+                ></a>
             </span>
             <span v-if="zoomFactor > 1">x{{Number.parseFloat(zoomFactor).toPrecision(3)}}</span>
         </div>
@@ -135,6 +135,19 @@
                     }"
                     @click="handleZoomClick"
                 ></div>
+                <div :style="{
+                    'position': 'absolute',
+                    'left': 0,
+                    'top': 0,
+                    'right': 0,
+                    'bottom': 0,
+                    'margin': 'auto',
+                    'width': '16px',
+                    'height': '16px',
+                    'background': 'rgba(255,0,0,0.8)',
+                    'border-radius': '50%',
+                    'pointer-events': 'none'
+                }"></div>
                 <Compass
                     v-if="shouldDisplayCompass"
                     :compass-rose-sizing-classes="compassRoseSizingClasses"
@@ -512,6 +525,7 @@ export default {
     async mounted() {
         eventHelpers.extend(this);
         this.focusedImageWrapper = this.$refs.focusedImageWrapper;
+        this.focusedImageElement = this.$refs.focusedImageElement;
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
         // this.canvas = this.$refs.focusedImageCanvas;
@@ -904,8 +918,9 @@ export default {
         zoomImage(scale, userCoordX, userCoordY) {
             const zoomLimits = {
                 max: 20,
-                min: 1 
+                min: 1
             };
+
             this.paused(true);
             if (scale > zoomLimits.max) {
                 scale = zoomLimits.max;
@@ -930,18 +945,62 @@ export default {
             //         (previousTranslateX + this.sizedImageDimensions.width/2) - e.pageX) *scaleProportion;
             // this.imageTranslateY = (imageRect.top +
             //     (previousTranslateY + this.sizedImageDimensions.height/2) - e.pageY) * scaleProportion;
+            // this.imageTranslateX = (
+            //         ((imageRect.left + previousTranslateX + (focusedImageElement.width - this.sizedImageDimensions.width)/this.sizedImageDimensions.width + this.sizedImageDimensions.width/2 - userCoordX))
+            //     );
+            // this.imageTranslateY = (
+            //     ((imageRect.top + previousTranslateY + (focusedImageElement.height - this.sizedImageDimensions.height)/this.sizedImageDimensions.height + this.sizedImageDimensions.height/2 - userCoordY)) 
+            // );
+
+
+
+                const sizedImageDistanceToCenterX = this.sizedImageDimensions.width / 2;
+                const sizedImageDistanceToCenterY = this.sizedImageDimensions.height / 2;
+                // measured from top left of 
+                const imagePositionCenterX = sizedImageDistanceToCenterX + imageRect.left;
+                const imagePositionCenterY = sizedImageDistanceToCenterY + imageRect.top;
+                const zoomedImageCenterX = imagePositionCenterX + previousTranslateX;
+                const zoomedImageCenterY = imagePositionCenterY + previousTranslateY;
+
+                const distanceFromCenterUserX = -imagePositionCenterX + userCoordX;
+                const distanceFromCenterUserY = -imagePositionCenterY + userCoordY;
+
+                this.zoomFactor = scale;
+                // change image scale
             // set the scale to zoom factor
             if (userCoordX && userCoordY) {
+                // const focusedImageElement = this.focusedImageElement.getBoundingClientRect();
+                
                 this.imageTranslateX = (
-                    ((imageRect.left + previousTranslateX * (1 - scaleProportion) + this.sizedImageDimensions.width / 2 - userCoordX))
+                    (
+                    zoomedImageCenterX
+                     - userCoordX
+                     
+                     )
                 );
                 this.imageTranslateY = (
-                    ((imageRect.top + previousTranslateY * (1 - scaleProportion) + this.sizedImageDimensions.height / 2 - userCoordY)) 
+                    (
+                        zoomedImageCenterY
+                        - userCoordY
+                    )  
                 );
 
             }
-            this.zoomFactor = scale;
-            console.table({imageRectLR: [imageRect.left, imageRect.top], pageXY: [userCoordX, userCoordY], sizedImage: [this.sizedImageDimensions.width/2, this.sizedImageDimensions.height/2] ,  translateXY:[ this.imageTranslateX, this.imageTranslateY]})
+
+            // console.log(this.focusedImageElement.getBoundingClientRect())
+
+            console.table({
+                scaleValues: [previousZoomFactor, scale],
+                scaleProportion: [scaleProportion],
+                sizedImageDistanceToCenterXY: [sizedImageDistanceToCenterX, sizedImageDistanceToCenterY],
+                imageRectLeftTop: [imageRect.left, imageRect.top],
+                imagePositionCenterXY: [imagePositionCenterX, imagePositionCenterY],
+                zoomedImageCenterXY: [zoomedImageCenterX, zoomedImageCenterY],
+                previousTranslate: [previousTranslateX, previousTranslateY],
+                distanceFromCenterUserXY: [distanceFromCenterUserX, distanceFromCenterUserY], 
+                pageXY: [userCoordX, userCoordY], 
+                sizedImage: [this.sizedImageDimensions.width/2, this.sizedImageDimensions.height/2],
+                translateXY:[ this.imageTranslateX, this.imageTranslateY]})
 
         },
         // handleGesture(e) {
@@ -951,9 +1010,9 @@ export default {
         //         console.log('zoom in')
         //     }
         // },
-        handleZoomButton(stepValue) {
-            this.incrementZoomFactor(stepValue);
-        },
+        // handleZoomButton(stepValue) {
+        //     this.incrementZoomFactor(stepValue);
+        // },
         handleZoomClick(e) {
             const step = 1;
             const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
@@ -1058,6 +1117,7 @@ export default {
                 this.resizingWindow = false;
             });
         },
+        // used to increment the zoom without knowledge of current level
         incrementZoomFactor(increment, userCoordX, userCoordY) {
             const newFactor = this.zoomFactor + increment;
             this.zoomImage(newFactor, userCoordX, userCoordY);
