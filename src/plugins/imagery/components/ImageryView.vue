@@ -915,7 +915,7 @@ export default {
             this.imageTranslateX = 0;
             this.imageTranslateY = 0;
         },
-        zoomImage(scale, userCoordX, userCoordY) {
+        xzoomImage(scale, userCoordX, userCoordY) {
             const zoomLimits = {
                 max: 20,
                 min: 1
@@ -1003,6 +1003,23 @@ export default {
                 translateXY:[ this.imageTranslateX, this.imageTranslateY]})
 
         },
+        zoomImage(newScaleFactor, screenClientX, screenClientY) {
+            const imageRect = this.focusedImageWrapper.getBoundingClientRect();
+            const imageContainerX = screenClientX - imageRect.left;
+            const imageContainerY = screenClientY - imageRect.top;
+
+            const currentScale = this.zoomFactor;
+            const previousTranslateX = this.imageTranslateX;
+            const previousTranslateY = this.imageTranslateY;
+            const offsetFromCenterX = (imageRect.width / 2) - imageContainerX;
+            const offsetFromCenterY = (imageRect.height / 2) - imageContainerY;
+
+            const offsetXInOriginalScale = offsetFromCenterX / currentScale;
+            const offsetYInOriginalScale = offsetFromCenterY / currentScale;
+            this.imageTranslateX = offsetXInOriginalScale + previousTranslateX;
+            this.imageTranslateY = offsetYInOriginalScale + previousTranslateY;
+            this.zoomFactor = newScaleFactor;
+        },
         // handleGesture(e) {
         //     if (e.scale < 1) {
         //         console.log('zoom out')
@@ -1016,8 +1033,13 @@ export default {
         handleZoomClick(e) {
             const step = 1;
             const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
-            this.zoomImage(zoomFactor, e.pageX, e.pageY);
+            this.zoomImage(zoomFactor, e.clientX, e.clientY);
         },
+        // handleZoomClick(e) {
+        //     const step = 1;
+        //     const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
+        //     this.zoomImage(zoomFactor, e.pageX, e.pageY);
+        // },
         startDrag(e) {
             e.preventDefault();
             e.stopPropagation();
