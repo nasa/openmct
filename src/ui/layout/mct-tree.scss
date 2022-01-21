@@ -280,38 +280,5 @@
         border: 1px solid $colorFormLines;
         border-radius: $controlCr;
         padding: $interiorMargin;
-
-        > .c-tree {
-            overflow: auto;
-        }
     }
-}
-
-// TRANSITIONS
-.children-enter-active {
-    &.down {
-        animation: animSlideLeft 500ms;
-    }
-
-    &.up {
-        animation: animSlideRight 500ms;
-    }
-}
-
-@keyframes animSlideLeft {
-    0% {opacity: 0; transform: translateX(100%);}
-    10% {opacity: 1;}
-    100% {transform: translateX(0);}
-}
-
-@keyframes animSlideRight {
-    0% {opacity: 0; transform: translateX(-100%);}
-    10% {opacity: 1;}
-    100% {transform: translateX(0);}
-}
-
-@keyframes animTemporaryHighlight {
-    from { background: transparent; }
-    30% { background: $colorItemTreeNewNode; }
-    100% { background: transparent; }
 }
