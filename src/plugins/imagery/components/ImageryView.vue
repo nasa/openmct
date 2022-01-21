@@ -60,12 +60,12 @@
         <div style="position: absolute; top: 60px; left: 20px; z-index: 5">
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-out">
                 <a class="s-icon-button icon-minus t-btn-zoom-out"
-                   @click="incrementZoomFactor(-1)"
+                   @click="handlePanButton(-30, -10)"
                 ></a>
             </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-in">
                 <a class="s-icon-button icon-plus t-btn-zoom-in"
-                   @click="incrementZoomFactor(1)"
+                   @click="handlePanButton(30, 10)"
                 ></a>
             </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-reset">
@@ -133,7 +133,7 @@
                         'height': `${sizedImageDimensions.height}px`,
 
                     }"
-                    @click="handleZoomClick"
+                    @click="handlePanZoomClick"
                 ></div>
                 <div :style="{
                     'position': 'absolute',
@@ -915,110 +915,47 @@ export default {
             this.imageTranslateX = 0;
             this.imageTranslateY = 0;
         },
-        xzoomImage(scale, userCoordX, userCoordY) {
+        zoomImage(newScaleFactor, screenClientX, screenClientY) {
             const zoomLimits = {
                 max: 20,
                 min: 1
             };
 
             this.paused(true);
-            if (scale > zoomLimits.max) {
-                scale = zoomLimits.max;
+            if (newScaleFactor > zoomLimits.max) {
+                newScaleFactor = zoomLimits.max;
+
+                return;
             }
 
-
-            if (scale <= 0 || scale < zoomLimits.min) {
+            if (newScaleFactor <= 0 || newScaleFactor < zoomLimits.min) {
                 return this.resetImage();
             }
 
-            // store previous values before calculating
-            const previousZoomFactor = this.zoomFactor;
-            const previousTranslateX = this.imageTranslateX;
-            const previousTranslateY = this.imageTranslateY;
-
-            const scaleProportion = (scale - previousZoomFactor) / previousZoomFactor;
-            console.log('scaleProportion', scaleProportion);
-            const imageRect = this.focusedImageWrapper.getBoundingClientRect();
-
-
-            // this.imageTranslateX = (imageRect.left +
-            //         (previousTranslateX + this.sizedImageDimensions.width/2) - e.pageX) *scaleProportion;
-            // this.imageTranslateY = (imageRect.top +
-            //     (previousTranslateY + this.sizedImageDimensions.height/2) - e.pageY) * scaleProportion;
-            // this.imageTranslateX = (
-            //         ((imageRect.left + previousTranslateX + (focusedImageElement.width - this.sizedImageDimensions.width)/this.sizedImageDimensions.width + this.sizedImageDimensions.width/2 - userCoordX))
-            //     );
-            // this.imageTranslateY = (
-            //     ((imageRect.top + previousTranslateY + (focusedImageElement.height - this.sizedImageDimensions.height)/this.sizedImageDimensions.height + this.sizedImageDimensions.height/2 - userCoordY)) 
-            // );
-
-
-
-                const sizedImageDistanceToCenterX = this.sizedImageDimensions.width / 2;
-                const sizedImageDistanceToCenterY = this.sizedImageDimensions.height / 2;
-                // measured from top left of 
-                const imagePositionCenterX = sizedImageDistanceToCenterX + imageRect.left;
-                const imagePositionCenterY = sizedImageDistanceToCenterY + imageRect.top;
-                const zoomedImageCenterX = imagePositionCenterX + previousTranslateX;
-                const zoomedImageCenterY = imagePositionCenterY + previousTranslateY;
-
-                const distanceFromCenterUserX = -imagePositionCenterX + userCoordX;
-                const distanceFromCenterUserY = -imagePositionCenterY + userCoordY;
-
-                this.zoomFactor = scale;
-                // change image scale
-            // set the scale to zoom factor
-            if (userCoordX && userCoordY) {
-                // const focusedImageElement = this.focusedImageElement.getBoundingClientRect();
-                
-                this.imageTranslateX = (
-                    (
-                    zoomedImageCenterX
-                     - userCoordX
-                     
-                     )
-                );
-                this.imageTranslateY = (
-                    (
-                        zoomedImageCenterY
-                        - userCoordY
-                    )  
-                );
-
-            }
-
-            // console.log(this.focusedImageElement.getBoundingClientRect())
-
-            console.table({
-                scaleValues: [previousZoomFactor, scale],
-                scaleProportion: [scaleProportion],
-                sizedImageDistanceToCenterXY: [sizedImageDistanceToCenterX, sizedImageDistanceToCenterY],
-                imageRectLeftTop: [imageRect.left, imageRect.top],
-                imagePositionCenterXY: [imagePositionCenterX, imagePositionCenterY],
-                zoomedImageCenterXY: [zoomedImageCenterX, zoomedImageCenterY],
-                previousTranslate: [previousTranslateX, previousTranslateY],
-                distanceFromCenterUserXY: [distanceFromCenterUserX, distanceFromCenterUserY], 
-                pageXY: [userCoordX, userCoordY], 
-                sizedImage: [this.sizedImageDimensions.width/2, this.sizedImageDimensions.height/2],
-                translateXY:[ this.imageTranslateX, this.imageTranslateY]})
-
-        },
-        zoomImage(newScaleFactor, screenClientX, screenClientY) {
+            // handle mouse events
             const imageRect = this.focusedImageWrapper.getBoundingClientRect();
             const imageContainerX = screenClientX - imageRect.left;
             const imageContainerY = screenClientY - imageRect.top;
+            const offsetFromCenterX = (imageRect.width / 2) - imageContainerX;
+            const offsetFromCenterY = (imageRect.height / 2) - imageContainerY;
+            // const scaleProportion = (scale - previousZoomFactor) / previousZoomFactor;
 
+            this.updatePanZoom(newScaleFactor, offsetFromCenterX, offsetFromCenterY);
+        },
+        updatePanZoom(newScaleFactor, offsetFromCenterX, offsetFromCenterY) {
             const currentScale = this.zoomFactor;
             const previousTranslateX = this.imageTranslateX;
             const previousTranslateY = this.imageTranslateY;
-            const offsetFromCenterX = (imageRect.width / 2) - imageContainerX;
-            const offsetFromCenterY = (imageRect.height / 2) - imageContainerY;
 
             const offsetXInOriginalScale = offsetFromCenterX / currentScale;
             const offsetYInOriginalScale = offsetFromCenterY / currentScale;
-            this.imageTranslateX = offsetXInOriginalScale + previousTranslateX;
-            this.imageTranslateY = offsetYInOriginalScale + previousTranslateY;
+            const translateX = offsetXInOriginalScale + previousTranslateX;
+            const translateY = offsetYInOriginalScale + previousTranslateY;
+            const imageRect = this.focusedImageWrapper.getBoundingClientRect();
+            this.imageTranslateX = (Math.abs(translateX) > imageRect.width *.25) ? Math.sign(translateX) * imageRect.width *.25 : translateX;
+            this.imageTranslateY = (Math.abs(translateY) > imageRect.height *.25) ? Math.sign(translateY) * imageRect.height *.25 : translateY;
             this.zoomFactor = newScaleFactor;
+            console.log(this.imageTranslateX, this.imageTranslateY, this.zoomFactor);
         },
         // handleGesture(e) {
         //     if (e.scale < 1) {
@@ -1030,12 +967,26 @@ export default {
         // handleZoomButton(stepValue) {
         //     this.incrementZoomFactor(stepValue);
         // },
-        handleZoomClick(e) {
-            const step = 1;
-            const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
-            this.zoomImage(zoomFactor, e.clientX, e.clientY);
+        handlePanButton(x, y) {
+            const currentScale = this.zoomFactor;
+            this.updatePanZoom(currentScale, x, y);
         },
-        // handleZoomClick(e) {
+        handlePanZoomClick(e) {
+            const step = 1;
+            if (e.altKey) {
+                return this.startPan(e);
+            }
+
+            // const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
+            const newZoomFactor = this.zoomFactor + step;
+            console.log(e.pageX, e.clientX, e.pageY, e.clientY);
+            console.assert(e.pageX === e.clientX, 'pageX = clientX')
+            console.assert(e.pageY === e.clientY, 'pageY = clientY')
+
+            console.log('handlePanZoomClick', e.clientX, e.clientY)
+            this.zoomImage(newZoomFactor, e.clientX, e.clientY);
+        },
+        // handlePanZoomClick(e) {
         //     const step = 1;
         //     const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
         //     this.zoomImage(zoomFactor, e.pageX, e.pageY);
@@ -1148,7 +1099,40 @@ export default {
             e.preventDefault();
             this.paused(true);
             this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
-        }
+        },
+        startPan(event) {
+            event.preventDefault();
+            this.listenTo(window, 'mouseup', this.onMouseUp, this);
+            this.listenTo(window, 'mousemove', this.trackMousePosition, this);
+
+            return false;
+        },
+        trackMousePosition(e) {
+            console.log('mousemove')
+            if (!e.altKey) {
+                return this.onMouseUp(e);
+            }
+
+            this.updatePan(e);
+        },
+        updatePan(e) {
+            this.zoomImage(this.zoomFactor, e.clientX, e.clientY);
+        },
+        endPan() {
+            console.log('endPan')
+        },
+        onMouseUp(event) {
+            this.stopListening(window, 'mouseup', this.onMouseUp, this);
+            this.stopListening(window, 'mousemove', this.trackMousePosition, this);
+            // if (this.pan) {
+            return this.endPan(event);
+            // }
+
+            // if (this.marquee) {
+            //     this.endMarquee(event);
+            // }
+        },
+
         // createImage(imageUrl) {
         //     return new Promise (function (resolve, reject) {
         //         if (!imageUrl) {
@@ -1224,35 +1208,7 @@ export default {
         //     }
 
         // },
-        // onMouseUp(event) {
-        //     this.stopListening(window, 'mouseup', this.onMouseUp, this);
-        //     this.stopListening(window, 'mousemove', this.trackMousePosition, this);
-        //     // if (this.isMouseClick()) {
-        //     //     this.lockHighlightPoint = !this.lockHighlightPoint;
-        //     // }
-        //     if (this.pan) {
-        //         return this.endPan(event);
-        //     }
 
-        //     if (this.marquee) {
-        //         this.endMarquee(event);
-        //     }
-        // },
-        //  trackMousePosition(event) {
-        //     console.log('mousemove');
-        //     // this.positionOverElement = {
-        //     //     x: event.clientX - this.chartElementBounds.left,
-        //     //     y: this.chartElementBounds.height
-        //     //   - (event.clientY - this.chartElementBounds.top)
-        //     // };
-        //     this.positionOverElement = {
-        //         x: event.clientX,
-        //         y: event.clientY
-        //     };
-        //     this.positionOverPlot = {
-        //         x: -this.positionOverElement.x,
-        //         y: -this.positionOverElement.y
-        //     }
 
 
         //     this.updateMarquee();
