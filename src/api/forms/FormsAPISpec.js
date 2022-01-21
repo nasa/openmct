@@ -94,7 +94,7 @@ describe("The Forms API", () => {
         expect(control.destroy).not.toBe(null);
     });
 
-    it("show form", () => {
+    it("show form in given element", () => {
         const element = document.createElement('div');
         const formStructure = {
             title: "Test Show Form",
@@ -118,6 +118,33 @@ describe("The Forms API", () => {
         openmct.forms.showForm(formStructure, { element });
 
         const titleElement = element.querySelector('.c-overlay__dialog-title');
+
+        expect(titleElement.textContent).toBe(formStructure.title);
+    });
+
+    it("show form using overlay", () => {
+        const formStructure = {
+            title: "Test Show Form",
+            sections: [
+                {
+                    rows: [
+                        {
+                            key: "name",
+                            control: "textfield",
+                            name: "Title",
+                            pattern: "\\S+",
+                            required: true,
+                            cssClass: "l-input-lg",
+                            value: 'Test Name'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        openmct.forms.showForm(formStructure);
+
+        const titleElement = document.querySelector('.c-overlay__dialog-title');
 
         expect(titleElement.textContent).toBe(formStructure.title);
     });
