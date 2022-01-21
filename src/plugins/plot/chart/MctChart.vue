@@ -24,8 +24,12 @@
 
 <template>
 <div class="gl-plot-chart-area">
-    <span v-html="canvasTemplate"></span>
-    <span v-html="canvasTemplate"></span>
+    <div style="display: contents" ref="chartContainer">
+        <span v-for="i in 2">
+            <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+        </span>
+    </div>
+
     <div ref="limitArea"
          class="js-limit-area"
     ></div>
@@ -73,11 +77,6 @@ export default {
             }
         }
     },
-    data() {
-        return {
-            canvasTemplate: '<canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>'
-        };
-    },
     watch: {
         highlights() {
             this.scheduleDraw();
@@ -101,7 +100,7 @@ export default {
         this.seriesElements = new WeakMap();
         this.seriesLimits = new WeakMap();
 
-        let canvasEls = this.$parent.$refs.chartContainer.querySelectorAll("canvas");
+        let canvasEls = this.$refs.chartContainer.querySelectorAll("canvas");
         const mainCanvas = canvasEls[1];
         const overlayCanvas = canvasEls[0];
         if (this.initializeCanvas(mainCanvas, overlayCanvas)) {

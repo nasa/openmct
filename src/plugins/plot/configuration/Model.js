@@ -25,11 +25,12 @@ import eventHelpers from "../lib/eventHelpers";
 import _ from 'lodash';
 
 /**
- * @template {ModelType} T
+ * @template {object} T
+ * @template {object} O
  */
 export default class Model extends EventEmitter {
     /**
-     * @param {ModelOptions<T>} options
+     * @param {ModelOptions<T, O>} options
      */
     constructor(options) {
         super();
@@ -45,10 +46,10 @@ export default class Model extends EventEmitter {
         // assigned a possibly-undefined value. Is this code unused?
         this.id = options.id;
 
-        /** @type {T} */
+        /** @type {ModelType<T>} */
         this.model = options.model;
         this.collection = options.collection;
-        const defaults = this.defaults(options);
+        const defaults = this.defaultModel(options);
         if (!this.model) {
             this.model = options.model = defaults;
         } else {
@@ -57,20 +58,20 @@ export default class Model extends EventEmitter {
 
         this.initialize(options);
 
-        /** @type {keyof T} */
+        /** @type {keyof ModelType<T> } */
         this.idAttr = 'id';
     }
 
     /**
-     * @param {ModelOptions<T>} options
-     * @returns {T}
+     * @param {ModelOptions<T, O>} options
+     * @returns {ModelType<T>}
      */
-    defaults(options) {
+    defaultModel(options) {
         return {};
     }
 
     /**
-     * @param {ModelOptions<T>} options
+     * @param {ModelOptions<T, O>} options
      */
     initialize(options) {
 
@@ -89,16 +90,16 @@ export default class Model extends EventEmitter {
     }
 
     /**
-     * @template {keyof T} K
+     * @template {keyof ModelType<T>} K
      * @param {K} attribute
-     * @returns {T[K]}
+     * @returns {ModelType<T>[K]}
      */
     get(attribute) {
         return this.model[attribute];
     }
 
     /**
-     * @template {keyof T} K
+     * @template {keyof ModelType<T>} K
      * @param {K} attribute
      * @returns boolean
      */
@@ -107,9 +108,9 @@ export default class Model extends EventEmitter {
     }
 
     /**
-     * @template {keyof T} K
+     * @template {keyof ModelType<T>} K
      * @param {K} attribute
-     * @param {T[K]} value
+     * @param {ModelType<T>[K]} value
      */
     set(attribute, value) {
         const oldValue = this.model[attribute];
@@ -119,7 +120,7 @@ export default class Model extends EventEmitter {
     }
 
     /**
-     * @template {keyof T} K
+     * @template {keyof ModelType<T>} K
      * @param {K} attribute
      */
     unset(attribute) {
@@ -135,16 +136,20 @@ export default class Model extends EventEmitter {
 /** @typedef {TODO} OpenMCT */
 
 /**
-@typedef {{id?: string}} ModelType
+@template {object} T
+@typedef {{
+    id?: string
+} & T} ModelType
 */
 
 /**
 @template {object} T
+@template {object} O
 @typedef {{
-    model?: T
+    model?: ModelType<T>
     models?: T[]
     openmct: OpenMCT
     id?: string
     [k: string]: unknown
-}} ModelOptions
+} & O} ModelOptions
 */

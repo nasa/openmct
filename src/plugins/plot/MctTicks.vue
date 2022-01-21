@@ -130,7 +130,7 @@ export default {
                 throw new Error('config is missing')
             }
 
-                return config[this.axisType];
+            return config[this.axisType];
         },
         /**
        * Determine whether ticks should be regenerated for a given range.

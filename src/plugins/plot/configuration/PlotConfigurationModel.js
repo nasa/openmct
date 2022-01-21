@@ -32,7 +32,7 @@ import LegendModel from "./LegendModel";
  * limited state.  The indiidual parts of the plot configuration model
  * handle setting defaults and updating in response to various changes.
  *
- * @extends {Model<PlotConfigurationModelType>}
+ * @extends {Model<PlotConfigModelType, PlotConfigModelOptions>}
  */
 export default class PlotConfigurationModel extends Model {
     /**
@@ -40,7 +40,7 @@ export default class PlotConfigurationModel extends Model {
      * to those that need it.
      *
      * @override
-     * @param {PlotConfigModelOptions} options
+     * @param {import('./Model').ModelOptions<PlotConfigModelType, PlotConfigModelOptions>} options
      */
     initialize(options) {
         this.openmct = options.openmct;
@@ -86,6 +86,8 @@ export default class PlotConfigurationModel extends Model {
     }
     /**
      * Retrieve the persisted series config for a given identifier.
+     * @param {import('./PlotSeries').Identifier} identifier
+     * @returns {import('./PlotSeries').PlotSeriesModelType=}
      */
     getPersistedSeriesConfig(identifier) {
         const domainObject = this.get('domainObject');
@@ -133,13 +135,14 @@ export default class PlotConfigurationModel extends Model {
     /**
      * Return defaults, which are extracted from the passed in domain
      * object.
+     * @override
+     * @param {import('./Model').ModelOptions<PlotConfigModelType, PlotConfigModelOptions>} options
      */
-    defaults(options) {
+    defaultModel(options) {
         return {
             series: [],
             domainObject: options.domainObject,
-            xAxis: {
-            },
+            xAxis: {},
             yAxis: _.cloneDeep(options.domainObject.configuration?.yAxis ?? {}),
             legend: _.cloneDeep(options.domainObject.configuration?.legend ?? {})
         };
@@ -148,18 +151,32 @@ export default class PlotConfigurationModel extends Model {
 
 /** @typedef {any} TODO */
 
+/** @typedef {import('./PlotSeries').default} PlotSeries */
+
 /**
-@typedef {import('./Model').ModelType & {
-    xAxis: import('./XAxisModel').XAxisModelType
-    yAxis: import('./XAxisModel').XAxisModelType
-    legend: TODO
-    series: TODO[]
-    domainObject: TODO
-}} PlotConfigurationModelType
+@typedef {{
+    configuration: {
+        series: import('./PlotSeries').PlotSeriesModelType[]
+    }
+}} SomeDomainObject_NeedsName
 */
 
 /**
-@typedef {import('./Model').ModelOptions<PlotConfigurationModelType> & {
+@typedef {{
+    xAxis: import('./XAxisModel').XAxisModelType
+    yAxis: import('./YAxisModel').YAxisModelType
+    legend: TODO
+    series: PlotSeries[]
+    domainObject: SomeDomainObject_NeedsName
+}} PlotConfigModelType
+*/
+
+/** @typedef {TODO} SomeOtherDomainObject */
+
+/**
+TODO: Is SomeOtherDomainObject the same domain object as with SomeDomainObject_NeedsName?
+@typedef {{
     plot: import('./PlotConfigurationModel').default
+    domainObject: SomeOtherDomainObject
 }} PlotConfigModelOptions
 */

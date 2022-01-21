@@ -22,12 +22,16 @@
 import Model from "./Model";
 
 /**
- * @extends {Model<XAxisModelType>}
+ * @extends {Model<XAxisModelType, XAxisModelOptions>}
  */
 export default class XAxisModel extends Model {
+    // Despite providing template types to the Model class, we still need to
+    // re-define the type of the following initialize() method's options arg. Tracking
+    // issue for this: https://github.com/microsoft/TypeScript/issues/32082
+    // When they fix it, we can remove the `@param` we have here.
     /**
      * @override
-     * @param {XAxisModelOptions} options
+     * @param {import('./Model').ModelOptions<XAxisModelType, XAxisModelOptions>} options
      */
     initialize(options) {
         this.plot = options.plot;
@@ -85,9 +89,10 @@ export default class XAxisModel extends Model {
         });
     }
     /**
-     * @param {XAxisModelOptions} options
+     * @param {import('./Model').ModelOptions<XAxisModelType, XAxisModelOptions>} options
+     * @override
      */
-    defaults(options) {
+    defaultModel(options) {
         const bounds = options.openmct.time.bounds();
         const timeSystem = options.openmct.time.timeSystem();
         const format = options.openmct.telemetry.getFormatter(timeSystem.timeFormat);
@@ -120,13 +125,13 @@ export default class XAxisModel extends Model {
 */
 
 /**
-@typedef {import("./Model").ModelType & {
+@typedef {import("./Model").ModelType<{
     range: NumberRange
     displayRange: NumberRange
     frozen: boolean
     label: string
     format: (n: number) => string
-}} AxisModelType
+}>} AxisModelType
 */
 
 /**
@@ -137,7 +142,7 @@ export default class XAxisModel extends Model {
 */
 
 /**
-@typedef {import('./Model').ModelOptions<XAxisModelType> & {
+@typedef {{
     plot: import('./PlotConfigurationModel').default
 }} XAxisModelOptions
 */

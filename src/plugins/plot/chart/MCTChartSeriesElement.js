@@ -153,3 +153,18 @@ export default class MCTChartSeriesElement {
     }
 
 }
+
+/** @typedef {any} TODO */
+
+/** @typedef {import('../configuration/PlotSeries').default} PlotSeries */
+
+/**
+@typedef {{
+    x: (x: number) => number
+    y: (y: number) => number
+    xVal: (point: Point, pSeries: PlotSeries) => number
+    yVal: (point: Point, pSeries: PlotSeries) => number
+    xKey: TODO
+    yKey: TODO
+}} Offset
+*/

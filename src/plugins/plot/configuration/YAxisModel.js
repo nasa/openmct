@@ -42,12 +42,12 @@ import Model from './Model';
  * `range`: the user-configured range to use for display, when autoscale is
  *         disabled.
  *
- * @extends {Model<YAxisModelType>}
+ * @extends {Model<YAxisModelType, YAxisModelOptions>}
  */
 export default class YAxisModel extends Model {
     /**
      * @override
-     * @param {YAxisModelOptions} options
+     * @param {import('./Model').ModelOptions<YAxisModelType, YAxisModelOptions>} options
      */
     initialize(options) {
         this.plot = options.plot;
@@ -231,10 +231,10 @@ export default class YAxisModel extends Model {
     }
     /**
      * @override
-     * @param {YAxisModelOptions} options
+     * @param {import('./Model').ModelOptions<YAxisModelType, YAxisModelOptions>} options
      * @returns {YAxisModelType}
      */
-    defaults(options) {
+    defaultModel(options) {
         // @ts-ignore incomplete YAxisModelType object used for default value.
         return {
             frozen: false,
@@ -256,7 +256,7 @@ export default class YAxisModel extends Model {
 */
 
 /**
-@typedef {import('./Model').ModelOptions<YAxisModelType> & {
+@typedef {{
     plot: import('./PlotConfigurationModel').default
 }} YAxisModelOptions
 */
