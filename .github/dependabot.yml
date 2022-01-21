@@ -25,3 +25,4 @@ updates:
     labels:
       - "type:maintenance"
       - "dependencies"
+      - "prcop:disable"

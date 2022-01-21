@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,24 +20,20 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+export default class User {
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
 
-        function SummaryWidgetsCompositionPolicy(openmct) {
-            this.openmct = openmct;
-        }
-
-        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            const parentType = parent.type;
-
-            if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
-                return false;
-            }
-
-            return true;
-        };
-
-        return SummaryWidgetsCompositionPolicy;
+        this.getId = this.getId.bind(this);
+        this.getName = this.getName.bind(this);
     }
-);
+
+    getId() {
+        return this.id;
+    }
+
+    getName() {
+        return this.name;
+    }
+}

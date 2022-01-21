@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2022, United States Government
+ * Open MCT, Copyright (c) 2014-2021, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,24 +20,30 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+// This provider exists because due to legacy reasons, we need to install
+// two plugins for two namespaces for CouchDB: one for "mct", and one for "".
+// Because of this, we need to separate out the search provider from the object
+// provider so we don't return two results for each found object.
+// If the above namespace is ever resolved, we can fold this search provider
+// back into the object provider.
 
-        function SummaryWidgetsCompositionPolicy(openmct) {
-            this.openmct = openmct;
-        }
+class CouchSearchProvider {
+    constructor(couchObjectProvider) {
+        this.couchObjectProvider = couchObjectProvider;
+    }
 
-        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            const parentType = parent.type;
-
-            if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
-                return false;
+    search(query, abortSignal) {
+        const filter = {
+            "selector": {
+                "model": {
+                    "name": {
+                        "$regex": `(?i)${query}`
+                    }
+                }
             }
-
-            return true;
         };
 
-        return SummaryWidgetsCompositionPolicy;
+        return this.couchObjectProvider.getObjectsByFilter(filter, abortSignal);
     }
-);
+}
+export default CouchSearchProvider;
