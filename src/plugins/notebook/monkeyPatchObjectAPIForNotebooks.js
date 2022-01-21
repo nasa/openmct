@@ -61,7 +61,8 @@ function applyLocalEntries(mutable, entries, openmct) {
 
             locallyModifiedEntries.forEach((locallyModifiedEntry) => {
                 let mergedEntry = mergedEntries.find(entry => entry.id === locallyModifiedEntry.id);
-                if (mergedEntry !== undefined) {
+                if (mergedEntry !== undefined
+                    && locallyModifiedEntry.text.match(/\S/)) {
                     mergedEntry.text = locallyModifiedEntry.text;
                     shouldMutate = true;
                 }
