@@ -193,9 +193,8 @@ export default {
                 objectPath,
                 openmct: this.openmct
             };
-            await createNewEmbed(snapshotMeta).then(newEmbed => {
-                this.entry.embeds.push(newEmbed);
-            });
+            const newEmbed = await createNewEmbed(snapshotMeta);
+            this.entry.embeds.push(newEmbed);
         },
         cancelEditMode(event) {
             const isEditing = this.openmct.editor.isEditing();
