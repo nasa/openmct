@@ -27,6 +27,7 @@ import {
     resetApplicationState,
     simulateKeyEvent
 } from 'utils/testing';
+import ClearDataPlugin from '../clearData/plugin';
 
 const ONE_MINUTE = 1000 * 60;
 const TEN_MINUTES = ONE_MINUTE * 10;
@@ -323,13 +324,21 @@ describe("The Imagery View Layouts", () => {
         let applicableViews;
         let imageryViewProvider;
         let imageryView;
-
+        let clearDataPlugin;
+        let clearDataAction;
+        
         beforeEach(() => {
 
             applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
             imageryView.show(child);
+            clearDataPlugin = new ClearDataPlugin(
+                ['example.imagery'],
+                {indicator: true}
+            );
+            openmct.install(clearDataPlugin);
+            clearDataAction = openmct.actions.getAction('clear-data-action');
 
             return Vue.nextTick();
         });
@@ -340,6 +349,16 @@ describe("The Imagery View Layouts", () => {
         //
         //     imageryView.destroy();
         // });
+
+        it('clearData is called when Clear Data for Object is selected', (done) => {
+            expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
+            openmct.objectViews.on('clearData', async (domainObject) => {
+                await Vue.nextTick();
+                expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
+                done();
+            });
+            clearDataAction.invoke([imageryObject]);
+        });
 
         it("on mount should show the the most recent image", (done) => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
