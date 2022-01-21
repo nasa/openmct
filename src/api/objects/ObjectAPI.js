@@ -466,23 +466,6 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
 };
 
 /**
- * Updates a domain object based on its latest persisted state. Note that this will mutate the provided object.
- * @param {module:openmct.DomainObject} domainObject an object to refresh from its persistence store
- * @returns {Promise} the provided object, updated to reflect the latest persisted state of the object.
- */
-ObjectAPI.prototype.refresh = async function (domainObject) {
-    const refreshedObject = await this.get(domainObject.identifier);
-
-    if (domainObject.isMutable) {
-        domainObject.$refresh(refreshedObject);
-    } else {
-        utils.refresh(domainObject, refreshedObject);
-    }
-
-    return domainObject;
-};
-
-/**
  * @private
  */
 ObjectAPI.prototype._toMutable = function (object) {
