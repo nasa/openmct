@@ -41,16 +41,17 @@ export default class Snapshot {
             fullSizeImageObjectIdentifier: object.identifier,
             thumbnailImage
         };
-        const embed = createNewEmbed(snapshotMeta, snapshot);
-        if (notebookType === NOTEBOOK_DEFAULT) {
-            const notebookStorage = getDefaultNotebook();
+        createNewEmbed(snapshotMeta, snapshot).then(embed => {
+            if (notebookType === NOTEBOOK_DEFAULT) {
+                const notebookStorage = getDefaultNotebook();
 
-            this._saveToDefaultNoteBook(notebookStorage, embed);
-            const notebookImageDomainObject = updateNamespaceOfDomainObject(object, notebookStorage.identifier.namespace);
-            saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
-        } else {
-            this._saveToNotebookSnapshots(object, embed);
-        }
+                this._saveToDefaultNoteBook(notebookStorage, embed);
+                const notebookImageDomainObject = updateNamespaceOfDomainObject(object, notebookStorage.identifier.namespace);
+                saveNotebookImageDomainObject(this.openmct, notebookImageDomainObject);
+            } else {
+                this._saveToNotebookSnapshots(object, embed);
+            }
+        });
     }
 
     /**
@@ -58,26 +59,26 @@ export default class Snapshot {
      */
     _saveToDefaultNoteBook(notebookStorage, embed) {
         this.openmct.objects.get(notebookStorage.identifier)
-            .then(async (domainObject) => {
-                addNotebookEntry(this.openmct, domainObject, notebookStorage, embed);
+            .then((domainObject) => {
+                return addNotebookEntry(this.openmct, domainObject, notebookStorage, embed).then(async () => {
+                    let link = notebookStorage.link;
 
-                let link = notebookStorage.link;
+                    // Backwards compatibility fix (old notebook model without link)
+                    if (!link) {
+                        link = await getDefaultNotebookLink(this.openmct, domainObject);
+                        notebookStorage.link = link;
+                        setDefaultNotebook(this.openmct, notebookStorage);
+                    }
 
-                // Backwards compatibility fix (old notebook model without link)
-                if (!link) {
-                    link = await getDefaultNotebookLink(this.openmct, domainObject);
-                    notebookStorage.link = link;
-                    setDefaultNotebook(this.openmct, notebookStorage);
-                }
+                    const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.defaultSectionId, notebookStorage.defaultPageId);
+                    if (!section || !page) {
+                        return;
+                    }
 
-                const { section, page } = getNotebookSectionAndPage(domainObject, notebookStorage.defaultSectionId, notebookStorage.defaultPageId);
-                if (!section || !page) {
-                    return;
-                }
-
-                const defaultPath = `${domainObject.name} - ${section.name} - ${page.name}`;
-                const msg = `Saved to Notebook ${defaultPath}`;
-                this._showNotification(msg, link);
+                    const defaultPath = `${domainObject.name} - ${section.name} - ${page.name}`;
+                    const msg = `Saved to Notebook ${defaultPath}`;
+                    this._showNotification(msg, link);
+                });
             });
     }
 
