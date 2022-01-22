@@ -21,65 +21,74 @@
  *****************************************************************************/
 import { createOpenMct, resetApplicationState } from '../../utils/testing';
 
-describe("The Forms API", () => {
+describe('The Forms API', () => {
     let openmct;
+    let element;
 
-    beforeEach(() => {
+    beforeEach((done) => {
+        element = document.createElement('div');
+        element.style.display = 'block';
+        element.style.width = '1920px';
+        element.style.height = '1080px';
+
         openmct = createOpenMct();
+        openmct.on('start', done);
+
+        openmct.startHeadless(element);
     });
 
     afterEach(() => {
         return resetApplicationState(openmct);
     });
 
-    it("form API exists", () => {
+    it('form API exists', () => {
         expect(openmct.forms.showForm).not.toBe(null);
     });
 
     describe('check default form controls exists', () => {
-        it("autocomplete", () => {
+        it('autocomplete', () => {
             const control = openmct.forms.getFormControl('autocomplete');
             expect(control.show).not.toBe(null);
         });
 
-        it("clock", () => {
+        it('clock', () => {
             const control = openmct.forms.getFormControl('composite');
             expect(control.show).not.toBe(null);
         });
 
-        it("datetime", () => {
+        it('datetime', () => {
             const control = openmct.forms.getFormControl('datetime');
             expect(control.show).not.toBe(null);
         });
 
-        it("file-input", () => {
+        it('file-input', () => {
             const control = openmct.forms.getFormControl('file-input');
             expect(control.show).not.toBe(null);
         });
 
-        it("locator", () => {
+        it('locator', () => {
             const control = openmct.forms.getFormControl('datetime');
             expect(control.show).not.toBe(null);
         });
-        it("numberfield", () => {
+        it('numberfield', () => {
             const control = openmct.forms.getFormControl('datetime');
             expect(control.show).not.toBe(null);
         });
-        it("select", () => {
+        it('select', () => {
             const control = openmct.forms.getFormControl('datetime');
             expect(control.show).not.toBe(null);
         });
-        it("textarea", () => {
+        it('textarea', () => {
             const control = openmct.forms.getFormControl('datetime');
             expect(control.show).not.toBe(null);
         });
-        it("textfield", () => {
+        it('textfield', () => {
             const control = openmct.forms.getFormControl('datetime');
             expect(control.show).not.toBe(null);
         });
     });
 
-    it("addNewFormControl", () => {
+    it('addNewFormControl', () => {
         const newFormControl = {
             show: () => {
                 console.log('show new control');
@@ -94,58 +103,50 @@ describe("The Forms API", () => {
         expect(control.destroy).not.toBe(null);
     });
 
-    it("show form in given element", () => {
-        const element = document.createElement('div');
-        const formStructure = {
-            title: "Test Show Form",
-            sections: [
-                {
-                    rows: [
-                        {
-                            key: "name",
-                            control: "textfield",
-                            name: "Title",
-                            pattern: "\\S+",
-                            required: true,
-                            cssClass: "l-input-lg",
-                            value: 'Test Name'
-                        }
-                    ]
-                }
-            ]
-        };
+    describe('show form', () => {
+        let formStructure;
 
-        openmct.forms.showForm(formStructure, { element });
+        beforeEach(() => {
+            formStructure = {
+                title: 'Test Show Form',
+                sections: [
+                    {
+                        rows: [
+                            {
+                                key: 'name',
+                                control: 'textfield',
+                                name: 'Title',
+                                pattern: '\\S+',
+                                required: false,
+                                cssClass: 'l-input-lg',
+                                value: 'Test Name'
+                            }
+                        ]
+                    }
+                ]
+            };
+        });
 
-        const titleElement = element.querySelector('.c-overlay__dialog-title');
+        it('providing element', (done) => {
+            openmct.forms.showForm(formStructure, { element }).catch(() => {
+                done();
+            });
+            const titleElement = element.querySelector('.c-overlay__dialog-title');
+            expect(titleElement.textContent).toBe(formStructure.title);
 
-        expect(titleElement.textContent).toBe(formStructure.title);
-    });
+            element.querySelectorAll('.c-form__bottom-bar button')[1].click();
+        });
 
-    it("show form using overlay", () => {
-        const formStructure = {
-            title: "Test Show Form",
-            sections: [
-                {
-                    rows: [
-                        {
-                            key: "name",
-                            control: "textfield",
-                            name: "Title",
-                            pattern: "\\S+",
-                            required: true,
-                            cssClass: "l-input-lg",
-                            value: 'Test Name'
-                        }
-                    ]
-                }
-            ]
-        };
+        it('without providing element', (done) => {
+            openmct.forms.showForm(formStructure).catch(() => {
+                done();
+            });
 
-        openmct.forms.showForm(formStructure);
+            const titleElement = document.querySelector('.c-overlay__dialog-title');
+            const title = titleElement.textContent;
 
-        const titleElement = document.querySelector('.c-overlay__dialog-title');
-
-        expect(titleElement.textContent).toBe(formStructure.title);
+            expect(title).toBe(formStructure.title);
+            document.querySelectorAll('.c-form__bottom-bar button')[1].click();
+        });
     });
 });
