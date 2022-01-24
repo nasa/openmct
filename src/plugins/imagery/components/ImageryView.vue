@@ -133,7 +133,7 @@
                         'height': `${sizedImageDimensions.height}px`,
 
                     }"
-                    @click="handlePanZoomClick"
+                    @mousedown="handlePanZoomClick"
                 ></div>
                 <div :style="{
                     'position': 'absolute',
@@ -952,10 +952,11 @@ export default {
             const translateX = offsetXInOriginalScale + previousTranslateX;
             const translateY = offsetYInOriginalScale + previousTranslateY;
             const imageRect = this.focusedImageWrapper.getBoundingClientRect();
+            // this.imageTranslateX = translateX;
+            // this.imageTranslateY = translateY;
             this.imageTranslateX = (Math.abs(translateX) > imageRect.width *.25) ? Math.sign(translateX) * imageRect.width *.25 : translateX;
             this.imageTranslateY = (Math.abs(translateY) > imageRect.height *.25) ? Math.sign(translateY) * imageRect.height *.25 : translateY;
             this.zoomFactor = newScaleFactor;
-            console.log(this.imageTranslateX, this.imageTranslateY, this.zoomFactor);
         },
         // handleGesture(e) {
         //     if (e.scale < 1) {
@@ -1100,12 +1101,13 @@ export default {
             this.paused(true);
             this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
         },
-        startPan(event) {
-            event.preventDefault();
+        startPan(e) {
+            console.log('startPan')
+            e.preventDefault();
             this.listenTo(window, 'mouseup', this.onMouseUp, this);
             this.listenTo(window, 'mousemove', this.trackMousePosition, this);
 
-            return false;
+            // return false;
         },
         trackMousePosition(e) {
             console.log('mousemove')
@@ -1114,6 +1116,8 @@ export default {
             }
 
             this.updatePan(e);
+            e.preventDefault();
+
         },
         updatePan(e) {
             this.zoomImage(this.zoomFactor, e.clientX, e.clientY);
@@ -1122,6 +1126,7 @@ export default {
             console.log('endPan')
         },
         onMouseUp(event) {
+            console.log('onMouseUp')
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
             // if (this.pan) {
