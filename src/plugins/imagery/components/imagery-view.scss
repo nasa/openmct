@@ -34,8 +34,10 @@
             &.selectable {
                 cursor: zoom-in;
             }
-            &.alt-pressed {
-                cursor: zoom-out;
+            &.pannable {
+                // cursor: zoom-out;
+                @include cursorGrab();
+
             }
         }
 

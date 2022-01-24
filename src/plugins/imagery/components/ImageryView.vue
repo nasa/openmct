@@ -77,7 +77,7 @@
         </div>
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false,'selectable': isSelectable, 'alt-pressed': altPressed}"
+             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false,'selectable': isSelectable, 'pannable': altPressed && zoomFactor > 1}"
              @click="expand"
         >
             <div ref="focusedImageWrapper"
@@ -128,7 +128,7 @@
                         'background-repeat': 'no-repeat',
                         'background-position': 'contain',
 
-                        'transition': 'transform 250ms ease-in',
+                        'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
                         'width': `${sizedImageDimensions.width}px`,
                         'height': `${sizedImageDimensions.height}px`,
 
@@ -315,7 +315,10 @@ export default {
             // rectangles: [],
             zoomFactor: 1,
             imageTranslateX: 0,
-            imageTranslateY: 0
+            imageTranslateY: 0,
+            pan: undefined,
+            animateZoom: true,
+            imagePanned: false
         };
     },
     computed: {
@@ -398,7 +401,8 @@ export default {
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
                 && this.imageContainerHeight !== undefined
-                && this.zoomFactor === 1;
+                && this.zoomFactor === 1
+                && this.imagePanned !== true;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;
@@ -912,6 +916,7 @@ export default {
         resetImage() {
             const defaultScale = 1;
             this.zoomFactor = defaultScale;
+            this.imagePanned = false;
             this.imageTranslateX = 0;
             this.imageTranslateY = 0;
         },
@@ -1099,18 +1104,26 @@ export default {
         wheelZoom(e) {
             e.preventDefault();
             this.paused(true);
+            // reduce deltaY sensitivity
             this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
         },
         startPan(e) {
-            console.log('startPan')
             e.preventDefault();
-            this.listenTo(window, 'mouseup', this.onMouseUp, this);
-            this.listenTo(window, 'mousemove', this.trackMousePosition, this);
 
-            // return false;
+            if (!this.pan && this.zoomFactor > 1) {
+                this.animateZoom = false;
+                this.imagePanned = true;
+                this.pan = {
+                    x: e.clientX,
+                    y: e.clientY
+                };
+                this.listenTo(window, 'mouseup', this.onMouseUp, this);
+                this.listenTo(window, 'mousemove', this.trackMousePosition, this);
+            }
+
+            return false;
         },
         trackMousePosition(e) {
-            console.log('mousemove')
             if (!e.altKey) {
                 return this.onMouseUp(e);
             }
@@ -1120,18 +1133,27 @@ export default {
 
         },
         updatePan(e) {
-            this.zoomImage(this.zoomFactor, e.clientX, e.clientY);
+            if (!this.pan) {
+                return;
+            }
+
+            const dX = e.clientX - this.pan.x;
+            const dY = e.clientY - this.pan.y;
+            this.pan = {x: e.clientX, y: e.clientY};
+            this.updatePanZoom(this.zoomFactor, dX, dY);
         },
         endPan() {
-            console.log('endPan')
+            this.pan = undefined;
+            this.animateZoom = true;
         },
         onMouseUp(event) {
             console.log('onMouseUp')
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
-            // if (this.pan) {
-            return this.endPan(event);
-            // }
+
+            if (this.pan) {
+                return this.endPan(event);
+            }
 
             // if (this.marquee) {
             //     this.endMarquee(event);
@@ -1213,9 +1235,6 @@ export default {
         //     }
 
         // },
-
-
-
         //     this.updateMarquee();
         //     // this.updatePan();
         //     event.preventDefault();
