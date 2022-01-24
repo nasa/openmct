@@ -60,12 +60,12 @@
         <div style="position: absolute; top: 60px; left: 20px; z-index: 5">
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-out">
                 <a class="s-icon-button icon-minus t-btn-zoom-out"
-                   @click="handlePanButton(-30, -10)"
+                   @click="handleZoomButton(-1)"
                 ></a>
             </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-in">
                 <a class="s-icon-button icon-plus t-btn-zoom-in"
-                   @click="handlePanButton(30, 10)"
+                   @click="handleZoomButton(1)"
                 ></a>
             </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-reset">
@@ -318,7 +318,8 @@ export default {
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
-            imagePanned: false
+            imagePanned: false,
+            wheelZooming: false
         };
     },
     computed: {
@@ -578,6 +579,7 @@ export default {
         // this.listenTo(imageElement, 'mouseleave', this.untrackMousePosition, this);
         // this.listenTo(imageElement, 'mousedown', this.onMouseDown, this);
         // this.listenTo(this.focusedImageWrapper, 'gesturechange', this.handleGesture, this);
+        this.clearWheelZoom = _.debounce(this.clearWheelZoom, 1000);
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         // this.marquee = undefined;
         // this.drawCanvas()
@@ -904,6 +906,10 @@ export default {
                 return this.resetImage();
             }
 
+            if (!(screenClientX || screenClientY)) {
+                return this.updatePanZoom(newScaleFactor, 0, 0);
+            }
+
             // handle mouse events
             const imageRect = this.focusedImageWrapper.getBoundingClientRect();
             const imageContainerX = screenClientX - imageRect.left;
@@ -924,26 +930,28 @@ export default {
             const translateX = offsetXInOriginalScale + previousTranslateX;
             const translateY = offsetYInOriginalScale + previousTranslateY;
             const imageRect = this.focusedImageWrapper.getBoundingClientRect();
-            // this.imageTranslateX = translateX;
-            // this.imageTranslateY = translateY;
-            this.imageTranslateX = (Math.abs(translateX) > imageRect.width *.25) ? Math.sign(translateX) * imageRect.width *.25 : translateX;
-            this.imageTranslateY = (Math.abs(translateY) > imageRect.height *.25) ? Math.sign(translateY) * imageRect.height *.25 : translateY;
+            const borderBuffer = 0.25;
+            this.imageTranslateX = (Math.abs(translateX) > imageRect.width * borderBuffer) ? Math.sign(translateX) * imageRect.width * borderBuffer : translateX;
+            this.imageTranslateY = (Math.abs(translateY) > imageRect.height * borderBuffer) ? Math.sign(translateY) * imageRect.height * borderBuffer : translateY;
+            this.imageTranslateX = translateX;
+            this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
         },
-        // handleGesture(e) {
-        //     if (e.scale < 1) {
-        //         console.log('zoom out')
-        //     } else if (e.scale > 1) {
-        //         console.log('zoom in')
-        //     }
-        // },
-        // handleZoomButton(stepValue) {
-        //     this.incrementZoomFactor(stepValue);
-        // },
-        handlePanButton(x, y) {
-            const currentScale = this.zoomFactor;
-            this.updatePanZoom(currentScale, x, y);
+        handleGesture(e) {
+            e.preventDefault()
+            if (e.scale < 1) {
+                console.log('zoom out')
+            } else if (e.scale > 1) {
+                console.log('zoom in')
+            }
         },
+        handleZoomButton(stepValue) {
+            this.incrementZoomFactor(stepValue);
+        },
+        // handlePanButton(x, y) {
+        //     const currentScale = this.zoomFactor;
+        //     this.updatePanZoom(currentScale, x, y);
+        // },
         handlePanZoomClick(e) {
             const step = 1;
             if (e.altKey) {
@@ -952,11 +960,9 @@ export default {
 
             // const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
             const newZoomFactor = this.zoomFactor + step;
-            console.log(e.pageX, e.clientX, e.pageY, e.clientY);
-            console.assert(e.pageX === e.clientX, 'pageX = clientX')
-            console.assert(e.pageY === e.clientY, 'pageY = clientY')
+            console.assert(e.pageX === e.clientX, 'pageX = clientX');
+            console.assert(e.pageY === e.clientY, 'pageY = clientY');
 
-            console.log('handlePanZoomClick', e.clientX, e.clientY)
             this.zoomImage(newZoomFactor, e.clientX, e.clientY);
         },
         // handlePanZoomClick(e) {
@@ -1068,11 +1074,26 @@ export default {
             const newFactor = this.zoomFactor + increment;
             this.zoomImage(newFactor, userCoordX, userCoordY);
         },
+        // debounced method
+        clearWheelZoom() {
+            this.wheelZooming = false;
+        },
         wheelZoom(e) {
             e.preventDefault();
             this.paused(true);
-            // reduce deltaY sensitivity
-            this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
+            // only use x,y coordinates on scrolling in
+            if (this.wheelZooming === false && e.deltaY > 0) {
+                this.wheelZooming = true;
+
+                // grab first x,y coordinates
+                this.incrementZoomFactor(e.deltaY * 0.01, e.clientX, e.clientY);
+            } else {
+                // ignore subsequent event x,y so scroll drift doesn't occur
+                this.incrementZoomFactor(e.deltaY * 0.01);
+            }
+
+            // debounced method that will only fire after the scroll series is complete
+            this.clearWheelZoom();
         },
         startPan(e) {
             e.preventDefault();
