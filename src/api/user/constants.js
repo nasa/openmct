@@ -20,43 +20,5 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * Module defining EventTelemetry.
- * Created by chacskaylo on 06/18/2015.
- * Modified by shale on 06/23/2015.
- */
-define(
-    ['../data/transcript.json'],
-    function (messages) {
-        "use strict";
-
-        var firstObservedTime = Date.now();
-
-        function EventTelemetry(request, interval) {
-
-            var latestObservedTime = Date.now(),
-                count = Math.floor((latestObservedTime - firstObservedTime) / interval),
-                generatorData = {};
-
-            generatorData.getPointCount = function () {
-                return count;
-            };
-
-            generatorData.getDomainValue = function (i, domain) {
-                return i * interval
-                        + (domain !== 'delta' ? firstObservedTime : 0);
-            };
-
-            generatorData.getRangeValue = function (i, range) {
-                var domainDelta = this.getDomainValue(i) - firstObservedTime,
-                    ind = i % messages.length;
-
-                return messages[ind] + " - [" + domainDelta.toString() + "]";
-            };
-
-            return generatorData;
-        }
-
-        return EventTelemetry;
-    }
-);
+export const MULTIPLE_PROVIDER_ERROR = 'Only one user provider may be set at a time.';
+export const NO_PROVIDER_ERROR = 'No user provider has been set.';
