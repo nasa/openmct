@@ -114,7 +114,7 @@
     "url": "https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=12.0.1 <15.0.0"
+    "node": ">=12.20.1 <15.0.0"
   },
   "author": "",
   "license": "Apache-2.0",
