@@ -20,6 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(['./BundleRegistry'], function (BundleRegistry) {
-    return new BundleRegistry();
-});
+export default function createExampleUser(UserClass) {
+    return class ExampleUser extends UserClass {
+        constructor(id, name, roles) {
+            super(id, name);
+
+            this.roles = roles;
+            this.getRoles = this.getRoles.bind(this);
+        }
+
+        getRoles() {
+            return this.roles;
+        }
+    };
+}

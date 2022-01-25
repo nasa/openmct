@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -38,7 +38,7 @@
         transition: $transIn;
 
         &.is-expanded {
-            height: max-content;
+            min-height: 100px;
         }
     }
 
@@ -233,7 +233,6 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
-        //display: flex; NEEDS REGRESSION TESTING!!!
         display: flex;
         flex-direction: column;
         flex: 1 1 auto !important;
@@ -243,11 +242,11 @@
         > * + * {
             margin-top: $interiorMargin;
         }
-    }
 
-    &__main-object-view {
-        flex: 1 1 auto;
-        overflow: auto;
+        > .c-object-view {
+            flex: 1 1 auto;
+            overflow: auto;
+        }
     }
 
     &__tree {
@@ -315,6 +314,12 @@
             pointer-events: none;
         }
     }
+}
+
+.c-object-view {
+    display: block;
+    height: 100%;
+    overflow: auto;
 }
 
 .is-editing {

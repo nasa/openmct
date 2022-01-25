@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -20,15 +20,6 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-function ConditionSetViewPolicy() {
-}
-
-ConditionSetViewPolicy.prototype.allow = function (view, domainObject) {
-    if (domainObject.getModel().type === 'conditionSet') {
-        return view.key === 'conditionSet.view';
-    }
-
-    return true;
-};
-
-export default ConditionSetViewPolicy;
+define(['./BundleRegistry'], function (BundleRegistry) {
+    return new BundleRegistry();
+});

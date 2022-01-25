@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,7 +22,6 @@
 
 /*global module,process*/
 
-const devMode = process.env.NODE_ENV !== 'production';
 const browsers = [process.env.NODE_ENV === 'debug' ? 'ChromeDebugging' : 'ChromeHeadless'];
 const coverageEnabled = process.env.COVERAGE === 'true';
 const reporters = ['spec', 'junit'];
@@ -32,13 +31,12 @@ if (coverageEnabled) {
 }
 
 module.exports = (config) => {
-    const webpackConfig = require('./webpack.config.js');
+    const webpackConfig = require('./webpack.dev.js');
     delete webpackConfig.output;
-
-    if (!devMode || coverageEnabled) {
+    if (coverageEnabled) {
         webpackConfig.module.rules.push({
             test: /\.js$/,
-            exclude: /node_modules|example|lib|dist/,
+            exclude: /node_modules|e2e|example|lib|dist|\.*.*Spec\.js/,
             use: {
                 loader: 'istanbul-instrumenter-loader',
                 options: {
@@ -104,7 +102,7 @@ module.exports = (config) => {
             reports: ['lcovonly', 'text-summary'],
             thresholds: {
                 global: {
-                    lines: 66
+                    lines: 55
                 }
             }
         },

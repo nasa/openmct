@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,14 +22,14 @@
 
 import { MY_ITEMS_KEY } from "./createMyItemsIdentifier";
 
-function myItemsInterceptor(identifierObject, openmct) {
+function myItemsInterceptor(openmct, identifierObject, name) {
 
     const myItemsModel = {
         identifier: identifierObject,
-        "name": "My Items",
-        "type": "folder",
-        "composition": [],
-        "location": "ROOT"
+        name,
+        type: "folder",
+        composition: [],
+        location: "ROOT"
     };
 
     return {

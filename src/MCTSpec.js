@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -22,21 +22,18 @@
 
 define([
     './plugins/plugins',
-    'legacyRegistry',
     'utils/testing'
-], function (plugins, legacyRegistry, testUtils) {
+], function (plugins, testUtils) {
     describe("MCT", function () {
         let openmct;
         let mockPlugin;
         let mockPlugin2;
         let mockListener;
-        let oldBundles;
 
         beforeEach(function () {
             mockPlugin = jasmine.createSpy('plugin');
             mockPlugin2 = jasmine.createSpy('plugin2');
             mockListener = jasmine.createSpy('listener');
-            oldBundles = legacyRegistry.list();
 
             openmct = testUtils.createOpenMct();
 
@@ -47,12 +44,6 @@ define([
 
         // Clean up the dirty singleton.
         afterEach(function () {
-            legacyRegistry.list().forEach(function (bundle) {
-                if (oldBundles.indexOf(bundle) === -1) {
-                    legacyRegistry.delete(bundle);
-                }
-            });
-
             return testUtils.resetApplicationState(openmct);
         });
 
@@ -110,10 +101,6 @@ define([
 
         describe("setAssetPath", function () {
             let testAssetPath;
-
-            beforeEach(function () {
-                openmct.legacyExtension = jasmine.createSpy('legacyExtension');
-            });
 
             it("configures the path for assets", function () {
                 testAssetPath = "some/path/";

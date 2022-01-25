@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+@use 'sass:math';
+
 /******************************************************** RESETS */
 *,
 :before,
@@ -226,7 +229,7 @@ body.desktop .has-local-controls {
     @include abs();
 }
 
-.c-grid {
+.c-grid .c-grid {
     pointer-events: none;
 
     &__x  { @include bgTicks($editUIGridColorFg, 'x'); }
@@ -308,7 +311,7 @@ body.desktop .has-local-controls {
     }
     &.c-tree__item {
         $d: $waitSpinnerTreeD;
-        $spinnerL: 19 + $d/2;
+        $spinnerL: 19 + math.div($d, 2);
 
         display: flex;
         align-items: center;

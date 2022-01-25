@@ -1,3 +1,5 @@
+@use 'sass:math';
+
 /******************************* GRID VIEW */
 .l-grid-view {
     display: flex;
@@ -42,7 +44,7 @@
     &__type-icon {
         filter: $colorKeyFilter;
         flex: 0 0 $gridItemMobile;
-        font-size: floor($gridItemMobile / 2);
+        font-size: floor(math.div($gridItemMobile, 2));
         margin-right: $interiorMarginLg;
     }
 
@@ -166,7 +168,7 @@
 
         &__type-icon {
             flex: 1 1 auto;
-            font-size: floor($gridItemDesk / 3);
+            font-size: floor(math.div($gridItemDesk, 3));
             margin: $interiorMargin 22.5% $interiorMargin * 3 22.5%;
             order: 2;
             transform-origin: center;

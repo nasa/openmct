@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,9 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+@use 'sass:math';
+
 /*********************************************************************** CLOCKS AND TIMERS */
 .c-clock,
 .c-timer {
@@ -784,7 +787,7 @@ body.desktop {
                 //width: $splitterHandleD;
             }
             &.flush-right {
-                width: ceil($splitterHandleD / 2);
+                width: ceil(math.div($splitterHandleD, 2));
                 &:after {
                     width: $splitterHandleD;
                     left: auto; right: 0;
