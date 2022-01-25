@@ -209,18 +209,7 @@ export default {
         },
         layoutItems: {
             handler(value) {
-                let wMax = this.$el.clientWidth / this.gridSize[0];
-                let hMax = this.$el.clientHeight / this.gridSize[1];
-                value.forEach(item => {
-                    if (item.x + item.width > wMax) {
-                        wMax = item.x + item.width + 2;
-                    }
-
-                    if (item.y + item.height > hMax) {
-                        hMax = item.y + item.height + 2;
-                    }
-                });
-                this.gridDimensions = [wMax * this.gridSize[0], hMax * this.gridSize[1]];
+                this.updateGrid();
             },
             deep: true
         }
@@ -233,6 +222,8 @@ export default {
         this.composition.on('remove', this.removeChild);
         this.composition.load();
         this.gridDimensions = [this.$el.offsetWidth, this.$el.scrollHeight];
+
+        this.watchDisplayResize();
     },
     destroyed: function () {
         this.openmct.selection.off('change', this.setSelection);
@@ -240,6 +231,25 @@ export default {
         this.composition.off('remove', this.removeChild);
     },
     methods: {
+        updateGrid() {
+            let wMax = this.$el.clientWidth / this.gridSize[0];
+            let hMax = this.$el.clientHeight / this.gridSize[1];
+            this.layoutItems.forEach(item => {
+                if (item.x + item.width > wMax) {
+                    wMax = item.x + item.width + 2;
+                }
+
+                if (item.y + item.height > hMax) {
+                    hMax = item.y + item.height + 2;
+                }
+            });
+            this.gridDimensions = [wMax * this.gridSize[0], hMax * this.gridSize[1]];
+        },
+        watchDisplayResize() {
+            const resizeObserver = new ResizeObserver(() => this.updateGrid());
+
+            resizeObserver.observe(this.$el);
+        },
         addElement(itemType, element) {
             this.addItem(itemType + '-view', element);
         },
@@ -404,8 +414,12 @@ export default {
             }
         },
         containsObject(identifier) {
-            return _.get(this.domainObject, 'composition')
-                .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
+            if ('composition' in this.domainObject) {
+                return this.domainObject.composition
+                    .some(childId => this.openmct.objects.areIdsEqual(childId, identifier));
+            }
+
+            return false;
         },
         handleDragOver($event) {
             if (this.domainObject.locked) {
@@ -494,7 +508,7 @@ export default {
             }
         },
         removeFromComposition(keyString) {
-            let composition = _.get(this.domainObject, 'composition');
+            let composition = this.domainObject.composition ? this.domainObject.composition : [];
             composition = composition.filter(identifier => {
                 return this.openmct.objects.makeKeyString(identifier) !== keyString;
             });
