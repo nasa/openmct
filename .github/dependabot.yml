@@ -10,6 +10,7 @@ updates:
       - "type:maintenance"
       - "dependencies"
       - "pr:e2e"
+      - "pr:daveit"
     allow:
       - dependency-name: "*eslint*"
       - dependency-name: "*karma*"
@@ -25,4 +26,4 @@ updates:
     labels:
       - "type:maintenance"
       - "dependencies"
-      - "prcop:disable"
+      - "pr:daveit"
