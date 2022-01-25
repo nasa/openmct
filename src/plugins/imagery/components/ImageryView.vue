@@ -68,9 +68,15 @@
                    @click="handleZoomButton(1)"
                 ></a>
             </span>
+            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-lock">
+                <a class="s-icon-button t-btn-zoom-lock"
+                    :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
+                   @click="lockPanZoomPosition"
+                ></a>
+            </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-reset">
                 <a class="s-icon-button icon-reset t-btn-zoom-reset"
-                   @click="resetImage"
+                   @click="resetImage(true)"
                 ></a>
             </span>
             <span v-if="zoomFactor > 1">x{{Number.parseFloat(zoomFactor).toPrecision(3)}}</span>
@@ -312,14 +318,14 @@ export default {
             resizingWindow: false,
             timeContext: undefined,
             altPressed: false,
-            // rectangles: [],
             zoomFactor: 1,
             imageTranslateX: 0,
             imageTranslateY: 0,
             pan: undefined,
             animateZoom: true,
             imagePanned: false,
-            wheelZooming: false
+            wheelZooming: false,
+            panZoomLocked: false
         };
     },
     computed: {
@@ -579,7 +585,7 @@ export default {
         // this.listenTo(imageElement, 'mouseleave', this.untrackMousePosition, this);
         // this.listenTo(imageElement, 'mousedown', this.onMouseDown, this);
         // this.listenTo(this.focusedImageWrapper, 'gesturechange', this.handleGesture, this);
-        this.clearWheelZoom = _.debounce(this.clearWheelZoom, 1000);
+        this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         // this.marquee = undefined;
         // this.drawCanvas()
@@ -882,10 +888,15 @@ export default {
                 this.setFocusedImage(--index, THUMBNAIL_CLICKED);
             }
         },
-        resetImage() {
+        resetImage(overrideLock) {
+            if (this.panZoomLocked && !overrideLock) {
+                return false;
+            }
+
             const defaultScale = 1;
             this.zoomFactor = defaultScale;
             this.imagePanned = false;
+            this.panZoomLocked = false;
             this.imageTranslateX = 0;
             this.imageTranslateY = 0;
         },
@@ -903,7 +914,7 @@ export default {
             }
 
             if (newScaleFactor <= 0 || newScaleFactor < zoomLimits.min) {
-                return this.resetImage();
+                return this.resetImage(true);
             }
 
             if (!(screenClientX || screenClientY)) {
@@ -930,7 +941,7 @@ export default {
             const translateX = offsetXInOriginalScale + previousTranslateX;
             const translateY = offsetYInOriginalScale + previousTranslateY;
             const imageRect = this.focusedImageWrapper.getBoundingClientRect();
-            const borderBuffer = 0.25;
+            const borderBuffer = 0;
             this.imageTranslateX = (Math.abs(translateX) > imageRect.width * borderBuffer) ? Math.sign(translateX) * imageRect.width * borderBuffer : translateX;
             this.imageTranslateY = (Math.abs(translateY) > imageRect.height * borderBuffer) ? Math.sign(translateY) * imageRect.height * borderBuffer : translateY;
             this.imageTranslateX = translateX;
@@ -947,6 +958,13 @@ export default {
         },
         handleZoomButton(stepValue) {
             this.incrementZoomFactor(stepValue);
+        },
+        lockPanZoomPosition() {
+            if (!this.panZoomLocked && this.zoomFactor === 1) {
+                return;
+            }
+
+            this.panZoomLocked = !this.panZoomLocked;
         },
         // handlePanButton(x, y) {
         //     const currentScale = this.zoomFactor;
