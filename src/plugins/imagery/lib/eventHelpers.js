@@ -23,7 +23,6 @@
 define([], function () {
     const helperFunctions = {
         listenTo: function (object, event, callback, context) {
-            console.log({object, event})
             if (!this._listeningTo) {
                 this._listeningTo = [];
             }
