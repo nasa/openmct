@@ -137,7 +137,11 @@ export default {
             if (this.timeOptions.mode) {
                 this.mode = this.timeOptions.mode;
             } else {
-                this.timeOptions.mode = this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: Object.create(this.timeContext.clock()).key};
+                if (this.timeContext.clock() === undefined) {
+                    this.timeOptions.mode = this.mode = { key: 'fixed' };
+                } else {
+                    this.timeOptions.mode = this.mode = { key: Object.create(this.timeContext.clock()).key};
+                }
             }
 
             if (this.independentTCEnabled) {
