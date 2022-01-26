@@ -131,6 +131,7 @@ export default class XAxisModel extends Model {
     frozen: boolean
     label: string
     format: (n: number) => string
+    values: Array<TODO>
 }>} AxisModelType
 */
 

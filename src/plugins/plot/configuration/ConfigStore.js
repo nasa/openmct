@@ -19,32 +19,49 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
-function ConfigStore() {
-    this.store = {};
-}
-
-ConfigStore.prototype.deleteStore = function (id) {
-    if (this.store[id]) {
-        if (this.store[id].destroy) {
-            this.store[id].destroy();
-        }
-
-        delete this.store[id];
+class ConfigStore {
+    constructor() {
+        /** @type {Record<string, Destroyable>} */
+        this.store = {};
     }
-};
 
-ConfigStore.prototype.deleteAll = function () {
-    Object.keys(this.store).forEach(id => this.deleteStore(id));
-};
+    /**
+    @param {string} id
+    */
+    deleteStore(id) {
+        const obj = this.store[id];
 
-ConfigStore.prototype.add = function (id, config) {
-    this.store[id] = config;
-};
+        if (obj) {
+            if (obj.destroy) {
+                obj.destroy();
+            }
 
-ConfigStore.prototype.get = function (id) {
-    return this.store[id];
-};
+            delete this.store[id];
+        }
+    }
+
+    deleteAll() {
+        Object.keys(this.store).forEach(id => this.deleteStore(id));
+    }
+
+    /**
+    @param {string} id
+    @param {any} config
+    */
+    add(id, config) {
+        this.store[id] = config;
+    }
+
+    /**
+    @param {string} id
+    */
+    get(id) {
+        return this.store[id];
+    }
+}
 
 const STORE = new ConfigStore();
 
 export default STORE;
+
+/** @typedef {{destroy?(): void}} Destroyable */

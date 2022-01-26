@@ -365,3 +365,7 @@ class TimeContext extends EventEmitter {
 }
 
 export default TimeContext;
+
+/**
+@typedef {{start: number, end: number}} Bounds
+*/

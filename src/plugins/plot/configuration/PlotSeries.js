@@ -117,8 +117,11 @@ export default class PlotSeries extends Model {
 
     /**
      * Remove real-time subscription when destroyed.
+     * @override
      */
-    onDestroy(model) {
+    destroy() {
+        super.destroy();
+
         if (this.unsubscribe) {
             this.unsubscribe();
         }
@@ -149,9 +152,11 @@ export default class PlotSeries extends Model {
 
         });
         this.openmct.time.on('bounds', this.updateLimits);
-        this.on('destroy', this.onDestroy, this);
     }
 
+    /**
+     * @param {Bounds} bounds
+     */
     updateLimits(bounds) {
         this.emit('limitBounds', bounds);
     }
@@ -201,7 +206,7 @@ export default class PlotSeries extends Model {
         return this.openmct
             .telemetry
             .request(this.domainObject, options)
-            .then(function (points) {
+            .then((points) => {
                 const data = this.getSeriesData();
                 const newPoints = _(data)
                     .concat(points)
@@ -209,7 +214,7 @@ export default class PlotSeries extends Model {
                     .uniq(true, point => [this.getXVal(point), this.getYVal(point)].join())
                     .value();
                 this.reset(newPoints);
-            }.bind(this))
+            })
             .catch((error) => {
                 console.warn('Error fetching data', error);
             });
@@ -514,6 +519,19 @@ export default class PlotSeries extends Model {
 
     /**
      * Update the series data with the given value.
+     * @returns {Array<{
+            cos: number
+            sin: number
+            mctLimitState: {
+                cssClass: string
+                high: number
+                low: {sin: number, cos: number}
+                name: string
+            }
+            utc: number
+            wavelength: number
+            yesterday: number
+        }>}
      */
     getSeriesData() {
         return configStore.get(this.dataStoreId) || [];
@@ -537,6 +555,7 @@ export default class PlotSeries extends Model {
     alarmMarkers: boolean
     limitLines: boolean
     interpolate: boolean
+    stats: TODO
 }} PlotSeriesModelType
 */
 
@@ -547,4 +566,8 @@ export default class PlotSeries extends Model {
     persistedConfig: PlotSeriesModelType
     filters: TODO
 }} PlotSeriesModelOptions
+*/
+
+/**
+@typedef {import('@/api/time/TimeContext').Bounds} Bounds
 */

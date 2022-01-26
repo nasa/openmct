@@ -124,6 +124,8 @@ export default {
     methods: {
         getAxisFromConfig() {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+
+            /** @type {import('./configuration/PlotConfigurationModel').default} */
             let config = configStore.get(configId);
 
             if (!config) {
