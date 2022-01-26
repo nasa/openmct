@@ -251,7 +251,20 @@ export default class PlotSeries extends Model {
             return this.limitEvaluator.evaluate(datum, valueMetadata);
         }.bind(this);
         const format = this.formats[newKey];
-        this.getYVal = format.parse.bind(format);
+        // this.getYVal = (point) => {
+        //     return format.parse(point);
+        // };
+        function log(n, base = Math.exp(1)) {
+            if (base === Math.exp(1)) {
+                return Math.log(n);
+            }
+
+            return Math.log(n) / Math.log(base);
+        }
+
+        this.getYVal = (point) => {
+            return log(format.parse(point), 10);
+        };
     }
 
     formatX(point) {

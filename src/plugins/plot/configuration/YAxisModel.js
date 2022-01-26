@@ -192,7 +192,13 @@ export default class YAxisModel extends Model {
         const yKey = sampleSeries.get('yKey');
         const yMetadata = sampleSeries.metadata.value(yKey);
         const yFormat = sampleSeries.formats[yKey];
-        this.set('format', yFormat.format.bind(yFormat));
+        // this.set('format', yFormat.format.bind(yFormat));
+
+        function antilog(n, base = Math.exp(1)) {
+            return Math.pow(base, n);
+        }
+
+        this.set('format', (n) => yFormat.format(antilog(n, 10)));
         this.set('values', yMetadata.values);
         if (!label) {
             const labelName = seriesCollection.map(function (s) {

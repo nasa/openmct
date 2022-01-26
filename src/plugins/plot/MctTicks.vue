@@ -177,6 +177,11 @@ export default {
                 }, this);
             }
 
+            function antilog(n) {
+                return Math.pow(Math.exp(1), n)
+            }
+
+            // return ticks(antilog(range.min), antilog(range.max), number);
             return ticks(range.min, range.max, number);
         },
 
