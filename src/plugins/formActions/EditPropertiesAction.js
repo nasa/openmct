@@ -45,7 +45,7 @@ export default class EditPropertiesAction extends PropertiesAction {
     }
 
     invoke(objectPath) {
-        this._showEditForm(objectPath);
+        return this._showEditForm(objectPath);
     }
 
     /**
@@ -98,7 +98,7 @@ export default class EditPropertiesAction extends PropertiesAction {
         const formStructure = createWizard.getFormStructure(false);
         formStructure.title = 'Edit ' + this.domainObject.name;
 
-        this.openmct.forms.showForm(formStructure)
+        return this.openmct.forms.showForm(formStructure)
             .then(this._onSave.bind(this));
     }
 }
