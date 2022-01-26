@@ -1,5 +1,5 @@
 <!--- Note: Please open the PR in draft form until you are ready for active review. -->
-Closes: <!--- Insert Issue Number(s) this PR addresses. Start by typing # will open a dropdown of recent issues. -->
+Closes <!--- Insert Issue Number(s) this PR addresses. Start by typing # will open a dropdown of recent issues. -->
 
 ### Describe your changes:
 <!--- Describe your changes and add any comments about your approach either here or inline if code comments aren't added -->
