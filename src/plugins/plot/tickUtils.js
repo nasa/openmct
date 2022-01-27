@@ -1,3 +1,6 @@
+import * as d3Scale from 'd3-scale';
+import * as d3Axis from 'd3-axis';
+
 const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
 const e2 = Math.sqrt(2);
@@ -38,6 +41,33 @@ function getPrecision(step) {
     }
 
     return precision;
+}
+
+export function d3Ticks(start, stop, count) {
+    let scale = d3Scale.scaleLinear();
+    scale.domain([start, stop]);
+
+    const axis = d3Axis.axisLeft(scale);
+
+    return axis.scale().ticks(count);
+}
+
+export function d3TicksLog(start, stop, count) {
+    if (start < 0) {
+        start = 0.1;
+    }
+
+    let scale = d3Scale.scaleLog().base(Math.E).domain([start, stop]);
+
+    const axis = d3Axis.axisBottom(scale);
+
+    const generatedTicks = axis.scale().ticks(count);
+    if (generatedTicks.length < 1) {
+        // if the difference between start, stop is small, the ticks might not be generated for log
+        return d3Ticks(start, stop, count);
+    }
+
+    return generatedTicks;
 }
 
 /**
