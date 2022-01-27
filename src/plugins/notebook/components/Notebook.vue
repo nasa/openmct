@@ -632,7 +632,8 @@ export default {
         updateDefaultNotebook(updatedNotebookStorageObject) {
             if (!this.isDefaultNotebook()) {
                 const persistedNotebookStorageObject = getDefaultNotebook();
-                if (persistedNotebookStorageObject.identifier !== undefined) {
+                if (persistedNotebookStorageObject
+                    && persistedNotebookStorageObject.identifier !== undefined) {
                     this.removeDefaultClass(persistedNotebookStorageObject.identifier);
                 }
 
