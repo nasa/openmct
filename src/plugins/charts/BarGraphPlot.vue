@@ -123,7 +123,10 @@ export default {
                     automargin: true,
                     fixedrange: true
                 },
-                yaxis: primaryYaxis,
+                yaxis: {
+                    ...primaryYaxis,
+                    type: 'log'
+                },
                 margin: {
                     l: 5,
                     r: 5,

@@ -62,6 +62,8 @@ export default {
         }
     },
     mounted() {
+        this.xValues = [];
+        this.yValues = [];
         this.refreshData = this.refreshData.bind(this);
         this.setTimeContext();
 
@@ -156,7 +158,7 @@ export default {
 
             const yAxisMetadata = metadata.valuesForHints(['range'])[0];
             //Exclude 'name' and 'time' based metadata specifically, from the x-Axis values by using range hints only
-            const xAxisMetadata = metadata.valuesForHints(['range']);
+            const xAxisMetadata = metadata.valuesForHints(['domain'])[0];
 
             return {
                 xAxisMetadata,
@@ -236,29 +238,29 @@ export default {
             let yValues = [];
 
             //populate X and Y values for plotly
-            axisMetadata.xAxisMetadata.forEach((metadata) => {
-                xValues.push(metadata.name);
-                if (data[metadata.key]) {
-                    const formattedValue = this.format(key, metadata.key, data);
-                    yValues.push(formattedValue);
-                } else {
-                    yValues.push(null);
-                }
-            });
+            xValues.push(this.format(key, axisMetadata.xAxisMetadata.key, data));
+            if (data[axisMetadata.yAxisMetadata.key]) {
+                const formattedValue = this.format(key, axisMetadata.yAxisMetadata.key, data);
+                yValues.push(formattedValue);
+            } else {
+                yValues.push(null);
+            }
+
+            this.xValues = this.xValues.concat(xValues);
+            this.yValues = this.yValues.concat(yValues);
 
             const trace = {
                 key,
                 name: telemetryObject.name,
-                x: xValues,
-                y: yValues,
+                x: this.xValues,
+                y: this.yValues,
                 text: yValues.map(String),
                 xAxisMetadata: axisMetadata.xAxisMetadata,
                 yAxisMetadata: axisMetadata.yAxisMetadata,
-                type: 'bar',
+                type: 'scatter',
                 marker: {
                     color: this.domainObject.configuration.barStyles.series[key].color
-                },
-                hoverinfo: 'skip'
+                }
             };
 
             this.addTrace(trace, key);
