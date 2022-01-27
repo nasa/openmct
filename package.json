@@ -1,6 +1,6 @@
 {
   "name": "openmct",
-  "version": "1.8.4",
+  "version": "1.8.5-SNAPSHOT",
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@braintree/sanitize-url": "^5.0.2",
@@ -20,7 +20,7 @@
     "d3-scale": "1.0.x",
     "d3-selection": "1.3.x",
     "eslint": "7.0.0",
-    "eslint-plugin-playwright": "0.7.1",
+    "eslint-plugin-playwright": "0.8.0",
     "eslint-plugin-vue": "^7.5.0",
     "eslint-plugin-you-dont-need-lodash-underscore": "^6.10.0",
     "eventemitter3": "^1.2.0",
@@ -73,7 +73,7 @@
     "uuid": "^3.3.3",
     "v8-compile-cache": "^1.1.0",
     "vue": "2.5.6",
-    "vue-eslint-parser": "8.0.1",
+    "vue-eslint-parser": "8.2.0",
     "vue-loader": "15.9.8",
     "vue-template-compiler": "2.5.6",
     "webpack": "^5.65.0",
@@ -114,7 +114,7 @@
     "url": "https://github.com/nasa/openmct.git"
   },
   "engines": {
-    "node": ">=12.0.1 <15.0.0"
+    "node": ">=12.20.1 <15.0.0"
   },
   "author": "",
   "license": "Apache-2.0",
