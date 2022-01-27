@@ -70,7 +70,7 @@
             </span>
             <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-lock">
                 <a class="s-icon-button t-btn-zoom-lock"
-                    :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
+                   :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
                    @click="lockPanZoomPosition"
                 ></a>
             </span>
@@ -91,7 +91,8 @@
                  :style="{
                      'width': `${sizedImageDimensions.width}px`,
                      'height': `${sizedImageDimensions.height}px`,
-                     'overflow': 'hidden'
+                     'overflow': 'hidden',
+                     'background-image': 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px)'
                  }"
             >
                 <img ref="focusedImage"
@@ -100,7 +101,7 @@
                      :draggable="!isSelectable"
                      :style="{
                          'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
-                         'visibility': 'hidden',
+                         'visibility': 'inherit',
                          'display': 'contents'
                      }"
                      :data-openmct-image-timestamp="time"
@@ -139,9 +140,11 @@
                         'height': `${sizedImageDimensions.height}px`,
 
                     }"
+                    :data-openmct-image-timestamp="time"
+                    :data-openmct-object-keystring="keyString"
                     @mousedown="handlePanZoomClick"
                 ></div>
-                <div :style="{
+                <!-- <div :style="{
                     'position': 'absolute',
                     'left': 0,
                     'top': 0,
@@ -153,7 +156,7 @@
                     'background': 'rgba(255,0,0,0.8)',
                     'border-radius': '50%',
                     'pointer-events': 'none'
-                }"></div>
+                }"></div> -->
                 <Compass
                     v-if="shouldDisplayCompass"
                     :compass-rose-sizing-classes="compassRoseSizingClasses"
@@ -584,7 +587,6 @@ export default {
         // this.listenTo(imageElement, 'mousemove', this.trackMousePosition, this);
         // this.listenTo(imageElement, 'mouseleave', this.untrackMousePosition, this);
         // this.listenTo(imageElement, 'mousedown', this.onMouseDown, this);
-        // this.listenTo(this.focusedImageWrapper, 'gesturechange', this.handleGesture, this);
         this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         // this.marquee = undefined;
@@ -940,10 +942,6 @@ export default {
             const offsetYInOriginalScale = offsetFromCenterY / currentScale;
             const translateX = offsetXInOriginalScale + previousTranslateX;
             const translateY = offsetYInOriginalScale + previousTranslateY;
-            const imageRect = this.focusedImageWrapper.getBoundingClientRect();
-            const borderBuffer = 0;
-            this.imageTranslateX = (Math.abs(translateX) > imageRect.width * borderBuffer) ? Math.sign(translateX) * imageRect.width * borderBuffer : translateX;
-            this.imageTranslateY = (Math.abs(translateY) > imageRect.height * borderBuffer) ? Math.sign(translateY) * imageRect.height * borderBuffer : translateY;
             this.imageTranslateX = translateX;
             this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
