@@ -116,6 +116,10 @@
   "engines": {
     "node": ">=12.20.1 <15.0.0"
   },
+  "browserslist": [
+    "defaults",
+    "not IE 11"
+  ],
   "author": "",
   "license": "Apache-2.0",
   "private": true
