@@ -155,6 +155,10 @@ export default {
             this.setViewFromBounds(bounds);
         },
         clearAllValidation() {
+            if (!this.$refs.startOffset || !this.$refs.endOffset) {
+                return;
+            }
+
             [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
         },
         clearValidationForInput(input) {

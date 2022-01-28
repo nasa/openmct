@@ -131,6 +131,10 @@ export default {
             this.setViewFromBounds(bounds);
         },
         clearAllValidation() {
+            if (!this.$refs.startDate || !this.$refs.endDate) {
+                return;
+            }
+
             [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
         },
         clearValidationForInput(input) {
