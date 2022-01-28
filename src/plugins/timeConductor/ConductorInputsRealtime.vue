@@ -155,7 +155,17 @@ export default {
             this.setViewFromBounds(bounds);
         },
         clearAllValidation() {
-            [this.$refs.startOffset, this.$refs.endOffset].forEach(this.clearValidationForInput);
+            let dateRefs = [];
+
+            if (this.$refs.startOffset) {
+                dateRefs.push(this.$refs.startOffset);
+            }
+
+            if (this.$refs.endOffset) {
+                dateRefs.push(this.$refs.endOffset);
+            }
+
+            dateRefs.forEach(this.clearValidationForInput);
         },
         clearValidationForInput(input) {
             input.setCustomValidity('');

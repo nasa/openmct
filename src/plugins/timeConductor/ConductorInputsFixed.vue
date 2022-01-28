@@ -131,7 +131,17 @@ export default {
             this.setViewFromBounds(bounds);
         },
         clearAllValidation() {
-            [this.$refs.startDate, this.$refs.endDate].forEach(this.clearValidationForInput);
+            let dateRefs = [];
+
+            if (this.$refs.startDate) {
+                dateRefs.push(this.$refs.startDate);
+            }
+
+            if (this.$refs.endDate) {
+                dateRefs.push(this.$refs.endDate);
+            }
+
+            dateRefs.forEach(this.clearValidationForInput);
         },
         clearValidationForInput(input) {
             input.setCustomValidity('');

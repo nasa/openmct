@@ -456,6 +456,10 @@ export default {
         },
         updateRealTime(clock) {
             this.isRealTime = clock !== undefined;
+            //re-request data if we switch to realtime
+            if (this.isRealTime) {
+                this.updateDisplayBounds(this.timeContext.bounds());
+            }
         },
 
         /**
