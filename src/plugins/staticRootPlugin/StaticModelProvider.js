@@ -32,6 +32,8 @@ define([
             }
         });
 
+        console.log(JSON.parse(objectString));
+
         return JSON.parse(objectString);
     }
 
