@@ -76,7 +76,7 @@
 
 <script>
 import eventHelpers from "./lib/eventHelpers";
-import { ticks, getFormattedTicks } from "./tickUtils";
+import {d3Ticks, ticks, getFormattedTicks, d3TicksLog} from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
 
 export default {
@@ -172,7 +172,11 @@ export default {
                 }, this);
             }
 
-            return ticks(range.min, range.max, number);
+            if (this.axisType === 'yAxis') {
+                return d3TicksLog(range.min, range.max, number);
+            } else {
+                return d3Ticks(range.min, range.max, number);
+            }
         },
 
         updateTicksForceRegeneration() {
