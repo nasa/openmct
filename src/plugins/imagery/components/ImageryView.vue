@@ -30,57 +30,56 @@
 >
     <div class="c-imagery__main-image-wrapper has-local-controls">
         <div class="h-local-controls h-local-controls--overlay-content c-local-controls--show-on-hover c-image-controls__controls">
-            <span class="c-image-controls__sliders"
-                  draggable="true"
-                  @dragstart="startDrag"
-            >
-                <div class="c-image-controls__slider-wrapper icon-brightness">
-                    <input v-model="filters.brightness"
-                           type="range"
-                           min="0"
-                           max="500"
-                    >
-                </div>
-                <div class="c-image-controls__slider-wrapper icon-contrast">
-                    <input v-model="filters.contrast"
-                           type="range"
-                           min="0"
-                           max="500"
-                    >
-                </div>
-            </span>
-            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
-                <a class="s-icon-button icon-reset t-btn-reset"
-                   @click="filters={brightness: 100, contrast: 100}"
-                ></a>
-            </span>
+            <div class="c-image-controls__control c-image-controls__zoom icon-magnify">
+                <div class="c-button-set c-button-set--strip-h">
+                    <button class="c-button t-btn-zoom-out icon-minus"
+                            @click="handleZoomButton(-1)"
+                    ></button>
 
+                    <button class="c-button t-btn-zoom-in icon-plus"
+                            @click="handleZoomButton(1)"
+                    ></button>
+                </div>
+
+                <button class="c-button t-btn-zoom-lock"
+                        :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
+                        @click="lockPanZoomPosition"
+                ></button>
+
+                <button class="c-button icon-reset t-btn-zoom-reset"
+                        @click="resetImage(true)"
+                ></button>
+
+                <span class="c-image-controls__zoom-factor">x{{ Number.parseFloat(zoomFactor).toPrecision(2) }}</span>
+            </div>
+            <div class="c-image-controls__control c-image-controls__brightness-contrast">
+                <span class="c-image-controls__sliders"
+                      draggable="true"
+                      @dragstart="startDrag"
+                >
+                    <div class="c-image-controls__input icon-brightness">
+                        <input v-model="filters.brightness"
+                               type="range"
+                               min="0"
+                               max="500"
+                        >
+                    </div>
+                    <div class="c-image-controls__input icon-contrast">
+                        <input v-model="filters.contrast"
+                               type="range"
+                               min="0"
+                               max="500"
+                        >
+                    </div>
+                </span>
+                <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-reset">
+                    <button class="c-icon-link icon-reset t-btn-reset"
+                            @click="filters={brightness: 100, contrast: 100}"
+                    ></button>
+                </span>
+            </div>
         </div>
-        <!-- TODO: structure this element -->
-        <div style="position: absolute; top: 60px; left: 20px; z-index: 5">
-            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-out">
-                <a class="s-icon-button icon-minus t-btn-zoom-out"
-                   @click="handleZoomButton(-1)"
-                ></a>
-            </span>
-            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-in">
-                <a class="s-icon-button icon-plus t-btn-zoom-in"
-                   @click="handleZoomButton(1)"
-                ></a>
-            </span>
-            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-lock">
-                <a class="s-icon-button t-btn-zoom-lock"
-                   :class="{'icon-unlocked': !panZoomLocked, 'icon-lock': panZoomLocked}"
-                   @click="lockPanZoomPosition"
-                ></a>
-            </span>
-            <span class="t-reset-btn-holder c-imagery__lc__reset-btn c-image-controls__btn-zoom-reset">
-                <a class="s-icon-button icon-reset t-btn-zoom-reset"
-                   @click="resetImage(true)"
-                ></a>
-            </span>
-            <span v-if="zoomFactor > 1">x{{Number.parseFloat(zoomFactor).toPrecision(3)}}</span>
-        </div>
+
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
              :class="{'paused unnsynced': isPaused && !isFixed,'stale':false,'selectable': isSelectable, 'pannable': altPressed && zoomFactor > 1}"
@@ -631,7 +630,6 @@ export default {
     },
     methods: {
 
-
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -980,11 +978,11 @@ export default {
             this.zoomFactor = newScaleFactor;
         },
         handleGesture(e) {
-            e.preventDefault()
+            e.preventDefault();
             if (e.scale < 1) {
-                console.log('zoom out')
+                console.log('zoom out');
             } else if (e.scale > 1) {
-                console.log('zoom in')
+                console.log('zoom in');
             }
         },
         handleZoomButton(stepValue) {
@@ -1176,7 +1174,10 @@ export default {
 
             const dX = e.clientX - this.pan.x;
             const dY = e.clientY - this.pan.y;
-            this.pan = {x: e.clientX, y: e.clientY};
+            this.pan = {
+                x: e.clientX,
+                y: e.clientY
+            };
             this.updatePanZoom(this.zoomFactor, dX, dY);
         },
         endPan() {
@@ -1184,7 +1185,7 @@ export default {
             this.animateZoom = true;
         },
         onMouseUp(event) {
-            console.log('onMouseUp')
+            console.log('onMouseUp');
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
 
@@ -1195,7 +1196,7 @@ export default {
             // if (this.marquee) {
             //     this.endMarquee(event);
             // }
-        },
+        }
 
         // createImage(imageUrl) {
         //     return new Promise (function (resolve, reject) {
@@ -1261,7 +1262,6 @@ export default {
         //     if (event.ctrlKey) {
         //         return;
         //     }
-
 
         //     this.listenTo(window, 'mouseup', this.onMouseUp, this);
         //     this.listenTo(window, 'mousemove', this.trackMousePosition, this);

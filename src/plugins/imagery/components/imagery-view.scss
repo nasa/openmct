@@ -185,8 +185,8 @@
         z-index: 2;
         background: $colorLocalControlOvrBg;
         border-radius: $basicCr;
-        max-width: 200px;
-        min-width: 70px;
+        max-width: 250px;
+        min-width: 170px;
         width: 35%;
         align-items: center;
         padding: $interiorMargin $interiorMarginLg;
@@ -210,6 +210,7 @@
 
     &__lc {
         &__reset-btn {
+            // Span that holds bracket graphics and button
             $bc: $scrollbarTrackColorBg;
 
             &:before,
@@ -230,18 +231,50 @@
                 border-bottom: 1px solid $bc;
                 margin-top: 2px;
             }
+
+            .c-icon-link {
+                color: $colorBtnFg;
+            }
         }
     }
 }
 
 .c-image-controls {
-    // Brightness/contrast
-
     &__controls {
-        // Sliders and reset element
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+
+        > * + * {
+            margin-top: $interiorMargin;
+        }
+
+        [class*='c-button'] { flex: 0 0 auto; }
+    }
+
+    &__control,
+    &__input {
         display: flex;
         align-items: center;
-        margin-right: $interiorMargin; // Need some extra space due to proximity to close button
+        width: 100%;
+
+        &:before {
+            color: rgba($colorMenuFg, 0.5);
+            margin-right: $interiorMarginSm;
+        }
+
+    }
+
+    &__input {
+        // A wrapper is needed to add the type icon to left of each control
+
+        input[type='range'] {
+            //width: 100%; // Do we need this?
+        }
+    }
+
+    &__zoom {
+        > * + * { margin-left: $interiorMargin; }
     }
 
     &__sliders {
@@ -251,21 +284,6 @@
 
         > * + * {
             margin-top: 11px;
-        }
-    }
-
-    &__slider-wrapper {
-        // A wrapper is needed to add the type icon to left of each range input
-        display: flex;
-        align-items: center;
-
-        &:before {
-            color: rgba($colorMenuFg, 0.5);
-            margin-right: $interiorMarginSm;
-        }
-
-        input[type='range'] {
-            width: 100px;
         }
     }
 
