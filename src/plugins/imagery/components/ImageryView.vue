@@ -276,6 +276,10 @@ const ARROW_LEFT = 37;
 
 const SCROLL_LATENCY = 250;
 
+
+const ZOOM_LIMITS_MAX_DEFAULT = 20;
+const ZOOM_LIMITS_MIN_DEFAULT = 1;
+
 export default {
     components: {
         Compass
@@ -589,6 +593,7 @@ export default {
         // this.listenTo(imageElement, 'mousemove', this.trackMousePosition, this);
         // this.listenTo(imageElement, 'mouseleave', this.untrackMousePosition, this);
         // this.listenTo(imageElement, 'mousedown', this.onMouseDown, this);
+        // this.listenTo(this.focusedImageWrapper, 'gesturestop', this.handleGesture, this);
         this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         // this.marquee = undefined;
@@ -934,19 +939,14 @@ export default {
             this.imageTranslateY = 0;
         },
         zoomImage(newScaleFactor, screenClientX, screenClientY) {
-            const zoomLimits = {
-                max: 20,
-                min: 1
-            };
-
             this.paused(true);
-            if (newScaleFactor > zoomLimits.max) {
-                newScaleFactor = zoomLimits.max;
+            if (newScaleFactor > ZOOM_LIMITS_MAX_DEFAULT) {
+                newScaleFactor = ZOOM_LIMITS_MAX_DEFAULT;
 
                 return;
             }
 
-            if (newScaleFactor <= 0 || newScaleFactor < zoomLimits.min) {
+            if (newScaleFactor <= 0 || newScaleFactor < ZOOM_LIMITS_MIN_DEFAULT) {
                 return this.resetImage(true);
             }
 
@@ -973,18 +973,22 @@ export default {
             const offsetYInOriginalScale = offsetFromCenterY / currentScale;
             const translateX = offsetXInOriginalScale + previousTranslateX;
             const translateY = offsetYInOriginalScale + previousTranslateY;
+            // const imageRect = this.focusedImageWrapper.getBoundingClientRect();
+            // const borderBuffer = 0;
+            // this.imageTranslateX = (Math.abs(translateX) > (imageRect.width * borderBuffer)) ? Math.sign(translateX) * imageRect.width * borderBuffer : translateX;
+            // this.imageTranslateY = (Math.abs(translateY) > (imageRect.height * borderBuffer)) ? Math.sign(translateY) * imageRect.height * borderBuffer : translateY;
             this.imageTranslateX = translateX;
             this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
         },
-        handleGesture(e) {
-            e.preventDefault();
-            if (e.scale < 1) {
-                console.log('zoom out');
-            } else if (e.scale > 1) {
-                console.log('zoom in');
-            }
-        },
+        // handleGesture(e) {
+        //     e.preventDefault()
+        //     if (e.scale < 1) {
+        //         console.log('zoom out')
+        //     } else if (e.scale > 1) {
+        //         console.log('zoom in')
+        //     }
+        // },
         handleZoomButton(stepValue) {
             this.incrementZoomFactor(stepValue);
         },
@@ -1005,18 +1009,12 @@ export default {
                 return this.startPan(e);
             }
 
-            // const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
             const newZoomFactor = this.zoomFactor + step;
             console.assert(e.pageX === e.clientX, 'pageX = clientX');
             console.assert(e.pageY === e.clientY, 'pageY = clientY');
 
             this.zoomImage(newZoomFactor, e.clientX, e.clientY);
         },
-        // handlePanZoomClick(e) {
-        //     const step = 1;
-        //     const zoomFactor = this.zoomFactor + (!e.altKey ? step : -step);
-        //     this.zoomImage(zoomFactor, e.pageX, e.pageY);
-        // },
         startDrag(e) {
             e.preventDefault();
             e.stopPropagation();
