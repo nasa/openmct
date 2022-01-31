@@ -94,7 +94,7 @@
                      'background-image': 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px)'
                  }"
             >
-                <img ref="focusedImage"
+                <!-- <img ref="focusedImage"
                      class="c-imagery__main-image__image js-imageryView-image "
                      :src="imageUrl"
                      :draggable="!isSelectable"
@@ -105,19 +105,11 @@
                      }"
                      :data-openmct-image-timestamp="time"
                      :data-openmct-object-keystring="keyString"
-                >
-                <!-- <canvas
-                    ref="focusedImageCanvas"
-                    :style="{
-                        'z-index': 10,
-                        'width': `${sizedImageDimensions.width} px`,
-                        'height': `${sizedImageDimensions.height} px`,
-                        'visibility': 'hidden'
-                    }">
-                </canvas> -->
+                > -->
                 <div
                     ref="focusedImageElement"
-                    class="c-imagery_main-image_background-image"
+                    class="c-imagery_main-image_background-image js-imageryView-image"
+                    :draggable="!isSelectable"
                     :style="{
                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
                         'background-image':
@@ -139,8 +131,6 @@
                         'height': `${sizedImageDimensions.height}px`,
 
                     }"
-                    :data-openmct-image-timestamp="time"
-                    :data-openmct-object-keystring="keyString"
                     @mousedown="handlePanZoomClick"
                 ></div>
                 <!-- <div :style="{
@@ -512,7 +502,6 @@ export default {
     watch: {
         imageUrl(newUrl, oldUrl) {
             if (newUrl) {
-                // this.drawCanvas(newUrl)
                 this.resetImage();
             }
         },
@@ -541,9 +530,6 @@ export default {
         this.focusedImageElement = this.$refs.focusedImageElement;
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
-        // this.canvas = this.$refs.focusedImageCanvas;
-        // this.context = this.canvas.getContext('2d');
-        // this.context.imageSmoothingEnabled = false;
 
         //We only need to use this till the user focuses an image manually
         if (this.indexForFocusedImage !== undefined) {
@@ -586,15 +572,8 @@ export default {
             this.thumbWrapperResizeObserver.observe(this.$refs.thumbsWrapper);
         }
 
-        // initialize pan/zoom features
-        // this.listenTo(imageElement, 'mousemove', this.trackMousePosition, this);
-        // this.listenTo(imageElement, 'mouseleave', this.untrackMousePosition, this);
-        // this.listenTo(imageElement, 'mousedown', this.onMouseDown, this);
-        // this.listenTo(this.focusedImageWrapper, 'gesturestop', this.handleGesture, this);
         this.clearWheelZoom = _.debounce(this.clearWheelZoom, 600);
         this.listenTo(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
-        // this.marquee = undefined;
-        // this.drawCanvas()
 
     },
     beforeDestroy() {
@@ -621,11 +600,6 @@ export default {
             }
         }
 
-        // remove mouse listeners for pan/zoom functionality
-        // this.stopListening(this.imageElement, 'mousemove', this.trackMousePosition, this);
-        // this.stopListening(this.imageElement, 'mouseleave', this.untrackMousePosition, this);
-        // this.stopListening(this.imageElement, 'mousedown', this.onMouseDown, this)
-        // this.stopListening(this.focusedImageWrapper, 'gesturechange', this.handleGesture, this);
         this.stopListening(this.focusedImageWrapper, 'wheel', this.wheelZoom, this);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
@@ -948,14 +922,6 @@ export default {
             this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
         },
-        // handleGesture(e) {
-        //     e.preventDefault()
-        //     if (e.scale < 1) {
-        //         console.log('zoom out')
-        //     } else if (e.scale > 1) {
-        //         console.log('zoom in')
-        //     }
-        // },
         handleZoomButton(stepValue) {
             this.incrementZoomFactor(stepValue);
         },
@@ -1157,149 +1123,7 @@ export default {
             if (this.pan) {
                 return this.endPan(event);
             }
-
-            // if (this.marquee) {
-            //     this.endMarquee(event);
-            // }
         }
-
-        // createImage(imageUrl) {
-        //     return new Promise (function (resolve, reject) {
-        //         if (!imageUrl) {
-        //             return reject('No image url provided');
-        //         }
-
-        //         let loadingImage = new Image();
-        //         loadingImage.onload = () => resolve(loadingImage);
-        //         loadingImage.src = imageUrl;
-        //     });
-        // },
-        // clearCanvas() {
-        //     console.log('clear canvas');
-        //     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // },
-
-        // drawMarquee() {
-        //     this.context.beginPath();
-        //     this.context.fillStyle = 'rgba(255,255,255,0.4)';
-        //     this.context.lineWidth = 1;
-        //     this.context.fillRect(50, 5, 100, 100);
-        //     this.context.stroke();
-        // },
-        // drawImage(image, centerX, centerY, zoomFactor = 10) {
-        //     const canvas = this.canvas;
-        //     this.context.imageSmoothingEnabled = false;
-
-        //     console.log('drawImage canvas',canvas)
-        //     const positionX = centerX || canvas.width / 2;
-        //     const positionY = centerY || canvas.height / 2;
-        //     const width = canvas.width + (zoomFactor * (canvas.width / canvas.height));
-        //     const height = canvas.height + zoomFactor;
-        //     const params = {
-        //         dx: 0 - (positionX / canvas.width) * (width - canvas.width),
-        //         dy: 0 - (positionY / canvas.height) * (height - canvas.height),
-        //         dWidth: canvas.width + (zoomFactor * (canvas.width / canvas.height)),
-        //         dHeight: canvas.height + zoomFactor
-        //     };
-        //     console.log(params, this.sizedImageDimensions)
-        //     const {dx, dy, dWidth, dHeight} = params;
-
-        //     this.context.drawImage(image, dx, dy, dWidth, dHeight);
-        //     // this.context.drawImage(image, 0, 10, 1000, 1500, 0 - 150, 0 - 130, 800, 400);
-
-        // },
-
-        // async drawCanvas(imageUrl) {
-        //     this.clearCanvas();
-        //     const focusedImage = await this.createImage(imageUrl);
-        //     this.drawImage(focusedImage);
-        //     // this.drawMarquee()
-        //     // this.context.stroke();
-        //     // focusedImage.addEventListener('load',, false);
-        //     // this.context.beginPath();
-        //     // this.context.drawImage(focusedImage, 250, 250);
-        //     // this.context.stroke();
-        //     // console.log({canvas: this.context, img})
-        // },
-        // onMouseDown(event) {
-        //     console.log('mousedown');
-        //     // do not monitor drag events on browser context click
-        //     if (event.ctrlKey) {
-        //         return;
-        //     }
-
-        //     this.listenTo(window, 'mouseup', this.onMouseUp, this);
-        //     this.listenTo(window, 'mousemove', this.trackMousePosition, this);
-        //     if (event.altKey) {
-        //         return this.startPan(event);
-        //     } else {
-        //         return this.startMarquee(event);
-        //     }
-
-        // },
-        //     this.updateMarquee();
-        //     // this.updatePan();
-        //     event.preventDefault();
-
-        // },
-        // marquee handlers
-        // startMarquee(event) {
-        //     console.log('startMarquee')
-        //     this.canvas.classList.remove('plot-drag');
-        //     this.canvas.classList.add('plot-marquee');
-
-        //     this.trackMousePosition(event);
-        //     // if (this.positionOverPlot) {
-        //         // this.freeze();
-        //         this.marquee = {
-        //             startPixels: this.positionOverElement,
-        //             endPixels: this.positionOverElement,
-        //             start: this.positionOverPlot,
-        //             end: this.positionOverPlot,
-        //             color: [1, 1, 1, 0.5]
-        //         };
-        //         this.rectangles.push(this.marquee);
-        //         this.trackHistory();
-        //     // }
-        // },
-        // endMarquee() {
-        //     const startPixels = this.marquee.startPixels;
-        //     const endPixels = this.marquee.endPixels;
-        //     console.log('endMarquee', {startPixels, endPixels})
-        //     const marqueeDistance = Math.sqrt(
-        //         Math.pow(startPixels.x - endPixels.x, 2)
-        //     + Math.pow(startPixels.y - endPixels.y, 2)
-        //     );
-        //     // Don't zoom if mouse moved less than 7.5 pixels.
-        //     if (marqueeDistance > 7.5) {
-        //         // this.config.xAxis.set('displayRange', {
-        //         //     min: Math.min(this.marquee.start.x, this.marquee.end.x),
-        //         //     max: Math.max(this.marquee.start.x, this.marquee.end.x)
-        //         // });
-        //         // this.config.yAxis.set('displayRange', {
-        //         //     min: Math.min(this.marquee.start.y, this.marquee.end.y),
-        //         //     max: Math.max(this.marquee.start.y, this.marquee.end.y)
-        //         // });
-        //         // this.userViewportChangeEnd();
-        //         console.log('time to do something')
-        //     } else {
-        //         // A history entry is created by startMarquee, need to remove
-        //         // if marquee zoom doesn't occur.
-        //         this.plotHistory.pop();
-        //     }
-
-        //     this.rectangles = [];
-        //     this.marquee = undefined;
-        // },
-        // updateMarquee() {
-        //     // console.log('update marquee')
-        //     if (!this.marquee) {
-        //         return;
-        //     }
-
-        //     this.marquee.end = this.positionOverPlot;
-        //     this.marquee.endPixels = this.positionOverElement;
-        // },
 
     }
 };
