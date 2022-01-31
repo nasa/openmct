@@ -94,7 +94,7 @@
                      'background-image': 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px)'
                  }"
             >
-                <!-- <img ref="focusedImage"
+                <img ref="focusedImage"
                      class="c-imagery__main-image__image js-imageryView-image "
                      :src="imageUrl"
                      :draggable="!isSelectable"
@@ -105,10 +105,10 @@
                      }"
                      :data-openmct-image-timestamp="time"
                      :data-openmct-object-keystring="keyString"
-                > -->
+                >
                 <div
                     ref="focusedImageElement"
-                    class="c-imagery_main-image_background-image js-imageryView-image"
+                    class="c-imagery_main-image_background-image"
                     :draggable="!isSelectable"
                     :style="{
                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
