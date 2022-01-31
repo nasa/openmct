@@ -90,7 +90,7 @@
                  :style="{
                      'width': `${sizedImageDimensions.width}px`,
                      'height': `${sizedImageDimensions.height}px`,
-                     'overflow': 'hidden',
+                     'overflow': 'visible clip',
                      'background-image': 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px)'
                  }"
             >
@@ -100,7 +100,7 @@
                      :draggable="!isSelectable"
                      :style="{
                          'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
-                         'visibility': 'inherit',
+                         'visibility': 'hidden',
                          'display': 'contents'
                      }"
                      :data-openmct-image-timestamp="time"
@@ -124,8 +124,7 @@
                         'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
                         'background-position': 'center',
                         'background-repeat': 'no-repeat',
-                        'background-position': 'contain',
-
+                        'background-size': 'contain',
                         'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
                         'width': `${sizedImageDimensions.width}px`,
                         'height': `${sizedImageDimensions.height}px`,
