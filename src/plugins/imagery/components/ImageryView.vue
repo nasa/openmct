@@ -86,11 +86,10 @@
 
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false,'selectable': isSelectable, 'pannable': altPressed && zoomFactor > 1}"
-             @click="expand"
-        >
-            <div class="c-imagery__hints"
-                 v-if="zoomFactor > 1"
+             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false, 'pannable': altPressed && zoomFactor > 1, 'zoom-in': metaPressed && !shiftPressed, 'zoom-out': metaPressed && shiftPressed}"
+             @click="expand">
+            <div v-if="zoomFactor > 1"
+                class="c-imagery__hints"
             >Alt-drag to pan</div>
             <div ref="focusedImageWrapper"
                  class="image-wrapper"
@@ -120,14 +119,16 @@
                     :style="{
                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
                         'background-image':
-                            `url(${imageUrl}),
-                            repeating-linear-gradient(
-                                45deg,
-                                transparent,
-                                transparent 4px,
-                                rgba(125,125,125,.2) 4px,
-                                rgba(125,125,125,.2) 8px
-                            )`,
+                            `${imageUrl ? (
+                                `url(${imageUrl}),
+                                    repeating-linear-gradient(
+                                        45deg,
+                                        transparent,
+                                        transparent 4px,
+                                        rgba(125,125,125,.2) 4px,
+                                        rgba(125,125,125,.2) 8px
+                                    )`
+                        ) : ''}`,
                         'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
                         'background-position': 'center',
                         'background-repeat': 'no-repeat',
@@ -319,6 +320,8 @@ export default {
             resizingWindow: false,
             timeContext: undefined,
             altPressed: false,
+            shiftPressed: false,
+            metaPressed: false,
             zoomFactor: 1,
             imageTranslateX: 0,
             imageTranslateY: 0,
@@ -525,11 +528,6 @@ export default {
                 this.scrollToRight();
             },
             deep: true
-        },
-        imageUrl(newUrl, oldUrl) {
-            if (newUrl) {
-                this.resetImage();
-            }
         },
         focusedImageIndex() {
             this.trackDuration();
@@ -743,10 +741,23 @@ export default {
             if (event.key === 'Alt') {
                 this.altPressed = true;
             }
+
+            if (event.metaKey) {
+                this.metaPressed = true;
+            }
+
+            if (event.shiftKey) {
+                this.shiftPressed = true;
+            }
         },
         handleKeyUp(event) {
             if (event.key === 'Alt') {
                 this.altPressed = false;
+            }
+
+            this.shiftPressed = false;
+            if (!event.metaKey) {
+                this.metaPressed = false;
             }
         },
         handleScroll() {
@@ -982,14 +993,15 @@ export default {
         // },
         handlePanZoomClick(e) {
             const step = 1;
-            if (e.altKey) {
+            if (this.altPressed) {
                 return this.startPan(e);
             }
 
-            const newZoomFactor = this.zoomFactor + step;
-            console.assert(e.pageX === e.clientX, 'pageX = clientX');
-            console.assert(e.pageY === e.clientY, 'pageY = clientY');
+            if (!this.metaPressed) {
+                return;
+            }
 
+            const newZoomFactor = this.zoomFactor + (this.shiftPressed ? -step : step);
             this.zoomImage(newZoomFactor, e.clientX, e.clientY);
         },
         startDrag(e) {
@@ -1160,7 +1172,6 @@ export default {
             this.animateZoom = true;
         },
         onMouseUp(event) {
-            console.log('onMouseUp');
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
 
