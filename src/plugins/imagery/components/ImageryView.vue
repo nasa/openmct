@@ -997,7 +997,7 @@ export default {
                 return this.startPan(e);
             }
 
-            if (!this.metaPressed) {
+            if (!(this.metaPressed && e.button === 0)) {
                 return;
             }
 
