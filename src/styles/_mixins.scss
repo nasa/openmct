@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+@use 'sass:math';
 
 /************************** GLYPHS */
 @mixin glyphBefore($unicode, $family: 'symbolsfont') {
@@ -202,7 +204,7 @@
 
 @mixin bgCheckerboard($c: $colorBodyFg, $opacity: 0.3, $size: 32px, $imp: false) {
     $color: rgba($c, $opacity);
-    $bgPos: floor($size / 2);
+    $bgPos: floor(math.div($size, 2));
 
     $impStr: null;
     @if $imp {
@@ -288,7 +290,7 @@
 @mixin triangle($dir: "left", $size: 5px, $ratio: 1, $color: red) {
     width: 0;
     height: 0;
-    $slopedB: $size/$ratio solid transparent;
+    $slopedB: math.div($size, $ratio) solid transparent;
     $straightB: $size solid $color;
     @if $dir == "up" {
         border-left: $slopedB;
@@ -385,11 +387,11 @@
     }
 }
 
-@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: rgba(black, 0.5) 0 0 2px) {
+@mixin nice-input($bg: $colorInputBg, $fg: $colorInputFg, $shdw: inset rgba(black, 0.5) 0 0 2px 1px) {
     @include input-base();
     background: $bg;
     color: $fg;
-    box-shadow: inset $shdw;
+    box-shadow: $shdw;
 }
 
 @mixin reactive-input($bg: $colorInputBg, $fg: $colorInputFg) {
@@ -685,7 +687,7 @@
 @mixin wrappedInput() {
     // An input that is wrapped. Optionally includes a __label or icon element.
     // Based on .c-search.
-    @include nice-input();
+    @include nice-input($shdw: $shdwInput);
     display: flex;
     align-items: center;
     padding-left: 4px;
@@ -780,7 +782,7 @@
 }
 
 
-@mixin sUnsynced() {
+@mixin sUnsynced {
     $c: $colorPausedBg;
     border: 1px solid $c;
 }

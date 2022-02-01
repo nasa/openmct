@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -183,6 +183,19 @@ describe('the plugin', function () {
                 const textEls = element.querySelectorAll('.c-plan__contents text');
                 expect(textEls.length).toEqual(3);
 
+                done();
+            });
+        });
+
+        it ('shows the status indicator when available', (done) => {
+            openmct.status.set({
+                key: "test-object",
+                namespace: ''
+            }, 'draft');
+
+            Vue.nextTick(() => {
+                const statusEl = element.querySelector('.c-plan__contents .is-status--draft');
+                expect(statusEl).toBeDefined();
                 done();
             });
         });

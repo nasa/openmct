@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2009-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -60,6 +60,8 @@ describe("Timer plugin:", () => {
             timerDefinition = openmct.types.get('timer').definition;
             timerDefinition.initialize(timerDomainObject);
 
+            spyOn(openmct.objects, 'supportsMutation').and.returnValue(true);
+
             openmct.on('start', resolve);
             openmct.start(appHolder);
         });
@@ -93,6 +95,8 @@ describe("Timer plugin:", () => {
             const applicableViews = openmct.objectViews.get(timerViewObject, [timerViewObject]);
             timerViewProvider = applicableViews.find(viewProvider => viewProvider.key === 'timer.view');
 
+            spyOn(openmct.objects, 'get').and.returnValue(Promise.resolve(timerViewObject));
+
             mutableTimerObject = await openmct.objects.getMutable(timerViewObject.identifier);
 
             timerObjectPath = [mutableTimerObject];
@@ -100,6 +104,10 @@ describe("Timer plugin:", () => {
             timerView.show(child);
 
             await Vue.nextTick();
+        });
+
+        afterEach(() => {
+            timerView.destroy();
         });
 
         it("should migrate old object properties to the configuration section", () => {

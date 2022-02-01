@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2021, United States Government
+ * Open MCT Web, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -41,6 +41,7 @@ const LOCAL_STORAGE_HISTORY_KEY_REALTIME = 'tcHistoryRealtime';
 const DEFAULT_RECORDS = 10;
 
 import { millisecondsToDHMS } from "utils/duration";
+import UTCTimeFormat from "../utcTimeSystem/UTCTimeFormat.js";
 
 export default {
     inject: ['openmct', 'configuration'],
@@ -263,7 +264,15 @@ export default {
                 format: format
             }).formatter;
 
-            return (isNegativeOffset ? '-' : '') + formatter.format(time, 'YYYY-MM-DD HH:mm:ss');
+            let formattedDate;
+
+            if (formatter instanceof UTCTimeFormat) {
+                formattedDate = formatter.format(time, formatter.DATE_FORMATS.PRECISION_SECONDS);
+            } else {
+                formattedDate = formatter.format(time);
+            }
+
+            return (isNegativeOffset ? '-' : '') + formattedDate;
         },
         showHistoryMenu() {
             const elementBoundingClientRect = this.$refs.historyButton.getBoundingClientRect();

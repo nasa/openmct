@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -116,7 +116,7 @@ export default function DisplayLayoutPlugin(options) {
             }
         });
         openmct.types.addType('layout', DisplayLayoutType());
-        openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct, options));
+        openmct.toolbars.addProvider(new DisplayLayoutToolbar(openmct));
         openmct.inspectorViews.addProvider(new AlphaNumericFormatViewProvider(openmct, options));
         openmct.composition.addPolicy((parent, child) => {
             if (parent.type === 'layout' && child.type === 'folder') {

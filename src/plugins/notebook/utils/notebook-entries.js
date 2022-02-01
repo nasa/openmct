@@ -105,11 +105,6 @@ export function addNotebookEntry(openmct, domainObject, notebookStorage, embed =
     const date = Date.now();
     const configuration = domainObject.configuration;
     const entries = configuration.entries || {};
-
-    if (!entries) {
-        return;
-    }
-
     const embeds = embed
         ? [embed]
         : [];
@@ -125,7 +120,7 @@ export function addNotebookEntry(openmct, domainObject, notebookStorage, embed =
     const newEntries = addEntryIntoPage(notebookStorage, entries, entry);
 
     addDefaultClass(domainObject, openmct);
-    domainObject.configuration.entries = newEntries;
+    mutateObject(openmct, domainObject, 'configuration.entries', newEntries);
 
     return id;
 }

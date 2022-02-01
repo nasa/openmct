@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -38,6 +38,8 @@ class CouchObjectProvider {
         this.objectQueue = {};
         this.observers = {};
         this.batchIds = [];
+        this.onEventMessage = this.onEventMessage.bind(this);
+        this.onEventError = this.onEventError.bind(this);
     }
 
     /**
@@ -50,7 +52,7 @@ class CouchObjectProvider {
         // eslint-disable-next-line no-undef
         const sharedWorkerURL = `${this.openmct.getAssetPath()}${__OPENMCT_ROOT_RELATIVE__}couchDBChangesFeed.js`;
 
-        sharedWorker = new SharedWorker(sharedWorkerURL);
+        sharedWorker = new SharedWorker(sharedWorkerURL, 'CouchDB SSE Shared Worker');
         sharedWorker.port.onmessage = provider.onSharedWorkerMessage.bind(this);
         sharedWorker.port.onmessageerror = provider.onSharedWorkerMessageError.bind(this);
         sharedWorker.port.start();
@@ -70,23 +72,32 @@ class CouchObjectProvider {
         console.log('Error', event);
     }
 
+    isSynchronizedObject(object) {
+        return (object && object.type
+            && this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES
+            && this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.includes(object.type));
+
+    }
+
     onSharedWorkerMessage(event) {
         if (event.data.type === 'connection') {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else {
             let objectChanges = event.data.objectChanges;
-            objectChanges.identifier = {
+            const objectIdentifier = {
                 namespace: this.namespace,
                 key: objectChanges.id
             };
-            let keyString = this.openmct.objects.makeKeyString(objectChanges.identifier);
+            let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
 
             if (observersForObject) {
                 observersForObject.forEach(async (observer) => {
-                    const updatedObject = await this.get(objectChanges.identifier);
-                    observer(updatedObject);
+                    const updatedObject = await this.get(objectIdentifier);
+                    if (this.isSynchronizedObject(updatedObject)) {
+                        observer(updatedObject);
+                    }
                 });
             }
         }
@@ -168,11 +179,8 @@ class CouchObjectProvider {
     getModel(response) {
         if (response && response.model) {
             let key = response[ID];
-            let object = response.model;
-            object.identifier = {
-                namespace: this.namespace,
-                key: key
-            };
+            let object = this.fromPersistedModel(response.model, key);
+
             if (!this.objectQueue[key]) {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
@@ -290,18 +298,12 @@ class CouchObjectProvider {
         return Array.from(new Set(array));
     }
 
-    search(query, abortSignal) {
-        const filter = {
-            "selector": {
-                "model": {
-                    "name": {
-                        "$regex": `(?i)${query}`
-                    }
-                }
-            }
-        };
-
-        return this.getObjectsByFilter(filter, abortSignal);
+    search() {
+        // Dummy search function. It has to appear to support search,
+        // otherwise the in-memory indexer will index all of its objects,
+        // but actually search results will be provided by a separate search provider
+        // see CoucheSearchProvider.js
+        return Promise.resolve([]);
     }
 
     async getObjectsByFilter(filter, abortSignal) {
@@ -390,38 +392,16 @@ class CouchObjectProvider {
      * @private
      */
     observeObjectChanges() {
-
-        let filter = {selector: {}};
-
-        if (this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES.length > 1) {
-            filter.selector.$or = this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES
-                .map(type => {
-                    return {
-                        'model': {
-                            type
-                        }
-                    };
-                });
-        } else {
-            filter.selector.model = {
-                type: this.openmct.objects.SYNCHRONIZED_OBJECT_TYPES[0]
-            };
-        }
-
-        // feed=continuous maintains an indefinitely open connection with a keep-alive of HEARTBEAT milliseconds until this client closes the connection
-        // style=main_only returns only the current winning revision of the document
-        let url = `${this.url}/_changes?feed=continuous&style=main_only&heartbeat=${HEARTBEAT}`;
-
-        let body = {};
-        if (filter) {
-            url = `${url}&filter=_selector`;
-            body = JSON.stringify(filter);
-        }
+        const sseChangesPath = `${this.url}/_changes`;
+        const sseURL = new URL(sseChangesPath);
+        sseURL.searchParams.append('feed', 'eventsource');
+        sseURL.searchParams.append('style', 'main_only');
+        sseURL.searchParams.append('heartbeat', HEARTBEAT);
 
         if (typeof SharedWorker === 'undefined') {
-            this.fetchChanges(url, body);
+            this.fetchChanges(sseURL.toString());
         } else {
-            this.initiateSharedWorkerFetchChanges(url, body);
+            this.initiateSharedWorkerFetchChanges(sseURL.toString());
         }
 
     }
@@ -429,7 +409,7 @@ class CouchObjectProvider {
     /**
      * @private
      */
-    initiateSharedWorkerFetchChanges(url, body) {
+    initiateSharedWorkerFetchChanges(url) {
         if (!this.changesFeedSharedWorker) {
             this.changesFeedSharedWorker = this.startSharedWorker();
 
@@ -443,17 +423,40 @@ class CouchObjectProvider {
 
             this.changesFeedSharedWorker.port.postMessage({
                 request: 'changes',
-                body,
                 url
             });
         }
     }
 
-    async fetchChanges(url, body) {
-        const controller = new AbortController();
-        const signal = controller.signal;
+    onEventError(error) {
+        console.error('Error on feed', error);
+        if (Object.keys(this.observers).length > 0) {
+            this.observeObjectChanges();
+        }
+    }
 
-        let error = false;
+    onEventMessage(event) {
+        const eventData = JSON.parse(event.data);
+        const identifier = {
+            namespace: this.namespace,
+            key: eventData.id
+        };
+        const keyString = this.openmct.objects.makeKeyString(identifier);
+        let observersForObject = this.observers[keyString];
+
+        if (observersForObject) {
+            observersForObject.forEach(async (observer) => {
+                const updatedObject = await this.get(identifier);
+                if (this.isSynchronizedObject(updatedObject)) {
+                    observer(updatedObject);
+                }
+            });
+        }
+    }
+
+    fetchChanges(url) {
+        const controller = new AbortController();
+        let couchEventSource;
 
         if (this.isObservingObjectChanges()) {
             this.stopObservingObjectChanges();
@@ -461,66 +464,18 @@ class CouchObjectProvider {
 
         this.stopObservingObjectChanges = () => {
             controller.abort();
+            couchEventSource.removeEventListener('message', this.onEventMessage);
             delete this.stopObservingObjectChanges;
         };
 
-        const response = await fetch(url, {
-            method: 'POST',
-            signal,
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body
-        });
+        console.debug('⇿ Opening CouchDB change feed connection ⇿');
 
-        let reader;
+        couchEventSource = new EventSource(url);
+        couchEventSource.onerror = this.onEventError;
 
-        if (response.body === undefined) {
-            error = true;
-        } else {
-            reader = response.body.getReader();
-        }
-
-        while (!error) {
-            const {done, value} = await reader.read();
-            //done is true when we lose connection with the provider
-            if (done) {
-                error = true;
-            }
-
-            if (value) {
-                let chunk = new Uint8Array(value.length);
-                chunk.set(value, 0);
-                const decodedChunk = new TextDecoder("utf-8").decode(chunk).split('\n');
-                if (decodedChunk.length && decodedChunk[decodedChunk.length - 1] === '') {
-                    decodedChunk.forEach((doc, index) => {
-                        try {
-                            const object = JSON.parse(doc);
-                            object.identifier = {
-                                namespace: this.namespace,
-                                key: object.id
-                            };
-                            let keyString = this.openmct.objects.makeKeyString(object.identifier);
-                            let observersForObject = this.observers[keyString];
-
-                            if (observersForObject) {
-                                observersForObject.forEach(async (observer) => {
-                                    const updatedObject = await this.get(object.identifier);
-                                    observer(updatedObject);
-                                });
-                            }
-                        } catch (e) {
-                            //do nothing;
-                        }
-                    });
-                }
-            }
-
-        }
-
-        if (error && Object.keys(this.observers).length > 0) {
-            this.observeObjectChanges();
-        }
+        // start listening for events
+        couchEventSource.addEventListener('message', this.onEventMessage);
+        console.debug('⇿ Opened connection ⇿');
     }
 
     /**
@@ -556,7 +511,9 @@ class CouchObjectProvider {
     create(model) {
         let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
+        model = this.toPersistableModel(model);
         this.enqueueObject(key, model, intermediateResponse);
+
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
@@ -593,10 +550,30 @@ class CouchObjectProvider {
     update(model) {
         let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
+        model = this.toPersistableModel(model);
+
         this.enqueueObject(key, model, intermediateResponse);
         this.updateQueued(key);
 
         return intermediateResponse.promise;
+    }
+
+    toPersistableModel(model) {
+        //First make a copy so we are not mutating the provided model.
+        const persistableModel = JSON.parse(JSON.stringify(model));
+        //Delete the identifier. Couch manages namespaces dynamically.
+        delete persistableModel.identifier;
+
+        return persistableModel;
+    }
+
+    fromPersistedModel(model, key) {
+        model.identifier = {
+            namespace: this.namespace,
+            key
+        };
+
+        return model;
     }
 }
 

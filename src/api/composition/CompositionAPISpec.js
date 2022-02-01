@@ -87,6 +87,12 @@ define([
                 expect(composition).toEqual(jasmine.any(CompositionCollection));
             });
 
+            it('correctly reflects composability', function () {
+                expect(compositionAPI.supportsComposition(domainObject)).toBe(true);
+                delete domainObject.composition;
+                expect(compositionAPI.supportsComposition(domainObject)).toBe(false);
+            });
+
             it('loads composition from domain object', function () {
                 const listener = jasmine.createSpy('addListener');
                 composition.on('add', listener);

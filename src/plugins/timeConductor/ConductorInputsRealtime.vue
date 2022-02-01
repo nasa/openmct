@@ -115,6 +115,11 @@ export default {
             isUTCBased: timeSystem.isUTCBased
         };
     },
+    watch: {
+        keyString() {
+            this.setTimeContext();
+        }
+    },
     mounted() {
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
@@ -138,13 +143,11 @@ export default {
                 this.timeContext.off('bounds', this.handleNewBounds);
                 this.timeContext.off('clock', this.clearAllValidation);
                 this.timeContext.off('clockOffsets', this.setViewFromOffsets);
-                this.timeContext.off('timeContext', this.setTimeContext);
             }
         },
         setTimeContext() {
             this.stopFollowingTime();
             this.timeContext = this.openmct.time.getContextForView(this.keyString ? [{identifier: this.keyString}] : []);
-            this.timeContext.on('timeContext', this.setTimeContext);
             this.followTime();
         },
         handleNewBounds(bounds) {

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -94,6 +94,7 @@ export default {
             const typeName = this.type ? this.type.definition.name : `Unknown: ${this.domainObject.type}`;
             const timestampLabel = this.domainObject.modified ? 'Modified' : 'Created';
             const timestamp = this.domainObject.modified ? this.domainObject.modified : this.domainObject.created;
+            const notes = this.domainObject.notes;
 
             const details = [
                 {
@@ -105,6 +106,13 @@ export default {
                     value: typeName
                 }
             ];
+
+            if (notes) {
+                details.push({
+                    name: 'Notes',
+                    value: notes
+                });
+            }
 
             if (timestamp !== undefined) {
                 const formattedTimestamp = Moment.utc(timestamp)
@@ -164,6 +172,10 @@ export default {
                         path = [path];
                     }
 
+                    if (field.control === 'file-input') {
+                        path = [...path, 'name'];
+                    }
+
                     return {
                         name: field.name,
                         path
@@ -174,6 +186,10 @@ export default {
                     return {
                         name: field.name,
                         value: field.path.reduce((object, key) => {
+                            if (object === undefined) {
+                                return object;
+                            }
+
                             return object[key];
                         }, this.domainObject)
                     };

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -47,18 +47,19 @@ export default class Transaction {
     createDirtyObjectPromise(object, action) {
         return new Promise((resolve, reject) => {
             action(object)
-                .then(resolve)
-                .catch(reject)
-                .finally(() => {
+                .then((success) => {
                     this.dirtyObjects.delete(object);
-                });
+                    resolve(success);
+                })
+                .catch(reject);
         });
     }
 
-    getDirtyObject(keystring) {
+    getDirtyObject(identifier) {
         let dirtyObject;
         this.dirtyObjects.forEach(object => {
-            if (this.objectAPI.makeKeyString(object.identifier) === keystring) {
+            const areIdsEqual = this.objectAPI.areIdsEqual(object.identifier, identifier);
+            if (areIdsEqual) {
                 dirtyObject = object;
             }
         });

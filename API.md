@@ -27,7 +27,7 @@
       - [Request Strategies **draft**](#request-strategies-draft)
         - [`latest` request strategy](#latest-request-strategy)
         - [`minmax` request strategy](#minmax-request-strategy)
-      - [Telemetry Formats **draft**](#telemetry-formats-draft)
+      - [Telemetry Formats](#telemetry-formats)
         - [Registering Formats](#registering-formats)
       - [Telemetry Data](#telemetry-data)
         - [Telemetry Datums](#telemetry-datums)
@@ -52,6 +52,8 @@
     - [The URL Status Indicator](#the-url-status-indicator)
     - [Creating a Simple Indicator](#creating-a-simple-indicator)
     - [Custom Indicators](#custom-indicators)
+  - [Priority API](#priority-api)
+    - [Priority Types](#priority-types)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -247,16 +249,24 @@ To do so, use the `addRoot` method of the object API.
 eg.
 ```javascript
 openmct.objects.addRoot({
-        namespace: "example.namespace",
-        key: "my-key"
-    });
+    namespace: "example.namespace",
+    key: "my-key"
+},
+openmct.priority.HIGH);
 ```
 
-The `addRoot` function takes a single [object identifier](#domain-objects-and-identifiers) 
-as an argument. 
+The `addRoot` function takes a two arguments, the first can be an [object identifier](#domain-objects-and-identifiers) for a root level object, or an array of identifiers for root 
+level objects, or a function that returns a promise for an identifier or an array of root level objects, the second is a [priority](#priority-api) or numeric value.
 
-Root objects are loaded just like any other objects, i.e. via an object
-provider.
+When using the `getAll` method of the object API, they will be returned in order of priority.
+
+eg.
+```javascript
+openmct.objects.addRoot(identifier, openmct.priority.LOW); // low = -1000, will appear last in composition or tree
+openmct.objects.addRoot(otherIdentifier, openmct.priority.HIGH); // high = 1000, will appear first in composition or tree
+```
+
+Root objects are loaded just like any other objects, i.e. via an object provider.
 
 ## Object Providers
 
@@ -481,6 +491,8 @@ In this case, the `domain` is the currently selected time-system, and the start 
 
 A telemetry provider's `request` method should return a promise for an array of telemetry datums.  These datums must be sorted by `domain` in ascending order.
 
+The telemetry provider's `request` method will also return an object `signal` with an `aborted` property with a value `true` if the request has been aborted by user navigation. This can be used to trigger actions when a request has been aborted.
+
 #### Request Strategies **draft**
 
 To improve performance views may request a certain strategy for data reduction.  These are intended to improve visualization performance by reducing the amount of data needed to be sent to the client.  These strategies will be indicated by additional parameters in the request options.  You may choose to handle them or ignore them.  
@@ -523,7 +535,7 @@ example:
 
 MinMax queries are issued by plots, and may be issued by other types as well.  The aim is to reduce the amount of data returned but still faithfully represent the full extent of the data.  In order to do this, the view calculates the maximum data resolution it can display (i.e. the number of horizontal pixels in a plot) and sends that as the `size`.  The response should include at least one minimum and one maximum value per point of resolution.
 
-#### Telemetry Formats **draft**
+#### Telemetry Formats
 
 Telemetry format objects define how to interpret and display telemetry data. 
 They have a simple structure:
@@ -1048,4 +1060,26 @@ A completely custom indicator can be added by simply providing a DOM element to 
     openmct.indicators.add({
         element: domNode
     });
+```
+
+## Priority API
+
+Open MCT provides some built-in priority values that can be used in the application for view providers, indicators, root object order, and more.
+
+### Priority Types
+
+Currently, the Open MCT Priority API provides (type: numeric value):
+- HIGH: 1000
+- Default: 0
+- LOW: -1000
+
+View provider Example:
+
+``` javascript
+  class ViewProvider {
+    ...
+    priority() {
+        return openmct.priority.HIGH;
+    }
+}
 ```

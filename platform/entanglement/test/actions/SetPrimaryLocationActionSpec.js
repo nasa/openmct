@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -31,9 +31,15 @@ define(
             var testContext,
                 testModel,
                 testId,
-                mockLocationCapability;
+                mockLocationCapability,
+                openmct;
 
             beforeEach(function () {
+                openmct = {
+                    objects: {
+                        isPersistable: jasmine.createSpy('isPersistable')
+                    }
+                };
                 testId = "some-id";
                 testModel = { name: "some name" };
 
@@ -42,6 +48,7 @@ define(
                     ['setPrimaryLocation', 'getContextualLocation']
                 );
 
+                openmct.objects.isPersistable.and.returnValue(true);
                 mockLocationCapability.getContextualLocation.and.returnValue(testId);
 
                 testContext = {
@@ -55,14 +62,19 @@ define(
             });
 
             it("is applicable to objects with no location specified", function () {
-                expect(SetPrimaryLocation.appliesTo(testContext))
+                expect(SetPrimaryLocation.appliesTo(testContext, undefined, openmct))
                     .toBe(true);
                 testContext.domainObject.getModel.and.returnValue({
                     location: "something",
                     name: "some name"
                 });
-                expect(SetPrimaryLocation.appliesTo(testContext))
+                expect(SetPrimaryLocation.appliesTo(testContext, undefined, openmct))
                     .toBe(false);
+            });
+
+            it("checks object persistability", function () {
+                SetPrimaryLocation.appliesTo(testContext, undefined, openmct);
+                expect(openmct.objects.isPersistable).toHaveBeenCalled();
             });
 
             it("sets the location contextually when performed", function () {

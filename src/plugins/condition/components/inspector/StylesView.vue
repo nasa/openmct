@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -63,7 +63,7 @@
         <div class="c-inspect-styles__header">
             Conditional Object Styles
         </div>
-        <div class="c-inspect-styles__content c-inspect-styles__condition-set">
+        <div class="c-inspect-styles__content c-inspect-styles__condition-set c-inspect-styles__elem">
             <a v-if="conditionSetDomainObject"
                class="c-object-label"
                @click="navigateOrPreview"
@@ -85,6 +85,27 @@
                         @click="removeConditionSet"
                 ></button>
             </template>
+        </div>
+
+        <div v-if="isConditionWidget && allowEditing"
+             class="c-inspect-styles__elem c-inspect-styles__output-label-toggle"
+        >
+            <label class="c-toggle-switch">
+                <input
+                    type="checkbox"
+                    :checked="useConditionSetOutputAsLabel"
+                    @change="updateConditionSetOutputLabel"
+                >
+                <span class="c-toggle-switch__slider"></span>
+                <span class="c-toggle-switch__label">Use Condition Set output as label</span>
+            </label>
+        </div>
+        <div v-if="isConditionWidget && !allowEditing"
+             class="c-inspect-styles__elem"
+        >
+            <span class="c-toggle-switch__label">Condition Set output as label:
+                <span v-if="useConditionSetOutputAsLabel"> Yes</span><span v-else> No</span>
+            </span>
         </div>
 
         <FontStyleEditor
@@ -127,10 +148,8 @@ import FontStyleEditor from '@/ui/inspector/styles/FontStyleEditor.vue';
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionSetIdentifierForItem } from "@/plugins/condition/utils/styleUtils";
-import ConditionSetSelectorDialog from "@/plugins/condition/components/inspector/ConditionSetSelectorDialog.vue";
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
-import Vue from 'vue';
 
 const NON_SPECIFIC = '??';
 const NON_STYLEABLE_CONTAINER_TYPES = [
@@ -172,7 +191,8 @@ export default {
             selectedConditionId: '',
             items: [],
             domainObject: undefined,
-            consolidatedFontStyle: {}
+            consolidatedFontStyle: {},
+            useConditionSetOutputAsLabel: false
         };
     },
     computed: {
@@ -186,6 +206,11 @@ export default {
         },
         allowEditing() {
             return this.isEditing && !this.locked;
+        },
+        isConditionWidget() {
+            const hasConditionWidgetObjects = this.domainObjectsById && Object.values(this.domainObjectsById).some((object) => object.type === 'conditionWidget');
+
+            return (hasConditionWidgetObjects || (this.domainObject && this.domainObject.type === 'conditionWidget'));
         },
         styleableFontItems() {
             return this.selection.filter(selectionPath => {
@@ -204,28 +229,6 @@ export default {
 
                 return true;
             });
-        },
-        computedconsolidatedFontStyle() {
-            let consolidatedFontStyle;
-            const styles = [];
-
-            this.styleableFontItems.forEach(styleable => {
-                const fontStyle = this.getFontStyle(styleable[0]);
-
-                styles.push(fontStyle);
-            });
-
-            if (styles.length) {
-                const hasConsolidatedFontSize = styles.length && styles.every((fontStyle, i, arr) => fontStyle.fontSize === arr[0].fontSize);
-                const hasConsolidatedFont = styles.length && styles.every((fontStyle, i, arr) => fontStyle.font === arr[0].font);
-
-                consolidatedFontStyle = {
-                    fontSize: hasConsolidatedFontSize ? styles[0].fontSize : NON_SPECIFIC,
-                    font: hasConsolidatedFont ? styles[0].font : NON_SPECIFIC
-                };
-            }
-
-            return consolidatedFontStyle;
         },
         nonSpecificFontProperties() {
             if (!this.consolidatedFontStyle) {
@@ -247,6 +250,8 @@ export default {
         this.previewAction = new PreviewAction(this.openmct);
         this.isMultipleSelection = this.selection.length > 1;
         this.getObjectsAndItemsFromSelection();
+        this.useConditionSetOutputAsLabel = this.getConfigurationForLabel();
+
         if (!this.isMultipleSelection) {
             let objectStyles = this.getObjectStyles();
             this.initializeStaticStyle(objectStyles);
@@ -264,6 +269,12 @@ export default {
         this.stylesManager.on('styleSelected', this.applyStyleToSelection);
     },
     methods: {
+        getConfigurationForLabel() {
+            const childObjectUsesLabels = Object.values(this.domainObjectsById || {}).some((object) => object.configuration && object.configuration.useConditionSetOutputAsLabel);
+            const domainObjectUsesLabels = this.domainObject && this.domainObject.configuration && this.domainObject.configuration.useConditionSetOutputAsLabel;
+
+            return childObjectUsesLabels || domainObjectUsesLabels;
+        },
         getObjectStyles() {
             let objectStyles;
             if (this.domainObjectsById) {
@@ -487,13 +498,14 @@ export default {
 
                 this.conditions[conditionConfiguration.id] = conditionConfiguration;
                 let foundStyle = this.findStyleByConditionId(conditionConfiguration.id);
+                let output = { output: conditionConfiguration.configuration.output };
                 if (foundStyle) {
-                    foundStyle.style = Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles, foundStyle.style);
+                    foundStyle.style = Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles, foundStyle.style, output);
                     conditionalStyles.push(foundStyle);
                 } else {
                     conditionalStyles.splice(index, 0, {
                         conditionId: conditionConfiguration.id,
-                        style: Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles)
+                        style: Object.assign((this.canHide ? { isStyleInvisible: '' } : {}), this.initialStyles, output)
                     });
                 }
             });
@@ -537,52 +549,28 @@ export default {
             return this.conditions ? this.conditions[id] : {};
         },
         addConditionSet() {
-            let conditionSetDomainObject;
-            let self = this;
-            function handleItemSelection(item) {
-                if (item) {
-                    conditionSetDomainObject = item;
-                }
-            }
+            const conditionWidgetParent = this.openmct.router.path[1];
+            const formStructure = {
+                title: 'Select Condition Set',
+                sections: [{
+                    name: 'Location',
+                    cssClass: 'grows',
+                    rows: [{
+                        key: 'location',
+                        name: 'Condition Set',
+                        cssClass: 'grows',
+                        control: 'locator',
+                        required: true,
+                        parent: conditionWidgetParent,
+                        validate: data => data.value[0].type === 'conditionSet'
+                    }]
+                }]
+            };
 
-            function dismissDialog(overlay, initialize) {
-                overlay.dismiss();
-
-                if (initialize && conditionSetDomainObject) {
-                    self.conditionSetDomainObject = conditionSetDomainObject;
-                    self.conditionalStyles = [];
-                    self.initializeConditionalStyles();
-                }
-            }
-
-            let vm = new Vue({
-                components: {ConditionSetSelectorDialog},
-                provide: {
-                    openmct: this.openmct
-                },
-                data() {
-                    return {
-                        handleItemSelection
-                    };
-                },
-                template: '<condition-set-selector-dialog @conditionSetSelected="handleItemSelection"></condition-set-selector-dialog>'
-            }).$mount();
-
-            let overlay = this.openmct.overlays.overlay({
-                element: vm.$el,
-                size: 'small',
-                buttons: [
-                    {
-                        label: 'OK',
-                        emphasis: 'true',
-                        callback: () => dismissDialog(overlay, true)
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: () => dismissDialog(overlay, false)
-                    }
-                ],
-                onDestroy: () => vm.$destroy()
+            this.openmct.forms.showForm(formStructure).then(data => {
+                this.conditionSetDomainObject = data.location[0];
+                this.conditionalStyles = [];
+                this.initializeConditionalStyles();
             });
         },
         removeConditionSet() {
@@ -714,6 +702,12 @@ export default {
                     } else {
                         objectStyle.styles.forEach((conditionalStyle, index) => {
                             let style = {};
+                            if (domainObject.configuration.useConditionSetOutputAsLabel) {
+                                style.output = conditionalStyle.style.output;
+                            } else {
+                                style.output = '';
+                            }
+
                             Object.keys(item.applicableStyles).concat(['isStyleInvisible']).forEach(key => {
                                 style[key] = conditionalStyle.style[key];
                             });
@@ -730,16 +724,38 @@ export default {
                     }
                 });
             } else {
-                domainObjectStyles = {
-                    ...domainObjectStyles,
-                    ...objectStyle
-                };
+                if (domainObject.configuration.useConditionSetOutputAsLabel !== true) {
+                    let objectConditionStyle = JSON.parse(JSON.stringify(objectStyle));
+                    objectConditionStyle.styles.forEach((conditionalStyle) => {
+                        conditionalStyle.style.output = '';
+                    });
+                    domainObjectStyles = {
+                        ...domainObjectStyles,
+                        ...objectConditionStyle
+                    };
+                } else {
+                    domainObjectStyles = {
+                        ...domainObjectStyles,
+                        ...objectStyle
+                    };
+                }
             }
 
             return domainObjectStyles;
         },
         applySelectedConditionStyle(conditionId) {
             this.selectedConditionId = conditionId;
+            this.getAndPersistStyles();
+        },
+        persistLabelConfiguration() {
+            if (this.domainObjectsById) {
+                Object.values(this.domainObjectsById).forEach((object) => {
+                    this.openmct.objects.mutate(object, 'configuration.useConditionSetOutputAsLabel', this.useConditionSetOutputAsLabel);
+                });
+            } else {
+                this.openmct.objects.mutate(this.domainObject, 'configuration.useConditionSetOutputAsLabel', this.useConditionSetOutputAsLabel);
+            }
+
             this.getAndPersistStyles();
         },
         persist(domainObject, style) {
@@ -862,6 +878,10 @@ export default {
             const layoutItemType = selectionPath[0].context.layoutItem && selectionPath[0].context.layoutItem.type;
 
             return layoutItemType && layoutItemType !== 'subobject-view';
+        },
+        updateConditionSetOutputLabel(event) {
+            this.useConditionSetOutputAsLabel = event.target.checked === true;
+            this.persistLabelConfiguration();
         }
     }
 };

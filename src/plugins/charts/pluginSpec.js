@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -130,14 +130,6 @@ describe("the plugin", function () {
         let mockComposition;
 
         beforeEach(async () => {
-            const getFunc = openmct.$injector.get;
-            spyOn(openmct.$injector, "get")
-                .withArgs("exportImageService").and.returnValue({
-                    exportPNG: () => {},
-                    exportJPG: () => {}
-                })
-                .and.callFake(getFunc);
-
             barGraphObject = {
                 identifier: {
                     namespace: "",
@@ -283,7 +275,6 @@ describe("the plugin", function () {
     });
 
     describe("The bar graph composition policy", () => {
-
         it("allows composition for telemetry that contain at least one range", () => {
             const parent = {
                 "composition": [],
@@ -356,6 +347,50 @@ describe("the plugin", function () {
                     }, {
                         key: "some-other-key",
                         name: "Another attribute"
+                    }]
+                }
+            };
+            const composition = openmct.composition.get(parent);
+            expect(() => {
+                composition.add(testTelemetryObject);
+            }).toThrow();
+            expect(parent.composition.length).toBe(0);
+        });
+        it("disallows composition for condition sets", () => {
+            const parent = {
+                "composition": [],
+                "configuration": {},
+                "name": "Some Bar Graph",
+                "type": "telemetry.plot.bar-graph",
+                "location": "mine",
+                "modified": 1631005183584,
+                "persisted": 1631005183502,
+                "identifier": {
+                    "namespace": "",
+                    "key": "b78e7e23-f2b8-4776-b1f0-3ff778f5c8a9"
+                }
+            };
+            const testTelemetryObject = {
+                identifier: {
+                    namespace: "",
+                    key: "test-object"
+                },
+                type: "conditionSet",
+                name: "Test Object",
+                telemetry: {
+                    values: [{
+                        key: "some-key",
+                        name: "Some attribute",
+                        format: "enum",
+                        hints: {
+                            domain: 1
+                        }
+                    }, {
+                        key: "some-other-key",
+                        name: "Another attribute",
+                        hints: {
+                            range: 1
+                        }
                     }]
                 }
             };

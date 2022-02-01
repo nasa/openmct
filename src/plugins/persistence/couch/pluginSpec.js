@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,7 +28,7 @@ import {
 describe('the plugin', () => {
     let openmct;
     let provider;
-    let testPath = '/test/db';
+    let testPath = 'http://localhost:9990/openmct';
     let options;
     let mockIdentifierService;
     let mockDomainObject;
@@ -74,6 +74,10 @@ describe('the plugin', () => {
         spyOn(provider, 'get').and.callThrough();
         spyOn(provider, 'create').and.callThrough();
         spyOn(provider, 'update').and.callThrough();
+        spyOn(provider, 'startSharedWorker').and.callThrough();
+        spyOn(provider, 'fetchChanges').and.callThrough();
+        spyOn(provider, 'onSharedWorkerMessage').and.callThrough();
+        spyOn(provider, 'onEventMessage').and.callThrough();
     });
 
     afterEach(() => {
@@ -102,21 +106,81 @@ describe('the plugin', () => {
             expect(result.identifier.key).toEqual(mockDomainObject.identifier.key);
         });
 
-        it('creates an object', async () => {
+        it('creates an object and starts shared worker', async () => {
             const result = await openmct.objects.save(mockDomainObject);
             expect(provider.create).toHaveBeenCalled();
+            expect(provider.startSharedWorker).toHaveBeenCalled();
             expect(result).toBeTrue();
         });
 
-        xit('updates an object', async () => {
+        it('updates an object', (done) => {
+            openmct.objects.save(mockDomainObject).then((result) => {
+                expect(result).toBeTrue();
+                expect(provider.create).toHaveBeenCalled();
+                //Set modified timestamp it detects a change and persists the updated model.
+                mockDomainObject.modified = mockDomainObject.persisted + 1;
+                openmct.objects.save(mockDomainObject).then((updatedResult) => {
+                    expect(updatedResult).toBeTrue();
+                    expect(provider.update).toHaveBeenCalled();
+                    done();
+                });
+            });
+        });
+
+        it('works without Shared Workers', async () => {
+            let sharedWorkerCallback;
+            const cachedSharedWorker = window.SharedWorker;
+            window.SharedWorker = undefined;
+
+            const mockEventSource = {
+                addEventListener: (topic, addedListener) => {
+                    sharedWorkerCallback = addedListener;
+                },
+                removeEventListener: () => {
+                    sharedWorkerCallback = null;
+                }
+            };
+            const cachedEventSource = window.EventSource;
+
+            window.EventSource = function (url) {
+                return mockEventSource;
+            };
+
+            mockDomainObject.id = mockDomainObject.identifier.key;
+
+            const fakeUpdateEvent = {
+                data: JSON.stringify(mockDomainObject)
+            };
+
+            // eslint-disable-next-line require-await
+            provider.request = async function (subPath, method, body, signal) {
+                return {
+                    body: fakeUpdateEvent,
+                    ok: true,
+                    id: mockDomainObject.id,
+                    rev: 5
+                };
+            };
+
             const result = await openmct.objects.save(mockDomainObject);
             expect(result).toBeTrue();
             expect(provider.create).toHaveBeenCalled();
+            expect(provider.startSharedWorker).not.toHaveBeenCalled();
+
             //Set modified timestamp it detects a change and persists the updated model.
-            mockDomainObject.modified = Date.now();
+            mockDomainObject.modified = mockDomainObject.persisted + 1;
             const updatedResult = await openmct.objects.save(mockDomainObject);
+            openmct.objects.observe(mockDomainObject, '*', (updatedObject) => {
+            });
+
             expect(updatedResult).toBeTrue();
             expect(provider.update).toHaveBeenCalled();
+            expect(provider.fetchChanges).toHaveBeenCalled();
+            sharedWorkerCallback(fakeUpdateEvent);
+            expect(provider.onEventMessage).toHaveBeenCalled();
+
+            window.SharedWorker = cachedSharedWorker;
+            window.EventSource = cachedEventSource;
         });
     });
     describe('batches requests', () => {
@@ -198,7 +262,9 @@ describe('the plugin', () => {
             await Promise.all(openmct.objects.search('test'));
             const requestUrl = fetch.calls.mostRecent().args[0];
 
-            expect(fetch).toHaveBeenCalled();
+            // we only want one call to fetch, not 2!
+            // see https://github.com/nasa/openmct/issues/4667
+            expect(fetch).toHaveBeenCalledTimes(1);
             expect(requestUrl.endsWith('_find')).toBeTrue();
         });
 
@@ -209,6 +275,5 @@ describe('the plugin', () => {
             expect(requestPayload).toBeDefined();
             expect(requestPayload.selector.model.name.$regex).toEqual('(?i)test');
         });
-
     });
 });
