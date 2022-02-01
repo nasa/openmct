@@ -89,6 +89,9 @@
              :class="{'paused unnsynced': isPaused && !isFixed,'stale':false,'selectable': isSelectable, 'pannable': altPressed && zoomFactor > 1}"
              @click="expand"
         >
+            <div class="c-imagery__hints"
+                 v-if="zoomFactor > 1"
+            >Alt-drag to pan</div>
             <div ref="focusedImageWrapper"
                  class="image-wrapper"
                  :style="{

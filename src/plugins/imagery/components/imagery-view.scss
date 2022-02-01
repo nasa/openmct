@@ -47,6 +47,18 @@
         }
     }
 
+    &__hints {
+        $m: $interiorMargin;
+        background: rgba(black, 0.2);
+        border-radius: $smallCr;
+        padding: 2px $interiorMargin;
+        position: absolute;
+        right: $m;
+        top: $m;
+        opacity: 0.9;
+        z-index: 2;
+    }
+
     &__control-bar,
     &__time {
         display: flex;
