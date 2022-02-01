@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,14 +19,13 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import { createOpenMct, resetApplicationState } from 'utils/testing';
 import TelemetryAPI from './TelemetryAPI';
 const { TelemetryCollection } = require("./TelemetryCollection");
 
 describe('Telemetry API', function () {
-    const NO_PROVIDER = 'No provider found';
     let openmct;
     let telemetryAPI;
-    let mockTypeService;
 
     beforeEach(function () {
         openmct = {
@@ -34,14 +33,11 @@ describe('Telemetry API', function () {
                 'timeSystem',
                 'bounds'
             ]),
-            $injector: jasmine.createSpyObj('injector', [
+            types: jasmine.createSpyObj('typeRegistry', [
                 'get'
             ])
         };
-        mockTypeService = jasmine.createSpyObj('typeService', [
-            'getType'
-        ]);
-        openmct.$injector.get.and.returnValue(mockTypeService);
+
         openmct.time.timeSystem.and.returnValue({key: 'system'});
         openmct.time.bounds.and.returnValue({
             start: 0,
@@ -69,6 +65,12 @@ describe('Telemetry API', function () {
                 },
                 type: 'sample-type'
             };
+
+            openmct.notifications = {
+                error: () => {
+                    console.log('sample error notification');
+                }
+            };
         });
 
         it('provides consistent results without providers', function (done) {
@@ -76,12 +78,11 @@ describe('Telemetry API', function () {
 
             expect(unsubscribe).toEqual(jasmine.any(Function));
 
-            telemetryAPI.request(domainObject).then(
-                () => {},
-                (error) => {
-                    expect(error).toBe(NO_PROVIDER);
-                }
-            ).finally(done);
+            telemetryAPI.request(domainObject)
+                .then((data) => {
+                    expect(data).toEqual([]);
+                })
+                .finally(done);
         });
 
         it('skips providers that do not match', function (done) {
@@ -101,8 +102,6 @@ describe('Telemetry API', function () {
                 expect(telemetryProvider.supportsRequest)
                     .toHaveBeenCalledWith(domainObject, jasmine.any(Object));
                 expect(telemetryProvider.request).not.toHaveBeenCalled();
-            }, (error) => {
-                expect(error).toBe(NO_PROVIDER);
             }).finally(done);
         });
 
@@ -268,9 +267,11 @@ describe('Telemetry API', function () {
             telemetryAPI.addProvider(telemetryProvider);
 
             telemetryAPI.request(domainObject).then(() => {
+                const { signal } = new AbortController();
                 expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
                     jasmine.any(Object),
                     {
+                        signal,
                         start: 0,
                         end: 1,
                         domain: 'system'
@@ -280,6 +281,7 @@ describe('Telemetry API', function () {
                 expect(telemetryProvider.request).toHaveBeenCalledWith(
                     jasmine.any(Object),
                     {
+                        signal,
                         start: 0,
                         end: 1,
                         domain: 'system'
@@ -293,6 +295,7 @@ describe('Telemetry API', function () {
                     expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
                         jasmine.any(Object),
                         {
+                            signal,
                             start: 0,
                             end: 1,
                             domain: 'system'
@@ -302,6 +305,7 @@ describe('Telemetry API', function () {
                     expect(telemetryProvider.request).toHaveBeenCalledWith(
                         jasmine.any(Object),
                         {
+                            signal,
                             start: 0,
                             end: 1,
                             domain: 'system'
@@ -322,12 +326,14 @@ describe('Telemetry API', function () {
                 end: 30,
                 domain: 'someDomain'
             }).then(() => {
+                const { signal } = new AbortController();
                 expect(telemetryProvider.supportsRequest).toHaveBeenCalledWith(
                     jasmine.any(Object),
                     {
                         start: 20,
                         end: 30,
-                        domain: 'someDomain'
+                        domain: 'someDomain',
+                        signal
                     }
                 );
 
@@ -336,7 +342,8 @@ describe('Telemetry API', function () {
                     {
                         start: 20,
                         end: 30,
-                        domain: 'someDomain'
+                        domain: 'someDomain',
+                        signal
                     }
                 );
 
@@ -347,7 +354,7 @@ describe('Telemetry API', function () {
     describe('metadata', function () {
         let mockMetadata = {};
         let mockObjectType = {
-            typeDef: {}
+            definition: {}
         };
         beforeEach(function () {
             telemetryAPI.addProvider({
@@ -359,7 +366,7 @@ describe('Telemetry API', function () {
                     return mockMetadata;
                 }
             });
-            mockTypeService.getType.and.returnValue(mockObjectType);
+            openmct.types.get.and.returnValue(mockObjectType);
         });
 
         it('respects explicit priority', function () {
@@ -578,7 +585,7 @@ describe('Telemetry API', function () {
         let domainObject;
         let mockMetadata = {};
         let mockObjectType = {
-            typeDef: {}
+            definition: {}
         };
 
         beforeEach(function () {
@@ -592,7 +599,7 @@ describe('Telemetry API', function () {
                     return mockMetadata;
                 }
             });
-            mockTypeService.getType.and.returnValue(mockObjectType);
+            openmct.types.get.and.returnValue(mockObjectType);
             domainObject = {
                 identifier: {
                     key: 'a',
@@ -611,3 +618,48 @@ describe('Telemetry API', function () {
     });
 });
 
+describe('Telemetery', () => {
+    let openmct;
+    let telemetryProvider;
+    let telemetryAPI;
+    let watchedSignal;
+
+    beforeEach(() => {
+        openmct = createOpenMct();
+        openmct.install(openmct.plugins.MyItems());
+
+        telemetryAPI = openmct.telemetry;
+
+        telemetryProvider = {
+            request: (obj, options) => {
+                watchedSignal = options.signal;
+
+                return Promise.resolve();
+            }
+        };
+        spyOn(telemetryAPI, 'findRequestProvider').and.returnValue(telemetryProvider);
+    });
+
+    afterEach(() => {
+        return resetApplicationState(openmct);
+    });
+
+    it('should not abort request without navigation', function (done) {
+        telemetryAPI.addProvider(telemetryProvider);
+
+        telemetryAPI.request({}).finally(() => {
+            expect(watchedSignal.aborted).toBe(false);
+            done();
+        });
+    });
+
+    it('should abort request on navigation', function (done) {
+        telemetryAPI.addProvider(telemetryProvider);
+
+        telemetryAPI.request({}).finally(() => {
+            expect(watchedSignal.aborted).toBe(true);
+            done();
+        });
+        openmct.router.doPathChange('newPath', 'oldPath');
+    });
+});

@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -37,6 +37,7 @@ export function createOpenMct(timeSystemOptions = DEFAULT_TIME_OPTIONS) {
     const openmct = new MCT();
     openmct.install(openmct.plugins.LocalStorage());
     openmct.install(openmct.plugins.UTCTimeSystem());
+    openmct.setAssetPath('/base');
 
     const timeSystemKey = timeSystemOptions.timeSystemKey;
     const start = timeSystemOptions.bounds.start;

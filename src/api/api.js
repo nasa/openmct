@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,44 +21,50 @@
  *****************************************************************************/
 
 define([
-    './time/TimeAPI',
-    './objects/ObjectAPI',
-    './composition/CompositionAPI',
-    './types/TypeRegistry',
-    './telemetry/TelemetryAPI',
-    './indicators/IndicatorAPI',
-    './notifications/NotificationAPI',
-    './Editor',
-    './menu/MenuAPI',
     './actions/ActionsAPI',
+    './composition/CompositionAPI',
+    './Editor',
+    './forms/FormsAPI',
+    './indicators/IndicatorAPI',
+    './menu/MenuAPI',
+    './notifications/NotificationAPI',
+    './objects/ObjectAPI',
+    './priority/PriorityAPI',
     './status/StatusAPI',
-    './priority/PriorityAPI'
+    './telemetry/TelemetryAPI',
+    './time/TimeAPI',
+    './types/TypeRegistry',
+    './user/UserAPI'
 ], function (
-    TimeAPI,
-    ObjectAPI,
-    CompositionAPI,
-    TypeRegistry,
-    TelemetryAPI,
-    IndicatorAPI,
-    NotificationAPI,
-    EditorAPI,
-    MenuAPI,
     ActionsAPI,
+    CompositionAPI,
+    EditorAPI,
+    FormsAPI,
+    IndicatorAPI,
+    MenuAPI,
+    NotificationAPI,
+    ObjectAPI,
+    PriorityAPI,
     StatusAPI,
-    PriorityAPI
+    TelemetryAPI,
+    TimeAPI,
+    TypeRegistry,
+    UserAPI
 ) {
     return {
-        TimeAPI: TimeAPI.default,
-        ObjectAPI: ObjectAPI,
-        CompositionAPI: CompositionAPI,
-        TypeRegistry: TypeRegistry,
-        TelemetryAPI: TelemetryAPI,
-        IndicatorAPI: IndicatorAPI,
-        NotificationAPI: NotificationAPI.default,
-        EditorAPI: EditorAPI,
-        MenuAPI: MenuAPI.default,
         ActionsAPI: ActionsAPI.default,
+        CompositionAPI: CompositionAPI,
+        EditorAPI: EditorAPI,
+        FormsAPI: FormsAPI,
+        IndicatorAPI: IndicatorAPI,
+        MenuAPI: MenuAPI.default,
+        NotificationAPI: NotificationAPI.default,
+        ObjectAPI: ObjectAPI,
+        PriorityAPI: PriorityAPI.default,
         StatusAPI: StatusAPI.default,
-        PriorityAPI: PriorityAPI.default
+        TelemetryAPI: TelemetryAPI,
+        TimeAPI: TimeAPI.default,
+        TypeRegistry: TypeRegistry,
+        UserAPI: UserAPI.default
     };
 });

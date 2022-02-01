@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -23,14 +23,14 @@
 import PlanViewProvider from './PlanViewProvider';
 import PlanInspectorViewProvider from "./inspector/PlanInspectorViewProvider";
 
-export default function () {
+export default function (configuration) {
     return function install(openmct) {
         openmct.types.addType('plan', {
             name: 'Plan',
             key: 'plan',
-            description: 'A plan',
+            description: 'A configurable timeline-like view for a compatible mission plan file.',
             creatable: true,
-            cssClass: 'icon-calendar',
+            cssClass: 'icon-plan',
             form: [
                 {
                     name: 'Upload Plan (JSON File)',
@@ -38,7 +38,10 @@ export default function () {
                     control: 'file-input',
                     required: true,
                     text: 'Select File...',
-                    type: 'application/json'
+                    type: 'application/json',
+                    property: [
+                        "selectFile"
+                    ]
                 }
             ],
             initialize: function (domainObject) {

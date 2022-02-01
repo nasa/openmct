@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Open MCT, Copyright (c) 2014-2021, United States Government
+* Open MCT, Copyright (c) 2014-2022, United States Government
 * as represented by the Administrator of the National Aeronautics and Space
 * Administration. All rights reserved.
 *
@@ -24,40 +24,31 @@
 <div ref="timelineHolder"
      class="c-timeline-holder"
 >
-    <div class="c-timeline">
-        <div v-for="timeSystemItem in timeSystems"
-             :key="timeSystemItem.timeSystem.key"
-             class="u-contents"
-        >
-            <swim-lane>
-                <template slot="label">
-                    {{ timeSystemItem.timeSystem.name }}
-                </template>
-                <template slot="object">
-                    <timeline-axis :bounds="timeSystemItem.bounds"
-                                   :time-system="timeSystemItem.timeSystem"
-                                   :content-height="height"
-                                   :rendering-engine="'svg'"
-                    />
-                </template>
+    <swim-lane v-for="timeSystemItem in timeSystems"
+               :key="timeSystemItem.timeSystem.key"
+    >
+        <template slot="label">
+            {{ timeSystemItem.timeSystem.name }}
+        </template>
+        <template slot="object">
+            <timeline-axis :bounds="timeSystemItem.bounds"
+                           :time-system="timeSystemItem.timeSystem"
+                           :content-height="height"
+                           :rendering-engine="'svg'"
+            />
+        </template>
 
-            </swim-lane>
-        </div>
+    </swim-lane>
 
-        <div ref="contentHolder"
-             class="u-contents c-timeline__objects c-timeline__content-holder"
-        >
-            <div
-                v-for="item in items"
-                :key="item.keyString"
-                class="u-contents c-timeline__content"
-            >
-                <timeline-object-view
-                    class="u-contents"
-                    :item="item"
-                />
-            </div>
-        </div>
+    <div ref="contentHolder"
+         class="c-timeline__objects"
+    >
+        <timeline-object-view
+            v-for="item in items"
+            :key="item.keyString"
+            class="c-timeline__content"
+            :item="item"
+        />
     </div>
 </div>
 </template>
@@ -170,14 +161,12 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
-            this.timeContext.on('timeContext', this.setTimeContext);
             this.updateViewBounds(this.timeContext.bounds());
             this.timeContext.on('bounds', this.updateViewBounds);
         },
         stopFollowingTimeContext() {
             if (this.timeContext) {
                 this.timeContext.off('bounds', this.updateViewBounds);
-                this.timeContext.off('timeContext', this.setTimeContext);
             }
         }
     }

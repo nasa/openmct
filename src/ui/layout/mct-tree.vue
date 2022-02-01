@@ -1,6 +1,12 @@
 <template>
-<div class="c-tree-and-search">
-
+<div
+    ref="treeContainer"
+    class="c-tree-and-search"
+    :class="{
+        'c-selector': isSelectorTree
+    }"
+    :style="treeHeight"
+>
     <div
         ref="search"
         class="c-tree-and-search__search"
@@ -72,6 +78,8 @@
                     v-for="(treeItem, index) in visibleItems"
                     :key="treeItem.navigationPath"
                     :node="treeItem"
+                    :is-selector-tree="isSelectorTree"
+                    :selected-item="selectedItem"
                     :active-search="activeSearch"
                     :left-offset="!activeSearch ? treeItem.leftOffset : '0px'"
                     :is-new="treeItem.isNew"
@@ -82,7 +90,8 @@
                     :loading-items="treeItemLoading"
                     @tree-item-mounted="scrollToCheck($event)"
                     @tree-item-destroyed="removeCompositionListenerFor($event)"
-                    @navigation-click="treeItemAction(treeItem, $event)"
+                    @tree-item-action="treeItemAction(treeItem, $event)"
+                    @tree-item-selection="treeItemSelection(treeItem)"
                 />
                 <!-- main loading -->
                 <div
@@ -113,9 +122,9 @@ import search from '../components/search.vue';
 
 const ITEM_BUFFER = 25;
 const LOCAL_STORAGE_KEY__TREE_EXPANDED = 'mct-tree-expanded';
-const RETURN_ALL_DESCENDANTS = true;
 const SORT_MY_ITEMS_ALPH_ASC = true;
 const TREE_ITEM_INDENT_PX = 18;
+const LOCATOR_ITEM_COUNT_HEIGHT = 10; // how many tree items to make the locator selection box show
 
 export default {
     name: 'MctTree',
@@ -125,13 +134,27 @@ export default {
     },
     inject: ['openmct'],
     props: {
+        isSelectorTree: {
+            type: Boolean,
+            required: false,
+            default() {
+                return false;
+            }
+        },
+        initialSelection: {
+            type: Object,
+            required: false,
+            default() {
+                return {};
+            }
+        },
         syncTreeNavigation: {
             type: Boolean,
-            required: true
+            required: false
         },
         resetTreeNavigation: {
             type: Boolean,
-            required: true
+            required: false
         }
     },
     data() {
@@ -150,7 +173,8 @@ export default {
             itemHeight: 27,
             itemOffset: 0,
             activeSearch: false,
-            mainTreeTopMargin: undefined
+            mainTreeTopMargin: undefined,
+            selectedItem: {}
         };
     },
     computed: {
@@ -180,6 +204,13 @@ export default {
         },
         showNoSearchResults() {
             return this.searchValue && this.searchResultItems.length === 0 && !this.searchLoading;
+        },
+        treeHeight() {
+            if (!this.isSelectorTree) {
+                return {};
+            } else {
+                return { height: this.itemHeight * LOCATOR_ITEM_COUNT_HEIGHT + 'px' };
+            }
         }
     },
     watch: {
@@ -224,7 +255,14 @@ export default {
         await this.loadRoot();
         this.isLoading = false;
 
-        await this.syncTreeOpenItems();
+        if (!this.isSelectorTree) {
+            await this.syncTreeOpenItems();
+        } else {
+            const objectPath = await this.openmct.objects.getOriginalPath(this.initialSelection.identifier);
+            const navigationPath = this.buildNavigationPath(objectPath);
+
+            this.openAndScrollTo(navigationPath);
+        }
     },
     created() {
         this.getSearchResults = _.debounce(this.getSearchResults, 400);
@@ -239,7 +277,6 @@ export default {
     methods: {
         async initialize() {
             this.isLoading = true;
-            this.openmct.$injector.get('searchService');
             this.getSavedOpenItems();
             this.treeResizeObserver = new ResizeObserver(this.handleTreeResize);
             this.treeResizeObserver.observe(this.$el);
@@ -266,6 +303,10 @@ export default {
             } else {
                 this.openTreeItem(parentItem);
             }
+        },
+        treeItemSelection(item) {
+            this.selectedItem = item;
+            this.$emit('tree-item-selection', item);
         },
         async openTreeItem(parentItem) {
             let parentPath = parentItem.navigationPath;
@@ -360,6 +401,10 @@ export default {
             }
         },
         openAndScrollTo(navigationPath) {
+            if (navigationPath.includes('/ROOT')) {
+                navigationPath = navigationPath.split('/ROOT').join('');
+            }
+
             let idArray = navigationPath.split('/');
             let fullPathArray = [];
             let pathsToOpen;
@@ -369,7 +414,6 @@ export default {
             // skip root
             idArray.splice(0, 2);
             idArray[0] = 'browse/' + idArray[0];
-
             idArray.reduce((parentPath, childPath) => {
                 let fullPath = [parentPath, childPath].join('/');
 
@@ -385,7 +429,11 @@ export default {
 
                 return this.openTreeItem(this.getTreeItemByPath(childPath));
 
-            }, Promise.resolve());
+            }, Promise.resolve()).then(() => {
+                if (this.isSelectorTree) {
+                    this.treeItemSelection(this.getTreeItemByPath(navigationPath));
+                }
+            });
         },
         scrollToCheck(navigationPath) {
             if (this.scrollToPath && this.scrollToPath === navigationPath) {
@@ -432,38 +480,47 @@ export default {
 
             return scrollTopAmount >= treeStart && scrollTopAmount < treeEnd;
         },
-        sortNameDescending(a, b) {
+        sortNameAscending(a, b) {
             // sorting tree children items
             if (!(a.name && b.name)) {
-                if (a.object.name > b.object.name) {
+                if (a.object.name.toLowerCase()
+                    > b.object.name.toLowerCase()) {
                     return 1;
                 }
 
-                if (b.object.name > a.object.name) {
+                if (b.object.name.toLowerCase()
+                    > a.object.name.toLowerCase()) {
                     return -1;
                 }
             }
 
-            // sorting compositon items
-            if (a.name > b.name) {
+            // sorting composition items
+            if (!a.name || !b.name) {
+                return 0;
+            }
+
+            if (a.name.toLowerCase()
+                > b.name.toLowerCase()) {
                 return 1;
             }
 
-            if (b.name > a.name) {
+            if (b.name.toLowerCase()
+                > a.name.toLowerCase()) {
                 return -1;
             }
 
             return 0;
         },
-
+        isSortable(parentObjectPath) {
+            // determine if any part of the parent's path includes a key value of mine; aka My Items
+            return Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
+        },
         async loadAndBuildTreeItemsFor(domainObject, parentObjectPath, abortSignal) {
             let collection = this.openmct.composition.get(domainObject);
             let composition = await collection.load(abortSignal);
-            // determine if any part of the parent's path includes a key value of mine; aka My Items
-            const isNestedInMyItems = Boolean(parentObjectPath.find(path => path.identifier.key === 'mine'));
 
-            if (SORT_MY_ITEMS_ALPH_ASC && isNestedInMyItems) {
-                const sortedComposition = composition.sort(this.sortNameDescending);
+            if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentObjectPath)) {
+                const sortedComposition = composition.slice().sort(this.sortNameAscending);
                 composition = sortedComposition;
             }
 
@@ -509,17 +566,35 @@ export default {
         },
         compositionAddHandler(navigationPath) {
             return (domainObject) => {
-                let parentItem = this.getTreeItemByPath(navigationPath);
-                let newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
-                let allDescendants = this.getChildrenInTreeFor(parentItem, RETURN_ALL_DESCENDANTS);
-                let afterItem = allDescendants.length ? allDescendants.pop() : parentItem;
+                const parentItem = this.getTreeItemByPath(navigationPath);
+                const newItem = this.buildTreeItem(domainObject, parentItem.objectPath, true);
+                const descendants = this.getChildrenInTreeFor(parentItem, true);
+                const directDescendants = this.getChildrenInTreeFor(parentItem);
 
-                this.addItemToTreeAfter(newItem, afterItem);
-                const isNestedInMyItems = Boolean(parentItem.objectPath && parentItem.objectPath.find(path => path.identifier.key === 'mine'));
+                if (directDescendants.length === 0) {
+                    this.addItemToTreeAfter(newItem, parentItem);
 
-                if (SORT_MY_ITEMS_ALPH_ASC && isNestedInMyItems) {
-                    this.sortTreeComposition(this.sortNameDescending, navigationPath);
+                    return;
                 }
+
+                if (SORT_MY_ITEMS_ALPH_ASC && this.isSortable(parentItem.objectPath)) {
+                    const newItemIndex = directDescendants
+                        .findIndex(descendant => this.sortNameAscending(descendant, newItem) > 0);
+                    const shouldInsertFirst = newItemIndex === 0;
+                    const shouldInsertLast = newItemIndex === -1;
+
+                    if (shouldInsertFirst) {
+                        this.addItemToTreeAfter(newItem, parentItem);
+                    } else if (shouldInsertLast) {
+                        this.addItemToTreeAfter(newItem, descendants.pop());
+                    } else {
+                        this.addItemToTreeBefore(newItem, directDescendants[newItemIndex]);
+                    }
+
+                    return;
+                }
+
+                this.addItemToTreeAfter(newItem, descendants.pop());
             };
         },
         compositionRemoveHandler(navigationPath) {
@@ -551,17 +626,18 @@ export default {
             const removeIndex = this.getTreeItemIndex(item.navigationPath);
             this.treeItems.splice(removeIndex, 1);
         },
-        sortTreeComposition(algorithem, parentPath) {
-            const parentIndex = this.getTreeItemIndex(parentPath);
-            const parentItem = this.treeItems[parentIndex];
+        addItemToTreeBefore(addItem, beforeItem) {
+            const addIndex = this.getTreeItemIndex(beforeItem.navigationPath);
 
-            const allDescendants = this.getChildrenInTreeFor(parentItem);
-            const sortedChildren = allDescendants.sort(algorithem);
-            this.treeItems.splice(parentIndex + 1, allDescendants.length, ...sortedChildren);
+            this.addItemToTree(addItem, addIndex);
         },
         addItemToTreeAfter(addItem, afterItem) {
             const addIndex = this.getTreeItemIndex(afterItem.navigationPath);
-            this.treeItems.splice(addIndex + 1, 0, addItem);
+
+            this.addItemToTree(addItem, addIndex + 1);
+        },
+        addItemToTree(addItem, index) {
+            this.treeItems.splice(index, 0, addItem);
 
             if (this.isTreeItemOpen(addItem)) {
                 this.openTreeItem(addItem);
@@ -592,12 +668,15 @@ export default {
             // to cancel an active searches if necessary
             this.abortSearchController = new AbortController();
             const abortSignal = this.abortSearchController.signal;
+            const searchPromises = this.openmct.objects.search(this.searchValue, abortSignal);
 
-            const promises = this.openmct.objects.search(this.searchValue, abortSignal)
-                .map(promise => promise
-                    .then(results => this.aggregateSearchResults(results, abortSignal)));
+            searchPromises.map(promise => promise
+                .then(results => {
+                    this.aggregateSearchResults(results, abortSignal);
+                }
+                ));
 
-            Promise.all(promises).catch(reason => {
+            Promise.all(searchPromises).catch(reason => {
                 // search aborted
             }).finally(() => {
                 this.searchLoading = false;
@@ -692,18 +771,26 @@ export default {
 
                 let checkHeights = () => {
                     let treeTopMargin = this.getElementStyleValue(this.$refs.mainTree, 'marginTop');
+                    let paddingOffset = 0;
+
                     if (
                         this.$el
                         && this.$refs.search
                         && this.$refs.mainTree
+                        && this.$refs.treeContainer
                         && this.$refs.dummyItem
                         && this.$el.offsetHeight !== 0
                         && treeTopMargin > 0
                     ) {
+                        if (this.isSelectorTree) {
+                            paddingOffset = this.getElementStyleValue(this.$refs.treeContainer, 'padding');
+                        }
+
                         this.mainTreeTopMargin = treeTopMargin;
                         this.mainTreeHeight = this.$el.offsetHeight
                             - this.$refs.search.offsetHeight
-                            - this.mainTreeTopMargin;
+                            - this.mainTreeTopMargin
+                            - (paddingOffset * 2);
                         this.itemHeight = this.getElementStyleValue(this.$refs.dummyItem, 'height');
 
                         resolve();
@@ -754,10 +841,18 @@ export default {
             return Number(styleString.slice(0, index));
         },
         getSavedOpenItems() {
+            if (this.isSelectorTree) {
+                return;
+            }
+
             let openItems = localStorage.getItem(LOCAL_STORAGE_KEY__TREE_EXPANDED);
             this.openTreeItems = openItems ? JSON.parse(openItems) : [];
         },
         setSavedOpenItems() {
+            if (this.isSelectorTree) {
+                return;
+            }
+
             localStorage.setItem(LOCAL_STORAGE_KEY__TREE_EXPANDED, JSON.stringify(this.openTreeItems));
         },
         handleTreeResize() {

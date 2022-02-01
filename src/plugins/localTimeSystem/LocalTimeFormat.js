@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2015, United States Government
+ * Open MCT Web, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -49,6 +49,7 @@ define([
      * @memberof platform/commonUI/formats
      */
     function LocalTimeFormat() {
+        this.key = 'local-format';
     }
 
     /**

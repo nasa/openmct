@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,7 +21,7 @@
  *****************************************************************************/
 import _ from 'lodash';
 const INSIDE_EDIT_PATH_BLACKLIST = ["copy", "follow", "link", "locate", "move", "link"];
-const OUTSIDE_EDIT_PATH_BLACKLIST = ["copy", "follow", "properties", "move", "link", "remove", "locate"];
+const OUTSIDE_EDIT_PATH_BLACKLIST = ["copy", "follow", "move", "link", "remove", "locate"];
 
 export default class LegacyContextMenuAction {
     constructor(openmct, LegacyAction) {
@@ -60,9 +60,10 @@ export default class LegacyContextMenuAction {
 
     appliesTo(objectPath) {
         let legacyObject = this.openmct.legacyObject(objectPath);
+        let view;
 
         return (this.LegacyAction.appliesTo === undefined
-                || this.LegacyAction.appliesTo({domainObject: legacyObject}))
+                || this.LegacyAction.appliesTo({domainObject: legacyObject}, view, this.openmct))
                 && !this.isBlacklisted(objectPath);
     }
 

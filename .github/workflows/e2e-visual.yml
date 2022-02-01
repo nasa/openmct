@@ -1,0 +1,24 @@
+name: "e2e-visual"
+on:
+  workflow_dispatch:
+  pull_request:
+    types: 
+      - labeled
+  schedule:
+    - cron: '28 21 * * 1-5'
+
+jobs:
+  e2e-visual:
+    if: ${{ github.event.label.name == 'pr:visual' }} || ${{ github.event.workflow_dispatch }} || ${{ github.event.schedule }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npx playwright install-deps
+      - run: npm install
+      - name: Run the e2e visual tests
+        run: npm run test:e2e:visual
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}

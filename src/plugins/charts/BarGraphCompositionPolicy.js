@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -26,7 +26,7 @@ export default function BarGraphCompositionPolicy(openmct) {
     function hasRange(metadata) {
         const rangeValues = metadata.valuesForHints(['range']);
 
-        return rangeValues.length > 0;
+        return rangeValues && rangeValues.length > 0;
     }
 
     function hasBarGraphTelemetry(domainObject) {
@@ -41,10 +41,10 @@ export default function BarGraphCompositionPolicy(openmct) {
 
     return {
         allow: function (parent, child) {
-            if ((parent.type === BAR_GRAPH_KEY)
-                && (hasBarGraphTelemetry(child) === false)
-            ) {
-                return false;
+            if (parent.type === BAR_GRAPH_KEY) {
+                if ((child.type === 'conditionSet') || (!hasBarGraphTelemetry(child))) {
+                    return false;
+                }
             }
 
             return true;

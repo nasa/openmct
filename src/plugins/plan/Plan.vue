@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2020, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -102,6 +102,8 @@ export default {
         this.setTimeContext();
         this.resizeTimer = setInterval(this.resize, RESIZE_POLL_INTERVAL);
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
+        this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
+        this.status = this.openmct.status.get(this.domainObject.identifier);
     },
     beforeDestroy() {
         clearInterval(this.resizeTimer);
@@ -109,12 +111,15 @@ export default {
         if (this.unlisten) {
             this.unlisten();
         }
+
+        if (this.removeStatusListener) {
+            this.removeStatusListener();
+        }
     },
     methods: {
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.path);
-            this.timeContext.on("timeContext", this.setTimeContext);
             this.followTimeContext();
         },
         followTimeContext() {
@@ -127,7 +132,6 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.setScaleAndPlotActivities);
                 this.timeContext.off("bounds", this.updateViewBounds);
-                this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
         observeForChanges(mutatedObject) {
@@ -365,6 +369,7 @@ export default {
 
             const rows = Object.keys(activityRows);
             const isNested = this.options.isChildObject;
+            const status = isNested ? '' : this.status;
 
             if (rows.length) {
                 const lastActivityRow = rows[rows.length - 1];
@@ -383,11 +388,12 @@ export default {
                     return {
                         heading,
                         isNested,
+                        status,
                         height: svgHeight,
                         width: svgWidth
                     };
                 },
-                template: `<swim-lane :is-nested="isNested"><template slot="label">{{heading}}</template><template slot="object"><svg :height="height" :width="width"></svg></template></swim-lane>`
+                template: `<swim-lane :is-nested="isNested" :status="status"><template slot="label">{{heading}}</template><template slot="object"><svg :height="height" :width="width"></svg></template></swim-lane>`
             });
 
             this.$refs.planHolder.appendChild(component.$mount().$el);
@@ -547,6 +553,13 @@ export default {
                 }
             }], multiSelect);
             event.stopPropagation();
+        },
+
+        setStatus(status) {
+            this.status = status;
+            if (this.xScale) {
+                this.drawPlan();
+            }
         }
     }
 };

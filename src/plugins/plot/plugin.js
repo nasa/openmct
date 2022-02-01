@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -34,7 +34,7 @@ export default function () {
             name: "Overlay Plot",
             cssClass: "icon-plot-overlay",
             description: "Combine multiple telemetry elements and view them together as a plot with common X and Y axes. Can be added to Display Layouts.",
-            creatable: "true",
+            creatable: true,
             initialize: function (domainObject) {
                 domainObject.composition = [];
                 domainObject.configuration = {

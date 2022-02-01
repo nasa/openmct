@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -71,8 +71,7 @@ export default class XAxisModel extends Model {
     defaults(options) {
         const bounds = options.openmct.time.bounds();
         const timeSystem = options.openmct.time.timeSystem();
-        const format = options.openmct.$injector.get('formatService')
-            .getFormat(timeSystem.timeFormat);
+        const format = options.openmct.telemetry.getFormatter(timeSystem.timeFormat);
 
         return {
             name: timeSystem.name,

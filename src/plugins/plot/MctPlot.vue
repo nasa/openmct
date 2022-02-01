@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -283,7 +283,6 @@ export default {
             this.stopFollowingTimeContext();
 
             this.timeContext = this.openmct.time.getContextForView(this.path);
-            this.timeContext.on('timeContext', this.setTimeContext);
             this.followTimeContext();
 
         },
@@ -297,7 +296,6 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off("clock", this.updateRealTime);
                 this.timeContext.off("bounds", this.updateDisplayBounds);
-                this.timeContext.off("timeContext", this.setTimeContext);
             }
         },
         getConfig() {

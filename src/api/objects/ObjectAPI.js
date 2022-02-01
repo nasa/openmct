@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,7 @@ import EventEmitter from 'EventEmitter';
 import InterceptorRegistry from './InterceptorRegistry';
 import Transaction from './Transaction';
 import ConflictError from './ConflictError';
+import InMemorySearchProvider from './InMemorySearchProvider';
 
 /**
  * Utilities for loading, saving, and manipulating domain objects.
@@ -40,10 +41,8 @@ function ObjectAPI(typeRegistry, openmct) {
     this.typeRegistry = typeRegistry;
     this.eventEmitter = new EventEmitter();
     this.providers = {};
-    this.rootRegistry = new RootRegistry();
-    this.injectIdentifierService = function () {
-        this.identifierService = this.openmct.$injector.get("identifierService");
-    };
+    this.rootRegistry = new RootRegistry(openmct);
+    this.inMemorySearchProvider = new InMemorySearchProvider(openmct);
 
     this.rootProvider = new RootObjectProvider(this.rootRegistry);
     this.cache = {};
@@ -65,32 +64,16 @@ ObjectAPI.prototype.supersecretSetFallbackProvider = function (p) {
 };
 
 /**
- * @private
- */
-ObjectAPI.prototype.getIdentifierService = function () {
-    // Lazily acquire identifier service
-    if (!this.identifierService) {
-        this.injectIdentifierService();
-    }
-
-    return this.identifierService;
-};
-
-/**
  * Retrieve the provider for a given identifier.
  * @private
  */
 ObjectAPI.prototype.getProvider = function (identifier) {
-    //handles the '' vs 'mct' namespace issue
-    const keyString = utils.makeKeyString(identifier);
-    const identifierService = this.getIdentifierService();
-    const namespace = identifierService.parse(keyString).getSpace();
 
     if (identifier.key === 'ROOT') {
         return this.rootProvider;
     }
 
-    return this.providers[namespace] || this.fallbackProvider;
+    return this.providers[identifier.namespace] || this.fallbackProvider;
 };
 
 /**
@@ -186,7 +169,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
     identifier = utils.parseKeyString(identifier);
     let dirtyObject;
     if (this.isTransactionActive()) {
-        dirtyObject = this.transaction.getDirtyObject(keystring);
+        dirtyObject = this.transaction.getDirtyObject(identifier);
     }
 
     if (dirtyObject) {
@@ -235,7 +218,7 @@ ObjectAPI.prototype.get = function (identifier, abortSignal) {
  *
  * Object providersSearches and combines results of each object provider search.
  * Objects without search provided will have been indexed
- * and will be searched using the fallback indexed search.
+ * and will be searched using the fallback in-memory search.
  * Search results are asynchronous and resolve in parallel.
  *
  * @method search
@@ -250,14 +233,11 @@ ObjectAPI.prototype.search = function (query, abortSignal) {
     const searchPromises = Object.values(this.providers)
         .filter(provider => provider.search !== undefined)
         .map(provider => provider.search(query, abortSignal));
-
-    searchPromises.push(this.fallbackProvider.superSecretFallbackSearch(query, abortSignal)
+    // abortSignal doesn't seem to be used in generic search?
+    searchPromises.push(this.inMemorySearchProvider.query(query, null)
         .then(results => results.hits
             .map(hit => {
-                let domainObject = utils.toNewFormat(hit.object.getModel(), hit.object.getId());
-                domainObject = this.applyGetInterceptors(domainObject.identifier, domainObject);
-
-                return domainObject;
+                return hit;
             })));
 
     return searchPromises;
@@ -387,14 +367,17 @@ ObjectAPI.prototype.endTransaction = function () {
 
 /**
  * Add a root-level object.
- * @param {module:openmct.ObjectAPI~Identifier|function} an array of
- *        identifiers for root level objects, or a function that returns a
+ * @param {module:openmct.ObjectAPI~Identifier|array|function} identifier an identifier or
+ *        an array of identifiers for root level objects, or a function that returns a
  *        promise for an identifier or an array of root level objects.
+ * @param {module:openmct.PriorityAPI~priority|Number} priority a number representing
+ *        this item(s) position in the root object's composition (example: order in object tree).
+ *        For arrays, they are treated as blocks.
  * @method addRoot
  * @memberof module:openmct.ObjectAPI#
  */
-ObjectAPI.prototype.addRoot = function (key) {
-    this.rootRegistry.addRoot(key);
+ObjectAPI.prototype.addRoot = function (identifier, priority) {
+    this.rootRegistry.addRoot(identifier, priority);
 };
 
 /**
@@ -483,23 +466,6 @@ ObjectAPI.prototype.mutate = function (domainObject, path, value) {
 };
 
 /**
- * Updates a domain object based on its latest persisted state. Note that this will mutate the provided object.
- * @param {module:openmct.DomainObject} domainObject an object to refresh from its persistence store
- * @returns {Promise} the provided object, updated to reflect the latest persisted state of the object.
- */
-ObjectAPI.prototype.refresh = async function (domainObject) {
-    const refreshedObject = await this.get(domainObject.identifier);
-
-    if (domainObject.isMutable) {
-        domainObject.$refresh(refreshedObject);
-    } else {
-        utils.refresh(domainObject, refreshedObject);
-    }
-
-    return domainObject;
-};
-
-/**
  * @private
  */
 ObjectAPI.prototype._toMutable = function (object) {
@@ -521,6 +487,7 @@ ObjectAPI.prototype._toMutable = function (object) {
                 if (updatedModel.persisted > mutableObject.modified) {
                     //Don't replace with a stale model. This can happen on slow connections when multiple mutations happen
                     //in rapid succession and intermediate persistence states are returned by the observe function.
+                    updatedModel = this.applyGetInterceptors(identifier, updatedModel);
                     mutableObject.$refresh(updatedModel);
                 }
             });

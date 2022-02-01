@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,7 +28,7 @@ export default function () {
         openmct.types.addType('time-strip', {
             name: 'Time Strip',
             key: 'time-strip',
-            description: 'An activity timeline',
+            description: 'Compose and display time-based telemetry and other object types in a timeline-like view.',
             creatable: true,
             cssClass: 'icon-timeline',
             initialize: function (domainObject) {

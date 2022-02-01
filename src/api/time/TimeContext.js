@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -21,6 +21,13 @@
  *****************************************************************************/
 
 import EventEmitter from 'EventEmitter';
+
+export const TIME_CONTEXT_EVENTS = [
+    'bounds',
+    'clock',
+    'timeSystem',
+    'clockOffsets'
+];
 
 class TimeContext extends EventEmitter {
     constructor() {
@@ -46,7 +53,7 @@ class TimeContext extends EventEmitter {
 
     /**
      * Get or set the time system of the TimeAPI.
-     * @param {TimeSystem | string} timeSystem
+     * @param {TimeSystem | string} timeSystemOrKey
      * @param {module:openmct.TimeAPI~TimeConductorBounds} bounds
      * @fires module:openmct.TimeAPI~timeSystem
      * @returns {TimeSystem} The currently applied time system
