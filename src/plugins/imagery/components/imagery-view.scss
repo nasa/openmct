@@ -31,11 +31,13 @@
             &.unnsynced{
                 @include sUnsynced();
             }
-            &.selectable {
+            &.zoom-in {
                 cursor: zoom-in;
             }
+            &.zoom-out {
+                cursor: zoom-out;
+            }
             &.pannable {
-                // cursor: zoom-out;
                 @include cursorGrab();
 
             }
