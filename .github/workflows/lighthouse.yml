@@ -5,9 +5,33 @@ on:
       version:
         description: 'Which branch do you want to test?' # Limited to branch for now
         required: false
-        default: 'master' 
+        default: 'master'
+  pull_request:
+    types: 
+      - labeled
+  schedule:
+    - cron: '28 21 * * 1-5'
 jobs:
-  lighthouse:
+  lighthouse-pr:
+    if: ${{ github.event.label.name == 'pr:lighthouse' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - run: lhci autorun
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - run: lhci autorun
+  lighthouse-nightly:
+    if: ${{ github.event.schedule }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,3 +42,16 @@ jobs:
           node-version: '14'
       - run: npm install
       - run: lhci autorun
+  lighthouse-displatch:
+    if: ${{ github.event.workflow_dispatch }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.version }}
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - run: npm install
+      - run: lhci autorun
+
