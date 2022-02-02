@@ -57,7 +57,7 @@ export function d3TicksLog(start, stop, count) {
         start = 0.1;
     }
 
-    let scale = d3Scale.scaleLog().base(Math.E).domain([start, stop]);
+    let scale = d3Scale.scaleLog().domain([start, stop]);
 
     const axis = d3Axis.axisBottom(scale);
 

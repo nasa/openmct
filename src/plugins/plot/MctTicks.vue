@@ -44,7 +44,7 @@
         <div v-for="tick in ticks"
              :key="tick.value"
              class="gl-plot-tick gl-plot-y-tick-label"
-             :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
+             :style="{ top: tick.top }"
              :title="tick.fullText || tick.text"
              style="margin-top: -0.50em; direction: ltr;"
         >
@@ -172,11 +172,7 @@ export default {
                 }, this);
             }
 
-            if (this.axisType === 'yAxis') {
-                return d3TicksLog(range.min, range.max, number);
-            } else {
-                return d3Ticks(range.min, range.max, number);
-            }
+            return d3Ticks(range.min, range.max, number);
         },
 
         updateTicksForceRegeneration() {
@@ -213,6 +209,27 @@ export default {
                 };
 
                 newTicks = getFormattedTicks(newTicks, format);
+
+                if (this.axisType !== 'xAxis') {
+                    let min = this.min;
+                    let max = this.max;
+                    newTicks = newTicks.map((tick) => {
+                        let value;
+                        if (tick.value !== 0) {
+                            value = (Math.log10(max) - Math.log10(tick.value)) / (Math.log10(max) - Math.log10(min)) * (100);
+                        }
+
+                        if (value < 0) {
+                            value = -value;
+                        }
+
+                        tick.top = value + '%';
+
+                        return tick;
+                    });
+                    console.log(this.min, this.max, newTicks.map(tick => `${tick.value} + ${tick.top}`));
+
+                }
 
                 this.ticks = newTicks;
                 this.shouldCheckWidth = true;
