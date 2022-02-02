@@ -856,12 +856,15 @@ export default {
                 }
             }
 
+            console.log('old index', this.focusedImageIndex);
+            console.log('new index', focusedIndex);
             this.focusedImageIndex = focusedIndex;
 
             //TODO: do we even need this anymore?
             if (this.isPaused && !thumbnailClick && this.focusedImageTimestamp === undefined) {
                 this.nextImageIndex = focusedIndex;
                 //this could happen if bounds changes
+
                 if (this.focusedImageIndex > this.imageHistory.length - 1) {
                     this.focusedImageIndex = focusedIndex;
                 }
