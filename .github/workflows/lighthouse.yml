@@ -16,5 +16,5 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - run: npm install && npm install -g @lhci/cli #Don't want to include this in our deps
+      - run: npm install
       - run: lhci autorun
