@@ -159,10 +159,7 @@
                     :compass-rose-sizing-classes="compassRoseSizingClasses"
                     :image="focusedImage"
                     :natural-aspect-ratio="focusedImageNaturalAspectRatio"
-                    :sized-image-dimensions="{
-                        height: sizedImageHeight,
-                        width: sizedImageWidth
-                    }"
+                    :sized-image-dimensions="sizedImageDimensions"
                 />
             </div>
         </div>
@@ -500,6 +497,12 @@ export default {
         isSelectable() {
             return true;
 
+        },
+        sizedImageDimensions() {
+            return {
+                width: this.sizedImageWidth,
+                height: this.sizedImageHeight
+            };
         }
     },
     watch: {
@@ -532,12 +535,6 @@ export default {
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
             this.getImageNaturalDimensions();
-        },
-        sizedImageDimensions() {
-            return {
-                width: this.sizedImageWidth,
-                height: this.sizedImageHeight
-            };
         }
     },
 
