@@ -632,6 +632,11 @@ export default {
             }
         },
         expand() {
+            // check for modifier keys so it doesnt interfere with the layout
+            if (this.altPressed || this.metaPressed) {
+                return;
+            }
+
             const actionCollection = this.openmct.actions.getActionsCollection(this.objectPath, this.currentView);
             const visibleActions = actionCollection.getVisibleActions();
             const viewLargeAction = visibleActions
