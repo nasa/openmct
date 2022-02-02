@@ -4,6 +4,7 @@
   "description": "The Open MCT core platform",
   "devDependencies": {
     "@braintree/sanitize-url": "^5.0.2",
+    "@lhci/cli": "0.9.0",
     "@percy/cli": "^1.0.0-beta.73",
     "@percy/playwright": "^1.0.1",
     "@playwright/test": "^1.18.1",
