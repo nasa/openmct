@@ -702,11 +702,14 @@ export default {
                     focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
                 }
 
-                if (!(this.isPaused || thumbnailClick)
-                    || focusedIndex === this.imageHistory.length - 1) {
+                const isLastImageFocused = focusedIndex === this.imageHistory.length - 1;
+                if (!(this.isPaused || thumbnailClick) && isLastImageFocused) {
                     delete this.previousFocusedImage;
                 }
             }
+
+            console.log('old index', this.focusedImageIndex);
+            console.log('new index', focusedIndex);
 
             this.focusedImageIndex = focusedIndex;
 
@@ -715,6 +718,9 @@ export default {
                 this.nextImageIndex = focusedIndex;
                 //this could happen if bounds changes
                 if (this.focusedImageIndex > this.imageHistory.length - 1) {
+                    console.log('why this?');
+                    console.log('old index', this.focusedImageIndex);
+                    console.log('new index', focusedIndex);
                     this.focusedImageIndex = focusedIndex;
                 }
 
