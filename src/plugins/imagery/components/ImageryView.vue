@@ -850,8 +850,8 @@ export default {
                     focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
                 }
 
-                if (!(this.isPaused || thumbnailClick)
-                    || focusedIndex === this.imageHistory.length - 1) {
+                const isLastImageFocused = focusedIndex === this.imageHistory.length - 1;
+                if (!(this.isPaused || thumbnailClick) && isLastImageFocused) {
                     delete this.previousFocusedImage;
                 }
             }
