@@ -27,7 +27,7 @@ This test suite is dedicated to tests which verify the basic operations surround
 const { test, expect } = require('@playwright/test');
 
 test.describe('Example Imagery', () => {
-    test('Can use Mouse Wheel to zoom in and out of default Imagery object', async ({ page }) => {
+    test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -53,4 +53,10 @@ test.describe('Example Imagery', () => {
         await page.mouse.wheel(0, 10);
 
     });
+    test.skip('Can use Mouse Wheel to zoom in and out of previous image');
+    test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
+    test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
