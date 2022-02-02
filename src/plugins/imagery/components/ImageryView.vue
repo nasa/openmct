@@ -95,8 +95,8 @@
             <div ref="focusedImageWrapper"
                  class="image-wrapper"
                  :style="{
-                     'width': `${sizedImageDimensions.width}px`,
-                     'height': `${sizedImageDimensions.height}px`,
+                     'width': `${sizedImageWidth}px`,
+                     'height': `${sizedImageHeight}px`,
                      'overflow': 'visible clip',
                      'background-image': 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px)'
                  }"
@@ -114,6 +114,7 @@
                      :data-openmct-object-keystring="keyString"
                 >
                 <div
+                    v-if="imageUrl"
                     ref="focusedImageElement"
                     class="c-imagery_main-image_background-image"
                     :draggable="!isSelectable"
@@ -133,8 +134,8 @@
                         'background-repeat': 'no-repeat',
                         'background-size': 'contain',
                         'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
-                        'width': `${sizedImageDimensions.width}px`,
-                        'height': `${sizedImageDimensions.height}px`,
+                        'width': `${sizedImageWidth}px`,
+                        'height': `${sizedImageHeight}px`,
 
                     }"
                     @mousedown="handlePanZoomClick"
@@ -157,7 +158,10 @@
                     :compass-rose-sizing-classes="compassRoseSizingClasses"
                     :image="focusedImage"
                     :natural-aspect-ratio="focusedImageNaturalAspectRatio"
-                    :sized-image-dimensions="sizedImageDimensions"
+                    :sized-image-dimensions="{
+                        height: sizedImageHeight,
+                        width: sizedImageWidth
+                    }"
                 />
             </div>
         </div>
@@ -326,17 +330,19 @@ export default {
             animateZoom: true,
             imagePanned: false,
             wheelZooming: false,
-            panZoomLocked: false
+            panZoomLocked: false,
+            sizedImageWidth: 0,
+            sizedImageHeight: 0
         };
     },
     computed: {
         compassRoseSizingClasses() {
             let compassRoseSizingClasses = '';
-            if (this.sizedImageDimensions.width < 300) {
+            if (this.sizedImageWidth < 300) {
                 compassRoseSizingClasses = '--rose-small --rose-min';
-            } else if (this.sizedImageDimensions.width < 500) {
+            } else if (this.sizedImageWidth < 500) {
                 compassRoseSizingClasses = '--rose-small';
-            } else if (this.sizedImageDimensions.width > 1000) {
+            } else if (this.sizedImageWidth > 1000) {
                 compassRoseSizingClasses = '--rose-max';
             }
 
@@ -405,12 +411,18 @@ export default {
             return result;
         },
         shouldDisplayCompass() {
-            return this.focusedImage !== undefined
+            const imageHeightAndWidth = this.sizedImageHeight !== 0
+                && this.sizedImageWidth !== 0;
+
+            const display = this.focusedImage !== undefined
                 && this.focusedImageNaturalAspectRatio !== undefined
                 && this.imageContainerWidth !== undefined
                 && this.imageContainerHeight !== undefined
+                && imageHeightAndWidth
                 && this.zoomFactor === 1
                 && this.imagePanned !== true;
+
+            return display;
         },
         isSpacecraftPositionFresh() {
             let isFresh = undefined;
@@ -472,20 +484,6 @@ export default {
 
             return isFresh;
         },
-        sizedImageDimensions() {
-            let sizedImageDimensions = {};
-            if ((this.imageContainerWidth / this.imageContainerHeight) > this.focusedImageNaturalAspectRatio) {
-                // container is wider than image
-                sizedImageDimensions.width = this.imageContainerHeight * this.focusedImageNaturalAspectRatio;
-                sizedImageDimensions.height = this.imageContainerHeight;
-            } else {
-                // container is taller than image
-                sizedImageDimensions.width = this.imageContainerWidth;
-                sizedImageDimensions.height = this.imageContainerWidth / this.focusedImageNaturalAspectRatio;
-            }
-
-            return sizedImageDimensions;
-        },
         isFixed() {
             let clock;
             if (this.timeContext) {
@@ -530,6 +528,12 @@ export default {
             this.resetAgeCSS();
             this.updateRelatedTelemetryForFocusedImage();
             this.getImageNaturalDimensions();
+        },
+        sizedImageDimensions() {
+            return {
+                width: this.sizedImageWidth,
+                height: this.sizedImageHeight
+            };
         }
     },
 
@@ -1051,7 +1055,7 @@ export default {
 
             // TODO - should probably cache this
             img.addEventListener('load', () => {
-                this.focusedImageNaturalAspectRatio = img.naturalWidth / img.naturalHeight;
+                this.setSizedImageDimensions();
             }, { once: true });
         },
         resizeImageContainer() {
@@ -1065,6 +1069,21 @@ export default {
 
             if (this.$refs.imageBG.clientHeight !== this.imageContainerHeight) {
                 this.imageContainerHeight = this.$refs.imageBG.clientHeight;
+            }
+
+            this.setSizedImageDimensions();
+        },
+        setSizedImageDimensions() {
+            this.focusedImageNaturalAspectRatio = this.$refs.focusedImage.naturalWidth / this.$refs.focusedImage.naturalHeight;
+
+            if ((this.imageContainerWidth / this.imageContainerHeight) > this.focusedImageNaturalAspectRatio) {
+                // container is wider than image
+                this.sizedImageWidth = this.imageContainerHeight * this.focusedImageNaturalAspectRatio;
+                this.sizedImageHeight = this.imageContainerHeight;
+            } else {
+                // container is taller than image
+                this.sizedImageWidth = this.imageContainerWidth;
+                this.sizedImageHeight = this.imageContainerWidth / this.focusedImageNaturalAspectRatio;
             }
         },
         handleThumbWindowResizeStart() {
@@ -1154,7 +1173,6 @@ export default {
             this.animateZoom = true;
         },
         onMouseUp(event) {
-            console.log('onMouseUp');
             this.stopListening(window, 'mouseup', this.onMouseUp, this);
             this.stopListening(window, 'mousemove', this.trackMousePosition, this);
 
