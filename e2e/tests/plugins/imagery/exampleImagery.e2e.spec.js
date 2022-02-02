@@ -21,7 +21,8 @@
  *****************************************************************************/
 
 /*
-This test suite is dedicated to tests which verify the basic operations surrounding imagery.
+This test suite is dedicated to tests which verify the basic operations surrounding imagery,
+but only assume that example imagery is present.
 */
 
 const { test, expect } = require('@playwright/test');
