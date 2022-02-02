@@ -506,7 +506,6 @@ describe("The Imagery View Layouts", () => {
             done();
         });
 
-        
     });
 
     describe("imagery time strip view", () => {

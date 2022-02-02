@@ -89,7 +89,7 @@
              :class="{'paused unnsynced': isPaused && !isFixed,'stale':false, 'pannable': altPressed && zoomFactor > 1, 'zoom-in': metaPressed && !shiftPressed, 'zoom-out': metaPressed && shiftPressed}"
              @click="expand">
             <div v-if="zoomFactor > 1"
-                class="c-imagery__hints"
+                 class="c-imagery__hints"
             >Alt-drag to pan</div>
             <div ref="focusedImageWrapper"
                  class="image-wrapper"
@@ -129,7 +129,7 @@
                                         rgba(125,125,125,.2) 4px,
                                         rgba(125,125,125,.2) 8px
                                     )`
-                        ) : ''}`,
+                            ) : ''}`,
                         'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
                         'background-position': 'center',
                         'background-repeat': 'no-repeat',
@@ -523,7 +523,6 @@ export default {
                 } else {
                     imageIndex = newSize > 0 ? newSize - 1 : undefined;
                 }
-
 
                 this.setFocusedImage(imageIndex, false);
                 this.scrollToRight();
