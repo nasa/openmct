@@ -54,6 +54,35 @@ test.describe('Example Imagery', () => {
 
     });
     test.skip('Can use Mouse Wheel to zoom in and out of previous image');
+    test.skip('Can use alt+drag to move around image once zoomed in');
+    test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
+    test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
+});
+
+test.describe('Example Imagery in Display layout', () => {
+    test.skip('Can use Mouse Wheel to zoom in and out of previous image');
+    test.skip('Can use alt+drag to move around image once zoomed in');
+    test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
+});
+
+test.describe('Example Imagery in Flexible layout', () => {
+    test.skip('Can use Mouse Wheel to zoom in and out of previous image');
+    test.skip('Can use alt+drag to move around image once zoomed in');
+    test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
+    test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
+    test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
+});
+
+test.describe('Example Imagery in Tabs view', () => {
+    test.skip('Can use Mouse Wheel to zoom in and out of previous image');
+    test.skip('Can use alt+drag to move around image once zoomed in');
     test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
     test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
     test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
