@@ -20,6 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import _ from 'lodash';
+import { antilog } from '../mathUtils';
 import Model from './Model';
 
 /**
@@ -193,11 +194,6 @@ export default class YAxisModel extends Model {
         const yMetadata = sampleSeries.metadata.value(yKey);
         const yFormat = sampleSeries.formats[yKey];
         // this.set('format', yFormat.format.bind(yFormat));
-
-        function antilog(n, base = Math.exp(1)) {
-            return Math.pow(base, n);
-        }
-
         this.set('format', (n) => yFormat.format(antilog(n, 10)));
         this.set('values', yMetadata.values);
         if (!label) {

@@ -76,7 +76,7 @@
 
 <script>
 import eventHelpers from "./lib/eventHelpers";
-import { ticks, getFormattedTicks } from "./tickUtils";
+import { ticks, getLogTicks, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
 
 export default {
@@ -177,12 +177,14 @@ export default {
                 }, this);
             }
 
-            function antilog(n) {
-                return Math.pow(Math.exp(1), n)
-            }
+            const useLogForY = true // TODO get this from UI input
 
-            // return ticks(antilog(range.min), antilog(range.max), number);
-            return ticks(range.min, range.max, number);
+            if (this.axisType === 'yAxis' && useLogForY) {
+                return getLogTicks(range.min, range.max, number);
+            }
+            else {
+                return ticks(range.min, range.max, number);
+            }
         },
 
         updateTicksForceRegeneration() {

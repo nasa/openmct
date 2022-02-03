@@ -1,3 +1,5 @@
+import { antilog, log } from "./mathUtils";
+
 const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
 const e2 = Math.sqrt(2);
@@ -38,6 +40,42 @@ function getPrecision(step) {
     }
 
     return precision;
+}
+
+export function getLogTicks(start, stop, mainTickCount = 4, secondaryTickCount = 4) {
+    // log()'ed values
+    const mainLogTicks = ticks(start, stop, mainTickCount);
+
+    // original values
+    const mainTicks = mainLogTicks.map(n => antilog(n, 10));
+
+    const result = [];
+
+    let i = 0;
+    for (const logTick of mainLogTicks) {
+        result.push(logTick);
+
+        if (i === mainLogTicks.length - 1) {
+            break;
+        }
+
+        const tick = mainTicks[i];
+        const nextTick = mainTicks[i + 1];
+        const rangeBetweenMainTicks = nextTick - tick;
+
+        const secondaryTicks = ticks(
+            tick + rangeBetweenMainTicks / (secondaryTickCount + 1),
+            nextTick - rangeBetweenMainTicks / (secondaryTickCount + 1),
+            secondaryTickCount - 2
+        )
+            .map(n => log(n, 10));
+
+        result.push(...secondaryTicks);
+
+        i++;
+    }
+
+    return result;
 }
 
 /**
