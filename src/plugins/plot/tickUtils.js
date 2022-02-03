@@ -78,6 +78,10 @@ export function getLogTicks(start, stop, mainTickCount = 4, secondaryTickCount =
     return result;
 }
 
+export function getLogTicks2(start, stop, count = 4) {
+    return ticks(antilog(start, 10), antilog(stop, 10), count).map(n => log(n, 10));
+}
+
 /**
  * Linear tick generation from d3-array.
  */

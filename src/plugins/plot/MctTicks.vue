@@ -76,7 +76,7 @@
 
 <script>
 import eventHelpers from "./lib/eventHelpers";
-import { ticks, getLogTicks, getFormattedTicks } from "./tickUtils";
+import { ticks, getLogTicks2, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
 
 export default {
@@ -88,6 +88,13 @@ export default {
                 return '';
             },
             required: true
+        },
+        // Make it a prop, then later we can allow user to change it via UI input
+        tickCount: {
+            type: Number,
+            default() {
+                return 8;
+            },
         },
         position: {
             required: true,
@@ -111,7 +118,6 @@ export default {
 
         this.axis = this.getAxisFromConfig();
 
-        this.tickCount = 4;
         this.tickUpdate = false;
         this.listenTo(this.axis, 'change:displayRange', this.updateTicks, this);
         this.listenTo(this.axis, 'change:format', this.updateTicks, this);
@@ -180,7 +186,7 @@ export default {
             const useLogForY = true // TODO get this from UI input
 
             if (this.axisType === 'yAxis' && useLogForY) {
-                return getLogTicks(range.min, range.max, number);
+                return getLogTicks2(range.min, range.max, number);
             }
             else {
                 return ticks(range.min, range.max, number);
