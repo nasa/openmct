@@ -36,8 +36,9 @@
 <script>
 const ACTIVITIES_OPTIONS = [
     'Don\'t Show',
-    'Show Events',
-    'Show Events that start within'
+    'Show all',
+    'That start within',
+    'That ended within'
 ];
 
 const DURATION_OPTIONS = [
@@ -66,6 +67,15 @@ export default {
             activitiesOptions: ACTIVITIES_OPTIONS,
             durationOptions: DURATION_OPTIONS
         };
+    },
+    mounted() {
+        if (this.prefix === 'futureEvents') {
+            this.activitiesOptions = ACTIVITIES_OPTIONS.slice(0, 3);
+        } else if (this.prefix === 'pastEvents') {
+            this.activitiesOptions = ACTIVITIES_OPTIONS.filter((item, index) => index !== 2);
+        } else if (this.prefix === 'currentEvents') {
+            this.activitiesOptions = ACTIVITIES_OPTIONS.slice(0, 2);
+        }
     },
     methods: {
         updateForm(property) {

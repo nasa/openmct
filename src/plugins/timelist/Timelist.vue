@@ -35,6 +35,8 @@
 import { getValidatedPlan } from "../plan/util";
 import ListView from '../../ui/components/List/ListView.vue';
 import { getPreciseDuration } from "../../utils/duration";
+import ticker from 'utils/clock/Ticker';
+import { SORT_ORDER_OPTIONS } from "./constants";
 
 import moment from "moment";
 import uuid from "uuid";
@@ -67,11 +69,11 @@ const headerItems = [{
     format: function (value, object) {
         const now = Date.now();
         let result;
-        if (object.start < now) {
-            const duration = now - object.start;
+        if (object.end < now) {
+            const duration = now - object.end;
             result = `-${getPreciseDuration(duration)}`;
-        } else if (object.end >= now) {
-            const duration = object.end - now;
+        } else if (object.start >= now) {
+            const duration = object.start - now;
             result = `+${getPreciseDuration(duration)}`;
         } else {
             result = 'Now';
@@ -90,7 +92,6 @@ export default {
     data() {
         return {
             viewBounds: undefined,
-            timeSystem: undefined,
             height: 0,
             planActivities: [],
             headerItems: headerItems,
@@ -98,17 +99,21 @@ export default {
         };
     },
     mounted() {
-        this.getPlanData(this.domainObject);
-        this.listActivities();
-        this.setTimeContext();
+        this.timestamp = Date.now();
+        this.observeForChanges(this.domainObject);
+
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
+        this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
     },
     beforeDestroy() {
-        this.stopFollowingTimeContext();
         if (this.unlisten) {
             this.unlisten();
+        }
+
+        if (this.unlistenTicker) {
+            this.unlistenTicker();
         }
 
         if (this.removeStatusListener) {
@@ -116,81 +121,139 @@ export default {
         }
     },
     methods: {
-        setTimeContext() {
-            this.stopFollowingTimeContext();
-            this.timeContext = this.openmct.time.getContextForView(this.path);
-            this.followTimeContext();
-        },
-        followTimeContext() {
-            this.updateViewBounds(this.timeContext.bounds());
-
-            this.timeContext.on("timeSystem", this.listActivities);
-            this.timeContext.on("bounds", this.updateViewBounds);
-        },
-        stopFollowingTimeContext() {
-            if (this.timeContext) {
-                this.timeContext.off("timeSystem", this.listActivities);
-                this.timeContext.off("bounds", this.updateViewBounds);
-            }
-        },
         observeForChanges(mutatedObject) {
             this.getPlanData(mutatedObject);
+            this.setViewBounds();
             this.listActivities();
         },
         getPlanData(domainObject) {
             this.planData = getValidatedPlan(domainObject);
         },
-        updateViewBounds(bounds) {
-            if (bounds) {
-                this.viewBounds = Object.create(bounds);
+        setViewBounds() {
+            const pastEventsIndex = this.domainObject.configuration.pastEventsIndex;
+            const currentEventsIndex = this.domainObject.configuration.currentEventsIndex;
+            const futureEventsIndex = this.domainObject.configuration.futureEventsIndex;
+            const pastEventsDuration = this.domainObject.configuration.pastEventsDuration;
+            const pastEventsDurationIndex = this.domainObject.configuration.pastEventsDurationIndex;
+            const futureEventsDuration = this.domainObject.configuration.futureEventsDuration;
+            const futureEventsDurationIndex = this.domainObject.configuration.futureEventsDurationIndex;
+
+            if (pastEventsIndex === 0 && futureEventsIndex === 0 && currentEventsIndex === 0) {
+                //show all events
+                this.showAll = false;
+                this.viewBounds = undefined;
+                this.hideAll = true;
+
+                return;
             }
 
-            if (this.timeSystem === undefined) {
-                this.timeSystem = this.openmct.time.timeSystem();
+            this.hideAll = false;
+
+            if (pastEventsIndex === 1 && futureEventsIndex === 1 && currentEventsIndex === 1) {
+            //show all events
+                this.showAll = true;
+                this.viewBounds = undefined;
+
+                return;
             }
 
-            this.planActivities = this.applyStyles(this.planActivities);
+            this.showAll = false;
+
+            this.viewBounds = {};
+
+            if (currentEventsIndex === 0) {
+                this.noCurrent = true;
+            } else {
+                this.noCurrent = false;
+            }
+
+            if (pastEventsIndex !== 1) {
+                const pastDurationInMS = this.getDurationInMilliSeconds(pastEventsDuration, pastEventsDurationIndex);
+                this.viewBounds.pastEnd = (timestamp) => {
+                    if (pastEventsIndex === 2) {
+                        return timestamp - pastDurationInMS;
+                    } else if (pastEventsIndex === 0) {
+                        return timestamp + 1;
+                    }
+                };
+            }
+
+            if (futureEventsIndex !== 1) {
+                const futureDurationInMS = this.getDurationInMilliSeconds(futureEventsDuration, futureEventsDurationIndex);
+                this.viewBounds.futureStart = (timestamp) => {
+                    if (futureEventsIndex === 2) {
+                        return timestamp + futureDurationInMS;
+                    } else if (futureEventsIndex === 0) {
+                        return 0;
+                    }
+                };
+            }
         },
-        listActivities(timeSystem) {
-            if (timeSystem !== undefined) {
-                this.timeSystem = timeSystem;
+        getDurationInMilliSeconds(duration, durationIndex) {
+            if (duration > 0) {
+                if (durationIndex === 0) {
+                    return duration * 1000;
+                } else if (durationIndex === 1) {
+                    return duration * 60 * 1000;
+                } else if (durationIndex === 2) {
+                    return duration * 60 * 24 * 1000;
+                }
             }
-
-            this.clearPreviousActivities();
+        },
+        listActivities() {
             let groups = Object.keys(this.planData);
             let activities = [];
 
             groups.forEach((key) => {
                 activities = activities.concat(this.planData[key]);
             });
-            //add css class for list items that are active now
             activities = this.applyStyles(activities);
             // sort by start time
             this.planActivities = activities.sort(this.sortByStartTime);
         },
-        clearPreviousActivities() {
-        },
-        isActivityInBounds(activity) {
-            if (!this.viewBounds) {
-                return;
+        clearPreviousActivities(time) {
+            if (time instanceof Date) {
+                this.timestamp = time.getTime();
+            } else {
+                this.timestamp = time;
             }
 
-            return (activity.start < this.viewBounds.end) && (activity.end > this.viewBounds.start);
+            this.listActivities();
+        },
+        isActivityInBounds(activity) {
+            if (this.hideAll === true) {
+                return false;
+            }
+
+            if (this.showAll === true) {
+                return true;
+            }
+
+            //current event or future start event or past end event
+            return (this.noCurrent === false && this.timestamp >= activity.start && this.timestamp <= activity.end)
+                || (this.timestamp > activity.end && (this.viewBounds.pastEnd === undefined || activity.end >= this.viewBounds.pastEnd(this.timestamp)))
+                || (this.timestamp < activity.start && (this.viewBounds.futureStart === undefined || activity.start <= this.viewBounds.futureStart(this.timestamp)));
         },
         applyStyles(activities) {
-            return activities.map((activity) => {
-                if (this.isActivityInBounds(activity)) {
-                    activity.cssClass = 'c-current';
-                } else {
-                    activity.cssClass = '';
-                }
+            return activities.filter(this.isActivityInBounds)
+                .map((activity) => {
+                    if ((this.timestamp >= activity.start && this.timestamp <= activity.end)) {
+                        activity.cssClass = 'c-current';
+                    } else {
+                        activity.cssClass = '';
+                    }
 
-                if (!activity.key) {
-                    activity.key = uuid();
-                }
+                    if (!activity.key) {
+                        activity.key = uuid();
+                    }
 
-                return activity;
-            });
+                    return activity;
+                });
+        },
+        sortActivities(activities) {
+            const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
+            const property = sortOrder.property;
+            const direction = sortOrder.direction.toLowerCase();
         },
         sortByStartTime(a, b) {
             const numA = parseInt(a.start, 10);

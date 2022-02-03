@@ -54,28 +54,7 @@
 <script>
 
 import EventProperties from './EventProperties.vue';
-const SORT_ORDER_OPTIONS = [
-    {
-        label: 'Start Ascending',
-        property: 'start',
-        direction: 'ASC'
-    },
-    {
-        label: 'Start Descending',
-        property: 'start',
-        direction: 'ASC'
-    },
-    {
-        label: 'End Ascending',
-        property: 'start',
-        direction: 'ASC'
-    },
-    {
-        label: 'End Descending',
-        property: 'start',
-        direction: 'ASC'
-    }
-];
+import { SORT_ORDER_OPTIONS } from "../constants";
 
 const EVENT_TYPES = [
     {
@@ -112,8 +91,8 @@ export default {
             this.updateProperty('sortOrderIndex', this.sortOrderIndex);
         },
         updateProperty(key, value) {
-            console.log(`configuration.${key}`, value);
-            // this.openmct.objects.mutate(this.domainObject, `configuration.${key}`, value);
+            // console.log(`configuration.${key}`, value);
+            this.openmct.objects.mutate(this.domainObject, `configuration.${key}`, value);
         },
         eventPropertiesUpdated(data) {
             const key = data.property;
