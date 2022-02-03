@@ -532,7 +532,9 @@ export default {
                     imageIndex = newSize > 0 ? newSize - 1 : undefined;
                 }
 
-                if (!this.isPaused) {
+                if (this.isPaused) {
+                    this.nextImageIndex = imageIndex;
+                } else {
                     this.setFocusedImage(imageIndex);
                 }
 
@@ -858,17 +860,6 @@ export default {
 
             this.focusedImageIndex = index;
         },
-
-        // //TODO: do we even need this anymore?
-        // if (this.isPaused && !thumbnailClick && this.focusedImageTimestamp === undefined) {
-        //     this.nextImageIndex = focusedIndex;
-        //     //this could happen if bounds changes
-        //     if (this.focusedImageIndex > this.imageHistory.length - 1) {
-        //         this.focusedImageIndex = focusedIndex;
-        //     }
-
-        //     return;
-        // }
         trackDuration() {
             if (this.canTrackDuration) {
                 this.stopDurationTracking();
