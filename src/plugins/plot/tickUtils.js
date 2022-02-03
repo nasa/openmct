@@ -42,7 +42,7 @@ function getPrecision(step) {
     return precision;
 }
 
-export function getLogTicks(start, stop, mainTickCount = 4, secondaryTickCount = 4) {
+export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount = 6) {
     // log()'ed values
     const mainLogTicks = ticks(start, stop, mainTickCount);
 
@@ -78,7 +78,7 @@ export function getLogTicks(start, stop, mainTickCount = 4, secondaryTickCount =
     return result;
 }
 
-export function getLogTicks2(start, stop, count = 4) {
+export function getLogTicks2(start, stop, count = 8) {
     return ticks(antilog(start, 10), antilog(stop, 10), count).map(n => log(n, 10));
 }
 

@@ -76,7 +76,7 @@
 
 <script>
 import eventHelpers from "./lib/eventHelpers";
-import { ticks, getLogTicks2, getFormattedTicks } from "./tickUtils";
+import { ticks, getLogTicks, getLogTicks2, getFormattedTicks } from "./tickUtils";
 import configStore from "./configuration/ConfigStore";
 
 export default {
@@ -186,7 +186,8 @@ export default {
             const useLogForY = true // TODO get this from UI input
 
             if (this.axisType === 'yAxis' && useLogForY) {
-                return getLogTicks2(range.min, range.max, number);
+                return getLogTicks(range.min, range.max, number);
+                // return getLogTicks2(range.min, range.max, number);
             }
             else {
                 return ticks(range.min, range.max, number);
