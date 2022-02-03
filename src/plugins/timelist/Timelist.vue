@@ -64,17 +64,14 @@ const headerItems = [{
 },
 {
     defaultDirection: false,
-    property: 'end',
+    property: 'duration',
     name: 'Time To/From',
-    format: function (value, object) {
-        const now = Date.now();
+    format: function (value) {
         let result;
-        if (object.end < now) {
-            const duration = now - object.end;
-            result = `-${getPreciseDuration(duration)}`;
-        } else if (object.start >= now) {
-            const duration = object.start - now;
-            result = `+${getPreciseDuration(duration)}`;
+        if (value < 0) {
+            result = `-${getPreciseDuration(Math.abs(value))}`;
+        } else if (value > 0) {
+            result = `+${getPreciseDuration(value)}`;
         } else {
             result = 'Now';
         }
@@ -246,6 +243,8 @@ export default {
                     if (!activity.key) {
                         activity.key = uuid();
                     }
+
+                    activity.duration = activity.start - this.timestamp;
 
                     return activity;
                 });
