@@ -532,9 +532,7 @@ export default {
                     imageIndex = newSize > 0 ? newSize - 1 : undefined;
                 }
 
-                if (this.isPaused) {
-                    this.nextImageIndex = imageIndex;
-                } else {
+                if (!this.isPaused) {
                     this.setFocusedImage(imageIndex);
                 }
 
@@ -629,7 +627,6 @@ export default {
         document.removeEventListener('keyup', this.handleKeyUp);
     },
     methods: {
-
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -787,20 +784,15 @@ export default {
             const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;
         },
-        paused(state, type) {
+        paused(state) {
             this.isPaused = state;
 
-            if (type === 'button') {
+            if (!state) {
+                this.previousFocusedImage = null;
                 this.setFocusedImage(this.imageHistory.length - 1);
+                this.autoScroll = true;
+                this.scrollToRight();
             }
-
-            if (this.nextImageIndex) {
-                this.setFocusedImage(this.nextImageIndex);
-                delete this.nextImageIndex;
-            }
-
-            this.autoScroll = true;
-            this.scrollToRight();
         },
         scrollToFocused() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
