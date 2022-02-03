@@ -141,19 +141,6 @@
                     }"
                     @mousedown="handlePanZoomClick"
                 ></div>
-                <!-- <div :style="{
-                    'position': 'absolute',
-                    'left': 0,
-                    'top': 0,
-                    'right': 0,
-                    'bottom': 0,
-                    'margin': 'auto',
-                    'width': '16px',
-                    'height': '16px',
-                    'background': 'rgba(255,0,0,0.8)',
-                    'border-radius': '50%',
-                    'pointer-events': 'none'
-                }"></div> -->
                 <Compass
                     v-if="shouldDisplayCompass"
                     :compass-rose-sizing-classes="compassRoseSizingClasses"
@@ -204,7 +191,7 @@
                     v-if="!isFixed"
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': isPaused}"
-                    @click="paused(!isPaused, 'button')"
+                    @click="paused(!isPaused)"
                 ></button>
             </div>
         </div>
@@ -516,27 +503,35 @@ export default {
                 const newSize = newHistory.length;
                 let imageIndex;
                 if (this.focusedImageTimestamp !== undefined) {
-                    const foundImageIndex = this.imageHistory.findIndex(image => {
-                        return image.time === this.focusedImageTimestamp;
-                    });
+                    const foundImageIndex = newHistory.findIndex(img => img.time === this.focusedImageTimestamp);
+                    imageIndex = foundImageIndex > -1
+                        ? foundImageIndex
+                        : newSize - 1;
+                } else {
+                    imageIndex = newSize > 0
+                        ? newSize - 1
+                        : undefined;
+                }
 
-                    imageIndex = foundImageIndex > -1 ? foundImageIndex : newSize - 1;
-                } else if (this.previousFocusedImage) {
+                this.nextImageIndex = imageIndex;
+
+                if (this.previousFocusedImage && newHistory.length) {
                     const matchIndex = this.matchIndexOfPreviousImage(
                         this.previousFocusedImage,
-                        this.imageHistory
+                        newHistory
                     );
 
-                    imageIndex = matchIndex > -1 ? matchIndex : newSize - 1;
-                } else {
-                    imageIndex = newSize > 0 ? newSize - 1 : undefined;
+                    if (matchIndex > -1) {
+                        this.setFocusedImage(matchIndex);
+                    } else {
+                        this.paused();
+                    }
                 }
 
                 if (!this.isPaused) {
                     this.setFocusedImage(imageIndex);
+                    this.scrollToRight();
                 }
-
-                this.scrollToRight();
             },
             deep: true
         },
@@ -785,11 +780,11 @@ export default {
             this.autoScroll = !disableScroll;
         },
         paused(state) {
-            this.isPaused = state;
+            this.isPaused = Boolean(state);
 
             if (!state) {
                 this.previousFocusedImage = null;
-                this.setFocusedImage(this.imageHistory.length - 1);
+                this.setFocusedImage(this.nextImageIndex);
                 this.autoScroll = true;
                 this.scrollToRight();
             }
@@ -838,9 +833,7 @@ export default {
             this.setPreviousFocusedImage(index);
         },
         setPreviousFocusedImage(index) {
-            //We use the props till the user changes what they want to see
             this.focusedImageTimestamp = undefined;
-            //set the previousFocusedImage when a user chooses an image
             this.previousFocusedImage = this.imageHistory[index]
                 ? JSON.parse(JSON.stringify(this.imageHistory[index]))
                 : undefined;
