@@ -101,6 +101,7 @@
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js",
     "test:e2e:visual": "percy exec --config ./e2e/.percy.yml -- npx playwright test --config=e2e/playwright-visual.config.js default",
     "test:e2e:full": "npx playwright test --config=e2e/playwright-ci.config.js",
+    "test:lhci": "lhci autorun",
     "test:watch": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --no-single-run",
     "verify": "concurrently 'npm:test' 'npm:lint'",
     "jsdoc": "jsdoc -c jsdoc.json -R API.md -r -d dist/docs/api",
