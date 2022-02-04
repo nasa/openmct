@@ -28,7 +28,7 @@ but only assume that example imagery is present.
 const { test, expect } = require('@playwright/test');
 
 test.describe('Example Imagery', () => {
-    test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
+    test.only('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -46,21 +46,27 @@ test.describe('Example Imagery', () => {
 
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
 
-        await page.locator('.c-imagery_main-image_background-image').boundingBox();
+        const image = await page.locator('.c-imagery_main-image_background-image').boundingBox();
+
+        await console.log(image.x);
 
         // Click .c-imagery_main-image_background-image
         await page.click('.c-imagery_main-image_background-image');
 
         await page.mouse.wheel(0, 10);
 
+        const image2 = await page.locator('.c-imagery_main-image_background-image').boundingBox();
+
+        await console.log(image2.x);
+
     });
-    test.skip('Can use Mouse Wheel to zoom in and out of previous image');
-    test.skip('Can use alt+drag to move around image once zoomed in');
-    test.skip('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
-    test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
-    test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
-    test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
-    test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
+    //test('Can use Mouse Wheel to zoom in and out of previous image');
+    //test('Can use alt+drag to move around image once zoomed in');
+    //test('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
+    //test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
+    //test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
+    //test.skip('If the imagery view is in pause mode, it should not be updated when new images come in');
+    //test.skip('If the imagery view is not in pause mode, it should be updated when new images come in');
 });
 
 test.describe('Example Imagery in Display layout', () => {
