@@ -62,10 +62,7 @@ export default {
         }
     },
     mounted() {
-        this.traceData = {
-            xValues: [],
-            yValues: []
-        };
+        this.valuesByTimestamp = {};
         this.refreshData = this.refreshData.bind(this);
         this.setTimeContext();
 
@@ -112,24 +109,18 @@ export default {
             this.telemetryObjects[key] = telemetryObject;
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
             this.telemetryObjectFormats[key] = this.openmct.telemetry.getFormatMap(metadata);
-            const telemetryObjectPath = [telemetryObject, ...this.path];
-            const telemetryIsAlias = this.openmct.objects.isObjectPathToALink(telemetryObject, telemetryObjectPath);
 
             // make an update object that's a clone of the existing styles object so we preserve existing choices
             let stylesUpdate = {};
-            if (this.domainObject.configuration.barStyles.series[key]) {
-                stylesUpdate = _.clone(this.domainObject.configuration.barStyles.series[key]);
+            if (this.domainObject.configuration.styles) {
+                stylesUpdate = _.clone(this.domainObject.configuration.styles);
             }
 
-            stylesUpdate.name = telemetryObject.name;
-            stylesUpdate.type = telemetryObject.type;
-            stylesUpdate.isAlias = telemetryIsAlias;
-
             // if something has changed, mutate and notify listeners
-            if (!_.isEqual(stylesUpdate, this.domainObject.configuration.barStyles.series[key])) {
+            if (!_.isEqual(stylesUpdate, this.domainObject.configuration.styles)) {
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles.series["${key}"]`,
+                    'configuration.styles',
                     stylesUpdate
                 );
             }
@@ -194,10 +185,18 @@ export default {
             this.composition.load();
         },
         refreshData(bounds, isTick) {
+            this.purgeRecordsOutsideRange(bounds);
             if (!isTick) {
                 const telemetryObjects = Object.values(this.telemetryObjects);
                 telemetryObjects.forEach(this.requestDataFor);
             }
+        },
+        purgeRecordsOutsideRange(bounds) {
+            Object.keys(this.valuesByTimestamp).forEach(timestamp => {
+                if (!this.isTimeInBounds(timestamp, bounds)) {
+                    delete this.valuesByTimestamp[timestamp];
+                }
+            });
         },
         removeAllSubscriptions() {
             this.subscriptions.forEach(subscription => subscription.unsubscribe());
@@ -217,11 +216,11 @@ export default {
                 delete this.telemetryObjectFormats[key];
             }
 
-            if (this.domainObject.configuration.barStyles.series[key]) {
-                delete this.domainObject.configuration.barStyles.series[key];
+            if (this.domainObject.configuration.styles) {
+                delete this.domainObject.configuration.styles;
                 this.openmct.objects.mutate(
                     this.domainObject,
-                    `configuration.barStyles.series["${key}"]`,
+                    'configuration.styles',
                     undefined
                 );
             }
@@ -245,27 +244,32 @@ export default {
                 return;
             }
 
-            let xValues = this.traceData.xValues;
-            let yValues = this.traceData.yValues;
+            const timestamp = this.getTimestampForDatum(data, key);
+            let valueForTimestamp = this.valuesByTimestamp[timestamp] || {};
 
             if (this.domainObject.configuration.xKey === key) {
                 //populate x values
                 const metadataKey = axisMetadata.xAxisMetadata.key;
                 if (data[metadataKey]) {
-                    const formattedValue = this.format(key, metadataKey, data);
-                    xValues.push(formattedValue);
-                } else {
-                    xValues.push(null);
+                    valueForTimestamp.x = this.format(key, metadataKey, data);
+                    if (valueForTimestamp.y === undefined) {
+                        valueForTimestamp.y = null;
+                    }
                 }
             } else if (this.domainObject.configuration.yKey === key) {
                 const metadataKey = axisMetadata.yAxisMetadata.key;
                 if (data[metadataKey]) {
-                    const formattedValue = this.format(key, metadataKey, data);
-                    yValues.push(formattedValue);
-                } else {
-                    yValues.push(null);
+                    valueForTimestamp.y = this.format(key, metadataKey, data);
+                    if (valueForTimestamp.x === undefined) {
+                        valueForTimestamp.x = null;
+                    }
                 }
             }
+
+            this.valuesByTimestamp[timestamp] = valueForTimestamp;
+            const xAndyValues = Object.values(this.valuesByTimestamp);
+            const xValues = xAndyValues.map(value => value.x);
+            const yValues = xAndyValues.map(value => value.y);
 
             let trace = {
                 key,
@@ -278,7 +282,7 @@ export default {
                 type: 'scatter',
                 mode: 'markers',
                 marker: {
-                    color: this.domainObject.configuration.barStyles.series[key].color
+                    color: this.domainObject.configuration.styles.color
                 },
                 hoverinfo: 'x+y'
             };
@@ -299,11 +303,18 @@ export default {
 
             this.addTrace(trace, key);
         },
-        isDataInTimeRange(datum, key) {
+        getTimestampForDatum(datum, key) {
             const timeSystemKey = this.timeContext.timeSystem().key;
-            let currentTimestamp = this.parse(key, timeSystemKey, datum);
 
-            return currentTimestamp && this.timeContext.bounds().end >= currentTimestamp;
+            return this.parse(key, timeSystemKey, datum);
+        },
+        isDataInTimeRange(datum, key) {
+            let currentTimestamp = this.getTimestampForDatum(datum, key);
+
+            return currentTimestamp && this.isTimeInBounds(currentTimestamp, this.timeContext.bounds());
+        },
+        isTimeInBounds(currentTimestamp, bounds) {
+            return bounds.start <= currentTimestamp && bounds.end >= currentTimestamp;
         },
         format(telemetryObjectKey, metadataKey, data) {
             const formats = this.telemetryObjectFormats[telemetryObjectKey];

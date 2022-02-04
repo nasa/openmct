@@ -20,50 +20,113 @@
  at runtime from the About dialog for additional information.
 -->
 <template>
-<ul class="c-tree c-bar-graph-options">
-    <h2 title="Display properties for this object">Scatter Plot Series</h2>
-    <li v-for="series in domainObject.composition"
-        :key="series.key"
-    >
-        <series-options :item="series"
-                        :color-palette="colorPalette"
+<ul class="c-tree c-scatter-plot-options">
+    <h2 title="Display properties for this object">Scatter Plot</h2>
+    <ul>
+        <li class="c-tree__item menus-to-left">
+            <span class="c-disclosure-triangle is-enabled flex-elem"
+                  :class="expandedCssClass"
+                  @click="expanded = !expanded"
+            >
+            </span>
+
+            <div class="c-object-label">
+                <div :class="[typeCss]">
+                </div>
+                <div class="c-object-label__name">{{ name }}</div>
+            </div>
+        </li>
+        <ColorSwatch v-if="expanded"
+                     :current-color="currentColor"
+                     title="Manually set the color for this plot."
+                     edit-title="Manually set the color for this plot"
+                     view-title="The color for this plot."
+                     short-label="Color"
+                     class="grid-properties"
+                     @colorSet="setColor"
         />
-    </li>
+    </ul>
 </ul>
 </template>
 
 <script>
-import SeriesOptions from "../../inspector/SeriesOptions.vue";
 import ColorPalette from '@/ui/color/ColorPalette';
+import ColorSwatch from '@/ui/color/ColorSwatch.vue';
+import Color from "@/ui/color/Color";
 
 export default {
     components: {
-        SeriesOptions
+        ColorSwatch
     },
     inject: ['openmct', 'domainObject'],
     data() {
         return {
-            isEditing: this.openmct.editor.isEditing(),
-            colorPalette: this.colorPalette
+            currentColor: undefined,
+            name: this.domainObject.name,
+            type: this.domainObject.type,
+            expanded: false
         };
     },
     computed: {
         canEdit() {
             return this.isEditing && !this.domainObject.locked;
+        },
+        expandedCssClass() {
+            return this.expanded ? 'c-disclosure-triangle--expanded' : '';
+        },
+        typeCss() {
+            const type = this.openmct.types.get(this.type);
+            if (type && type.definition && type.definition.cssClass) {
+                return `c-object-label__type-icon ${type.definition.cssClass}`;
+            }
+
+            return 'c-object-label__type-icon';
         }
     },
     beforeMount() {
         this.colorPalette = new ColorPalette();
     },
     mounted() {
+        this.isEditing = this.openmct.editor.isEditing();
         this.openmct.editor.on('isEditing', this.setEditState);
+        this.initColorAndName();
+        this.removeStylesListener = this.openmct.objects.observe(this.domainObject, 'configuration.styles', this.initColorAndName);
     },
     beforeDestroy() {
         this.openmct.editor.off('isEditing', this.setEditState);
+        if (this.removeStylesListener) {
+            this.removeStylesListener();
+        }
     },
     methods: {
         setEditState(isEditing) {
             this.isEditing = isEditing;
+        },
+        initColorAndName() {
+        // this is called before the plot is initialized
+            if (!this.domainObject.configuration.styles) {
+                const color = this.colorPalette.getNextColor().asHexString();
+                this.domainObject.configuration.styles = {
+                    color
+                };
+            } else if (!this.domainObject.configuration.styles.color) {
+                this.domainObject.configuration.styles.color = this.colorPalette.getNextColor().asHexString();
+            }
+
+            this.currentColor = this.domainObject.configuration.styles.color;
+
+            let colorHexString = this.currentColor;
+            const colorObject = Color.fromHexString(colorHexString);
+
+            this.colorPalette.remove(colorObject);
+        },
+        setColor(chosenColor) {
+            this.currentColor = chosenColor.asHexString();
+            this.openmct.objects.mutate(
+                this.domainObject,
+                `configuration.styles.color`,
+                this.currentColor
+            );
         }
     }
 };
