@@ -46,18 +46,20 @@ test.describe('Example Imagery', () => {
 
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
 
-        const image = await page.locator('.c-imagery_main-image_background-image').boundingBox();
+        const imageDimensions = await page.locator('.c-imagery_main-image_background-image').boundingBox();
 
-        await console.log(image.x);
+        await console.log(imageDimensions.x);
 
         // Click .c-imagery_main-image_background-image
         await page.click('.c-imagery_main-image_background-image');
 
         await page.mouse.wheel(0, 10);
 
-        const image2 = await page.locator('.c-imagery_main-image_background-image').boundingBox();
+        const imageMouseZoomed = await page.locator('.c-imagery_main-image_background-image').boundingBox();
 
-        await console.log(image2.x);
+        await console.log(imageMouseZoomed.x);
+
+        await expect (imageDimensions.x).toBeGreaterThan(imageMouseZoomed.x);
 
     });
     //test('Can use Mouse Wheel to zoom in and out of previous image');
