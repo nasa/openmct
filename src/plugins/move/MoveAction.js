@@ -144,6 +144,10 @@ export default class MoveAction {
             const parentCandidatePath = data.value;
             const parentCandidate = parentCandidatePath[0];
 
+            if (!this.openmct.objects.isPersistable(parentCandidate.identifier)) {
+                return false;
+            }
+
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
             let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
