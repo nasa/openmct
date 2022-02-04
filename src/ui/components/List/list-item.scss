@@ -1,7 +1,11 @@
 /******************************* LIST ITEM */
 .c-list-item {
-  &.c-current {
-    background-color: #00ace6;
-    color: black;
+  &.--is-current {
+    background-color: rgba($colorStatusAlert, 0.2);
+    font-weight: bold;
+  }
+
+  &.--is-future {
+    background-color: rgba($colorBtnMajorBg, 0.2);
   }
 }

@@ -26,11 +26,11 @@ import TimeListInspectorViewProvider from "./inspector/TimeListInspectorViewProv
 export default function () {
     return function install(openmct) {
         openmct.types.addType('timelist', {
-            name: 'Timelist',
+            name: 'Time List',
             key: 'timelist',
-            description: 'A configurable activity view for a compatible mission plan file.',
+            description: 'A configurable, time-ordered list view of activities for a compatible mission plan file.',
             creatable: true,
-            cssClass: 'icon-plan',
+            cssClass: 'icon-timelist',
             form: [
                 {
                     name: 'Upload Plan (JSON File)',
@@ -64,4 +64,3 @@ export default function () {
 
     };
 }
-

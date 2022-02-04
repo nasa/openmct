@@ -27,8 +27,8 @@ export default function TimelistViewProvider(openmct) {
 
     return {
         key: 'timelist.view',
-        name: 'Timelist',
-        cssClass: 'icon-plan',
+        name: 'Time List',
+        cssClass: 'icon-timelist',
         canView(domainObject) {
             return domainObject.type === 'timelist';
         },

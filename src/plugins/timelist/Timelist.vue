@@ -234,10 +234,12 @@ export default {
         applyStyles(activities) {
             return activities.filter(this.isActivityInBounds)
                 .map((activity) => {
-                    if ((this.timestamp >= activity.start && this.timestamp <= activity.end)) {
-                        activity.cssClass = 'c-current';
+                    if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
+                        activity.cssClass = '--is-current';
+                    } else if (this.timestamp < activity.start) {
+                        activity.cssClass = '--is-future';
                     } else {
-                        activity.cssClass = '';
+                        activity.cssClass = '--is-past';
                     }
 
                     if (!activity.key) {
