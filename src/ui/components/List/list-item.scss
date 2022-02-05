@@ -1,11 +1,23 @@
-/******************************* LIST ITEM */
+/******************************* LIST ITEMS */
 .c-list-item {
+  /* Time Lists */
+  $colorCurrentFuture: pullForward($colorBodyFg, 20%);
+
   &.--is-current {
     background-color: rgba($colorStatusAlert, 0.2);
+    color: $colorCurrentFuture;
     font-weight: bold;
   }
 
   &.--is-future {
     background-color: rgba($colorBtnMajorBg, 0.2);
+    color: $colorCurrentFuture;
+  }
+
+  &__value {
+    &.--duration {
+      // Force small
+      width: 5%;
+    }
   }
 }

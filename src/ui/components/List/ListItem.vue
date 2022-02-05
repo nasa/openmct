@@ -6,6 +6,7 @@
     <td v-for="itemValue in formattedItemValues"
         :key="itemValue.key"
         class="c-list-item__value"
+        :class="['--' + itemValue.key]"
     >
         {{ itemValue.text }}
     </td>

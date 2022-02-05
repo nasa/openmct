@@ -32,53 +32,55 @@
 </template>
 
 <script>
-import { getValidatedPlan } from "../plan/util";
+import {getValidatedPlan} from "../plan/util";
 import ListView from '../../ui/components/List/ListView.vue';
-import { getPreciseDuration } from "../../utils/duration";
+import {getPreciseDuration} from "../../utils/duration";
 import ticker from 'utils/clock/Ticker';
-import { SORT_ORDER_OPTIONS } from "./constants";
+import {SORT_ORDER_OPTIONS} from "./constants";
 
 import moment from "moment";
 import uuid from "uuid";
 
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
-const headerItems = [{
-    defaultDirection: true,
-    property: 'name',
-    name: 'Activity'
-}, {
-    defaultDirection: true,
-    isSortable: true,
-    property: 'start',
-    name: 'Start Time',
-    format: function (value, object) {
-        return `${moment(value).format(TIME_FORMAT)}Z`;
-    }
-}, {
-    defaultDirection: true,
-    property: 'end',
-    name: 'End Time',
-    format: function (value, object) {
-        return `${moment(value).format(TIME_FORMAT)}Z`;
-    }
-},
-{
-    defaultDirection: false,
-    property: 'duration',
-    name: 'Time To/From',
-    format: function (value) {
-        let result;
-        if (value < 0) {
-            result = `-${getPreciseDuration(Math.abs(value))}`;
-        } else if (value > 0) {
-            result = `+${getPreciseDuration(value)}`;
-        } else {
-            result = 'Now';
+const headerItems = [
+    {
+        defaultDirection: true,
+        isSortable: true,
+        property: 'start',
+        name: 'Start Time',
+        format: function (value, object) {
+            return `${moment(value).format(TIME_FORMAT)}Z`;
         }
+    }, {
+        defaultDirection: true,
+        property: 'end',
+        name: 'End Time',
+        format: function (value, object) {
+            return `${moment(value).format(TIME_FORMAT)}Z`;
+        }
+    }, {
+        defaultDirection: false,
+        property: 'duration',
+        name: 'Time To/From',
+        format: function (value) {
+            let result;
+            if (value < 0) {
+                result = `-${getPreciseDuration(Math.abs(value))}`;
+            } else if (value > 0) {
+                result = `+${getPreciseDuration(value)}`;
+            } else {
+                result = 'Now';
+            }
 
-        return result;
+            return result;
+        }
+    }, {
+        defaultDirection: true,
+        property: 'name',
+        name: 'Activity'
     }
-}];
+];
+
 const defaultSort = 'start';
 
 export default {
@@ -147,7 +149,7 @@ export default {
             this.hideAll = false;
 
             if (pastEventsIndex === 1 && futureEventsIndex === 1 && currentEventsIndex === 1) {
-            //show all events
+                //show all events
                 this.showAll = true;
                 this.viewBounds = undefined;
 
@@ -228,8 +230,8 @@ export default {
 
             //current event or future start event or past end event
             return (this.noCurrent === false && this.timestamp >= activity.start && this.timestamp <= activity.end)
-                || (this.timestamp > activity.end && (this.viewBounds.pastEnd === undefined || activity.end >= this.viewBounds.pastEnd(this.timestamp)))
-                || (this.timestamp < activity.start && (this.viewBounds.futureStart === undefined || activity.start <= this.viewBounds.futureStart(this.timestamp)));
+          || (this.timestamp > activity.end && (this.viewBounds.pastEnd === undefined || activity.end >= this.viewBounds.pastEnd(this.timestamp)))
+          || (this.timestamp < activity.start && (this.viewBounds.futureStart === undefined || activity.start <= this.viewBounds.futureStart(this.timestamp)));
         },
         applyStyles(activities) {
             return activities.filter(this.isActivityInBounds)
