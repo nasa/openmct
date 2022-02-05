@@ -194,6 +194,7 @@
 .icon-bar-chart {  @include glyphBefore($glyph-icon-bar-chart); }
 .icon-map {  @include glyphBefore($glyph-icon-map); }
 .icon-plan {  @include glyphBefore($glyph-icon-plan); }
+.icon-timelist {  @include glyphBefore($glyph-icon-timelist); }
 
 /************************** 12 PX CLASSES */
 // TODO: sync with 16px redo as of 10/25/18
@@ -256,3 +257,4 @@
 .bg-icon-bar-chart { @include glyphBg($bg-icon-bar-chart); }
 .bg-icon-map { @include glyphBg($bg-icon-map); }
 .bg-icon-plan { @include glyphBg($bg-icon-plan); }
+.bg-icon-timelist { @include glyphBg($bg-icon-timelist); }
