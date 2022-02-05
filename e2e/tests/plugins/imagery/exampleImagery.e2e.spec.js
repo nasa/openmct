@@ -28,7 +28,9 @@ but only assume that example imagery is present.
 const { test, expect } = require('@playwright/test');
 
 test.describe('Example Imagery', () => {
-    test.only('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
+
+    test.beforeEach(async ({ page }) => {
+        page.on('console', msg => console.log(msg.text()))
         //Go to baseURL
         await page.goto('/', { waitUntil: 'networkidle' });
 
@@ -45,25 +47,91 @@ test.describe('Example Imagery', () => {
         ]);
 
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
+    });
+    
+    const backgroundImageSelector = '.c-imagery_main-image_background-image';
+    test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
+        const bgImageLocator = await page.locator(backgroundImageSelector);
+        const deltaYStep = 100; //equivalent to 1x zoom
+        await bgImageLocator.hover();
+        const originalImageDimensions = await page.locator(backgroundImageSelector).boundingBox();
+        // zoom in
+        await bgImageLocator.hover();
+        await page.mouse.wheel(0, deltaYStep * 2);
+        // wait for zoom animation to finish
+        await page.waitForTimeout(300);
+        const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
+        // zoom out
+        await bgImageLocator.hover();
+        await page.mouse.wheel(0, -deltaYStep);
+        // wait for zoom animation to finish
+        await page.waitForTimeout(300);
+        const imageMouseZoomedOut = await page.locator(backgroundImageSelector).boundingBox();
 
-        const imageDimensions = await page.locator('.c-imagery_main-image_background-image').boundingBox();
+        expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
+        expect(imageMouseZoomedIn.width).toBeGreaterThan(originalImageDimensions.width);
+        expect(imageMouseZoomedOut.height).toBeLessThan(imageMouseZoomedIn.height);
+        expect(imageMouseZoomedOut.width).toBeLessThan(imageMouseZoomedIn.width);
 
-        await console.log(imageDimensions.x);
-
-        // Click .c-imagery_main-image_background-image
-        await page.click('.c-imagery_main-image_background-image');
-
-        await page.mouse.wheel(0, 10);
-
-        const imageMouseZoomed = await page.locator('.c-imagery_main-image_background-image').boundingBox();
-
-        await console.log(imageMouseZoomed.x);
-
-        await expect (imageDimensions.x).toBeGreaterThan(imageMouseZoomed.x);
 
     });
+
+    test.only('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
+        const deltaYStep = 100; //equivalent to 1x zoom
+
+        const bgImageLocator = await page.locator(backgroundImageSelector);
+        await bgImageLocator.hover();
+        // zoom in
+        await page.mouse.wheel(0, deltaYStep * 2);
+        await page.waitForTimeout(300);
+        const zoomedBoundingBox = await bgImageLocator.boundingBox();
+        const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
+        const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
+        // move to the right
+
+        // center the mouse pointer
+        await page.mouse.move(imageCenterX, imageCenterY);
+
+        // pan right
+        await page.keyboard.down('Alt');
+        await page.mouse.down();
+        await page.mouse.move(imageCenterX - 200, imageCenterY, 10);
+        await page.mouse.up();
+        await page.keyboard.up('Alt');
+        const afterRightPanBoundingBox = await bgImageLocator.boundingBox();
+        expect(zoomedBoundingBox.x).toBeGreaterThan(afterRightPanBoundingBox.x);
+
+        // pan left
+        await page.keyboard.down('Alt');
+        await page.mouse.down();
+        await page.mouse.move(imageCenterX, imageCenterY, 10);
+        await page.mouse.up();
+        await page.keyboard.up('Alt');
+        const afterLeftPanBoundingBox = await bgImageLocator.boundingBox();
+        expect(afterRightPanBoundingBox.x).toBeLessThan(afterLeftPanBoundingBox.x);
+
+        // pan up
+        await page.mouse.move(imageCenterX, imageCenterY);
+        await page.keyboard.down('Alt');
+        await page.mouse.down();
+        await page.mouse.move(imageCenterX, imageCenterY + 200, 10);
+        await page.mouse.up();
+        await page.keyboard.up('Alt');
+        const afterUpPanBoundingBox = await bgImageLocator.boundingBox();
+        expect(afterUpPanBoundingBox.y).toBeGreaterThan(afterLeftPanBoundingBox.y);
+
+        // pan down
+        await page.keyboard.down('Alt');
+        await page.mouse.down();
+        await page.mouse.move(imageCenterX, imageCenterY - 200, 10);
+        await page.mouse.up();
+        await page.keyboard.up('Alt');
+        const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
+        expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
+
+    });
+
     //test('Can use Mouse Wheel to zoom in and out of previous image');
-    //test('Can use alt+drag to move around image once zoomed in');
     //test('Can zoom into the latest image and the real-time/fixed-time imagery will pause');
     //test.skip('Can zoom into a previous image from thumbstrip in real-time or fixed-time');
     //test.skip('Clicking on the left arrow should pause the imagery and go to previous image');
