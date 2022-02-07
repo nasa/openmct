@@ -7,6 +7,7 @@
         :key="itemValue.key"
         class="c-list-item__value"
         :class="['--' + itemValue.key]"
+        :title="itemValue.text"
     >
         {{ itemValue.text }}
     </td>
