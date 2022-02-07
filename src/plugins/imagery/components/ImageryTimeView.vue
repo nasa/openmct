@@ -65,13 +65,8 @@ export default {
             keyString: undefined
         };
     },
-    computed: {
-        imageHistorySize() {
-            return this.imageHistory.length;
-        }
-    },
     watch: {
-        imageHistorySize(newSize, oldSize) {
+        imageHistory(newHistory, oldHistory) {
             this.updatePlotImagery();
         }
     },

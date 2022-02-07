@@ -240,9 +240,6 @@ export default {
         };
     },
     computed: {
-        imageHistorySize() {
-            return this.imageHistory.length;
-        },
         compassRoseSizingClasses() {
             let compassRoseSizingClasses = '';
             if (this.sizedImageDimensions.width < 300) {
@@ -409,19 +406,23 @@ export default {
         }
     },
     watch: {
-        imageHistorySize(newSize, oldSize) {
-            let imageIndex;
-            if (this.focusedImageTimestamp !== undefined) {
-                const foundImageIndex = this.imageHistory.findIndex(image => {
-                    return image.time === this.focusedImageTimestamp;
-                });
-                imageIndex = foundImageIndex > -1 ? foundImageIndex : newSize - 1;
-            } else {
-                imageIndex = newSize > 0 ? newSize - 1 : undefined;
-            }
+        imageHistory: {
+            handler(newHistory, oldHistory) {
+                const newSize = newHistory.length;
+                let imageIndex;
+                if (this.focusedImageTimestamp !== undefined) {
+                    const foundImageIndex = this.imageHistory.findIndex(image => {
+                        return image.time === this.focusedImageTimestamp;
+                    });
+                    imageIndex = foundImageIndex > -1 ? foundImageIndex : newSize - 1;
+                } else {
+                    imageIndex = newSize > 0 ? newSize - 1 : undefined;
+                }
 
-            this.setFocusedImage(imageIndex, false);
-            this.scrollToRight();
+                this.setFocusedImage(imageIndex, false);
+                this.scrollToRight();
+            },
+            deep: true
         },
         focusedImageIndex() {
             this.trackDuration();
@@ -508,12 +509,6 @@ export default {
             if (this.timeContext) {
                 this.timeContext.off("timeSystem", this.trackDuration);
                 this.timeContext.off("clock", this.trackDuration);
-            }
-        },
-        boundsChange(bounds, isTick) {
-            if (!isTick) {
-                this.previousFocusedImage = this.focusedImage ? JSON.parse(JSON.stringify(this.focusedImage)) : undefined;
-                this.requestHistory();
             }
         },
         expand() {
@@ -690,22 +685,32 @@ export default {
                 return;
             }
 
-            if (this.previousFocusedImage) {
-                // determine if the previous image exists in the new bounds of imageHistory
-                const matchIndex = this.matchIndexOfPreviousImage(
-                    this.previousFocusedImage,
-                    this.imageHistory
-                );
-                focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
-
-                delete this.previousFocusedImage;
-            }
-
             if (thumbnailClick) {
                 //We use the props till the user changes what they want to see
                 this.focusedImageTimestamp = undefined;
+                //set the previousFocusedImage when a user chooses an image
+                this.previousFocusedImage = this.imageHistory[focusedIndex] ? JSON.parse(JSON.stringify(this.imageHistory[focusedIndex])) : undefined;
             }
 
+            if (this.previousFocusedImage) {
+                // determine if the previous image exists in the new bounds of imageHistory
+                if (!thumbnailClick) {
+                    const matchIndex = this.matchIndexOfPreviousImage(
+                        this.previousFocusedImage,
+                        this.imageHistory
+                    );
+                    focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
+                }
+
+                if (!(this.isPaused || thumbnailClick)
+                    || focusedIndex === this.imageHistory.length - 1) {
+                    delete this.previousFocusedImage;
+                }
+            }
+
+            this.focusedImageIndex = focusedIndex;
+
+            //TODO: do we even need this anymore?
             if (this.isPaused && !thumbnailClick && this.focusedImageTimestamp === undefined) {
                 this.nextImageIndex = focusedIndex;
                 //this could happen if bounds changes
@@ -715,8 +720,6 @@ export default {
 
                 return;
             }
-
-            this.focusedImageIndex = focusedIndex;
 
             if (thumbnailClick && !this.isPaused) {
                 this.paused(true);

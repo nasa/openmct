@@ -1,0 +1,23 @@
+name: PRcop
+
+on:
+  pull_request:
+    types:
+      - edited
+      - synchronize
+      - ready_for_review
+      - review_requested
+  pull_request_review_comment:
+    types:
+      - created
+
+jobs:
+  prcop:
+    runs-on: ubuntu-latest
+    name: PRcop
+    steps:
+      - name: Linting Pull Request
+        uses: makaroni4/prcop@v1.0.35
+        with:
+          config-file: ".github/workflows/prcop-config.json"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
