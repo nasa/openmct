@@ -21,8 +21,10 @@
  *****************************************************************************/
 
 import CouchObjectProvider from './CouchObjectProvider';
+import CouchSearchProvider from './CouchSearchProvider';
 const NAMESPACE = '';
 const LEGACY_SPACE = 'mct';
+const COUCH_SEARCH_ONLY_NAMESPACE = `COUCH_SEARCH_${Date.now()}`;
 
 export default function CouchPlugin(options) {
     return function install(openmct) {
@@ -32,5 +34,6 @@ export default function CouchPlugin(options) {
         // Installing the same provider under both namespaces means that it can respond to object gets for both namespaces.
         openmct.objects.addProvider(LEGACY_SPACE, install.couchProvider);
         openmct.objects.addProvider(NAMESPACE, install.couchProvider);
+        openmct.objects.addProvider(COUCH_SEARCH_ONLY_NAMESPACE, new CouchSearchProvider(install.couchProvider));
     };
 }

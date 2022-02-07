@@ -19,25 +19,24 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+import EventTelmetryProvider from './EventTelemetryProvider';
+import EventMetadataProvider from './EventMetadataProvider';
 
-define(
-    [],
-    function () {
-
-        function SummaryWidgetsCompositionPolicy(openmct) {
-            this.openmct = openmct;
-        }
-
-        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            const parentType = parent.type;
-
-            if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
-                return false;
+export default function EventGeneratorPlugin(options) {
+    return function install(openmct) {
+        openmct.types.addType("eventGenerator", {
+            name: "Event Message Generator",
+            description: "For development use. Creates sample event message data that mimics a live data stream.",
+            cssClass: "icon-generator-events",
+            creatable: true,
+            initialize: function (object) {
+                object.telemetry = {
+                    duration: 5
+                };
             }
+        });
+        openmct.telemetry.addProvider(new EventTelmetryProvider());
+        openmct.telemetry.addProvider(new EventMetadataProvider());
 
-            return true;
-        };
-
-        return SummaryWidgetsCompositionPolicy;
-    }
-);
+    };
+}

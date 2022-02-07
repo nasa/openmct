@@ -20,43 +20,37 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-/**
- * Module defining EventTelemetry.
- * Created by chacskaylo on 06/18/2015.
- * Modified by shale on 06/23/2015.
- */
-define(
-    ['../data/transcript.json'],
-    function (messages) {
-        "use strict";
+import UserIndicator from './components/UserIndicator.vue';
+import Vue from 'vue';
 
-        var firstObservedTime = Date.now();
+export default function UserIndicatorPlugin() {
 
-        function EventTelemetry(request, interval) {
+    function addIndicator(openmct) {
+        const userIndicator = new Vue ({
+            components: {
+                UserIndicator
+            },
+            provide: {
+                openmct: openmct
+            },
+            template: '<UserIndicator />'
+        });
 
-            var latestObservedTime = Date.now(),
-                count = Math.floor((latestObservedTime - firstObservedTime) / interval),
-                generatorData = {};
-
-            generatorData.getPointCount = function () {
-                return count;
-            };
-
-            generatorData.getDomainValue = function (i, domain) {
-                return i * interval
-                        + (domain !== 'delta' ? firstObservedTime : 0);
-            };
-
-            generatorData.getRangeValue = function (i, range) {
-                var domainDelta = this.getDomainValue(i) - firstObservedTime,
-                    ind = i % messages.length;
-
-                return messages[ind] + " - [" + domainDelta.toString() + "]";
-            };
-
-            return generatorData;
-        }
-
-        return EventTelemetry;
+        openmct.indicators.add({
+            key: 'user-indicator',
+            element: userIndicator.$mount().$el,
+            priority: openmct.priority.HIGH
+        });
     }
-);
+
+    return function install(openmct) {
+        if (openmct.user.hasProvider()) {
+            addIndicator(openmct);
+        } else {
+            // back up if user provider added after indicator installed
+            openmct.user.on('providerAdded', () => {
+                addIndicator(openmct);
+            });
+        }
+    };
+}

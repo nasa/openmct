@@ -20,24 +20,17 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 
-define(
-    [],
-    function () {
+export default function createExampleUser(UserClass) {
+    return class ExampleUser extends UserClass {
+        constructor(id, name, roles) {
+            super(id, name);
 
-        function SummaryWidgetsCompositionPolicy(openmct) {
-            this.openmct = openmct;
+            this.roles = roles;
+            this.getRoles = this.getRoles.bind(this);
         }
 
-        SummaryWidgetsCompositionPolicy.prototype.allow = function (parent, child) {
-            const parentType = parent.type;
-
-            if (parentType === 'summary-widget' && !this.openmct.telemetry.isTelemetryObject(child)) {
-                return false;
-            }
-
-            return true;
-        };
-
-        return SummaryWidgetsCompositionPolicy;
-    }
-);
+        getRoles() {
+            return this.roles;
+        }
+    };
+}

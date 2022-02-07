@@ -148,10 +148,8 @@ import FontStyleEditor from '@/ui/inspector/styles/FontStyleEditor.vue';
 import StyleEditor from "./StyleEditor.vue";
 import PreviewAction from "@/ui/preview/PreviewAction.js";
 import { getApplicableStylesForItem, getConsolidatedStyleValues, getConditionSetIdentifierForItem } from "@/plugins/condition/utils/styleUtils";
-import SelectorDialogTree from '@/ui/components/SelectorDialogTree.vue';
 import ConditionError from "@/plugins/condition/components/ConditionError.vue";
 import ConditionDescription from "@/plugins/condition/components/ConditionDescription.vue";
-import Vue from 'vue';
 
 const NON_SPECIFIC = '??';
 const NON_STYLEABLE_CONTAINER_TYPES = [
@@ -551,53 +549,28 @@ export default {
             return this.conditions ? this.conditions[id] : {};
         },
         addConditionSet() {
-            let conditionSetDomainObject;
-            let self = this;
-            function handleItemSelection({ item }) {
-                if (item) {
-                    conditionSetDomainObject = item;
-                }
-            }
+            const conditionWidgetParent = this.openmct.router.path[1];
+            const formStructure = {
+                title: 'Select Condition Set',
+                sections: [{
+                    name: 'Location',
+                    cssClass: 'grows',
+                    rows: [{
+                        key: 'location',
+                        name: 'Condition Set',
+                        cssClass: 'grows',
+                        control: 'locator',
+                        required: true,
+                        parent: conditionWidgetParent,
+                        validate: data => data.value[0].type === 'conditionSet'
+                    }]
+                }]
+            };
 
-            function dismissDialog(overlay, initialize) {
-                overlay.dismiss();
-
-                if (initialize && conditionSetDomainObject) {
-                    self.conditionSetDomainObject = conditionSetDomainObject;
-                    self.conditionalStyles = [];
-                    self.initializeConditionalStyles();
-                }
-            }
-
-            let vm = new Vue({
-                components: { SelectorDialogTree },
-                provide: {
-                    openmct: this.openmct
-                },
-                data() {
-                    return {
-                        handleItemSelection,
-                        title: 'Select Condition Set'
-                    };
-                },
-                template: '<SelectorDialogTree :title="title" @treeItemSelected="handleItemSelection"></SelectorDialogTree>'
-            }).$mount();
-
-            let overlay = this.openmct.overlays.overlay({
-                element: vm.$el,
-                size: 'small',
-                buttons: [
-                    {
-                        label: 'OK',
-                        emphasis: 'true',
-                        callback: () => dismissDialog(overlay, true)
-                    },
-                    {
-                        label: 'Cancel',
-                        callback: () => dismissDialog(overlay, false)
-                    }
-                ],
-                onDestroy: () => vm.$destroy()
+            this.openmct.forms.showForm(formStructure).then(data => {
+                this.conditionSetDomainObject = data.location[0];
+                this.conditionalStyles = [];
+                this.initializeConditionalStyles();
             });
         },
         removeConditionSet() {

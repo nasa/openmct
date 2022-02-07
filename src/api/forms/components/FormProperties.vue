@@ -60,13 +60,13 @@
                 class="c-button c-button--major"
                 @click="onSave"
         >
-            OK
+            {{ submitLabel }}
         </button>
         <button tabindex="0"
                 class="c-button"
                 @click="onDismiss"
         >
-            Cancel
+            {{ cancelLabel }}
         </button>
     </div>
 </div>
@@ -105,6 +105,28 @@ export default {
                 .some(([key, value]) => {
                     return value;
                 });
+        },
+        submitLabel() {
+            if (
+                this.model.buttons
+                && this.model.buttons.submit
+                && this.model.buttons.submit.label
+            ) {
+                return this.model.buttons.submit.label;
+            }
+
+            return 'OK';
+        },
+        cancelLabel() {
+            if (
+                this.model.buttons
+                && this.model.buttons.cancel
+                && this.model.buttons.cancel.label
+            ) {
+                return this.model.buttons.submit.label;
+            }
+
+            return 'Cancel';
         }
     },
     mounted() {
