@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -19,6 +19,8 @@
  * this source code distribution or the Licensing information page available
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
+
+@use 'sass:math';
 
 /******************************************************** BUTTONS */
 // Optionally can include icon in :before via markup
@@ -271,6 +273,7 @@ input, textarea {
 input[type=text],
 input[type=search],
 input[type=number],
+input[type=password],
 input[type=date],
 textarea {
     @include reactive-input();
@@ -785,7 +788,7 @@ select {
         }
 
         &--swatched {
-            padding-bottom: floor($pTB / 2);
+            padding-bottom: floor(math.div($pTB, 2));
             width: 2em; // Standardize the width
         }
 
@@ -935,7 +938,7 @@ select {
 
 @mixin sliderTrack($bg: $scrollbarTrackColorBg, $knobH: 12px, $trackH: 3px) {
     border-radius: 2px;
-    $breakPointPx: floor(($knobH - $trackH) / 2);
+    $breakPointPx: floor(math.div($knobH - $trackH, 2));
     $bp1: $breakPointPx;
     $bp2: $breakPointPx + $trackH;
     box-sizing: border-box;

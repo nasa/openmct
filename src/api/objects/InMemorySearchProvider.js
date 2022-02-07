@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -187,7 +187,7 @@ class InMemorySearchProvider {
      */
     scheduleForIndexing(identifier) {
         const keyString = this.openmct.objects.makeKeyString(identifier);
-        const objectProvider = this.openmct.objects.getProvider(identifier.key);
+        const objectProvider = this.openmct.objects.getProvider(identifier);
 
         if (objectProvider === undefined || objectProvider.search === undefined) {
             if (!this.indexedIds[keyString] && !this.pendingIndex[keyString]) {

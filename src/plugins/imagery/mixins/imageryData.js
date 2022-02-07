@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -120,9 +120,15 @@ export default {
             return this.timeFormatter.parse(datum);
         },
         boundsChange(bounds, isTick) {
-            if (!isTick) {
-                this.requestHistory();
+            if (isTick) {
+                return;
             }
+
+            // forcibly reset the imageContainer size to prevent an aspect ratio distortion
+            delete this.imageContainerWidth;
+            delete this.imageContainerHeight;
+
+            return this.requestHistory();
         },
         async requestHistory() {
             let bounds = this.timeContext.bounds();

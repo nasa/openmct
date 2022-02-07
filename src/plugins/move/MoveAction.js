@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -140,11 +140,13 @@ export default class MoveAction {
     }
 
     validate(currentParent) {
-        return (object, data) => {
-            const parentCandidate = data.value;
+        return (data) => {
+            const parentCandidatePath = data.value;
+            const parentCandidate = parentCandidatePath[0];
+
             let currentParentKeystring = this.openmct.objects.makeKeyString(currentParent.identifier);
             let parentCandidateKeystring = this.openmct.objects.makeKeyString(parentCandidate.identifier);
-            let objectKeystring = this.openmct.objects.makeKeyString(object.identifier);
+            let objectKeystring = this.openmct.objects.makeKeyString(this.object.identifier);
 
             if (!parentCandidateKeystring || !currentParentKeystring) {
                 return false;
@@ -163,7 +165,7 @@ export default class MoveAction {
                 return false;
             }
 
-            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, object);
+            return parentCandidate && this.openmct.composition.checkPolicy(parentCandidate, this.object);
         };
     }
 

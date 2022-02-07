@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -64,23 +64,11 @@ const notebookStorage = {
 };
 
 let openmct;
-let mockIdentifierService;
 
 describe('Notebook Storage:', () => {
     beforeEach(() => {
         openmct = createOpenMct();
-        openmct.$injector = jasmine.createSpyObj('$injector', ['get']);
-        mockIdentifierService = jasmine.createSpyObj(
-            'identifierService',
-            ['parse']
-        );
-        mockIdentifierService.parse.and.returnValue({
-            getSpace: () => {
-                return '';
-            }
-        });
 
-        openmct.$injector.get.and.returnValue(mockIdentifierService);
         window.localStorage.setItem('notebook-storage', null);
         openmct.objects.addProvider('', jasmine.createSpyObj('mockNotebookProvider', [
             'create',

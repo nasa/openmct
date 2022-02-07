@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2021, United States Government
+ * Open MCT Web, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -142,6 +142,11 @@ export default {
             date: undefined,
             time: undefined
         };
+    },
+    watch: {
+        defaultDateTime() {
+            this.updateFromModel(this.defaultDateTime);
+        }
     },
     mounted: function () {
         this.updateFromModel(this.defaultDateTime);

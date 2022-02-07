@@ -110,7 +110,7 @@ export default class Snapshot {
         }
 
         return () => {
-            window.location.href = window.location.origin + url;
+            location.hash = url;
         };
     }
 }

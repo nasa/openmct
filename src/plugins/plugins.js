@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -28,6 +28,7 @@ define([
     './ISOTimeFormat/plugin',
     './myItems/plugin',
     '../../example/generator/plugin',
+    '../../example/eventGenerator/plugin',
     './autoflow/AutoflowTabularPlugin',
     './timeConductor/plugin',
     '../../example/imagery/plugin',
@@ -73,8 +74,12 @@ define([
     './hyperlink/plugin',
     './clock/plugin',
     './DeviceClassifier/plugin',
-    './UTCTimeFormat/plugin',
-    './timer/plugin'
+    './timer/plugin',
+    './userIndicator/plugin',
+    '../../example/exampleUser/plugin',
+    './localStorage/plugin',
+    './legacySupport/plugin.js',
+    '../adapter/indicators/legacy-indicators-plugin'
 ], function (
     _,
     UTCTimeSystem,
@@ -83,6 +88,7 @@ define([
     ISOTimeFormat,
     MyItems,
     GeneratorPlugin,
+    EventGeneratorPlugin,
     AutoflowPlugin,
     TimeConductorPlugin,
     ExampleImagery,
@@ -128,11 +134,14 @@ define([
     Hyperlink,
     Clock,
     DeviceClassifier,
-    UTCTimeFormat,
-    Timer
+    Timer,
+    UserIndicator,
+    ExampleUser,
+    LocalStorage,
+    LegacySupportPlugin,
+    LegacyIndicatorsPlugin
 ) {
     const bundleMap = {
-        LocalStorage: 'platform/persistence/local',
         Elasticsearch: 'platform/persistence/elastic'
     };
 
@@ -144,7 +153,13 @@ define([
         };
     });
 
-    plugins.UTCTimeSystem = UTCTimeSystem;
+    plugins.example = {};
+    plugins.example.ExampleUser = ExampleUser.default;
+    plugins.example.ExampleImagery = ExampleImagery.default;
+    plugins.example.EventGeneratorPlugin = EventGeneratorPlugin.default;
+    plugins.example.Generator = () => GeneratorPlugin;
+
+    plugins.UTCTimeSystem = UTCTimeSystem.default;
     plugins.LocalTimeSystem = LocalTimeSystem;
     plugins.RemoteClock = RemoteClock.default;
 
@@ -189,11 +204,6 @@ define([
         };
     };
 
-    plugins.Generator = function () {
-        return GeneratorPlugin;
-    };
-
-    plugins.ExampleImagery = ExampleImagery.default;
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
     plugins.Chart = ChartPlugin.default;
@@ -237,7 +247,10 @@ define([
     plugins.Clock = Clock.default;
     plugins.Timer = Timer.default;
     plugins.DeviceClassifier = DeviceClassifier.default;
-    plugins.UTCTimeFormat = UTCTimeFormat.default;
+    plugins.UserIndicator = UserIndicator.default;
+    plugins.LocalStorage = LocalStorage.default;
+    plugins.LegacySupport = LegacySupportPlugin.default;
+    plugins.LegacyIndicators = LegacyIndicatorsPlugin;
 
     return plugins;
 });

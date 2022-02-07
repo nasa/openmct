@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT Web, Copyright (c) 2014-2021, United States Government
+ * Open MCT Web, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -105,38 +105,49 @@ export default {
     watch: {
         domainObject: {
             handler(domainObject) {
-                if (!domainObject.configuration.timeOptions || !this.independentTCEnabled) {
-                    return;
-                }
-
-                if (this.timeOptions.start !== domainObject.configuration.timeOptions.start
-                    || this.timeOptions.end !== domainObject.configuration.timeOptions.end) {
-                    this.timeOptions = domainObject.configuration.timeOptions;
+                const key = this.openmct.objects.makeKeyString(domainObject.identifier);
+                if (key !== this.keyString) {
+                    //domain object has changed
                     this.destroyIndependentTime();
-                    this.registerIndependentTimeOffsets();
+
+                    this.independentTCEnabled = domainObject.configuration.useIndependentTime === true;
+                    this.timeOptions = domainObject.configuration.timeOptions || {
+                        clockOffsets: this.openmct.time.clockOffsets(),
+                        fixedOffsets: this.openmct.time.bounds()
+                    };
+
+                    this.initialize();
                 }
             },
             deep: true
         }
     },
     mounted() {
-        this.setTimeContext();
-
-        if (this.timeOptions.mode) {
-            this.mode = this.timeOptions.mode;
-        } else {
-            this.timeOptions.mode = this.mode = this.timeContext.clock() === undefined ? { key: 'fixed' } : { key: Object.create(this.timeContext.clock()).key};
-        }
-
-        if (this.independentTCEnabled) {
-            this.registerIndependentTimeOffsets();
-        }
+        this.initialize();
     },
     beforeDestroy() {
         this.stopFollowingTimeContext();
         this.destroyIndependentTime();
     },
     methods: {
+        initialize() {
+            this.keyString = this.openmct.objects.makeKeyString(this.domainObject.identifier);
+            this.setTimeContext();
+
+            if (this.timeOptions.mode) {
+                this.mode = this.timeOptions.mode;
+            } else {
+                if (this.timeContext.clock() === undefined) {
+                    this.timeOptions.mode = this.mode = { key: 'fixed' };
+                } else {
+                    this.timeOptions.mode = this.mode = { key: Object.create(this.timeContext.clock()).key};
+                }
+            }
+
+            if (this.independentTCEnabled) {
+                this.registerIndependentTimeOffsets();
+            }
+        },
         toggleIndependentTC() {
             this.independentTCEnabled = !this.independentTCEnabled;
             if (this.independentTCEnabled) {
@@ -209,10 +220,9 @@ export default {
                 offsets = this.timeOptions.clockOffsets;
             }
 
-            const key = this.openmct.objects.makeKeyString(this.domainObject.identifier);
-            const timeContext = this.openmct.time.getIndependentContext(key);
+            const timeContext = this.openmct.time.getIndependentContext(this.keyString);
             if (!timeContext.hasOwnContext()) {
-                this.unregisterIndependentTime = this.openmct.time.addIndependentContext(key, offsets, this.isFixed ? undefined : this.mode.key);
+                this.unregisterIndependentTime = this.openmct.time.addIndependentContext(this.keyString, offsets, this.isFixed ? undefined : this.mode.key);
             } else {
                 if (this.isFixed) {
                     timeContext.stopClock();

@@ -1,5 +1,5 @@
 <!--
- Open MCT, Copyright (c) 2014-2021, United States Government
+ Open MCT, Copyright (c) 2014-2022, United States Government
  as represented by the Administrator of the National Aeronautics and Space
  Administration. All rights reserved.
 
@@ -65,13 +65,8 @@ export default {
             keyString: undefined
         };
     },
-    computed: {
-        imageHistorySize() {
-            return this.imageHistory.length;
-        }
-    },
     watch: {
-        imageHistorySize(newSize, oldSize) {
+        imageHistory(newHistory, oldHistory) {
             this.updatePlotImagery();
         }
     },
@@ -119,10 +114,10 @@ export default {
                 this.timeContext.off("bounds", this.updateViewBounds);
             }
         },
-        expand(index) {
+        expand(imageTimestamp) {
             const path = this.objectPath[0];
             this.previewAction.invoke([path], {
-                indexForFocusedImage: index,
+                timestamp: imageTimestamp,
                 objectPath: this.objectPath
             });
         },
@@ -395,7 +390,7 @@ export default {
             //handle mousedown event to show the image in a large view
             imageWrapper.addEventListener('mousedown', (e) => {
                 if (e.button === 0) {
-                    this.expand(index);
+                    this.expand(item.time);
                 }
             });
 

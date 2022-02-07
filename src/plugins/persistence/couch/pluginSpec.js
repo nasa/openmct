@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -129,8 +129,9 @@ describe('the plugin', () => {
 
         it('works without Shared Workers', async () => {
             let sharedWorkerCallback;
-            const restoreSharedWorker = window.SharedWorker;
+            const cachedSharedWorker = window.SharedWorker;
             window.SharedWorker = undefined;
+
             const mockEventSource = {
                 addEventListener: (topic, addedListener) => {
                     sharedWorkerCallback = addedListener;
@@ -139,6 +140,8 @@ describe('the plugin', () => {
                     sharedWorkerCallback = null;
                 }
             };
+            const cachedEventSource = window.EventSource;
+
             window.EventSource = function (url) {
                 return mockEventSource;
             };
@@ -163,17 +166,21 @@ describe('the plugin', () => {
             expect(result).toBeTrue();
             expect(provider.create).toHaveBeenCalled();
             expect(provider.startSharedWorker).not.toHaveBeenCalled();
+
             //Set modified timestamp it detects a change and persists the updated model.
             mockDomainObject.modified = mockDomainObject.persisted + 1;
             const updatedResult = await openmct.objects.save(mockDomainObject);
             openmct.objects.observe(mockDomainObject, '*', (updatedObject) => {
             });
+
             expect(updatedResult).toBeTrue();
             expect(provider.update).toHaveBeenCalled();
             expect(provider.fetchChanges).toHaveBeenCalled();
             sharedWorkerCallback(fakeUpdateEvent);
             expect(provider.onEventMessage).toHaveBeenCalled();
-            window.SharedWorker = restoreSharedWorker;
+
+            window.SharedWorker = cachedSharedWorker;
+            window.EventSource = cachedEventSource;
         });
     });
     describe('batches requests', () => {
@@ -255,7 +262,9 @@ describe('the plugin', () => {
             await Promise.all(openmct.objects.search('test'));
             const requestUrl = fetch.calls.mostRecent().args[0];
 
-            expect(fetch).toHaveBeenCalled();
+            // we only want one call to fetch, not 2!
+            // see https://github.com/nasa/openmct/issues/4667
+            expect(fetch).toHaveBeenCalledTimes(1);
             expect(requestUrl.endsWith('_find')).toBeTrue();
         });
 

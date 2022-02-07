@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -84,17 +84,17 @@ class CouchObjectProvider {
             this.changesFeedSharedWorkerConnectionId = event.data.connectionId;
         } else {
             let objectChanges = event.data.objectChanges;
-            objectChanges.identifier = {
+            const objectIdentifier = {
                 namespace: this.namespace,
                 key: objectChanges.id
             };
-            let keyString = this.openmct.objects.makeKeyString(objectChanges.identifier);
+            let keyString = this.openmct.objects.makeKeyString(objectIdentifier);
             //TODO: Optimize this so that we don't 'get' the object if it's current revision (from this.objectQueue) is the same as the one we already have.
             let observersForObject = this.observers[keyString];
 
             if (observersForObject) {
                 observersForObject.forEach(async (observer) => {
-                    const updatedObject = await this.get(objectChanges.identifier);
+                    const updatedObject = await this.get(objectIdentifier);
                     if (this.isSynchronizedObject(updatedObject)) {
                         observer(updatedObject);
                     }
@@ -179,11 +179,8 @@ class CouchObjectProvider {
     getModel(response) {
         if (response && response.model) {
             let key = response[ID];
-            let object = response.model;
-            object.identifier = {
-                namespace: this.namespace,
-                key: key
-            };
+            let object = this.fromPersistedModel(response.model, key);
+
             if (!this.objectQueue[key]) {
                 this.objectQueue[key] = new CouchObjectQueue(undefined, response[REV]);
             }
@@ -301,18 +298,12 @@ class CouchObjectProvider {
         return Array.from(new Set(array));
     }
 
-    search(query, abortSignal) {
-        const filter = {
-            "selector": {
-                "model": {
-                    "name": {
-                        "$regex": `(?i)${query}`
-                    }
-                }
-            }
-        };
-
-        return this.getObjectsByFilter(filter, abortSignal);
+    search() {
+        // Dummy search function. It has to appear to support search,
+        // otherwise the in-memory indexer will index all of its objects,
+        // but actually search results will be provided by a separate search provider
+        // see CoucheSearchProvider.js
+        return Promise.resolve([]);
     }
 
     async getObjectsByFilter(filter, abortSignal) {
@@ -445,17 +436,17 @@ class CouchObjectProvider {
     }
 
     onEventMessage(event) {
-        const object = JSON.parse(event.data);
-        object.identifier = {
+        const eventData = JSON.parse(event.data);
+        const identifier = {
             namespace: this.namespace,
-            key: object.id
+            key: eventData.id
         };
-        let keyString = this.openmct.objects.makeKeyString(object.identifier);
+        const keyString = this.openmct.objects.makeKeyString(identifier);
         let observersForObject = this.observers[keyString];
 
         if (observersForObject) {
             observersForObject.forEach(async (observer) => {
-                const updatedObject = await this.get(object.identifier);
+                const updatedObject = await this.get(identifier);
                 if (this.isSynchronizedObject(updatedObject)) {
                     observer(updatedObject);
                 }
@@ -520,7 +511,9 @@ class CouchObjectProvider {
     create(model) {
         let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
+        model = this.toPersistableModel(model);
         this.enqueueObject(key, model, intermediateResponse);
+
         if (!this.objectQueue[key].pending) {
             this.objectQueue[key].pending = true;
             const queued = this.objectQueue[key].dequeue();
@@ -557,10 +550,30 @@ class CouchObjectProvider {
     update(model) {
         let intermediateResponse = this.getIntermediateResponse();
         const key = model.identifier.key;
+        model = this.toPersistableModel(model);
+
         this.enqueueObject(key, model, intermediateResponse);
         this.updateQueued(key);
 
         return intermediateResponse.promise;
+    }
+
+    toPersistableModel(model) {
+        //First make a copy so we are not mutating the provided model.
+        const persistableModel = JSON.parse(JSON.stringify(model));
+        //Delete the identifier. Couch manages namespaces dynamically.
+        delete persistableModel.identifier;
+
+        return persistableModel;
+    }
+
+    fromPersistedModel(model, key) {
+        model.identifier = {
+            namespace: this.namespace,
+            key
+        };
+
+        return model;
     }
 }
 

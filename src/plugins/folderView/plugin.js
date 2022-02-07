@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -29,6 +29,17 @@ define([
 ) {
     return function plugin() {
         return function install(openmct) {
+            openmct.types.addType('folder', {
+                name: "Folder",
+                key: "folder",
+                description: "Create folders to organize other objects or links to objects without the ability to edit it's properties.",
+                cssClass: "icon-folder",
+                creatable: true,
+                initialize: function (domainObject) {
+                    domainObject.composition = [];
+                }
+            });
+
             openmct.objectViews.addProvider(new FolderGridView(openmct));
             openmct.objectViews.addProvider(new FolderListView(openmct));
         };

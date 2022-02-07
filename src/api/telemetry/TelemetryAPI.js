@@ -1,5 +1,5 @@
 /*****************************************************************************
- * Open MCT, Copyright (c) 2014-2021, United States Government
+ * Open MCT, Copyright (c) 2014-2022, United States Government
  * as represented by the Administrator of the National Aeronautics and Space
  * Administration. All rights reserved.
  *
@@ -137,14 +137,17 @@ define([
      */
     function TelemetryAPI(openmct) {
         this.openmct = openmct;
-        this.requestProviders = [];
-        this.subscriptionProviders = [];
-        this.metadataProviders = [new DefaultMetadataProvider(this.openmct)];
+
+        this.formatMapCache = new WeakMap();
+        this.formatters = new Map();
         this.limitProviders = [];
         this.metadataCache = new WeakMap();
-        this.formatMapCache = new WeakMap();
-        this.valueFormatterCache = new WeakMap();
+        this.metadataProviders = [new DefaultMetadataProvider(this.openmct)];
+        this.noRequestProviderForAllObjects = false;
         this.requestAbortControllers = new Set();
+        this.requestProviders = [];
+        this.subscriptionProviders = [];
+        this.valueFormatterCache = new WeakMap();
     }
 
     TelemetryAPI.prototype.abortAllRequests = function () {
@@ -313,6 +316,10 @@ define([
      *          telemetry data
      */
     TelemetryAPI.prototype.request = function (domainObject) {
+        if (this.noRequestProviderForAllObjects) {
+            return Promise.resolve([]);
+        }
+
         if (arguments.length === 1) {
             arguments.length = 2;
             arguments[1] = {};
@@ -325,19 +332,22 @@ define([
         this.standardizeRequestOptions(arguments[1]);
         const provider = this.findRequestProvider.apply(this, arguments);
         if (!provider) {
-            return Promise.reject('No provider found');
+            this.requestAbortControllers.delete(abortController);
+
+            return this.handleMissingRequestProvider(domainObject);
         }
 
-        return provider.request.apply(provider, arguments).catch((rejected) => {
-            if (rejected.name !== 'AbortError') {
-                this.openmct.notifications.error('Error requesting telemetry data, see console for details');
-                console.error(rejected);
-            }
+        return provider.request.apply(provider, arguments)
+            .catch((rejected) => {
+                if (rejected.name !== 'AbortError') {
+                    this.openmct.notifications.error('Error requesting telemetry data, see console for details');
+                    console.error(rejected);
+                }
 
-            return Promise.reject(rejected);
-        }).finally(() => {
-            this.requestAbortControllers.delete(abortController);
-        });
+                return Promise.reject(rejected);
+            }).finally(() => {
+                this.requestAbortControllers.delete(abortController);
+            });
     };
 
     /**
@@ -446,17 +456,6 @@ define([
     };
 
     /**
-     * @private
-     */
-    TelemetryAPI.prototype.getFormatService = function () {
-        if (!this.formatService) {
-            this.formatService = this.openmct.$injector.get('formatService');
-        }
-
-        return this.formatService;
-    };
-
-    /**
      * Get a value formatter for a given valueMetadata.
      *
      * @returns {TelemetryValueFormatter}
@@ -465,7 +464,7 @@ define([
         if (!this.valueFormatterCache.has(valueMetadata)) {
             this.valueFormatterCache.set(
                 valueMetadata,
-                new TelemetryValueFormatter(valueMetadata, this.getFormatService())
+                new TelemetryValueFormatter(valueMetadata, this.formatters)
             );
         }
 
@@ -479,9 +478,7 @@ define([
      * @returns {Format}
      */
     TelemetryAPI.prototype.getFormatter = function (key) {
-        const formatMap = this.getFormatService().formatMap;
-
-        return formatMap[key];
+        return this.formatters.get(key);
     };
 
     /**
@@ -508,16 +505,41 @@ define([
     };
 
     /**
+     * Error Handling: Missing Request provider
+     *
+     * @returns Promise
+     */
+    TelemetryAPI.prototype.handleMissingRequestProvider = function (domainObject) {
+        this.noRequestProviderForAllObjects = this.requestProviders.every(requestProvider => {
+            const supportsRequest = requestProvider.supportsRequest.apply(requestProvider, arguments);
+            const hasRequestProvider = Object.hasOwn(requestProvider, 'request');
+
+            return supportsRequest && hasRequestProvider;
+        });
+
+        let message = '';
+        let detailMessage = '';
+        if (this.noRequestProviderForAllObjects) {
+            message = 'Missing request providers, see console for details';
+            detailMessage = 'Missing request provider for all request providers';
+        } else {
+            message = 'Missing request provider, see console for details';
+            const { name, identifier } = domainObject;
+            detailMessage = `Missing request provider for domainObject, name: ${name}, identifier: ${JSON.stringify(identifier)}`;
+        }
+
+        this.openmct.notifications.error(message);
+        console.error(detailMessage);
+
+        return Promise.resolve([]);
+    };
+
+    /**
      * Register a new telemetry data formatter.
      * @param {Format} format the
      */
     TelemetryAPI.prototype.addFormat = function (format) {
-        this.openmct.legacyExtension('formats', {
-            key: format.key,
-            implementation: function () {
-                return format;
-            }
-        });
+        this.formatters.set(format.key, format);
     };
 
     /**

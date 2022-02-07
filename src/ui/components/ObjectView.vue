@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div v-if="domainObject && domainObject.type === 'time-strip'"
+    <div v-if="supportsIndependentTime"
          class="c-conductor-holder--compact l-shell__main-independent-time-conductor"
     >
         <independent-time-conductor :domain-object="domainObject"
@@ -9,7 +9,8 @@
         />
     </div>
     <div ref="objectViewWrapper"
-         :class="objectViewStyle"
+         class="c-object-view"
+         :class="objectTypeClass"
     ></div>
 </div>
 </template>
@@ -20,6 +21,12 @@ import StyleRuleManager from "@/plugins/condition/StyleRuleManager";
 import {STYLE_CONSTANTS} from "@/plugins/condition/utils/constants";
 import IndependentTimeConductor from '@/plugins/timeConductor/independent/IndependentTimeConductor.vue';
 
+const SupportedViewTypes = [
+    'plot-stacked',
+    'plot-overlay',
+    'bar-graph.view',
+    'time-strip.view'
+];
 export default {
     components: {
         IndependentTimeConductor
@@ -65,12 +72,13 @@ export default {
         font() {
             return this.objectFontStyle ? this.objectFontStyle.font : this.layoutFont;
         },
-        objectViewStyle() {
-            if (this.domainObject && this.domainObject.type === 'time-strip') {
-                return 'l-shell__main-object-view';
-            } else {
-                return 'u-contents';
-            }
+        supportsIndependentTime() {
+            const viewKey = this.getViewKey();
+
+            return this.domainObject && SupportedViewTypes.includes(viewKey);
+        },
+        objectTypeClass() {
+            return this.domainObject && ('is-object-type-' + this.domainObject.type);
         }
     },
     destroyed() {
@@ -148,11 +156,15 @@ export default {
             this.openmct.objectViews.off('clearData', this.clearData);
         },
         getStyleReceiver() {
-            let styleReceiver = this.$refs.objectViewWrapper.querySelector('.js-style-receiver')
-                || this.$refs.objectViewWrapper.querySelector(':first-child');
+            let styleReceiver;
 
-            if (styleReceiver === null) {
-                styleReceiver = undefined;
+            if (this.$refs.objectViewWrapper !== undefined) {
+                styleReceiver = this.$refs.objectViewWrapper.querySelector('.js-style-receiver')
+                  || this.$refs.objectViewWrapper.querySelector(':first-child');
+
+                if (styleReceiver === null) {
+                    styleReceiver = undefined;
+                }
             }
 
             return styleReceiver;
@@ -198,6 +210,12 @@ export default {
                     }
                 }
             });
+
+            if (this.domainObject && this.domainObject.type === 'conditionWidget' && keys.includes('output')) {
+                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', styleObj.output);
+            } else {
+                this.openmct.objects.mutate(this.domainObject, 'conditionalLabel', '');
+            }
         },
         updateView(immediatelySelect) {
             this.clear();
