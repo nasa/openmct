@@ -21,26 +21,24 @@
 -->
 
 <template>
-<div class="c-tree c-timelist-properties">
-    <ul class="l-inspector-part">
-        <h2 title="Timeframe options">Timeframe</h2>
-        <div class="c-tree__item menus-to-left">
-            <li class="grid-row">
-                <div class="grid-cell label"
-                     title="Sort order of the timelist."
-                >Sort Order</div>
-                <div class="grid-cell value">
-                    <select v-model="sortOrderIndex"
-                            @change="updateSortOrder()"
-                    >
-                        <option v-for="(sortOrderOption, index) in sortOrderOptions"
-                                :key="index"
-                                :value="index"
-                        >{{ sortOrderOption.label }}</option>
-                    </select>
-                </div>
-            </li>
-        </div>
+<div class="c-inspect-properties c-timelist-properties">
+    <ul class="c-inspect-properties__section">
+        <div class="c-inspect-properties_header" title="Timeframe options">Timeframe</div>
+        <li class="c-inspect-properties__row">
+            <div class="c-inspect-properties__label"
+                 title="Sort order of the timelist."
+            >Sort Order</div>
+            <div class="c-inspect-properties__value">
+                <select v-model="sortOrderIndex"
+                        @change="updateSortOrder()"
+                >
+                    <option v-for="(sortOrderOption, index) in sortOrderOptions"
+                            :key="index"
+                            :value="index"
+                    >{{ sortOrderOption.label }}</option>
+                </select>
+            </div>
+        </li>
         <event-properties v-for="type in eventTypes"
                           :key="type.prefix"
                           :label="type.label"

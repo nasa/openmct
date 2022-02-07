@@ -167,6 +167,14 @@
             grid-column: 1 / 3;
         }
     }
+
+    .is-editing & {
+        .c-inspect-properties {
+            &__value, &__label {
+                line-height: 160%; // Prevent buttons/selects from overlapping when wrapping
+            }
+        }
+    }
 }
 
 /********************************************* INSPECTOR PROPERTIES TAB */

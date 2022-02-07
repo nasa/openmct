@@ -1,44 +1,42 @@
 <template>
-<div class="c-tree__item">
-    <li class="grid-row">
-        <div class="grid-cell label"
-             title="Options for future events."
-        >{{ label }}</div>
-        <div class="grid-cell value c-tree__item">
-            <select v-model="index"
-                    @change="updateForm('index')"
-            >
-                <option v-for="(activityOption, activityKey) in activitiesOptions"
-                        :key="activityKey"
-                        :value="activityKey"
-                >{{ activityOption }}</option>
-            </select>
-            <input v-if="index === 2"
-                   v-model="duration"
-                   class="c-input--flex"
-                   type="text"
-                   @change="updateForm('duration')"
-            >
-            <select v-if="index === 2"
-                    v-model="durationIndex"
-                    @change="updateForm('durationIndex')"
-            >
-                <option v-for="(durationOption, durationKey) in durationOptions"
-                        :key="durationKey"
-                        :value="durationKey"
-                >{{ durationOption }}</option>
-            </select>
-        </div>
-    </li>
-</div>
+<li class="c-inspect-properties__row">
+    <div class="c-inspect-properties__label"
+         title="Options for future events."
+    >{{ label }}</div>
+    <div class="c-inspect-properties__value">
+        <select v-model="index"
+                @change="updateForm('index')"
+        >
+            <option v-for="(activityOption, activityKey) in activitiesOptions"
+                    :key="activityKey"
+                    :value="activityKey"
+            >{{ activityOption }}</option>
+        </select>
+        <input v-if="index === 2"
+               v-model="duration"
+               class="c-input c-input--sm"
+               type="text"
+               @change="updateForm('duration')"
+        >
+        <select v-if="index === 2"
+                v-model="durationIndex"
+                @change="updateForm('durationIndex')"
+        >
+            <option v-for="(durationOption, durationKey) in durationOptions"
+                    :key="durationKey"
+                    :value="durationKey"
+            >{{ durationOption }}</option>
+        </select>
+    </div>
+</li>
 </template>
 
 <script>
 const ACTIVITIES_OPTIONS = [
-    'Don\'t Show',
+    'Don\'t show',
     'Show all',
-    'That start within',
-    'That ended within'
+    'Show starts within',
+    'Show after end for'
 ];
 
 const DURATION_OPTIONS = [
