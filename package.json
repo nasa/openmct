@@ -6,7 +6,7 @@
     "@braintree/sanitize-url": "5.0.2",
     "@percy/cli": "1.0.0-beta.73",
     "@percy/playwright": "1.0.1",
-    "@playwright/test": "1.18.0",
+    "@playwright/test": "1.18.1",
     "allure-playwright": "2.0.0-beta.14",
     "angular": ">=1.8.0",
     "angular-route": "1.4.14",
