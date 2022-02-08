@@ -23,12 +23,16 @@
 <template>
 <div class="c-inspect-properties c-timelist-properties">
     <ul class="c-inspect-properties__section">
-        <div class="c-inspect-properties_header" title="Timeframe options">Timeframe</div>
+        <div class="c-inspect-properties_header"
+             title="'Timeframe options'"
+        >Timeframe</div>
         <li class="c-inspect-properties__row">
             <div class="c-inspect-properties__label"
                  title="Sort order of the timelist."
             >Sort Order</div>
-            <div class="c-inspect-properties__value">
+            <div v-if="canEdit"
+                 class="c-inspect-properties__value"
+            >
                 <select v-model="sortOrderIndex"
                         @change="updateSortOrder()"
                 >
@@ -37,6 +41,11 @@
                             :value="index"
                     >{{ sortOrderOption.label }}</option>
                 </select>
+            </div>
+            <div v-else
+                 class="c-inspect-properties__value"
+            >
+                {{ sortOrderOptions[sortOrderIndex].label }}
             </div>
         </li>
         <event-properties v-for="type in eventTypes"
@@ -78,13 +87,25 @@ export default {
         return {
             sortOrderIndex: this.domainObject.configuration.sortOrderIndex,
             sortOrderOptions: SORT_ORDER_OPTIONS,
-            eventTypes: EVENT_TYPES
+            eventTypes: EVENT_TYPES,
+            isEditing: this.openmct.editor.isEditing()
         };
     },
+    computed: {
+        canEdit() {
+            return this.isEditing && !this.domainObject.locked;
+        }
+    },
     mounted() {
-
+        this.openmct.editor.on('isEditing', this.setEditState);
+    },
+    beforeDestroy() {
+        this.openmct.editor.off('isEditing', this.setEditState);
     },
     methods: {
+        setEditState(isEditing) {
+            this.isEditing = isEditing;
+        },
         updateSortOrder() {
             this.updateProperty('sortOrderIndex', this.sortOrderIndex);
         },
