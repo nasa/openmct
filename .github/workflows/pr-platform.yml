@@ -9,6 +9,7 @@ jobs:
     if: ${{ github.event.label.name == 'pr:platform' }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
