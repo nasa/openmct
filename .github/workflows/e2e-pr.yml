@@ -15,8 +15,8 @@ jobs:
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: "nasa",
+              repo: "openmct",
               body: 'Started e2e Run. Follow along: https://github.com/nasa/openmct/actions/runs/' + context.runId
             })
       - uses: actions/checkout@v2
@@ -37,8 +37,8 @@ jobs:
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: "nasa",
+              repo: "openmct",
               body: 'Success ✅ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
             })
       - name: Test failure
@@ -48,7 +48,7 @@ jobs:
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: "nasa",
+              repo: "openmct",
               body: 'Failure ❌ ! Build artifacts are here: https://github.com/nasa/openmct/actions/runs/' + context.runId
             })

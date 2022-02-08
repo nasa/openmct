@@ -10,6 +10,7 @@
     </div>
     <div ref="objectViewWrapper"
          class="c-object-view"
+         :class="objectTypeClass"
     ></div>
 </div>
 </template>
@@ -75,6 +76,9 @@ export default {
             const viewKey = this.getViewKey();
 
             return this.domainObject && SupportedViewTypes.includes(viewKey);
+        },
+        objectTypeClass() {
+            return this.domainObject && ('is-object-type-' + this.domainObject.type);
         }
     },
     destroyed() {
