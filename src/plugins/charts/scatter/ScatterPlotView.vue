@@ -34,6 +34,8 @@
 import BarGraph from '../BarGraphPlot.vue';
 import _ from 'lodash';
 
+const MAX_INTERPOLATE = 5;
+
 export default {
     components: {
         BarGraph
@@ -62,6 +64,7 @@ export default {
         }
     },
     mounted() {
+        this.telemetryCollections = {};
         this.valuesByTimestamp = {};
         this.refreshData = this.refreshData.bind(this);
         this.setTimeContext();
@@ -73,6 +76,8 @@ export default {
         this.stopFollowingTimeContext();
 
         this.removeAllSubscriptions();
+
+        Object.keys(this.telemetryCollections).forEach(this.removeTelemetryCollection);
 
         if (!this.composition) {
             return;
@@ -126,28 +131,28 @@ export default {
             }
 
             // ask for the current telemetry data, then subcribe for changes
-            this.requestDataFor(telemetryObject);
-            this.subscribeToObject(telemetryObject);
+            this.telemetryCollections[key] = this.openmct.telemetry
+                .requestCollection(telemetryObject);
+
+            const telemetryProcessor = this.getTelemetryProcessor(key);
+            // this.telemetryCollections[key].on('remove', telemetryRemover);
+            this.telemetryCollections[key].on('add', telemetryProcessor);
+            // this.telemetryCollections[key].on('clear', this.clearData);
+            this.telemetryCollections[key].load();
         },
-        addTrace(trace, key) {
-            if (!this.trace.length) {
-                this.trace = this.trace.concat([trace]);
-
-                return;
-            }
-
-            let isInTrace = false;
-            const newTrace = this.trace.map((currentTrace, index) => {
-                if (currentTrace.key !== key) {
-                    return currentTrace;
+        getTelemetryProcessor(keyString) {
+            return (telemetry) => {
+                //Check that telemetry object has not been removed since telemetry was requested.
+                const telemetryObject = this.telemetryObjects[keyString];
+                if (!telemetryObject) {
+                    return;
                 }
 
-                isInTrace = true;
-
-                return trace;
-            });
-
-            this.trace = isInTrace ? newTrace : newTrace.concat([trace]);
+                telemetry.forEach(datum => {
+                    const axisMetadata = this.getAxisMetadata(telemetryObject);
+                    this.addDataToGraph(telemetryObject, datum, axisMetadata);
+                });
+            };
         },
         getAxisMetadata(telemetryObject) {
             const metadata = this.openmct.telemetry.getMetadata(telemetryObject);
@@ -187,8 +192,8 @@ export default {
         refreshData(bounds, isTick) {
             this.purgeRecordsOutsideRange(bounds);
             if (!isTick) {
-                const telemetryObjects = Object.values(this.telemetryObjects);
-                telemetryObjects.forEach(this.requestDataFor);
+                const telemetryKeys = Object.keys(this.telemetryCollections);
+                telemetryKeys.forEach(key => this.telemetryCollections[key].load());
             }
         },
         purgeRecordsOutsideRange(bounds) {
@@ -197,6 +202,13 @@ export default {
                     delete this.valuesByTimestamp[timestamp];
                 }
             });
+        },
+        removeTelemetryCollection(keyString) {
+            if (this.telemetryCollections[keyString]) {
+                this.telemetryCollections[keyString].destroy();
+                this.telemetryCollections[keyString] = undefined;
+                delete this.telemetryCollections[keyString];
+            }
         },
         removeAllSubscriptions() {
             this.subscriptions.forEach(subscription => subscription.unsubscribe());
@@ -252,16 +264,26 @@ export default {
                 const metadataKey = axisMetadata.xAxisMetadata.key;
                 if (data[metadataKey]) {
                     valueForTimestamp.x = this.format(key, metadataKey, data);
+                    valueForTimestamp.xInterpolated = false;
+                    // this.adjustInterpolatedValues(timestamp, 'x', valueForTimestamp.x);
                     if (valueForTimestamp.y === undefined) {
+                        //find nearest y
+                        // valueForTimestamp.y = this.getInterpolatedValue(timestamp, 'y');
                         valueForTimestamp.y = null;
+                        valueForTimestamp.yInterpolated = true;
                     }
                 }
             } else if (this.domainObject.configuration.yKey === key) {
                 const metadataKey = axisMetadata.yAxisMetadata.key;
                 if (data[metadataKey]) {
                     valueForTimestamp.y = this.format(key, metadataKey, data);
+                    valueForTimestamp.yInterpolated = false;
+                    // this.adjustInterpolatedValues(timestamp, 'y', valueForTimestamp.y);
                     if (valueForTimestamp.x === undefined) {
+                        //find nearest x
+                        // valueForTimestamp.x = this.getInterpolatedValue(timestamp, 'x');
                         valueForTimestamp.x = null;
+                        valueForTimestamp.xInterpolated = true;
                     }
                 }
             }
@@ -301,7 +323,80 @@ export default {
                 };
             }
 
-            this.addTrace(trace, key);
+            this.trace = [trace];
+        },
+        getInterpolatedValue(timestamp, prop) {
+            const keys = Object.keys(this.valuesByTimestamp);
+            const keysLength = keys.length;
+            const values = Object.values(this.valuesByTimestamp);
+            let index = keys.findIndex(item => {
+                return parseInt(item, 10) === timestamp;
+            });
+            if (index < 0) {
+                index = keysLength - 1;
+            }
+
+            let found;
+
+            let count = 1;
+            let done = false;
+            while (found === undefined && !done && count < MAX_INTERPOLATE) {
+                const previous = index - count;
+                const next = index + count;
+                if (previous >= 0 && values[previous] !== undefined && values[previous][prop] !== null) {
+                    found = values[previous][prop];
+                } else if (next < keysLength && values[next] !== undefined && values[next][prop] !== null) {
+                    found = values[next][prop];
+                }
+
+                if (previous < 0 && next >= keysLength) {
+                    done = true;
+                }
+
+                count++;
+            }
+
+            return found === undefined ? null : found;
+        },
+        adjustInterpolatedValues(timestamp, prop, trueValue) {
+            const keys = Object.keys(this.valuesByTimestamp);
+            const keysLength = keys.length;
+            const values = Object.values(this.valuesByTimestamp);
+            let index = keys.findIndex(item => {
+                return parseInt(item, 10) === timestamp;
+            });
+            if (index < 0) {
+                index = keysLength;
+            }
+
+            let count = 1;
+            let prevDone = false;
+            let prevInterpolated = false;
+            let nextDone = false;
+            let nextInterpolated = false;
+            while ((!prevDone || !nextDone) && count < MAX_INTERPOLATE) {
+                const previous = index - count;
+                const next = index + count;
+                if (prevDone === false && previous >= 0 && values[previous][`${prop}Interpolated`] === true) {
+                    this.valuesByTimestamp[keys[previous]][prop] = trueValue;
+                    this.valuesByTimestamp[keys[previous]][`${prop}Interpolated`] = false;
+                    prevInterpolated = true;
+                } else if (prevInterpolated === true && values[previous][`${prop}Interpolated`] === false) {
+                    //stop when you find the first true value
+                    prevDone = true;
+                }
+
+                if (nextDone === false && next < keysLength && values[next][`${prop}Interpolated`] === true) {
+                    this.valuesByTimestamp[keys[next]][prop] = trueValue;
+                    this.valuesByTimestamp[keys[next]][`${prop}Interpolated`] = false;
+                    nextInterpolated = true;
+                } else if (nextInterpolated === true && values[next][`${prop}Interpolated`] === false) {
+                    //stop when you find the first true value
+                    nextDone = true;
+                }
+
+                count++;
+            }
         },
         getTimestampForDatum(datum, key) {
             const timeSystemKey = this.timeContext.timeSystem().key;
