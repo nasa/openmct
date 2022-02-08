@@ -27,6 +27,7 @@
     <list-view :items="planActivities"
                :header-items="headerItems"
                :default-sort="defaultSort"
+               class="sticky"
     />
 </div>
 </template>

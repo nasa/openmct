@@ -1,7 +1,17 @@
 /******************************* LIST VIEW */
-.c-list-view {
-    overflow-x: auto !important;
-    overflow-y: auto;
+.c-list-view-generic {
+    &:not(.sticky) {
+        overflow-x: auto !important;
+        overflow-y: auto;
+    }
+
+    &.sticky {
+        thead>tr {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+        }
+    }
 
     tbody tr {
         background: $colorListItemBg;
