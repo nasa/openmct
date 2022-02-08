@@ -99,17 +99,24 @@ export default {
         };
     },
     mounted() {
+        this.isEditing = this.openmct.editor.isEditing();
         this.timestamp = Date.now();
         this.observeForChanges(this.domainObject);
 
         this.unlisten = this.openmct.objects.observe(this.domainObject, '*', this.observeForChanges);
+        this.unlistenConfig = this.openmct.objects.observe(this.domainObject, 'configuration', this.observeForConfigChanges);
         this.removeStatusListener = this.openmct.status.observe(this.domainObject.identifier, this.setStatus);
         this.status = this.openmct.status.get(this.domainObject.identifier);
         this.unlistenTicker = ticker.listen(this.clearPreviousActivities);
+        this.openmct.editor.on('isEditing', this.setEditState);
     },
     beforeDestroy() {
         if (this.unlisten) {
             this.unlisten();
+        }
+
+        if (this.unlistenConfig) {
+            this.unlistenConfig();
         }
 
         if (this.unlistenTicker) {
@@ -119,12 +126,25 @@ export default {
         if (this.removeStatusListener) {
             this.removeStatusListener();
         }
+
+        this.openmct.editor.off('isEditing', this.setEditState);
     },
     methods: {
         observeForChanges(mutatedObject) {
             this.getPlanData(mutatedObject);
-            this.setViewBounds();
-            this.listActivities();
+            this.observeForConfigChanges(mutatedObject.configuration);
+        },
+        observeForConfigChanges(configuration) {
+            if (this.isEditing) {
+                this.filterValue = configuration.filter;
+                this.hideAll = false;
+                this.showAll = true;
+                this.listActivities();
+            } else {
+                this.filterValue = configuration.filter;
+                this.setViewBounds();
+                this.listActivities();
+            }
         },
         getPlanData(domainObject) {
             this.planData = getValidatedPlan(domainObject);
@@ -207,6 +227,7 @@ export default {
             groups.forEach((key) => {
                 activities = activities.concat(this.planData[key]);
             });
+            activities = activities.filter(this.filterActivities);
             activities = this.applyStyles(activities);
             // sort by start time
             this.planActivities = activities.sort(this.sortByStartTime);
@@ -220,8 +241,11 @@ export default {
 
             this.listActivities();
         },
-        isActivityInBounds(activity) {
-            if (this.hideAll === true) {
+        filterActivities(activity) {
+
+            const hasFilterMatch = this.filterByName(activity.name);
+
+            if (hasFilterMatch === false || this.hideAll === true) {
                 return false;
             }
 
@@ -230,29 +254,40 @@ export default {
             }
 
             //current event or future start event or past end event
-            return (this.noCurrent === false && this.timestamp >= activity.start && this.timestamp <= activity.end)
-          || (this.timestamp > activity.end && (this.viewBounds.pastEnd === undefined || activity.end >= this.viewBounds.pastEnd(this.timestamp)))
-          || (this.timestamp < activity.start && (this.viewBounds.futureStart === undefined || activity.start <= this.viewBounds.futureStart(this.timestamp)));
+            const isCurrent = (this.noCurrent === false && this.timestamp >= activity.start && this.timestamp <= activity.end);
+            const isPast = (this.timestamp > activity.end && (this.viewBounds.pastEnd === undefined || activity.end >= this.viewBounds.pastEnd(this.timestamp)));
+            const isFuture = (this.timestamp < activity.start && (this.viewBounds.futureStart === undefined || activity.start <= this.viewBounds.futureStart(this.timestamp)));
+
+            return isCurrent || isPast || isFuture;
+        },
+        filterByName(name) {
+            const filters = this.filterValue.split(',');
+
+            return filters.some((search => {
+                const normalized = search.trim().toLowerCase();
+                const regex = new RegExp(normalized);
+
+                return regex.test(name.toLowerCase());
+            }));
         },
         applyStyles(activities) {
-            return activities.filter(this.isActivityInBounds)
-                .map((activity) => {
-                    if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
-                        activity.cssClass = '--is-current';
-                    } else if (this.timestamp < activity.start) {
-                        activity.cssClass = '--is-future';
-                    } else {
-                        activity.cssClass = '--is-past';
-                    }
+            return activities.map((activity) => {
+                if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
+                    activity.cssClass = '--is-current';
+                } else if (this.timestamp < activity.start) {
+                    activity.cssClass = '--is-future';
+                } else {
+                    activity.cssClass = '--is-past';
+                }
 
-                    if (!activity.key) {
-                        activity.key = uuid();
-                    }
+                if (!activity.key) {
+                    activity.key = uuid();
+                }
 
-                    activity.duration = activity.start - this.timestamp;
+                activity.duration = activity.start - this.timestamp;
 
-                    return activity;
-                });
+                return activity;
+            });
         },
         sortActivities(activities) {
             const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
@@ -274,9 +309,10 @@ export default {
         },
         setStatus(status) {
             this.status = status;
-            if (this.xScale) {
-                this.drawPlan();
-            }
+        },
+        setEditState(isEditing) {
+            this.isEditing = isEditing;
+            this.observeForConfigChanges(this.domainObject.configuration);
         }
     }
 };

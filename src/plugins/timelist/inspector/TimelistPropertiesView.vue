@@ -21,40 +21,50 @@
 -->
 
 <template>
-<div class="c-inspect-properties c-timelist-properties">
-    <ul class="c-inspect-properties__section">
-        <div class="c-inspect-properties_header"
-             title="'Timeframe options'"
-        >Timeframe</div>
-        <li class="c-inspect-properties__row">
-            <div class="c-inspect-properties__label"
-                 title="Sort order of the timelist."
-            >Sort Order</div>
-            <div v-if="canEdit"
-                 class="c-inspect-properties__value"
-            >
-                <select v-model="sortOrderIndex"
-                        @change="updateSortOrder()"
+<div class="c-timelist-properties">
+    <div class="c-inspect-properties">
+        <ul class="c-inspect-properties__section">
+            <div class="c-inspect-properties_header"
+                 title="'Timeframe options'"
+            >Timeframe</div>
+            <li class="c-inspect-properties__row">
+                <div class="c-inspect-properties__label"
+                     title="Sort order of the timelist."
+                >Sort Order</div>
+                <div v-if="canEdit"
+                     class="c-inspect-properties__value"
                 >
-                    <option v-for="(sortOrderOption, index) in sortOrderOptions"
-                            :key="index"
-                            :value="index"
-                    >{{ sortOrderOption.label }}</option>
-                </select>
-            </div>
-            <div v-else
-                 class="c-inspect-properties__value"
-            >
-                {{ sortOrderOptions[sortOrderIndex].label }}
-            </div>
-        </li>
-        <event-properties v-for="type in eventTypes"
-                          :key="type.prefix"
-                          :label="type.label"
-                          :prefix="type.prefix"
-                          @updated="eventPropertiesUpdated"
-        />
-    </ul>
+                    <select v-model="sortOrderIndex"
+                            @change="updateSortOrder()"
+                    >
+                        <option v-for="(sortOrderOption, index) in sortOrderOptions"
+                                :key="index"
+                                :value="index"
+                        >{{ sortOrderOption.label }}</option>
+                    </select>
+                </div>
+                <div v-else
+                     class="c-inspect-properties__value"
+                >
+                    {{ sortOrderOptions[sortOrderIndex].label }}
+                </div>
+            </li>
+            <event-properties v-for="type in eventTypes"
+                              :key="type.prefix"
+                              :label="type.label"
+                              :prefix="type.prefix"
+                              @updated="eventPropertiesUpdated"
+            />
+        </ul>
+    </div>
+    <div class="c-inspect-properties">
+        <ul class="c-inspect-properties__section">
+            <div class="c-inspect-properties_header"
+                 title="'Filters'"
+            >Filtering</div>
+            <filtering @updated="eventPropertiesUpdated" />
+        </ul>
+    </div>
 </div>
 </template>
 
@@ -62,6 +72,7 @@
 
 import EventProperties from './EventProperties.vue';
 import { SORT_ORDER_OPTIONS } from "../constants";
+import Filtering from "./Filtering.vue";
 
 const EVENT_TYPES = [
     {
@@ -80,6 +91,7 @@ const EVENT_TYPES = [
 
 export default {
     components: {
+        Filtering,
         EventProperties
     },
     inject: ['openmct', 'domainObject'],
@@ -110,7 +122,6 @@ export default {
             this.updateProperty('sortOrderIndex', this.sortOrderIndex);
         },
         updateProperty(key, value) {
-            // console.log(`configuration.${key}`, value);
             this.openmct.objects.mutate(this.domainObject, `configuration.${key}`, value);
         },
         eventPropertiesUpdated(data) {
