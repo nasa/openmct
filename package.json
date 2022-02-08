@@ -63,7 +63,7 @@
     "resolve-url-loader": "4.0.0",
     "sass": "1.49.0",
     "sass-loader": "12.4.0",
-    "sinon": "12.0.1",
+    "sinon": "13.0.1",
     "style-loader": "^1.0.1",
     "uuid": "^3.3.3",
     "vue": "2.5.6",
