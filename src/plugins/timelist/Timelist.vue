@@ -54,6 +54,7 @@ const headerItems = [
         }
     }, {
         defaultDirection: true,
+        isSortable: true,
         property: 'end',
         name: 'End Time',
         format: function (value, object) {
@@ -82,7 +83,10 @@ const headerItems = [
     }
 ];
 
-const defaultSort = 'start';
+const defaultSort = {
+    property: 'start',
+    defaultDirection: true
+};
 
 export default {
     components: {
@@ -142,6 +146,7 @@ export default {
                 this.listActivities();
             } else {
                 this.filterValue = configuration.filter;
+                this.setSort();
                 this.setViewBounds();
                 this.listActivities();
             }
@@ -289,10 +294,14 @@ export default {
                 return activity;
             });
         },
-        sortActivities(activities) {
+        setSort() {
             const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];
             const property = sortOrder.property;
-            const direction = sortOrder.direction.toLowerCase();
+            const direction = sortOrder.direction.toLowerCase() === 'asc';
+            this.defaultSort = {
+                property,
+                defaultDirection: direction
+            };
         },
         sortByStartTime(a, b) {
             const numA = parseInt(a.start, 10);

@@ -7,16 +7,16 @@ export const SORT_ORDER_OPTIONS = [
     {
         label: 'Start Descending',
         property: 'start',
-        direction: 'ASC'
+        direction: 'DESC'
     },
     {
         label: 'End Ascending',
-        property: 'start',
+        property: 'end',
         direction: 'ASC'
     },
     {
         label: 'End Descending',
-        property: 'start',
-        direction: 'ASC'
+        property: 'end',
+        direction: 'DESC'
     }
 ];
