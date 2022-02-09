@@ -84,6 +84,7 @@ describe("The Imagery View Layouts", () => {
     let telemetryPromise;
     let telemetryPromiseResolve;
     let cleanupFirst;
+    let isClearDataTriggered;
 
     let openmct;
     let parent;
@@ -202,6 +203,10 @@ describe("The Imagery View Layouts", () => {
         });
 
         spyOn(openmct.telemetry, 'request').and.callFake(() => {
+            if (isClearDataTriggered) {
+                return [];
+            }
+
             telemetryPromiseResolve(imageTelemetry);
 
             return telemetryPromise;
@@ -326,7 +331,7 @@ describe("The Imagery View Layouts", () => {
         let imageryView;
         let clearDataPlugin;
         let clearDataAction;
-        
+
         beforeEach(() => {
 
             applicableViews = openmct.objectViews.get(imageryObject, [imageryObject]);
@@ -339,25 +344,30 @@ describe("The Imagery View Layouts", () => {
             );
             openmct.install(clearDataPlugin);
             clearDataAction = openmct.actions.getAction('clear-data-action');
+            isClearDataTriggered = false;
 
             return Vue.nextTick();
         });
-
         // afterEach(() => {
         //     openmct.time.stopClock();
         //     openmct.router.removeListener('change:hash', resolveFunction);
         //
         //     imageryView.destroy();
         // });
+        it('clear data action is installed', () => {
+            expect(clearDataAction).toBeDefined();
+        });
 
-        it('clearData is called when Clear Data for Object is selected', (done) => {
+        fit('clearData is called when clear data for object is selected', (done) => {
             expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
-            openmct.objectViews.on('clearData', async (domainObject) => {
+            openmct.objectViews.on('clearData', async (_domainObject) => {
                 await Vue.nextTick();
                 expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
                 done();
             });
-            clearDataAction.invoke([imageryObject]);
+            // stubbed telemetry data will return empty array when true
+            isClearDataTriggered = true;
+            clearDataAction.invoke(imageryObject);
         });
 
         it("on mount should show the the most recent image", (done) => {
