@@ -77,7 +77,7 @@ define([
     './timer/plugin',
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
-    './localStorage/plugin',
+    './localStorage/plugin'
 ], function (
     _,
     UTCTimeSystem,
