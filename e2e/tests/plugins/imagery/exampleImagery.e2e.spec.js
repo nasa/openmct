@@ -48,7 +48,7 @@ test.describe('Example Imagery', () => {
 
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
     });
-    
+
     const backgroundImageSelector = '.c-imagery_main-image_background-image';
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
         const bgImageLocator = await page.locator(backgroundImageSelector);
@@ -73,10 +73,9 @@ test.describe('Example Imagery', () => {
         expect(imageMouseZoomedOut.height).toBeLessThan(imageMouseZoomedIn.height);
         expect(imageMouseZoomedOut.width).toBeLessThan(imageMouseZoomedIn.width);
 
-
     });
 
-    test.only('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
+    test('Can use alt+drag to move around image once zoomed in', async ({ page }) => {
         const deltaYStep = 100; //equivalent to 1x zoom
 
         const bgImageLocator = await page.locator(backgroundImageSelector);
@@ -129,6 +128,56 @@ test.describe('Example Imagery', () => {
         const afterDownPanBoundingBox = await bgImageLocator.boundingBox();
         expect(afterDownPanBoundingBox.y).toBeLessThan(afterUpPanBoundingBox.y);
 
+    });
+
+    test('Can use + - buttons to zoom on the image', async ({ page }) => {
+        const bgImageLocator = await page.locator(backgroundImageSelector);
+        await bgImageLocator.hover();
+        const zoomInBtn = await page.locator('.t-btn-zoom-in');
+        const zoomOutBtn = await page.locator('.t-btn-zoom-out');
+        const initialBoundingBox = await bgImageLocator.boundingBox();
+
+        await zoomInBtn.click();
+        await zoomInBtn.click();
+        // wait for zoom animation to finish
+        await page.waitForTimeout(300);
+        const zoomedInBoundingBox = await bgImageLocator.boundingBox();
+        expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
+        expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
+
+        await zoomOutBtn.click();
+        // wait for zoom animation to finish
+        await page.waitForTimeout(300);
+        const zoomedOutBoundingBox = await bgImageLocator.boundingBox();
+        expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
+        expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
+
+    });
+
+    test('Can use the reset button to reset the image', async ({ page }) => {
+        const bgImageLocator = await page.locator(backgroundImageSelector);
+        await bgImageLocator.hover();
+        const zoomInBtn = await page.locator('.t-btn-zoom-in');
+        const zoomResetBtn = await page.locator('.t-btn-zoom-reset');
+        const initialBoundingBox = await bgImageLocator.boundingBox();
+
+        await zoomInBtn.click();
+        await zoomInBtn.click();
+        // wait for zoom animation to finish
+        await page.waitForTimeout(300);
+        const zoomedInBoundingBox = await bgImageLocator.boundingBox();
+        expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
+        expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
+
+        await zoomResetBtn.click();
+        await page.waitForTimeout(300);
+
+        const resetBoundingBox = await bgImageLocator.boundingBox();
+        expect(resetBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
+        expect(resetBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
+
+        expect(resetBoundingBox.height).toEqual(initialBoundingBox.height);
+        expect(resetBoundingBox.width).toEqual(initialBoundingBox.width);
     });
 
     //test('Can use Mouse Wheel to zoom in and out of previous image');
