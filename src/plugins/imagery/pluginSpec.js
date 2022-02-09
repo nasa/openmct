@@ -338,38 +338,22 @@ describe("The Imagery View Layouts", () => {
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
             imageryView.show(child);
-            imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
             clearDataPlugin = new ClearDataPlugin(
                 ['example.imagery'],
                 {indicator: true}
             );
             openmct.install(clearDataPlugin);
             clearDataAction = openmct.actions.getAction('clear-data-action');
-            isClearDataTriggered = false;
 
             return Vue.nextTick();
         });
-        // afterEach(() => {
-        //     openmct.time.stopClock();
-        //     openmct.router.removeListener('change:hash', resolveFunction);
-        //
-        //     imageryView.destroy();
-        // });
-        it('clear data action is installed', () => {
-            expect(clearDataAction).toBeDefined();
+        afterEach(() => {
+            isClearDataTriggered = false;
+            // openmct.time.stopClock();
+            // openmct.router.removeListener('change:hash', resolveFunction);
+            // imageryView.destroy();
         });
 
-        it('on clearData action should clear data for object is selected', (done) => {
-            expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
-            openmct.objectViews.on('clearData', async (_domainObject) => {
-                await Vue.nextTick();
-                expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
-                done();
-            });
-            // stubbed telemetry data will return empty array when true
-            isClearDataTriggered = true;
-            clearDataAction.invoke(imageryObject);
-        });
 
         it("on mount should show the the most recent image", (done) => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
@@ -499,6 +483,21 @@ describe("The Imagery View Layouts", () => {
                     done();
                 });
             });
+        });
+        it('clear data action is installed', () => {
+            expect(clearDataAction).toBeDefined();
+        });
+
+        it('on clearData action should clear data for object is selected', (done) => {
+            expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
+            openmct.objectViews.on('clearData', async (_domainObject) => {
+                await Vue.nextTick();
+                expect(parent.querySelectorAll('.c-imagery__thumb').length).toBe(0);
+                done();
+            });
+            // stubbed telemetry data will return empty array when true
+            isClearDataTriggered = true;
+            clearDataAction.invoke(imageryObject);
         });
     });
 
