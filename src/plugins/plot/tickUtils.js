@@ -1,4 +1,4 @@
-import { antilog, log } from "./mathUtils";
+import { antisymlog, symlog } from "./mathUtils";
 
 const e10 = Math.sqrt(50);
 const e5 = Math.sqrt(10);
@@ -47,7 +47,8 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
     const mainLogTicks = ticks(start, stop, mainTickCount);
 
     // original values
-    const mainTicks = mainLogTicks.map(n => antilog(n, 10));
+    const scale = 1; // TODO get from UI, positive number above 0
+    const mainTicks = mainLogTicks.map(n => antisymlog(n / scale, 10));
 
     const result = [];
 
@@ -63,14 +64,14 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
         const nextTick = mainTicks[i + 1];
         const rangeBetweenMainTicks = nextTick - tick;
 
-        const secondaryTicks = ticks(
+        const secondaryLogTicks = ticks(
             tick + rangeBetweenMainTicks / (secondaryTickCount + 1),
             nextTick - rangeBetweenMainTicks / (secondaryTickCount + 1),
             secondaryTickCount - 2
         )
-            .map(n => log(n, 10));
+            .map(n => scale * symlog(n, 10));
 
-        result.push(...secondaryTicks);
+        result.push(...secondaryLogTicks);
 
         i++;
     }
@@ -79,7 +80,10 @@ export function getLogTicks(start, stop, mainTickCount = 8, secondaryTickCount =
 }
 
 export function getLogTicks2(start, stop, count = 8) {
-    return ticks(antilog(start, 10), antilog(stop, 10), count).map(n => log(n, 10));
+    const scale = 1; // TODO get from UI, positive number above 0
+
+    return ticks(antisymlog(start / scale, 10), antisymlog(stop / scale, 10), count)
+        .map(n => scale * symlog(n, 10));
 }
 
 /**

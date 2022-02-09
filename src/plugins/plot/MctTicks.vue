@@ -27,8 +27,8 @@
     <div v-if="position === 'left'"
          class="gl-plot-tick-wrapper"
     >
-        <div v-for="tick in ticks"
-             :key="tick.value"
+        <div v-for="(tick, i) in ticks"
+             :key="i"
              class="gl-plot-tick gl-plot-x-tick-label"
              :style="{
                  left: (100 * (tick.value - min) / interval) + '%'
@@ -41,8 +41,8 @@
     <div v-if="position === 'top'"
          class="gl-plot-tick-wrapper"
     >
-        <div v-for="tick in ticks"
-             :key="tick.value"
+        <div v-for="(tick, i) in ticks"
+             :key="i"
              class="gl-plot-tick gl-plot-y-tick-label"
              :style="{ top: (100 * (max - tick.value) / interval) + '%' }"
              :title="tick.fullText || tick.text"
@@ -53,8 +53,8 @@
     </div>
     <!-- grid lines follow -->
     <template v-if="position === 'right'">
-        <div v-for="tick in ticks"
-             :key="tick.value"
+        <div v-for="(tick, i) in ticks"
+             :key="i"
              class="gl-plot-hash hash-v"
              :style="{
                  right: (100 * (max - tick.value) / interval) + '%',
@@ -64,8 +64,8 @@
         </div>
     </template>
     <template v-if="position === 'bottom'">
-        <div v-for="tick in ticks"
-             :key="tick.value"
+        <div v-for="(tick, i) in ticks"
+             :key="i"
              class="gl-plot-hash hash-h"
              :style="{ bottom: (100 * (tick.value - min) / interval) + '%', width: '100%' }"
         >
@@ -93,7 +93,7 @@ export default {
         tickCount: {
             type: Number,
             default() {
-                return 8;
+                return 6;
             },
         },
         position: {
@@ -183,10 +183,10 @@ export default {
                 }, this);
             }
 
-            const useLogForY = true // TODO get this from UI input
+            const useLogForY = true; // TODO get from UI
 
             if (this.axisType === 'yAxis' && useLogForY) {
-                return getLogTicks(range.min, range.max, number);
+                return getLogTicks(range.min, range.max, number, 4);
                 // return getLogTicks2(range.min, range.max, number);
             }
             else {

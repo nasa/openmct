@@ -20,7 +20,7 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 import _ from 'lodash';
-import { antilog } from '../mathUtils';
+import { antisymlog } from '../mathUtils';
 import Model from './Model';
 
 /**
@@ -193,8 +193,8 @@ export default class YAxisModel extends Model {
         const yKey = sampleSeries.get('yKey');
         const yMetadata = sampleSeries.metadata.value(yKey);
         const yFormat = sampleSeries.formats[yKey];
-        // this.set('format', yFormat.format.bind(yFormat));
-        this.set('format', (n) => yFormat.format(antilog(n, 10)));
+        const scale = 1; // TODO get from UI, positive number above 0
+        this.set('format', (n) => yFormat.format(antisymlog(n / scale, 10)));
         this.set('values', yMetadata.values);
         if (!label) {
             const labelName = seriesCollection.map(function (s) {

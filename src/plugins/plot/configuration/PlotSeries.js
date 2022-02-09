@@ -23,7 +23,7 @@ import _ from 'lodash';
 import Model from "./Model";
 import { MARKER_SHAPES } from '../draw/MarkerShapes';
 import configStore from "../configuration/ConfigStore";
-import { log } from '../mathUtils';
+import { symlog } from '../mathUtils';
 
 /**
  * Plot series handle interpreting telemetry metadata for a single telemetry
@@ -253,8 +253,12 @@ export default class PlotSeries extends Model {
         }.bind(this);
         const format = this.formats[newKey];
         // this.getYVal = format.parse.bind(format);
-        this.getYVal = (point) => {
-            return log(format.parse(point), 10);
+        this.getYVal = (value) => {
+            const useLogForY = true; // TODO get from UI
+            const scale = 1; // TODO get from UI, positive number above 0
+            const y = format.parse(value);
+
+            return useLogForY ? scale * symlog(y, 10) : y;
         };
     }
 
