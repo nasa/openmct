@@ -338,6 +338,7 @@ describe("The Imagery View Layouts", () => {
             imageryViewProvider = applicableViews.find(viewProvider => viewProvider.key === imageryKey);
             imageryView = imageryViewProvider.view(imageryObject, [imageryObject]);
             imageryView.show(child);
+            imageTelemetry = generateTelemetry(START - TEN_MINUTES, COUNT);
             clearDataPlugin = new ClearDataPlugin(
                 ['example.imagery'],
                 {indicator: true}
@@ -358,7 +359,7 @@ describe("The Imagery View Layouts", () => {
             expect(clearDataAction).toBeDefined();
         });
 
-        it('clearData is called when clear data for object is selected', (done) => {
+        it('on clearData action should clear data for object is selected', (done) => {
             expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
             openmct.objectViews.on('clearData', async (_domainObject) => {
                 await Vue.nextTick();
