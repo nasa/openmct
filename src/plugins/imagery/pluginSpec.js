@@ -358,7 +358,7 @@ describe("The Imagery View Layouts", () => {
             expect(clearDataAction).toBeDefined();
         });
 
-        fit('clearData is called when clear data for object is selected', (done) => {
+        it('clearData is called when clear data for object is selected', (done) => {
             expect(parent.querySelectorAll('.c-imagery__thumb').length).not.toBe(0);
             openmct.objectViews.on('clearData', async (_domainObject) => {
                 await Vue.nextTick();
