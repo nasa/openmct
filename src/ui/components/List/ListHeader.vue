@@ -2,11 +2,11 @@
 <th v-if="isSortable"
     class="is-sortable"
     :class="{
-        'is-sorting': sortBy === property,
-        'asc': ascending,
-        'desc': !ascending
+        'is-sorting': currentSort === property,
+        'asc': direction,
+        'desc': !direction
     }"
-    @click="sort(property, defaultDirection)"
+    @click="sort(property, direction)"
 >
     {{ title }}
 </th>
@@ -24,11 +24,15 @@ export default {
             type: String,
             required: true
         },
+        currentSort: {
+            type: String,
+            required: true
+        },
         title: {
             type: String,
             required: true
         },
-        defaultDirection: {
+        direction: {
             type: Boolean,
             required: true
         },
@@ -39,17 +43,11 @@ export default {
             }
         }
     },
-    data() {
-        return {
-            ascending: false,
-            sortBy: undefined
-        };
-    },
     methods: {
-        sort(field, defaultDirection) {
+        sort(property, direction) {
             this.$emit('sort', {
-                field,
-                defaultDirection
+                property,
+                direction
             });
         }
     }

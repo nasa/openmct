@@ -55,7 +55,8 @@ export default function () {
                     currentEventsDuration: 20,
                     pastEventsIndex: 0,
                     pastEventsDurationIndex: 0,
-                    pastEventsDuration: 20
+                    pastEventsDuration: 20,
+                    filter: ''
                 };
             }
         });

@@ -21,11 +21,12 @@
  *****************************************************************************/
 
 import {createOpenMct, resetApplicationState} from "utils/testing";
-import PlanPlugin from "../plan/plugin";
+import TimelistPlugin from "./plugin";
 import Vue from 'vue';
+import moment from "moment";
 
 describe('the plugin', function () {
-    let planDefinition;
+    let timelistDefinition;
     let element;
     let child;
     let openmct;
@@ -37,18 +38,10 @@ describe('the plugin', function () {
         appHolder.style.width = '640px';
         appHolder.style.height = '480px';
 
-        const timeSystemOptions = {
-            timeSystemKey: 'utc',
-            bounds: {
-                start: 1597160002854,
-                end: 1597181232854
-            }
-        };
+        openmct = createOpenMct();
+        openmct.install(new TimelistPlugin());
 
-        openmct = createOpenMct(timeSystemOptions);
-        openmct.install(new PlanPlugin());
-
-        planDefinition = openmct.types.get('plan').definition;
+        timelistDefinition = openmct.types.get('timelist').definition;
 
         element = document.createElement('div');
         element.style.width = '640px';
@@ -70,61 +63,59 @@ describe('the plugin', function () {
         return resetApplicationState(openmct);
     });
 
-    let mockPlanObject = {
-        name: 'Plan',
-        key: 'plan',
+    let mockTimelistObject = {
+        name: 'Timelist',
+        key: 'timelist',
         creatable: true
     };
 
-    it('defines a plan object type with the correct key', () => {
-        expect(planDefinition.key).toEqual(mockPlanObject.key);
+    it('defines a timelist object type with the correct key', () => {
+        expect(timelistDefinition.key).toEqual(mockTimelistObject.key);
     });
 
     it('is creatable', () => {
-        expect(planDefinition.creatable).toEqual(mockPlanObject.creatable);
+        expect(timelistDefinition.creatable).toEqual(mockTimelistObject.creatable);
     });
 
-    describe('the plan view', () => {
-        it('provides a plan view', () => {
+    describe('the timelist view', () => {
+        it('provides a timelist view', () => {
             const testViewObject = {
                 id: "test-object",
-                type: "plan"
+                type: "timelist"
             };
             openmct.router.path = [testViewObject];
 
             const applicableViews = openmct.objectViews.get(testViewObject, [testViewObject]);
-            let planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
-            expect(planView).toBeDefined();
+            let timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            expect(timelistView).toBeDefined();
         });
     });
 
-    describe('the plan view displays activities', () => {
-        let planDomainObject;
-        let mockObjectPath = [
-            {
-                identifier: {
-                    key: 'test',
-                    namespace: ''
-                },
-                type: 'time-strip',
-                name: 'Test Parent Object'
-            }
-        ];
-        let planView;
+    describe('the timelist view displays activities', () => {
+        let timelistDomainObject;
+        let timelistView;
 
         beforeEach(() => {
-            openmct.time.timeSystem('utc', {
-                start: 1597160002854,
-                end: 1597181232854
-            });
-
-            planDomainObject = {
+            timelistDomainObject = {
                 identifier: {
                     key: 'test-object',
                     namespace: ''
                 },
-                type: 'plan',
+                type: 'timelist',
                 id: "test-object",
+                configuration: {
+                    sortOrderIndex: 0,
+                    futureEventsIndex: 1,
+                    futureEventsDurationIndex: 0,
+                    futureEventsDuration: 20,
+                    currentEventsIndex: 1,
+                    currentEventsDurationIndex: 0,
+                    currentEventsDuration: 20,
+                    pastEventsIndex: 1,
+                    pastEventsDurationIndex: 0,
+                    pastEventsDuration: 20,
+                    filter: ''
+                },
                 selectFile: {
                     body: JSON.stringify({
                         "TEST-GROUP": [
@@ -149,53 +140,35 @@ describe('the plugin', function () {
                 }
             };
 
-            openmct.router.path = [planDomainObject];
+            openmct.router.path = [timelistDomainObject];
 
-            const applicableViews = openmct.objectViews.get(planDomainObject, [planDomainObject]);
-            planView = applicableViews.find((viewProvider) => viewProvider.key === 'plan.view');
-            let view = planView.view(planDomainObject, mockObjectPath);
+            const applicableViews = openmct.objectViews.get(timelistDomainObject, [timelistDomainObject]);
+            timelistView = applicableViews.find((viewProvider) => viewProvider.key === 'timelist.view');
+            let view = timelistView.view(timelistDomainObject, []);
             view.show(child, true);
 
             return Vue.nextTick();
         });
 
-        it('loads activities into the view', () => {
-            const svgEls = element.querySelectorAll('.c-plan__contents svg');
-            expect(svgEls.length).toEqual(1);
+        it('displays the activities', () => {
+            const items = element.querySelectorAll('.c-table__body .c-list-item');
+            expect(items.length).toEqual(2);
         });
 
-        it('displays the group label', () => {
-            const labelEl = element.querySelector('.c-plan__contents .c-object-label .c-object-label__name');
-            expect(labelEl.innerHTML).toEqual('TEST-GROUP');
+        it('displays the activity headers', () => {
+            const headers = element.querySelectorAll('.c-table__body th');
+            expect(headers.length).toEqual(4);
         });
 
-        it('displays the activities and their labels', (done) => {
-            const bounds = {
-                start: 1597160002854,
-                end: 1597181232854
-            };
-
-            openmct.time.bounds(bounds);
-
+        it('displays activity details', (done) => {
             Vue.nextTick(() => {
-                const rectEls = element.querySelectorAll('.c-plan__contents rect');
-                expect(rectEls.length).toEqual(2);
-                const textEls = element.querySelectorAll('.c-plan__contents text');
-                expect(textEls.length).toEqual(3);
+                const itemEls = element.querySelectorAll('.c-table__body .c-list-item');
+                const itemValues = itemEls[0].querySelectorAll('.c-list-item__value');
+                expect(itemValues.length).toEqual(4);
+                expect(itemValues[3].innerHTML.trim()).toEqual('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua');
+                expect(itemValues[0].innerHTML.trim()).toEqual(`${moment(1597170002854).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
+                expect(itemValues[1].innerHTML.trim()).toEqual(`${moment(1597171032854).format('YYYY-MM-DD HH:mm:ss:SSS')}Z`);
 
-                done();
-            });
-        });
-
-        it ('shows the status indicator when available', (done) => {
-            openmct.status.set({
-                key: "test-object",
-                namespace: ''
-            }, 'draft');
-
-            Vue.nextTick(() => {
-                const statusEl = element.querySelector('.c-plan__contents .is-status--draft');
-                expect(statusEl).toBeDefined();
                 done();
             });
         });
