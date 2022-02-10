@@ -151,7 +151,8 @@
         padding: 3px $interiorMarginLg 3px 0;
     }
 
-    &__label {
+    &__label,
+    &__hint {
         color: $colorInspectorPropName;
 
         &[title]:not([title=""]) {

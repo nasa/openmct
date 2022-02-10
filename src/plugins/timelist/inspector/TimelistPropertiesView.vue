@@ -28,6 +28,9 @@
                  title="'Timeframe options'"
             >Timeframe</div>
             <li class="c-inspect-properties__row">
+                <div v-if="canEdit"
+                     class="c-inspect-properties__hint span-all"
+                >These settings are not previewed and will be applied after editing is completed.</div>
                 <div class="c-inspect-properties__label"
                      title="Sort order of the timelist."
                 >Sort Order</div>

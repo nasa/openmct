@@ -1,8 +1,11 @@
 <template>
 <li class="c-inspect-properties__row">
+    <div v-if="canEdit"
+         class="c-inspect-properties__hint span-all"
+    >Filter this view by comma-separated keywords.</div>
     <div class="c-inspect-properties__label"
          title="Filter by keyword."
-    >Filter by keyword, comma separated</div>
+    >Filters</div>
     <div v-if="canEdit"
          class="c-inspect-properties__value"
          :class="{'form-error': hasError}"
@@ -12,6 +15,7 @@
                type="text"
                @change="updateForm('filter')"
         >
+        <button class="c-button">Preview</button>
     </div>
     <div v-else
          class="c-inspect-properties__value"

@@ -1,5 +1,5 @@
 <template>
-<div class="c-table c-table--sortable c-list-view-generic">
+<div class="c-table c-table--sortable c-list-view c-list-view--sticky-header">
     <table class="c-table__body">
         <thead class="c-table__header">
             <tr>

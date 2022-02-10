@@ -345,7 +345,7 @@ $shdwItemText: none;
 $colorTabBorder: pullForward($colorBodyBg, 10%);
 $colorTabBodyBg: $colorBodyBg;
 $colorTabBodyFg: pullForward($colorBodyFg, 20%);
-$colorTabHeaderBg: rgba($colorBodyFg, 0.2);
+$colorTabHeaderBg: #e2e2e2;
 $colorTabHeaderFg: $colorBodyFg;
 $colorTabHeaderBorder: $colorBodyBg;
 $colorTabGroupHeaderBg: pullForward($colorBodyBg, 5%);
