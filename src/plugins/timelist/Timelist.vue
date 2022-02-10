@@ -29,6 +29,7 @@
                :default-sort="defaultSort"
                class="sticky"
     />
+    <div class="nowMarker"></div>
 </div>
 </template>
 
@@ -42,6 +43,8 @@ import {SORT_ORDER_OPTIONS} from "./constants";
 import moment from "moment";
 import uuid from "uuid";
 
+const HEADER_HEIGHT = 19;
+const ROW_HEIGHT = 29;
 const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss:SSS';
 const headerItems = [
     {
@@ -246,7 +249,7 @@ export default {
 
             this.listActivities();
         },
-        filterActivities(activity) {
+        filterActivities(activity, index) {
 
             const hasFilterMatch = this.filterByName(activity.name);
 
@@ -276,9 +279,14 @@ export default {
             }));
         },
         applyStyles(activities) {
-            return activities.map((activity) => {
+            let isFirstCurrent = false;
+            const styledActivities = activities.map((activity, index) => {
                 if (this.timestamp >= activity.start && this.timestamp <= activity.end) {
                     activity.cssClass = '--is-current';
+                    if (!isFirstCurrent) {
+                        isFirstCurrent = true;
+                        this.setNowMarker(index);
+                    }
                 } else if (this.timestamp < activity.start) {
                     activity.cssClass = '--is-future';
                 } else {
@@ -293,6 +301,21 @@ export default {
 
                 return activity;
             });
+
+            if (!isFirstCurrent) {
+                this.resetNowMarker();
+            }
+
+            return styledActivities;
+        },
+        resetNowMarker() {
+            const nowEl = this.$el.querySelector('.nowMarker');
+            nowEl.classList.remove('hasCurrent');
+        },
+        setNowMarker(index) {
+            const nowEl = this.$el.querySelector('.nowMarker');
+            nowEl.classList.add('hasCurrent');
+            nowEl.style.top = `${ROW_HEIGHT * index + HEADER_HEIGHT}px`;
         },
         setSort() {
             const sortOrder = SORT_ORDER_OPTIONS[this.domainObject.configuration.sortOrderIndex];

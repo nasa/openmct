@@ -21,5 +21,11 @@
  *****************************************************************************/
 
 .c-timelist {
-
+  & .nowMarker.hasCurrent {
+    height: 2px;
+    position: absolute;
+    z-index: 10;
+    background: cyan;
+    width: 100%;
+  }
 }
