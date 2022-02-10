@@ -1,16 +1,3 @@
-@mixin displayMarquee($c) {
-    > .c-frame-edit {
-        // All other frames
-        //@include test($c, 0.4);
-        display: block;
-    }
-    > .c-frame > .c-frame-edit {
-        // Line object frame
-        //@include test($c, 0.4);
-        display: block;
-    }
-}
-
 .l-layout {
     @include abs();
     display: flex;
@@ -83,14 +70,36 @@
     }
 
     /*********************** EDIT MARQUEE CONTROL */
-    *[s-selected-parent] {
-        > .l-layout {
-            // When main shell layout is the parent
-            @include displayMarquee(deeppink);
+    *[s-selected] {
+        // The selected frame should always be a sibling of .c-frame-edit
+        // except for the Display Layout line object
+        > .c-frame-edit,
+        ~ .c-frame-edit {
+            display: block;
         }
-        > * > * > * {
-            // When a sub-layout is the parent
-            @include displayMarquee(blue);
+
+        &.l-layout__frame {
+            > *:not(.c-so-view--layout) .c-so-view__object-view {
+                pointer-events: none;
+            }
+        }
+
+        // When select context is main view layout
+        &.is-object-type-layout,
+        &.is-object-type-tabs {
+            .l-layout,
+            .c-so-view--layout {
+                .c-object-view:not(.is-object-type-layout) {
+                    pointer-events: none;
+                }
+            }
+        }
+    }
+
+    // When editing, turn off pointer events for all sub-objects other than layouts
+    .c-so-view--layout {
+        .c-object-view:not(.is-object-type-layout) {
+            pointer-events: none;
         }
     }
 }

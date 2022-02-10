@@ -74,7 +74,7 @@
                         transition-delay: $moveBarOutDelay;
                     }
 
-                    + .c-frame__move-bar {
+                    ~ .c-frame__move-bar {
                         transition: $transOut;
                         transition-delay: $moveBarOutDelay;
                         @include userSelectNone();
