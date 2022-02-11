@@ -78,8 +78,6 @@ define([
     './userIndicator/plugin',
     '../../example/exampleUser/plugin',
     './localStorage/plugin',
-    './legacySupport/plugin.js',
-    '../adapter/indicators/legacy-indicators-plugin',
     './timelist/plugin'
 ], function (
     _,
@@ -139,21 +137,9 @@ define([
     UserIndicator,
     ExampleUser,
     LocalStorage,
-    LegacySupportPlugin,
-    LegacyIndicatorsPlugin,
     TimeList
 ) {
-    const bundleMap = {
-        Elasticsearch: 'platform/persistence/elastic'
-    };
-
-    const plugins = _.mapValues(bundleMap, function (bundleName, pluginName) {
-        return function pluginConstructor() {
-            return function (openmct) {
-                openmct.legacyRegistry.enable(bundleName);
-            };
-        };
-    });
+    const plugins = {};
 
     plugins.example = {};
     plugins.example.ExampleUser = ExampleUser.default;
@@ -183,28 +169,6 @@ define([
     plugins.Conductor = TimeConductorPlugin.default;
 
     plugins.CouchDB = CouchDBPlugin.default;
-
-    plugins.Elasticsearch = function (url) {
-        return function (openmct) {
-            if (url) {
-                const bundleName = "config/elastic";
-                openmct.legacyRegistry.register(bundleName, {
-                    "extensions": {
-                        "constants": [
-                            {
-                                "key": "ELASTIC_ROOT",
-                                "value": url,
-                                "priority": "mandatory"
-                            }
-                        ]
-                    }
-                });
-                openmct.legacyRegistry.enable(bundleName);
-            }
-
-            openmct.legacyRegistry.enable(bundleMap.Elasticsearch);
-        };
-    };
 
     plugins.ImageryPlugin = ImageryPlugin;
     plugins.Plot = PlotPlugin.default;
@@ -251,8 +215,6 @@ define([
     plugins.DeviceClassifier = DeviceClassifier.default;
     plugins.UserIndicator = UserIndicator.default;
     plugins.LocalStorage = LocalStorage.default;
-    plugins.LegacySupport = LegacySupportPlugin.default;
-    plugins.LegacyIndicators = LegacyIndicatorsPlugin;
     plugins.Timelist = TimeList.default;
 
     return plugins;
