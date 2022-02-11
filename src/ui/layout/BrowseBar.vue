@@ -68,7 +68,9 @@
                 class="l-browse-bar__actions__edit c-button c-button--major icon-pencil"
                 title="Edit"
                 @click="edit()"
-            ></button>
+            >
+                <span class="c-button__label">Edit</span>
+            </button>
 
             <div
                 v-if="isEditing"
@@ -78,7 +80,8 @@
                     class="c-button--menu c-button--major icon-save"
                     title="Save"
                     @click.stop="toggleSaveMenu"
-                ></button>
+                >
+                    <span class="c-button__label">Save</span></button>
                 <div
                     v-show="showSaveMenu"
                     class="c-menu"
