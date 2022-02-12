@@ -1,4 +1,4 @@
-name: (WARN)PRCop
+name: PRCop
 
 on:
   pull_request:
@@ -17,6 +17,7 @@ on:
 jobs:
   prcop:
     runs-on: ubuntu-latest
+    name: Template Check
     steps:
       - name: Linting Pull Request
         uses: makaroni4/prcop@v1.0.35
