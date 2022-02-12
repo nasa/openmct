@@ -3,10 +3,13 @@ name: PRcop
 on:
   pull_request:
     types:
+      - opened
+      - reopened
       - edited
       - synchronize
       - ready_for_review
       - review_requested
+      - review_request_removed
   pull_request_review_comment:
     types:
       - created
@@ -14,7 +17,7 @@ on:
 jobs:
   prcop:
     runs-on: ubuntu-latest
-    name: PRcop
+    name: (WARN)PRcop
     steps:
       - name: Linting Pull Request
         uses: makaroni4/prcop@v1.0.35
