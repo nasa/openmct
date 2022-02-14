@@ -86,7 +86,13 @@
 
         <div ref="imageBG"
              class="c-imagery__main-image__bg"
-             :class="{'paused unnsynced': isPaused && !isFixed,'stale':false, 'pannable': altPressed && zoomFactor > 1, 'zoom-in': metaPressed && !shiftPressed, 'zoom-out': metaPressed && shiftPressed}"
+             :class="{
+                 'paused unnsynced': isPaused && !isFixed,
+                 'stale': false,
+                 'pannable': isPannable,
+                 'cursor-zoom-in': showCursorZoomIn,
+                 'cursor-zoom-out': showCursorZoomOut
+             }"
              @click="expand">
             <div v-if="zoomFactor > 1"
                  class="c-imagery__hints"
@@ -490,6 +496,15 @@ export default {
                 width: this.sizedImageWidth,
                 height: this.sizedImageHeight
             };
+        },
+        isPannable() {
+            return this.altPressed && this.zoomFactor > 1;
+        },
+        showCursorZoomIn() {
+            return this.metaPressed && !this.shiftPressed;
+        },
+        showCursorZoomOut() {
+            return this.metaPressed && this.shiftPressed;
         }
     },
     watch: {

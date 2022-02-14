@@ -31,10 +31,10 @@
             &.unnsynced{
                 @include sUnsynced();
             }
-            &.zoom-in {
+            &.cursor-zoom-in {
                 cursor: zoom-in;
             }
-            &.zoom-out {
+            &.cursor-zoom-out {
                 cursor: zoom-out;
             }
             &.pannable {
