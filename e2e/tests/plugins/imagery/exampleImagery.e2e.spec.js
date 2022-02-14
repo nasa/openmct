@@ -59,13 +59,13 @@ test.describe('Example Imagery', () => {
         await bgImageLocator.hover();
         await page.mouse.wheel(0, deltaYStep * 2);
         // wait for zoom animation to finish
-        await page.waitForTimeout(300);
+        await bgImageLocator.hover();
         const imageMouseZoomedIn = await page.locator(backgroundImageSelector).boundingBox();
         // zoom out
         await bgImageLocator.hover();
         await page.mouse.wheel(0, -deltaYStep);
         // wait for zoom animation to finish
-        await page.waitForTimeout(300);
+        await bgImageLocator.hover();
         const imageMouseZoomedOut = await page.locator(backgroundImageSelector).boundingBox();
 
         expect(imageMouseZoomedIn.height).toBeGreaterThan(originalImageDimensions.height);
@@ -82,7 +82,7 @@ test.describe('Example Imagery', () => {
         await bgImageLocator.hover();
         // zoom in
         await page.mouse.wheel(0, deltaYStep * 2);
-        await page.waitForTimeout(300);
+        await bgImageLocator.hover();
         const zoomedBoundingBox = await bgImageLocator.boundingBox();
         const imageCenterX = zoomedBoundingBox.x + zoomedBoundingBox.width / 2;
         const imageCenterY = zoomedBoundingBox.y + zoomedBoundingBox.height / 2;
@@ -140,14 +140,14 @@ test.describe('Example Imagery', () => {
         await zoomInBtn.click();
         await zoomInBtn.click();
         // wait for zoom animation to finish
-        await page.waitForTimeout(300);
+        await bgImageLocator.hover();
         const zoomedInBoundingBox = await bgImageLocator.boundingBox();
         expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
         await zoomOutBtn.click();
         // wait for zoom animation to finish
-        await page.waitForTimeout(300);
+        await bgImageLocator.hover();
         const zoomedOutBoundingBox = await bgImageLocator.boundingBox();
         expect(zoomedOutBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
         expect(zoomedOutBoundingBox.width).toBeLessThan(zoomedInBoundingBox.width);
@@ -164,13 +164,13 @@ test.describe('Example Imagery', () => {
         await zoomInBtn.click();
         await zoomInBtn.click();
         // wait for zoom animation to finish
-        await page.waitForTimeout(300);
+        await bgImageLocator.hover();
         const zoomedInBoundingBox = await bgImageLocator.boundingBox();
         expect(zoomedInBoundingBox.height).toBeGreaterThan(initialBoundingBox.height);
         expect(zoomedInBoundingBox.width).toBeGreaterThan(initialBoundingBox.width);
 
         await zoomResetBtn.click();
-        await page.waitForTimeout(300);
+        await bgImageLocator.hover();
 
         const resetBoundingBox = await bgImageLocator.boundingBox();
         expect(resetBoundingBox.height).toBeLessThan(zoomedInBoundingBox.height);
