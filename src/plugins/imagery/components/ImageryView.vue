@@ -141,19 +141,6 @@
                     }"
                     @mousedown="handlePanZoomClick"
                 ></div>
-                <!-- <div :style="{
-                    'position': 'absolute',
-                    'left': 0,
-                    'top': 0,
-                    'right': 0,
-                    'bottom': 0,
-                    'margin': 'auto',
-                    'width': '16px',
-                    'height': '16px',
-                    'background': 'rgba(255,0,0,0.8)',
-                    'border-radius': '50%',
-                    'pointer-events': 'none'
-                }"></div> -->
                 <Compass
                     v-if="shouldDisplayCompass"
                     :compass-rose-sizing-classes="compassRoseSizingClasses"
@@ -204,7 +191,7 @@
                     v-if="!isFixed"
                     class="c-button icon-pause pause-play"
                     :class="{'is-paused': isPaused}"
-                    @click="paused(!isPaused, 'button')"
+                    @click="paused(!isPaused)"
                 ></button>
             </div>
         </div>
@@ -224,7 +211,7 @@
                  :key="image.url + image.time"
                  class="c-imagery__thumb c-thumb"
                  :class="{ selected: focusedImageIndex === index && isPaused }"
-                 @click="setFocusedImage(index, thumbnailClick)"
+                 @click="thumbnailClicked(index)"
             >
                 <a href=""
                    :download="image.imageDownloadName"
@@ -516,16 +503,35 @@ export default {
                 const newSize = newHistory.length;
                 let imageIndex;
                 if (this.focusedImageTimestamp !== undefined) {
-                    const foundImageIndex = this.imageHistory.findIndex(image => {
-                        return image.time === this.focusedImageTimestamp;
-                    });
-                    imageIndex = foundImageIndex > -1 ? foundImageIndex : newSize - 1;
+                    const foundImageIndex = newHistory.findIndex(img => img.time === this.focusedImageTimestamp);
+                    imageIndex = foundImageIndex > -1
+                        ? foundImageIndex
+                        : newSize - 1;
                 } else {
-                    imageIndex = newSize > 0 ? newSize - 1 : undefined;
+                    imageIndex = newSize > 0
+                        ? newSize - 1
+                        : undefined;
                 }
 
-                this.setFocusedImage(imageIndex, false);
-                this.scrollToRight();
+                this.nextImageIndex = imageIndex;
+
+                if (this.previousFocusedImage && newHistory.length) {
+                    const matchIndex = this.matchIndexOfPreviousImage(
+                        this.previousFocusedImage,
+                        newHistory
+                    );
+
+                    if (matchIndex > -1) {
+                        this.setFocusedImage(matchIndex);
+                    } else {
+                        this.paused();
+                    }
+                }
+
+                if (!this.isPaused) {
+                    this.setFocusedImage(imageIndex);
+                    this.scrollToRight();
+                }
             },
             deep: true
         },
@@ -536,7 +542,6 @@ export default {
             this.getImageNaturalDimensions();
         }
     },
-
     async mounted() {
         eventHelpers.extend(this);
         this.focusedImageWrapper = this.$refs.focusedImageWrapper;
@@ -617,7 +622,6 @@ export default {
         document.removeEventListener('keyup', this.handleKeyUp);
     },
     methods: {
-
         setTimeContext() {
             this.stopFollowingTimeContext();
             this.timeContext = this.openmct.time.getContextForView(this.objectPath);
@@ -775,20 +779,15 @@ export default {
             const disableScroll = scrollWidth > Math.ceil(scrollLeft + clientWidth);
             this.autoScroll = !disableScroll;
         },
-        paused(state, type) {
-            this.isPaused = state;
+        paused(state) {
+            this.isPaused = Boolean(state);
 
-            if (type === 'button') {
-                this.setFocusedImage(this.imageHistory.length - 1);
-            }
-
-            if (this.nextImageIndex) {
+            if (!state) {
+                this.previousFocusedImage = null;
                 this.setFocusedImage(this.nextImageIndex);
-                delete this.nextImageIndex;
+                this.autoScroll = true;
+                this.scrollToRight();
             }
-
-            this.autoScroll = true;
-            this.scrollToRight();
         },
         scrollToFocused() {
             const thumbsWrapper = this.$refs.thumbsWrapper;
@@ -827,54 +826,24 @@ export default {
                 && x.time === previous.time
             ));
         },
-        setFocusedImage(index, thumbnailClick = false) {
-            let focusedIndex = index;
+        thumbnailClicked(index) {
+            this.setFocusedImage(index);
+            this.paused(true);
+
+            this.setPreviousFocusedImage(index);
+        },
+        setPreviousFocusedImage(index) {
+            this.focusedImageTimestamp = undefined;
+            this.previousFocusedImage = this.imageHistory[index]
+                ? JSON.parse(JSON.stringify(this.imageHistory[index]))
+                : undefined;
+        },
+        setFocusedImage(index) {
             if (!(Number.isInteger(index) && index > -1)) {
                 return;
             }
 
-            if (thumbnailClick) {
-                //We use the props till the user changes what they want to see
-                this.focusedImageTimestamp = undefined;
-                //set the previousFocusedImage when a user chooses an image
-                this.previousFocusedImage = this.imageHistory[focusedIndex] ? JSON.parse(JSON.stringify(this.imageHistory[focusedIndex])) : undefined;
-            }
-
-            if (this.previousFocusedImage) {
-                // determine if the previous image exists in the new bounds of imageHistory
-                if (!thumbnailClick) {
-                    const matchIndex = this.matchIndexOfPreviousImage(
-                        this.previousFocusedImage,
-                        this.imageHistory
-                    );
-                    focusedIndex = matchIndex > -1 ? matchIndex : this.imageHistory.length - 1;
-                }
-
-                const isLastImageFocused = focusedIndex === this.imageHistory.length - 1;
-                if (!(this.isPaused || thumbnailClick) && isLastImageFocused) {
-                    delete this.previousFocusedImage;
-                }
-            }
-
-            console.log('old index', this.focusedImageIndex);
-            console.log('new index', focusedIndex);
-            this.focusedImageIndex = focusedIndex;
-
-            //TODO: do we even need this anymore?
-            if (this.isPaused && !thumbnailClick && this.focusedImageTimestamp === undefined) {
-                this.nextImageIndex = focusedIndex;
-                //this could happen if bounds changes
-
-                if (this.focusedImageIndex > this.imageHistory.length - 1) {
-                    this.focusedImageIndex = focusedIndex;
-                }
-
-                return;
-            }
-
-            if (thumbnailClick && !this.isPaused) {
-                this.paused(true);
-            }
+            this.focusedImageIndex = index;
         },
         trackDuration() {
             if (this.canTrackDuration) {
@@ -912,7 +881,7 @@ export default {
 
             let index = this.focusedImageIndex;
 
-            this.setFocusedImage(++index, THUMBNAIL_CLICKED);
+            this.thumbnailClicked(++index);
             if (index === this.imageHistory.length - 1) {
                 this.paused(false);
             }
@@ -925,9 +894,9 @@ export default {
             let index = this.focusedImageIndex;
 
             if (index === this.imageHistory.length - 1) {
-                this.setFocusedImage(this.imageHistory.length - 2, THUMBNAIL_CLICKED);
+                this.thumbnailClicked(this.imageHistory.length - 2);
             } else {
-                this.setFocusedImage(--index, THUMBNAIL_CLICKED);
+                this.thumbnailClicked(--index);
             }
         },
         resetImage(overrideLock) {
@@ -943,7 +912,10 @@ export default {
             this.imageTranslateY = 0;
         },
         zoomImage(newScaleFactor, screenClientX, screenClientY) {
-            this.paused(true);
+            if (!this.isPaused) {
+                this.paused(true);
+            }
+
             if (newScaleFactor > ZOOM_LIMITS_MAX_DEFAULT) {
                 newScaleFactor = ZOOM_LIMITS_MAX_DEFAULT;
 
@@ -995,10 +967,6 @@ export default {
 
             this.panZoomLocked = !this.panZoomLocked;
         },
-        // handlePanButton(x, y) {
-        //     const currentScale = this.zoomFactor;
-        //     this.updatePanZoom(currentScale, x, y);
-        // },
         handlePanZoomClick(e) {
             const step = 1;
             if (this.altPressed) {
@@ -1137,7 +1105,10 @@ export default {
         },
         wheelZoom(e) {
             e.preventDefault();
-            this.paused(true);
+            if (!this.isPaused) {
+                this.paused(true);
+            }
+
             // only use x,y coordinates on scrolling in
             if (this.wheelZooming === false && e.deltaY > 0) {
                 this.wheelZooming = true;
@@ -1202,7 +1173,6 @@ export default {
                 return this.endPan(event);
             }
         }
-
     }
 };
 </script>
