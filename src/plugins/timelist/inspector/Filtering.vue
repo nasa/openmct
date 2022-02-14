@@ -13,9 +13,9 @@
         <input v-model="filterValue"
                class="c-input"
                type="text"
-               @change="updateForm('filter')"
+               @keydown.enter.exact.stop="forceBlur($event)"
+               @keyup="updateForm($event, 'filter')"
         >
-        <button class="c-button">Preview</button>
     </div>
     <div v-else
          class="c-inspect-properties__value"
@@ -54,7 +54,10 @@ export default {
                 this.hasError = false;
             }
         },
-        updateForm(property) {
+        forceBlur(event) {
+            event.target.blur();
+        },
+        updateForm(event, property) {
             if (!this.isValid()) {
                 this.hasError = true;
 
@@ -74,7 +77,7 @@ export default {
                 return true;
             }
 
-            const regex = new RegExp(/^([a-zA-Z0-9_\s,])+$/g);
+            const regex = new RegExp(/^([a-zA-Z0-9_\-\s,])+$/g);
 
             return regex.test(this.filterValue);
         }
