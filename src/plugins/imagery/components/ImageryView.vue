@@ -54,7 +54,7 @@
                         @click="resetImage(true)"
                 ></button>
 
-                <span class="c-image-controls__zoom-factor">x{{ Number.parseFloat(zoomFactor).toPrecision(2) }}</span>
+                <span class="c-image-controls__zoom-factor">x{{formattedZoomFactor}}</span>
             </div>
             <div class="c-image-controls__control c-image-controls__brightness-contrast">
                 <span class="c-image-controls__sliders"
@@ -505,6 +505,9 @@ export default {
         },
         showCursorZoomOut() {
             return this.metaPressed && this.shiftPressed;
+        },
+        formattedZoomFactor() {
+            return Number.parseFloat(this.zoomFactor).toPrecision(2);
         }
     },
     watch: {
