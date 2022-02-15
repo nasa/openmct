@@ -83,6 +83,7 @@
     "build:prod": "cross-env webpack --config webpack.prod.js",
     "build:dev": "webpack --config webpack.dev.js",
     "build:watch": "webpack --config webpack.dev.js --watch",
+    "info": "npx envinfo --system --browsers --npmPackages --binaries --languages --markdown",
     "test": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --single-run",
     "test:debug": "cross-env NODE_ENV=debug karma start --no-single-run",
     "test:coverage": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" COVERAGE=true karma start --single-run",
