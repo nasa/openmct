@@ -954,7 +954,6 @@ export default {
             const imageContainerY = screenClientY - imageRect.top;
             const offsetFromCenterX = (imageRect.width / 2) - imageContainerX;
             const offsetFromCenterY = (imageRect.height / 2) - imageContainerY;
-            // const scaleProportion = (scale - previousZoomFactor) / previousZoomFactor;
 
             this.updatePanZoom(newScaleFactor, offsetFromCenterX, offsetFromCenterY);
         },
@@ -967,10 +966,7 @@ export default {
             const offsetYInOriginalScale = offsetFromCenterY / currentScale;
             const translateX = offsetXInOriginalScale + previousTranslateX;
             const translateY = offsetYInOriginalScale + previousTranslateY;
-            // const imageRect = this.focusedImageWrapper.getBoundingClientRect();
-            // const borderBuffer = 0;
-            // this.imageTranslateX = (Math.abs(translateX) > (imageRect.width * borderBuffer)) ? Math.sign(translateX) * imageRect.width * borderBuffer : translateX;
-            // this.imageTranslateY = (Math.abs(translateY) > (imageRect.height * borderBuffer)) ? Math.sign(translateY) * imageRect.height * borderBuffer : translateY;
+
             this.imageTranslateX = translateX;
             this.imageTranslateY = translateY;
             this.zoomFactor = newScaleFactor;
