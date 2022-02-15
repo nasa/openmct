@@ -2,7 +2,9 @@ name: "e2e-pr"
 on:
   workflow_dispatch:
   pull_request:
-    types: [ labeled ]
+    types:
+      - labeled
+      - opened
 
 jobs:
   e2e-full:
