@@ -20,10 +20,8 @@
  * at runtime from the About dialog for additional information.
  *****************************************************************************/
 class ConfigStore {
-    constructor() {
-        /** @type {Record<string, Destroyable>} */
-        this.store = {};
-    }
+    /** @type {Record<string, Destroyable>} */
+    store = {};
 
     /**
     @param {string} id
