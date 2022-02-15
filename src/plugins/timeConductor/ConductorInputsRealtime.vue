@@ -115,6 +115,11 @@ export default {
             isUTCBased: timeSystem.isUTCBased
         };
     },
+    watch: {
+        keyString() {
+            this.setTimeContext();
+        }
+    },
     mounted() {
         this.handleNewBounds = _.throttle(this.handleNewBounds, 300);
         this.setTimeSystem(JSON.parse(JSON.stringify(this.openmct.time.timeSystem())));
