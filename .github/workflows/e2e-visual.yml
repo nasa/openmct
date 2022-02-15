@@ -4,6 +4,7 @@ on:
   pull_request:
     types: 
       - labeled
+      - opened
   schedule:
     - cron: '28 21 * * 1-5'
 
