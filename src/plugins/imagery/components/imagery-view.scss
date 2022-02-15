@@ -18,6 +18,11 @@
         flex: 1 1 auto;
     }
 
+    .image-wrapper {
+        overflow: visible clip;
+        background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px);
+    }
+
     &__main-image {
         &__bg {
             background-color: $colorPlotBg;
@@ -42,10 +47,16 @@
 
             }
         }
-
+        &__background-image {
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: contain;
+        }
         &__image {
             height: 100%;
             width: 100%;
+            visibility: hidden;
+            display: contents;
         }
     }
 

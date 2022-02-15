@@ -101,9 +101,7 @@
                  class="image-wrapper"
                  :style="{
                      'width': `${sizedImageWidth}px`,
-                     'height': `${sizedImageHeight}px`,
-                     'overflow': 'visible clip',
-                     'background-image': 'repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(125, 125, 125, 0.2) 4px, rgba(125, 125, 125, 0.2) 8px)'
+                     'height': `${sizedImageHeight}px`
                  }"
             >
                 <img ref="focusedImage"
@@ -111,9 +109,7 @@
                      :src="imageUrl"
                      :draggable="!isSelectable"
                      :style="{
-                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
-                         'visibility': 'hidden',
-                         'display': 'contents'
+                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`
                      }"
                      :data-openmct-image-timestamp="time"
                      :data-openmct-object-keystring="keyString"
@@ -121,7 +117,7 @@
                 <div
                     v-if="imageUrl"
                     ref="focusedImageElement"
-                    class="c-imagery_main-image_background-image"
+                    class="c-imagery__main-image__background-image"
                     :draggable="!isSelectable"
                     :style="{
                         'filter': `brightness(${filters.brightness}%) contrast(${filters.contrast}%)`,
@@ -137,9 +133,6 @@
                                     )`
                             ) : ''}`,
                         'transform': `scale(${zoomFactor}) translate(${imageTranslateX}px, ${imageTranslateY}px)`,
-                        'background-position': 'center',
-                        'background-repeat': 'no-repeat',
-                        'background-size': 'contain',
                         'transition': `${!pan && animateZoom ? 'transform 250ms ease-in' : 'initial'}`,
                         'width': `${sizedImageWidth}px`,
                         'height': `${sizedImageHeight}px`,
