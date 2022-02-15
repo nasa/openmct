@@ -24,9 +24,7 @@
 
 <template>
 <div class="gl-plot-chart-area">
-    <span v-for="i in 2">
-        <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
-    </span>
+    <canvas v-for="i in 2" style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
 
     <div ref="limitArea"
          class="js-limit-area"
