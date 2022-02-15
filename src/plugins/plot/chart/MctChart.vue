@@ -24,11 +24,9 @@
 
 <template>
 <div class="gl-plot-chart-area">
-    <div style="display: contents" ref="chartContainer">
-        <span v-for="i in 2">
-            <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
-        </span>
-    </div>
+    <span v-for="i in 2">
+        <canvas style="position: absolute; background: none; width: 100%; height: 100%;"></canvas>
+    </span>
 
     <div ref="limitArea"
          class="js-limit-area"
@@ -100,7 +98,7 @@ export default {
         this.seriesElements = new WeakMap();
         this.seriesLimits = new WeakMap();
 
-        let canvasEls = this.$refs.chartContainer.querySelectorAll("canvas");
+        const canvasEls = this.$el.querySelectorAll("canvas");
         const mainCanvas = canvasEls[1];
         const overlayCanvas = canvasEls[0];
         if (this.initializeCanvas(mainCanvas, overlayCanvas)) {
