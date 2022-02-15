@@ -22,16 +22,5 @@
  * The [Development Process](process/) document describes the
  Open MCT software development cycle.
 
-## Legacy Documentation
-
-As we transition to a new API, the following documentation for the old API
-(which is supported during the transition) may be useful as well:
-
- * The [Architecture Overview](architecture/) describes the concepts used
- throughout Open MCT, and gives a high level overview of the platform's design.
-
- * The [Developer's Guide](guide/) goes into more detail about how to use the
- platform and the functionality that it provides.
-
  * The [Tutorials](https://github.com/nasa/openmct-tutorial) give examples of extending the platform to add
  functionality, and integrate with data sources.
