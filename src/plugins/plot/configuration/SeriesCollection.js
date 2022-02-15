@@ -30,9 +30,6 @@ import ColorPalette from "@/ui/color/ColorPalette";
  * @extends {Collection<SeriesCollectionModelType, SeriesCollectionOptions>}
  */
 export default class SeriesCollection extends Collection {
-    /** @type {import('./PlotConfigurationModel').default} */
-    plot
-
     /**
     @override
     @param {import('./Model').ModelOptions<SeriesCollectionModelType, SeriesCollectionOptions>} options
