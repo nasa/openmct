@@ -49,7 +49,7 @@ test.describe('Example Imagery', () => {
         await expect(page.locator('.l-browse-bar__object-name')).toContainText('Unnamed Example Imagery');
     });
 
-    const backgroundImageSelector = '.c-imagery_main-image_background-image';
+    const backgroundImageSelector = '.c-imagery__main-image__background-image';
     test('Can use Mouse Wheel to zoom in and out of latest image', async ({ page }) => {
         const bgImageLocator = await page.locator(backgroundImageSelector);
         const deltaYStep = 100; //equivalent to 1x zoom
