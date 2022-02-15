@@ -76,7 +76,7 @@ jobs:
           node-version: <<parameters.node-version>>
       - run: npm audit --audit-level=low
       - generate_and_store_version_and_filesystem_artifacts
-  node14-lint:
+  lint:
     parameters:
       node-version:
         type: string
@@ -141,8 +141,8 @@ jobs:
 workflows:
   overall-circleci-commit-status: #These jobs run on every commit
     jobs:
-      - node14-lint:
-          node-version: lts/fermium
+      - lint:
+          node-version: lts/gallium
       - unit-test:
           name: node12-chrome
           node-version: lts/erbium
@@ -152,10 +152,14 @@ workflows:
           node-version: lts/fermium
           browser: ChromeHeadless
           post-steps:
-            - upload_code_covio               
+            - upload_code_covio  
+      - unit-test:
+          name: node16-chrome
+          node-version: lts/gallium
+          browser: ChromeHeadless             
       - e2e-test:
           name: e2e-ci
-          node-version: lts/fermium
+          node-version: lts/gallium
           suite: ci
   the-nightly: #These jobs do not run on PRs, but against master at night
     jobs:
@@ -175,11 +179,15 @@ workflows:
           name: node14-chrome-nightly
           node-version: lts/fermium
           browser: ChromeHeadless
+      - unit-test:
+          name: node16-chrome-nightly
+          node-version: lts/gallium
+          browser: ChromeHeadless
       - npm-audit:
-          node-version: lts/fermium
+          node-version: lts/gallium
       - e2e-test:
           name: e2e-full-nightly
-          node-version: lts/fermium
+          node-version: lts/gallium
           suite: full
     triggers:
       - schedule:
