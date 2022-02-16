@@ -47,7 +47,7 @@
     "location-bar": "^3.0.1",
     "lodash": "^4.17.12",
     "mini-css-extract-plugin": "2.4.5",
-    "moment": "2.25.3",
+    "moment": "2.29.1",
     "moment-duration-format": "^2.2.2",
     "moment-timezone": "0.5.28",
     "node-bourbon": "^4.2.3",
