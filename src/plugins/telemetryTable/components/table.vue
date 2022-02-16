@@ -511,7 +511,7 @@ export default {
         this.table.initialize();
     },
     destroyed() {
-        this.table.off('object-added', this.addObject);
+/*        this.table.off('object-added', this.addObject);
         this.table.off('object-removed', this.removeObject);
         this.table.off('historical-rows-processed', this.checkForMarkedRows);
         this.table.off('refresh', this.clearRowsAndRerender);
@@ -528,7 +528,7 @@ export default {
 
         this.table.configuration.destroy();
 
-        this.table.destroy();
+        this.table.destroy();*/
     },
     methods: {
         updateVisibleRows() {
