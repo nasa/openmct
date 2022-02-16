@@ -3,7 +3,6 @@
   "version": "2.0.1-SNAPSHOT",
   "description": "The Open MCT core platform",
   "devDependencies": {
-    "@lhci/cli": "0.9.0",
     "@braintree/sanitize-url": "5.0.2",
     "@percy/cli": "1.0.0-beta.75",
     "@percy/playwright": "1.0.1",
@@ -93,7 +92,6 @@
     "test:e2e:local": "npx playwright test --config=e2e/playwright-local.config.js",
     "test:e2e:visual": "percy exec --config ./e2e/.percy.yml -- npx playwright test --config=e2e/playwright-visual.config.js default",
     "test:e2e:full": "npx playwright test --config=e2e/playwright-ci.config.js",
-    "test:lhci": "lhci autorun",
     "test:watch": "cross-env NODE_OPTIONS=\"--max_old_space_size=4096\" karma start --no-single-run",
     "jsdoc": "jsdoc -c jsdoc.json -R API.md -r -d dist/docs/api",
     "update-about-dialog-copyright": "perl -pi -e 's/20\\d\\d\\-202\\d/2014\\-2022/gm' ./src/ui/layout/AboutDialog.vue",
