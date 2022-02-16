@@ -35,8 +35,8 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
       - name: npm install with lighthouse cli 
         run: npm install && npm install -g @lhci/cli
-      - name: Run lhci against master to generate baseline
-        run: lhci autorun
+      - name: Run lhci against master to generate baseline and ignore exit codes
+        run: lhci autorun || true
       - name: Perform clean checkout of PR
         uses: actions/checkout@v2
         with:
