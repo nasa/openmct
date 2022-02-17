@@ -17,15 +17,6 @@ assignees: ''
 #### Expected vs Current Behavior
 <!--- Tell us what should have happened -->
 
-#### Impact Check List
-<!--- Please select from the following options -->
-
-- [ ] Data loss or misrepresented data?
-- [ ] Regression? Did this used to work or has it always been broken?
-- [ ] Is there a workaround available?
-- [ ] Does this impact a critical component?
-- [ ] Is this just a visual bug with no functional impact?
-
 #### Steps to Reproduce
 <!--- Provide a link to a live example, or an unambiguous set of steps to -->
 <!--- reproduce this bug. Include code to reproduce, if relevant -->
@@ -35,10 +26,20 @@ assignees: ''
 4.
 
 #### Environment
+<!--- If encountered on local machine, execute the following:
+<!--- npx envinfo --system --browsers --npmPackages --binaries --languages --markdown -->
 * Open MCT Version: <!--- date of build, version, or SHA -->
 * Deployment Type: <!--- npm dev? VIPER Dev? openmct-yamcs? -->
 * OS:
 * Browser:
+
+#### Impact Check List
+<!--- Please select from the following options -->
+- [ ] Data loss or misrepresented data?
+- [ ] Regression? Did this used to work or has it always been broken?
+- [ ] Is there a workaround available?
+- [ ] Does this impact a critical component?
+- [ ] Is this just a visual bug with no functional impact?
 
 #### Additional Information
 <!--- Include any screenshots, gifs, or logs which will expedite triage -->
