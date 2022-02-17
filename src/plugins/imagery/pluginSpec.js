@@ -354,7 +354,6 @@ describe("The Imagery View Layouts", () => {
             // imageryView.destroy();
         });
 
-
         it("on mount should show the the most recent image", (done) => {
             //Looks like we need Vue.nextTick here so that computed properties settle down
             Vue.nextTick(() => {
