@@ -2,13 +2,13 @@ define ([
     './ConditionEvaluator',
     'objectUtils',
     'EventEmitter',
-    'zepto',
+    // 'zepto',
     'lodash'
 ], function (
     ConditionEvaluator,
     objectUtils,
     EventEmitter,
-    $,
+    // $,
     _
 ) {
 
@@ -232,7 +232,10 @@ define ([
 
             self.eventEmitter.emit('add', obj);
 
-            $('.w-summary-widget').removeClass('s-status-no-data');
+            const summaryWidget = document.querySelector('.w-summary-widget');
+            if (summaryWidget) {
+                summaryWidget.classList.remove('s-status-no-data');
+            }
         }
     };
 
@@ -256,7 +259,10 @@ define ([
         this.eventEmitter.emit('remove', identifier);
 
         if (_.isEmpty(this.compositionObjs)) {
-            $('.w-summary-widget').addClass('s-status-no-data');
+            const summaryWidget = document.querySelector('.w-summary-widget');
+            if (summaryWidget) {
+                summaryWidget.classList.add('s-status-no-data');
+            }
         }
     };
 
