@@ -112,7 +112,6 @@
     "Firefox ESR",
     "not IE 11",
     "last 2 Chrome versions",
-    "maintained node versions",
     "unreleased Chrome versions",
     "ios_saf > 15"
   ],
