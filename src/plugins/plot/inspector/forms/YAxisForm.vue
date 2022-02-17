@@ -12,9 +12,22 @@
                                                 @change="updateForm('label')"
             ></div>
         </li>
-    </ul>
-    <ul class="l-inspector-part">
-        <h2>Y Axis Scaling</h2>
+        <li class="grid-row">
+            <div
+                class="grid-cell label"
+                title="Enable log mode."
+            >
+                Log mode
+            </div>
+            <div class="grid-cell value">
+                <!-- eslint-disable-next-line vue/html-self-closing -->
+                <input
+                    v-model="logMode"
+                    type="checkbox"
+                    @change="updateForm('logMode')"
+                />
+            </div>
+        </li>
         <li class="grid-row">
             <div class="grid-cell label"
                  title="Automatically scale the Y axis to keep all values in view."
@@ -92,6 +105,7 @@ export default {
         return {
             label: '',
             autoscale: '',
+            logMode: false,
             autoscalePadding: '',
             rangeMin: '',
             rangeMax: '',
@@ -104,23 +118,23 @@ export default {
     },
     methods: {
         initialize: function () {
-            this.fields = [
-                {
-                    modelProp: 'label',
+            this.fields = {
+                label: {
                     objectPath: 'configuration.yAxis.label'
                 },
-                {
-                    modelProp: 'autoscale',
+                autoscale: {
                     coerce: Boolean,
                     objectPath: 'configuration.yAxis.autoscale'
                 },
-                {
-                    modelProp: 'autoscalePadding',
+                autoscalePadding: {
                     coerce: Number,
                     objectPath: 'configuration.yAxis.autoscalePadding'
                 },
-                {
-                    modelProp: 'range',
+                logMode: {
+                    coerce: Boolean,
+                    objectPath: 'configuration.yAxis.logMode'
+                },
+                range: {
                     objectPath: 'configuration.yAxis.range',
                     coerce: function coerceRange(range) {
                         if (!range) {
@@ -173,11 +187,12 @@ export default {
                         return true;
                     }
                 }
-            ];
+            };
         },
         initFormValues() {
             this.label = this.yAxis.get('label');
             this.autoscale = this.yAxis.get('autoscale');
+            this.logMode = this.yAxis.get('logMode');
             this.autoscalePadding = this.yAxis.get('autoscalePadding');
             const range = this.yAxis.get('range');
             if (!range) {
@@ -199,8 +214,8 @@ export default {
                 newVal = this[formKey];
             }
 
-            const oldVal = this.yAxis.get(formKey);
-            const formField = this.fields.find((field) => field.modelProp === formKey);
+            let oldVal = this.yAxis.get(formKey);
+            const formField = this.fields[formKey];
 
             const path = objectPath(formField.objectPath);
             const validationResult = validate(newVal, this.yAxis, formField.validate);
@@ -212,13 +227,17 @@ export default {
                 return;
             }
 
-            if (!_.isEqual(coerce(newVal, formField.coerce), coerce(oldVal, formField.coerce))) {
-                this.yAxis.set(formKey, coerce(newVal, formField.coerce));
+            newVal = formField.coerce?.(newVal) ?? newVal;
+            oldVal = formField.coerce?.(oldVal) ?? oldVal;
+
+            if (!_.isEqual(newVal, oldVal)) {
+                // TODO: Why do we mutate yAxis twice, once directly, once via objects.mutate?
+                this.yAxis.set(formKey, newVal);
                 if (path) {
                     this.openmct.objects.mutate(
                         this.domainObject,
                         path(this.domainObject, this.yAxis),
-                        coerce(newVal, formField.coerce)
+                        newVal
                     );
                 }
             }

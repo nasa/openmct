@@ -183,9 +183,7 @@ export default {
                 }, this);
             }
 
-            const useLogForY = true; // TODO get from UI
-
-            if (this.axisType === 'yAxis' && useLogForY) {
+            if (this.axisType === 'yAxis' && this.axis.get('logMode')) {
                 return getLogTicks(range.min, range.max, number, 4);
                 // return getLogTicks2(range.min, range.max, number);
             }

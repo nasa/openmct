@@ -230,6 +230,9 @@ export default class PlotSeries extends Model {
             this.getXVal = format.parse.bind(format);
         }
     }
+
+    logMode = false;
+
     /**
      * Update y formatter on change, default to stepAfter interpolation if
      * y range is an enumeration.
@@ -252,13 +255,11 @@ export default class PlotSeries extends Model {
             return this.limitEvaluator.evaluate(datum, valueMetadata);
         }.bind(this);
         const format = this.formats[newKey];
-        // this.getYVal = format.parse.bind(format);
         this.getYVal = (value) => {
-            const useLogForY = true; // TODO get from UI
             const scale = 1; // TODO get from UI, positive number above 0
             const y = format.parse(value);
 
-            return useLogForY ? scale * symlog(y, 10) : y;
+            return this.logMode ? scale * symlog(y, 10) : y;
         };
     }
 
@@ -527,7 +528,8 @@ export default class PlotSeries extends Model {
 
     /**
      * Update the series data with the given value.
-     * @returns {Array<{
+     * This return type definition is totally wrong, only for sinwave generator. It needs to be generic.
+     * @return-example {Array<{
             cos: number
             sin: number
             mctLimitState: {

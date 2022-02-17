@@ -55,6 +55,7 @@ export default class YAxisModel extends Model {
         this.listenTo(this, 'change:stats', this.calculateAutoscaleExtents, this);
         this.listenTo(this, 'change:autoscale', this.toggleAutoscale, this);
         this.listenTo(this, 'change:autoscalePadding', this.updatePadding, this);
+        this.listenTo(this, 'change:logMode', this.resetSeries, this);
         this.listenTo(this, 'change:frozen', this.toggleFreeze, this);
         this.listenTo(this, 'change:range', this.updateDisplayRange, this);
         this.updateDisplayRange(this.get('range'));
@@ -174,13 +175,19 @@ export default class YAxisModel extends Model {
             this.set('displayRange', this.get('range'));
         }
     }
+    resetSeries() {
+        this.plot.series.forEach((plotSeries) => {
+            plotSeries.logMode = this.get('logMode');
+            plotSeries.reset(plotSeries.getSeriesData());
+        });
+    }
     /**
      * Update yAxis format, values, and label from known series.
      * @param {import('./SeriesCollection').default} seriesCollection
      */
     updateFromSeries(seriesCollection) {
         const plotModel = this.plot.get('domainObject');
-        const label = _.get(plotModel, 'configuration.yAxis.label');
+        const label = plotModel.configuration?.yAxis?.label;
         const sampleSeries = seriesCollection.first();
         if (!sampleSeries) {
             if (!label) {
@@ -194,7 +201,13 @@ export default class YAxisModel extends Model {
         const yMetadata = sampleSeries.metadata.value(yKey);
         const yFormat = sampleSeries.formats[yKey];
         const scale = 1; // TODO get from UI, positive number above 0
-        this.set('format', (n) => yFormat.format(antisymlog(n / scale, 10)));
+
+        if (this.get('logMode')) {
+            this.set('format', (n) => yFormat.format(antisymlog(n / scale, 10)));
+        } else {
+            this.set('format', (n) => yFormat.format(n));
+        }
+
         this.set('values', yMetadata.values);
         if (!label) {
             const labelName = seriesCollection.map(function (s) {
@@ -248,6 +261,7 @@ export default class YAxisModel extends Model {
         return {
             frozen: false,
             autoscale: true,
+            logMode: false,
             autoscalePadding: 0.1
         };
     }
@@ -258,6 +272,7 @@ export default class YAxisModel extends Model {
 /**
 @typedef {import('./XAxisModel').AxisModelType & {
     autoscale: boolean
+    logMode: boolean
     autoscalePadding: number
     stats: import('./XAxisModel').NumberRange
     values: Array<TODO>
