@@ -112,9 +112,9 @@
     "Firefox ESR",
     "not IE 11",
     "last 2 Chrome versions",
-    "last 2 Safari versions",
     "maintained node versions",
-    "unreleased Chrome versions"
+    "unreleased Chrome versions",
+    "ios_saf > 15"
   ],
   "author": "",
   "license": "Apache-2.0",
