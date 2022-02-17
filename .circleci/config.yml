@@ -2,7 +2,7 @@ version: 2.1
 executors:
   pw-focal-development:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.19.0-focal
+      - image: mcr.microsoft.com/playwright:v1.19.1-focal
     environment:
       NODE_ENV: development # Needed to ensure 'dist' folder created and devDependencies installed
 parameters:

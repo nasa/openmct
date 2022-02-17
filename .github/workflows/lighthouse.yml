@@ -5,16 +5,96 @@ on:
       version:
         description: 'Which branch do you want to test?' # Limited to branch for now
         required: false
-        default: 'master' 
+        default: 'master'
+  pull_request:
+    types: 
+      - labeled
+  schedule:
+    - cron: '28 21 * * 1-5'
 jobs:
-  lighthouse:
+  lighthouse-pr:
+    if: ${{ github.event.label.name == 'pr:lighthouse' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Master for Baseline
+        uses: actions/checkout@v2
+        with:
+          ref: master #explicitly checkout master for baseline
+      - name: Install Node 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+      - name: npm install with lighthouse cli 
+        run: npm install && npm install -g @lhci/cli
+      - name: Run lhci against master to generate baseline and ignore exit codes
+        run: lhci autorun || true
+      - name: Perform clean checkout of PR
+        uses: actions/checkout@v2
+        with:
+          clean: true
+      - name: Install Node version which is compatible with PR
+        uses: actions/setup-node@v2
+      - name: npm install with lighthouse cli 
+        run: npm install && npm install -g @lhci/cli
+      - name: Run lhci with PR
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+  lighthouse-nightly:
+    if: ${{ github.event.schedule }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Node 14
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+      - name: npm install with lighthouse cli 
+        run: npm install && npm install -g @lhci/cli
+      - name: Run lhci against master to generate baseline
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+  lighthouse-dispatch:
+    if: ${{ github.event.workflow_dispatch }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.version }}
-      - uses: actions/setup-node@v2
+      - name: Install Node 14
+        uses: actions/setup-node@v2
         with:
-          node-version: '16'
-      - run: npm install && npm install -g @lhci/cli #Don't want to include this in our deps
-      - run: lhci autorun
+          node-version: '14'
+      - name: Cache node modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/package.json') }}
+      - name: npm install with lighthouse cli 
+        run: npm install && npm install -g @lhci/cli
+      - name: Run lhci against master to generate baseline
+        run: lhci autorun
+        
