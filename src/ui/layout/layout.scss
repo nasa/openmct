@@ -81,7 +81,7 @@
                 flex: 0 0 auto;
 
                 + * {
-                    margin-top: $interiorMargin;
+                    //margin-top: $interiorMargin;
                 }
             }
         }
@@ -153,8 +153,11 @@
 
     /******************************* HEAD */
     &__main-view-browse-bar {
+        background: none; //$editUIBaseColor;
+        border-top-left-radius: $controlCr;
+        border-top-right-radius: $controlCr;
         flex: 0 0 auto;
-        margin-bottom: $interiorMargin; // Needs some additional visual separation
+        padding: 5px 5px;
     }
 
     body.mobile & .l-shell__main-view-browse-bar {
@@ -233,6 +236,9 @@
     /******************************* MAIN AREA */
     &__main-container {
         // Wrapper for main views
+        border: 2px solid transparent; // $editUIBaseColor;
+        border-bottom-left-radius: $controlCr;
+        border-bottom-right-radius: $controlCr;
         display: flex;
         flex-direction: column;
         flex: 1 1 auto !important;
@@ -240,7 +246,7 @@
         overflow: auto;
 
         > * + * {
-            margin-top: $interiorMargin;
+            // margin-top: $interiorMargin;
         }
 
         > .c-object-view {
@@ -258,6 +264,7 @@
         border-top: 1px solid $colorInteriorBorder;
         display: flex;
         flex-direction: column;
+        margin-top: $interiorMargin;
         padding-top: $interiorMargin;
 
         > * + * {
@@ -303,7 +310,7 @@
         // Toolbar in the main shell, used by Display Layouts
         $p: $interiorMargin;
         background: $editUIBaseColor;
-        border-radius: $basicCr;
+        border-radius: $controlCr;
         height: $p + 24px; // Need to standardize the height
         justify-content: space-between;
         padding: $p;
@@ -323,11 +330,55 @@
 }
 
 .is-editing {
+    .l-shell__main-view-browse-bar {
+        background: $editUIBaseColor;
+
+        .c-notebook-snapshot-menubutton,
+        .l-browse-bar__more-options {
+            display: none;
+        }
+    }
+
+    .l-browse-bar__save {
+        background: $editUIColorFg;
+        color: $editUIBaseColor;
+
+        &:hover {
+            filter: none !important;
+            background: rgba($editUIColorFg, 0.8);
+        }
+    }
+
+    .l-browse-bar__cancel-edit {
+        color: $editUIColorFg;
+
+        &:hover {
+            background: $editUIBaseColorHov !important;
+        }
+    }
+
+    .l-shell__toolbar {
+        $m: $interiorMargin;
+        background: $editUIBaseColor;
+        border-radius: 0;
+        &:before {
+            background: rgba($editUIColorFg, 10%);
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            height: 1px;
+            left: $m;
+            right: $m;
+        }
+    }
+
     .l-shell__main-container {
-        $m: 3px;
-        box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
-        margin-left: $m;
-        margin-right: $m;
+        //$m: 3px;
+        //box-shadow: $colorBodyBg 0 0 0 1px, $editUIAreaShdw;
+        border-color: $editUIBaseColor;
+        //margin-left: $m;
+        //margin-right: $m;
 
         &[s-selected] {
             // Provide a clearer selection context articulation for the main edit area
@@ -392,6 +443,7 @@
 
     &__nav-to-parent-button {
         // This is an icon-button
+        margin-right: $interiorMarginLg;
         .is-editing & {
             display: none;
         }
@@ -406,13 +458,13 @@
         filter: $objectLabelNameFilter;
     }
 
-    .c-object-label__type-icon {
-        opacity: $objectLabelTypeIconOpacity;
-    }
+    //.c-object-label__type-icon {
+    //    opacity: $objectLabelTypeIconOpacity;
+    //}
 
     &__object-name--w {
         @include headerFont(1.5em);
-        margin-left: $interiorMarginLg;
+        //margin-left: $interiorMarginLg;
         min-width: 0;
 
         .is-status__indicator {
@@ -423,6 +475,15 @@
 
     &__object-details {
         opacity: 0.5;
+    }
+
+    &__edit-label {
+        display: none !important;
+        font-size: 0.7em;
+        text-transform: uppercase;
+        opacity: 0.5;
+
+        .is-editing & { display: block !important; }
     }
 }
 

@@ -11,6 +11,8 @@
             class="l-browse-bar__object-name--w c-object-label"
             :class="[statusClass]"
         >
+            <div class="l-browse-bar__edit-label">Editing</div>
+
             <div class="c-object-label__type-icon"
                  :class="type.cssClass"
             >
@@ -77,7 +79,7 @@
                 class="l-browse-bar__view-switcher c-ctrl-wrapper c-ctrl-wrapper--menus-left"
             >
                 <button
-                    class="c-button--menu c-button--major icon-save"
+                    class="c-button--menu l-browse-bar__save icon-save"
                     title="Save"
                     @click.stop="toggleSaveMenu"
                 >
@@ -107,12 +109,12 @@
 
             <button
                 v-if="isEditing"
-                class="l-browse-bar__actions c-button icon-x"
+                class="l-browse-bar__actions l-browse-bar__cancel-edit c-icon-button icon-x"
                 title="Cancel Editing"
                 @click="promptUserandCancelEditing()"
             ></button>
             <button
-                class="l-browse-bar__actions c-icon-button icon-3-dots"
+                class="l-browse-bar__actions l-browse-bar__more-options c-icon-button icon-3-dots"
                 title="More options"
                 @click.prevent.stop="showMenuItems($event)"
             ></button>

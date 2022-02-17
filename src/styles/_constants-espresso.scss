@@ -90,7 +90,7 @@ $objectLabelNameFilter: brightness(1.3);
 
 // Layout
 $shellMainPad: 4px 0;
-$shellPanePad: $interiorMargin, 7px;
+$shellPanePad: $interiorMargin, 5px;
 $drawerBg: lighten($colorBodyBg, 5%);
 $drawerFg: lighten($colorBodyFg, 5%);
 $sideBarBg: $drawerBg;
@@ -166,7 +166,7 @@ $editUIColorBg: $editUIColor;
 $editUIColorFg: #fff;
 $editUIColorHov: pullForward(saturate($uiColor, 10%), 20%); // Hover color when $editUIColor is applied as a base color
 $editUIBaseColor: #344b8d; // Base color, toolbar bg
-$editUIBaseColorHov: pullForward($editUIBaseColor, 20%);
+$editUIBaseColorHov: pullForward($editUIBaseColor, 10%);
 $editUIBaseColorFg: #ffffff; // Toolbar button icon colors, etc.
 $editUIAreaBaseColor: pullForward(saturate($editUIBaseColor, 30%), 20%);
 $editUIAreaShdw: $editUIAreaBaseColor 0 0 0 2px; // Edit area s-selected-parent

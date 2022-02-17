@@ -3,15 +3,14 @@
     flex: 1 1 auto;
     flex-direction: column;
 
-    > * {
-        // This is on purpose: want extra margin on top object-name element
+    > * + * {
         margin-top: $interiorMargin;
     }
 
     &__selected,
     &__multiple-selected {
         @include headerFont(1.1em);
-        padding: $interiorMarginSm 0;
+        //padding: $interiorMarginSm 0;
     }
 
     &__multiple-selected {
