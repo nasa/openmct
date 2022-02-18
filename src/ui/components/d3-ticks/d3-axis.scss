@@ -1,0 +1,28 @@
+.c-d3-axis {
+    $w: 30px;
+    height: $w;
+
+    svg {
+        $lineC: rgba($colorBodyFg, 0.3) !important;
+        text-rendering: geometricPrecision;
+        width: 100%;
+        height: 100%;
+
+        .domain {
+            stroke: $lineC;
+        }
+
+        .tick {
+            line {
+                stroke: $lineC;
+            }
+
+            text {
+                // Tick labels
+                fill: $colorBodyFg;
+                paint-order: stroke;
+                font-weight: bold;
+            }
+        }
+    }
+}

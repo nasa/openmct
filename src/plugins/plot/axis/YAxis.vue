@@ -47,23 +47,32 @@
         </option>
     </select>
 
-    <mct-ticks :axis-type="'yAxis'"
+    <mct-ticks v-if="logMode === false"
+               :axis-type="'yAxis'"
                class="gl-plot-ticks"
                :position="'top'"
                @plotTickWidth="onTickWidthChange"
+    />
+    <d3-axis v-if="bounds && logMode === true"
+             class="gl-plot-ticks"
+             :bounds="bounds"
+             :content-height="height"
     />
 </div>
 </template>
 
 <script>
 import MctTicks from "../MctTicks.vue";
+import D3Axis from "../../../ui/components/d3-ticks/D3Axis.vue";
 import configStore from "../configuration/ConfigStore";
+import eventHelpers from "../lib/eventHelpers";
 
 export default {
     components: {
-        MctTicks
+        MctTicks,
+        D3Axis
     },
-    inject: ['openmct', 'domainObject'],
+    inject: ['openmct', 'domainObject', 'path'],
     props: {
         singleSeries: {
             type: Boolean,
@@ -87,15 +96,53 @@ export default {
     data() {
         return {
             yAxisLabel: 'none',
-            loaded: false
+            loaded: false,
+            bounds: undefined,
+            height: undefined,
+            logMode: false
         };
     },
     mounted() {
+        eventHelpers.extend(this);
+        this.parentElement = this.$el.parentElement;
         this.yAxis = this.getYAxisFromConfig();
+        this.logMode = this.yAxis.get('logMode');
+        this.setBoundsAndOptions();
+        this.setDimensions = this.setDimensions.bind(this);
+        this.setDimensions();
         this.loaded = true;
-        this.setUpYAxisOptions();
+        this.listenTo(this.yAxis, 'change:displayRange', this.setBounds);
+        this.listenTo(this.yAxis, 'change:logMode', this.changeToLogTicks);
+        this.plotResizeObserver = new ResizeObserver(this.setDimensions);
+        this.plotResizeObserver.observe(this.parentElement);
+    },
+    beforeDestroy() {
+        if (this.plotResizeObserver) {
+            this.plotResizeObserver.unobserve(this.parentElement);
+        }
     },
     methods: {
+        setDimensions() {
+            //TODO: Handle resizing
+            const dimensions = this.parentElement.getBoundingClientRect();
+            this.height = Math.round(dimensions.height);
+        },
+        setBoundsAndOptions() {
+            this.setBounds();
+            this.setUpYAxisOptions();
+        },
+        setBounds() {
+            const bounds = this.yAxis.get('displayRange');
+            if (bounds) {
+                this.bounds = {
+                    start: bounds.min,
+                    end: bounds.max
+                };
+            }
+        },
+        changeToLogTicks(logMode) {
+            this.logMode = logMode;
+        },
         getYAxisFromConfig() {
             const configId = this.openmct.objects.makeKeyString(this.domainObject.identifier);
             let config = configStore.get(configId);
