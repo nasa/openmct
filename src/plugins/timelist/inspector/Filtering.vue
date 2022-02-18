@@ -10,12 +10,12 @@
          class="c-inspect-properties__value"
          :class="{'form-error': hasError}"
     >
-        <input v-model="filterValue"
-               class="c-input"
-               type="text"
-               @keydown.enter.exact.stop="forceBlur($event)"
-               @keyup="updateForm($event, 'filter')"
-        >
+        <textarea v-model="filterValue"
+                  class="c-input--flex"
+                  type="text"
+                  @keydown.enter.exact.stop="forceBlur($event)"
+                  @keyup="updateForm($event, 'filter')"
+        ></textarea>
     </div>
     <div v-else
          class="c-inspect-properties__value"

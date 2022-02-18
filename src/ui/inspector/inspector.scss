@@ -79,6 +79,11 @@
         padding-right: 0;
     }
 
+    textarea {
+        // When a textarea is in the Inspector, only allow vertical resize
+        resize: vertical;
+    }
+
     /************************************************************** LEGACY */
     .l-inspector-part {
         display: contents;
